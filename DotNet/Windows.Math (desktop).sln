@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30303.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Windows.Math (desktop)", "Windows.Math (desktop).csproj", "{9ADED065-140B-42EF-9B17-7AFC1F530A45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathTests (desktop)", "MathTests\MathTests (desktop).csproj", "{5C40AF30-FE01-40A3-BF0F-223FD2D5177A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9ADED065-140B-42EF-9B17-7AFC1F530A45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ADED065-140B-42EF-9B17-7AFC1F530A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ADED065-140B-42EF-9B17-7AFC1F530A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ADED065-140B-42EF-9B17-7AFC1F530A45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C40AF30-FE01-40A3-BF0F-223FD2D5177A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C40AF30-FE01-40A3-BF0F-223FD2D5177A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C40AF30-FE01-40A3-BF0F-223FD2D5177A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C40AF30-FE01-40A3-BF0F-223FD2D5177A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
