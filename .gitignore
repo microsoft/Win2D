@@ -1,7 +1,10 @@
 *.suo
 *.user
+*.sdf
 
 bin/
 obj/
-
+Debug/
+Release/
 TestResults/
+ipch/
