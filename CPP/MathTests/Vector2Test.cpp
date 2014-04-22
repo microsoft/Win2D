@@ -10,9 +10,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests
 {
-	TEST_CLASS(Vector2Test)
-	{
-	public:
+    TEST_CLASS(Vector2Test)
+    {
+    public:
         // A test for Distance (Vector2, Vector2)
         TEST_METHOD(Vector2DistanceTest)
         {
@@ -80,7 +80,7 @@ namespace MathTests
             Vector2 b(FLT_MAX, FLT_MAX);
 
             float actual = Vector2::Dot(a, b);
-			Assert::IsTrue(IsNegativeInfinity(actual), L"Vector2::Dot did not return the expected value.");
+            Assert::IsTrue(IsNegativeInfinity(actual), L"Vector2::Dot did not return the expected value.");
         }
 
         // A test for Length ()
@@ -205,36 +205,36 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Clamp did not return the expected value.");
 
             // Case N3: specfied value is smaller than max value.
-			a = Vector2(-1.0f, -2.0f);
+            a = Vector2(-1.0f, -2.0f);
             expected = min;
             actual = Vector2::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Clamp did not return the expected value.");
 
             // Case N4: combination case.
             a = Vector2(-2.0f, 4.0f);
-			expected = Vector2(min.X, max.Y);
+            expected = Vector2(min.X, max.Y);
             actual = Vector2::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Clamp did not return the expected value.");
 
             // User specfied min value is bigger than max value.
-			max = Vector2(0.0f, 0.1f);
-			min = Vector2(1.0f, 1.1f);
+            max = Vector2(0.0f, 0.1f);
+            min = Vector2(1.0f, 1.1f);
 
             // Case W1: specfied value is in the range.
-			a = Vector2(0.5f, 0.3f);
+            a = Vector2(0.5f, 0.3f);
             expected = min;
             actual = Vector2::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Clamp did not return the expected value.");
 
             // Normal case.
             // Case W2: specfied value is bigger than max and min value.
-			a = Vector2(2.0f, 3.0f);
+            a = Vector2(2.0f, 3.0f);
             expected = min;
             actual = Vector2::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Clamp did not return the expected value.");
 
             // Case W3: specfied value is smaller than min and max value.
-			a = Vector2(-1.0f, -2.0f);
+            a = Vector2(-1.0f, -2.0f);
             expected = min;
             actual = Vector2::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Clamp did not return the expected value.");
@@ -306,12 +306,12 @@ namespace MathTests
         TEST_METHOD(Vector2LerpTest5)
         {
             Vector2 a(45.67f, 90.0f);
-			Vector2 b(std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity());
+            Vector2 b(std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity());
 
             float t = 0.408f;
             Vector2 actual = Vector2::Lerp(a, b, t);
-			Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector2::Lerp did not return the expected value.");
-			Assert::IsTrue(IsNegativeInfinity(actual.Y), L"Vector2::Lerp did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector2::Lerp did not return the expected value.");
+            Assert::IsTrue(IsNegativeInfinity(actual.Y), L"Vector2::Lerp did not return the expected value.");
         }
 
         // A test for Lerp (Vector2, Vector2, float)
@@ -481,8 +481,8 @@ namespace MathTests
 
             Vector2 actual = -a;
 
-			Assert::IsTrue(IsNegativeInfinity(actual.X), L"Vector2::Lerp did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector2::Lerp did not return the expected value.");
+            Assert::IsTrue(IsNegativeInfinity(actual.X), L"Vector2::Lerp did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector2::Lerp did not return the expected value.");
         }
 
         // A test for operator - (Vector2)
@@ -587,8 +587,8 @@ namespace MathTests
 
             Vector2 actual = a / div;
 
-			Assert::IsTrue(IsNegativeInfinity(actual.X), L"Vector2::operator / did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector2::operator / did not return the expected value.");
+            Assert::IsTrue(IsNegativeInfinity(actual.X), L"Vector2::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector2::operator / did not return the expected value.");
         }
 
         // A test for operator / (Vector2, Vector2)
@@ -599,8 +599,8 @@ namespace MathTests
 
             Vector2 actual = a / b;
 
-			Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector2::operator / did not return the expected value.");
-			Assert::IsTrue(IsNegativeInfinity(actual.Y), L"Vector2::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector2::operator / did not return the expected value.");
+            Assert::IsTrue(IsNegativeInfinity(actual.Y), L"Vector2::operator / did not return the expected value.");
         }
 
         // A test for operator + (Vector2, Vector2)
@@ -814,7 +814,7 @@ namespace MathTests
 
             value = 2.0f;
             target = Vector2(value);
-			expected = Vector2(value, value);
+            expected = Vector2(value, value);
             Assert::AreEqual(expected, target, L"Vector2::cstr did not return the expected value.");
         }
 
@@ -847,14 +847,14 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Reflect did not return the expected value.");
 
             // Reflect on XY plane.
-			n = Vector2(0.0f, 0.0f);
-			expected = Vector2(a.X, a.Y);
+            n = Vector2(0.0f, 0.0f);
+            expected = Vector2(a.X, a.Y);
             actual = Vector2::Reflect(a, n);
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Reflect did not return the expected value.");
 
             // Reflect on YZ plane.
-			n = Vector2(1.0f, 0.0f);
-			expected = Vector2(-a.X, a.Y);
+            n = Vector2(1.0f, 0.0f);
+            expected = Vector2(-a.X, a.Y);
             actual = Vector2::Reflect(a, n);
             Assert::IsTrue(Equal(expected, actual), L"Vector2::Reflect did not return the expected value.");
         }
@@ -888,7 +888,7 @@ namespace MathTests
         {
             Vector2 vector(23, 42);
 
-			Windows::Foundation::Size result = vector;
+            Windows::Foundation::Size result = vector;
 
             Assert::AreEqual(23.0f, result.Width);
             Assert::AreEqual(42.0f, result.Height);
@@ -908,7 +908,7 @@ namespace MathTests
         // A test for Size -> Vector2 conversion
         TEST_METHOD(Vector2FromSizeTest)
         {
-			Windows::Foundation::Size size(23, 42);
+            Windows::Foundation::Size size(23, 42);
 
             Vector2 result(size);
 
@@ -919,7 +919,7 @@ namespace MathTests
         // A test for Point -> Vector2 conversion
         TEST_METHOD(Vector2FromPointTest)
         {
-			Windows::Foundation::Point point(23, 42);
+            Windows::Foundation::Point point(23, 42);
 
             Vector2 result(point);
 
@@ -927,25 +927,25 @@ namespace MathTests
             Assert::AreEqual(42.0f, result.Y);
         }
 
-		struct Vector2_2x
-		{
-			Vector2 a;
-			Vector2 b;
-		};
+        struct Vector2_2x
+        {
+            Vector2 a;
+            Vector2 b;
+        };
 
-		struct Vector2PlusFloat
-		{
-			Vector2 v;
-			float f;
-		};
+        struct Vector2PlusFloat
+        {
+            Vector2 v;
+            float f;
+        };
 
-		struct Vector2PlusFloat_2x
-		{
-			Vector2PlusFloat a;
-			Vector2PlusFloat b;
-		};
-		
-		// A test to make sure these types are blittable directly into GPU buffer memory layouts
+        struct Vector2PlusFloat_2x
+        {
+            Vector2PlusFloat a;
+            Vector2PlusFloat b;
+        };
+        
+        // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(Vector2SizeofTest)
         {
             Assert::AreEqual(8u, sizeof(Vector2));
@@ -953,5 +953,5 @@ namespace MathTests
             Assert::AreEqual(12u, sizeof(Vector2PlusFloat));
             Assert::AreEqual(24u, sizeof(Vector2PlusFloat_2x));
         }
-	};
+    };
 }

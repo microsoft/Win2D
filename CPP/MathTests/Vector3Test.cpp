@@ -10,9 +10,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests
 {
-	TEST_CLASS(Vector3Test)
-	{
-	public:
+    TEST_CLASS(Vector3Test)
+    {
+    public:
         // A test for Cross (Vector3, Vector3)
         TEST_METHOD(Vector3CrossTest)
         {
@@ -277,13 +277,13 @@ namespace MathTests
 
             // Reflect on XY plane.
             n = Vector3(0.0f, 0.0f, 1.0f);
-			expected = Vector3(a.X, a.Y, -a.Z);
+            expected = Vector3(a.X, a.Y, -a.Z);
             actual = Vector3::Reflect(a, n);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Reflect did not return the expected value.");
 
             // Reflect on YZ plane.
-			n = Vector3(1.0f, 0.0f, 0.0f);
-			expected = Vector3(-a.X, a.Y, a.Z);
+            n = Vector3(1.0f, 0.0f, 0.0f);
+            expected = Vector3(-a.X, a.Y, a.Z);
             actual = Vector3::Reflect(a, n);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Reflect did not return the expected value.");
         }
@@ -359,42 +359,42 @@ namespace MathTests
 
             // Normal case.
             // Case N2: specfied value is bigger than max value.
-			a = Vector3(2.0f, 3.0f, 4.0f);
+            a = Vector3(2.0f, 3.0f, 4.0f);
             expected = max;
             actual = Vector3::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Clamp did not return the expected value.");
 
             // Case N3: specfied value is smaller than max value.
-			a = Vector3(-2.0f, -3.0f, -4.0f);
+            a = Vector3(-2.0f, -3.0f, -4.0f);
             expected = min;
             actual = Vector3::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Clamp did not return the expected value.");
 
             // Case N4: combination case.
-			a = Vector3(-2.0f, 0.5f, 4.0f);
-			expected = Vector3(min.X, a.Y, max.Z);
+            a = Vector3(-2.0f, 0.5f, 4.0f);
+            expected = Vector3(min.X, a.Y, max.Z);
             actual = Vector3::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Clamp did not return the expected value.");
 
             // User specfied min value is bigger than max value.
-			max = Vector3(0.0f, 0.1f, 0.13f);
-			min = Vector3(1.0f, 1.1f, 1.13f);
+            max = Vector3(0.0f, 0.1f, 0.13f);
+            min = Vector3(1.0f, 1.1f, 1.13f);
 
             // Case W1: specfied value is in the range.
-			a = Vector3(0.5f, 0.3f, 0.33f);
+            a = Vector3(0.5f, 0.3f, 0.33f);
             expected = min;
             actual = Vector3::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Clamp did not return the expected value.");
 
             // Normal case.
             // Case W2: specfied value is bigger than max and min value.
-			a = Vector3(2.0f, 3.0f, 4.0f);
+            a = Vector3(2.0f, 3.0f, 4.0f);
             expected = min;
             actual = Vector3::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Clamp did not return the expected value.");
 
             // Case W3: specfied value is smaller than min and max value.
-			a = Vector3(-2.0f, -3.0f, -4.0f);
+            a = Vector3(-2.0f, -3.0f, -4.0f);
             expected = min;
             actual = Vector3::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector3::Clamp did not return the expected value.");
@@ -590,8 +590,8 @@ namespace MathTests
             Vector3 actual = a / div;
 
             Assert::IsTrue(IsNegativeInfinity(actual.X), L"Vector3::operator / did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector3::operator / did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(actual.Z), L"Vector3::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector3::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.Z), L"Vector3::operator / did not return the expected value.");
 
         }
 
@@ -603,7 +603,7 @@ namespace MathTests
 
             Vector3 actual = a / b;
 
-			Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector3::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector3::operator / did not return the expected value.");
             Assert::IsTrue(IsNegativeInfinity(actual.Y), L"Vector3::operator / did not return the expected value.");
             Assert::IsTrue(IsNegativeInfinity(actual.Z), L"Vector3::operator / did not return the expected value.");
         }
@@ -671,7 +671,7 @@ namespace MathTests
 
             Assert::IsTrue(isnan(target.X), L"Vector3::constructor (Vector3) did not return the expected value.");
             Assert::IsTrue(FLT_MAX == target.Y, L"Vector3::constructor (Vector3) did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(target.Z), L"Vector3::constructor (Vector3) did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(target.Z), L"Vector3::constructor (Vector3) did not return the expected value.");
         }
 
         // A test for Add (Vector3, Vector3)
@@ -841,7 +841,7 @@ namespace MathTests
 
             value = 2.0f;
             target = Vector3(value);
-			expected = Vector3(value, value, value);
+            expected = Vector3(value, value, value);
             Assert::AreEqual(expected, target, L"Vector3::cstr did not return the expected value.");
         }
 
@@ -866,23 +866,23 @@ namespace MathTests
             Assert::IsFalse(c == c);
         }
 
-		struct Vector3_2x
-		{
-			Vector3 a;
-			Vector3 b;
-		};
+        struct Vector3_2x
+        {
+            Vector3 a;
+            Vector3 b;
+        };
 
-		struct Vector3PlusFloat
-		{
-			Vector3 v;
-			float f;
-		};
+        struct Vector3PlusFloat
+        {
+            Vector3 v;
+            float f;
+        };
 
-		struct Vector3PlusFloat_2x
-		{
-			Vector3PlusFloat a;
-			Vector3PlusFloat b;
-		};
+        struct Vector3PlusFloat_2x
+        {
+            Vector3PlusFloat a;
+            Vector3PlusFloat b;
+        };
 
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(Vector3SizeofTest)
@@ -892,5 +892,5 @@ namespace MathTests
             Assert::AreEqual(16u, sizeof(Vector3PlusFloat));
             Assert::AreEqual(32u, sizeof(Vector3PlusFloat_2x));
         }
-	};
+    };
 }

@@ -10,9 +10,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests
 {
-	TEST_CLASS(Matrix3x2Test)
-	{
-	public:
+    TEST_CLASS(Matrix3x2Test)
+    {
+    public:
         static Matrix3x2 GenerateMatrixNumberFrom1To6()
         {
             Matrix3x2 a;
@@ -22,7 +22,7 @@ namespace MathTests
             return a;
         }
 
-		static Matrix3x2 GenerateTestMatrix()
+        static Matrix3x2 GenerateTestMatrix()
         {
             Matrix3x2 m = Matrix3x2::CreateRotation(ToRadians(30.0f));
             m.SetTranslation(Vector2(111.0f, 222.0f));
@@ -638,7 +638,7 @@ namespace MathTests
             // Set value and get value must be same.
             val = Vector2(1.0f, 2.0f);
             a.SetTranslation(val);
-			Assert::AreEqual(val, a.Translation(), L"Matrix3x2::Translation was not set correctly.");
+            Assert::AreEqual(val, a.Translation(), L"Matrix3x2::Translation was not set correctly.");
 
             // Make sure it only modifies expected value of matrix.
             Assert::IsTrue(
@@ -792,23 +792,23 @@ namespace MathTests
             Assert::IsFalse(f == f);
         }
 
-		struct Matrix3x2_2x
-		{
-			Matrix3x2 a;
-			Matrix3x2 b;
-		};
+        struct Matrix3x2_2x
+        {
+            Matrix3x2 a;
+            Matrix3x2 b;
+        };
 
-		struct Matrix3x2PlusFloat
-		{
-			Matrix3x2 v;
-			float f;
-		};
+        struct Matrix3x2PlusFloat
+        {
+            Matrix3x2 v;
+            float f;
+        };
 
-		struct Matrix3x2PlusFloat_2x
-		{
-			Matrix3x2PlusFloat a;
-			Matrix3x2PlusFloat b;
-		};
+        struct Matrix3x2PlusFloat_2x
+        {
+            Matrix3x2PlusFloat a;
+            Matrix3x2PlusFloat b;
+        };
 
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(Matrix3x2SizeofTest)
@@ -818,5 +818,5 @@ namespace MathTests
             Assert::AreEqual(28u, sizeof(Matrix3x2PlusFloat));
             Assert::AreEqual(56u, sizeof(Matrix3x2PlusFloat_2x));
         }
-	};
+    };
 }

@@ -10,10 +10,10 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests
 {
-	TEST_CLASS(Matrix4x4Test)
-	{
-	public:
-		static Matrix4x4 GenerateMatrixNumberFrom1To16()
+    TEST_CLASS(Matrix4x4Test)
+    {
+    public:
+        static Matrix4x4 GenerateMatrixNumberFrom1To16()
         {
             Matrix4x4 a;
             a.M11 = 1.0f; a.M12 = 2.0f; a.M13 = 3.0f; a.M14 = 4.0f;
@@ -23,7 +23,7 @@ namespace MathTests
             return a;
         }
 
-		static Matrix4x4 GenerateTestMatrix()
+        static Matrix4x4 GenerateTestMatrix()
         {
             Matrix4x4 m =
                 Matrix4x4::CreateRotationX(ToRadians(30.0f)) *
@@ -143,7 +143,7 @@ namespace MathTests
             Matrix4x4 mtx = Matrix4x4::CreateFromYawPitchRoll(3, 4, 5);
 
             Matrix4x4 actual;
-			Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
+            Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
 
             Matrix4x4 i = mtx * actual;
             Assert::IsTrue(Equal(i, Matrix4x4::Identity()));
@@ -155,7 +155,7 @@ namespace MathTests
             Matrix4x4 mtx = Matrix4x4::CreateScale(23, 42, -666);
 
             Matrix4x4 actual;
-			Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
+            Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
 
             Matrix4x4 i = mtx * actual;
             Assert::IsTrue(Equal(i, Matrix4x4::Identity()));
@@ -167,7 +167,7 @@ namespace MathTests
             Matrix4x4 mtx = Matrix4x4::CreatePerspectiveFieldOfView(1, 1.333f, 0.1f, 666);
 
             Matrix4x4 actual;
-			Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
+            Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
 
             Matrix4x4 i = mtx * actual;
             Assert::IsTrue(Equal(i, Matrix4x4::Identity()));
@@ -181,7 +181,7 @@ namespace MathTests
                             Matrix4x4::CreateTranslation(17, 53, 89);
 
             Matrix4x4 actual;
-			Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
+            Assert::IsTrue(Matrix4x4::Invert(mtx, &actual));
 
             Matrix4x4 i = mtx * actual;
             Assert::IsTrue(Equal(i, Matrix4x4::Identity()));
@@ -192,35 +192,35 @@ namespace MathTests
             DecomposeTest(yaw, pitch, roll, expectedTranslation, expectedScales, true);
         }
 
-		void DecomposeTest(float yaw, float pitch, float roll, Vector3 expectedTranslation, Vector3 expectedScales, bool expectedResult)
-		{
-			Quaternion expectedRotation = Quaternion::CreateFromYawPitchRoll(
-				ToRadians(yaw), ToRadians(pitch), ToRadians(roll));
+        void DecomposeTest(float yaw, float pitch, float roll, Vector3 expectedTranslation, Vector3 expectedScales, bool expectedResult)
+        {
+            Quaternion expectedRotation = Quaternion::CreateFromYawPitchRoll(
+                ToRadians(yaw), ToRadians(pitch), ToRadians(roll));
 
-			Matrix4x4 m = Matrix4x4::CreateScale(expectedScales) *
-				Matrix4x4::CreateFromQuaternion(expectedRotation) *
-				Matrix4x4::CreateTranslation(expectedTranslation);
+            Matrix4x4 m = Matrix4x4::CreateScale(expectedScales) *
+                Matrix4x4::CreateFromQuaternion(expectedRotation) *
+                Matrix4x4::CreateTranslation(expectedTranslation);
 
-			Vector3 scales;
-			Quaternion rotation;
-			Vector3 translation;
+            Vector3 scales;
+            Quaternion rotation;
+            Vector3 translation;
 
-			bool actualResult = Matrix4x4::Decompose(m, &scales, &rotation, &translation);
-			Assert::AreEqual(expectedResult, actualResult, L"Matrix4x4::Decompose did not return expected value.");
-			if (expectedResult)
-			{
-				Assert::IsTrue(Equal(expectedScales, scales), L"Matrix4x4::Decompose did not return expected value.");
-			}
-			else
-			{
-				Assert::IsTrue(Equal(fabs(expectedScales.X), fabs(scales.X)) &&
-							   Equal(fabs(expectedScales.Y), fabs(scales.Y)) &&
-							   Equal(fabs(expectedScales.Z), fabs(scales.Z)), L"Matrix4x4::Decompose did not return expected value.");
+            bool actualResult = Matrix4x4::Decompose(m, &scales, &rotation, &translation);
+            Assert::AreEqual(expectedResult, actualResult, L"Matrix4x4::Decompose did not return expected value.");
+            if (expectedResult)
+            {
+                Assert::IsTrue(Equal(expectedScales, scales), L"Matrix4x4::Decompose did not return expected value.");
+            }
+            else
+            {
+                Assert::IsTrue(Equal(fabs(expectedScales.X), fabs(scales.X)) &&
+                               Equal(fabs(expectedScales.Y), fabs(scales.Y)) &&
+                               Equal(fabs(expectedScales.Z), fabs(scales.Z)), L"Matrix4x4::Decompose did not return expected value.");
 
-			}
-			Assert::IsTrue(EqualRotation(expectedRotation, rotation), L"Matrix4x4::Decompose did not return expected value.");
-			Assert::IsTrue(Equal(expectedTranslation, translation), L"Matrix4x4::Decompose did not return expected value.");
-		}
+            }
+            Assert::IsTrue(EqualRotation(expectedRotation, rotation), L"Matrix4x4::Decompose did not return expected value.");
+            Assert::IsTrue(Equal(expectedTranslation, translation), L"Matrix4x4::Decompose did not return expected value.");
+        }
         
         TEST_METHOD(Matrix4x4DecomposeTest01)
         {
@@ -278,8 +278,8 @@ namespace MathTests
             bool actualResult = Matrix4x4::Decompose(m, &scales, &rotation, &translation);
             Assert::AreEqual(false, actualResult, L"Matrix4x4::Decompose did not return expected value.");
             Assert::IsTrue(Equal(fabs(expectedScales.X), fabs(scales.X)) &&
-						   Equal(fabs(expectedScales.Y), fabs(scales.Y)) &&
-						   Equal(fabs(expectedScales.Z), fabs(scales.Z)), L"Matrix4x4::Decompose did not return expected value.");
+                           Equal(fabs(expectedScales.Y), fabs(scales.Y)) &&
+                           Equal(fabs(expectedScales.Z), fabs(scales.Z)), L"Matrix4x4::Decompose did not return expected value.");
 
             Assert::IsTrue(EqualRotation(Quaternion::Identity(), rotation), L"Matrix4x4::Decompose did not return expected value.");
             Assert::IsTrue(Equal(Vector3::Zero(), translation), L"Matrix4x4::Decompose did not return expected value.");
@@ -427,7 +427,7 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual));
 
             expected = Matrix4x4::CreateFromQuaternion(Quaternion::CreateFromAxisAngle(Vector3::Normalize(Vector3::One()), radians));
-			actual = Matrix4x4::CreateFromAxisAngle(Vector3::Normalize(Vector3::One()), radians);
+            actual = Matrix4x4::CreateFromAxisAngle(Vector3::Normalize(Vector3::One()), radians);
             Assert::IsTrue(Equal(expected, actual));
 
             const int rotCount = 16;
@@ -436,7 +436,7 @@ namespace MathTests
                 float latitude = (2.0f * DirectX::XM_PI) * ((float)i / (float)rotCount);
                 for (int j = 0; j < rotCount; ++j)
                 {
-					float longitude = -DirectX::XM_PIDIV2 + DirectX::XM_PI * ((float)j / (float)rotCount);
+                    float longitude = -DirectX::XM_PIDIV2 + DirectX::XM_PI * ((float)j / (float)rotCount);
 
                     Matrix4x4 m = Matrix4x4::CreateRotationZ(longitude) * Matrix4x4::CreateRotationY(latitude);
                     Vector3 axis(m.M11, m.M12, m.M13);
@@ -506,7 +506,7 @@ namespace MathTests
         {
             // Complex cases.
             Plane planes[] =
-			{
+            {
                 Plane( 0, 1, 0, 0 ),
                 Plane( 1, 2, 3, 4 ),
                 Plane( 5, 6, 7, 8 ),
@@ -515,7 +515,7 @@ namespace MathTests
             };
 
             Vector3 points[] =
-			{
+            {
                 Vector3( 1, 2, 3),
                 Vector3( 5, 6, 7),
                 Vector3( 8, 9, 10),
@@ -524,7 +524,7 @@ namespace MathTests
                 Vector3(-8,-9,-10),
             };
 
-			for (int i = 0; i < sizeof(planes) / sizeof(planes[0]); i++)
+            for (int i = 0; i < sizeof(planes) / sizeof(planes[0]); i++)
             {
                 Plane plane = Plane::Normalize(planes[i]);
 
@@ -562,9 +562,9 @@ namespace MathTests
                     Vector3(  1.0f,-1.0f,-1.0f ),
                 };
 
-				for (int j = 0; j < sizeof(testDirections) / sizeof(testDirections[0]); j++)
+                for (int j = 0; j < sizeof(testDirections) / sizeof(testDirections[0]); j++)
                 {
-					Vector3 lightDirInfo = testDirections[j];
+                    Vector3 lightDirInfo = testDirections[j];
 
                     if (lightDirInfo.Length() < 0.1f) continue;
                     Vector3 lightDir = Vector3::Normalize(lightDirInfo);
@@ -574,9 +574,9 @@ namespace MathTests
                     Matrix4x4 m = Matrix4x4::CreateShadow(lightDir, plane);
                     Vector3 pp = -plane.D * plane.Normal; // origin of the plane.
 
-					for (int k = 0; k < sizeof(points) / sizeof(points[0]); k++)
+                    for (int k = 0; k < sizeof(points) / sizeof(points[0]); k++)
                     {
-						Vector3 point = points[k];
+                        Vector3 point = points[k];
 
                         Vector4 v4 = Vector4::Transform(point, m);
 
@@ -615,7 +615,7 @@ namespace MathTests
 
             // Complex cases.
             Plane planes[] =
-			{
+            {
                 Plane( 0, 1, 0, 0 ),
                 Plane( 1, 2, 3, 4 ),
                 Plane( 5, 6, 7, 8 ),
@@ -624,24 +624,24 @@ namespace MathTests
             };
 
             Vector3 points[] =
-			{
+            {
                 Vector3( 1, 2, 3),
                 Vector3( 5, 6, 7),
                 Vector3(-1,-2,-3),
                 Vector3(-5,-6,-7),
             };
 
-			for (int i = 0; i < sizeof(planes) / sizeof(planes[0]); i++)
-			{
-				Plane plane = Plane::Normalize(planes[i]);
+            for (int i = 0; i < sizeof(planes) / sizeof(planes[0]); i++)
+            {
+                Plane plane = Plane::Normalize(planes[i]);
                 Matrix4x4 m = Matrix4x4::CreateReflection(plane);
                 Vector3 pp = -plane.D * plane.Normal; // Position on the plane.
 
-				for (int j = 0; j < sizeof(points) / sizeof(points[0]); j++)
-				{
-					Vector3 point = points[j];
+                for (int j = 0; j < sizeof(points) / sizeof(points[0]); j++)
+                {
+                    Vector3 point = points[j];
 
-					Vector3 rp = Vector3::Transform(point, m);
+                    Vector3 rp = Vector3::Transform(point, m);
 
                     // Maniually compute refelction point and compare results.
                     Vector3 v = point - pp;
@@ -1906,7 +1906,7 @@ namespace MathTests
             // Set value and get value must be same.
             val = Vector3(1.0f, 2.0f, 3.0f);
             a.SetTranslation(val);
-			Assert::AreEqual(val, a.Translation(), L"Matrix4x4::Translation was not set correctly.");
+            Assert::AreEqual(val, a.Translation(), L"Matrix4x4::Translation was not set correctly.");
 
             // Make sure it only modifies expected value of matrix.
             Assert::IsTrue(
@@ -2057,23 +2057,23 @@ namespace MathTests
             Assert::IsFalse(p == p);
         }
 
-		struct Matrix4x4_2x
-		{
-			Matrix4x4 a;
-			Matrix4x4 b;
-		};
+        struct Matrix4x4_2x
+        {
+            Matrix4x4 a;
+            Matrix4x4 b;
+        };
 
-		struct Matrix4x4PlusFloat
-		{
-			Matrix4x4 v;
-			float f;
-		};
+        struct Matrix4x4PlusFloat
+        {
+            Matrix4x4 v;
+            float f;
+        };
 
-		struct Matrix4x4PlusFloat_2x
-		{
-			Matrix4x4PlusFloat a;
-			Matrix4x4PlusFloat b;
-		};
+        struct Matrix4x4PlusFloat_2x
+        {
+            Matrix4x4PlusFloat a;
+            Matrix4x4PlusFloat b;
+        };
 
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(Matrix4x4SizeofTest)
@@ -2083,5 +2083,5 @@ namespace MathTests
             Assert::AreEqual(68u, sizeof(Matrix4x4PlusFloat));
             Assert::AreEqual(136u, sizeof(Matrix4x4PlusFloat_2x));
         }
-	};
+    };
 }

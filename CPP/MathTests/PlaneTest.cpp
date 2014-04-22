@@ -10,9 +10,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests
 {
-	TEST_CLASS(PlaneTest)
-	{
-	public:
+    TEST_CLASS(PlaneTest)
+    {
+    public:
         // A test for operator != (Plane, Plane)
         TEST_METHOD(PlaneInequalityTest)
         {
@@ -59,18 +59,18 @@ namespace MathTests
                 L"Plane::cstor did not return the expected value.");
         }
 
-		// A test for Plane (float, float, float, float)
-		TEST_METHOD(PlaneConstructorTest1)
-		{
-			float a = 1.0f, b = 2.0f, c = 3.0f, d = 4.0f;
-			Plane target(a, b, c, d);
+        // A test for Plane (float, float, float, float)
+        TEST_METHOD(PlaneConstructorTest1)
+        {
+            float a = 1.0f, b = 2.0f, c = 3.0f, d = 4.0f;
+            Plane target(a, b, c, d);
 
-			Assert::IsTrue(
-				target.Normal.X == a && target.Normal.Y == b && target.Normal.Z == c && target.D == d,
-				L"Plane::cstor did not return the expected value.");
-		}
+            Assert::IsTrue(
+                target.Normal.X == a && target.Normal.Y == b && target.Normal.Z == c && target.D == d,
+                L"Plane::cstor did not return the expected value.");
+        }
 
-		// A test for Plane (Vector3, Vector3, Vector3)
+        // A test for Plane (Vector3, Vector3, Vector3)
         TEST_METHOD(PlaneConstructorTest2)
         {
             Vector3 point1(0.0f, 1.0f, 1.0f);
@@ -220,9 +220,9 @@ namespace MathTests
         TEST_METHOD(PlaneEqualsNanTest)
         {
             Plane a(NAN, 0, 0, 0);
-			Plane b(0, NAN, 0, 0);
-			Plane c(0, 0, NAN, 0);
-			Plane d(0, 0, 0, NAN);
+            Plane b(0, NAN, 0, 0);
+            Plane c(0, 0, NAN, 0);
+            Plane d(0, 0, 0, NAN);
 
             Assert::IsFalse(a == Plane(0, 0, 0, 0));
             Assert::IsFalse(b == Plane(0, 0, 0, 0));
@@ -241,24 +241,24 @@ namespace MathTests
             Assert::IsFalse(d == d);
         }
 
-		struct Plane_2x
-		{
-			Plane a;
-			Plane b;
-		};
+        struct Plane_2x
+        {
+            Plane a;
+            Plane b;
+        };
 
-		struct PlanePlusFloat
-		{
-			Plane v;
-			float f;
-		};
+        struct PlanePlusFloat
+        {
+            Plane v;
+            float f;
+        };
 
-		struct PlanePlusFloat_2x
-		{
-			PlanePlusFloat a;
-			PlanePlusFloat b;
-		};
-		
+        struct PlanePlusFloat_2x
+        {
+            PlanePlusFloat a;
+            PlanePlusFloat b;
+        };
+        
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(PlaneSizeofTest)
         {
@@ -267,5 +267,5 @@ namespace MathTests
             Assert::AreEqual(20u, sizeof(PlanePlusFloat));
             Assert::AreEqual(40u, sizeof(PlanePlusFloat_2x));
         }
-	};
+    };
 }

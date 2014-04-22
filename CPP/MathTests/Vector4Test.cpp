@@ -10,9 +10,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests
 {
-	TEST_CLASS(Vector4Test)
-	{
-	public:
+    TEST_CLASS(Vector4Test)
+    {
+    public:
         // A test for DistanceSquared (Vector4, Vector4)
         TEST_METHOD(Vector4DistanceSquaredTest)
         {
@@ -186,36 +186,36 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Clamp did not return the expected value.");
 
             // Case N3: specfied value is smaller than max value.
-			a = Vector4(-2.0f, -3.0f, -4.0f, -5.0f);
+            a = Vector4(-2.0f, -3.0f, -4.0f, -5.0f);
             expected = min;
             actual = Vector4::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Clamp did not return the expected value.");
 
             // Case N4: combination case.
-			a = Vector4(-2.0f, 0.5f, 4.0f, -5.0f);
-			expected = Vector4(min.X, a.Y, max.Z, min.W);
+            a = Vector4(-2.0f, 0.5f, 4.0f, -5.0f);
+            expected = Vector4(min.X, a.Y, max.Z, min.W);
             actual = Vector4::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Clamp did not return the expected value.");
 
             // User specfied min value is bigger than max value.
-			max = Vector4(0.0f, 0.1f, 0.13f, 0.14f);
-			min = Vector4(1.0f, 1.1f, 1.13f, 1.14f);
+            max = Vector4(0.0f, 0.1f, 0.13f, 0.14f);
+            min = Vector4(1.0f, 1.1f, 1.13f, 1.14f);
 
             // Case W1: specfied value is in the range.
-			a = Vector4(0.5f, 0.3f, 0.33f, 0.44f);
+            a = Vector4(0.5f, 0.3f, 0.33f, 0.44f);
             expected = min;
             actual = Vector4::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Clamp did not return the expected value.");
 
             // Normal case.
             // Case W2: specfied value is bigger than max and min value.
-			a = Vector4(2.0f, 3.0f, 4.0f, 5.0f);
+            a = Vector4(2.0f, 3.0f, 4.0f, 5.0f);
             expected = min;
             actual = Vector4::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Clamp did not return the expected value.");
 
             // Case W3: specfied value is smaller than min and max value.
-			a = Vector4(-2.0f, -3.0f, -4.0f, -5.0f);
+            a = Vector4(-2.0f, -3.0f, -4.0f, -5.0f);
             expected = min;
             actual = Vector4::Clamp(a, min, max);
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Clamp did not return the expected value.");
@@ -766,9 +766,9 @@ namespace MathTests
 
             Vector4 actual = a / div;
 
-			Assert::IsTrue(IsNegativeInfinity(actual.X), L"Vector4::operator / did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector4::operator / did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(actual.Z), L"Vector4::operator / did not return the expected value.");
+            Assert::IsTrue(IsNegativeInfinity(actual.X), L"Vector4::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.Y), L"Vector4::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.Z), L"Vector4::operator / did not return the expected value.");
             Assert::IsTrue(isnan(actual.W), L"Vector4::operator / did not return the expected value.");
         }
 
@@ -780,7 +780,7 @@ namespace MathTests
 
             Vector4 actual = a / b;
 
-			Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector4::operator / did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(actual.X), L"Vector4::operator / did not return the expected value.");
             Assert::IsTrue(IsNegativeInfinity(actual.Y), L"Vector4::operator / did not return the expected value.");
             Assert::IsTrue(IsNegativeInfinity(actual.Z), L"Vector4::operator / did not return the expected value.");
             Assert::IsTrue(IsNegativeInfinity(actual.W), L"Vector4::operator / did not return the expected value.");
@@ -856,7 +856,7 @@ namespace MathTests
 
             Assert::IsTrue(isnan(target.X), L"Vector4::constructor (float, float, float, float) did not return the expected value.");
             Assert::IsTrue(FLT_MAX == target.Y, L"Vector4::constructor (float, float, float, float) did not return the expected value.");
-			Assert::IsTrue(IsPositiveInfinity(target.Z), L"Vector4::constructor (float, float, float, float) did not return the expected value.");
+            Assert::IsTrue(IsPositiveInfinity(target.Z), L"Vector4::constructor (float, float, float, float) did not return the expected value.");
             Assert::IsTrue(FLT_EPSILON == target.W, L"Vector4::constructor (float, float, float, float) did not return the expected value.");
         }
 
@@ -1035,7 +1035,7 @@ namespace MathTests
 
             value = 2.0f;
             target = Vector4(value);
-			expected = Vector4(value, value, value, value);
+            expected = Vector4(value, value, value, value);
             Assert::AreEqual(expected, target, L"Vector4::cstr did not return the expected value.");
         }
 
@@ -1048,14 +1048,14 @@ namespace MathTests
             Vector4 d(0, 0, 0, NAN);
 
             Assert::IsFalse(a == Vector4::Zero());
-			Assert::IsFalse(b == Vector4::Zero());
-			Assert::IsFalse(c == Vector4::Zero());
-			Assert::IsFalse(d == Vector4::Zero());
+            Assert::IsFalse(b == Vector4::Zero());
+            Assert::IsFalse(c == Vector4::Zero());
+            Assert::IsFalse(d == Vector4::Zero());
 
-			Assert::IsTrue(a != Vector4::Zero());
-			Assert::IsTrue(b != Vector4::Zero());
-			Assert::IsTrue(c != Vector4::Zero());
-			Assert::IsTrue(d != Vector4::Zero());
+            Assert::IsTrue(a != Vector4::Zero());
+            Assert::IsTrue(b != Vector4::Zero());
+            Assert::IsTrue(c != Vector4::Zero());
+            Assert::IsTrue(d != Vector4::Zero());
 
             // Counterintuitive result - IEEE rules for NaN comparison are weird!
             Assert::IsFalse(a == a);
@@ -1064,23 +1064,23 @@ namespace MathTests
             Assert::IsFalse(d == d);
         }
 
-		struct Vector4_2x
-		{
-			Vector4 a;
-			Vector4 b;
-		};
+        struct Vector4_2x
+        {
+            Vector4 a;
+            Vector4 b;
+        };
 
-		struct Vector4PlusFloat
-		{
-			Vector4 v;
-			float f;
-		};
+        struct Vector4PlusFloat
+        {
+            Vector4 v;
+            float f;
+        };
 
-		struct Vector4PlusFloat_2x
-		{
-			Vector4PlusFloat a;
-			Vector4PlusFloat b;
-		};
+        struct Vector4PlusFloat_2x
+        {
+            Vector4PlusFloat a;
+            Vector4PlusFloat b;
+        };
 
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(Vector4SizeofTest)
@@ -1090,5 +1090,5 @@ namespace MathTests
             Assert::AreEqual(20u, sizeof(Vector4PlusFloat));
             Assert::AreEqual(40u, sizeof(Vector4PlusFloat_2x));
         }
-	};
+    };
 }

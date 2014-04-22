@@ -10,9 +10,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests
 {
-	TEST_CLASS(QuaternionTest)
-	{
-	public:
+    TEST_CLASS(QuaternionTest)
+    {
+    public:
         // A test for Dot (Quaternion, Quaternion)
         TEST_METHOD(QuaternionDotTest)
         {
@@ -154,7 +154,7 @@ namespace MathTests
             Quaternion a(0.0f, 0.0f, -0.0f, 0.0f);
 
             Quaternion actual = Quaternion::Normalize(a);
-			Assert::IsTrue(isnan(actual.X) && isnan(actual.Y) && isnan(actual.Z) && isnan(actual.W)
+            Assert::IsTrue(isnan(actual.X) && isnan(actual.Y) && isnan(actual.Z) && isnan(actual.W)
                 , L"Quaternion::Normalize did not return the expected value.");
         }
         
@@ -327,8 +327,8 @@ namespace MathTests
             float rollAngle = ToRadians(50.0f);
 
             Quaternion yaw = Quaternion::CreateFromAxisAngle(Vector3::UnitY(), yawAngle);
-			Quaternion pitch = Quaternion::CreateFromAxisAngle(Vector3::UnitX(), pitchAngle);
-			Quaternion roll = Quaternion::CreateFromAxisAngle(Vector3::UnitZ(), rollAngle);
+            Quaternion pitch = Quaternion::CreateFromAxisAngle(Vector3::UnitX(), pitchAngle);
+            Quaternion roll = Quaternion::CreateFromAxisAngle(Vector3::UnitZ(), rollAngle);
 
             Quaternion expected = yaw * pitch * roll;
             Quaternion actual = Quaternion::CreateFromYawPitchRoll(yawAngle, pitchAngle, rollAngle);
@@ -350,8 +350,8 @@ namespace MathTests
                         float rollRad = ToRadians(rollAngle);
 
                         Quaternion yaw = Quaternion::CreateFromAxisAngle(Vector3::UnitY(), yawRad);
-						Quaternion pitch = Quaternion::CreateFromAxisAngle(Vector3::UnitX(), pitchRad);
-						Quaternion roll = Quaternion::CreateFromAxisAngle(Vector3::UnitZ(), rollRad);
+                        Quaternion pitch = Quaternion::CreateFromAxisAngle(Vector3::UnitX(), pitchRad);
+                        Quaternion roll = Quaternion::CreateFromAxisAngle(Vector3::UnitZ(), rollRad);
 
                         Quaternion expected = yaw * pitch * roll;
                         Quaternion actual = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
@@ -738,7 +738,7 @@ namespace MathTests
         // A test for IsIdentity()
         TEST_METHOD(QuaternionIsIdentityTest)
         {
-			Assert::IsTrue(Quaternion::Identity().IsIdentity());
+            Assert::IsTrue(Quaternion::Identity().IsIdentity());
             Assert::IsTrue(Quaternion(0, 0, 0, 1).IsIdentity());
             Assert::IsFalse(Quaternion(1, 0, 0, 1).IsIdentity());
             Assert::IsFalse(Quaternion(0, 1, 0, 1).IsIdentity());
@@ -776,25 +776,25 @@ namespace MathTests
             Assert::IsFalse(d == d);
         }
 
-		struct Quaternion_2x
-		{
-			Quaternion a;
-			Quaternion b;
-		};
+        struct Quaternion_2x
+        {
+            Quaternion a;
+            Quaternion b;
+        };
 
-		struct QuaternionPlusFloat
-		{
-			Quaternion v;
-			float f;
-		};
+        struct QuaternionPlusFloat
+        {
+            Quaternion v;
+            float f;
+        };
 
-		struct QuaternionPlusFloat_2x
-		{
-			QuaternionPlusFloat a;
-			QuaternionPlusFloat b;
-		};
-		
-		// A test to make sure these types are blittable directly into GPU buffer memory layouts
+        struct QuaternionPlusFloat_2x
+        {
+            QuaternionPlusFloat a;
+            QuaternionPlusFloat b;
+        };
+        
+        // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(QuaternionSizeofTest)
         {
             Assert::AreEqual(16u, sizeof(Quaternion));
@@ -802,5 +802,5 @@ namespace MathTests
             Assert::AreEqual(20u, sizeof(QuaternionPlusFloat));
             Assert::AreEqual(40u, sizeof(QuaternionPlusFloat_2x));
         }
-	};
+    };
 }
