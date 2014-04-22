@@ -17,21 +17,6 @@ namespace MathTests
     [TestClass()]
     public class PlaneTest
     {
-        static private bool CloseEnough(float a, float b)
-        {
-            return Math.Abs(a - b) < 1e-5f;
-        }
-
-        static private bool CloseEnough(Plane a, Plane b)
-        {
-            return CloseEnough(a.Normal, b.Normal) && CloseEnough(a.D, b.D);
-        }
-
-        private static bool CloseEnough(Vector3 a, Vector3 b)
-        {
-            return CloseEnough(a.X, b.X) && CloseEnough(a.Y, b.Y) && CloseEnough(a.Z, b.Z);
-        }
-
         #region Standard value type method tests.
 
         /// <summary>
@@ -153,26 +138,9 @@ namespace MathTests
         public void PlaneToStringTest()
         {
             Plane target = new Plane(1.0f, 2.0f, 3.0f, 4.1f);
-
-            /* shawnhar 2014 - apparently there is no way to change culture on the fly in a Store app???
-            // Save current culture info.
-            using (CultureBlock cb = new CultureBlock())
-            {
-                // Set culture for US.
-                cb.SetCulture("en");
-             */
-                string expected = "{Normal:{X:1 Y:2 Z:3} D:4.1}";
-                string actual = target.ToString();
-                Assert.AreEqual(expected, actual, "Plane.ToString did not return the expected value.");
-
-            /*
-                // Set culture for Franch. Now "." become ",".
-                cb.SetCulture("fr");
-                expected = "{Normal:{X:1 Y:2 Z:3} D:4,1}";
-                actual = target.ToString();
-                Assert.AreEqual(expected, actual, "Plane.ToString did not return the expected value.");
-            }
-             */
+            string expected = "{Normal:{X:1 Y:2 Z:3} D:4.1}";
+            string actual = target.ToString();
+            Assert.AreEqual(expected, actual, "Plane.ToString did not return the expected value.");
         }
 
         #endregion
@@ -222,7 +190,7 @@ namespace MathTests
             float invRoot2 = (float)(1 / Math.Sqrt(2));
 
             Plane expected = new Plane(new Vector3(invRoot2, 0, invRoot2), -invRoot2);
-            Assert.IsTrue(CloseEnough(target, expected), "Plane.cstor did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(target, expected), "Plane.cstor did not return the expected value.");
         }
 
         /// <summary>
@@ -266,7 +234,7 @@ namespace MathTests
 
             float expected = 10 + 12 + 12 + 10;
             float actual = Plane.Dot(target, value);
-            Assert.IsTrue(CloseEnough(expected, actual), "Plane.Dot returns unexpected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.Dot returns unexpected value.");
         }
 
         [TestMethod]
@@ -277,7 +245,7 @@ namespace MathTests
 
             float expected = 10 + 12 + 12 + 5;
             float actual = Plane.DotCoordinate(target, value);
-            Assert.IsTrue(CloseEnough(expected, actual), "Plane.DotCoordinate returns unexpected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.DotCoordinate returns unexpected value.");
         }
 
         [TestMethod]
@@ -288,7 +256,7 @@ namespace MathTests
 
             float expected = 10 + 12 + 12;
             float actual = Plane.DotNormal(target, value);
-            Assert.IsTrue(CloseEnough(expected, actual), "Plane.DotCoordinate returns unexpected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.DotCoordinate returns unexpected value.");
         }
 
         [TestMethod]
@@ -301,11 +269,11 @@ namespace MathTests
             Plane expected = new Plane(target.Normal * invF, target.D * invF);
 
             Plane actual = Plane.Normalize(target);
-            Assert.IsTrue(CloseEnough(expected, actual), "Plane.Normalize returns unexpected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.Normalize returns unexpected value.");
 
             // normalize, normalized normal.
             actual = Plane.Normalize(actual);
-            Assert.IsTrue(CloseEnough(expected, actual), "Plane.Normalize returns unexpected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.Normalize returns unexpected value.");
         }
 
         [TestMethod]
@@ -335,7 +303,7 @@ namespace MathTests
 
             Plane actual;
             actual = Plane.Transform(target, m);
-            Assert.IsTrue(CloseEnough(expected, actual), "Plane.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.Transform did not return the expected value.");
         }
 
         [TestMethod]
@@ -360,7 +328,7 @@ namespace MathTests
 
             Plane actual;
             actual = Plane.Transform(target, q);
-            Assert.IsTrue(CloseEnough(expected, actual), "Plane.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.Transform did not return the expected value.");
         }
 
         #endregion

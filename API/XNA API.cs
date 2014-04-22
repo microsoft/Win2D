@@ -7,13 +7,13 @@ namespace Microsoft.Xna.Framework
         public float X;
         public float Y;
 
+        public Vector2(float x, float y)
+        public Vector2(float value)
+
         public static Vector2 Zero { get; }
         public static Vector2 One { get; }
         public static Vector2 UnitX { get; }
         public static Vector2 UnitY { get; }
-
-        public Vector2(float x, float y)
-        public Vector2(float value)
 
         public float Length()
         public float LengthSquared()
@@ -65,6 +65,10 @@ namespace Microsoft.Xna.Framework
         public float Y;
         public float Z;
 
+        public Vector3(float x, float y, float z)
+        public Vector3(Vector2 value, float z)
+        public Vector3(float value)
+
         public static Vector3 Zero { get; }
         public static Vector3 One { get; }
         public static Vector3 UnitX { get; }
@@ -76,10 +80,6 @@ namespace Microsoft.Xna.Framework
         public static Vector3 Left { get; }
         public static Vector3 Forward { get; }
         public static Vector3 Backward { get; }
-
-        public Vector3(float x, float y, float z)
-        public Vector3(Vector2 value, float z)
-        public Vector3(float value)
 
         public float Length()
         public float LengthSquared()
@@ -133,17 +133,17 @@ namespace Microsoft.Xna.Framework
         public float Z;
         public float W;
 
+        public Vector4(float x, float y, float z, float w)
+        public Vector4(Vector2 value, float z, float w)
+        public Vector4(Vector3 value, float w)
+        public Vector4(float value)
+
         public static Vector4 Zero { get; }
         public static Vector4 One { get; }
         public static Vector4 UnitX { get; }
         public static Vector4 UnitY { get; }
         public static Vector4 UnitZ { get; }
         public static Vector4 UnitW { get; }
-
-        public Vector4(float x, float y, float z, float w)
-        public Vector4(Vector2 value, float z, float w)
-        public Vector4(Vector3 value, float w)
-        public Vector4(float value)
 
         public float Length()
         public float LengthSquared()
@@ -208,8 +208,9 @@ namespace Microsoft.Xna.Framework
         public float M43;
         public float M44;
 
-        public static Matrix Identity { get; }
+        public Matrix(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
 
+        public static Matrix Identity { get; }
         public Vector3 Up { get; set; }
         public Vector3 Down { get; set; }
         public Vector3 Right { get; set; }
@@ -218,8 +219,7 @@ namespace Microsoft.Xna.Framework
         public Vector3 Backward { get; set; }
         public Vector3 Translation { get; set; }
 
-        public Matrix(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
-
+        public float Determinant()
         public static Matrix CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3? cameraForwardVector)
         public static Matrix CreateConstrainedBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 rotateAxis, Vector3? cameraForwardVector, Vector3? objectForwardVector)
         public static Matrix CreateTranslation(Vector3 position)
@@ -242,7 +242,6 @@ namespace Microsoft.Xna.Framework
         public static Matrix CreateFromYawPitchRoll(float yaw, float pitch, float roll)
         public static Matrix CreateShadow(Vector3 lightDirection, Plane plane)
         public static Matrix CreateReflection(Plane value)
-        public float Determinant()
         public static Matrix Invert(Matrix matrix)
         public bool Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 translation)
         public static Matrix Transform(Matrix value, Quaternion rotation)
@@ -274,10 +273,10 @@ namespace Microsoft.Xna.Framework
         public float Z;
         public float W;
 
-        public static Quaternion Identity { get; }
-
         public Quaternion(float x, float y, float z, float w)
         public Quaternion(Vector3 vectorPart, float scalarPart)
+
+        public static Quaternion Identity { get; }
 
         public float Length()
         public float LengthSquared()

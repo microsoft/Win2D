@@ -17,20 +17,7 @@ namespace MathTests
     [TestClass()]
     public class Matrix3x2Test
     {
-        static bool Equal(float a, float b)
-        {
-            return (System.Math.Abs(a - b) < 1e-5);
-        }
-
-        static bool Equal(Matrix3x2 a, Matrix3x2 b)
-        {
-            return
-                Equal(a.M11, b.M11) && Equal(a.M12, b.M12) &&
-                Equal(a.M21, b.M21) && Equal(a.M22, b.M22) &&
-                Equal(a.M31, b.M31) && Equal(a.M32, b.M32);
-        }
-
-        Matrix3x2 GenerateMatrixNumberFrom1To6()
+        static Matrix3x2 GenerateMatrixNumberFrom1To6()
         {
             Matrix3x2 a = new Matrix3x2();
             a.M11 = 1.0f; a.M12 = 2.0f;
@@ -39,7 +26,7 @@ namespace MathTests
             return a;
         }
 
-        Matrix3x2 GenerateTestMatrix()
+        static Matrix3x2 GenerateTestMatrix()
         {
             Matrix3x2 m = Matrix3x2.CreateRotation(MathHelper.ToRadians(30.0f));
             m.Translation = new Vector2(111.0f, 222.0f);
@@ -55,7 +42,7 @@ namespace MathTests
             Matrix3x2 val = new Matrix3x2();
             val.M11 = val.M22 = 1.0f;
 
-            Assert.IsTrue(Equal(val, Matrix3x2.Identity), "Matrix3x2.Indentity was not set correctly.");
+            Assert.IsTrue(MathHelper.Equal(val, Matrix3x2.Identity), "Matrix3x2.Indentity was not set correctly.");
         }
 
         /// <summary>
@@ -69,7 +56,7 @@ namespace MathTests
             float val = 1.0f;
             float det = target.Determinant();
 
-            Assert.IsTrue(Equal(val, det), "Matrix3x2.Determinant was not set correctly.");
+            Assert.IsTrue(MathHelper.Equal(val, det), "Matrix3x2.Determinant was not set correctly.");
         }
 
         /// <summary>
@@ -119,10 +106,10 @@ namespace MathTests
             Matrix3x2 actual;
 
             Assert.IsTrue(Matrix3x2.Invert(mtx, out actual));
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.Invert did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.Invert did not return the expected value.");
 
             Matrix3x2 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix3x2.Identity), "Matrix3x2.Invert did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity), "Matrix3x2.Invert did not return the expected value.");
         }
 
         /// <summary>
@@ -136,7 +123,7 @@ namespace MathTests
             Matrix3x2 actual;
             Assert.IsTrue(Matrix3x2.Invert(mtx, out actual));
 
-            Assert.IsTrue(Equal(actual, Matrix3x2.Identity));
+            Assert.IsTrue(MathHelper.Equal(actual, Matrix3x2.Identity));
         }
 
         /// <summary>
@@ -151,7 +138,7 @@ namespace MathTests
             Assert.IsTrue(Matrix3x2.Invert(mtx, out actual));
 
             Matrix3x2 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix3x2.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
         /// <summary>
@@ -166,7 +153,7 @@ namespace MathTests
             Assert.IsTrue(Matrix3x2.Invert(mtx, out actual));
 
             Matrix3x2 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix3x2.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
         /// <summary>
@@ -181,7 +168,7 @@ namespace MathTests
             Assert.IsTrue(Matrix3x2.Invert(mtx, out actual));
 
             Matrix3x2 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix3x2.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
         ///A test for Invert (Matrix3x2)
@@ -197,7 +184,7 @@ namespace MathTests
             Assert.IsTrue(Matrix3x2.Invert(mtx, out actual));
 
             Matrix3x2 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix3x2.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
         /// <summary>
@@ -216,7 +203,7 @@ namespace MathTests
 
             Matrix3x2 actual;
             actual = Matrix3x2.CreateRotation(radians);
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.CreateRotation did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.CreateRotation did not return the expected value.");
         }
 
         /// <summary>
@@ -230,11 +217,11 @@ namespace MathTests
 
             Matrix3x2 rotateAroundZero = Matrix3x2.CreateRotation(radians, Vector2.Zero);
             Matrix3x2 rotateAroundZeroExpected = Matrix3x2.CreateRotation(radians);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
 
             Matrix3x2 rotateAroundCenter = Matrix3x2.CreateRotation(radians, center);
             Matrix3x2 rotateAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateRotation(radians) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
         /// <summary>
@@ -269,10 +256,10 @@ namespace MathTests
             float delta = MathHelper.ToRadians(0.01f);
 
             actual = Matrix3x2.CreateRotation(MathHelper.Pi + delta);
-            Assert.IsFalse(Equal(new Matrix3x2(-1, 0, 0, -1, 0, 0), actual));
+            Assert.IsFalse(MathHelper.Equal(new Matrix3x2(-1, 0, 0, -1, 0, 0), actual));
 
             actual = Matrix3x2.CreateRotation(MathHelper.Pi - delta);
-            Assert.IsFalse(Equal(new Matrix3x2(-1, 0, 0, -1, 0, 0), actual));
+            Assert.IsFalse(MathHelper.Equal(new Matrix3x2(-1, 0, 0, -1, 0, 0), actual));
         }
 
         /// <summary>
@@ -309,10 +296,10 @@ namespace MathTests
             float delta = MathHelper.ToRadians(0.01f);
 
             actual = Matrix3x2.CreateRotation(MathHelper.Pi + delta, center);
-            Assert.IsFalse(Equal(new Matrix3x2(-1, 0, 0, -1, 6, 14), actual));
+            Assert.IsFalse(MathHelper.Equal(new Matrix3x2(-1, 0, 0, -1, 6, 14), actual));
 
             actual = Matrix3x2.CreateRotation(MathHelper.Pi - delta, center);
-            Assert.IsFalse(Equal(new Matrix3x2(-1, 0, 0, -1, 6, 14), actual));
+            Assert.IsFalse(MathHelper.Equal(new Matrix3x2(-1, 0, 0, -1, 6, 14), actual));
         }
 
         /// <summary>
@@ -328,7 +315,7 @@ namespace MathTests
             a.M31 = 5.0f; a.M32 = 6.0f;
 
             float detA = a.Determinant();
-            Assert.IsTrue(Equal(detA, 0.0f), "Matrix3x2.Invert did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(detA, 0.0f), "Matrix3x2.Invert did not return the expected value.");
 
             Matrix3x2 actual;
             Assert.IsFalse(Matrix3x2.Invert(a, out actual));
@@ -368,7 +355,7 @@ namespace MathTests
 
             Matrix3x2 actual;
             actual = Matrix3x2.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -385,7 +372,7 @@ namespace MathTests
             expected.M31 = -5.0f; expected.M32 = -6.0f;
 
             Matrix3x2 actual = -a;
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -399,7 +386,7 @@ namespace MathTests
             Matrix3x2 expected = new Matrix3x2();
 
             Matrix3x2 actual = a - b;
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -422,7 +409,7 @@ namespace MathTests
             expected.M32 = a.M31 * b.M12 + a.M32 * b.M22 + b.M32;
 
             Matrix3x2 actual = a * b;
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator * did not return the expected value.");
 
             // Sanity check by comparison with 4x4 multiply.
             a = Matrix3x2.CreateRotation(MathHelper.ToRadians(30)) * Matrix3x2.CreateTranslation(23, 42);
@@ -435,7 +422,7 @@ namespace MathTests
             Matrix4x4 expected44 = a44 * b44;
             Matrix4x4 actual44 = new Matrix4x4(actual);
 
-            Assert.IsTrue(Matrix4x4Test.Equal(expected44, actual44), "Matrix3x2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected44, actual44), "Matrix3x2.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -456,7 +443,7 @@ namespace MathTests
             Matrix3x2 expected = a;
             Matrix3x2 actual = a * b;
 
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -477,7 +464,7 @@ namespace MathTests
 
             actual = a + b;
 
-            Assert.IsTrue(Equal(expected, actual), "Matrix3x2.operator + did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator + did not return the expected value.");
         }
 
         /// <summary>
@@ -606,7 +593,7 @@ namespace MathTests
             Matrix4x4 expected44 = Matrix4x4.Multiply(a44, b44);
             Matrix4x4 actual44 = new Matrix4x4(actual);
 
-            Assert.IsTrue(Matrix4x4Test.Equal(expected44, actual44), "Matrix3x2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected44, actual44), "Matrix3x2.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -710,11 +697,11 @@ namespace MathTests
 
             Matrix3x2 scaleAroundZero = Matrix3x2.CreateScale(scale, Vector2.Zero);
             Matrix3x2 scaleAroundZeroExpected = Matrix3x2.CreateScale(scale);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
 
             Matrix3x2 scaleAroundCenter = Matrix3x2.CreateScale(scale, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
         /// <summary>
@@ -743,11 +730,11 @@ namespace MathTests
 
             Matrix3x2 scaleAroundZero = Matrix3x2.CreateScale(scale, Vector2.Zero);
             Matrix3x2 scaleAroundZeroExpected = Matrix3x2.CreateScale(scale);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
 
             Matrix3x2 scaleAroundCenter = Matrix3x2.CreateScale(scale, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
         /// <summary>
@@ -777,11 +764,11 @@ namespace MathTests
 
             Matrix3x2 scaleAroundZero = Matrix3x2.CreateScale(scale.X, scale.Y, Vector2.Zero);
             Matrix3x2 scaleAroundZeroExpected = Matrix3x2.CreateScale(scale.X, scale.Y);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
 
             Matrix3x2 scaleAroundCenter = Matrix3x2.CreateScale(scale.X, scale.Y, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateScale(scale.X, scale.Y) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
         /// <summary>
@@ -884,23 +871,23 @@ namespace MathTests
         {
             Matrix3x2 expected = new Matrix3x2(1, 0, -0.414213562373095f, 1, 0, 0);
             Matrix3x2 actual = Matrix3x2.CreateSkew(-MathHelper.Pi / 8, 0);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             expected = new Matrix3x2(1, 0, 0.414213562373095f, 1, 0, 0);
             actual = Matrix3x2.CreateSkew(MathHelper.Pi / 8, 0);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             Vector2 result = Vector2.Transform(new Vector2(0, 0), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(0, 0), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(0, 0), result));
 
             result = Vector2.Transform(new Vector2(0, 1), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(0.414213568f, 1), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(0.414213568f, 1), result));
 
             result = Vector2.Transform(new Vector2(0, -1), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(-0.414213568f, -1), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(-0.414213568f, -1), result));
 
             result = Vector2.Transform(new Vector2(3, 10), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(7.14213568f, 10), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(7.14213568f, 10), result));
         }
 
         /// <summary>
@@ -911,23 +898,23 @@ namespace MathTests
         {
             Matrix3x2 expected = new Matrix3x2(1, -0.414213562373095f, 0, 1, 0, 0);
             Matrix3x2 actual = Matrix3x2.CreateSkew(0, -MathHelper.Pi / 8);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             expected = new Matrix3x2(1, 0.414213562373095f, 0, 1, 0, 0);
             actual = Matrix3x2.CreateSkew(0, MathHelper.Pi / 8);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             Vector2 result = Vector2.Transform(new Vector2(0, 0), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(0, 0), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(0, 0), result));
 
             result = Vector2.Transform(new Vector2(1, 0), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(1, 0.414213568f), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(1, 0.414213568f), result));
 
             result = Vector2.Transform(new Vector2(-1, 0), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(-1, -0.414213568f), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(-1, -0.414213568f), result));
 
             result = Vector2.Transform(new Vector2(10, 3), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(10, 7.14213568f), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(10, 7.14213568f), result));
         }
 
         /// <summary>
@@ -938,19 +925,19 @@ namespace MathTests
         {
             Matrix3x2 expected = new Matrix3x2(1, -0.414213562373095f, 1, 1, 0, 0);
             Matrix3x2 actual = Matrix3x2.CreateSkew(MathHelper.Pi / 4, -MathHelper.Pi / 8);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             Vector2 result = Vector2.Transform(new Vector2(0, 0), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(0, 0), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(0, 0), result));
 
             result = Vector2.Transform(new Vector2(1, 0), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(1, -0.414213562373095f), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(1, -0.414213562373095f), result));
 
             result = Vector2.Transform(new Vector2(0, 1), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(1, 1), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(1, 1), result));
 
             result = Vector2.Transform(new Vector2(1, 1), actual);
-            Assert.IsTrue(Vector2Test.Equal(new Vector2(2, 0.585786437626905f), result));
+            Assert.IsTrue(MathHelper.Equal(new Vector2(2, 0.585786437626905f), result));
         }
 
         /// <summary>
@@ -964,11 +951,11 @@ namespace MathTests
 
             Matrix3x2 skewAroundZero = Matrix3x2.CreateSkew(skewX, skewY, Vector2.Zero);
             Matrix3x2 skewAroundZeroExpected = Matrix3x2.CreateSkew(skewX, skewY);
-            Assert.IsTrue(Equal(skewAroundZero, skewAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(skewAroundZero, skewAroundZeroExpected));
 
             Matrix3x2 skewAroundCenter = Matrix3x2.CreateSkew(skewX, skewY, center);
             Matrix3x2 skewAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateSkew(skewX, skewY) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(Equal(skewAroundZero, skewAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(skewAroundZero, skewAroundZeroExpected));
         }
 
         /// <summary>

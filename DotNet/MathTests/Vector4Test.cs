@@ -17,31 +17,6 @@ namespace MathTests
     [TestClass()]
     public class Vector4Test
     {
-        static bool Equal(float a, float b)
-        {
-            return (System.Math.Abs(a - b) < 1e-6);
-        }
-
-        static bool Equal(Vector4 a, Vector4 b)
-        {
-            return Equal(a.X, b.X) && Equal(a.Y, b.Y) && Equal(a.Z, b.Z) && Equal(a.W, b.W);
-        }
-
-        static bool CloseEnough(Vector4[] a, Vector4[] b)
-        {
-            if ((a == null || b == null) && a != b) return false;
-            if (a == b) return true;
-            if (a.Length != b.Length) return false;
-
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (!Equal(a[i], b[i]))
-                    return false;
-            }
-
-            return true;
-        }
-
         /// <summary>
         ///A test for DistanceSquared (Vector4, Vector4)
         ///</summary>
@@ -56,7 +31,7 @@ namespace MathTests
             float actual;
 
             actual = Vector4.DistanceSquared(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.DistanceSquared did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.DistanceSquared did not return the expected value.");
         }
 
         /// <summary>
@@ -72,7 +47,7 @@ namespace MathTests
             float actual;
 
             actual = Vector4.Distance(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Distance did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Distance did not return the expected value.");
         }
 
         /// <summary>
@@ -103,7 +78,7 @@ namespace MathTests
             float actual;
 
             actual = Vector4.Dot(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Dot did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Dot did not return the expected value.");
         }
 
         /// <summary>
@@ -121,7 +96,7 @@ namespace MathTests
             Vector4 e = new Vector4(c, 0);
 
             float actual = Vector4.Dot(d, e);
-            Assert.IsTrue(Equal(0.0f, actual), "Vector4.Dot did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(0.0f, actual), "Vector4.Dot did not return the expected value.");
         }
 
         /// <summary>
@@ -140,7 +115,7 @@ namespace MathTests
 
             actual = target.Length();
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Length did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Length did not return the expected value.");
         }
 
         /// <summary>
@@ -155,7 +130,7 @@ namespace MathTests
             float expected = 0.0f;
             float actual = target.Length();
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Length did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Length did not return the expected value.");
         }
 
         /// <summary>
@@ -174,7 +149,7 @@ namespace MathTests
 
             actual = target.LengthSquared();
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.LengthSquared did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.LengthSquared did not return the expected value.");
         }
 
         /// <summary>
@@ -189,7 +164,7 @@ namespace MathTests
             Vector4 expected = new Vector4(-1.0f, 1.0f, -3.0f, 0.0f);
             Vector4 actual;
             actual = Vector4.Min(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Min did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Min did not return the expected value.");
         }
 
         /// <summary>
@@ -204,7 +179,7 @@ namespace MathTests
             Vector4 expected = new Vector4(2.0f, 4.0f, -1.0f, 1000.0f);
             Vector4 actual;
             actual = Vector4.Max(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Max did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Max did not return the expected value.");
         }
 
         [TestMethod]
@@ -243,26 +218,26 @@ namespace MathTests
             // Case N1: specfied value is in the range.
             Vector4 expected = new Vector4(0.5f, 0.3f, 0.33f, 0.44f);
             Vector4 actual = Vector4.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
 
             // Normal case.
             // Case N2: specfied value is bigger than max value.
             a = new Vector4(2.0f, 3.0f, 4.0f, 5.0f);
             expected = max;
             actual = Vector4.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
 
             // Case N3: specfied value is smaller than max value.
             a = new Vector4(-2.0f, -3.0f, -4.0f, -5.0f);
             expected = min;
             actual = Vector4.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
 
             // Case N4: combination case.
             a = new Vector4(-2.0f, 0.5f, 4.0f, -5.0f);
             expected = new Vector4(min.X, a.Y, max.Z, min.W);
             actual = Vector4.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
 
             // User specfied min value is bigger than max value.
             max = new Vector4(0.0f, 0.1f, 0.13f, 0.14f);
@@ -272,20 +247,20 @@ namespace MathTests
             a = new Vector4(0.5f, 0.3f, 0.33f, 0.44f);
             expected = min;
             actual = Vector4.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
 
             // Normal case.
             // Case W2: specfied value is bigger than max and min value.
             a = new Vector4(2.0f, 3.0f, 4.0f, 5.0f);
             expected = min;
             actual = Vector4.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
 
             // Case W3: specfied value is smaller than min and max value.
             a = new Vector4(-2.0f, -3.0f, -4.0f, -5.0f);
             expected = min;
             actual = Vector4.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Clamp did not return the expected value.");
         }
 
         #region Lerp Tests
@@ -305,7 +280,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -321,7 +296,7 @@ namespace MathTests
             float t = 0.0f;
             Vector4 expected = new Vector4(1.0f, 2.0f, 3.0f, 4.0f);
             Vector4 actual = Vector4.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -337,7 +312,7 @@ namespace MathTests
             float t = 1.0f;
             Vector4 expected = new Vector4(4.0f, 5.0f, 6.0f, 7.0f);
             Vector4 actual = Vector4.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -353,7 +328,7 @@ namespace MathTests
             float t = 2.0f;
             Vector4 expected = new Vector4(8.0f, 10.0f, 12.0f, 14.0f);
             Vector4 actual = Vector4.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -369,7 +344,7 @@ namespace MathTests
             float t = -2.0f;
             Vector4 expected = -(b * 2);
             Vector4 actual = Vector4.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -385,7 +360,7 @@ namespace MathTests
             float t = 0.85f;
             Vector4 expected = a;
             Vector4 actual = Vector4.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
         #endregion
@@ -412,7 +387,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -435,7 +410,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -458,14 +433,14 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
 
             // 
             v.W = 1.0f;
 
             expected = new Vector4(12.19198728f, 21.53349376f, 32.61602545f, 1.0f);
             actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -480,7 +455,7 @@ namespace MathTests
             Vector4 expected = new Vector4(0, 0, 0, 0);
 
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -495,7 +470,7 @@ namespace MathTests
             Vector4 expected = new Vector4(1.0f, 2.0f, 3.0f, 0.0f);
 
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -517,7 +492,7 @@ namespace MathTests
 
             Vector4 expected = Vector4.Transform(new Vector4(v, 1.0f), m);
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -532,7 +507,7 @@ namespace MathTests
             Vector4 expected = new Vector4(0, 0, 0, 0);
 
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -547,7 +522,7 @@ namespace MathTests
             Vector4 expected = new Vector4(1.0f, 2.0f, 3.0f, 1.0f);
 
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -569,7 +544,7 @@ namespace MathTests
 
             Vector4 expected = Vector4.Transform(new Vector4(v, 0.0f, 1.0f), m);
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -584,7 +559,7 @@ namespace MathTests
             Vector4 expected = new Vector4(0, 0, 0, 0);
 
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -599,7 +574,7 @@ namespace MathTests
             Vector4 expected = new Vector4(1.0f, 2.0f, 0, 1.0f);
 
             Vector4 actual = Vector4.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         #endregion
@@ -625,7 +600,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -646,7 +621,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -667,13 +642,13 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
 
             // 
             v.W = 1.0f;
             expected.W = 1.0f;
             actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -688,7 +663,7 @@ namespace MathTests
             Vector4 expected = v;
 
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -703,7 +678,7 @@ namespace MathTests
             Vector4 expected = new Vector4(1.0f, 2.0f, 3.0f, 0.0f);
 
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -723,7 +698,7 @@ namespace MathTests
 
             Vector4 expected = Vector4.Transform(v, m);
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -738,7 +713,7 @@ namespace MathTests
             Vector4 expected = new Vector4(v, 1.0f);
 
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -753,7 +728,7 @@ namespace MathTests
             Vector4 expected = new Vector4(1.0f, 2.0f, 3.0f, 1.0f);
 
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -773,7 +748,7 @@ namespace MathTests
 
             Vector4 expected = Vector4.Transform(v, m);
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -788,7 +763,7 @@ namespace MathTests
             Vector4 expected = new Vector4(1.0f, 2.0f, 0, 1.0f);
 
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -803,7 +778,7 @@ namespace MathTests
             Vector4 expected = new Vector4(1.0f, 2.0f, 0, 1.0f);
 
             Vector4 actual = Vector4.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Transform did not return the expected value.");
         }
 
         #endregion
@@ -824,7 +799,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = Vector4.Normalize(a);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Normalize did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Normalize did not return the expected value.");
         }
 
         /// <summary>
@@ -838,7 +813,7 @@ namespace MathTests
 
             Vector4 expected = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
             Vector4 actual = Vector4.Normalize(a);
-            Assert.IsTrue(Equal(expected, actual), "Vector4.Normalize did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Normalize did not return the expected value.");
         }
 
         /// <summary>
@@ -868,7 +843,7 @@ namespace MathTests
 
             actual = -a;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -885,7 +860,7 @@ namespace MathTests
 
             actual = a - b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -902,7 +877,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = a * factor;
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -918,7 +893,7 @@ namespace MathTests
             Vector4 actual;
 
             actual = factor * a;
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -935,7 +910,7 @@ namespace MathTests
 
             actual = a * b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -953,7 +928,7 @@ namespace MathTests
 
             actual = a / div;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator / did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator / did not return the expected value.");
         }
 
         /// <summary>
@@ -970,7 +945,7 @@ namespace MathTests
 
             actual = a / b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator / did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator / did not return the expected value.");
         }
 
         /// <summary>
@@ -989,7 +964,7 @@ namespace MathTests
             Assert.IsTrue(float.IsNegativeInfinity(actual.X), "Vector4.operator / did not return the expected value.");
             Assert.IsTrue(float.IsPositiveInfinity(actual.Y), "Vector4.operator / did not return the expected value.");
             Assert.IsTrue(float.IsPositiveInfinity(actual.Z), "Vector4.operator / did not return the expected value.");
-            Assert.IsTrue(float.IsPositiveInfinity(actual.Z), "Vector4.operator / did not return the expected value.");
+            Assert.IsTrue(float.IsNaN(actual.W), "Vector4.operator / did not return the expected value.");
         }
 
         /// <summary>
@@ -1024,7 +999,7 @@ namespace MathTests
 
             actual = a + b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector4.operator + did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.operator + did not return the expected value.");
         }
 
         /// <summary>
@@ -1040,7 +1015,7 @@ namespace MathTests
 
             Vector4 target = new Vector4(x, y, z, w);
 
-            Assert.IsTrue(Equal(target.X, x) && Equal(target.Y, y) && Equal(target.Z, z) && Equal(target.W, w),
+            Assert.IsTrue(MathHelper.Equal(target.X, x) && MathHelper.Equal(target.Y, y) && MathHelper.Equal(target.Z, z) && MathHelper.Equal(target.W, w),
                 "Vector4 constructor(x,y,z,w) did not return the expected value.");
         }
 
@@ -1055,7 +1030,7 @@ namespace MathTests
             float w = 4.0f;
 
             Vector4 target = new Vector4(a, z, w);
-            Assert.IsTrue(Equal(target.X, a.X) && Equal(target.Y, a.Y) && Equal(target.Z, z) && Equal(target.W, w),
+            Assert.IsTrue(MathHelper.Equal(target.X, a.X) && MathHelper.Equal(target.Y, a.Y) && MathHelper.Equal(target.Z, z) && MathHelper.Equal(target.W, w),
                 "Vector4 constructor(Vector2,z,w) did not return the expected value.");
         }
 
@@ -1070,7 +1045,7 @@ namespace MathTests
 
             Vector4 target = new Vector4(a, w);
 
-            Assert.IsTrue(Equal(target.X, a.X) && Equal(target.Y, a.Y) && Equal(target.Z, a.Z) && Equal(target.W, w),
+            Assert.IsTrue(MathHelper.Equal(target.X, a.X) && MathHelper.Equal(target.Y, a.Y) && MathHelper.Equal(target.Z, a.Z) && MathHelper.Equal(target.W, w),
                 "Vector4 constructor(Vector3,w) did not return the expected value.");
         }
 

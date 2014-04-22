@@ -17,39 +17,7 @@ namespace MathTests
     [TestClass()]
     public class Matrix4x4Test
     {
-        static bool Equal(float a, float b)
-        {
-            return (System.Math.Abs(a - b) < 1e-5);
-        }
-
-        static bool Compare(Vector3 a, Vector3 b)
-        {
-            const float epsilon = 1e-5f;
-            return System.Math.Abs(a.X - b.X) < epsilon &&
-                    System.Math.Abs(a.Y - b.Y) < epsilon &&
-                    System.Math.Abs(a.Z - b.Z) < epsilon;
-        }
-
-        static internal bool Equal(Matrix4x4 a, Matrix4x4 b)
-        {
-            return
-                Equal(a.M11, b.M11) && Equal(a.M12, b.M12) && Equal(a.M13, b.M13) && Equal(a.M14, b.M14) &&
-                Equal(a.M21, b.M21) && Equal(a.M22, b.M22) && Equal(a.M23, b.M23) && Equal(a.M24, b.M24) &&
-                Equal(a.M31, b.M31) && Equal(a.M32, b.M32) && Equal(a.M33, b.M33) && Equal(a.M34, b.M34) &&
-                Equal(a.M41, b.M41) && Equal(a.M42, b.M42) && Equal(a.M43, b.M43) && Equal(a.M44, b.M44);
-        }
-
-        static bool Equal(Quaternion a, Quaternion b)
-        {
-            return Equal(a.X, b.X) && Equal(a.Y, b.Y) && Equal(a.Z, b.Z) && Equal(a.W, b.W);
-        }
-
-        static bool EqualRotation(Quaternion a, Quaternion b)
-        {
-            return Equal(a, b) | Equal(a, -b);
-        }
-
-        Matrix4x4 GenerateMatrixNumberFrom1To16()
+        static Matrix4x4 GenerateMatrixNumberFrom1To16()
         {
             Matrix4x4 a = new Matrix4x4();
             a.M11 = 1.0f; a.M12 = 2.0f; a.M13 = 3.0f; a.M14 = 4.0f;
@@ -59,7 +27,7 @@ namespace MathTests
             return a;
         }
 
-        Matrix4x4 GenerateTestMatrix()
+        static Matrix4x4 GenerateTestMatrix()
         {
             Matrix4x4 m =
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(30.0f)) *
@@ -78,7 +46,7 @@ namespace MathTests
             Matrix4x4 val = new Matrix4x4();
             val.M11 = val.M22 = val.M33 = val.M44 = 1.0f;
 
-            Assert.IsTrue(Equal(val, Matrix4x4.Identity), "Matrix4x4.Indentity was not set correctly.");
+            Assert.IsTrue(MathHelper.Equal(val, Matrix4x4.Identity), "Matrix4x4.Indentity was not set correctly.");
         }
 
         /// <summary>
@@ -95,7 +63,7 @@ namespace MathTests
             float val = 1.0f;
             float det = target.Determinant();
 
-            Assert.IsTrue(Equal(val, det), "Matrix4x4.Determinant was not set correctly.");
+            Assert.IsTrue(MathHelper.Equal(val, det), "Matrix4x4.Determinant was not set correctly.");
         }
 
         /// <summary>
@@ -156,11 +124,11 @@ namespace MathTests
             Matrix4x4 actual;
 
             Assert.IsTrue(Matrix4x4.Invert(mtx, out actual));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.Invert did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Invert did not return the expected value.");
 
             // Make sure M*M is identity matrix
             Matrix4x4 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix4x4.Identity), "Matrix4x4.Invert did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity), "Matrix4x4.Invert did not return the expected value.");
         }
 
         /// <summary>
@@ -174,7 +142,7 @@ namespace MathTests
             Matrix4x4 actual;
             Assert.IsTrue(Matrix4x4.Invert(mtx, out actual));
 
-            Assert.IsTrue(Equal(actual, Matrix4x4.Identity));
+            Assert.IsTrue(MathHelper.Equal(actual, Matrix4x4.Identity));
         }
 
         /// <summary>
@@ -189,7 +157,7 @@ namespace MathTests
             Assert.IsTrue(Matrix4x4.Invert(mtx, out actual));
 
             Matrix4x4 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix4x4.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
         /// <summary>
@@ -204,7 +172,7 @@ namespace MathTests
             Assert.IsTrue(Matrix4x4.Invert(mtx, out actual));
 
             Matrix4x4 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix4x4.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
         /// <summary>
@@ -219,7 +187,7 @@ namespace MathTests
             Assert.IsTrue(Matrix4x4.Invert(mtx, out actual));
 
             Matrix4x4 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix4x4.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
         /// <summary>
@@ -234,7 +202,7 @@ namespace MathTests
             Assert.IsTrue(Matrix4x4.Invert(mtx, out actual));
 
             Matrix4x4 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix4x4.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
         /// <summary>
@@ -251,7 +219,7 @@ namespace MathTests
             Assert.IsTrue(Matrix4x4.Invert(mtx, out actual));
 
             Matrix4x4 i = mtx * actual;
-            Assert.IsTrue(Equal(i, Matrix4x4.Identity));
+            Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
         void DecomposeTest(float yaw, float pitch, float roll, Vector3 expectedTranslation, Vector3 expectedScales)
@@ -276,20 +244,20 @@ namespace MathTests
             Assert.AreEqual(expectedResult, actualResult, "Matrix4x4.Decompose did not return expected value.");
             if (expectedResult)
             {
-                Assert.IsTrue(Compare(expectedScales, scales),
+                Assert.IsTrue(MathHelper.Equal(expectedScales, scales),
                     String.Format("Matrix4x4.Decompose did not return expected value Expected:{0} actual:{1}.", expectedScales, scales));
             }
             else
             {
-                Assert.IsTrue(Equal(Math.Abs(expectedScales.X), Math.Abs(scales.X)) &&
-                    Equal(Math.Abs(expectedScales.Y), Math.Abs(scales.Y))
-                    && Equal(Math.Abs(expectedScales.Z), Math.Abs(scales.Z)),
+                Assert.IsTrue(MathHelper.Equal(Math.Abs(expectedScales.X), Math.Abs(scales.X)) &&
+                    MathHelper.Equal(Math.Abs(expectedScales.Y), Math.Abs(scales.Y))
+                    && MathHelper.Equal(Math.Abs(expectedScales.Z), Math.Abs(scales.Z)),
                         String.Format("Matrix4x4.Decompose did not return expected value Expected:{0} actual:{1}.", expectedScales, scales));
 
             }
-            Assert.IsTrue(EqualRotation(expectedRotation, rotation),
+            Assert.IsTrue(MathHelper.EqualRotation(expectedRotation, rotation),
                 String.Format("Matrix4x4.Decompose did not return expected value. Expected:{0} actual:{1}.", expectedRotation, rotation));
-            Assert.IsTrue(Compare(expectedTranslation, translation),
+            Assert.IsTrue(MathHelper.Equal(expectedTranslation, translation),
                 String.Format("Matrix4x4.Decompose did not return expected value. Expected:{0} actual:{1}.", expectedTranslation, translation));
         }
 
@@ -352,12 +320,12 @@ namespace MathTests
 
             bool actualResult = Matrix4x4.Decompose(m, out scales, out rotation, out translation);
             Assert.AreEqual(false, actualResult, "Matrix4x4.Decompose did not return expected value.");
-            Assert.IsTrue(Equal(Math.Abs(expectedScales.X), Math.Abs(scales.X)) &&
-                Equal(Math.Abs(expectedScales.Y), Math.Abs(scales.Y))
-                && Equal(Math.Abs(expectedScales.Z), Math.Abs(scales.Z)), "Matrix4x4.Decompose did not return expected value.");
+            Assert.IsTrue(MathHelper.Equal(Math.Abs(expectedScales.X), Math.Abs(scales.X)) &&
+                MathHelper.Equal(Math.Abs(expectedScales.Y), Math.Abs(scales.Y))
+                && MathHelper.Equal(Math.Abs(expectedScales.Z), Math.Abs(scales.Z)), "Matrix4x4.Decompose did not return expected value.");
 
-            Assert.IsTrue(EqualRotation(Quaternion.Identity, rotation), "Matrix4x4.Decompose did not return expected value.");
-            Assert.IsTrue(Compare(Vector3.Zero, translation), "Matrix4x4.Decompose did not return expected value.");
+            Assert.IsTrue(MathHelper.EqualRotation(Quaternion.Identity, rotation), "Matrix4x4.Decompose did not return expected value.");
+            Assert.IsTrue(MathHelper.Equal(Vector3.Zero, translation), "Matrix4x4.Decompose did not return expected value.");
         }
 
         [TestMethod]
@@ -388,7 +356,7 @@ namespace MathTests
             Matrix4x4 expected = target * m;
             Matrix4x4 actual;
             actual = Matrix4x4.Transform(target, q);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Transform did not return the expected value.");
         }
 
         #region Factory method tests
@@ -413,7 +381,7 @@ namespace MathTests
             Matrix4x4 actual;
 
             actual = Matrix4x4.CreateRotationX(radians);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateRotationX did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationX did not return the expected value.");
         }
 
         /// <summary>
@@ -427,7 +395,7 @@ namespace MathTests
 
             Matrix4x4 expected = Matrix4x4.Identity;
             Matrix4x4 actual = Matrix4x4.CreateRotationX(radians);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateRotationX did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationX did not return the expected value.");
         }
 
         /// <summary>
@@ -441,11 +409,11 @@ namespace MathTests
 
             Matrix4x4 rotateAroundZero = Matrix4x4.CreateRotationX(radians, Vector3.Zero);
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4.CreateRotationX(radians);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
 
             Matrix4x4 rotateAroundCenter = Matrix4x4.CreateRotationX(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateRotationX(radians) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
         /// <summary>
@@ -467,7 +435,7 @@ namespace MathTests
 
             Matrix4x4 actual;
             actual = Matrix4x4.CreateRotationY(radians);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateRotationY did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationY did not return the expected value.");
         }
 
         /// <summary>
@@ -489,7 +457,7 @@ namespace MathTests
             expected.M44 = 1.0f;
 
             Matrix4x4 actual = Matrix4x4.CreateRotationY(radians);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateRotationY did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationY did not return the expected value.");
         }
 
         /// <summary>
@@ -503,11 +471,11 @@ namespace MathTests
 
             Matrix4x4 rotateAroundZero = Matrix4x4.CreateRotationY(radians, Vector3.Zero);
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4.CreateRotationY(radians);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
 
             Matrix4x4 rotateAroundCenter = Matrix4x4.CreateRotationY(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateRotationY(radians) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
         /// <summary>
@@ -520,19 +488,19 @@ namespace MathTests
 
             Matrix4x4 expected = Matrix4x4.CreateRotationX(radians);
             Matrix4x4 actual = Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, radians);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             expected = Matrix4x4.CreateRotationY(radians);
             actual = Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, radians);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             expected = Matrix4x4.CreateRotationZ(radians);
             actual = Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, radians);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             expected = Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(Vector3.Normalize(Vector3.One), radians));
             actual = Matrix4x4.CreateFromAxisAngle(Vector3.Normalize(Vector3.One), radians);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
 
             const int rotCount = 16;
             for (int i = 0; i < rotCount; ++i)
@@ -549,11 +517,10 @@ namespace MathTests
                         float rot = (2.0f * MathHelper.Pi) * ((float)k / (float)rotCount);
                         expected = Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(axis, rot));
                         actual = Matrix4x4.CreateFromAxisAngle(axis, rot);
-                        Assert.IsTrue(Equal(expected, actual));
+                        Assert.IsTrue(MathHelper.Equal(expected, actual));
                     }
                 }
             }
-
         }
 
         [TestMethod]
@@ -569,7 +536,7 @@ namespace MathTests
 
             Matrix4x4 expected = roll * pitch * yaw;
             Matrix4x4 actual = Matrix4x4.CreateFromYawPitchRoll(yawAngle, pitchAngle, rollAngle);
-            Assert.IsTrue(Equal(expected, actual));
+            Assert.IsTrue(MathHelper.Equal(expected, actual));
         }
 
         [TestMethod]
@@ -593,7 +560,7 @@ namespace MathTests
 
                         Matrix4x4 expected = roll * pitch * yaw;
                         Matrix4x4 actual = Matrix4x4.CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
-                        Assert.IsTrue(Equal(expected, actual), String.Format("Yaw:{0} Pitch:{1} Roll:{2}", yawAngle, pitchAngle, rollAngle));
+                        Assert.IsTrue(MathHelper.Equal(expected, actual), String.Format("Yaw:{0} Pitch:{1} Roll:{2}", yawAngle, pitchAngle, rollAngle));
                     }
                 }
             }
@@ -609,7 +576,7 @@ namespace MathTests
             Matrix4x4 expected = Matrix4x4.CreateScale(1, 0, 1);
 
             Matrix4x4 actual = Matrix4x4.CreateShadow(lightDir, plane);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateShadow did not returned expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateShadow did not returned expected value.");
         }
 
         [TestMethod]
@@ -692,15 +659,14 @@ namespace MathTests
                         // Make sure transformed position is on the plane.
                         Vector3 v = sp - pp;
                         float d = Vector3.Dot(v, plane.Normal);
-                        Assert.IsTrue(Equal(d, 0), "Matrix4x4.CreateShadow did not provide expected value.");
+                        Assert.IsTrue(MathHelper.Equal(d, 0), "Matrix4x4.CreateShadow did not provide expected value.");
 
                         // make sure direction between transformed position and original position are same as light direction.
                         if (Vector3.Dot(point - pp, plane.Normal) > 0.0001f)
                         {
                             Vector3 dir = Vector3.Normalize(point - sp);
-                            Assert.IsTrue(Compare(dir, lightDir), "Matrix4x4.CreateShadow did not provide expected value.");
+                            Assert.IsTrue(MathHelper.Equal(dir, lightDir), "Matrix4x4.CreateShadow did not provide expected value.");
                         }
-
                     }
                 }
             }
@@ -709,7 +675,7 @@ namespace MathTests
         void CreateReflectionTest(Plane plane, Matrix4x4 expected)
         {
             Matrix4x4 actual = Matrix4x4.CreateReflection(plane);
-            Assert.IsTrue(Equal(actual, expected), "Matrix4x4.CreateReflection did not return expected value.");
+            Assert.IsTrue(MathHelper.Equal(actual, expected), "Matrix4x4.CreateReflection did not return expected value.");
         }
 
         [TestMethod]
@@ -753,7 +719,7 @@ namespace MathTests
                     Vector3 v = point - pp;
                     float d = Vector3.Dot(v, plane.Normal);
                     Vector3 vp = point - 2.0f * d * plane.Normal;
-                    Assert.IsTrue(Compare(rp, vp), "Matrix4x4.Reflection did not provide expected value.");
+                    Assert.IsTrue(MathHelper.Equal(rp, vp), "Matrix4x4.Reflection did not provide expected value.");
                 }
             }
         }
@@ -776,7 +742,7 @@ namespace MathTests
 
             Matrix4x4 actual;
             actual = Matrix4x4.CreateRotationZ(radians);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateRotationZ did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationZ did not return the expected value.");
         }
 
         /// <summary>
@@ -790,11 +756,11 @@ namespace MathTests
 
             Matrix4x4 rotateAroundZero = Matrix4x4.CreateRotationZ(radians, Vector3.Zero);
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4.CreateRotationZ(radians);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
 
             Matrix4x4 rotateAroundCenter = Matrix4x4.CreateRotationZ(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateRotationZ(radians) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
         /// <summary>
@@ -826,7 +792,7 @@ namespace MathTests
             expected.M44 = 1.0f;
 
             Matrix4x4 actual = Matrix4x4.CreateLookAt(cameraPosition, cameraTarget, cameraUpVector);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateLookAt did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateLookAt did not return the expected value.");
         }
 
         /// <summary>
@@ -861,7 +827,7 @@ namespace MathTests
             expected.M44 = 1.0f;
 
             Matrix4x4 actual = Matrix4x4.CreateWorld(objectPosition, objectForwardDirection, objectUpVector);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateWorld did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateWorld did not return the expected value.");
 
             Assert.AreEqual(objectPosition, actual.Translation);
             Assert.IsTrue(Vector3.Dot(Vector3.Normalize(objectUpVector), new Vector3(actual.M21, actual.M22, actual.M23)) > 0);
@@ -888,7 +854,7 @@ namespace MathTests
 
             Matrix4x4 actual;
             actual = Matrix4x4.CreateOrthographic(width, height, zNearPlane, zFarPlane);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateOrtho did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateOrtho did not return the expected value.");
         }
 
         /// <summary>
@@ -915,7 +881,7 @@ namespace MathTests
 
             Matrix4x4 actual;
             actual = Matrix4x4.CreateOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateOrthoOffCenter did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateOrthoOffCenter did not return the expected value.");
         }
 
         /// <summary>
@@ -938,7 +904,7 @@ namespace MathTests
 
             Matrix4x4 actual;
             actual = Matrix4x4.CreatePerspective(width, height, zNearPlane, zFarPlane);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreatePerspective did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreatePerspective did not return the expected value.");
         }
 
         /// <summary>
@@ -1038,7 +1004,7 @@ namespace MathTests
             Matrix4x4 actual;
 
             actual = Matrix4x4.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreatePerspectiveFieldOfView did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreatePerspectiveFieldOfView did not return the expected value.");
         }
 
         /// <summary>
@@ -1155,7 +1121,7 @@ namespace MathTests
 
             Matrix4x4 actual;
             actual = Matrix4x4.CreatePerspectiveOffCenter(left, right, bottom, top, zNearPlane, zFarPlane);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreatePerspectiveOffCenter did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreatePerspectiveOffCenter did not return the expected value.");
         }
 
         /// <summary>
@@ -1231,7 +1197,7 @@ namespace MathTests
             a.M41 = 13.0f; a.M42 = 14.0f; a.M43 = 15.0f; a.M44 = 16.0f;
 
             float detA = a.Determinant();
-            Assert.IsTrue(Equal(detA, 0.0f), "Matrix4x4.Invert did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(detA, 0.0f), "Matrix4x4.Invert did not return the expected value.");
 
             Matrix4x4 actual;
             Assert.IsFalse(Matrix4x4.Invert(a, out actual));
@@ -1284,7 +1250,7 @@ namespace MathTests
 
             Matrix4x4 actual;
             actual = Matrix4x4.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -1302,7 +1268,7 @@ namespace MathTests
             expected.M41 = -13.0f; expected.M42 = -14.0f; expected.M43 = -15.0f; expected.M44 = -16.0f;
 
             Matrix4x4 actual = -a;
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -1316,7 +1282,7 @@ namespace MathTests
             Matrix4x4 expected = new Matrix4x4();
 
             Matrix4x4 actual = a - b;
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -1350,7 +1316,7 @@ namespace MathTests
             expected.M44 = a.M41 * b.M14 + a.M42 * b.M24 + a.M43 * b.M34 + a.M44 * b.M44;
 
             Matrix4x4 actual = a * b;
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -1372,7 +1338,7 @@ namespace MathTests
             Matrix4x4 expected = a;
             Matrix4x4 actual = a * b;
 
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -1394,7 +1360,7 @@ namespace MathTests
 
             actual = a + b;
 
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.operator + did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator + did not return the expected value.");
         }
 
         /// <summary>
@@ -1412,7 +1378,7 @@ namespace MathTests
             expected.M41 = a.M14; expected.M42 = a.M24; expected.M43 = a.M34; expected.M44 = a.M44;
 
             Matrix4x4 actual = Matrix4x4.Transpose(a);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.Transpose did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Transpose did not return the expected value.");
         }
 
         /// <summary>
@@ -1426,7 +1392,7 @@ namespace MathTests
             Matrix4x4 expected = Matrix4x4.Identity;
 
             Matrix4x4 actual = Matrix4x4.Transpose(a);
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.Transpose did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Transpose did not return the expected value.");
         }
 
         /// <summary>
@@ -1460,7 +1426,7 @@ namespace MathTests
             expected.M44 = 1.0f;
 
             Matrix4x4 target = Matrix4x4.CreateFromQuaternion(q);
-            Assert.IsTrue(Equal(expected, target), "Matrix4x4.Matrix4x4(Quaternion) did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, target), "Matrix4x4.Matrix4x4(Quaternion) did not return the expected value.");
         }
 
         /// <summary>
@@ -1476,13 +1442,13 @@ namespace MathTests
 
                 Matrix4x4 expected = Matrix4x4.CreateRotationX(angle);
                 Matrix4x4 actual = Matrix4x4.CreateFromQuaternion(quat);
-                Assert.IsTrue(Equal(expected, actual),
+                Assert.IsTrue(MathHelper.Equal(expected, actual),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
 
                 // make sure convert back to quaternion is same as we passed quaternion.
                 Quaternion q2 = Quaternion.CreateFromRotationMatrix(actual);
-                Assert.IsTrue(EqualRotation(quat, q2),
+                Assert.IsTrue(MathHelper.EqualRotation(quat, q2),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
             }
@@ -1501,13 +1467,13 @@ namespace MathTests
 
                 Matrix4x4 expected = Matrix4x4.CreateRotationY(angle);
                 Matrix4x4 actual = Matrix4x4.CreateFromQuaternion(quat);
-                Assert.IsTrue(Equal(expected, actual),
+                Assert.IsTrue(MathHelper.Equal(expected, actual),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
 
                 // make sure convert back to quaternion is same as we passed quaternion.
                 Quaternion q2 = Quaternion.CreateFromRotationMatrix(actual);
-                Assert.IsTrue(EqualRotation(quat, q2),
+                Assert.IsTrue(MathHelper.EqualRotation(quat, q2),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
             }
@@ -1526,13 +1492,13 @@ namespace MathTests
 
                 Matrix4x4 expected = Matrix4x4.CreateRotationZ(angle);
                 Matrix4x4 actual = Matrix4x4.CreateFromQuaternion(quat);
-                Assert.IsTrue(Equal(expected, actual),
+                Assert.IsTrue(MathHelper.Equal(expected, actual),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
 
                 // make sure convert back to quaternion is same as we passed quaternion.
                 Quaternion q2 = Quaternion.CreateFromRotationMatrix(actual);
-                Assert.IsTrue(EqualRotation(quat, q2),
+                Assert.IsTrue(MathHelper.EqualRotation(quat, q2),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
             }
@@ -1557,13 +1523,13 @@ namespace MathTests
                     Matrix4x4.CreateRotationY(angle) *
                     Matrix4x4.CreateRotationZ(angle);
                 Matrix4x4 actual = Matrix4x4.CreateFromQuaternion(quat);
-                Assert.IsTrue(Equal(expected, actual),
+                Assert.IsTrue(MathHelper.Equal(expected, actual),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
 
                 // make sure convert back to quaternion is same as we passed quaternion.
                 Quaternion q2 = Quaternion.CreateFromRotationMatrix(actual);
-                Assert.IsTrue(EqualRotation(quat, q2),
+                Assert.IsTrue(MathHelper.EqualRotation(quat, q2),
                     "Quaternion.FromQuaternion did not return the expected value. angle:{0}",
                     angle.ToString());
             }
@@ -1784,7 +1750,7 @@ namespace MathTests
             Vector3 objectPosition = cameraPosition + placeDirection * 10.0f;
             Matrix4x4 expected = expectedRotation * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateBillboard(objectPosition, cameraPosition, cameraUpVector, new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -1941,7 +1907,7 @@ namespace MathTests
             // Doesn't pass camera face direction. CreateBillboard uses new Vector3(0, 0, -1) direction. Result must be same as 180 degrees rotate along y-axis.
             Matrix4x4 expected = Matrix4x4.CreateRotationY(MathHelper.ToRadians(180.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateBillboard(objectPosition, cameraPosition, cameraUpVector, new Vector3(0, 0, 1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -1958,7 +1924,7 @@ namespace MathTests
             // Passes Vector3.Rgiht as camera face direction. Result must be same as -90 degrees rotate along y-axis.
             Matrix4x4 expected = Matrix4x4.CreateRotationY(MathHelper.ToRadians(-90.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateBillboard(objectPosition, cameraPosition, cameraUpVector, new Vector3(1, 0, 0));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
         }
 
         #endregion
@@ -1971,16 +1937,16 @@ namespace MathTests
             Vector3 objectPosition = cameraPosition + placeDirection * 10.0f;
             Matrix4x4 expected = expectedRotation * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
 
             // When you move camera along rotateAxis, result must be same.
             cameraPosition += rotateAxis * 10.0f;
             actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
 
             cameraPosition -= rotateAxis * 30.0f;
             actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -2137,7 +2103,7 @@ namespace MathTests
             // Doesn't pass camera face direction. CreateConstrainedBillboard uses new Vector3(0, 0, -1) direction. Result must be same as 180 degrees rotate along y-axis.
             Matrix4x4 expected = Matrix4x4.CreateRotationY(MathHelper.ToRadians(180.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, cameraUpVector, new Vector3(0, 0, 1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -2154,7 +2120,7 @@ namespace MathTests
             // Passes Vector3.Rgiht as camera face direction. Result must be same as -90 degrees rotate along y-axis.
             Matrix4x4 expected = Matrix4x4.CreateRotationY(MathHelper.ToRadians(-90.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, cameraUpVector, new Vector3(1, 0, 0), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -2172,7 +2138,7 @@ namespace MathTests
             // In this case, CreateConstrainedBillboard picks new Vector3(0, 0, -1) as object forward vector.
             Matrix4x4 expected = Matrix4x4.CreateRotationY(MathHelper.ToRadians(180.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -2190,7 +2156,7 @@ namespace MathTests
             // In this case, CreateConstrainedBillboard picks new Vector3(1, 0, 0) as object forward vector.
             Matrix4x4 expected = Matrix4x4.CreateRotationX(MathHelper.ToRadians(-90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(-90.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -2208,7 +2174,7 @@ namespace MathTests
             // User passes correct objectForwardVector.
             Matrix4x4 expected = Matrix4x4.CreateRotationY(MathHelper.ToRadians(180.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -2226,7 +2192,7 @@ namespace MathTests
             // User passes correct objectForwardVector.
             Matrix4x4 expected = Matrix4x4.CreateRotationY(MathHelper.ToRadians(180.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 1, 0));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         /// <summary>
@@ -2244,7 +2210,7 @@ namespace MathTests
             // In this case, CreateConstrainedBillboard picks Vector3.Right as object forward vector.
             Matrix4x4 expected = Matrix4x4.CreateRotationX(MathHelper.ToRadians(-90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(-90.0f)) * Matrix4x4.CreateTranslation(objectPosition);
             Matrix4x4 actual = Matrix4x4.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new Vector3(0, 0, -1), new Vector3(0, 0, -1));
-            Assert.IsTrue(Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
         #endregion
@@ -2276,11 +2242,11 @@ namespace MathTests
 
             Matrix4x4 scaleAroundZero = Matrix4x4.CreateScale(scale, Vector3.Zero);
             Matrix4x4 scaleAroundZeroExpected = Matrix4x4.CreateScale(scale);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
 
             Matrix4x4 scaleAroundCenter = Matrix4x4.CreateScale(scale, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
         /// <summary>
@@ -2310,11 +2276,11 @@ namespace MathTests
 
             Matrix4x4 scaleAroundZero = Matrix4x4.CreateScale(scale, Vector3.Zero);
             Matrix4x4 scaleAroundZeroExpected = Matrix4x4.CreateScale(scale);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
 
             Matrix4x4 scaleAroundCenter = Matrix4x4.CreateScale(scale, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
         /// <summary>
@@ -2346,11 +2312,11 @@ namespace MathTests
 
             Matrix4x4 scaleAroundZero = Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z, Vector3.Zero);
             Matrix4x4 scaleAroundZeroExpected = Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
 
             Matrix4x4 scaleAroundCenter = Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
         /// <summary>

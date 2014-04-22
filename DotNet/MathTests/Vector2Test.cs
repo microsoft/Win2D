@@ -17,31 +17,6 @@ namespace MathTests
     [TestClass()]
     public class Vector2Test
     {
-        static bool Equal(float a, float b)
-        {
-            return (System.Math.Abs(a - b) < 1e-6);
-        }
-
-        static internal bool Equal(Vector2 a, Vector2 b)
-        {
-            return Equal(a.X, b.X) && Equal(a.Y, b.Y);
-        }
-
-        static bool CloseEnough(Vector2[] a, Vector2[] b)
-        {
-            if ((a == null || b == null) && a != b) return false;
-            if (a == b) return true;
-            if (a.Length != b.Length) return false;
-
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (!Equal(a[i], b[i]))
-                    return false;
-            }
-
-            return true;
-        }
-
         /// <summary>
         ///A test for Distance (Vector2, Vector2)
         ///</summary>
@@ -55,7 +30,7 @@ namespace MathTests
             float actual;
 
             actual = Vector2.Distance(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Distance did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Distance did not return the expected value.");
         }
 
         /// <summary>
@@ -85,7 +60,7 @@ namespace MathTests
             float actual;
 
             actual = Vector2.DistanceSquared(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.DistanceSquared did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.DistanceSquared did not return the expected value.");
         }
 
         /// <summary>
@@ -101,7 +76,7 @@ namespace MathTests
             float actual;
 
             actual = Vector2.Dot(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Dot did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Dot did not return the expected value.");
         }
 
         /// <summary>
@@ -148,7 +123,7 @@ namespace MathTests
 
             actual = target.Length();
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Length did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Length did not return the expected value.");
         }
 
         /// <summary>
@@ -167,7 +142,7 @@ namespace MathTests
 
             actual = target.Length();
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Length did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Length did not return the expected value.");
         }
 
         /// <summary>
@@ -185,7 +160,7 @@ namespace MathTests
 
             actual = target.LengthSquared();
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.LengthSquared did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.LengthSquared did not return the expected value.");
         }
 
         /// <summary>
@@ -215,7 +190,7 @@ namespace MathTests
             Vector2 expected = new Vector2(-1.0f, 1.0f);
             Vector2 actual;
             actual = Vector2.Min(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Min did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Min did not return the expected value.");
         }
 
         [TestMethod]
@@ -252,7 +227,7 @@ namespace MathTests
             Vector2 expected = new Vector2(2.0f, 4.0f);
             Vector2 actual;
             actual = Vector2.Max(a, b);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Max did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Max did not return the expected value.");
         }
 
         /// <summary>
@@ -269,26 +244,26 @@ namespace MathTests
             // Case N1: specfied value is in the range.
             Vector2 expected = new Vector2(0.5f, 0.3f);
             Vector2 actual = Vector2.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
 
             // Normal case.
             // Case N2: specfied value is bigger than max value.
             a = new Vector2(2.0f, 3.0f);
             expected = max;
             actual = Vector2.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
 
             // Case N3: specfied value is smaller than max value.
             a = new Vector2(-1.0f, -2.0f);
             expected = min;
             actual = Vector2.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
 
             // Case N4: combination case.
             a = new Vector2(-2.0f, 4.0f);
             expected = new Vector2(min.X, max.Y);
             actual = Vector2.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
 
             // User specfied min value is bigger than max value.
             max = new Vector2(0.0f, 0.1f);
@@ -298,20 +273,20 @@ namespace MathTests
             a = new Vector2(0.5f, 0.3f);
             expected = min;
             actual = Vector2.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
 
             // Normal case.
             // Case W2: specfied value is bigger than max and min value.
             a = new Vector2(2.0f, 3.0f);
             expected = min;
             actual = Vector2.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
 
             // Case W3: specfied value is smaller than min and max value.
             a = new Vector2(-1.0f, -2.0f);
             expected = min;
             actual = Vector2.Clamp(a, min, max);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
         }
 
         #region Lerp Tests
@@ -330,7 +305,7 @@ namespace MathTests
             Vector2 expected = new Vector2(2.0f, 3.0f);
             Vector2 actual;
             actual = Vector2.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -346,7 +321,7 @@ namespace MathTests
             float t = 0.0f;
             Vector2 expected = Vector2.Zero;
             Vector2 actual = Vector2.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -362,7 +337,7 @@ namespace MathTests
             float t = 1.0f;
             Vector2 expected = new Vector2(3.18f, 4.25f);
             Vector2 actual = Vector2.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -378,7 +353,7 @@ namespace MathTests
             float t = 2.0f;
             Vector2 expected = b * 2.0f;
             Vector2 actual = Vector2.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -394,7 +369,7 @@ namespace MathTests
             float t = -2.0f;
             Vector2 expected = -(b * 2.0f);
             Vector2 actual = Vector2.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
         /// <summary>
@@ -427,7 +402,7 @@ namespace MathTests
 
             Vector2 expected = new Vector2(1.0f, 2.0f);
             Vector2 actual = Vector2.Lerp(a, b, t);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
         #endregion
@@ -451,7 +426,7 @@ namespace MathTests
             Vector2 actual;
 
             actual = Vector2.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -469,7 +444,7 @@ namespace MathTests
             Vector2 actual;
 
             actual = Vector2.Transform(v, m);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -531,7 +506,7 @@ namespace MathTests
 
             Vector2 expected = Vector2.Transform(v, m);
             Vector2 actual = Vector2.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -546,7 +521,7 @@ namespace MathTests
             Vector2 expected = v;
 
             Vector2 actual = Vector2.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
         /// <summary>
@@ -561,7 +536,7 @@ namespace MathTests
             Vector2 expected = v;
 
             Vector2 actual = Vector2.Transform(v, q);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Transform did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
         #endregion
@@ -577,7 +552,7 @@ namespace MathTests
             Vector2 actual;
 
             actual = Vector2.Normalize(a);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Normalize did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Normalize did not return the expected value.");
         }
 
         /// <summary>
@@ -618,7 +593,7 @@ namespace MathTests
 
             actual = -a;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -664,7 +639,7 @@ namespace MathTests
 
             actual = a - b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator - did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator - did not return the expected value.");
         }
 
         /// <summary>
@@ -680,7 +655,7 @@ namespace MathTests
             Vector2 actual;
 
             actual = a * factor;
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -696,7 +671,7 @@ namespace MathTests
             Vector2 actual;
 
             actual = factor * a;
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -713,7 +688,7 @@ namespace MathTests
 
             actual = a * b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator * did not return the expected value.");
         }
 
         /// <summary>
@@ -731,7 +706,7 @@ namespace MathTests
 
             actual = a / div;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator / did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator / did not return the expected value.");
         }
 
         /// <summary>
@@ -748,7 +723,7 @@ namespace MathTests
 
             actual = a / b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator / did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator / did not return the expected value.");
         }
 
         /// <summary>
@@ -799,7 +774,7 @@ namespace MathTests
 
             actual = a + b;
 
-            Assert.IsTrue(Equal(expected, actual), "Vector2.operator + did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator + did not return the expected value.");
         }
 
         /// <summary>
@@ -812,7 +787,7 @@ namespace MathTests
             float y = 2.0f;
 
             Vector2 target = new Vector2(x, y);
-            Assert.IsTrue(Equal(target.X, x) && Equal(target.Y, y), "Vector2(x,y) constructor did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(target.X, x) && MathHelper.Equal(target.Y, y), "Vector2(x,y) constructor did not return the expected value.");
         }
 
         /// <summary>
@@ -824,7 +799,7 @@ namespace MathTests
             Vector2 a = new Vector2(1.0f, 2.0f);
 
             Vector2 target = a;
-            Assert.IsTrue(Equal(target, a), "Vector2( Vector2 ) constructor did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(target, a), "Vector2( Vector2 ) constructor did not return the expected value.");
         }
 
 
@@ -1184,19 +1159,19 @@ namespace MathTests
             Vector2 n = new Vector2(0.0f, 1.0f);
             Vector2 expected = new Vector2(a.X, -a.Y);
             Vector2 actual = Vector2.Reflect(a, n);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
 
             // Reflect on XY plane.
             n = new Vector2(0.0f, 0.0f);
             expected = new Vector2(a.X, a.Y);
             actual = Vector2.Reflect(a, n);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
 
             // Reflect on YZ plane.
             n = new Vector2(1.0f, 0.0f);
             expected = new Vector2(-a.X, a.Y);
             actual = Vector2.Reflect(a, n);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
         }
 
         /// <summary>
@@ -1212,7 +1187,7 @@ namespace MathTests
 
             Vector2 expected = -n;
             Vector2 actual = Vector2.Reflect(a, n);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
         }
 
         /// <summary>
@@ -1228,7 +1203,7 @@ namespace MathTests
 
             Vector2 expected = n;
             Vector2 actual = Vector2.Reflect(a, n);
-            Assert.IsTrue(Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
         }
 
         #endregion

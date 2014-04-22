@@ -13,21 +13,6 @@ namespace MathTests
 	TEST_CLASS(PlaneTest)
 	{
 	public:
-        static bool CloseEnough(float a, float b)
-        {
-            return fabs(a - b) < 1e-5f;
-        }
-
-        static bool CloseEnough(Plane a, Plane b)
-        {
-            return CloseEnough(a.Normal, b.Normal) && CloseEnough(a.D, b.D);
-        }
-
-        static bool CloseEnough(Vector3 a, Vector3 b)
-        {
-            return CloseEnough(a.X, b.X) && CloseEnough(a.Y, b.Y) && CloseEnough(a.Z, b.Z);
-        }
-
         // A test for operator != (Plane, Plane)
         TEST_METHOD(PlaneInequalityTest)
         {
@@ -108,7 +93,7 @@ namespace MathTests
             float invRoot2 = (float)(1.0f / sqrt(2));
 
             Plane expected(Vector3(invRoot2, 0, invRoot2), -invRoot2);
-            Assert::IsTrue(CloseEnough(target, expected), L"Plane::cstor did not return the expected value.");
+            Assert::IsTrue(Equal(target, expected), L"Plane::cstor did not return the expected value.");
         }
 
         // A test for Plane (Vector3, Vector3, Vector3)
@@ -141,7 +126,7 @@ namespace MathTests
 
             float expected = 10 + 12 + 12 + 10;
             float actual = Plane::Dot(target, value);
-            Assert::IsTrue(CloseEnough(expected, actual), L"Plane::Dot returns unexpected value.");
+            Assert::IsTrue(Equal(expected, actual), L"Plane::Dot returns unexpected value.");
         }
 
         TEST_METHOD(PlaneDotCoordinateTest)
@@ -151,7 +136,7 @@ namespace MathTests
 
             float expected = 10 + 12 + 12 + 5;
             float actual = Plane::DotCoordinate(target, value);
-            Assert::IsTrue(CloseEnough(expected, actual), L"Plane::DotCoordinate returns unexpected value.");
+            Assert::IsTrue(Equal(expected, actual), L"Plane::DotCoordinate returns unexpected value.");
         }
 
         TEST_METHOD(PlaneDotNormalTest)
@@ -161,7 +146,7 @@ namespace MathTests
 
             float expected = 10 + 12 + 12;
             float actual = Plane::DotNormal(target, value);
-            Assert::IsTrue(CloseEnough(expected, actual), L"Plane::DotCoordinate returns unexpected value.");
+            Assert::IsTrue(Equal(expected, actual), L"Plane::DotCoordinate returns unexpected value.");
         }
 
         TEST_METHOD(PlaneNormalizeTest)
@@ -173,11 +158,11 @@ namespace MathTests
             Plane expected(target.Normal * invF, target.D * invF);
 
             Plane actual = Plane::Normalize(target);
-            Assert::IsTrue(CloseEnough(expected, actual), L"Plane::Normalize returns unexpected value.");
+            Assert::IsTrue(Equal(expected, actual), L"Plane::Normalize returns unexpected value.");
 
             // normalize, normalized normal.
             actual = Plane::Normalize(actual);
-            Assert::IsTrue(CloseEnough(expected, actual), L"Plane::Normalize returns unexpected value.");
+            Assert::IsTrue(Equal(expected, actual), L"Plane::Normalize returns unexpected value.");
         }
 
         TEST_METHOD(PlaneTransformTest1)
@@ -205,7 +190,7 @@ namespace MathTests
 
             Plane actual;
             actual = Plane::Transform(target, m);
-            Assert::IsTrue(CloseEnough(expected, actual), L"Plane::Transform did not return the expected value.");
+            Assert::IsTrue(Equal(expected, actual), L"Plane::Transform did not return the expected value.");
         }
 
         TEST_METHOD(PlaneTransformTest2)
@@ -228,7 +213,7 @@ namespace MathTests
 
             Plane actual;
             actual = Plane::Transform(target, q);
-            Assert::IsTrue(CloseEnough(expected, actual), L"Plane::Transform did not return the expected value.");
+            Assert::IsTrue(Equal(expected, actual), L"Plane::Transform did not return the expected value.");
         }
         
         // A test for Plane comparison involving NaN values
