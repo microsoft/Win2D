@@ -76,7 +76,7 @@ namespace MathTests
         // A test for Dot (Vector2, Vector2)
         TEST_METHOD(Vector2DotTest2)
         {
-            Vector2 a(FLT_MIN, FLT_MIN);
+            Vector2 a(-FLT_MAX, -FLT_MAX);
             Vector2 b(FLT_MAX, FLT_MAX);
 
             float actual = Vector2::Dot(a, b);
@@ -650,7 +650,7 @@ namespace MathTests
         TEST_METHOD(Vector2ConstructorTest3)
         {
             Vector2 target(NAN, FLT_MAX);
-            Assert::AreEqual(target.X, NAN, L"Vector2(x,y) constructor did not return the expected value.");
+            Assert::IsTrue(isnan(target.X), L"Vector2(x,y) constructor did not return the expected value.");
             Assert::AreEqual(target.Y, FLT_MAX, L"Vector2(x,y) constructor did not return the expected value.");
         }
 

@@ -775,7 +775,7 @@ namespace MathTests
         // A test for operator / (Vector4, Vector4)
         TEST_METHOD(Vector4DivisionTest3)
         {
-            Vector4 a(0.047f, -3.0f, -std::numeric_limits<float>::infinity(), FLT_MIN);
+            Vector4 a(0.047f, -3.0f, -std::numeric_limits<float>::infinity(), -FLT_MAX);
             Vector4 b;
 
             Vector4 actual = a / b;
