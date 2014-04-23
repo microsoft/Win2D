@@ -664,7 +664,7 @@ namespace MathTests
             Assert::AreEqual(a.Z, 0.0f, L"Vector3::constructor () did not return the expected value.");
         }
 
-        // A test for Vector2 (float, float)
+        // A test for Vector3 (float, float, float)
         TEST_METHOD(Vector3ConstructorTest4)
         {
             Vector3 target(NAN, FLT_MAX, std::numeric_limits<float>::infinity());

@@ -267,6 +267,14 @@ namespace MathTests
                 L"Quaternion::constructor (Vector3,w) did not return the expected value.");
         }
 
+        // A test for Quaternion ()
+        TEST_METHOD(QuaternionConstructorTest2)
+        {
+            Quaternion target;
+            Assert::IsTrue(target.X == 0 && target.Y == 0 && target.Z == 0 && target.W == 0,
+                L"Quaternion::constructor () did not return the expected value.");
+        }
+
         // A test for CreateFromAxisAngle (Vector3, float)
         TEST_METHOD(QuaternionCreateFromAxisAngleTest)
         {

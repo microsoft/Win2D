@@ -29,6 +29,32 @@ namespace MathTests
             return m;
         }
 
+        // A test for Matrix3x2 (float, float, float, float, float, float)
+        TEST_METHOD(Matrix3x2ConstructorTest)
+        {
+            Matrix3x2 val(1, 2, 3, 4, 5, 6);
+
+            Assert::AreEqual(val.M11, 1.0f);
+            Assert::AreEqual(val.M12, 2.0f);
+            Assert::AreEqual(val.M21, 3.0f);
+            Assert::AreEqual(val.M22, 4.0f);
+            Assert::AreEqual(val.M31, 5.0f);
+            Assert::AreEqual(val.M32, 6.0f);
+        }
+
+        // A test for Matrix3x2 ()
+        TEST_METHOD(Matrix3x2ConstructorTest2)
+        {
+            Matrix3x2 val;
+
+            Assert::AreEqual(val.M11, 0.0f);
+            Assert::AreEqual(val.M12, 0.0f);
+            Assert::AreEqual(val.M21, 0.0f);
+            Assert::AreEqual(val.M22, 0.0f);
+            Assert::AreEqual(val.M31, 0.0f);
+            Assert::AreEqual(val.M32, 0.0f);
+        }
+
         // A test for Identity
         TEST_METHOD(Matrix3x2IdentityTest)
         {

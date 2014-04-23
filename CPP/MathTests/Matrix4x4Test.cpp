@@ -33,6 +33,52 @@ namespace MathTests
             return m;
         }
 
+        // A test for Matrix4x4 (float, float, float ... x16)
+        TEST_METHOD(Matrix4x4ConstructorTest)
+        {
+            Matrix4x4 val(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+            Assert::AreEqual(val.M11, 1.0f);
+            Assert::AreEqual(val.M12, 2.0f);
+            Assert::AreEqual(val.M13, 3.0f);
+            Assert::AreEqual(val.M14, 4.0f);
+            Assert::AreEqual(val.M21, 5.0f);
+            Assert::AreEqual(val.M22, 6.0f);
+            Assert::AreEqual(val.M23, 7.0f);
+            Assert::AreEqual(val.M24, 8.0f);
+            Assert::AreEqual(val.M31, 9.0f);
+            Assert::AreEqual(val.M32, 10.0f);
+            Assert::AreEqual(val.M33, 11.0f);
+            Assert::AreEqual(val.M34, 12.0f);
+            Assert::AreEqual(val.M41, 13.0f);
+            Assert::AreEqual(val.M42, 14.0f);
+            Assert::AreEqual(val.M43, 15.0f);
+            Assert::AreEqual(val.M44, 16.0f);
+        }
+
+        // A test for Matrix4x4 ()
+        TEST_METHOD(Matrix4x4ConstructorTest2)
+        {
+            Matrix4x4 val;
+
+            Assert::AreEqual(val.M11, 0.0f);
+            Assert::AreEqual(val.M12, 0.0f);
+            Assert::AreEqual(val.M13, 0.0f);
+            Assert::AreEqual(val.M14, 0.0f);
+            Assert::AreEqual(val.M21, 0.0f);
+            Assert::AreEqual(val.M22, 0.0f);
+            Assert::AreEqual(val.M23, 0.0f);
+            Assert::AreEqual(val.M24, 0.0f);
+            Assert::AreEqual(val.M31, 0.0f);
+            Assert::AreEqual(val.M32, 0.0f);
+            Assert::AreEqual(val.M33, 0.0f);
+            Assert::AreEqual(val.M34, 0.0f);
+            Assert::AreEqual(val.M41, 0.0f);
+            Assert::AreEqual(val.M42, 0.0f);
+            Assert::AreEqual(val.M43, 0.0f);
+            Assert::AreEqual(val.M44, 0.0f);
+        }
+
         // A test for Identity
         TEST_METHOD(Matrix4x4IdentityTest)
         {

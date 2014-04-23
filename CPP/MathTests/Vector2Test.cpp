@@ -633,7 +633,7 @@ namespace MathTests
         {
             Vector2 a(1.0f, 2.0f);
 
-            Vector2 target = a;
+            Vector2 target(a);
             Assert::IsTrue(Equal(target, a), L"Vector2( Vector2 ) constructor did not return the expected value.");
         }
 
