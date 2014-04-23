@@ -888,10 +888,15 @@ namespace MathTests
         {
             Vector2 vector(23, 42);
 
-            Windows::Foundation::Size result = vector;
+            Windows::Foundation::Size result(vector);
 
             Assert::AreEqual(23.0f, result.Width);
             Assert::AreEqual(42.0f, result.Height);
+
+            result = Vector2(42, 23);
+
+            Assert::AreEqual(42.0f, result.Width);
+            Assert::AreEqual(23.0f, result.Height);
         }
 
         // A test for Vector2 -> Point conversion
@@ -899,10 +904,15 @@ namespace MathTests
         {
             Vector2 vector(23, 42);
 
-            Windows::Foundation::Point result = vector;
+            Windows::Foundation::Point result(vector);
 
             Assert::AreEqual(23.0f, result.X);
             Assert::AreEqual(42.0f, result.Y);
+
+            result = Vector2(42, 23);
+
+            Assert::AreEqual(42.0f, result.X);
+            Assert::AreEqual(23.0f, result.Y);
         }
 
         // A test for Size -> Vector2 conversion
@@ -914,6 +924,11 @@ namespace MathTests
 
             Assert::AreEqual(23.0f, result.X);
             Assert::AreEqual(42.0f, result.Y);
+
+            result = Windows::Foundation::Size(42, 23);
+
+            Assert::AreEqual(42.0f, result.X);
+            Assert::AreEqual(23.0f, result.Y);
         }
 
         // A test for Point -> Vector2 conversion
@@ -925,6 +940,11 @@ namespace MathTests
 
             Assert::AreEqual(23.0f, result.X);
             Assert::AreEqual(42.0f, result.Y);
+
+            result = Windows::Foundation::Point(42, 23);
+
+            Assert::AreEqual(42.0f, result.X);
+            Assert::AreEqual(23.0f, result.Y);
         }
 
         struct Vector2_2x

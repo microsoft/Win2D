@@ -27,8 +27,8 @@ namespace Windows
             Vector2();
             Vector2(float x, float y);
             explicit Vector2(float value);
-            explicit Vector2(Windows::Foundation::Point const& value);
-            explicit Vector2(Windows::Foundation::Size const& value);
+            Vector2(Windows::Foundation::Point const& value);
+            Vector2(Windows::Foundation::Size const& value);
 
             // Conversion operators.
             operator Windows::Foundation::Point() const;
