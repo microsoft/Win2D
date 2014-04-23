@@ -1873,12 +1873,15 @@ namespace Windows
 
             float invDet = 1.0f / det;
 
-            result->M11 = matrix.M22 * invDet;
-            result->M12 = -matrix.M12 * invDet;
-            result->M21 = -matrix.M21 * invDet;
-            result->M22 = matrix.M11 * invDet;
-            result->M31 = (matrix.M21 * matrix.M32 - matrix.M31 * matrix.M22) * invDet;
-            result->M32 = (matrix.M31 * matrix.M12 - matrix.M11 * matrix.M32) * invDet;
+            *result = Matrix3x2
+            (
+                matrix.M22 * invDet,
+                -matrix.M12 * invDet,
+                -matrix.M21 * invDet,
+                matrix.M11 * invDet,
+                (matrix.M21 * matrix.M32 - matrix.M31 * matrix.M22) * invDet,
+                (matrix.M31 * matrix.M12 - matrix.M11 * matrix.M32) * invDet
+            );
 
             return true;
         }

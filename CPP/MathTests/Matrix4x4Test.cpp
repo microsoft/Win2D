@@ -161,6 +161,23 @@ namespace MathTests
         }
 
         // A test for Invert (Matrix4x4)
+        TEST_METHOD(Matrix4x4InvertInPlaceTest)
+        {
+            Matrix4x4 mtx =
+                Matrix4x4::CreateRotationX(ToRadians(30.0f)) *
+                Matrix4x4::CreateRotationY(ToRadians(30.0f)) *
+                Matrix4x4::CreateRotationZ(ToRadians(30.0f)) *
+                Matrix4x4::CreateScale(3, 4, 5) *
+                Matrix4x4::CreateTranslation(23, 42, 666);
+
+            Matrix4x4 expected;
+            Assert::IsTrue(Matrix4x4::Invert(mtx, &expected));
+
+            Assert::IsTrue(Matrix4x4::Invert(mtx, &mtx));
+            Assert::IsTrue(Equal(expected, mtx), L"Matrix4x4::Invert did not return the expected value.");
+        }
+
+        // A test for Invert (Matrix4x4)
         TEST_METHOD(Matrix4x4InvertIdentityTest)
         {
             Matrix4x4 mtx = Matrix4x4::Identity();

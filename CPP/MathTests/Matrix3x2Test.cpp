@@ -122,6 +122,20 @@ namespace MathTests
         }
 
         // A test for Invert (Matrix3x2)
+        TEST_METHOD(Matrix3x2InvertInPlaceTest)
+        {
+            Matrix3x2 mtx = Matrix3x2::CreateRotation(ToRadians(30.0f)) * 
+                            Matrix3x2::CreateScale(2, 3) * 
+                            Matrix3x2::CreateTranslation(23, 42);
+
+            Matrix3x2 expected;
+            Assert::IsTrue(Matrix3x2::Invert(mtx, &expected));
+
+            Assert::IsTrue(Matrix3x2::Invert(mtx, &mtx));
+            Assert::IsTrue(Equal(expected, mtx), L"Matrix3x2::Invert did not return the expected value.");
+        }
+
+        // A test for Invert (Matrix3x2)
         TEST_METHOD(Matrix3x2InvertIdentityTest)
         {
             Matrix3x2 mtx = Matrix3x2::Identity();
