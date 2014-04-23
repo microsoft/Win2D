@@ -346,8 +346,7 @@ namespace Windows
 
         inline Vector2& Vector2::operator +=(Vector2 const& value)
         {
-            X += value.X;
-            Y += value.Y;
+            *this = *this + value;
 
             return *this;
         }
@@ -355,45 +354,40 @@ namespace Windows
 
         inline Vector2& Vector2::operator -=(Vector2 const& value)
         {
-            X -= value.X;
-            Y -= value.Y;
-        
+            *this = *this - value;
+
             return *this;
         }
 
 
         inline Vector2& Vector2::operator *=(Vector2 const& value)
         {
-            X *= value.X;
-            Y *= value.Y;
-        
+            *this = *this * value;
+
             return *this;
         }
 
 
         inline Vector2& Vector2::operator *=(float scaleFactor)
         {
-            X *= scaleFactor;
-            Y *= scaleFactor;
-        
+            *this = *this * scaleFactor;
+
             return *this;
         }
 
 
         inline Vector2& Vector2::operator /=(Vector2 const& value)
         {
-            X /= value.X;
-            Y /= value.Y;
-        
+            *this = *this / value;
+
             return *this;
         }
 
 
         inline Vector2& Vector2::operator /=(float divider)
         {
-            X /= divider;
-            Y /= divider;
-        
+            *this = *this / divider;
+
             return *this;
         }
 
@@ -836,9 +830,7 @@ namespace Windows
 
         inline Vector3& Vector3::operator +=(Vector3 const& value)
         {
-            X += value.X;
-            Y += value.Y;
-            Z += value.Z;
+            *this = *this + value;
 
             return *this;
         }
@@ -846,9 +838,7 @@ namespace Windows
 
         inline Vector3& Vector3::operator -=(Vector3 const& value)
         {
-            X -= value.X;
-            Y -= value.Y;
-            Z -= value.Z;
+            *this = *this - value;
 
             return *this;
         }
@@ -856,9 +846,7 @@ namespace Windows
 
         inline Vector3& Vector3::operator *=(Vector3 const& value)
         {
-            X *= value.X;
-            Y *= value.Y;
-            Z *= value.Z;
+            *this = *this * value;
 
             return *this;
         }
@@ -866,9 +854,7 @@ namespace Windows
 
         inline Vector3& Vector3::operator *=(float scaleFactor)
         {
-            X *= scaleFactor;
-            Y *= scaleFactor;
-            Z *= scaleFactor;
+            *this = *this * scaleFactor;
 
             return *this;
         }
@@ -876,9 +862,7 @@ namespace Windows
 
         inline Vector3& Vector3::operator /=(Vector3 const& value)
         {
-            X /= value.X;
-            Y /= value.Y;
-            Z /= value.Z;
+            *this = *this / value;
 
             return *this;
         }
@@ -886,9 +870,7 @@ namespace Windows
 
         inline Vector3& Vector3::operator /=(float divider)
         {
-            X /= divider;
-            Y /= divider;
-            Z /= divider;
+            *this = *this / divider;
 
             return *this;
         }
@@ -1416,10 +1398,7 @@ namespace Windows
 
         inline Vector4& Vector4::operator +=(Vector4 const& value)
         {
-            X += value.X;
-            Y += value.Y;
-            Z += value.Z;
-            W += value.W;
+            *this = *this + value;
 
             return *this;
         }
@@ -1427,10 +1406,7 @@ namespace Windows
 
         inline Vector4& Vector4::operator -=(Vector4 const& value)
         {
-            X -= value.X;
-            Y -= value.Y;
-            Z -= value.Z;
-            W -= value.W;
+            *this = *this - value;
 
             return *this;
         }
@@ -1438,10 +1414,7 @@ namespace Windows
 
         inline Vector4& Vector4::operator *=(Vector4 const& value)
         {
-            X *= value.X;
-            Y *= value.Y;
-            Z *= value.Z;
-            W *= value.W;
+            *this = *this * value;
 
             return *this;
         }
@@ -1449,10 +1422,7 @@ namespace Windows
 
         inline Vector4& Vector4::operator *=(float scaleFactor)
         {
-            X *= scaleFactor;
-            Y *= scaleFactor;
-            Z *= scaleFactor;
-            W *= scaleFactor;
+            *this = *this * scaleFactor;
 
             return *this;
         }
@@ -1460,10 +1430,7 @@ namespace Windows
 
         inline Vector4& Vector4::operator /=(Vector4 const& value)
         {
-            X /= value.X;
-            Y /= value.Y;
-            Z /= value.Z;
-            W /= value.W;
+            *this = *this / value;
 
             return *this;
         }
@@ -1471,10 +1438,7 @@ namespace Windows
 
         inline Vector4& Vector4::operator /=(float divider)
         {
-            X /= divider;
-            Y /= divider;
-            Z /= divider;
-            W /= divider;
+            *this = *this / divider;
 
             return *this;
         }
@@ -2026,7 +1990,7 @@ namespace Windows
 
         inline Matrix3x2& Matrix3x2::operator +=(Matrix3x2 const& value)
         {
-            *this = Add(*this, value);
+            *this = *this + value;
 
             return *this;
         }
@@ -2034,7 +1998,7 @@ namespace Windows
 
         inline Matrix3x2& Matrix3x2::operator -=(Matrix3x2 const& value)
         {
-            *this = Subtract(*this, value);
+            *this = *this - value;
 
             return *this;
         }
@@ -2042,7 +2006,7 @@ namespace Windows
 
         inline Matrix3x2& Matrix3x2::operator *=(Matrix3x2 const& value)
         {
-            *this = Multiply(*this, value);
+            *this = *this * value;
 
             return *this;
         }
@@ -3457,7 +3421,7 @@ namespace Windows
 
         inline Matrix4x4& Matrix4x4::operator +=(Matrix4x4 const& value)
         {
-            *this = Add(*this, value);
+            *this = *this + value;
 
             return *this;
         }
@@ -3465,7 +3429,7 @@ namespace Windows
 
         inline Matrix4x4& Matrix4x4::operator -=(Matrix4x4 const& value)
         {
-            *this = Subtract(*this, value);
+            *this = *this - value;
 
             return *this;
         }
@@ -3473,7 +3437,7 @@ namespace Windows
 
         inline Matrix4x4& Matrix4x4::operator *=(Matrix4x4 const& value)
         {
-            *this = Multiply(*this, value);
+            *this = *this * value;
 
             return *this;
         }
@@ -4181,7 +4145,7 @@ namespace Windows
 
         inline Quaternion& Quaternion::operator +=(Quaternion const& value)
         {
-            *this = Add(*this, value);
+            *this = *this + value;
 
             return *this;
         }
@@ -4189,7 +4153,7 @@ namespace Windows
 
         inline Quaternion& Quaternion::operator -=(Quaternion const& value)
         {
-            *this = Subtract(*this, value);
+            *this = *this - value;
 
             return *this;
         }
@@ -4197,7 +4161,7 @@ namespace Windows
 
         inline Quaternion& Quaternion::operator *=(Quaternion const& value)
         {
-            *this = Multiply(*this, value);
+            *this = *this * value;
 
             return *this;
         }
@@ -4205,7 +4169,7 @@ namespace Windows
 
         inline Quaternion& Quaternion::operator *=(float scaleFactor)
         {
-            *this = Multiply(*this, scaleFactor);
+            *this = *this * scaleFactor;
 
             return *this;
         }
@@ -4213,7 +4177,7 @@ namespace Windows
 
         inline Quaternion& Quaternion::operator /=(Quaternion const& value)
         {
-            *this = Divide(*this, value);
+            *this = *this / value;
 
             return *this;
         }
