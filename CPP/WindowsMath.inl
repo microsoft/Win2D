@@ -394,15 +394,15 @@ namespace Windows
 
         inline bool Vector2::operator ==(Vector2 const& value) const
         {
-            return (X == value.X &&
-                    Y == value.Y);
+            return X == value.X &&
+                   Y == value.Y;
         }
 
 
         inline bool Vector2::operator !=(Vector2 const& value) const
         {
-            return (X != value.X ||
-                    Y != value.Y);
+            return X != value.X ||
+                   Y != value.Y;
         }
 
 
@@ -878,17 +878,17 @@ namespace Windows
 
         inline bool Vector3::operator ==(Vector3 const& value) const
         {
-            return (X == value.X &&
-                    Y == value.Y &&
-                    Z == value.Z);
+            return X == value.X &&
+                   Y == value.Y &&
+                   Z == value.Z;
         }
 
 
         inline bool Vector3::operator !=(Vector3 const& value) const
         {
-            return (X != value.X ||
-                    Y != value.Y ||
-                    Z != value.Z);
+            return X != value.X ||
+                   Y != value.Y ||
+                   Z != value.Z;
         }
 
 
@@ -1446,19 +1446,19 @@ namespace Windows
 
         inline bool Vector4::operator ==(Vector4 const& value) const
         {
-            return (X == value.X &&
-                    Y == value.Y &&
-                    Z == value.Z &&
-                    W == value.W);
+            return X == value.X &&
+                   Y == value.Y &&
+                   Z == value.Z &&
+                   W == value.W;
         }
 
 
         inline bool Vector4::operator !=(Vector4 const& value) const
         {
-            return (X != value.X ||
-                    Y != value.Y ||
-                    Z != value.Z ||
-                    W != value.W);
+            return X != value.X ||
+                   Y != value.Y ||
+                   Z != value.Z ||
+                   W != value.W;
         }
 
 
@@ -1575,31 +1575,15 @@ namespace Windows
 
         inline bool Matrix3x2::IsIdentity() const
         {
-            return M11 == 1.0f && M22 == 1.0f && // Check diagonal element first for early out.
-                                  M12 == 0.0f &&
-                   M21 == 0.0f                &&
-                   M31 == 0.0f && M32 == 0.0f;
+            return M11 == 1 && M22 == 1 && // Check diagonal element first for early out.
+                               M12 == 0 &&
+                   M21 == 0             &&
+                   M31 == 0 && M32 == 0;
         }
 
 
         inline float Matrix3x2::Determinant() const
         {
-            // There isn't actually any such thing as a determinant for a non-square matrix,
-            // but this 3x2 type is really just an optimization of a 3x3 where we happen to
-            // know the rightmost column is always (0, 0, 1). So we expand to 3x3 format:
-            //
-            //  [ M11, M12, 0 ]
-            //  [ M21, M22, 0 ]
-            //  [ M31, M32, 1 ]
-            //
-            // Sum the diagnonal products:
-            //  (M11 * M22 * 1) + (M12 * 0 * M31) + (0 * M21 * M32)
-            //
-            // Subtract the opposite diagonal products:
-            //  (M31 * M22 * 0) + (M32 * 0 * M11) + (1 * M21 * M12)
-            //
-            // Collapse out the constants and oh look, this is just a 2x2 determinant!
-
             return (M11 * M22) - (M21 * M12);
         }
 
@@ -2014,18 +1998,18 @@ namespace Windows
 
         inline bool Matrix3x2::operator ==(Matrix3x2 const& value) const
         {
-            return (M11 == value.M11 && M22 == value.M22 && // Check diagonal element first for early out.
-                                        M12 == value.M12 &&
-                    M21 == value.M21 &&
-                    M31 == value.M31 && M32 == value.M32);
+            return M11 == value.M11 && M22 == value.M22 && // Check diagonal element first for early out.
+                                       M12 == value.M12 &&
+                   M21 == value.M21                     &&
+                   M31 == value.M31 && M32 == value.M32;
         }
 
 
         inline bool Matrix3x2::operator !=(Matrix3x2 const& value) const
         {
-            return (M11 != value.M11 || M12 != value.M12 ||
-                    M21 != value.M21 || M22 != value.M22 ||
-                    M31 != value.M31 || M32 != value.M32);
+            return M11 != value.M11 || M12 != value.M12 ||
+                   M21 != value.M21 || M22 != value.M22 ||
+                   M31 != value.M31 || M32 != value.M32;
         }
 
 
@@ -2107,13 +2091,13 @@ namespace Windows
 
 
         inline bool Matrix4x4::IsIdentity() const
-            {
-                return M11 == 1.0f && M22 == 1.0f && M33 == 1.0f && M44 == 1.0f && // Check diagonal element first for early out.
-                                      M12 == 0.0f && M13 == 0.0f && M14 == 0.0f &&
-                       M21 == 0.0f                && M23 == 0.0f && M24 == 0.0f &&
-                       M31 == 0.0f && M32 == 0.0f                && M34 == 0.0f &&
-                       M41 == 0.0f && M42 == 0.0f && M43 == 0.0f;
-            }
+        {
+            return M11 == 1 && M22 == 1 && M33 == 1 && M44 == 1 && // Check diagonal element first for early out.
+                               M12 == 0 && M13 == 0 && M14 == 0 &&
+                   M21 == 0             && M23 == 0 && M24 == 0 &&
+                   M31 == 0 && M32 == 0             && M34 == 0 &&
+                   M41 == 0 && M42 == 0 && M43 == 0;
+        }
 
 
         inline float Matrix4x4::Determinant() const
@@ -2138,12 +2122,6 @@ namespace Windows
             //   | e f g |
             // d | i j k | = d ( e ( jo - kn ) - f ( io - km ) + g ( in - jm ) )
             //   | m n o |
-            //
-            // Cost of operation
-            // 17 adds and 28 muls.
-            //
-            // add: 6 + 8 + 3 = 17
-            // mul: 12 + 16 = 28
 
             float a = M11, b = M12, c = M13, d = M14;
             float e = M21, f = M22, g = M23, h = M24;
@@ -2165,23 +2143,23 @@ namespace Windows
 
 
         inline Vector3 Matrix4x4::Translation() const
-            {
-                Vector3 ans;
+        {
+            Vector3 ans;
                 
-                ans.X = M41; 
-                ans.Y = M42; 
-                ans.Z = M43;
+            ans.X = M41; 
+            ans.Y = M42; 
+            ans.Z = M43;
                 
-                return ans;
-            }
+            return ans;
+        }
 
 
         inline void Matrix4x4::SetTranslation(Vector3 const& translation)
-            {
-                M41 = translation.X; 
-                M42 = translation.Y;
-                M43 = translation.Z;
-            }
+        {
+            M41 = translation.X; 
+            M42 = translation.Y;
+            M43 = translation.Z;
+        }
 
 
         inline Matrix4x4 Matrix4x4::CreateBillboard(Vector3 const& objectPosition, Vector3 const& cameraPosition, Vector3 const& cameraUpVector, Vector3 const& cameraForwardVector)
@@ -2258,7 +2236,6 @@ namespace Windows
             {
                 zaxis = objectForwardVector;
 
-                // Make sure passed values are useful for compute.
                 dot = Vector3::Dot(rotateAxis, zaxis);
 
                 if (fabs(dot) > minAngle)
@@ -2548,9 +2525,8 @@ namespace Windows
             // a: angle
             // x, y, z: unit vector for axis.
             //
-            // Rotation matrix M can compute by using below equation.
+            // Rotation matrix M can be computed by below equation.
             //
-            //        T               T
             //  M = uu + (cos a)( I-uu ) + (sin a)S
             //
             // Where:
@@ -2564,7 +2540,6 @@ namespace Windows
             //      [ 1 0 0 ]
             //  I = [ 0 1 0 ]
             //      [ 0 0 1 ]
-            //
             //
             //     [  xx+cosa*(1-xx)   yx-cosa*yx-sina*z zx-cosa*xz+sina*y ]
             // M = [ xy-cosa*yx+sina*z    yy+cosa(1-yy)  yz-cosa*yz-sina*x ]
@@ -2964,8 +2939,6 @@ namespace Windows
             // C   = (-1)  | e f g | = + ( a ( fk - gj ) - b ( ek - gi ) + c ( ej - fi ) )
             //  44         | i j k |
             //
-            // Cost of operation
-            // 53 adds, 104 muls, and 1 div.
             float a = matrix.M11, b = matrix.M12, c = matrix.M13, d = matrix.M14;
             float e = matrix.M21, f = matrix.M22, g = matrix.M23, h = matrix.M24;
             float i = matrix.M31, j = matrix.M32, k = matrix.M33, l = matrix.M34;
@@ -3223,7 +3196,6 @@ namespace Windows
             }
             else
             {
-                // generate the quaternion from the matrix
                 *rotation = Quaternion::CreateFromRotationMatrix(matTemp);
             }
 
@@ -3445,20 +3417,20 @@ namespace Windows
 
         inline bool Matrix4x4::operator ==(Matrix4x4 const& value) const
         {
-            return (M11 == value.M11 && M22 == value.M22 && M33 == value.M33 && M44 == value.M44 && // Check diagonal element first for early out.
-                                        M12 == value.M12 && M13 == value.M13 && M14 == value.M14 &&
-                    M21 == value.M21                     && M23 == value.M23 && M24 == value.M24 &&
-                    M31 == value.M31 && M32 == value.M32                     && M34 == value.M34 &&
-                    M41 == value.M41 && M42 == value.M42 && M43 == value.M43);
+            return M11 == value.M11 && M22 == value.M22 && M33 == value.M33 && M44 == value.M44 && // Check diagonal element first for early out.
+                                       M12 == value.M12 && M13 == value.M13 && M14 == value.M14 &&
+                   M21 == value.M21                     && M23 == value.M23 && M24 == value.M24 &&
+                   M31 == value.M31 && M32 == value.M32                     && M34 == value.M34 &&
+                   M41 == value.M41 && M42 == value.M42 && M43 == value.M43;
         }
 
 
         inline bool Matrix4x4::operator !=(Matrix4x4 const& value) const
         {
-            return (M11 != value.M11 || M12 != value.M12 || M13 != value.M13 || M14 != value.M14 ||
-                    M21 != value.M21 || M22 != value.M22 || M23 != value.M23 || M24 != value.M24 ||
-                    M31 != value.M31 || M32 != value.M32 || M33 != value.M33 || M34 != value.M34 ||
-                    M41 != value.M41 || M42 != value.M42 || M43 != value.M43 || M44 != value.M44);
+            return M11 != value.M11 || M12 != value.M12 || M13 != value.M13 || M14 != value.M14 ||
+                   M21 != value.M21 || M22 != value.M22 || M23 != value.M23 || M24 != value.M24 ||
+                   M31 != value.M31 || M32 != value.M32 || M33 != value.M33 || M34 != value.M34 ||
+                   M41 != value.M41 || M42 != value.M42 || M43 != value.M43 || M44 != value.M44;
         }
 
 
@@ -3578,7 +3550,7 @@ namespace Windows
             {
                 result.Normal = value.Normal;
                 result.D = value.D;
-                return result; // It already normalized, so we don't need to farther process.
+                return result;
             }
 
             float fInv = 1.0f / sqrtf(f);
@@ -3683,19 +3655,19 @@ namespace Windows
 
         inline bool Plane::operator ==(Plane const& value) const
         {
-            return (Normal.X == value.Normal.X &&
-                    Normal.Y == value.Normal.Y &&
-                    Normal.Z == value.Normal.Z &&
-                    D == value.D);
+            return Normal.X == value.Normal.X &&
+                   Normal.Y == value.Normal.Y &&
+                   Normal.Z == value.Normal.Z &&
+                   D == value.D;
         }
 
 
         inline bool Plane::operator !=(Plane const& value) const
         {
-            return (Normal.X != value.Normal.X ||
-                    Normal.Y != value.Normal.Y || 
-                    Normal.Z != value.Normal.Z ||
-                    D != value.D);
+            return Normal.X != value.Normal.X ||
+                   Normal.Y != value.Normal.Y || 
+                   Normal.Z != value.Normal.Z ||
+                   D != value.D;
         }
 
 
@@ -3722,7 +3694,10 @@ namespace Windows
 
         inline bool Quaternion::IsIdentity() const
         {
-            return X == 0.0f && Y == 0.0f && Z == 0.0f && W == 1.0f;
+            return X == 0 &&
+                   Y == 0 &&
+                   Z == 0 &&
+                   W == 1;
         }
 
 
@@ -3809,8 +3784,8 @@ namespace Windows
 
         inline Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
         {
-            //  Roll first, about axis the object is facing, then
-            //  pitch upward, then yaw to face into the new heading
+            // Roll first, about axis the object is facing, then
+            // pitch upward, then yaw to face into the new heading
             float sr, cr, sp, cp, sy, cy;
 
             float halfRoll = roll * 0.5f;
@@ -4100,7 +4075,6 @@ namespace Windows
             float q1z = quaternion1.Z;
             float q1w = quaternion1.W;
 
-            //-------------------------------------
             // Inverse part.
             float ls = quaternion2.X * quaternion2.X + quaternion2.Y * quaternion2.Y +
                        quaternion2.Z * quaternion2.Z + quaternion2.W * quaternion2.W;
@@ -4111,10 +4085,7 @@ namespace Windows
             float q2z = -quaternion2.Z * invNorm;
             float q2w = quaternion2.W * invNorm;
 
-            //-------------------------------------
             // Multiply part.
-
-            // cross(av, bv)
             float cx = q1y * q2z - q1z * q2y;
             float cy = q1z * q2x - q1x * q2z;
             float cz = q1x * q2y - q1y * q2x;
@@ -4185,19 +4156,19 @@ namespace Windows
 
         inline bool Quaternion::operator ==(Quaternion const& value) const
         {
-            return (X == value.X &&
-                    Y == value.Y &&
-                    Z == value.Z &&
-                    W == value.W);
+            return X == value.X &&
+                   Y == value.Y &&
+                   Z == value.Z &&
+                   W == value.W;
         }
 
 
         inline bool Quaternion::operator !=(Quaternion const& value) const
         {
-            return (X != value.X ||
-                    Y != value.Y ||
-                    Z != value.Z ||
-                    W != value.W);
+            return X != value.X ||
+                   Y != value.Y ||
+                   Z != value.Z ||
+                   W != value.W;
         }
 
 
@@ -4279,7 +4250,6 @@ namespace Windows
             float q1z = value1.Z;
             float q1w = value1.W;
 
-            //-------------------------------------
             // Inverse part.
             float ls = value2.X * value2.X + value2.Y * value2.Y +
                        value2.Z * value2.Z + value2.W * value2.W;
@@ -4290,10 +4260,7 @@ namespace Windows
             float q2z = -value2.Z * invNorm;
             float q2w = value2.W * invNorm;
 
-            //-------------------------------------
             // Multiply part.
-
-            // cross(av, bv)
             float cx = q1y * q2z - q1z * q2y;
             float cy = q1z * q2x - q1x * q2z;
             float cz = q1x * q2y - q1y * q2x;
