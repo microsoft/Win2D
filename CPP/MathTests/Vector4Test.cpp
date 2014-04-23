@@ -1090,5 +1090,44 @@ namespace MathTests
             Assert::AreEqual(20u, sizeof(Vector4PlusFloat));
             Assert::AreEqual(40u, sizeof(Vector4PlusFloat_2x));
         }
+
+        // A test to make sure this type matches our expectations for blittability
+        TEST_METHOD(Vector4TypeTraitsTest)
+        {
+            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            Assert::IsTrue(std::is_standard_layout<Vector4>::value);
+            Assert::IsFalse(std::is_pod<Vector4>::value);
+            Assert::IsFalse(std::is_trivial<Vector4>::value);
+
+            // Default constructor is present but not trivial.
+            Assert::IsTrue(std::is_default_constructible<Vector4>::value);
+            Assert::IsFalse(std::is_trivially_default_constructible<Vector4>::value);
+            Assert::IsFalse(std::is_nothrow_default_constructible<Vector4>::value);
+
+            // Copy constructor is present and trivial.
+            Assert::IsTrue(std::is_copy_constructible<Vector4>::value);
+            Assert::IsTrue(std::is_trivially_copy_constructible<Vector4>::value);
+            Assert::IsTrue(std::is_nothrow_copy_constructible<Vector4>::value);
+
+            // Move constructor is present and trivial.
+            Assert::IsTrue(std::is_move_constructible<Vector4>::value);
+            Assert::IsTrue(std::is_trivially_move_constructible<Vector4>::value);
+            Assert::IsTrue(std::is_nothrow_move_constructible<Vector4>::value);
+
+            // Copy assignment is present and trivial.
+            Assert::IsTrue(std::is_copy_assignable<Vector4>::value);
+            Assert::IsTrue(std::is_trivially_copy_assignable<Vector4>::value);
+            Assert::IsTrue(std::is_nothrow_copy_assignable<Vector4>::value);
+
+            // Move assignment is present and trivial.
+            Assert::IsTrue(std::is_move_assignable<Vector4>::value);
+            Assert::IsTrue(std::is_trivially_move_assignable<Vector4>::value);
+            Assert::IsTrue(std::is_nothrow_move_assignable<Vector4>::value);
+
+            // Destruction is present and trivial.
+            Assert::IsTrue(std::is_destructible<Vector4>::value);
+            Assert::IsTrue(std::is_trivially_destructible<Vector4>::value);
+            Assert::IsTrue(std::is_nothrow_destructible<Vector4>::value);
+        }
     };
 }

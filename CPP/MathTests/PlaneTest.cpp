@@ -267,5 +267,44 @@ namespace MathTests
             Assert::AreEqual(20u, sizeof(PlanePlusFloat));
             Assert::AreEqual(40u, sizeof(PlanePlusFloat_2x));
         }
+
+        // A test to make sure this type matches our expectations for blittability
+        TEST_METHOD(PlaneTypeTraitsTest)
+        {
+            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            Assert::IsTrue(std::is_standard_layout<Plane>::value);
+            Assert::IsFalse(std::is_pod<Plane>::value);
+            Assert::IsFalse(std::is_trivial<Plane>::value);
+
+            // Default constructor is present but not trivial.
+            Assert::IsTrue(std::is_default_constructible<Plane>::value);
+            Assert::IsFalse(std::is_trivially_default_constructible<Plane>::value);
+            Assert::IsFalse(std::is_nothrow_default_constructible<Plane>::value);
+
+            // Copy constructor is present and trivial.
+            Assert::IsTrue(std::is_copy_constructible<Plane>::value);
+            Assert::IsTrue(std::is_trivially_copy_constructible<Plane>::value);
+            Assert::IsTrue(std::is_nothrow_copy_constructible<Plane>::value);
+
+            // Move constructor is present and trivial.
+            Assert::IsTrue(std::is_move_constructible<Plane>::value);
+            Assert::IsTrue(std::is_trivially_move_constructible<Plane>::value);
+            Assert::IsTrue(std::is_nothrow_move_constructible<Plane>::value);
+
+            // Copy assignment is present and trivial.
+            Assert::IsTrue(std::is_copy_assignable<Plane>::value);
+            Assert::IsTrue(std::is_trivially_copy_assignable<Plane>::value);
+            Assert::IsTrue(std::is_nothrow_copy_assignable<Plane>::value);
+
+            // Move assignment is present and trivial.
+            Assert::IsTrue(std::is_move_assignable<Plane>::value);
+            Assert::IsTrue(std::is_trivially_move_assignable<Plane>::value);
+            Assert::IsTrue(std::is_nothrow_move_assignable<Plane>::value);
+
+            // Destruction is present and trivial.
+            Assert::IsTrue(std::is_destructible<Plane>::value);
+            Assert::IsTrue(std::is_trivially_destructible<Plane>::value);
+            Assert::IsTrue(std::is_nothrow_destructible<Plane>::value);
+        }
     };
 }

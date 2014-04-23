@@ -892,5 +892,44 @@ namespace MathTests
             Assert::AreEqual(16u, sizeof(Vector3PlusFloat));
             Assert::AreEqual(32u, sizeof(Vector3PlusFloat_2x));
         }
+
+        // A test to make sure this type matches our expectations for blittability
+        TEST_METHOD(Vector3TypeTraitsTest)
+        {
+            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            Assert::IsTrue(std::is_standard_layout<Vector3>::value);
+            Assert::IsFalse(std::is_pod<Vector3>::value);
+            Assert::IsFalse(std::is_trivial<Vector3>::value);
+
+            // Default constructor is present but not trivial.
+            Assert::IsTrue(std::is_default_constructible<Vector3>::value);
+            Assert::IsFalse(std::is_trivially_default_constructible<Vector3>::value);
+            Assert::IsFalse(std::is_nothrow_default_constructible<Vector3>::value);
+
+            // Copy constructor is present and trivial.
+            Assert::IsTrue(std::is_copy_constructible<Vector3>::value);
+            Assert::IsTrue(std::is_trivially_copy_constructible<Vector3>::value);
+            Assert::IsTrue(std::is_nothrow_copy_constructible<Vector3>::value);
+
+            // Move constructor is present and trivial.
+            Assert::IsTrue(std::is_move_constructible<Vector3>::value);
+            Assert::IsTrue(std::is_trivially_move_constructible<Vector3>::value);
+            Assert::IsTrue(std::is_nothrow_move_constructible<Vector3>::value);
+
+            // Copy assignment is present and trivial.
+            Assert::IsTrue(std::is_copy_assignable<Vector3>::value);
+            Assert::IsTrue(std::is_trivially_copy_assignable<Vector3>::value);
+            Assert::IsTrue(std::is_nothrow_copy_assignable<Vector3>::value);
+
+            // Move assignment is present and trivial.
+            Assert::IsTrue(std::is_move_assignable<Vector3>::value);
+            Assert::IsTrue(std::is_trivially_move_assignable<Vector3>::value);
+            Assert::IsTrue(std::is_nothrow_move_assignable<Vector3>::value);
+
+            // Destruction is present and trivial.
+            Assert::IsTrue(std::is_destructible<Vector3>::value);
+            Assert::IsTrue(std::is_trivially_destructible<Vector3>::value);
+            Assert::IsTrue(std::is_nothrow_destructible<Vector3>::value);
+        }
     };
 }

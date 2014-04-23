@@ -2129,5 +2129,44 @@ namespace MathTests
             Assert::AreEqual(68u, sizeof(Matrix4x4PlusFloat));
             Assert::AreEqual(136u, sizeof(Matrix4x4PlusFloat_2x));
         }
+
+        // A test to make sure this type matches our expectations for blittability
+        TEST_METHOD(Matrix4x4TypeTraitsTest)
+        {
+            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            Assert::IsTrue(std::is_standard_layout<Matrix4x4>::value);
+            Assert::IsFalse(std::is_pod<Matrix4x4>::value);
+            Assert::IsFalse(std::is_trivial<Matrix4x4>::value);
+
+            // Default constructor is present but not trivial.
+            Assert::IsTrue(std::is_default_constructible<Matrix4x4>::value);
+            Assert::IsFalse(std::is_trivially_default_constructible<Matrix4x4>::value);
+            Assert::IsFalse(std::is_nothrow_default_constructible<Matrix4x4>::value);
+
+            // Copy constructor is present and trivial.
+            Assert::IsTrue(std::is_copy_constructible<Matrix4x4>::value);
+            Assert::IsTrue(std::is_trivially_copy_constructible<Matrix4x4>::value);
+            Assert::IsTrue(std::is_nothrow_copy_constructible<Matrix4x4>::value);
+
+            // Move constructor is present and trivial.
+            Assert::IsTrue(std::is_move_constructible<Matrix4x4>::value);
+            Assert::IsTrue(std::is_trivially_move_constructible<Matrix4x4>::value);
+            Assert::IsTrue(std::is_nothrow_move_constructible<Matrix4x4>::value);
+
+            // Copy assignment is present and trivial.
+            Assert::IsTrue(std::is_copy_assignable<Matrix4x4>::value);
+            Assert::IsTrue(std::is_trivially_copy_assignable<Matrix4x4>::value);
+            Assert::IsTrue(std::is_nothrow_copy_assignable<Matrix4x4>::value);
+
+            // Move assignment is present and trivial.
+            Assert::IsTrue(std::is_move_assignable<Matrix4x4>::value);
+            Assert::IsTrue(std::is_trivially_move_assignable<Matrix4x4>::value);
+            Assert::IsTrue(std::is_nothrow_move_assignable<Matrix4x4>::value);
+
+            // Destruction is present and trivial.
+            Assert::IsTrue(std::is_destructible<Matrix4x4>::value);
+            Assert::IsTrue(std::is_trivially_destructible<Matrix4x4>::value);
+            Assert::IsTrue(std::is_nothrow_destructible<Matrix4x4>::value);
+        }
     };
 }
