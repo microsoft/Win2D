@@ -2,8 +2,6 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //
 
-#include <stdexcept>
-
 namespace Windows
 {
     namespace Math
