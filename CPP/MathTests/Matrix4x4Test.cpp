@@ -891,7 +891,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -905,7 +905,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -919,7 +919,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -933,7 +933,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -967,7 +967,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -981,7 +981,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -995,7 +995,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -1009,7 +1009,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -1023,7 +1023,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -1062,7 +1062,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -1077,7 +1077,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }
@@ -1092,7 +1092,7 @@ namespace MathTests
 
                 Assert::Fail(L"should have thrown");
             }
-            catch (...)
+            catch (Platform::InvalidArgumentException^)
             {
             }
         }

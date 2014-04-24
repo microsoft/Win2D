@@ -1133,8 +1133,8 @@ namespace Windows
             Vector4 result;
 
             float x = value1.X;
-            x = (x> max.X) ? max.X : x;
-            x = (x< min.X) ? min.X : x;
+            x = (x > max.X) ? max.X : x;
+            x = (x < min.X) ? min.X : x;
 
             float y = value1.Y;
             y = (y > max.Y) ? max.Y : y;
@@ -2567,16 +2567,16 @@ namespace Windows
         inline Matrix4x4 Matrix4x4::CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
         {
             if (fieldOfView <= 0.0f || fieldOfView >= DirectX::XM_PI)
-                throw std::invalid_argument("fieldOfView");
+                throw ref new Platform::InvalidArgumentException();
 
             if (nearPlaneDistance <= 0.0f)
-                throw std::invalid_argument("nearPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             if (farPlaneDistance <= 0.0f)
-                throw std::invalid_argument("farPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             if (nearPlaneDistance >= farPlaneDistance )
-                throw std::invalid_argument("nearPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             float yScale = 1.0f / tanf(fieldOfView * 0.5f);
             float xScale = yScale / aspectRatio;
@@ -2603,13 +2603,13 @@ namespace Windows
         inline Matrix4x4 Matrix4x4::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
-                throw std::invalid_argument("nearPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             if (farPlaneDistance <= 0.0f)
-                throw std::invalid_argument("farPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             if (nearPlaneDistance >= farPlaneDistance)
-                throw std::invalid_argument("nearPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             Matrix4x4 result;
 
@@ -2633,13 +2633,13 @@ namespace Windows
         inline Matrix4x4 Matrix4x4::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
-                throw std::invalid_argument("nearPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             if (farPlaneDistance <= 0.0f)
-                throw std::invalid_argument("farPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             if (nearPlaneDistance >= farPlaneDistance)
-                throw std::invalid_argument("nearPlaneDistance");
+                throw ref new Platform::InvalidArgumentException();
 
             Matrix4x4 result;
 
