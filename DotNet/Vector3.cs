@@ -290,13 +290,13 @@ namespace Windows.Math
         }
 
 
-        public static Vector3 Multiply(Vector3 value1, float scaleFactor)
+        public static Vector3 Multiply(Vector3 value1, float value2)
         {
             Vector3 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
-            ans.Z = value1.Z * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
 
             return ans;
         }
@@ -376,25 +376,25 @@ namespace Windows.Math
         }
 
 
-        public static Vector3 operator *(Vector3 value, float scaleFactor)
+        public static Vector3 operator *(Vector3 value1, float value2)
         {
             Vector3 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
-            ans.Z = value.Z * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
 
             return ans;
         }
 
 
-        public static Vector3 operator *(float scaleFactor, Vector3 value)
+        public static Vector3 operator *(float value1, Vector3 value2)
         {
             Vector3 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
-            ans.Z = value.Z * scaleFactor;
+            ans.X = value2.X * value1;
+            ans.Y = value2.Y * value1;
+            ans.Z = value2.Z * value1;
 
             return ans;
         }
@@ -412,15 +412,15 @@ namespace Windows.Math
         }
 
 
-        public static Vector3 operator /(Vector3 value, float divider)
+        public static Vector3 operator /(Vector3 value1, float value2)
         {
             Vector3 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
             
-            ans.X = value.X * invDiv;
-            ans.Y = value.Y * invDiv;
-            ans.Z = value.Z * invDiv;
+            ans.X = value1.X * invDiv;
+            ans.Y = value1.Y * invDiv;
+            ans.Z = value1.Z * invDiv;
 
             return ans;
         }

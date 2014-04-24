@@ -391,132 +391,132 @@ namespace Windows.Math
         }
         
         
-        public static Matrix3x2 Negate(Matrix3x2 matrix)
+        public static Matrix3x2 Negate(Matrix3x2 value)
         {
             Matrix3x2 result;
 
-            result.M11 = -matrix.M11; result.M12 = -matrix.M12;
-            result.M21 = -matrix.M21; result.M22 = -matrix.M22;
-            result.M31 = -matrix.M31; result.M32 = -matrix.M32;
+            result.M11 = -value.M11; result.M12 = -value.M12;
+            result.M21 = -value.M21; result.M22 = -value.M22;
+            result.M31 = -value.M31; result.M32 = -value.M32;
 
             return result;
         }
 
 
-        public static Matrix3x2 Add(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 Add(Matrix3x2 value1, Matrix3x2 value2)
         {
             Matrix3x2 result;
 
-            result.M11 = matrix1.M11 + matrix2.M11; result.M12 = matrix1.M12 + matrix2.M12;
-            result.M21 = matrix1.M21 + matrix2.M21; result.M22 = matrix1.M22 + matrix2.M22;
-            result.M31 = matrix1.M31 + matrix2.M31; result.M32 = matrix1.M32 + matrix2.M32;
+            result.M11 = value1.M11 + value2.M11; result.M12 = value1.M12 + value2.M12;
+            result.M21 = value1.M21 + value2.M21; result.M22 = value1.M22 + value2.M22;
+            result.M31 = value1.M31 + value2.M31; result.M32 = value1.M32 + value2.M32;
 
             return result;
         }
 
 
-        public static Matrix3x2 Subtract(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 Subtract(Matrix3x2 value1, Matrix3x2 value2)
         {
             Matrix3x2 result;
 
-            result.M11 = matrix1.M11 - matrix2.M11; result.M12 = matrix1.M12 - matrix2.M12;
-            result.M21 = matrix1.M21 - matrix2.M21; result.M22 = matrix1.M22 - matrix2.M22;
-            result.M31 = matrix1.M31 - matrix2.M31; result.M32 = matrix1.M32 - matrix2.M32;
+            result.M11 = value1.M11 - value2.M11; result.M12 = value1.M12 - value2.M12;
+            result.M21 = value1.M21 - value2.M21; result.M22 = value1.M22 - value2.M22;
+            result.M31 = value1.M31 - value2.M31; result.M32 = value1.M32 - value2.M32;
 
             return result;
         }
 
 
-        public static Matrix3x2 Multiply(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 Multiply(Matrix3x2 value1, Matrix3x2 value2)
         {
             Matrix3x2 result;
 
             // First row
-            result.M11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21;
-            result.M12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22;
+            result.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21;
+            result.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22;
             
             // Second row
-            result.M21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21;
-            result.M22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22;
+            result.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21;
+            result.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22;
             
             // Third row
-            result.M31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix2.M31;
-            result.M32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix2.M32;
+            result.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value2.M31;
+            result.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value2.M32;
 
             return result;
         }
         
         
-        public static Matrix3x2 operator -(Matrix3x2 matrix1)
+        public static Matrix3x2 operator -(Matrix3x2 value)
         {
             Matrix3x2 m;
 
-            m.M11 = -matrix1.M11; m.M12 = -matrix1.M12;
-            m.M21 = -matrix1.M21; m.M22 = -matrix1.M22;
-            m.M31 = -matrix1.M31; m.M32 = -matrix1.M32;
+            m.M11 = -value.M11; m.M12 = -value.M12;
+            m.M21 = -value.M21; m.M22 = -value.M22;
+            m.M31 = -value.M31; m.M32 = -value.M32;
 
             return m;
         }
 
 
-        public static Matrix3x2 operator +(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 operator +(Matrix3x2 value1, Matrix3x2 value2)
         {
             Matrix3x2 m;
 
-            m.M11 = matrix1.M11 + matrix2.M11; m.M12 = matrix1.M12 + matrix2.M12;
-            m.M21 = matrix1.M21 + matrix2.M21; m.M22 = matrix1.M22 + matrix2.M22;
-            m.M31 = matrix1.M31 + matrix2.M31; m.M32 = matrix1.M32 + matrix2.M32;
+            m.M11 = value1.M11 + value2.M11; m.M12 = value1.M12 + value2.M12;
+            m.M21 = value1.M21 + value2.M21; m.M22 = value1.M22 + value2.M22;
+            m.M31 = value1.M31 + value2.M31; m.M32 = value1.M32 + value2.M32;
 
             return m;
         }
 
 
-        public static Matrix3x2 operator -(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 operator -(Matrix3x2 value1, Matrix3x2 value2)
         {
             Matrix3x2 m;
 
-            m.M11 = matrix1.M11 - matrix2.M11; m.M12 = matrix1.M12 - matrix2.M12;
-            m.M21 = matrix1.M21 - matrix2.M21; m.M22 = matrix1.M22 - matrix2.M22;
-            m.M31 = matrix1.M31 - matrix2.M31; m.M32 = matrix1.M32 - matrix2.M32;
+            m.M11 = value1.M11 - value2.M11; m.M12 = value1.M12 - value2.M12;
+            m.M21 = value1.M21 - value2.M21; m.M22 = value1.M22 - value2.M22;
+            m.M31 = value1.M31 - value2.M31; m.M32 = value1.M32 - value2.M32;
 
             return m;
         }
 
 
-        public static Matrix3x2 operator *(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 operator *(Matrix3x2 value1, Matrix3x2 value2)
         {
             Matrix3x2 m;
 
             // First row
-            m.M11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21;
-            m.M12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22;
+            m.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21;
+            m.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22;
             
             // Second row
-            m.M21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21;
-            m.M22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22;
+            m.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21;
+            m.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22;
             
             // Third row
-            m.M31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix2.M31;
-            m.M32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix2.M32;
+            m.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value2.M31;
+            m.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value2.M32;
 
             return m;
         }
 
 
-        public static bool operator ==(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static bool operator ==(Matrix3x2 value1, Matrix3x2 value2)
         {
-            return (matrix1.M11 == matrix2.M11 && matrix1.M22 == matrix2.M22 && // Check diagonal element first for early out.
-                                                  matrix1.M12 == matrix2.M12 &&
-                    matrix1.M21 == matrix2.M21 &&
-                    matrix1.M31 == matrix2.M31 && matrix1.M32 == matrix2.M32);
+            return (value1.M11 == value2.M11 && value1.M22 == value2.M22 && // Check diagonal element first for early out.
+                                                value1.M12 == value2.M12 &&
+                    value1.M21 == value2.M21 &&
+                    value1.M31 == value2.M31 && value1.M32 == value2.M32);
         }
 
 
-        public static bool operator !=(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static bool operator !=(Matrix3x2 value1, Matrix3x2 value2)
         {
-            return (matrix1.M11 != matrix2.M11 || matrix1.M12 != matrix2.M12 ||
-                    matrix1.M21 != matrix2.M21 || matrix1.M22 != matrix2.M22 ||
-                    matrix1.M31 != matrix2.M31 || matrix1.M32 != matrix2.M32);
+            return (value1.M11 != value2.M11 || value1.M12 != value2.M12 ||
+                    value1.M21 != value2.M21 || value1.M22 != value2.M22 ||
+                    value1.M31 != value2.M31 || value1.M32 != value2.M32);
         }
 
 

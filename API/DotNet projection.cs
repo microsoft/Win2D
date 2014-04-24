@@ -40,18 +40,18 @@ namespace Windows.Math
         public static Vector2 Add(Vector2 value1, Vector2 value2)
         public static Vector2 Subtract(Vector2 value1, Vector2 value2)
         public static Vector2 Multiply(Vector2 value1, Vector2 value2)
-        public static Vector2 Multiply(Vector2 value1, float scaleFactor)
+        public static Vector2 Multiply(Vector2 value1, float value2)
         public static Vector2 Divide(Vector2 value1, Vector2 value2)
-        public static Vector2 Divide(Vector2 value1, float divider)
+        public static Vector2 Divide(Vector2 value1, float value2)
 
         public static Vector2 operator -(Vector2 value)
         public static Vector2 operator +(Vector2 value1, Vector2 value2)
         public static Vector2 operator -(Vector2 value1, Vector2 value2)
         public static Vector2 operator *(Vector2 value1, Vector2 value2)
-        public static Vector2 operator *(Vector2 value, float scaleFactor)
-        public static Vector2 operator *(float scaleFactor, Vector2 value)
+        public static Vector2 operator *(Vector2 value1, float value2)
+        public static Vector2 operator *(float value1, Vector2 value2)
         public static Vector2 operator /(Vector2 value1, Vector2 value2)
-        public static Vector2 operator /(Vector2 value1, float divider)
+        public static Vector2 operator /(Vector2 value1, float value2)
     }
 
 
@@ -90,7 +90,7 @@ namespace Windows.Math
         public static Vector3 Add(Vector3 value1, Vector3 value2)
         public static Vector3 Subtract(Vector3 value1, Vector3 value2)
         public static Vector3 Multiply(Vector3 value1, Vector3 value2)
-        public static Vector3 Multiply(Vector3 value1, float scaleFactor)
+        public static Vector3 Multiply(Vector3 value1, float value2)
         public static Vector3 Divide(Vector3 value1, Vector3 value2)
         public static Vector3 Divide(Vector3 value1, float value2)
 
@@ -98,10 +98,10 @@ namespace Windows.Math
         public static Vector3 operator +(Vector3 value1, Vector3 value2)
         public static Vector3 operator -(Vector3 value1, Vector3 value2)
         public static Vector3 operator *(Vector3 value1, Vector3 value2)
-        public static Vector3 operator *(Vector3 value, float scaleFactor)
-        public static Vector3 operator *(float scaleFactor, Vector3 value)
+        public static Vector3 operator *(Vector3 value1, float value2)
+        public static Vector3 operator *(float value1, Vector3 value2)
         public static Vector3 operator /(Vector3 value1, Vector3 value2)
-        public static Vector3 operator /(Vector3 value, float divider)
+        public static Vector3 operator /(Vector3 value1, float value2)
     }
 
 
@@ -144,18 +144,18 @@ namespace Windows.Math
         public static Vector4 Add(Vector4 value1, Vector4 value2)
         public static Vector4 Subtract(Vector4 value1, Vector4 value2)
         public static Vector4 Multiply(Vector4 value1, Vector4 value2)
-        public static Vector4 Multiply(Vector4 value1, float scaleFactor)
+        public static Vector4 Multiply(Vector4 value1, float value2)
         public static Vector4 Divide(Vector4 value1, Vector4 value2)
-        public static Vector4 Divide(Vector4 value1, float divider)
+        public static Vector4 Divide(Vector4 value1, float value2)
 
         public static Vector4 operator -(Vector4 value)
         public static Vector4 operator +(Vector4 value1, Vector4 value2)
         public static Vector4 operator -(Vector4 value1, Vector4 value2)
         public static Vector4 operator *(Vector4 value1, Vector4 value2)
-        public static Vector4 operator *(Vector4 value1, float scaleFactor)
-        public static Vector4 operator *(float scaleFactor, Vector4 value1)
+        public static Vector4 operator *(Vector4 value1, float value2)
+        public static Vector4 operator *(float value1, Vector4 value2)
         public static Vector4 operator /(Vector4 value1, Vector4 value2)
-        public static Vector4 operator /(Vector4 value1, float divider)
+        public static Vector4 operator /(Vector4 value1, float value2)
     }
 
 
@@ -219,15 +219,15 @@ namespace Windows.Math
         public static Matrix4x4 Transform(Matrix4x4 value, Quaternion rotation)
         public static Matrix4x4 Transpose(Matrix4x4 matrix)
         public static Matrix4x4 Lerp(Matrix4x4 matrix1, Matrix4x4 matrix2, float amount)
-        public static Matrix4x4 Negate(Matrix4x4 matrix)
-        public static Matrix4x4 Add(Matrix4x4 matrix1, Matrix4x4 matrix2)
-        public static Matrix4x4 Subtract(Matrix4x4 matrix1, Matrix4x4 matrix2)
-        public static Matrix4x4 Multiply(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 Negate(Matrix4x4 value)
+        public static Matrix4x4 Add(Matrix4x4 value1, Matrix4x4 value2)
+        public static Matrix4x4 Subtract(Matrix4x4 value1, Matrix4x4 value2)
+        public static Matrix4x4 Multiply(Matrix4x4 value1, Matrix4x4 value2)
 
-        public static Matrix4x4 operator -(Matrix4x4 matrix1)
-        public static Matrix4x4 operator +(Matrix4x4 matrix1, Matrix4x4 matrix2)
-        public static Matrix4x4 operator -(Matrix4x4 matrix1, Matrix4x4 matrix2)
-        public static Matrix4x4 operator *(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 operator -(Matrix4x4 value)
+        public static Matrix4x4 operator +(Matrix4x4 value1, Matrix4x4 value2)
+        public static Matrix4x4 operator -(Matrix4x4 value1, Matrix4x4 value2)
+        public static Matrix4x4 operator *(Matrix4x4 value1, Matrix4x4 value2)
     }
 
 
@@ -261,15 +261,15 @@ namespace Windows.Math
         public static Matrix3x2 CreateRotation(float radians, Vector2 centerPoint)
         public static bool Invert(Matrix3x2 matrix, out Matrix3x2 result)
         public static Matrix3x2 Lerp(Matrix3x2 matrix1, Matrix3x2 matrix2, float amount)
-        public static Matrix3x2 Negate(Matrix3x2 matrix)
-        public static Matrix3x2 Add(Matrix3x2 matrix1, Matrix3x2 matrix2)
-        public static Matrix3x2 Subtract(Matrix3x2 matrix1, Matrix3x2 matrix2)
-        public static Matrix3x2 Multiply(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 Negate(Matrix3x2 value)
+        public static Matrix3x2 Add(Matrix3x2 value1, Matrix3x2 value2)
+        public static Matrix3x2 Subtract(Matrix3x2 value1, Matrix3x2 value2)
+        public static Matrix3x2 Multiply(Matrix3x2 value1, Matrix3x2 value2)
 
-        public static Matrix3x2 operator -(Matrix3x2 matrix1)
-        public static Matrix3x2 operator +(Matrix3x2 matrix1, Matrix3x2 matrix2)
-        public static Matrix3x2 operator -(Matrix3x2 matrix1, Matrix3x2 matrix2)
-        public static Matrix3x2 operator *(Matrix3x2 matrix1, Matrix3x2 matrix2)
+        public static Matrix3x2 operator -(Matrix3x2 value)
+        public static Matrix3x2 operator +(Matrix3x2 value1, Matrix3x2 value2)
+        public static Matrix3x2 operator -(Matrix3x2 value1, Matrix3x2 value2)
+        public static Matrix3x2 operator *(Matrix3x2 value1, Matrix3x2 value2)
     }
 
 
@@ -288,9 +288,9 @@ namespace Windows.Math
 
         public float Length()
         public float LengthSquared()
-        public static Quaternion Normalize(Quaternion quaternion)
+        public static Quaternion Normalize(Quaternion value)
         public static Quaternion Conjugate(Quaternion value)
-        public static Quaternion Inverse(Quaternion quaternion)
+        public static Quaternion Inverse(Quaternion value)
         public static Quaternion CreateFromAxisAngle(Vector3 axis, float angle)
         public static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll)
         public static Quaternion CreateFromRotationMatrix(Matrix4x4 matrix)
@@ -298,19 +298,19 @@ namespace Windows.Math
         public static Quaternion Slerp(Quaternion quaternion1, Quaternion quaternion2, float amount)
         public static Quaternion Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount)
         public static Quaternion Concatenate(Quaternion value1, Quaternion value2)
-        public static Quaternion Negate(Quaternion quaternion)
-        public static Quaternion Add(Quaternion quaternion1, Quaternion quaternion2)
-        public static Quaternion Subtract(Quaternion quaternion1, Quaternion quaternion2)
-        public static Quaternion Multiply(Quaternion quaternion1, Quaternion quaternion2)
-        public static Quaternion Multiply(Quaternion quaternion1, float scaleFactor)
-        public static Quaternion Divide(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion Negate(Quaternion value)
+        public static Quaternion Add(Quaternion value1, Quaternion value2)
+        public static Quaternion Subtract(Quaternion value1, Quaternion value2)
+        public static Quaternion Multiply(Quaternion value1, Quaternion value2)
+        public static Quaternion Multiply(Quaternion value1, float value2)
+        public static Quaternion Divide(Quaternion value1, Quaternion value2)
 
-        public static Quaternion operator -(Quaternion quaternion)
-        public static Quaternion operator +(Quaternion quaternion1, Quaternion quaternion2)
-        public static Quaternion operator -(Quaternion quaternion1, Quaternion quaternion2)
-        public static Quaternion operator *(Quaternion quaternion1, Quaternion quaternion2)
-        public static Quaternion operator *(Quaternion quaternion1, float scaleFactor)
-        public static Quaternion operator /(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion operator -(Quaternion value)
+        public static Quaternion operator +(Quaternion value1, Quaternion value2)
+        public static Quaternion operator -(Quaternion value1, Quaternion value2)
+        public static Quaternion operator *(Quaternion value1, Quaternion value2)
+        public static Quaternion operator *(Quaternion value1, float value2)
+        public static Quaternion operator /(Quaternion value1, Quaternion value2)
     }
 
 

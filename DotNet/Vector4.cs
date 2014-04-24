@@ -363,14 +363,14 @@ namespace Windows.Math
         }
 
 
-        public static Vector4 Multiply(Vector4 value1, float scaleFactor)
+        public static Vector4 Multiply(Vector4 value1, float value2)
         {
             Vector4 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
-            ans.Z = value1.Z * scaleFactor;
-            ans.W = value1.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
@@ -389,11 +389,11 @@ namespace Windows.Math
         }
 
 
-        public static Vector4 Divide(Vector4 value1, float divider)
+        public static Vector4 Divide(Vector4 value1, float value2)
         {
             Vector4 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -456,27 +456,27 @@ namespace Windows.Math
         }
 
 
-        public static Vector4 operator *(Vector4 value1, float scaleFactor)
+        public static Vector4 operator *(Vector4 value1, float value2)
         {
             Vector4 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
-            ans.Z = value1.Z * scaleFactor;
-            ans.W = value1.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
 
 
-        public static Vector4 operator *(float scaleFactor, Vector4 value1)
+        public static Vector4 operator *(float value1, Vector4 value2)
         {
             Vector4 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
-            ans.Z = value1.Z * scaleFactor;
-            ans.W = value1.W * scaleFactor;
+            ans.X = value2.X * value1;
+            ans.Y = value2.Y * value1;
+            ans.Z = value2.Z * value1;
+            ans.W = value2.W * value1;
 
             return ans;
         }
@@ -495,11 +495,11 @@ namespace Windows.Math
         }
 
 
-        public static Vector4 operator /(Vector4 value1, float divider)
+        public static Vector4 operator /(Vector4 value1, float value2)
         {
             Vector4 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
             
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;

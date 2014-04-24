@@ -183,18 +183,21 @@ namespace Windows.Math
         }
 
 
-        public static bool operator ==(Plane lhs, Plane rhs)
+        public static bool operator ==(Plane value1, Plane value2)
         {
-            return lhs.Equals(rhs);
+            return (value1.Normal.X == value2.Normal.X &&
+                    value1.Normal.Y == value2.Normal.Y &&
+                    value1.Normal.Z == value2.Normal.Z &&
+                    value1.D == value2.D);
         }
 
 
-        public static bool operator !=(Plane lhs, Plane rhs)
+        public static bool operator !=(Plane value1, Plane value2)
         {
-            return (lhs.Normal.X != rhs.Normal.X || 
-                    lhs.Normal.Y != rhs.Normal.Y || 
-                    lhs.Normal.Z != rhs.Normal.Z || 
-                    lhs.D != rhs.D);
+            return (value1.Normal.X != value2.Normal.X || 
+                    value1.Normal.Y != value2.Normal.Y || 
+                    value1.Normal.Z != value2.Normal.Z || 
+                    value1.D != value2.D);
         }
 
 

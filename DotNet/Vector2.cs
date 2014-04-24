@@ -303,12 +303,12 @@ namespace Windows.Math
         }
 
 
-        public static Vector2 Multiply(Vector2 value1, float scaleFactor)
+        public static Vector2 Multiply(Vector2 value1, float value2)
         {
             Vector2 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
 
             return ans;
         }
@@ -325,11 +325,11 @@ namespace Windows.Math
         }
 
 
-        public static Vector2 Divide(Vector2 value1, float divider)
+        public static Vector2 Divide(Vector2 value1, float value2)
         {
             Vector2 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -382,23 +382,23 @@ namespace Windows.Math
         }
 
 
-        public static Vector2 operator *(Vector2 value, float scaleFactor)
+        public static Vector2 operator *(Vector2 value1, float value2)
         {
             Vector2 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
 
             return ans;
         }
 
 
-        public static Vector2 operator *(float scaleFactor, Vector2 value)
+        public static Vector2 operator *(float value1, Vector2 value2)
         {
             Vector2 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
+            ans.X = value2.X * value1;
+            ans.Y = value2.Y * value1;
 
             return ans;
         }
@@ -415,11 +415,11 @@ namespace Windows.Math
         }
 
 
-        public static Vector2 operator /(Vector2 value1, float divider)
+        public static Vector2 operator /(Vector2 value1, float value2)
         {
             Vector2 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
             
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;

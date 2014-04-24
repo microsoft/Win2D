@@ -1312,164 +1312,164 @@ namespace Windows.Math
         }
         
         
-        public static Matrix4x4 Negate(Matrix4x4 matrix)
+        public static Matrix4x4 Negate(Matrix4x4 value)
         {
             Matrix4x4 result;
 
-            result.M11 = -matrix.M11; result.M12 = -matrix.M12; result.M13 = -matrix.M13; result.M14 = -matrix.M14;
-            result.M21 = -matrix.M21; result.M22 = -matrix.M22; result.M23 = -matrix.M23; result.M24 = -matrix.M24;
-            result.M31 = -matrix.M31; result.M32 = -matrix.M32; result.M33 = -matrix.M33; result.M34 = -matrix.M34;
-            result.M41 = -matrix.M41; result.M42 = -matrix.M42; result.M43 = -matrix.M43; result.M44 = -matrix.M44;
+            result.M11 = -value.M11; result.M12 = -value.M12; result.M13 = -value.M13; result.M14 = -value.M14;
+            result.M21 = -value.M21; result.M22 = -value.M22; result.M23 = -value.M23; result.M24 = -value.M24;
+            result.M31 = -value.M31; result.M32 = -value.M32; result.M33 = -value.M33; result.M34 = -value.M34;
+            result.M41 = -value.M41; result.M42 = -value.M42; result.M43 = -value.M43; result.M44 = -value.M44;
 
             return result;
         }
 
 
-        public static Matrix4x4 Add(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 Add(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 result;
 
-            result.M11 = matrix1.M11 + matrix2.M11; result.M12 = matrix1.M12 + matrix2.M12; result.M13 = matrix1.M13 + matrix2.M13; result.M14 = matrix1.M14 + matrix2.M14;
-            result.M21 = matrix1.M21 + matrix2.M21; result.M22 = matrix1.M22 + matrix2.M22; result.M23 = matrix1.M23 + matrix2.M23; result.M24 = matrix1.M24 + matrix2.M24;
-            result.M31 = matrix1.M31 + matrix2.M31; result.M32 = matrix1.M32 + matrix2.M32; result.M33 = matrix1.M33 + matrix2.M33; result.M34 = matrix1.M34 + matrix2.M34;
-            result.M41 = matrix1.M41 + matrix2.M41; result.M42 = matrix1.M42 + matrix2.M42; result.M43 = matrix1.M43 + matrix2.M43; result.M44 = matrix1.M44 + matrix2.M44;
+            result.M11 = value1.M11 + value2.M11; result.M12 = value1.M12 + value2.M12; result.M13 = value1.M13 + value2.M13; result.M14 = value1.M14 + value2.M14;
+            result.M21 = value1.M21 + value2.M21; result.M22 = value1.M22 + value2.M22; result.M23 = value1.M23 + value2.M23; result.M24 = value1.M24 + value2.M24;
+            result.M31 = value1.M31 + value2.M31; result.M32 = value1.M32 + value2.M32; result.M33 = value1.M33 + value2.M33; result.M34 = value1.M34 + value2.M34;
+            result.M41 = value1.M41 + value2.M41; result.M42 = value1.M42 + value2.M42; result.M43 = value1.M43 + value2.M43; result.M44 = value1.M44 + value2.M44;
 
             return result;
         }
 
 
-        public static Matrix4x4 Subtract(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 Subtract(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 result;
 
-            result.M11 = matrix1.M11 - matrix2.M11; result.M12 = matrix1.M12 - matrix2.M12; result.M13 = matrix1.M13 - matrix2.M13; result.M14 = matrix1.M14 - matrix2.M14;
-            result.M21 = matrix1.M21 - matrix2.M21; result.M22 = matrix1.M22 - matrix2.M22; result.M23 = matrix1.M23 - matrix2.M23; result.M24 = matrix1.M24 - matrix2.M24;
-            result.M31 = matrix1.M31 - matrix2.M31; result.M32 = matrix1.M32 - matrix2.M32; result.M33 = matrix1.M33 - matrix2.M33; result.M34 = matrix1.M34 - matrix2.M34;
-            result.M41 = matrix1.M41 - matrix2.M41; result.M42 = matrix1.M42 - matrix2.M42; result.M43 = matrix1.M43 - matrix2.M43; result.M44 = matrix1.M44 - matrix2.M44;
+            result.M11 = value1.M11 - value2.M11; result.M12 = value1.M12 - value2.M12; result.M13 = value1.M13 - value2.M13; result.M14 = value1.M14 - value2.M14;
+            result.M21 = value1.M21 - value2.M21; result.M22 = value1.M22 - value2.M22; result.M23 = value1.M23 - value2.M23; result.M24 = value1.M24 - value2.M24;
+            result.M31 = value1.M31 - value2.M31; result.M32 = value1.M32 - value2.M32; result.M33 = value1.M33 - value2.M33; result.M34 = value1.M34 - value2.M34;
+            result.M41 = value1.M41 - value2.M41; result.M42 = value1.M42 - value2.M42; result.M43 = value1.M43 - value2.M43; result.M44 = value1.M44 - value2.M44;
 
             return result;
         }
 
 
-        public static Matrix4x4 Multiply(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 Multiply(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 result;
 
             // First row
-            result.M11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21 + matrix1.M13 * matrix2.M31 + matrix1.M14 * matrix2.M41;
-            result.M12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22 + matrix1.M13 * matrix2.M32 + matrix1.M14 * matrix2.M42;
-            result.M13 = matrix1.M11 * matrix2.M13 + matrix1.M12 * matrix2.M23 + matrix1.M13 * matrix2.M33 + matrix1.M14 * matrix2.M43;
-            result.M14 = matrix1.M11 * matrix2.M14 + matrix1.M12 * matrix2.M24 + matrix1.M13 * matrix2.M34 + matrix1.M14 * matrix2.M44;
+            result.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21 + value1.M13 * value2.M31 + value1.M14 * value2.M41;
+            result.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22 + value1.M13 * value2.M32 + value1.M14 * value2.M42;
+            result.M13 = value1.M11 * value2.M13 + value1.M12 * value2.M23 + value1.M13 * value2.M33 + value1.M14 * value2.M43;
+            result.M14 = value1.M11 * value2.M14 + value1.M12 * value2.M24 + value1.M13 * value2.M34 + value1.M14 * value2.M44;
 
             // Second row
-            result.M21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21 + matrix1.M23 * matrix2.M31 + matrix1.M24 * matrix2.M41;
-            result.M22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22 + matrix1.M23 * matrix2.M32 + matrix1.M24 * matrix2.M42;
-            result.M23 = matrix1.M21 * matrix2.M13 + matrix1.M22 * matrix2.M23 + matrix1.M23 * matrix2.M33 + matrix1.M24 * matrix2.M43;
-            result.M24 = matrix1.M21 * matrix2.M14 + matrix1.M22 * matrix2.M24 + matrix1.M23 * matrix2.M34 + matrix1.M24 * matrix2.M44;
+            result.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21 + value1.M23 * value2.M31 + value1.M24 * value2.M41;
+            result.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22 + value1.M23 * value2.M32 + value1.M24 * value2.M42;
+            result.M23 = value1.M21 * value2.M13 + value1.M22 * value2.M23 + value1.M23 * value2.M33 + value1.M24 * value2.M43;
+            result.M24 = value1.M21 * value2.M14 + value1.M22 * value2.M24 + value1.M23 * value2.M34 + value1.M24 * value2.M44;
 
             // Third row
-            result.M31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix1.M33 * matrix2.M31 + matrix1.M34 * matrix2.M41;
-            result.M32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix1.M33 * matrix2.M32 + matrix1.M34 * matrix2.M42;
-            result.M33 = matrix1.M31 * matrix2.M13 + matrix1.M32 * matrix2.M23 + matrix1.M33 * matrix2.M33 + matrix1.M34 * matrix2.M43;
-            result.M34 = matrix1.M31 * matrix2.M14 + matrix1.M32 * matrix2.M24 + matrix1.M33 * matrix2.M34 + matrix1.M34 * matrix2.M44;
+            result.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value1.M33 * value2.M31 + value1.M34 * value2.M41;
+            result.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value1.M33 * value2.M32 + value1.M34 * value2.M42;
+            result.M33 = value1.M31 * value2.M13 + value1.M32 * value2.M23 + value1.M33 * value2.M33 + value1.M34 * value2.M43;
+            result.M34 = value1.M31 * value2.M14 + value1.M32 * value2.M24 + value1.M33 * value2.M34 + value1.M34 * value2.M44;
 
             // Fourth row
-            result.M41 = matrix1.M41 * matrix2.M11 + matrix1.M42 * matrix2.M21 + matrix1.M43 * matrix2.M31 + matrix1.M44 * matrix2.M41;
-            result.M42 = matrix1.M41 * matrix2.M12 + matrix1.M42 * matrix2.M22 + matrix1.M43 * matrix2.M32 + matrix1.M44 * matrix2.M42;
-            result.M43 = matrix1.M41 * matrix2.M13 + matrix1.M42 * matrix2.M23 + matrix1.M43 * matrix2.M33 + matrix1.M44 * matrix2.M43;
-            result.M44 = matrix1.M41 * matrix2.M14 + matrix1.M42 * matrix2.M24 + matrix1.M43 * matrix2.M34 + matrix1.M44 * matrix2.M44;
+            result.M41 = value1.M41 * value2.M11 + value1.M42 * value2.M21 + value1.M43 * value2.M31 + value1.M44 * value2.M41;
+            result.M42 = value1.M41 * value2.M12 + value1.M42 * value2.M22 + value1.M43 * value2.M32 + value1.M44 * value2.M42;
+            result.M43 = value1.M41 * value2.M13 + value1.M42 * value2.M23 + value1.M43 * value2.M33 + value1.M44 * value2.M43;
+            result.M44 = value1.M41 * value2.M14 + value1.M42 * value2.M24 + value1.M43 * value2.M34 + value1.M44 * value2.M44;
 
             return result;
         }
         
         
-        public static Matrix4x4 operator -(Matrix4x4 matrix1)
+        public static Matrix4x4 operator -(Matrix4x4 value)
         {
             Matrix4x4 m;
 
-            m.M11 = -matrix1.M11; m.M12 = -matrix1.M12; m.M13 = -matrix1.M13; m.M14 = -matrix1.M14;
-            m.M21 = -matrix1.M21; m.M22 = -matrix1.M22; m.M23 = -matrix1.M23; m.M24 = -matrix1.M24;
-            m.M31 = -matrix1.M31; m.M32 = -matrix1.M32; m.M33 = -matrix1.M33; m.M34 = -matrix1.M34;
-            m.M41 = -matrix1.M41; m.M42 = -matrix1.M42; m.M43 = -matrix1.M43; m.M44 = -matrix1.M44;
+            m.M11 = -value.M11; m.M12 = -value.M12; m.M13 = -value.M13; m.M14 = -value.M14;
+            m.M21 = -value.M21; m.M22 = -value.M22; m.M23 = -value.M23; m.M24 = -value.M24;
+            m.M31 = -value.M31; m.M32 = -value.M32; m.M33 = -value.M33; m.M34 = -value.M34;
+            m.M41 = -value.M41; m.M42 = -value.M42; m.M43 = -value.M43; m.M44 = -value.M44;
 
             return m;
         }
 
 
-        public static Matrix4x4 operator +(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 operator +(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 m;
 
-            m.M11 = matrix1.M11 + matrix2.M11; m.M12 = matrix1.M12 + matrix2.M12; m.M13 = matrix1.M13 + matrix2.M13; m.M14 = matrix1.M14 + matrix2.M14;
-            m.M21 = matrix1.M21 + matrix2.M21; m.M22 = matrix1.M22 + matrix2.M22; m.M23 = matrix1.M23 + matrix2.M23; m.M24 = matrix1.M24 + matrix2.M24;
-            m.M31 = matrix1.M31 + matrix2.M31; m.M32 = matrix1.M32 + matrix2.M32; m.M33 = matrix1.M33 + matrix2.M33; m.M34 = matrix1.M34 + matrix2.M34;
-            m.M41 = matrix1.M41 + matrix2.M41; m.M42 = matrix1.M42 + matrix2.M42; m.M43 = matrix1.M43 + matrix2.M43; m.M44 = matrix1.M44 + matrix2.M44;
+            m.M11 = value1.M11 + value2.M11; m.M12 = value1.M12 + value2.M12; m.M13 = value1.M13 + value2.M13; m.M14 = value1.M14 + value2.M14;
+            m.M21 = value1.M21 + value2.M21; m.M22 = value1.M22 + value2.M22; m.M23 = value1.M23 + value2.M23; m.M24 = value1.M24 + value2.M24;
+            m.M31 = value1.M31 + value2.M31; m.M32 = value1.M32 + value2.M32; m.M33 = value1.M33 + value2.M33; m.M34 = value1.M34 + value2.M34;
+            m.M41 = value1.M41 + value2.M41; m.M42 = value1.M42 + value2.M42; m.M43 = value1.M43 + value2.M43; m.M44 = value1.M44 + value2.M44;
 
             return m;
         }
 
 
-        public static Matrix4x4 operator -(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 operator -(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 m;
 
-            m.M11 = matrix1.M11 - matrix2.M11; m.M12 = matrix1.M12 - matrix2.M12; m.M13 = matrix1.M13 - matrix2.M13; m.M14 = matrix1.M14 - matrix2.M14;
-            m.M21 = matrix1.M21 - matrix2.M21; m.M22 = matrix1.M22 - matrix2.M22; m.M23 = matrix1.M23 - matrix2.M23; m.M24 = matrix1.M24 - matrix2.M24;
-            m.M31 = matrix1.M31 - matrix2.M31; m.M32 = matrix1.M32 - matrix2.M32; m.M33 = matrix1.M33 - matrix2.M33; m.M34 = matrix1.M34 - matrix2.M34;
-            m.M41 = matrix1.M41 - matrix2.M41; m.M42 = matrix1.M42 - matrix2.M42; m.M43 = matrix1.M43 - matrix2.M43; m.M44 = matrix1.M44 - matrix2.M44;
+            m.M11 = value1.M11 - value2.M11; m.M12 = value1.M12 - value2.M12; m.M13 = value1.M13 - value2.M13; m.M14 = value1.M14 - value2.M14;
+            m.M21 = value1.M21 - value2.M21; m.M22 = value1.M22 - value2.M22; m.M23 = value1.M23 - value2.M23; m.M24 = value1.M24 - value2.M24;
+            m.M31 = value1.M31 - value2.M31; m.M32 = value1.M32 - value2.M32; m.M33 = value1.M33 - value2.M33; m.M34 = value1.M34 - value2.M34;
+            m.M41 = value1.M41 - value2.M41; m.M42 = value1.M42 - value2.M42; m.M43 = value1.M43 - value2.M43; m.M44 = value1.M44 - value2.M44;
 
             return m;
         }
 
 
-        public static Matrix4x4 operator *(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static Matrix4x4 operator *(Matrix4x4 value1, Matrix4x4 value2)
         {
             Matrix4x4 m;
 
             // First row
-            m.M11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21 + matrix1.M13 * matrix2.M31 + matrix1.M14 * matrix2.M41;
-            m.M12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22 + matrix1.M13 * matrix2.M32 + matrix1.M14 * matrix2.M42;
-            m.M13 = matrix1.M11 * matrix2.M13 + matrix1.M12 * matrix2.M23 + matrix1.M13 * matrix2.M33 + matrix1.M14 * matrix2.M43;
-            m.M14 = matrix1.M11 * matrix2.M14 + matrix1.M12 * matrix2.M24 + matrix1.M13 * matrix2.M34 + matrix1.M14 * matrix2.M44;
+            m.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21 + value1.M13 * value2.M31 + value1.M14 * value2.M41;
+            m.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22 + value1.M13 * value2.M32 + value1.M14 * value2.M42;
+            m.M13 = value1.M11 * value2.M13 + value1.M12 * value2.M23 + value1.M13 * value2.M33 + value1.M14 * value2.M43;
+            m.M14 = value1.M11 * value2.M14 + value1.M12 * value2.M24 + value1.M13 * value2.M34 + value1.M14 * value2.M44;
             
             // Second row
-            m.M21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21 + matrix1.M23 * matrix2.M31 + matrix1.M24 * matrix2.M41;
-            m.M22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22 + matrix1.M23 * matrix2.M32 + matrix1.M24 * matrix2.M42;
-            m.M23 = matrix1.M21 * matrix2.M13 + matrix1.M22 * matrix2.M23 + matrix1.M23 * matrix2.M33 + matrix1.M24 * matrix2.M43;
-            m.M24 = matrix1.M21 * matrix2.M14 + matrix1.M22 * matrix2.M24 + matrix1.M23 * matrix2.M34 + matrix1.M24 * matrix2.M44;
+            m.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21 + value1.M23 * value2.M31 + value1.M24 * value2.M41;
+            m.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22 + value1.M23 * value2.M32 + value1.M24 * value2.M42;
+            m.M23 = value1.M21 * value2.M13 + value1.M22 * value2.M23 + value1.M23 * value2.M33 + value1.M24 * value2.M43;
+            m.M24 = value1.M21 * value2.M14 + value1.M22 * value2.M24 + value1.M23 * value2.M34 + value1.M24 * value2.M44;
             
             // Third row
-            m.M31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix1.M33 * matrix2.M31 + matrix1.M34 * matrix2.M41;
-            m.M32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix1.M33 * matrix2.M32 + matrix1.M34 * matrix2.M42;
-            m.M33 = matrix1.M31 * matrix2.M13 + matrix1.M32 * matrix2.M23 + matrix1.M33 * matrix2.M33 + matrix1.M34 * matrix2.M43;
-            m.M34 = matrix1.M31 * matrix2.M14 + matrix1.M32 * matrix2.M24 + matrix1.M33 * matrix2.M34 + matrix1.M34 * matrix2.M44;
+            m.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value1.M33 * value2.M31 + value1.M34 * value2.M41;
+            m.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value1.M33 * value2.M32 + value1.M34 * value2.M42;
+            m.M33 = value1.M31 * value2.M13 + value1.M32 * value2.M23 + value1.M33 * value2.M33 + value1.M34 * value2.M43;
+            m.M34 = value1.M31 * value2.M14 + value1.M32 * value2.M24 + value1.M33 * value2.M34 + value1.M34 * value2.M44;
             
             // Fourth row
-            m.M41 = matrix1.M41 * matrix2.M11 + matrix1.M42 * matrix2.M21 + matrix1.M43 * matrix2.M31 + matrix1.M44 * matrix2.M41;
-            m.M42 = matrix1.M41 * matrix2.M12 + matrix1.M42 * matrix2.M22 + matrix1.M43 * matrix2.M32 + matrix1.M44 * matrix2.M42;
-            m.M43 = matrix1.M41 * matrix2.M13 + matrix1.M42 * matrix2.M23 + matrix1.M43 * matrix2.M33 + matrix1.M44 * matrix2.M43;
-            m.M44 = matrix1.M41 * matrix2.M14 + matrix1.M42 * matrix2.M24 + matrix1.M43 * matrix2.M34 + matrix1.M44 * matrix2.M44;
+            m.M41 = value1.M41 * value2.M11 + value1.M42 * value2.M21 + value1.M43 * value2.M31 + value1.M44 * value2.M41;
+            m.M42 = value1.M41 * value2.M12 + value1.M42 * value2.M22 + value1.M43 * value2.M32 + value1.M44 * value2.M42;
+            m.M43 = value1.M41 * value2.M13 + value1.M42 * value2.M23 + value1.M43 * value2.M33 + value1.M44 * value2.M43;
+            m.M44 = value1.M41 * value2.M14 + value1.M42 * value2.M24 + value1.M43 * value2.M34 + value1.M44 * value2.M44;
 
             return m;
         }
 
 
-        public static bool operator ==(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static bool operator ==(Matrix4x4 value1, Matrix4x4 value2)
         {
-            return (matrix1.M11 == matrix2.M11 && matrix1.M22 == matrix2.M22 && matrix1.M33 == matrix2.M33 && matrix1.M44 == matrix2.M44 && // Check diagonal element first for early out.
-                                                  matrix1.M12 == matrix2.M12 && matrix1.M13 == matrix2.M13 && matrix1.M14 == matrix2.M14 &&
-                    matrix1.M21 == matrix2.M21                               && matrix1.M23 == matrix2.M23 && matrix1.M24 == matrix2.M24 &&
-                    matrix1.M31 == matrix2.M31 && matrix1.M32 == matrix2.M32                               && matrix1.M34 == matrix2.M34 &&
-                    matrix1.M41 == matrix2.M41 && matrix1.M42 == matrix2.M42 && matrix1.M43 == matrix2.M43);
+            return (value1.M11 == value2.M11 && value1.M22 == value2.M22 && value1.M33 == value2.M33 && value1.M44 == value2.M44 && // Check diagonal element first for early out.
+                                                value1.M12 == value2.M12 && value1.M13 == value2.M13 && value1.M14 == value2.M14 &&
+                    value1.M21 == value2.M21                             && value1.M23 == value2.M23 && value1.M24 == value2.M24 &&
+                    value1.M31 == value2.M31 && value1.M32 == value2.M32                             && value1.M34 == value2.M34 &&
+                    value1.M41 == value2.M41 && value1.M42 == value2.M42 && value1.M43 == value2.M43);
         }
 
 
-        public static bool operator !=(Matrix4x4 matrix1, Matrix4x4 matrix2)
+        public static bool operator !=(Matrix4x4 value1, Matrix4x4 value2)
         {
-            return (matrix1.M11 != matrix2.M11 || matrix1.M12 != matrix2.M12 || matrix1.M13 != matrix2.M13 || matrix1.M14 != matrix2.M14 ||
-                    matrix1.M21 != matrix2.M21 || matrix1.M22 != matrix2.M22 || matrix1.M23 != matrix2.M23 || matrix1.M24 != matrix2.M24 ||
-                    matrix1.M31 != matrix2.M31 || matrix1.M32 != matrix2.M32 || matrix1.M33 != matrix2.M33 || matrix1.M34 != matrix2.M34 ||
-                    matrix1.M41 != matrix2.M41 || matrix1.M42 != matrix2.M42 || matrix1.M43 != matrix2.M43 || matrix1.M44 != matrix2.M44);
+            return (value1.M11 != value2.M11 || value1.M12 != value2.M12 || value1.M13 != value2.M13 || value1.M14 != value2.M14 ||
+                    value1.M21 != value2.M21 || value1.M22 != value2.M22 || value1.M23 != value2.M23 || value1.M24 != value2.M24 ||
+                    value1.M31 != value2.M31 || value1.M32 != value2.M32 || value1.M33 != value2.M33 || value1.M34 != value2.M34 ||
+                    value1.M41 != value2.M41 || value1.M42 != value2.M42 || value1.M43 != value2.M43 || value1.M44 != value2.M44);
         }
 
 

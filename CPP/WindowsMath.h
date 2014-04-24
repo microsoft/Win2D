@@ -63,18 +63,18 @@ namespace Windows
             static Vector2 Add(Vector2 const& value1, Vector2 const& value2);
             static Vector2 Subtract(Vector2 const& value1, Vector2 const& value2);
             static Vector2 Multiply(Vector2 const& value1, Vector2 const& value2);
-            static Vector2 Multiply(Vector2 const& value1, float scaleFactor);
+            static Vector2 Multiply(Vector2 const& value1, float value2);
             static Vector2 Divide(Vector2 const& value1, Vector2 const& value2);
-            static Vector2 Divide(Vector2 const& value1, float divider);
+            static Vector2 Divide(Vector2 const& value1, float value2);
 
             // Operator overloads.
             Vector2 operator -() const;
             Vector2& operator +=(Vector2 const& value);
             Vector2& operator -=(Vector2 const& value);
             Vector2& operator *=(Vector2 const& value);
-            Vector2& operator *=(float scaleFactor);
+            Vector2& operator *=(float value);
             Vector2& operator /=(Vector2 const& value);
-            Vector2& operator /=(float divider);
+            Vector2& operator /=(float value);
             bool operator ==(Vector2 const& value) const;
             bool operator !=(Vector2 const& value) const;
         };
@@ -83,10 +83,10 @@ namespace Windows
         Vector2 operator +(Vector2 const& value1, Vector2 const& value2);
         Vector2 operator -(Vector2 const& value1, Vector2 const& value2);
         Vector2 operator *(Vector2 const& value1, Vector2 const& value2);
-        Vector2 operator *(Vector2 const& value, float scaleFactor);
-        Vector2 operator *(float scaleFactor, Vector2 const& value);
+        Vector2 operator *(Vector2 const& value1, float value2);
+        Vector2 operator *(float value1, Vector2 const& value2);
         Vector2 operator /(Vector2 const& value1, Vector2 const& value2);
-        Vector2 operator /(Vector2 const& value1, float divider);
+        Vector2 operator /(Vector2 const& value1, float value2);
 
 
         struct Vector3
@@ -128,7 +128,7 @@ namespace Windows
             static Vector3 Add(Vector3 const& value1, Vector3 const& value2);
             static Vector3 Subtract(Vector3 const& value1, Vector3 const& value2);
             static Vector3 Multiply(Vector3 const& value1, Vector3 const& value2);
-            static Vector3 Multiply(Vector3 const& value1, float scaleFactor);
+            static Vector3 Multiply(Vector3 const& value1, float value2);
             static Vector3 Divide(Vector3 const& value1, Vector3 const& value2);
             static Vector3 Divide(Vector3 const& value1, float value2);
 
@@ -137,9 +137,9 @@ namespace Windows
             Vector3& operator +=(Vector3 const& value);
             Vector3& operator -=(Vector3 const& value);
             Vector3& operator *=(Vector3 const& value);
-            Vector3& operator *=(float scaleFactor);
+            Vector3& operator *=(float value);
             Vector3& operator /=(Vector3 const& value);
-            Vector3& operator /=(float divider);
+            Vector3& operator /=(float value);
             bool operator ==(Vector3 const& value) const;
             bool operator !=(Vector3 const& value) const;
         };
@@ -148,10 +148,10 @@ namespace Windows
         Vector3 operator +(Vector3 const& value1, Vector3 const& value2);
         Vector3 operator -(Vector3 const& value1, Vector3 const& value2);
         Vector3 operator *(Vector3 const& value1, Vector3 const& value2);
-        Vector3 operator *(Vector3 const& value, float scaleFactor);
-        Vector3 operator *(float scaleFactor, Vector3 const& value);
+        Vector3 operator *(Vector3 const& value1, float value2);
+        Vector3 operator *(float value1, Vector3 const& value2);
         Vector3 operator /(Vector3 const& value1, Vector3 const& value2);
-        Vector3 operator /(Vector3 const& value1, float divider);
+        Vector3 operator /(Vector3 const& value1, float value2);
 
 
         struct Vector4
@@ -196,18 +196,18 @@ namespace Windows
             static Vector4 Add(Vector4 const& value1, Vector4 const& value2);
             static Vector4 Subtract(Vector4 const& value1, Vector4 const& value2);
             static Vector4 Multiply(Vector4 const& value1, Vector4 const& value2);
-            static Vector4 Multiply(Vector4 const& value1, float scaleFactor);
+            static Vector4 Multiply(Vector4 const& value1, float value2);
             static Vector4 Divide(Vector4 const& value1, Vector4 const& value2);
-            static Vector4 Divide(Vector4 const& value1, float divider);
+            static Vector4 Divide(Vector4 const& value1, float value2);
 
             // Operator overloads.
             Vector4 operator -() const;
             Vector4& operator +=(Vector4 const& value);
             Vector4& operator -=(Vector4 const& value);
             Vector4& operator *=(Vector4 const& value);
-            Vector4& operator *=(float scaleFactor);
+            Vector4& operator *=(float value);
             Vector4& operator /=(Vector4 const& value);
-            Vector4& operator /=(float divider);
+            Vector4& operator /=(float value);
             bool operator ==(Vector4 const& value) const;
             bool operator !=(Vector4 const& value) const;
         };
@@ -216,10 +216,10 @@ namespace Windows
         Vector4 operator +(Vector4 const& value1, Vector4 const& value2);
         Vector4 operator -(Vector4 const& value1, Vector4 const& value2);
         Vector4 operator *(Vector4 const& value1, Vector4 const& value2);
-        Vector4 operator *(Vector4 const& value, float scaleFactor);
-        Vector4 operator *(float scaleFactor, Vector4 const& value);
+        Vector4 operator *(Vector4 const& value1, float value2);
+        Vector4 operator *(float value1, Vector4 const& value2);
         Vector4 operator /(Vector4 const& value1, Vector4 const& value2);
-        Vector4 operator /(Vector4 const& value1, float divider);
+        Vector4 operator /(Vector4 const& value1, float value2);
 
 
         struct Matrix3x2
@@ -256,10 +256,10 @@ namespace Windows
             static Matrix3x2 CreateRotation(float radians, Vector2 const& centerPoint);
             static bool Invert(Matrix3x2 const& matrix, _Out_ Matrix3x2* result);
             static Matrix3x2 Lerp(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2, float amount);
-            static Matrix3x2 Negate(Matrix3x2 const& matrix);
-            static Matrix3x2 Add(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2);
-            static Matrix3x2 Subtract(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2);
-            static Matrix3x2 Multiply(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2);
+            static Matrix3x2 Negate(Matrix3x2 const& value);
+            static Matrix3x2 Add(Matrix3x2 const& value1, Matrix3x2 const& value2);
+            static Matrix3x2 Subtract(Matrix3x2 const& value1, Matrix3x2 const& value2);
+            static Matrix3x2 Multiply(Matrix3x2 const& value1, Matrix3x2 const& value2);
 
             // Operator overloads.
             Matrix3x2 operator -() const;
@@ -331,10 +331,10 @@ namespace Windows
             static Matrix4x4 Transform(Matrix4x4 const& value, Quaternion const& rotation);
             static Matrix4x4 Transpose(Matrix4x4 const& matrix);
             static Matrix4x4 Lerp(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2, float amount);
-            static Matrix4x4 Negate(Matrix4x4 const& matrix);
-            static Matrix4x4 Add(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2);
-            static Matrix4x4 Subtract(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2);
-            static Matrix4x4 Multiply(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2);
+            static Matrix4x4 Negate(Matrix4x4 const& value);
+            static Matrix4x4 Add(Matrix4x4 const& value1, Matrix4x4 const& value2);
+            static Matrix4x4 Subtract(Matrix4x4 const& value1, Matrix4x4 const& value2);
+            static Matrix4x4 Multiply(Matrix4x4 const& value1, Matrix4x4 const& value2);
 
             // Operator overloads.
             Matrix4x4 operator -() const;
@@ -395,9 +395,9 @@ namespace Windows
             float LengthSquared() const;
 
             // Static methods.
-            static Quaternion Normalize(Quaternion const& quaternion);
+            static Quaternion Normalize(Quaternion const& value);
             static Quaternion Conjugate(Quaternion const& value);
-            static Quaternion Inverse(Quaternion const& quaternion);
+            static Quaternion Inverse(Quaternion const& value);
             static Quaternion CreateFromAxisAngle(Vector3 const& axis, float angle);
             static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll);
             static Quaternion CreateFromRotationMatrix(Matrix4x4 const& matrix);
@@ -405,19 +405,19 @@ namespace Windows
             static Quaternion Slerp(Quaternion const& quaternion1, Quaternion const& quaternion2, float amount);
             static Quaternion Lerp(Quaternion const& quaternion1, Quaternion const& quaternion2, float amount);
             static Quaternion Concatenate(Quaternion const& value1, Quaternion const& value2);
-            static Quaternion Negate(Quaternion const& quaternion);
-            static Quaternion Add(Quaternion const& quaternion1, Quaternion const& quaternion2);
-            static Quaternion Subtract(Quaternion const& quaternion1, Quaternion const& quaternion2);
-            static Quaternion Multiply(Quaternion const& quaternion1, Quaternion const& quaternion2);
-            static Quaternion Multiply(Quaternion const& quaternion1, float scaleFactor);
-            static Quaternion Divide(Quaternion const& quaternion1, Quaternion const& quaternion2);
+            static Quaternion Negate(Quaternion const& value);
+            static Quaternion Add(Quaternion const& value1, Quaternion const& value2);
+            static Quaternion Subtract(Quaternion const& value1, Quaternion const& value2);
+            static Quaternion Multiply(Quaternion const& value1, Quaternion const& value2);
+            static Quaternion Multiply(Quaternion const& value1, float value2);
+            static Quaternion Divide(Quaternion const& value1, Quaternion const& value2);
 
             // Operator overloads.
             Quaternion operator -() const;
             Quaternion& operator +=(Quaternion const& value);
             Quaternion& operator -=(Quaternion const& value);
             Quaternion& operator *=(Quaternion const& value);
-            Quaternion& operator *=(float scaleFactor);
+            Quaternion& operator *=(float value);
             Quaternion& operator /=(Quaternion const& value);
             bool operator ==(Quaternion const& value) const;
             bool operator !=(Quaternion const& value) const;
@@ -427,7 +427,7 @@ namespace Windows
         Quaternion operator +(Quaternion const& value1, Quaternion const& value2);
         Quaternion operator -(Quaternion const& value1, Quaternion const& value2);
         Quaternion operator *(Quaternion const& value1, Quaternion const& value2);
-        Quaternion operator *(Quaternion const& value, float scaleFactor);
+        Quaternion operator *(Quaternion const& value1, float value2);
         Quaternion operator /(Quaternion const& value1, Quaternion const& value2);
     }
 }

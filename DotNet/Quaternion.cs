@@ -61,18 +61,18 @@ namespace Windows.Math
         }
 
 
-        public static Quaternion Normalize(Quaternion quaternion)
+        public static Quaternion Normalize(Quaternion value)
         {
             Quaternion ans;
 
-            float ls = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
+            float ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W;
             
             float invNorm = 1.0f / (float)SM.Sqrt((double)ls);
 
-            ans.X = quaternion.X * invNorm;
-            ans.Y = quaternion.Y * invNorm;
-            ans.Z = quaternion.Z * invNorm;
-            ans.W = quaternion.W * invNorm;
+            ans.X = value.X * invNorm;
+            ans.Y = value.Y * invNorm;
+            ans.Z = value.Z * invNorm;
+            ans.W = value.W * invNorm;
 
             return ans;
         }
@@ -91,7 +91,7 @@ namespace Windows.Math
         }
 
 
-        public static Quaternion Inverse(Quaternion quaternion)
+        public static Quaternion Inverse(Quaternion value)
         {
             //  -1   (       a              -v       )
             // q   = ( -------------   ------------- )
@@ -99,13 +99,13 @@ namespace Windows.Math
 
             Quaternion ans;
             
-            float ls = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
+            float ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W;
             float invNorm = 1.0f / ls;
 
-            ans.X = -quaternion.X * invNorm;
-            ans.Y = -quaternion.Y * invNorm;
-            ans.Z = -quaternion.Z * invNorm;
-            ans.W = quaternion.W * invNorm;
+            ans.X = -value.X * invNorm;
+            ans.Y = -value.Y * invNorm;
+            ans.Z = -value.Z * invNorm;
+            ans.W = value.W * invNorm;
 
             return ans;
         }
@@ -330,58 +330,58 @@ namespace Windows.Math
         }
 
 
-        public static Quaternion Negate(Quaternion quaternion)
+        public static Quaternion Negate(Quaternion value)
         {
             Quaternion ans;
 
-            ans.X = -quaternion.X;
-            ans.Y = -quaternion.Y;
-            ans.Z = -quaternion.Z;
-            ans.W = -quaternion.W;
+            ans.X = -value.X;
+            ans.Y = -value.Y;
+            ans.Z = -value.Z;
+            ans.W = -value.W;
 
             return ans;
         }
 
 
-        public static Quaternion Add(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion Add(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X + quaternion2.X;
-            ans.Y = quaternion1.Y + quaternion2.Y;
-            ans.Z = quaternion1.Z + quaternion2.Z;
-            ans.W = quaternion1.W + quaternion2.W;
+            ans.X = value1.X + value2.X;
+            ans.Y = value1.Y + value2.Y;
+            ans.Z = value1.Z + value2.Z;
+            ans.W = value1.W + value2.W;
 
             return ans;
         }
 
 
-        public static Quaternion Subtract(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion Subtract(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X - quaternion2.X;
-            ans.Y = quaternion1.Y - quaternion2.Y;
-            ans.Z = quaternion1.Z - quaternion2.Z;
-            ans.W = quaternion1.W - quaternion2.W;
+            ans.X = value1.X - value2.X;
+            ans.Y = value1.Y - value2.Y;
+            ans.Z = value1.Z - value2.Z;
+            ans.W = value1.W - value2.W;
 
             return ans;
         }
 
 
-        public static Quaternion Multiply(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion Multiply(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            float q1x = quaternion1.X;
-            float q1y = quaternion1.Y;
-            float q1z = quaternion1.Z;
-            float q1w = quaternion1.W;
+            float q1x = value1.X;
+            float q1y = value1.Y;
+            float q1z = value1.Z;
+            float q1w = value1.W;
 
-            float q2x = quaternion2.X;
-            float q2y = quaternion2.Y;
-            float q2z = quaternion2.Z;
-            float q2w = quaternion2.W;
+            float q2x = value2.X;
+            float q2y = value2.Y;
+            float q2z = value2.Z;
+            float q2w = value2.W;
 
             // cross(av, bv)
             float cx = q1y * q2z - q1z * q2y;
@@ -399,38 +399,38 @@ namespace Windows.Math
         }
 
 
-        public static Quaternion Multiply(Quaternion quaternion1, float scaleFactor)
+        public static Quaternion Multiply(Quaternion value1, float value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X * scaleFactor;
-            ans.Y = quaternion1.Y * scaleFactor;
-            ans.Z = quaternion1.Z * scaleFactor;
-            ans.W = quaternion1.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
 
 
-        public static Quaternion Divide(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion Divide(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            float q1x = quaternion1.X;
-            float q1y = quaternion1.Y;
-            float q1z = quaternion1.Z;
-            float q1w = quaternion1.W;
+            float q1x = value1.X;
+            float q1y = value1.Y;
+            float q1z = value1.Z;
+            float q1w = value1.W;
 
             //-------------------------------------
             // Inverse part.
-            float ls = quaternion2.X * quaternion2.X + quaternion2.Y * quaternion2.Y +
-                       quaternion2.Z * quaternion2.Z + quaternion2.W * quaternion2.W;
+            float ls = value2.X * value2.X + value2.Y * value2.Y +
+                       value2.Z * value2.Z + value2.W * value2.W;
             float invNorm = 1.0f / ls;
 
-            float q2x = -quaternion2.X * invNorm;
-            float q2y = -quaternion2.Y * invNorm;
-            float q2z = -quaternion2.Z * invNorm;
-            float q2w = quaternion2.W * invNorm;
+            float q2x = -value2.X * invNorm;
+            float q2y = -value2.Y * invNorm;
+            float q2z = -value2.Z * invNorm;
+            float q2w = value2.W * invNorm;
 
             //-------------------------------------
             // Multiply part.
@@ -451,58 +451,58 @@ namespace Windows.Math
         }
 
 
-        public static Quaternion operator -(Quaternion quaternion)
+        public static Quaternion operator -(Quaternion value)
         {
             Quaternion ans;
 
-            ans.X = -quaternion.X;
-            ans.Y = -quaternion.Y;
-            ans.Z = -quaternion.Z;
-            ans.W = -quaternion.W;
+            ans.X = -value.X;
+            ans.Y = -value.Y;
+            ans.Z = -value.Z;
+            ans.W = -value.W;
 
             return ans;
         }
 
 
-        public static Quaternion operator +(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion operator +(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X + quaternion2.X;
-            ans.Y = quaternion1.Y + quaternion2.Y;
-            ans.Z = quaternion1.Z + quaternion2.Z;
-            ans.W = quaternion1.W + quaternion2.W;
+            ans.X = value1.X + value2.X;
+            ans.Y = value1.Y + value2.Y;
+            ans.Z = value1.Z + value2.Z;
+            ans.W = value1.W + value2.W;
 
             return ans;
         }
 
 
-        public static Quaternion operator -(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion operator -(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X - quaternion2.X;
-            ans.Y = quaternion1.Y - quaternion2.Y;
-            ans.Z = quaternion1.Z - quaternion2.Z;
-            ans.W = quaternion1.W - quaternion2.W;
+            ans.X = value1.X - value2.X;
+            ans.Y = value1.Y - value2.Y;
+            ans.Z = value1.Z - value2.Z;
+            ans.W = value1.W - value2.W;
 
             return ans;
         }
 
 
-        public static Quaternion operator *(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion operator *(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            float q1x = quaternion1.X;
-            float q1y = quaternion1.Y;
-            float q1z = quaternion1.Z;
-            float q1w = quaternion1.W;
+            float q1x = value1.X;
+            float q1y = value1.Y;
+            float q1z = value1.Z;
+            float q1w = value1.W;
 
-            float q2x = quaternion2.X;
-            float q2y = quaternion2.Y;
-            float q2z = quaternion2.Z;
-            float q2w = quaternion2.W;
+            float q2x = value2.X;
+            float q2y = value2.Y;
+            float q2z = value2.Z;
+            float q2w = value2.W;
 
             // cross(av, bv)
             float cx = q1y * q2z - q1z * q2y;
@@ -520,38 +520,38 @@ namespace Windows.Math
         }
 
 
-        public static Quaternion operator *(Quaternion quaternion1, float scaleFactor)
+        public static Quaternion operator *(Quaternion value1, float value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X * scaleFactor;
-            ans.Y = quaternion1.Y * scaleFactor;
-            ans.Z = quaternion1.Z * scaleFactor;
-            ans.W = quaternion1.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
 
 
-        public static Quaternion operator /(Quaternion quaternion1, Quaternion quaternion2)
+        public static Quaternion operator /(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
 
-            float q1x = quaternion1.X;
-            float q1y = quaternion1.Y;
-            float q1z = quaternion1.Z;
-            float q1w = quaternion1.W;
+            float q1x = value1.X;
+            float q1y = value1.Y;
+            float q1z = value1.Z;
+            float q1w = value1.W;
 
             //-------------------------------------
             // Inverse part.
-            float ls = quaternion2.X * quaternion2.X + quaternion2.Y * quaternion2.Y +
-                       quaternion2.Z * quaternion2.Z + quaternion2.W * quaternion2.W;
+            float ls = value2.X * value2.X + value2.Y * value2.Y +
+                       value2.Z * value2.Z + value2.W * value2.W;
             float invNorm = 1.0f / ls;
 
-            float q2x = -quaternion2.X * invNorm;
-            float q2y = -quaternion2.Y * invNorm;
-            float q2z = -quaternion2.Z * invNorm;
-            float q2w = quaternion2.W * invNorm;
+            float q2x = -value2.X * invNorm;
+            float q2y = -value2.Y * invNorm;
+            float q2z = -value2.Z * invNorm;
+            float q2w = value2.W * invNorm;
 
             //-------------------------------------
             // Multiply part.
@@ -572,21 +572,21 @@ namespace Windows.Math
         }
 
 
-        public static bool operator ==(Quaternion quaternion1, Quaternion quaternion2)
+        public static bool operator ==(Quaternion value1, Quaternion value2)
         {
-            return (quaternion1.X == quaternion2.X &&
-                    quaternion1.Y == quaternion2.Y &&
-                    quaternion1.Z == quaternion2.Z &&
-                    quaternion1.W == quaternion2.W);
+            return (value1.X == value2.X &&
+                    value1.Y == value2.Y &&
+                    value1.Z == value2.Z &&
+                    value1.W == value2.W);
         }
 
 
-        public static bool operator !=(Quaternion quaternion1, Quaternion quaternion2)
+        public static bool operator !=(Quaternion value1, Quaternion value2)
         {
-            return (quaternion1.X != quaternion2.X ||
-                    quaternion1.Y != quaternion2.Y ||
-                    quaternion1.Z != quaternion2.Z ||
-                    quaternion1.W != quaternion2.W);
+            return (value1.X != value2.X ||
+                    value1.Y != value2.Y ||
+                    value1.Z != value2.Z ||
+                    value1.W != value2.W);
         }
 
 

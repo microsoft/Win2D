@@ -298,12 +298,12 @@ namespace Windows
         }
 
 
-        inline Vector2 Vector2::Multiply(Vector2 const& value1, float scaleFactor)
+        inline Vector2 Vector2::Multiply(Vector2 const& value1, float value2)
         {
             Vector2 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
 
             return ans;
         }
@@ -320,11 +320,11 @@ namespace Windows
         }
 
 
-        inline Vector2 Vector2::Divide(Vector2 const& value1, float divider)
+        inline Vector2 Vector2::Divide(Vector2 const& value1, float value2)
         {
             Vector2 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -368,9 +368,9 @@ namespace Windows
         }
 
 
-        inline Vector2& Vector2::operator *=(float scaleFactor)
+        inline Vector2& Vector2::operator *=(float value)
         {
-            *this = *this * scaleFactor;
+            *this = *this * value;
 
             return *this;
         }
@@ -384,9 +384,9 @@ namespace Windows
         }
 
 
-        inline Vector2& Vector2::operator /=(float divider)
+        inline Vector2& Vector2::operator /=(float value)
         {
-            *this = *this / divider;
+            *this = *this / value;
 
             return *this;
         }
@@ -439,23 +439,23 @@ namespace Windows
         }
 
 
-        inline Vector2 operator *(Vector2 const& value, float scaleFactor)
+        inline Vector2 operator *(Vector2 const& value1, float value2)
         {
             Vector2 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
 
             return ans;
         }
 
 
-        inline Vector2 operator *(float scaleFactor, Vector2 const& value)
+        inline Vector2 operator *(float value1, Vector2 const& value2)
         {
             Vector2 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
+            ans.X = value1 * value2.X;
+            ans.Y = value1 * value2.Y;
 
             return ans;
         }
@@ -472,11 +472,11 @@ namespace Windows
         }
 
 
-        inline Vector2 operator /(Vector2 const& value1, float divider)
+        inline Vector2 operator /(Vector2 const& value1, float value2)
         {
             Vector2 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -778,13 +778,13 @@ namespace Windows
         }
 
 
-        inline Vector3 Vector3::Multiply(Vector3 const& value1, float scaleFactor)
+        inline Vector3 Vector3::Multiply(Vector3 const& value1, float value2)
         {
             Vector3 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
-            ans.Z = value1.Z * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
 
             return ans;
         }
@@ -852,9 +852,9 @@ namespace Windows
         }
 
 
-        inline Vector3& Vector3::operator *=(float scaleFactor)
+        inline Vector3& Vector3::operator *=(float value)
         {
-            *this = *this * scaleFactor;
+            *this = *this * value;
 
             return *this;
         }
@@ -868,9 +868,9 @@ namespace Windows
         }
 
 
-        inline Vector3& Vector3::operator /=(float divider)
+        inline Vector3& Vector3::operator /=(float value)
         {
-            *this = *this / divider;
+            *this = *this / value;
 
             return *this;
         }
@@ -928,25 +928,25 @@ namespace Windows
         }
 
 
-        inline Vector3 operator *(Vector3 const& value, float scaleFactor)
+        inline Vector3 operator *(Vector3 const& value1, float value2)
         {
             Vector3 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
-            ans.Z = value.Z * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
 
             return ans;
         }
 
 
-        inline Vector3 operator *(float scaleFactor, Vector3 const& value)
+        inline Vector3 operator *(float value1, Vector3 const& value2)
         {
             Vector3 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
-            ans.Z = value.Z * scaleFactor;
+            ans.X = value1 * value2.X;
+            ans.Y = value1 * value2.Y;
+            ans.Z = value1 * value2.Z;
 
             return ans;
         }
@@ -964,11 +964,11 @@ namespace Windows
         }
 
 
-        inline Vector3 operator /(Vector3 const& value1, float divider)
+        inline Vector3 operator /(Vector3 const& value1, float value2)
         {
             Vector3 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -1342,14 +1342,14 @@ namespace Windows
         }
 
 
-        inline Vector4 Vector4::Multiply(Vector4 const& value1, float scaleFactor)
+        inline Vector4 Vector4::Multiply(Vector4 const& value1, float value2)
         {
             Vector4 ans;
 
-            ans.X = value1.X * scaleFactor;
-            ans.Y = value1.Y * scaleFactor;
-            ans.Z = value1.Z * scaleFactor;
-            ans.W = value1.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
@@ -1368,11 +1368,11 @@ namespace Windows
         }
 
 
-        inline Vector4 Vector4::Divide(Vector4 const& value1, float divider)
+        inline Vector4 Vector4::Divide(Vector4 const& value1, float value2)
         {
             Vector4 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -1420,9 +1420,9 @@ namespace Windows
         }
 
 
-        inline Vector4& Vector4::operator *=(float scaleFactor)
+        inline Vector4& Vector4::operator *=(float value)
         {
-            *this = *this * scaleFactor;
+            *this = *this * value;
 
             return *this;
         }
@@ -1436,9 +1436,9 @@ namespace Windows
         }
 
 
-        inline Vector4& Vector4::operator /=(float divider)
+        inline Vector4& Vector4::operator /=(float value)
         {
-            *this = *this / divider;
+            *this = *this / value;
 
             return *this;
         }
@@ -1501,27 +1501,27 @@ namespace Windows
         }
 
 
-        inline Vector4 operator *(Vector4 const& value, float scaleFactor)
+        inline Vector4 operator *(Vector4 const& value1, float value2)
         {
             Vector4 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
-            ans.Z = value.Z * scaleFactor;
-            ans.W = value.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
 
 
-        inline Vector4 operator *(float scaleFactor, Vector4 const& value)
+        inline Vector4 operator *(float value1, Vector4 const& value2)
         {
             Vector4 ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
-            ans.Z = value.Z * scaleFactor;
-            ans.W = value.W * scaleFactor;
+            ans.X = value1 * value2.X;
+            ans.Y = value1 * value2.Y;
+            ans.Z = value1 * value2.Z;
+            ans.W = value1 * value2.W;
 
             return ans;
         }
@@ -1540,11 +1540,11 @@ namespace Windows
         }
 
 
-        inline Vector4 operator /(Vector4 const& value1, float divider)
+        inline Vector4 operator /(Vector4 const& value1, float value2)
         {
             Vector4 ans;
 
-            float invDiv = 1.0f / divider;
+            float invDiv = 1.0f / value2;
             
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -1907,57 +1907,57 @@ namespace Windows
         }
 
 
-        inline Matrix3x2 Matrix3x2::Negate(Matrix3x2 const& matrix)
+        inline Matrix3x2 Matrix3x2::Negate(Matrix3x2 const& value)
         {
             Matrix3x2 result;
 
-            result.M11 = -matrix.M11; result.M12 = -matrix.M12;
-            result.M21 = -matrix.M21; result.M22 = -matrix.M22;
-            result.M31 = -matrix.M31; result.M32 = -matrix.M32;
+            result.M11 = -value.M11; result.M12 = -value.M12;
+            result.M21 = -value.M21; result.M22 = -value.M22;
+            result.M31 = -value.M31; result.M32 = -value.M32;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::Add(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2)
+        inline Matrix3x2 Matrix3x2::Add(Matrix3x2 const& value1, Matrix3x2 const& value2)
         {
             Matrix3x2 result;
 
-            result.M11 = matrix1.M11 + matrix2.M11; result.M12 = matrix1.M12 + matrix2.M12;
-            result.M21 = matrix1.M21 + matrix2.M21; result.M22 = matrix1.M22 + matrix2.M22;
-            result.M31 = matrix1.M31 + matrix2.M31; result.M32 = matrix1.M32 + matrix2.M32;
+            result.M11 = value1.M11 + value2.M11; result.M12 = value1.M12 + value2.M12;
+            result.M21 = value1.M21 + value2.M21; result.M22 = value1.M22 + value2.M22;
+            result.M31 = value1.M31 + value2.M31; result.M32 = value1.M32 + value2.M32;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::Subtract(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2)
+        inline Matrix3x2 Matrix3x2::Subtract(Matrix3x2 const& value1, Matrix3x2 const& value2)
         {
             Matrix3x2 result;
 
-            result.M11 = matrix1.M11 - matrix2.M11; result.M12 = matrix1.M12 - matrix2.M12;
-            result.M21 = matrix1.M21 - matrix2.M21; result.M22 = matrix1.M22 - matrix2.M22;
-            result.M31 = matrix1.M31 - matrix2.M31; result.M32 = matrix1.M32 - matrix2.M32;
+            result.M11 = value1.M11 - value2.M11; result.M12 = value1.M12 - value2.M12;
+            result.M21 = value1.M21 - value2.M21; result.M22 = value1.M22 - value2.M22;
+            result.M31 = value1.M31 - value2.M31; result.M32 = value1.M32 - value2.M32;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::Multiply(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2)
+        inline Matrix3x2 Matrix3x2::Multiply(Matrix3x2 const& value1, Matrix3x2 const& value2)
         {
             Matrix3x2 result;
 
             // First row
-            result.M11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21;
-            result.M12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22;
+            result.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21;
+            result.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22;
             
             // Second row
-            result.M21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21;
-            result.M22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22;
+            result.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21;
+            result.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22;
             
             // Third row
-            result.M31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix2.M31;
-            result.M32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix2.M32;
+            result.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value2.M31;
+            result.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value2.M32;
 
             return result;
         }
@@ -3310,72 +3310,72 @@ namespace Windows
         }
 
 
-        inline Matrix4x4 Matrix4x4::Negate(Matrix4x4 const& matrix)
+        inline Matrix4x4 Matrix4x4::Negate(Matrix4x4 const& value)
         {
             Matrix4x4 result;
 
-            result.M11 = -matrix.M11; result.M12 = -matrix.M12; result.M13 = -matrix.M13; result.M14 = -matrix.M14;
-            result.M21 = -matrix.M21; result.M22 = -matrix.M22; result.M23 = -matrix.M23; result.M24 = -matrix.M24;
-            result.M31 = -matrix.M31; result.M32 = -matrix.M32; result.M33 = -matrix.M33; result.M34 = -matrix.M34;
-            result.M41 = -matrix.M41; result.M42 = -matrix.M42; result.M43 = -matrix.M43; result.M44 = -matrix.M44;
+            result.M11 = -value.M11; result.M12 = -value.M12; result.M13 = -value.M13; result.M14 = -value.M14;
+            result.M21 = -value.M21; result.M22 = -value.M22; result.M23 = -value.M23; result.M24 = -value.M24;
+            result.M31 = -value.M31; result.M32 = -value.M32; result.M33 = -value.M33; result.M34 = -value.M34;
+            result.M41 = -value.M41; result.M42 = -value.M42; result.M43 = -value.M43; result.M44 = -value.M44;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::Add(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2)
+        inline Matrix4x4 Matrix4x4::Add(Matrix4x4 const& value1, Matrix4x4 const& value2)
         {
             Matrix4x4 result;
 
-            result.M11 = matrix1.M11 + matrix2.M11; result.M12 = matrix1.M12 + matrix2.M12; result.M13 = matrix1.M13 + matrix2.M13; result.M14 = matrix1.M14 + matrix2.M14;
-            result.M21 = matrix1.M21 + matrix2.M21; result.M22 = matrix1.M22 + matrix2.M22; result.M23 = matrix1.M23 + matrix2.M23; result.M24 = matrix1.M24 + matrix2.M24;
-            result.M31 = matrix1.M31 + matrix2.M31; result.M32 = matrix1.M32 + matrix2.M32; result.M33 = matrix1.M33 + matrix2.M33; result.M34 = matrix1.M34 + matrix2.M34;
-            result.M41 = matrix1.M41 + matrix2.M41; result.M42 = matrix1.M42 + matrix2.M42; result.M43 = matrix1.M43 + matrix2.M43; result.M44 = matrix1.M44 + matrix2.M44;
+            result.M11 = value1.M11 + value2.M11; result.M12 = value1.M12 + value2.M12; result.M13 = value1.M13 + value2.M13; result.M14 = value1.M14 + value2.M14;
+            result.M21 = value1.M21 + value2.M21; result.M22 = value1.M22 + value2.M22; result.M23 = value1.M23 + value2.M23; result.M24 = value1.M24 + value2.M24;
+            result.M31 = value1.M31 + value2.M31; result.M32 = value1.M32 + value2.M32; result.M33 = value1.M33 + value2.M33; result.M34 = value1.M34 + value2.M34;
+            result.M41 = value1.M41 + value2.M41; result.M42 = value1.M42 + value2.M42; result.M43 = value1.M43 + value2.M43; result.M44 = value1.M44 + value2.M44;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::Subtract(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2)
+        inline Matrix4x4 Matrix4x4::Subtract(Matrix4x4 const& value1, Matrix4x4 const& value2)
         {
             Matrix4x4 result;
 
-            result.M11 = matrix1.M11 - matrix2.M11; result.M12 = matrix1.M12 - matrix2.M12; result.M13 = matrix1.M13 - matrix2.M13; result.M14 = matrix1.M14 - matrix2.M14;
-            result.M21 = matrix1.M21 - matrix2.M21; result.M22 = matrix1.M22 - matrix2.M22; result.M23 = matrix1.M23 - matrix2.M23; result.M24 = matrix1.M24 - matrix2.M24;
-            result.M31 = matrix1.M31 - matrix2.M31; result.M32 = matrix1.M32 - matrix2.M32; result.M33 = matrix1.M33 - matrix2.M33; result.M34 = matrix1.M34 - matrix2.M34;
-            result.M41 = matrix1.M41 - matrix2.M41; result.M42 = matrix1.M42 - matrix2.M42; result.M43 = matrix1.M43 - matrix2.M43; result.M44 = matrix1.M44 - matrix2.M44;
+            result.M11 = value1.M11 - value2.M11; result.M12 = value1.M12 - value2.M12; result.M13 = value1.M13 - value2.M13; result.M14 = value1.M14 - value2.M14;
+            result.M21 = value1.M21 - value2.M21; result.M22 = value1.M22 - value2.M22; result.M23 = value1.M23 - value2.M23; result.M24 = value1.M24 - value2.M24;
+            result.M31 = value1.M31 - value2.M31; result.M32 = value1.M32 - value2.M32; result.M33 = value1.M33 - value2.M33; result.M34 = value1.M34 - value2.M34;
+            result.M41 = value1.M41 - value2.M41; result.M42 = value1.M42 - value2.M42; result.M43 = value1.M43 - value2.M43; result.M44 = value1.M44 - value2.M44;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::Multiply(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2)
+        inline Matrix4x4 Matrix4x4::Multiply(Matrix4x4 const& value1, Matrix4x4 const& value2)
         {
             Matrix4x4 result;
 
             // First row
-            result.M11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21 + matrix1.M13 * matrix2.M31 + matrix1.M14 * matrix2.M41;
-            result.M12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22 + matrix1.M13 * matrix2.M32 + matrix1.M14 * matrix2.M42;
-            result.M13 = matrix1.M11 * matrix2.M13 + matrix1.M12 * matrix2.M23 + matrix1.M13 * matrix2.M33 + matrix1.M14 * matrix2.M43;
-            result.M14 = matrix1.M11 * matrix2.M14 + matrix1.M12 * matrix2.M24 + matrix1.M13 * matrix2.M34 + matrix1.M14 * matrix2.M44;
+            result.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21 + value1.M13 * value2.M31 + value1.M14 * value2.M41;
+            result.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22 + value1.M13 * value2.M32 + value1.M14 * value2.M42;
+            result.M13 = value1.M11 * value2.M13 + value1.M12 * value2.M23 + value1.M13 * value2.M33 + value1.M14 * value2.M43;
+            result.M14 = value1.M11 * value2.M14 + value1.M12 * value2.M24 + value1.M13 * value2.M34 + value1.M14 * value2.M44;
 
             // Second row
-            result.M21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21 + matrix1.M23 * matrix2.M31 + matrix1.M24 * matrix2.M41;
-            result.M22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22 + matrix1.M23 * matrix2.M32 + matrix1.M24 * matrix2.M42;
-            result.M23 = matrix1.M21 * matrix2.M13 + matrix1.M22 * matrix2.M23 + matrix1.M23 * matrix2.M33 + matrix1.M24 * matrix2.M43;
-            result.M24 = matrix1.M21 * matrix2.M14 + matrix1.M22 * matrix2.M24 + matrix1.M23 * matrix2.M34 + matrix1.M24 * matrix2.M44;
+            result.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21 + value1.M23 * value2.M31 + value1.M24 * value2.M41;
+            result.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22 + value1.M23 * value2.M32 + value1.M24 * value2.M42;
+            result.M23 = value1.M21 * value2.M13 + value1.M22 * value2.M23 + value1.M23 * value2.M33 + value1.M24 * value2.M43;
+            result.M24 = value1.M21 * value2.M14 + value1.M22 * value2.M24 + value1.M23 * value2.M34 + value1.M24 * value2.M44;
 
             // Third row
-            result.M31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix1.M33 * matrix2.M31 + matrix1.M34 * matrix2.M41;
-            result.M32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix1.M33 * matrix2.M32 + matrix1.M34 * matrix2.M42;
-            result.M33 = matrix1.M31 * matrix2.M13 + matrix1.M32 * matrix2.M23 + matrix1.M33 * matrix2.M33 + matrix1.M34 * matrix2.M43;
-            result.M34 = matrix1.M31 * matrix2.M14 + matrix1.M32 * matrix2.M24 + matrix1.M33 * matrix2.M34 + matrix1.M34 * matrix2.M44;
+            result.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value1.M33 * value2.M31 + value1.M34 * value2.M41;
+            result.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value1.M33 * value2.M32 + value1.M34 * value2.M42;
+            result.M33 = value1.M31 * value2.M13 + value1.M32 * value2.M23 + value1.M33 * value2.M33 + value1.M34 * value2.M43;
+            result.M34 = value1.M31 * value2.M14 + value1.M32 * value2.M24 + value1.M33 * value2.M34 + value1.M34 * value2.M44;
 
             // Fourth row
-            result.M41 = matrix1.M41 * matrix2.M11 + matrix1.M42 * matrix2.M21 + matrix1.M43 * matrix2.M31 + matrix1.M44 * matrix2.M41;
-            result.M42 = matrix1.M41 * matrix2.M12 + matrix1.M42 * matrix2.M22 + matrix1.M43 * matrix2.M32 + matrix1.M44 * matrix2.M42;
-            result.M43 = matrix1.M41 * matrix2.M13 + matrix1.M42 * matrix2.M23 + matrix1.M43 * matrix2.M33 + matrix1.M44 * matrix2.M43;
-            result.M44 = matrix1.M41 * matrix2.M14 + matrix1.M42 * matrix2.M24 + matrix1.M43 * matrix2.M34 + matrix1.M44 * matrix2.M44;
+            result.M41 = value1.M41 * value2.M11 + value1.M42 * value2.M21 + value1.M43 * value2.M31 + value1.M44 * value2.M41;
+            result.M42 = value1.M41 * value2.M12 + value1.M42 * value2.M22 + value1.M43 * value2.M32 + value1.M44 * value2.M42;
+            result.M43 = value1.M41 * value2.M13 + value1.M42 * value2.M23 + value1.M43 * value2.M33 + value1.M44 * value2.M43;
+            result.M44 = value1.M41 * value2.M14 + value1.M42 * value2.M24 + value1.M43 * value2.M34 + value1.M44 * value2.M44;
 
             return result;
         }
@@ -3718,18 +3718,18 @@ namespace Windows
         }
 
 
-        inline Quaternion Quaternion::Normalize(Quaternion const& quaternion)
+        inline Quaternion Quaternion::Normalize(Quaternion const& value)
         {
             Quaternion ans;
 
-            float ls = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
+            float ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W;
             
             float invNorm = 1.0f / sqrtf(ls);
 
-            ans.X = quaternion.X * invNorm;
-            ans.Y = quaternion.Y * invNorm;
-            ans.Z = quaternion.Z * invNorm;
-            ans.W = quaternion.W * invNorm;
+            ans.X = value.X * invNorm;
+            ans.Y = value.Y * invNorm;
+            ans.Z = value.Z * invNorm;
+            ans.W = value.W * invNorm;
 
             return ans;
         }
@@ -3748,7 +3748,7 @@ namespace Windows
         }
 
 
-        inline Quaternion Quaternion::Inverse(Quaternion const& quaternion)
+        inline Quaternion Quaternion::Inverse(Quaternion const& value)
         {
             //  -1   (       a              -v       )
             // q   = ( -------------   ------------- )
@@ -3756,13 +3756,13 @@ namespace Windows
 
             Quaternion ans;
             
-            float ls = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
+            float ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W;
             float invNorm = 1.0f / ls;
 
-            ans.X = -quaternion.X * invNorm;
-            ans.Y = -quaternion.Y * invNorm;
-            ans.Z = -quaternion.Z * invNorm;
-            ans.W = quaternion.W * invNorm;
+            ans.X = -value.X * invNorm;
+            ans.Y = -value.Y * invNorm;
+            ans.Z = -value.Z * invNorm;
+            ans.W = value.W * invNorm;
 
             return ans;
         }
@@ -3987,58 +3987,58 @@ namespace Windows
         }
 
 
-        inline Quaternion Quaternion::Negate(Quaternion const& quaternion)
+        inline Quaternion Quaternion::Negate(Quaternion const& value)
         {
             Quaternion ans;
 
-            ans.X = -quaternion.X;
-            ans.Y = -quaternion.Y;
-            ans.Z = -quaternion.Z;
-            ans.W = -quaternion.W;
+            ans.X = -value.X;
+            ans.Y = -value.Y;
+            ans.Z = -value.Z;
+            ans.W = -value.W;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Add(Quaternion const& quaternion1, Quaternion const& quaternion2)
+        inline Quaternion Quaternion::Add(Quaternion const& value1, Quaternion const& value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X + quaternion2.X;
-            ans.Y = quaternion1.Y + quaternion2.Y;
-            ans.Z = quaternion1.Z + quaternion2.Z;
-            ans.W = quaternion1.W + quaternion2.W;
+            ans.X = value1.X + value2.X;
+            ans.Y = value1.Y + value2.Y;
+            ans.Z = value1.Z + value2.Z;
+            ans.W = value1.W + value2.W;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Subtract(Quaternion const& quaternion1, Quaternion const& quaternion2)
+        inline Quaternion Quaternion::Subtract(Quaternion const& value1, Quaternion const& value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X - quaternion2.X;
-            ans.Y = quaternion1.Y - quaternion2.Y;
-            ans.Z = quaternion1.Z - quaternion2.Z;
-            ans.W = quaternion1.W - quaternion2.W;
+            ans.X = value1.X - value2.X;
+            ans.Y = value1.Y - value2.Y;
+            ans.Z = value1.Z - value2.Z;
+            ans.W = value1.W - value2.W;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Multiply(Quaternion const& quaternion1, Quaternion const& quaternion2)
+        inline Quaternion Quaternion::Multiply(Quaternion const& value1, Quaternion const& value2)
         {
             Quaternion ans;
 
-            float q1x = quaternion1.X;
-            float q1y = quaternion1.Y;
-            float q1z = quaternion1.Z;
-            float q1w = quaternion1.W;
+            float q1x = value1.X;
+            float q1y = value1.Y;
+            float q1z = value1.Z;
+            float q1w = value1.W;
 
-            float q2x = quaternion2.X;
-            float q2y = quaternion2.Y;
-            float q2z = quaternion2.Z;
-            float q2w = quaternion2.W;
+            float q2x = value2.X;
+            float q2y = value2.Y;
+            float q2z = value2.Z;
+            float q2w = value2.W;
 
             // cross(av, bv)
             float cx = q1y * q2z - q1z * q2y;
@@ -4056,37 +4056,37 @@ namespace Windows
         }
 
 
-        inline Quaternion Quaternion::Multiply(Quaternion const& quaternion1, float scaleFactor)
+        inline Quaternion Quaternion::Multiply(Quaternion const& value1, float value2)
         {
             Quaternion ans;
 
-            ans.X = quaternion1.X * scaleFactor;
-            ans.Y = quaternion1.Y * scaleFactor;
-            ans.Z = quaternion1.Z * scaleFactor;
-            ans.W = quaternion1.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Divide(Quaternion const& quaternion1, Quaternion const& quaternion2)
+        inline Quaternion Quaternion::Divide(Quaternion const& value1, Quaternion const& value2)
         {
             Quaternion ans;
 
-            float q1x = quaternion1.X;
-            float q1y = quaternion1.Y;
-            float q1z = quaternion1.Z;
-            float q1w = quaternion1.W;
+            float q1x = value1.X;
+            float q1y = value1.Y;
+            float q1z = value1.Z;
+            float q1w = value1.W;
 
             // Inverse part.
-            float ls = quaternion2.X * quaternion2.X + quaternion2.Y * quaternion2.Y +
-                       quaternion2.Z * quaternion2.Z + quaternion2.W * quaternion2.W;
+            float ls = value2.X * value2.X + value2.Y * value2.Y +
+                       value2.Z * value2.Z + value2.W * value2.W;
             float invNorm = 1.0f / ls;
 
-            float q2x = -quaternion2.X * invNorm;
-            float q2y = -quaternion2.Y * invNorm;
-            float q2z = -quaternion2.Z * invNorm;
-            float q2w = quaternion2.W * invNorm;
+            float q2x = -value2.X * invNorm;
+            float q2y = -value2.Y * invNorm;
+            float q2z = -value2.Z * invNorm;
+            float q2w = value2.W * invNorm;
 
             // Multiply part.
             float cx = q1y * q2z - q1z * q2y;
@@ -4141,9 +4141,9 @@ namespace Windows
         }
 
 
-        inline Quaternion& Quaternion::operator *=(float scaleFactor)
+        inline Quaternion& Quaternion::operator *=(float value)
         {
-            *this = *this * scaleFactor;
+            *this = *this * value;
 
             return *this;
         }
@@ -4231,14 +4231,14 @@ namespace Windows
         }
 
 
-        inline Quaternion operator *(Quaternion const& value, float scaleFactor)
+        inline Quaternion operator *(Quaternion const& value1, float value2)
         {
             Quaternion ans;
 
-            ans.X = value.X * scaleFactor;
-            ans.Y = value.Y * scaleFactor;
-            ans.Z = value.Z * scaleFactor;
-            ans.W = value.W * scaleFactor;
+            ans.X = value1.X * value2;
+            ans.Y = value1.Y * value2;
+            ans.Z = value1.Z * value2;
+            ans.W = value1.W * value2;
 
             return ans;
         }
