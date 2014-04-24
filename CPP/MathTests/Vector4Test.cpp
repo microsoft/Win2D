@@ -1024,6 +1024,110 @@ namespace MathTests
             Assert::AreEqual(val, Vector4::Zero(), L"Vector4::Zero was not set correctly.");
         }
 
+        // A test for operator +=
+        TEST_METHOD(Vector4OperatorAddEqualsTest)
+        {
+            Vector4 a(1, 2, 3, 4);
+            Vector4 b(5, 6, 7, 8);
+            Vector4 expected = Vector4::Add(a, b);
+            
+            // In-place += operation.
+            Vector4& ret = a += b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector4::Add(b, b);
+            b += b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator -=
+        TEST_METHOD(Vector4OperatorSubtractEqualsTest)
+        {
+            Vector4 a(1, 2, 3, 4);
+            Vector4 b(5, 6, 7, 8);
+            Vector4 expected = Vector4::Subtract(a, b);
+            
+            // In-place -= operation.
+            Vector4& ret = a -= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector4::Subtract(b, b);
+            b -= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Vector4OperatorMultiplyEqualsTest)
+        {
+            Vector4 a(1, 2, 3, 4);
+            Vector4 b(5, 6, 7, 8);
+            Vector4 expected = Vector4::Multiply(a, b);
+            
+            // In-place *= operation.
+            Vector4& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector4::Multiply(b, b);
+            b *= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Vector4OperatorMultiplyEqualsScalerTest)
+        {
+            Vector4 a(1, 2, 3, 4);
+            float b = 5;
+            Vector4 expected = Vector4::Multiply(a, b);
+            
+            // In-place *= operation.
+            Vector4& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+        }
+
+        // A test for operator /=
+        TEST_METHOD(Vector4OperatorDivideEqualsTest)
+        {
+            Vector4 a(1, 2, 3, 4);
+            Vector4 b(5, 6, 7, 8);
+            Vector4 expected = Vector4::Divide(a, b);
+            
+            // In-place /= operation.
+            Vector4& ret = a /= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector4::Divide(b, b);
+            b /= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator /=
+        TEST_METHOD(Vector4OperatorDivideEqualsScalerTest)
+        {
+            Vector4 a(1, 2, 3, 4);
+            float b = 5;
+            Vector4 expected = Vector4::Divide(a, b);
+            
+            // In-place /= operation.
+            Vector4& ret = a /= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+        }
+
         // A test for Vector4 (float)
         TEST_METHOD(Vector4ConstructorTest6)
         {

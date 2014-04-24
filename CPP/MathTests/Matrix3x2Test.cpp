@@ -555,6 +555,63 @@ namespace MathTests
             Assert::AreEqual(expected, actual, L"Matrix3x2::Subtract did not return the expected value.");
         }
 
+        // A test for operator +=
+        TEST_METHOD(Matrix3x2OperatorAddEqualsTest)
+        {
+            Matrix3x2 a(1, 2, 3, 4, 5, 6);
+            Matrix3x2 b(7, 8, 9, 8, 7, 6);
+            Matrix3x2 expected = Matrix3x2::Add(a, b);
+            
+            // In-place += operation.
+            Matrix3x2& ret = a += b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+
+            // Pointer aliasing where object is applied to itself.
+            expected = Matrix3x2::Add(b, b);
+            b += b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator -=
+        TEST_METHOD(Matrix3x2OperatorSubtractEqualsTest)
+        {
+            Matrix3x2 a(1, 2, 3, 4, 5, 6);
+            Matrix3x2 b(7, 8, 9, 8, 7, 6);
+            Matrix3x2 expected = Matrix3x2::Subtract(a, b);
+            
+            // In-place -= operation.
+            Matrix3x2& ret = a -= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+
+            // Pointer aliasing where object is applied to itself.
+            expected = Matrix3x2::Subtract(b, b);
+            b -= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Matrix3x2OperatorMultiplyEqualsTest)
+        {
+            Matrix3x2 a(1, 2, 3, 4, 5, 6);
+            Matrix3x2 b(7, 8, 9, 8, 7, 6);
+            Matrix3x2 expected = Matrix3x2::Multiply(a, b);
+            
+            // In-place *= operation.
+            Matrix3x2& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+
+            // Pointer aliasing where object is applied to itself.
+            expected = Matrix3x2::Multiply(b, b);
+            b *= b;
+            Assert::AreEqual(b, expected);
+        }
+
         // A test for CreateScale (Vector2)
         TEST_METHOD(Matrix3x2CreateScaleTest1)
         {

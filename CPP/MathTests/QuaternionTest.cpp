@@ -561,6 +561,96 @@ namespace MathTests
             Assert::AreEqual(expected, actual, L"Quaternion::Subtract did not return the expected value.");
         }
 
+        // A test for operator +=
+        TEST_METHOD(QuaternionOperatorAddEqualsTest)
+        {
+            Quaternion a(1, 2, 3, 4);
+            Quaternion b(5, 6, 7, 8);
+            Quaternion expected = Quaternion::Add(a, b);
+            
+            // In-place += operation.
+            Quaternion& ret = a += b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Quaternion::Add(b, b);
+            b += b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator -=
+        TEST_METHOD(QuaternionOperatorSubtractEqualsTest)
+        {
+            Quaternion a(1, 2, 3, 4);
+            Quaternion b(5, 6, 7, 8);
+            Quaternion expected = Quaternion::Subtract(a, b);
+            
+            // In-place -= operation.
+            Quaternion& ret = a -= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Quaternion::Subtract(b, b);
+            b -= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(QuaternionOperatorMultiplyEqualsTest)
+        {
+            Quaternion a(1, 2, 3, 4);
+            Quaternion b(5, 6, 7, 8);
+            Quaternion expected = Quaternion::Multiply(a, b);
+            
+            // In-place *= operation.
+            Quaternion& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Quaternion::Multiply(b, b);
+            b *= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(QuaternionOperatorMultiplyEqualsScalerTest)
+        {
+            Quaternion a(1, 2, 3, 4);
+            float b = 5;
+            Quaternion expected = Quaternion::Multiply(a, b);
+            
+            // In-place *= operation.
+            Quaternion& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+        }
+
+        // A test for operator /=
+        TEST_METHOD(QuaternionOperatorDivideEqualsTest)
+        {
+            Quaternion a(1, 2, 3, 4);
+            Quaternion b(5, 6, 7, 8);
+            Quaternion expected = Quaternion::Divide(a, b);
+            
+            // In-place /= operation.
+            Quaternion& ret = a /= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Quaternion::Divide(b, b);
+            b /= b;
+            Assert::AreEqual(b, expected);
+        }
+
         // A test for operator != (Quaternion, Quaternion)
         TEST_METHOD(QuaternionInequalityTest)
         {

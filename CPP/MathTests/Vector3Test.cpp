@@ -830,6 +830,110 @@ namespace MathTests
             Assert::AreEqual(val, Vector3::Zero(), L"Vector3::Zero() was not set correctly.");
         }
 
+        // A test for operator +=
+        TEST_METHOD(Vector3OperatorAddEqualsTest)
+        {
+            Vector3 a(1, 2, 3);
+            Vector3 b(4, 5, 6);
+            Vector3 expected = Vector3::Add(a, b);
+            
+            // In-place += operation.
+            Vector3& ret = a += b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector3::Add(b, b);
+            b += b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator -=
+        TEST_METHOD(Vector3OperatorSubtractEqualsTest)
+        {
+            Vector3 a(1, 2, 3);
+            Vector3 b(4, 5, 6);
+            Vector3 expected = Vector3::Subtract(a, b);
+            
+            // In-place -= operation.
+            Vector3& ret = a -= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector3::Subtract(b, b);
+            b -= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Vector3OperatorMultiplyEqualsTest)
+        {
+            Vector3 a(1, 2, 3);
+            Vector3 b(4, 5, 6);
+            Vector3 expected = Vector3::Multiply(a, b);
+            
+            // In-place *= operation.
+            Vector3& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector3::Multiply(b, b);
+            b *= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Vector3OperatorMultiplyEqualsScalerTest)
+        {
+            Vector3 a(1, 2, 3);
+            float b = 5;
+            Vector3 expected = Vector3::Multiply(a, b);
+            
+            // In-place *= operation.
+            Vector3& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+        }
+
+        // A test for operator /=
+        TEST_METHOD(Vector3OperatorDivideEqualsTest)
+        {
+            Vector3 a(1, 2, 3);
+            Vector3 b(4, 5, 6);
+            Vector3 expected = Vector3::Divide(a, b);
+            
+            // In-place /= operation.
+            Vector3& ret = a /= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Vector3::Divide(b, b);
+            b /= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator /=
+        TEST_METHOD(Vector3OperatorDivideEqualsScalerTest)
+        {
+            Vector3 a(1, 2, 3);
+            float b = 5;
+            Vector3 expected = Vector3::Divide(a, b);
+            
+            // In-place /= operation.
+            Vector3& ret = a /= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+        }
+
         // A test for Vector3 (float)
         TEST_METHOD(Vector3ConstructorTest5)
         {

@@ -1506,6 +1506,63 @@ namespace MathTests
             Assert::AreEqual(expected, actual, L"Matrix4x4::Subtract did not return the expected value.");
         }
 
+        // A test for operator +=
+        TEST_METHOD(Matrix4x4OperatorAddEqualsTest)
+        {
+            Matrix4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+            Matrix4x4 b(4, 7, 6, 1, 8, 2, 5, 6, 9, 5, 2, 4, 6, 8, 4, 1);
+            Matrix4x4 expected = Matrix4x4::Add(a, b);
+            
+            // In-place += operation.
+            Matrix4x4& ret = a += b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Matrix4x4::Add(b, b);
+            b += b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator -=
+        TEST_METHOD(Matrix4x4OperatorSubtractEqualsTest)
+        {
+            Matrix4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+            Matrix4x4 b(4, 7, 6, 1, 8, 2, 5, 6, 9, 5, 2, 4, 6, 8, 4, 1);
+            Matrix4x4 expected = Matrix4x4::Subtract(a, b);
+            
+            // In-place -= operation.
+            Matrix4x4& ret = a -= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Matrix4x4::Subtract(b, b);
+            b -= b;
+            Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Matrix4x4OperatorMultiplyEqualsTest)
+        {
+            Matrix4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+            Matrix4x4 b(4, 7, 6, 1, 8, 2, 5, 6, 9, 5, 2, 4, 6, 8, 4, 1);
+            Matrix4x4 expected = Matrix4x4::Multiply(a, b);
+            
+            // In-place *+ operation.
+            Matrix4x4& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
+            
+            // Pointer aliasing where object is applied to itself.
+            expected = Matrix4x4::Multiply(b, b);
+            b *= b;
+            Assert::AreEqual(b, expected);
+        }
+
         void CreateBillboardTestMethod(Vector3 placeDirection, Vector3 cameraUpVector, Matrix4x4 expectedRotation)
         {
             Vector3 cameraPosition(3.0f, 4.0f, 5.0f);
