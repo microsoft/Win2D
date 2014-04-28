@@ -895,10 +895,10 @@ namespace MathTests
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(QuaternionSizeofTest)
         {
-            Assert::AreEqual(16u, sizeof(Quaternion));
-            Assert::AreEqual(32u, sizeof(Quaternion_2x));
-            Assert::AreEqual(20u, sizeof(QuaternionPlusFloat));
-            Assert::AreEqual(40u, sizeof(QuaternionPlusFloat_2x));
+            Assert::AreEqual(size_t(16), sizeof(Quaternion));
+            Assert::AreEqual(size_t(32), sizeof(Quaternion_2x));
+            Assert::AreEqual(size_t(20), sizeof(QuaternionPlusFloat));
+            Assert::AreEqual(size_t(40), sizeof(QuaternionPlusFloat_2x));
         }
 
         // A test to make sure this type matches our expectations for blittability

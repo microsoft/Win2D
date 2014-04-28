@@ -991,10 +991,10 @@ namespace MathTests
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(Vector3SizeofTest)
         {
-            Assert::AreEqual(12u, sizeof(Vector3));
-            Assert::AreEqual(24u, sizeof(Vector3_2x));
-            Assert::AreEqual(16u, sizeof(Vector3PlusFloat));
-            Assert::AreEqual(32u, sizeof(Vector3PlusFloat_2x));
+            Assert::AreEqual(size_t(12), sizeof(Vector3));
+            Assert::AreEqual(size_t(24), sizeof(Vector3_2x));
+            Assert::AreEqual(size_t(16), sizeof(Vector3PlusFloat));
+            Assert::AreEqual(size_t(32), sizeof(Vector3PlusFloat_2x));
         }
 
         // A test to make sure this type matches our expectations for blittability

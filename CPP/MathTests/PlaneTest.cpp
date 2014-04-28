@@ -262,10 +262,10 @@ namespace MathTests
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(PlaneSizeofTest)
         {
-            Assert::AreEqual(16u, sizeof(Plane));
-            Assert::AreEqual(32u, sizeof(Plane_2x));
-            Assert::AreEqual(20u, sizeof(PlanePlusFloat));
-            Assert::AreEqual(40u, sizeof(PlanePlusFloat_2x));
+            Assert::AreEqual(size_t(16), sizeof(Plane));
+            Assert::AreEqual(size_t(32), sizeof(Plane_2x));
+            Assert::AreEqual(size_t(20), sizeof(PlanePlusFloat));
+            Assert::AreEqual(size_t(40), sizeof(PlanePlusFloat_2x));
         }
 
         // A test to make sure this type matches our expectations for blittability

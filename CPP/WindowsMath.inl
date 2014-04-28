@@ -2,6 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //
 
+#pragma warning(push)
+#pragma warning(disable: 4723) // potential divide by 0
+#pragma warning(disable: 4756) // overflow in constant arithmetic
+
 namespace Windows
 {
     namespace Math
@@ -4277,3 +4281,5 @@ namespace Windows
         }
     }
 }
+
+#pragma warning(pop)
