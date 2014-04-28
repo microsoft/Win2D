@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)MidlRT.xml"/>
+    <AvailableItemName Include="MidlRT"/>
+  </ItemGroup>
+
+  <Target Name="MidlRT"
+          BeforeTargets="MakeDirsForMidl"
+          Condition="'@(MidlRT)' != ''">
+    <Error Condition="'$(UnmergedWinmdDirectory)' == ''" Text="UnmergedWinmdDirectory property is not set."/>
+    <ItemGroup>
+      <Midl Include="%(MidlRT.Identity)">
+        <WarningLevel>1</WarningLevel>
+        <WarnAsError>true</WarnAsError>
+        <MetadataFileName>$(UnmergedWinmdDirectory)\%(Filename).winmd</MetadataFileName>
+        <DllDataFileName>$(IntDir)dlldata.c</DllDataFileName>
+        <GenerateTypeLibrary>false</GenerateTypeLibrary>
+        <HeaderFileName>$(IdlHeaderDirectory)\%(Filename).h</HeaderFileName>
+        <ProxyFileName>$(IntDir)%(Filename)_p.c</ProxyFileName>
+        <InterfaceIdentifierFileName>$(IntDir)%(Filename)_i.c</InterfaceIdentifierFileName>
+      </Midl>
+
+      <!-- Compile the proxy and iid files.  These are C and so cannot share a
+           PCH with the rest of our C++ code.  Simplest thing here is to just
+           disable precompiled headers for these files. -->
+
+      <ClCompile Include="$(IntDir)%(MidlRT.Filename)_p.c" Condition="'%(MidlRT.HasInterfaces)' == 'true'">
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClCompile>
+      <ClCompile Include="$(IntDir)%(MidlRT.Filename)_i.c" Condition="'%(MidlRT.HasInterfaces)' == 'true'">
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClCompile>
+    </ItemGroup>
+  </Target>
+
+  <!-- There's only one dlldata.c for all of the IDL files, so we only attempt
+       to compile this once.
+  -->
+
+  <Target Name="MidlRT_DllData" AfterTargets="MidlRT" Condition="'@(MidlRT)' != ''">
+    <ItemGroup>
+      <ClCompile Include="$(IntDir)dlldata.c">
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClCompile>
+    </ItemGroup>
+  </Target>
+
+  <!--
+      dlldata.c gets missed from the standard clean targets, so we need to do
+      that explicitly.
+  -->
+  <PropertyGroup>
+    <CleanDependsOn>
+      $(CleanDependsOn);MidlRTClean
+    </CleanDependsOn>
+  </PropertyGroup>
+
+  <Target Name="MidlRTClean">
+    <Delete Files="$(IntDir)dlldata.c"/>
+  </Target>
+</Project>

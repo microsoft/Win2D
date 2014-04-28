@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+
+    This file contains build system properties that are common between C# and
+    C++ projects.
+
+  -->
+
+  <PropertyGroup>
+    
+    <!--
+
+        <__OutputPath> is used to initialize <OutputPath> for C# and <OutDir> for C++.
+
+        Every project gets its own directory to put its artifacts in.  This is
+        particularly important for Store apps since these will have files with
+        the same name (eg AppXManifest.xml) that are different for each project.
+
+    -->
+
+    <__OutputPath>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
+  </PropertyGroup>
+
+</Project>
