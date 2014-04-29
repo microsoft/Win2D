@@ -1442,6 +1442,26 @@ namespace MathTests
             Assert::AreEqual(expected, actual, L"Matrix4x4::Multiply did not return the expected value.");
         }
 
+        // A test for Multiply (Matrix4x4, float)
+        TEST_METHOD(Matrix4x4MultiplyTest5)
+        {
+            Matrix4x4 a = GenerateMatrixNumberFrom1To16();
+            Matrix4x4 expected(3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48);
+            Matrix4x4 actual = Matrix4x4::Multiply(a, 3);
+
+            Assert::AreEqual(expected, actual, L"Matrix4x4::Multiply did not return the expected value.");
+        }
+
+        // A test for Multiply (Matrix4x4, float)
+        TEST_METHOD(Matrix4x4MultiplyTest6)
+        {
+            Matrix4x4 a = GenerateMatrixNumberFrom1To16();
+            Matrix4x4 expected(3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48);
+            Matrix4x4 actual = a * 3;
+
+            Assert::AreEqual(expected, actual, L"Matrix4x4::operator * did not return the expected value.");
+        }
+
         // A test for Negate (Matrix4x4)
         TEST_METHOD(Matrix4x4NegateTest)
         {
@@ -1551,7 +1571,7 @@ namespace MathTests
             Matrix4x4 b(4, 7, 6, 1, 8, 2, 5, 6, 9, 5, 2, 4, 6, 8, 4, 1);
             Matrix4x4 expected = Matrix4x4::Multiply(a, b);
             
-            // In-place *+ operation.
+            // In-place *= operation.
             Matrix4x4& ret = a *= b;
             
             Assert::AreEqual(a, expected);
@@ -1561,6 +1581,20 @@ namespace MathTests
             expected = Matrix4x4::Multiply(b, b);
             b *= b;
             Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Matrix4x4OperatorMultiplyEqualsTest2)
+        {
+            Matrix4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+            float b = 23;
+            Matrix4x4 expected = Matrix4x4::Multiply(a, b);
+            
+            // In-place *= operation.
+            Matrix4x4& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
         }
 
         void CreateBillboardTestMethod(Vector3 placeDirection, Vector3 cameraUpVector, Matrix4x4 expectedRotation)

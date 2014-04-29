@@ -593,7 +593,33 @@ namespace MathTests
             Matrix4x4 expected44 = Matrix4x4.Multiply(a44, b44);
             Matrix4x4 actual44 = new Matrix4x4(actual);
 
-            Assert.IsTrue(MathHelper.Equal(expected44, actual44), "Matrix3x2.operator * did not return the expected value.");
+            Assert.IsTrue(MathHelper.Equal(expected44, actual44), "Matrix3x2.Multiply did not return the expected value.");
+        }
+
+        /// <summary>
+        ///A test for Multiply (Matrix3x2, float)
+        ///</summary>
+        [TestMethod]
+        public void Matrix3x2MultiplyTest5()
+        {
+            Matrix3x2 a = GenerateMatrixNumberFrom1To6();
+            Matrix3x2 expected = new Matrix3x2(3, 6, 9, 12, 15, 18);
+            Matrix3x2 actual = Matrix3x2.Multiply(a, 3);
+
+            Assert.AreEqual(expected, actual, "Matrix3x2.Multiply did not return the expected value.");
+        }
+
+        /// <summary>
+        ///A test for Multiply (Matrix3x2, float)
+        ///</summary>
+        [TestMethod]
+        public void Matrix3x2MultiplyTest6()
+        {
+            Matrix3x2 a = GenerateMatrixNumberFrom1To6();
+            Matrix3x2 expected = new Matrix3x2(3, 6, 9, 12, 15, 18);
+            Matrix3x2 actual = a * 3;
+
+            Assert.AreEqual(expected, actual, "Matrix3x2.operator * did not return the expected value.");
         }
 
         /// <summary>

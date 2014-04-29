@@ -1667,6 +1667,32 @@ namespace MathTests
         }
 
         /// <summary>
+        ///A test for Multiply (Matrix4x4, float)
+        ///</summary>
+        [TestMethod]
+        public void Matrix4x4MultiplyTest5()
+        {
+            Matrix4x4 a = GenerateMatrixNumberFrom1To16();
+            Matrix4x4 expected = new Matrix4x4(3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48);
+            Matrix4x4 actual = Matrix4x4.Multiply(a, 3);
+
+            Assert.AreEqual(expected, actual, "Matrix4x4.Multiply did not return the expected value.");
+        }
+
+        /// <summary>
+        ///A test for Multiply (Matrix4x4, float)
+        ///</summary>
+        [TestMethod]
+        public void Matrix4x4MultiplyTest6()
+        {
+            Matrix4x4 a = GenerateMatrixNumberFrom1To16();
+            Matrix4x4 expected = new Matrix4x4(3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48);
+            Matrix4x4 actual = a * 3;
+
+            Assert.AreEqual(expected, actual, "Matrix4x4.operator * did not return the expected value.");
+        }
+
+        /// <summary>
         ///A test for Negate (Matrix4x4)
         ///</summary>
         [TestMethod]

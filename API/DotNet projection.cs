@@ -223,11 +223,13 @@ namespace Windows.Math
         public static Matrix4x4 Add(Matrix4x4 value1, Matrix4x4 value2)
         public static Matrix4x4 Subtract(Matrix4x4 value1, Matrix4x4 value2)
         public static Matrix4x4 Multiply(Matrix4x4 value1, Matrix4x4 value2)
+        public static Matrix4x4 Multiply(Matrix4x4 value1, float value2)
 
         public static Matrix4x4 operator -(Matrix4x4 value)
         public static Matrix4x4 operator +(Matrix4x4 value1, Matrix4x4 value2)
         public static Matrix4x4 operator -(Matrix4x4 value1, Matrix4x4 value2)
         public static Matrix4x4 operator *(Matrix4x4 value1, Matrix4x4 value2)
+        public static Matrix4x4 operator *(Matrix4x4 value1, float value2)
     }
 
 
@@ -265,11 +267,13 @@ namespace Windows.Math
         public static Matrix3x2 Add(Matrix3x2 value1, Matrix3x2 value2)
         public static Matrix3x2 Subtract(Matrix3x2 value1, Matrix3x2 value2)
         public static Matrix3x2 Multiply(Matrix3x2 value1, Matrix3x2 value2)
+        public static Matrix3x2 Multiply(Matrix3x2 value1, float value2)
 
         public static Matrix3x2 operator -(Matrix3x2 value)
         public static Matrix3x2 operator +(Matrix3x2 value1, Matrix3x2 value2)
         public static Matrix3x2 operator -(Matrix3x2 value1, Matrix3x2 value2)
         public static Matrix3x2 operator *(Matrix3x2 value1, Matrix3x2 value2)
+        public static Matrix3x2 operator *(Matrix3x2 value1, float value2)
     }
 
 

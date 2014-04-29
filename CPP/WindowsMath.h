@@ -1,3 +1,4 @@
+
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //
@@ -260,12 +261,14 @@ namespace Windows
             static Matrix3x2 Add(Matrix3x2 const& value1, Matrix3x2 const& value2);
             static Matrix3x2 Subtract(Matrix3x2 const& value1, Matrix3x2 const& value2);
             static Matrix3x2 Multiply(Matrix3x2 const& value1, Matrix3x2 const& value2);
+            static Matrix3x2 Multiply(Matrix3x2 const& value1, float value2);
 
             // Operator overloads.
             Matrix3x2 operator -() const;
             Matrix3x2& operator +=(Matrix3x2 const& value);
             Matrix3x2& operator -=(Matrix3x2 const& value);
             Matrix3x2& operator *=(Matrix3x2 const& value);
+            Matrix3x2& operator *=(float value);
             bool operator ==(Matrix3x2 const& value) const;
             bool operator !=(Matrix3x2 const& value) const;
         };
@@ -274,6 +277,7 @@ namespace Windows
         Matrix3x2 operator +(Matrix3x2 const& value1, Matrix3x2 const& value2);
         Matrix3x2 operator -(Matrix3x2 const& value1, Matrix3x2 const& value2);
         Matrix3x2 operator *(Matrix3x2 const& value1, Matrix3x2 const& value2);
+        Matrix3x2 operator *(Matrix3x2 const& value1, float value2);
 
 
         struct Matrix4x4
@@ -335,12 +339,14 @@ namespace Windows
             static Matrix4x4 Add(Matrix4x4 const& value1, Matrix4x4 const& value2);
             static Matrix4x4 Subtract(Matrix4x4 const& value1, Matrix4x4 const& value2);
             static Matrix4x4 Multiply(Matrix4x4 const& value1, Matrix4x4 const& value2);
+            static Matrix4x4 Multiply(Matrix4x4 const& value1, float value2);
 
             // Operator overloads.
             Matrix4x4 operator -() const;
             Matrix4x4& operator +=(Matrix4x4 const& value);
             Matrix4x4& operator -=(Matrix4x4 const& value);
             Matrix4x4& operator *=(Matrix4x4 const& value);
+            Matrix4x4& operator *=(float value);
             bool operator ==(Matrix4x4 const& value) const;
             bool operator !=(Matrix4x4 const& value) const;
         };
@@ -349,6 +355,7 @@ namespace Windows
         Matrix4x4 operator +(Matrix4x4 const& value1, Matrix4x4 const& value2);
         Matrix4x4 operator -(Matrix4x4 const& value1, Matrix4x4 const& value2);
         Matrix4x4 operator *(Matrix4x4 const& value1, Matrix4x4 const& value2);
+        Matrix4x4 operator *(Matrix4x4 const& value1, float value2);
 
 
         struct Plane

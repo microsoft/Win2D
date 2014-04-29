@@ -1965,6 +1965,18 @@ namespace Windows
         }
 
 
+        inline Matrix3x2 Matrix3x2::Multiply(Matrix3x2 const& value1, float value2)
+        {
+            Matrix3x2 result;
+
+            result.M11 = value1.M11 * value2; result.M12 = value1.M12 * value2;
+            result.M21 = value1.M21 * value2; result.M22 = value1.M22 * value2;
+            result.M31 = value1.M31 * value2; result.M32 = value1.M32 * value2;
+
+            return result;
+        }
+
+
         inline Matrix3x2 Matrix3x2::operator -() const
         {
             Matrix3x2 m;
@@ -1994,6 +2006,14 @@ namespace Windows
 
 
         inline Matrix3x2& Matrix3x2::operator *=(Matrix3x2 const& value)
+        {
+            *this = *this * value;
+
+            return *this;
+        }
+
+
+        inline Matrix3x2& Matrix3x2::operator *=(float value)
         {
             *this = *this * value;
 
@@ -2057,6 +2077,18 @@ namespace Windows
             // Third row
             m.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value2.M31;
             m.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value2.M32;
+
+            return m;
+        }
+
+
+        inline Matrix3x2 operator *(Matrix3x2 const& value1, float value2)
+        {
+            Matrix3x2 m;
+
+            m.M11 = value1.M11 * value2; m.M12 = value1.M12 * value2;
+            m.M21 = value1.M21 * value2; m.M22 = value1.M22 * value2;
+            m.M31 = value1.M31 * value2; m.M32 = value1.M32 * value2;
 
             return m;
         }
@@ -3383,6 +3415,19 @@ namespace Windows
         }
 
 
+        inline Matrix4x4 Matrix4x4::Multiply(Matrix4x4 const& value1, float value2)
+        {
+            Matrix4x4 result;
+
+            result.M11 = value1.M11 * value2; result.M12 = value1.M12 * value2; result.M13 = value1.M13 * value2; result.M14 = value1.M14 * value2;
+            result.M21 = value1.M21 * value2; result.M22 = value1.M22 * value2; result.M23 = value1.M23 * value2; result.M24 = value1.M24 * value2;
+            result.M31 = value1.M31 * value2; result.M32 = value1.M32 * value2; result.M33 = value1.M33 * value2; result.M34 = value1.M34 * value2;
+            result.M41 = value1.M41 * value2; result.M42 = value1.M42 * value2; result.M43 = value1.M43 * value2; result.M44 = value1.M44 * value2;
+
+            return result;
+        }
+
+
         inline Matrix4x4 Matrix4x4::operator -() const
         {
             Matrix4x4 m;
@@ -3413,6 +3458,14 @@ namespace Windows
 
 
         inline Matrix4x4& Matrix4x4::operator *=(Matrix4x4 const& value)
+        {
+            *this = *this * value;
+
+            return *this;
+        }
+
+
+        inline Matrix4x4& Matrix4x4::operator *=(float value)
         {
             *this = *this * value;
 
@@ -3492,6 +3545,19 @@ namespace Windows
             m.M42 = value1.M41 * value2.M12 + value1.M42 * value2.M22 + value1.M43 * value2.M32 + value1.M44 * value2.M42;
             m.M43 = value1.M41 * value2.M13 + value1.M42 * value2.M23 + value1.M43 * value2.M33 + value1.M44 * value2.M43;
             m.M44 = value1.M41 * value2.M14 + value1.M42 * value2.M24 + value1.M43 * value2.M34 + value1.M44 * value2.M44;
+
+            return m;
+        }
+
+
+        inline Matrix4x4 operator *(Matrix4x4 const& value1, float value2)
+        {
+            Matrix4x4 m;
+
+            m.M11 = value1.M11 * value2; m.M12 = value1.M12 * value2; m.M13 = value1.M13 * value2; m.M14 = value1.M14 * value2;
+            m.M21 = value1.M21 * value2; m.M22 = value1.M22 * value2; m.M23 = value1.M23 * value2; m.M24 = value1.M24 * value2;
+            m.M31 = value1.M31 * value2; m.M32 = value1.M32 * value2; m.M33 = value1.M33 * value2; m.M34 = value1.M34 * value2;
+            m.M41 = value1.M41 * value2; m.M42 = value1.M42 * value2; m.M43 = value1.M43 * value2; m.M44 = value1.M44 * value2;
 
             return m;
         }

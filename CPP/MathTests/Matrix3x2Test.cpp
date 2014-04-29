@@ -489,7 +489,27 @@ namespace MathTests
             Matrix4x4 expected44 = Matrix4x4::Multiply(a44, b44);
             Matrix4x4 actual44(actual);
 
-            Assert::IsTrue(Equal(expected44, actual44), L"Matrix3x2::operator * did not return the expected value.");
+            Assert::IsTrue(Equal(expected44, actual44), L"Matrix3x2::Multiply did not return the expected value.");
+        }
+
+        // A test for Multiply (Matrix3x2, float)
+        TEST_METHOD(Matrix3x2MultiplyTest5)
+        {
+            Matrix3x2 a = GenerateMatrixNumberFrom1To6();
+            Matrix3x2 expected(3, 6, 9, 12, 15, 18);
+            Matrix3x2 actual = Matrix3x2::Multiply(a, 3);
+
+            Assert::AreEqual(expected, actual, L"Matrix3x2::Multiply did not return the expected value.");
+        }
+
+        // A test for Multiply (Matrix3x2, float)
+        TEST_METHOD(Matrix3x2MultiplyTest6)
+        {
+            Matrix3x2 a = GenerateMatrixNumberFrom1To6();
+            Matrix3x2 expected(3, 6, 9, 12, 15, 18);
+            Matrix3x2 actual = a * 3;
+
+            Assert::AreEqual(expected, actual, L"Matrix3x2::operator * did not return the expected value.");
         }
 
         // A test for Negate (Matrix3x2)
@@ -610,6 +630,20 @@ namespace MathTests
             expected = Matrix3x2::Multiply(b, b);
             b *= b;
             Assert::AreEqual(b, expected);
+        }
+
+        // A test for operator *=
+        TEST_METHOD(Matrix3x2OperatorMultiplyEqualsTest2)
+        {
+            Matrix3x2 a(1, 2, 3, 4, 5, 6);
+            float b = 23;
+            Matrix3x2 expected = Matrix3x2::Multiply(a, b);
+            
+            // In-place *= operation.
+            Matrix3x2& ret = a *= b;
+            
+            Assert::AreEqual(a, expected);
+            Assert::AreEqual<void*>(&a, &ret);
         }
 
         // A test for CreateScale (Vector2)
