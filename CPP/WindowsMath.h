@@ -7,6 +7,7 @@
 
 #include <DirectXMath.h>
 
+
 namespace Windows
 {
     namespace Math
@@ -438,5 +439,27 @@ namespace Windows
         Quaternion operator /(Quaternion const& value1, Quaternion const& value2);
     }
 }
+
+
+// Interop between Windows::Math and DirectXMath.
+namespace DirectX
+{
+    XMVECTOR XM_CALLCONV XMLoadVector2   (_In_ Windows::Math::Vector2    const* pSource);
+    XMVECTOR XM_CALLCONV XMLoadVector3   (_In_ Windows::Math::Vector3    const* pSource);
+    XMVECTOR XM_CALLCONV XMLoadVector4   (_In_ Windows::Math::Vector4    const* pSource);
+    XMMATRIX XM_CALLCONV XMLoadMatrix3x2 (_In_ Windows::Math::Matrix3x2  const* pSource);
+    XMMATRIX XM_CALLCONV XMLoadMatrix4x4 (_In_ Windows::Math::Matrix4x4  const* pSource);
+    XMVECTOR XM_CALLCONV XMLoadPlane     (_In_ Windows::Math::Plane      const* pSource);
+    XMVECTOR XM_CALLCONV XMLoadQuaternion(_In_ Windows::Math::Quaternion const* pSource);
+
+    void XM_CALLCONV XMStoreVector2   (_Out_ Windows::Math::Vector2*    pDestination, _In_ FXMVECTOR value);
+    void XM_CALLCONV XMStoreVector3   (_Out_ Windows::Math::Vector3*    pDestination, _In_ FXMVECTOR value);
+    void XM_CALLCONV XMStoreVector4   (_Out_ Windows::Math::Vector4*    pDestination, _In_ FXMVECTOR value);
+    void XM_CALLCONV XMStoreMatrix3x2 (_Out_ Windows::Math::Matrix3x2*  pDestination, _In_ FXMMATRIX value);
+    void XM_CALLCONV XMStoreMatrix4x4 (_Out_ Windows::Math::Matrix4x4*  pDestination, _In_ FXMMATRIX value);
+    void XM_CALLCONV XMStorePlane     (_Out_ Windows::Math::Plane*      pDestination, _In_ FXMVECTOR value);
+    void XM_CALLCONV XMStoreQuaternion(_Out_ Windows::Math::Quaternion* pDestination, _In_ FXMVECTOR value);
+}
+
 
 #include "WindowsMath.inl"

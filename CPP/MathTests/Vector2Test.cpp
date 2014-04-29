@@ -1076,6 +1076,33 @@ namespace MathTests
             Assert::AreEqual(size_t(16), sizeof(Vector2_2x));
             Assert::AreEqual(size_t(12), sizeof(Vector2PlusFloat));
             Assert::AreEqual(size_t(24), sizeof(Vector2PlusFloat_2x));
+            Assert::AreEqual(sizeof(Vector2), sizeof(DirectX::XMFLOAT2));
+        }
+
+        // A test of Vector2 -> DirectXMath interop
+        TEST_METHOD(Vector2LoadTest)
+        {
+            Vector2 a(23, 42);
+            DirectX::XMVECTOR b = DirectX::XMLoadVector2(&a);
+            DirectX::XMFLOAT4 c;
+            DirectX::XMStoreFloat4(&c, b);
+
+            Assert::AreEqual(a.X, c.x);
+            Assert::AreEqual(a.Y, c.y);
+            Assert::AreEqual(0.0f, c.z);
+            Assert::AreEqual(0.0f, c.w);
+        }
+
+        // A test of DirectXMath -> Vector2 interop
+        TEST_METHOD(Vector2StoreTest)
+        {
+            DirectX::XMFLOAT2 a(23, 42);
+            DirectX::XMVECTOR b = DirectX::XMLoadFloat2(&a);
+            Vector2 c;
+            DirectX::XMStoreVector2(&c, b);
+
+            Assert::AreEqual(a.x, c.X);
+            Assert::AreEqual(a.y, c.Y);
         }
 
         // A test to make sure this type matches our expectations for blittability

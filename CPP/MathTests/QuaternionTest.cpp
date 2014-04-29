@@ -899,6 +899,35 @@ namespace MathTests
             Assert::AreEqual(size_t(32), sizeof(Quaternion_2x));
             Assert::AreEqual(size_t(20), sizeof(QuaternionPlusFloat));
             Assert::AreEqual(size_t(40), sizeof(QuaternionPlusFloat_2x));
+            Assert::AreEqual(sizeof(Quaternion), sizeof(DirectX::XMFLOAT4));
+        }
+
+        // A test of Quaternion -> DirectXMath interop
+        TEST_METHOD(QuaternionLoadTest)
+        {
+            Quaternion a(23, 42, 666, -1);
+            DirectX::XMVECTOR b = DirectX::XMLoadQuaternion(&a);
+            DirectX::XMFLOAT4 c;
+            DirectX::XMStoreFloat4(&c, b);
+
+            Assert::AreEqual(a.X, c.x);
+            Assert::AreEqual(a.Y, c.y);
+            Assert::AreEqual(a.Z, c.z);
+            Assert::AreEqual(a.W, c.w);
+        }
+
+        // A test of DirectXMath -> Quaternion interop
+        TEST_METHOD(QuaternionStoreTest)
+        {
+            DirectX::XMFLOAT4 a(23, 42, 666, -1);
+            DirectX::XMVECTOR b = DirectX::XMLoadFloat4(&a);
+            Quaternion c;
+            DirectX::XMStoreQuaternion(&c, b);
+
+            Assert::AreEqual(a.x, c.X);
+            Assert::AreEqual(a.y, c.Y);
+            Assert::AreEqual(a.z, c.Z);
+            Assert::AreEqual(a.w, c.W);
         }
 
         // A test to make sure this type matches our expectations for blittability

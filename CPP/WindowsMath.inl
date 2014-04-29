@@ -6,6 +6,108 @@
 #pragma warning(disable: 4723) // potential divide by 0
 #pragma warning(disable: 4756) // overflow in constant arithmetic
 
+
+namespace DirectX
+{
+    inline XMVECTOR XM_CALLCONV XMLoadVector2(_In_ Windows::Math::Vector2 const* pSource)
+    {
+        return XMLoadFloat2(reinterpret_cast<XMFLOAT2 const*>(pSource));
+    }
+
+
+    inline XMVECTOR XM_CALLCONV XMLoadVector3(_In_ Windows::Math::Vector3 const* pSource)
+    {
+        return XMLoadFloat3(reinterpret_cast<XMFLOAT3 const*>(pSource));
+    }
+
+
+    inline XMVECTOR XM_CALLCONV XMLoadVector4(_In_ Windows::Math::Vector4 const* pSource)
+    {
+        return XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(pSource));
+    }
+
+
+    inline XMMATRIX XM_CALLCONV XMLoadMatrix3x2(_In_ Windows::Math::Matrix3x2 const* pSource)
+    {
+        XMVECTOR abcd = XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(&pSource->M11));
+        XMVECTOR ef = XMLoadFloat2(reinterpret_cast<XMFLOAT2 const*>(&pSource->M31));
+
+        XMMATRIX m;
+
+        m.r[0] = XMVectorPermute<0, 1, 4, 5>(abcd, g_XMZero);
+        m.r[1] = XMVectorPermute<2, 3, 4, 5>(abcd, g_XMZero);
+        m.r[2] = g_XMIdentityR2;
+        m.r[3] = XMVectorPermute<0, 1, 6, 7>(ef, g_XMIdentityR3);
+
+        return m;
+    }
+
+
+    inline XMMATRIX XM_CALLCONV XMLoadMatrix4x4(_In_ Windows::Math::Matrix4x4 const* pSource)
+    {
+        return XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4 const*>(pSource));
+    }
+
+
+    inline XMVECTOR XM_CALLCONV XMLoadPlane(_In_ Windows::Math::Plane const* pSource)
+    {
+        return XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(pSource));
+    }
+
+
+    inline XMVECTOR XM_CALLCONV XMLoadQuaternion(_In_ Windows::Math::Quaternion const* pSource)
+    {
+        return XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(pSource));
+    }
+
+
+    inline void XM_CALLCONV XMStoreVector2(_Out_ Windows::Math::Vector2* pDestination, _In_ FXMVECTOR value)
+    {
+        XMStoreFloat2(reinterpret_cast<XMFLOAT2*>(pDestination), value);
+    }
+
+
+    inline void XM_CALLCONV XMStoreVector3(_Out_ Windows::Math::Vector3* pDestination, _In_ FXMVECTOR value)
+    {
+        XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(pDestination), value);
+    }
+
+
+    inline void XM_CALLCONV XMStoreVector4(_Out_ Windows::Math::Vector4* pDestination, _In_ FXMVECTOR value)
+    {
+        XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(pDestination), value);
+    }
+
+
+    inline void XM_CALLCONV XMStoreMatrix3x2(_Out_ Windows::Math::Matrix3x2* pDestination, _In_ FXMMATRIX value)
+    {
+        XMVECTOR abcd = XMVectorPermute<0, 1, 4, 5>(value.r[0], value.r[1]);
+        XMVECTOR ef = value.r[3];
+
+        XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(&pDestination->M11), abcd);
+        XMStoreFloat2(reinterpret_cast<XMFLOAT2*>(&pDestination->M31), ef);
+    }
+
+
+    inline void XM_CALLCONV XMStoreMatrix4x4(_Out_ Windows::Math::Matrix4x4* pDestination, _In_ FXMMATRIX value)
+    {
+        XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(pDestination), value);
+    }
+
+
+    inline void XM_CALLCONV XMStorePlane(_Out_ Windows::Math::Plane* pDestination, _In_ FXMVECTOR value)
+    {
+        XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(pDestination), value);
+    }
+
+
+    inline void XM_CALLCONV XMStoreQuaternion(_Out_ Windows::Math::Quaternion* pDestination, _In_ FXMVECTOR value)
+    {
+        XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(pDestination), value);
+    }
+}
+
+
 namespace Windows
 {
     namespace Math
@@ -4347,5 +4449,6 @@ namespace Windows
         }
     }
 }
+
 
 #pragma warning(pop)

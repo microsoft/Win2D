@@ -266,6 +266,35 @@ namespace MathTests
             Assert::AreEqual(size_t(32), sizeof(Plane_2x));
             Assert::AreEqual(size_t(20), sizeof(PlanePlusFloat));
             Assert::AreEqual(size_t(40), sizeof(PlanePlusFloat_2x));
+            Assert::AreEqual(sizeof(Plane), sizeof(DirectX::XMFLOAT4));
+        }
+
+        // A test of Plane -> DirectXMath interop
+        TEST_METHOD(PlaneLoadTest)
+        {
+            Plane a(23, 42, 666, -1);
+            DirectX::XMVECTOR b = DirectX::XMLoadPlane(&a);
+            DirectX::XMFLOAT4 c;
+            DirectX::XMStoreFloat4(&c, b);
+
+            Assert::AreEqual(a.Normal.X, c.x);
+            Assert::AreEqual(a.Normal.Y, c.y);
+            Assert::AreEqual(a.Normal.Z, c.z);
+            Assert::AreEqual(a.D, c.w);
+        }
+
+        // A test of DirectXMath -> Plane interop
+        TEST_METHOD(PlaneStoreTest)
+        {
+            DirectX::XMFLOAT4 a(23, 42, 666, -1);
+            DirectX::XMVECTOR b = DirectX::XMLoadFloat4(&a);
+            Plane c;
+            DirectX::XMStorePlane(&c, b);
+
+            Assert::AreEqual(a.x, c.Normal.X);
+            Assert::AreEqual(a.y, c.Normal.Y);
+            Assert::AreEqual(a.z, c.Normal.Z);
+            Assert::AreEqual(a.w, c.D);
         }
 
         // A test to make sure this type matches our expectations for blittability

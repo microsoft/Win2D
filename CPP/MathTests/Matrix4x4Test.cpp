@@ -2236,6 +2236,65 @@ namespace MathTests
             Assert::AreEqual(size_t(128), sizeof(Matrix4x4_2x));
             Assert::AreEqual(size_t(68), sizeof(Matrix4x4PlusFloat));
             Assert::AreEqual(size_t(136), sizeof(Matrix4x4PlusFloat_2x));
+            Assert::AreEqual(sizeof(Matrix4x4), sizeof(DirectX::XMFLOAT4X4));
+        }
+
+        // A test of Matrix4x4 -> DirectXMath interop
+        TEST_METHOD(Matrix4x4LoadTest)
+        {
+            Matrix4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+            DirectX::XMMATRIX b = DirectX::XMLoadMatrix4x4(&a);
+            DirectX::XMFLOAT4X4 c;
+            DirectX::XMStoreFloat4x4(&c, b);
+
+            Assert::AreEqual(a.M11, c._11);
+            Assert::AreEqual(a.M12, c._12);
+            Assert::AreEqual(a.M13, c._13);
+            Assert::AreEqual(a.M14, c._14);
+
+            Assert::AreEqual(a.M21, c._21);
+            Assert::AreEqual(a.M22, c._22);
+            Assert::AreEqual(a.M23, c._23);
+            Assert::AreEqual(a.M24, c._24);
+
+            Assert::AreEqual(a.M31, c._31);
+            Assert::AreEqual(a.M32, c._32);
+            Assert::AreEqual(a.M33, c._33);
+            Assert::AreEqual(a.M34, c._34);
+
+            Assert::AreEqual(a.M41, c._41);
+            Assert::AreEqual(a.M42, c._42);
+            Assert::AreEqual(a.M43, c._43);
+            Assert::AreEqual(a.M44, c._44);
+        }
+
+        // A test of DirectXMath -> Matrix4x4 interop
+        TEST_METHOD(Matrix4x4StoreTest)
+        {
+            DirectX::XMFLOAT4X4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+            DirectX::XMMATRIX b = DirectX::XMLoadFloat4x4(&a);
+            Matrix4x4 c;
+            DirectX::XMStoreMatrix4x4(&c, b);
+
+            Assert::AreEqual(a._11, c.M11);
+            Assert::AreEqual(a._12, c.M12);
+            Assert::AreEqual(a._13, c.M13);
+            Assert::AreEqual(a._14, c.M14);
+
+            Assert::AreEqual(a._21, c.M21);
+            Assert::AreEqual(a._22, c.M22);
+            Assert::AreEqual(a._23, c.M23);
+            Assert::AreEqual(a._24, c.M24);
+
+            Assert::AreEqual(a._31, c.M31);
+            Assert::AreEqual(a._32, c.M32);
+            Assert::AreEqual(a._33, c.M33);
+            Assert::AreEqual(a._34, c.M34);
+
+            Assert::AreEqual(a._41, c.M41);
+            Assert::AreEqual(a._42, c.M42);
+            Assert::AreEqual(a._43, c.M43);
+            Assert::AreEqual(a._44, c.M44);
         }
 
         // A test to make sure this type matches our expectations for blittability
