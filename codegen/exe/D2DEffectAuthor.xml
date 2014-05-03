@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!-- This file contains types defined in D2D1 v2. This is maintained-->
+<!-- in a saparate file to make it more clear what the new          -->
+<!-- interfaces are. The two XML files are simply read sequentially -->
+<!-- to build the object model.                                     -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<D2DTypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D2DTypes.xsd">
+
+    <Primitive Name="PD2D1_PROPERTY_GET_FUNCTION"/>
+    <Primitive Name="PD2D1_PROPERTY_SET_FUNCTION"/>
+    <Primitive Name="REFGUID" AlwaysConst="true"/>
+    <Primitive Name="D3D_FEATURE_LEVEL"/>
+    <Primitive Name="PCSTR"/>
+
+
+    <Namespace Name="D2D1">
+        <Enum Name="CHANGE_TYPE" IsFlags="true" Comment="Indicates what has changed since the last time the effect was asked to prepare to render.">
+            <Field Name="NONE" Value="0" Comment="Nothing has changed."/>
+            <Field Name="PROPERTIES" Value="1" Comment="The effect's properties have changed."/>
+            <Field Name="CONTEXT" Value="2" Comment="The internal context has changed and should be inspected."/>
+            <Field Name="GRAPH" Value="3" Comment="A new graph has been set due to a change in the input count."/>
+        </Enum>
+                
+        <Enum Name="PIXEL_OPTIONS" IsFlags="true" Comment="Indicates options for drawing using a pixel shader.">
+            <Field Name="NONE" Value="0" Comment="Default pixel processing."/>
+            <Field Name="TRIVIAL_SAMPLING" Value="1" Comment="Indicates that the shader samples its inputs only at exactly the same scene coordinate as the output pixel, and that it returns transparent black whenever the input pixels are also transparent black."/>
+        </Enum>
+        
+        <Enum Name="VERTEX_OPTIONS" IsFlags="true" Comment="Indicates options for drawing custom vertices set by transforms.">
+            <Field Name="NONE" Value="0" Comment="Default vertex processing."/>
+            <Field Name="DO_NOT_CLEAR" Value="1" Comment="Indicates that the output rectangle does not need to be cleared before drawing custom vertices. This must only be used by transforms whose custom vertices completely cover their output rectangle."/>
+            <Field Name="USE_DEPTH_BUFFER" Value="2" Comment="Causes a depth buffer to be used while drawing custom vertices. This impacts drawing behavior when primitives overlap one another."/>
+            <Field Name="ASSUME_NO_OVERLAP" Value="4" Comment="Indicates that custom vertices do not form primitives which overlap one another."/>
+        </Enum>
+
+        <Enum Name="VERTEX_USAGE" Comment="Describes how a vertex buffer is to be managed.">
+            <Field Name="STATIC"  Value="0" Comment="The vertex buffer content do not change frequently from frame to frame."/>
+            <Field Name="DYNAMIC" Value="1" Comment="The vertex buffer is intended to be updated frequently."/>
+        </Enum>
+
+        <Enum Name="BLEND_OPERATION" Comment="Describes a particular blend in the D2D1_BLEND_DESCRIPTION structure.">
+            <Field Name="ADD"  Value="1"/>
+            <Field Name="SUBTRACT" Value="2"/>
+            <Field Name="REV_SUBTRACT" Value="3"/>
+            <Field Name="MIN" Value="4"/>
+            <Field Name="MAX" Value="5"/>
+        </Enum>
+
+        <Enum Name="BLEND" Comment="Describes a particular blend in the D2D1_BLEND_DESCRIPTION structure.">
+            <Field Name="ZERO"  Value="1"/>
+            <Field Name="ONE" Value="2"/>
+            <Field Name="SRC_COLOR" Value="3"/>
+            <Field Name="INV_SRC_COLOR" Value="4"/>
+            <Field Name="SRC_ALPHA" Value="5"/>
+            <Field Name="INV_SRC_ALPHA" Value="6"/>
+            <Field Name="DEST_ALPHA" Value="7"/>
+            <Field Name="INV_DEST_ALPHA" Value="8"/>
+            <Field Name="DEST_COLOR" Value="9"/>
+            <Field Name="INV_DEST_COLOR" Value="10"/>
+            <Field Name="SRC_ALPHA_SAT" Value="11"/>
+            <Field Name="BLEND_FACTOR" Value="14"/>
+            <Field Name="INV_BLEND_FACTOR" Value="15"/>
+        </Enum>
+
+        <Enum Name="CHANNEL_DEPTH" Comment="Allows a caller to control the channel depth of a stage in the rendering pipeline.">
+            <Field Name="DEFAULT"  Value="0"/>
+            <Field Name="1" Value="1"/>
+            <Field Name="4" Value="4"/>
+        </Enum>
+
+        <Enum Name="FILTER" Comment="Represents filtering modes transforms may select to use on their input textures.">
+            <Field Name="MIN_MAG_MIP_POINT" Value="0x00"/>
+            <Field Name="MIN_MAG_POINT_MIP_LINEAR" Value="0x01"/>
+            <Field Name="MIN_POINT_MAG_LINEAR_MIP_POINT" Value="0x04"/>
+            <Field Name="MIN_POINT_MAG_MIP_LINEAR" Value="0x05"/>
+            <Field Name="MIN_LINEAR_MAG_MIP_POINT" Value="0x10"/>
+            <Field Name="MIN_LINEAR_MAG_POINT_MIP_LINEAR" Value="0x11"/>
+            <Field Name="MIN_MAG_LINEAR_MIP_POINT" Value="0x14"/>
+            <Field Name="MIN_MAG_MIP_LINEAR" Value="0x15"/>
+            <Field Name="ANISOTROPIC" Value="0x55"/>
+        </Enum>
+        
+        <Enum Name="FEATURE" Comment="Defines capabilities of the underlying D3D device which may be queried using CheckFeatureSupport.">
+            <Field Name="DOUBLES" Value="0"/>            
+            <Field Name="D3D10_X_HARDWARE_OPTIONS" Value="1"/>
+        </Enum>
+        
+        <Struct Name="PROPERTY_BINDING" Comment="Defines a property binding to a function. The name must match the property defined in the registration schema.">
+            <Field Name="propertyName" Type="PCWSTR" Comment="The name of the property."/>
+            <Field Name="setFunction" Type="PD2D1_PROPERTY_SET_FUNCTION" Comment="The function that will receive the data to set."/>
+            <Field Name="getFunction" Type="PD2D1_PROPERTY_GET_FUNCTION" Comment="The function that will be asked to write the output data."/>
+        </Struct>
+
+        <Struct Name="RESOURCE_TEXTURE_PROPERTIES" Comment="This is used to define a resource texture when that resource texture is created.">
+            <Field Name="extents" Type="UINT32" Form="pointer ecount" ECount="dimensions"/>
+            <Field Name="dimensions" Type="UINT32"/>
+            <Field Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION"/>
+            <Field Name="channelDepth" Type="D2D1::CHANNEL_DEPTH"/>
+            <Field Name="filter" Type="D2D1::FILTER"/>
+            <Field Name="extendModes" Type="D2D1::EXTEND_MODE" Form="pointer ecount" ECount="dimensions"/>
+        </Struct>
+
+        <Struct Name="INPUT_ELEMENT_DESC" Comment="This defines a single element of the vertex layout.">
+            <Field Name="semanticName" Type="PCSTR"/>
+            <Field Name="semanticIndex" Type="UINT32"/>
+            <Field Name="format" Type="DXGI_FORMAT"/>
+            <Field Name="inputSlot" Type="UINT32"/>
+            <Field Name="alignedByteOffset" Type="UINT32"/>
+        </Struct>
+
+        <Struct Name="VERTEX_BUFFER_PROPERTIES" Comment="This defines the properties of a vertex buffer which uses the default vertex layout.">
+            <Field Name="inputCount" Type="UINT32"/>
+            <Field Name="usage" Type="D2D1::VERTEX_USAGE"/>
+            <Field Name="data" Type="BYTE" Form="pointer ecount opt" ECount="byteWidth"/>
+            <Field Name="byteWidth" Type="UINT32"/>
+        </Struct>
+
+        <Struct Name="CUSTOM_VERTEX_BUFFER_PROPERTIES" Comment="This defines the input layout of vertices and the vertex shader which processes them.">
+            <Field Name="shaderBufferWithInputSignature" Type="BYTE" Form="pointer ecount" ECount="shaderBufferSize"/>
+            <Field Name="shaderBufferSize" Type="UINT32"/>
+            <Field Name="inputElements" Type="D2D1::INPUT_ELEMENT_DESC" Form="pointer ecount opt" ECount="elementCount"/>
+            <Field Name="elementCount" Type="UINT32"/>
+            <Field Name="stride" Type="UINT32"/>
+        </Struct>
+
+        <Struct Name="VERTEX_RANGE" Comment="This defines the range of vertices from a vertex buffer to draw.">
+            <Field Name="startVertex" Type="UINT32"/>
+            <Field Name="vertexCount" Type="UINT32"/>
+        </Struct>
+
+        <Struct Name="BLEND_DESCRIPTION" Comment="Blend description which configures a blend transform object.">
+            <Field Name="sourceBlend" Type="D2D1::BLEND"/>
+            <Field Name="destinationBlend" Type="D2D1::BLEND"/>
+            <Field Name="blendOperation" Type="D2D1::BLEND_OPERATION"/>
+            <Field Name="sourceBlendAlpha" Type="D2D1::BLEND"/>
+            <Field Name="destinationBlendAlpha" Type="D2D1::BLEND"/>
+            <Field Name="blendOperationAlpha" Type="D2D1::BLEND_OPERATION"/>
+            <Field Name="blendFactor">
+                <Type Name="FLOAT">
+                    <ArrayDimension Size="4"/>
+                </Type>
+            </Field>
+        </Struct>
+
+        <Struct Name="INPUT_DESCRIPTION" Comment="Describes options transforms may select to use on their input textures." >
+            <Field Name="filter" Type="D2D1::FILTER"/>
+            <Field Name="levelOfDetailCount" Type="UINT32"/>
+        </Struct>
+        
+        <Struct Name="FEATURE_DATA_DOUBLES" Comment="Indicates whether shader support for doubles is present on the underlying hardware.  This may be populated using CheckFeatureSupport." >
+            <Field Name="doublePrecisionFloatShaderOps" Type="BOOL"/>
+        </Struct>
+        
+        <Struct Name="FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS" Comment="Indicates support for features which are optional on D3D10 feature levels.  This may be populated using CheckFeatureSupport." >
+            <Field Name="computeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x" Type="BOOL"/>
+        </Struct>
+        
+        <Interface Name="IVertexBuffer" Extends="IUnknown" Comment="A transform uses this interface to write new vertices to a vertex buffer." IID="9b8b1336-00a5-4668-92b7-ced5d8bf9b7b">
+            <Method Name="Map">
+                <Parameter Name="data" Type="BYTE" Form="deref out pointer pointer bcount"  IsArray="true" LengthParameter="bufferSize"/>
+            </Method>
+
+            <Method Name="Unmap"/>
+        </Interface>
+
+        <Interface Name="IResourceTexture" Extends="IUnknown" IID="688d15c3-02b0-438d-b13a-d1b44c32c39a">
+            <Method Name="Update" Comment="Update the vertex text.">
+                <Parameter Name="minimumExtents" Type="UINT32" Form="pointer ecount opt" ECount="dimensions"/>
+                <Parameter Name="maximimumExtents" Type="UINT32" Form="pointer ecount opt" ECount="dimensions"/>
+                <Parameter Name="strides" Type="UINT32" Form="pointer ecount opt" ECount="dimensions - 1"/>
+                <Parameter Name="dimensions" Type="UINT32"/>
+                <Parameter Name="data" IsArray="true" Type="BYTE" Form="pointer"/>
+            </Method>
+        </Interface>
+        
+        <!-- IRenderInfo is not a leaf type, so no need to test QI -->
+        <Interface Name="IRenderInfo" Extends="IUnknown" ShouldTestQI="false" Comment="A transform uses this interface to specify how to render a particular pass in D2D." IID="519ae1bd-d19a-420d-b849-364f594776b7">
+            <Method Name="SetInputDescription" Comment="Sets options for sampling the specified image input">
+                <Parameter Name="inputIndex" Type="UINT32"/>
+                <Parameter Name="inputDescription" Type="D2D1::INPUT_DESCRIPTION"/>
+            </Method>
+
+            <Method Name="SetOutputBuffer" Comment="Controls the output precision and channel-depth for the associated transform.">
+                <Parameter Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION"/>
+                <Parameter Name="channelDepth" Type="D2D1::CHANNEL_DEPTH"/>
+            </Method>
+
+            <Method Name="SetCached"  Return="void" Comment="Controls whether the output of the associated transform is cached.">
+                <Parameter Name="isCached" Type="BOOL"/>
+            </Method>
+            
+            <Method Name="SetInstructionCountHint"  Return="void" Comment="Provides a hint of the approximate shader instruction count per pixel.  If provided, it may improve performance when processing large images.  Instructions should be counted multiple times if occurring within loops.">
+                <Parameter Name="instructionCount" Type="UINT32"/>
+            </Method>
+        </Interface>
+        
+        <Interface Name="IDrawInfo" Extends="D2D1::IRenderInfo" Comment="A transform uses this interface to specify how to render a particular pass using pixel and vertex shaders." IID="693ce632-7f2f-45de-93fe-18d88b37aa21">
+            <Method Name="SetPixelShaderConstantBuffer" Comment="Set the constant buffer for this transform's pixel shader.">
+                <Parameter Name="buffer" Type="BYTE" Form="pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="SetResourceTexture" Comment="Sets the resource texture corresponding to the given shader texture index.">
+                <Parameter Name="textureIndex" Type="UINT32"/>
+                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="pointer"/>
+            </Method>
+
+            <Method Name="SetVertexShaderConstantBuffer" Comment="Set the constant buffer for this transform's vertex shader.">
+                <Parameter Name="buffer" Type="BYTE" Form="pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="SetPixelShader" Comment="Set the shader instructions for this transform.">
+                <Parameter Name="shaderId" Type="REFGUID" Form="in"/>
+                <Parameter Name="pixelOptions" Type="D2D1::PIXEL_OPTIONS" Default="D2D1_PIXEL_OPTIONS_NONE"/>
+            </Method>
+
+            <Method Name="SetVertexProcessing" Comment="Set custom vertices for the associated transform.  A blend mode if foreground-over will be used if blendDescription is NULL.">
+                <Parameter Name="vertexBuffer" Type="D2D1::IVertexBuffer" Form="pointer opt"/>
+                <Parameter Name="vertexOptions" Type="D2D1::VERTEX_OPTIONS"/>
+                <Parameter Name="blendDescription" Type="D2D1::BLEND_DESCRIPTION" Form="pointer opt"  Default="NULL"/>
+                <Parameter Name="vertexRange" Type="D2D1::VERTEX_RANGE" Form="pointer opt"  Default="NULL"/>
+                <Parameter Name="vertexShader" Type="GUID" Form="pointer opt"  Default="NULL"/>
+            </Method>
+            
+        </Interface>
+        
+        <Interface Name="IComputeInfo" Extends="D2D1::IRenderInfo" Comment="A transform uses this interface to specify how to render a particular pass using compute shader." IID="5598b14b-9fd7-48b7-9bdb-8f0964eb38bc">
+            <Method Name="SetComputeShaderConstantBuffer" Comment="Set the constant buffer for this transform.">
+                <Parameter Name="buffer" Type="BYTE" Form="pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="SetComputeShader" Comment="Set the shader instructions for this transform.">
+                <Parameter Name="shaderId" Type="REFGUID" Form="in"/>
+            </Method>
+
+            <Method Name="SetResourceTexture" Comment="Sets the resource texture corresponding to the given shader texture index.">
+                <Parameter Name="textureIndex" Type="UINT32"/>
+                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="pointer"/>
+            </Method>
+        </Interface>
+
+        <Interface Name="ITransformNode" Extends="IUnknown"  Comment="A base object which can be inserted into a transform graph." IID="b2efe1e7-729f-4102-949f-505fa21bf666">
+            <Method Name="GetInputCount" IsConst="true" Return="UINT32" Comment="Return the number of input this node has."/>
+        </Interface>
+
+        <Interface Name="ITransformGraph" Extends="IUnknown" Comment="The implementation of the actual graph." IID="13d29038-c3e6-4034-9081-13b53a417992">
+            <Method Name="GetInputCount" IsConst="true" Return="UINT32" Comment="Return the number of input this graph has."/>
+            
+            <Method Name="SetSingleTransformNode" Comment="Sets the graph to contain a single transform whose inputs map 1:1 with effect inputs.">
+                <Parameter Name="node" Type="D2D1::ITransformNode" Form="pointer" />
+            </Method>
+            <Method Name="AddNode" Comment="Adds the given transform node to the graph.">
+                <Parameter Name="node" Type="D2D1::ITransformNode" Form="pointer" />
+            </Method>
+            <Method Name="RemoveNode" Comment="Removes the given transform node from the graph.">
+                <Parameter Name="node" Type="D2D1::ITransformNode" Form="pointer" />
+            </Method>
+            <Method Name="SetOutputNode" Comment="Indicates that the given transform node should be considered to be the output node of the graph.">
+                <Parameter Name="node" Type="D2D1::ITransformNode" Form="pointer" />
+            </Method>
+            <Method Name="ConnectNode" Comment="Connects one node to another node inside the graph.">
+                <Parameter Name="fromNode" Type="D2D1::ITransformNode" Form="pointer" />
+                <Parameter Name="toNode" Type="D2D1::ITransformNode" Form="pointer" />                
+                <Parameter Name="toNodeInputIndex" Type="UINT32"/>
+            </Method>
+            <Method Name="ConnectToEffectInput" Comment="Connects a transform node inside the graph to the corresponding input of the encapsulating effect.">
+                <Parameter Name="toEffectInputIndex" Type="UINT32"/>            
+                <Parameter Name="node" Type="D2D1::ITransformNode" Form="pointer" />                
+                <Parameter Name="toNodeInputIndex" Type="UINT32"/>            
+            </Method>
+            <Method Name="Clear" Return="void" Comment="Clears all nodes and connections from the transform graph.">
+            </Method>
+            <Method Name="SetPassthroughGraph" Comment="Uses the specified input as the effect output.">
+                <Parameter Name="effectInputIndex" Type="UINT32"/>
+            </Method>
+        </Interface>
+
+        <!-- ITransform is not a leaf type, so no need to test QI -->
+        <Interface Name="ITransform"  Extends="D2D1::ITransformNode" ShouldTestQI="false" Comment="The interface implemented by a transform author." IID="ef1a287d-342a-4f76-8fdb-da0d6ea9f92b">
+            <Method Name="MapOutputRectToInputRects" IsConst="true">
+                <Parameter Name="outputRect" Type="D2D1::RECT_L" Form="pointer"/>
+                <Parameter Name="inputRects" Type="D2D1::RECT_L" Form="out pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="MapInputRectsToOutputRect">
+                <Parameter Name="inputRects" Type="D2D1::RECT_L" Form="pointer ecount" ECount="inputRectCount"/>
+                <Parameter Name="inputOpaqueSubRects" Type="D2D1::RECT_L" Form="pointer ecount" ECount="inputRectCount"/>
+                <Parameter Name="inputRectCount" Type="UINT32"/>
+                <Parameter Name="outputRect" Type="D2D1::RECT_L" Form="out pointer"/>
+                <Parameter Name="outputOpaqueSubRect" Type="D2D1::RECT_L" Form="out pointer"/>
+            </Method>
+
+            <Method Name="MapInvalidRect" IsConst="true">
+                <Parameter Name="inputIndex" Type="UINT32"/>
+                <Parameter Name="invalidInputRect" Type="D2D1::RECT_L" />
+                <Parameter Name="invalidOutputRect" Type="D2D1::RECT_L" Form="out pointer"/>
+            </Method>
+        </Interface>
+
+        <!-- D2D does not expose an IDrawTransform implementation, so no need to test QI -->
+        <Interface Name="IDrawTransform" Extends="D2D1::ITransform" ShouldTestQI="false" Comment="The interface implemented by a transform author to provide a GPU-based effect." IID="36bfdcb6-9739-435d-a30d-a653beff6a6f">
+             <Method Name="SetDrawInfo">
+                <Parameter Name="drawInfo" Type="D2D1::IDrawInfo" Form="pointer"/>
+            </Method>
+        </Interface>
+
+        <!-- D2D does not expose an IComputeTransform implementation, so no need to test QI -->
+        <Interface Name="IComputeTransform" Extends="D2D1::ITransform" ShouldTestQI="false" Comment="The interface implemented by a transform author to provide a Compute Shader based effect." IID="0d85573c-01e3-4f7d-bfd9-0d60608bf3c3">
+            <Method Name="SetComputeInfo">
+                <Parameter Name="computeInfo" Type="D2D1::IComputeInfo" Form="pointer"/>
+            </Method>
+
+            <Method Name="CalculateThreadgroups">
+                <Parameter Name="outputRect" Type="D2D1::RECT_L" Form="pointer"/>
+                <Parameter Name="dimensionX" Type="UINT32" Form="out pointer"/>
+                <Parameter Name="dimensionY" Type="UINT32" Form="out pointer"/>
+                <Parameter Name="dimensionZ" Type="UINT32" Form="out pointer"/>
+            </Method>
+        </Interface>
+
+        <!-- D2D does not expose an IAnalysisTransform implementation, so no need to test QI -->
+        <Interface Name="IAnalysisTransform" Extends="IUnknown" ShouldTestQI="false" Comment="The interface implemented by a transform author to indicate that it should receive an analysis result callback." IID="0359dc30-95e6-4568-9055-27720d130e93">
+            <Method Name="ProcessAnalysisResults">
+                <Parameter Name="analysisData" Type="BYTE" Form="pointer" IsArray="true"/>
+            </Method>
+        </Interface>
+
+        <!-- D2D does not expose an ISourceTransform implementation, so no need to test QI -->
+        <Interface Name="ISourceTransform" Extends="D2D1::ITransform" ShouldTestQI="false" Comment="The interface implemented by a transform author to provide a CPU based source effect." IID="db1800dd-0c34-4cf9-be90-31cc0a5653e1">
+            <Method Name="SetRenderInfo">
+                <Parameter Name="renderInfo" Type="D2D1::IRenderInfo" Form="pointer"/>
+            </Method>
+            <Method Name="Draw">
+                <Parameter Name="target" Type="D2D1::IBitmap1" Form="pointer"/>
+                <Parameter Name="drawRect" Type="D2D1::RECT_L" Form="pointer"/>
+                <Parameter Name="targetOrigin" Type="D2D1::POINT_2U"/>
+            </Method>
+        </Interface>
+        
+        <!-- IConcreteTransform is not a leaf type, so no need to test QI -->
+        <Interface Name="IConcreteTransform" Extends="D2D1::ITransformNode" ShouldTestQI="false" Comment="Base interface for built-in transforms on which precision and caching may be controlled." IID="1a799d8a-69f7-4e4c-9fed-437ccc6684cc">
+            <Method Name="SetOutputBuffer" Comment="Controls the output precision and channel-depth for this transform.">
+                <Parameter Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION"/>
+                <Parameter Name="channelDepth" Type="D2D1::CHANNEL_DEPTH"/>
+            </Method>
+
+            <Method Name="SetCached" Return="void" Comment="Controls whether the output of this transform is cached.">
+                <Parameter Name="isCached" Type="BOOL"/>
+            </Method>
+        </Interface>
+        
+        <Interface Name="IBlendTransform" Extends="D2D1::IConcreteTransform" Comment="An effect uses this interface to configure a blending operation." IID="63ac0b32-ba44-450f-8806-7f4ca1ff2f1b">
+            <Method Name="SetDescription" Return="void">
+                <Parameter Name="description" Type="D2D1::BLEND_DESCRIPTION" Form="pointer"/>
+            </Method>
+
+            <Method Name="GetDescription" Return="void" IsConst="true">
+                <Parameter Name="description" Type="D2D1::BLEND_DESCRIPTION" Form="out pointer"/>
+            </Method>
+        </Interface>
+        
+        <Interface Name="IBorderTransform" Extends="D2D1::IConcreteTransform" Comment="An effect uses this interface to configure border generation." IID="4998735c-3a19-473c-9781-656847e3a347">
+            <Method Name="SetExtendModeX" Return="void">
+                <Parameter Name="extendMode" Type="D2D1::EXTEND_MODE" />
+            </Method>
+            
+            <Method Name="SetExtendModeY" Return="void">
+                <Parameter Name="extendMode" Type="D2D1::EXTEND_MODE" />
+            </Method>
+            
+            <Method Name="GetExtendModeX" Return="D2D1::EXTEND_MODE" IsConst="true" />
+
+            <Method Name="GetExtendModeY" Return="D2D1::EXTEND_MODE" IsConst="true" />
+        </Interface>    
+            
+        <Interface Name="IOffsetTransform" Extends="D2D1::ITransformNode" Comment="An effect uses this interface to offset an image without inserting a rendering pass." IID="3fe6adea-7643-4f53-bd14-a0ce63f24042">
+            <Method Name="SetOffset" Return="void">
+                <Parameter Name="offset" Type="D2D1::POINT_2L" />
+            </Method>
+            
+            <Method Name="GetOffset" Return="D2D1::POINT_2L" IsConst="true" />
+        </Interface>
+        
+        <Interface Name="IBoundsAdjustmentTransform" Extends="D2D1::ITransformNode" Comment="An effect uses this interface to alter the image rectangle of its input." IID="90f732e2-5092-4606-a819-8651970baccd">
+            <Method Name="SetOutputBounds" Return="void">
+                <Parameter Name="outputBounds" Type="D2D1::RECT_L" Form="pointer"/>
+            </Method>
+            
+            <Method Name="GetOutputBounds" Return="void" IsConst="true">
+                <Parameter Name="outputBounds" Type="D2D1::RECT_L" Form="out pointer"/>
+            </Method>
+        </Interface>
+        
+        <Interface Name="IEffectContext" Extends="IUnknown" Comment="The internal context handed to effect authors to create transforms from effects and any other operation tied to context which is not useful to the application facing API." IID="3d9f916b-27dc-4ad7-b4f1-64945340f563">
+            <Method Name="GetDpi" Return="void" IsConst="true">
+                <Parameter Name="dpiX" Type="FLOAT" Form="out pointer"/>
+                <Parameter Name="dpiY" Type="FLOAT" Form="out pointer"/>
+            </Method>
+                        
+            <Method Name="CreateEffect" Comment="Create a new effect, the effect must either be built in or previously registered through ID2D1Factory1::RegisterEffect.">
+              <Parameter Name="effectId" Type="REFCLSID" Form="in"/>
+              <Parameter Name="effect" Type="D2D1::IEffect" Form="deref out pointer" IsRetval="true" />
+            </Method>
+
+            <Method Name="GetMaximumSupportedFeatureLevel" IsConst="true">
+              <Parameter Name="featureLevels" Type="D3D_FEATURE_LEVEL" Form="pointer" IsArray="true"/>
+              <Parameter Name="maximumSupportedFeatureLevel" Type="D3D_FEATURE_LEVEL" Form="out pointer"/>
+            </Method>
+
+
+            <Method Name="CreateTransformNodeFromEffect" Comment="Create a transform node from the passed in effect.">
+                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer"/>
+                <Parameter Name="transformNode" Type="D2D1::ITransformNode" Form="deref out pointer"/>
+            </Method>
+
+            <Method Name="CreateBlendTransform">
+                <Parameter Name="numInputs" Type="UINT32"/>
+                <Parameter Name="blendDescription" Type="D2D1::BLEND_DESCRIPTION" Form="pointer"/>
+                <Parameter Name="transform" Type="D2D1::IBlendTransform" Form="deref out pointer"/>
+            </Method>
+            
+            <Method Name="CreateBorderTransform">
+                <Parameter Name="extendModeX" Type="D2D1::EXTEND_MODE" />
+                <Parameter Name="extendModeY" Type="D2D1::EXTEND_MODE" />
+                <Parameter Name="transform" Type="D2D1::IBorderTransform" Form="deref out pointer"/>
+            </Method>
+            
+            <Method Name="CreateOffsetTransform">
+                <Parameter Name="offset" Type="D2D1::POINT_2L" />
+                <Parameter Name="transform" Type="D2D1::IOffsetTransform" Form="deref out pointer"/>
+            </Method>
+            
+            <Method Name="CreateBoundsAdjustmentTransform">
+                <Parameter Name="outputRectangle" Type="D2D1::RECT_L" Form="pointer"/>
+                <Parameter Name="transform" Type="D2D1::IBoundsAdjustmentTransform" Form="deref out pointer"/>
+            </Method>
+
+            <Method Name="LoadPixelShader">
+                <Parameter Name="shaderId" Type="REFGUID"/>
+                <Parameter Name="shaderBuffer" Type="BYTE" Form="pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="LoadVertexShader">
+                <Parameter Name="resourceId" Type="REFGUID"/>
+                <Parameter Name="shaderBuffer" Type="BYTE" Form="pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="LoadComputeShader">
+                <Parameter Name="resourceId" Type="REFGUID"/>
+                <Parameter Name="shaderBuffer" Type="BYTE" Form="pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="IsShaderLoaded" Return="BOOL">
+                <Parameter Name="shaderId" Type="REFGUID"/>
+            </Method>
+
+            <Method Name="CreateResourceTexture">
+                <Parameter Name="resourceId" Type="GUID" Form="pointer opt"/>
+                <Parameter Name="resourceTextureProperties" Type="D2D1::RESOURCE_TEXTURE_PROPERTIES" Form="pointer"/>
+                <Parameter Name="data" Type="BYTE" Form="pointer ecount opt" ECount="dataSize"/>
+                <Parameter Name="strides" Type="UINT32" Form="pointer ecount opt" ECount="resourceTextureProperties->dimensions - 1"/>
+                <Parameter Name="dataSize" Type="UINT32"/>
+                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="deref out pointer"/>
+            </Method>
+
+            <Method Name="FindResourceTexture">
+                <Parameter Name="resourceId" Type="GUID" Form="pointer"/>
+                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="deref out pointer"/>
+            </Method>
+            
+            <Method Name="CreateVertexBuffer">
+                <Parameter Name="vertexBufferProperties" Type="D2D1::VERTEX_BUFFER_PROPERTIES" Form="pointer"/>
+                <Parameter Name="resourceId" Type="GUID" Form="pointer opt"/>
+                <Parameter Name="customVertexBufferProperties" Type="D2D1::CUSTOM_VERTEX_BUFFER_PROPERTIES" Form="pointer opt"/>
+                <Parameter Name="buffer" Type="D2D1::IVertexBuffer" Form="deref out pointer"/>
+            </Method>
+            
+            <Method Name="FindVertexBuffer">
+                <Parameter Name="resourceId" Type="GUID" Form="pointer"/>
+                <Parameter Name="buffer" Type="D2D1::IVertexBuffer" Form="deref out pointer"/>
+            </Method>
+
+            <Method Name="CreateColorContext" Comment="Creates a color context from a color space.  If the space is Custom, the context is initialized from the profile/profileSize arguments.  Otherwise the context is initialized with the profile bytes associated with the space and profile/profileSize are ignored.">
+              <Parameter Name="space" Type="D2D1::COLOR_SPACE"/>
+              <Parameter Name="profile" Type="BYTE" Form="pointer ecount opt" ECount="profileSize"/>
+              <Parameter Name="profileSize" Type="UINT32"/>
+              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer"/>
+            </Method>
+
+            <Method Name="CreateColorContextFromFilename">
+              <Parameter Name="filename" Type="PCWSTR" Form="in"/>
+              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer"/>
+            </Method>
+
+            <Method Name="CreateColorContextFromWicColorContext">
+              <Parameter Name="wicColorContext" Type="IWICColorContext" Form="pointer"/>
+              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer"/>
+            </Method>
+
+            <Method Name="CheckFeatureSupport" IsConst="true">
+              <Parameter Name="feature" Type="D2D1::FEATURE" />
+              <Parameter Name="featureSupportData" Type="void" Form="out bcount pointer" ECount="featureSupportDataSize" IsRetval="true"/>
+              <Parameter Name="featureSupportDataSize" Type="UINT32" />
+            </Method>
+
+            <Method Name="IsBufferPrecisionSupported" IsConst="true" Return="BOOL" Comment="Indicates whether the buffer precision is supported by D2D.">
+                <Parameter Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION" />
+            </Method>
+        </Interface>
+
+        <!-- D2D does not expose an IEffectImpl implementation, so no need to test QI -->
+        <Interface Name="IEffectImpl" Extends="IUnknown" ShouldTestQI="false" Comment="This is the interface implemented by an effect author, along with the constructor and registration information." IID="a248fd3f-3e6c-4e63-9f03-7f68ecc91db9">
+            <Method Name="Initialize" Comment="Initialize the effect with a context and a transform graph. The effect must populate the transform graph with a topology and can update it later.">
+                <Parameter Name="effectContext" Type="D2D1::IEffectContext" Form="pointer"/>
+                <Parameter Name="transformGraph" Type="D2D1::ITransformGraph" Form="pointer"/>
+            </Method>
+
+            <Method Name="PrepareForRender" Comment="Initialize the effect with a context and a transform graph. The effect must populate the transform graph with a topology and can update it later.">
+                <Parameter Name="changeType" Type="D2D1::CHANGE_TYPE"/>
+            </Method>
+            
+            <Method Name="SetGraph" Comment="Sets a new transform graph to the effect.  This happens when the number of inputs to the effect changes, if the effect support a variable number of inputs.">
+                <Parameter Name="transformGraph" Type="D2D1::ITransformGraph" Form="pointer"/>
+            </Method>
+            
+        </Interface>
+
+
+   </Namespace>
+
+</D2DTypes>

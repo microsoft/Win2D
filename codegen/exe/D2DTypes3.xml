@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!-- This file contains types defined in D2D1_2. This is maintained -->
+<!-- in a separate file to make it more clear what the new          -->
+<!-- interfaces are. The XML files are simply read sequentially -->
+<!-- to build the object model.                                     -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<D2DTypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D2DTypes.xsd">
+
+   <Namespace Name="D2D1">
+
+       <Enum Name="RENDERING_PRIORITY" Comment="Specifies the extent to which D2D will throttle work sent to the GPU.">
+           <Field Name="NORMAL" Value="0"/>
+           <Field Name="LOW" Value="1"/>
+       </Enum>     
+
+        <Interface Name="IDevice1" Extends="D2D1::IDevice" IID="d21768e1-23a4-4823-a14b-7c3eba85d658" ShouldTestQI="true" QIFromBase="true">
+            <Method Name="GetRenderingPriority" Return="D2D1::RENDERING_PRIORITY" Comment="Retrieves the rendering priority currently set on the device."/>
+            <Method Name="SetRenderingPriority" Return="void" Comment="Sets the rendering priority of the device.">
+                <Parameter Name="renderingPriority" Type="D2D1::RENDERING_PRIORITY"/>
+            </Method>
+            <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
+                <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
+                <Parameter Name="deviceContext1" Type="D2D1::IDeviceContext1" Form="deref out pointer" IsRetval="true" />
+            </Method>
+        </Interface>
+       
+       <Interface Name="IFactory2" Extends="D2D1::IFactory1" IID="94f81a73-9212-4376-9c58-b16a3a0d3992" ShouldTestQI="true" QIFromBase="true">
+           <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
+               <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer"/>
+               <Parameter Name="d2dDevice1" Type="D2D1::IDevice1" Form="deref out pointer" IsRetval="true"/>
+           </Method>
+       </Interface>
+
+       <Interface Name="IGeometryRealization" Extends="D2D1::IResource" IID="a16907d7-bc02-4801-99e8-8cf7f485f774">
+       </Interface>
+
+       <Interface Name="IDeviceContext1" Extends="D2D1::IDeviceContext" IID="d37f57e4-6908-459f-a199-e72f24f79987" ShouldTestQI="true" QIFromBase="true">
+         <Method Name="CreateFilledGeometryRealization">
+           <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer"/>
+           <Parameter Name="flatteningTolerance" Type="FLOAT"/>
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer"/>
+         </Method>
+         <Method Name="CreateStrokedGeometryRealization">
+           <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer"/>
+           <Parameter Name="flatteningTolerance" Type="FLOAT"/>
+           <Parameter Name="strokeWidth" Type="FLOAT"/>
+           <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt"/>
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer" IsRetval="true"/>
+         </Method>
+         <Method Name="DrawGeometryRealization" Return="void">
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="pointer"/>
+           <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
+         </Method>
+       </Interface>     
+
+       <!-- Revised=true attribute in Interface element indicates that EACH implementation of the base interface implements this interface too.
+            The D2D debug layer relies on that assumption and may upcast base interface pointer and call new interface method without QueryInterface validation!
+            
+            It is expected that some ID2D1CommandSink objects do not provide ID2D1CommandSink1 implementation. That is why this is not a revised interface.
+       -->
+        <Interface Name="ICommandSink1" Extends="D2D1::ICommandSink" IID="9eb767fd-4269-4467-b8c2-eb30cb305743" WrapOutgoing="true" ShouldTestQI="false" Revised="false" HasD2DImplementation="false">
+            <Method Name="SetPrimitiveBlend1" Comment="This method is called if primitiveBlend value was added after Windows 8. SetPrimitiveBlend method is used for Win8 values (_SOURCE_OVER and _COPY).">
+                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND" Form="value"/>
+            </Method>
+        </Interface>
+
+   </Namespace>
+
+</D2DTypes>

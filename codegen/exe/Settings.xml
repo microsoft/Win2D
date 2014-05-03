@@ -1,0 +1,51 @@
+<Settings>
+
+    <!-- This document contains overrides for what is in the D2D API xml files.-->
+
+    <Prefix Value="Dx"/>
+
+    <Namespace Name="D2D1">
+
+        <!-- Enums are projected by default.-->
+        <Enum Name="D2D1::LAYER_OPTIONS" ShouldProject="false"/>
+        <Enum Name="D2D1::LAYER_OPTIONS1" ProjectedNameOverride="LayerOptions"/>
+        <Enum Name="D2D1::GAMMA">
+            <Field Name="2_2" ProjectedNameOverride="Srgb"/>
+            <Field Name="1_0" ProjectedNameOverride="Linear"/>
+        </Enum>
+        <Enum Name="D2D1::FEATURE_LEVEL">
+            <Field Name="9" ProjectedNameOverride="Level9"/>
+            <Field Name="10" ProjectedNameOverride="Level10"/>
+        </Enum>
+        <Enum Name="D2D1::BUFFER_PRECISION">
+            <Field Name="8BPC_UNORM" ProjectedNameOverride="Precision8BpcUnorm"/>
+            <Field Name="8BPC_UNORM_SRGB" ProjectedNameOverride="Precision8BpcUnormSrgb"/>
+            <Field Name="16BPC_UNORM" ProjectedNameOverride="Precision16BpcUnorm"/>
+            <Field Name="16BPC_FLOAT" ProjectedNameOverride="Precision16BpcFloat"/>
+            <Field Name="32BPC_FLOAT" ProjectedNameOverride="Precision32BpcFloat"/>
+        </Enum>
+        <Enum Name="D2D1::CHANNEL_DEPTH">
+            <Field Name="1" ProjectedNameOverride="Depth1"/>
+            <Field Name="4" ProjectedNameOverride="Depth4"/>
+        </Enum>
+        
+        <!-- Structs are not projected by default.-->
+        <Struct Name="D2D1::BEZIER_SEGMENT" ShouldProject="true" Guid="1cd6d1d1-4242-482a-afd4-bcf251d97820" />
+        <Struct Name="D2D1::QUADRATIC_BEZIER_SEGMENT" ShouldProject="true" Guid="bd4b48ed-0252-45f4-b40e-118ad7c1ffce" />
+        <Struct Name="D2D1::ARC_SEGMENT" ShouldProject="true" Guid="ac627056-f349-4771-be39-cb9f3b3c93a4" />
+        <Struct Name="D2D1::ELLIPSE" ShouldProject="true" Guid="9c50546b-8b87-44da-8ab0-d8552890e0c7" />
+        <Struct Name="D2D1::ROUNDED_RECT" ShouldProject="true" Guid="9b61dfa9-93d6-4e6d-ae40-059dfbf0ef35"  ProjectedNameOverride="RoundedRectangle"/>
+        <Struct Name="D2D1::TRIANGLE" ShouldProject="true"  Guid="f06ae239-149e-42b9-8eaa-5aa63fd079b3" />
+        <Struct Name="D2D1::RADIAL_GRADIENT_BRUSH_PROPERTIES" ShouldProject="true" Guid="84dc0df7-4f46-4c93-84d2-b20d451f07f4" />
+        <Struct Name="D2D1::LINEAR_GRADIENT_BRUSH_PROPERTIES" ShouldProject="true" Guid="b687b451-cce0-49a2-b336-60045f341ce0" />
+        <Struct Name="D2D1::GRADIENT_STOP" ShouldProject="true"  Guid="0b329db6-8d06-4db0-8155-88b13de20344"/>
+        <Struct Name="D2D1::STROKE_STYLE_PROPERTIES1" ShouldProject="true" Guid="b48780bf-7eb7-41b0-a56b-1f8837723ab6" ProjectedNameOverride="StrokeStyleProperties"/>
+        <Struct Name="D2D1::LAYER_PARAMETERS1" ShouldProject="true" Guid="4a837512-5ca1-46eb-96d1-fcc634796341" ProjectedNameOverride="LayerParameters"/>
+
+        <Interface Name="D2D1::IBrush" IsProjectedAsAbstract="true"/>
+        <Interface Name="D2D1::IImage" IsProjectedAsAbstract="true"/>
+        <Interface Name="D2D1::IGeometry" IsProjectedAsAbstract="true"/>
+
+    </Namespace>
+
+</Settings>

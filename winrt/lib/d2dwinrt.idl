@@ -1,5 +1,6 @@
 import "inspectable.idl";
 import "Windows.Foundation.idl";
+import "DirectX.codegen.idl";
 
 #include "version.h"
 
@@ -8,7 +9,7 @@ namespace Microsoft.DirectX
 
     //
     // This is a placeholder that demonstrates that we are able to build IDL
-    // files.
+    // files. 
     //
 
     //

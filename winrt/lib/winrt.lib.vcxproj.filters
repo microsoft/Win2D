@@ -6,7 +6,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Conversion.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>

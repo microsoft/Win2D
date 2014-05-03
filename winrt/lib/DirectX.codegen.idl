@@ -1,0 +1,874 @@
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+
+#include "version.h"
+
+namespace Microsoft
+{
+    namespace DirectX
+    {
+        [version(VERSION)]
+        typedef enum DxArcSize
+        {
+            Small = (int)0,
+            Large = (int)1
+        } DxArcSize;
+
+        [version(VERSION)]
+        typedef enum DxGeometrySimplificationOption
+        {
+            CubicsAndLines = (int)0,
+            Lines = (int)1
+        } DxGeometrySimplificationOption;
+
+        [version(VERSION)]
+        typedef enum DxBitmapInterpolationMode
+        {
+            NearestNeighbor = (int)0,
+            Linear = (int)1
+        } DxBitmapInterpolationMode;
+
+        [version(VERSION)]
+        typedef enum DxGamma
+        {
+            Srgb = (int)0,
+            Linear = (int)1
+        } DxGamma;
+
+        [version(VERSION)]
+        typedef enum DxOpacityMaskContent
+        {
+            Graphics = (int)0,
+            TextNatural = (int)1,
+            TextGdiCompatible = (int)2
+        } DxOpacityMaskContent;
+
+        [version(VERSION)]
+        typedef enum DxCombineMode
+        {
+            Union = (int)0,
+            Intersect = (int)1,
+            Xor = (int)2,
+            Exclude = (int)3
+        } DxCombineMode;
+
+        [version(VERSION)]
+        typedef enum DxDashStyle
+        {
+            Solid = (int)0,
+            Dash = (int)1,
+            Dot = (int)2,
+            DashDot = (int)3,
+            DashDotDot = (int)4,
+            Custom = (int)5
+        } DxDashStyle;
+
+        [version(VERSION)]
+        typedef enum DxDebugLevel
+        {
+            None = (int)0,
+            Error = (int)1,
+            Warning = (int)2,
+            Information = (int)3
+        } DxDebugLevel;
+
+        [version(VERSION), flags]
+        typedef enum DxDrawTextOptions
+        {
+            NoSnap = 0x00000001,
+            Clip = 0x00000002,
+            EnableColorFont = 0x00000004,
+            None = 0x00000000
+        } DxDrawTextOptions;
+
+        [version(VERSION)]
+        typedef enum DxAntialiasMode
+        {
+            PerPrimitive = (int)0,
+            Aliased = (int)1
+        } DxAntialiasMode;
+
+        [version(VERSION)]
+        typedef enum DxAlphaMode
+        {
+            Unknown = (int)0,
+            Premultiplied = (int)1,
+            Straight = (int)2,
+            Ignore = (int)3
+        } DxAlphaMode;
+
+        [version(VERSION)]
+        typedef enum DxExtendMode
+        {
+            Clamp = (int)0,
+            Wrap = (int)1,
+            Mirror = (int)2
+        } DxExtendMode;
+
+        [version(VERSION)]
+        typedef enum DxFactoryType
+        {
+            SingleThreaded = (int)0,
+            MultiThreaded = (int)1
+        } DxFactoryType;
+
+        [version(VERSION)]
+        typedef enum DxFeatureLevel
+        {
+            Default = (int)0,
+            Level9 = (int)0x9100,
+            Level10 = (int)0xA000
+        } DxFeatureLevel;
+
+        [version(VERSION)]
+        typedef enum DxFigureBegin
+        {
+            Filled = (int)0,
+            Hollow = (int)1
+        } DxFigureBegin;
+
+        [version(VERSION)]
+        typedef enum DxFigureEnd
+        {
+            Open = (int)0,
+            Closed = (int)1
+        } DxFigureEnd;
+
+        [version(VERSION)]
+        typedef enum DxGeometryRelation
+        {
+            Unknown = (int)0,
+            Disjoint = (int)1,
+            IsContained = (int)2,
+            Contains = (int)3,
+            Overlap = (int)4
+        } DxGeometryRelation;
+
+        [version(VERSION), flags]
+        typedef enum DxPathSegment
+        {
+            None = 0x00000000,
+            ForceUnstroked = 0x00000001,
+            ForceRoundLineJoin = 0x00000002
+        } DxPathSegment;
+
+        [version(VERSION)]
+        typedef enum DxCapStyle
+        {
+            Flat = (int)0,
+            Square = (int)1,
+            Round = (int)2,
+            Triangle = (int)3
+        } DxCapStyle;
+
+        [version(VERSION)]
+        typedef enum DxLineJoin
+        {
+            Miter = (int)0,
+            Bevel = (int)1,
+            Round = (int)2,
+            MiterOrBevel = (int)3
+        } DxLineJoin;
+
+        [version(VERSION), flags]
+        typedef enum DxPresentOptions
+        {
+            None = 0x00000000,
+            RetainContents = 0x00000001,
+            Immediately = 0x00000002
+        } DxPresentOptions;
+
+        [version(VERSION), flags]
+        typedef enum DxRenderTargetUsage
+        {
+            None = 0x00000000,
+            ForceBitmapRemoting = 0x00000001,
+            GdiCompatible = 0x00000002
+        } DxRenderTargetUsage;
+
+        [version(VERSION)]
+        typedef enum DxRenderTargetType
+        {
+            Default = (int)0,
+            Software = (int)1,
+            Hardware = (int)2
+        } DxRenderTargetType;
+
+        [version(VERSION), flags]
+        typedef enum DxCompatibleRenderTargetOptions
+        {
+            None = 0x00000000,
+            GdiCompatible = 0x00000001
+        } DxCompatibleRenderTargetOptions;
+
+        [version(VERSION)]
+        typedef enum DxSweepDirection
+        {
+            CounterClockwise = (int)0,
+            Clockwise = (int)1
+        } DxSweepDirection;
+
+        [version(VERSION)]
+        typedef enum DxTextAntialiasMode
+        {
+            Default = (int)0,
+            Cleartype = (int)1,
+            Grayscale = (int)2,
+            Aliased = (int)3
+        } DxTextAntialiasMode;
+
+        [version(VERSION)]
+        typedef enum DxFillMode
+        {
+            Alternate = (int)0,
+            Winding = (int)1
+        } DxFillMode;
+
+        [version(VERSION), flags]
+        typedef enum DxWindowState
+        {
+            None = 0x0000000,
+            Occluded = 0x0000001
+        } DxWindowState;
+
+        [version(VERSION)]
+        typedef enum DxDcInitializeMode
+        {
+            Copy = (int)0,
+            Clear = (int)1
+        } DxDcInitializeMode;
+
+        [version(VERSION), flags]
+        typedef enum DxBitmapOptions
+        {
+            None = 0x00000000,
+            Target = 0x00000001,
+            CannotDraw = 0x00000002,
+            CpuRead = 0x00000004,
+            GdiCompatible = 0x00000008
+        } DxBitmapOptions;
+
+        [version(VERSION)]
+        typedef enum DxCompositeMode
+        {
+            SourceOver = (int)0,
+            DestinationOver = (int)1,
+            SourceIn = (int)2,
+            DestinationIn = (int)3,
+            SourceOut = (int)4,
+            DestinationOut = (int)5,
+            SourceAtop = (int)6,
+            DestinationAtop = (int)7,
+            Xor = (int)8,
+            Plus = (int)9,
+            SourceCopy = (int)10,
+            BoundedSourceCopy = (int)11,
+            MaskInvert = (int)12
+        } DxCompositeMode;
+
+        [version(VERSION)]
+        typedef enum DxBufferPrecision
+        {
+            Unknown = (int)0,
+            Precision8BpcUnorm = (int)1,
+            Precision8BpcUnormSrgb = (int)2,
+            Precision16BpcUnorm = (int)3,
+            Precision16BpcFloat = (int)4,
+            Precision32BpcFloat = (int)5
+        } DxBufferPrecision;
+
+        [version(VERSION), flags]
+        typedef enum DxMapOptions
+        {
+            None = 0,
+            Read = 1,
+            Write = 2,
+            Discard = 4
+        } DxMapOptions;
+
+        [version(VERSION)]
+        typedef enum DxPropertyType
+        {
+            Unknown = (int)0,
+            String = (int)1,
+            Bool = (int)2,
+            Uint32 = (int)3,
+            Int32 = (int)4,
+            Float = (int)5,
+            Vector2 = (int)6,
+            Vector3 = (int)7,
+            Vector4 = (int)8,
+            Blob = (int)9,
+            Iunknown = (int)10,
+            Enum = (int)11,
+            Array = (int)12,
+            Clsid = (int)13,
+            Matrix3x2 = (int)14,
+            Matrix4x3 = (int)15,
+            Matrix4x4 = (int)16,
+            Matrix5x4 = (int)17,
+            ColorContext = (int)18
+        } DxPropertyType;
+
+        [version(VERSION)]
+        typedef enum DxProperty
+        {
+            Clsid = (int)0x80000000,
+            Displayname = (int)0x80000001,
+            Author = (int)0x80000002,
+            Category = (int)0x80000003,
+            Description = (int)0x80000004,
+            Inputs = (int)0x80000005,
+            Cached = (int)0x80000006,
+            Precision = (int)0x80000007,
+            MinInputs = (int)0x80000008,
+            MaxInputs = (int)0x80000009
+        } DxProperty;
+
+        [version(VERSION)]
+        typedef enum DxSubproperty
+        {
+            Displayname = (int)0x80000000,
+            Isreadonly = (int)0x80000001,
+            Min = (int)0x80000002,
+            Max = (int)0x80000003,
+            Default = (int)0x80000004,
+            Fields = (int)0x80000005,
+            Index = (int)0x80000006
+        } DxSubproperty;
+
+        [version(VERSION)]
+        typedef enum DxInterpolationMode
+        {
+            NearestNeighbor = (int)0,
+            Linear = (int)1,
+            Cubic = (int)2,
+            MultiSampleLinear = (int)3,
+            Anisotropic = (int)4,
+            HighQualityCubic = (int)5
+        } DxInterpolationMode;
+
+        [version(VERSION)]
+        typedef enum DxUnitMode
+        {
+            Dips = (int)0,
+            Pixels = (int)1
+        } DxUnitMode;
+
+        [version(VERSION)]
+        typedef enum DxColorSpace
+        {
+            Custom = (int)0,
+            Srgb = (int)1,
+            Scrgb = (int)2
+        } DxColorSpace;
+
+        [version(VERSION), flags]
+        typedef enum DxDeviceContextOptions
+        {
+            None = 0,
+            EnableMultithreadedOptimizations = 1
+        } DxDeviceContextOptions;
+
+        [version(VERSION)]
+        typedef enum DxStrokeTransformType
+        {
+            Normal = (int)0,
+            Fixed = (int)1,
+            Hairline = (int)2
+        } DxStrokeTransformType;
+
+        [version(VERSION)]
+        typedef enum DxPrimitiveBlend
+        {
+            SourceOver = (int)0,
+            Copy = (int)1,
+            Min = (int)2,
+            Add = (int)3
+        } DxPrimitiveBlend;
+
+        [version(VERSION), flags]
+        typedef enum LayerOptions
+        {
+            None = 0,
+            InitializeFromBackground = 1,
+            IgnoreAlpha = 2
+        } LayerOptions;
+
+        [version(VERSION)]
+        typedef enum DxThreadingMode
+        {
+            SingleThreaded = (int)0,
+            MultiThreaded = (int)1
+        } DxThreadingMode;
+
+        [version(VERSION)]
+        typedef enum DxColorInterpolationMode
+        {
+            Straight = (int)0,
+            Premultiplied = (int)1
+        } DxColorInterpolationMode;
+
+        [version(VERSION)]
+        typedef enum DxBorderEdgeMode
+        {
+            Clamp = (int)0,
+            Wrap = (int)1,
+            Mirror = (int)2
+        } DxBorderEdgeMode;
+
+        [version(VERSION)]
+        typedef enum DxBorderMode
+        {
+            Soft = (int)0,
+            Hard = (int)1
+        } DxBorderMode;
+
+        [version(VERSION)]
+        typedef enum DxColormanagementRenderingIntent
+        {
+            Perceptual = (int)0,
+            RelativeColorimetric = (int)1,
+            Saturation = (int)2,
+            AbsoluteColorimetric = (int)3
+        } DxColormanagementRenderingIntent;
+
+        [version(VERSION)]
+        typedef enum DxChannelSelector
+        {
+            R = (int)0,
+            G = (int)1,
+            B = (int)2,
+            A = (int)3
+        } DxChannelSelector;
+
+        [version(VERSION)]
+        typedef enum DxBitmapsourceOrientation
+        {
+            Default = (int)1,
+            FlipHorizontal = (int)2,
+            RotateClockwise180 = (int)3,
+            RotateClockwise180FlipHorizontal = (int)4,
+            RotateClockwise270FlipHorizontal = (int)5,
+            RotateClockwise90 = (int)6,
+            RotateClockwise90FlipHorizontal = (int)7,
+            RotateClockwise270 = (int)8
+        } DxBitmapsourceOrientation;
+
+        [version(VERSION)]
+        typedef enum DxPrintFontSubsetMode
+        {
+            Default = (int)0,
+            Eachpage = (int)1,
+            None = (int)2
+        } DxPrintFontSubsetMode;
+
+        [version(VERSION), flags]
+        typedef enum DxChangeType
+        {
+            None = 0,
+            Properties = 1,
+            Context = 2,
+            Graph = 3
+        } DxChangeType;
+
+        [version(VERSION), flags]
+        typedef enum DxPixelOptions
+        {
+            None = 0,
+            TrivialSampling = 1
+        } DxPixelOptions;
+
+        [version(VERSION), flags]
+        typedef enum DxVertexOptions
+        {
+            None = 0,
+            DoNotClear = 1,
+            UseDepthBuffer = 2,
+            AssumeNoOverlap = 4
+        } DxVertexOptions;
+
+        [version(VERSION)]
+        typedef enum DxVertexUsage
+        {
+            Static = (int)0,
+            Dynamic = (int)1
+        } DxVertexUsage;
+
+        [version(VERSION)]
+        typedef enum DxBlendOperation
+        {
+            Add = (int)1,
+            Subtract = (int)2,
+            RevSubtract = (int)3,
+            Min = (int)4,
+            Max = (int)5
+        } DxBlendOperation;
+
+        [version(VERSION)]
+        typedef enum DxBlend
+        {
+            Zero = (int)1,
+            One = (int)2,
+            SrcColor = (int)3,
+            InvSrcColor = (int)4,
+            SrcAlpha = (int)5,
+            InvSrcAlpha = (int)6,
+            DestAlpha = (int)7,
+            InvDestAlpha = (int)8,
+            DestColor = (int)9,
+            InvDestColor = (int)10,
+            SrcAlphaSat = (int)11,
+            BlendFactor = (int)14,
+            InvBlendFactor = (int)15
+        } DxBlend;
+
+        [version(VERSION)]
+        typedef enum DxChannelDepth
+        {
+            Default = (int)0,
+            Depth1 = (int)1,
+            Depth4 = (int)4
+        } DxChannelDepth;
+
+        [version(VERSION)]
+        typedef enum DxFilter
+        {
+            MinMagMipPoint = (int)0x00,
+            MinMagPointMipLinear = (int)0x01,
+            MinPointMagLinearMipPoint = (int)0x04,
+            MinPointMagMipLinear = (int)0x05,
+            MinLinearMagMipPoint = (int)0x10,
+            MinLinearMagPointMipLinear = (int)0x11,
+            MinMagLinearMipPoint = (int)0x14,
+            MinMagMipLinear = (int)0x15,
+            Anisotropic = (int)0x55
+        } DxFilter;
+
+        [version(VERSION)]
+        typedef enum DxFeature
+        {
+            Doubles = (int)0,
+            D3d10XHardwareOptions = (int)1
+        } DxFeature;
+
+        [version(VERSION)]
+        typedef enum DxRenderingPriority
+        {
+            Normal = (int)0,
+            Low = (int)1
+        } DxRenderingPriority;
+
+        interface IDxArcSegment;
+        runtimeclass DxArcSegment;
+
+        [uuid(ac627056-f349-4771-be39-cb9f3b3c93a4), version(VERSION), exclusiveto(DxArcSegment)]
+        interface IDxArcSegment : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point([out, retval] int* value);
+            [propput] HRESULT Point([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Size([out, retval] int* value);
+            [propput] HRESULT Size([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT RotationAngle([out, retval] int* value);
+            [propput] HRESULT RotationAngle([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT SweepDirection([out, retval] int* value);
+            [propput] HRESULT SweepDirection([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT ArcSize([out, retval] int* value);
+            [propput] HRESULT ArcSize([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxArcSegment
+        {
+            [default] interface IDxArcSegment;
+        }
+
+        interface IDxBezierSegment;
+        runtimeclass DxBezierSegment;
+
+        [uuid(1cd6d1d1-4242-482a-afd4-bcf251d97820), version(VERSION), exclusiveto(DxBezierSegment)]
+        interface IDxBezierSegment : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point1([out, retval] int* value);
+            [propput] HRESULT Point1([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point2([out, retval] int* value);
+            [propput] HRESULT Point2([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point3([out, retval] int* value);
+            [propput] HRESULT Point3([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxBezierSegment
+        {
+            [default] interface IDxBezierSegment;
+        }
+
+        interface IDxTriangle;
+        runtimeclass DxTriangle;
+
+        [uuid(f06ae239-149e-42b9-8eaa-5aa63fd079b3), version(VERSION), exclusiveto(DxTriangle)]
+        interface IDxTriangle : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point1([out, retval] int* value);
+            [propput] HRESULT Point1([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point2([out, retval] int* value);
+            [propput] HRESULT Point2([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point3([out, retval] int* value);
+            [propput] HRESULT Point3([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxTriangle
+        {
+            [default] interface IDxTriangle;
+        }
+
+        interface IDxEllipse;
+        runtimeclass DxEllipse;
+
+        [uuid(9c50546b-8b87-44da-8ab0-d8552890e0c7), version(VERSION), exclusiveto(DxEllipse)]
+        interface IDxEllipse : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point([out, retval] int* value);
+            [propput] HRESULT Point([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT RadiusX([out, retval] int* value);
+            [propput] HRESULT RadiusX([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT RadiusY([out, retval] int* value);
+            [propput] HRESULT RadiusY([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxEllipse
+        {
+            [default] interface IDxEllipse;
+        }
+
+        interface IDxGradientStop;
+        runtimeclass DxGradientStop;
+
+        [uuid(0b329db6-8d06-4db0-8155-88b13de20344), version(VERSION), exclusiveto(DxGradientStop)]
+        interface IDxGradientStop : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Position([out, retval] int* value);
+            [propput] HRESULT Position([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Color([out, retval] int* value);
+            [propput] HRESULT Color([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxGradientStop
+        {
+            [default] interface IDxGradientStop;
+        }
+
+        interface IDxQuadraticBezierSegment;
+        runtimeclass DxQuadraticBezierSegment;
+
+        [uuid(bd4b48ed-0252-45f4-b40e-118ad7c1ffce), version(VERSION), exclusiveto(DxQuadraticBezierSegment)]
+        interface IDxQuadraticBezierSegment : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point1([out, retval] int* value);
+            [propput] HRESULT Point1([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Point2([out, retval] int* value);
+            [propput] HRESULT Point2([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxQuadraticBezierSegment
+        {
+            [default] interface IDxQuadraticBezierSegment;
+        }
+
+        interface IRoundedRectangle;
+        runtimeclass RoundedRectangle;
+
+        [uuid(9b61dfa9-93d6-4e6d-ae40-059dfbf0ef35), version(VERSION), exclusiveto(RoundedRectangle)]
+        interface IRoundedRectangle : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Rect([out, retval] int* value);
+            [propput] HRESULT Rect([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT RadiusX([out, retval] int* value);
+            [propput] HRESULT RadiusX([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT RadiusY([out, retval] int* value);
+            [propput] HRESULT RadiusY([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass RoundedRectangle
+        {
+            [default] interface IRoundedRectangle;
+        }
+
+        interface IDxLinearGradientBrushProperties;
+        runtimeclass DxLinearGradientBrushProperties;
+
+        [uuid(b687b451-cce0-49a2-b336-60045f341ce0), version(VERSION), exclusiveto(DxLinearGradientBrushProperties)]
+        interface IDxLinearGradientBrushProperties : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT StartPoint([out, retval] int* value);
+            [propput] HRESULT StartPoint([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT EndPoint([out, retval] int* value);
+            [propput] HRESULT EndPoint([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxLinearGradientBrushProperties
+        {
+            [default] interface IDxLinearGradientBrushProperties;
+        }
+
+        interface IDxRadialGradientBrushProperties;
+        runtimeclass DxRadialGradientBrushProperties;
+
+        [uuid(84dc0df7-4f46-4c93-84d2-b20d451f07f4), version(VERSION), exclusiveto(DxRadialGradientBrushProperties)]
+        interface IDxRadialGradientBrushProperties : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Center([out, retval] int* value);
+            [propput] HRESULT Center([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT GradientOriginOffset([out, retval] int* value);
+            [propput] HRESULT GradientOriginOffset([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT RadiusX([out, retval] int* value);
+            [propput] HRESULT RadiusX([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT RadiusY([out, retval] int* value);
+            [propput] HRESULT RadiusY([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass DxRadialGradientBrushProperties
+        {
+            [default] interface IDxRadialGradientBrushProperties;
+        }
+
+        interface ILayerParameters;
+        runtimeclass LayerParameters;
+
+        [uuid(4a837512-5ca1-46eb-96d1-fcc634796341), version(VERSION), exclusiveto(LayerParameters)]
+        interface ILayerParameters : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT ContentBounds([out, retval] int* value);
+            [propput] HRESULT ContentBounds([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT GeometricMask([out, retval] int* value);
+            [propput] HRESULT GeometricMask([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT MaskAntialiasMode([out, retval] int* value);
+            [propput] HRESULT MaskAntialiasMode([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT MaskTransform([out, retval] int* value);
+            [propput] HRESULT MaskTransform([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT Opacity([out, retval] int* value);
+            [propput] HRESULT Opacity([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT OpacityBrush([out, retval] int* value);
+            [propput] HRESULT OpacityBrush([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT LayerOptions([out, retval] int* value);
+            [propput] HRESULT LayerOptions([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass LayerParameters
+        {
+            [default] interface ILayerParameters;
+        }
+
+        interface IStrokeStyleProperties;
+        runtimeclass StrokeStyleProperties;
+
+        [uuid(b48780bf-7eb7-41b0-a56b-1f8837723ab6), version(VERSION), exclusiveto(StrokeStyleProperties)]
+        interface IStrokeStyleProperties : IInspectable
+        {
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT StartCap([out, retval] int* value);
+            [propput] HRESULT StartCap([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT EndCap([out, retval] int* value);
+            [propput] HRESULT EndCap([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT DashCap([out, retval] int* value);
+            [propput] HRESULT DashCap([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT LineJoin([out, retval] int* value);
+            [propput] HRESULT LineJoin([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT MiterLimit([out, retval] int* value);
+            [propput] HRESULT MiterLimit([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT DashStyle([out, retval] int* value);
+            [propput] HRESULT DashStyle([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT DashOffset([out, retval] int* value);
+            [propput] HRESULT DashOffset([in] int value);
+
+            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
+            [propget] HRESULT TransformType([out, retval] int* value);
+            [propput] HRESULT TransformType([in] int value);
+        }
+
+        [version(VERSION), activatable(VERSION)]
+        runtimeclass StrokeStyleProperties
+        {
+            [default] interface IStrokeStyleProperties;
+        }
+
+    }
+}
