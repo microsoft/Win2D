@@ -10,6 +10,16 @@ using System.IO;
 
 namespace CodeGen
 {
+    public class ReplaceStructWithBuiltInType
+    {
+        // XML bindings
+        [XmlAttributeAttribute]
+        public string Namespace;
+
+        [XmlAttributeAttribute]
+        public string Name;
+    }
+
 
     public class StructOverrides
     {
@@ -22,17 +32,17 @@ namespace CodeGen
         [XmlAttributeAttribute]
         public string Name;
 
-        // XML bindings
         [XmlAttributeAttribute]
         public bool ShouldProject;
 
-        // XML bindings
         [XmlAttributeAttribute]
         public string Guid;
 
-        // XML bindings
         [XmlAttributeAttribute]
         public string ProjectedNameOverride;
+
+        [XmlElement("ReplaceWithBuiltInType")]
+        public ReplaceStructWithBuiltInType ReplaceStructWith { get; set; }
     }
 
     public class EnumOverrides
@@ -46,16 +56,25 @@ namespace CodeGen
         [XmlAttributeAttribute]
         public string Name;
 
-        // XML bindings
         [XmlAttributeAttribute]
         public bool ShouldProject;
 
-        // XML bindings
         [XmlAttributeAttribute]
         public string ProjectedNameOverride;
 
         [XmlElement("Field")]
         public List<EnumFieldOverrides> Fields { get; set; }
+    }
+
+
+    public class InterfaceOverrides
+    {
+        // XML bindings
+        [XmlAttributeAttribute]
+        public string Name;
+
+        [XmlAttributeAttribute]
+        public bool IsProjectedAsAbstract;
     }
 
 
@@ -73,6 +92,9 @@ namespace CodeGen
 
         [XmlElement("Enum")]
         public List<EnumOverrides> Enums { get; set; }
+
+        [XmlElement("Interface")]
+        public List<InterfaceOverrides> Interfaces { get; set; }
     }
 
     public class EnumFieldOverrides
@@ -81,7 +103,6 @@ namespace CodeGen
         [XmlAttributeAttribute]
         public string Name;
 
-        // XML bindings
         [XmlAttributeAttribute]
         public string ProjectedNameOverride;
     }
@@ -107,7 +128,7 @@ namespace CodeGen
 
             foreach (NamespaceOverrides settingsNamespace in document.Namespaces)
             {
-                Namespace n = masterDocument.GetNamespace(settingsNamespace.Name);
+                Namespace n = D2DTypes.GetNamespaceByName(masterDocument.Namespaces, settingsNamespace.Name);
                 n.Overrides = settingsNamespace;
 
                 foreach (StructOverrides settingsStruct in settingsNamespace.Structs)
@@ -125,6 +146,12 @@ namespace CodeGen
                     {
                         e.GetEnumValueByName(settingsField.Name).ProjectedNameOverride = settingsField.ProjectedNameOverride;
                     }
+                }
+
+                foreach (InterfaceOverrides settingsInterface in settingsNamespace.Interfaces)
+                {
+                    Interface i = (qualifiableTypes[settingsInterface.Name]) as Interface;
+                    i.IsProjectedAsAbstract = settingsInterface.IsProjectedAsAbstract;
                 }
 
             }

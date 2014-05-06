@@ -73,6 +73,7 @@ namespace CodeGen
             Debug.Assert(StylizeWithCapitalLeadingLetter("...cat") == "...cat");
 
             Debug.Assert(StylizeNameFromUnderscoreSeparators(null) == null);
+            Debug.Assert(StylizeNameFromUnderscoreSeparators("") == "");
             Debug.Assert(StylizeNameFromUnderscoreSeparators("d") == "D");
             Debug.Assert(StylizeNameFromUnderscoreSeparators("D") == "D");
             Debug.Assert(StylizeNameFromUnderscoreSeparators("_") == "");

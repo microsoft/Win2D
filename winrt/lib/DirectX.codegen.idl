@@ -1,12 +1,37 @@
 import "inspectable.idl";
 import "Windows.Foundation.idl";
+import "Windows.UI.idl";
 
 #include "version.h"
 
 namespace Microsoft
 {
+    // This is placeholder, until the inbox math types are ready to use.
+    namespace Math
+    {
+        typedef int Matrix3x2;
+    }
+
     namespace DirectX
     {
+        //
+        // IDxGeometry
+        //
+        [uuid(A0D3D5DC-A2BD-4E5A-AA75-C13B8FF238C2), version(VERSION)]
+        interface IDxGeometry : IInspectable
+            requires Windows.Foundation.IClosable
+        {
+        }
+
+        //
+        // IDxBrush
+        //
+        [uuid(718BAB7E-2A06-46DB-8127-11F65291554E), version(VERSION)]
+        interface IDxBrush : IInspectable
+            requires Windows.Foundation.IClosable
+        {
+        }
+
         [version(VERSION)]
         typedef enum DxArcSize
         {
@@ -565,25 +590,20 @@ namespace Microsoft
         [uuid(ac627056-f349-4771-be39-cb9f3b3c93a4), version(VERSION), exclusiveto(DxArcSegment)]
         interface IDxArcSegment : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point([out, retval] int* value);
-            [propput] HRESULT Point([in] int value);
+            [propget] HRESULT Point([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Size([out, retval] int* value);
-            [propput] HRESULT Size([in] int value);
+            [propget] HRESULT Size([out, retval] Windows.Foundation.Size* value);
+            [propput] HRESULT Size([in] Windows.Foundation.Size value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT RotationAngle([out, retval] int* value);
-            [propput] HRESULT RotationAngle([in] int value);
+            [propget] HRESULT RotationAngle([out, retval] FLOAT* value);
+            [propput] HRESULT RotationAngle([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT SweepDirection([out, retval] int* value);
-            [propput] HRESULT SweepDirection([in] int value);
+            [propget] HRESULT SweepDirection([out, retval] DxSweepDirection* value);
+            [propput] HRESULT SweepDirection([in] DxSweepDirection value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT ArcSize([out, retval] int* value);
-            [propput] HRESULT ArcSize([in] int value);
+            [propget] HRESULT ArcSize([out, retval] DxArcSize* value);
+            [propput] HRESULT ArcSize([in] DxArcSize value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -598,17 +618,14 @@ namespace Microsoft
         [uuid(1cd6d1d1-4242-482a-afd4-bcf251d97820), version(VERSION), exclusiveto(DxBezierSegment)]
         interface IDxBezierSegment : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point1([out, retval] int* value);
-            [propput] HRESULT Point1([in] int value);
+            [propget] HRESULT Point1([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point1([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point2([out, retval] int* value);
-            [propput] HRESULT Point2([in] int value);
+            [propget] HRESULT Point2([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point2([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point3([out, retval] int* value);
-            [propput] HRESULT Point3([in] int value);
+            [propget] HRESULT Point3([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point3([in] Windows.Foundation.Point value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -623,17 +640,14 @@ namespace Microsoft
         [uuid(f06ae239-149e-42b9-8eaa-5aa63fd079b3), version(VERSION), exclusiveto(DxTriangle)]
         interface IDxTriangle : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point1([out, retval] int* value);
-            [propput] HRESULT Point1([in] int value);
+            [propget] HRESULT Point1([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point1([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point2([out, retval] int* value);
-            [propput] HRESULT Point2([in] int value);
+            [propget] HRESULT Point2([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point2([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point3([out, retval] int* value);
-            [propput] HRESULT Point3([in] int value);
+            [propget] HRESULT Point3([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point3([in] Windows.Foundation.Point value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -648,17 +662,14 @@ namespace Microsoft
         [uuid(9c50546b-8b87-44da-8ab0-d8552890e0c7), version(VERSION), exclusiveto(DxEllipse)]
         interface IDxEllipse : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point([out, retval] int* value);
-            [propput] HRESULT Point([in] int value);
+            [propget] HRESULT Point([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT RadiusX([out, retval] int* value);
-            [propput] HRESULT RadiusX([in] int value);
+            [propget] HRESULT RadiusX([out, retval] FLOAT* value);
+            [propput] HRESULT RadiusX([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT RadiusY([out, retval] int* value);
-            [propput] HRESULT RadiusY([in] int value);
+            [propget] HRESULT RadiusY([out, retval] FLOAT* value);
+            [propput] HRESULT RadiusY([in] FLOAT value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -673,13 +684,11 @@ namespace Microsoft
         [uuid(0b329db6-8d06-4db0-8155-88b13de20344), version(VERSION), exclusiveto(DxGradientStop)]
         interface IDxGradientStop : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Position([out, retval] int* value);
-            [propput] HRESULT Position([in] int value);
+            [propget] HRESULT Position([out, retval] FLOAT* value);
+            [propput] HRESULT Position([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Color([out, retval] int* value);
-            [propput] HRESULT Color([in] int value);
+            [propget] HRESULT Color([out, retval] Windows.UI.Color* value);
+            [propput] HRESULT Color([in] Windows.UI.Color value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -694,13 +703,11 @@ namespace Microsoft
         [uuid(bd4b48ed-0252-45f4-b40e-118ad7c1ffce), version(VERSION), exclusiveto(DxQuadraticBezierSegment)]
         interface IDxQuadraticBezierSegment : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point1([out, retval] int* value);
-            [propput] HRESULT Point1([in] int value);
+            [propget] HRESULT Point1([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point1([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Point2([out, retval] int* value);
-            [propput] HRESULT Point2([in] int value);
+            [propget] HRESULT Point2([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Point2([in] Windows.Foundation.Point value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -715,17 +722,14 @@ namespace Microsoft
         [uuid(9b61dfa9-93d6-4e6d-ae40-059dfbf0ef35), version(VERSION), exclusiveto(RoundedRectangle)]
         interface IRoundedRectangle : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Rect([out, retval] int* value);
-            [propput] HRESULT Rect([in] int value);
+            [propget] HRESULT Rect([out, retval] Windows.Foundation.Rect* value);
+            [propput] HRESULT Rect([in] Windows.Foundation.Rect value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT RadiusX([out, retval] int* value);
-            [propput] HRESULT RadiusX([in] int value);
+            [propget] HRESULT RadiusX([out, retval] FLOAT* value);
+            [propput] HRESULT RadiusX([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT RadiusY([out, retval] int* value);
-            [propput] HRESULT RadiusY([in] int value);
+            [propget] HRESULT RadiusY([out, retval] FLOAT* value);
+            [propput] HRESULT RadiusY([in] FLOAT value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -740,13 +744,11 @@ namespace Microsoft
         [uuid(b687b451-cce0-49a2-b336-60045f341ce0), version(VERSION), exclusiveto(DxLinearGradientBrushProperties)]
         interface IDxLinearGradientBrushProperties : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT StartPoint([out, retval] int* value);
-            [propput] HRESULT StartPoint([in] int value);
+            [propget] HRESULT StartPoint([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT StartPoint([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT EndPoint([out, retval] int* value);
-            [propput] HRESULT EndPoint([in] int value);
+            [propget] HRESULT EndPoint([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT EndPoint([in] Windows.Foundation.Point value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -761,21 +763,17 @@ namespace Microsoft
         [uuid(84dc0df7-4f46-4c93-84d2-b20d451f07f4), version(VERSION), exclusiveto(DxRadialGradientBrushProperties)]
         interface IDxRadialGradientBrushProperties : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Center([out, retval] int* value);
-            [propput] HRESULT Center([in] int value);
+            [propget] HRESULT Center([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT Center([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT GradientOriginOffset([out, retval] int* value);
-            [propput] HRESULT GradientOriginOffset([in] int value);
+            [propget] HRESULT GradientOriginOffset([out, retval] Windows.Foundation.Point* value);
+            [propput] HRESULT GradientOriginOffset([in] Windows.Foundation.Point value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT RadiusX([out, retval] int* value);
-            [propput] HRESULT RadiusX([in] int value);
+            [propget] HRESULT RadiusX([out, retval] FLOAT* value);
+            [propput] HRESULT RadiusX([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT RadiusY([out, retval] int* value);
-            [propput] HRESULT RadiusY([in] int value);
+            [propget] HRESULT RadiusY([out, retval] FLOAT* value);
+            [propput] HRESULT RadiusY([in] FLOAT value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -790,33 +788,26 @@ namespace Microsoft
         [uuid(4a837512-5ca1-46eb-96d1-fcc634796341), version(VERSION), exclusiveto(LayerParameters)]
         interface ILayerParameters : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT ContentBounds([out, retval] int* value);
-            [propput] HRESULT ContentBounds([in] int value);
+            [propget] HRESULT ContentBounds([out, retval] Windows.Foundation.Rect* value);
+            [propput] HRESULT ContentBounds([in] Windows.Foundation.Rect value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT GeometricMask([out, retval] int* value);
-            [propput] HRESULT GeometricMask([in] int value);
+            [propget] HRESULT GeometricMask([out, retval] IDxGeometry** value);
+            [propput] HRESULT GeometricMask([in] IDxGeometry* value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT MaskAntialiasMode([out, retval] int* value);
-            [propput] HRESULT MaskAntialiasMode([in] int value);
+            [propget] HRESULT MaskAntialiasMode([out, retval] DxAntialiasMode* value);
+            [propput] HRESULT MaskAntialiasMode([in] DxAntialiasMode value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT MaskTransform([out, retval] int* value);
-            [propput] HRESULT MaskTransform([in] int value);
+            [propget] HRESULT MaskTransform([out, retval] Microsoft.Math.Matrix3x2* value);
+            [propput] HRESULT MaskTransform([in] Microsoft.Math.Matrix3x2 value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT Opacity([out, retval] int* value);
-            [propput] HRESULT Opacity([in] int value);
+            [propget] HRESULT Opacity([out, retval] FLOAT* value);
+            [propput] HRESULT Opacity([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT OpacityBrush([out, retval] int* value);
-            [propput] HRESULT OpacityBrush([in] int value);
+            [propget] HRESULT OpacityBrush([out, retval] IDxBrush** value);
+            [propput] HRESULT OpacityBrush([in] IDxBrush* value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT LayerOptions([out, retval] int* value);
-            [propput] HRESULT LayerOptions([in] int value);
+            [propget] HRESULT LayerOptions([out, retval] LayerOptions* value);
+            [propput] HRESULT LayerOptions([in] LayerOptions value);
         }
 
         [version(VERSION), activatable(VERSION)]
@@ -831,37 +822,29 @@ namespace Microsoft
         [uuid(b48780bf-7eb7-41b0-a56b-1f8837723ab6), version(VERSION), exclusiveto(StrokeStyleProperties)]
         interface IStrokeStyleProperties : IInspectable
         {
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT StartCap([out, retval] int* value);
-            [propput] HRESULT StartCap([in] int value);
+            [propget] HRESULT StartCap([out, retval] DxCapStyle* value);
+            [propput] HRESULT StartCap([in] DxCapStyle value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT EndCap([out, retval] int* value);
-            [propput] HRESULT EndCap([in] int value);
+            [propget] HRESULT EndCap([out, retval] DxCapStyle* value);
+            [propput] HRESULT EndCap([in] DxCapStyle value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT DashCap([out, retval] int* value);
-            [propput] HRESULT DashCap([in] int value);
+            [propget] HRESULT DashCap([out, retval] DxCapStyle* value);
+            [propput] HRESULT DashCap([in] DxCapStyle value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT LineJoin([out, retval] int* value);
-            [propput] HRESULT LineJoin([in] int value);
+            [propget] HRESULT LineJoin([out, retval] DxLineJoin* value);
+            [propput] HRESULT LineJoin([in] DxLineJoin value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT MiterLimit([out, retval] int* value);
-            [propput] HRESULT MiterLimit([in] int value);
+            [propget] HRESULT MiterLimit([out, retval] FLOAT* value);
+            [propput] HRESULT MiterLimit([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT DashStyle([out, retval] int* value);
-            [propput] HRESULT DashStyle([in] int value);
+            [propget] HRESULT DashStyle([out, retval] DxDashStyle* value);
+            [propput] HRESULT DashStyle([in] DxDashStyle value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT DashOffset([out, retval] int* value);
-            [propput] HRESULT DashOffset([in] int value);
+            [propget] HRESULT DashOffset([out, retval] FLOAT* value);
+            [propput] HRESULT DashOffset([in] FLOAT value);
 
-            // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-            [propget] HRESULT TransformType([out, retval] int* value);
-            [propput] HRESULT TransformType([in] int value);
+            [propget] HRESULT TransformType([out, retval] DxStrokeTransformType* value);
+            [propput] HRESULT TransformType([in] DxStrokeTransformType value);
         }
 
         [version(VERSION), activatable(VERSION)]

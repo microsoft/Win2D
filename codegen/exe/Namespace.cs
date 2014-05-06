@@ -93,6 +93,26 @@ namespace CodeGen
                     types[qualifiedName] = i;            
                 }
             }
+
+            if (Typedefs != null)
+            {
+                foreach (Typedef t in Typedefs)
+                {
+                    // In the types XML, often times types are declared as one type,
+                    // then typedefs to something else, and referenced thereafter
+                    // as that second type. And so, typedefs must be handled here.
+                    //
+                    // In the XML, the 'Name' field in each typedef is unqualified,
+                    // but the 'From' field is qualified.
+                    // For example, <Typedef Name="COLOR_F" From="D2D::COLOR_F"/>
+                    //
+                    // So, the entries are added to the type dictionary here
+                    // under the qualified name.
+                    //
+                    string qualified = Name + "::" + t.Name;
+                    types[qualified] = types[t.From];
+                }
+            }
         }
 
         public void Resolve(Dictionary<string, QualifiableType> types)
@@ -120,6 +140,7 @@ namespace CodeGen
                     i.Resolve(types);
                 }
             }
+
         }
 
     }

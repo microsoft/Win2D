@@ -46,6 +46,27 @@
         <Interface Name="D2D1::IImage" IsProjectedAsAbstract="true"/>
         <Interface Name="D2D1::IGeometry" IsProjectedAsAbstract="true"/>
 
+        <!-- Note: This is placeholder, and will eventually be removed and replaced with the inbox type.-->
+        <Struct Name="D2D1::MATRIX_3X2_F" ShouldProject="false">
+            <ReplaceWithBuiltInType Namespace="Microsoft.Math." Name="Matrix3x2"/>
+        </Struct>
+
+        <Struct Name="D2D::POINT_2F" ShouldProject="false">
+            <ReplaceWithBuiltInType Namespace="Windows.Foundation." Name="Point"/>
+        </Struct>
+
+        <Struct Name="D2D::SIZE_F" ShouldProject="false">
+            <ReplaceWithBuiltInType Namespace="Windows.Foundation." Name="Size"/>
+        </Struct>
+
+        <Struct Name="D2D::RECT_F" ShouldProject="false">
+            <ReplaceWithBuiltInType Namespace="Windows.Foundation." Name="Rect"/>
+        </Struct>
+
+        <Struct Name="D3DCOLORVALUE" ShouldProject="false">
+            <ReplaceWithBuiltInType Namespace="Windows.UI." Name="Color"/>
+        </Struct>
+
     </Namespace>
 
 </Settings>

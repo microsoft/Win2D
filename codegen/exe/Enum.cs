@@ -129,6 +129,14 @@ namespace CodeGen
             get { return m_rawName; }
         }
 
+        public override string ProjectedNameIncludingIndirection
+        {
+            get
+            {
+                return ProjectedName;
+            }
+        }
+
         Dictionary<string, EnumValue> m_enumValueLookupByName;
 
         public EnumValue GetEnumValueByName(string name)
@@ -138,10 +146,18 @@ namespace CodeGen
 
         public void Commit(Namespace parentNamespace)
         {
-            Debug.Assert(parentNamespace != null);
             if (parentNamespace != null)
             {
                 m_rawName =  parentNamespace.ApiName + "_" + Name;
+            }
+            else
+            {
+                //
+                // Namespace of NULL indicates the global namespace.
+                // These types aren't D2D types, and their full native name is
+                // exactly what's in the name field (no need to prepend anything).
+                //
+                m_rawName = Name; 
             }
 
             m_enumValueLookupByName = new Dictionary<string, EnumValue>();

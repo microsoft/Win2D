@@ -39,6 +39,20 @@ namespace CodeGen
         {
             get { return m_innerName; }
         }
+
+        public override string ProjectedNameIncludingIndirection
+        {
+            get{ return ProjectedName + "*"; }
+        }
+        
+        public override string AccessorSuffix 
+        {
+            get { return ".Get()"; } 
+        }
+        public override string RuntimeClassMemberTypeName 
+        {
+            get { return "ComPtr<" + ProjectedName + ">"; } 
+        }
         
         public void Commit(Namespace parentNamespace, string qualifier, Dictionary<string, QualifiableType> types)
         {
@@ -51,9 +65,9 @@ namespace CodeGen
             string unprefixed = Name.Substring(1);
             m_stylizedName = Formatter.Prefix + unprefixed;
 
-            m_innerName = "I" + m_parentNamespace.ApiName + unprefixed; // This assumption relies on the assert above.
+            m_innerName = "I" + m_parentNamespace.ApiName + unprefixed; 
 
-            if(IsProjectedAsAbstract)
+            if (IsProjectedAsAbstract)
             {
                 m_stylizedName = "I" + Formatter.Prefix + unprefixed;
             }

@@ -45,6 +45,7 @@
     <Compile Include="Enum.cs" />
     <Compile Include="Interface.cs" />
     <Compile Include="Namespace.cs" />
+    <Compile Include="Primitive.cs" />
     <Compile Include="QualifiableType.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Struct.cs" />

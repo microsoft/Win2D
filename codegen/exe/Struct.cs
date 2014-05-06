@@ -46,6 +46,7 @@ namespace CodeGen
                 m_type = types[Type];
             }
         }
+
         public string PropertyName { get { return m_propertyName; } }
         public string PrivateMemberName { get { return m_privateMemberName; } }
 
@@ -82,9 +83,26 @@ namespace CodeGen
             get { return m_rawName; }
         }
 
+        public override string ProjectedNameIncludingIndirection
+        {
+            get { return ProjectedName; }
+        }
+
+        public override string IdlTypeNameQualifier
+        {
+            get { return m_idlTypeNameQualifier; }
+        }
+
         public void Commit(Namespace parentNamespace)
         {
-            m_rawName = parentNamespace.ApiName + "_" + Name;
+            if(parentNamespace != null)
+            {
+                m_rawName = parentNamespace.ApiName + "_" + Name;
+            }
+            else
+            {
+                m_rawName = Name;
+            }
 
             foreach(StructField sf in Fields)
             {
@@ -96,6 +114,13 @@ namespace CodeGen
         }
         public void Resolve(Dictionary<string, QualifiableType> types)
         {
+            // Commit any overrides substitutions.
+            if (Overrides != null && Overrides.ReplaceStructWith != null)
+            {
+                m_stylizedName = Overrides.ReplaceStructWith.Name;
+                m_idlTypeNameQualifier = Overrides.ReplaceStructWith.Namespace;
+            }
+
             if (!Overrides.ShouldProject)
             {
                 return;
@@ -134,6 +159,7 @@ namespace CodeGen
         string m_rawName;
         string m_stylizedName;
         string m_idlInterfaceName;
+        string m_idlTypeNameQualifier;
 
         // Used for code generation.
         public void OutputCode(OutputFiles outputFiles)
@@ -147,7 +173,7 @@ namespace CodeGen
             {
                 return;
             }
-
+            
             // IDL file
             outputFiles.IdlFile.WriteLine("interface " + m_idlInterfaceName + ";");
             outputFiles.IdlFile.WriteLine("runtimeclass " + m_stylizedName + ";");
@@ -159,11 +185,8 @@ namespace CodeGen
 
             for (int i = 0; i < Fields.Count; i++)
             {
-                // TODO: Use the correct types for struct fields. Types are always treated as int for the time being.
-                outputFiles.IdlFile.WriteLine("// TODO: Use the correct types for struct fields. Types are always treated as int for the time being.");
-
-                outputFiles.IdlFile.WriteLine("[propget] HRESULT " + Fields[i].PropertyName + "([out, retval] int* value);");
-                outputFiles.IdlFile.WriteLine("[propput] HRESULT " + Fields[i].PropertyName + "([in] int value);");
+                outputFiles.IdlFile.WriteLine("[propget] HRESULT " + Fields[i].PropertyName + "([out, retval] " + Fields[i].TypeObject.IdlTypeNameQualifier + Fields[i].TypeObject.ProjectedNameIncludingIndirection + "* value);");
+                outputFiles.IdlFile.WriteLine("[propput] HRESULT " + Fields[i].PropertyName + "([in] " + Fields[i].TypeObject.IdlTypeNameQualifier + Fields[i].TypeObject.ProjectedNameIncludingIndirection + " value);");
 
                 if(i < Fields.Count - 1)
                 {
@@ -196,7 +219,7 @@ namespace CodeGen
             outputFiles.CppFile.Indent();
             for (int i = 0; i < Fields.Count; i++)
             {
-                outputFiles.CppFile.WriteLine("IFACEMETHOD(get_" + Fields[i].PropertyName + ")(_Out_ int *pValue) override"); ;
+                outputFiles.CppFile.WriteLine("IFACEMETHOD(get_" + Fields[i].PropertyName + ")(_Out_ " + Fields[i].TypeObject.ProjectedNameIncludingIndirection + " *pValue) override"); ;
                 outputFiles.CppFile.WriteLine("{");
                 outputFiles.CppFile.Indent();
 
@@ -209,7 +232,7 @@ namespace CodeGen
                 outputFiles.CppFile.WriteLine("else");
                 outputFiles.CppFile.WriteLine("{");
                 outputFiles.CppFile.Indent();
-                outputFiles.CppFile.WriteLine("*pValue = " + Fields[i].PrivateMemberName + ";");
+                outputFiles.CppFile.WriteLine("*pValue = " + Fields[i].PrivateMemberName + Fields[i].TypeObject.AccessorSuffix + ";");
                 outputFiles.CppFile.WriteLine("return S_OK;");
                 outputFiles.CppFile.Unindent();
                 outputFiles.CppFile.WriteLine("}");
@@ -217,7 +240,7 @@ namespace CodeGen
                 outputFiles.CppFile.Unindent();
                 outputFiles.CppFile.WriteLine("}");
                 outputFiles.CppFile.WriteLine();
-                outputFiles.CppFile.WriteLine("IFACEMETHOD(put_" + Fields[i].PropertyName + ")(int value) override"); ;
+                outputFiles.CppFile.WriteLine("IFACEMETHOD(put_" + Fields[i].PropertyName + ")(" + Fields[i].TypeObject.ProjectedNameIncludingIndirection + " value) override"); ;
                 outputFiles.CppFile.WriteLine("{");
                 outputFiles.CppFile.Indent();
                 outputFiles.CppFile.WriteLine(Fields[i].PrivateMemberName + " = value;");
@@ -231,7 +254,7 @@ namespace CodeGen
             outputFiles.CppFile.Indent();
             for (int i = 0; i < Fields.Count; i++)
             {
-                outputFiles.CppFile.WriteLine("int " + Fields[i].PrivateMemberName + ";");
+                outputFiles.CppFile.WriteLine(Fields[i].TypeObject.RuntimeClassMemberTypeName + " " + Fields[i].PrivateMemberName + ";");
             }
             outputFiles.CppFile.Unindent();
             outputFiles.CppFile.WriteLine("};");
