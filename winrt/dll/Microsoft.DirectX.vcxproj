@@ -24,6 +24,9 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -32,7 +35,6 @@
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>d2d1.lib;d3d11.lib;windowscodecs.lib;dwrite.lib;runtimeobject.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreImportLibrary>false</IgnoreImportLibrary>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

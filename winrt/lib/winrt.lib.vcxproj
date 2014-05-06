@@ -37,18 +37,23 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ClosablePtr.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="GraphicsDevice\GraphicsDevice.h" />
+    <ClInclude Include="GraphicsDevice\GraphicsSurface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectX.codegen.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <MidlRT Include="d2dwinrt.idl" />
     <MidlRT Include="DirectX.codegen.idl" />
+    <MidlRT Include="GraphicsDevice\WinRTGraphicsInterop.idl" />
+    <ClCompile Include="GraphicsDevice\GraphicsDeviceInterop.cpp" />
+    <ClCompile Include="GraphicsDevice\GraphicsDevice.cpp" />
+    <ClCompile Include="GraphicsDevice\GraphicsSurface.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(SolutionDir)build\dxrt.cpp.targets" />

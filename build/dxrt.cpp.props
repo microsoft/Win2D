@@ -35,6 +35,7 @@
     <UnmergedWinmdDirectory>$(SolutionDir)bin\$(Platform)\$(Configuration)\UnmergedWinMD</UnmergedWinmdDirectory>
     <MergedWinmdDirectory>$(SolutionDir)bin\$(Platform)\$(Configuration)\MergedWinMD</MergedWinmdDirectory>
     <IdlHeaderDirectory>$(SolutionDir)bin\$(Platform)\$(Configuration)\IdlHeader</IdlHeaderDirectory>
+    <PublishedHeaderDirectory>$(SolutionDir)winrt\published</PublishedHeaderDirectory>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
@@ -58,7 +59,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <SDLCheck>true</SDLCheck>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(IdlHeaderDirectory);$(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IdlHeaderDirectory);$(PublishedHeaderDirectory);$(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <UseFullPaths>true</UseFullPaths>
       <TreatWarningAsError>true</TreatWarningAsError>

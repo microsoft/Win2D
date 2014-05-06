@@ -51,3 +51,9 @@ inline void ThrowIfFailed(HRESULT hr)
     if (FAILED(hr))
         throw ComException(hr);
 }
+
+inline void ThrowIfFalse(bool value, HRESULT hrToThrow)
+{
+    if (!value)
+        throw ComException(hrToThrow);
+}

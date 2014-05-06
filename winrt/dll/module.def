@@ -2,3 +2,7 @@ EXPORTS
 DllCanUnloadNow         PRIVATE
 DllGetActivationFactory PRIVATE
 DllGetClassObject       PRIVATE
+CreateGraphicsDeviceFromDXGIDevice
+CreateGraphicsSurfaceFromDXGISurface
+GetDXGIInterfaceFromGraphicsDevice
+GetDXGIInterfaceFromGraphicsSurface

@@ -2,14 +2,38 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="GraphicsDevice\GraphicsDeviceInterop.cpp">
+      <Filter>GraphicsDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice\GraphicsDevice.cpp">
+      <Filter>GraphicsDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice\GraphicsSurface.cpp">
+      <Filter>GraphicsDevice</Filter>
+    </ClCompile>
     <ClCompile Include="DirectX.codegen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="GraphicsDevice\GraphicsDevice.h">
+      <Filter>GraphicsDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDevice\GraphicsSurface.h">
+      <Filter>GraphicsDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosablePtr.h" />
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="d2dwinrt.idl" />
     <MidlRT Include="DirectX.codegen.idl" />
+    <MidlRT Include="GraphicsDevice\WinRTGraphicsInterop.idl">
+      <Filter>GraphicsDevice</Filter>
+    </MidlRT>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GraphicsDevice">
+      <UniqueIdentifier>{11b5fe6d-254b-4956-bd73-d4858e0e4393}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
