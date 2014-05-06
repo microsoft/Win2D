@@ -28,7 +28,7 @@
 #include <windows.ui.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
-#include <Microsoft.DirectX.GraphicsDevice.interop.h>
+#include <Microsoft.DirectX.interop.h>
 
 #include <WinRTGraphicsInterop.h>
 

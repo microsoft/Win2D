@@ -22,7 +22,7 @@
 #include <d2dwinrt.h>
 #include <WinRTGraphicsInterop.h>
 
-#include <Microsoft.DirectX.GraphicsDevice.interop.h>
+#include <Microsoft.DirectX.interop.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
