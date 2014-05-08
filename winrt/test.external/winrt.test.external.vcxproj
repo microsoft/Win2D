@@ -38,6 +38,7 @@
     <ClInclude Include="Helpers.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX11EnumTests.cpp" />
     <ClCompile Include="GraphicsDeviceTests.cpp" />
     <ClCompile Include="GraphicsErrorTests.cpp" />
     <ClCompile Include="GraphicsSurfaceTests.cpp" />
