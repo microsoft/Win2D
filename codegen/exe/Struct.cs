@@ -168,6 +168,37 @@ namespace CodeGen
         // Used for code generation.
         public void OutputCode(Dictionary<string, QualifiableType> typeDictionary, OutputFiles outputFiles)
         {
+            if (RequiresClassProjection(typeDictionary))
+            {
+                OutputClassProjectionCode(typeDictionary, outputFiles);
+            }
+            else
+            {
+                OutputValueTypeProjectionCode(typeDictionary, outputFiles);
+            }
+        }
+
+        bool RequiresClassProjection(Dictionary<string, QualifiableType> typeDictionary)
+        {
+            // Precondition: this method may only be called from OutputCode, not from
+            // the constructor. If it is called from the constructor, some of the field
+            // types may not be present in the dictionary yet.
+
+            // The projection type depends on whether this struct has any field which is a ref class.
+            foreach (StructField f in m_structFields)
+            {
+                QualifiableType fieldType = typeDictionary[f.TypeName];
+                if (fieldType is Interface)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        void OutputClassProjectionCode(Dictionary<string, QualifiableType> typeDictionary, OutputFiles outputFiles)
+        {
             // IDL file
             outputFiles.IdlFile.WriteLine("interface " + m_idlInterfaceName + ";");
             outputFiles.IdlFile.WriteLine("runtimeclass " + m_stylizedName + ";");
@@ -184,7 +215,7 @@ namespace CodeGen
                 outputFiles.IdlFile.WriteLine("[propget] HRESULT " + m_structFields[i].PropertyName + "([out, retval] " + typeObject.IdlTypeNameQualifier + typeObject.ProjectedNameIncludingIndirection + "* value);");
                 outputFiles.IdlFile.WriteLine("[propput] HRESULT " + m_structFields[i].PropertyName + "([in] " + typeObject.IdlTypeNameQualifier + typeObject.ProjectedNameIncludingIndirection + " value);");
 
-                if(i < m_structFields.Count - 1)
+                if (i < m_structFields.Count - 1)
                 {
                     outputFiles.IdlFile.WriteLine();
                 }
@@ -258,6 +289,24 @@ namespace CodeGen
             outputFiles.CppFile.Unindent();
             outputFiles.CppFile.WriteLine("};");
             outputFiles.CppFile.WriteLine();
+        }
+
+        void OutputValueTypeProjectionCode(Dictionary<string, QualifiableType> typeDictionary, OutputFiles outputFiles)
+        {
+            // This outputs to the IDL file only. There is no output to the .cpp file.
+            outputFiles.IdlFile.WriteLine("[version(VERSION)]");
+            outputFiles.IdlFile.WriteLine("typedef struct " + m_stylizedName);
+            outputFiles.IdlFile.WriteLine("{");
+            outputFiles.IdlFile.Indent();
+            foreach(StructField structField in m_structFields)
+            {
+                QualifiableType typeObject = typeDictionary[structField.TypeName];
+                outputFiles.IdlFile.WriteLine(typeObject.IdlTypeNameQualifier + typeObject.ProjectedName + " " + structField.PropertyName + ";");
+            }
+            outputFiles.IdlFile.Unindent();
+            outputFiles.IdlFile.WriteLine("} " + m_stylizedName + ";");
+            outputFiles.IdlFile.WriteLine();
+
         }
     }
 }

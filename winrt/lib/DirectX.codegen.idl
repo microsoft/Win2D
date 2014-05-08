@@ -584,203 +584,77 @@ namespace Microsoft
             Low = (int)1
         } DxRenderingPriority;
 
-        interface IDxArcSegment;
-        runtimeclass DxArcSegment;
-
-        [uuid(ac627056-f349-4771-be39-cb9f3b3c93a4), version(VERSION), exclusiveto(DxArcSegment)]
-        interface IDxArcSegment : IInspectable
+        [version(VERSION)]
+        typedef struct DxArcSegment
         {
-            [propget] HRESULT Point([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point([in] Windows.Foundation.Point value);
+            Windows.Foundation.Point Point;
+            Windows.Foundation.Size Size;
+            FLOAT RotationAngle;
+            DxSweepDirection SweepDirection;
+            DxArcSize ArcSize;
+        } DxArcSegment;
 
-            [propget] HRESULT Size([out, retval] Windows.Foundation.Size* value);
-            [propput] HRESULT Size([in] Windows.Foundation.Size value);
-
-            [propget] HRESULT RotationAngle([out, retval] FLOAT* value);
-            [propput] HRESULT RotationAngle([in] FLOAT value);
-
-            [propget] HRESULT SweepDirection([out, retval] DxSweepDirection* value);
-            [propput] HRESULT SweepDirection([in] DxSweepDirection value);
-
-            [propget] HRESULT ArcSize([out, retval] DxArcSize* value);
-            [propput] HRESULT ArcSize([in] DxArcSize value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxArcSegment
+        [version(VERSION)]
+        typedef struct DxBezierSegment
         {
-            [default] interface IDxArcSegment;
-        }
+            Windows.Foundation.Point Point1;
+            Windows.Foundation.Point Point2;
+            Windows.Foundation.Point Point3;
+        } DxBezierSegment;
 
-        interface IDxBezierSegment;
-        runtimeclass DxBezierSegment;
-
-        [uuid(1cd6d1d1-4242-482a-afd4-bcf251d97820), version(VERSION), exclusiveto(DxBezierSegment)]
-        interface IDxBezierSegment : IInspectable
+        [version(VERSION)]
+        typedef struct DxTriangle
         {
-            [propget] HRESULT Point1([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point1([in] Windows.Foundation.Point value);
+            Windows.Foundation.Point Point1;
+            Windows.Foundation.Point Point2;
+            Windows.Foundation.Point Point3;
+        } DxTriangle;
 
-            [propget] HRESULT Point2([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point2([in] Windows.Foundation.Point value);
-
-            [propget] HRESULT Point3([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point3([in] Windows.Foundation.Point value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxBezierSegment
+        [version(VERSION)]
+        typedef struct DxEllipse
         {
-            [default] interface IDxBezierSegment;
-        }
+            Windows.Foundation.Point Point;
+            FLOAT RadiusX;
+            FLOAT RadiusY;
+        } DxEllipse;
 
-        interface IDxTriangle;
-        runtimeclass DxTriangle;
-
-        [uuid(f06ae239-149e-42b9-8eaa-5aa63fd079b3), version(VERSION), exclusiveto(DxTriangle)]
-        interface IDxTriangle : IInspectable
+        [version(VERSION)]
+        typedef struct DxGradientStop
         {
-            [propget] HRESULT Point1([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point1([in] Windows.Foundation.Point value);
+            FLOAT Position;
+            Windows.UI.Color Color;
+        } DxGradientStop;
 
-            [propget] HRESULT Point2([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point2([in] Windows.Foundation.Point value);
-
-            [propget] HRESULT Point3([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point3([in] Windows.Foundation.Point value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxTriangle
+        [version(VERSION)]
+        typedef struct DxQuadraticBezierSegment
         {
-            [default] interface IDxTriangle;
-        }
+            Windows.Foundation.Point Point1;
+            Windows.Foundation.Point Point2;
+        } DxQuadraticBezierSegment;
 
-        interface IDxEllipse;
-        runtimeclass DxEllipse;
-
-        [uuid(9c50546b-8b87-44da-8ab0-d8552890e0c7), version(VERSION), exclusiveto(DxEllipse)]
-        interface IDxEllipse : IInspectable
+        [version(VERSION)]
+        typedef struct RoundedRectangle
         {
-            [propget] HRESULT Point([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point([in] Windows.Foundation.Point value);
+            Windows.Foundation.Rect Rect;
+            FLOAT RadiusX;
+            FLOAT RadiusY;
+        } RoundedRectangle;
 
-            [propget] HRESULT RadiusX([out, retval] FLOAT* value);
-            [propput] HRESULT RadiusX([in] FLOAT value);
-
-            [propget] HRESULT RadiusY([out, retval] FLOAT* value);
-            [propput] HRESULT RadiusY([in] FLOAT value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxEllipse
+        [version(VERSION)]
+        typedef struct DxLinearGradientBrushProperties
         {
-            [default] interface IDxEllipse;
-        }
+            Windows.Foundation.Point StartPoint;
+            Windows.Foundation.Point EndPoint;
+        } DxLinearGradientBrushProperties;
 
-        interface IDxGradientStop;
-        runtimeclass DxGradientStop;
-
-        [uuid(0b329db6-8d06-4db0-8155-88b13de20344), version(VERSION), exclusiveto(DxGradientStop)]
-        interface IDxGradientStop : IInspectable
+        [version(VERSION)]
+        typedef struct DxRadialGradientBrushProperties
         {
-            [propget] HRESULT Position([out, retval] FLOAT* value);
-            [propput] HRESULT Position([in] FLOAT value);
-
-            [propget] HRESULT Color([out, retval] Windows.UI.Color* value);
-            [propput] HRESULT Color([in] Windows.UI.Color value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxGradientStop
-        {
-            [default] interface IDxGradientStop;
-        }
-
-        interface IDxQuadraticBezierSegment;
-        runtimeclass DxQuadraticBezierSegment;
-
-        [uuid(bd4b48ed-0252-45f4-b40e-118ad7c1ffce), version(VERSION), exclusiveto(DxQuadraticBezierSegment)]
-        interface IDxQuadraticBezierSegment : IInspectable
-        {
-            [propget] HRESULT Point1([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point1([in] Windows.Foundation.Point value);
-
-            [propget] HRESULT Point2([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Point2([in] Windows.Foundation.Point value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxQuadraticBezierSegment
-        {
-            [default] interface IDxQuadraticBezierSegment;
-        }
-
-        interface IRoundedRectangle;
-        runtimeclass RoundedRectangle;
-
-        [uuid(9b61dfa9-93d6-4e6d-ae40-059dfbf0ef35), version(VERSION), exclusiveto(RoundedRectangle)]
-        interface IRoundedRectangle : IInspectable
-        {
-            [propget] HRESULT Rect([out, retval] Windows.Foundation.Rect* value);
-            [propput] HRESULT Rect([in] Windows.Foundation.Rect value);
-
-            [propget] HRESULT RadiusX([out, retval] FLOAT* value);
-            [propput] HRESULT RadiusX([in] FLOAT value);
-
-            [propget] HRESULT RadiusY([out, retval] FLOAT* value);
-            [propput] HRESULT RadiusY([in] FLOAT value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass RoundedRectangle
-        {
-            [default] interface IRoundedRectangle;
-        }
-
-        interface IDxLinearGradientBrushProperties;
-        runtimeclass DxLinearGradientBrushProperties;
-
-        [uuid(b687b451-cce0-49a2-b336-60045f341ce0), version(VERSION), exclusiveto(DxLinearGradientBrushProperties)]
-        interface IDxLinearGradientBrushProperties : IInspectable
-        {
-            [propget] HRESULT StartPoint([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT StartPoint([in] Windows.Foundation.Point value);
-
-            [propget] HRESULT EndPoint([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT EndPoint([in] Windows.Foundation.Point value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxLinearGradientBrushProperties
-        {
-            [default] interface IDxLinearGradientBrushProperties;
-        }
-
-        interface IDxRadialGradientBrushProperties;
-        runtimeclass DxRadialGradientBrushProperties;
-
-        [uuid(84dc0df7-4f46-4c93-84d2-b20d451f07f4), version(VERSION), exclusiveto(DxRadialGradientBrushProperties)]
-        interface IDxRadialGradientBrushProperties : IInspectable
-        {
-            [propget] HRESULT Center([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT Center([in] Windows.Foundation.Point value);
-
-            [propget] HRESULT GradientOriginOffset([out, retval] Windows.Foundation.Point* value);
-            [propput] HRESULT GradientOriginOffset([in] Windows.Foundation.Point value);
-
-            [propget] HRESULT RadiusX([out, retval] FLOAT* value);
-            [propput] HRESULT RadiusX([in] FLOAT value);
-
-            [propget] HRESULT RadiusY([out, retval] FLOAT* value);
-            [propput] HRESULT RadiusY([in] FLOAT value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass DxRadialGradientBrushProperties
-        {
-            [default] interface IDxRadialGradientBrushProperties;
-        }
+            Windows.Foundation.Point Center;
+            Windows.Foundation.Point GradientOriginOffset;
+            FLOAT RadiusX;
+            FLOAT RadiusY;
+        } DxRadialGradientBrushProperties;
 
         interface ILayerParameters;
         runtimeclass LayerParameters;
@@ -816,42 +690,18 @@ namespace Microsoft
             [default] interface ILayerParameters;
         }
 
-        interface IStrokeStyleProperties;
-        runtimeclass StrokeStyleProperties;
-
-        [uuid(b48780bf-7eb7-41b0-a56b-1f8837723ab6), version(VERSION), exclusiveto(StrokeStyleProperties)]
-        interface IStrokeStyleProperties : IInspectable
+        [version(VERSION)]
+        typedef struct StrokeStyleProperties
         {
-            [propget] HRESULT StartCap([out, retval] DxCapStyle* value);
-            [propput] HRESULT StartCap([in] DxCapStyle value);
-
-            [propget] HRESULT EndCap([out, retval] DxCapStyle* value);
-            [propput] HRESULT EndCap([in] DxCapStyle value);
-
-            [propget] HRESULT DashCap([out, retval] DxCapStyle* value);
-            [propput] HRESULT DashCap([in] DxCapStyle value);
-
-            [propget] HRESULT LineJoin([out, retval] DxLineJoin* value);
-            [propput] HRESULT LineJoin([in] DxLineJoin value);
-
-            [propget] HRESULT MiterLimit([out, retval] FLOAT* value);
-            [propput] HRESULT MiterLimit([in] FLOAT value);
-
-            [propget] HRESULT DashStyle([out, retval] DxDashStyle* value);
-            [propput] HRESULT DashStyle([in] DxDashStyle value);
-
-            [propget] HRESULT DashOffset([out, retval] FLOAT* value);
-            [propput] HRESULT DashOffset([in] FLOAT value);
-
-            [propget] HRESULT TransformType([out, retval] DxStrokeTransformType* value);
-            [propput] HRESULT TransformType([in] DxStrokeTransformType value);
-        }
-
-        [version(VERSION), activatable(VERSION)]
-        runtimeclass StrokeStyleProperties
-        {
-            [default] interface IStrokeStyleProperties;
-        }
+            DxCapStyle StartCap;
+            DxCapStyle EndCap;
+            DxCapStyle DashCap;
+            DxLineJoin LineJoin;
+            FLOAT MiterLimit;
+            DxDashStyle DashStyle;
+            FLOAT DashOffset;
+            DxStrokeTransformType TransformType;
+        } StrokeStyleProperties;
 
     }
 }
