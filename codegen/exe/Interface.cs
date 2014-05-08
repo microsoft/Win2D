@@ -11,24 +11,45 @@ using System.IO;
 
 namespace CodeGen
 {
-    public class Interface : QualifiableType
+    namespace XmlBindings
     {
-        //
-        // While the codegen does not output code for interfaces, it needs to know about them
-        // in order to resolve names; notice how there is a Resolve method which forms the
-        // correct name for the types dictionary, but no Output code method.
-        //
-        // In particular, this is necessary to resolve struct fields, some of which are interfaces.
-        // For example, a field of D2D1_LAYER_PARAMETERS is an ID2D1Geometry geometry mask type.
-        //
+        public class Interface
+        {
+            //
+            // While the codegen does not output code for interfaces, it needs to know about them
+            // in order to resolve names; notice how there is a Resolve method which forms the
+            // correct name for the types dictionary, but no Output code method.
+            //
+            // In particular, this is necessary to resolve struct fields, some of which are interfaces.
+            // For example, a field of D2D1_LAYER_PARAMETERS is an ID2D1Geometry geometry mask type.
+            //
 
-        [XmlAttributeAttribute]
-        public string Name;
+            [XmlAttributeAttribute]
+            public string Name;
 
-        [XmlAttributeAttribute]
-        public string Extends;
+            [XmlAttributeAttribute]
+            public string Extends;
+        }
+    }
 
-        public bool IsProjectedAsAbstract;
+    class Interface : QualifiableType
+    {
+        public Interface(Namespace parentNamespace, XmlBindings.Interface xmlData, Overrides.XmlBindings.Interface overrides, Dictionary<string, QualifiableType> typeDictionary)
+        {
+            Debug.Assert(xmlData.Name.StartsWith("I"));
+            string unprefixed = xmlData.Name.Substring(1);
+            m_stylizedName = Formatter.Prefix + unprefixed;
+
+            m_innerName = "I" + parentNamespace.ApiName + unprefixed;
+
+            if(overrides != null && overrides.IsProjectedAsAbstract)
+            {
+                m_stylizedName = "I" + Formatter.Prefix + unprefixed;
+            }
+
+            typeDictionary[parentNamespace.RawName + "::" + xmlData.Name] = this;
+
+        }
 
         public override string ProjectedName
         {
@@ -53,36 +74,9 @@ namespace CodeGen
         {
             get { return "ComPtr<" + ProjectedName + ">"; } 
         }
-        
-        public void Commit(Namespace parentNamespace, string qualifier, Dictionary<string, QualifiableType> types)
-        {
-            m_parentNamespace = parentNamespace;
-        }
-
-        public void Resolve(Dictionary<string, QualifiableType> types)
-        {
-            Debug.Assert(Name.StartsWith("I"));
-            string unprefixed = Name.Substring(1);
-            m_stylizedName = Formatter.Prefix + unprefixed;
-
-            m_innerName = "I" + m_parentNamespace.ApiName + unprefixed; 
-
-            if (IsProjectedAsAbstract)
-            {
-                m_stylizedName = "I" + Formatter.Prefix + unprefixed;
-            }
-
-            if (types.ContainsKey(Extends))
-            {
-                // Note: the Extends field is already qualified. See D2DTypes.xml. Example: Extends="D2D1::IImage"
-                m_extendsType = types[Extends];
-            }
-        }
 
         string m_stylizedName;
         string m_innerName;
-        Namespace m_parentNamespace;
-        QualifiableType m_extendsType;
     }
 
 }

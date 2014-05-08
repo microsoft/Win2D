@@ -3,7 +3,6 @@
 //
 
 using System.Diagnostics;
-using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -11,8 +10,7 @@ using System.Globalization;
 
 namespace CodeGen
 {
-
-    public class Formatter : System.IDisposable
+    class Formatter : System.IDisposable
     {
         // Provides indenting, where one indent equals four spaces.
         public Formatter(string fileName)

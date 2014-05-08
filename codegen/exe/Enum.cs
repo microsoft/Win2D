@@ -10,40 +10,43 @@ using System.IO;
 
 namespace CodeGen
 {
-    public class EnumValue
+    namespace XmlBindings
     {
-        // XML-bound properties. Used for deserialization.
-        [XmlAttributeAttribute]
-        public string Name;
-
-        [XmlAttributeAttribute]
-        public string Comment;
-
-        [XmlAttributeAttribute]
-        public string Value;
-
-        [XmlAttributeAttribute]
-        public string NumericalValue;
-
-        // Contains a possible override from Settings.xml.
-        public string ProjectedNameOverride;
-        
-        // The functions and member variables below are used for post-deseralization processing.
-        public void Commit(Enum parent)
+        public class EnumValue
         {
-            m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(Name);
-            m_parent = parent;
+            // XML-bound properties. Used for deserialization.
+            [XmlAttributeAttribute]
+            public string Name;
+
+            [XmlAttributeAttribute]
+            public string Comment;
+
+            [XmlAttributeAttribute]
+            public string Value;
+
+            [XmlAttributeAttribute]
+            public string NumericalValue;
         }
+    }
 
-        public void Resolve()
+    class EnumValue
+    {
+        public EnumValue(XmlBindings.EnumValue xmlData, Overrides.XmlBindings.EnumValue overrides)
         {
-            if(ProjectedNameOverride != null)
+            if (overrides != null && overrides.ProjectedNameOverride != null)
             {
-                m_stylizedName = ProjectedNameOverride;
+                m_stylizedName = overrides.ProjectedNameOverride;
             }
+            else
+            {
+                m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
+            }
+
+            m_valueExpression = GetValueExpression(xmlData);
+
         }
 
-        string GetValueAsString()
+        static string GetValueExpression(XmlBindings.EnumValue xmlData)
         {
             //
             // Value and NumericalValue seem like they should be the same, but they're not. 
@@ -59,19 +62,17 @@ namespace CodeGen
             // 2. Value, must always be parseable as int literal
             //
 
-            if (NumericalValue != null)
+            if (xmlData.NumericalValue != null)
             {
-                return NumericalValue;
+                return xmlData.NumericalValue;
             }
             else
             {
-                Debug.Assert(Value != null);
-                return Value;
+                Debug.Assert(xmlData.Value != null);
+                return xmlData.Value;
             }
-
         }
 
-        // Used for code generation.
         public void OutputCode(bool isLast, bool isFlags, OutputFiles outputFiles)
         {
             outputFiles.IdlFile.WriteIndent();
@@ -90,36 +91,92 @@ namespace CodeGen
                 outputFiles.IdlFile.Write("(int)");
             }
 
-            outputFiles.IdlFile.Write(GetValueAsString());
+            outputFiles.IdlFile.Write(m_valueExpression);
 
             string suffix = isLast ? "" : ",";
             outputFiles.IdlFile.Write(suffix);
             outputFiles.IdlFile.WriteLine();
         }
-
-        Enum m_parent;
         string m_stylizedName;
+        string m_valueExpression;
+
     }
 
-    public class Enum : QualifiableType
+    namespace XmlBindings
     {
-        // XML-bound properties. Used for deserialization.
-        [XmlAttributeAttribute]
-        public string Name;
+        public class Enum
+        {
+            // XML-bound properties. Used for deserialization.
+            [XmlAttributeAttribute]
+            public string Name;
 
-        [XmlAttributeAttribute]
-        public string Comment;
+            [XmlAttributeAttribute]
+            public string Comment;
 
-        [XmlAttributeAttribute]
-        public bool IsFlags;
+            [XmlAttributeAttribute]
+            public bool IsFlags;
 
-        [XmlElement("Field")]
-        public EnumValue[] EnumValues { get; set; }
+            [XmlElement("Field")]
+            public XmlBindings.EnumValue[] EnumValues { get; set; }
+        }
+    }
 
-        // Stores the overrides from Settings.xml.
-        public EnumOverrides Overrides;
+    class Enum : QualifiableType
+    {
+        public Enum(Namespace parentNamespace, XmlBindings.Enum xmlData, Overrides.XmlBindings.Enum overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
+        {
+            m_stylizedName = Formatter.Prefix + Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
 
-        // The functions and member variables below are used for post-deseralization processing.
+            if (parentNamespace != null)
+            {
+                m_rawName = parentNamespace.ApiName + "_" + xmlData.Name;
+                typeDictionary[parentNamespace.RawName + "::" + xmlData.Name] = this;
+            }
+            else
+            {
+                //
+                // Namespace of NULL indicates the global namespace.
+                // These types aren't D2D types, and their full native name is
+                // exactly what's in the name field (no need to prepend anything).
+                //
+                m_rawName = xmlData.Name;
+                typeDictionary[xmlData.Name] = this;
+            }
+
+            m_isFlags = xmlData.IsFlags;
+
+            m_enumValues = new List<EnumValue>();
+            foreach (XmlBindings.EnumValue valueXml in xmlData.EnumValues)
+            {
+                Overrides.XmlBindings.EnumValue overridesEnumValue = null;
+                if (overrides != null) overridesEnumValue = overrides.Values.Find(x => x.Name == valueXml.Name);
+
+                m_enumValues.Add(new EnumValue(valueXml, overridesEnumValue));
+            }
+
+            bool shouldProject = true;
+            if(overrides != null)
+            {
+                if(!overrides.ShouldProject)
+                {
+                    shouldProject = false;
+                }
+
+                if(overrides.ProjectedNameOverride != null)
+                {
+                    m_stylizedName = overrides.ProjectedNameOverride;
+                }
+
+            }
+
+            // Enums in the global namespace are defined as aliases only. By convention, only enums in a namespace are output.
+            if (parentNamespace != null && shouldProject)
+            {
+                outputDataTypes.AddEnum(this);
+            }
+
+        }
+
         public override string ProjectedName
         {
             get { return m_stylizedName; }
@@ -131,86 +188,15 @@ namespace CodeGen
 
         public override string ProjectedNameIncludingIndirection
         {
-            get
-            {
-                return ProjectedName;
-            }
-        }
-
-        Dictionary<string, EnumValue> m_enumValueLookupByName;
-
-        public EnumValue GetEnumValueByName(string name)
-        {
-            return m_enumValueLookupByName[name];
-        }
-
-        public void Commit(Namespace parentNamespace)
-        {
-            if (parentNamespace != null)
-            {
-                m_rawName =  parentNamespace.ApiName + "_" + Name;
-            }
-            else
-            {
-                //
-                // Namespace of NULL indicates the global namespace.
-                // These types aren't D2D types, and their full native name is
-                // exactly what's in the name field (no need to prepend anything).
-                //
-                m_rawName = Name; 
-            }
-
-            m_enumValueLookupByName = new Dictionary<string, EnumValue>();
-
-            if (EnumValues != null)
-            {
-                foreach (EnumValue enumValue in EnumValues)
-                {
-                    m_enumValueLookupByName[enumValue.Name] = enumValue;
-                    enumValue.Commit(this);
-                }
-            
-            }
-
-            Overrides = new EnumOverrides();
-        }
-
-        public void Resolve()
-        {
-            if (!Overrides.ShouldProject)
-            {
-                return;
-            }
-
-            if (Overrides.ProjectedNameOverride != null)
-            {
-                m_stylizedName = Overrides.ProjectedNameOverride;
-            }
-            else
-            {
-                m_stylizedName = Formatter.Prefix + Formatter.StylizeNameFromUnderscoreSeparators(Name);
-            }
-
-            if (EnumValues != null)
-            {
-                foreach (EnumValue enumValue in EnumValues)
-                {
-                    enumValue.Resolve();
-                }
-            }
+            get { return m_stylizedName; }
         }
 
         // Used for code generation.
         public void OutputCode(OutputFiles outputFiles)
         {
-            if (!Overrides.ShouldProject)
-            {
-                return;
-            }
-
             outputFiles.IdlFile.WriteIndent();
             outputFiles.IdlFile.Write("[version(VERSION)");
-            if (IsFlags)
+            if (m_isFlags)
             {
                 outputFiles.IdlFile.Write(", flags");
             }
@@ -221,10 +207,10 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine("{");
             outputFiles.IdlFile.Indent();
 
-            for (int i = 0; i < EnumValues.Length; i++)
+            for (int i = 0; i < m_enumValues.Count; i++)
             {
-                bool isLast = i == EnumValues.Length - 1;
-                EnumValues[i].OutputCode(isLast, IsFlags, outputFiles);
+                bool isLast = i == m_enumValues.Count - 1;
+                m_enumValues[i].OutputCode(isLast, m_isFlags, outputFiles);
 
             }
             outputFiles.IdlFile.Unindent();
@@ -234,6 +220,8 @@ namespace CodeGen
 
         private string m_rawName;
         private string m_stylizedName;
+        private List<EnumValue> m_enumValues;
+        private bool m_isFlags;
     }
 
 }

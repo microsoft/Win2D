@@ -11,12 +11,16 @@ using System.Xml.Serialization;
 
 namespace CodeGen
 {
-    public class Typedef
+    namespace XmlBindings
     {
-        [XmlAttributeAttribute]
-        public string Name;
+        public class Typedef
+        {
+            [XmlAttributeAttribute]
+            public string Name;
 
-        [XmlAttributeAttribute]
-        public string From;
+            [XmlAttributeAttribute]
+            public string From;
+        }
+
     }
 }

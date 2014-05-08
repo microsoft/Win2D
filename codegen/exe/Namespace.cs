@@ -21,127 +21,102 @@ namespace CodeGen
     // There are a couple D2D types, then, that are just typedefed to types in the global namespace.
     // For these, we have manual wrappers for them.
 
-    public class Namespace
+    namespace XmlBindings
     {
-        // XML-bound properties. Used for deserialization.
-        [XmlElement("Enum")]
-        public List<Enum> Enums { get; set; }
+        public class Namespace
+        {
+            [XmlElement("Enum")]
+            public List<XmlBindings.Enum> Enums { get; set; }
 
-        [XmlElement("Struct")]
-        public List<Struct> Structs { get; set; }
+            [XmlElement("Struct")]
+            public List<XmlBindings.Struct> Structs { get; set; }
 
-        [XmlElement("Interface")]
-        public List<Interface> Interfaces { get; set; }
+            [XmlElement("Interface")]
+            public List<XmlBindings.Interface> Interfaces { get; set; }
 
-        [XmlElement("Typedef")]
-        public List<Typedef> Typedefs { get; set; }
+            [XmlElement("Typedef")]
+            public List<XmlBindings.Typedef> Typedefs { get; set; }
 
-        [XmlAttributeAttribute]
-        public string Name;
-                
-        public NamespaceOverrides Overrides;
+            [XmlAttributeAttribute]
+            public string Name;
+        }
+    }
 
-        // The functions and member variables below are used for post-deseralization processing.
+    class Namespace
+    {
+        public Namespace(XmlBindings.Namespace xmlData, Overrides.XmlBindings.Namespace overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
+        {
+            m_rawName = xmlData.Name;
+
+            if (overrides != null && overrides.NameOverride != null)
+            {
+                m_apiName = overrides.NameOverride;
+            }
+            else
+            {
+                m_apiName = xmlData.Name;
+            }
+
+            m_enums = new List<Enum>();
+            foreach(XmlBindings.Enum enumXml in xmlData.Enums)
+            {
+                Overrides.XmlBindings.Enum overridesEnum = null;
+                if(overrides != null) overridesEnum = overrides.Enums.Find(x => x.Name == enumXml.Name);
+
+                m_enums.Add(new Enum(this, enumXml, overridesEnum, typeDictionary, outputDataTypes));
+            }
+
+            m_structs = new List<Struct>();
+            foreach (XmlBindings.Struct structXml in xmlData.Structs)
+            {
+                Overrides.XmlBindings.Struct overridesStruct = null;
+                if(overrides != null) overridesStruct = overrides.Structs.Find(x => x.Name == structXml.Name);
+
+                m_structs.Add(new Struct(this, structXml, overridesStruct, typeDictionary, outputDataTypes));
+            }
+
+            m_interfaces = new List<Interface>();
+            foreach (XmlBindings.Interface interfaceXml in xmlData.Interfaces)
+            {
+                Overrides.XmlBindings.Interface overridesInterface = null;
+                if(overrides != null) overridesInterface = overrides.Interfaces.Find(x => x.Name == interfaceXml.Name);
+
+                m_interfaces.Add(new Interface(this, interfaceXml, overridesInterface, typeDictionary));
+            }
+
+            foreach (XmlBindings.Typedef t in xmlData.Typedefs)
+            {
+                // In the types XML, often times types are declared as one type,
+                // then typedefs to something else, and referenced thereafter
+                // as that second type. And so, typedefs must be handled here.
+                //
+                // In the XML, the 'Name' field in each typedef is unqualified,
+                // but the 'From' field is qualified.
+                // For example, <Typedef Name="COLOR_F" From="D2D::COLOR_F"/>
+                //
+                // So, the entries are added to the type dictionary here
+                // under the qualified name.
+                //
+                string qualified = xmlData.Name + "::" + t.Name;
+                typeDictionary[qualified] = typeDictionary[t.From];
+            }
+        }
+
         public string ApiName
         {
-            get 
-            { 
-                if (Overrides != null && Overrides.Name != null)
-                {
-                    return Overrides.Name;
-                }
-                else
-                {
-                    return Name;
-                }
-            }
+            get  { return m_apiName; }
         }
 
-        public void Commit(Dictionary<string, QualifiableType> types)
+        public string RawName
         {
-            string qualifier = Name + "::";
-            
-            if (Enums != null)
-            {
-                foreach (Enum e in Enums)
-                {
-                    e.Commit(this);
-
-                    string qualifiedName = qualifier + e.Name;
-                    types[qualifiedName] = e;
-                }
-            }
-
-            if (Structs != null)
-            {
-                foreach (Struct s in Structs)
-                {
-                    s.Commit(this);
-
-                    string qualifiedName = qualifier + s.Name;
-                    types[qualifiedName] = s;
-                }
-            }
-
-            if (Interfaces != null)
-            {
-                foreach (Interface i in Interfaces)
-                {
-                    i.Commit(this, qualifier, types);
-
-                    string qualifiedName = qualifier + i.Name;
-                    types[qualifiedName] = i;            
-                }
-            }
-
-            if (Typedefs != null)
-            {
-                foreach (Typedef t in Typedefs)
-                {
-                    // In the types XML, often times types are declared as one type,
-                    // then typedefs to something else, and referenced thereafter
-                    // as that second type. And so, typedefs must be handled here.
-                    //
-                    // In the XML, the 'Name' field in each typedef is unqualified,
-                    // but the 'From' field is qualified.
-                    // For example, <Typedef Name="COLOR_F" From="D2D::COLOR_F"/>
-                    //
-                    // So, the entries are added to the type dictionary here
-                    // under the qualified name.
-                    //
-                    string qualified = Name + "::" + t.Name;
-                    types[qualified] = types[t.From];
-                }
-            }
+            get {  return m_rawName; }
         }
 
-        public void Resolve(Dictionary<string, QualifiableType> types)
-        {
-            if (Enums != null)
-            {
-                foreach (Enum e in Enums)
-                {
-                    e.Resolve();
-                }
-            }
-
-            if (Structs != null)
-            {
-                foreach (Struct s in Structs)
-                {
-                    s.Resolve(types);
-                }
-            }
-
-            if (Interfaces != null)
-            {
-                foreach (Interface i in Interfaces)
-                {
-                    i.Resolve(types);
-                }
-            }
-
-        }
+        string m_rawName;
+        string m_apiName;
+        List<Enum> m_enums;
+        List<Struct> m_structs;
+        List<Interface> m_interfaces;
 
     }
 

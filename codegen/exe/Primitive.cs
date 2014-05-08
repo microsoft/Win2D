@@ -16,24 +16,38 @@ namespace CodeGen
     // later typedefed to D2D1::COLOR_F. The name "D2D1::COLOR_F" is used throughout all the API
     // XML to refer to color.
     //
-    ///
-    public class Primitive : QualifiableType
+    namespace XmlBindings
     {
-        [XmlAttributeAttribute]
-        public string Name;
+        public class Primitive
+        {
+            [XmlAttributeAttribute]
+            public string Name;
+        }
+
+    }
+
+    class Primitive : QualifiableType
+    {
+        public Primitive(XmlBindings.Primitive xmlData, Dictionary<string, QualifiableType> typeDictionary)
+        {
+            m_name = xmlData.Name;
+            typeDictionary[m_name] = this;
+        }
 
         public override string ProjectedName
         {
-            get { return Name; }
+            get { return m_name; } 
         }
         public override string NativeName
         {
-            get { return Name; }
+            get { return m_name; } 
         }
 
         public override string ProjectedNameIncludingIndirection
         {
-            get { return ProjectedName; }
+            get { return m_name; }
         }
+
+        string m_name;
     }
 }
