@@ -16,13 +16,13 @@ namespace test.managed
         {
             //
             // This test interops a C# component (ie this one) with a C++/CX 
-            // component (GraphicsDeviceComponent) using GraphicsDevice and 
-            // GraphicsSurface to pass a IDXGIDevice and IDXGISurface between 
+            // component (GraphicsDeviceComponent) using DirectX11Device and 
+            // DirectX11Surface to pass a IDXGIDevice and IDXGISurface between 
             // them.
             //
 
             // Create a device.
-            GraphicsDevice graphicsDevice = GraphicsDeviceComponent.DeviceCreator.CreateDevice();
+            DirectX11Device graphicsDevice = GraphicsDeviceComponent.DeviceCreator.CreateDevice();
 
             // We should be able to call Trim() without anything bad happening
             graphicsDevice.Trim();
@@ -32,7 +32,7 @@ namespace test.managed
             uint expectedHeight = 256;
             var expectedGraphicsFormat = GraphicsResourceFormat.R32_FLOAT;
 
-            GraphicsSurface surface = GraphicsDeviceComponent.SurfaceCreator.CreateSurface(
+            DirectX11Surface surface = GraphicsDeviceComponent.SurfaceCreator.CreateSurface(
                 graphicsDevice,
                 expectedWidth,
                 expectedHeight,
@@ -44,8 +44,8 @@ namespace test.managed
             Assert.AreEqual(expectedWidth, desc.Width);
             Assert.AreEqual(expectedHeight, desc.Height);
             Assert.AreEqual(expectedGraphicsFormat, desc.Format);
-            Assert.AreEqual(1U, desc.SampleDesc.Count);
-            Assert.AreEqual(0U, desc.SampleDesc.Quality);
+            Assert.AreEqual(1U, desc.MultisampleDescription.Count);
+            Assert.AreEqual(0U, desc.MultisampleDescription.Quality);
         }
     }
 }

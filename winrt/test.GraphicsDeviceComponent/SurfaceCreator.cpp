@@ -10,8 +10,8 @@ namespace GraphicsDeviceComponent
     public ref class SurfaceCreator sealed
     {
     public:
-        static GraphicsSurface^ CreateSurface(
-            GraphicsDevice^ device,
+        static DirectX11Surface^ CreateSurface(
+            DirectX11Device^ device,
             uint32_t width,
             uint32_t height,
             GraphicsResourceFormat format)
@@ -36,7 +36,7 @@ namespace GraphicsDeviceComponent
             ComPtr<IDXGISurface> dxgiSurface;
             ThrowIfFailed(texture.As(&dxgiSurface));
 
-            return CreateGraphicsSurface(dxgiSurface.Get());
+            return CreateDirectX11Surface(dxgiSurface.Get());
         }
     };
 }

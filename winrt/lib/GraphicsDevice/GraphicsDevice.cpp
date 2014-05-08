@@ -6,7 +6,7 @@
 
 namespace dxrt
 {
-    GraphicsDevice::GraphicsDevice(IDXGIDevice* dxgiDevice)
+    DirectX11Device::DirectX11Device(IDXGIDevice* dxgiDevice)
     {
         if (dxgiDevice == nullptr)
             throw ComException(E_INVALIDARG);
@@ -18,14 +18,14 @@ namespace dxrt
     }
 
 
-    IFACEMETHODIMP GraphicsDevice::Close()
+    IFACEMETHODIMP DirectX11Device::Close()
     {
         m_DxgiDevice.Close();
         return S_OK;
     }
 
 
-    IFACEMETHODIMP GraphicsDevice::Trim()
+    IFACEMETHODIMP DirectX11Device::Trim()
     {
         return ExceptionBoundary(
             [&]()
@@ -38,7 +38,7 @@ namespace dxrt
     }
 
 
-    void GraphicsDevice::GetDXGIInterface(REFIID iid, void** p)
+    void DirectX11Device::GetDXGIInterface(REFIID iid, void** p)
     {
         auto& device = m_DxgiDevice.EnsureNotClosed();
         ThrowIfFailed(device.CopyTo(iid, p));

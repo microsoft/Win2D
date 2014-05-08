@@ -9,7 +9,7 @@ namespace GraphicsDeviceComponent
     public ref class DeviceCreator sealed
     {
     public:
-        static GraphicsDevice^ CreateDevice()
+        static DirectX11Device^ CreateDevice()
         {
             using namespace Microsoft::WRL;
 
@@ -29,7 +29,7 @@ namespace GraphicsDeviceComponent
 
             ComPtr<IDXGIDevice> dxgiDevice;
             ThrowIfFailed(d3dDevice.As(&dxgiDevice));
-            return CreateGraphicsDevice(dxgiDevice.Get());
+            return CreateDirectX11Device(dxgiDevice.Get());
         }
     };
 }

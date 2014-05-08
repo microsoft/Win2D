@@ -7,8 +7,8 @@ import "Windows.Foundation.idl";
 
 namespace Microsoft.DirectX
 {
-    runtimeclass GraphicsDevice;
-    runtimeclass GraphicsSurface;
+    runtimeclass DirectX11Device;
+    runtimeclass DirectX11Surface;
 
     //
     // GraphicsResourceFormat -- this is a WinRT projection of DXGI_FORMAT
@@ -136,49 +136,49 @@ namespace Microsoft.DirectX
 
 
     //
-    // GraphicsMultisampleDescription -- this is a WinRT projection of
+    // DirectX11MultisampleDescription -- this is a WinRT projection of
     // DXGI_SAMPLE_DESC
     //
     [version(VERSION)]
-    typedef struct GraphicsMultisampleDescription
+    typedef struct DirectX11MultisampleDescription
     {
         UINT Count;
         UINT Quality;
-    } GraphicsMultisampleDescription;
+    } DirectX11MultisampleDescription;
 
 
     //
-    // GraphicsSurfaceDescription -- this is a WinRT projection of
+    // DirectX11SurfaceDescription -- this is a WinRT projection of
     // DXGI_SURFACE_DESC.
     //
     [version(VERSION)]
-    typedef struct GraphicsSurfaceDescription
+    typedef struct DirectX11SurfaceDescription
     {
         UINT Width;
         UINT Height;
         GraphicsResourceFormat Format;
-        GraphicsMultisampleDescription SampleDesc;
-    } GraphicsSurfaceDescription;
+        DirectX11MultisampleDescription MultisampleDescription;
+    } DirectX11SurfaceDescription;
 
 
     //
-    // GraphicsResourceUsage -- this is a WinRT projection of D3D11_USAGE
+    // DirectX11Usage -- this is a WinRT projection of D3D11_USAGE
     //
     [version(VERSION)]
-    typedef enum GraphicsResourceUsage
+    typedef enum DirectX11Usage
     {
         Default = 0,            // D3D11_USAGE_DEFAULT
         Immutable = 1,          // D3D11_USAGE_IMMUTABLE
         Dynamic = 2,            // D3D11_USAGE_DYNAMIC
         Staging = 3             // D3D11_USAGE_STAGING
-    } GraphicsResourceUsage;
+    } DirectX11Usage;
 
 
     //
     // Error codes
     //
     [version(VERSION)]
-    typedef enum GraphicsErrorCode
+    typedef enum GraphicsErrorCodes
     {
         DeviceHung                              = (int) 0x887A0006, // DXGI_ERROR_DEVICE_HUNG
         DeviceRemoved                           = (int) 0x887A0005, // DXGI_ERROR_DEVICE_REMOVED
@@ -206,10 +206,10 @@ namespace Microsoft.DirectX
         FileNotFound                            = (int) 0x887C0002, // D3D11_ERROR_FILE_NOT_FOUND
         TooManyUniqueViewObjects                = (int) 0x887C0003, // D3D11_ERROR_TOO_MANY_UNIQUE_VIEW_OBJECTS
         DeferredContextMapWithoutInitialDiscard = (int) 0x887C0004, // D3D11_ERROR_DEFERRED_CONTEXT_MAP_WITHOUT_INITIAL_DISCARD
-    } GraphicsErrorCode;
+    } GraphicsErrorCodes;
 
     //
-    // runtimeclass: GraphicsDevice
+    // runtimeclass: DirectX11Device
     //
     // This represents an IDXGIDevice and can be used to interop between
     // components that need to exchange IDXGIDevice references.
@@ -217,8 +217,8 @@ namespace Microsoft.DirectX
 
     [version(VERSION), 
      uuid(A37624AB-8D5F-4650-9D3E-9EAE3D9BC670), 
-     exclusiveto(GraphicsDevice)]
-    interface IGraphicsDevice : IInspectable
+     exclusiveto(DirectX11Device)]
+    interface IDirectX11Device : IInspectable
         requires Windows.Foundation.IClosable
     {
         //
@@ -228,14 +228,14 @@ namespace Microsoft.DirectX
     }
 
     [version(VERSION), marshaling_behavior(agile)]
-    runtimeclass GraphicsDevice
+    runtimeclass DirectX11Device
     {
-        [default] interface IGraphicsDevice;
+        [default] interface IDirectX11Device;
     }
 
 
     //
-    // runtimeclass: GraphicsSurface
+    // runtimeclass: DirectX11Surface
     //
     // This represents an IDXGISurface and can be used to interop between
     // components that need to exchange IDXGISurface references.
@@ -243,12 +243,12 @@ namespace Microsoft.DirectX
 
     [version(VERSION),
      uuid(0BF4A146-13C1-4694-BEE3-7ABF15EAF586),
-     exclusiveto(GraphicsSurface)]
-    interface IGraphicsSurface : IInspectable
+     exclusiveto(DirectX11Surface)]
+    interface IDirectX11Surface : IInspectable
         requires Windows.Foundation.IClosable
     {
         [propget] HRESULT Description(
-            [out, retval] GraphicsSurfaceDescription* value);
+            [out, retval] DirectX11SurfaceDescription* value);
 
         [propget] HRESULT EvictionPriority(
             [out, retval] UINT32* value);
@@ -259,8 +259,8 @@ namespace Microsoft.DirectX
 
     [version(VERSION),
      uuid(B038CEBD-98A7-4FCA-91BC-E13D2E5AE25D),
-     exclusiveto(GraphicsSurface)]
-    interface IGraphicsSurfaceStatics : IInspectable
+     exclusiveto(DirectX11Surface)]
+    interface IDirectX11SurfaceStatics : IInspectable
     {
         [propget] HRESULT ResourcePriorityMinimum(
             [out, retval] UINT32* value);
@@ -280,9 +280,9 @@ namespace Microsoft.DirectX
 
     [version(VERSION), 
      marshaling_behavior(agile),
-     static(IGraphicsSurfaceStatics, VERSION)]
-    runtimeclass GraphicsSurface
+     static(IDirectX11SurfaceStatics, VERSION)]
+    runtimeclass DirectX11Surface
     {
-        [default] interface IGraphicsSurface;
+        [default] interface IDirectX11Surface;
     }
 }

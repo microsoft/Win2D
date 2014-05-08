@@ -8,31 +8,31 @@ namespace dxrt
     using namespace ABI::Microsoft::DirectX;
 
     [uuid(4D1CE3D8-3EED-4D43-8CDA-1C4A1190844F)]
-    class IGraphicsSurfaceInternal : public IUnknown
+    class IDirectX11SurfaceInternal : public IUnknown
     {
     public:
         virtual void GetDXGIInterface(REFIID iid, void** p) = 0;
     };
 
-    class GraphicsSurface : public RuntimeClass<
+    class DirectX11Surface : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
-        IGraphicsSurface,
+        IDirectX11Surface,
         ABI::Windows::Foundation::IClosable,
-        IGraphicsSurfaceInternal>
+        IDirectX11SurfaceInternal>
     {
-        InspectableClass(RuntimeClass_Microsoft_DirectX_GraphicsSurface, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_DirectX_DirectX11Surface, BaseTrust);
 
         ClosablePtr<IDXGISurface> m_DxgiSurface;
 
     public:
-        GraphicsSurface(IDXGISurface* surface);
+        DirectX11Surface(IDXGISurface* surface);
 
         // IClosable
         IFACEMETHOD(Close)() override;
 
-        // IGraphicsSurface
+        // IDirectX11Surface
         IFACEMETHOD(get_Description)(
-            _Out_ GraphicsSurfaceDescription* value) override;
+            _Out_ DirectX11SurfaceDescription* value) override;
 
         IFACEMETHOD(get_EvictionPriority)(
             _Out_ uint32_t* value) override;
@@ -40,7 +40,7 @@ namespace dxrt
         IFACEMETHOD(put_EvictionPriority)(
             _In_ uint32_t value) override;
 
-        // IGraphicsSurfaceInternal
+        // IDirectX11SurfaceInternal
         virtual void GetDXGIInterface(REFIID iid, void** p) override;
     };
 }

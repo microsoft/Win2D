@@ -4,7 +4,7 @@
 
 using namespace Microsoft::DirectX;
 
-TEST_CLASS(GraphicsSurfaceTests)
+TEST_CLASS(DirectX11SurfaceTests)
 {
 public:
     TEST_METHOD(RoundtripDxgiSurface)
@@ -15,9 +15,9 @@ public:
         ThrowIfFailed(texture.As(&dxgiSurface));
 
         //
-        // Create a GraphicsSurface based on this
+        // Create a DirectX11Surface based on this
         //
-        GraphicsSurface^ graphicsSurface = CreateGraphicsSurface(dxgiSurface.Get());
+        DirectX11Surface^ graphicsSurface = CreateDirectX11Surface(dxgiSurface.Get());
 
         //
         // Convert it back to a DXGI surface
@@ -40,16 +40,16 @@ public:
         Assert::AreEqual(texture.Get(), roundTrippedTexture.Get());
     }
 
-    TEST_METHOD(CreateGraphicsSurfaceFailsOnNullDxgiSurface)
+    TEST_METHOD(CreateDirectX11SurfaceFailsOnNullDxgiSurface)
     {
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             []() 
             { 
-                CreateGraphicsSurface(nullptr);
+                CreateDirectX11Surface(nullptr);
             });
     }
 
-    TEST_METHOD(GraphicsSurfaceImplementsClosableCorrectly)
+    TEST_METHOD(DirectX11SurfaceImplementsClosableCorrectly)
     {
         //
         // Create a mock IDXGISurface implementation.  The token is used so we
@@ -76,15 +76,15 @@ public:
         Assert::IsFalse(weakToken.expired());
 
         //
-        // Wrap a GraphicsSurface around mockDxgiSurface.  This takes ownership
+        // Wrap a DirectX11Surface around mockDxgiSurface.  This takes ownership
         // of the mockDxgiSurface, so we release our reference to it.
         //
-        GraphicsSurface^ graphicsSurface = CreateGraphicsSurface(mockDxgiSurface.Get());
+        DirectX11Surface^ graphicsSurface = CreateDirectX11Surface(mockDxgiSurface.Get());
         mockDxgiSurface.Reset();
         Assert::IsFalse(weakToken.expired());
 
         //
-        // Now explicitly close the GraphicsSurface ('delete foo' in C++/CX
+        // Now explicitly close the DirectX11Surface ('delete foo' in C++/CX
         // calls Close()).  This should release the token, making our weakToken
         // invalid.
         //
@@ -108,7 +108,7 @@ public:
 #undef EXPECT_OBJECT_CLOSED
     }
 
-    TEST_METHOD(GraphicsSurfaceGetDescriptionCallsGetDesc)
+    TEST_METHOD(DirectX11SurfaceGetDescriptionCallsGetDesc)
     {
         //
         // Create a mock DXGI surface that tracks whether or not GetDesc is
@@ -134,35 +134,35 @@ public:
             };
 
         //
-        // Wrap a GraphicsSurface around it
+        // Wrap a DirectX11Surface around it
         //
-        GraphicsSurface^ graphicsSurface = CreateGraphicsSurface(mockDxgiSurface.Get());
+        DirectX11Surface^ graphicsSurface = CreateDirectX11Surface(mockDxgiSurface.Get());
 
         //
         // Get the Description property and compare that with what we expected.
         //
-        GraphicsSurfaceDescription actualDesc = graphicsSurface->Description;
+        DirectX11SurfaceDescription actualDesc = graphicsSurface->Description;
 
         Assert::IsTrue(getDescCalled);
         Assert::AreEqual(expectedDesc.Width, actualDesc.Width);
         Assert::AreEqual(expectedDesc.Height, actualDesc.Height);
         Assert::AreEqual(static_cast<int>(expectedDesc.Format), static_cast<int>(actualDesc.Format));
-        Assert::AreEqual(expectedDesc.SampleDesc.Count, actualDesc.SampleDesc.Count);
-        Assert::AreEqual(expectedDesc.SampleDesc.Quality, actualDesc.SampleDesc.Quality);
+        Assert::AreEqual(expectedDesc.SampleDesc.Count, actualDesc.MultisampleDescription.Count);
+        Assert::AreEqual(expectedDesc.SampleDesc.Quality, actualDesc.MultisampleDescription.Quality);
     }
 
-    TEST_METHOD(GraphicsSurfaceGetDescriptionFailsIfPassedNull)
+    TEST_METHOD(DirectX11SurfaceGetDescriptionFailsIfPassedNull)
     {
         ComPtr<IDXGISurface> mockDxgiSurface = Make<MockDxgiSurface>();
-        GraphicsSurface^ graphicsSurface = CreateGraphicsSurface(mockDxgiSurface.Get());
+        DirectX11Surface^ graphicsSurface = CreateDirectX11Surface(mockDxgiSurface.Get());
 
-        ABI::Microsoft::DirectX::IGraphicsSurface* rawGraphicsSurface =
-            reinterpret_cast<ABI::Microsoft::DirectX::IGraphicsSurface*>(graphicsSurface);
+        ABI::Microsoft::DirectX::IDirectX11Surface* rawDirectX11Surface =
+            reinterpret_cast<ABI::Microsoft::DirectX::IDirectX11Surface*>(graphicsSurface);
 
-        Assert::AreEqual(E_INVALIDARG, rawGraphicsSurface->get_Description(nullptr));
+        Assert::AreEqual(E_INVALIDARG, rawDirectX11Surface->get_Description(nullptr));
     }
 
-    TEST_METHOD(GraphicsSurfaceGetEvictionPriorityCallsDxgiResource)
+    TEST_METHOD(DirectX11SurfaceGetEvictionPriorityCallsDxgiResource)
     {
         ComPtr<MockDxgiSurface> mockDxgiSurface = Make<MockDxgiSurface>();
 
@@ -177,13 +177,13 @@ public:
                 return expectedEvictionPriority;
             };
 
-        GraphicsSurface^ graphicsSurface = CreateGraphicsSurface(mockDxgiSurface.Get());
+        DirectX11Surface^ graphicsSurface = CreateDirectX11Surface(mockDxgiSurface.Get());
 
         Assert::AreEqual(expectedEvictionPriority, graphicsSurface->EvictionPriority);
         Assert::IsTrue(getEvictionPriorityCalled);
     }
 
-    TEST_METHOD(GraphicsSurfaceSetEvictionPriorityCallsDxgiResource)
+    TEST_METHOD(DirectX11SurfaceSetEvictionPriorityCallsDxgiResource)
     {
         ComPtr<MockDxgiSurface> mockDxgiSurface = Make<MockDxgiSurface>();
 
@@ -199,14 +199,14 @@ public:
                 actualEvictionPriority = value;
             };
 
-        GraphicsSurface^ graphicsSurface = CreateGraphicsSurface(mockDxgiSurface.Get());
+        DirectX11Surface^ graphicsSurface = CreateDirectX11Surface(mockDxgiSurface.Get());
 
         graphicsSurface->EvictionPriority = expectedEvictionPriority;
         Assert::IsTrue(setEvictionPriorityCalled);
         Assert::AreEqual(expectedEvictionPriority, actualEvictionPriority);            
     }
 
-    TEST_METHOD(GraphicsSurfaceResourcePriorityPropertiesAreAvailable)
+    TEST_METHOD(DirectX11SurfaceResourcePriorityPropertiesAreAvailable)
     {
         //
         // The various DXGI_RESOURCE_* constants are defined in the IDL to be
@@ -225,11 +225,11 @@ public:
         //   #define	DXGI_RESOURCE_PRIORITY_MAXIMUM	( 0xc8000000 )
         //
 
-        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_MINIMUM) , GraphicsSurface::ResourcePriorityMinimum);
-        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_LOW)     , GraphicsSurface::ResourcePriorityLow);
-        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_NORMAL)  , GraphicsSurface::ResourcePriorityNormal);
-        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_HIGH)    , GraphicsSurface::ResourcePriorityHigh);
-        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_MAXIMUM) , GraphicsSurface::ResourcePriorityMaximum);
+        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_MINIMUM) , DirectX11Surface::ResourcePriorityMinimum);
+        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_LOW)     , DirectX11Surface::ResourcePriorityLow);
+        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_NORMAL)  , DirectX11Surface::ResourcePriorityNormal);
+        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_HIGH)    , DirectX11Surface::ResourcePriorityHigh);
+        Assert::AreEqual(static_cast<uint32_t>(DXGI_RESOURCE_PRIORITY_MAXIMUM) , DirectX11Surface::ResourcePriorityMaximum);
     }
 
 private:

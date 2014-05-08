@@ -4,7 +4,7 @@
 
 using namespace Microsoft::DirectX;
 
-TEST_CLASS(GraphicsDeviceTests)
+TEST_CLASS(DirectX11DeviceTests)
 {
 public:
     TEST_METHOD(RoundtripDxgiDevice)
@@ -18,9 +18,9 @@ public:
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
 
         //
-        // Create a GraphicsDevice based on this
+        // Create a DirectX11Device based on this
         //
-        GraphicsDevice^ graphicsDevice = CreateGraphicsDevice(dxgiDevice.Get());
+        DirectX11Device^ graphicsDevice = CreateDirectX11Device(dxgiDevice.Get());
 
         //
         // Convert it back to a DXGI device
@@ -43,16 +43,16 @@ public:
         Assert::AreEqual(d3dDevice.Get(), roundTrippedD3DDevice.Get());
     }
 
-    TEST_METHOD(CreateGraphicsDeviceFailsOnNullDxgiDevice)
+    TEST_METHOD(CreateDirectX11DeviceFailsOnNullDxgiDevice)
     {
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             []() 
             { 
-                CreateGraphicsDevice(nullptr); 
+                CreateDirectX11Device(nullptr); 
             });
     }
 
-    TEST_METHOD(GraphicsDeviceImplementsClosableCorrectly)
+    TEST_METHOD(DirectX11DeviceImplementsClosableCorrectly)
     {
         //
         // Create a mock IDXGIDevice implementation.  The token is used so
@@ -80,15 +80,15 @@ public:
         Assert::IsFalse(weakToken.expired());
 
         //
-        // Wrap a GraphicsDevice around mockDxgiDevice.  This takes ownership of
+        // Wrap a DirectX11Device around mockDxgiDevice.  This takes ownership of
         // the mockDxgiDevice, so we release our reference to it.
         //
-        GraphicsDevice^ graphicsDevice = CreateGraphicsDevice(mockDxgiDevice.Get());
+        DirectX11Device^ graphicsDevice = CreateDirectX11Device(mockDxgiDevice.Get());
         mockDxgiDevice.Reset();
         Assert::IsFalse(weakToken.expired());
 
         //
-        // Now explicitly close the GraphicsDevice ('delete foo' in C++/CX calls
+        // Now explicitly close the DirectX11Device ('delete foo' in C++/CX calls
         // Close()).  This should release the token, making our weakToken
         // invalid.
         //
@@ -107,7 +107,7 @@ public:
             [&]() { graphicsDevice->Trim(); });
     }
 
-    TEST_METHOD(GraphicsDeviceCallsTrim)
+    TEST_METHOD(DirectX11DeviceCallsTrim)
     {
         //
         // Create a mock DXGI device that tracks whether or not trim was called.
@@ -124,12 +124,12 @@ public:
             };
 
         //
-        // Wrap a GraphicsDevice around it
+        // Wrap a DirectX11Device around it
         //
-        GraphicsDevice^ graphicsDevice = CreateGraphicsDevice(mockDxgiDevice.Get());
+        DirectX11Device^ graphicsDevice = CreateDirectX11Device(mockDxgiDevice.Get());
 
         //
-        // Now call GraphicsDevice::Trim() and verify that Trim() was called on
+        // Now call DirectX11Device::Trim() and verify that Trim() was called on
         // the DXGI device.
         //
         graphicsDevice->Trim();

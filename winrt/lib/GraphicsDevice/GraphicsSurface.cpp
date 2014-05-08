@@ -6,7 +6,7 @@
 
 namespace dxrt
 {
-    GraphicsSurface::GraphicsSurface(IDXGISurface* dxgiSurface)
+    DirectX11Surface::DirectX11Surface(IDXGISurface* dxgiSurface)
     {
         if (dxgiSurface == nullptr)
             throw ComException(E_INVALIDARG);
@@ -15,7 +15,7 @@ namespace dxrt
     }
 
 
-    IFACEMETHODIMP GraphicsSurface::Close()
+    IFACEMETHODIMP DirectX11Surface::Close()
     {
         m_DxgiSurface.Close();
         return S_OK;
@@ -23,7 +23,7 @@ namespace dxrt
 
 
     _Use_decl_annotations_
-    IFACEMETHODIMP GraphicsSurface::get_Description(GraphicsSurfaceDescription* desc)
+    IFACEMETHODIMP DirectX11Surface::get_Description(DirectX11SurfaceDescription* desc)
     {
         return ExceptionBoundary(
             [&]()
@@ -35,27 +35,27 @@ namespace dxrt
 
                 //
                 // IDXGISurface::GetDesc() expects a DXGI_SURFACE_DESC.  We've
-                // cunningly arranged it so that GraphicsSurfaceDescription has
+                // cunningly arranged it so that DirectX11SurfaceDescription has
                 // exactly the same binary layout as DXGI_SURFACE_DESC, so we
                 // can pass one in directly and so avoid an unnecessary copy.
                 //
                 // These static asserts verify that the binary layout really
                 // does match.
                 //
-                static_assert(sizeof(DXGI_SURFACE_DESC) == sizeof(GraphicsSurfaceDescription), "GraphicsSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-                static_assert(offsetof(DXGI_SURFACE_DESC, Width) == offsetof(GraphicsSurfaceDescription, Width), "GraphicsSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-                static_assert(offsetof(DXGI_SURFACE_DESC, Height) == offsetof(GraphicsSurfaceDescription, Height), "GraphicsSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-                static_assert(offsetof(DXGI_SURFACE_DESC, Format) == offsetof(GraphicsSurfaceDescription, Format), "GraphicsSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-                static_assert(offsetof(DXGI_SURFACE_DESC, SampleDesc) == offsetof(GraphicsSurfaceDescription, SampleDesc), "GraphicsSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-                static_assert(offsetof(DXGI_SAMPLE_DESC, Count) == offsetof(GraphicsMultisampleDescription, Count), "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
-                static_assert(offsetof(DXGI_SAMPLE_DESC, Quality) == offsetof(GraphicsMultisampleDescription, Quality), "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
+                static_assert(sizeof(DXGI_SURFACE_DESC) == sizeof(DirectX11SurfaceDescription), "DirectX11SurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+                static_assert(offsetof(DXGI_SURFACE_DESC, Width) == offsetof(DirectX11SurfaceDescription, Width), "DirectX11SurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+                static_assert(offsetof(DXGI_SURFACE_DESC, Height) == offsetof(DirectX11SurfaceDescription, Height), "DirectX11SurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+                static_assert(offsetof(DXGI_SURFACE_DESC, Format) == offsetof(DirectX11SurfaceDescription, Format), "DirectX11SurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+                static_assert(offsetof(DXGI_SURFACE_DESC, SampleDesc) == offsetof(DirectX11SurfaceDescription, MultisampleDescription), "DirectX11SurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+                static_assert(offsetof(DXGI_SAMPLE_DESC, Count) == offsetof(DirectX11MultisampleDescription, Count), "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
+                static_assert(offsetof(DXGI_SAMPLE_DESC, Quality) == offsetof(DirectX11MultisampleDescription, Quality), "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
 
                 ThrowIfFailed(surface->GetDesc(reinterpret_cast<DXGI_SURFACE_DESC*>(desc)));
             });
     }
 
     _Use_decl_annotations_
-    IFACEMETHODIMP GraphicsSurface::get_EvictionPriority(uint32_t* value)
+    IFACEMETHODIMP DirectX11Surface::get_EvictionPriority(uint32_t* value)
     {
         return ExceptionBoundary(
             [&]()
@@ -70,7 +70,7 @@ namespace dxrt
 
 
     _Use_decl_annotations_
-    IFACEMETHODIMP GraphicsSurface::put_EvictionPriority(uint32_t value)
+    IFACEMETHODIMP DirectX11Surface::put_EvictionPriority(uint32_t value)
     {
         return ExceptionBoundary(
             [&]()
@@ -85,7 +85,7 @@ namespace dxrt
 
 
     _Use_decl_annotations_
-    void GraphicsSurface::GetDXGIInterface(REFIID iid, void** p)
+    void DirectX11Surface::GetDXGIInterface(REFIID iid, void** p)
     {
         auto& surface = m_DxgiSurface.EnsureNotClosed();
         ThrowIfFailed(surface.CopyTo(iid, p));
@@ -96,9 +96,9 @@ namespace dxrt
     // Graphics surface statics
     //
 
-    class GraphicsSurfaceStatics : public ActivationFactory<IGraphicsSurfaceStatics>
+    class DirectX11SurfaceStatics : public ActivationFactory<IDirectX11SurfaceStatics>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_DirectX_GraphicsSurface, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_DirectX_DirectX11Surface, BaseTrust);
 
     public:
         IFACEMETHODIMP get_ResourcePriorityMinimum(
@@ -152,5 +152,5 @@ namespace dxrt
         }
     };
 
-    ActivatableStaticOnlyFactory(GraphicsSurfaceStatics);
+    ActivatableStaticOnlyFactory(DirectX11SurfaceStatics);
 }

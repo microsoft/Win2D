@@ -9,41 +9,41 @@ using namespace Microsoft::WRL;
 using namespace dxrt;
 
 _Use_decl_annotations_
-STDAPI CreateGraphicsDeviceFromDXGIDevice(
+STDAPI CreateDirectX11DeviceFromDXGIDevice(
     IDXGIDevice* dxgiDevice,
-    IInspectable** inspectableGraphicsDevice)
+    IInspectable** inspectableDirectX11Device)
 {
-    using dxrt::GraphicsDevice;
+    using dxrt::DirectX11Device;
 
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<GraphicsDevice> graphicsDevice = Make<GraphicsDevice>(dxgiDevice);
+            ComPtr<DirectX11Device> graphicsDevice = Make<DirectX11Device>(dxgiDevice);
             ThrowIfFalse(graphicsDevice, E_OUTOFMEMORY);
-            ThrowIfFailed(graphicsDevice.CopyTo(inspectableGraphicsDevice));
+            ThrowIfFailed(graphicsDevice.CopyTo(inspectableDirectX11Device));
         });
 }
 
 
 _Use_decl_annotations_
-STDAPI CreateGraphicsSurfaceFromDXGISurface(
+STDAPI CreateDirectX11SurfaceFromDXGISurface(
     IDXGISurface* dxgiSurface,
-    IInspectable** inspectableGraphicsSurface)
+    IInspectable** inspectableDirectX11Surface)
 {
-    using dxrt::GraphicsSurface;
+    using dxrt::DirectX11Surface;
 
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<GraphicsSurface> graphicsSurface = Make<GraphicsSurface>(dxgiSurface);
+            ComPtr<DirectX11Surface> graphicsSurface = Make<DirectX11Surface>(dxgiSurface);
             ThrowIfFalse(graphicsSurface, E_OUTOFMEMORY);
-            ThrowIfFailed(graphicsSurface.CopyTo(inspectableGraphicsSurface));
+            ThrowIfFailed(graphicsSurface.CopyTo(inspectableDirectX11Surface));
         });
 }
 
 
 _Use_decl_annotations_
-STDAPI GetDXGIInterfaceFromGraphicsDevice(
+STDAPI GetDXGIInterfaceFromDirectX11Device(
     IInspectable* graphicsDevice,
     REFIID iid,
     void** p)
@@ -51,7 +51,7 @@ STDAPI GetDXGIInterfaceFromGraphicsDevice(
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<IGraphicsDeviceInternal> graphicsDeviceInternal;
+            ComPtr<IDirectX11DeviceInternal> graphicsDeviceInternal;
             ThrowIfFailed(graphicsDevice->QueryInterface(graphicsDeviceInternal.GetAddressOf()));
 
             graphicsDeviceInternal->GetDXGIInterface(iid, p);
@@ -60,7 +60,7 @@ STDAPI GetDXGIInterfaceFromGraphicsDevice(
 
 
 _Use_decl_annotations_
-STDAPI GetDXGIInterfaceFromGraphicsSurface(
+STDAPI GetDXGIInterfaceFromDirectX11Surface(
     IInspectable* graphicsSurface,
     REFIID iid,
     void** p)
@@ -68,7 +68,7 @@ STDAPI GetDXGIInterfaceFromGraphicsSurface(
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<IGraphicsSurfaceInternal> graphicsSurfaceInternal;
+            ComPtr<IDirectX11SurfaceInternal> graphicsSurfaceInternal;
             ThrowIfFailed(graphicsSurface->QueryInterface(graphicsSurfaceInternal.GetAddressOf()));
             graphicsSurfaceInternal->GetDXGIInterface(iid, p);
         });

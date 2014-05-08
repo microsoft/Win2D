@@ -2,7 +2,7 @@ EXPORTS
 DllCanUnloadNow         PRIVATE
 DllGetActivationFactory PRIVATE
 DllGetClassObject       PRIVATE
-CreateGraphicsDeviceFromDXGIDevice
-CreateGraphicsSurfaceFromDXGISurface
-GetDXGIInterfaceFromGraphicsDevice
-GetDXGIInterfaceFromGraphicsSurface
+CreateDirectX11DeviceFromDXGIDevice
+CreateDirectX11SurfaceFromDXGISurface
+GetDXGIInterfaceFromDirectX11Device
+GetDXGIInterfaceFromDirectX11Surface

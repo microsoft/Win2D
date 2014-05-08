@@ -8,32 +8,32 @@ namespace dxrt
     using namespace ABI::Microsoft::DirectX;
 
     [uuid(0A55F0AC-0BDD-4CFA-A9E7-8B2743AD33B7)]
-    class IGraphicsDeviceInternal : public IUnknown
+    class IDirectX11DeviceInternal : public IUnknown
     {
     public:
         virtual void GetDXGIInterface(REFIID iid, void** p) = 0;
     };
 
-    class GraphicsDevice : public RuntimeClass<
+    class DirectX11Device : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
-        IGraphicsDevice,
+        IDirectX11Device,
         ABI::Windows::Foundation::IClosable,
-        IGraphicsDeviceInternal>
+        IDirectX11DeviceInternal>
     {
-        InspectableClass(RuntimeClass_Microsoft_DirectX_GraphicsDevice, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_DirectX_DirectX11Device, BaseTrust);
 
         ClosablePtr<IDXGIDevice3> m_DxgiDevice;
 
     public:
-        GraphicsDevice(IDXGIDevice* device);
+        DirectX11Device(IDXGIDevice* device);
 
         // IClosable
         IFACEMETHOD(Close)() override;
 
-        // IGraphicsDevice
+        // IDirectX11Device
         IFACEMETHOD(Trim)() override;
 
-        // IGraphicsDeviceInternal
+        // IDirectX11DeviceInternal
         virtual void GetDXGIInterface(REFIID iid, void** p) override;
     };
 }

@@ -5,20 +5,20 @@
 #include <inspectable.h>
 #include <dxgi.h>
 
-STDAPI CreateGraphicsDeviceFromDXGIDevice(
+STDAPI CreateDirectX11DeviceFromDXGIDevice(
     _In_ IDXGIDevice* dxgiDevice,
     _Out_ IInspectable** graphicsDevice);
 
-STDAPI CreateGraphicsSurfaceFromDXGISurface(
+STDAPI CreateDirectX11SurfaceFromDXGISurface(
     _In_ IDXGISurface* dgxiSurface,
     _Out_ IInspectable** graphicsSurface);
 
-STDAPI GetDXGIInterfaceFromGraphicsDevice(
+STDAPI GetDXGIInterfaceFromDirectX11Device(
     _In_ IInspectable* graphicsDevice,
     _In_ REFIID iid,
     _Out_ void** p);
 
-STDAPI GetDXGIInterfaceFromGraphicsSurface(
+STDAPI GetDXGIInterfaceFromDirectX11Surface(
     _In_ IInspectable* graphicsSurface,
     _In_ REFIID iid,
     _Out_ void** p);
@@ -34,48 +34,48 @@ namespace Microsoft
 {
     namespace DirectX
     {
-        inline GraphicsDevice^ CreateGraphicsDevice(
+        inline DirectX11Device^ CreateDirectX11Device(
             _In_ IDXGIDevice* dxgiDevice)
         {
             using Microsoft::WRL::ComPtr;
 
-            ComPtr<IInspectable> inspectableGraphicsDevice;
-            __abi_ThrowIfFailed(CreateGraphicsDeviceFromDXGIDevice(
+            ComPtr<IInspectable> inspectableDirectX11Device;
+            __abi_ThrowIfFailed(CreateDirectX11DeviceFromDXGIDevice(
                 dxgiDevice, 
-                &inspectableGraphicsDevice));
+                &inspectableDirectX11Device));
 
-            return reinterpret_cast<GraphicsDevice^>(inspectableGraphicsDevice.Detach());
+            return reinterpret_cast<DirectX11Device^>(inspectableDirectX11Device.Detach());
         }
 
-        inline GraphicsSurface^ CreateGraphicsSurface(
+        inline DirectX11Surface^ CreateDirectX11Surface(
             _In_ IDXGISurface* dxgiSurface)
         {
             using Microsoft::WRL::ComPtr;
 
-            ComPtr<IInspectable> inspectableGraphicsSurface;
-            __abi_ThrowIfFailed(CreateGraphicsSurfaceFromDXGISurface(
+            ComPtr<IInspectable> inspectableDirectX11Surface;
+            __abi_ThrowIfFailed(CreateDirectX11SurfaceFromDXGISurface(
                 dxgiSurface,
-                &inspectableGraphicsSurface));
+                &inspectableDirectX11Surface));
 
-            return reinterpret_cast<GraphicsSurface^>(inspectableGraphicsSurface.Detach());
+            return reinterpret_cast<DirectX11Surface^>(inspectableDirectX11Surface.Detach());
         }
 
         template<typename DXGI_TYPE>
         inline HRESULT GetDXGIInterface(
-            _In_  GraphicsDevice^ graphicsDevice, 
+            _In_  DirectX11Device^ graphicsDevice, 
             _Out_ DXGI_TYPE** dxgi)
         {
-            return GetDXGIInterfaceFromGraphicsDevice(
+            return GetDXGIInterfaceFromDirectX11Device(
                 reinterpret_cast<IInspectable*>(graphicsDevice),
                 IID_PPV_ARGS(dxgi));
         }
 
         template<typename DXGI_TYPE>
         inline HRESULT GetDXGIInterface(
-            _In_ GraphicsSurface^ graphicsSurface,
+            _In_ DirectX11Surface^ graphicsSurface,
             _Out_ DXGI_TYPE** dxgi)
         {
-            return GetDXGIInterfaceFromGraphicsSurface(
+            return GetDXGIInterfaceFromDirectX11Surface(
                 reinterpret_cast<IInspectable*>(graphicsSurface),
                 IID_PPV_ARGS(dxgi));                
         }

@@ -9,7 +9,7 @@ TEST_CLASS(GraphicsErrorTests)
 public:
     TEST_METHOD(GraphicsErrorCodesMatchDXGICodes)
     {
-#define CHECK(WINRT, HR) Assert::AreEqual(static_cast<HRESULT>(GraphicsErrorCode::WINRT), HR)
+#define CHECK(WINRT, HR) Assert::AreEqual(static_cast<HRESULT>(GraphicsErrorCodes::WINRT), HR)
 
         CHECK(DeviceHung                              , DXGI_ERROR_DEVICE_HUNG);
         CHECK(DeviceRemoved                           , DXGI_ERROR_DEVICE_REMOVED);
