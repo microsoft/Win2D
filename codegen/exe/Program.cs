@@ -184,10 +184,6 @@ namespace CodeGen
 
                 outputDataTypes.OutputCode(typeDictionary, outputFiles);
             }
-
-            // Below is a verification step.
-            // TODO: Consider moving this out of the main codegen process.
-            Formatter.FormattingTest();
         }
 
         //

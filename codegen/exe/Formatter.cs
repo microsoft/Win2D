@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace CodeGen
 {
-    class Formatter : System.IDisposable
+    public class Formatter : System.IDisposable
     {
         // Provides indenting, where one indent equals four spaces.
         public Formatter(string fileName)
@@ -58,32 +58,6 @@ namespace CodeGen
         string m_singleIndent;
         string m_indentAccumulator;
         StreamWriter m_streamWriter;
-
-        public static void FormattingTest()
-        {
-            Debug.Assert(StylizeWithCapitalLeadingLetter(null) == null);
-            Debug.Assert(StylizeWithCapitalLeadingLetter("") == "");
-            Debug.Assert(StylizeWithCapitalLeadingLetter("a") == "A");
-            Debug.Assert(StylizeWithCapitalLeadingLetter("A") == "A");
-            Debug.Assert(StylizeWithCapitalLeadingLetter("_") == "_");
-            Debug.Assert(StylizeWithCapitalLeadingLetter("cat") == "Cat");
-            Debug.Assert(StylizeWithCapitalLeadingLetter("Cat") == "Cat");
-            Debug.Assert(StylizeWithCapitalLeadingLetter("...cat") == "...cat");
-
-            Debug.Assert(StylizeNameFromUnderscoreSeparators(null) == null);
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("") == "");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("d") == "D");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("D") == "D");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("_") == "");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("__") == "");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("a__") == "A");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("_a_") == "A");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("__a") == "A");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("a_b_c") == "ABC");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("CAT_DOG") == "CatDog");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("CATDOG") == "Catdog");
-            Debug.Assert(StylizeNameFromUnderscoreSeparators("TYPE_1X1_suffix") == "Type1x1Suffix");
-        }
 
         // Public utility functions
         public static string StylizeWithCapitalLeadingLetter(string name)
