@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30303.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetMath", "math\DotNet\DotNetMath.csproj", "{3C1B37E8-10D1-4381-882A-9F0C0FD45871}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetMath", "DotNet\DotNetMath.csproj", "{3C1B37E8-10D1-4381-882A-9F0C0FD45871}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetMathTests", "math\DotNet\tests\DotNetMathTests.csproj", "{1EBFC5DD-14AB-4421-8BCA-ADF6719A7B45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetMathTests", "DotNet\tests\DotNetMathTests.csproj", "{1EBFC5DD-14AB-4421-8BCA-ADF6719A7B45}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppMathTests", "math\Cpp\tests\CppMathTests.vcxproj", "{975F7524-1EAE-4FD3-A71F-A2CBA27038A5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppMathTests", "Cpp\tests\CppMathTests.vcxproj", "{975F7524-1EAE-4FD3-A71F-A2CBA27038A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CppMath", "CppMath", "{59EE0893-E280-42CD-92CA-86370F9B349A}"
 	ProjectSection(SolutionItems) = preProject
-		math\Cpp\WindowsMath.h = math\Cpp\WindowsMath.h
-		math\Cpp\WindowsMath.inl = math\Cpp\WindowsMath.inl
+		Cpp\WindowsMath.h = Cpp\WindowsMath.h
+		Cpp\WindowsMath.inl = Cpp\WindowsMath.inl
 	EndProjectSection
 EndProject
 Global
