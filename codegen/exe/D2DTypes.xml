@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright (c) Microsoft Corporation.  All rights reserved. -->
+
 <D2DTypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D2DTypes.xsd">
     <FileDependency Name="D2DTypes2.xml"/>
     <FileDependency Name="D2DEffectAuthor.xml"/>
     <FileDependency Name="D2DTypesP.xml"/> 
     <FileDependency Name="D2DTypes3.xml"/>
-    <FileDependency Name="D2DTypes4.xml"/>
 
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Common primitive types                                        -->
