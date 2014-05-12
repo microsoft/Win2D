@@ -74,12 +74,4 @@ namespace MathTests
             return Equal(a, b) || Equal(a, -b);
         }
     }
-
-
-    class DescriptionAttribute : Attribute
-    {
-        public DescriptionAttribute(string description)
-        {
-        }
-    }
 }

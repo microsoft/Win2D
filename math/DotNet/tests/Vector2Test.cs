@@ -4,22 +4,15 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Windows.Math;
-
-#if NO_WINRT
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#endif
+using Windows.Math;
 
 namespace MathTests
 {
     [TestClass()]
     public class Vector2Test
     {
-        /// <summary>
-        ///A test for Distance (Vector2, Vector2)
-        ///</summary>
+        // A test for Distance (Vector2, Vector2)
         [TestMethod]
         public void Vector2DistanceTest()
         {
@@ -33,11 +26,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Distance did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Distance (Vector2, Vector2)
-        ///</summary>
+        // A test for Distance (Vector2, Vector2)
+        // Distance from the same point
         [TestMethod]
-        [Description("Distance from the same point")]
         public void Vector2DistanceTest2()
         {
             Vector2 a = new Vector2(1.051f, 2.05f);
@@ -47,9 +38,7 @@ namespace MathTests
             Assert.AreEqual(0.0f, actual, "Vector2.Distance did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for DistanceSquared (Vector2, Vector2)
-        ///</summary>
+        // A test for DistanceSquared (Vector2, Vector2)
         [TestMethod]
         public void Vector2DistanceSquaredTest()
         {
@@ -63,9 +52,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.DistanceSquared did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Dot (Vector2, Vector2)
-        ///</summary>
+        // A test for Dot (Vector2, Vector2)
         [TestMethod]
         public void Vector2DotTest()
         {
@@ -79,11 +66,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Dot did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Dot (Vector2, Vector2)
-        ///</summary>
+        // A test for Dot (Vector2, Vector2)
+        // Dot test for perpendicular vector
         [TestMethod]
-        [Description("Dot test for perpendicular vector")]
         public void Vector2DotTest1()
         {
             Vector2 a = new Vector2(1.55f, 1.55f);
@@ -94,11 +79,9 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Dot did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Dot (Vector2, Vector2)
-        ///</summary>
+        // A test for Dot (Vector2, Vector2)
+        // Dot test with specail float values
         [TestMethod]
-        [Description("Dot test with specail float values")]
         public void Vector2DotTest2()
         {
             Vector2 a = new Vector2(float.MinValue, float.MinValue);
@@ -108,9 +91,7 @@ namespace MathTests
             Assert.IsTrue(float.IsNegativeInfinity(actual), "Vector2.Dot did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Length ()
-        ///</summary>
+        // A test for Length ()
         [TestMethod]
         public void Vector2LengthTest()
         {
@@ -126,11 +107,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Length did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Length ()
-        ///</summary>
+        // A test for Length ()
+        // Length test where length is zero
         [TestMethod]
-        [Description("Length test where length is zero")]
         public void Vector2LengthTest1()
         {
             Vector2 target = new Vector2();
@@ -145,9 +124,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Length did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for LengthSquared ()
-        ///</summary>
+        // A test for LengthSquared ()
         [TestMethod]
         public void Vector2LengthSquaredTest()
         {
@@ -163,11 +140,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.LengthSquared did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for LengthSquared ()
-        ///</summary>
+        // A test for LengthSquared ()
+        // LengthSquared test where the result is zero
         [TestMethod]
-        [Description("LengthSquared test where the result is zero")]
         public void Vector2LengthSquaredTest1()
         {
             Vector2 a = new Vector2(0.0f, 0.0f);
@@ -178,9 +153,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.LengthSquared did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Min (Vector2, Vector2)
-        ///</summary>
+        // A test for Min (Vector2, Vector2)
         [TestMethod]
         public void Vector2MinTest()
         {
@@ -215,9 +188,7 @@ namespace MathTests
             Assert.AreEqual(actual, max);
         }
 
-        /// <summary>
-        ///A test for Max (Vector2, Vector2)
-        ///</summary>
+        // A test for Max (Vector2, Vector2)
         [TestMethod]
         public void Vector2MaxTest()
         {
@@ -230,9 +201,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Max did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Clamp (Vector2, Vector2, Vector2)
-        ///</summary>
+        // A test for Clamp (Vector2, Vector2, Vector2)
         [TestMethod]
         public void Vector2ClampTest()
         {
@@ -289,11 +258,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Clamp did not return the expected value.");
         }
 
-        #region Lerp Tests
-
-        /// <summary>
-        ///A test for Lerp (Vector2, Vector2, float)
-        ///</summary>
+        // A test for Lerp (Vector2, Vector2, float)
         [TestMethod]
         public void Vector2LerpTest()
         {
@@ -308,11 +273,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Vector2, Vector2, float)
-        ///</summary>
+        // A test for Lerp (Vector2, Vector2, float)
+        // Lerp test with factor zero
         [TestMethod]
-        [Description("Lerp test with factor zero")]
         public void Vector2LerpTest1()
         {
             Vector2 a = new Vector2(0.0f, 0.0f);
@@ -324,11 +287,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Vector2, Vector2, float)
-        ///</summary>
+        // A test for Lerp (Vector2, Vector2, float)
+        // Lerp test with factor one
         [TestMethod]
-        [Description("Lerp test with factor one")]
         public void Vector2LerpTest2()
         {
             Vector2 a = new Vector2(0.0f, 0.0f);
@@ -340,11 +301,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Vector2, Vector2, float)
-        ///</summary>
+        // A test for Lerp (Vector2, Vector2, float)
+        // Lerp test with factor > 1
         [TestMethod]
-        [Description("Lerp test with factor > 1")]
         public void Vector2LerpTest3()
         {
             Vector2 a = new Vector2(0.0f, 0.0f);
@@ -356,11 +315,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Vector2, Vector2, float)
-        ///</summary>
+        // A test for Lerp (Vector2, Vector2, float)
+        // Lerp test with factor < 0
         [TestMethod]
-        [Description("Lerp test with factor < 0")]
         public void Vector2LerpTest4()
         {
             Vector2 a = new Vector2(0.0f, 0.0f);
@@ -372,11 +329,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Vector2, Vector2, float)
-        ///</summary>
+        // A test for Lerp (Vector2, Vector2, float)
+        // Lerp test with special float value
         [TestMethod]
-        [Description("Lerp test with special float value")]
         public void Vector2LerpTest5()
         {
             Vector2 a = new Vector2(45.67f, 90.0f);
@@ -388,11 +343,9 @@ namespace MathTests
             Assert.IsTrue(float.IsNegativeInfinity(actual.Y), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Vector2, Vector2, float)
-        ///</summary>
+        // A test for Lerp (Vector2, Vector2, float)
+        // Lerp test from the same point
         [TestMethod]
-        [Description("Lerp test from the same point")]
         public void Vector2LerpTest6()
         {
             Vector2 a = new Vector2(1.0f, 2.0f);
@@ -405,11 +358,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Lerp did not return the expected value.");
         }
 
-        #endregion
-
-        /// <summary>
-        ///A test for Transform(Vector2, Matrix4x4)
-        ///</summary>
+        // A test for Transform(Vector2, Matrix4x4)
         [TestMethod]
         public void Vector2TransformTest()
         {
@@ -429,9 +378,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Transform(Vector2, Matrix3x2)
-        ///</summary>
+        // A test for Transform(Vector2, Matrix3x2)
         [TestMethod]
         public void Vector2Transform3x2Test()
         {
@@ -447,9 +394,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for TransformNormal (Vector2, Matrix4x4)
-        ///</summary>
+        // A test for TransformNormal (Vector2, Matrix4x4)
         [TestMethod]
         public void Vector2TransformNormalTest()
         {
@@ -469,9 +414,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.TransformNormal did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for TransformNormal (Vector2, Matrix3x2)
-        ///</summary>
+        // A test for TransformNormal (Vector2, Matrix3x2)
         [TestMethod]
         public void Vector2TransformNormal3x2Test()
         {
@@ -487,13 +430,8 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.TransformNormal did not return the expected value.");
         }
 
-        #region Transform vector by Quaternion
-
-        /// <summary>
-        ///A test for Transform (Vector2, Quaternion)
-        ///</summary>
+        // A test for Transform (Vector2, Quaternion)
         [TestMethod]
-        [Description("Transform Vector2 test")]
         public void Vector2TransformByQuaternionTest()
         {
             Vector2 v = new Vector2(1.0f, 2.0f);
@@ -509,11 +447,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Transform (Vector2, Quaternion)
-        ///</summary>
+        // A test for Transform (Vector2, Quaternion)
+        // Transform Vector2 with zero quaternion
         [TestMethod]
-        [Description("Transform Vector2 with zero quaternion")]
         public void Vector2TransformByQuaternionTest1()
         {
             Vector2 v = new Vector2(1.0f, 2.0f);
@@ -524,11 +460,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Transform (Vector2, Quaternion)
-        ///</summary>
+        // A test for Transform (Vector2, Quaternion)
+        // Transform Vector2 with identity quaternion
         [TestMethod]
-        [Description("Transform Vector2 with identity quaternion")]
         public void Vector2TransformByQuaternionTest2()
         {
             Vector2 v = new Vector2(1.0f, 2.0f);
@@ -539,11 +473,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Transform did not return the expected value.");
         }
 
-        #endregion
-
-        /// <summary>
-        ///A test for Normalize (Vector2)
-        ///</summary>
+        // A test for Normalize (Vector2)
         [TestMethod]
         public void Vector2NormalizeTest()
         {
@@ -555,11 +485,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Normalize did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Normalize (Vector2)
-        ///</summary>
+        // A test for Normalize (Vector2)
+        // Normalize zero length vector
         [TestMethod]
-        [Description("Normalize zero length vector")]
         public void Vector2NormalizeTest1()
         {
             Vector2 a = new Vector2(); // no parameter, default to 0.0f
@@ -567,11 +495,9 @@ namespace MathTests
             Assert.IsTrue(float.IsNaN(actual.X) && float.IsNaN(actual.Y), "Vector2.Normalize did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Normalize (Vector2)
-        ///</summary>
+        // A test for Normalize (Vector2)
+        // Normalize infinite length vector
         [TestMethod]
-        [Description("Normalize infinite length vector")]
         public void Vector2NormalizeTest2()
         {
             Vector2 a = new Vector2(float.MaxValue, float.MaxValue);
@@ -580,9 +506,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Normalize did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Vector2)
-        ///</summary>
+        // A test for operator - (Vector2)
         [TestMethod]
         public void Vector2UnaryNegationTest()
         {
@@ -596,11 +520,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Vector2)
-        ///</summary>
+        // A test for operator - (Vector2)
+        // Negate test with special float value
         [TestMethod]
-        [Description("Negate test with special float value")]
         public void Vector2UnaryNegationTest1()
         {
             Vector2 a = new Vector2(float.PositiveInfinity, float.NegativeInfinity);
@@ -611,11 +533,9 @@ namespace MathTests
             Assert.IsTrue(float.IsPositiveInfinity(actual.Y), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Vector2)
-        ///</summary>
+        // A test for operator - (Vector2)
+        // Negate test with special float value
         [TestMethod]
-        [Description("Negate test with special float value")]
         public void Vector2UnaryNegationTest2()
         {
             Vector2 a = new Vector2(float.NaN, 0.0f);
@@ -625,9 +545,7 @@ namespace MathTests
             Assert.IsTrue(float.Equals(0.0f, actual.Y), "Vector2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Vector2, Vector2)
-        ///</summary>
+        // A test for operator - (Vector2, Vector2)
         [TestMethod]
         public void Vector2SubtractionTest()
         {
@@ -642,9 +560,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Vector2, float)
-        ///</summary>
+        // A test for operator * (Vector2, float)
         [TestMethod]
         public void Vector2MultiplyTest()
         {
@@ -658,9 +574,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (float, Vector2)
-        ///</summary>
+        // A test for operator * (float, Vector2)
         [TestMethod]
         public void Vector2MultiplyTest4()
         {
@@ -674,9 +588,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Vector2, Vector2)
-        ///</summary>
+        // A test for operator * (Vector2, Vector2)
         [TestMethod]
         public void Vector2MultiplyTest1()
         {
@@ -691,9 +603,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator / (Vector2, float)
-        ///</summary>
+        // A test for operator / (Vector2, float)
         [TestMethod]
         public void Vector2DivisionTest()
         {
@@ -709,9 +619,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator / did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator / (Vector2, Vector2)
-        ///</summary>
+        // A test for operator / (Vector2, Vector2)
         [TestMethod]
         public void Vector2DivisionTest1()
         {
@@ -726,11 +634,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator / did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator / (Vector2, float)
-        ///</summary>
+        // A test for operator / (Vector2, float)
+        // Divide by zero
         [TestMethod]
-        [Description("Divide by zero")]
         public void Vector2DivisionTest2()
         {
             Vector2 a = new Vector2(-2.0f, 3.0f);
@@ -743,11 +649,9 @@ namespace MathTests
             Assert.IsTrue(float.IsPositiveInfinity(actual.Y), "Vector2.operator / did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator / (Vector2, Vector2)
-        ///</summary>
+        // A test for operator / (Vector2, Vector2)
+        // Divide by zero
         [TestMethod]
-        [Description("Divide by zero")]
         public void Vector2DivisionTest3()
         {
             Vector2 a = new Vector2(0.047f, -3.0f);
@@ -759,9 +663,7 @@ namespace MathTests
             Assert.IsTrue(float.IsInfinity(actual.Y), "Vector2.operator / did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator + (Vector2, Vector2)
-        ///</summary>
+        // A test for operator + (Vector2, Vector2)
         [TestMethod]
         public void Vector2AdditionTest()
         {
@@ -777,9 +679,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.operator + did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Vector2 (float, float)
-        ///</summary>
+        // A test for Vector2 (float, float)
         [TestMethod]
         public void Vector2ConstructorTest()
         {
@@ -790,9 +690,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(target.X, x) && MathHelper.Equal(target.Y, y), "Vector2(x,y) constructor did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Vector2 (Vector2)
-        ///</summary>
+        // A test for Vector2 (Vector2)
         [TestMethod]
         public void Vector2ConstructorTest1()
         {
@@ -803,11 +701,9 @@ namespace MathTests
         }
 
 
-        /// <summary>
-        ///A test for Vector2 ()
-        ///</summary>
+        // A test for Vector2 ()
+        // Constructor with no parameter
         [TestMethod]
-        [Description("Constructor with no parameter")]
         public void Vector2ConstructorTest2()
         {
             Vector2 target = new Vector2();
@@ -815,11 +711,9 @@ namespace MathTests
             Assert.AreEqual(target.Y, 0.0f, "Vector2() constructor did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Vector2 (float, float)
-        ///</summary>
+        // A test for Vector2 (float, float)
+        // Constructor with special floating values
         [TestMethod]
-        [Description("Constructor with special floating values")]
         public void Vector2ConstructorTest3()
         {
             Vector2 target = new Vector2(float.NaN, float.MaxValue);
@@ -827,11 +721,8 @@ namespace MathTests
             Assert.AreEqual(target.Y, float.MaxValue, "Vector2(x,y) constructor did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for ToString ()
-        ///</summary>
+        // A test for ToString ()
         [TestMethod]
-        [Description("ToString test for Vector2")]
         public void Vector2ToStringTest()
         {
             Vector2 target = new Vector2(1.0f, 2.2f);
@@ -843,9 +734,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.ToString did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Add (Vector2, Vector2)
-        ///</summary>
+        // A test for Add (Vector2, Vector2)
         [TestMethod]
         public void Vector2AddTest()
         {
@@ -859,9 +748,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Add did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Divide (Vector2, float)
-        ///</summary>
+        // A test for Divide (Vector2, float)
         [TestMethod]
         public void Vector2DivideTest()
         {
@@ -873,9 +760,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Divide did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Divide (Vector2, Vector2)
-        ///</summary>
+        // A test for Divide (Vector2, Vector2)
         [TestMethod]
         public void Vector2DivideTest1()
         {
@@ -889,9 +774,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Divide did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Equals (object)
-        ///</summary>
+        // A test for Equals (object)
         [TestMethod]
         public void Vector2EqualsTest()
         {
@@ -925,9 +808,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for GetHashCode ()
-        ///</summary>
+        // A test for GetHashCode ()
         [TestMethod]
         public void Vector2GetHashCodeTest()
         {
@@ -941,9 +822,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.GetHashCode did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Vector2, float)
-        ///</summary>
+        // A test for Multiply (Vector2, float)
         [TestMethod]
         public void Vector2MultiplyTest2()
         {
@@ -954,9 +833,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Vector2, Vector2)
-        ///</summary>
+        // A test for Multiply (Vector2, Vector2)
         [TestMethod]
         public void Vector2MultiplyTest3()
         {
@@ -970,9 +847,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Negate (Vector2)
-        ///</summary>
+        // A test for Negate (Vector2)
         [TestMethod]
         public void Vector2NegateTest()
         {
@@ -985,9 +860,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Negate did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator != (Vector2, Vector2)
-        ///</summary>
+        // A test for operator != (Vector2, Vector2)
         [TestMethod]
         public void Vector2InequalityTest()
         {
@@ -1006,9 +879,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.operator != did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator == (Vector2, Vector2)
-        ///</summary>
+        // A test for operator == (Vector2, Vector2)
         [TestMethod]
         public void Vector2EqualityTest()
         {
@@ -1027,9 +898,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.operator == did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Subtract (Vector2, Vector2)
-        ///</summary>
+        // A test for Subtract (Vector2, Vector2)
         [TestMethod]
         public void Vector2SubtractTest()
         {
@@ -1043,9 +912,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Subtract did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for UnitX
-        ///</summary>
+        // A test for UnitX
         [TestMethod]
         public void Vector2UnitXTest()
         {
@@ -1053,9 +920,7 @@ namespace MathTests
             Assert.AreEqual(val, Vector2.UnitX, "Vector2.UnitX was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for UnitY
-        ///</summary>
+        // A test for UnitY
         [TestMethod]
         public void Vector2UnitYTest()
         {
@@ -1063,9 +928,7 @@ namespace MathTests
             Assert.AreEqual(val, Vector2.UnitY, "Vector2.UnitY was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for One
-        ///</summary>
+        // A test for One
         [TestMethod]
         public void Vector2OneTest()
         {
@@ -1073,9 +936,7 @@ namespace MathTests
             Assert.AreEqual(val, Vector2.One, "Vector2.One was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for Zero
-        ///</summary>
+        // A test for Zero
         [TestMethod]
         public void Vector2ZeroTest()
         {
@@ -1083,9 +944,7 @@ namespace MathTests
             Assert.AreEqual(val, Vector2.Zero, "Vector2.Zero was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for Equals (Vector2)
-        ///</summary>
+        // A test for Equals (Vector2)
         [TestMethod]
         public void Vector2EqualsTest1()
         {
@@ -1104,9 +963,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Vector2.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Vector2 (float)
-        ///</summary>
+        // A test for Vector2 (float)
         [TestMethod]
         public void Vector2ConstructorTest4()
         {
@@ -1122,9 +979,7 @@ namespace MathTests
             Assert.AreEqual(expected, target, "Vector2.cstr did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Vector2 comparison involving NaN values
-        ///</summary>
+        // A test for Vector2 comparison involving NaN values
         [TestMethod]
         public void Vector2EqualsNanTest()
         {
@@ -1145,11 +1000,7 @@ namespace MathTests
             Assert.IsFalse(b.Equals(b));
         }
 
-        #region Reflect Tests
-
-        /// <summary>
-        ///A test for Reflect (Vector2, Vector2)
-        ///</summary>
+        // A test for Reflect (Vector2, Vector2)
         [TestMethod]
         public void Vector2ReflectTest()
         {
@@ -1174,11 +1025,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Reflect (Vector2, Vector2)
-        ///</summary>
+        // A test for Reflect (Vector2, Vector2)
+        // Reflection when normal and source are the same
         [TestMethod]
-        [Description("Reflection when normal and source are the same")]
         public void Vector2ReflectTest1()
         {
             Vector2 n = new Vector2(0.45f, 1.28f);
@@ -1190,11 +1039,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Reflect (Vector2, Vector2)
-        ///</summary>
+        // A test for Reflect (Vector2, Vector2)
+        // Reflection when normal and source are negation
         [TestMethod]
-        [Description("Reflection when normal and source are negation")]
         public void Vector2ReflectTest2()
         {
             Vector2 n = new Vector2(0.45f, 1.28f);
@@ -1206,14 +1053,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector2.Reflect did not return the expected value.");
         }
 
-        #endregion
-
-        #region WinRT conversions
-#if !NO_WINRT
-        
-        /// <summary>
-        ///A test for Vector2 -> Size conversion
-        ///</summary>
+        // A test for Vector2 -> Size conversion
         [TestMethod]
         public void Vector2ToSizeTest()
         {
@@ -1225,9 +1065,7 @@ namespace MathTests
             Assert.AreEqual(42.0, result.Height);
         }
 
-        /// <summary>
-        ///A test for Vector2 -> Point conversion
-        ///</summary>
+        // A test for Vector2 -> Point conversion
         [TestMethod]
         public void Vector2ToPointTest()
         {
@@ -1239,9 +1077,7 @@ namespace MathTests
             Assert.AreEqual(42.0, result.Y);
         }
 
-        /// <summary>
-        ///A test for Size -> Vector2 conversion
-        ///</summary>
+        // A test for Size -> Vector2 conversion
         [TestMethod]
         public void Vector2FromSizeTest()
         {
@@ -1253,9 +1089,7 @@ namespace MathTests
             Assert.AreEqual(42.0f, result.Y);
         }
 
-        /// <summary>
-        ///A test for Point -> Vector2 conversion
-        ///</summary>
+        // A test for Point -> Vector2 conversion
         [TestMethod]
         public void Vector2FromPointTest()
         {
@@ -1267,12 +1101,7 @@ namespace MathTests
             Assert.AreEqual(42.0f, result.Y);
         }
 
-#endif // !NO_WINRT
-        #endregion
-        
-        /// <summary>
-        ///A test to make sure these types are blittable directly into GPU buffer memory layouts
-        ///</summary>
+        // A test to make sure these types are blittable directly into GPU buffer memory layouts
         [TestMethod]
         public unsafe void Vector2SizeofTest()
         {

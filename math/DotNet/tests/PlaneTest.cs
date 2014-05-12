@@ -4,24 +4,15 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Windows.Math;
-
-#if NO_WINRT
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#endif
+using Windows.Math;
 
 namespace MathTests
 {
     [TestClass()]
     public class PlaneTest
     {
-        #region Standard value type method tests.
-
-        /// <summary>
-        ///A test for Equals (Plane)
-        ///</summary>
+        // A test for Equals (Plane)
         [TestMethod]
         public void PlaneEqualsTest1()
         {
@@ -40,9 +31,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Plane.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Equals (object)
-        ///</summary>
+        // A test for Equals (object)
         [TestMethod]
         public void PlaneEqualsTest()
         {
@@ -76,9 +65,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Plane.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator != (Plane, Plane)
-        ///</summary>
+        // A test for operator != (Plane, Plane)
         [TestMethod]
         public void PlaneInequalityTest()
         {
@@ -97,9 +84,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Plane.operator != did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator == (Plane, Plane)
-        ///</summary>
+        // A test for operator == (Plane, Plane)
         [TestMethod]
         public void PlaneEqualityTest()
         {
@@ -118,9 +103,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Plane.operator != did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for GetHashCode ()
-        ///</summary>
+        // A test for GetHashCode ()
         [TestMethod]
         public void PlaneGetHashCodeTest()
         {
@@ -131,9 +114,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Plane.GetHashCode did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for ToString ()
-        ///</summary>
+        // A test for ToString ()
         [TestMethod]
         public void PlaneToStringTest()
         {
@@ -143,13 +124,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Plane.ToString did not return the expected value.");
         }
 
-        #endregion
-
-        #region Constructor tests.
-
-        /// <summary>
-        ///A test for Plane (float, float, float, float)
-        ///</summary>
+        // A test for Plane (float, float, float, float)
         [TestMethod]
         public void PlaneConstructorTest1()
         {
@@ -161,9 +136,7 @@ namespace MathTests
                 "Plane.cstor did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Plane (Vector3, Vector3, Vector3)
-        ///</summary>
+        // A test for Plane (Vector3, Vector3, Vector3)
         [TestMethod]
         public void PlaneConstructorTest2()
         {
@@ -176,9 +149,7 @@ namespace MathTests
             Assert.AreEqual(target, expected, "Plane.cstor did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Plane (Vector3, Vector3, Vector3)
-        ///</summary>
+        // A test for Plane (Vector3, Vector3, Vector3)
         [TestMethod]
         public void PlaneConstructorRegressionTest01()
         {
@@ -193,9 +164,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(target, expected), "Plane.cstor did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Plane (Vector3, Vector3, Vector3)
-        ///</summary>
+        // A test for Plane (Vector3, Vector3, Vector3)
         [TestMethod]
         public void PlaneConstructorTest3()
         {
@@ -208,9 +177,7 @@ namespace MathTests
                 "Plane.cstor did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Plane (Vector4)
-        ///</summary>
+        // A test for Plane (Vector4)
         [TestMethod]
         public void PlaneConstructorTest()
         {
@@ -221,10 +188,6 @@ namespace MathTests
                 target.Normal.X == value.X && target.Normal.Y == value.Y && target.Normal.Z == value.Z && target.D == value.W,
                 "Plane.cstor did not return the expected value.");
         }
-
-        #endregion
-
-        #region Operations.
 
         [TestMethod]
         public void PlaneDotTest()
@@ -277,7 +240,7 @@ namespace MathTests
         }
 
         [TestMethod]
-        [Description("Transform by matrix")]
+        // Transform by matrix
         public void PlaneTransformTest1()
         {
             Plane target = new Plane(1, 2, 3, 4);
@@ -307,7 +270,7 @@ namespace MathTests
         }
 
         [TestMethod]
-        [Description("Transform by quaternion")]
+        // Transform by quaternion
         public void PlaneTransformTest2()
         {
             Plane target = new Plane(1, 2, 3, 4);
@@ -331,11 +294,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Plane.Transform did not return the expected value.");
         }
 
-        #endregion
-
-        /// <summary>
-        ///A test for Plane comparison involving NaN values
-        ///</summary>
+        // A test for Plane comparison involving NaN values
         [TestMethod]
         public void PlaneEqualsNanTest()
         {
@@ -366,9 +325,7 @@ namespace MathTests
             Assert.IsFalse(d.Equals(d));
         }
 
-        /// <summary>
-        ///A test to make sure these types are blittable directly into GPU buffer memory layouts
-        ///</summary>
+        // A test to make sure these types are blittable directly into GPU buffer memory layouts
         [TestMethod]
         public unsafe void PlaneSizeofTest()
         {

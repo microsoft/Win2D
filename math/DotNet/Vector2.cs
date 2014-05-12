@@ -34,8 +34,6 @@ namespace Windows.Math
         }
 
 
-#if !NO_WINRT
-
         public static implicit operator Windows.Foundation.Point(Vector2 value)
         {
             return new Windows.Foundation.Point(value.X, value.Y);
@@ -68,8 +66,6 @@ namespace Windows.Math
 
             return result;
         }
-
-#endif  // !NO_WINRT
 
 
         public float Length()

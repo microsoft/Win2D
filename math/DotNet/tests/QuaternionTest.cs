@@ -4,22 +4,15 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Windows.Math;
-
-#if NO_WINRT
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#endif
+using Windows.Math;
 
 namespace MathTests
 {
     [TestClass()]
     public class QuaternionTest
     {
-        /// <summary>
-        ///A test for Dot (Quaternion, Quaternion)
-        ///</summary>
+        // A test for Dot (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionDotTest()
         {
@@ -33,9 +26,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Dot did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Length ()
-        ///</summary>
+        // A test for Length ()
         [TestMethod]
         public void QuaternionLengthTest()
         {
@@ -53,9 +44,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Length did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for LengthSquared ()
-        ///</summary>
+        // A test for LengthSquared ()
         [TestMethod]
         public void QuaternionLengthSquaredTest()
         {
@@ -72,9 +61,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.LengthSquared did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Lerp (Quaternion, Quaternion, float)
         [TestMethod]
         public void QuaternionLerpTest()
         {
@@ -96,11 +83,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Lerp (Quaternion, Quaternion, float)
+        // Lerp test when t = 0
         [TestMethod]
-        [Description("Lerp test when t = 0")]
         public void QuaternionLerpTest1()
         {
             Vector3 axis = Vector3.Normalize(new Vector3(1.0f, 2.0f, 3.0f));
@@ -114,11 +99,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Lerp (Quaternion, Quaternion, float)
+        // Lerp test when t = 1
         [TestMethod]
-        [Description("Lerp test when t = 1")]
         public void QuaternionLerpTest2()
         {
             Vector3 axis = Vector3.Normalize(new Vector3(1.0f, 2.0f, 3.0f));
@@ -132,11 +115,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Lerp (Quaternion, Quaternion, float)
+        // Lerp test when the two quaternions are more than 90 degree (dot product <0)
         [TestMethod]
-        [Description("Lerp test when the two quaternions are more than 90 degree (dot product <0)")]
         public void QuaternionLerpTest3()
         {
             Vector3 axis = Vector3.Normalize(new Vector3(1.0f, 2.0f, 3.0f));
@@ -152,9 +133,7 @@ namespace MathTests
             Assert.IsTrue(actual == a, "Quaternion.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Conjugate(Quaternion)
-        ///</summary>
+        // A test for Conjugate(Quaternion)
         [TestMethod]
         public void QuaternionConjugateTest1()
         {
@@ -167,9 +146,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Conjugate did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Normalize (Quaternion)
-        ///</summary>
+        // A test for Normalize (Quaternion)
         [TestMethod]
         public void QuaternionNormalizeTest()
         {
@@ -182,11 +159,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Normalize did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Normalize (Quaternion)
-        ///</summary>
+        // A test for Normalize (Quaternion)
+        // Normalize zero length quaternion
         [TestMethod]
-        [Description("Normalize zero length quaternion")]
         public void QuaternionNormalizeTest1()
         {
             Quaternion a = new Quaternion(0.0f, 0.0f, -0.0f, 0.0f);
@@ -196,9 +171,7 @@ namespace MathTests
                 , "Quaternion.Normalize did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Concatenate(Quaternion, Quaternion)
-        ///</summary>
+        // A test for Concatenate(Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionConcatenateTest1()
         {
@@ -212,9 +185,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Concatenate did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Quaternion, Quaternion)
-        ///</summary>
+        // A test for operator - (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionSubtractionTest()
         {
@@ -229,9 +200,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Quaternion, float)
-        ///</summary>
+        // A test for operator * (Quaternion, float)
         [TestMethod]
         public void QuaternionMultiplyTest()
         {
@@ -246,9 +215,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Quaternion, Quaternion)
-        ///</summary>
+        // A test for operator * (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionMultiplyTest1()
         {
@@ -264,9 +231,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator / (Quaternion, Quaternion)
-        ///</summary>
+        // A test for operator / (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionDivisionTest1()
         {
@@ -281,9 +246,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.operator / did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator + (Quaternion, Quaternion)
-        ///</summary>
+        // A test for operator + (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionAdditionTest()
         {
@@ -298,9 +261,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.operator + did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Quaternion (float, float, float, float)
-        ///</summary>
+        // A test for Quaternion (float, float, float, float)
         [TestMethod]
         public void QuaternionConstructorTest()
         {
@@ -315,9 +276,7 @@ namespace MathTests
                 "Quaternion.constructor (x,y,z,w) did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Quaternion (Vector3, float)
-        ///</summary>
+        // A test for Quaternion (Vector3, float)
         [TestMethod]
         public void QuaternionConstructorTest1()
         {
@@ -329,9 +288,7 @@ namespace MathTests
                 "Quaternion.constructor (Vector3,w) did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromAxisAngle (Vector3, float)
-        ///</summary>
+        // A test for CreateFromAxisAngle (Vector3, float)
         [TestMethod]
         public void QuaternionCreateFromAxisAngleTest()
         {
@@ -345,11 +302,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.CreateFromAxisAngle did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromAxisAngle (Vector3, float)
-        ///</summary>
+        // A test for CreateFromAxisAngle (Vector3, float)
+        // CreateFromAxisAngle of zero vector
         [TestMethod]
-        [Description("CreateFromAxisAngle of zero vector")]
         public void QuaternionCreateFromAxisAngleTest1()
         {
             Vector3 axis = new Vector3();
@@ -362,11 +317,9 @@ namespace MathTests
                 , "Quaternion.CreateFromAxisAngle did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromAxisAngle (Vector3, float)
-        ///</summary>
+        // A test for CreateFromAxisAngle (Vector3, float)
+        // CreateFromAxisAngle of angle = 30 && 750
         [TestMethod]
-        [Description("CreateFromAxisAngle of angle = 30 && 750")]
         public void QuaternionCreateFromAxisAngleTest2()
         {
             Vector3 axis = new Vector3(1, 0, 0);
@@ -378,11 +331,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(actual1, actual2), "Quaternion.CreateFromAxisAngle did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromAxisAngle (Vector3, float)
-        ///</summary>
+        // A test for CreateFromAxisAngle (Vector3, float)
+        // CreateFromAxisAngle of angle = 30 && 390
         [TestMethod]
-        [Description("CreateFromAxisAngle of angle = 30 && 390")]
         public void QuaternionCreateFromAxisAngleTest3()
         {
             Vector3 axis = new Vector3(1, 0, 0);
@@ -413,8 +364,8 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual));
         }
 
+        // Covers more numeric rigions
         [TestMethod]
-        [Description("Covers more numeric rigions")]
         public void QuaternionCreateFromYawPitchRollTest2()
         {
             const float step = 35.0f;
@@ -441,9 +392,7 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for Slerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Slerp (Quaternion, Quaternion, float)
         [TestMethod]
         public void QuaternionSlerpTest()
         {
@@ -465,11 +414,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Slerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Slerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Slerp (Quaternion, Quaternion, float)
+        // Slerp test where t = 0
         [TestMethod]
-        [Description("Slerp test where t = 0")]
         public void QuaternionSlerpTest1()
         {
             Vector3 axis = Vector3.Normalize(new Vector3(1.0f, 2.0f, 3.0f));
@@ -483,11 +430,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Slerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Slerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Slerp (Quaternion, Quaternion, float)
+        // Slerp test where t = 1
         [TestMethod]
-        [Description("Slerp test where t = 1")]
         public void QuaternionSlerpTest2()
         {
             Vector3 axis = Vector3.Normalize(new Vector3(1.0f, 2.0f, 3.0f));
@@ -501,11 +446,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Slerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Slerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Slerp (Quaternion, Quaternion, float)
+        // Slerp test where dot product is < 0
         [TestMethod]
-        [Description("Slerp test where dot product is < 0")]
         public void QuaternionSlerpTest3()
         {
             Vector3 axis = Vector3.Normalize(new Vector3(1.0f, 2.0f, 3.0f));
@@ -522,11 +465,9 @@ namespace MathTests
             Assert.IsTrue(actual == expected, "Quaternion.Slerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Slerp (Quaternion, Quaternion, float)
-        ///</summary>
+        // A test for Slerp (Quaternion, Quaternion, float)
+        // Slerp test where the quaternion is flipped
         [TestMethod]
-        [Description("Slerp test where the quaternion is flipped")]
         public void QuaternionSlerpTest4()
         {
             Vector3 axis = Vector3.Normalize(new Vector3(1.0f, 2.0f, 3.0f));
@@ -540,9 +481,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Slerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Quaternion)
-        ///</summary>
+        // A test for operator - (Quaternion)
         [TestMethod]
         public void QuaternionUnaryNegationTest()
         {
@@ -556,9 +495,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Inverse (Quaternion)
-        ///</summary>
+        // A test for Inverse (Quaternion)
         [TestMethod]
         public void QuaternionInverseTest()
         {
@@ -571,11 +508,9 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.Inverse did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Inverse (Quaternion)
-        ///</summary>
+        // A test for Inverse (Quaternion)
+        // Invert zero length quaternion
         [TestMethod]
-        [Description("Invert zero length quaternion")]
         public void QuaternionInverseTest1()
         {
             Quaternion a = new Quaternion();
@@ -585,9 +520,7 @@ namespace MathTests
                 , "Quaternion.Inverse did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for ToString ()
-        ///</summary>
+        // A test for ToString ()
         [TestMethod]
         public void QuaternionToStringTest()
         {
@@ -599,9 +532,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.ToString did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Add (Quaternion, Quaternion)
-        ///</summary>
+        // A test for Add (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionAddTest()
         {
@@ -615,9 +546,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.Add did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Divide (Quaternion, Quaternion)
-        ///</summary>
+        // A test for Divide (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionDivideTest()
         {
@@ -631,9 +560,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Divide did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Equals (object)
-        ///</summary>
+        // A test for Equals (object)
         [TestMethod]
         public void QuaternionEqualsTest()
         {
@@ -667,9 +594,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for GetHashCode ()
-        ///</summary>
+        // A test for GetHashCode ()
         [TestMethod]
         public void QuaternionGetHashCodeTest()
         {
@@ -680,9 +605,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.GetHashCode did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Quaternion, float)
-        ///</summary>
+        // A test for Multiply (Quaternion, float)
         [TestMethod]
         public void QuaternionMultiplyTest2()
         {
@@ -696,9 +619,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Quaternion, Quaternion)
-        ///</summary>
+        // A test for Multiply (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionMultiplyTest3()
         {
@@ -712,9 +633,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Quaternion.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Negate (Quaternion)
-        ///</summary>
+        // A test for Negate (Quaternion)
         [TestMethod]
         public void QuaternionNegateTest()
         {
@@ -727,9 +646,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.Negate did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Subtract (Quaternion, Quaternion)
-        ///</summary>
+        // A test for Subtract (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionSubtractTest()
         {
@@ -743,9 +660,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.Subtract did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator != (Quaternion, Quaternion)
-        ///</summary>
+        // A test for operator != (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionInequalityTest()
         {
@@ -764,9 +679,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.operator != did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator == (Quaternion, Quaternion)
-        ///</summary>
+        // A test for operator == (Quaternion, Quaternion)
         [TestMethod]
         public void QuaternionEqualityTest()
         {
@@ -785,11 +698,9 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.operator == did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // Convert Identity matrix test
         [TestMethod]
-        [Description("Convert Identity matrix test")]
         public void QuaternionFromRotationMatrixTest1()
         {
             Matrix4x4 matrix = Matrix4x4.Identity;
@@ -803,11 +714,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(matrix, m2), "Quaternion.CreateFromRotationMatrix did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // Convert X axis rotation matrix
         [TestMethod]
-        [Description("Convert X axis rotation matrix")]
         public void QuaternionFromRotationMatrixTest2()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -828,11 +737,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // Convert Y axis rotation matrix
         [TestMethod]
-        [Description("Convert Y axis rotation matrix")]
         public void QuaternionFromRotationMatrixTest3()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -853,11 +760,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // Convert Z axis rotation matrix
         [TestMethod]
-        [Description("Convert Z axis rotation matrix")]
         public void QuaternionFromRotationMatrixTest4()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -878,11 +783,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // Convert XYZ axis rotation matrix
         [TestMethod]
-        [Description("Convert XYZ axis rotation matrix")]
         public void QuaternionFromRotationMatrixTest5()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -907,11 +810,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // X axis is most large axis case
         [TestMethod]
-        [Description("X axis is most large axis case")]
         public void QuaternionFromRotationMatrixWithScaledMatrixTest1()
         {
             float angle = MathHelper.ToRadians(180.0f);
@@ -926,11 +827,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(matrix, m2), "Quaternion.CreateFromRotationMatrix did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // Y axis is most large axis case
         [TestMethod]
-        [Description("Y axis is most large axis case")]
         public void QuaternionFromRotationMatrixWithScaledMatrixTest2()
         {
             float angle = MathHelper.ToRadians(180.0f);
@@ -945,11 +844,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(matrix, m2), "Quaternion.CreateFromRotationMatrix did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateFromRotationMatrix (Matrix4x4)
-        ///</summary>
+        // A test for CreateFromRotationMatrix (Matrix4x4)
+        // Z axis is most large axis case
         [TestMethod]
-        [Description("Z axis is most large axis case")]
         public void QuaternionFromRotationMatrixWithScaledMatrixTest3()
         {
             float angle = MathHelper.ToRadians(180.0f);
@@ -964,9 +861,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(matrix, m2), "Quaternion.CreateFromRotationMatrix did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Equals (Quaternion)
-        ///</summary>
+        // A test for Equals (Quaternion)
         [TestMethod]
         public void QuaternionEqualsTest1()
         {
@@ -985,9 +880,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Quaternion.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Identity
-        ///</summary>
+        // A test for Identity
         [TestMethod]
         public void QuaternionIdentityTest()
         {
@@ -995,9 +888,7 @@ namespace MathTests
             Assert.AreEqual(val, Quaternion.Identity, "Quaternion.Identity was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for IsIdentity
-        ///</summary>
+        // A test for IsIdentity
         [TestMethod]
         public void QuaternionIsIdentityTest()
         {
@@ -1009,9 +900,7 @@ namespace MathTests
             Assert.IsFalse(new Quaternion(0, 0, 0, 0).IsIdentity);
         }
 
-        /// <summary>
-        ///A test for Quaternion comparison involving NaN values
-        ///</summary>
+        // A test for Quaternion comparison involving NaN values
         [TestMethod]
         public void QuaternionEqualsNanTest()
         {
@@ -1047,9 +936,7 @@ namespace MathTests
             Assert.IsFalse(d.Equals(d));
         }
 
-        /// <summary>
-        ///A test to make sure these types are blittable directly into GPU buffer memory layouts
-        ///</summary>
+        // A test to make sure these types are blittable directly into GPU buffer memory layouts
         [TestMethod]
         public unsafe void QuaternionSizeofTest()
         {

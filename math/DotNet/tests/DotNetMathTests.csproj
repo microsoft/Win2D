@@ -48,7 +48,7 @@
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Matrix3x2Test.cs" />
     <Compile Include="Matrix4x4Test.cs" />
     <Compile Include="PlaneTest.cs" />

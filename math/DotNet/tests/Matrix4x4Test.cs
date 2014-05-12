@@ -4,13 +4,8 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Windows.Math;
-
-#if NO_WINRT
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#endif
+using Windows.Math;
 
 namespace MathTests
 {
@@ -37,9 +32,7 @@ namespace MathTests
             return m;
         }
 
-        /// <summary>
-        ///A test for Identity
-        ///</summary>
+        // A test for Identity
         [TestMethod]
         public void Matrix4x4IdentityTest()
         {
@@ -49,9 +42,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(val, Matrix4x4.Identity), "Matrix4x4.Indentity was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for Determinant
-        ///</summary>
+        // A test for Determinant
         [TestMethod]
         public void Matrix4x4DeterminantTest()
         {
@@ -66,11 +57,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(val, det), "Matrix4x4.Determinant was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for Determinant
-        ///</summary>
+        // A test for Determinant
+        // Determinant test |A| = 1 / |A'|
         [TestMethod]
-        [Description("Determinant test |A| = 1 / |A'|")]
         public void Matrix4x4DeterminantTest1()
         {
             Matrix4x4 a = new Matrix4x4();
@@ -89,9 +78,7 @@ namespace MathTests
             Assert.IsTrue(System.Math.Abs(detA - t) < 1e-3, "Matrix4x4.Determinant was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
         [TestMethod]
         public void Matrix4x4InvertTest()
         {
@@ -131,9 +118,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity), "Matrix4x4.Invert did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
         [TestMethod]
         public void Matrix4x4InvertIdentityTest()
         {
@@ -145,9 +130,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(actual, Matrix4x4.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
         [TestMethod]
         public void Matrix4x4InvertTranslationTest()
         {
@@ -160,9 +143,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
         [TestMethod]
         public void Matrix4x4InvertRotationTest()
         {
@@ -175,9 +156,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
         [TestMethod]
         public void Matrix4x4InvertScaleTest()
         {
@@ -190,9 +169,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
         [TestMethod]
         public void Matrix4x4InvertProjectionTest()
         {
@@ -205,9 +182,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix4x4.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
         [TestMethod]
         public void Matrix4x4InvertAffineTest()
         {
@@ -261,8 +236,8 @@ namespace MathTests
                 String.Format("Matrix4x4.Decompose did not return expected value. Expected:{0} actual:{1}.", expectedTranslation, translation));
         }
 
+        // Various rotation decompose test.
         [TestMethod]
-        [Description("Various rotation decompose test.")]
         public void Matrix4x4DecomposeTest01()
         {
             DecomposeTest(10.0f, 20.0f, 30.0f, new Vector3(10, 20, 30), new Vector3(2, 3, 4));
@@ -281,8 +256,8 @@ namespace MathTests
             }
         }
 
+        // Various scaled matrix decomposite test.
         [TestMethod]
-        [Description("Various scaled matrix decomposite test.")]
         public void Matrix4x4DecomposeTest02()
         {
             DecomposeTest(10.0f, 20.0f, 30.0f, new Vector3(10, 20, 30), new Vector3(2, 3, 4));
@@ -328,8 +303,8 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(Vector3.Zero, translation), "Matrix4x4.Decompose did not return expected value.");
         }
 
+        // Tiny scale decompose test.
         [TestMethod]
-        [Description("Tiny scale decompose test.")]
         public void Matrix4x4DecomposeTest03()
         {
             DecomposeScaleTest(1, 2e-6f, 3e-6f);
@@ -340,7 +315,7 @@ namespace MathTests
             DecomposeScaleTest(3e-6f, 2e-6f, 1);
         }
 
-        [Description("Transform by quaternion test")]
+        // Transform by quaternion test
         [TestMethod]
         public void Matrix4x4TransformTest()
         {
@@ -359,11 +334,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Transform did not return the expected value.");
         }
 
-        #region Factory method tests
-
-        /// <summary>
-        ///A test for CreateRotationX (float)
-        ///</summary>
+        // A test for CreateRotationX (float)
         [TestMethod]
         public void Matrix4x4CreateRotationXTest()
         {
@@ -384,11 +355,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationX did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateRotationX (float)
-        ///</summary>
+        // A test for CreateRotationX (float)
+        // CreateRotationX of zero degree
         [TestMethod]
-        [Description("CreateRotationX of zero degree")]
         public void Matrix4x4CreateRotationXTest1()
         {
             float radians = 0;
@@ -398,9 +367,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationX did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateRotationX (float, Vector3)
-        ///</summary>
+        // A test for CreateRotationX (float, Vector3)
         [TestMethod]
         public void Matrix4x4CreateRotationXCenterTest()
         {
@@ -416,9 +383,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateRotationY (float)
-        ///</summary>
+        // A test for CreateRotationY (float)
         [TestMethod]
         public void Matrix4x4CreateRotationYTest()
         {
@@ -438,11 +403,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationY did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for RotationY (float)
-        ///</summary>
+        // A test for RotationY (float)
+        // CreateRotationY test for negative angle
         [TestMethod]
-        [Description("CreateRotationY test for negative angle")]
         public void Matrix4x4CreateRotationYTest1()
         {
             float radians = MathHelper.ToRadians(-300.0f);
@@ -460,9 +423,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationY did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateRotationY (float, Vector3)
-        ///</summary>
+        // A test for CreateRotationY (float, Vector3)
         [TestMethod]
         public void Matrix4x4CreateRotationYCenterTest()
         {
@@ -478,9 +439,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateFromAxisAngle(Vector3,float)
-        ///</summary>
+        // A test for CreateFromAxisAngle(Vector3,float)
         [TestMethod]
         public void Matrix4x4CreateFromAxisAngleTest()
         {
@@ -539,8 +498,8 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual));
         }
 
+        // Covers more numeric rigions
         [TestMethod]
-        [Description("Covers more numeric rigions")]
         public void Matrix4x4CreateFromYawPitchRollTest2()
         {
             const float step = 35.0f;
@@ -566,8 +525,8 @@ namespace MathTests
             }
         }
 
+        // Simple shadow test.
         [TestMethod]
-        [Description("Simple shadow test.")]
         public void Matrix4x4CreateShadowTest01()
         {
             Vector3 lightDir = Vector3.UnitY;
@@ -579,8 +538,8 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateShadow did not returned expected value.");
         }
 
+        // Various plane projections.
         [TestMethod]
-        [Description("Various plane projections.")]
         public void Matrix4x4CreateShadowTest02()
         {
             // Complex cases.
@@ -724,9 +683,7 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreateRotationZ (float)
-        ///</summary>
+        // A test for CreateRotationZ (float)
         [TestMethod]
         public void Matrix4x4CreateRotationZTest()
         {
@@ -745,9 +702,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateRotationZ did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateRotationZ (float, Vector3)
-        ///</summary>
+        // A test for CreateRotationZ (float, Vector3)
         [TestMethod]
         public void Matrix4x4CreateRotationZCenterTest()
         {
@@ -763,9 +718,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CrateLookAt (Vector3, Vector3, Vector3)
-        ///</summary>
+        // A test for CrateLookAt (Vector3, Vector3, Vector3)
         [TestMethod]
         public void Matrix4x4CreateLookAtTest()
         {
@@ -795,9 +748,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateLookAt did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateWorld (Vector3, Vector3, Vector3)
-        ///</summary>
+        // A test for CreateWorld (Vector3, Vector3, Vector3)
         [TestMethod]
         public void Matrix4x4CreateWorldTest()
         {
@@ -834,9 +785,7 @@ namespace MathTests
             Assert.IsTrue(Vector3.Dot(Vector3.Normalize(objectForwardDirection), new Vector3(-actual.M31, -actual.M32, -actual.M33)) > 0.999f);
         }
 
-        /// <summary>
-        ///A test for CreateOrtho (float, float, float, float)
-        ///</summary>
+        // A test for CreateOrtho (float, float, float, float)
         [TestMethod]
         public void Matrix4x4CreateOrthoTest()
         {
@@ -857,9 +806,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateOrtho did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateOrthoOffCenter (float, float, float, float, float, float)
-        ///</summary>
+        // A test for CreateOrthoOffCenter (float, float, float, float, float, float)
         [TestMethod]
         public void Matrix4x4CreateOrthoOffCenterTest()
         {
@@ -884,9 +831,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateOrthoOffCenter did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreatePerspective (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspective (float, float, float, float)
         [TestMethod]
         public void Matrix4x4CreatePerspectiveTest()
         {
@@ -907,11 +852,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreatePerspective did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreatePerspective (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspective (float, float, float, float)
+        // CreatePerspective test where znear = zfar
         [TestMethod]
-        [Description("CreatePerspective test where znear = zfar")]
         public void Matrix4x4CreatePerspectiveTest1()
         {
             try
@@ -930,11 +873,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspective (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspective (float, float, float, float)
+        // CreatePerspective test where near plane is negative value
         [TestMethod]
-        [Description("CreatePerspective test where near plane is negative value")]
         public void Matrix4x4CreatePerspectiveTest2()
         {
             try
@@ -948,11 +889,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspective (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspective (float, float, float, float)
+        // CreatePerspective test where far plane is negative value
         [TestMethod]
-        [Description("CreatePerspective test where far plane is negative value")]
         public void Matrix4x4CreatePerspectiveTest3()
         {
             try
@@ -966,11 +905,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspective (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspective (float, float, float, float)
+        // CreatePerspective test where near plane is beyond far plane
         [TestMethod]
-        [Description("CreatePerspective test where near plane is beyond far plane")]
         public void Matrix4x4CreatePerspectiveTest4()
         {
             try
@@ -984,9 +921,7 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveFieldOfView (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveFieldOfView (float, float, float, float)
         [TestMethod]
         public void Matrix4x4CreatePerspectiveFieldOfViewTest()
         {
@@ -1007,11 +942,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreatePerspectiveFieldOfView did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveFieldOfView (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveFieldOfView (float, float, float, float)
+        // CreatePerspectiveFieldOfView test where filedOfView is negative value.
         [TestMethod]
-        [Description("CreatePerspectiveFieldOfView test where filedOfView is negative value.")]
         public void Matrix4x4CreatePerspectiveFieldOfViewTest1()
         {
             try
@@ -1025,11 +958,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveFieldOfView (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveFieldOfView (float, float, float, float)
+        // CreatePerspectiveFieldOfView test where filedOfView is more than pi.
         [TestMethod]
-        [Description("CreatePerspectiveFieldOfView test where filedOfView is more than pi.")]
         public void Matrix4x4CreatePerspectiveFieldOfViewTest2()
         {
             try
@@ -1043,11 +974,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveFieldOfView (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveFieldOfView (float, float, float, float)
+        // CreatePerspectiveFieldOfView test where nearPlaneDistance is negative value.
         [TestMethod]
-        [Description("CreatePerspectiveFieldOfView test where nearPlaneDistance is negative value.")]
         public void Matrix4x4CreatePerspectiveFieldOfViewTest3()
         {
             try
@@ -1061,11 +990,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveFieldOfView (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveFieldOfView (float, float, float, float)
+        // CreatePerspectiveFieldOfView test where farPlaneDistance is negative value.
         [TestMethod]
-        [Description("CreatePerspectiveFieldOfView test where farPlaneDistance is negative value.")]
         public void Matrix4x4CreatePerspectiveFieldOfViewTest4()
         {
             try
@@ -1079,11 +1006,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveFieldOfView (float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveFieldOfView (float, float, float, float)
+        // CreatePerspectiveFieldOfView test where nearPlaneDistance is larger than farPlaneDistance.
         [TestMethod]
-        [Description("CreatePerspectiveFieldOfView test where nearPlaneDistance is larger than farPlaneDistance.")]
         public void Matrix4x4CreatePerspectiveFieldOfViewTest5()
         {
             try
@@ -1097,9 +1022,7 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
         [TestMethod]
         public void Matrix4x4CreatePerspectiveOffCenterTest()
         {
@@ -1124,11 +1047,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreatePerspectiveOffCenter did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
+        // CreatePerspectiveOffCenter test where nearPlaneDistance is negative.
         [TestMethod]
-        [Description("CreatePerspectiveOffCenter test where nearPlaneDistance is negative.")]
         public void Matrix4x4CreatePerspectiveOffCenterTest1()
         {
             try
@@ -1143,11 +1064,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
+        // CreatePerspectiveOffCenter test where farPlaneDistance is negative.
         [TestMethod]
-        [Description("CreatePerspectiveOffCenter test where farPlaneDistance is negative.")]
         public void Matrix4x4CreatePerspectiveOffCenterTest2()
         {
             try
@@ -1162,11 +1081,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
-        ///</summary>
+        // A test for CreatePerspectiveOffCenter (float, float, float, float, float, float)
+        // CreatePerspectiveOffCenter test where test where nearPlaneDistance is larger than farPlaneDistance.
         [TestMethod]
-        [Description("CreatePerspectiveOffCenter test where test where nearPlaneDistance is larger than farPlaneDistance.")]
         public void Matrix4x4CreatePerspectiveOffCenterTest3()
         {
             try
@@ -1181,13 +1098,9 @@ namespace MathTests
             }
         }
 
-        #endregion
-
-        /// <summary>
-        ///A test for Invert (Matrix4x4)
-        ///</summary>
+        // A test for Invert (Matrix4x4)
+        // Non invertible matrix - determinant is zero - singular matrix
         [TestMethod]
-        [Description("Non invertible matrix - determinant is zero - singular matrix")]
         public void Matrix4x4InvertTest1()
         {
             Matrix4x4 a = new Matrix4x4();
@@ -1211,9 +1124,7 @@ namespace MathTests
                 , "Matrix4x4.Invert did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Matrix4x4, Matrix4x4, float)
-        ///</summary>
+        // A test for Lerp (Matrix4x4, Matrix4x4, float)
         [TestMethod]
         public void Matrix4x4LerpTest()
         {
@@ -1253,9 +1164,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Matrix4x4)
-        ///</summary>
+        // A test for operator - (Matrix4x4)
         [TestMethod]
         public void Matrix4x4UnaryNegationTest()
         {
@@ -1271,9 +1180,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for operator - (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4SubtractionTest()
         {
@@ -1285,9 +1192,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for operator * (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4MultiplyTest1()
         {
@@ -1319,11 +1224,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for operator * (Matrix4x4, Matrix4x4)
+        // Multiply with identity matrix
         [TestMethod]
-        [Description("Multiply with identity matrix")]
         public void Matrix4x4MultiplyTest4()
         {
             Matrix4x4 a = new Matrix4x4();
@@ -1341,9 +1244,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator + (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for operator + (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4AdditionTest()
         {
@@ -1363,9 +1264,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.operator + did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Transpose (Matrix4x4)
-        ///</summary>
+        // A test for Transpose (Matrix4x4)
         [TestMethod]
         public void Matrix4x4TransposeTest()
         {
@@ -1381,11 +1280,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Transpose did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Transpose (Matrix4x4)
-        ///</summary>
+        // A test for Transpose (Matrix4x4)
+        // Transpose Identity matrix
         [TestMethod]
-        [Description("Transpose Identity matrix")]
         public void Matrix4x4TransposeTest1()
         {
             Matrix4x4 a = Matrix4x4.Identity;
@@ -1395,9 +1292,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.Transpose did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Matrix4x4 (Quaternion)
-        ///</summary>
+        // A test for Matrix4x4 (Quaternion)
         [TestMethod]
         public void Matrix4x4FromQuaternionTest1()
         {
@@ -1429,11 +1324,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, target), "Matrix4x4.Matrix4x4(Quaternion) did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for FromQuaternion (Matrix4x4)
-        ///</summary>
+        // A test for FromQuaternion (Matrix4x4)
+        // Convert X axis rotation matrix
         [TestMethod]
-        [Description("Convert X axis rotation matrix")]
         public void Matrix4x4FromQuaternionTest2()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -1454,11 +1347,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for FromQuaternion (Matrix4x4)
-        ///</summary>
+        // A test for FromQuaternion (Matrix4x4)
+        // Convert Y axis rotation matrix
         [TestMethod]
-        [Description("Convert Y axis rotation matrix")]
         public void Matrix4x4FromQuaternionTest3()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -1479,11 +1370,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for FromQuaternion (Matrix4x4)
-        ///</summary>
+        // A test for FromQuaternion (Matrix4x4)
+        // Convert Z axis rotation matrix
         [TestMethod]
-        [Description("Convert Z axis rotation matrix")]
         public void Matrix4x4FromQuaternionTest4()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -1504,11 +1393,9 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for FromQuaternion (Matrix4x4)
-        ///</summary>
+        // A test for FromQuaternion (Matrix4x4)
+        // Convert XYZ axis rotation matrix
         [TestMethod]
-        [Description("Convert XYZ axis rotation matrix")]
         public void Matrix4x4FromQuaternionTest5()
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
@@ -1535,9 +1422,7 @@ namespace MathTests
             }
         }
 
-        /// <summary>
-        ///A test for ToString ()
-        ///</summary>
+        // A test for ToString ()
         [TestMethod]
         public void Matrix4x4ToStringTest()
         {
@@ -1557,9 +1442,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.ToString did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Add (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for Add (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4AddTest()
         {
@@ -1578,9 +1461,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.Add did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Equals (object)
-        ///</summary>
+        // A test for Equals (object)
         [TestMethod]
         public void Matrix4x4EqualsTest()
         {
@@ -1614,9 +1495,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for GetHashCode ()
-        ///</summary>
+        // A test for GetHashCode ()
         [TestMethod]
         public void Matrix4x4GetHashCodeTest()
         {
@@ -1631,9 +1510,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.GetHashCode did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for Multiply (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4MultiplyTest3()
         {
@@ -1666,9 +1543,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Matrix4x4, float)
-        ///</summary>
+        // A test for Multiply (Matrix4x4, float)
         [TestMethod]
         public void Matrix4x4MultiplyTest5()
         {
@@ -1679,9 +1554,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Matrix4x4, float)
-        ///</summary>
+        // A test for Multiply (Matrix4x4, float)
         [TestMethod]
         public void Matrix4x4MultiplyTest6()
         {
@@ -1692,9 +1565,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Negate (Matrix4x4)
-        ///</summary>
+        // A test for Negate (Matrix4x4)
         [TestMethod]
         public void Matrix4x4NegateTest()
         {
@@ -1711,9 +1582,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.Negate did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator != (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for operator != (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4InequalityTest()
         {
@@ -1732,9 +1601,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.operator != did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator == (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for operator == (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4EqualityTest()
         {
@@ -1753,9 +1620,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.operator == did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Subtract (Matrix4x4, Matrix4x4)
-        ///</summary>
+        // A test for Subtract (Matrix4x4, Matrix4x4)
         [TestMethod]
         public void Matrix4x4SubtractTest()
         {
@@ -1768,8 +1633,6 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.Subtract did not return the expected value.");
         }
 
-        #region CreateBillboard method tests
-
         private void CreateBillboardTestMethod(Vector3 placeDirection, Vector3 cameraUpVector, Matrix4x4 expectedRotation)
         {
             Vector3 cameraPosition = new Vector3(3.0f, 4.0f, 5.0f);
@@ -1779,55 +1642,45 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Forward side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Forward side of camera on XZ-plane")]
         public void Matrix4x4CreateBillboardTest01()
         {
             // Object placed at Forward of camera. result must be same as 180 degrees rotate along y-axis.
             CreateBillboardTestMethod(new Vector3(0, 0, -1), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(180.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Backward side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Backward side of camera on XZ-plane")]
         public void Matrix4x4CreateBillboardTest02()
         {
             // Object placed at Backward of camera. This result must be same as 0 degrees rotate along y-axis.
             CreateBillboardTestMethod(new Vector3(0, 0, 1), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(0)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Right side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Right side of camera on XZ-plane")]
         public void Matrix4x4CreateBillboardTest03()
         {
             // Place object at Right side of camera. This result must be same as 90 degrees rotate along y-axis.
             CreateBillboardTestMethod(new Vector3(1, 0, 0), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(90)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Left side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Left side of camera on XZ-plane")]
         public void Matrix4x4CreateBillboardTest04()
         {
             // Place object at Left side of camera. This result must be same as -90 degrees rotate along y-axis.
             CreateBillboardTestMethod(new Vector3(-1, 0, 0), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(-90)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Up side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Up side of camera on XY-plane")]
         public void Matrix4x4CreateBillboardTest05()
         {
             // Place object at Up side of camera. result must be same as 180 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -1835,11 +1688,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(180)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Down side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Down side of camera on XY-plane")]
         public void Matrix4x4CreateBillboardTest06()
         {
             // Place object at Down side of camera. result must be same as 0 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -1847,11 +1698,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(0)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Right side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Right side of camera on XY-plane")]
         public void Matrix4x4CreateBillboardTest07()
         {
             // Place object at Right side of camera. result must be same as 90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -1859,11 +1708,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Left side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Left side of camera on XY-plane")]
         public void Matrix4x4CreateBillboardTest08()
         {
             // Place object at Left side of camera. result must be same as -90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -1871,11 +1718,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(-90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Up side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Up side of camera on YZ-plane")]
         public void Matrix4x4CreateBillboardTest09()
         {
             // Place object at Up side of camera. result must be same as -90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -1883,11 +1728,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(-90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Down side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Down side of camera on YZ-plane")]
         public void Matrix4x4CreateBillboardTest10()
         {
             // Place object at Down side of camera. result must be same as 90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -1895,11 +1738,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Forward side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Forward side of camera on YZ-plane")]
         public void Matrix4x4CreateBillboardTest11()
         {
             // Place object at Forward side of camera. result must be same as 180 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -1907,11 +1748,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(180.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Backward side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Backward side of camera on YZ-plane")]
         public void Matrix4x4CreateBillboardTest12()
         {
             // Place object at Backward side of camera. result must be same as 0 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -1919,11 +1758,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(0.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Object and camera positions are too close and doesn't pass cameraFowardVector.
         [TestMethod]
-        [Description("Object and camera positions are too close and doesn't pass cameraFowardVector.")]
         public void Matrix4x4CreateBillboardTooCloseTest1()
         {
             Vector3 objectPosition = new Vector3(3.0f, 4.0f, 5.0f);
@@ -1936,11 +1773,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Object and camera positions are too close and passed cameraFowardVector.
         [TestMethod]
-        [Description("Object and camera positions are too close and passed cameraFowardVector.")]
         public void Matrix4x4CreateBillboardTooCloseTest2()
         {
             Vector3 objectPosition = new Vector3(3.0f, 4.0f, 5.0f);
@@ -1952,10 +1787,6 @@ namespace MathTests
             Matrix4x4 actual = Matrix4x4.CreateBillboard(objectPosition, cameraPosition, cameraUpVector, new Vector3(1, 0, 0));
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateBillboard did not return the expected value.");
         }
-
-        #endregion
-
-        #region CreateConstrainedBillboard method tests
 
         private void CreateConstrainedBillboardTestMethod(Vector3 placeDirection, Vector3 rotateAxis, Matrix4x4 expectedRotation)
         {
@@ -1975,55 +1806,45 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Forward side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Forward side of camera on XZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest01()
         {
             // Object placed at Forward of camera. result must be same as 180 degrees rotate along y-axis.
             CreateConstrainedBillboardTestMethod(new Vector3(0, 0, -1), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(180.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Backward side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Backward side of camera on XZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest02()
         {
             // Object placed at Backward of camera. This result must be same as 0 degrees rotate along y-axis.
             CreateConstrainedBillboardTestMethod(new Vector3(0, 0, 1), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(0)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Right side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Right side of camera on XZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest03()
         {
             // Place object at Right side of camera. This result must be same as 90 degrees rotate along y-axis.
             CreateConstrainedBillboardTestMethod(new Vector3(1, 0, 0), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(90)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Left side of camera on XZ-plane
         [TestMethod]
-        [Description("Place object at Left side of camera on XZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest04()
         {
             // Place object at Left side of camera. This result must be same as -90 degrees rotate along y-axis.
             CreateConstrainedBillboardTestMethod(new Vector3(-1, 0, 0), new Vector3(0, 1, 0), Matrix4x4.CreateRotationY(MathHelper.ToRadians(-90)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Up side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Up side of camera on XY-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest05()
         {
             // Place object at Up side of camera. result must be same as 180 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -2031,11 +1852,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(180)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Down side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Down side of camera on XY-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest06()
         {
             // Place object at Down side of camera. result must be same as 0 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -2043,11 +1862,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(0)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Right side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Right side of camera on XY-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest07()
         {
             // Place object at Right side of camera. result must be same as 90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -2055,11 +1872,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Left side of camera on XY-plane
         [TestMethod]
-        [Description("Place object at Left side of camera on XY-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest08()
         {
             // Place object at Left side of camera. result must be same as -90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
@@ -2067,11 +1882,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationZ(MathHelper.ToRadians(-90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Up side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Up side of camera on YZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest09()
         {
             // Place object at Up side of camera. result must be same as -90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -2079,11 +1892,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(-90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Down side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Down side of camera on YZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest10()
         {
             // Place object at Down side of camera. result must be same as 90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -2091,11 +1902,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(90.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Forward side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Forward side of camera on YZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest11()
         {
             // Place object at Forward side of camera. result must be same as 180 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -2103,11 +1912,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(180.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Place object at Backward side of camera on YZ-plane
         [TestMethod]
-        [Description("Place object at Backward side of camera on YZ-plane")]
         public void Matrix4x4CreateConstrainedBillboardTest12()
         {
             // Place object at Backward side of camera. result must be same as 0 degrees rotate along x-axis after 90 degrees rotate along z-axis.
@@ -2115,11 +1922,9 @@ namespace MathTests
                 Matrix4x4.CreateRotationZ(MathHelper.ToRadians(90.0f)) * Matrix4x4.CreateRotationX(MathHelper.ToRadians(0.0f)));
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Object and camera positions are too close and doesn't pass cameraForwardVector.
         [TestMethod]
-        [Description("Object and camera positions are too close and doesn't pass cameraForwardVector.")]
         public void Matrix4x4CreateConstrainedBillboardTooCloseTest1()
         {
             Vector3 objectPosition = new Vector3(3.0f, 4.0f, 5.0f);
@@ -2132,11 +1937,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Object and camera positions are too close and passed cameraForwardVector.
         [TestMethod]
-        [Description("Object and camera positions are too close and passed cameraForwardVector.")]
         public void Matrix4x4CreateConstrainedBillboardTooCloseTest2()
         {
             Vector3 objectPosition = new Vector3(3.0f, 4.0f, 5.0f);
@@ -2149,11 +1952,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Angle between rotateAxis and camera to object vector is too small. And use doesn't passed objectForwardVector parameter.
         [TestMethod]
-        [Description("Angle between rotateAxis and camera to object vector is too small. And use doesn't passed objectForwardVector parameter.")]
         public void Matrix4x4CreateConstrainedBillboardAlongAxisTest1()
         {
             // Place camera at up side of object.
@@ -2167,11 +1968,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Angle between rotateAxis and camera to object vector is too small. And user doesn't passed objectForwardVector parameter.
         [TestMethod]
-        [Description("Angle between rotateAxis and camera to object vector is too small. And user doesn't passed objectForwardVector parameter.")]
         public void Matrix4x4CreateConstrainedBillboardAlongAxisTest2()
         {
             // Place camera at up side of object.
@@ -2185,11 +1984,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Angle between rotateAxis and camera to object vector is too small. And user passed correct objectForwardVector parameter.
         [TestMethod]
-        [Description("Angle between rotateAxis and camera to object vector is too small. And user passed correct objectForwardVector parameter.")]
         public void Matrix4x4CreateConstrainedBillboardAlongAxisTest3()
         {
             // Place camera at up side of object.
@@ -2203,11 +2000,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Angle between rotateAxis and camera to object vector is too small. And user passed incorrect objectForwardVector parameter.
         [TestMethod]
-        [Description("Angle between rotateAxis and camera to object vector is too small. And user passed incorrect objectForwardVector parameter.")]
         public void Matrix4x4CreateConstrainedBillboardAlongAxisTest4()
         {
             // Place camera at up side of object.
@@ -2221,11 +2016,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
-        ///</summary>
+        // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
+        // Angle between rotateAxis and camera to object vector is too small. And user passed incorrect objectForwardVector parameter.
         [TestMethod]
-        [Description("Angle between rotateAxis and camera to object vector is too small. And user passed incorrect objectForwardVector parameter.")]
         public void Matrix4x4CreateConstrainedBillboardAlongAxisTest5()
         {
             // Place camera at up side of object.
@@ -2239,11 +2032,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix4x4.CreateConstrainedBillboard did not return the expected value.");
         }
 
-        #endregion
-
-        /// <summary>
-        ///A test for CreateScale (Vector3)
-        ///</summary>
+        // A test for CreateScale (Vector3)
         [TestMethod]
         public void Matrix4x4CreateScaleTest1()
         {
@@ -2257,9 +2046,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.CreateScale did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateScale (Vector3, Vector3)
-        ///</summary>
+        // A test for CreateScale (Vector3, Vector3)
         [TestMethod]
         public void Matrix4x4CreateScaleCenterTest1()
         {
@@ -2275,9 +2062,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateScale (float)
-        ///</summary>
+        // A test for CreateScale (float)
         [TestMethod]
         public void Matrix4x4CreateScaleTest2()
         {
@@ -2291,9 +2076,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.CreateScale did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateScale (float, Vector3)
-        ///</summary>
+        // A test for CreateScale (float, Vector3)
         [TestMethod]
         public void Matrix4x4CreateScaleCenterTest2()
         {
@@ -2309,9 +2092,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateScale (float, float, float)
-        ///</summary>
+        // A test for CreateScale (float, float, float)
         [TestMethod]
         public void Matrix4x4CreateScaleTest3()
         {
@@ -2327,9 +2108,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.CreateScale did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateScale (float, float, float, Vector3)
-        ///</summary>
+        // A test for CreateScale (float, float, float, Vector3)
         [TestMethod]
         public void Matrix4x4CreateScaleCenterTest3()
         {
@@ -2345,9 +2124,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateTranslation (Vector3)
-        ///</summary>
+        // A test for CreateTranslation (Vector3)
         [TestMethod]
         public void Matrix4x4CreateTranslationTest1()
         {
@@ -2362,9 +2139,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.CreateTranslation did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateTranslation (float, float, float)
-        ///</summary>
+        // A test for CreateTranslation (float, float, float)
         [TestMethod]
         public void Matrix4x4CreateTranslationTest2()
         {
@@ -2382,9 +2157,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.CreateTranslation did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Translation
-        ///</summary>
+        // A test for Translation
         [TestMethod]
         public void Matrix4x4TranslationTest()
         {
@@ -2409,9 +2182,7 @@ namespace MathTests
                 "Matrix4x4.Translation modified unexpected value of matrix.");
         }
 
-        /// <summary>
-        ///A test for Equals (Matrix4x4)
-        ///</summary>
+        // A test for Equals (Matrix4x4)
         [TestMethod]
         public void Matrix4x4EqualsTest1()
         {
@@ -2430,9 +2201,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix4x4.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for IsIdentity
-        ///</summary>
+        // A test for IsIdentity
         [TestMethod]
         public void Matrix4x4IsIdentityTest()
         {
@@ -2456,9 +2225,7 @@ namespace MathTests
             Assert.IsFalse(new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0).IsIdentity);
         }
 
-        /// <summary>
-        ///A test for Matrix4x4 (Matrix3x2)
-        ///</summary>
+        // A test for Matrix4x4 (Matrix3x2)
         [TestMethod]
         public void Matrix4x4From3x2Test()
         {
@@ -2486,9 +2253,7 @@ namespace MathTests
             Assert.AreEqual(1f, result.M44);
         }
 
-        /// <summary>
-        ///A test for Matrix4x4 comparison involving NaN values
-        ///</summary>
+        // A test for Matrix4x4 comparison involving NaN values
         [TestMethod]
         public void Matrix4x4EqualsNanTest()
         {
@@ -2596,9 +2361,7 @@ namespace MathTests
             Assert.IsFalse(p.Equals(p));
         }
 
-        /// <summary>
-        ///A test to make sure these types are blittable directly into GPU buffer memory layouts
-        ///</summary>
+        // A test to make sure these types are blittable directly into GPU buffer memory layouts
         [TestMethod]
         public unsafe void Matrix4x4SizeofTest()
         {

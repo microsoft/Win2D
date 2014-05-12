@@ -4,13 +4,8 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Windows.Math;
-
-#if NO_WINRT
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#else
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#endif
+using Windows.Math;
 
 namespace MathTests
 {
@@ -33,9 +28,7 @@ namespace MathTests
             return m;
         }
 
-        /// <summary>
-        ///A test for Identity
-        ///</summary>
+        // A test for Identity
         [TestMethod]
         public void Matrix3x2IdentityTest()
         {
@@ -45,9 +38,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(val, Matrix3x2.Identity), "Matrix3x2.Indentity was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for Determinant
-        ///</summary>
+        // A test for Determinant
         [TestMethod]
         public void Matrix3x2DeterminantTest()
         {
@@ -59,11 +50,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(val, det), "Matrix3x2.Determinant was not set correctly.");
         }
 
-        /// <summary>
-        ///A test for Determinant
-        ///</summary>
+        // A test for Determinant
+        // Determinant test |A| = 1 / |A'|
         [TestMethod]
-        [Description("Determinant test |A| = 1 / |A'|")]
         public void Matrix3x2DeterminantTest1()
         {
             Matrix3x2 a = new Matrix3x2();
@@ -85,9 +74,7 @@ namespace MathTests
             Assert.AreEqual(new Matrix4x4(i).Determinant(), detI);
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix3x2)
-        ///</summary>
+        // A test for Invert (Matrix3x2)
         [TestMethod]
         public void Matrix3x2InvertTest()
         {
@@ -112,9 +99,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity), "Matrix3x2.Invert did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix3x2)
-        ///</summary>
+        // A test for Invert (Matrix3x2)
         [TestMethod]
         public void Matrix3x2InvertIdentityTest()
         {
@@ -126,9 +111,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(actual, Matrix3x2.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix3x2)
-        ///</summary>
+        // A test for Invert (Matrix3x2)
         [TestMethod]
         public void Matrix3x2InvertTranslationTest()
         {
@@ -141,9 +124,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix3x2)
-        ///</summary>
+        // A test for Invert (Matrix3x2)
         [TestMethod]
         public void Matrix3x2InvertRotationTest()
         {
@@ -156,9 +137,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix3x2)
-        ///</summary>
+        // A test for Invert (Matrix3x2)
         [TestMethod]
         public void Matrix3x2InvertScaleTest()
         {
@@ -171,8 +150,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
-        ///A test for Invert (Matrix3x2)
-        ///</summary>
+        // A test for Invert (Matrix3x2)
         [TestMethod]
         public void Matrix3x2InvertAffineTest()
         {
@@ -187,9 +165,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(i, Matrix3x2.Identity));
         }
 
-        /// <summary>
-        ///A test for CreateRotation (float)
-        ///</summary>
+        // A test for CreateRotation (float)
         [TestMethod]
         public void Matrix3x2CreateRotationTest()
         {
@@ -206,9 +182,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.CreateRotation did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateRotation (float, Vector2)
-        ///</summary>
+        // A test for CreateRotation (float, Vector2)
         [TestMethod]
         public void Matrix3x2CreateRotationCenterTest()
         {
@@ -224,9 +198,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateRotation (float)
-        ///</summary>
+        // A test for CreateRotation (float)
         [TestMethod]
         public void Matrix3x2CreateRotationRightAngleTest()
         {
@@ -262,9 +234,7 @@ namespace MathTests
             Assert.IsFalse(MathHelper.Equal(new Matrix3x2(-1, 0, 0, -1, 0, 0), actual));
         }
 
-        /// <summary>
-        ///A test for CreateRotation (float, Vector2)
-        ///</summary>
+        // A test for CreateRotation (float, Vector2)
         [TestMethod]
         public void Matrix3x2CreateRotationRightAngleCenterTest()
         {
@@ -302,11 +272,9 @@ namespace MathTests
             Assert.IsFalse(MathHelper.Equal(new Matrix3x2(-1, 0, 0, -1, 6, 14), actual));
         }
 
-        /// <summary>
-        ///A test for Invert (Matrix3x2)
-        ///</summary>
+        // A test for Invert (Matrix3x2)
+        // Non invertible matrix - determinant is zero - singular matrix
         [TestMethod]
-        [Description("Non invertible matrix - determinant is zero - singular matrix")]
         public void Matrix3x2InvertTest1()
         {
             Matrix3x2 a = new Matrix3x2();
@@ -328,9 +296,7 @@ namespace MathTests
                 , "Matrix3x2.Invert did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Lerp (Matrix3x2, Matrix3x2, float)
-        ///</summary>
+        // A test for Lerp (Matrix3x2, Matrix3x2, float)
         [TestMethod]
         public void Matrix3x2LerpTest()
         {
@@ -358,9 +324,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.Lerp did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Matrix3x2)
-        ///</summary>
+        // A test for operator - (Matrix3x2)
         [TestMethod]
         public void Matrix3x2UnaryNegationTest()
         {
@@ -375,9 +339,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator - (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for operator - (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2SubtractionTest()
         {
@@ -389,9 +351,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator - did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for operator * (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2MultiplyTest1()
         {
@@ -425,11 +385,9 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected44, actual44), "Matrix3x2.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator * (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for operator * (Matrix3x2, Matrix3x2)
+        // Multiply with identity matrix
         [TestMethod]
-        [Description("Multiply with identity matrix")]
         public void Matrix3x2MultiplyTest4()
         {
             Matrix3x2 a = new Matrix3x2();
@@ -446,9 +404,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator + (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for operator + (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2AdditionTest()
         {
@@ -467,9 +423,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Matrix3x2.operator + did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for ToString ()
-        ///</summary>
+        // A test for ToString ()
         [TestMethod]
         public void Matrix3x2ToStringTest()
         {
@@ -487,9 +441,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.ToString did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Add (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for Add (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2AddTest()
         {
@@ -507,9 +459,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.Add did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Equals (object)
-        ///</summary>
+        // A test for Equals (object)
         [TestMethod]
         public void Matrix3x2EqualsTest()
         {
@@ -543,9 +493,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for GetHashCode ()
-        ///</summary>
+        // A test for GetHashCode ()
         [TestMethod]
         public void Matrix3x2GetHashCodeTest()
         {
@@ -559,9 +507,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.GetHashCode did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for Multiply (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2MultiplyTest3()
         {
@@ -596,9 +542,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected44, actual44), "Matrix3x2.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Matrix3x2, float)
-        ///</summary>
+        // A test for Multiply (Matrix3x2, float)
         [TestMethod]
         public void Matrix3x2MultiplyTest5()
         {
@@ -609,9 +553,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.Multiply did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Multiply (Matrix3x2, float)
-        ///</summary>
+        // A test for Multiply (Matrix3x2, float)
         [TestMethod]
         public void Matrix3x2MultiplyTest6()
         {
@@ -622,9 +564,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.operator * did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Negate (Matrix3x2)
-        ///</summary>
+        // A test for Negate (Matrix3x2)
         [TestMethod]
         public void Matrix3x2NegateTest()
         {
@@ -640,9 +580,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.Negate did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator != (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for operator != (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2InequalityTest()
         {
@@ -661,9 +599,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.operator != did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for operator == (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for operator == (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2EqualityTest()
         {
@@ -682,9 +618,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.operator == did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Subtract (Matrix3x2, Matrix3x2)
-        ///</summary>
+        // A test for Subtract (Matrix3x2, Matrix3x2)
         [TestMethod]
         public void Matrix3x2SubtractTest()
         {
@@ -697,9 +631,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.Subtract did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateScale (Vector2)
-        ///</summary>
+        // A test for CreateScale (Vector2)
         [TestMethod]
         public void Matrix3x2CreateScaleTest1()
         {
@@ -712,9 +644,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.CreateScale did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateScale (Vector2, Vector2)
-        ///</summary>
+        // A test for CreateScale (Vector2, Vector2)
         [TestMethod]
         public void Matrix3x2CreateScaleCenterTest1()
         {
@@ -730,9 +660,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateScale (float)
-        ///</summary>
+        // A test for CreateScale (float)
         [TestMethod]
         public void Matrix3x2CreateScaleTest2()
         {
@@ -745,9 +673,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.CreateScale did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateScale (float, Vector2)
-        ///</summary>
+        // A test for CreateScale (float, Vector2)
         [TestMethod]
         public void Matrix3x2CreateScaleCenterTest2()
         {
@@ -763,9 +689,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateScale (float, float)
-        ///</summary>
+        // A test for CreateScale (float, float)
         [TestMethod]
         public void Matrix3x2CreateScaleTest3()
         {
@@ -779,9 +703,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.CreateScale did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateScale (float, float, Vector2)
-        ///</summary>
+        // A test for CreateScale (float, float, Vector2)
         [TestMethod]
         public void Matrix3x2CreateScaleCenterTest3()
         {
@@ -797,9 +719,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for CreateTranslation (Vector2)
-        ///</summary>
+        // A test for CreateTranslation (Vector2)
         [TestMethod]
         public void Matrix3x2CreateTranslationTest1()
         {
@@ -813,9 +733,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.CreateTranslation did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateTranslation (float, float)
-        ///</summary>
+        // A test for CreateTranslation (float, float)
         [TestMethod]
         public void Matrix3x2CreateTranslationTest2()
         {
@@ -831,9 +749,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.CreateTranslation did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for Translation
-        ///</summary>
+        // A test for Translation
         [TestMethod]
         public void Matrix3x2TranslationTest()
         {
@@ -857,9 +773,7 @@ namespace MathTests
                 "Matrix3x2.Translation modified unexpected value of matrix.");
         }
 
-        /// <summary>
-        ///A test for Equals (Matrix3x2)
-        ///</summary>
+        // A test for Equals (Matrix3x2)
         [TestMethod]
         public void Matrix3x2EqualsTest1()
         {
@@ -878,9 +792,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.Equals did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateSkew (float, float)
-        ///</summary>
+        // A test for CreateSkew (float, float)
         [TestMethod]
         public void Matrix3x2CreateSkewIdentityTest()
         {
@@ -889,9 +801,7 @@ namespace MathTests
             Assert.AreEqual(expected, actual, "Matrix3x2.CreateSkew did not return the expected value.");
         }
 
-        /// <summary>
-        ///A test for CreateSkew (float, float)
-        ///</summary>
+        // A test for CreateSkew (float, float)
         [TestMethod]
         public void Matrix3x2CreateSkewXTest()
         {
@@ -916,9 +826,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(new Vector2(7.14213568f, 10), result));
         }
 
-        /// <summary>
-        ///A test for CreateSkew (float, float)
-        ///</summary>
+        // A test for CreateSkew (float, float)
         [TestMethod]
         public void Matrix3x2CreateSkewYTest()
         {
@@ -943,9 +851,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(new Vector2(10, 7.14213568f), result));
         }
 
-        /// <summary>
-        ///A test for CreateSkew (float, float)
-        ///</summary>
+        // A test for CreateSkew (float, float)
         [TestMethod]
         public void Matrix3x2CreateSkewXYTest()
         {
@@ -966,9 +872,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(new Vector2(2, 0.585786437626905f), result));
         }
 
-        /// <summary>
-        ///A test for CreateSkew (float, float, Vector2)
-        ///</summary>
+        // A test for CreateSkew (float, float, Vector2)
         [TestMethod]
         public void Matrix3x2CreateSkewCenterTest()
         {
@@ -984,9 +888,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(skewAroundZero, skewAroundZeroExpected));
         }
 
-        /// <summary>
-        ///A test for IsIdentity
-        ///</summary>
+        // A test for IsIdentity
         [TestMethod]
         public void Matrix3x2IsIdentityTest()
         {
@@ -1000,9 +902,7 @@ namespace MathTests
             Assert.IsFalse(new Matrix3x2(1, 0, 0, 1, 0, 1).IsIdentity);
         }
 
-        /// <summary>
-        ///A test for Matrix3x2 comparison involving NaN values
-        ///</summary>
+        // A test for Matrix3x2 comparison involving NaN values
         [TestMethod]
         public void Matrix3x2EqualsNanTest()
         {
@@ -1050,9 +950,7 @@ namespace MathTests
             Assert.IsFalse(f.Equals(f));
         }
 
-        /// <summary>
-        ///A test to make sure these types are blittable directly into GPU buffer memory layouts
-        ///</summary>
+        // A test to make sure these types are blittable directly into GPU buffer memory layouts
         [TestMethod]
         public unsafe void Matrix3x2SizeofTest()
         {
