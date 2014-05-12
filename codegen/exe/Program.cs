@@ -145,17 +145,25 @@ namespace CodeGen
         List<Enum> m_enums;
         List<Struct> m_structs;
     }
-
-
+    
     public class Program
     {
         static void Main(string[] args)
         {
+            GenerateCode(GetDefaultOutputLocation());
+        }
+        
+        public static string GetDefaultOutputLocation()
+        {
+            return Path.GetFullPath(Path.Combine(FindInputDirectory(), "..", "..", "winrt", "lib"));
+        }
+
+        public static void GenerateCode(string outputDir)
+        {
+            var filenameBase = "DirectX";
+
             var inputDir = FindInputDirectory();
 
-            var filenameBase = "DirectX";
-            var outputDir = Path.GetFullPath(Path.Combine(inputDir, "..", "..", "winrt", "lib"));
-            
             List<string> files = new List<string>();
             files.Add("D2DTypes.xml");
             files.Add("D2DTypes2.xml");
@@ -166,9 +174,9 @@ namespace CodeGen
             Formatter.Prefix = overridesXmlData.Prefix.Value;
 
             List<D2DTypes> typeDocuments = new List<D2DTypes>();
-            Dictionary<string, QualifiableType> typeDictionary = new Dictionary<string,QualifiableType>();
+            Dictionary<string, QualifiableType> typeDictionary = new Dictionary<string, QualifiableType>();
             OutputDataTypes outputDataTypes = new OutputDataTypes();
-            foreach(string fileName in files)
+            foreach (string fileName in files)
             {
                 XmlBindings.D2DTypes xmlDocument = XmlBindings.Utilities.LoadXmlData<XmlBindings.D2DTypes>(inputDir, fileName);
                 typeDocuments.Add(new D2DTypes(xmlDocument, overridesXmlData, typeDictionary, outputDataTypes));
