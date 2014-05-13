@@ -202,9 +202,13 @@ namespace CodeGen
             string[] candidates = new string[] {
                 ".",
                 "codegen/exe",
-                "../../../../codegen/exe"
+                "../../../../codegen/exe",
+                "../src/codegen/exe" // [1]
             };
 
+            // [1] Note: VSO typically runs tests out of a folder C:\a\bin. 
+            // The 'a' folder also contains a src folder containing the checked-in source code.
+            
             foreach (var candidate in candidates)
             {
                 var normalizedCandidate = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, candidate));
