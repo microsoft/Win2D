@@ -37,59 +37,59 @@ namespace CsConsumer
 #if IMPL
             // Initialization.
 #if DEBUG
-            DxFactory.SetDefaultOptions(DxDebugLevel.Information); // On CHK builds, enable the debug layer.
+            CanvasFactory.SetDefaultOptions(CanvasDebugLevel.Information); // On CHK builds, enable the debug layer.
 #endif
-            DxDevice device = new DxDevice();
-            DxDeviceContext m_deviceContext = new DxDeviceContext(device);
+            CanvasDevice device = new CanvasDevice();
+            CanvasDeviceContext m_deviceContext = new CanvasDeviceContext(device);
 
-            // Create a DX image source and assign it to the Canvas XAML control as a background brush.
+            // Create a Canvas image source and assign it to the Canvas XAML control as a background brush.
             DirectXImageSource m_surfaceImageSource = new DirectXImageSource(device, m_canvas.Width, m_canvas.Height);
             m_imageBrush = new ImageBrush();
             m_imageBrush.ImageSource = m_surfaceImageSource;
             m_canvas.Background = m_imageBrush;
 
             // Declare a red solid color brush.
-            DxSolidColorBrush solidColorBrush = new DxSolidColorBrush(device, Color.FromArgb(0, 1, 1, 1));
+            CanvasSolidColorBrush solidColorBrush = new CanvasSolidColorBrush(device, Color.FromArgb(0, 1, 1, 1));
             
             const int cellDim = 200;
 
             // Strokestyle
-            DxStrokeStyleProperties strokeStyleProperties = new DxStrokeStyleProperties();
-            strokeStyleProperties.DashStyle = DxDashStyle.Dash;
-            strokeStyleProperties.DashCap = DxCapStyle.Round;
-            DxStrokeStyle strokeStyle = new DxStrokeStyle(device, strokeStyleProperties);
+            CanvasStrokeStyleProperties strokeStyleProperties = new CanvasStrokeStyleProperties();
+            strokeStyleProperties.DashStyle = CanvasDashStyle.Dash;
+            strokeStyleProperties.DashCap = CanvasCapStyle.Round;
+            CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle(device, strokeStyleProperties);
 
             // Create a freeform geometry.
-            DxPathGeometry pathGeometry = new DxPathGeometry(device);
+            CanvasPathGeometry pathGeometry = new CanvasPathGeometry(device);
             using (PathGeometryCreator pgc = new PathGeometryCreator(pathGeometry))
             {
-                pgc.BeginFigure(new Point(cellDim, cellDim), DxFigureBegin.Filled);
+                pgc.BeginFigure(new Point(cellDim, cellDim), CanvasFigureBegin.Filled);
                 pgc.AddLine(new Point(cellDim * 2, cellDim + 10));
                 pgc.AddLine(new Point(cellDim, cellDim + 20));
                 pgc.AddLine(new Point(cellDim * 2, cellDim + 50));
                 pgc.AddLine(new Point(cellDim, cellDim + 100));
                 pgc.AddLine(new Point(cellDim * 2, cellDim * 2));
-                pgc.EndFigure(DxFigureEnd.Closed);
+                pgc.EndFigure(CanvasFigureEnd.Closed);
             }
             // Turn it into a mesh.
-            DxMesh mesh = new DxMesh(device, pathGeometry);
+            CanvasMesh mesh = new CanvasMesh(device, pathGeometry);
 
             // Draw a white X to an intermediate.
-            DxBitmap whiteXBitmap = new DxBitmap(device, DxBitmapOptions.Target, cellDim, cellDim);
-            using (DxDrawingSession ds = whiteXBitmap.CreateDrawingSession())
+            CanvasBitmap whiteXBitmap = new CanvasBitmap(device, CanvasBitmapOptions.Target, cellDim, cellDim);
+            using (CanvasDrawingSession ds = whiteXBitmap.CreateDrawingSession())
             {
-                ds.SetAntialiasMode(DxAntialiasMode.PerPrimitive);
+                ds.SetAntialiasMode(CanvasAntialiasMode.PerPrimitive);
                 solidColorBrush.Color = Colors.White; 
                 ds.DrawLine(new Point(30, 30), new Point(cellDim - 30, cellDim - 30), solidColorBrush, 10.0f);
                 ds.DrawLine(new Point(cellDim - 30, 30), new Point(30, cellDim - 30), solidColorBrush, 10.0f);
             }
 
-            DxBitmap leafBitmap = new DxBitmap(device, "leaf.png");
+            CanvasBitmap leafBitmap = new CanvasBitmap(device, "leaf.png");
 
             // Drawing to the Canvas XAML control.
-            using (DxDrawingSession ds = m_surfaceImageSource.CreateDrawingSession())
+            using (CanvasDrawingSession ds = m_surfaceImageSource.CreateDrawingSession())
             {
-                ds.SetTransform(DxMatrix3x2F.RotationInDegrees(5));
+                ds.SetTransform(CanvasMatrix3x2F.RotationInDegrees(5));
 
                 ds.DrawBitmap(whiteXBitmap, new Point(0, 0));
 
@@ -98,15 +98,15 @@ namespace CsConsumer
                 ds.DrawRectangle(new Windows.Foundation.Rect(cellDim + 20, 20, cellDim - 40, cellDim - 40), solidColorBrush, 11);
                 
                 // Aliased and antialiased ellipses
-                ds.SetAntialiasMode(DxAntialiasMode.Aliased);
+                ds.SetAntialiasMode(CanvasAntialiasMode.Aliased);
                 solidColorBrush.Color = Colors.Red; 
                 ds.FillEllipse(new Point(cellDim / 2 - 20, cellDim + (cellDim / 2) - 20), cellDim / 3, cellDim / 3, solidColorBrush);
-                ds.SetAntialiasMode(DxAntialiasMode.PerPrimitive);
+                ds.SetAntialiasMode(CanvasAntialiasMode.PerPrimitive);
 
                 // Make an ellipse geometry.
-                DxEllipseGeometry ellipseGeometry = new DxEllipseGeometry(device, new DxEllipse(new Point(cellDim / 2 + 20, cellDim + (cellDim / 2) + 20), cellDim / 3, cellDim / 3));
+                CanvasEllipseGeometry ellipseGeometry = new CanvasEllipseGeometry(device, new CanvasEllipse(new Point(cellDim / 2 + 20, cellDim + (cellDim / 2) + 20), cellDim / 3, cellDim / 3));
                 // Draw the tessellated ellipse.
-                System.Collections.Generic.IReadOnlyList < DxTriangle > tessellation = ellipseGeometry.GetTessellation();
+                System.Collections.Generic.IReadOnlyList < CanvasTriangle > tessellation = ellipseGeometry.GetTessellation();
                 solidColorBrush.Color = Colors.LightGreen;
                 for (int i = 0; i < tessellation.Count; i++)
                 {

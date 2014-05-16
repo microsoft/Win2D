@@ -41,7 +41,7 @@ namespace dxrt
             return S_OK;
         }
 
-        IFACEMETHOD(get_GeometricMask)(_Out_ IDxGeometry* *pValue) override
+        IFACEMETHOD(get_GeometricMask)(_Out_ ICanvasGeometry* *pValue) override
         {
             if (pValue == nullptr)
             {
@@ -54,13 +54,13 @@ namespace dxrt
             }
         }
 
-        IFACEMETHOD(put_GeometricMask)(IDxGeometry* value) override
+        IFACEMETHOD(put_GeometricMask)(ICanvasGeometry* value) override
         {
             m_geometricMask = value;
             return S_OK;
         }
 
-        IFACEMETHOD(get_MaskAntialiasMode)(_Out_ DxAntialiasMode *pValue) override
+        IFACEMETHOD(get_MaskAntialiasMode)(_Out_ CanvasAntialiasMode *pValue) override
         {
             if (pValue == nullptr)
             {
@@ -73,7 +73,7 @@ namespace dxrt
             }
         }
 
-        IFACEMETHOD(put_MaskAntialiasMode)(DxAntialiasMode value) override
+        IFACEMETHOD(put_MaskAntialiasMode)(CanvasAntialiasMode value) override
         {
             m_maskAntialiasMode = value;
             return S_OK;
@@ -117,7 +117,7 @@ namespace dxrt
             return S_OK;
         }
 
-        IFACEMETHOD(get_OpacityBrush)(_Out_ IDxBrush* *pValue) override
+        IFACEMETHOD(get_OpacityBrush)(_Out_ ICanvasBrush* *pValue) override
         {
             if (pValue == nullptr)
             {
@@ -130,7 +130,7 @@ namespace dxrt
             }
         }
 
-        IFACEMETHOD(put_OpacityBrush)(IDxBrush* value) override
+        IFACEMETHOD(put_OpacityBrush)(ICanvasBrush* value) override
         {
             m_opacityBrush = value;
             return S_OK;
@@ -157,11 +157,11 @@ namespace dxrt
 
     private:
         Rect m_contentBounds;
-        ComPtr<IDxGeometry> m_geometricMask;
-        DxAntialiasMode m_maskAntialiasMode;
+        ComPtr<ICanvasGeometry> m_geometricMask;
+        CanvasAntialiasMode m_maskAntialiasMode;
         Matrix3x2 m_maskTransform;
         FLOAT m_opacity;
-        ComPtr<IDxBrush> m_opacityBrush;
+        ComPtr<ICanvasBrush> m_opacityBrush;
         LayerOptions m_layerOptions;
     };
 

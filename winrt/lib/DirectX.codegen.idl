@@ -15,70 +15,70 @@ namespace Microsoft
     namespace DirectX
     {
         //
-        // IDxGeometry
+        // ICanvasGeometry
         //
         [uuid(A0D3D5DC-A2BD-4E5A-AA75-C13B8FF238C2), version(VERSION)]
-        interface IDxGeometry : IInspectable
+        interface ICanvasGeometry : IInspectable
             requires Windows.Foundation.IClosable
         {
         }
 
         //
-        // IDxBrush
+        // ICanvasBrush
         //
         [uuid(718BAB7E-2A06-46DB-8127-11F65291554E), version(VERSION)]
-        interface IDxBrush : IInspectable
+        interface ICanvasBrush : IInspectable
             requires Windows.Foundation.IClosable
         {
         }
 
         [version(VERSION)]
-        typedef enum DxArcSize
+        typedef enum CanvasArcSize
         {
             Small = (int)0,
             Large = (int)1
-        } DxArcSize;
+        } CanvasArcSize;
 
         [version(VERSION)]
-        typedef enum DxGeometrySimplificationOption
+        typedef enum CanvasGeometrySimplificationOption
         {
             CubicsAndLines = (int)0,
             Lines = (int)1
-        } DxGeometrySimplificationOption;
+        } CanvasGeometrySimplificationOption;
 
         [version(VERSION)]
-        typedef enum DxBitmapInterpolationMode
+        typedef enum CanvasBitmapInterpolationMode
         {
             NearestNeighbor = (int)0,
             Linear = (int)1
-        } DxBitmapInterpolationMode;
+        } CanvasBitmapInterpolationMode;
 
         [version(VERSION)]
-        typedef enum DxGamma
+        typedef enum CanvasGamma
         {
             Srgb = (int)0,
             Linear = (int)1
-        } DxGamma;
+        } CanvasGamma;
 
         [version(VERSION)]
-        typedef enum DxOpacityMaskContent
+        typedef enum CanvasOpacityMaskContent
         {
             Graphics = (int)0,
             TextNatural = (int)1,
             TextGdiCompatible = (int)2
-        } DxOpacityMaskContent;
+        } CanvasOpacityMaskContent;
 
         [version(VERSION)]
-        typedef enum DxCombineMode
+        typedef enum CanvasCombineMode
         {
             Union = (int)0,
             Intersect = (int)1,
             Xor = (int)2,
             Exclude = (int)3
-        } DxCombineMode;
+        } CanvasCombineMode;
 
         [version(VERSION)]
-        typedef enum DxDashStyle
+        typedef enum CanvasDashStyle
         {
             Solid = (int)0,
             Dash = (int)1,
@@ -86,195 +86,195 @@ namespace Microsoft
             DashDot = (int)3,
             DashDotDot = (int)4,
             Custom = (int)5
-        } DxDashStyle;
+        } CanvasDashStyle;
 
         [version(VERSION)]
-        typedef enum DxDebugLevel
+        typedef enum CanvasDebugLevel
         {
             None = (int)0,
             Error = (int)1,
             Warning = (int)2,
             Information = (int)3
-        } DxDebugLevel;
+        } CanvasDebugLevel;
 
         [version(VERSION), flags]
-        typedef enum DxDrawTextOptions
+        typedef enum CanvasDrawTextOptions
         {
             NoSnap = 0x00000001,
             Clip = 0x00000002,
             EnableColorFont = 0x00000004,
             None = 0x00000000
-        } DxDrawTextOptions;
+        } CanvasDrawTextOptions;
 
         [version(VERSION)]
-        typedef enum DxAntialiasMode
+        typedef enum CanvasAntialiasMode
         {
             PerPrimitive = (int)0,
             Aliased = (int)1
-        } DxAntialiasMode;
+        } CanvasAntialiasMode;
 
         [version(VERSION)]
-        typedef enum DxAlphaMode
+        typedef enum CanvasAlphaMode
         {
             Unknown = (int)0,
             Premultiplied = (int)1,
             Straight = (int)2,
             Ignore = (int)3
-        } DxAlphaMode;
+        } CanvasAlphaMode;
 
         [version(VERSION)]
-        typedef enum DxExtendMode
+        typedef enum CanvasExtendMode
         {
             Clamp = (int)0,
             Wrap = (int)1,
             Mirror = (int)2
-        } DxExtendMode;
+        } CanvasExtendMode;
 
         [version(VERSION)]
-        typedef enum DxFactoryType
+        typedef enum CanvasFactoryType
         {
             SingleThreaded = (int)0,
             MultiThreaded = (int)1
-        } DxFactoryType;
+        } CanvasFactoryType;
 
         [version(VERSION)]
-        typedef enum DxFeatureLevel
+        typedef enum CanvasFeatureLevel
         {
             Default = (int)0,
             Level9 = (int)0x9100,
             Level10 = (int)0xA000
-        } DxFeatureLevel;
+        } CanvasFeatureLevel;
 
         [version(VERSION)]
-        typedef enum DxFigureBegin
+        typedef enum CanvasFigureBegin
         {
             Filled = (int)0,
             Hollow = (int)1
-        } DxFigureBegin;
+        } CanvasFigureBegin;
 
         [version(VERSION)]
-        typedef enum DxFigureEnd
+        typedef enum CanvasFigureEnd
         {
             Open = (int)0,
             Closed = (int)1
-        } DxFigureEnd;
+        } CanvasFigureEnd;
 
         [version(VERSION)]
-        typedef enum DxGeometryRelation
+        typedef enum CanvasGeometryRelation
         {
             Unknown = (int)0,
             Disjoint = (int)1,
             IsContained = (int)2,
             Contains = (int)3,
             Overlap = (int)4
-        } DxGeometryRelation;
+        } CanvasGeometryRelation;
 
         [version(VERSION), flags]
-        typedef enum DxPathSegment
+        typedef enum CanvasPathSegment
         {
             None = 0x00000000,
             ForceUnstroked = 0x00000001,
             ForceRoundLineJoin = 0x00000002
-        } DxPathSegment;
+        } CanvasPathSegment;
 
         [version(VERSION)]
-        typedef enum DxCapStyle
+        typedef enum CanvasCapStyle
         {
             Flat = (int)0,
             Square = (int)1,
             Round = (int)2,
             Triangle = (int)3
-        } DxCapStyle;
+        } CanvasCapStyle;
 
         [version(VERSION)]
-        typedef enum DxLineJoin
+        typedef enum CanvasLineJoin
         {
             Miter = (int)0,
             Bevel = (int)1,
             Round = (int)2,
             MiterOrBevel = (int)3
-        } DxLineJoin;
+        } CanvasLineJoin;
 
         [version(VERSION), flags]
-        typedef enum DxPresentOptions
+        typedef enum CanvasPresentOptions
         {
             None = 0x00000000,
             RetainContents = 0x00000001,
             Immediately = 0x00000002
-        } DxPresentOptions;
+        } CanvasPresentOptions;
 
         [version(VERSION), flags]
-        typedef enum DxRenderTargetUsage
+        typedef enum CanvasRenderTargetUsage
         {
             None = 0x00000000,
             ForceBitmapRemoting = 0x00000001,
             GdiCompatible = 0x00000002
-        } DxRenderTargetUsage;
+        } CanvasRenderTargetUsage;
 
         [version(VERSION)]
-        typedef enum DxRenderTargetType
+        typedef enum CanvasRenderTargetType
         {
             Default = (int)0,
             Software = (int)1,
             Hardware = (int)2
-        } DxRenderTargetType;
+        } CanvasRenderTargetType;
 
         [version(VERSION), flags]
-        typedef enum DxCompatibleRenderTargetOptions
+        typedef enum CanvasCompatibleRenderTargetOptions
         {
             None = 0x00000000,
             GdiCompatible = 0x00000001
-        } DxCompatibleRenderTargetOptions;
+        } CanvasCompatibleRenderTargetOptions;
 
         [version(VERSION)]
-        typedef enum DxSweepDirection
+        typedef enum CanvasSweepDirection
         {
             CounterClockwise = (int)0,
             Clockwise = (int)1
-        } DxSweepDirection;
+        } CanvasSweepDirection;
 
         [version(VERSION)]
-        typedef enum DxTextAntialiasMode
+        typedef enum CanvasTextAntialiasMode
         {
             Default = (int)0,
             Cleartype = (int)1,
             Grayscale = (int)2,
             Aliased = (int)3
-        } DxTextAntialiasMode;
+        } CanvasTextAntialiasMode;
 
         [version(VERSION)]
-        typedef enum DxFillMode
+        typedef enum CanvasFillMode
         {
             Alternate = (int)0,
             Winding = (int)1
-        } DxFillMode;
+        } CanvasFillMode;
 
         [version(VERSION), flags]
-        typedef enum DxWindowState
+        typedef enum CanvasWindowState
         {
             None = 0x0000000,
             Occluded = 0x0000001
-        } DxWindowState;
+        } CanvasWindowState;
 
         [version(VERSION)]
-        typedef enum DxDcInitializeMode
+        typedef enum CanvasDcInitializeMode
         {
             Copy = (int)0,
             Clear = (int)1
-        } DxDcInitializeMode;
+        } CanvasDcInitializeMode;
 
         [version(VERSION), flags]
-        typedef enum DxBitmapOptions
+        typedef enum CanvasBitmapOptions
         {
             None = 0x00000000,
             Target = 0x00000001,
             CannotDraw = 0x00000002,
             CpuRead = 0x00000004,
             GdiCompatible = 0x00000008
-        } DxBitmapOptions;
+        } CanvasBitmapOptions;
 
         [version(VERSION)]
-        typedef enum DxCompositeMode
+        typedef enum CanvasCompositeMode
         {
             SourceOver = (int)0,
             DestinationOver = (int)1,
@@ -289,10 +289,10 @@ namespace Microsoft
             SourceCopy = (int)10,
             BoundedSourceCopy = (int)11,
             MaskInvert = (int)12
-        } DxCompositeMode;
+        } CanvasCompositeMode;
 
         [version(VERSION)]
-        typedef enum DxBufferPrecision
+        typedef enum CanvasBufferPrecision
         {
             Unknown = (int)0,
             Precision8BpcUnorm = (int)1,
@@ -300,19 +300,19 @@ namespace Microsoft
             Precision16BpcUnorm = (int)3,
             Precision16BpcFloat = (int)4,
             Precision32BpcFloat = (int)5
-        } DxBufferPrecision;
+        } CanvasBufferPrecision;
 
         [version(VERSION), flags]
-        typedef enum DxMapOptions
+        typedef enum CanvasMapOptions
         {
             None = 0,
             Read = 1,
             Write = 2,
             Discard = 4
-        } DxMapOptions;
+        } CanvasMapOptions;
 
         [version(VERSION)]
-        typedef enum DxPropertyType
+        typedef enum CanvasPropertyType
         {
             Unknown = (int)0,
             String = (int)1,
@@ -333,10 +333,10 @@ namespace Microsoft
             Matrix4x4 = (int)16,
             Matrix5x4 = (int)17,
             ColorContext = (int)18
-        } DxPropertyType;
+        } CanvasPropertyType;
 
         [version(VERSION)]
-        typedef enum DxProperty
+        typedef enum CanvasProperty
         {
             Clsid = (int)0x80000000,
             Displayname = (int)0x80000001,
@@ -348,10 +348,10 @@ namespace Microsoft
             Precision = (int)0x80000007,
             MinInputs = (int)0x80000008,
             MaxInputs = (int)0x80000009
-        } DxProperty;
+        } CanvasProperty;
 
         [version(VERSION)]
-        typedef enum DxSubproperty
+        typedef enum CanvasSubproperty
         {
             Displayname = (int)0x80000000,
             Isreadonly = (int)0x80000001,
@@ -360,10 +360,10 @@ namespace Microsoft
             Default = (int)0x80000004,
             Fields = (int)0x80000005,
             Index = (int)0x80000006
-        } DxSubproperty;
+        } CanvasSubproperty;
 
         [version(VERSION)]
-        typedef enum DxInterpolationMode
+        typedef enum CanvasInterpolationMode
         {
             NearestNeighbor = (int)0,
             Linear = (int)1,
@@ -371,46 +371,46 @@ namespace Microsoft
             MultiSampleLinear = (int)3,
             Anisotropic = (int)4,
             HighQualityCubic = (int)5
-        } DxInterpolationMode;
+        } CanvasInterpolationMode;
 
         [version(VERSION)]
-        typedef enum DxUnitMode
+        typedef enum CanvasUnitMode
         {
             Dips = (int)0,
             Pixels = (int)1
-        } DxUnitMode;
+        } CanvasUnitMode;
 
         [version(VERSION)]
-        typedef enum DxColorSpace
+        typedef enum CanvasColorSpace
         {
             Custom = (int)0,
             Srgb = (int)1,
             Scrgb = (int)2
-        } DxColorSpace;
+        } CanvasColorSpace;
 
         [version(VERSION), flags]
-        typedef enum DxDeviceContextOptions
+        typedef enum CanvasDeviceContextOptions
         {
             None = 0,
             EnableMultithreadedOptimizations = 1
-        } DxDeviceContextOptions;
+        } CanvasDeviceContextOptions;
 
         [version(VERSION)]
-        typedef enum DxStrokeTransformType
+        typedef enum CanvasStrokeTransformType
         {
             Normal = (int)0,
             Fixed = (int)1,
             Hairline = (int)2
-        } DxStrokeTransformType;
+        } CanvasStrokeTransformType;
 
         [version(VERSION)]
-        typedef enum DxPrimitiveBlend
+        typedef enum CanvasPrimitiveBlend
         {
             SourceOver = (int)0,
             Copy = (int)1,
             Min = (int)2,
             Add = (int)3
-        } DxPrimitiveBlend;
+        } CanvasPrimitiveBlend;
 
         [version(VERSION), flags]
         typedef enum LayerOptions
@@ -421,54 +421,54 @@ namespace Microsoft
         } LayerOptions;
 
         [version(VERSION)]
-        typedef enum DxThreadingMode
+        typedef enum CanvasThreadingMode
         {
             SingleThreaded = (int)0,
             MultiThreaded = (int)1
-        } DxThreadingMode;
+        } CanvasThreadingMode;
 
         [version(VERSION)]
-        typedef enum DxColorInterpolationMode
+        typedef enum CanvasColorInterpolationMode
         {
             Straight = (int)0,
             Premultiplied = (int)1
-        } DxColorInterpolationMode;
+        } CanvasColorInterpolationMode;
 
         [version(VERSION)]
-        typedef enum DxBorderEdgeMode
+        typedef enum CanvasBorderEdgeMode
         {
             Clamp = (int)0,
             Wrap = (int)1,
             Mirror = (int)2
-        } DxBorderEdgeMode;
+        } CanvasBorderEdgeMode;
 
         [version(VERSION)]
-        typedef enum DxBorderMode
+        typedef enum CanvasBorderMode
         {
             Soft = (int)0,
             Hard = (int)1
-        } DxBorderMode;
+        } CanvasBorderMode;
 
         [version(VERSION)]
-        typedef enum DxColormanagementRenderingIntent
+        typedef enum CanvasColormanagementRenderingIntent
         {
             Perceptual = (int)0,
             RelativeColorimetric = (int)1,
             Saturation = (int)2,
             AbsoluteColorimetric = (int)3
-        } DxColormanagementRenderingIntent;
+        } CanvasColormanagementRenderingIntent;
 
         [version(VERSION)]
-        typedef enum DxChannelSelector
+        typedef enum CanvasChannelSelector
         {
             R = (int)0,
             G = (int)1,
             B = (int)2,
             A = (int)3
-        } DxChannelSelector;
+        } CanvasChannelSelector;
 
         [version(VERSION)]
-        typedef enum DxBitmapsourceOrientation
+        typedef enum CanvasBitmapsourceOrientation
         {
             Default = (int)1,
             FlipHorizontal = (int)2,
@@ -478,60 +478,60 @@ namespace Microsoft
             RotateClockwise90 = (int)6,
             RotateClockwise90FlipHorizontal = (int)7,
             RotateClockwise270 = (int)8
-        } DxBitmapsourceOrientation;
+        } CanvasBitmapsourceOrientation;
 
         [version(VERSION)]
-        typedef enum DxPrintFontSubsetMode
+        typedef enum CanvasPrintFontSubsetMode
         {
             Default = (int)0,
             Eachpage = (int)1,
             None = (int)2
-        } DxPrintFontSubsetMode;
+        } CanvasPrintFontSubsetMode;
 
         [version(VERSION), flags]
-        typedef enum DxChangeType
+        typedef enum CanvasChangeType
         {
             None = 0,
             Properties = 1,
             Context = 2,
             Graph = 3
-        } DxChangeType;
+        } CanvasChangeType;
 
         [version(VERSION), flags]
-        typedef enum DxPixelOptions
+        typedef enum CanvasPixelOptions
         {
             None = 0,
             TrivialSampling = 1
-        } DxPixelOptions;
+        } CanvasPixelOptions;
 
         [version(VERSION), flags]
-        typedef enum DxVertexOptions
+        typedef enum CanvasVertexOptions
         {
             None = 0,
             DoNotClear = 1,
             UseDepthBuffer = 2,
             AssumeNoOverlap = 4
-        } DxVertexOptions;
+        } CanvasVertexOptions;
 
         [version(VERSION)]
-        typedef enum DxVertexUsage
+        typedef enum CanvasVertexUsage
         {
             Static = (int)0,
             Dynamic = (int)1
-        } DxVertexUsage;
+        } CanvasVertexUsage;
 
         [version(VERSION)]
-        typedef enum DxBlendOperation
+        typedef enum CanvasBlendOperation
         {
             Add = (int)1,
             Subtract = (int)2,
             RevSubtract = (int)3,
             Min = (int)4,
             Max = (int)5
-        } DxBlendOperation;
+        } CanvasBlendOperation;
 
         [version(VERSION)]
-        typedef enum DxBlend
+        typedef enum CanvasBlend
         {
             Zero = (int)1,
             One = (int)2,
@@ -546,18 +546,18 @@ namespace Microsoft
             SrcAlphaSat = (int)11,
             BlendFactor = (int)14,
             InvBlendFactor = (int)15
-        } DxBlend;
+        } CanvasBlend;
 
         [version(VERSION)]
-        typedef enum DxChannelDepth
+        typedef enum CanvasChannelDepth
         {
             Default = (int)0,
             Depth1 = (int)1,
             Depth4 = (int)4
-        } DxChannelDepth;
+        } CanvasChannelDepth;
 
         [version(VERSION)]
-        typedef enum DxFilter
+        typedef enum CanvasFilter
         {
             MinMagMipPoint = (int)0x00,
             MinMagPointMipLinear = (int)0x01,
@@ -568,69 +568,69 @@ namespace Microsoft
             MinMagLinearMipPoint = (int)0x14,
             MinMagMipLinear = (int)0x15,
             Anisotropic = (int)0x55
-        } DxFilter;
+        } CanvasFilter;
 
         [version(VERSION)]
-        typedef enum DxFeature
+        typedef enum CanvasFeature
         {
             Doubles = (int)0,
             D3d10XHardwareOptions = (int)1
-        } DxFeature;
+        } CanvasFeature;
 
         [version(VERSION)]
-        typedef enum DxRenderingPriority
+        typedef enum CanvasRenderingPriority
         {
             Normal = (int)0,
             Low = (int)1
-        } DxRenderingPriority;
+        } CanvasRenderingPriority;
 
         [version(VERSION)]
-        typedef struct DxArcSegment
+        typedef struct CanvasArcSegment
         {
             Windows.Foundation.Point Point;
             Windows.Foundation.Size Size;
             FLOAT RotationAngle;
-            DxSweepDirection SweepDirection;
-            DxArcSize ArcSize;
-        } DxArcSegment;
+            CanvasSweepDirection SweepDirection;
+            CanvasArcSize ArcSize;
+        } CanvasArcSegment;
 
         [version(VERSION)]
-        typedef struct DxBezierSegment
+        typedef struct CanvasBezierSegment
         {
             Windows.Foundation.Point Point1;
             Windows.Foundation.Point Point2;
             Windows.Foundation.Point Point3;
-        } DxBezierSegment;
+        } CanvasBezierSegment;
 
         [version(VERSION)]
-        typedef struct DxTriangle
+        typedef struct CanvasTriangle
         {
             Windows.Foundation.Point Point1;
             Windows.Foundation.Point Point2;
             Windows.Foundation.Point Point3;
-        } DxTriangle;
+        } CanvasTriangle;
 
         [version(VERSION)]
-        typedef struct DxEllipse
+        typedef struct CanvasEllipse
         {
             Windows.Foundation.Point Point;
             FLOAT RadiusX;
             FLOAT RadiusY;
-        } DxEllipse;
+        } CanvasEllipse;
 
         [version(VERSION)]
-        typedef struct DxGradientStop
+        typedef struct CanvasGradientStop
         {
             FLOAT Position;
             Windows.UI.Color Color;
-        } DxGradientStop;
+        } CanvasGradientStop;
 
         [version(VERSION)]
-        typedef struct DxQuadraticBezierSegment
+        typedef struct CanvasQuadraticBezierSegment
         {
             Windows.Foundation.Point Point1;
             Windows.Foundation.Point Point2;
-        } DxQuadraticBezierSegment;
+        } CanvasQuadraticBezierSegment;
 
         [version(VERSION)]
         typedef struct RoundedRectangle
@@ -641,20 +641,20 @@ namespace Microsoft
         } RoundedRectangle;
 
         [version(VERSION)]
-        typedef struct DxLinearGradientBrushProperties
+        typedef struct CanvasLinearGradientBrushProperties
         {
             Windows.Foundation.Point StartPoint;
             Windows.Foundation.Point EndPoint;
-        } DxLinearGradientBrushProperties;
+        } CanvasLinearGradientBrushProperties;
 
         [version(VERSION)]
-        typedef struct DxRadialGradientBrushProperties
+        typedef struct CanvasRadialGradientBrushProperties
         {
             Windows.Foundation.Point Center;
             Windows.Foundation.Point GradientOriginOffset;
             FLOAT RadiusX;
             FLOAT RadiusY;
-        } DxRadialGradientBrushProperties;
+        } CanvasRadialGradientBrushProperties;
 
         interface ILayerParameters;
         runtimeclass LayerParameters;
@@ -665,11 +665,11 @@ namespace Microsoft
             [propget] HRESULT ContentBounds([out, retval] Windows.Foundation.Rect* value);
             [propput] HRESULT ContentBounds([in] Windows.Foundation.Rect value);
 
-            [propget] HRESULT GeometricMask([out, retval] IDxGeometry** value);
-            [propput] HRESULT GeometricMask([in] IDxGeometry* value);
+            [propget] HRESULT GeometricMask([out, retval] ICanvasGeometry** value);
+            [propput] HRESULT GeometricMask([in] ICanvasGeometry* value);
 
-            [propget] HRESULT MaskAntialiasMode([out, retval] DxAntialiasMode* value);
-            [propput] HRESULT MaskAntialiasMode([in] DxAntialiasMode value);
+            [propget] HRESULT MaskAntialiasMode([out, retval] CanvasAntialiasMode* value);
+            [propput] HRESULT MaskAntialiasMode([in] CanvasAntialiasMode value);
 
             [propget] HRESULT MaskTransform([out, retval] Microsoft.Math.Matrix3x2* value);
             [propput] HRESULT MaskTransform([in] Microsoft.Math.Matrix3x2 value);
@@ -677,8 +677,8 @@ namespace Microsoft
             [propget] HRESULT Opacity([out, retval] FLOAT* value);
             [propput] HRESULT Opacity([in] FLOAT value);
 
-            [propget] HRESULT OpacityBrush([out, retval] IDxBrush** value);
-            [propput] HRESULT OpacityBrush([in] IDxBrush* value);
+            [propget] HRESULT OpacityBrush([out, retval] ICanvasBrush** value);
+            [propput] HRESULT OpacityBrush([in] ICanvasBrush* value);
 
             [propget] HRESULT LayerOptions([out, retval] LayerOptions* value);
             [propput] HRESULT LayerOptions([in] LayerOptions value);
@@ -693,14 +693,14 @@ namespace Microsoft
         [version(VERSION)]
         typedef struct StrokeStyleProperties
         {
-            DxCapStyle StartCap;
-            DxCapStyle EndCap;
-            DxCapStyle DashCap;
-            DxLineJoin LineJoin;
+            CanvasCapStyle StartCap;
+            CanvasCapStyle EndCap;
+            CanvasCapStyle DashCap;
+            CanvasLineJoin LineJoin;
             FLOAT MiterLimit;
-            DxDashStyle DashStyle;
+            CanvasDashStyle DashStyle;
             FLOAT DashOffset;
-            DxStrokeTransformType TransformType;
+            CanvasStrokeTransformType TransformType;
         } StrokeStyleProperties;
 
     }

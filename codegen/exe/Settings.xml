@@ -2,7 +2,7 @@
 
     <!-- This document contains overrides for what is in the D2D API xml files.-->
 
-    <Prefix Value="Dx"/>
+    <Prefix Value="Canvas"/>
 
     <Struct Name="D3DCOLORVALUE" ShouldProject="false" ProjectedNameOverride="Color" IdlNamespaceQualifier="Windows.UI."/>
 

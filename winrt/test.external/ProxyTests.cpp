@@ -3,7 +3,7 @@
 using namespace Microsoft::WRL::Wrappers;
 using namespace ABI::Microsoft::DirectX;
 
-class TestResourceImpl : public RuntimeClass<IDxResource>
+class TestResourceImpl : public RuntimeClass<ICanvasResource>
 {
 public:
 };
@@ -41,10 +41,10 @@ public:
         // to ensure that we use standard marshaling (ie no FTM).
         //
         {
-            ComPtr<IDxResource> original;
+            ComPtr<ICanvasResource> original;
             ThrowIfFailed(MakeAndInitialize<TestResourceImpl>(&original));
 
-            ThrowIfFailed(CoMarshalInterface(stream.Get(), __uuidof(IDxResource), original.Get(), MSHCTX_LOCAL, nullptr, MSHLFLAGS_NORMAL));
+            ThrowIfFailed(CoMarshalInterface(stream.Get(), __uuidof(ICanvasResource), original.Get(), MSHCTX_LOCAL, nullptr, MSHLFLAGS_NORMAL));
         }
 
         //
@@ -57,7 +57,7 @@ public:
         //
         // Now attempt to unmarshal.
         //
-        ComPtr<IDxResource> unmarshaled;
+        ComPtr<ICanvasResource> unmarshaled;
         ThrowIfFailed(CoGetInterfaceAndReleaseStream(stream.Detach(), IID_PPV_ARGS(&unmarshaled)));
 
         //

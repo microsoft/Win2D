@@ -105,12 +105,14 @@ namespace CodeGen
             outputFiles.IdlFile.Indent();
 
             // Declaration of abstract types
+            // TODO: Currently these are hardcoded; they should be emitted like any other 
+            // type. See backlog item #1073.
 
             outputFiles.IdlFile.WriteLine("//");
-            outputFiles.IdlFile.WriteLine("// IDxGeometry");
+            outputFiles.IdlFile.WriteLine("// I" + Formatter.Prefix + "Geometry");
             outputFiles.IdlFile.WriteLine("//");
             outputFiles.IdlFile.WriteLine("[uuid(A0D3D5DC-A2BD-4E5A-AA75-C13B8FF238C2), version(VERSION)]");
-            outputFiles.IdlFile.WriteLine("interface IDxGeometry : IInspectable");
+            outputFiles.IdlFile.WriteLine("interface I" + Formatter.Prefix + "Geometry : IInspectable");
             outputFiles.IdlFile.Indent();
             outputFiles.IdlFile.WriteLine("requires Windows.Foundation.IClosable");
             outputFiles.IdlFile.Unindent();
@@ -119,10 +121,10 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine();
 
             outputFiles.IdlFile.WriteLine("//");
-            outputFiles.IdlFile.WriteLine("// IDxBrush");
+            outputFiles.IdlFile.WriteLine("// I" + Formatter.Prefix + "Brush");
             outputFiles.IdlFile.WriteLine("//");
             outputFiles.IdlFile.WriteLine("[uuid(718BAB7E-2A06-46DB-8127-11F65291554E), version(VERSION)]");
-            outputFiles.IdlFile.WriteLine("interface IDxBrush : IInspectable");
+            outputFiles.IdlFile.WriteLine("interface I" + Formatter.Prefix + "Brush : IInspectable");
             outputFiles.IdlFile.Indent();
             outputFiles.IdlFile.WriteLine("requires Windows.Foundation.IClosable");
             outputFiles.IdlFile.Unindent();

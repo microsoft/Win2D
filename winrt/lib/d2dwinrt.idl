@@ -13,10 +13,10 @@ namespace Microsoft.DirectX
     //
 
     //
-    // IDxResource
+    // ICanvasResource
     //
     [uuid(300A4B09-5732-4472-BC78-987270FCBE49), version(VERSION)]
-    interface IDxResource : IInspectable
+    interface ICanvasResource : IInspectable
         requires Windows.Foundation.IClosable
     {
     }

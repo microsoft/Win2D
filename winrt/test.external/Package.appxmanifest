@@ -56,7 +56,7 @@
     <Extension Category="windows.activatableClass.proxyStub">
       <ProxyStub ClassId="77089F19-0251-4FF4-9100-D10DFD76E958">
         <Path>Microsoft.DirectX.dll</Path>
-        <Interface Name="IDxResource" InterfaceId="300A4B09-5732-4472-BC78-987270FCBE49"/>
+        <Interface Name="ICanvasResource" InterfaceId="300A4B09-5732-4472-BC78-987270FCBE49"/>
       </ProxyStub>
     </Extension>
   </Extensions>
