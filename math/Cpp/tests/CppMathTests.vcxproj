@@ -39,13 +39,13 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Matrix3x2Test.cpp" />
-    <ClCompile Include="Matrix4x4Test.cpp" />
+    <ClCompile Include="Float3x2Test.cpp" />
+    <ClCompile Include="Float4x4Test.cpp" />
     <ClCompile Include="PlaneTest.cpp" />
     <ClCompile Include="QuaternionTest.cpp" />
-    <ClCompile Include="Vector2Test.cpp" />
-    <ClCompile Include="Vector3Test.cpp" />
-    <ClCompile Include="Vector4Test.cpp" />
+    <ClCompile Include="Float2Test.cpp" />
+    <ClCompile Include="Float3Test.cpp" />
+    <ClCompile Include="Float4Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="CppUnitTestFramework, Version=11.0" />

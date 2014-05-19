@@ -36,47 +36,47 @@ namespace MathTests
         return (fabs(a - b) < 1e-5);
     }
 
-    inline bool Equal(Vector2 const& a, Vector2 const& b)
+    inline bool Equal(float2 const& a, float2 const& b)
     {
-        return Equal(a.X, b.X) && Equal(a.Y, b.Y);
+        return Equal(a.x, b.x) && Equal(a.y, b.y);
     }
 
-    inline bool Equal(Vector3 const& a, Vector3 const& b)
+    inline bool Equal(float3 const& a, float3 const& b)
     {
-        return Equal(a.X, b.X) && Equal(a.Y, b.Y) && Equal(a.Z, b.Z);
+        return Equal(a.x, b.x) && Equal(a.y, b.y) && Equal(a.z, b.z);
     }
 
-    inline bool Equal(Vector4 const& a, Vector4 const& b)
+    inline bool Equal(float4 const& a, float4 const& b)
     {
-        return Equal(a.X, b.X) && Equal(a.Y, b.Y) && Equal(a.Z, b.Z) && Equal(a.W, b.W);
+        return Equal(a.x, b.x) && Equal(a.y, b.y) && Equal(a.z, b.z) && Equal(a.w, b.w);
     }
 
-    inline bool Equal(Matrix3x2 const& a, Matrix3x2 const& b)
+    inline bool Equal(float3x2 const& a, float3x2 const& b)
     {
-        return Equal(a.M11, b.M11) && Equal(a.M12, b.M12) &&
-               Equal(a.M21, b.M21) && Equal(a.M22, b.M22) &&
-               Equal(a.M31, b.M31) && Equal(a.M32, b.M32);
+        return Equal(a.m11, b.m11) && Equal(a.m12, b.m12) &&
+               Equal(a.m21, b.m21) && Equal(a.m22, b.m22) &&
+               Equal(a.m31, b.m31) && Equal(a.m32, b.m32);
     }
 
-    inline bool Equal(Matrix4x4 const& a, Matrix4x4 const& b)
+    inline bool Equal(float4x4 const& a, float4x4 const& b)
     {
-        return Equal(a.M11, b.M11) && Equal(a.M12, b.M12) && Equal(a.M13, b.M13) && Equal(a.M14, b.M14) &&
-               Equal(a.M21, b.M21) && Equal(a.M22, b.M22) && Equal(a.M23, b.M23) && Equal(a.M24, b.M24) &&
-               Equal(a.M31, b.M31) && Equal(a.M32, b.M32) && Equal(a.M33, b.M33) && Equal(a.M34, b.M34) &&
-               Equal(a.M41, b.M41) && Equal(a.M42, b.M42) && Equal(a.M43, b.M43) && Equal(a.M44, b.M44);
+        return Equal(a.m11, b.m11) && Equal(a.m12, b.m12) && Equal(a.m13, b.m13) && Equal(a.m14, b.m14) &&
+               Equal(a.m21, b.m21) && Equal(a.m22, b.m22) && Equal(a.m23, b.m23) && Equal(a.m24, b.m24) &&
+               Equal(a.m31, b.m31) && Equal(a.m32, b.m32) && Equal(a.m33, b.m33) && Equal(a.m34, b.m34) &&
+               Equal(a.m41, b.m41) && Equal(a.m42, b.m42) && Equal(a.m43, b.m43) && Equal(a.m44, b.m44);
     }
 
-    inline bool Equal(Plane const& a, Plane const& b)
+    inline bool Equal(plane const& a, plane const& b)
     {
-        return Equal(a.Normal, b.Normal) && Equal(a.D, b.D);
+        return Equal(a.normal, b.normal) && Equal(a.d, b.d);
     }
 
-    inline bool Equal(Quaternion const& a, Quaternion const& b)
+    inline bool Equal(quaternion const& a, quaternion const& b)
     {
-        return Equal(a.X, b.X) && Equal(a.Y, b.Y) && Equal(a.Z, b.Z) && Equal(a.W, b.W);
+        return Equal(a.x, b.x) && Equal(a.y, b.y) && Equal(a.z, b.z) && Equal(a.w, b.w);
     }
 
-    inline bool EqualRotation(Quaternion a, Quaternion b)
+    inline bool EqualRotation(quaternion a, quaternion b)
     {
         return Equal(a, b) || Equal(a, -b);
     }
@@ -90,59 +90,59 @@ namespace Microsoft
     { 
         namespace CppUnitTestFramework
         {
-            template<> static std::wstring ToString<Vector2>(Vector2 const& value)
+            template<> static std::wstring ToString<float2>(float2 const& value)
             {
                 wchar_t tmp[256];
-                swprintf_s(tmp, L"{X:%f Y:%f}", value.X, value.Y);
+                swprintf_s(tmp, L"{x:%f y:%f}", value.x, value.y);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<Vector3>(Vector3 const& value)
+            template<> static std::wstring ToString<float3>(float3 const& value)
             {
                 wchar_t tmp[256];
-                swprintf_s(tmp, L"{X:%f Y:%f Z:%f}", value.X, value.Y, value.Z);
+                swprintf_s(tmp, L"{x:%f y:%f z:%f}", value.x, value.y, value.z);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<Vector4>(Vector4 const& value)
+            template<> static std::wstring ToString<float4>(float4 const& value)
             {
                 wchar_t tmp[256];
-                swprintf_s(tmp, L"{X:%f Y:%f Z:%f W:%f}", value.X, value.Y, value.Z, value.W);
+                swprintf_s(tmp, L"{x:%f y:%f z:%f w:%f}", value.x, value.y, value.z, value.w);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<Matrix4x4>(Matrix4x4 const& value)
+            template<> static std::wstring ToString<float4x4>(float4x4 const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{ {%f %f %f %f} {%f %f %f %f} {%f %f %f %f} {%f %f %f %f} }",
-                                value.M11, value.M12, value.M13, value.M14,
-                                value.M21, value.M22, value.M23, value.M24,
-                                value.M31, value.M32, value.M33, value.M34,
-                                value.M41, value.M42, value.M43, value.M44);
+                                value.m11, value.m12, value.m13, value.m14,
+                                value.m21, value.m22, value.m23, value.m24,
+                                value.m31, value.m32, value.m33, value.m34,
+                                value.m41, value.m42, value.m43, value.m44);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<Matrix3x2>(Matrix3x2 const& value)
+            template<> static std::wstring ToString<float3x2>(float3x2 const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{ {%f %f} {%f %f} {%f %f} }",
-                                value.M11, value.M12,
-                                value.M21, value.M22,
-                                value.M31, value.M32);
+                                value.m11, value.m12,
+                                value.m21, value.m22,
+                                value.m31, value.m32);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<Plane>(Plane const& value)
+            template<> static std::wstring ToString<plane>(plane const& value)
             {
                 wchar_t tmp[256];
-                swprintf_s(tmp, L"{Normal:{X:%f Y:%f Z:%f} D:%f}", value.Normal.X, value.Normal.Y, value.Normal.Z, value.D);
+                swprintf_s(tmp, L"{Normal:{x:%f y:%f z:%f} d:%f}", value.normal.x, value.normal.y, value.normal.z, value.d);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<Quaternion>(Quaternion const& value)
+            template<> static std::wstring ToString<quaternion>(quaternion const& value)
             {
                 wchar_t tmp[256];
-                swprintf_s(tmp, L"{X:%f Y:%f Z:%f W:%f}", value.X, value.Y, value.Z, value.W);
+                swprintf_s(tmp, L"{x:%f y:%f z:%f w:%f}", value.x, value.y, value.z, value.w);
                 return tmp;
             }
         }

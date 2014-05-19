@@ -15,28 +15,28 @@ namespace Midl = ABI::Microsoft::Graphics::Canvas::Math;
 
 
 // Helper methods make reinterpret_cast between WinRT and Impl types more readable.
-#define DECLARE_ASIMPL_FUNCTION(Type)                                                       \
+#define DECLARE_ASIMPL_FUNCTION(MidlType, ImplType)                                         \
                                                                                             \
-    __forceinline Impl::Type* asImpl(Midl::Type* value)                                     \
+    __forceinline ImplType* asImpl(MidlType* value)                                         \
     {                                                                                       \
-        static_assert(sizeof(Impl::Type) == sizeof(Midl::Type), "type sizes don't match");  \
+        static_assert(sizeof(ImplType) == sizeof(MidlType), "type sizes don't match");      \
                                                                                             \
-        return reinterpret_cast<Impl::Type*>(value);                                        \
+        return reinterpret_cast<ImplType*>(value);                                          \
     }                                                                                       \
                                                                                             \
-    __forceinline Impl::Type& asImpl(Midl::Type& value)                                     \
+    __forceinline ImplType& asImpl(MidlType& value)                                         \
     {                                                                                       \
         return *asImpl(&value);                                                             \
     }
 
 
-DECLARE_ASIMPL_FUNCTION(Vector2)
-DECLARE_ASIMPL_FUNCTION(Vector3)
-DECLARE_ASIMPL_FUNCTION(Vector4)
-DECLARE_ASIMPL_FUNCTION(Matrix3x2)
-DECLARE_ASIMPL_FUNCTION(Matrix4x4)
-DECLARE_ASIMPL_FUNCTION(Plane)
-DECLARE_ASIMPL_FUNCTION(Quaternion)
+DECLARE_ASIMPL_FUNCTION(Midl::Vector2,    Impl::float2)
+DECLARE_ASIMPL_FUNCTION(Midl::Vector3,    Impl::float3)
+DECLARE_ASIMPL_FUNCTION(Midl::Vector4,    Impl::float4)
+DECLARE_ASIMPL_FUNCTION(Midl::Matrix3x2,  Impl::float3x2)
+DECLARE_ASIMPL_FUNCTION(Midl::Matrix4x4,  Impl::float4x4)
+DECLARE_ASIMPL_FUNCTION(Midl::Plane,      Impl::plane)
+DECLARE_ASIMPL_FUNCTION(Midl::Quaternion, Impl::quaternion)
 
 
 #undef DECLARE_ASIMPL_FUNCTION

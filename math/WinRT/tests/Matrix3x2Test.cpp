@@ -503,7 +503,6 @@ namespace MathTests
         TEST_METHOD(Matrix3x2TranslationTest)
         {
             Matrix3x2 a = GenerateTestMatrix();
-            Matrix3x2 b = a;
 
             // Transfomed vector that has same semantics of property must be same.
             Vector2 val = Vector2Helper::FromValues(a.M31, a.M32);

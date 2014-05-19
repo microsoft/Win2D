@@ -11,6 +11,10 @@
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #endif
 
+#ifndef NOMINMAX
+#define NOMINMAX                        // Stop Windows from defining min() and max() macros that break STL
+#endif
+
 #include <windows.h>
 #include <wrl.h>
 #include <strsafe.h>

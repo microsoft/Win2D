@@ -7,38 +7,30 @@
 #pragma warning(disable: 4756) // overflow in constant arithmetic
 
 
-#ifdef __cplusplus_winrt
-#define _WINDOWS_MATH_INVALID_ARGUMENT_(arg)    ref new Platform::InvalidArgumentException()
-#else
-#include <stdexcept>
-#define _WINDOWS_MATH_INVALID_ARGUMENT_(arg)    std::invalid_argument(#arg)
-#endif
-
-
 namespace DirectX
 {
-    inline XMVECTOR XM_CALLCONV XMLoadVector2(_In_ Windows::Math::Vector2 const* pSource)
+    inline XMVECTOR XM_CALLCONV XMLoadFloat2(_In_ Windows::Math::float2 const* pSource)
     {
         return XMLoadFloat2(reinterpret_cast<XMFLOAT2 const*>(pSource));
     }
 
 
-    inline XMVECTOR XM_CALLCONV XMLoadVector3(_In_ Windows::Math::Vector3 const* pSource)
+    inline XMVECTOR XM_CALLCONV XMLoadFloat3(_In_ Windows::Math::float3 const* pSource)
     {
         return XMLoadFloat3(reinterpret_cast<XMFLOAT3 const*>(pSource));
     }
 
 
-    inline XMVECTOR XM_CALLCONV XMLoadVector4(_In_ Windows::Math::Vector4 const* pSource)
+    inline XMVECTOR XM_CALLCONV XMLoadFloat4(_In_ Windows::Math::float4 const* pSource)
     {
         return XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(pSource));
     }
 
 
-    inline XMMATRIX XM_CALLCONV XMLoadMatrix3x2(_In_ Windows::Math::Matrix3x2 const* pSource)
+    inline XMMATRIX XM_CALLCONV XMLoadFloat3x2(_In_ Windows::Math::float3x2 const* pSource)
     {
-        XMVECTOR abcd = XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(&pSource->M11));
-        XMVECTOR ef = XMLoadFloat2(reinterpret_cast<XMFLOAT2 const*>(&pSource->M31));
+        XMVECTOR abcd = XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(&pSource->m11));
+        XMVECTOR ef = XMLoadFloat2(reinterpret_cast<XMFLOAT2 const*>(&pSource->m31));
 
         XMMATRIX m;
 
@@ -51,65 +43,65 @@ namespace DirectX
     }
 
 
-    inline XMMATRIX XM_CALLCONV XMLoadMatrix4x4(_In_ Windows::Math::Matrix4x4 const* pSource)
+    inline XMMATRIX XM_CALLCONV XMLoadFloat4x4(_In_ Windows::Math::float4x4 const* pSource)
     {
         return XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4 const*>(pSource));
     }
 
 
-    inline XMVECTOR XM_CALLCONV XMLoadPlane(_In_ Windows::Math::Plane const* pSource)
+    inline XMVECTOR XM_CALLCONV XMLoadPlane(_In_ Windows::Math::plane const* pSource)
     {
         return XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(pSource));
     }
 
 
-    inline XMVECTOR XM_CALLCONV XMLoadQuaternion(_In_ Windows::Math::Quaternion const* pSource)
+    inline XMVECTOR XM_CALLCONV XMLoadQuaternion(_In_ Windows::Math::quaternion const* pSource)
     {
         return XMLoadFloat4(reinterpret_cast<XMFLOAT4 const*>(pSource));
     }
 
 
-    inline void XM_CALLCONV XMStoreVector2(_Out_ Windows::Math::Vector2* pDestination, _In_ FXMVECTOR value)
+    inline void XM_CALLCONV XMStoreFloat2(_Out_ Windows::Math::float2* pDestination, _In_ FXMVECTOR value)
     {
         XMStoreFloat2(reinterpret_cast<XMFLOAT2*>(pDestination), value);
     }
 
 
-    inline void XM_CALLCONV XMStoreVector3(_Out_ Windows::Math::Vector3* pDestination, _In_ FXMVECTOR value)
+    inline void XM_CALLCONV XMStoreFloat3(_Out_ Windows::Math::float3* pDestination, _In_ FXMVECTOR value)
     {
         XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(pDestination), value);
     }
 
 
-    inline void XM_CALLCONV XMStoreVector4(_Out_ Windows::Math::Vector4* pDestination, _In_ FXMVECTOR value)
+    inline void XM_CALLCONV XMStoreFloat4(_Out_ Windows::Math::float4* pDestination, _In_ FXMVECTOR value)
     {
         XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(pDestination), value);
     }
 
 
-    inline void XM_CALLCONV XMStoreMatrix3x2(_Out_ Windows::Math::Matrix3x2* pDestination, _In_ FXMMATRIX value)
+    inline void XM_CALLCONV XMStoreFloat3x2(_Out_ Windows::Math::float3x2* pDestination, _In_ FXMMATRIX value)
     {
         XMVECTOR abcd = XMVectorPermute<0, 1, 4, 5>(value.r[0], value.r[1]);
         XMVECTOR ef = value.r[3];
 
-        XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(&pDestination->M11), abcd);
-        XMStoreFloat2(reinterpret_cast<XMFLOAT2*>(&pDestination->M31), ef);
+        XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(&pDestination->m11), abcd);
+        XMStoreFloat2(reinterpret_cast<XMFLOAT2*>(&pDestination->m31), ef);
     }
 
 
-    inline void XM_CALLCONV XMStoreMatrix4x4(_Out_ Windows::Math::Matrix4x4* pDestination, _In_ FXMMATRIX value)
+    inline void XM_CALLCONV XMStoreFloat4x4(_Out_ Windows::Math::float4x4* pDestination, _In_ FXMMATRIX value)
     {
         XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(pDestination), value);
     }
 
 
-    inline void XM_CALLCONV XMStorePlane(_Out_ Windows::Math::Plane* pDestination, _In_ FXMVECTOR value)
+    inline void XM_CALLCONV XMStorePlane(_Out_ Windows::Math::plane* pDestination, _In_ FXMVECTOR value)
     {
         XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(pDestination), value);
     }
 
 
-    inline void XM_CALLCONV XMStoreQuaternion(_Out_ Windows::Math::Quaternion* pDestination, _In_ FXMVECTOR value)
+    inline void XM_CALLCONV XMStoreQuaternion(_Out_ Windows::Math::quaternion* pDestination, _In_ FXMVECTOR value)
     {
         XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(pDestination), value);
     }
@@ -120,84 +112,84 @@ namespace Windows
 {
     namespace Math
     {
-        inline Vector2::Vector2(float x, float y)
-            : X(x), Y(y)
+        inline float2::float2(float x, float y)
+            : x(x), y(y)
         { }
 
 
-        inline Vector2::Vector2(float value)
-            : X(value), Y(value)
+        inline float2::float2(float value)
+            : x(value), y(value)
         { }
 
 
 #ifdef __cplusplus_winrt
 
-        inline Vector2::Vector2(Windows::Foundation::Point const& value)
-            : X(value.X), Y(value.Y)
+        inline float2::float2(Windows::Foundation::Point const& value)
+            : x(value.X), y(value.Y)
         { }
 
 
-        inline Vector2::Vector2(Windows::Foundation::Size const& value)
-            : X(value.Width), Y(value.Height)
+        inline float2::float2(Windows::Foundation::Size const& value)
+            : x(value.Width), y(value.Height)
         { }
 
 
-        inline Vector2::operator Windows::Foundation::Point() const
+        inline float2::operator Windows::Foundation::Point() const
         {
-            return Windows::Foundation::Point(X, Y);
+            return Windows::Foundation::Point(x, y);
         }
 
 
-        inline Vector2::operator Windows::Foundation::Size() const
+        inline float2::operator Windows::Foundation::Size() const
         {
-            return Windows::Foundation::Size(X, Y);
+            return Windows::Foundation::Size(x, y);
         }
 
 #endif  // __cpluspluswinrt
 
 
-        inline Vector2 Vector2::Zero()
+        inline float2 float2::zero()
         {
-            return Vector2(0, 0);
+            return float2(0, 0);
         }
 
 
-        inline Vector2 Vector2::One()
+        inline float2 float2::one()
         {
-            return Vector2(1, 1);
+            return float2(1, 1);
         }
 
 
-        inline Vector2 Vector2::UnitX()
+        inline float2 float2::unit_x()
         {
-            return Vector2(1, 0);
+            return float2(1, 0);
         }
 
 
-        inline Vector2 Vector2::UnitY()
+        inline float2 float2::unit_y()
         {
-            return Vector2(0, 1);
+            return float2(0, 1);
         }
 
 
-        inline float Vector2::Length() const
+        inline float length(float2 const& value)
         {
-            float ls = X * X + Y * Y;
+            float ls = value.x * value.x + value.y * value.y;
 
             return sqrtf(ls);
         }
 
 
-        inline float Vector2::LengthSquared() const
+        inline float length_squared(float2 const& value)
         {
-            return X * X + Y * Y;
+            return value.x * value.x + value.y * value.y;
         }
 
 
-        inline float Vector2::Distance(Vector2 const& value1, Vector2 const& value2)
+        inline float distance(float2 const& value1, float2 const& value2)
         {
-            float dx = value1.X - value2.X;
-            float dy = value1.Y - value2.Y;
+            float dx = value1.x - value2.x;
+            float dy = value1.y - value2.y;
 
             float ls = dx * dx + dy * dy;
 
@@ -205,257 +197,178 @@ namespace Windows
         }
 
 
-        inline float Vector2::DistanceSquared(Vector2 const& value1, Vector2 const& value2)
+        inline float distance_squared(float2 const& value1, float2 const& value2)
         {
-            float dx = value1.X - value2.X;
-            float dy = value1.Y - value2.Y;
+            float dx = value1.x - value2.x;
+            float dy = value1.y - value2.y;
 
             return dx * dx + dy * dy;
         }
 
 
-        inline float Vector2::Dot(Vector2 const& value1, Vector2 const& value2)
+        inline float dot(float2 const& value1, float2 const& value2)
         {
-            return value1.X * value2.X +
-                   value1.Y * value2.Y;
+            return value1.x * value2.x +
+                   value1.y * value2.y;
         }
 
 
-        inline Vector2 Vector2::Normalize(Vector2 const& value)
+        inline float2 normalize(float2 const& value)
         {
-            Vector2 ans;
+            float2 ans;
 
-            float ls = value.X * value.X + value.Y * value.Y;
+            float ls = value.x * value.x + value.y * value.y;
             float invNorm = 1.0f / sqrtf(ls);
 
-            ans.X = value.X * invNorm;
-            ans.Y = value.Y * invNorm;
+            ans.x = value.x * invNorm;
+            ans.y = value.y * invNorm;
 
             return ans;
         }
 
 
-        inline Vector2 Vector2::Reflect(Vector2 const& vector, Vector2 const& normal)
+        inline float2 reflect(float2 const& vector, float2 const& normal)
         {
-            Vector2 ans;
+            float2 ans;
 
-            float dot = vector.X * normal.X + vector.Y * normal.Y;
+            float dot = vector.x * normal.x + vector.y * normal.y;
 
-            ans.X = vector.X - 2.0f * dot * normal.X;
-            ans.Y = vector.Y - 2.0f * dot * normal.Y;
+            ans.x = vector.x - 2.0f * dot * normal.x;
+            ans.y = vector.y - 2.0f * dot * normal.y;
 
             return ans;
         }
 
 
-        inline Vector2 Vector2::Min(Vector2 const& value1, Vector2 const& value2)
+        inline float2 min(float2 const& value1, float2 const& value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = (value1.X < value2.X) ? value1.X : value2.X;
-            ans.Y = (value1.Y < value2.Y) ? value1.Y : value2.Y;
+            ans.x = (value1.x < value2.x) ? value1.x : value2.x;
+            ans.y = (value1.y < value2.y) ? value1.y : value2.y;
 
             return ans;
         }
 
 
-        inline Vector2 Vector2::Max(Vector2 const& value1, Vector2 const& value2)
+        inline float2 max(float2 const& value1, float2 const& value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = (value1.X > value2.X) ? value1.X : value2.X;
-            ans.Y = (value1.Y > value2.Y) ? value1.Y : value2.Y;
+            ans.x = (value1.x > value2.x) ? value1.x : value2.x;
+            ans.y = (value1.y > value2.y) ? value1.y : value2.y;
 
             return ans;
         }
 
 
-        inline Vector2 Vector2::Clamp(Vector2 const& value1, Vector2 const& min, Vector2 const& max)
+        inline float2 clamp(float2 const& value1, float2 const& min, float2 const& max)
         {
-            Vector2 result;
+            float2 result;
 
-            float x = value1.X;
-            x = (x > max.X) ? max.X : x;
-            x = (x < min.X) ? min.X : x;
+            float x = value1.x;
+            x = (x > max.x) ? max.x : x;
+            x = (x < min.x) ? min.x : x;
 
-            float y = value1.Y;
-            y = (y > max.Y) ? max.Y : y;
-            y = (y < min.Y) ? min.Y : y;
+            float y = value1.y;
+            y = (y > max.y) ? max.y : y;
+            y = (y < min.y) ? min.y : y;
 
-            result.X = x;
-            result.Y = y;
+            result.x = x;
+            result.y = y;
 
             return result;
         }
 
 
-        inline Vector2 Vector2::Lerp(Vector2 const& value1, Vector2 const& value2, float amount)
+        inline float2 lerp(float2 const& value1, float2 const& value2, float amount)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = value1.X + (value2.X - value1.X) * amount;
-            ans.Y = value1.Y + (value2.Y - value1.Y) * amount;
+            ans.x = value1.x + (value2.x - value1.x) * amount;
+            ans.y = value1.y + (value2.y - value1.y) * amount;
 
             return ans;
         }
 
 
-        inline Vector2 Vector2::Transform(Vector2 const& position, Matrix3x2 const& matrix)
+        inline float2 transform(float2 const& position, float3x2 const& matrix)
         {
-            Vector2 result;
+            float2 result;
 
-            result.X = position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M31;
-            result.Y = position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M32;
+            result.x = position.x * matrix.m11 + position.y * matrix.m21 + matrix.m31;
+            result.y = position.x * matrix.m12 + position.y * matrix.m22 + matrix.m32;
 
             return result;
         }
 
 
-        inline Vector2 Vector2::Transform(Vector2 const& position, Matrix4x4 const& matrix)
+        inline float2 transform(float2 const& position, float4x4 const& matrix)
         {
-            Vector2 result;
+            float2 result;
 
-            result.X = position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41;
-            result.Y = position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42;
+            result.x = position.x * matrix.m11 + position.y * matrix.m21 + matrix.m41;
+            result.y = position.x * matrix.m12 + position.y * matrix.m22 + matrix.m42;
 
             return result;
         }
 
 
-        inline Vector2 Vector2::TransformNormal(Vector2 const& normal, Matrix3x2 const& matrix)
+        inline float2 transform_normal(float2 const& normal, float3x2 const& matrix)
         {
-            Vector2 result;
+            float2 result;
 
-            result.X = normal.X * matrix.M11 + normal.Y * matrix.M21;
-            result.Y = normal.X * matrix.M12 + normal.Y * matrix.M22;
+            result.x = normal.x * matrix.m11 + normal.y * matrix.m21;
+            result.y = normal.x * matrix.m12 + normal.y * matrix.m22;
 
             return result;
         }
 
 
-        inline Vector2 Vector2::TransformNormal(Vector2 const& normal, Matrix4x4 const& matrix)
+        inline float2 transform_normal(float2 const& normal, float4x4 const& matrix)
         {
-            Vector2 result;
+            float2 result;
 
-            result.X = normal.X * matrix.M11 + normal.Y * matrix.M21;
-            result.Y = normal.X * matrix.M12 + normal.Y * matrix.M22;
+            result.x = normal.x * matrix.m11 + normal.y * matrix.m21;
+            result.y = normal.x * matrix.m12 + normal.y * matrix.m22;
 
             return result;
         }
 
 
-        inline Vector2 Vector2::Transform(Vector2 const& value, Quaternion const& rotation)
+        inline float2 transform(float2 const& value, quaternion const& rotation)
         {
-            Vector2 result;
+            float2 result;
 
-            float x2 = rotation.X + rotation.X;
-            float y2 = rotation.Y + rotation.Y;
-            float z2 = rotation.Z + rotation.Z;
+            float x2 = rotation.x + rotation.x;
+            float y2 = rotation.y + rotation.y;
+            float z2 = rotation.z + rotation.z;
 
-            float wz2 = rotation.W * z2;
-            float xx2 = rotation.X * x2;
-            float xy2 = rotation.X * y2;
-            float yy2 = rotation.Y * y2;
-            float zz2 = rotation.Z * z2;
+            float wz2 = rotation.w * z2;
+            float xx2 = rotation.x * x2;
+            float xy2 = rotation.x * y2;
+            float yy2 = rotation.y * y2;
+            float zz2 = rotation.z * z2;
 
-            result.X = value.X * (1.0f - yy2 - zz2) + value.Y * (xy2 - wz2);
-            result.Y = value.X * (xy2 + wz2) + value.Y * (1.0f - xx2 - zz2);
+            result.x = value.x * (1.0f - yy2 - zz2) + value.y * (xy2 - wz2);
+            result.y = value.x * (xy2 + wz2) + value.y * (1.0f - xx2 - zz2);
 
             return result;
         }
 
 
-        inline Vector2 Vector2::Negate(Vector2 const& value)
+        inline float2 float2::operator -() const
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = -value.X;
-            ans.Y = -value.Y;
+            ans.x = -x;
+            ans.y = -y;
 
             return ans;
         }
 
 
-        inline Vector2 Vector2::Add(Vector2 const& value1, Vector2 const& value2)
-        {
-            Vector2 ans;
-
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
-
-            return ans;
-        }
-
-
-        inline Vector2 Vector2::Subtract(Vector2 const& value1, Vector2 const& value2)
-        {
-            Vector2 ans;
-
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
-
-            return ans;
-        }
-
-
-        inline Vector2 Vector2::Multiply(Vector2 const& value1, Vector2 const& value2)
-        {
-            Vector2 ans;
-
-            ans.X = value1.X * value2.X;
-            ans.Y = value1.Y * value2.Y;
-
-            return ans;
-        }
-
-
-        inline Vector2 Vector2::Multiply(Vector2 const& value1, float value2)
-        {
-            Vector2 ans;
-
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
-
-            return ans;
-        }
-
-
-        inline Vector2 Vector2::Divide(Vector2 const& value1, Vector2 const& value2)
-        {
-            Vector2 ans;
-
-            ans.X = value1.X / value2.X;
-            ans.Y = value1.Y / value2.Y;
-
-            return ans;
-        }
-
-
-        inline Vector2 Vector2::Divide(Vector2 const& value1, float value2)
-        {
-            Vector2 ans;
-
-            float invDiv = 1.0f / value2;
-
-            ans.X = value1.X * invDiv;
-            ans.Y = value1.Y * invDiv;
-
-            return ans;
-        }
-
-
-        inline Vector2 Vector2::operator -() const
-        {
-            Vector2 ans;
-
-            ans.X = -X;
-            ans.Y = -Y;
-
-            return ans;
-        }
-
-
-        inline Vector2& Vector2::operator +=(Vector2 const& value)
+        inline float2& float2::operator +=(float2 const& value)
         {
             *this = *this + value;
 
@@ -463,7 +376,7 @@ namespace Windows
         }
 
 
-        inline Vector2& Vector2::operator -=(Vector2 const& value)
+        inline float2& float2::operator -=(float2 const& value)
         {
             *this = *this - value;
 
@@ -471,7 +384,7 @@ namespace Windows
         }
 
 
-        inline Vector2& Vector2::operator *=(Vector2 const& value)
+        inline float2& float2::operator *=(float2 const& value)
         {
             *this = *this * value;
 
@@ -479,7 +392,7 @@ namespace Windows
         }
 
 
-        inline Vector2& Vector2::operator *=(float value)
+        inline float2& float2::operator *=(float value)
         {
             *this = *this * value;
 
@@ -487,7 +400,7 @@ namespace Windows
         }
 
 
-        inline Vector2& Vector2::operator /=(Vector2 const& value)
+        inline float2& float2::operator /=(float2 const& value)
         {
             *this = *this / value;
 
@@ -495,7 +408,7 @@ namespace Windows
         }
 
 
-        inline Vector2& Vector2::operator /=(float value)
+        inline float2& float2::operator /=(float value)
         {
             *this = *this / value;
 
@@ -503,163 +416,163 @@ namespace Windows
         }
 
 
-        inline bool Vector2::operator ==(Vector2 const& value) const
+        inline bool float2::operator ==(float2 const& value) const
         {
-            return X == value.X &&
-                   Y == value.Y;
+            return x == value.x &&
+                   y == value.y;
         }
 
 
-        inline bool Vector2::operator !=(Vector2 const& value) const
+        inline bool float2::operator !=(float2 const& value) const
         {
-            return X != value.X ||
-                   Y != value.Y;
+            return x != value.x ||
+                   y != value.y;
         }
 
 
-        inline Vector2 operator +(Vector2 const& value1, Vector2 const& value2)
+        inline float2 operator +(float2 const& value1, float2 const& value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
 
             return ans;
         }
 
 
-        inline Vector2 operator -(Vector2 const& value1, Vector2 const& value2)
+        inline float2 operator -(float2 const& value1, float2 const& value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
 
             return ans;
         }
 
 
-        inline Vector2 operator *(Vector2 const& value1, Vector2 const& value2)
+        inline float2 operator *(float2 const& value1, float2 const& value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = value1.X * value2.X;
-            ans.Y = value1.Y * value2.Y;
+            ans.x = value1.x * value2.x;
+            ans.y = value1.y * value2.y;
 
             return ans;
         }
 
 
-        inline Vector2 operator *(Vector2 const& value1, float value2)
+        inline float2 operator *(float2 const& value1, float value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
 
             return ans;
         }
 
 
-        inline Vector2 operator *(float value1, Vector2 const& value2)
+        inline float2 operator *(float value1, float2 const& value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = value1 * value2.X;
-            ans.Y = value1 * value2.Y;
+            ans.x = value1 * value2.x;
+            ans.y = value1 * value2.y;
 
             return ans;
         }
 
 
-        inline Vector2 operator /(Vector2 const& value1, Vector2 const& value2)
+        inline float2 operator /(float2 const& value1, float2 const& value2)
         {
-            Vector2 ans;
+            float2 ans;
 
-            ans.X = value1.X / value2.X;
-            ans.Y = value1.Y / value2.Y;
+            ans.x = value1.x / value2.x;
+            ans.y = value1.y / value2.y;
 
             return ans;
         }
 
 
-        inline Vector2 operator /(Vector2 const& value1, float value2)
+        inline float2 operator /(float2 const& value1, float value2)
         {
-            Vector2 ans;
+            float2 ans;
 
             float invDiv = 1.0f / value2;
 
-            ans.X = value1.X * invDiv;
-            ans.Y = value1.Y * invDiv;
+            ans.x = value1.x * invDiv;
+            ans.y = value1.y * invDiv;
 
             return ans;
         }
 
 
-        inline Vector3::Vector3(float x, float y, float z)
-            : X(x), Y(y), Z(z)
+        inline float3::float3(float x, float y, float z)
+            : x(x), y(y), z(z)
         { }
 
 
-        inline Vector3::Vector3(Vector2 const& value, float z)
-            : X(value.X), Y(value.Y), Z(z)
+        inline float3::float3(float2 const& value, float z)
+            : x(value.x), y(value.y), z(z)
         { }
 
 
-        inline Vector3::Vector3(float value)
-            : X(value), Y(value), Z(value)
+        inline float3::float3(float value)
+            : x(value), y(value), z(value)
         { }
 
 
-        inline Vector3 Vector3::Zero()
+        inline float3 float3::zero()
         {
-            return Vector3(0, 0, 0);
+            return float3(0, 0, 0);
         }
 
 
-        inline Vector3 Vector3::One()
+        inline float3 float3::one()
         {
-            return Vector3(1, 1, 1);
+            return float3(1, 1, 1);
         }
 
 
-        inline Vector3 Vector3::UnitX()
+        inline float3 float3::unit_x()
         {
-            return Vector3(1, 0, 0);
+            return float3(1, 0, 0);
         }
 
 
-        inline Vector3 Vector3::UnitY()
+        inline float3 float3::unit_y()
         {
-            return Vector3(0, 1, 0);
+            return float3(0, 1, 0);
         }
 
 
-        inline Vector3 Vector3::UnitZ()
+        inline float3 float3::unit_z()
         {
-            return Vector3(0, 0, 1);
+            return float3(0, 0, 1);
         }
 
 
-        inline float Vector3::Length() const
+        inline float length(float3 const& value)
         {
-            float ls = X * X + Y * Y + Z * Z;
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z;
 
             return sqrtf(ls);
         }
 
 
-        inline float Vector3::LengthSquared() const
+        inline float length_squared(float3 const& value)
         {
-            return X * X + Y * Y + Z * Z;
+            return value.x * value.x + value.y * value.y + value.z * value.z;
         }
 
 
-        inline float Vector3::Distance(Vector3 const& value1, Vector3 const& value2)
+        inline float distance(float3 const& value1, float3 const& value2)
         {
-            float dx = value1.X - value2.X;
-            float dy = value1.Y - value2.Y;
-            float dz = value1.Z - value2.Z;
+            float dx = value1.x - value2.x;
+            float dy = value1.y - value2.y;
+            float dz = value1.z - value2.z;
 
             float ls = dx * dx + dy * dy + dz * dz;
 
@@ -667,274 +580,188 @@ namespace Windows
         }
 
 
-        inline float Vector3::DistanceSquared(Vector3 const& value1, Vector3 const& value2)
+        inline float distance_squared(float3 const& value1, float3 const& value2)
         {
-            float dx = value1.X - value2.X;
-            float dy = value1.Y - value2.Y;
-            float dz = value1.Z - value2.Z;
+            float dx = value1.x - value2.x;
+            float dy = value1.y - value2.y;
+            float dz = value1.z - value2.z;
 
             return dx * dx + dy * dy + dz * dz;
         }
 
 
-        inline float Vector3::Dot(Vector3 const& vector1, Vector3 const& vector2)
+        inline float dot(float3 const& vector1, float3 const& vector2)
         {
-            return vector1.X * vector2.X +
-                   vector1.Y * vector2.Y +
-                   vector1.Z * vector2.Z;
+            return vector1.x * vector2.x +
+                   vector1.y * vector2.y +
+                   vector1.z * vector2.z;
         }
 
 
-        inline Vector3 Vector3::Normalize(Vector3 const& value)
+        inline float3 normalize(float3 const& value)
         {
-            Vector3 ans;
+            float3 ans;
 
-            float ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z;
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z;
             float invNorm = 1.0f / sqrtf(ls);
 
-            ans.X = value.X * invNorm;
-            ans.Y = value.Y * invNorm;
-            ans.Z = value.Z * invNorm;
+            ans.x = value.x * invNorm;
+            ans.y = value.y * invNorm;
+            ans.z = value.z * invNorm;
 
             return ans;
         }
 
 
-        inline Vector3 Vector3::Cross(Vector3 const& vector1, Vector3 const& vector2)
+        inline float3 cross(float3 const& vector1, float3 const& vector2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
-            ans.Y = vector1.Z * vector2.X - vector1.X * vector2.Z;
-            ans.Z = vector1.X * vector2.Y - vector1.Y * vector2.X;
+            ans.x = vector1.y * vector2.z - vector1.z * vector2.y;
+            ans.y = vector1.z * vector2.x - vector1.x * vector2.z;
+            ans.z = vector1.x * vector2.y - vector1.y * vector2.x;
 
             return ans;
         }
 
 
-        inline Vector3 Vector3::Reflect(Vector3 const& vector, Vector3 const& normal)
+        inline float3 reflect(float3 const& vector, float3 const& normal)
         {
-            Vector3 ans;
+            float3 ans;
 
-            float dot = vector.X * normal.X + vector.Y * normal.Y + vector.Z * normal.Z;
+            float dot = vector.x * normal.x + vector.y * normal.y + vector.z * normal.z;
 
-            ans.X = vector.X - 2.0f * dot * normal.X;
-            ans.Y = vector.Y - 2.0f * dot * normal.Y;
-            ans.Z = vector.Z - 2.0f * dot * normal.Z;
+            ans.x = vector.x - 2.0f * dot * normal.x;
+            ans.y = vector.y - 2.0f * dot * normal.y;
+            ans.z = vector.z - 2.0f * dot * normal.z;
 
             return ans;
         }
 
 
-        inline Vector3 Vector3::Min(Vector3 const& value1, Vector3 const& value2)
+        inline float3 min(float3 const& value1, float3 const& value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = (value1.X < value2.X) ? value1.X : value2.X;
-            ans.Y = (value1.Y < value2.Y) ? value1.Y : value2.Y;
-            ans.Z = (value1.Z < value2.Z) ? value1.Z : value2.Z;
+            ans.x = (value1.x < value2.x) ? value1.x : value2.x;
+            ans.y = (value1.y < value2.y) ? value1.y : value2.y;
+            ans.z = (value1.z < value2.z) ? value1.z : value2.z;
 
             return ans;
         }
 
 
-        inline Vector3 Vector3::Max(Vector3 const& value1, Vector3 const& value2)
+        inline float3 max(float3 const& value1, float3 const& value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = (value1.X > value2.X) ? value1.X : value2.X;
-            ans.Y = (value1.Y > value2.Y) ? value1.Y : value2.Y;
-            ans.Z = (value1.Z > value2.Z) ? value1.Z : value2.Z;
+            ans.x = (value1.x > value2.x) ? value1.x : value2.x;
+            ans.y = (value1.y > value2.y) ? value1.y : value2.y;
+            ans.z = (value1.z > value2.z) ? value1.z : value2.z;
 
             return ans;
         }
 
 
-        inline Vector3 Vector3::Clamp(Vector3 const& value1, Vector3 const& min, Vector3 const& max)
+        inline float3 clamp(float3 const& value1, float3 const& min, float3 const& max)
         {
-            Vector3 result;
+            float3 result;
 
-            float x = value1.X;
-            x = (x > max.X) ? max.X : x;
-            x = (x < min.X) ? min.X : x;
+            float x = value1.x;
+            x = (x > max.x) ? max.x : x;
+            x = (x < min.x) ? min.x : x;
 
-            float y = value1.Y;
-            y = (y > max.Y) ? max.Y : y;
-            y = (y < min.Y) ? min.Y : y;
+            float y = value1.y;
+            y = (y > max.y) ? max.y : y;
+            y = (y < min.y) ? min.y : y;
 
-            float z = value1.Z;
-            z = (z > max.Z) ? max.Z : z;
-            z = (z < min.Z) ? min.Z : z;
+            float z = value1.z;
+            z = (z > max.z) ? max.z : z;
+            z = (z < min.z) ? min.z : z;
 
-            result.X = x;
-            result.Y = y;
-            result.Z = z;
+            result.x = x;
+            result.y = y;
+            result.z = z;
 
             return result;
         }
 
 
-        inline Vector3 Vector3::Lerp(Vector3 const& value1, Vector3 const& value2, float amount)
+        inline float3 lerp(float3 const& value1, float3 const& value2, float amount)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = value1.X + (value2.X - value1.X) * amount;
-            ans.Y = value1.Y + (value2.Y - value1.Y) * amount;
-            ans.Z = value1.Z + (value2.Z - value1.Z) * amount;
+            ans.x = value1.x + (value2.x - value1.x) * amount;
+            ans.y = value1.y + (value2.y - value1.y) * amount;
+            ans.z = value1.z + (value2.z - value1.z) * amount;
 
             return ans;
         }
 
 
-        inline Vector3 Vector3::Transform(Vector3 const& position, Matrix4x4 const& matrix)
+        inline float3 transform(float3 const& position, float4x4 const& matrix)
         {
-            Vector3 result;
+            float3 result;
 
-            result.X = position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41;
-            result.Y = position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42;
-            result.Z = position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43;
+            result.x = position.x * matrix.m11 + position.y * matrix.m21 + position.z * matrix.m31 + matrix.m41;
+            result.y = position.x * matrix.m12 + position.y * matrix.m22 + position.z * matrix.m32 + matrix.m42;
+            result.z = position.x * matrix.m13 + position.y * matrix.m23 + position.z * matrix.m33 + matrix.m43;
 
             return result;
         }
 
 
-        inline Vector3 Vector3::TransformNormal(Vector3 const& normal, Matrix4x4 const& matrix)
+        inline float3 transform_normal(float3 const& normal, float4x4 const& matrix)
         {
-            Vector3 result;
+            float3 result;
 
-            result.X = normal.X * matrix.M11 + normal.Y * matrix.M21 + normal.Z * matrix.M31;
-            result.Y = normal.X * matrix.M12 + normal.Y * matrix.M22 + normal.Z * matrix.M32;
-            result.Z = normal.X * matrix.M13 + normal.Y * matrix.M23 + normal.Z * matrix.M33;
+            result.x = normal.x * matrix.m11 + normal.y * matrix.m21 + normal.z * matrix.m31;
+            result.y = normal.x * matrix.m12 + normal.y * matrix.m22 + normal.z * matrix.m32;
+            result.z = normal.x * matrix.m13 + normal.y * matrix.m23 + normal.z * matrix.m33;
 
             return result;
         }
 
 
-        inline Vector3 Vector3::Transform(Vector3 const& value, Quaternion const& rotation)
+        inline float3 transform(float3 const& value, quaternion const& rotation)
         {
-            Vector3 result;
+            float3 result;
 
-            float x2 = rotation.X + rotation.X;
-            float y2 = rotation.Y + rotation.Y;
-            float z2 = rotation.Z + rotation.Z;
+            float x2 = rotation.x + rotation.x;
+            float y2 = rotation.y + rotation.y;
+            float z2 = rotation.z + rotation.z;
 
-            float wx2 = rotation.W * x2;
-            float wy2 = rotation.W * y2;
-            float wz2 = rotation.W * z2;
-            float xx2 = rotation.X * x2;
-            float xy2 = rotation.X * y2;
-            float xz2 = rotation.X * z2;
-            float yy2 = rotation.Y * y2;
-            float yz2 = rotation.Y * z2;
-            float zz2 = rotation.Z * z2;
+            float wx2 = rotation.w * x2;
+            float wy2 = rotation.w * y2;
+            float wz2 = rotation.w * z2;
+            float xx2 = rotation.x * x2;
+            float xy2 = rotation.x * y2;
+            float xz2 = rotation.x * z2;
+            float yy2 = rotation.y * y2;
+            float yz2 = rotation.y * z2;
+            float zz2 = rotation.z * z2;
 
-            result.X = value.X * (1.0f - yy2 - zz2) + value.Y * (xy2 - wz2) + value.Z * (xz2 + wy2);
-            result.Y = value.X * (xy2 + wz2) + value.Y * (1.0f - xx2 - zz2) + value.Z * (yz2 - wx2);
-            result.Z = value.X * (xz2 - wy2) + value.Y * (yz2 + wx2) + value.Z * (1.0f - xx2 - yy2);
+            result.x = value.x * (1.0f - yy2 - zz2) + value.y * (xy2 - wz2) + value.z * (xz2 + wy2);
+            result.y = value.x * (xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (yz2 - wx2);
+            result.z = value.x * (xz2 - wy2) + value.y * (yz2 + wx2) + value.z * (1.0f - xx2 - yy2);
 
             return result;
         }
 
 
-        inline Vector3 Vector3::Negate(Vector3 const& value)
+        inline float3 float3::operator -() const
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = -value.X;
-            ans.Y = -value.Y;
-            ans.Z = -value.Z;
+            ans.x = -x;
+            ans.y = -y;
+            ans.z = -z;
 
             return ans;
         }
 
 
-        inline Vector3 Vector3::Add(Vector3 const& value1, Vector3 const& value2)
-        {
-            Vector3 ans;
-
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
-            ans.Z = value1.Z + value2.Z;
-
-            return ans;
-        }
-
-
-        inline Vector3 Vector3::Subtract(Vector3 const& value1, Vector3 const& value2)
-        {
-            Vector3 ans;
-
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
-            ans.Z = value1.Z - value2.Z;
-
-            return ans;
-        }
-
-
-        inline Vector3 Vector3::Multiply(Vector3 const& value1, Vector3 const& value2)
-        {
-            Vector3 ans;
-
-            ans.X = value1.X * value2.X;
-            ans.Y = value1.Y * value2.Y;
-            ans.Z = value1.Z * value2.Z;
-
-            return ans;
-        }
-
-
-        inline Vector3 Vector3::Multiply(Vector3 const& value1, float value2)
-        {
-            Vector3 ans;
-
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
-            ans.Z = value1.Z * value2;
-
-            return ans;
-        }
-
-
-        inline Vector3 Vector3::Divide(Vector3 const& value1, Vector3 const& value2)
-        {
-            Vector3 ans;
-
-            ans.X = value1.X / value2.X;
-            ans.Y = value1.Y / value2.Y;
-            ans.Z = value1.Z / value2.Z;
-
-            return ans;
-        }
-
-
-        inline Vector3 Vector3::Divide(Vector3 const& value1, float value2)
-        {
-            Vector3 ans;
-
-            float invDiv = 1.0f / value2;
-
-            ans.X = value1.X * invDiv;
-            ans.Y = value1.Y * invDiv;
-            ans.Z = value1.Z * invDiv;
-
-            return ans;
-        }
-
-
-        inline Vector3 Vector3::operator -() const
-        {
-            Vector3 ans;
-
-            ans.X = -X;
-            ans.Y = -Y;
-            ans.Z = -Z;
-
-            return ans;
-        }
-
-
-        inline Vector3& Vector3::operator +=(Vector3 const& value)
+        inline float3& float3::operator +=(float3 const& value)
         {
             *this = *this + value;
 
@@ -942,7 +769,7 @@ namespace Windows
         }
 
 
-        inline Vector3& Vector3::operator -=(Vector3 const& value)
+        inline float3& float3::operator -=(float3 const& value)
         {
             *this = *this - value;
 
@@ -950,7 +777,7 @@ namespace Windows
         }
 
 
-        inline Vector3& Vector3::operator *=(Vector3 const& value)
+        inline float3& float3::operator *=(float3 const& value)
         {
             *this = *this * value;
 
@@ -958,7 +785,7 @@ namespace Windows
         }
 
 
-        inline Vector3& Vector3::operator *=(float value)
+        inline float3& float3::operator *=(float value)
         {
             *this = *this * value;
 
@@ -966,7 +793,7 @@ namespace Windows
         }
 
 
-        inline Vector3& Vector3::operator /=(Vector3 const& value)
+        inline float3& float3::operator /=(float3 const& value)
         {
             *this = *this / value;
 
@@ -974,7 +801,7 @@ namespace Windows
         }
 
 
-        inline Vector3& Vector3::operator /=(float value)
+        inline float3& float3::operator /=(float value)
         {
             *this = *this / value;
 
@@ -982,184 +809,184 @@ namespace Windows
         }
 
 
-        inline bool Vector3::operator ==(Vector3 const& value) const
+        inline bool float3::operator ==(float3 const& value) const
         {
-            return X == value.X &&
-                   Y == value.Y &&
-                   Z == value.Z;
+            return x == value.x &&
+                   y == value.y &&
+                   z == value.z;
         }
 
 
-        inline bool Vector3::operator !=(Vector3 const& value) const
+        inline bool float3::operator !=(float3 const& value) const
         {
-            return X != value.X ||
-                   Y != value.Y ||
-                   Z != value.Z;
+            return x != value.x ||
+                   y != value.y ||
+                   z != value.z;
         }
 
 
-        inline Vector3 operator +(Vector3 const& value1, Vector3 const& value2)
+        inline float3 operator +(float3 const& value1, float3 const& value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
-            ans.Z = value1.Z + value2.Z;
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
+            ans.z = value1.z + value2.z;
 
             return ans;
         }
 
 
-        inline Vector3 operator -(Vector3 const& value1, Vector3 const& value2)
+        inline float3 operator -(float3 const& value1, float3 const& value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
-            ans.Z = value1.Z - value2.Z;
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
+            ans.z = value1.z - value2.z;
 
             return ans;
         }
 
 
-        inline Vector3 operator *(Vector3 const& value1, Vector3 const& value2)
+        inline float3 operator *(float3 const& value1, float3 const& value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = value1.X * value2.X;
-            ans.Y = value1.Y * value2.Y;
-            ans.Z = value1.Z * value2.Z;
+            ans.x = value1.x * value2.x;
+            ans.y = value1.y * value2.y;
+            ans.z = value1.z * value2.z;
 
             return ans;
         }
 
 
-        inline Vector3 operator *(Vector3 const& value1, float value2)
+        inline float3 operator *(float3 const& value1, float value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
-            ans.Z = value1.Z * value2;
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
+            ans.z = value1.z * value2;
 
             return ans;
         }
 
 
-        inline Vector3 operator *(float value1, Vector3 const& value2)
+        inline float3 operator *(float value1, float3 const& value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = value1 * value2.X;
-            ans.Y = value1 * value2.Y;
-            ans.Z = value1 * value2.Z;
+            ans.x = value1 * value2.x;
+            ans.y = value1 * value2.y;
+            ans.z = value1 * value2.z;
 
             return ans;
         }
 
 
-        inline Vector3 operator /(Vector3 const& value1, Vector3 const& value2)
+        inline float3 operator /(float3 const& value1, float3 const& value2)
         {
-            Vector3 ans;
+            float3 ans;
 
-            ans.X = value1.X / value2.X;
-            ans.Y = value1.Y / value2.Y;
-            ans.Z = value1.Z / value2.Z;
+            ans.x = value1.x / value2.x;
+            ans.y = value1.y / value2.y;
+            ans.z = value1.z / value2.z;
 
             return ans;
         }
 
 
-        inline Vector3 operator /(Vector3 const& value1, float value2)
+        inline float3 operator /(float3 const& value1, float value2)
         {
-            Vector3 ans;
+            float3 ans;
 
             float invDiv = 1.0f / value2;
 
-            ans.X = value1.X * invDiv;
-            ans.Y = value1.Y * invDiv;
-            ans.Z = value1.Z * invDiv;
+            ans.x = value1.x * invDiv;
+            ans.y = value1.y * invDiv;
+            ans.z = value1.z * invDiv;
 
             return ans;
         }
 
 
-        inline Vector4::Vector4(float x, float y, float z, float w)
-            : X(x), Y(y), Z(z), W(w)
+        inline float4::float4(float x, float y, float z, float w)
+            : x(x), y(y), z(z), w(w)
         { }
 
 
-        inline Vector4::Vector4(Vector2 const& value, float z, float w)
-            : X(value.X), Y(value.Y), Z(z), W(w)
+        inline float4::float4(float2 const& value, float z, float w)
+            : x(value.x), y(value.y), z(z), w(w)
         { }
 
 
-        inline Vector4::Vector4(Vector3 const& value, float w)
-            : X(value.X), Y(value.Y), Z(value.Z), W(w)
+        inline float4::float4(float3 const& value, float w)
+            : x(value.x), y(value.y), z(value.z), w(w)
         { }
 
 
-        inline Vector4::Vector4(float value)
-            : X(value), Y(value), Z(value), W(value)
+        inline float4::float4(float value)
+            : x(value), y(value), z(value), w(value)
         { }
 
 
-        inline Vector4 Vector4::Zero()
+        inline float4 float4::zero()
         {
-            return Vector4(0, 0, 0, 0);
+            return float4(0, 0, 0, 0);
         }
 
 
-        inline Vector4 Vector4::One()
+        inline float4 float4::one()
         {
-            return Vector4(1, 1, 1, 1);
+            return float4(1, 1, 1, 1);
         }
 
 
-        inline Vector4 Vector4::UnitX()
+        inline float4 float4::unit_x()
         {
-            return Vector4(1, 0, 0, 0);
+            return float4(1, 0, 0, 0);
         }
 
 
-        inline Vector4 Vector4::UnitY()
+        inline float4 float4::unit_y()
         {
-            return Vector4(0, 1, 0, 0);
+            return float4(0, 1, 0, 0);
         }
 
 
-        inline Vector4 Vector4::UnitZ()
+        inline float4 float4::unit_z()
         {
-            return Vector4(0, 0, 1, 0);
+            return float4(0, 0, 1, 0);
         }
 
 
-        inline Vector4 Vector4::UnitW()
+        inline float4 float4::unit_w()
         {
-            return Vector4(0, 0, 0, 1);
+            return float4(0, 0, 0, 1);
         }
 
 
-        inline float Vector4::Length() const
+        inline float length(float4 const& value)
         {
-            float ls = X * X + Y * Y + Z * Z + W * W;
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
             
             return sqrtf(ls);
         }
 
 
-        inline float Vector4::LengthSquared() const
+        inline float length_squared(float4 const& value)
         {
-            return X * X + Y * Y + Z * Z + W * W;
+            return value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
         }
 
 
-        inline float Vector4::Distance(Vector4 const& value1, Vector4 const& value2)
+        inline float distance(float4 const& value1, float4 const& value2)
         {
-            float dx = value1.X - value2.X;
-            float dy = value1.Y - value2.Y;
-            float dz = value1.Z - value2.Z;
-            float dw = value1.W - value2.W;
+            float dx = value1.x - value2.x;
+            float dy = value1.y - value2.y;
+            float dz = value1.z - value2.z;
+            float dw = value1.w - value2.w;
             
             float ls = dx * dx + dy * dy + dz * dz + dw * dw;
 
@@ -1167,337 +994,244 @@ namespace Windows
         }
 
 
-        inline float Vector4::DistanceSquared(Vector4 const& value1, Vector4 const& value2)
+        inline float distance_squared(float4 const& value1, float4 const& value2)
         {
-            float dx = value1.X - value2.X;
-            float dy = value1.Y - value2.Y;
-            float dz = value1.Z - value2.Z;
-            float dw = value1.W - value2.W;
+            float dx = value1.x - value2.x;
+            float dy = value1.y - value2.y;
+            float dz = value1.z - value2.z;
+            float dw = value1.w - value2.w;
             
             return dx * dx + dy * dy + dz * dz + dw * dw;
         }
 
 
-        inline float Vector4::Dot(Vector4 const& vector1, Vector4 const& vector2)
+        inline float dot(float4 const& vector1, float4 const& vector2)
         {
-            return vector1.X * vector2.X + 
-                   vector1.Y * vector2.Y + 
-                   vector1.Z * vector2.Z + 
-                   vector1.W * vector2.W;
+            return vector1.x * vector2.x + 
+                   vector1.y * vector2.y + 
+                   vector1.z * vector2.z + 
+                   vector1.w * vector2.w;
         }
 
 
-        inline Vector4 Vector4::Normalize(Vector4 const& vector)
+        inline float4 normalize(float4 const& vector)
         {
-            Vector4 ans;
+            float4 ans;
 
-            float ls = vector.X * vector.X + vector.Y * vector.Y + vector.Z * vector.Z + vector.W * vector.W;
+            float ls = vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w;
             float invNorm = 1.0f / sqrtf(ls);
 
-            ans.X = vector.X * invNorm;
-            ans.Y = vector.Y * invNorm;
-            ans.Z = vector.Z * invNorm;
-            ans.W = vector.W * invNorm;
+            ans.x = vector.x * invNorm;
+            ans.y = vector.y * invNorm;
+            ans.z = vector.z * invNorm;
+            ans.w = vector.w * invNorm;
 
             return ans;
         }
 
 
-        inline Vector4 Vector4::Min(Vector4 const& value1, Vector4 const& value2)
+        inline float4 min(float4 const& value1, float4 const& value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = (value1.X < value2.X) ? value1.X : value2.X;
-            ans.Y = (value1.Y < value2.Y) ? value1.Y : value2.Y;
-            ans.Z = (value1.Z < value2.Z) ? value1.Z : value2.Z;
-            ans.W = (value1.W < value2.W) ? value1.W : value2.W;
+            ans.x = (value1.x < value2.x) ? value1.x : value2.x;
+            ans.y = (value1.y < value2.y) ? value1.y : value2.y;
+            ans.z = (value1.z < value2.z) ? value1.z : value2.z;
+            ans.w = (value1.w < value2.w) ? value1.w : value2.w;
 
             return ans;
         }
 
 
-        inline Vector4 Vector4::Max(Vector4 const& value1, Vector4 const& value2)
+        inline float4 max(float4 const& value1, float4 const& value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = (value1.X > value2.X) ? value1.X : value2.X;
-            ans.Y = (value1.Y > value2.Y) ? value1.Y : value2.Y;
-            ans.Z = (value1.Z > value2.Z) ? value1.Z : value2.Z;
-            ans.W = (value1.W > value2.W) ? value1.W : value2.W;
+            ans.x = (value1.x > value2.x) ? value1.x : value2.x;
+            ans.y = (value1.y > value2.y) ? value1.y : value2.y;
+            ans.z = (value1.z > value2.z) ? value1.z : value2.z;
+            ans.w = (value1.w > value2.w) ? value1.w : value2.w;
 
             return ans;
         }
 
 
-        inline Vector4 Vector4::Clamp(Vector4 const& value1, Vector4 const& min, Vector4 const& max)
+        inline float4 clamp(float4 const& value1, float4 const& min, float4 const& max)
         {
-            Vector4 result;
+            float4 result;
 
-            float x = value1.X;
-            x = (x > max.X) ? max.X : x;
-            x = (x < min.X) ? min.X : x;
+            float x = value1.x;
+            x = (x > max.x) ? max.x : x;
+            x = (x < min.x) ? min.x : x;
 
-            float y = value1.Y;
-            y = (y > max.Y) ? max.Y : y;
-            y = (y < min.Y) ? min.Y : y;
+            float y = value1.y;
+            y = (y > max.y) ? max.y : y;
+            y = (y < min.y) ? min.y : y;
 
-            float z = value1.Z;
-            z = (z > max.Z) ? max.Z : z;
-            z = (z < min.Z) ? min.Z : z;
+            float z = value1.z;
+            z = (z > max.z) ? max.z : z;
+            z = (z < min.z) ? min.z : z;
 
-            float w = value1.W;
-            w = (w > max.W) ? max.W : w;
-            w = (w < min.W) ? min.W : w;
+            float w = value1.w;
+            w = (w > max.w) ? max.w : w;
+            w = (w < min.w) ? min.w : w;
 
-            result.X = x;
-            result.Y = y;
-            result.Z = z;
-            result.W = w;
+            result.x = x;
+            result.y = y;
+            result.z = z;
+            result.w = w;
 
             return result;
         }
 
 
-        inline Vector4 Vector4::Lerp(Vector4 const& value1, Vector4 const& value2, float amount)
+        inline float4 lerp(float4 const& value1, float4 const& value2, float amount)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = value1.X + (value2.X - value1.X) * amount;
-            ans.Y = value1.Y + (value2.Y - value1.Y) * amount;
-            ans.Z = value1.Z + (value2.Z - value1.Z) * amount;
-            ans.W = value1.W + (value2.W - value1.W) * amount;
+            ans.x = value1.x + (value2.x - value1.x) * amount;
+            ans.y = value1.y + (value2.y - value1.y) * amount;
+            ans.z = value1.z + (value2.z - value1.z) * amount;
+            ans.w = value1.w + (value2.w - value1.w) * amount;
 
             return ans;
         }
 
 
-        inline Vector4 Vector4::Transform(Vector2 const& position, Matrix4x4 const& matrix)
+        inline float4 transform(float4 const& vector, float4x4 const& matrix)
         {
-            Vector4 result;
+            float4 result;
 
-            result.X = position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41;
-            result.Y = position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42;
-            result.Z = position.X * matrix.M13 + position.Y * matrix.M23 + matrix.M43;
-            result.W = position.X * matrix.M14 + position.Y * matrix.M24 + matrix.M44;
+            result.x = vector.x * matrix.m11 + vector.y * matrix.m21 + vector.z * matrix.m31 + vector.w * matrix.m41;
+            result.y = vector.x * matrix.m12 + vector.y * matrix.m22 + vector.z * matrix.m32 + vector.w * matrix.m42;
+            result.z = vector.x * matrix.m13 + vector.y * matrix.m23 + vector.z * matrix.m33 + vector.w * matrix.m43;
+            result.w = vector.x * matrix.m14 + vector.y * matrix.m24 + vector.z * matrix.m34 + vector.w * matrix.m44;
 
             return result;
         }
 
 
-        inline Vector4 Vector4::Transform(Vector3 const& position, Matrix4x4 const& matrix)
+        inline float4 transform4(float3 const& position, float4x4 const& matrix)
         {
-            Vector4 result;
+            float4 result;
 
-            result.X = position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41;
-            result.Y = position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42;
-            result.Z = position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43;
-            result.W = position.X * matrix.M14 + position.Y * matrix.M24 + position.Z * matrix.M34 + matrix.M44;
+            result.x = position.x * matrix.m11 + position.y * matrix.m21 + position.z * matrix.m31 + matrix.m41;
+            result.y = position.x * matrix.m12 + position.y * matrix.m22 + position.z * matrix.m32 + matrix.m42;
+            result.z = position.x * matrix.m13 + position.y * matrix.m23 + position.z * matrix.m33 + matrix.m43;
+            result.w = position.x * matrix.m14 + position.y * matrix.m24 + position.z * matrix.m34 + matrix.m44;
 
             return result;
         }
 
 
-        inline Vector4 Vector4::Transform(Vector4 const& vector, Matrix4x4 const& matrix)
+        inline float4 transform4(float2 const& position, float4x4 const& matrix)
         {
-            Vector4 result;
+            float4 result;
 
-            result.X = vector.X * matrix.M11 + vector.Y * matrix.M21 + vector.Z * matrix.M31 + vector.W * matrix.M41;
-            result.Y = vector.X * matrix.M12 + vector.Y * matrix.M22 + vector.Z * matrix.M32 + vector.W * matrix.M42;
-            result.Z = vector.X * matrix.M13 + vector.Y * matrix.M23 + vector.Z * matrix.M33 + vector.W * matrix.M43;
-            result.W = vector.X * matrix.M14 + vector.Y * matrix.M24 + vector.Z * matrix.M34 + vector.W * matrix.M44;
+            result.x = position.x * matrix.m11 + position.y * matrix.m21 + matrix.m41;
+            result.y = position.x * matrix.m12 + position.y * matrix.m22 + matrix.m42;
+            result.z = position.x * matrix.m13 + position.y * matrix.m23 + matrix.m43;
+            result.w = position.x * matrix.m14 + position.y * matrix.m24 + matrix.m44;
 
             return result;
         }
 
 
-        inline Vector4 Vector4::Transform(Vector2 const& value, Quaternion const& rotation)
+        inline float4 transform(float4 const& value, quaternion const& rotation)
         {
-            Vector4 result;
+            float4 result;
 
-            float x2 = rotation.X + rotation.X;
-            float y2 = rotation.Y + rotation.Y;
-            float z2 = rotation.Z + rotation.Z;
+            float x2 = rotation.x + rotation.x;
+            float y2 = rotation.y + rotation.y;
+            float z2 = rotation.z + rotation.z;
 
-            float wx2 = rotation.W * x2;
-            float wy2 = rotation.W * y2;
-            float wz2 = rotation.W * z2;
-            float xx2 = rotation.X * x2;
-            float xy2 = rotation.X * y2;
-            float xz2 = rotation.X * z2;
-            float yy2 = rotation.Y * y2;
-            float yz2 = rotation.Y * z2;
-            float zz2 = rotation.Z * z2;
+            float wx2 = rotation.w * x2;
+            float wy2 = rotation.w * y2;
+            float wz2 = rotation.w * z2;
+            float xx2 = rotation.x * x2;
+            float xy2 = rotation.x * y2;
+            float xz2 = rotation.x * z2;
+            float yy2 = rotation.y * y2;
+            float yz2 = rotation.y * z2;
+            float zz2 = rotation.z * z2;
 
-            result.X = value.X * (1.0f - yy2 - zz2) + value.Y * (       xy2 - wz2);
-            result.Y = value.X * (       xy2 + wz2) + value.Y * (1.0f - xx2 - zz2);
-            result.Z = value.X * (       xz2 - wy2) + value.Y * (       yz2 + wx2);
-            result.W = 1.0f;
+            result.x = value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2) + value.z * (       xz2 + wy2);
+            result.y = value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (       yz2 - wx2);
+            result.z = value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2) + value.z * (1.0f - xx2 - yy2);
+            result.w = value.w;
 
             return result;
         }
 
 
-        inline Vector4 Vector4::Transform(Vector3 const& value, Quaternion const& rotation)
+        inline float4 transform4(float3 const& value, quaternion const& rotation)
         {
-            Vector4 result;
+            float4 result;
 
-            float x2 = rotation.X + rotation.X;
-            float y2 = rotation.Y + rotation.Y;
-            float z2 = rotation.Z + rotation.Z;
+            float x2 = rotation.x + rotation.x;
+            float y2 = rotation.y + rotation.y;
+            float z2 = rotation.z + rotation.z;
 
-            float wx2 = rotation.W * x2;
-            float wy2 = rotation.W * y2;
-            float wz2 = rotation.W * z2;
-            float xx2 = rotation.X * x2;
-            float xy2 = rotation.X * y2;
-            float xz2 = rotation.X * z2;
-            float yy2 = rotation.Y * y2;
-            float yz2 = rotation.Y * z2;
-            float zz2 = rotation.Z * z2;
+            float wx2 = rotation.w * x2;
+            float wy2 = rotation.w * y2;
+            float wz2 = rotation.w * z2;
+            float xx2 = rotation.x * x2;
+            float xy2 = rotation.x * y2;
+            float xz2 = rotation.x * z2;
+            float yy2 = rotation.y * y2;
+            float yz2 = rotation.y * z2;
+            float zz2 = rotation.z * z2;
 
-            result.X = value.X * (1.0f - yy2 - zz2) + value.Y * (       xy2 - wz2) + value.Z * (       xz2 + wy2);
-            result.Y = value.X * (       xy2 + wz2) + value.Y * (1.0f - xx2 - zz2) + value.Z * (       yz2 - wx2);
-            result.Z = value.X * (       xz2 - wy2) + value.Y * (       yz2 + wx2) + value.Z * (1.0f - xx2 - yy2);
-            result.W = 1.0f;
+            result.x = value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2) + value.z * (       xz2 + wy2);
+            result.y = value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (       yz2 - wx2);
+            result.z = value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2) + value.z * (1.0f - xx2 - yy2);
+            result.w = 1.0f;
 
             return result;
         }
 
 
-        inline Vector4 Vector4::Transform(Vector4 const& value, Quaternion const& rotation)
+        inline float4 transform4(float2 const& value, quaternion const& rotation)
         {
-            Vector4 result;
+            float4 result;
 
-            float x2 = rotation.X + rotation.X;
-            float y2 = rotation.Y + rotation.Y;
-            float z2 = rotation.Z + rotation.Z;
+            float x2 = rotation.x + rotation.x;
+            float y2 = rotation.y + rotation.y;
+            float z2 = rotation.z + rotation.z;
 
-            float wx2 = rotation.W * x2;
-            float wy2 = rotation.W * y2;
-            float wz2 = rotation.W * z2;
-            float xx2 = rotation.X * x2;
-            float xy2 = rotation.X * y2;
-            float xz2 = rotation.X * z2;
-            float yy2 = rotation.Y * y2;
-            float yz2 = rotation.Y * z2;
-            float zz2 = rotation.Z * z2;
+            float wx2 = rotation.w * x2;
+            float wy2 = rotation.w * y2;
+            float wz2 = rotation.w * z2;
+            float xx2 = rotation.x * x2;
+            float xy2 = rotation.x * y2;
+            float xz2 = rotation.x * z2;
+            float yy2 = rotation.y * y2;
+            float yz2 = rotation.y * z2;
+            float zz2 = rotation.z * z2;
 
-            result.X = value.X * (1.0f - yy2 - zz2) + value.Y * (       xy2 - wz2) + value.Z * (       xz2 + wy2);
-            result.Y = value.X * (       xy2 + wz2) + value.Y * (1.0f - xx2 - zz2) + value.Z * (       yz2 - wx2);
-            result.Z = value.X * (       xz2 - wy2) + value.Y * (       yz2 + wx2) + value.Z * (1.0f - xx2 - yy2);
-            result.W = value.W;
+            result.x = value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2);
+            result.y = value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2);
+            result.z = value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2);
+            result.w = 1.0f;
 
             return result;
         }
 
 
-        inline Vector4 Vector4::Negate(Vector4 const& value)
+        inline float4 float4::operator -() const
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = -value.X;
-            ans.Y = -value.Y;
-            ans.Z = -value.Z;
-            ans.W = -value.W;
+            ans.x = -x;
+            ans.y = -y;
+            ans.z = -z;
+            ans.w = -w;
 
             return ans;
         }
 
 
-        inline Vector4 Vector4::Add(Vector4 const& value1, Vector4 const& value2)
-        {
-            Vector4 ans;
-
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
-            ans.Z = value1.Z + value2.Z;
-            ans.W = value1.W + value2.W;
-
-            return ans;
-        }
-
-
-        inline Vector4 Vector4::Subtract(Vector4 const& value1, Vector4 const& value2)
-        {
-            Vector4 ans;
-
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
-            ans.Z = value1.Z - value2.Z;
-            ans.W = value1.W - value2.W;
-
-            return ans;
-        }
-
-
-        inline Vector4 Vector4::Multiply(Vector4 const& value1, Vector4 const& value2)
-        {
-            Vector4 ans;
-
-            ans.X = value1.X * value2.X;
-            ans.Y = value1.Y * value2.Y;
-            ans.Z = value1.Z * value2.Z;
-            ans.W = value1.W * value2.W;
-
-            return ans;
-        }
-
-
-        inline Vector4 Vector4::Multiply(Vector4 const& value1, float value2)
-        {
-            Vector4 ans;
-
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
-            ans.Z = value1.Z * value2;
-            ans.W = value1.W * value2;
-
-            return ans;
-        }
-
-
-        inline Vector4 Vector4::Divide(Vector4 const& value1, Vector4 const& value2)
-        {
-            Vector4 ans;
-
-            ans.X = value1.X / value2.X;
-            ans.Y = value1.Y / value2.Y;
-            ans.Z = value1.Z / value2.Z;
-            ans.W = value1.W / value2.W;
-
-            return ans;
-        }
-
-
-        inline Vector4 Vector4::Divide(Vector4 const& value1, float value2)
-        {
-            Vector4 ans;
-
-            float invDiv = 1.0f / value2;
-
-            ans.X = value1.X * invDiv;
-            ans.Y = value1.Y * invDiv;
-            ans.Z = value1.Z * invDiv;
-            ans.W = value1.W * invDiv;
-
-            return ans;
-        }
-
-
-        inline Vector4 Vector4::operator -() const
-        {
-            Vector4 ans;
-
-            ans.X = -X;
-            ans.Y = -Y;
-            ans.Z = -Z;
-            ans.W = -W;
-
-            return ans;
-        }
-
-
-        inline Vector4& Vector4::operator +=(Vector4 const& value)
+        inline float4& float4::operator +=(float4 const& value)
         {
             *this = *this + value;
 
@@ -1505,7 +1239,7 @@ namespace Windows
         }
 
 
-        inline Vector4& Vector4::operator -=(Vector4 const& value)
+        inline float4& float4::operator -=(float4 const& value)
         {
             *this = *this - value;
 
@@ -1513,7 +1247,7 @@ namespace Windows
         }
 
 
-        inline Vector4& Vector4::operator *=(Vector4 const& value)
+        inline float4& float4::operator *=(float4 const& value)
         {
             *this = *this * value;
 
@@ -1521,7 +1255,7 @@ namespace Windows
         }
 
 
-        inline Vector4& Vector4::operator *=(float value)
+        inline float4& float4::operator *=(float value)
         {
             *this = *this * value;
 
@@ -1529,7 +1263,7 @@ namespace Windows
         }
 
 
-        inline Vector4& Vector4::operator /=(Vector4 const& value)
+        inline float4& float4::operator /=(float4 const& value)
         {
             *this = *this / value;
 
@@ -1537,7 +1271,7 @@ namespace Windows
         }
 
 
-        inline Vector4& Vector4::operator /=(float value)
+        inline float4& float4::operator /=(float value)
         {
             *this = *this / value;
 
@@ -1545,308 +1279,301 @@ namespace Windows
         }
 
 
-        inline bool Vector4::operator ==(Vector4 const& value) const
+        inline bool float4::operator ==(float4 const& value) const
         {
-            return X == value.X &&
-                   Y == value.Y &&
-                   Z == value.Z &&
-                   W == value.W;
+            return x == value.x &&
+                   y == value.y &&
+                   z == value.z &&
+                   w == value.w;
         }
 
 
-        inline bool Vector4::operator !=(Vector4 const& value) const
+        inline bool float4::operator !=(float4 const& value) const
         {
-            return X != value.X ||
-                   Y != value.Y ||
-                   Z != value.Z ||
-                   W != value.W;
+            return x != value.x ||
+                   y != value.y ||
+                   z != value.z ||
+                   w != value.w;
         }
 
 
-        inline Vector4 operator +(Vector4 const& value1, Vector4 const& value2)
+        inline float4 operator +(float4 const& value1, float4 const& value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
-            ans.Z = value1.Z + value2.Z;
-            ans.W = value1.W + value2.W;
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
+            ans.z = value1.z + value2.z;
+            ans.w = value1.w + value2.w;
 
             return ans;
         }
 
 
-        inline Vector4 operator -(Vector4 const& value1, Vector4 const& value2)
+        inline float4 operator -(float4 const& value1, float4 const& value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
-            ans.Z = value1.Z - value2.Z;
-            ans.W = value1.W - value2.W;
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
+            ans.z = value1.z - value2.z;
+            ans.w = value1.w - value2.w;
 
             return ans;
         }
 
 
-        inline Vector4 operator *(Vector4 const& value1, Vector4 const& value2)
+        inline float4 operator *(float4 const& value1, float4 const& value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = value1.X * value2.X;
-            ans.Y = value1.Y * value2.Y;
-            ans.Z = value1.Z * value2.Z;
-            ans.W = value1.W * value2.W;
+            ans.x = value1.x * value2.x;
+            ans.y = value1.y * value2.y;
+            ans.z = value1.z * value2.z;
+            ans.w = value1.w * value2.w;
 
             return ans;
         }
 
 
-        inline Vector4 operator *(Vector4 const& value1, float value2)
+        inline float4 operator *(float4 const& value1, float value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
-            ans.Z = value1.Z * value2;
-            ans.W = value1.W * value2;
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
+            ans.z = value1.z * value2;
+            ans.w = value1.w * value2;
 
             return ans;
         }
 
 
-        inline Vector4 operator *(float value1, Vector4 const& value2)
+        inline float4 operator *(float value1, float4 const& value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = value1 * value2.X;
-            ans.Y = value1 * value2.Y;
-            ans.Z = value1 * value2.Z;
-            ans.W = value1 * value2.W;
+            ans.x = value1 * value2.x;
+            ans.y = value1 * value2.y;
+            ans.z = value1 * value2.z;
+            ans.w = value1 * value2.w;
 
             return ans;
         }
 
 
-        inline Vector4 operator /(Vector4 const& value1, Vector4 const& value2)
+        inline float4 operator /(float4 const& value1, float4 const& value2)
         {
-            Vector4 ans;
+            float4 ans;
 
-            ans.X = value1.X / value2.X;
-            ans.Y = value1.Y / value2.Y;
-            ans.Z = value1.Z / value2.Z;
-            ans.W = value1.W / value2.W;
+            ans.x = value1.x / value2.x;
+            ans.y = value1.y / value2.y;
+            ans.z = value1.z / value2.z;
+            ans.w = value1.w / value2.w;
 
             return ans;
         }
 
 
-        inline Vector4 operator /(Vector4 const& value1, float value2)
+        inline float4 operator /(float4 const& value1, float value2)
         {
-            Vector4 ans;
+            float4 ans;
 
             float invDiv = 1.0f / value2;
             
-            ans.X = value1.X * invDiv;
-            ans.Y = value1.Y * invDiv;
-            ans.Z = value1.Z * invDiv;
-            ans.W = value1.W * invDiv;
+            ans.x = value1.x * invDiv;
+            ans.y = value1.y * invDiv;
+            ans.z = value1.z * invDiv;
+            ans.w = value1.w * invDiv;
 
             return ans;
         }
 
 
-        inline Matrix3x2::Matrix3x2(float m11, float m12, float m21, float m22, float m31, float m32)
-            : M11(m11), M12(m12), M21(m21), M22(m22), M31(m31), M32(m32)
+        inline float3x2::float3x2(float m11, float m12, float m21, float m22, float m31, float m32)
+            : m11(m11), m12(m12), m21(m21), m22(m22), m31(m31), m32(m32)
         { }
 
 
-        inline Matrix3x2 Matrix3x2::Identity()
+        inline float3x2 float3x2::identity()
         {
-            return Matrix3x2(1, 0,
-                             0, 1,
-                             0, 0);
+            return float3x2(1, 0,
+                            0, 1,
+                            0, 0);
         }
 
 
-        inline bool Matrix3x2::IsIdentity() const
+        inline bool is_identity(float3x2 const& value)
         {
-            return M11 == 1 && M22 == 1 && // Check diagonal element first for early out.
-                               M12 == 0 &&
-                   M21 == 0             &&
-                   M31 == 0 && M32 == 0;
+            return value.m11 == 1 && value.m22 == 1 && // Check diagonal element first for early out.
+                                     value.m12 == 0 &&
+                   value.m21 == 0                   &&
+                   value.m31 == 0 && value.m32 == 0;
         }
 
 
-        inline float Matrix3x2::Determinant() const
+        inline float determinant(float3x2 const& value)
         {
-            return (M11 * M22) - (M21 * M12);
+            return (value.m11 * value.m22) - (value.m21 * value.m12);
         }
 
 
-        inline Vector2 Matrix3x2::Translation() const
+        inline float2 translation(float3x2 const& value)
         {
-            Vector2 ans;
+            float2 ans;
                 
-            ans.X = M31; 
-            ans.Y = M32;
+            ans.x = value.m31; 
+            ans.y = value.m32;
                 
             return ans;
         }
 
 
-        inline void Matrix3x2::SetTranslation(Vector2 const& translation)
+        inline float3x2 float3x2::translation(float2 const& position)
         {
-            M31 = translation.X; 
-            M32 = translation.Y;
-        }
+            float3x2 result;
 
+            result.m11 = 1.0f; result.m12 = 0.0f;
+            result.m21 = 0.0f; result.m22 = 1.0f;
 
-        inline Matrix3x2 Matrix3x2::CreateTranslation(Vector2 const& position)
-        {
-            Matrix3x2 result;
-
-            result.M11 = 1.0f; result.M12 = 0.0f;
-            result.M21 = 0.0f; result.M22 = 1.0f;
-
-            result.M31 = position.X;
-            result.M32 = position.Y;
+            result.m31 = position.x;
+            result.m32 = position.y;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateTranslation(float xPosition, float yPosition)
+        inline float3x2 float3x2::translation(float xPosition, float yPosition)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
-            result.M11 = 1.0f; result.M12 = 0.0f;
-            result.M21 = 0.0f; result.M22 = 1.0f;
+            result.m11 = 1.0f; result.m12 = 0.0f;
+            result.m21 = 0.0f; result.m22 = 1.0f;
 
-            result.M31 = xPosition;
-            result.M32 = yPosition;
+            result.m31 = xPosition;
+            result.m32 = yPosition;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateScale(float xScale, float yScale)
+        inline float3x2 float3x2::scale(float xScale, float yScale)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
-            result.M11 = xScale; result.M12 = 0.0f;
-            result.M21 = 0.0f;   result.M22 = yScale;
-            result.M31 = 0.0f;   result.M32 = 0.0f;
+            result.m11 = xScale; result.m12 = 0.0f;
+            result.m21 = 0.0f;   result.m22 = yScale;
+            result.m31 = 0.0f;   result.m32 = 0.0f;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateScale(float xScale, float yScale, Vector2 const& centerPoint)
+        inline float3x2 float3x2::scale(float xScale, float yScale, float2 const& centerPoint)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
-            float tx = centerPoint.X * (1 - xScale);
-            float ty = centerPoint.Y * (1 - yScale);
+            float tx = centerPoint.x * (1 - xScale);
+            float ty = centerPoint.y * (1 - yScale);
 
-            result.M11 = xScale; result.M12 = 0.0f;
-            result.M21 = 0.0f;   result.M22 = yScale;
-            result.M31 = tx;     result.M32 = ty;
+            result.m11 = xScale; result.m12 = 0.0f;
+            result.m21 = 0.0f;   result.m22 = yScale;
+            result.m31 = tx;     result.m32 = ty;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateScale(Vector2 const& scales)
+        inline float3x2 float3x2::scale(float2 const& scales)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
-            result.M11 = scales.X; result.M12 = 0.0f;
-            result.M21 = 0.0f;     result.M22 = scales.Y;
-            result.M31 = 0.0f;     result.M32 = 0.0f;
+            result.m11 = scales.x; result.m12 = 0.0f;
+            result.m21 = 0.0f;     result.m22 = scales.y;
+            result.m31 = 0.0f;     result.m32 = 0.0f;
             
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateScale(Vector2 const& scales, Vector2 const& centerPoint)
+        inline float3x2 float3x2::scale(float2 const& scales, float2 const& centerPoint)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
-            float tx = centerPoint.X * (1 - scales.X);
-            float ty = centerPoint.Y * (1 - scales.Y);
+            float tx = centerPoint.x * (1 - scales.x);
+            float ty = centerPoint.y * (1 - scales.y);
 
-            result.M11 = scales.X; result.M12 = 0.0f;
-            result.M21 = 0.0f;     result.M22 = scales.Y;
-            result.M31 = tx;       result.M32 = ty;
+            result.m11 = scales.x; result.m12 = 0.0f;
+            result.m21 = 0.0f;     result.m22 = scales.y;
+            result.m31 = tx;       result.m32 = ty;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateScale(float scale)
+        inline float3x2 float3x2::scale(float scale)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
-            result.M11 = scale; result.M12 = 0.0f;
-            result.M21 = 0.0f;  result.M22 = scale;
-            result.M31 = 0.0f;  result.M32 = 0.0f;
+            result.m11 = scale; result.m12 = 0.0f;
+            result.m21 = 0.0f;  result.m22 = scale;
+            result.m31 = 0.0f;  result.m32 = 0.0f;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateScale(float scale, Vector2 const& centerPoint)
+        inline float3x2 float3x2::scale(float scale, float2 const& centerPoint)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
-            float tx = centerPoint.X * (1 - scale);
-            float ty = centerPoint.Y * (1 - scale);
+            float tx = centerPoint.x * (1 - scale);
+            float ty = centerPoint.y * (1 - scale);
 
-            result.M11 = scale; result.M12 = 0.0f;
-            result.M21 = 0.0f;  result.M22 = scale;
-            result.M31 = tx;    result.M32 = ty;
+            result.m11 = scale; result.m12 = 0.0f;
+            result.m21 = 0.0f;  result.m22 = scale;
+            result.m31 = tx;    result.m32 = ty;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateSkew(float radiansX, float radiansY)
+        inline float3x2 float3x2::skew(float radiansX, float radiansY)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
             float xTan = tanf(radiansX);
             float yTan = tanf(radiansY);
 
-            result.M11 = 1.0f; result.M12 = yTan;
-            result.M21 = xTan; result.M22 = 1.0f;
-            result.M31 = 0.0f; result.M32 = 0.0f;
+            result.m11 = 1.0f; result.m12 = yTan;
+            result.m21 = xTan; result.m22 = 1.0f;
+            result.m31 = 0.0f; result.m32 = 0.0f;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateSkew(float radiansX, float radiansY, Vector2 const& centerPoint)
+        inline float3x2 float3x2::skew(float radiansX, float radiansY, float2 const& centerPoint)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
             float xTan = tanf(radiansX);
             float yTan = tanf(radiansY);
 
-            float tx = -centerPoint.Y * xTan;
-            float ty = -centerPoint.X * yTan;
+            float tx = -centerPoint.y * xTan;
+            float ty = -centerPoint.x * yTan;
 
-            result.M11 = 1.0f; result.M12 = yTan;
-            result.M21 = xTan; result.M22 = 1.0f;
-            result.M31 = tx;   result.M32 = ty;
+            result.m11 = 1.0f; result.m12 = yTan;
+            result.m21 = xTan; result.m22 = 1.0f;
+            result.m31 = tx;   result.m32 = ty;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateRotation(float radians)
+        inline float3x2 float3x2::rotation(float radians)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
             radians = fmodf(radians, DirectX::XM_2PI);
 
@@ -1891,17 +1618,17 @@ namespace Windows
             // [  c  s ]
             // [ -s  c ]
             // [  0  0 ]
-            result.M11 =    c; result.M12 =    s;
-            result.M21 =   -s; result.M22 =    c;
-            result.M31 = 0.0f; result.M32 = 0.0f;
+            result.m11 =    c; result.m12 =    s;
+            result.m21 =   -s; result.m22 =    c;
+            result.m31 = 0.0f; result.m32 = 0.0f;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::CreateRotation(float radians, Vector2 const& centerPoint)
+        inline float3x2 float3x2::rotation(float radians, float2 const& centerPoint)
         {
-            Matrix3x2 result;
+            float3x2 result;
 
             radians = fmodf(radians, DirectX::XM_2PI);
 
@@ -1943,147 +1670,79 @@ namespace Windows
                 s = sinf(radians);
             }
 
-            float x = centerPoint.X * (1 - c) + centerPoint.Y * s;
-            float y = centerPoint.Y * (1 - c) - centerPoint.X * s;
+            float x = centerPoint.x * (1 - c) + centerPoint.y * s;
+            float y = centerPoint.y * (1 - c) - centerPoint.x * s;
 
             // [  c  s ]
             // [ -s  c ]
             // [  x  y ]
-            result.M11 =  c; result.M12 = s;
-            result.M21 = -s; result.M22 = c;
-            result.M31 =  x; result.M32 = y;
+            result.m11 =  c; result.m12 = s;
+            result.m21 = -s; result.m22 = c;
+            result.m31 =  x; result.m32 = y;
 
             return result;
         }
 
 
-        inline bool Matrix3x2::Invert(Matrix3x2 const& matrix, _Out_ Matrix3x2* result)
+        inline bool invert(float3x2 const& matrix, _Out_ float3x2* result)
         {
-            float det = (matrix.M11 * matrix.M22) - (matrix.M21 * matrix.M12);
+            float det = (matrix.m11 * matrix.m22) - (matrix.m21 * matrix.m12);
 
             if (fabs(det) < FLT_EPSILON)
             {
-                *result = Matrix3x2(NAN, NAN, NAN, NAN, NAN, NAN);
+                *result = float3x2(NAN, NAN, NAN, NAN, NAN, NAN);
                 return false;
             }
 
             float invDet = 1.0f / det;
 
-            *result = Matrix3x2
+            *result = float3x2
             (
-                matrix.M22 * invDet,
-                -matrix.M12 * invDet,
-                -matrix.M21 * invDet,
-                matrix.M11 * invDet,
-                (matrix.M21 * matrix.M32 - matrix.M31 * matrix.M22) * invDet,
-                (matrix.M31 * matrix.M12 - matrix.M11 * matrix.M32) * invDet
+                matrix.m22 * invDet,
+                -matrix.m12 * invDet,
+                -matrix.m21 * invDet,
+                matrix.m11 * invDet,
+                (matrix.m21 * matrix.m32 - matrix.m31 * matrix.m22) * invDet,
+                (matrix.m31 * matrix.m12 - matrix.m11 * matrix.m32) * invDet
             );
 
             return true;
         }
 
 
-        inline Matrix3x2 Matrix3x2::Lerp(Matrix3x2 const& matrix1, Matrix3x2 const& matrix2, float amount)
+        inline float3x2 lerp(float3x2 const& matrix1, float3x2 const& matrix2, float amount)
         {
-            Matrix3x2 result;
+            float3x2 result;
             
             // First row
-            result.M11 = matrix1.M11 + (matrix2.M11 - matrix1.M11) * amount;
-            result.M12 = matrix1.M12 + (matrix2.M12 - matrix1.M12) * amount;
+            result.m11 = matrix1.m11 + (matrix2.m11 - matrix1.m11) * amount;
+            result.m12 = matrix1.m12 + (matrix2.m12 - matrix1.m12) * amount;
             
             // Second row
-            result.M21 = matrix1.M21 + (matrix2.M21 - matrix1.M21) * amount;
-            result.M22 = matrix1.M22 + (matrix2.M22 - matrix1.M22) * amount;
+            result.m21 = matrix1.m21 + (matrix2.m21 - matrix1.m21) * amount;
+            result.m22 = matrix1.m22 + (matrix2.m22 - matrix1.m22) * amount;
             
             // Third row
-            result.M31 = matrix1.M31 + (matrix2.M31 - matrix1.M31) * amount;
-            result.M32 = matrix1.M32 + (matrix2.M32 - matrix1.M32) * amount;
+            result.m31 = matrix1.m31 + (matrix2.m31 - matrix1.m31) * amount;
+            result.m32 = matrix1.m32 + (matrix2.m32 - matrix1.m32) * amount;
 
             return result;
         }
 
 
-        inline Matrix3x2 Matrix3x2::Negate(Matrix3x2 const& value)
+        inline float3x2 float3x2::operator -() const
         {
-            Matrix3x2 result;
+            float3x2 m;
 
-            result.M11 = -value.M11; result.M12 = -value.M12;
-            result.M21 = -value.M21; result.M22 = -value.M22;
-            result.M31 = -value.M31; result.M32 = -value.M32;
-
-            return result;
-        }
-
-
-        inline Matrix3x2 Matrix3x2::Add(Matrix3x2 const& value1, Matrix3x2 const& value2)
-        {
-            Matrix3x2 result;
-
-            result.M11 = value1.M11 + value2.M11; result.M12 = value1.M12 + value2.M12;
-            result.M21 = value1.M21 + value2.M21; result.M22 = value1.M22 + value2.M22;
-            result.M31 = value1.M31 + value2.M31; result.M32 = value1.M32 + value2.M32;
-
-            return result;
-        }
-
-
-        inline Matrix3x2 Matrix3x2::Subtract(Matrix3x2 const& value1, Matrix3x2 const& value2)
-        {
-            Matrix3x2 result;
-
-            result.M11 = value1.M11 - value2.M11; result.M12 = value1.M12 - value2.M12;
-            result.M21 = value1.M21 - value2.M21; result.M22 = value1.M22 - value2.M22;
-            result.M31 = value1.M31 - value2.M31; result.M32 = value1.M32 - value2.M32;
-
-            return result;
-        }
-
-
-        inline Matrix3x2 Matrix3x2::Multiply(Matrix3x2 const& value1, Matrix3x2 const& value2)
-        {
-            Matrix3x2 result;
-
-            // First row
-            result.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21;
-            result.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22;
-            
-            // Second row
-            result.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21;
-            result.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22;
-            
-            // Third row
-            result.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value2.M31;
-            result.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value2.M32;
-
-            return result;
-        }
-
-
-        inline Matrix3x2 Matrix3x2::Multiply(Matrix3x2 const& value1, float value2)
-        {
-            Matrix3x2 result;
-
-            result.M11 = value1.M11 * value2; result.M12 = value1.M12 * value2;
-            result.M21 = value1.M21 * value2; result.M22 = value1.M22 * value2;
-            result.M31 = value1.M31 * value2; result.M32 = value1.M32 * value2;
-
-            return result;
-        }
-
-
-        inline Matrix3x2 Matrix3x2::operator -() const
-        {
-            Matrix3x2 m;
-
-            m.M11 = -M11; m.M12 = -M12;
-            m.M21 = -M21; m.M22 = -M22;
-            m.M31 = -M31; m.M32 = -M32;
+            m.m11 = -m11; m.m12 = -m12;
+            m.m21 = -m21; m.m22 = -m22;
+            m.m31 = -m31; m.m32 = -m32;
 
             return m;
         }
 
 
-        inline Matrix3x2& Matrix3x2::operator +=(Matrix3x2 const& value)
+        inline float3x2& float3x2::operator +=(float3x2 const& value)
         {
             *this = *this + value;
 
@@ -2091,7 +1750,7 @@ namespace Windows
         }
 
 
-        inline Matrix3x2& Matrix3x2::operator -=(Matrix3x2 const& value)
+        inline float3x2& float3x2::operator -=(float3x2 const& value)
         {
             *this = *this - value;
 
@@ -2099,7 +1758,7 @@ namespace Windows
         }
 
 
-        inline Matrix3x2& Matrix3x2::operator *=(Matrix3x2 const& value)
+        inline float3x2& float3x2::operator *=(float3x2 const& value)
         {
             *this = *this * value;
 
@@ -2107,7 +1766,7 @@ namespace Windows
         }
 
 
-        inline Matrix3x2& Matrix3x2::operator *=(float value)
+        inline float3x2& float3x2::operator *=(float value)
         {
             *this = *this * value;
 
@@ -2115,115 +1774,115 @@ namespace Windows
         }
 
 
-        inline bool Matrix3x2::operator ==(Matrix3x2 const& value) const
+        inline bool float3x2::operator ==(float3x2 const& value) const
         {
-            return M11 == value.M11 && M22 == value.M22 && // Check diagonal element first for early out.
-                                       M12 == value.M12 &&
-                   M21 == value.M21                     &&
-                   M31 == value.M31 && M32 == value.M32;
+            return m11 == value.m11 && m22 == value.m22 && // Check diagonal element first for early out.
+                                       m12 == value.m12 &&
+                   m21 == value.m21                     &&
+                   m31 == value.m31 && m32 == value.m32;
         }
 
 
-        inline bool Matrix3x2::operator !=(Matrix3x2 const& value) const
+        inline bool float3x2::operator !=(float3x2 const& value) const
         {
-            return M11 != value.M11 || M12 != value.M12 ||
-                   M21 != value.M21 || M22 != value.M22 ||
-                   M31 != value.M31 || M32 != value.M32;
+            return m11 != value.m11 || m12 != value.m12 ||
+                   m21 != value.m21 || m22 != value.m22 ||
+                   m31 != value.m31 || m32 != value.m32;
         }
 
 
-        inline Matrix3x2 operator +(Matrix3x2 const& value1, Matrix3x2 const& value2)
+        inline float3x2 operator +(float3x2 const& value1, float3x2 const& value2)
         {
-            Matrix3x2 m;
+            float3x2 m;
 
-            m.M11 = value1.M11 + value2.M11; m.M12 = value1.M12 + value2.M12;
-            m.M21 = value1.M21 + value2.M21; m.M22 = value1.M22 + value2.M22;
-            m.M31 = value1.M31 + value2.M31; m.M32 = value1.M32 + value2.M32;
+            m.m11 = value1.m11 + value2.m11; m.m12 = value1.m12 + value2.m12;
+            m.m21 = value1.m21 + value2.m21; m.m22 = value1.m22 + value2.m22;
+            m.m31 = value1.m31 + value2.m31; m.m32 = value1.m32 + value2.m32;
 
             return m;
         }
 
 
-        inline Matrix3x2 operator -(Matrix3x2 const& value1, Matrix3x2 const& value2)
+        inline float3x2 operator -(float3x2 const& value1, float3x2 const& value2)
         {
-            Matrix3x2 m;
+            float3x2 m;
 
-            m.M11 = value1.M11 - value2.M11; m.M12 = value1.M12 - value2.M12;
-            m.M21 = value1.M21 - value2.M21; m.M22 = value1.M22 - value2.M22;
-            m.M31 = value1.M31 - value2.M31; m.M32 = value1.M32 - value2.M32;
+            m.m11 = value1.m11 - value2.m11; m.m12 = value1.m12 - value2.m12;
+            m.m21 = value1.m21 - value2.m21; m.m22 = value1.m22 - value2.m22;
+            m.m31 = value1.m31 - value2.m31; m.m32 = value1.m32 - value2.m32;
 
             return m;
         }
 
 
-        inline Matrix3x2 operator *(Matrix3x2 const& value1, Matrix3x2 const& value2)
+        inline float3x2 operator *(float3x2 const& value1, float3x2 const& value2)
         {
-            Matrix3x2 m;
+            float3x2 m;
 
             // First row
-            m.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21;
-            m.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22;
+            m.m11 = value1.m11 * value2.m11 + value1.m12 * value2.m21;
+            m.m12 = value1.m11 * value2.m12 + value1.m12 * value2.m22;
             
             // Second row
-            m.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21;
-            m.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22;
+            m.m21 = value1.m21 * value2.m11 + value1.m22 * value2.m21;
+            m.m22 = value1.m21 * value2.m12 + value1.m22 * value2.m22;
             
             // Third row
-            m.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value2.M31;
-            m.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value2.M32;
+            m.m31 = value1.m31 * value2.m11 + value1.m32 * value2.m21 + value2.m31;
+            m.m32 = value1.m31 * value2.m12 + value1.m32 * value2.m22 + value2.m32;
 
             return m;
         }
 
 
-        inline Matrix3x2 operator *(Matrix3x2 const& value1, float value2)
+        inline float3x2 operator *(float3x2 const& value1, float value2)
         {
-            Matrix3x2 m;
+            float3x2 m;
 
-            m.M11 = value1.M11 * value2; m.M12 = value1.M12 * value2;
-            m.M21 = value1.M21 * value2; m.M22 = value1.M22 * value2;
-            m.M31 = value1.M31 * value2; m.M32 = value1.M32 * value2;
+            m.m11 = value1.m11 * value2; m.m12 = value1.m12 * value2;
+            m.m21 = value1.m21 * value2; m.m22 = value1.m22 * value2;
+            m.m31 = value1.m31 * value2; m.m32 = value1.m32 * value2;
 
             return m;
         }
 
 
-        inline Matrix4x4::Matrix4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
-            : M11(m11), M12(m12), M13(m13), M14(m14),
-              M21(m21), M22(m22), M23(m23), M24(m24),
-              M31(m31), M32(m32), M33(m33), M34(m34),
-              M41(m41), M42(m42), M43(m43), M44(m44)
+        inline float4x4::float4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
+            : m11(m11), m12(m12), m13(m13), m14(m14),
+              m21(m21), m22(m22), m23(m23), m24(m24),
+              m31(m31), m32(m32), m33(m33), m34(m34),
+              m41(m41), m42(m42), m43(m43), m44(m44)
         { }
 
 
-        inline Matrix4x4::Matrix4x4(Matrix3x2 const& value)
-            : M11(value.M11), M12(value.M12), M13(0), M14(0),
-              M21(value.M21), M22(value.M22), M23(0), M24(0),
-              M31(0),         M32(0),         M33(1), M34(0),
-              M41(value.M31), M42(value.M32), M43(0), M44(1)
+        inline float4x4::float4x4(float3x2 const& value)
+            : m11(value.m11), m12(value.m12), m13(0), m14(0),
+              m21(value.m21), m22(value.m22), m23(0), m24(0),
+              m31(0),         m32(0),         m33(1), m34(0),
+              m41(value.m31), m42(value.m32), m43(0), m44(1)
         { }
 
 
-        inline Matrix4x4 Matrix4x4::Identity()
+        inline float4x4 float4x4::identity()
         {
-            return Matrix4x4(1, 0, 0, 0,
-                             0, 1, 0, 0,
-                             0, 0, 1, 0,
-                             0, 0, 0, 1);
+            return float4x4(1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1);
         }
 
 
-        inline bool Matrix4x4::IsIdentity() const
+        inline bool is_identity(float4x4 const& value)
         {
-            return M11 == 1 && M22 == 1 && M33 == 1 && M44 == 1 && // Check diagonal element first for early out.
-                               M12 == 0 && M13 == 0 && M14 == 0 &&
-                   M21 == 0             && M23 == 0 && M24 == 0 &&
-                   M31 == 0 && M32 == 0             && M34 == 0 &&
-                   M41 == 0 && M42 == 0 && M43 == 0;
+            return value.m11 == 1 && value.m22 == 1 && value.m33 == 1 && value.m44 == 1 && // Check diagonal element first for early out.
+                                     value.m12 == 0 && value.m13 == 0 && value.m14 == 0 &&
+                   value.m21 == 0                   && value.m23 == 0 && value.m24 == 0 &&
+                   value.m31 == 0 && value.m32 == 0                   && value.m34 == 0 &&
+                   value.m41 == 0 && value.m42 == 0 && value.m43 == 0;
         }
 
 
-        inline float Matrix4x4::Determinant() const
+        inline float determinant(float4x4 const& value)
         {
             // | a b c d |     | f g h |     | e g h |     | e f h |     | e f g |
             // | e f g h | = a | j k l | - b | i k l | + c | i j l | - d | i j k |
@@ -2246,10 +1905,10 @@ namespace Windows
             // d | i j k | = d ( e ( jo - kn ) - f ( io - km ) + g ( in - jm ) )
             //   | m n o |
 
-            float a = M11, b = M12, c = M13, d = M14;
-            float e = M21, f = M22, g = M23, h = M24;
-            float i = M31, j = M32, k = M33, l = M34;
-            float m = M41, n = M42, o = M43, p = M44;
+            float a = value.m11, b = value.m12, c = value.m13, d = value.m14;
+            float e = value.m21, f = value.m22, g = value.m23, h = value.m24;
+            float i = value.m31, j = value.m32, k = value.m33, l = value.m34;
+            float m = value.m41, n = value.m42, o = value.m43, p = value.m44;
 
             float kp_lo = k * p - l * o;
             float jp_ln = j * p - l * n;
@@ -2265,37 +1924,29 @@ namespace Windows
         }
 
 
-        inline Vector3 Matrix4x4::Translation() const
+        inline float3 translation(float4x4 const& value)
         {
-            Vector3 ans;
+            float3 ans;
                 
-            ans.X = M41; 
-            ans.Y = M42; 
-            ans.Z = M43;
+            ans.x = value.m41; 
+            ans.y = value.m42;
+            ans.z = value.m43;
                 
             return ans;
         }
 
 
-        inline void Matrix4x4::SetTranslation(Vector3 const& translation)
-        {
-            M41 = translation.X; 
-            M42 = translation.Y;
-            M43 = translation.Z;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::CreateBillboard(Vector3 const& objectPosition, Vector3 const& cameraPosition, Vector3 const& cameraUpVector, Vector3 const& cameraForwardVector)
+        inline float4x4 float4x4::billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& cameraUpVector, float3 const& cameraForwardVector)
         {
             const float epsilon = 1e-4f;
 
-            Vector3 zaxis;
+            float3 zaxis;
 
-            zaxis.X = objectPosition.X - cameraPosition.X;
-            zaxis.Y = objectPosition.Y - cameraPosition.Y;
-            zaxis.Z = objectPosition.Z - cameraPosition.Z;
+            zaxis.x = objectPosition.x - cameraPosition.x;
+            zaxis.y = objectPosition.y - cameraPosition.y;
+            zaxis.z = objectPosition.z - cameraPosition.z;
 
-            float norm = zaxis.LengthSquared();
+            float norm = length_squared(zaxis);
 
             if (norm < epsilon)
             {
@@ -2303,41 +1954,41 @@ namespace Windows
             }
             else
             {
-                zaxis = Vector3::Multiply(zaxis, 1.0f / sqrtf(norm));
+                zaxis = zaxis / sqrtf(norm);
             }
 
-            Vector3 xaxis = Vector3::Normalize(Vector3::Cross(cameraUpVector, zaxis));
+            float3 xaxis = normalize(cross(cameraUpVector, zaxis));
 
-            Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
+            float3 yaxis = cross(zaxis, xaxis);
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = xaxis.X; result.M12 = xaxis.Y; result.M13 = xaxis.Z; result.M14 = 0.0f;
-            result.M21 = yaxis.X; result.M22 = yaxis.Y; result.M23 = yaxis.Z; result.M24 = 0.0f;
-            result.M31 = zaxis.X; result.M32 = zaxis.Y; result.M33 = zaxis.Z; result.M34 = 0.0f;
+            result.m11 = xaxis.x; result.m12 = xaxis.y; result.m13 = xaxis.z; result.m14 = 0.0f;
+            result.m21 = yaxis.x; result.m22 = yaxis.y; result.m23 = yaxis.z; result.m24 = 0.0f;
+            result.m31 = zaxis.x; result.m32 = zaxis.y; result.m33 = zaxis.z; result.m34 = 0.0f;
 
-            result.M41 = objectPosition.X;
-            result.M42 = objectPosition.Y;
-            result.M43 = objectPosition.Z;
-            result.M44 = 1.0f;
+            result.m41 = objectPosition.x;
+            result.m42 = objectPosition.y;
+            result.m43 = objectPosition.z;
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateConstrainedBillboard(Vector3 const& objectPosition, Vector3 const& cameraPosition, Vector3 const& rotateAxis, Vector3 const& cameraForwardVector, Vector3 const& objectForwardVector)
+        inline float4x4 float4x4::constrained_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& rotateAxis, float3 const& cameraForwardVector, float3 const& objectForwardVector)
         {
             const float epsilon = 1e-4f;
             const float minAngle = 1.0f - (0.1f * (DirectX::XM_PI / 180.0f)); // 0.1 degrees
 
             // Treat the case when object and camera positions are too close.
-            Vector3 faceDir;
+            float3 faceDir;
 
-            faceDir.X = objectPosition.X - cameraPosition.X;
-            faceDir.Y = objectPosition.Y - cameraPosition.Y;
-            faceDir.Z = objectPosition.Z - cameraPosition.Z;
+            faceDir.x = objectPosition.x - cameraPosition.x;
+            faceDir.y = objectPosition.y - cameraPosition.y;
+            faceDir.z = objectPosition.z - cameraPosition.z;
 
-            float norm = faceDir.LengthSquared();
+            float norm = length_squared(faceDir);
 
             if (norm < epsilon)
             {
@@ -2345,178 +1996,174 @@ namespace Windows
             }
             else
             {
-                faceDir = Vector3::Multiply(faceDir, (1.0f / sqrtf(norm)));
+                faceDir = faceDir / sqrtf(norm);
             }
 
-            Vector3 yaxis = rotateAxis;
-            Vector3 xaxis;
-            Vector3 zaxis;
+            float3 yaxis = rotateAxis;
+            float3 xaxis;
+            float3 zaxis;
 
             // Treat the case when angle between faceDir and rotateAxis is too close to 0.
-            float dot = Vector3::Dot(rotateAxis, faceDir);
-
-            if (fabs(dot) > minAngle)
+            if (fabs(dot(rotateAxis, faceDir)) > minAngle)
             {
                 zaxis = objectForwardVector;
 
-                dot = Vector3::Dot(rotateAxis, zaxis);
-
-                if (fabs(dot) > minAngle)
+                if (fabs(dot(rotateAxis, zaxis)) > minAngle)
                 {
-                    zaxis = (fabs(rotateAxis.Z) > minAngle) ? Vector3(1, 0, 0) : Vector3(0, 0, -1);
+                    zaxis = (fabs(rotateAxis.z) > minAngle) ? float3(1, 0, 0) : float3(0, 0, -1);
                 }
 
-                xaxis = Vector3::Normalize(Vector3::Cross(rotateAxis, zaxis));
-                zaxis = Vector3::Normalize(Vector3::Cross(xaxis, rotateAxis));
+                xaxis = normalize(cross(rotateAxis, zaxis));
+                zaxis = normalize(cross(xaxis, rotateAxis));
             }
             else
             {
-                xaxis = Vector3::Normalize(Vector3::Cross(rotateAxis, faceDir));
-                zaxis = Vector3::Normalize(Vector3::Cross(xaxis, yaxis));
+                xaxis = normalize(cross(rotateAxis, faceDir));
+                zaxis = normalize(cross(xaxis, yaxis));
             }
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = xaxis.X; result.M12 = xaxis.Y; result.M13 = xaxis.Z; result.M14 = 0.0f;
-            result.M21 = yaxis.X; result.M22 = yaxis.Y; result.M23 = yaxis.Z; result.M24 = 0.0f;
-            result.M31 = zaxis.X; result.M32 = zaxis.Y; result.M33 = zaxis.Z; result.M34 = 0.0f;
+            result.m11 = xaxis.x; result.m12 = xaxis.y; result.m13 = xaxis.z; result.m14 = 0.0f;
+            result.m21 = yaxis.x; result.m22 = yaxis.y; result.m23 = yaxis.z; result.m24 = 0.0f;
+            result.m31 = zaxis.x; result.m32 = zaxis.y; result.m33 = zaxis.z; result.m34 = 0.0f;
 
-            result.M41 = objectPosition.X;
-            result.M42 = objectPosition.Y;
-            result.M43 = objectPosition.Z;
-            result.M44 = 1.0f;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::CreateTranslation(Vector3 const& position)
-        {
-            Matrix4x4 result;
-
-            result.M11 = 1.0f; result.M12 = 0.0f; result.M13 = 0.0f; result.M14 = 0.0f;
-            result.M21 = 0.0f; result.M22 = 1.0f; result.M23 = 0.0f; result.M24 = 0.0f;
-            result.M31 = 0.0f; result.M32 = 0.0f; result.M33 = 1.0f; result.M34 = 0.0f;
-
-            result.M41 = position.X;
-            result.M42 = position.Y;
-            result.M43 = position.Z;
-            result.M44 = 1.0f;
+            result.m41 = objectPosition.x;
+            result.m42 = objectPosition.y;
+            result.m43 = objectPosition.z;
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateTranslation(float xPosition, float yPosition, float zPosition)
+        inline float4x4 float4x4::translation(float3 const& position)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = 1.0f; result.M12 = 0.0f; result.M13 = 0.0f; result.M14 = 0.0f;
-            result.M21 = 0.0f; result.M22 = 1.0f; result.M23 = 0.0f; result.M24 = 0.0f;
-            result.M31 = 0.0f; result.M32 = 0.0f; result.M33 = 1.0f; result.M34 = 0.0f;
+            result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
+            result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
+            result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
 
-            result.M41 = xPosition;
-            result.M42 = yPosition;
-            result.M43 = zPosition;
-            result.M44 = 1.0f;
+            result.m41 = position.x;
+            result.m42 = position.y;
+            result.m43 = position.z;
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateScale(float xScale, float yScale, float zScale)
+        inline float4x4 float4x4::translation(float xPosition, float yPosition, float zPosition)
         {
-            Matrix4x4 result;
+            float4x4 result;
+
+            result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
+            result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
+            result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
+
+            result.m41 = xPosition;
+            result.m42 = yPosition;
+            result.m43 = zPosition;
+            result.m44 = 1.0f;
+
+            return result;
+        }
+
+
+        inline float4x4 float4x4::scale(float xScale, float yScale, float zScale)
+        {
+            float4x4 result;
             
-            result.M11 = xScale; result.M12 = 0.0f;   result.M13 = 0.0f;   result.M14 = 0.0f;
-            result.M21 = 0.0f;   result.M22 = yScale; result.M23 = 0.0f;   result.M24 = 0.0f;
-            result.M31 = 0.0f;   result.M32 = 0.0f;   result.M33 = zScale; result.M34 = 0.0f;
-            result.M41 = 0.0f;   result.M42 = 0.0f;   result.M43 = 0.0f;   result.M44 = 1.0f;
+            result.m11 = xScale; result.m12 = 0.0f;   result.m13 = 0.0f;   result.m14 = 0.0f;
+            result.m21 = 0.0f;   result.m22 = yScale; result.m23 = 0.0f;   result.m24 = 0.0f;
+            result.m31 = 0.0f;   result.m32 = 0.0f;   result.m33 = zScale; result.m34 = 0.0f;
+            result.m41 = 0.0f;   result.m42 = 0.0f;   result.m43 = 0.0f;   result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateScale(float xScale, float yScale, float zScale, Vector3 const& centerPoint)
+        inline float4x4 float4x4::scale(float xScale, float yScale, float zScale, float3 const& centerPoint)
         { 
-            Matrix4x4 result;
+            float4x4 result;
 
-            float tx = centerPoint.X * (1 - xScale);
-            float ty = centerPoint.Y * (1 - yScale);
-            float tz = centerPoint.Z * (1 - zScale);
+            float tx = centerPoint.x * (1 - xScale);
+            float ty = centerPoint.y * (1 - yScale);
+            float tz = centerPoint.z * (1 - zScale);
 
-            result.M11 = xScale; result.M12 = 0.0f;   result.M13 = 0.0f;   result.M14 = 0.0f;
-            result.M21 = 0.0f;   result.M22 = yScale; result.M23 = 0.0f;   result.M24 = 0.0f;
-            result.M31 = 0.0f;   result.M32 = 0.0f;   result.M33 = zScale; result.M34 = 0.0f;
-            result.M41 = tx;     result.M42 = ty;     result.M43 = tz;     result.M44 = 1.0f;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::CreateScale(Vector3 const& scales)
-        {
-            Matrix4x4 result;
-
-            result.M11 = scales.X; result.M12 = 0.0f;     result.M13 = 0.0f;     result.M14 = 0.0f;
-            result.M21 = 0.0f;     result.M22 = scales.Y; result.M23 = 0.0f;     result.M24 = 0.0f;
-            result.M31 = 0.0f;     result.M32 = 0.0f;     result.M33 = scales.Z; result.M34 = 0.0f;
-            result.M41 = 0.0f;     result.M42 = 0.0f;     result.M43 = 0.0f;     result.M44 = 1.0f;
+            result.m11 = xScale; result.m12 = 0.0f;   result.m13 = 0.0f;   result.m14 = 0.0f;
+            result.m21 = 0.0f;   result.m22 = yScale; result.m23 = 0.0f;   result.m24 = 0.0f;
+            result.m31 = 0.0f;   result.m32 = 0.0f;   result.m33 = zScale; result.m34 = 0.0f;
+            result.m41 = tx;     result.m42 = ty;     result.m43 = tz;     result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateScale(Vector3 const& scales, Vector3 const& centerPoint)
+        inline float4x4 float4x4::scale(float3 const& scales)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
-            float tx = centerPoint.X * (1 - scales.X);
-            float ty = centerPoint.Y * (1 - scales.Y);
-            float tz = centerPoint.Z * (1 - scales.Z);
-
-            result.M11 = scales.X; result.M12 = 0.0f;     result.M13 = 0.0f;     result.M14 = 0.0f;
-            result.M21 = 0.0f;     result.M22 = scales.Y; result.M23 = 0.0f;     result.M24 = 0.0f;
-            result.M31 = 0.0f;     result.M32 = 0.0f;     result.M33 = scales.Z; result.M34 = 0.0f;
-            result.M41 = tx;       result.M42 = ty;       result.M43 = tz;       result.M44 = 1.0f;
+            result.m11 = scales.x; result.m12 = 0.0f;     result.m13 = 0.0f;     result.m14 = 0.0f;
+            result.m21 = 0.0f;     result.m22 = scales.y; result.m23 = 0.0f;     result.m24 = 0.0f;
+            result.m31 = 0.0f;     result.m32 = 0.0f;     result.m33 = scales.z; result.m34 = 0.0f;
+            result.m41 = 0.0f;     result.m42 = 0.0f;     result.m43 = 0.0f;     result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateScale(float scale)
+        inline float4x4 float4x4::scale(float3 const& scales, float3 const& centerPoint)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = scale; result.M12 = 0.0f;  result.M13 = 0.0f;  result.M14 = 0.0f;
-            result.M21 = 0.0f;  result.M22 = scale; result.M23 = 0.0f;  result.M24 = 0.0f;
-            result.M31 = 0.0f;  result.M32 = 0.0f;  result.M33 = scale; result.M34 = 0.0f;
-            result.M41 = 0.0f;  result.M42 = 0.0f;  result.M43 = 0.0f;  result.M44 = 1.0f;
+            float tx = centerPoint.x * (1 - scales.x);
+            float ty = centerPoint.y * (1 - scales.y);
+            float tz = centerPoint.z * (1 - scales.z);
+
+            result.m11 = scales.x; result.m12 = 0.0f;     result.m13 = 0.0f;     result.m14 = 0.0f;
+            result.m21 = 0.0f;     result.m22 = scales.y; result.m23 = 0.0f;     result.m24 = 0.0f;
+            result.m31 = 0.0f;     result.m32 = 0.0f;     result.m33 = scales.z; result.m34 = 0.0f;
+            result.m41 = tx;       result.m42 = ty;       result.m43 = tz;       result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateScale(float scale, Vector3 const& centerPoint)
+        inline float4x4 float4x4::scale(float scale)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
-            float tx = centerPoint.X * (1 - scale);
-            float ty = centerPoint.Y * (1 - scale);
-            float tz = centerPoint.Z * (1 - scale);
-
-            result.M11 = scale; result.M12 = 0.0f;  result.M13 = 0.0f;  result.M14 = 0.0f;
-            result.M21 = 0.0f;  result.M22 = scale; result.M23 = 0.0f;  result.M24 = 0.0f;
-            result.M31 = 0.0f;  result.M32 = 0.0f;  result.M33 = scale; result.M34 = 0.0f;
-            result.M41 = tx;    result.M42 = ty;    result.M43 = tz;    result.M44 = 1.0f;
+            result.m11 = scale; result.m12 = 0.0f;  result.m13 = 0.0f;  result.m14 = 0.0f;
+            result.m21 = 0.0f;  result.m22 = scale; result.m23 = 0.0f;  result.m24 = 0.0f;
+            result.m31 = 0.0f;  result.m32 = 0.0f;  result.m33 = scale; result.m34 = 0.0f;
+            result.m41 = 0.0f;  result.m42 = 0.0f;  result.m43 = 0.0f;  result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateRotationX(float radians)
+        inline float4x4 float4x4::scale(float scale, float3 const& centerPoint)
         {
-            Matrix4x4 result;
+            float4x4 result;
+
+            float tx = centerPoint.x * (1 - scale);
+            float ty = centerPoint.y * (1 - scale);
+            float tz = centerPoint.z * (1 - scale);
+
+            result.m11 = scale; result.m12 = 0.0f;  result.m13 = 0.0f;  result.m14 = 0.0f;
+            result.m21 = 0.0f;  result.m22 = scale; result.m23 = 0.0f;  result.m24 = 0.0f;
+            result.m31 = 0.0f;  result.m32 = 0.0f;  result.m33 = scale; result.m34 = 0.0f;
+            result.m41 = tx;    result.m42 = ty;    result.m43 = tz;    result.m44 = 1.0f;
+
+            return result;
+        }
+
+
+        inline float4x4 float4x4::rotation_x(float radians)
+        {
+            float4x4 result;
 
             float c = cosf(radians);
             float s = sinf(radians);
@@ -2525,41 +2172,41 @@ namespace Windows
             // [  0  c  s  0 ]
             // [  0 -s  c  0 ]
             // [  0  0  0  1 ]
-            result.M11 = 1.0f; result.M12 = 0.0f; result.M13 = 0.0f; result.M14 = 0.0f;
-            result.M21 = 0.0f; result.M22 =    c; result.M23 =    s; result.M24 = 0.0f;
-            result.M31 = 0.0f; result.M32 =   -s; result.M33 =    c; result.M34 = 0.0f;
-            result.M41 = 0.0f; result.M42 = 0.0f; result.M43 = 0.0f; result.M44 = 1.0f;
+            result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
+            result.m21 = 0.0f; result.m22 =    c; result.m23 =    s; result.m24 = 0.0f;
+            result.m31 = 0.0f; result.m32 =   -s; result.m33 =    c; result.m34 = 0.0f;
+            result.m41 = 0.0f; result.m42 = 0.0f; result.m43 = 0.0f; result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateRotationX(float radians, Vector3 const& centerPoint)
+        inline float4x4 float4x4::rotation_x(float radians, float3 const& centerPoint)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
             float c = cosf(radians);
             float s = sinf(radians);
 
-            float y = centerPoint.Y * (1 - c) + centerPoint.Z * s;
-            float z = centerPoint.Z * (1 - c) - centerPoint.Y * s;
+            float y = centerPoint.y * (1 - c) + centerPoint.z * s;
+            float z = centerPoint.z * (1 - c) - centerPoint.y * s;
 
             // [  1  0  0  0 ]
             // [  0  c  s  0 ]
             // [  0 -s  c  0 ]
             // [  0  y  z  1 ]
-            result.M11 = 1.0f; result.M12 = 0.0f; result.M13 = 0.0f; result.M14 = 0.0f;
-            result.M21 = 0.0f; result.M22 =    c; result.M23 =    s; result.M24 = 0.0f;
-            result.M31 = 0.0f; result.M32 =   -s; result.M33 =    c; result.M34 = 0.0f;
-            result.M41 = 0.0f; result.M42 =    y; result.M43 =    z; result.M44 = 1.0f;
+            result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
+            result.m21 = 0.0f; result.m22 =    c; result.m23 =    s; result.m24 = 0.0f;
+            result.m31 = 0.0f; result.m32 =   -s; result.m33 =    c; result.m34 = 0.0f;
+            result.m41 = 0.0f; result.m42 =    y; result.m43 =    z; result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateRotationY(float radians)
+        inline float4x4 float4x4::rotation_y(float radians)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
             float c = cosf(radians);
             float s = sinf(radians);
@@ -2568,41 +2215,41 @@ namespace Windows
             // [  0  1  0  0 ]
             // [  s  0  c  0 ]
             // [  0  0  0  1 ]
-            result.M11 =    c; result.M12 = 0.0f; result.M13 =   -s; result.M14 = 0.0f;
-            result.M21 = 0.0f; result.M22 = 1.0f; result.M23 = 0.0f; result.M24 = 0.0f;
-            result.M31 =    s; result.M32 = 0.0f; result.M33 =    c; result.M34 = 0.0f;
-            result.M41 = 0.0f; result.M42 = 0.0f; result.M43 = 0.0f; result.M44 = 1.0f;
+            result.m11 =    c; result.m12 = 0.0f; result.m13 =   -s; result.m14 = 0.0f;
+            result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
+            result.m31 =    s; result.m32 = 0.0f; result.m33 =    c; result.m34 = 0.0f;
+            result.m41 = 0.0f; result.m42 = 0.0f; result.m43 = 0.0f; result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateRotationY(float radians, Vector3 const& centerPoint)
+        inline float4x4 float4x4::rotation_y(float radians, float3 const& centerPoint)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
             float c = cosf(radians);
             float s = sinf(radians);
 
-            float x = centerPoint.X * (1 - c) - centerPoint.Z * s;
-            float z = centerPoint.Z * (1 - c) + centerPoint.X * s;
+            float x = centerPoint.x * (1 - c) - centerPoint.z * s;
+            float z = centerPoint.z * (1 - c) + centerPoint.x * s;
 
             // [  c  0 -s  0 ]
             // [  0  1  0  0 ]
             // [  s  0  c  0 ]
             // [  x  0  z  1 ]
-            result.M11 =    c; result.M12 = 0.0f; result.M13 =   -s; result.M14 = 0.0f;
-            result.M21 = 0.0f; result.M22 = 1.0f; result.M23 = 0.0f; result.M24 = 0.0f;
-            result.M31 =    s; result.M32 = 0.0f; result.M33 =    c; result.M34 = 0.0f;
-            result.M41 =    x; result.M42 = 0.0f; result.M43 =    z; result.M44 = 1.0f;
+            result.m11 =    c; result.m12 = 0.0f; result.m13 =   -s; result.m14 = 0.0f;
+            result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
+            result.m31 =    s; result.m32 = 0.0f; result.m33 =    c; result.m34 = 0.0f;
+            result.m41 =    x; result.m42 = 0.0f; result.m43 =    z; result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateRotationZ(float radians)
+        inline float4x4 float4x4::rotation_z(float radians)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
             float c = cosf(radians);
             float s = sinf(radians);
@@ -2611,39 +2258,39 @@ namespace Windows
             // [ -s  c  0  0 ]
             // [  0  0  1  0 ]
             // [  0  0  0  1 ]
-            result.M11 =    c; result.M12 =    s; result.M13 = 0.0f; result.M14 = 0.0f;
-            result.M21 =   -s; result.M22 =    c; result.M23 = 0.0f; result.M24 = 0.0f;
-            result.M31 = 0.0f; result.M32 = 0.0f; result.M33 = 1.0f; result.M34 = 0.0f;
-            result.M41 = 0.0f; result.M42 = 0.0f; result.M43 = 0.0f; result.M44 = 1.0f;
+            result.m11 =    c; result.m12 =    s; result.m13 = 0.0f; result.m14 = 0.0f;
+            result.m21 =   -s; result.m22 =    c; result.m23 = 0.0f; result.m24 = 0.0f;
+            result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
+            result.m41 = 0.0f; result.m42 = 0.0f; result.m43 = 0.0f; result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateRotationZ(float radians, Vector3 const& centerPoint)
+        inline float4x4 float4x4::rotation_z(float radians, float3 const& centerPoint)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
             float c = cosf(radians);
             float s = sinf(radians);
 
-            float x = centerPoint.X * (1 - c) + centerPoint.Y * s;
-            float y = centerPoint.Y * (1 - c) - centerPoint.X * s;
+            float x = centerPoint.x * (1 - c) + centerPoint.y * s;
+            float y = centerPoint.y * (1 - c) - centerPoint.x * s;
 
             // [  c  s  0  0 ]
             // [ -s  c  0  0 ]
             // [  0  0  1  0 ]
             // [  x  y  0  1 ]
-            result.M11 =    c; result.M12 =    s; result.M13 = 0.0f; result.M14 = 0.0f;
-            result.M21 =   -s; result.M22 =    c; result.M23 = 0.0f; result.M24 = 0.0f;
-            result.M31 = 0.0f; result.M32 = 0.0f; result.M33 = 1.0f; result.M34 = 0.0f;
-            result.M41 =    x; result.M42 =    y; result.M43 = 0.0f; result.M44 = 1.0f;
+            result.m11 =    c; result.m12 =    s; result.m13 = 0.0f; result.m14 = 0.0f;
+            result.m21 =   -s; result.m22 =    c; result.m23 = 0.0f; result.m24 = 0.0f;
+            result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
+            result.m41 =    x; result.m42 =    y; result.m43 = 0.0f; result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateFromAxisAngle(Vector3 const& axis, float angle)
+        inline float4x4 float4x4::from_axis_angle(float3 const& axis, float angle)
         {
             // a: angle
             // x, y, z: unit vector for axis.
@@ -2668,309 +2315,309 @@ namespace Windows
             // M = [ xy-cosa*yx+sina*z    yy+cosa(1-yy)  yz-cosa*yz-sina*x ]
             //     [ zx-cosa*zx-sina*y zy-cosa*zy+sina*x   zz+cosa*(1-zz)  ]
             //
-            float x = axis.X, y = axis.Y, z = axis.Z;
+            float x = axis.x, y = axis.y, z = axis.z;
             float sa = sinf(angle), ca = cosf(angle);
             float xx = x * x, yy = y * y, zz = z * z;
             float xy = x * y, xz = x * z, yz = y * z;
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = xx + ca * ( 1.0f - xx );   result.M12 = xy - ca * xy + sa * z;     result.M13 = xz - ca * xz - sa * y;     result.M14 = 0.0f;
-            result.M21 = xy - ca * xy - sa * z;     result.M22 = yy + ca * ( 1.0f - yy );   result.M23 = yz - ca * yz + sa * x;     result.M24 = 0.0f;
-            result.M31 = xz - ca * xz + sa * y;     result.M32 = yz - ca * yz - sa * x;     result.M33 = zz + ca * ( 1.0f - zz );   result.M34 = 0.0f;
-            result.M41 = 0.0f;                      result.M42 = 0.0f;                      result.M43 = 0.0f;                      result.M44 = 1.0f;
+            result.m11 = xx + ca * ( 1.0f - xx );   result.m12 = xy - ca * xy + sa * z;     result.m13 = xz - ca * xz - sa * y;     result.m14 = 0.0f;
+            result.m21 = xy - ca * xy - sa * z;     result.m22 = yy + ca * ( 1.0f - yy );   result.m23 = yz - ca * yz + sa * x;     result.m24 = 0.0f;
+            result.m31 = xz - ca * xz + sa * y;     result.m32 = yz - ca * yz - sa * x;     result.m33 = zz + ca * ( 1.0f - zz );   result.m34 = 0.0f;
+            result.m41 = 0.0f;                      result.m42 = 0.0f;                      result.m43 = 0.0f;                      result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
+        inline float4x4 float4x4::perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
         {
             if (fieldOfView <= 0.0f || fieldOfView >= DirectX::XM_PI)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(fieldOfView);
+                throw std::invalid_argument("fieldOfView");
 
             if (nearPlaneDistance <= 0.0f)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
+                throw std::invalid_argument("nearPlaneDistance");
 
             if (farPlaneDistance <= 0.0f)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(farPlaneDistance);
+                throw std::invalid_argument("farPlaneDistance");
 
             if (nearPlaneDistance >= farPlaneDistance )
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
+                throw std::invalid_argument("nearPlaneDistance");
 
             float yScale = 1.0f / tanf(fieldOfView * 0.5f);
             float xScale = yScale / aspectRatio;
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = xScale;
-            result.M12 = result.M13 = result.M14 = 0.0f;
+            result.m11 = xScale;
+            result.m12 = result.m13 = result.m14 = 0.0f;
 
-            result.M22 = yScale;
-            result.M21 = result.M23 = result.M24 = 0.0f;
+            result.m22 = yScale;
+            result.m21 = result.m23 = result.m24 = 0.0f;
 
-            result.M31 = result.M32 = 0.0f;
-            result.M33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-            result.M34 = -1.0f;
+            result.m31 = result.m32 = 0.0f;
+            result.m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+            result.m34 = -1.0f;
 
-            result.M41 = result.M42 = result.M44 = 0.0f;
-            result.M43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+            result.m41 = result.m42 = result.m44 = 0.0f;
+            result.m43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
+        inline float4x4 float4x4::perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
+                throw std::invalid_argument("nearPlaneDistance");
 
             if (farPlaneDistance <= 0.0f)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(farPlaneDistance);
+                throw std::invalid_argument("farPlaneDistance");
 
             if (nearPlaneDistance >= farPlaneDistance)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
+                throw std::invalid_argument("nearPlaneDistance");
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = 2.0f * nearPlaneDistance / width;
-            result.M12 = result.M13 = result.M14 = 0.0f;
+            result.m11 = 2.0f * nearPlaneDistance / width;
+            result.m12 = result.m13 = result.m14 = 0.0f;
 
-            result.M22 = 2.0f * nearPlaneDistance / height;
-            result.M21 = result.M23 = result.M24 = 0.0f;
+            result.m22 = 2.0f * nearPlaneDistance / height;
+            result.m21 = result.m23 = result.m24 = 0.0f;
 
-            result.M33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-            result.M31 = result.M32 = 0.0f;
-            result.M34 = -1.0f;
+            result.m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+            result.m31 = result.m32 = 0.0f;
+            result.m34 = -1.0f;
 
-            result.M41 = result.M42 = result.M44 = 0.0f;
-            result.M43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+            result.m41 = result.m42 = result.m44 = 0.0f;
+            result.m43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
+        inline float4x4 float4x4::perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
+                throw std::invalid_argument("nearPlaneDistance");
 
             if (farPlaneDistance <= 0.0f)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(farPlaneDistance);
+                throw std::invalid_argument("farPlaneDistance");
 
             if (nearPlaneDistance >= farPlaneDistance)
-                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
+                throw std::invalid_argument("nearPlaneDistance");
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = 2.0f * nearPlaneDistance / (right - left);
-            result.M12 = result.M13 = result.M14 = 0.0f;
+            result.m11 = 2.0f * nearPlaneDistance / (right - left);
+            result.m12 = result.m13 = result.m14 = 0.0f;
 
-            result.M22 = 2.0f * nearPlaneDistance / (top - bottom);
-            result.M21 = result.M23 = result.M24 = 0.0f;
+            result.m22 = 2.0f * nearPlaneDistance / (top - bottom);
+            result.m21 = result.m23 = result.m24 = 0.0f;
 
-            result.M31 = (left + right) / (right - left);
-            result.M32 = (top + bottom) / (top - bottom);
-            result.M33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-            result.M34 = -1.0f;
+            result.m31 = (left + right) / (right - left);
+            result.m32 = (top + bottom) / (top - bottom);
+            result.m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+            result.m34 = -1.0f;
 
-            result.M43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-            result.M41 = result.M42 = result.M44 = 0.0f;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane)
-        {
-            Matrix4x4 result;
-
-            result.M11 = 2.0f / width;
-            result.M12 = result.M13 = result.M14 = 0.0f;
-
-            result.M22 = 2.0f / height;
-            result.M21 = result.M23 = result.M24 = 0.0f;
-
-            result.M33 = 1.0f / (zNearPlane - zFarPlane);
-            result.M31 = result.M32 = result.M34 = 0.0f;
-
-            result.M41 = result.M42 = 0.0f;
-            result.M43 = zNearPlane / (zNearPlane - zFarPlane);
-            result.M44 = 1.0f;
+            result.m43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+            result.m41 = result.m42 = result.m44 = 0.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)
+        inline float4x4 float4x4::orthographic(float width, float height, float zNearPlane, float zFarPlane)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = 2.0f / (right - left);
-            result.M12 = result.M13 = result.M14 = 0.0f;
+            result.m11 = 2.0f / width;
+            result.m12 = result.m13 = result.m14 = 0.0f;
 
-            result.M22 = 2.0f / (top - bottom);
-            result.M21 = result.M23 = result.M24 = 0.0f;
+            result.m22 = 2.0f / height;
+            result.m21 = result.m23 = result.m24 = 0.0f;
 
-            result.M33 = 1.0f / (zNearPlane - zFarPlane);
-            result.M31 = result.M32 = result.M34 = 0.0f;
+            result.m33 = 1.0f / (zNearPlane - zFarPlane);
+            result.m31 = result.m32 = result.m34 = 0.0f;
 
-            result.M41 = (left + right) / (left - right);
-            result.M42 = (top + bottom) / (bottom - top);
-            result.M43 = zNearPlane / (zNearPlane - zFarPlane);
-            result.M44 = 1.0f;
+            result.m41 = result.m42 = 0.0f;
+            result.m43 = zNearPlane / (zNearPlane - zFarPlane);
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateLookAt(Vector3 const& cameraPosition, Vector3 const& cameraTarget, Vector3 const& cameraUpVector)
+        inline float4x4 float4x4::orthographic_off_center(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)
         {
-            Vector3 zaxis = Vector3::Normalize(cameraPosition - cameraTarget);
-            Vector3 xaxis = Vector3::Normalize(Vector3::Cross(cameraUpVector, zaxis));
-            Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
+            float4x4 result;
 
-            Matrix4x4 result;
+            result.m11 = 2.0f / (right - left);
+            result.m12 = result.m13 = result.m14 = 0.0f;
 
-            result.M11 = xaxis.X; result.M12 = yaxis.X; result.M13 = zaxis.X; result.M14 = 0.0f;
-            result.M21 = xaxis.Y; result.M22 = yaxis.Y; result.M23 = zaxis.Y; result.M24 = 0.0f;
-            result.M31 = xaxis.Z; result.M32 = yaxis.Z; result.M33 = zaxis.Z; result.M34 = 0.0f;
-            result.M41 = -Vector3::Dot(xaxis, cameraPosition);
-            result.M42 = -Vector3::Dot(yaxis, cameraPosition);
-            result.M43 = -Vector3::Dot(zaxis, cameraPosition);
-            result.M44 = 1.0f;
+            result.m22 = 2.0f / (top - bottom);
+            result.m21 = result.m23 = result.m24 = 0.0f;
+
+            result.m33 = 1.0f / (zNearPlane - zFarPlane);
+            result.m31 = result.m32 = result.m34 = 0.0f;
+
+            result.m41 = (left + right) / (left - right);
+            result.m42 = (top + bottom) / (bottom - top);
+            result.m43 = zNearPlane / (zNearPlane - zFarPlane);
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateWorld(Vector3 const& position, Vector3 const& forward, Vector3 const& up)
+        inline float4x4 float4x4::look_at(float3 const& cameraPosition, float3 const& cameraTarget, float3 const& cameraUpVector)
         {
-            Vector3 zaxis = Vector3::Normalize(-forward);
-            Vector3 xaxis = Vector3::Normalize(Vector3::Cross(up, zaxis));
-            Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
+            float3 zaxis = normalize(cameraPosition - cameraTarget);
+            float3 xaxis = normalize(cross(cameraUpVector, zaxis));
+            float3 yaxis = cross(zaxis, xaxis);
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = xaxis.X; result.M12 = xaxis.Y; result.M13 = xaxis.Z; result.M14 = 0.0f;
-            result.M21 = yaxis.X; result.M22 = yaxis.Y; result.M23 = yaxis.Z; result.M24 = 0.0f;
-            result.M31 = zaxis.X; result.M32 = zaxis.Y; result.M33 = zaxis.Z; result.M34 = 0.0f;
-            result.M41 = position.X;
-            result.M42 = position.Y;
-            result.M43 = position.Z;
-            result.M44 = 1.0f;
+            result.m11 = xaxis.x; result.m12 = yaxis.x; result.m13 = zaxis.x; result.m14 = 0.0f;
+            result.m21 = xaxis.y; result.m22 = yaxis.y; result.m23 = zaxis.y; result.m24 = 0.0f;
+            result.m31 = xaxis.z; result.m32 = yaxis.z; result.m33 = zaxis.z; result.m34 = 0.0f;
+            result.m41 = -dot(xaxis, cameraPosition);
+            result.m42 = -dot(yaxis, cameraPosition);
+            result.m43 = -dot(zaxis, cameraPosition);
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateFromQuaternion(Quaternion const& quaternion)
+        inline float4x4 float4x4::world(float3 const& position, float3 const& forward, float3 const& up)
         {
-            Matrix4x4 result;
+            float3 zaxis = normalize(-forward);
+            float3 xaxis = normalize(cross(up, zaxis));
+            float3 yaxis = cross(zaxis, xaxis);
 
-            float xx = quaternion.X * quaternion.X;
-            float yy = quaternion.Y * quaternion.Y;
-            float zz = quaternion.Z * quaternion.Z;
+            float4x4 result;
 
-            float xy = quaternion.X * quaternion.Y;
-            float wz = quaternion.Z * quaternion.W;
-            float xz = quaternion.Z * quaternion.X;
-            float wy = quaternion.Y * quaternion.W;
-            float yz = quaternion.Y * quaternion.Z;
-            float wx = quaternion.X * quaternion.W;
-
-            result.M11 = 1.0f - 2.0f * (yy + zz);   result.M12 = 2.0f * (xy + wz);          result.M13 = 2.0f * (xz - wy);          result.M14 = 0.0f;
-            result.M21 = 2.0f * (xy - wz);          result.M22 = 1.0f - 2.0f * (zz + xx);   result.M23 = 2.0f * (yz + wx);          result.M24 = 0.0f;
-            result.M31 = 2.0f * (xz + wy);          result.M32 = 2.0f * (yz - wx);          result.M33 = 1.0f - 2.0f * (yy + xx);   result.M34 = 0.0f;
-            result.M41 = 0.0f;                      result.M42 = 0.0f;                      result.M43 = 0.0f;                      result.M44 = 1.0f;
+            result.m11 = xaxis.x; result.m12 = xaxis.y; result.m13 = xaxis.z; result.m14 = 0.0f;
+            result.m21 = yaxis.x; result.m22 = yaxis.y; result.m23 = yaxis.z; result.m24 = 0.0f;
+            result.m31 = zaxis.x; result.m32 = zaxis.y; result.m33 = zaxis.z; result.m34 = 0.0f;
+            result.m41 = position.x;
+            result.m42 = position.y;
+            result.m43 = position.z;
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+        inline float4x4 float4x4::from_quaternion(quaternion const& quaternion)
         {
-            Quaternion q = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
+            float4x4 result;
 
-            return Matrix4x4::CreateFromQuaternion(q);
-        }
+            float xx = quaternion.x * quaternion.x;
+            float yy = quaternion.y * quaternion.y;
+            float zz = quaternion.z * quaternion.z;
 
+            float xy = quaternion.x * quaternion.y;
+            float wz = quaternion.z * quaternion.w;
+            float xz = quaternion.z * quaternion.x;
+            float wy = quaternion.y * quaternion.w;
+            float yz = quaternion.y * quaternion.z;
+            float wx = quaternion.x * quaternion.w;
 
-        inline Matrix4x4 Matrix4x4::CreateShadow(Vector3 const& lightDirection, Plane const& plane)
-        {
-            Plane p = Plane::Normalize(plane);
-
-            float dot = p.Normal.X * lightDirection.X + p.Normal.Y * lightDirection.Y + p.Normal.Z * lightDirection.Z;
-            float a = -p.Normal.X;
-            float b = -p.Normal.Y;
-            float c = -p.Normal.Z;
-            float d = -p.D;
-
-            Matrix4x4 result;
-
-            result.M11 = a * lightDirection.X + dot;
-            result.M21 = b * lightDirection.X;
-            result.M31 = c * lightDirection.X;
-            result.M41 = d * lightDirection.X;
-
-            result.M12 = a * lightDirection.Y;
-            result.M22 = b * lightDirection.Y + dot;
-            result.M32 = c * lightDirection.Y;
-            result.M42 = d * lightDirection.Y;
-
-            result.M13 = a * lightDirection.Z;
-            result.M23 = b * lightDirection.Z;
-            result.M33 = c * lightDirection.Z + dot;
-            result.M43 = d * lightDirection.Z;
-
-            result.M14 = 0.0f;
-            result.M24 = 0.0f;
-            result.M34 = 0.0f;
-            result.M44 = dot;
+            result.m11 = 1.0f - 2.0f * (yy + zz);   result.m12 = 2.0f * (xy + wz);          result.m13 = 2.0f * (xz - wy);          result.m14 = 0.0f;
+            result.m21 = 2.0f * (xy - wz);          result.m22 = 1.0f - 2.0f * (zz + xx);   result.m23 = 2.0f * (yz + wx);          result.m24 = 0.0f;
+            result.m31 = 2.0f * (xz + wy);          result.m32 = 2.0f * (yz - wx);          result.m33 = 1.0f - 2.0f * (yy + xx);   result.m34 = 0.0f;
+            result.m41 = 0.0f;                      result.m42 = 0.0f;                      result.m43 = 0.0f;                      result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::CreateReflection(Plane const& value)
+        inline float4x4 float4x4::from_yaw_pitch_roll(float yaw, float pitch, float roll)
         {
-            Plane v = Plane::Normalize(value);
+            quaternion q = quaternion::from_yaw_pitch_roll(yaw, pitch, roll);
 
-            float a = v.Normal.X;
-            float b = v.Normal.Y;
-            float c = v.Normal.Z;
+            return float4x4::from_quaternion(q);
+        }
+
+
+        inline float4x4 float4x4::shadow(float3 const& lightDirection, plane const& plane)
+        {
+            auto p = normalize(plane);
+
+            float dot = p.normal.x * lightDirection.x + p.normal.y * lightDirection.y + p.normal.z * lightDirection.z;
+            float a = -p.normal.x;
+            float b = -p.normal.y;
+            float c = -p.normal.z;
+            float d = -p.d;
+
+            float4x4 result;
+
+            result.m11 = a * lightDirection.x + dot;
+            result.m21 = b * lightDirection.x;
+            result.m31 = c * lightDirection.x;
+            result.m41 = d * lightDirection.x;
+
+            result.m12 = a * lightDirection.y;
+            result.m22 = b * lightDirection.y + dot;
+            result.m32 = c * lightDirection.y;
+            result.m42 = d * lightDirection.y;
+
+            result.m13 = a * lightDirection.z;
+            result.m23 = b * lightDirection.z;
+            result.m33 = c * lightDirection.z + dot;
+            result.m43 = d * lightDirection.z;
+
+            result.m14 = 0.0f;
+            result.m24 = 0.0f;
+            result.m34 = 0.0f;
+            result.m44 = dot;
+
+            return result;
+        }
+
+
+        inline float4x4 float4x4::reflection(plane const& value)
+        {
+            plane v = normalize(value);
+
+            float a = v.normal.x;
+            float b = v.normal.y;
+            float c = v.normal.z;
 
             float fa = -2.0f * a;
             float fb = -2.0f * b;
             float fc = -2.0f * c;
 
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = fa * a + 1.0f;
-            result.M12 = fb * a;
-            result.M13 = fc * a;
-            result.M14 = 0.0f;
+            result.m11 = fa * a + 1.0f;
+            result.m12 = fb * a;
+            result.m13 = fc * a;
+            result.m14 = 0.0f;
 
-            result.M21 = fa * b;
-            result.M22 = fb * b + 1.0f;
-            result.M23 = fc * b;
-            result.M24 = 0.0f;
+            result.m21 = fa * b;
+            result.m22 = fb * b + 1.0f;
+            result.m23 = fc * b;
+            result.m24 = 0.0f;
 
-            result.M31 = fa * c;
-            result.M32 = fb * c;
-            result.M33 = fc * c + 1.0f;
-            result.M34 = 0.0f;
+            result.m31 = fa * c;
+            result.m32 = fb * c;
+            result.m33 = fc * c + 1.0f;
+            result.m34 = 0.0f;
 
-            result.M41 = fa * v.D;
-            result.M42 = fb * v.D;
-            result.M43 = fc * v.D;
-            result.M44 = 1.0f;
+            result.m41 = fa * v.d;
+            result.m42 = fb * v.d;
+            result.m43 = fc * v.d;
+            result.m44 = 1.0f;
 
             return result;
         }
 
 
-        inline bool Matrix4x4::Invert(Matrix4x4 const& matrix, _Out_ Matrix4x4* result)
+        inline bool invert(float4x4 const& matrix, _Out_ float4x4* result)
         {
             //                                       -1
             // If you have matrix M, inverse Matrix M   can compute
@@ -3062,10 +2709,10 @@ namespace Windows
             // C   = (-1)  | e f g | = + ( a ( fk - gj ) - b ( ek - gi ) + c ( ej - fi ) )
             //  44         | i j k |
             //
-            float a = matrix.M11, b = matrix.M12, c = matrix.M13, d = matrix.M14;
-            float e = matrix.M21, f = matrix.M22, g = matrix.M23, h = matrix.M24;
-            float i = matrix.M31, j = matrix.M32, k = matrix.M33, l = matrix.M34;
-            float m = matrix.M41, n = matrix.M42, o = matrix.M43, p = matrix.M44;
+            float a = matrix.m11, b = matrix.m12, c = matrix.m13, d = matrix.m14;
+            float e = matrix.m21, f = matrix.m22, g = matrix.m23, h = matrix.m24;
+            float i = matrix.m31, j = matrix.m32, k = matrix.m33, l = matrix.m34;
+            float m = matrix.m41, n = matrix.m42, o = matrix.m43, p = matrix.m44;
 
             float kp_lo = k * p - l * o;
             float jp_ln = j * p - l * n;
@@ -3083,7 +2730,7 @@ namespace Windows
 
             if (fabs(det) < FLT_EPSILON)
             {
-                *result = Matrix4x4(NAN, NAN, NAN, NAN,
+                *result = float4x4(NAN, NAN, NAN, NAN,
                                     NAN, NAN, NAN, NAN,
                                     NAN, NAN, NAN, NAN,
                                     NAN, NAN, NAN, NAN);
@@ -3092,15 +2739,15 @@ namespace Windows
 
             float invDet = 1.0f / det;
 
-            result->M11 = a11 * invDet;
-            result->M21 = a12 * invDet;
-            result->M31 = a13 * invDet;
-            result->M41 = a14 * invDet;
+            result->m11 = a11 * invDet;
+            result->m21 = a12 * invDet;
+            result->m31 = a13 * invDet;
+            result->m41 = a14 * invDet;
 
-            result->M12 = -(b * kp_lo - c * jp_ln + d * jo_kn) * invDet;
-            result->M22 = +(a * kp_lo - c * ip_lm + d * io_km) * invDet;
-            result->M32 = -(a * jp_ln - b * ip_lm + d * in_jm) * invDet;
-            result->M42 = +(a * jo_kn - b * io_km + c * in_jm) * invDet;
+            result->m12 = -(b * kp_lo - c * jp_ln + d * jo_kn) * invDet;
+            result->m22 = +(a * kp_lo - c * ip_lm + d * io_km) * invDet;
+            result->m32 = -(a * jp_ln - b * ip_lm + d * in_jm) * invDet;
+            result->m42 = +(a * jo_kn - b * io_km + c * in_jm) * invDet;
 
             float gp_ho = g * p - h * o;
             float fp_hn = f * p - h * n;
@@ -3109,10 +2756,10 @@ namespace Windows
             float eo_gm = e * o - g * m;
             float en_fm = e * n - f * m;
 
-            result->M13 = +(b * gp_ho - c * fp_hn + d * fo_gn) * invDet;
-            result->M23 = -(a * gp_ho - c * ep_hm + d * eo_gm) * invDet;
-            result->M33 = +(a * fp_hn - b * ep_hm + d * en_fm) * invDet;
-            result->M43 = -(a * fo_gn - b * eo_gm + c * en_fm) * invDet;
+            result->m13 = +(b * gp_ho - c * fp_hn + d * fo_gn) * invDet;
+            result->m23 = -(a * gp_ho - c * ep_hm + d * eo_gm) * invDet;
+            result->m33 = +(a * fp_hn - b * ep_hm + d * en_fm) * invDet;
+            result->m43 = -(a * fo_gn - b * eo_gm + c * en_fm) * invDet;
 
             float gl_hk = g * l - h * k;
             float fl_hj = f * l - h * j;
@@ -3121,64 +2768,64 @@ namespace Windows
             float ek_gi = e * k - g * i;
             float ej_fi = e * j - f * i;
 
-            result->M14 = -(b * gl_hk - c * fl_hj + d * fk_gj) * invDet;
-            result->M24 = +(a * gl_hk - c * el_hi + d * ek_gi) * invDet;
-            result->M34 = -(a * fl_hj - b * el_hi + d * ej_fi) * invDet;
-            result->M44 = +(a * fk_gj - b * ek_gi + c * ej_fi) * invDet;
+            result->m14 = -(b * gl_hk - c * fl_hj + d * fk_gj) * invDet;
+            result->m24 = +(a * gl_hk - c * el_hi + d * ek_gi) * invDet;
+            result->m34 = -(a * fl_hj - b * el_hi + d * ej_fi) * invDet;
+            result->m44 = +(a * fk_gj - b * ek_gi + c * ej_fi) * invDet;
 
             return true;
         }
 
 
-        inline bool Matrix4x4::Decompose(Matrix4x4 const& matrix, _Out_ Vector3* scale, _Out_ Quaternion* rotation, _Out_ Vector3* translation)
+        inline bool decompose(float4x4 const& matrix, _Out_ float3* scale, _Out_ quaternion* rotation, _Out_ float3* translation)
         {
             bool result = true;
 
-            float* pfScales = &scale->X;
+            float* pfScales = &scale->x;
 
             const float EPSILON = 0.0001f;
             float det;
 
             struct CanonicalBasis
             {
-                Vector3 Row0;
-                Vector3 Row1;
-                Vector3 Row2;
+                float3 Row0;
+                float3 Row1;
+                float3 Row2;
             };
 
             struct VectorBasis
             {
-                Vector3* Element0;
-                Vector3* Element1;
-                Vector3* Element2;
+                float3* Element0;
+                float3* Element1;
+                float3* Element2;
             };
 
             VectorBasis vectorBasis;
-            Vector3** pVectorBasis = (Vector3**)&vectorBasis;
+            float3** pVectorBasis = (float3**)&vectorBasis;
 
-            Matrix4x4 matTemp = Matrix4x4::Identity();
+            float4x4 matTemp = float4x4::identity();
             CanonicalBasis canonicalBasis;
-            Vector3* pCanonicalBasis = &canonicalBasis.Row0;
+            float3* pCanonicalBasis = &canonicalBasis.Row0;
 
-            canonicalBasis.Row0 = Vector3(1.0f, 0.0f, 0.0f);
-            canonicalBasis.Row1 = Vector3(0.0f, 1.0f, 0.0f);
-            canonicalBasis.Row2 = Vector3(0.0f, 0.0f, 1.0f);
+            canonicalBasis.Row0 = float3(1.0f, 0.0f, 0.0f);
+            canonicalBasis.Row1 = float3(0.0f, 1.0f, 0.0f);
+            canonicalBasis.Row2 = float3(0.0f, 0.0f, 1.0f);
 
-            translation->X = matrix.M41;
-            translation->Y = matrix.M42;
-            translation->Z = matrix.M43;
+            translation->x = matrix.m41;
+            translation->y = matrix.m42;
+            translation->z = matrix.m43;
 
-            pVectorBasis[0] = (Vector3*)&matTemp.M11;
-            pVectorBasis[1] = (Vector3*)&matTemp.M21;
-            pVectorBasis[2] = (Vector3*)&matTemp.M31;
+            pVectorBasis[0] = (float3*)&matTemp.m11;
+            pVectorBasis[1] = (float3*)&matTemp.m21;
+            pVectorBasis[2] = (float3*)&matTemp.m31;
 
-            *(pVectorBasis[0]) = Vector3(matrix.M11, matrix.M12, matrix.M13);
-            *(pVectorBasis[1]) = Vector3(matrix.M21, matrix.M22, matrix.M23);
-            *(pVectorBasis[2]) = Vector3(matrix.M31, matrix.M32, matrix.M33);
+            *(pVectorBasis[0]) = float3(matrix.m11, matrix.m12, matrix.m13);
+            *(pVectorBasis[1]) = float3(matrix.m21, matrix.m22, matrix.m23);
+            *(pVectorBasis[2]) = float3(matrix.m31, matrix.m32, matrix.m33);
 
-            scale->X = pVectorBasis[0]->Length();
-            scale->Y = pVectorBasis[1]->Length();
-            scale->Z = pVectorBasis[2]->Length();
+            scale->x = length(*pVectorBasis[0]);
+            scale->y = length(*pVectorBasis[1]);
+            scale->z = length(*pVectorBasis[2]);
 
             int a, b, c;
             float x = pfScales[0], y = pfScales[1], z = pfScales[2];
@@ -3236,16 +2883,16 @@ namespace Windows
                 *(pVectorBasis[a]) = pCanonicalBasis[a];
             }
 
-            *pVectorBasis[a] = Vector3::Normalize(*pVectorBasis[a]);
+            *pVectorBasis[a] = normalize(*pVectorBasis[a]);
 
             if (pfScales[b] < EPSILON)
             {
                 int cc;
                 float fAbsX, fAbsY, fAbsZ;
 
-                fAbsX = fabs(pVectorBasis[a]->X);
-                fAbsY = fabs(pVectorBasis[a]->Y);
-                fAbsZ = fabs(pVectorBasis[a]->Z);
+                fAbsX = fabs(pVectorBasis[a]->x);
+                fAbsY = fabs(pVectorBasis[a]->y);
+                fAbsZ = fabs(pVectorBasis[a]->z);
 
                 if (fAbsX < fAbsY)
                 {
@@ -3284,19 +2931,19 @@ namespace Windows
                     }
                 }
 
-                *(pCanonicalBasis + cc) = Vector3::Cross(*pVectorBasis[b], *pVectorBasis[a]);
+                *(pCanonicalBasis + cc) = cross(*pVectorBasis[b], *pVectorBasis[a]);
             }
 
-            *pVectorBasis[b] = Vector3::Normalize(*pVectorBasis[b]);
+            *pVectorBasis[b] = normalize(*pVectorBasis[b]);
 
             if (pfScales[c] < EPSILON)
             {
-                *pVectorBasis[b] = Vector3::Cross(*pVectorBasis[c], *pVectorBasis[a]);
+                *pVectorBasis[b] = cross(*pVectorBasis[c], *pVectorBasis[a]);
             }
 
-            *pVectorBasis[c] = Vector3::Normalize(*pVectorBasis[c]);
+            *pVectorBasis[c] = normalize(*pVectorBasis[c]);
 
-            det = matTemp.Determinant();
+            det = determinant(matTemp);
 
             // use Kramer's rule to check for handedness of coordinate system
             if (det < 0.0f)
@@ -3314,34 +2961,34 @@ namespace Windows
             if ((EPSILON < det))
             {
                 // Non-SRT matrix encountered
-                *rotation = Quaternion::Identity();
+                *rotation = quaternion::identity();
                 result = false;
             }
             else
             {
-                *rotation = Quaternion::CreateFromRotationMatrix(matTemp);
+                *rotation = quaternion::from_rotation_matrix(matTemp);
             }
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::Transform(Matrix4x4 const& value, Quaternion const& rotation)
+        inline float4x4 transform(float4x4 const& value, quaternion const& rotation)
         {
             // Compute rotation matrix.
-            float x2 = rotation.X + rotation.X;
-            float y2 = rotation.Y + rotation.Y;
-            float z2 = rotation.Z + rotation.Z;
+            float x2 = rotation.x + rotation.x;
+            float y2 = rotation.y + rotation.y;
+            float z2 = rotation.z + rotation.z;
 
-            float wx2 = rotation.W * x2;
-            float wy2 = rotation.W * y2;
-            float wz2 = rotation.W * z2;
-            float xx2 = rotation.X * x2;
-            float xy2 = rotation.X * y2;
-            float xz2 = rotation.X * z2;
-            float yy2 = rotation.Y * y2;
-            float yz2 = rotation.Y * z2;
-            float zz2 = rotation.Z * z2;
+            float wx2 = rotation.w * x2;
+            float wy2 = rotation.w * y2;
+            float wz2 = rotation.w * z2;
+            float xx2 = rotation.x * x2;
+            float xy2 = rotation.x * y2;
+            float xz2 = rotation.x * z2;
+            float yy2 = rotation.y * y2;
+            float yz2 = rotation.y * z2;
+            float zz2 = rotation.z * z2;
 
             float q11 = 1.0f - yy2 - zz2;
             float q21 = xy2 - wz2;
@@ -3355,179 +3002,95 @@ namespace Windows
             float q23 = yz2 + wx2;
             float q33 = 1.0f - xx2 - yy2;
 
-            Matrix4x4 result;
+            float4x4 result;
 
             // First row
-            result.M11 = value.M11 * q11 + value.M12 * q21 + value.M13 * q31;
-            result.M12 = value.M11 * q12 + value.M12 * q22 + value.M13 * q32;
-            result.M13 = value.M11 * q13 + value.M12 * q23 + value.M13 * q33;
-            result.M14 = value.M14;
+            result.m11 = value.m11 * q11 + value.m12 * q21 + value.m13 * q31;
+            result.m12 = value.m11 * q12 + value.m12 * q22 + value.m13 * q32;
+            result.m13 = value.m11 * q13 + value.m12 * q23 + value.m13 * q33;
+            result.m14 = value.m14;
 
             // Second row
-            result.M21 = value.M21 * q11 + value.M22 * q21 + value.M23 * q31;
-            result.M22 = value.M21 * q12 + value.M22 * q22 + value.M23 * q32;
-            result.M23 = value.M21 * q13 + value.M22 * q23 + value.M23 * q33;
-            result.M24 = value.M24;
+            result.m21 = value.m21 * q11 + value.m22 * q21 + value.m23 * q31;
+            result.m22 = value.m21 * q12 + value.m22 * q22 + value.m23 * q32;
+            result.m23 = value.m21 * q13 + value.m22 * q23 + value.m23 * q33;
+            result.m24 = value.m24;
 
             // Third row
-            result.M31 = value.M31 * q11 + value.M32 * q21 + value.M33 * q31;
-            result.M32 = value.M31 * q12 + value.M32 * q22 + value.M33 * q32;
-            result.M33 = value.M31 * q13 + value.M32 * q23 + value.M33 * q33;
-            result.M34 = value.M34;
+            result.m31 = value.m31 * q11 + value.m32 * q21 + value.m33 * q31;
+            result.m32 = value.m31 * q12 + value.m32 * q22 + value.m33 * q32;
+            result.m33 = value.m31 * q13 + value.m32 * q23 + value.m33 * q33;
+            result.m34 = value.m34;
 
             // Fourth row
-            result.M41 = value.M41 * q11 + value.M42 * q21 + value.M43 * q31;
-            result.M42 = value.M41 * q12 + value.M42 * q22 + value.M43 * q32;
-            result.M43 = value.M41 * q13 + value.M42 * q23 + value.M43 * q33;
-            result.M44 = value.M44;
+            result.m41 = value.m41 * q11 + value.m42 * q21 + value.m43 * q31;
+            result.m42 = value.m41 * q12 + value.m42 * q22 + value.m43 * q32;
+            result.m43 = value.m41 * q13 + value.m42 * q23 + value.m43 * q33;
+            result.m44 = value.m44;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::Transpose(Matrix4x4 const& matrix)
+        inline float4x4 transpose(float4x4 const& matrix)
         {
-            Matrix4x4 result;
+            float4x4 result;
 
-            result.M11 = matrix.M11; result.M12 = matrix.M21; result.M13 = matrix.M31; result.M14 = matrix.M41;
-            result.M21 = matrix.M12; result.M22 = matrix.M22; result.M23 = matrix.M32; result.M24 = matrix.M42;
-            result.M31 = matrix.M13; result.M32 = matrix.M23; result.M33 = matrix.M33; result.M34 = matrix.M43;
-            result.M41 = matrix.M14; result.M42 = matrix.M24; result.M43 = matrix.M34; result.M44 = matrix.M44;
+            result.m11 = matrix.m11; result.m12 = matrix.m21; result.m13 = matrix.m31; result.m14 = matrix.m41;
+            result.m21 = matrix.m12; result.m22 = matrix.m22; result.m23 = matrix.m32; result.m24 = matrix.m42;
+            result.m31 = matrix.m13; result.m32 = matrix.m23; result.m33 = matrix.m33; result.m34 = matrix.m43;
+            result.m41 = matrix.m14; result.m42 = matrix.m24; result.m43 = matrix.m34; result.m44 = matrix.m44;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::Lerp(Matrix4x4 const& matrix1, Matrix4x4 const& matrix2, float amount)
+        inline float4x4 lerp(float4x4 const& matrix1, float4x4 const& matrix2, float amount)
         {
-            Matrix4x4 result;
+            float4x4 result;
             
             // First row
-            result.M11 = matrix1.M11 + (matrix2.M11 - matrix1.M11) * amount;
-            result.M12 = matrix1.M12 + (matrix2.M12 - matrix1.M12) * amount;
-            result.M13 = matrix1.M13 + (matrix2.M13 - matrix1.M13) * amount;
-            result.M14 = matrix1.M14 + (matrix2.M14 - matrix1.M14) * amount;
+            result.m11 = matrix1.m11 + (matrix2.m11 - matrix1.m11) * amount;
+            result.m12 = matrix1.m12 + (matrix2.m12 - matrix1.m12) * amount;
+            result.m13 = matrix1.m13 + (matrix2.m13 - matrix1.m13) * amount;
+            result.m14 = matrix1.m14 + (matrix2.m14 - matrix1.m14) * amount;
             
             // Second row
-            result.M21 = matrix1.M21 + (matrix2.M21 - matrix1.M21) * amount;
-            result.M22 = matrix1.M22 + (matrix2.M22 - matrix1.M22) * amount;
-            result.M23 = matrix1.M23 + (matrix2.M23 - matrix1.M23) * amount;
-            result.M24 = matrix1.M24 + (matrix2.M24 - matrix1.M24) * amount;
+            result.m21 = matrix1.m21 + (matrix2.m21 - matrix1.m21) * amount;
+            result.m22 = matrix1.m22 + (matrix2.m22 - matrix1.m22) * amount;
+            result.m23 = matrix1.m23 + (matrix2.m23 - matrix1.m23) * amount;
+            result.m24 = matrix1.m24 + (matrix2.m24 - matrix1.m24) * amount;
             
             // Third row
-            result.M31 = matrix1.M31 + (matrix2.M31 - matrix1.M31) * amount;
-            result.M32 = matrix1.M32 + (matrix2.M32 - matrix1.M32) * amount;
-            result.M33 = matrix1.M33 + (matrix2.M33 - matrix1.M33) * amount;
-            result.M34 = matrix1.M34 + (matrix2.M34 - matrix1.M34) * amount;
+            result.m31 = matrix1.m31 + (matrix2.m31 - matrix1.m31) * amount;
+            result.m32 = matrix1.m32 + (matrix2.m32 - matrix1.m32) * amount;
+            result.m33 = matrix1.m33 + (matrix2.m33 - matrix1.m33) * amount;
+            result.m34 = matrix1.m34 + (matrix2.m34 - matrix1.m34) * amount;
             
             // Fourth row
-            result.M41 = matrix1.M41 + (matrix2.M41 - matrix1.M41) * amount;
-            result.M42 = matrix1.M42 + (matrix2.M42 - matrix1.M42) * amount;
-            result.M43 = matrix1.M43 + (matrix2.M43 - matrix1.M43) * amount;
-            result.M44 = matrix1.M44 + (matrix2.M44 - matrix1.M44) * amount;
+            result.m41 = matrix1.m41 + (matrix2.m41 - matrix1.m41) * amount;
+            result.m42 = matrix1.m42 + (matrix2.m42 - matrix1.m42) * amount;
+            result.m43 = matrix1.m43 + (matrix2.m43 - matrix1.m43) * amount;
+            result.m44 = matrix1.m44 + (matrix2.m44 - matrix1.m44) * amount;
 
             return result;
         }
 
 
-        inline Matrix4x4 Matrix4x4::Negate(Matrix4x4 const& value)
+        inline float4x4 float4x4::operator -() const
         {
-            Matrix4x4 result;
+            float4x4 m;
 
-            result.M11 = -value.M11; result.M12 = -value.M12; result.M13 = -value.M13; result.M14 = -value.M14;
-            result.M21 = -value.M21; result.M22 = -value.M22; result.M23 = -value.M23; result.M24 = -value.M24;
-            result.M31 = -value.M31; result.M32 = -value.M32; result.M33 = -value.M33; result.M34 = -value.M34;
-            result.M41 = -value.M41; result.M42 = -value.M42; result.M43 = -value.M43; result.M44 = -value.M44;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::Add(Matrix4x4 const& value1, Matrix4x4 const& value2)
-        {
-            Matrix4x4 result;
-
-            result.M11 = value1.M11 + value2.M11; result.M12 = value1.M12 + value2.M12; result.M13 = value1.M13 + value2.M13; result.M14 = value1.M14 + value2.M14;
-            result.M21 = value1.M21 + value2.M21; result.M22 = value1.M22 + value2.M22; result.M23 = value1.M23 + value2.M23; result.M24 = value1.M24 + value2.M24;
-            result.M31 = value1.M31 + value2.M31; result.M32 = value1.M32 + value2.M32; result.M33 = value1.M33 + value2.M33; result.M34 = value1.M34 + value2.M34;
-            result.M41 = value1.M41 + value2.M41; result.M42 = value1.M42 + value2.M42; result.M43 = value1.M43 + value2.M43; result.M44 = value1.M44 + value2.M44;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::Subtract(Matrix4x4 const& value1, Matrix4x4 const& value2)
-        {
-            Matrix4x4 result;
-
-            result.M11 = value1.M11 - value2.M11; result.M12 = value1.M12 - value2.M12; result.M13 = value1.M13 - value2.M13; result.M14 = value1.M14 - value2.M14;
-            result.M21 = value1.M21 - value2.M21; result.M22 = value1.M22 - value2.M22; result.M23 = value1.M23 - value2.M23; result.M24 = value1.M24 - value2.M24;
-            result.M31 = value1.M31 - value2.M31; result.M32 = value1.M32 - value2.M32; result.M33 = value1.M33 - value2.M33; result.M34 = value1.M34 - value2.M34;
-            result.M41 = value1.M41 - value2.M41; result.M42 = value1.M42 - value2.M42; result.M43 = value1.M43 - value2.M43; result.M44 = value1.M44 - value2.M44;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::Multiply(Matrix4x4 const& value1, Matrix4x4 const& value2)
-        {
-            Matrix4x4 result;
-
-            // First row
-            result.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21 + value1.M13 * value2.M31 + value1.M14 * value2.M41;
-            result.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22 + value1.M13 * value2.M32 + value1.M14 * value2.M42;
-            result.M13 = value1.M11 * value2.M13 + value1.M12 * value2.M23 + value1.M13 * value2.M33 + value1.M14 * value2.M43;
-            result.M14 = value1.M11 * value2.M14 + value1.M12 * value2.M24 + value1.M13 * value2.M34 + value1.M14 * value2.M44;
-
-            // Second row
-            result.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21 + value1.M23 * value2.M31 + value1.M24 * value2.M41;
-            result.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22 + value1.M23 * value2.M32 + value1.M24 * value2.M42;
-            result.M23 = value1.M21 * value2.M13 + value1.M22 * value2.M23 + value1.M23 * value2.M33 + value1.M24 * value2.M43;
-            result.M24 = value1.M21 * value2.M14 + value1.M22 * value2.M24 + value1.M23 * value2.M34 + value1.M24 * value2.M44;
-
-            // Third row
-            result.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value1.M33 * value2.M31 + value1.M34 * value2.M41;
-            result.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value1.M33 * value2.M32 + value1.M34 * value2.M42;
-            result.M33 = value1.M31 * value2.M13 + value1.M32 * value2.M23 + value1.M33 * value2.M33 + value1.M34 * value2.M43;
-            result.M34 = value1.M31 * value2.M14 + value1.M32 * value2.M24 + value1.M33 * value2.M34 + value1.M34 * value2.M44;
-
-            // Fourth row
-            result.M41 = value1.M41 * value2.M11 + value1.M42 * value2.M21 + value1.M43 * value2.M31 + value1.M44 * value2.M41;
-            result.M42 = value1.M41 * value2.M12 + value1.M42 * value2.M22 + value1.M43 * value2.M32 + value1.M44 * value2.M42;
-            result.M43 = value1.M41 * value2.M13 + value1.M42 * value2.M23 + value1.M43 * value2.M33 + value1.M44 * value2.M43;
-            result.M44 = value1.M41 * value2.M14 + value1.M42 * value2.M24 + value1.M43 * value2.M34 + value1.M44 * value2.M44;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::Multiply(Matrix4x4 const& value1, float value2)
-        {
-            Matrix4x4 result;
-
-            result.M11 = value1.M11 * value2; result.M12 = value1.M12 * value2; result.M13 = value1.M13 * value2; result.M14 = value1.M14 * value2;
-            result.M21 = value1.M21 * value2; result.M22 = value1.M22 * value2; result.M23 = value1.M23 * value2; result.M24 = value1.M24 * value2;
-            result.M31 = value1.M31 * value2; result.M32 = value1.M32 * value2; result.M33 = value1.M33 * value2; result.M34 = value1.M34 * value2;
-            result.M41 = value1.M41 * value2; result.M42 = value1.M42 * value2; result.M43 = value1.M43 * value2; result.M44 = value1.M44 * value2;
-
-            return result;
-        }
-
-
-        inline Matrix4x4 Matrix4x4::operator -() const
-        {
-            Matrix4x4 m;
-
-            m.M11 = -M11; m.M12 = -M12; m.M13 = -M13; m.M14 = -M14;
-            m.M21 = -M21; m.M22 = -M22; m.M23 = -M23; m.M24 = -M24;
-            m.M31 = -M31; m.M32 = -M32; m.M33 = -M33; m.M34 = -M34;
-            m.M41 = -M41; m.M42 = -M42; m.M43 = -M43; m.M44 = -M44;
+            m.m11 = -m11; m.m12 = -m12; m.m13 = -m13; m.m14 = -m14;
+            m.m21 = -m21; m.m22 = -m22; m.m23 = -m23; m.m24 = -m24;
+            m.m31 = -m31; m.m32 = -m32; m.m33 = -m33; m.m34 = -m34;
+            m.m41 = -m41; m.m42 = -m42; m.m43 = -m43; m.m44 = -m44;
 
             return m;
         }
 
 
-        inline Matrix4x4& Matrix4x4::operator +=(Matrix4x4 const& value)
+        inline float4x4& float4x4::operator +=(float4x4 const& value)
         {
             *this = *this + value;
 
@@ -3535,7 +3098,7 @@ namespace Windows
         }
 
 
-        inline Matrix4x4& Matrix4x4::operator -=(Matrix4x4 const& value)
+        inline float4x4& float4x4::operator -=(float4x4 const& value)
         {
             *this = *this - value;
 
@@ -3543,7 +3106,7 @@ namespace Windows
         }
 
 
-        inline Matrix4x4& Matrix4x4::operator *=(Matrix4x4 const& value)
+        inline float4x4& float4x4::operator *=(float4x4 const& value)
         {
             *this = *this * value;
 
@@ -3551,7 +3114,7 @@ namespace Windows
         }
 
 
-        inline Matrix4x4& Matrix4x4::operator *=(float value)
+        inline float4x4& float4x4::operator *=(float value)
         {
             *this = *this * value;
 
@@ -3559,122 +3122,122 @@ namespace Windows
         }
 
 
-        inline bool Matrix4x4::operator ==(Matrix4x4 const& value) const
+        inline bool float4x4::operator ==(float4x4 const& value) const
         {
-            return M11 == value.M11 && M22 == value.M22 && M33 == value.M33 && M44 == value.M44 && // Check diagonal element first for early out.
-                                       M12 == value.M12 && M13 == value.M13 && M14 == value.M14 &&
-                   M21 == value.M21                     && M23 == value.M23 && M24 == value.M24 &&
-                   M31 == value.M31 && M32 == value.M32                     && M34 == value.M34 &&
-                   M41 == value.M41 && M42 == value.M42 && M43 == value.M43;
+            return m11 == value.m11 && m22 == value.m22 && m33 == value.m33 && m44 == value.m44 && // Check diagonal element first for early out.
+                                       m12 == value.m12 && m13 == value.m13 && m14 == value.m14 &&
+                   m21 == value.m21                     && m23 == value.m23 && m24 == value.m24 &&
+                   m31 == value.m31 && m32 == value.m32                     && m34 == value.m34 &&
+                   m41 == value.m41 && m42 == value.m42 && m43 == value.m43;
         }
 
 
-        inline bool Matrix4x4::operator !=(Matrix4x4 const& value) const
+        inline bool float4x4::operator !=(float4x4 const& value) const
         {
-            return M11 != value.M11 || M12 != value.M12 || M13 != value.M13 || M14 != value.M14 ||
-                   M21 != value.M21 || M22 != value.M22 || M23 != value.M23 || M24 != value.M24 ||
-                   M31 != value.M31 || M32 != value.M32 || M33 != value.M33 || M34 != value.M34 ||
-                   M41 != value.M41 || M42 != value.M42 || M43 != value.M43 || M44 != value.M44;
+            return m11 != value.m11 || m12 != value.m12 || m13 != value.m13 || m14 != value.m14 ||
+                   m21 != value.m21 || m22 != value.m22 || m23 != value.m23 || m24 != value.m24 ||
+                   m31 != value.m31 || m32 != value.m32 || m33 != value.m33 || m34 != value.m34 ||
+                   m41 != value.m41 || m42 != value.m42 || m43 != value.m43 || m44 != value.m44;
         }
 
 
-        inline Matrix4x4 operator +(Matrix4x4 const& value1, Matrix4x4 const& value2)
+        inline float4x4 operator +(float4x4 const& value1, float4x4 const& value2)
         {
-            Matrix4x4 m;
+            float4x4 m;
 
-            m.M11 = value1.M11 + value2.M11; m.M12 = value1.M12 + value2.M12; m.M13 = value1.M13 + value2.M13; m.M14 = value1.M14 + value2.M14;
-            m.M21 = value1.M21 + value2.M21; m.M22 = value1.M22 + value2.M22; m.M23 = value1.M23 + value2.M23; m.M24 = value1.M24 + value2.M24;
-            m.M31 = value1.M31 + value2.M31; m.M32 = value1.M32 + value2.M32; m.M33 = value1.M33 + value2.M33; m.M34 = value1.M34 + value2.M34;
-            m.M41 = value1.M41 + value2.M41; m.M42 = value1.M42 + value2.M42; m.M43 = value1.M43 + value2.M43; m.M44 = value1.M44 + value2.M44;
+            m.m11 = value1.m11 + value2.m11; m.m12 = value1.m12 + value2.m12; m.m13 = value1.m13 + value2.m13; m.m14 = value1.m14 + value2.m14;
+            m.m21 = value1.m21 + value2.m21; m.m22 = value1.m22 + value2.m22; m.m23 = value1.m23 + value2.m23; m.m24 = value1.m24 + value2.m24;
+            m.m31 = value1.m31 + value2.m31; m.m32 = value1.m32 + value2.m32; m.m33 = value1.m33 + value2.m33; m.m34 = value1.m34 + value2.m34;
+            m.m41 = value1.m41 + value2.m41; m.m42 = value1.m42 + value2.m42; m.m43 = value1.m43 + value2.m43; m.m44 = value1.m44 + value2.m44;
 
             return m;
         }
 
 
-        inline Matrix4x4 operator -(Matrix4x4 const& value1, Matrix4x4 const& value2)
+        inline float4x4 operator -(float4x4 const& value1, float4x4 const& value2)
         {
-            Matrix4x4 m;
+            float4x4 m;
 
-            m.M11 = value1.M11 - value2.M11; m.M12 = value1.M12 - value2.M12; m.M13 = value1.M13 - value2.M13; m.M14 = value1.M14 - value2.M14;
-            m.M21 = value1.M21 - value2.M21; m.M22 = value1.M22 - value2.M22; m.M23 = value1.M23 - value2.M23; m.M24 = value1.M24 - value2.M24;
-            m.M31 = value1.M31 - value2.M31; m.M32 = value1.M32 - value2.M32; m.M33 = value1.M33 - value2.M33; m.M34 = value1.M34 - value2.M34;
-            m.M41 = value1.M41 - value2.M41; m.M42 = value1.M42 - value2.M42; m.M43 = value1.M43 - value2.M43; m.M44 = value1.M44 - value2.M44;
+            m.m11 = value1.m11 - value2.m11; m.m12 = value1.m12 - value2.m12; m.m13 = value1.m13 - value2.m13; m.m14 = value1.m14 - value2.m14;
+            m.m21 = value1.m21 - value2.m21; m.m22 = value1.m22 - value2.m22; m.m23 = value1.m23 - value2.m23; m.m24 = value1.m24 - value2.m24;
+            m.m31 = value1.m31 - value2.m31; m.m32 = value1.m32 - value2.m32; m.m33 = value1.m33 - value2.m33; m.m34 = value1.m34 - value2.m34;
+            m.m41 = value1.m41 - value2.m41; m.m42 = value1.m42 - value2.m42; m.m43 = value1.m43 - value2.m43; m.m44 = value1.m44 - value2.m44;
 
             return m;
         }
 
 
-        inline Matrix4x4 operator *(Matrix4x4 const& value1, Matrix4x4 const& value2)
+        inline float4x4 operator *(float4x4 const& value1, float4x4 const& value2)
         {
-            Matrix4x4 m;
+            float4x4 m;
 
             // First row
-            m.M11 = value1.M11 * value2.M11 + value1.M12 * value2.M21 + value1.M13 * value2.M31 + value1.M14 * value2.M41;
-            m.M12 = value1.M11 * value2.M12 + value1.M12 * value2.M22 + value1.M13 * value2.M32 + value1.M14 * value2.M42;
-            m.M13 = value1.M11 * value2.M13 + value1.M12 * value2.M23 + value1.M13 * value2.M33 + value1.M14 * value2.M43;
-            m.M14 = value1.M11 * value2.M14 + value1.M12 * value2.M24 + value1.M13 * value2.M34 + value1.M14 * value2.M44;
+            m.m11 = value1.m11 * value2.m11 + value1.m12 * value2.m21 + value1.m13 * value2.m31 + value1.m14 * value2.m41;
+            m.m12 = value1.m11 * value2.m12 + value1.m12 * value2.m22 + value1.m13 * value2.m32 + value1.m14 * value2.m42;
+            m.m13 = value1.m11 * value2.m13 + value1.m12 * value2.m23 + value1.m13 * value2.m33 + value1.m14 * value2.m43;
+            m.m14 = value1.m11 * value2.m14 + value1.m12 * value2.m24 + value1.m13 * value2.m34 + value1.m14 * value2.m44;
             
             // Second row
-            m.M21 = value1.M21 * value2.M11 + value1.M22 * value2.M21 + value1.M23 * value2.M31 + value1.M24 * value2.M41;
-            m.M22 = value1.M21 * value2.M12 + value1.M22 * value2.M22 + value1.M23 * value2.M32 + value1.M24 * value2.M42;
-            m.M23 = value1.M21 * value2.M13 + value1.M22 * value2.M23 + value1.M23 * value2.M33 + value1.M24 * value2.M43;
-            m.M24 = value1.M21 * value2.M14 + value1.M22 * value2.M24 + value1.M23 * value2.M34 + value1.M24 * value2.M44;
+            m.m21 = value1.m21 * value2.m11 + value1.m22 * value2.m21 + value1.m23 * value2.m31 + value1.m24 * value2.m41;
+            m.m22 = value1.m21 * value2.m12 + value1.m22 * value2.m22 + value1.m23 * value2.m32 + value1.m24 * value2.m42;
+            m.m23 = value1.m21 * value2.m13 + value1.m22 * value2.m23 + value1.m23 * value2.m33 + value1.m24 * value2.m43;
+            m.m24 = value1.m21 * value2.m14 + value1.m22 * value2.m24 + value1.m23 * value2.m34 + value1.m24 * value2.m44;
             
             // Third row
-            m.M31 = value1.M31 * value2.M11 + value1.M32 * value2.M21 + value1.M33 * value2.M31 + value1.M34 * value2.M41;
-            m.M32 = value1.M31 * value2.M12 + value1.M32 * value2.M22 + value1.M33 * value2.M32 + value1.M34 * value2.M42;
-            m.M33 = value1.M31 * value2.M13 + value1.M32 * value2.M23 + value1.M33 * value2.M33 + value1.M34 * value2.M43;
-            m.M34 = value1.M31 * value2.M14 + value1.M32 * value2.M24 + value1.M33 * value2.M34 + value1.M34 * value2.M44;
+            m.m31 = value1.m31 * value2.m11 + value1.m32 * value2.m21 + value1.m33 * value2.m31 + value1.m34 * value2.m41;
+            m.m32 = value1.m31 * value2.m12 + value1.m32 * value2.m22 + value1.m33 * value2.m32 + value1.m34 * value2.m42;
+            m.m33 = value1.m31 * value2.m13 + value1.m32 * value2.m23 + value1.m33 * value2.m33 + value1.m34 * value2.m43;
+            m.m34 = value1.m31 * value2.m14 + value1.m32 * value2.m24 + value1.m33 * value2.m34 + value1.m34 * value2.m44;
             
             // Fourth row
-            m.M41 = value1.M41 * value2.M11 + value1.M42 * value2.M21 + value1.M43 * value2.M31 + value1.M44 * value2.M41;
-            m.M42 = value1.M41 * value2.M12 + value1.M42 * value2.M22 + value1.M43 * value2.M32 + value1.M44 * value2.M42;
-            m.M43 = value1.M41 * value2.M13 + value1.M42 * value2.M23 + value1.M43 * value2.M33 + value1.M44 * value2.M43;
-            m.M44 = value1.M41 * value2.M14 + value1.M42 * value2.M24 + value1.M43 * value2.M34 + value1.M44 * value2.M44;
+            m.m41 = value1.m41 * value2.m11 + value1.m42 * value2.m21 + value1.m43 * value2.m31 + value1.m44 * value2.m41;
+            m.m42 = value1.m41 * value2.m12 + value1.m42 * value2.m22 + value1.m43 * value2.m32 + value1.m44 * value2.m42;
+            m.m43 = value1.m41 * value2.m13 + value1.m42 * value2.m23 + value1.m43 * value2.m33 + value1.m44 * value2.m43;
+            m.m44 = value1.m41 * value2.m14 + value1.m42 * value2.m24 + value1.m43 * value2.m34 + value1.m44 * value2.m44;
 
             return m;
         }
 
 
-        inline Matrix4x4 operator *(Matrix4x4 const& value1, float value2)
+        inline float4x4 operator *(float4x4 const& value1, float value2)
         {
-            Matrix4x4 m;
+            float4x4 m;
 
-            m.M11 = value1.M11 * value2; m.M12 = value1.M12 * value2; m.M13 = value1.M13 * value2; m.M14 = value1.M14 * value2;
-            m.M21 = value1.M21 * value2; m.M22 = value1.M22 * value2; m.M23 = value1.M23 * value2; m.M24 = value1.M24 * value2;
-            m.M31 = value1.M31 * value2; m.M32 = value1.M32 * value2; m.M33 = value1.M33 * value2; m.M34 = value1.M34 * value2;
-            m.M41 = value1.M41 * value2; m.M42 = value1.M42 * value2; m.M43 = value1.M43 * value2; m.M44 = value1.M44 * value2;
+            m.m11 = value1.m11 * value2; m.m12 = value1.m12 * value2; m.m13 = value1.m13 * value2; m.m14 = value1.m14 * value2;
+            m.m21 = value1.m21 * value2; m.m22 = value1.m22 * value2; m.m23 = value1.m23 * value2; m.m24 = value1.m24 * value2;
+            m.m31 = value1.m31 * value2; m.m32 = value1.m32 * value2; m.m33 = value1.m33 * value2; m.m34 = value1.m34 * value2;
+            m.m41 = value1.m41 * value2; m.m42 = value1.m42 * value2; m.m43 = value1.m43 * value2; m.m44 = value1.m44 * value2;
 
             return m;
         }
 
 
-        inline Plane::Plane(float a, float b, float c, float d)
-            : Normal(a, b, c), D(d)
+        inline plane::plane(float a, float b, float c, float d)
+            : normal(a, b, c), d(d)
         { }
 
 
-        inline Plane::Plane(Vector3 const& normal, float d)
-            : Normal(normal), D(d)
+        inline plane::plane(float3 const& normal, float d)
+            : normal(normal), d(d)
         { }
 
 
-        inline Plane::Plane(Vector4 const& value)
-            : Normal(value.X, value.Y, value.Z), D(value.W)
+        inline plane::plane(float4 const& value)
+            : normal(value.x, value.y, value.z), d(value.w)
         { }
 
 
-        inline Plane Plane::CreateFromVertices(Vector3 const& point1, Vector3 const& point2, Vector3 const& point3)
+        inline plane plane::from_vertices(float3 const& point1, float3 const& point2, float3 const& point3)
         {
-            Plane result;
+            plane result;
 
-            float ax = point2.X - point1.X;
-            float ay = point2.Y - point1.Y;
-            float az = point2.Z - point1.Z;
+            float ax = point2.x - point1.x;
+            float ay = point2.y - point1.y;
+            float az = point2.z - point1.z;
 
-            float bx = point3.X - point1.X;
-            float by = point3.Y - point1.Y;
-            float bz = point3.Z - point1.Z;
+            float bx = point3.x - point1.x;
+            float by = point3.y - point1.y;
+            float bz = point3.z - point1.z;
 
             // N=Cross(a,b)
             float nx = ay * bz - az * by;
@@ -3685,77 +3248,77 @@ namespace Windows
             float ls = nx * nx + ny * ny + nz * nz;
             float invNorm = 1.0f / sqrtf(ls);
 
-            result.Normal.X = nx * invNorm;
-            result.Normal.Y = ny * invNorm;
-            result.Normal.Z = nz * invNorm;
+            result.normal.x = nx * invNorm;
+            result.normal.y = ny * invNorm;
+            result.normal.z = nz * invNorm;
 
             // D = - Dot(N, point1)
-            result.D = -(result.Normal.X * point1.X + result.Normal.Y * point1.Y + result.Normal.Z * point1.Z);
+            result.d = -(result.normal.x * point1.x + result.normal.y * point1.y + result.normal.z * point1.z);
 
             return result;
         }
 
 
-        inline Plane Plane::Normalize(Plane const& value)
+        inline plane normalize(plane const& value)
         {
-            Plane result;
+            plane result;
 
-            float f = value.Normal.X * value.Normal.X + value.Normal.Y * value.Normal.Y + value.Normal.Z * value.Normal.Z;
+            float f = value.normal.x * value.normal.x + value.normal.y * value.normal.y + value.normal.z * value.normal.z;
 
             if (fabs(f - 1.0f) < FLT_EPSILON)
             {
-                result.Normal = value.Normal;
-                result.D = value.D;
+                result.normal = value.normal;
+                result.d = value.d;
                 return result;
             }
 
             float fInv = 1.0f / sqrtf(f);
 
-            result.Normal.X = value.Normal.X * fInv;
-            result.Normal.Y = value.Normal.Y * fInv;
-            result.Normal.Z = value.Normal.Z * fInv;
+            result.normal.x = value.normal.x * fInv;
+            result.normal.y = value.normal.y * fInv;
+            result.normal.z = value.normal.z * fInv;
 
-            result.D = value.D * fInv;
+            result.d = value.d * fInv;
 
             return result;
         }
 
 
-        inline Plane Plane::Transform(Plane const& plane, Matrix4x4 const& matrix)
+        inline plane transform(plane const& plane, float4x4 const& matrix)
         {
-            Matrix4x4 m;
-            Matrix4x4::Invert(matrix, &m);
+            float4x4 m;
+            invert(matrix, &m);
 
-            Plane result;
+            Math::plane result;
 
-            float x = plane.Normal.X, y = plane.Normal.Y, z = plane.Normal.Z, w = plane.D;
+            float x = plane.normal.x, y = plane.normal.y, z = plane.normal.z, w = plane.d;
 
-            result.Normal.X = x * m.M11 + y * m.M12 + z * m.M13 + w * m.M14;
-            result.Normal.Y = x * m.M21 + y * m.M22 + z * m.M23 + w * m.M24;
-            result.Normal.Z = x * m.M31 + y * m.M32 + z * m.M33 + w * m.M34;
+            result.normal.x = x * m.m11 + y * m.m12 + z * m.m13 + w * m.m14;
+            result.normal.y = x * m.m21 + y * m.m22 + z * m.m23 + w * m.m24;
+            result.normal.z = x * m.m31 + y * m.m32 + z * m.m33 + w * m.m34;
 
-            result.D = x * m.M41 + y * m.M42 + z * m.M43 + w * m.M44;
+            result.d = x * m.m41 + y * m.m42 + z * m.m43 + w * m.m44;
 
             return result;
         }
 
 
-        inline Plane Plane::Transform(Plane const& plane, Quaternion const& rotation)
+        inline plane transform(plane const& plane, quaternion const& rotation)
         {
             // Compute rotation matrix.
-            float x2 = rotation.X + rotation.X;
-            float y2 = rotation.Y + rotation.Y;
-            float z2 = rotation.Z + rotation.Z;
+            float x2 = rotation.x + rotation.x;
+            float y2 = rotation.y + rotation.y;
+            float z2 = rotation.z + rotation.z;
 
-            float wx2 = rotation.W * x2;
-            float wy2 = rotation.W * y2;
-            float wz2 = rotation.W * z2;
-            float xx2 = rotation.X * x2;
-            float xy2 = rotation.X * y2;
-            float xz2 = rotation.X * z2;
-            float yy2 = rotation.Y * y2;
-            float yz2 = rotation.Y * z2;
-            float zz2 = rotation.Z * z2;
+            float wx2 = rotation.w * x2;
+            float wy2 = rotation.w * y2;
+            float wz2 = rotation.w * z2;
+            float xx2 = rotation.x * x2;
+            float xy2 = rotation.x * y2;
+            float xz2 = rotation.x * z2;
+            float yy2 = rotation.y * y2;
+            float yz2 = rotation.y * z2;
+            float zz2 = rotation.z * z2;
 
             float m11 = 1.0f - yy2 - zz2;
             float m21 = xy2 - wz2;
@@ -3769,171 +3332,171 @@ namespace Windows
             float m23 = yz2 + wx2;
             float m33 = 1.0f - xx2 - yy2;
 
-            Plane result;
+            Math::plane result;
 
-            float x = plane.Normal.X, y = plane.Normal.Y, z = plane.Normal.Z;
+            float x = plane.normal.x, y = plane.normal.y, z = plane.normal.z;
 
-            result.Normal.X = x * m11 + y * m21 + z * m31;
-            result.Normal.Y = x * m12 + y * m22 + z * m32;
-            result.Normal.Z = x * m13 + y * m23 + z * m33;
+            result.normal.x = x * m11 + y * m21 + z * m31;
+            result.normal.y = x * m12 + y * m22 + z * m32;
+            result.normal.z = x * m13 + y * m23 + z * m33;
 
-            result.D = plane.D;
+            result.d = plane.d;
 
             return result;
         }
 
 
-        inline float Plane::Dot(Plane const& plane, Vector4 const& value)
+        inline float dot(plane const& plane, float4 const& value)
         {
-            return plane.Normal.X * value.X + 
-                   plane.Normal.Y * value.Y + 
-                   plane.Normal.Z * value.Z + 
-                   plane.D * value.W;
+            return plane.normal.x * value.x + 
+                   plane.normal.y * value.y + 
+                   plane.normal.z * value.z + 
+                   plane.d * value.w;
         }
 
 
-        inline float Plane::DotCoordinate(Plane const& plane, Vector3 const& value)
+        inline float dot_coordinate(plane const& plane, float3 const& value)
         {
-            return plane.Normal.X * value.X + 
-                   plane.Normal.Y * value.Y + 
-                   plane.Normal.Z * value.Z + 
-                   plane.D;
+            return plane.normal.x * value.x + 
+                   plane.normal.y * value.y + 
+                   plane.normal.z * value.z + 
+                   plane.d;
         }
 
 
-        inline float Plane::DotNormal(Plane const& plane, Vector3 const& value)
+        inline float dot_normal(plane const& plane, float3 const& value)
         {
-            return plane.Normal.X * value.X + 
-                   plane.Normal.Y * value.Y + 
-                   plane.Normal.Z * value.Z;
+            return plane.normal.x * value.x + 
+                   plane.normal.y * value.y + 
+                   plane.normal.z * value.z;
         }
 
 
-        inline bool Plane::operator ==(Plane const& value) const
+        inline bool plane::operator ==(plane const& value) const
         {
-            return Normal.X == value.Normal.X &&
-                   Normal.Y == value.Normal.Y &&
-                   Normal.Z == value.Normal.Z &&
-                   D == value.D;
+            return normal.x == value.normal.x &&
+                   normal.y == value.normal.y &&
+                   normal.z == value.normal.z &&
+                   d == value.d;
         }
 
 
-        inline bool Plane::operator !=(Plane const& value) const
+        inline bool plane::operator !=(plane const& value) const
         {
-            return Normal.X != value.Normal.X ||
-                   Normal.Y != value.Normal.Y || 
-                   Normal.Z != value.Normal.Z ||
-                   D != value.D;
+            return normal.x != value.normal.x ||
+                   normal.y != value.normal.y || 
+                   normal.z != value.normal.z ||
+                   d != value.d;
         }
 
 
-        inline Quaternion::Quaternion(float x, float y, float z, float w)
-            : X(x), Y(y), Z(z), W(w)
+        inline quaternion::quaternion(float x, float y, float z, float w)
+            : x(x), y(y), z(z), w(w)
         { }
 
 
-        inline Quaternion::Quaternion(Vector3 const& vectorPart, float scalarPart)
-            : X(vectorPart.X), Y(vectorPart.Y), Z(vectorPart.Z), W(scalarPart)
+        inline quaternion::quaternion(float3 const& vectorPart, float scalarPart)
+            : x(vectorPart.x), y(vectorPart.y), z(vectorPart.z), w(scalarPart)
         { }
 
 
-        inline Quaternion Quaternion::Identity()
+        inline quaternion quaternion::identity()
         {
-            return Quaternion(0, 0, 0, 1);
+            return quaternion(0, 0, 0, 1);
         }
 
 
-        inline bool Quaternion::IsIdentity() const
+        inline bool is_identity(quaternion const& value)
         {
-            return X == 0 &&
-                   Y == 0 &&
-                   Z == 0 &&
-                   W == 1;
+            return value.x == 0 &&
+                   value.y == 0 &&
+                   value.z == 0 &&
+                   value.w == 1;
         }
 
 
-        inline float Quaternion::Length() const
+        inline float length(quaternion const& value)
         {
-            float ls = X * X + Y * Y + Z * Z + W * W;
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
 
             return sqrtf(ls);
         }
 
 
-        inline float Quaternion::LengthSquared() const
+        inline float length_squared(quaternion const& value)
         {
-            return X * X + Y * Y + Z * Z + W * W;
+            return value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
         }
 
 
-        inline Quaternion Quaternion::Normalize(Quaternion const& value)
+        inline quaternion normalize(quaternion const& value)
         {
-            Quaternion ans;
+            quaternion ans;
 
-            float ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W;
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
             
             float invNorm = 1.0f / sqrtf(ls);
 
-            ans.X = value.X * invNorm;
-            ans.Y = value.Y * invNorm;
-            ans.Z = value.Z * invNorm;
-            ans.W = value.W * invNorm;
+            ans.x = value.x * invNorm;
+            ans.y = value.y * invNorm;
+            ans.z = value.z * invNorm;
+            ans.w = value.w * invNorm;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Conjugate(Quaternion const& value)
+        inline quaternion conjugate(quaternion const& value)
         {
-            Quaternion ans;
+            quaternion ans;
             
-            ans.X = -value.X;
-            ans.Y = -value.Y;
-            ans.Z = -value.Z;
-            ans.W = value.W;
+            ans.x = -value.x;
+            ans.y = -value.y;
+            ans.z = -value.z;
+            ans.w = value.w;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Inverse(Quaternion const& value)
+        inline quaternion inverse(quaternion const& value)
         {
             //  -1   (       a              -v       )
             // q   = ( -------------   ------------- )
             //       (  a^2 + |v|^2  ,  a^2 + |v|^2  )
 
-            Quaternion ans;
+            quaternion ans;
             
-            float ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W;
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
             float invNorm = 1.0f / ls;
 
-            ans.X = -value.X * invNorm;
-            ans.Y = -value.Y * invNorm;
-            ans.Z = -value.Z * invNorm;
-            ans.W = value.W * invNorm;
+            ans.x = -value.x * invNorm;
+            ans.y = -value.y * invNorm;
+            ans.z = -value.z * invNorm;
+            ans.w = value.w * invNorm;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::CreateFromAxisAngle(Vector3 const& axis, float angle)
+        inline quaternion quaternion::from_axis_angle(float3 const& axis, float angle)
         {
-            Quaternion ans;
+            quaternion ans;
 
             float halfAngle = angle * 0.5f;
             float s = sinf(halfAngle);
             float c = cosf(halfAngle);
 
-            ans.X = axis.X * s;
-            ans.Y = axis.Y * s;
-            ans.Z = axis.Z * s;
-            ans.W = c;
+            ans.x = axis.x * s;
+            ans.y = axis.y * s;
+            ans.z = axis.z * s;
+            ans.w = c;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+        inline quaternion quaternion::from_yaw_pitch_roll(float yaw, float pitch, float roll)
         {
             // Roll first, about axis the object is facing, then
             // pitch upward, then yaw to face into the new heading
@@ -3948,60 +3511,60 @@ namespace Windows
             float halfYaw = yaw * 0.5f;
             sy = sinf(halfYaw); cy = cosf(halfYaw);
 
-            Quaternion result;
+            quaternion result;
             
-            result.X = cy * sp * cr + sy * cp * sr;
-            result.Y = sy * cp * cr - cy * sp * sr;
-            result.Z = cy * cp * sr - sy * sp * cr;
-            result.W = cy * cp * cr + sy * sp * sr;
+            result.x = cy * sp * cr + sy * cp * sr;
+            result.y = sy * cp * cr - cy * sp * sr;
+            result.z = cy * cp * sr - sy * sp * cr;
+            result.w = cy * cp * cr + sy * sp * sr;
 
             return result;
         }
 
 
-        inline Quaternion Quaternion::CreateFromRotationMatrix(Matrix4x4 const& matrix)
+        inline quaternion quaternion::from_rotation_matrix(float4x4 const& matrix)
         {
-            float trace = matrix.M11 + matrix.M22 + matrix.M33;
+            float trace = matrix.m11 + matrix.m22 + matrix.m33;
             
-            Quaternion q;
+            quaternion q;
             
             if (trace > 0.0f)
             {
                 float s = sqrtf(trace + 1.0f);
-                q.W = s * 0.5f;
+                q.w = s * 0.5f;
                 s = 0.5f / s;
-                q.X = (matrix.M23 - matrix.M32) * s;
-                q.Y = (matrix.M31 - matrix.M13) * s;
-                q.Z = (matrix.M12 - matrix.M21) * s;
+                q.x = (matrix.m23 - matrix.m32) * s;
+                q.y = (matrix.m31 - matrix.m13) * s;
+                q.z = (matrix.m12 - matrix.m21) * s;
             }
             else
             {
-                if (matrix.M11 >= matrix.M22 && matrix.M11 >= matrix.M33)
+                if (matrix.m11 >= matrix.m22 && matrix.m11 >= matrix.m33)
                 {
-                    float s = sqrtf(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
+                    float s = sqrtf(1.0f + matrix.m11 - matrix.m22 - matrix.m33);
                     float invS = 0.5f / s;
-                    q.X = 0.5f * s;
-                    q.Y = (matrix.M12 + matrix.M21) * invS;
-                    q.Z = (matrix.M13 + matrix.M31) * invS;
-                    q.W = (matrix.M23 - matrix.M32) * invS;
+                    q.x = 0.5f * s;
+                    q.y = (matrix.m12 + matrix.m21) * invS;
+                    q.z = (matrix.m13 + matrix.m31) * invS;
+                    q.w = (matrix.m23 - matrix.m32) * invS;
                 }
-                else if (matrix.M22 > matrix.M33)
+                else if (matrix.m22 > matrix.m33)
                 {
-                    float s = sqrtf(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
+                    float s = sqrtf(1.0f + matrix.m22 - matrix.m11 - matrix.m33);
                     float invS = 0.5f / s;
-                    q.X = (matrix.M21 + matrix.M12) * invS;
-                    q.Y = 0.5f * s;
-                    q.Z = (matrix.M32 + matrix.M23) * invS;
-                    q.W = (matrix.M31 - matrix.M13) * invS;
+                    q.x = (matrix.m21 + matrix.m12) * invS;
+                    q.y = 0.5f * s;
+                    q.z = (matrix.m32 + matrix.m23) * invS;
+                    q.w = (matrix.m31 - matrix.m13) * invS;
                 }
                 else
                 {
-                    float s = sqrtf(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
+                    float s = sqrtf(1.0f + matrix.m33 - matrix.m11 - matrix.m22);
                     float invS = 0.5f / s;
-                    q.X = (matrix.M31 + matrix.M13) * invS;
-                    q.Y = (matrix.M32 + matrix.M23) * invS;
-                    q.Z = 0.5f * s;
-                    q.W = (matrix.M12 - matrix.M21) * invS;
+                    q.x = (matrix.m31 + matrix.m13) * invS;
+                    q.y = (matrix.m32 + matrix.m23) * invS;
+                    q.z = 0.5f * s;
+                    q.w = (matrix.m12 - matrix.m21) * invS;
                 }
             }
 
@@ -4009,23 +3572,23 @@ namespace Windows
         }
 
 
-        inline float Quaternion::Dot(Quaternion const& quaternion1, Quaternion const& quaternion2)
+        inline float dot(quaternion const& quaternion1, quaternion const& quaternion2)
         {
-            return quaternion1.X * quaternion2.X + 
-                   quaternion1.Y * quaternion2.Y + 
-                   quaternion1.Z * quaternion2.Z + 
-                   quaternion1.W * quaternion2.W;
+            return quaternion1.x * quaternion2.x + 
+                   quaternion1.y * quaternion2.y + 
+                   quaternion1.z * quaternion2.z + 
+                   quaternion1.w * quaternion2.w;
         }
 
 
-        inline Quaternion Quaternion::Slerp(Quaternion const& quaternion1, Quaternion const& quaternion2, float amount)
+        inline quaternion slerp(quaternion const& quaternion1, quaternion const& quaternion2, float amount)
         {
             const float epsilon = 1e-6f;
 
             float t = amount;
             
-            float cosOmega = quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y +
-                             quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W;
+            float cosOmega = quaternion1.x * quaternion2.x + quaternion1.y * quaternion2.y +
+                             quaternion1.z * quaternion2.z + quaternion1.w * quaternion2.w;
 
             bool flip = false;
             
@@ -4054,139 +3617,70 @@ namespace Windows
                     : sinf(t * omega) * invSinOmega;
             }
 
-            Quaternion ans;
+            quaternion ans;
 
-            ans.X = s1 * quaternion1.X + s2 * quaternion2.X;
-            ans.Y = s1 * quaternion1.Y + s2 * quaternion2.Y;
-            ans.Z = s1 * quaternion1.Z + s2 * quaternion2.Z;
-            ans.W = s1 * quaternion1.W + s2 * quaternion2.W;
+            ans.x = s1 * quaternion1.x + s2 * quaternion2.x;
+            ans.y = s1 * quaternion1.y + s2 * quaternion2.y;
+            ans.z = s1 * quaternion1.z + s2 * quaternion2.z;
+            ans.w = s1 * quaternion1.w + s2 * quaternion2.w;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Lerp(Quaternion const& quaternion1, Quaternion const& quaternion2, float amount)
+        inline quaternion lerp(quaternion const& quaternion1, quaternion const& quaternion2, float amount)
         {
             float t = amount;
             float t1 = 1.0f - t;
 
-            Quaternion r;
+            quaternion r;
 
-            float dot = quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y +
-                        quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W;
+            float dot = quaternion1.x * quaternion2.x + quaternion1.y * quaternion2.y +
+                        quaternion1.z * quaternion2.z + quaternion1.w * quaternion2.w;
 
             if (dot >= 0.0f)
             {
-                r.X = t1 * quaternion1.X + t * quaternion2.X;
-                r.Y = t1 * quaternion1.Y + t * quaternion2.Y;
-                r.Z = t1 * quaternion1.Z + t * quaternion2.Z;
-                r.W = t1 * quaternion1.W + t * quaternion2.W;
+                r.x = t1 * quaternion1.x + t * quaternion2.x;
+                r.y = t1 * quaternion1.y + t * quaternion2.y;
+                r.z = t1 * quaternion1.z + t * quaternion2.z;
+                r.w = t1 * quaternion1.w + t * quaternion2.w;
             }
             else
             {
-                r.X = t1 * quaternion1.X - t * quaternion2.X;
-                r.Y = t1 * quaternion1.Y - t * quaternion2.Y;
-                r.Z = t1 * quaternion1.Z - t * quaternion2.Z;
-                r.W = t1 * quaternion1.W - t * quaternion2.W;
+                r.x = t1 * quaternion1.x - t * quaternion2.x;
+                r.y = t1 * quaternion1.y - t * quaternion2.y;
+                r.z = t1 * quaternion1.z - t * quaternion2.z;
+                r.w = t1 * quaternion1.w - t * quaternion2.w;
             }
 
             // Normalize it.
-            float ls = r.X * r.X + r.Y * r.Y + r.Z * r.Z + r.W * r.W;
+            float ls = r.x * r.x + r.y * r.y + r.z * r.z + r.w * r.w;
             float invNorm = 1.0f / sqrtf(ls);
 
-            r.X *= invNorm;
-            r.Y *= invNorm;
-            r.Z *= invNorm;
-            r.W *= invNorm;
+            r.x *= invNorm;
+            r.y *= invNorm;
+            r.z *= invNorm;
+            r.w *= invNorm;
 
             return r;
         }
 
 
-        inline Quaternion Quaternion::Concatenate(Quaternion const& value1, Quaternion const& value2)
+        inline quaternion concatenate(quaternion const& value1, quaternion const& value2)
         {
-            Quaternion ans;
+            quaternion ans;
 
             // Concatenate rotation is actually q2 * q1 instead of q1 * q2.
             // So that's why value2 goes q1 and value1 goes q2.
-            float q1x = value2.X;
-            float q1y = value2.Y;
-            float q1z = value2.Z;
-            float q1w = value2.W;
+            float q1x = value2.x;
+            float q1y = value2.y;
+            float q1z = value2.z;
+            float q1w = value2.w;
 
-            float q2x = value1.X;
-            float q2y = value1.Y;
-            float q2z = value1.Z;
-            float q2w = value1.W;
-
-            // cross(av, bv)
-            float cx = q1y * q2z - q1z * q2y;
-            float cy = q1z * q2x - q1x * q2z;
-            float cz = q1x * q2y - q1y * q2x;
-
-            float dot = q1x * q2x + q1y * q2y + q1z * q2z;
-
-            ans.X = q1x * q2w + q2x * q1w + cx;
-            ans.Y = q1y * q2w + q2y * q1w + cy;
-            ans.Z = q1z * q2w + q2z * q1w + cz;
-            ans.W = q1w * q2w - dot;
-
-            return ans;
-        }
-
-
-        inline Quaternion Quaternion::Negate(Quaternion const& value)
-        {
-            Quaternion ans;
-
-            ans.X = -value.X;
-            ans.Y = -value.Y;
-            ans.Z = -value.Z;
-            ans.W = -value.W;
-
-            return ans;
-        }
-
-
-        inline Quaternion Quaternion::Add(Quaternion const& value1, Quaternion const& value2)
-        {
-            Quaternion ans;
-
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
-            ans.Z = value1.Z + value2.Z;
-            ans.W = value1.W + value2.W;
-
-            return ans;
-        }
-
-
-        inline Quaternion Quaternion::Subtract(Quaternion const& value1, Quaternion const& value2)
-        {
-            Quaternion ans;
-
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
-            ans.Z = value1.Z - value2.Z;
-            ans.W = value1.W - value2.W;
-
-            return ans;
-        }
-
-
-        inline Quaternion Quaternion::Multiply(Quaternion const& value1, Quaternion const& value2)
-        {
-            Quaternion ans;
-
-            float q1x = value1.X;
-            float q1y = value1.Y;
-            float q1z = value1.Z;
-            float q1w = value1.W;
-
-            float q2x = value2.X;
-            float q2y = value2.Y;
-            float q2z = value2.Z;
-            float q2w = value2.W;
+            float q2x = value1.x;
+            float q2y = value1.y;
+            float q2z = value1.z;
+            float q2w = value1.w;
 
             // cross(av, bv)
             float cx = q1y * q2z - q1z * q2y;
@@ -4195,77 +3689,29 @@ namespace Windows
 
             float dot = q1x * q2x + q1y * q2y + q1z * q2z;
 
-            ans.X = q1x * q2w + q2x * q1w + cx;
-            ans.Y = q1y * q2w + q2y * q1w + cy;
-            ans.Z = q1z * q2w + q2z * q1w + cz;
-            ans.W = q1w * q2w - dot;
+            ans.x = q1x * q2w + q2x * q1w + cx;
+            ans.y = q1y * q2w + q2y * q1w + cy;
+            ans.z = q1z * q2w + q2z * q1w + cz;
+            ans.w = q1w * q2w - dot;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::Multiply(Quaternion const& value1, float value2)
+        inline quaternion quaternion::operator -() const
         {
-            Quaternion ans;
+            quaternion ans;
 
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
-            ans.Z = value1.Z * value2;
-            ans.W = value1.W * value2;
-
-            return ans;
-        }
-
-
-        inline Quaternion Quaternion::Divide(Quaternion const& value1, Quaternion const& value2)
-        {
-            Quaternion ans;
-
-            float q1x = value1.X;
-            float q1y = value1.Y;
-            float q1z = value1.Z;
-            float q1w = value1.W;
-
-            // Inverse part.
-            float ls = value2.X * value2.X + value2.Y * value2.Y +
-                       value2.Z * value2.Z + value2.W * value2.W;
-            float invNorm = 1.0f / ls;
-
-            float q2x = -value2.X * invNorm;
-            float q2y = -value2.Y * invNorm;
-            float q2z = -value2.Z * invNorm;
-            float q2w = value2.W * invNorm;
-
-            // Multiply part.
-            float cx = q1y * q2z - q1z * q2y;
-            float cy = q1z * q2x - q1x * q2z;
-            float cz = q1x * q2y - q1y * q2x;
-
-            float dot = q1x * q2x + q1y * q2y + q1z * q2z;
-
-            ans.X = q1x * q2w + q2x * q1w + cx;
-            ans.Y = q1y * q2w + q2y * q1w + cy;
-            ans.Z = q1z * q2w + q2z * q1w + cz;
-            ans.W = q1w * q2w - dot;
+            ans.x = -x;
+            ans.y = -y;
+            ans.z = -z;
+            ans.w = -w;
 
             return ans;
         }
 
 
-        inline Quaternion Quaternion::operator -() const
-        {
-            Quaternion ans;
-
-            ans.X = -X;
-            ans.Y = -Y;
-            ans.Z = -Z;
-            ans.W = -W;
-
-            return ans;
-        }
-
-
-        inline Quaternion& Quaternion::operator +=(Quaternion const& value)
+        inline quaternion& quaternion::operator +=(quaternion const& value)
         {
             *this = *this + value;
 
@@ -4273,7 +3719,7 @@ namespace Windows
         }
 
 
-        inline Quaternion& Quaternion::operator -=(Quaternion const& value)
+        inline quaternion& quaternion::operator -=(quaternion const& value)
         {
             *this = *this - value;
 
@@ -4281,7 +3727,7 @@ namespace Windows
         }
 
 
-        inline Quaternion& Quaternion::operator *=(Quaternion const& value)
+        inline quaternion& quaternion::operator *=(quaternion const& value)
         {
             *this = *this * value;
 
@@ -4289,7 +3735,7 @@ namespace Windows
         }
 
 
-        inline Quaternion& Quaternion::operator *=(float value)
+        inline quaternion& quaternion::operator *=(float value)
         {
             *this = *this * value;
 
@@ -4297,7 +3743,7 @@ namespace Windows
         }
 
 
-        inline Quaternion& Quaternion::operator /=(Quaternion const& value)
+        inline quaternion& quaternion::operator /=(quaternion const& value)
         {
             *this = *this / value;
 
@@ -4305,63 +3751,63 @@ namespace Windows
         }
 
 
-        inline bool Quaternion::operator ==(Quaternion const& value) const
+        inline bool quaternion::operator ==(quaternion const& value) const
         {
-            return X == value.X &&
-                   Y == value.Y &&
-                   Z == value.Z &&
-                   W == value.W;
+            return x == value.x &&
+                   y == value.y &&
+                   z == value.z &&
+                   w == value.w;
         }
 
 
-        inline bool Quaternion::operator !=(Quaternion const& value) const
+        inline bool quaternion::operator !=(quaternion const& value) const
         {
-            return X != value.X ||
-                   Y != value.Y ||
-                   Z != value.Z ||
-                   W != value.W;
+            return x != value.x ||
+                   y != value.y ||
+                   z != value.z ||
+                   w != value.w;
         }
 
 
-        inline Quaternion operator +(Quaternion const& value1, Quaternion const& value2)
+        inline quaternion operator +(quaternion const& value1, quaternion const& value2)
         {
-            Quaternion ans;
+            quaternion ans;
 
-            ans.X = value1.X + value2.X;
-            ans.Y = value1.Y + value2.Y;
-            ans.Z = value1.Z + value2.Z;
-            ans.W = value1.W + value2.W;
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
+            ans.z = value1.z + value2.z;
+            ans.w = value1.w + value2.w;
 
             return ans;
         }
 
 
-        inline Quaternion operator -(Quaternion const& value1, Quaternion const& value2)
+        inline quaternion operator -(quaternion const& value1, quaternion const& value2)
         {
-            Quaternion ans;
+            quaternion ans;
 
-            ans.X = value1.X - value2.X;
-            ans.Y = value1.Y - value2.Y;
-            ans.Z = value1.Z - value2.Z;
-            ans.W = value1.W - value2.W;
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
+            ans.z = value1.z - value2.z;
+            ans.w = value1.w - value2.w;
 
             return ans;
         }
 
 
-        inline Quaternion operator *(Quaternion const& value1, Quaternion const& value2)
+        inline quaternion operator *(quaternion const& value1, quaternion const& value2)
         {
-            Quaternion ans;
+            quaternion ans;
 
-            float q1x = value1.X;
-            float q1y = value1.Y;
-            float q1z = value1.Z;
-            float q1w = value1.W;
+            float q1x = value1.x;
+            float q1y = value1.y;
+            float q1z = value1.z;
+            float q1w = value1.w;
 
-            float q2x = value2.X;
-            float q2y = value2.Y;
-            float q2z = value2.Z;
-            float q2w = value2.W;
+            float q2x = value2.x;
+            float q2y = value2.y;
+            float q2z = value2.z;
+            float q2w = value2.w;
 
             // cross(av, bv)
             float cx = q1y * q2z - q1z * q2y;
@@ -4370,46 +3816,46 @@ namespace Windows
 
             float dot = q1x * q2x + q1y * q2y + q1z * q2z;
 
-            ans.X = q1x * q2w + q2x * q1w + cx;
-            ans.Y = q1y * q2w + q2y * q1w + cy;
-            ans.Z = q1z * q2w + q2z * q1w + cz;
-            ans.W = q1w * q2w - dot;
+            ans.x = q1x * q2w + q2x * q1w + cx;
+            ans.y = q1y * q2w + q2y * q1w + cy;
+            ans.z = q1z * q2w + q2z * q1w + cz;
+            ans.w = q1w * q2w - dot;
 
             return ans;
         }
 
 
-        inline Quaternion operator *(Quaternion const& value1, float value2)
+        inline quaternion operator *(quaternion const& value1, float value2)
         {
-            Quaternion ans;
+            quaternion ans;
 
-            ans.X = value1.X * value2;
-            ans.Y = value1.Y * value2;
-            ans.Z = value1.Z * value2;
-            ans.W = value1.W * value2;
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
+            ans.z = value1.z * value2;
+            ans.w = value1.w * value2;
 
             return ans;
         }
 
 
-        inline Quaternion operator /(Quaternion const& value1, Quaternion const& value2)
+        inline quaternion operator /(quaternion const& value1, quaternion const& value2)
         {
-            Quaternion ans;
+            quaternion ans;
 
-            float q1x = value1.X;
-            float q1y = value1.Y;
-            float q1z = value1.Z;
-            float q1w = value1.W;
+            float q1x = value1.x;
+            float q1y = value1.y;
+            float q1z = value1.z;
+            float q1w = value1.w;
 
             // Inverse part.
-            float ls = value2.X * value2.X + value2.Y * value2.Y +
-                       value2.Z * value2.Z + value2.W * value2.W;
+            float ls = value2.x * value2.x + value2.y * value2.y +
+                       value2.z * value2.z + value2.w * value2.w;
             float invNorm = 1.0f / ls;
 
-            float q2x = -value2.X * invNorm;
-            float q2y = -value2.Y * invNorm;
-            float q2z = -value2.Z * invNorm;
-            float q2w = value2.W * invNorm;
+            float q2x = -value2.x * invNorm;
+            float q2y = -value2.y * invNorm;
+            float q2z = -value2.z * invNorm;
+            float q2w = value2.w * invNorm;
 
             // Multiply part.
             float cx = q1y * q2z - q1z * q2y;
@@ -4418,17 +3864,15 @@ namespace Windows
 
             float dot = q1x * q2x + q1y * q2y + q1z * q2z;
 
-            ans.X = q1x * q2w + q2x * q1w + cx;
-            ans.Y = q1y * q2w + q2y * q1w + cy;
-            ans.Z = q1z * q2w + q2z * q1w + cz;
-            ans.W = q1w * q2w - dot;
+            ans.x = q1x * q2w + q2x * q1w + cx;
+            ans.y = q1y * q2w + q2y * q1w + cy;
+            ans.z = q1z * q2w + q2z * q1w + cz;
+            ans.w = q1w * q2w - dot;
 
             return ans;
         }
     }
 }
 
-
-#undef _WINDOWS_MATH_INVALID_ARGUMENT_
 
 #pragma warning(pop)

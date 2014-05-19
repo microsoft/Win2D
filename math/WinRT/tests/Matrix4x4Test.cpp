@@ -1810,7 +1810,6 @@ namespace MathTests
         TEST_METHOD(Matrix4x4TranslationTest)
         {
             Matrix4x4 a = GenerateTestMatrix();
-            Matrix4x4 b = a;
 
             // Transfomed vector that has same semantics of property must be same.
             Vector3 val = Vector3Helper::FromValues(a.M41, a.M42, a.M43);

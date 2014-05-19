@@ -13,227 +13,227 @@ namespace MathTests
     TEST_CLASS(PlaneTest)
     {
     public:
-        // A test for operator != (Plane, Plane)
+        // A test for operator != (plane, plane)
         TEST_METHOD(PlaneInequalityTest)
         {
-            Plane a(1.0f, 2.0f, 3.0f, 4.0f);
-            Plane b(1.0f, 2.0f, 3.0f, 4.0f);
+            plane a(1.0f, 2.0f, 3.0f, 4.0f);
+            plane b(1.0f, 2.0f, 3.0f, 4.0f);
 
             // case 1: compare between same values
             bool expected = false;
             bool actual = a != b;
-            Assert::AreEqual(expected, actual, L"Plane::operator != did not return the expected value.");
+            Assert::AreEqual(expected, actual, L"plane::operator != did not return the expected value.");
 
             // case 2: compare between different values
-            b.Normal.X = 10.0f;
+            b.normal.x = 10.0f;
             expected = true;
             actual = a != b;
-            Assert::AreEqual(expected, actual, L"Plane::operator != did not return the expected value.");
+            Assert::AreEqual(expected, actual, L"plane::operator != did not return the expected value.");
         }
         
-        // A test for operator == (Plane, Plane)
+        // A test for operator == (plane, plane)
         TEST_METHOD(PlaneEqualityTest)
         {
-            Plane a(1.0f, 2.0f, 3.0f, 4.0f);
-            Plane b(1.0f, 2.0f, 3.0f, 4.0f);
+            plane a(1.0f, 2.0f, 3.0f, 4.0f);
+            plane b(1.0f, 2.0f, 3.0f, 4.0f);
 
             // case 1: compare between same values
             bool expected = true;
             bool actual = a == b;
-            Assert::AreEqual(expected, actual, L"Plane::operator != did not return the expected value.");
+            Assert::AreEqual(expected, actual, L"plane::operator != did not return the expected value.");
 
             // case 2: compare between different values
-            b.Normal.X = 10.0f;
+            b.normal.x = 10.0f;
             expected = false;
             actual = a == b;
-            Assert::AreEqual(expected, actual, L"Plane::operator != did not return the expected value.");
+            Assert::AreEqual(expected, actual, L"plane::operator != did not return the expected value.");
         }
         
-        // A test for Plane ()
+        // A test for plane ()
         TEST_METHOD(PlaneConstructorTest0)
         {
-            Plane target;
+            plane target;
 
             // Default constructor leaves the struct uninitialized, so this 
             // test does nothing more than validate that the constructor exists.
 
-            target.D = 0;    // avoid warning about unused variable
+            target.d = 0;    // avoid warning about unused variable
         }
 
-        // A test for Plane (float, float, float, float)
+        // A test for plane (float, float, float, float)
         TEST_METHOD(PlaneConstructorTest1)
         {
             float a = 1.0f, b = 2.0f, c = 3.0f, d = 4.0f;
-            Plane target(a, b, c, d);
+            plane target(a, b, c, d);
 
             Assert::IsTrue(
-                target.Normal.X == a && target.Normal.Y == b && target.Normal.Z == c && target.D == d,
-                L"Plane::cstor did not return the expected value.");
+                target.normal.x == a && target.normal.y == b && target.normal.z == c && target.d == d,
+                L"plane::cstor did not return the expected value.");
         }
 
-        // A test for Plane::CreateFromVertices
+        // A test for plane::from_vertices
         TEST_METHOD(PlaneCreateFromVerticesTest)
         {
-            Vector3 point1(0.0f, 1.0f, 1.0f);
-            Vector3 point2(0.0f, 0.0f, 1.0f);
-            Vector3 point3(1.0f, 0.0f, 1.0f);
+            float3 point1(0.0f, 1.0f, 1.0f);
+            float3 point2(0.0f, 0.0f, 1.0f);
+            float3 point3(1.0f, 0.0f, 1.0f);
 
-            Plane target = Plane::CreateFromVertices(point1, point2, point3);
-            Plane expected(Vector3(0, 0, 1), -1.0f);
-            Assert::AreEqual(target, expected, L"Plane::cstor did not return the expected value.");
+            plane target = plane::from_vertices(point1, point2, point3);
+            plane expected(float3(0, 0, 1), -1.0f);
+            Assert::AreEqual(target, expected, L"plane::cstor did not return the expected value.");
         }
         
-        // A test for Plane::CreateFromVertices
+        // A test for plane::from_vertices
         TEST_METHOD(PlaneCreateFromVerticesTest2)
         {
-            Vector3 point1(0.0f, 0.0f, 1.0f);
-            Vector3 point2(1.0f, 0.0f, 0.0f);
-            Vector3 point3(1.0f, 1.0f, 0.0f);
+            float3 point1(0.0f, 0.0f, 1.0f);
+            float3 point2(1.0f, 0.0f, 0.0f);
+            float3 point3(1.0f, 1.0f, 0.0f);
 
-            Plane target = Plane::CreateFromVertices(point1, point2, point3);
+            plane target = plane::from_vertices(point1, point2, point3);
             float invRoot2 = (float)(1.0f / sqrt(2));
 
-            Plane expected(Vector3(invRoot2, 0, invRoot2), -invRoot2);
-            Assert::IsTrue(Equal(target, expected), L"Plane::cstor did not return the expected value.");
+            plane expected(float3(invRoot2, 0, invRoot2), -invRoot2);
+            Assert::IsTrue(Equal(target, expected), L"plane::cstor did not return the expected value.");
         }
 
-        // A test for Plane (Vector3, float)
+        // A test for plane (float3, float)
         TEST_METHOD(PlaneConstructorTest3)
         {
-            Vector3 normal(1, 2, 3);
+            float3 normal(1, 2, 3);
             float d = 4;
 
-            Plane target(normal, d);
+            plane target(normal, d);
             Assert::IsTrue(
-                target.Normal == normal && target.D == d,
-                L"Plane::cstor did not return the expected value.");
+                target.normal == normal && target.d == d,
+                L"plane::cstor did not return the expected value.");
         }
 
-        // A test for Plane (Vector4)
+        // A test for plane (float4)
         TEST_METHOD(PlaneConstructorTest)
         {
-            Vector4 value(1.0f, 2.0f, 3.0f, 4.0f);
-            Plane target(value);
+            float4 value(1.0f, 2.0f, 3.0f, 4.0f);
+            plane target(value);
 
             Assert::IsTrue(
-                target.Normal.X == value.X && target.Normal.Y == value.Y && target.Normal.Z == value.Z && target.D == value.W,
-                L"Plane::cstor did not return the expected value.");
+                target.normal.x == value.x && target.normal.y == value.y && target.normal.z == value.z && target.d == value.w,
+                L"plane::cstor did not return the expected value.");
         }
 
         TEST_METHOD(PlaneDotTest)
         {
-            Plane target(2, 3, 4, 5);
-            Vector4 value(5, 4, 3, 2);
+            plane target(2, 3, 4, 5);
+            float4 value(5, 4, 3, 2);
 
             float expected = 10 + 12 + 12 + 10;
-            float actual = Plane::Dot(target, value);
-            Assert::IsTrue(Equal(expected, actual), L"Plane::Dot returns unexpected value.");
+            float actual = dot(target, value);
+            Assert::IsTrue(Equal(expected, actual), L"dot returns unexpected value.");
         }
 
         TEST_METHOD(PlaneDotCoordinateTest)
         {
-            Plane target(2, 3, 4, 5);
-            Vector3 value(5, 4, 3);
+            plane target(2, 3, 4, 5);
+            float3 value(5, 4, 3);
 
             float expected = 10 + 12 + 12 + 5;
-            float actual = Plane::DotCoordinate(target, value);
-            Assert::IsTrue(Equal(expected, actual), L"Plane::DotCoordinate returns unexpected value.");
+            float actual = dot_coordinate(target, value);
+            Assert::IsTrue(Equal(expected, actual), L"dot_coordinate returns unexpected value.");
         }
 
         TEST_METHOD(PlaneDotNormalTest)
         {
-            Plane target(2, 3, 4, 5);
-            Vector3 value(5, 4, 3);
+            plane target(2, 3, 4, 5);
+            float3 value(5, 4, 3);
 
             float expected = 10 + 12 + 12;
-            float actual = Plane::DotNormal(target, value);
-            Assert::IsTrue(Equal(expected, actual), L"Plane::DotCoordinate returns unexpected value.");
+            float actual = dot_normal(target, value);
+            Assert::IsTrue(Equal(expected, actual), L"dot_coordinate returns unexpected value.");
         }
 
         TEST_METHOD(PlaneNormalizeTest)
         {
-            Plane target(1, 2, 3, 4);
+            plane target(1, 2, 3, 4);
 
-            float f = target.Normal.LengthSquared();
+            float f = length_squared(target.normal);
             float invF = 1.0f / sqrt(f);
-            Plane expected(target.Normal * invF, target.D * invF);
+            plane expected(target.normal * invF, target.d * invF);
 
-            Plane actual = Plane::Normalize(target);
-            Assert::IsTrue(Equal(expected, actual), L"Plane::Normalize returns unexpected value.");
+            plane actual = normalize(target);
+            Assert::IsTrue(Equal(expected, actual), L"normalize returns unexpected value.");
 
             // normalize, normalized normal.
-            actual = Plane::Normalize(actual);
-            Assert::IsTrue(Equal(expected, actual), L"Plane::Normalize returns unexpected value.");
+            actual = normalize(actual);
+            Assert::IsTrue(Equal(expected, actual), L"normalize returns unexpected value.");
         }
 
         TEST_METHOD(PlaneTransformTest1)
         {
-            Plane target(1, 2, 3, 4);
-            target = Plane::Normalize(target);
+            plane target(1, 2, 3, 4);
+            target = normalize(target);
 
-            Matrix4x4 m =
-                Matrix4x4::CreateRotationX(ToRadians(30.0f)) *
-                Matrix4x4::CreateRotationY(ToRadians(30.0f)) *
-                Matrix4x4::CreateRotationZ(ToRadians(30.0f));
-            m.M41 = 10.0f;
-            m.M42 = 20.0f;
-            m.M43 = 30.0f;
+            float4x4 m =
+                float4x4::rotation_x(ToRadians(30.0f)) *
+                float4x4::rotation_y(ToRadians(30.0f)) *
+                float4x4::rotation_z(ToRadians(30.0f));
+            m.m41 = 10.0f;
+            m.m42 = 20.0f;
+            m.m43 = 30.0f;
 
-            Plane expected;
-            Matrix4x4 inv;
-            Matrix4x4::Invert(m, &inv);
-            Matrix4x4 itm = Matrix4x4::Transpose(inv);
-            float x = target.Normal.X, y = target.Normal.Y, z = target.Normal.Z, w = target.D;
-            expected.Normal.X = x * itm.M11 + y * itm.M21 + z * itm.M31 + w * itm.M41;
-            expected.Normal.Y = x * itm.M12 + y * itm.M22 + z * itm.M32 + w * itm.M42;
-            expected.Normal.Z = x * itm.M13 + y * itm.M23 + z * itm.M33 + w * itm.M43;
-            expected.D = x * itm.M14 + y * itm.M24 + z * itm.M34 + w * itm.M44;
+            plane expected;
+            float4x4 inv;
+            invert(m, &inv);
+            float4x4 itm = transpose(inv);
+            float x = target.normal.x, y = target.normal.y, z = target.normal.z, w = target.d;
+            expected.normal.x = x * itm.m11 + y * itm.m21 + z * itm.m31 + w * itm.m41;
+            expected.normal.y = x * itm.m12 + y * itm.m22 + z * itm.m32 + w * itm.m42;
+            expected.normal.z = x * itm.m13 + y * itm.m23 + z * itm.m33 + w * itm.m43;
+            expected.d = x * itm.m14 + y * itm.m24 + z * itm.m34 + w * itm.m44;
 
-            Plane actual;
-            actual = Plane::Transform(target, m);
-            Assert::IsTrue(Equal(expected, actual), L"Plane::Transform did not return the expected value.");
+            plane actual;
+            actual = transform(target, m);
+            Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
         }
 
         TEST_METHOD(PlaneTransformTest2)
         {
-            Plane target(1, 2, 3, 4);
-            target = Plane::Normalize(target);
+            plane target(1, 2, 3, 4);
+            target = normalize(target);
 
-            Matrix4x4 m =
-                Matrix4x4::CreateRotationX(ToRadians(30.0f)) *
-                Matrix4x4::CreateRotationY(ToRadians(30.0f)) *
-                Matrix4x4::CreateRotationZ(ToRadians(30.0f));
-            Quaternion q = Quaternion::CreateFromRotationMatrix(m);
+            float4x4 m =
+                float4x4::rotation_x(ToRadians(30.0f)) *
+                float4x4::rotation_y(ToRadians(30.0f)) *
+                float4x4::rotation_z(ToRadians(30.0f));
+            quaternion q = quaternion::from_rotation_matrix(m);
 
-            Plane expected;
-            float x = target.Normal.X, y = target.Normal.Y, z = target.Normal.Z, w = target.D;
-            expected.Normal.X = x * m.M11 + y * m.M21 + z * m.M31 + w * m.M41;
-            expected.Normal.Y = x * m.M12 + y * m.M22 + z * m.M32 + w * m.M42;
-            expected.Normal.Z = x * m.M13 + y * m.M23 + z * m.M33 + w * m.M43;
-            expected.D = x * m.M14 + y * m.M24 + z * m.M34 + w * m.M44;
+            plane expected;
+            float x = target.normal.x, y = target.normal.y, z = target.normal.z, w = target.d;
+            expected.normal.x = x * m.m11 + y * m.m21 + z * m.m31 + w * m.m41;
+            expected.normal.y = x * m.m12 + y * m.m22 + z * m.m32 + w * m.m42;
+            expected.normal.z = x * m.m13 + y * m.m23 + z * m.m33 + w * m.m43;
+            expected.d = x * m.m14 + y * m.m24 + z * m.m34 + w * m.m44;
 
-            Plane actual;
-            actual = Plane::Transform(target, q);
-            Assert::IsTrue(Equal(expected, actual), L"Plane::Transform did not return the expected value.");
+            plane actual;
+            actual = transform(target, q);
+            Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
         }
         
-        // A test for Plane comparison involving NaN values
+        // A test for plane comparison involving NaN values
         TEST_METHOD(PlaneEqualsNanTest)
         {
-            Plane a(NAN, 0, 0, 0);
-            Plane b(0, NAN, 0, 0);
-            Plane c(0, 0, NAN, 0);
-            Plane d(0, 0, 0, NAN);
+            plane a(NAN, 0, 0, 0);
+            plane b(0, NAN, 0, 0);
+            plane c(0, 0, NAN, 0);
+            plane d(0, 0, 0, NAN);
 
-            Assert::IsFalse(a == Plane(0, 0, 0, 0));
-            Assert::IsFalse(b == Plane(0, 0, 0, 0));
-            Assert::IsFalse(c == Plane(0, 0, 0, 0));
-            Assert::IsFalse(d == Plane(0, 0, 0, 0));
+            Assert::IsFalse(a == plane(0, 0, 0, 0));
+            Assert::IsFalse(b == plane(0, 0, 0, 0));
+            Assert::IsFalse(c == plane(0, 0, 0, 0));
+            Assert::IsFalse(d == plane(0, 0, 0, 0));
 
-            Assert::IsTrue(a != Plane(0, 0, 0, 0));
-            Assert::IsTrue(b != Plane(0, 0, 0, 0));
-            Assert::IsTrue(c != Plane(0, 0, 0, 0));
-            Assert::IsTrue(d != Plane(0, 0, 0, 0));
+            Assert::IsTrue(a != plane(0, 0, 0, 0));
+            Assert::IsTrue(b != plane(0, 0, 0, 0));
+            Assert::IsTrue(c != plane(0, 0, 0, 0));
+            Assert::IsTrue(d != plane(0, 0, 0, 0));
 
             // Counterintuitive result - IEEE rules for NaN comparison are weird!
             Assert::IsFalse(a == a);
@@ -244,13 +244,13 @@ namespace MathTests
 
         struct Plane_2x
         {
-            Plane a;
-            Plane b;
+            plane a;
+            plane b;
         };
 
         struct PlanePlusFloat
         {
-            Plane v;
+            plane v;
             float f;
         };
 
@@ -263,85 +263,85 @@ namespace MathTests
         // A test to make sure these types are blittable directly into GPU buffer memory layouts
         TEST_METHOD(PlaneSizeofTest)
         {
-            Assert::AreEqual(size_t(16), sizeof(Plane));
+            Assert::AreEqual(size_t(16), sizeof(plane));
             Assert::AreEqual(size_t(32), sizeof(Plane_2x));
             Assert::AreEqual(size_t(20), sizeof(PlanePlusFloat));
             Assert::AreEqual(size_t(40), sizeof(PlanePlusFloat_2x));
-            Assert::AreEqual(sizeof(Plane), sizeof(DirectX::XMFLOAT4));
+            Assert::AreEqual(sizeof(plane), sizeof(DirectX::XMFLOAT4));
         }
 
         // A test to make sure the fields are laid out how we expect
         TEST_METHOD(PlaneFieldOffsetTest)
         {
-            Assert::AreEqual(size_t(0), offsetof(Plane, Normal));
-            Assert::AreEqual(size_t(12), offsetof(Plane, D));
+            Assert::AreEqual(size_t(0), offsetof(plane, normal));
+            Assert::AreEqual(size_t(12), offsetof(plane, d));
         }
 
-        // A test of Plane -> DirectXMath interop
+        // A test of plane -> DirectXMath interop
         TEST_METHOD(PlaneLoadTest)
         {
-            Plane a(23, 42, 666, -1);
+            plane a(23, 42, 666, -1);
             DirectX::XMVECTOR b = DirectX::XMLoadPlane(&a);
             DirectX::XMFLOAT4 c;
             DirectX::XMStoreFloat4(&c, b);
 
-            Assert::AreEqual(a.Normal.X, c.x);
-            Assert::AreEqual(a.Normal.Y, c.y);
-            Assert::AreEqual(a.Normal.Z, c.z);
-            Assert::AreEqual(a.D, c.w);
+            Assert::AreEqual(a.normal.x, c.x);
+            Assert::AreEqual(a.normal.y, c.y);
+            Assert::AreEqual(a.normal.z, c.z);
+            Assert::AreEqual(a.d, c.w);
         }
 
-        // A test of DirectXMath -> Plane interop
+        // A test of DirectXMath -> plane interop
         TEST_METHOD(PlaneStoreTest)
         {
             DirectX::XMFLOAT4 a(23, 42, 666, -1);
             DirectX::XMVECTOR b = DirectX::XMLoadFloat4(&a);
-            Plane c;
+            plane c;
             DirectX::XMStorePlane(&c, b);
 
-            Assert::AreEqual(a.x, c.Normal.X);
-            Assert::AreEqual(a.y, c.Normal.Y);
-            Assert::AreEqual(a.z, c.Normal.Z);
-            Assert::AreEqual(a.w, c.D);
+            Assert::AreEqual(a.x, c.normal.x);
+            Assert::AreEqual(a.y, c.normal.y);
+            Assert::AreEqual(a.z, c.normal.z);
+            Assert::AreEqual(a.w, c.d);
         }
 
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(PlaneTypeTraitsTest)
         {
             // We should be standard layout and trivial, but not POD because we have constructors.
-            Assert::IsTrue(std::is_standard_layout<Plane>::value);
-            Assert::IsTrue(std::is_trivial<Plane>::value);
-            Assert::IsFalse(std::is_pod<Plane>::value);
+            Assert::IsTrue(std::is_standard_layout<plane>::value);
+            Assert::IsTrue(std::is_trivial<plane>::value);
+            Assert::IsFalse(std::is_pod<plane>::value);
 
             // Default constructor is present and trivial.
-            Assert::IsTrue(std::is_default_constructible<Plane>::value);
-            Assert::IsTrue(std::is_trivially_default_constructible<Plane>::value);
-            Assert::IsFalse(std::is_nothrow_default_constructible<Plane>::value);
+            Assert::IsTrue(std::is_default_constructible<plane>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<plane>::value);
+            Assert::IsFalse(std::is_nothrow_default_constructible<plane>::value);
 
             // Copy constructor is present and trivial.
-            Assert::IsTrue(std::is_copy_constructible<Plane>::value);
-            Assert::IsTrue(std::is_trivially_copy_constructible<Plane>::value);
-            Assert::IsTrue(std::is_nothrow_copy_constructible<Plane>::value);
+            Assert::IsTrue(std::is_copy_constructible<plane>::value);
+            Assert::IsTrue(std::is_trivially_copy_constructible<plane>::value);
+            Assert::IsTrue(std::is_nothrow_copy_constructible<plane>::value);
 
             // Move constructor is present and trivial.
-            Assert::IsTrue(std::is_move_constructible<Plane>::value);
-            Assert::IsTrue(std::is_trivially_move_constructible<Plane>::value);
-            Assert::IsTrue(std::is_nothrow_move_constructible<Plane>::value);
+            Assert::IsTrue(std::is_move_constructible<plane>::value);
+            Assert::IsTrue(std::is_trivially_move_constructible<plane>::value);
+            Assert::IsTrue(std::is_nothrow_move_constructible<plane>::value);
 
             // Copy assignment is present and trivial.
-            Assert::IsTrue(std::is_copy_assignable<Plane>::value);
-            Assert::IsTrue(std::is_trivially_copy_assignable<Plane>::value);
-            Assert::IsTrue(std::is_nothrow_copy_assignable<Plane>::value);
+            Assert::IsTrue(std::is_copy_assignable<plane>::value);
+            Assert::IsTrue(std::is_trivially_copy_assignable<plane>::value);
+            Assert::IsTrue(std::is_nothrow_copy_assignable<plane>::value);
 
             // Move assignment is present and trivial.
-            Assert::IsTrue(std::is_move_assignable<Plane>::value);
-            Assert::IsTrue(std::is_trivially_move_assignable<Plane>::value);
-            Assert::IsTrue(std::is_nothrow_move_assignable<Plane>::value);
+            Assert::IsTrue(std::is_move_assignable<plane>::value);
+            Assert::IsTrue(std::is_trivially_move_assignable<plane>::value);
+            Assert::IsTrue(std::is_nothrow_move_assignable<plane>::value);
 
             // Destruction is present and trivial.
-            Assert::IsTrue(std::is_destructible<Plane>::value);
-            Assert::IsTrue(std::is_trivially_destructible<Plane>::value);
-            Assert::IsTrue(std::is_nothrow_destructible<Plane>::value);
+            Assert::IsTrue(std::is_destructible<plane>::value);
+            Assert::IsTrue(std::is_trivially_destructible<plane>::value);
+            Assert::IsTrue(std::is_nothrow_destructible<plane>::value);
         }
     };
 }
