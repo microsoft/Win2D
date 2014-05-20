@@ -27,9 +27,9 @@ public:
         return S_OK;
     }
 
-    IFACEMETHODIMP FromVertices(Midl::Vector3 point1, Midl::Vector3 point2, Midl::Vector3 point3, _Out_ Midl::Plane* ret)
+    IFACEMETHODIMP CreateFromVertices(Midl::Vector3 point1, Midl::Vector3 point2, Midl::Vector3 point3, _Out_ Midl::Plane* ret)
     {
-        *asImpl(ret) = Impl::Plane(asImpl(point1), asImpl(point2), asImpl(point3));
+        *asImpl(ret) = Impl::Plane::CreateFromVertices(asImpl(point1), asImpl(point2), asImpl(point3));
         return S_OK;
     }
 

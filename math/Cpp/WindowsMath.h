@@ -371,9 +371,9 @@ namespace Windows
             Plane(float a, float b, float c, float d);
             Plane(Vector3 const& normal, float d);
             explicit Plane(Vector4 const& value);
-            Plane(Vector3 const& point1, Vector3 const& point2, Vector3 const& point3);
 
             // Static methods.
+            static Plane CreateFromVertices(Vector3 const& point1, Vector3 const& point2, Vector3 const& point3);
             static Plane Normalize(Plane const& value);
             static Plane Transform(Plane const& plane, Matrix4x4 const& matrix);
             static Plane Transform(Plane const& plane, Quaternion const& rotation);

@@ -40,8 +40,10 @@ namespace Windows.Math
         }
 
 
-        public Plane(Vector3 point1, Vector3 point2, Vector3 point3)
+        public static Plane CreateFromVertices(Vector3 point1, Vector3 point2, Vector3 point3)
         {
+            Plane result;
+
             float ax = point2.X - point1.X;
             float ay = point2.Y - point1.Y;
             float az = point2.Z - point1.Z;
@@ -59,12 +61,14 @@ namespace Windows.Math
             float ls = nx * nx + ny * ny + nz * nz;
             float invNorm = 1.0f / (float)SM.Sqrt((double)ls);
 
-            Normal.X = nx * invNorm;
-            Normal.Y = ny * invNorm;
-            Normal.Z = nz * invNorm;
+            result.Normal.X = nx * invNorm;
+            result.Normal.Y = ny * invNorm;
+            result.Normal.Z = nz * invNorm;
 
             // D = - Dot(N, point1)
-            D = -(Normal.X * point1.X + Normal.Y * point1.Y + Normal.Z * point1.Z);
+            result.D = -(result.Normal.X * point1.X + result.Normal.Y * point1.Y + result.Normal.Z * point1.Z);
+
+            return result;
         }
 
 

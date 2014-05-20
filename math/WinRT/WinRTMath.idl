@@ -320,8 +320,8 @@ namespace Microsoft.DirectX.Math
         HRESULT FromValues([in] FLOAT a, [in] FLOAT b, [in] FLOAT c, [in] FLOAT d, [out, retval] Plane* ret);
         HRESULT FromVector3([in] Vector3 normal, [in] FLOAT d, [out, retval] Plane* ret);
         HRESULT FromVector4([in] Vector4 value, [out, retval] Plane* ret);
-        HRESULT FromVertices([in] Vector3 point1, [in] Vector3 point2, [in] Vector3 point3, [out, retval] Plane* ret);
 
+        HRESULT CreateFromVertices([in] Vector3 point1, [in] Vector3 point2, [in] Vector3 point3, [out, retval] Plane* ret);
         HRESULT Normalize([in] Plane value, [out, retval] Plane* ret);
         HRESULT Transform([in] Plane plane, [in] Matrix4x4 matrix, [out, retval] Plane* ret);
         HRESULT TransformByQuaternion([in] Plane plane, [in] Quaternion rotation, [out, retval] Plane* ret);

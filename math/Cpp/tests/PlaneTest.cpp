@@ -71,33 +71,33 @@ namespace MathTests
                 L"Plane::cstor did not return the expected value.");
         }
 
-        // A test for Plane (Vector3, Vector3, Vector3)
-        TEST_METHOD(PlaneConstructorTest2)
+        // A test for Plane::CreateFromVertices
+        TEST_METHOD(PlaneCreateFromVerticesTest)
         {
             Vector3 point1(0.0f, 1.0f, 1.0f);
             Vector3 point2(0.0f, 0.0f, 1.0f);
             Vector3 point3(1.0f, 0.0f, 1.0f);
 
-            Plane target(point1, point2, point3);
+            Plane target = Plane::CreateFromVertices(point1, point2, point3);
             Plane expected(Vector3(0, 0, 1), -1.0f);
             Assert::AreEqual(target, expected, L"Plane::cstor did not return the expected value.");
         }
         
-        // A test for Plane (Vector3, Vector3, Vector3)
-        TEST_METHOD(PlaneConstructorRegressionTest01)
+        // A test for Plane::CreateFromVertices
+        TEST_METHOD(PlaneCreateFromVerticesTest2)
         {
             Vector3 point1(0.0f, 0.0f, 1.0f);
             Vector3 point2(1.0f, 0.0f, 0.0f);
             Vector3 point3(1.0f, 1.0f, 0.0f);
 
-            Plane target(point1, point2, point3);
+            Plane target = Plane::CreateFromVertices(point1, point2, point3);
             float invRoot2 = (float)(1.0f / sqrt(2));
 
             Plane expected(Vector3(invRoot2, 0, invRoot2), -invRoot2);
             Assert::IsTrue(Equal(target, expected), L"Plane::cstor did not return the expected value.");
         }
 
-        // A test for Plane (Vector3, Vector3, Vector3)
+        // A test for Plane (Vector3, float)
         TEST_METHOD(PlaneConstructorTest3)
         {
             Vector3 normal(1, 2, 3);
