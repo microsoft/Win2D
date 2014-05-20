@@ -222,7 +222,6 @@ namespace MathTests
             Quaternion a = new Quaternion(1.0f, 2.0f, 3.0f, 4.0f);
             Quaternion b = new Quaternion(5.0f, 6.0f, 7.0f, 8.0f);
 
-            //            Quaternion expected = new Quaternion(32.0f, 32.0f, 56.0f, -6.0f);
             Quaternion expected = new Quaternion(24.0f, 48.0f, 48.0f, -6.0f);
             Quaternion actual;
 
@@ -965,6 +964,18 @@ namespace MathTests
         {
             QuaternionPlusFloat a;
             QuaternionPlusFloat b;
+        }
+
+        // A test to make sure the fields are laid out how we expect
+        [TestMethod]
+        public unsafe void QuaternionFieldOffsetTest()
+        {
+            Quaternion* ptr = (Quaternion*)0;
+
+            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->X));
+            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->Y));
+            Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->Z));
+            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->W));
         }
     }
 }

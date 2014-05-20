@@ -54,9 +54,10 @@ namespace MathTests
         {
             Plane target;
 
-            Assert::IsTrue(
-                target.Normal.X == 0 && target.Normal.Y == 0 && target.Normal.Z == 0 && target.D == 0,
-                L"Plane::cstor did not return the expected value.");
+            // Default constructor leaves the struct uninitialized, so this 
+            // test does nothing more than validate that the constructor exists.
+
+            target.D = 0;    // avoid warning about unused variable
         }
 
         // A test for Plane (float, float, float, float)
@@ -269,6 +270,13 @@ namespace MathTests
             Assert::AreEqual(sizeof(Plane), sizeof(DirectX::XMFLOAT4));
         }
 
+        // A test to make sure the fields are laid out how we expect
+        TEST_METHOD(PlaneFieldOffsetTest)
+        {
+            Assert::AreEqual(size_t(0), offsetof(Plane, Normal));
+            Assert::AreEqual(size_t(12), offsetof(Plane, D));
+        }
+
         // A test of Plane -> DirectXMath interop
         TEST_METHOD(PlaneLoadTest)
         {
@@ -300,14 +308,14 @@ namespace MathTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(PlaneTypeTraitsTest)
         {
-            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            // We should be standard layout and trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_standard_layout<Plane>::value);
+            Assert::IsTrue(std::is_trivial<Plane>::value);
             Assert::IsFalse(std::is_pod<Plane>::value);
-            Assert::IsFalse(std::is_trivial<Plane>::value);
 
-            // Default constructor is present but not trivial.
+            // Default constructor is present and trivial.
             Assert::IsTrue(std::is_default_constructible<Plane>::value);
-            Assert::IsFalse(std::is_trivially_default_constructible<Plane>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<Plane>::value);
             Assert::IsFalse(std::is_nothrow_default_constructible<Plane>::value);
 
             // Copy constructor is present and trivial.

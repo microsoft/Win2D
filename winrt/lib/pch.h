@@ -31,6 +31,7 @@
 #include <Microsoft.DirectX.interop.h>
 
 #include <WinRTGraphicsInterop.h>
+#include <WinRTMath.h>
 
 #include <ErrorHandling.h>
 

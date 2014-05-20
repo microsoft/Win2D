@@ -7,6 +7,14 @@
 #pragma warning(disable: 4756) // overflow in constant arithmetic
 
 
+#ifdef __cplusplus_winrt
+#define _WINDOWS_MATH_INVALID_ARGUMENT_(arg)    ref new Platform::InvalidArgumentException()
+#else
+#include <stdexcept>
+#define _WINDOWS_MATH_INVALID_ARGUMENT_(arg)    std::invalid_argument(#arg)
+#endif
+
+
 namespace DirectX
 {
     inline XMVECTOR XM_CALLCONV XMLoadVector2(_In_ Windows::Math::Vector2 const* pSource)
@@ -112,11 +120,6 @@ namespace Windows
 {
     namespace Math
     {
-        inline Vector2::Vector2()
-            : X(0), Y(0)
-        { }
-
-
         inline Vector2::Vector2(float x, float y)
             : X(x), Y(y)
         { }
@@ -126,6 +129,8 @@ namespace Windows
             : X(value), Y(value)
         { }
 
+
+#ifdef __cplusplus_winrt
 
         inline Vector2::Vector2(Windows::Foundation::Point const& value)
             : X(value.X), Y(value.Y)
@@ -147,6 +152,8 @@ namespace Windows
         {
             return Windows::Foundation::Size(X, Y);
         }
+
+#endif  // __cpluspluswinrt
 
 
         inline Vector2 Vector2::Zero()
@@ -587,11 +594,6 @@ namespace Windows
 
             return ans;
         }
-
-
-        inline Vector3::Vector3()
-            : X(0), Y(0), Z(0)
-        { }
 
 
         inline Vector3::Vector3(float x, float y, float z)
@@ -1080,11 +1082,6 @@ namespace Windows
 
             return ans;
         }
-
-
-        inline Vector4::Vector4()
-            : X(0), Y(0), Z(0), W(0)
-        { }
 
 
         inline Vector4::Vector4(float x, float y, float z, float w)
@@ -1659,11 +1656,6 @@ namespace Windows
         }
 
 
-        inline Matrix3x2::Matrix3x2()
-            : M11(0), M12(0), M21(0), M22(0), M31(0), M32(0)
-        { }
-
-
         inline Matrix3x2::Matrix3x2(float m11, float m12, float m21, float m22, float m31, float m32)
             : M11(m11), M12(m12), M21(m21), M22(m22), M31(m31), M32(m32)
         { }
@@ -2196,14 +2188,6 @@ namespace Windows
         }
 
 
-        inline Matrix4x4::Matrix4x4()
-            : M11(0), M12(0), M13(0), M14(0),
-              M21(0), M22(0), M23(0), M24(0),
-              M31(0), M32(0), M33(0), M34(0),
-              M41(0), M42(0), M43(0), M44(0)
-        { }
-
-
         inline Matrix4x4::Matrix4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
             : M11(m11), M12(m12), M13(m13), M14(m14),
               M21(m21), M22(m22), M23(m23), M24(m24),
@@ -2703,16 +2687,16 @@ namespace Windows
         inline Matrix4x4 Matrix4x4::CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
         {
             if (fieldOfView <= 0.0f || fieldOfView >= DirectX::XM_PI)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(fieldOfView);
 
             if (nearPlaneDistance <= 0.0f)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
 
             if (farPlaneDistance <= 0.0f)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(farPlaneDistance);
 
             if (nearPlaneDistance >= farPlaneDistance )
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
 
             float yScale = 1.0f / tanf(fieldOfView * 0.5f);
             float xScale = yScale / aspectRatio;
@@ -2739,13 +2723,13 @@ namespace Windows
         inline Matrix4x4 Matrix4x4::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
 
             if (farPlaneDistance <= 0.0f)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(farPlaneDistance);
 
             if (nearPlaneDistance >= farPlaneDistance)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
 
             Matrix4x4 result;
 
@@ -2769,13 +2753,13 @@ namespace Windows
         inline Matrix4x4 Matrix4x4::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
 
             if (farPlaneDistance <= 0.0f)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(farPlaneDistance);
 
             if (nearPlaneDistance >= farPlaneDistance)
-                throw ref new Platform::InvalidArgumentException();
+                throw _WINDOWS_MATH_INVALID_ARGUMENT_(nearPlaneDistance);
 
             Matrix4x4 result;
 
@@ -3665,11 +3649,6 @@ namespace Windows
         }
 
 
-        inline Plane::Plane()
-            : Normal(0, 0, 0), D(0)
-        { }
-
-
         inline Plane::Plane(float a, float b, float c, float d)
             : Normal(a, b, c), D(d)
         { }
@@ -3842,11 +3821,6 @@ namespace Windows
                    Normal.Z != value.Normal.Z ||
                    D != value.D;
         }
-
-
-        inline Quaternion::Quaternion()
-            : X(0), Y(0), Z(0), W(0)
-        { }
 
 
         inline Quaternion::Quaternion(float x, float y, float z, float w)
@@ -4450,5 +4424,7 @@ namespace Windows
     }
 }
 
+
+#undef _WINDOWS_MATH_INVALID_ARGUMENT_
 
 #pragma warning(pop)

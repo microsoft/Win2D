@@ -355,5 +355,15 @@ namespace MathTests
             PlanePlusFloat a;
             PlanePlusFloat b;
         }
+
+        // A test to make sure the fields are laid out how we expect
+        [TestMethod]
+        public unsafe void PlaneFieldOffsetTest()
+        {
+            Plane* ptr = (Plane*)0;
+
+            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->Normal));
+            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->D));
+        }
     }
 }

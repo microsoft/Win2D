@@ -47,18 +47,16 @@ namespace MathTests
         {
             Matrix3x2 val;
 
-            Assert::AreEqual(val.M11, 0.0f);
-            Assert::AreEqual(val.M12, 0.0f);
-            Assert::AreEqual(val.M21, 0.0f);
-            Assert::AreEqual(val.M22, 0.0f);
-            Assert::AreEqual(val.M31, 0.0f);
-            Assert::AreEqual(val.M32, 0.0f);
+            // Default constructor leaves the struct uninitialized, so this 
+            // test does nothing more than validate that the constructor exists.
+
+            val.M11 = 0;    // avoid warning about unused variable
         }
 
         // A test for Identity
         TEST_METHOD(Matrix3x2IdentityTest)
         {
-            Matrix3x2 val;
+            Matrix3x2 val = Matrix3x2(0, 0, 0, 0, 0, 0);
             val.M11 = val.M22 = 1.0f;
 
             Assert::IsTrue(Equal(val, Matrix3x2::Identity()), L"Matrix3x2::Indentity was not set correctly.");
@@ -201,7 +199,7 @@ namespace MathTests
         {
             float radians = ToRadians(50.0f);
 
-            Matrix3x2 expected;
+            Matrix3x2 expected = Matrix3x2::Identity();
             expected.M11 = 0.642787635f;
             expected.M12 = 0.766044438f;
             expected.M21 = -0.766044438f;
@@ -224,7 +222,7 @@ namespace MathTests
 
             Matrix3x2 rotateAroundCenter = Matrix3x2::CreateRotation(radians, center);
             Matrix3x2 rotateAroundCenterExpected = Matrix3x2::CreateTranslation(-center) * Matrix3x2::CreateRotation(radians) * Matrix3x2::CreateTranslation(center);
-            Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CreateRotation (float)
@@ -367,7 +365,7 @@ namespace MathTests
         {
             Matrix3x2 a = GenerateMatrixNumberFrom1To6();
             Matrix3x2 b = GenerateMatrixNumberFrom1To6();
-            Matrix3x2 expected;
+            Matrix3x2 expected = Matrix3x2(0, 0, 0, 0, 0, 0);
 
             Matrix3x2 actual = a - b;
             Assert::IsTrue(Equal(expected, actual), L"Matrix3x2::operator - did not return the expected value.");
@@ -568,7 +566,7 @@ namespace MathTests
         {
             Matrix3x2 a = GenerateMatrixNumberFrom1To6();
             Matrix3x2 b = GenerateMatrixNumberFrom1To6();
-            Matrix3x2 expected;
+            Matrix3x2 expected = Matrix3x2(0, 0, 0, 0, 0, 0);
             Matrix3x2 actual;
 
             actual = Matrix3x2::Subtract(a, b);
@@ -670,7 +668,7 @@ namespace MathTests
 
             Matrix3x2 scaleAroundCenter = Matrix3x2::CreateScale(scale, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2::CreateTranslation(-center) * Matrix3x2::CreateScale(scale) * Matrix3x2::CreateTranslation(center);
-            Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float)
@@ -697,7 +695,7 @@ namespace MathTests
 
             Matrix3x2 scaleAroundCenter = Matrix3x2::CreateScale(scale, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2::CreateTranslation(-center) * Matrix3x2::CreateScale(scale) * Matrix3x2::CreateTranslation(center);
-            Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float, float)
@@ -725,7 +723,7 @@ namespace MathTests
 
             Matrix3x2 scaleAroundCenter = Matrix3x2::CreateScale(scale.X, scale.Y, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2::CreateTranslation(-center) * Matrix3x2::CreateScale(scale.X, scale.Y) * Matrix3x2::CreateTranslation(center);
-            Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateTranslation (Vector2)
@@ -867,7 +865,7 @@ namespace MathTests
 
             Matrix3x2 skewAroundCenter = Matrix3x2::CreateSkew(skewX, skewY, center);
             Matrix3x2 skewAroundCenterExpected = Matrix3x2::CreateTranslation(-center) * Matrix3x2::CreateSkew(skewX, skewY) * Matrix3x2::CreateTranslation(center);
-            Assert::IsTrue(Equal(skewAroundZero, skewAroundZeroExpected));
+            Assert::IsTrue(Equal(skewAroundCenter, skewAroundCenterExpected));
         }
 
         // A test for IsIdentity()
@@ -951,6 +949,19 @@ namespace MathTests
             Assert::AreEqual(sizeof(Matrix3x2), sizeof(DirectX::XMFLOAT4) + sizeof(DirectX::XMFLOAT2));
         }
 
+        // A test to make sure the fields are laid out how we expect
+        TEST_METHOD(Matrix3x2FieldOffsetTest)
+        {
+            Assert::AreEqual(size_t(0), offsetof(Matrix3x2, M11));
+            Assert::AreEqual(size_t(4), offsetof(Matrix3x2, M12));
+
+            Assert::AreEqual(size_t(8), offsetof(Matrix3x2, M21));
+            Assert::AreEqual(size_t(12), offsetof(Matrix3x2, M22));
+
+            Assert::AreEqual(size_t(16), offsetof(Matrix3x2, M31));
+            Assert::AreEqual(size_t(20), offsetof(Matrix3x2, M32));
+        }
+
         // A test of Matrix3x2 -> DirectXMath interop
         TEST_METHOD(Matrix3x2LoadTest)
         {
@@ -1006,14 +1017,14 @@ namespace MathTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(Matrix3x2TypeTraitsTest)
         {
-            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            // We should be standard layout and trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_standard_layout<Matrix3x2>::value);
+            Assert::IsTrue(std::is_trivial<Matrix3x2>::value);
             Assert::IsFalse(std::is_pod<Matrix3x2>::value);
-            Assert::IsFalse(std::is_trivial<Matrix3x2>::value);
 
-            // Default constructor is present but not trivial.
+            // Default constructor is present and trivial.
             Assert::IsTrue(std::is_default_constructible<Matrix3x2>::value);
-            Assert::IsFalse(std::is_trivially_default_constructible<Matrix3x2>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<Matrix3x2>::value);
             Assert::IsFalse(std::is_nothrow_default_constructible<Matrix3x2>::value);
 
             // Copy constructor is present and trivial.

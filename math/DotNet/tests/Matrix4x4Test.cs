@@ -372,7 +372,7 @@ namespace MathTests
         public void Matrix4x4CreateRotationXCenterTest()
         {
             float radians = MathHelper.ToRadians(30.0f);
-            Vector3 center = new Vector3(23, 42, 666);
+            Vector3 center = new Vector3(23, 42, 66);
 
             Matrix4x4 rotateAroundZero = Matrix4x4.CreateRotationX(radians, Vector3.Zero);
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4.CreateRotationX(radians);
@@ -380,7 +380,7 @@ namespace MathTests
 
             Matrix4x4 rotateAroundCenter = Matrix4x4.CreateRotationX(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateRotationX(radians) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CreateRotationY (float)
@@ -428,7 +428,7 @@ namespace MathTests
         public void Matrix4x4CreateRotationYCenterTest()
         {
             float radians = MathHelper.ToRadians(30.0f);
-            Vector3 center = new Vector3(23, 42, 666);
+            Vector3 center = new Vector3(23, 42, 66);
 
             Matrix4x4 rotateAroundZero = Matrix4x4.CreateRotationY(radians, Vector3.Zero);
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4.CreateRotationY(radians);
@@ -436,7 +436,7 @@ namespace MathTests
 
             Matrix4x4 rotateAroundCenter = Matrix4x4.CreateRotationY(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateRotationY(radians) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CreateFromAxisAngle(Vector3,float)
@@ -707,7 +707,7 @@ namespace MathTests
         public void Matrix4x4CreateRotationZCenterTest()
         {
             float radians = MathHelper.ToRadians(30.0f);
-            Vector3 center = new Vector3(23, 42, 666);
+            Vector3 center = new Vector3(23, 42, 66);
 
             Matrix4x4 rotateAroundZero = Matrix4x4.CreateRotationZ(radians, Vector3.Zero);
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4.CreateRotationZ(radians);
@@ -715,7 +715,7 @@ namespace MathTests
 
             Matrix4x4 rotateAroundCenter = Matrix4x4.CreateRotationZ(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateRotationZ(radians) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CrateLookAt (Vector3, Vector3, Vector3)
@@ -2059,7 +2059,7 @@ namespace MathTests
 
             Matrix4x4 scaleAroundCenter = Matrix4x4.CreateScale(scale, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float)
@@ -2089,7 +2089,7 @@ namespace MathTests
 
             Matrix4x4 scaleAroundCenter = Matrix4x4.CreateScale(scale, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float, float, float)
@@ -2121,7 +2121,7 @@ namespace MathTests
 
             Matrix4x4 scaleAroundCenter = Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4.CreateTranslation(-center) * Matrix4x4.CreateScale(scale.X, scale.Y, scale.Z) * Matrix4x4.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateTranslation (Vector3)
@@ -2390,6 +2390,33 @@ namespace MathTests
         {
             Matrix4x4PlusFloat a;
             Matrix4x4PlusFloat b;
+        }
+
+        // A test to make sure the fields are laid out how we expect
+        [TestMethod]
+        public unsafe void Matrix4x4FieldOffsetTest()
+        {
+            Matrix4x4* ptr = (Matrix4x4*)0;
+
+            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->M11));
+            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->M12));
+            Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->M13));
+            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->M14));
+
+            Assert.AreEqual(new IntPtr(16), new IntPtr(&ptr->M21));
+            Assert.AreEqual(new IntPtr(20), new IntPtr(&ptr->M22));
+            Assert.AreEqual(new IntPtr(24), new IntPtr(&ptr->M23));
+            Assert.AreEqual(new IntPtr(28), new IntPtr(&ptr->M24));
+
+            Assert.AreEqual(new IntPtr(32), new IntPtr(&ptr->M31));
+            Assert.AreEqual(new IntPtr(36), new IntPtr(&ptr->M32));
+            Assert.AreEqual(new IntPtr(40), new IntPtr(&ptr->M33));
+            Assert.AreEqual(new IntPtr(44), new IntPtr(&ptr->M34));
+
+            Assert.AreEqual(new IntPtr(48), new IntPtr(&ptr->M41));
+            Assert.AreEqual(new IntPtr(52), new IntPtr(&ptr->M42));
+            Assert.AreEqual(new IntPtr(56), new IntPtr(&ptr->M43));
+            Assert.AreEqual(new IntPtr(60), new IntPtr(&ptr->M44));
         }
     }
 }

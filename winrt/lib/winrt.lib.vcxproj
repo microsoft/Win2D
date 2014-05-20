@@ -20,6 +20,9 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
+    <Midl>
+      <AdditionalIncludeDirectories>..\..\Math\WinRT</AdditionalIncludeDirectories>
+    </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -32,11 +35,13 @@
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
     <CustomBuildStep>
-      <Command>mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial</Command>
+      <Command>mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial -n:Microsoft.DirectX:2</Command>
       <Outputs>$(MergedWinmdDirectory)\$(RootNamespace).winmd</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\math\Cpp\WindowsMath.h" />
+    <ClInclude Include="..\..\math\WinRT\MathTypeConversion.h" />
     <ClInclude Include="ClosablePtr.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="version.h" />
@@ -44,6 +49,13 @@
     <ClInclude Include="GraphicsDevice\GraphicsSurface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\math\WinRT\Matrix3x2.cpp" />
+    <ClCompile Include="..\..\math\WinRT\Matrix4x4.cpp" />
+    <ClCompile Include="..\..\math\WinRT\Plane.cpp" />
+    <ClCompile Include="..\..\math\WinRT\Quaternion.cpp" />
+    <ClCompile Include="..\..\math\WinRT\Vector2.cpp" />
+    <ClCompile Include="..\..\math\WinRT\Vector3.cpp" />
+    <ClCompile Include="..\..\math\WinRT\Vector4.cpp" />
     <ClCompile Include="DirectX.codegen.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -51,9 +63,13 @@
     <MidlRT Include="d2dwinrt.idl" />
     <MidlRT Include="DirectX.codegen.idl" />
     <MidlRT Include="GraphicsDevice\WinRTGraphicsInterop.idl" />
+    <MidlRT Include="..\..\math\WinRT\WinRTMath.idl" />
     <ClCompile Include="GraphicsDevice\GraphicsDeviceInterop.cpp" />
     <ClCompile Include="GraphicsDevice\GraphicsDevice.cpp" />
     <ClCompile Include="GraphicsDevice\GraphicsSurface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\math\Cpp\WindowsMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(SolutionDir)build\dxrt.cpp.targets" />

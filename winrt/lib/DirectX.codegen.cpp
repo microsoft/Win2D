@@ -9,11 +9,9 @@
 #include <wrl.h>
 using namespace Microsoft::WRL;
 using namespace ABI::Microsoft::DirectX;
+using namespace ABI::Microsoft::DirectX::Math;
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
-
-// This is placeholder until the inbox math types are ready to use.
-typedef int Matrix3x2;
 
 namespace dxrt
 {

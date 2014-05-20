@@ -195,7 +195,7 @@ namespace MathTests
 
             Matrix3x2 rotateAroundCenter = Matrix3x2.CreateRotation(radians, center);
             Matrix3x2 rotateAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateRotation(radians) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CreateRotation (float)
@@ -657,7 +657,7 @@ namespace MathTests
 
             Matrix3x2 scaleAroundCenter = Matrix3x2.CreateScale(scale, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float)
@@ -686,7 +686,7 @@ namespace MathTests
 
             Matrix3x2 scaleAroundCenter = Matrix3x2.CreateScale(scale, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateScale(scale) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float, float)
@@ -716,7 +716,7 @@ namespace MathTests
 
             Matrix3x2 scaleAroundCenter = Matrix3x2.CreateScale(scale.X, scale.Y, center);
             Matrix3x2 scaleAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateScale(scale.X, scale.Y) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateTranslation (Vector2)
@@ -885,7 +885,7 @@ namespace MathTests
 
             Matrix3x2 skewAroundCenter = Matrix3x2.CreateSkew(skewX, skewY, center);
             Matrix3x2 skewAroundCenterExpected = Matrix3x2.CreateTranslation(-center) * Matrix3x2.CreateSkew(skewX, skewY) * Matrix3x2.CreateTranslation(center);
-            Assert.IsTrue(MathHelper.Equal(skewAroundZero, skewAroundZeroExpected));
+            Assert.IsTrue(MathHelper.Equal(skewAroundCenter, skewAroundCenterExpected));
         }
 
         // A test for IsIdentity
@@ -979,6 +979,22 @@ namespace MathTests
         {
             Matrix3x2PlusFloat a;
             Matrix3x2PlusFloat b;
+        }
+
+        // A test to make sure the fields are laid out how we expect
+        [TestMethod]
+        public unsafe void Matrix3x2FieldOffsetTest()
+        {
+            Matrix3x2* ptr = (Matrix3x2*)0;
+
+            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->M11));
+            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->M12));
+
+            Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->M21));
+            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->M22));
+
+            Assert.AreEqual(new IntPtr(16), new IntPtr(&ptr->M31));
+            Assert.AreEqual(new IntPtr(20), new IntPtr(&ptr->M32));
         }
     }
 }

@@ -415,7 +415,7 @@ namespace MathTests
         TEST_METHOD(Vector2TransformByQuaternionTest1)
         {
             Vector2 v(1.0f, 2.0f);
-            Quaternion q;
+            Quaternion q(0, 0, 0, 0);
             Vector2 expected = v;
 
             Vector2 actual = Vector2::Transform(v, q);
@@ -447,7 +447,7 @@ namespace MathTests
         // A test for Normalize (Vector2)
         TEST_METHOD(Vector2NormalizeTest1)
         {
-            Vector2 a; // no parameter, default to 0.0f
+            Vector2 a(0);
             Vector2 actual = Vector2::Normalize(a);
             Assert::IsTrue(isnan(actual.X) && isnan(actual.Y), L"Vector2::Normalize did not return the expected value.");
         }
@@ -595,7 +595,7 @@ namespace MathTests
         TEST_METHOD(Vector2DivisionTest3)
         {
             Vector2 a(0.047f, -3.0f);
-            Vector2 b;
+            Vector2 b(0, 0);
 
             Vector2 actual = a / b;
 
@@ -637,13 +637,15 @@ namespace MathTests
             Assert::IsTrue(Equal(target, a), L"Vector2( Vector2 ) constructor did not return the expected value.");
         }
 
-
         // A test for Vector2 ()
         TEST_METHOD(Vector2ConstructorTest2)
         {
             Vector2 target;
-            Assert::AreEqual(target.X, 0.0f, L"Vector2() constructor did not return the expected value.");
-            Assert::AreEqual(target.Y, 0.0f, L"Vector2() constructor did not return the expected value.");
+
+            // Default constructor leaves the struct uninitialized, so this 
+            // test does nothing more than validate that the constructor exists.
+
+            target.X = 0;    // avoid warning about unused variable
         }
 
         // A test for Vector2 (float, float)
@@ -861,7 +863,7 @@ namespace MathTests
         }
 
         // A test for operator *=
-        TEST_METHOD(Vector2OperatorMultiplyEqualsScalerTest)
+        TEST_METHOD(Vector2OperatorMultiplyEqualsScalarTest)
         {
             Vector2 a(1, 2);
             float b = 3;
@@ -894,7 +896,7 @@ namespace MathTests
         }
 
         // A test for operator /=
-        TEST_METHOD(Vector2OperatorDivideEqualsScalerTest)
+        TEST_METHOD(Vector2OperatorDivideEqualsScalarTest)
         {
             Vector2 a(1, 2);
             float b = 3;
@@ -1079,6 +1081,13 @@ namespace MathTests
             Assert::AreEqual(sizeof(Vector2), sizeof(DirectX::XMFLOAT2));
         }
 
+        // A test to make sure the fields are laid out how we expect
+        TEST_METHOD(Vector2FieldOffsetTest)
+        {
+            Assert::AreEqual(size_t(0), offsetof(Vector2, X));
+            Assert::AreEqual(size_t(4), offsetof(Vector2, Y));
+        }
+
         // A test of Vector2 -> DirectXMath interop
         TEST_METHOD(Vector2LoadTest)
         {
@@ -1108,14 +1117,14 @@ namespace MathTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(Vector2TypeTraitsTest)
         {
-            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            // We should be standard layout and trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_standard_layout<Vector2>::value);
+            Assert::IsTrue(std::is_trivial<Vector2>::value);
             Assert::IsFalse(std::is_pod<Vector2>::value);
-            Assert::IsFalse(std::is_trivial<Vector2>::value);
 
-            // Default constructor is present but not trivial.
+            // Default constructor is present and trivial.
             Assert::IsTrue(std::is_default_constructible<Vector2>::value);
-            Assert::IsFalse(std::is_trivially_default_constructible<Vector2>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<Vector2>::value);
             Assert::IsFalse(std::is_nothrow_default_constructible<Vector2>::value);
 
             // Copy constructor is present and trivial.

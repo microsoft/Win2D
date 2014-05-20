@@ -205,7 +205,6 @@ namespace MathTests
             Quaternion a(1.0f, 2.0f, 3.0f, 4.0f);
             Quaternion b(5.0f, 6.0f, 7.0f, 8.0f);
 
-            //            Quaternion expected(32.0f, 32.0f, 56.0f, -6.0f);
             Quaternion expected(24.0f, 48.0f, 48.0f, -6.0f);
             Quaternion actual;
 
@@ -271,8 +270,11 @@ namespace MathTests
         TEST_METHOD(QuaternionConstructorTest2)
         {
             Quaternion target;
-            Assert::IsTrue(target.X == 0 && target.Y == 0 && target.Z == 0 && target.W == 0,
-                L"Quaternion::constructor () did not return the expected value.");
+
+            // Default constructor leaves the struct uninitialized, so this 
+            // test does nothing more than validate that the constructor exists.
+
+            target.X = 0;    // avoid warning about unused variable
         }
 
         // A test for CreateFromAxisAngle (Vector3, float)
@@ -291,7 +293,7 @@ namespace MathTests
         // A test for CreateFromAxisAngle (Vector3, float)
         TEST_METHOD(QuaternionCreateFromAxisAngleTest1)
         {
-            Vector3 axis;
+            Vector3 axis = Vector3::Zero();
             float angle = ToRadians(-30.0f);
 
             float cos = cosf(angle / 2.0f);
@@ -477,7 +479,7 @@ namespace MathTests
         // A test for Inverse (Quaternion)
         TEST_METHOD(QuaternionInverseTest1)
         {
-            Quaternion a;
+            Quaternion a(0, 0, 0, 0);
             Quaternion actual = Quaternion::Inverse(a);
 
             Assert::IsTrue(isnan(actual.X) && isnan(actual.Y) && isnan(actual.Z) && isnan(actual.W)
@@ -619,7 +621,7 @@ namespace MathTests
         }
 
         // A test for operator *=
-        TEST_METHOD(QuaternionOperatorMultiplyEqualsScalerTest)
+        TEST_METHOD(QuaternionOperatorMultiplyEqualsScalarTest)
         {
             Quaternion a(1, 2, 3, 4);
             float b = 5;
@@ -902,6 +904,15 @@ namespace MathTests
             Assert::AreEqual(sizeof(Quaternion), sizeof(DirectX::XMFLOAT4));
         }
 
+        // A test to make sure the fields are laid out how we expect
+        TEST_METHOD(QuaternionFieldOffsetTest)
+        {
+            Assert::AreEqual(size_t(0), offsetof(Quaternion, X));
+            Assert::AreEqual(size_t(4), offsetof(Quaternion, Y));
+            Assert::AreEqual(size_t(8), offsetof(Quaternion, Z));
+            Assert::AreEqual(size_t(12), offsetof(Quaternion, W));
+        }
+
         // A test of Quaternion -> DirectXMath interop
         TEST_METHOD(QuaternionLoadTest)
         {
@@ -933,14 +944,14 @@ namespace MathTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(QuaternionTypeTraitsTest)
         {
-            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            // We should be standard layout and trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_standard_layout<Quaternion>::value);
+            Assert::IsTrue(std::is_trivial<Quaternion>::value);
             Assert::IsFalse(std::is_pod<Quaternion>::value);
-            Assert::IsFalse(std::is_trivial<Quaternion>::value);
 
-            // Default constructor is present but not trivial.
+            // Default constructor is present and trivial.
             Assert::IsTrue(std::is_default_constructible<Quaternion>::value);
-            Assert::IsFalse(std::is_trivially_default_constructible<Quaternion>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<Quaternion>::value);
             Assert::IsFalse(std::is_nothrow_default_constructible<Quaternion>::value);
 
             // Copy constructor is present and trivial.

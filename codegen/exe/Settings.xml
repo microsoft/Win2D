@@ -14,8 +14,7 @@
 
         <Struct Name="RECT_F" ShouldProject="false" ProjectedNameOverride="Rect" IdlNamespaceQualifier="Windows.Foundation."/>
 
-        <!-- Note: This is placeholder, and will eventually be removed and replaced with the inbox type.-->
-        <Struct Name="MATRIX_3X2_F" ShouldProject="false" ProjectedNameOverride="Matrix3x2" IdlNamespaceQualifier="Microsoft.Math."/>
+        <Struct Name="MATRIX_3X2_F" ShouldProject="false" ProjectedNameOverride="Matrix3x2" IdlNamespaceQualifier="Microsoft.DirectX.Math."/>
 
     </Namespace>
 

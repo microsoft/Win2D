@@ -9,14 +9,46 @@
       <UniqueIdentifier>7592ecf6-b96c-42f3-b7e7-91ccffc1641a</UniqueIdentifier>
       <Extensions>appxmanifest;tile;settings</Extensions>
     </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{55e9e660-033d-4208-a45f-d46ae33a7466}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="..\..\math\WinRT\tests\Helpers.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ProxyTests.cpp" />
+    <ClCompile Include="DirectX11EnumTests.cpp" />
+    <ClCompile Include="GraphicsDeviceTests.cpp" />
+    <ClCompile Include="GraphicsErrorTests.cpp" />
+    <ClCompile Include="GraphicsSurfaceTests.cpp" />
+    <ClCompile Include="..\..\math\WinRT\tests\Matrix3x2Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\tests\Matrix4x4Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\tests\PlaneTest.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\tests\QuaternionTest.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\tests\Vector2Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\tests\Vector3Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\tests\Vector4Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\UnitTestLogo.scale-100.png">

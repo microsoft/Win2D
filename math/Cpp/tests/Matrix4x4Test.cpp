@@ -61,29 +61,16 @@ namespace MathTests
         {
             Matrix4x4 val;
 
-            Assert::AreEqual(val.M11, 0.0f);
-            Assert::AreEqual(val.M12, 0.0f);
-            Assert::AreEqual(val.M13, 0.0f);
-            Assert::AreEqual(val.M14, 0.0f);
-            Assert::AreEqual(val.M21, 0.0f);
-            Assert::AreEqual(val.M22, 0.0f);
-            Assert::AreEqual(val.M23, 0.0f);
-            Assert::AreEqual(val.M24, 0.0f);
-            Assert::AreEqual(val.M31, 0.0f);
-            Assert::AreEqual(val.M32, 0.0f);
-            Assert::AreEqual(val.M33, 0.0f);
-            Assert::AreEqual(val.M34, 0.0f);
-            Assert::AreEqual(val.M41, 0.0f);
-            Assert::AreEqual(val.M42, 0.0f);
-            Assert::AreEqual(val.M43, 0.0f);
-            Assert::AreEqual(val.M44, 0.0f);
+            // Default constructor leaves the struct uninitialized, so this 
+            // test does nothing more than validate that the constructor exists.
+
+            val.M11 = 0;    // avoid warning about unused variable
         }
 
         // A test for Identity
         TEST_METHOD(Matrix4x4IdentityTest)
         {
-            Matrix4x4 val;
-            val.M11 = val.M22 = val.M33 = val.M44 = 1.0f;
+            Matrix4x4 val(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
             Assert::IsTrue(Equal(val, Matrix4x4::Identity()), L"Matrix4x4::Indentity was not set correctly.");
         }
@@ -380,14 +367,13 @@ namespace MathTests
         {
             float radians = ToRadians(30.0f);
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
 
             expected.M11 = 1.0f;
             expected.M22 = 0.8660254f;
             expected.M23 = 0.5f;
             expected.M32 = -0.5f;
             expected.M33 = 0.8660254f;
-            expected.M44 = 1.0f;
 
             Matrix4x4 actual;
 
@@ -409,7 +395,7 @@ namespace MathTests
         TEST_METHOD(Matrix4x4CreateRotationXCenterTest)
         {
             float radians = ToRadians(30.0f);
-            Vector3 center(23, 42, 666);
+            Vector3 center(23, 42, 66);
 
             Matrix4x4 rotateAroundZero = Matrix4x4::CreateRotationX(radians, Vector3::Zero());
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4::CreateRotationX(radians);
@@ -417,7 +403,7 @@ namespace MathTests
 
             Matrix4x4 rotateAroundCenter = Matrix4x4::CreateRotationX(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4::CreateTranslation(-center) * Matrix4x4::CreateRotationX(radians) * Matrix4x4::CreateTranslation(center);
-            Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CreateRotationY (float)
@@ -425,14 +411,12 @@ namespace MathTests
         {
             float radians = ToRadians(60.0f);
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
 
             expected.M11 = 0.49999997f;
             expected.M13 = -0.866025448f;
-            expected.M22 = 1.0f;
             expected.M31 = 0.866025448f;
             expected.M33 = 0.49999997f;
-            expected.M44 = 1.0f;
 
             Matrix4x4 actual;
             actual = Matrix4x4::CreateRotationY(radians);
@@ -444,14 +428,12 @@ namespace MathTests
         {
             float radians = ToRadians(-300.0f);
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
 
             expected.M11 = 0.49999997f;
             expected.M13 = -0.866025448f;
-            expected.M22 = 1.0f;
             expected.M31 = 0.866025448f;
             expected.M33 = 0.49999997f;
-            expected.M44 = 1.0f;
 
             Matrix4x4 actual = Matrix4x4::CreateRotationY(radians);
             Assert::IsTrue(Equal(expected, actual), L"Matrix4x4::CreateRotationY did not return the expected value.");
@@ -461,7 +443,7 @@ namespace MathTests
         TEST_METHOD(Matrix4x4CreateRotationYCenterTest)
         {
             float radians = ToRadians(30.0f);
-            Vector3 center(23, 42, 666);
+            Vector3 center(23, 42, 66);
 
             Matrix4x4 rotateAroundZero = Matrix4x4::CreateRotationY(radians, Vector3::Zero());
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4::CreateRotationY(radians);
@@ -469,7 +451,7 @@ namespace MathTests
 
             Matrix4x4 rotateAroundCenter = Matrix4x4::CreateRotationY(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4::CreateTranslation(-center) * Matrix4x4::CreateRotationY(radians) * Matrix4x4::CreateTranslation(center);
-            Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CreateFromAxisAngle(Vector3,float)
@@ -720,13 +702,11 @@ namespace MathTests
         {
             float radians = ToRadians(50.0f);
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
             expected.M11 = 0.642787635f;
             expected.M12 = 0.766044438f;
             expected.M21 = -0.766044438f;
             expected.M22 = 0.642787635f;
-            expected.M33 = 1.0f;
-            expected.M44 = 1.0f;
 
             Matrix4x4 actual;
             actual = Matrix4x4::CreateRotationZ(radians);
@@ -737,7 +717,7 @@ namespace MathTests
         TEST_METHOD(Matrix4x4CreateRotationZCenterTest)
         {
             float radians = ToRadians(30.0f);
-            Vector3 center(23, 42, 666);
+            Vector3 center(23, 42, 66);
 
             Matrix4x4 rotateAroundZero = Matrix4x4::CreateRotationZ(radians, Vector3::Zero());
             Matrix4x4 rotateAroundZeroExpected = Matrix4x4::CreateRotationZ(radians);
@@ -745,7 +725,7 @@ namespace MathTests
 
             Matrix4x4 rotateAroundCenter = Matrix4x4::CreateRotationZ(radians, center);
             Matrix4x4 rotateAroundCenterExpected = Matrix4x4::CreateTranslation(-center) * Matrix4x4::CreateRotationZ(radians) * Matrix4x4::CreateTranslation(center);
-            Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
+            Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
         // A test for CreateLookAt (Vector3, Vector3, Vector3)
@@ -755,7 +735,7 @@ namespace MathTests
             Vector3 cameraTarget(3.0f, 2.0f, -4.0f);
             Vector3 cameraUpVector(0.0f, 1.0f, 0.0f);
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
             expected.M11 = 0.979457f;
             expected.M12 = -0.0928267762f;
             expected.M13 = 0.179017f;
@@ -771,7 +751,6 @@ namespace MathTests
             expected.M41 = -3.74498272f;
             expected.M42 = -3.30050683f;
             expected.M43 = -37.0820961f;
-            expected.M44 = 1.0f;
 
             Matrix4x4 actual = Matrix4x4::CreateLookAt(cameraPosition, cameraTarget, cameraUpVector);
             Assert::IsTrue(Equal(expected, actual), L"Matrix4x4::CreateLookAt did not return the expected value.");
@@ -821,12 +800,11 @@ namespace MathTests
             float zNearPlane = 1.5f;
             float zFarPlane = 1000.0f;
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
             expected.M11 = 0.02f;
             expected.M22 = 0.01f;
             expected.M33 = -0.00100150227f;
             expected.M43 = -0.00150225335f;
-            expected.M44 = 1.0f;
 
             Matrix4x4 actual;
             actual = Matrix4x4::CreateOrthographic(width, height, zNearPlane, zFarPlane);
@@ -843,14 +821,13 @@ namespace MathTests
             float zNearPlane = 1.5f;
             float zFarPlane = 1000.0f;
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
             expected.M11 = 0.025f;
             expected.M22 = 0.0125f;
             expected.M33 = -0.00100150227f;
             expected.M41 = -1.25f;
             expected.M42 = -1.25f;
             expected.M43 = -0.00150225335f;
-            expected.M44 = 1.0f;
 
             Matrix4x4 actual;
             actual = Matrix4x4::CreateOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane);
@@ -865,12 +842,13 @@ namespace MathTests
             float zNearPlane = 1.5f;
             float zFarPlane = 1000.0f;
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
             expected.M11 = 0.03f;
             expected.M22 = 0.015f;
             expected.M33 = -1.00150228f;
             expected.M34 = -1.0f;
             expected.M43 = -1.50225341f;
+            expected.M44 = 0;
 
             Matrix4x4 actual;
             actual = Matrix4x4::CreatePerspective(width, height, zNearPlane, zFarPlane);
@@ -946,12 +924,13 @@ namespace MathTests
             float zNearPlane = 1.5f;
             float zFarPlane = 1000.0f;
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
             expected.M11 = 2.09927845f;
             expected.M22 = 3.73205066f;
             expected.M33 = -1.00150228f;
             expected.M34 = -1.0f;
             expected.M43 = -1.50225341f;
+            expected.M44 = 0;
             Matrix4x4 actual;
 
             actual = Matrix4x4::CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
@@ -1038,7 +1017,7 @@ namespace MathTests
             float zNearPlane = 1.5f;
             float zFarPlane = 1000.0f;
 
-            Matrix4x4 expected;
+            Matrix4x4 expected = Matrix4x4::Identity();
             expected.M11 = 0.0375f;
             expected.M22 = 0.01875f;
             expected.M31 = 1.25f;
@@ -1046,6 +1025,7 @@ namespace MathTests
             expected.M33 = -1.00150228f;
             expected.M34 = -1.0f;
             expected.M43 = -1.50225341f;
+            expected.M44 = 0;
 
             Matrix4x4 actual;
             actual = Matrix4x4::CreatePerspectiveOffCenter(left, right, bottom, top, zNearPlane, zFarPlane);
@@ -1180,7 +1160,7 @@ namespace MathTests
         {
             Matrix4x4 a = GenerateMatrixNumberFrom1To16();
             Matrix4x4 b = GenerateMatrixNumberFrom1To16();
-            Matrix4x4 expected;
+            Matrix4x4 expected(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
             Matrix4x4 actual = a - b;
             Assert::IsTrue(Equal(expected, actual), L"Matrix4x4::operator - did not return the expected value.");
@@ -1519,7 +1499,7 @@ namespace MathTests
         {
             Matrix4x4 a = GenerateMatrixNumberFrom1To16();
             Matrix4x4 b = GenerateMatrixNumberFrom1To16();
-            Matrix4x4 expected;
+            Matrix4x4 expected(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             Matrix4x4 actual;
 
             actual = Matrix4x4::Subtract(a, b);
@@ -1955,7 +1935,7 @@ namespace MathTests
 
             Matrix4x4 scaleAroundCenter = Matrix4x4::CreateScale(scale, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4::CreateTranslation(-center) * Matrix4x4::CreateScale(scale) * Matrix4x4::CreateTranslation(center);
-            Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float)
@@ -1983,7 +1963,7 @@ namespace MathTests
 
             Matrix4x4 scaleAroundCenter = Matrix4x4::CreateScale(scale, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4::CreateTranslation(-center) * Matrix4x4::CreateScale(scale) * Matrix4x4::CreateTranslation(center);
-            Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateScale (float, float, float)
@@ -2013,7 +1993,7 @@ namespace MathTests
 
             Matrix4x4 scaleAroundCenter = Matrix4x4::CreateScale(scale.X, scale.Y, scale.Z, center);
             Matrix4x4 scaleAroundCenterExpected = Matrix4x4::CreateTranslation(-center) * Matrix4x4::CreateScale(scale.X, scale.Y, scale.Z) * Matrix4x4::CreateTranslation(center);
-            Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
+            Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
         // A test for CreateTranslation (Vector3)
@@ -2239,6 +2219,30 @@ namespace MathTests
             Assert::AreEqual(sizeof(Matrix4x4), sizeof(DirectX::XMFLOAT4X4));
         }
 
+        // A test to make sure the fields are laid out how we expect
+        TEST_METHOD(Matrix4x4FieldOffsetTest)
+        {
+            Assert::AreEqual(size_t(0), offsetof(Matrix4x4, M11));
+            Assert::AreEqual(size_t(4), offsetof(Matrix4x4, M12));
+            Assert::AreEqual(size_t(8), offsetof(Matrix4x4, M13));
+            Assert::AreEqual(size_t(12), offsetof(Matrix4x4, M14));
+
+            Assert::AreEqual(size_t(16), offsetof(Matrix4x4, M21));
+            Assert::AreEqual(size_t(20), offsetof(Matrix4x4, M22));
+            Assert::AreEqual(size_t(24), offsetof(Matrix4x4, M23));
+            Assert::AreEqual(size_t(28), offsetof(Matrix4x4, M24));
+
+            Assert::AreEqual(size_t(32), offsetof(Matrix4x4, M31));
+            Assert::AreEqual(size_t(36), offsetof(Matrix4x4, M32));
+            Assert::AreEqual(size_t(40), offsetof(Matrix4x4, M33));
+            Assert::AreEqual(size_t(44), offsetof(Matrix4x4, M34));
+
+            Assert::AreEqual(size_t(48), offsetof(Matrix4x4, M41));
+            Assert::AreEqual(size_t(52), offsetof(Matrix4x4, M42));
+            Assert::AreEqual(size_t(56), offsetof(Matrix4x4, M43));
+            Assert::AreEqual(size_t(60), offsetof(Matrix4x4, M44));
+        }
+
         // A test of Matrix4x4 -> DirectXMath interop
         TEST_METHOD(Matrix4x4LoadTest)
         {
@@ -2300,14 +2304,14 @@ namespace MathTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(Matrix4x4TypeTraitsTest)
         {
-            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            // We should be standard layout and trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_standard_layout<Matrix4x4>::value);
+            Assert::IsTrue(std::is_trivial<Matrix4x4>::value);
             Assert::IsFalse(std::is_pod<Matrix4x4>::value);
-            Assert::IsFalse(std::is_trivial<Matrix4x4>::value);
 
-            // Default constructor is present but not trivial.
+            // Default constructor is present and trivial.
             Assert::IsTrue(std::is_default_constructible<Matrix4x4>::value);
-            Assert::IsFalse(std::is_trivially_default_constructible<Matrix4x4>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<Matrix4x4>::value);
             Assert::IsFalse(std::is_nothrow_default_constructible<Matrix4x4>::value);
 
             // Copy constructor is present and trivial.

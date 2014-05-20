@@ -12,6 +12,27 @@
       <Filter>GraphicsDevice</Filter>
     </ClCompile>
     <ClCompile Include="DirectX.codegen.cpp" />
+    <ClCompile Include="..\..\math\WinRT\Vector2.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\Matrix3x2.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\Matrix4x4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\Plane.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\Quaternion.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\Vector3.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math\WinRT\Vector4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -23,6 +44,12 @@
       <Filter>GraphicsDevice</Filter>
     </ClInclude>
     <ClInclude Include="ClosablePtr.h" />
+    <ClInclude Include="..\..\math\WinRT\MathTypeConversion.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\math\Cpp\WindowsMath.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="d2dwinrt.idl" />
@@ -30,10 +57,21 @@
     <MidlRT Include="GraphicsDevice\WinRTGraphicsInterop.idl">
       <Filter>GraphicsDevice</Filter>
     </MidlRT>
+    <MidlRT Include="..\..\math\WinRT\WinRTMath.idl">
+      <Filter>math</Filter>
+    </MidlRT>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GraphicsDevice">
       <UniqueIdentifier>{11b5fe6d-254b-4956-bd73-d4858e0e4393}</UniqueIdentifier>
     </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{4a9f6024-d883-45f8-9a4c-687d58e5fe9c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\math\Cpp\WindowsMath.inl">
+      <Filter>math</Filter>
+    </None>
   </ItemGroup>
 </Project>

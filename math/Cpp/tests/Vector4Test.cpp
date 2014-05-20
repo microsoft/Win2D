@@ -96,7 +96,7 @@ namespace MathTests
         // A test for Length ()
         TEST_METHOD(Vector4LengthTest1)
         {
-            Vector4 target;
+            Vector4 target(0);
 
             float expected = 0.0f;
             float actual = target.Length();
@@ -236,7 +236,7 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         TEST_METHOD(Vector4LerpTest1)
         {
             Vector4 a(Vector3(1.0f, 2.0f, 3.0f), 4.0f);
@@ -248,7 +248,7 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         TEST_METHOD(Vector4LerpTest2)
         {
             Vector4 a(Vector3(1.0f, 2.0f, 3.0f), 4.0f);
@@ -260,7 +260,7 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         TEST_METHOD(Vector4LerpTest3)
         {
             Vector4 a(Vector3(0.0f, 0.0f, 0.0f), 0.0f);
@@ -272,7 +272,7 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         TEST_METHOD(Vector4LerpTest4)
         {
             Vector4 a(Vector3(0.0f, 0.0f, 0.0f), 0.0f);
@@ -284,7 +284,7 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"Vector4::Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         TEST_METHOD(Vector4LerpTest5)
         {
             Vector4 a(4.0f, 5.0f, 6.0f, 7.0f);
@@ -367,7 +367,7 @@ namespace MathTests
         TEST_METHOD(Vector4TransformVector4Test1)
         {
             Vector4 v(1.0f, 2.0f, 3.0f, 0.0f);
-            Matrix4x4 m;
+            Matrix4x4 m(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             Vector4 expected(0, 0, 0, 0);
 
             Vector4 actual = Vector4::Transform(v, m);
@@ -407,7 +407,7 @@ namespace MathTests
         TEST_METHOD(Vector4TransformVector3Test1)
         {
             Vector3 v(1.0f, 2.0f, 3.0f);
-            Matrix4x4 m;
+            Matrix4x4 m(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             Vector4 expected(0, 0, 0, 0);
 
             Vector4 actual = Vector4::Transform(v, m);
@@ -447,7 +447,7 @@ namespace MathTests
         TEST_METHOD(Vector4TransformVector2Test1)
         {
             Vector2 v(1.0f, 2.0f);
-            Matrix4x4 m;
+            Matrix4x4 m(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             Vector4 expected(0, 0, 0, 0);
 
             Vector4 actual = Vector4::Transform(v, m);
@@ -530,7 +530,7 @@ namespace MathTests
         TEST_METHOD(Vector4TransformVector4QuaternionTest1)
         {
             Vector4 v(1.0f, 2.0f, 3.0f, 0.0f);
-            Quaternion q;
+            Quaternion q(0, 0, 0, 0);
             Vector4 expected = v;
 
             Vector4 actual = Vector4::Transform(v, q);
@@ -568,7 +568,7 @@ namespace MathTests
         TEST_METHOD(Vector4TransformVector3QuaternionTest1)
         {
             Vector3 v(1.0f, 2.0f, 3.0f);
-            Quaternion q;
+            Quaternion q(0, 0, 0, 0);
             Vector4 expected(v, 1.0f);
 
             Vector4 actual = Vector4::Transform(v, q);
@@ -606,7 +606,7 @@ namespace MathTests
         TEST_METHOD(Vector4TransformVector2QuaternionTest1)
         {
             Vector2 v(1.0f, 2.0f);
-            Quaternion q;
+            Quaternion q(0, 0, 0, 0);
             Vector4 expected(1.0f, 2.0f, 0, 1.0f);
 
             Vector4 actual = Vector4::Transform(v, q);
@@ -776,7 +776,7 @@ namespace MathTests
         TEST_METHOD(Vector4DivisionTest3)
         {
             Vector4 a(0.047f, -3.0f, -std::numeric_limits<float>::infinity(), -FLT_MAX);
-            Vector4 b;
+            Vector4 b(0);
 
             Vector4 actual = a / b;
 
@@ -843,10 +843,10 @@ namespace MathTests
         {
             Vector4 a;
 
-            Assert::AreEqual(a.X, 0.0f, L"Vector4::constructor () did not return the expected value.");
-            Assert::AreEqual(a.Y, 0.0f, L"Vector4::constructor () did not return the expected value.");
-            Assert::AreEqual(a.Z, 0.0f, L"Vector4::constructor () did not return the expected value.");
-            Assert::AreEqual(a.W, 0.0f, L"Vector4::constructor () did not return the expected value.");
+            // Default constructor leaves the struct uninitialized, so this 
+            // test does nothing more than validate that the constructor exists.
+
+            a.X = 0;    // avoid warning about unused variable
         }
 
         // A test for Vector4 ()
@@ -1082,7 +1082,7 @@ namespace MathTests
         }
 
         // A test for operator *=
-        TEST_METHOD(Vector4OperatorMultiplyEqualsScalerTest)
+        TEST_METHOD(Vector4OperatorMultiplyEqualsScalarTest)
         {
             Vector4 a(1, 2, 3, 4);
             float b = 5;
@@ -1115,7 +1115,7 @@ namespace MathTests
         }
 
         // A test for operator /=
-        TEST_METHOD(Vector4OperatorDivideEqualsScalerTest)
+        TEST_METHOD(Vector4OperatorDivideEqualsScalarTest)
         {
             Vector4 a(1, 2, 3, 4);
             float b = 5;
@@ -1196,6 +1196,15 @@ namespace MathTests
             Assert::AreEqual(sizeof(Vector4), sizeof(DirectX::XMFLOAT4));
         }
 
+        // A test to make sure the fields are laid out how we expect
+        TEST_METHOD(Vector4FieldOffsetTest)
+        {
+            Assert::AreEqual(size_t(0), offsetof(Vector4, X));
+            Assert::AreEqual(size_t(4), offsetof(Vector4, Y));
+            Assert::AreEqual(size_t(8), offsetof(Vector4, Z));
+            Assert::AreEqual(size_t(12), offsetof(Vector4, W));
+        }
+
         // A test of Vector4 -> DirectXMath interop
         TEST_METHOD(Vector4LoadTest)
         {
@@ -1227,14 +1236,14 @@ namespace MathTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(Vector4TypeTraitsTest)
         {
-            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            // We should be standard layout and trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_standard_layout<Vector4>::value);
+            Assert::IsTrue(std::is_trivial<Vector4>::value);
             Assert::IsFalse(std::is_pod<Vector4>::value);
-            Assert::IsFalse(std::is_trivial<Vector4>::value);
 
-            // Default constructor is present but not trivial.
+            // Default constructor is present and trivial.
             Assert::IsTrue(std::is_default_constructible<Vector4>::value);
-            Assert::IsFalse(std::is_trivially_default_constructible<Vector4>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<Vector4>::value);
             Assert::IsFalse(std::is_nothrow_default_constructible<Vector4>::value);
 
             // Copy constructor is present and trivial.

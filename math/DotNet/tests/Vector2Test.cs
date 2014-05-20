@@ -690,17 +690,6 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(target.X, x) && MathHelper.Equal(target.Y, y), "Vector2(x,y) constructor did not return the expected value.");
         }
 
-        // A test for Vector2 (Vector2)
-        [TestMethod]
-        public void Vector2ConstructorTest1()
-        {
-            Vector2 a = new Vector2(1.0f, 2.0f);
-
-            Vector2 target = a;
-            Assert.IsTrue(MathHelper.Equal(target, a), "Vector2( Vector2 ) constructor did not return the expected value.");
-        }
-
-
         // A test for Vector2 ()
         // Constructor with no parameter
         [TestMethod]
@@ -1130,6 +1119,16 @@ namespace MathTests
         {
             Vector2PlusFloat a;
             Vector2PlusFloat b;
+        }
+
+        // A test to make sure the fields are laid out how we expect
+        [TestMethod]
+        public unsafe void Vector2FieldOffsetTest()
+        {
+            Vector2* ptr = (Vector2*)0;
+
+            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->X));
+            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->Y));
         }
     }
 }

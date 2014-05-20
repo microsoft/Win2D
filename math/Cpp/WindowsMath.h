@@ -25,15 +25,18 @@ namespace Windows
             float X, Y;
 
             // Constructors.
-            Vector2();
+            Vector2() = default;
             Vector2(float x, float y);
             explicit Vector2(float value);
+
+#ifdef __cplusplus_winrt
             Vector2(Windows::Foundation::Point const& value);
             Vector2(Windows::Foundation::Size const& value);
 
             // Conversion operators.
             operator Windows::Foundation::Point() const;
             operator Windows::Foundation::Size() const;
+#endif
 
             // Common values.
             static Vector2 Zero();
@@ -95,7 +98,7 @@ namespace Windows
             float X, Y, Z;
 
             // Constructors.
-            Vector3();
+            Vector3() = default;
             Vector3(float x, float y, float z);
             Vector3(Vector2 const& value, float z);
             explicit Vector3(float value);
@@ -160,7 +163,7 @@ namespace Windows
             float X, Y, Z, W;
 
             // Constructors.
-            Vector4();
+            Vector4() = default;
             Vector4(float x, float y, float z, float w);
             Vector4(Vector2 const& value, float z, float w);
             Vector4(Vector3 const& value, float w);
@@ -230,7 +233,7 @@ namespace Windows
             float M31, M32;
 
             // Constructors.
-            Matrix3x2();
+            Matrix3x2() = default;
             Matrix3x2(float m11, float m12, float m21, float m22, float m31, float m32);
 
             // Common values.
@@ -288,7 +291,7 @@ namespace Windows
             float M41, M42, M43, M44;
 
             // Constructors.
-            Matrix4x4();
+            Matrix4x4() = default;
             Matrix4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44);
             explicit Matrix4x4(Matrix3x2 const& value);
 
@@ -364,7 +367,7 @@ namespace Windows
             float D;
 
             // Constructors.
-            Plane();
+            Plane() = default;
             Plane(float a, float b, float c, float d);
             Plane(Vector3 const& normal, float d);
             explicit Plane(Vector4 const& value);
@@ -389,7 +392,7 @@ namespace Windows
             float X, Y, Z, W;
 
             // Constructors.
-            Quaternion();
+            Quaternion() = default;
             Quaternion(float x, float y, float z, float w);
             Quaternion(Vector3 const& vectorPart, float scalarPart);
 

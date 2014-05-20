@@ -1,17 +1,12 @@
 import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "Windows.UI.idl";
+import "WinRTMath.idl";
 
 #include "version.h"
 
 namespace Microsoft
 {
-    // This is placeholder, until the inbox math types are ready to use.
-    namespace Math
-    {
-        typedef int Matrix3x2;
-    }
-
     namespace DirectX
     {
         //
@@ -671,8 +666,8 @@ namespace Microsoft
             [propget] HRESULT MaskAntialiasMode([out, retval] CanvasAntialiasMode* value);
             [propput] HRESULT MaskAntialiasMode([in] CanvasAntialiasMode value);
 
-            [propget] HRESULT MaskTransform([out, retval] Microsoft.Math.Matrix3x2* value);
-            [propput] HRESULT MaskTransform([in] Microsoft.Math.Matrix3x2 value);
+            [propget] HRESULT MaskTransform([out, retval] Microsoft.DirectX.Math.Matrix3x2* value);
+            [propput] HRESULT MaskTransform([in] Microsoft.DirectX.Math.Matrix3x2 value);
 
             [propget] HRESULT Opacity([out, retval] FLOAT* value);
             [propput] HRESULT Opacity([in] FLOAT value);

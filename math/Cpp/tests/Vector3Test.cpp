@@ -121,7 +121,7 @@ namespace MathTests
         // A test for Length ()
         TEST_METHOD(Vector3LengthTest1)
         {
-            Vector3 target;
+            Vector3 target(0);
 
             float expected = 0.0f;
             float actual = target.Length();
@@ -439,7 +439,7 @@ namespace MathTests
         TEST_METHOD(Vector3TransformByQuaternionTest1)
         {
             Vector3 v(1.0f, 2.0f, 3.0f);
-            Quaternion q;
+            Quaternion q(0, 0, 0, 0);
             Vector3 expected = v;
 
             Vector3 actual = Vector3::Transform(v, q);
@@ -599,7 +599,7 @@ namespace MathTests
         TEST_METHOD(Vector3DivisionTest3)
         {
             Vector3 a(0.047f, -3.0f, -std::numeric_limits<float>::infinity());
-            Vector3 b;
+            Vector3 b(0);
 
             Vector3 actual = a / b;
 
@@ -649,7 +649,7 @@ namespace MathTests
         {
             Vector3 a(1.0f, 2.0f, 3.0f);
 
-            Vector3 target = a;
+            Vector3 target(a);
 
             Assert::IsTrue(Equal(target.X, 1.0f) && Equal(target.Y, 2.0f) && Equal(target.Z, 3.0f), L"Vector3::constructor (Vector3) did not return the expected value.");
         }
@@ -659,9 +659,10 @@ namespace MathTests
         {
             Vector3 a;
 
-            Assert::AreEqual(a.X, 0.0f, L"Vector3::constructor () did not return the expected value.");
-            Assert::AreEqual(a.Y, 0.0f, L"Vector3::constructor () did not return the expected value.");
-            Assert::AreEqual(a.Z, 0.0f, L"Vector3::constructor () did not return the expected value.");
+            // Default constructor leaves the struct uninitialized, so this 
+            // test does nothing more than validate that the constructor exists.
+
+            a.X = 0;    // avoid warning about unused variable
         }
 
         // A test for Vector3 (float, float, float)
@@ -888,7 +889,7 @@ namespace MathTests
         }
 
         // A test for operator *=
-        TEST_METHOD(Vector3OperatorMultiplyEqualsScalerTest)
+        TEST_METHOD(Vector3OperatorMultiplyEqualsScalarTest)
         {
             Vector3 a(1, 2, 3);
             float b = 5;
@@ -921,7 +922,7 @@ namespace MathTests
         }
 
         // A test for operator /=
-        TEST_METHOD(Vector3OperatorDivideEqualsScalerTest)
+        TEST_METHOD(Vector3OperatorDivideEqualsScalarTest)
         {
             Vector3 a(1, 2, 3);
             float b = 5;
@@ -998,6 +999,14 @@ namespace MathTests
             Assert::AreEqual(sizeof(Vector3), sizeof(DirectX::XMFLOAT3));
         }
 
+        // A test to make sure the fields are laid out how we expect
+        TEST_METHOD(Vector3FieldOffsetTest)
+        {
+            Assert::AreEqual(size_t(0), offsetof(Vector3, X));
+            Assert::AreEqual(size_t(4), offsetof(Vector3, Y));
+            Assert::AreEqual(size_t(8), offsetof(Vector3, Z));
+        }
+
         // A test of Vector3 -> DirectXMath interop
         TEST_METHOD(Vector3LoadTest)
         {
@@ -1028,14 +1037,14 @@ namespace MathTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(Vector3TypeTraitsTest)
         {
-            // We should be standard layout, but not POD or trivial due to the zero-initializing default constructor.
+            // We should be standard layout and trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_standard_layout<Vector3>::value);
+            Assert::IsTrue(std::is_trivial<Vector3>::value);
             Assert::IsFalse(std::is_pod<Vector3>::value);
-            Assert::IsFalse(std::is_trivial<Vector3>::value);
 
-            // Default constructor is present but not trivial.
+            // Default constructor is present and trivial.
             Assert::IsTrue(std::is_default_constructible<Vector3>::value);
-            Assert::IsFalse(std::is_trivially_default_constructible<Vector3>::value);
+            Assert::IsTrue(std::is_trivially_default_constructible<Vector3>::value);
             Assert::IsFalse(std::is_nothrow_default_constructible<Vector3>::value);
 
             // Copy constructor is present and trivial.

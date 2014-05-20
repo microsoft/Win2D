@@ -69,11 +69,9 @@ namespace CodeGen
             outputFiles.CppFile.WriteLine("#include <wrl.h>");
             outputFiles.CppFile.WriteLine("using namespace Microsoft::WRL;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::DirectX;");
+            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::DirectX::Math;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::Foundation;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::UI;");
-            outputFiles.CppFile.WriteLine();
-            outputFiles.CppFile.WriteLine("// This is placeholder until the inbox math types are ready to use.");
-            outputFiles.CppFile.WriteLine("typedef int Matrix3x2;");
             outputFiles.CppFile.WriteLine();
             outputFiles.CppFile.WriteLine("namespace dxrt");
             outputFiles.CppFile.WriteLine("{");
@@ -82,6 +80,7 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine("import \"inspectable.idl\";");
             outputFiles.IdlFile.WriteLine("import \"Windows.Foundation.idl\";");
             outputFiles.IdlFile.WriteLine("import \"Windows.UI.idl\";");
+            outputFiles.IdlFile.WriteLine("import \"WinRTMath.idl\";");
             outputFiles.IdlFile.WriteLine();
             outputFiles.IdlFile.WriteLine("#include \"version.h\"");
             outputFiles.IdlFile.WriteLine();
@@ -89,16 +88,6 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine("namespace Microsoft");
             outputFiles.IdlFile.WriteLine("{");
             outputFiles.IdlFile.Indent();
-
-            // Placeholder for math types
-            outputFiles.IdlFile.WriteLine("// This is placeholder, until the inbox math types are ready to use.");
-            outputFiles.IdlFile.WriteLine("namespace Math");
-            outputFiles.IdlFile.WriteLine("{");
-            outputFiles.IdlFile.Indent();
-            outputFiles.IdlFile.WriteLine("typedef int Matrix3x2;");
-            outputFiles.IdlFile.Unindent();
-            outputFiles.IdlFile.WriteLine("}");
-            outputFiles.IdlFile.WriteLine();
 
             outputFiles.IdlFile.WriteLine("namespace DirectX");
             outputFiles.IdlFile.WriteLine("{");

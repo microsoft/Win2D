@@ -251,7 +251,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         // Lerp test with factor zero
         [TestMethod]
         public void Vector4LerpTest1()
@@ -265,7 +265,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         // Lerp test with factor one
         [TestMethod]
         public void Vector4LerpTest2()
@@ -279,7 +279,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         // Lerp test with factor > 1
         [TestMethod]
         public void Vector4LerpTest3()
@@ -293,7 +293,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         // Lerp test with factor < 0
         [TestMethod]
         public void Vector4LerpTest4()
@@ -307,7 +307,7 @@ namespace MathTests
             Assert.IsTrue(MathHelper.Equal(expected, actual), "Vector4.Lerp did not return the expected value.");
         }
 
-        // A test for Lerp (Vector3, Vector3, float)
+        // A test for Lerp (Vector4, Vector4, float)
         // Lerp test from the same point
         [TestMethod]
         public void Vector4LerpTest5()
@@ -1282,6 +1282,18 @@ namespace MathTests
         {
             Vector4PlusFloat a;
             Vector4PlusFloat b;
+        }
+
+        // A test to make sure the fields are laid out how we expect
+        [TestMethod]
+        public unsafe void Vector4FieldOffsetTest()
+        {
+            Vector4* ptr = (Vector4*)0;
+
+            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->X));
+            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->Y));
+            Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->Z));
+            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->W));
         }
     }
 }
