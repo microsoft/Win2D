@@ -127,7 +127,9 @@ namespace CsConsumer
 #endif
         }
 
+#if IMPL
         ImageBrush m_imageBrush;
+#endif
     }
 
 

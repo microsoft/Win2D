@@ -3,5 +3,6 @@
   <Import Project="dxrt.common.props"/>
   <PropertyGroup>
     <OutputPath>$(__OutputPath)</OutputPath>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 </Project>
