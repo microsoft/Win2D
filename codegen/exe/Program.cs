@@ -141,19 +141,19 @@ namespace CodeGen
     {
         static void Main(string[] args)
         {
-            GenerateCode(GetDefaultOutputLocation());
+            var inputDir = FindInputDirectory();
+
+            GenerateCode(inputDir, GetDefaultOutputLocation(inputDir));
         }
         
-        public static string GetDefaultOutputLocation()
+        public static string GetDefaultOutputLocation(string inputDir)
         {
-            return Path.GetFullPath(Path.Combine(FindInputDirectory(), "..", "..", "winrt", "lib"));
+            return Path.GetFullPath(Path.Combine(inputDir, "..", "..", "winrt", "lib"));
         }
 
-        public static void GenerateCode(string outputDir)
+        public static void GenerateCode(string inputDir, string outputDir)
         {
             var filenameBase = "DirectX";
-
-            var inputDir = FindInputDirectory();
 
             List<string> files = new List<string>();
             files.Add("D2DTypes.xml");
@@ -194,12 +194,8 @@ namespace CodeGen
                 ".",
                 "codegen/exe",
                 "../../../../codegen/exe",
-                "../src/codegen/exe" // [1]
             };
 
-            // [1] Note: VSO typically runs tests out of a folder C:\a\bin. 
-            // The 'a' folder also contains a src folder containing the checked-in source code.
-            
             foreach (var candidate in candidates)
             {
                 var normalizedCandidate = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, candidate));

@@ -35,59 +35,57 @@ namespace CodeGen.Test
         }
 
         [TestMethod]
+        [DeploymentItem("Deployed Files/DirectX.codegen.cpp", "codegen/expected")]
+        [DeploymentItem("Deployed Files/DirectX.codegen.idl", "codegen/expected")]
+        [DeploymentItem("Deployed Files/D2DEffectAuthor.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/D2DTypes2.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/D2DTypes3.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/Settings.xml", "codegen/in")]
         public void OutputIsInSync()
         {            
             //
-            // This test sets codegen to generate its output to some temporary files, and then diffs the temporary files
-            // with what's checked in. 
+            // This test sets codegen to generate its output to some temporary 
+            // files, and then diffs the temporary files with what's checked in. 
             //
-            // This allows us to detect if the output files were manually edited, or someone changed codegen without
-            // re-running it.
+            // This allows us to detect if the output files were manually 
+            // edited, or someone changed codegen without re-running it.
             //
-            // Normally, Codegen outputs to winrt/lib.
-            // For this test, Codegen outputs to codegen/test/tmp.
+            // The tests are executed from a deployed directory that contains 
+            // the test executable / dependent assemblies and the 
+            // DeploymentItems listed above.  The codegen outputs under this 
+            // directory as well.  The test runner cleans up the entire deploy 
+            // directory on exit.
             //
 
-            DirectoryInfo treeDirectoryInfo = null;
-            DirectoryInfo testDirectoryInfo = null;
+            string inputDir = "codegen/in";
+            string expectedDir = "codegen/expected";
+            string actualDir = "codegen/actual";
 
-            try
-            {            
-                string treeOutputDir = CodeGen.Program.GetDefaultOutputLocation();
-                string testOutputDir = Path.Combine(Path.GetTempPath(), "codegen");
+            // Run the codegen            
+            CodeGen.Program.GenerateCode(inputDir, actualDir);
 
-                treeDirectoryInfo = new DirectoryInfo(treeOutputDir);
-                testDirectoryInfo = new DirectoryInfo(testOutputDir);
+            // Verify the output from the codegen matches what was expected
+            var expectedDirectoryInfo = new DirectoryInfo(expectedDir);
+            var actualDirectoryInfo = new DirectoryInfo(actualDir);
 
-                // Generate code to the test directory.
-                CodeGen.Program.GenerateCode(testOutputDir);
+            FileInfo[] expectedGeneratedFiles = expectedDirectoryInfo.GetFiles("*.codegen.*");
+            FileInfo[] actualGeneratedFiles = actualDirectoryInfo.GetFiles(); // Used for .Length only
 
-                FileInfo[] treeGeneratedFiles = treeDirectoryInfo.GetFiles("*.codegen.*");
-                FileInfo[] testGeneratedFiles = testDirectoryInfo.GetFiles(); // Used for .Length only
+            // Ensure the correct number of files was generated.
+            Assert.AreEqual(expectedGeneratedFiles.Length, actualGeneratedFiles.Length);
 
-                // Ensure the correct number of files was generated.
-                Assert.AreEqual(treeGeneratedFiles.Length, testGeneratedFiles.Length);
-
-                // For each codegenned file in the tree, ensure it was output to the test folder.
-                foreach (FileInfo treeFile in treeGeneratedFiles)
-                {
-                    FileInfo testFile = new FileInfo(Path.Combine(testOutputDir, treeFile.Name));
-                    Assert.IsTrue(testFile.Exists);
-
-                    string treeFileContent = File.ReadAllText(treeFile.FullName);
-                    string testFileContent = File.ReadAllText(testFile.FullName);
-
-                    Assert.AreEqual(treeFileContent, testFileContent);
-                }            
-            }
-            finally
+            // For each codegenned file in the tree, ensure it was output to the test folder.
+            foreach (FileInfo expectedFile in expectedGeneratedFiles)
             {
-                // Delete the temporary directory.
-                if (testDirectoryInfo != null)
-                {
-                    testDirectoryInfo.Delete(true); // 'true' indicates recursive behavior, deletes contained files
-                }
-            }
+                FileInfo actualFile = new FileInfo(Path.Combine(actualDir, expectedFile.Name));
+                Assert.IsTrue(actualFile.Exists);
+
+                string expectedFileContent = File.ReadAllText(expectedFile.FullName);
+                string actualFileContent = File.ReadAllText(actualFile.FullName);
+
+                Assert.AreEqual(expectedFileContent, actualFileContent);
+            }            
         }
     }
 }
