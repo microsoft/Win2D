@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{fbb57887-39f9-47e2-bca9-c4b620223610}</ProjectGuid>
+    <RootNamespace>test_external_WindowsPhone</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Phone</ApplicationType>
+    <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
+    <TestApplication>true</TestApplication>
+    <AppxPackage>True</AppxPackage>
+    <PackageCertificateKeyFile>test.external.WindowsPhone_TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)build\dxrt.cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
+  <PropertyGroup Label="UserMacros">
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>PSAPI_VERSION=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.WindowsPhone.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="test.external.WindowsPhone_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Logo.scale-240.png" />
+    <Image Include="Images\SmallLogo.scale-240.png" />
+    <Image Include="Images\SplashScreen.scale-240.png" />
+    <Image Include="Images\Square71x71Logo.scale-240.png" />
+    <Image Include="Images\StoreLogo.scale-240.png" />
+    <Image Include="Images\WideLogo.scale-240.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="CppUnitTestFramework, Version=12.0" />
+    <SDKReference Include="TestPlatform, Version=12.0" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsPhone\v$(TargetPlatformVersion)\Microsoft.Cpp.WindowsPhone.$(TargetPlatformVersion).targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\dll\Microsoft.DirectX.WindowsPhone.vcxproj">
+      <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
+    </ProjectReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <_DefineDefaultConvergedProjectType>False</_DefineDefaultConvergedProjectType>
+  </PropertyGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

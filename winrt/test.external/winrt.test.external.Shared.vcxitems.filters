@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DirectX11EnumTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDeviceTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsErrorTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsSurfaceTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ProxyTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\Matrix3x2Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\Matrix4x4Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\PlaneTest.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\QuaternionTest.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\Vector2Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\Vector3Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\Vector4Test.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\Helpers.h">
+      <Filter>math</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="math">
+      <UniqueIdentifier>{7d50a963-c3ae-4866-b651-c537ea2115b1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -9,6 +9,15 @@
   -->
 
   <PropertyGroup>
+    <DeviceType Condition="'$(ApplicationType)' == 'Windows Store'">Windows</DeviceType>
+    <DeviceType Condition="'$(ApplicationType)' == 'Windows Phone'">Phone</DeviceType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <FullPlatform>$(DeviceType)$(Platform)</FullPlatform>
+  </PropertyGroup>
+
+  <PropertyGroup>
     
     <!--
 
@@ -20,7 +29,9 @@
 
     -->
 
-    <__OutputPath>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
+    <__OutputPath>$(SolutionDir)bin\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(FullPlatform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
 
 </Project>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Image Include="Images\Logo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\SmallLogo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\SplashScreen.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Square71x71Logo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\StoreLogo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\WideLogo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="winrt.test.internal.WindowsPhone_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Package">
+      <UniqueIdentifier>{fd0090e7-a24b-4cde-8afd-338e19d4c614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{abd860b1-bdb9-45a2-a66d-fab052d90f90}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.WindowsPhone.appxmanifest">
+      <Filter>Package</Filter>
+    </AppxManifest>
+  </ItemGroup>
+</Project>

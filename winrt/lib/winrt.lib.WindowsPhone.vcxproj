@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{8c279709-e303-4546-a218-9b6e03521574}</ProjectGuid>
+		<RootNamespace>Microsoft.DirectX</RootNamespace>
+		<DefaultLanguage>en-US</DefaultLanguage>
+		<MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+		<AppContainerApplication>true</AppContainerApplication>
+		<ApplicationType>Windows Phone</ApplicationType>
+		<ApplicationTypeRevision>8.1</ApplicationTypeRevision>
+	</PropertyGroup>
+
+	<Import Project="winrt.lib.Shared.vcxitems" Label="Shared" />
+
+</Project>

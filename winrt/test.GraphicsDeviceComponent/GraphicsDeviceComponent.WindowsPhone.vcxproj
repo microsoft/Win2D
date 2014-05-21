@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{dd961f31-3142-4e3a-80a9-bc9da5d75816}</ProjectGuid>
+    <RootNamespace>GraphicsDeviceComponent</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Phone</ApplicationType>
+    <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
+    <ProjectName>winrt.test.GraphicsDeviceComponent.WindowsPhone</ProjectName>
+  </PropertyGroup>
+  <Import Project="GraphicsDeviceComponent.Shared.vcxitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\winrt\dll\Microsoft.DirectX.WindowsPhone.vcxproj">
+      <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
