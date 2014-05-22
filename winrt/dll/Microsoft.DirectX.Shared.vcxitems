@@ -41,13 +41,16 @@
       <AdditionalDependencies>d2d1.lib;d3d11.lib;windowscodecs.lib;dwrite.lib;runtimeobject.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
+      <WindowsMetadataFile>$(Outdir)\$(ItemsRootNamespace).winmd</WindowsMetadataFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CopyMergedWinMD Include="$(MergedWinmdDirectory)\*.winmd" />
+    <CopyMergedWinMD Include="$(MergedWinmdDirectory)\$(ItemsRootNamespace).winmd" />
   </ItemGroup>
-  <Target Name="CopyMergedWinMD" BeforeTargets="Build">
-    <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)" />
+  <Target Name="CopyMergedWinMD" BeforeTargets="Link" Outputs="@(CopiedWinMDFile)">
+    <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)">
+      <Output TaskParameter="CopiedFiles" ItemName="CopiedWinMDFile"/>
+    </Copy>
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

@@ -33,21 +33,14 @@ IF %ERRORLEVEL% NEQ 0 (
 
 IF "%1"=="/?" (
     ECHO Usage: %0 [path]
-    ECHO    where [path] is the path to your local Git repository.
+    ECHO    optional parameter [path] is the path to your local Git repository.
     ECHO    Example: BuildAndTestAllConfigs.cmd C:\Src
     GOTO END
 )
 
 SET ENABLE_PARALLEL=/m
 
-:: Full Rebuild is necessary to work around bug #965 (task #1063). A race condition
-:: can occur where IDL dependencies are not rebuilt for the components that 
-:: consume them. We can change this to a build (remove this flag altogether) 
-:: when the bug is fixed.
-:: This bug does not occur every time, but this should prevent it.
-SET USE_REBUILD=/t:Rebuild
-
-SET BUILD_FLAGS=%ENABLE_PARALLEL% %USE_REBUILD%
+SET BUILD_FLAGS=%ENABLE_PARALLEL%
 
 SET GIT_TREE_LOCATION=%~dp0..\
 

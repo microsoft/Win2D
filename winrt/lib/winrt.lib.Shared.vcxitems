@@ -35,6 +35,7 @@
     </Link>
     <CustomBuildStep>
       <Command>mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial -n:Microsoft.DirectX:2</Command>
+      <Inputs>$(UnmergedWinmdDirectory)\*.winmd</Inputs>
       <Outputs>$(MergedWinmdDirectory)\$(RootNamespace).winmd</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
