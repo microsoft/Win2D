@@ -11,6 +11,7 @@
     <TestApplication>true</TestApplication>
     <AppxPackage>True</AppxPackage>
     <PackageCertificateKeyFile>test.external.WindowsPhone_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <DoNotBuild Condition="'$(TF_BUILD)' == 'true'">true</DoNotBuild>
   </PropertyGroup>
   <Import Project="$(SolutionDir)build\dxrt.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -62,6 +63,5 @@
   <PropertyGroup>
     <_DefineDefaultConvergedProjectType>False</_DefineDefaultConvergedProjectType>
   </PropertyGroup>
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <Import Project="$(SolutionDir)build\dxrt.cpp.targets" />
 </Project>
