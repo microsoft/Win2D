@@ -2,10 +2,10 @@
 
 #pragma once
 
-namespace dxrt
+namespace canvas
 {
     using namespace Microsoft::WRL;
-    using namespace ABI::Microsoft::DirectX;
+    using namespace ABI::Microsoft::Graphics::Canvas;
 
     [uuid(0A55F0AC-0BDD-4CFA-A9E7-8B2743AD33B7)]
     class IDirectX11DeviceInternal : public IUnknown
@@ -20,7 +20,7 @@ namespace dxrt
         ABI::Windows::Foundation::IClosable,
         IDirectX11DeviceInternal>
     {
-        InspectableClass(RuntimeClass_Microsoft_DirectX_DirectX11Device, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_DirectX11Device, BaseTrust);
 
         ClosablePtr<IDXGIDevice3> m_DxgiDevice;
 

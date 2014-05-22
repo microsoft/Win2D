@@ -4,7 +4,7 @@
 
 #include "GraphicsSurface.h"
 
-namespace dxrt
+namespace canvas
 {
     DirectX11Surface::DirectX11Surface(IDXGISurface* dxgiSurface)
     {
@@ -98,7 +98,7 @@ namespace dxrt
 
     class DirectX11SurfaceStatics : public ActivationFactory<IDirectX11SurfaceStatics>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_DirectX_DirectX11Surface, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_DirectX11Surface, BaseTrust);
 
     public:
         IFACEMETHODIMP get_ResourcePriorityMinimum(

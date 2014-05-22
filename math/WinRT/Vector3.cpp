@@ -6,7 +6,7 @@
 
 class Vector3Statics : public Microsoft::WRL::ActivationFactory<Midl::IVector3HelperStatics>
 {
-    InspectableClassStatic(RuntimeClass_Microsoft_DirectX_Math_Vector3Helper, BaseTrust);
+    InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Math_Vector3Helper, BaseTrust);
 
 public:
     IFACEMETHODIMP FromValues(float x, float y, float z, _Out_ Midl::Vector3* ret)

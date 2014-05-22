@@ -1,7 +1,7 @@
 #include "pch.h"
 
 using namespace Microsoft::WRL::Wrappers;
-using namespace ABI::Microsoft::DirectX;
+using namespace ABI::Microsoft::Graphics::Canvas;
 
 class TestResourceImpl : public RuntimeClass<ICanvasResource>
 {

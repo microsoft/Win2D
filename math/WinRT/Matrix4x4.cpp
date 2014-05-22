@@ -6,7 +6,7 @@
 
 class Matrix4x4Statics : public Microsoft::WRL::ActivationFactory<Midl::IMatrix4x4HelperStatics>
 {
-    InspectableClassStatic(RuntimeClass_Microsoft_DirectX_Math_Matrix4x4Helper, BaseTrust);
+    InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Math_Matrix4x4Helper, BaseTrust);
 
 public:
     IFACEMETHODIMP FromValues(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44, _Out_ Midl::Matrix4x4* ret)

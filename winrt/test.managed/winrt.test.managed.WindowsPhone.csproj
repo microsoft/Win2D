@@ -24,7 +24,7 @@
     <AppXPackage>True</AppXPackage>
     <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\build\dxrt.cs.props" />
+  <Import Project="$(SolutionDir)\build\canvas.cs.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
@@ -67,8 +67,8 @@
   </PropertyGroup>
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
-    <ProjectReference Include="..\dll\Microsoft.DirectX.WindowsPhone.vcxproj">
-      <Name>Microsoft.DirectX.WindowsPhone</Name>
+    <ProjectReference Include="..\dll\winrt.dll.WindowsPhone.vcxproj">
+      <Name>winrt.dll.WindowsPhone</Name>
       <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
     </ProjectReference>
     <ProjectReference Include="..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.WindowsPhone.vcxproj">
@@ -110,6 +110,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="$(SolutionDir)\build\dxrt.cs.targets" />
+  <Import Project="$(SolutionDir)\build\canvas.cs.targets" />
 
 </Project>

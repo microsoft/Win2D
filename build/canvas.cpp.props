@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="dxrt.common.props" />
+  <Import Project="canvas.common.props" />
 
   <!-- This lets individual projects turn off their building.  This allows us to
        prevent building in the cloud for unsupported SDKs (ie Phone unit tests)

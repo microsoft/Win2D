@@ -6,14 +6,14 @@
 #include "GraphicsSurface.h"
 
 using namespace Microsoft::WRL;
-using namespace dxrt;
+using namespace canvas;
 
 _Use_decl_annotations_
 STDAPI CreateDirectX11DeviceFromDXGIDevice(
     IDXGIDevice* dxgiDevice,
     IInspectable** inspectableDirectX11Device)
 {
-    using dxrt::DirectX11Device;
+    using canvas::DirectX11Device;
 
     return ExceptionBoundary(
         [&]()
@@ -30,7 +30,7 @@ STDAPI CreateDirectX11SurfaceFromDXGISurface(
     IDXGISurface* dxgiSurface,
     IInspectable** inspectableDirectX11Surface)
 {
-    using dxrt::DirectX11Surface;
+    using canvas::DirectX11Surface;
 
     return ExceptionBoundary(
         [&]()

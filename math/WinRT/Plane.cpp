@@ -6,7 +6,7 @@
 
 class PlaneStatics : public Microsoft::WRL::ActivationFactory<Midl::IPlaneHelperStatics>
 {
-    InspectableClassStatic(RuntimeClass_Microsoft_DirectX_Math_PlaneHelper, BaseTrust);
+    InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Math_PlaneHelper, BaseTrust);
 
 public:
     IFACEMETHODIMP FromValues(FLOAT a, FLOAT b, FLOAT c, FLOAT d, _Out_ Midl::Plane* ret)

@@ -6,7 +6,7 @@
 ::
 :: Description:
 ::     This script is a convenience for building all the 
-::     flavors of codegen and the DXRT solution (all 
+::     flavors of codegen and the Canvas solution (all 
 ::     platforms and configurations), all in one step. Runs 
 ::     the tests as well.
 ::
@@ -72,15 +72,15 @@ for %%C in (Debug Release) DO (
     )
 )
 
-:: DXRT.sln
-:: TODO: Enable tests for this solution. The Dxrt tests are a bit different from the codegen ones in that
+:: CANVAS.sln
+:: TODO: Enable tests for this solution. The Canvas tests are a bit different from the codegen ones in that
 :: they require being run in an AppContainer. See task #1053.
 for %%P in (x86 x64 ARM) DO (
     for %%C in (Debug Release) DO (
-        msbuild %GIT_TREE_LOCATION%\dxrt.sln %BUILD_FLAGS% /p:Configuration="%%C" /p:Platform="%%P"
+        msbuild %GIT_TREE_LOCATION%\canvas.sln %BUILD_FLAGS% /p:Configuration="%%C" /p:Platform="%%P"
         IF !ERRORLEVEL! NEQ 0 ( 
             ECHO.
-            ECHO A build error occurred. Stopping at dxrt.sln build, configuration %%C, platform %%P.
+            ECHO A build error occurred. Stopping at canvas.sln build, configuration %%C, platform %%P.
             GOTO END
         )
     )

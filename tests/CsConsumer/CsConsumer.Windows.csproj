@@ -16,7 +16,7 @@
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>CsConsumer_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\build\dxrt.cs.props" />
+  <Import Project="$(SolutionDir)\build\canvas.cs.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
@@ -79,9 +79,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <ProjectReference Include="..\..\winrt\dll\Microsoft.DirectX.Windows.vcxproj">
+    <ProjectReference Include="..\..\winrt\dll\winrt.dll.Windows.vcxproj">
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
-      <Name>Microsoft.DirectX.Windows</Name>
+      <Name>winrt.dll.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

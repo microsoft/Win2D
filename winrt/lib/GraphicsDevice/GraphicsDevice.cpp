@@ -4,7 +4,7 @@
 
 #include "GraphicsDevice.h"
 
-namespace dxrt
+namespace canvas
 {
     DirectX11Device::DirectX11Device(IDXGIDevice* dxgiDevice)
     {

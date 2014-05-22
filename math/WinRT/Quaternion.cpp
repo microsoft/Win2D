@@ -6,7 +6,7 @@
 
 class QuaternionStatics : public Microsoft::WRL::ActivationFactory<Midl::IQuaternionHelperStatics>
 {
-    InspectableClassStatic(RuntimeClass_Microsoft_DirectX_Math_QuaternionHelper, BaseTrust);
+    InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Math_QuaternionHelper, BaseTrust);
 
 public:
     IFACEMETHODIMP FromValues(float x, float y, float z, float w, _Out_ Midl::Quaternion* ret)

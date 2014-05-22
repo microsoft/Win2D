@@ -8,12 +8,12 @@
 #include "d2dwinrt.h"
 #include <wrl.h>
 using namespace Microsoft::WRL;
-using namespace ABI::Microsoft::DirectX;
-using namespace ABI::Microsoft::DirectX::Math;
+using namespace ABI::Microsoft::Graphics::Canvas;
+using namespace ABI::Microsoft::Graphics::Canvas::Math;
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
 
-namespace dxrt
+namespace canvas
 {
     class LayerParameters : public Microsoft::WRL::RuntimeClass<ILayerParameters>
     {

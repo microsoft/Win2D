@@ -6,7 +6,7 @@ import "Windows.Foundation.idl";
 #include "../../winrt/lib/version.h"
 
 
-namespace Microsoft.DirectX.Math
+namespace Microsoft.Graphics.Canvas.Math
 {
     [version(VERSION)]
     typedef struct Vector2

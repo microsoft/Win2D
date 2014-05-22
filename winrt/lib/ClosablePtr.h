@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace dxrt
+namespace canvas
 {
     //
     // This wraps up a ComPtr to make sure that it cannot be accessed without

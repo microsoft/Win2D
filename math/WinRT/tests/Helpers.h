@@ -6,7 +6,7 @@
 
 #include "pch.h"
 
-using namespace Microsoft::DirectX::Math;
+using namespace Microsoft::Graphics::Canvas::Math;
 
 
 namespace MathTests
@@ -86,48 +86,51 @@ namespace MathTests
 // Exact equality comparisons.
 namespace Microsoft
 {
-    namespace DirectX
+    namespace Graphics
     {
-        namespace Math
+        namespace Canvas
         {
-            inline bool operator ==(Vector2 const& a, Vector2 const& b)
+            namespace Math
             {
-                return (a.X == b.X) && (a.Y == b.Y);
-            }
+                inline bool operator ==(Vector2 const& a, Vector2 const& b)
+                {
+                    return (a.X == b.X) && (a.Y == b.Y);
+                }
 
-            inline bool operator ==(Vector3 const& a, Vector3 const& b)
-            {
-                return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
-            }
+                inline bool operator ==(Vector3 const& a, Vector3 const& b)
+                {
+                    return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
+                }
 
-            inline bool operator ==(Vector4 const& a, Vector4 const& b)
-            {
-                return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
-            }
+                inline bool operator ==(Vector4 const& a, Vector4 const& b)
+                {
+                    return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
+                }
 
-            inline bool operator ==(Matrix3x2 const& a, Matrix3x2 const& b)
-            {
-                return (a.M11 == b.M11) && (a.M12 == b.M12) &&
-                       (a.M21 == b.M21) && (a.M22 == b.M22) &&
-                       (a.M31 == b.M31) && (a.M32 == b.M32);
-            }
+                inline bool operator ==(Matrix3x2 const& a, Matrix3x2 const& b)
+                {
+                    return (a.M11 == b.M11) && (a.M12 == b.M12) &&
+                        (a.M21 == b.M21) && (a.M22 == b.M22) &&
+                        (a.M31 == b.M31) && (a.M32 == b.M32);
+                }
 
-            inline bool operator ==(Matrix4x4 const& a, Matrix4x4 const& b)
-            {
-                return (a.M11 == b.M11) && (a.M12 == b.M12) && (a.M13 == b.M13) && (a.M14 == b.M14) &&
-                       (a.M21 == b.M21) && (a.M22 == b.M22) && (a.M23 == b.M23) && (a.M24 == b.M24) &&
-                       (a.M31 == b.M31) && (a.M32 == b.M32) && (a.M33 == b.M33) && (a.M34 == b.M34) &&
-                       (a.M41 == b.M41) && (a.M42 == b.M42) && (a.M43 == b.M43) && (a.M44 == b.M44);
-            }
+                inline bool operator ==(Matrix4x4 const& a, Matrix4x4 const& b)
+                {
+                    return (a.M11 == b.M11) && (a.M12 == b.M12) && (a.M13 == b.M13) && (a.M14 == b.M14) &&
+                        (a.M21 == b.M21) && (a.M22 == b.M22) && (a.M23 == b.M23) && (a.M24 == b.M24) &&
+                        (a.M31 == b.M31) && (a.M32 == b.M32) && (a.M33 == b.M33) && (a.M34 == b.M34) &&
+                        (a.M41 == b.M41) && (a.M42 == b.M42) && (a.M43 == b.M43) && (a.M44 == b.M44);
+                }
 
-            inline bool operator ==(Plane const& a, Plane const& b)
-            {
-                return (a.Normal == b.Normal) && (a.D == b.D);
-            }
+                inline bool operator ==(Plane const& a, Plane const& b)
+                {
+                    return (a.Normal == b.Normal) && (a.D == b.D);
+                }
 
-            inline bool operator ==(Quaternion const& a, Quaternion const& b)
-            {
-                return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
+                inline bool operator ==(Quaternion const& a, Quaternion const& b)
+                {
+                    return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
+                }
             }
         }
     }

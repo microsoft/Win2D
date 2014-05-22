@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "Helpers.h"
 
-using namespace Microsoft::DirectX::Math;
+using namespace Microsoft::Graphics::Canvas::Math;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace MathTests

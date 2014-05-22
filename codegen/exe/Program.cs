@@ -68,12 +68,12 @@ namespace CodeGen
             outputFiles.CppFile.WriteLine("#include \"d2dwinrt.h\"");
             outputFiles.CppFile.WriteLine("#include <wrl.h>");
             outputFiles.CppFile.WriteLine("using namespace Microsoft::WRL;");
-            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::DirectX;");
-            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::DirectX::Math;");
+            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas;");
+            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas::Math;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::Foundation;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::UI;");
             outputFiles.CppFile.WriteLine();
-            outputFiles.CppFile.WriteLine("namespace dxrt");
+            outputFiles.CppFile.WriteLine("namespace canvas");
             outputFiles.CppFile.WriteLine("{");
             outputFiles.CppFile.Indent();
 
@@ -85,11 +85,7 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine("#include \"version.h\"");
             outputFiles.IdlFile.WriteLine();
 
-            outputFiles.IdlFile.WriteLine("namespace Microsoft");
-            outputFiles.IdlFile.WriteLine("{");
-            outputFiles.IdlFile.Indent();
-
-            outputFiles.IdlFile.WriteLine("namespace DirectX");
+            outputFiles.IdlFile.WriteLine("namespace Microsoft.Graphics.Canvas");
             outputFiles.IdlFile.WriteLine("{");
             outputFiles.IdlFile.Indent();
 
@@ -127,8 +123,6 @@ namespace CodeGen
             outputFiles.CppFile.Unindent();
             outputFiles.CppFile.WriteLine("}");
 
-            outputFiles.IdlFile.Unindent();
-            outputFiles.IdlFile.WriteLine("}");
             outputFiles.IdlFile.Unindent();
             outputFiles.IdlFile.WriteLine("}");
         }

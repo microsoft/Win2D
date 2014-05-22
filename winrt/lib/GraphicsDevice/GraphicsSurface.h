@@ -2,10 +2,10 @@
 
 #pragma once
 
-namespace dxrt
+namespace canvas
 {
     using namespace Microsoft::WRL;
-    using namespace ABI::Microsoft::DirectX;
+    using namespace ABI::Microsoft::Graphics::Canvas;
 
     [uuid(4D1CE3D8-3EED-4D43-8CDA-1C4A1190844F)]
     class IDirectX11SurfaceInternal : public IUnknown
@@ -20,7 +20,7 @@ namespace dxrt
         ABI::Windows::Foundation::IClosable,
         IDirectX11SurfaceInternal>
     {
-        InspectableClass(RuntimeClass_Microsoft_DirectX_DirectX11Surface, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_DirectX11Surface, BaseTrust);
 
         ClosablePtr<IDXGISurface> m_DxgiSurface;
 

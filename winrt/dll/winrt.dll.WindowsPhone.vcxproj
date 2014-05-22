@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6eabd217-3fd8-4298-929d-857811d8f3fa}</ProjectGuid>
-    <RootNamespace>Microsoft.DirectX</RootNamespace>
+    <RootNamespace>Microsoft.Graphics.Canvas</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
@@ -19,5 +19,5 @@
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="Microsoft.DirectX.Shared.vcxitems" Label="Shared" />
+  <Import Project="winrt.dll.Shared.vcxitems" Label="Shared" />
 </Project>

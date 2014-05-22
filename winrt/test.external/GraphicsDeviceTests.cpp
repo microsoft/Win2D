@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-using namespace Microsoft::DirectX;
+using namespace Microsoft::Graphics::Canvas;
 
 TEST_CLASS(DirectX11DeviceTests)
 {

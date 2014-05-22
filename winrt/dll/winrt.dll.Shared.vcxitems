@@ -6,11 +6,11 @@
     <HasSharedItems>true</HasSharedItems>
     <SharedGUID>2a0d48ab-673e-466e-91ca-254d07d2a814</SharedGUID>
     <ItemsProjectGuid>{d3d2a425-69d2-4f8c-98dc-760abc25e535}</ItemsProjectGuid>
-    <ItemsRootNamespace>Microsoft.DirectX</ItemsRootNamespace>
+    <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
     <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build\dxrt.cpp.props" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
 
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
@@ -63,6 +63,6 @@
 
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(SolutionDir)build\dxrt.cpp.targets" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
 
 </Project>

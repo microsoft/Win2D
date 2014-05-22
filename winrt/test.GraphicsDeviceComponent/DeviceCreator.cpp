@@ -4,7 +4,7 @@
 
 namespace GraphicsDeviceComponent
 {
-    using namespace Microsoft::DirectX;
+    using namespace Microsoft::Graphics::Canvas;
 
     public ref class DeviceCreator sealed
     {

@@ -19,7 +19,7 @@
     <PackageCertificateKeyFile>winrt.test.managed_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\build\dxrt.cs.props" />
+  <Import Project="$(SolutionDir)\build\canvas.cs.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
@@ -104,9 +104,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
-    <ProjectReference Include="..\dll\Microsoft.DirectX.Windows.vcxproj">
+    <ProjectReference Include="..\dll\winrt.dll.Windows.vcxproj">
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
-      <Name>Microsoft.DirectX.Windows</Name>
+      <Name>winrt.dll.Windows</Name>
     </ProjectReference>
     <ProjectReference Include="..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj">
       <Project>{e09c8be2-ac5a-4c87-9c2e-35290853448e}</Project>

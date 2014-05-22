@@ -5,7 +5,7 @@ import "Windows.Foundation.idl";
 
 #include "../version.h"
 
-namespace Microsoft.DirectX
+namespace Microsoft.Graphics.Canvas
 {
     runtimeclass DirectX11Device;
     runtimeclass DirectX11Surface;

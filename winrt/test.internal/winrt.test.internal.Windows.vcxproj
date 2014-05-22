@@ -15,7 +15,7 @@
     <AppxBundle>Never</AppxBundle>
     <ProjectName>winrt.test.internal.Windows</ProjectName>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\dxrt.cpp.props" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>

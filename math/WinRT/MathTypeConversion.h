@@ -11,7 +11,7 @@
 // Namespace shortcuts make the wrapper methods more readable. All this code requires explicit namespace qualification,
 // since we have two versions of every type. Impl = the optimized inline C++ version, Midl = the WinRT struct type.
 namespace Impl = Windows::Math;
-namespace Midl = ABI::Microsoft::DirectX::Math;
+namespace Midl = ABI::Microsoft::Graphics::Canvas::Math;
 
 
 // Helper methods make reinterpret_cast between WinRT and Impl types more readable.

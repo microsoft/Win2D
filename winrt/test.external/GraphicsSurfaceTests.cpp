@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-using namespace Microsoft::DirectX;
+using namespace Microsoft::Graphics::Canvas;
 
 TEST_CLASS(DirectX11SurfaceTests)
 {
@@ -156,8 +156,8 @@ public:
         ComPtr<IDXGISurface> mockDxgiSurface = Make<MockDxgiSurface>();
         DirectX11Surface^ graphicsSurface = CreateDirectX11Surface(mockDxgiSurface.Get());
 
-        ABI::Microsoft::DirectX::IDirectX11Surface* rawDirectX11Surface =
-            reinterpret_cast<ABI::Microsoft::DirectX::IDirectX11Surface*>(graphicsSurface);
+        ABI::Microsoft::Graphics::Canvas::IDirectX11Surface* rawDirectX11Surface =
+            reinterpret_cast<ABI::Microsoft::Graphics::Canvas::IDirectX11Surface*>(graphicsSurface);
 
         Assert::AreEqual(E_INVALIDARG, rawDirectX11Surface->get_Description(nullptr));
     }

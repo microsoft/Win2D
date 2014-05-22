@@ -6,10 +6,10 @@
     <HasSharedItems>true</HasSharedItems>
     <SharedGUID>bc5b5047-8681-4c9d-9908-87de9818e82c</SharedGUID>
     <ItemsProjectGuid>{1574c4de-318f-4555-b72e-97532f720a13}</ItemsProjectGuid>
-    <ItemsRootNamespace>Microsoft.DirectX</ItemsRootNamespace>
+    <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build\dxrt.cpp.props" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
   <Import Project="$(SolutionDir)build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
@@ -34,7 +34,7 @@
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
     <CustomBuildStep>
-      <Command>mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial -n:Microsoft.DirectX:2</Command>
+      <Command>mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial -n:Microsoft.Graphics.Canvas:3</Command>
       <Inputs>$(UnmergedWinmdDirectory)\*.winmd</Inputs>
       <Outputs>$(MergedWinmdDirectory)\$(RootNamespace).winmd</Outputs>
     </CustomBuildStep>
@@ -77,7 +77,7 @@
   </ItemGroup>
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(SolutionDir)build\dxrt.cpp.targets" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
   <Import Project="$(SolutionDir)build\midlrt.targets" />
 
 </Project>

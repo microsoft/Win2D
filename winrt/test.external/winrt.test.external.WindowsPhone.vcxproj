@@ -13,7 +13,7 @@
     <PackageCertificateKeyFile>test.external.WindowsPhone_TemporaryKey.pfx</PackageCertificateKeyFile>
     <DoNotBuild Condition="'$(TF_BUILD)' == 'true'">true</DoNotBuild>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\dxrt.cpp.props" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
   <PropertyGroup Label="UserMacros">
@@ -55,7 +55,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsPhone\v$(TargetPlatformVersion)\Microsoft.Cpp.WindowsPhone.$(TargetPlatformVersion).targets" />
 
   <ItemGroup>
-    <ProjectReference Include="..\dll\Microsoft.DirectX.WindowsPhone.vcxproj">
+    <ProjectReference Include="..\dll\winrt.dll.WindowsPhone.vcxproj">
       <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -63,5 +63,5 @@
   <PropertyGroup>
     <_DefineDefaultConvergedProjectType>False</_DefineDefaultConvergedProjectType>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\dxrt.cpp.targets" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
 </Project>

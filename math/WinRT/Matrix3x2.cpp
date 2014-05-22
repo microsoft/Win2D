@@ -6,7 +6,7 @@
 
 class Matrix3x2Statics : public Microsoft::WRL::ActivationFactory<Midl::IMatrix3x2HelperStatics>
 {
-    InspectableClassStatic(RuntimeClass_Microsoft_DirectX_Math_Matrix3x2Helper, BaseTrust);
+    InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Math_Matrix3x2Helper, BaseTrust);
 
 public:
     IFACEMETHODIMP FromValues(float m11, float m12, float m21, float m22, float m31, float m32, _Out_ Midl::Matrix3x2* ret)

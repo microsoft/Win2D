@@ -14,7 +14,7 @@
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\dxrt.cpp.props" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -50,7 +50,7 @@
     <Image Include="Images\UnitTestStoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dll\Microsoft.DirectX.Windows.vcxproj">
+    <ProjectReference Include="..\dll\winrt.dll.Windows.vcxproj">
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
     </ProjectReference>
   </ItemGroup>

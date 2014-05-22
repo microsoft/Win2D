@@ -14,7 +14,7 @@
 
         <Struct Name="RECT_F" ShouldProject="false" ProjectedNameOverride="Rect" IdlNamespaceQualifier="Windows.Foundation."/>
 
-        <Struct Name="MATRIX_3X2_F" ShouldProject="false" ProjectedNameOverride="Matrix3x2" IdlNamespaceQualifier="Microsoft.DirectX.Math."/>
+        <Struct Name="MATRIX_3X2_F" ShouldProject="false" ProjectedNameOverride="Matrix3x2" IdlNamespaceQualifier="Microsoft.Graphics.Canvas.Math."/>
 
     </Namespace>
 
