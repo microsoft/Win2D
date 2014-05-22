@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -41,8 +41,6 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\math\Cpp\WindowsMath.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\MathTypeConversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.h" />
@@ -55,18 +53,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Matrix3x2.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Matrix4x4.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Plane.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Quaternion.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Vector2.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Vector3.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Vector4.cpp" />
     <MidlRT Include="$(MSBuildThisFileDirectory)d2dwinrt.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)DirectX.codegen.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)GraphicsDevice\WinRTGraphicsInterop.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDeviceInterop.cpp" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl">
+      <HasInterfaces>false</HasInterfaces>
+    </MidlRT>
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.cpp" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
@@ -75,9 +68,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\..\math\Cpp\WindowsMath.inl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

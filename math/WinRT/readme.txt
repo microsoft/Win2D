@@ -1,1 +1,1 @@
-The code in this folder is included and built by ..\..\winrt\lib\winrt.lib.vcxproj
+This IDL is included and built by ..\..\winrt\lib\winrt.lib.vcxproj
