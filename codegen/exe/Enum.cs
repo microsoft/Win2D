@@ -164,7 +164,7 @@ namespace CodeGen
 
                 if(overrides.ProjectedNameOverride != null)
                 {
-                    m_stylizedName = overrides.ProjectedNameOverride;
+                    m_stylizedName = Formatter.Prefix + overrides.ProjectedNameOverride;
                 }
 
             }

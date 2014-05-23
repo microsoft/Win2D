@@ -9,6 +9,7 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl">
       <Filter>math</Filter>
     </MidlRT>
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />

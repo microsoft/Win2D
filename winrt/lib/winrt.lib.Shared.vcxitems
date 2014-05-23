@@ -8,11 +8,9 @@
     <ItemsProjectGuid>{1574c4de-318f-4555-b72e-97532f720a13}</ItemsProjectGuid>
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
   </PropertyGroup>
-
   <Import Project="$(SolutionDir)build\canvas.cpp.props" />
   <Import Project="$(SolutionDir)build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <TargetName>winrt</TargetName>
@@ -20,7 +18,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <Midl>
-      <AdditionalIncludeDirectories>..\..\Math\WinRT</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Math\WinRT;$(ProjectDir)GraphicsDevice</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -67,17 +65,15 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.cpp" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\math\Cpp\WindowsMath.inl" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
   <Import Project="$(SolutionDir)build\midlrt.targets" />
-
 </Project>

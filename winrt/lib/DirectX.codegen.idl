@@ -124,19 +124,11 @@ namespace Microsoft.Graphics.Canvas
     } CanvasExtendMode;
 
     [version(VERSION)]
-    typedef enum CanvasFactoryType
+    typedef enum CanvasDeviceThreading
     {
         SingleThreaded = (int)0,
         MultiThreaded = (int)1
-    } CanvasFactoryType;
-
-    [version(VERSION)]
-    typedef enum CanvasFeatureLevel
-    {
-        Default = (int)0,
-        Level9 = (int)0x9100,
-        Level10 = (int)0xA000
-    } CanvasFeatureLevel;
+    } CanvasDeviceThreading;
 
     [version(VERSION)]
     typedef enum CanvasFigureBegin
@@ -406,12 +398,12 @@ namespace Microsoft.Graphics.Canvas
     } CanvasPrimitiveBlend;
 
     [version(VERSION), flags]
-    typedef enum LayerOptions
+    typedef enum CanvasLayerOptions
     {
         None = 0,
         InitializeFromBackground = 1,
         IgnoreAlpha = 2
-    } LayerOptions;
+    } CanvasLayerOptions;
 
     [version(VERSION)]
     typedef enum CanvasThreadingMode
@@ -673,8 +665,8 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT OpacityBrush([out, retval] ICanvasBrush** value);
         [propput] HRESULT OpacityBrush([in] ICanvasBrush* value);
 
-        [propget] HRESULT LayerOptions([out, retval] LayerOptions* value);
-        [propput] HRESULT LayerOptions([in] LayerOptions value);
+        [propget] HRESULT LayerOptions([out, retval] CanvasLayerOptions* value);
+        [propput] HRESULT LayerOptions([in] CanvasLayerOptions value);
     }
 
     [version(VERSION), activatable(VERSION)]

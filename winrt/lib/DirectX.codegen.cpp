@@ -134,7 +134,7 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHOD(get_LayerOptions)(_Out_ LayerOptions *pValue) override
+        IFACEMETHOD(get_LayerOptions)(_Out_ CanvasLayerOptions *pValue) override
         {
             if (pValue == nullptr)
             {
@@ -147,7 +147,7 @@ namespace canvas
             }
         }
 
-        IFACEMETHOD(put_LayerOptions)(LayerOptions value) override
+        IFACEMETHOD(put_LayerOptions)(CanvasLayerOptions value) override
         {
             m_layerOptions = value;
             return S_OK;
@@ -160,7 +160,7 @@ namespace canvas
         Matrix3x2 m_maskTransform;
         FLOAT m_opacity;
         ComPtr<ICanvasBrush> m_opacityBrush;
-        LayerOptions m_layerOptions;
+        CanvasLayerOptions m_layerOptions;
     };
 
 }

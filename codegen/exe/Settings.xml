@@ -27,10 +27,8 @@
             <Field Name="2_2" ProjectedNameOverride="Srgb"/>
             <Field Name="1_0" ProjectedNameOverride="Linear"/>
         </Enum>
-        <Enum Name="FEATURE_LEVEL">
-            <Field Name="9" ProjectedNameOverride="Level9"/>
-            <Field Name="10" ProjectedNameOverride="Level10"/>
-        </Enum>
+        <!--Todo: Sanity check that the same element isn't specified twice for overrides. See backlog item #1140.-->
+        <Enum Name="FEATURE_LEVEL" ShouldProject="false"/>
         <Enum Name="BUFFER_PRECISION">
             <Field Name="8BPC_UNORM" ProjectedNameOverride="Precision8BpcUnorm"/>
             <Field Name="8BPC_UNORM_SRGB" ProjectedNameOverride="Precision8BpcUnormSrgb"/>
@@ -42,6 +40,7 @@
             <Field Name="1" ProjectedNameOverride="Depth1"/>
             <Field Name="4" ProjectedNameOverride="Depth4"/>
         </Enum>
+        <Enum Name="FACTORY_TYPE" ProjectedNameOverride="DeviceThreading"/>
         
         <!-- Structs are not projected by default.-->
         <Struct Name="BEZIER_SEGMENT" ShouldProject="true" Guid="1cd6d1d1-4242-482a-afd4-bcf251d97820" />
