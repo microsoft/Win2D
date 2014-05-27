@@ -57,3 +57,29 @@ inline void ThrowIfFalse(bool value, HRESULT hrToThrow)
     if (!value)
         throw ComException(hrToThrow);
 }
+
+template<typename T>
+inline void ThrowIfNullPtr(T* ptr, HRESULT hrToThrow)
+{
+    if (!ptr)
+        throw ComException(hrToThrow);
+}
+
+template<typename T>
+inline void CheckInPointer(T* ptr)
+{
+    ThrowIfNullPtr(ptr, E_INVALIDARG);
+}
+
+template<typename T>
+inline void CheckAndClearOutPointer(T** ptr)
+{
+    ThrowIfNullPtr(ptr, E_INVALIDARG);
+    *ptr = nullptr;
+}
+
+inline void CheckMakeResult(bool result)
+{
+    if (!result)
+        throw ComException(E_OUTOFMEMORY);
+}

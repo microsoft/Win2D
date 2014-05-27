@@ -9,7 +9,8 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl">
       <Filter>math</Filter>
     </MidlRT>
-    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\Vector4.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
@@ -61,6 +63,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\math\Cpp\WindowsMath.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GraphicsDevice">

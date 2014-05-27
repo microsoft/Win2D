@@ -10,18 +10,22 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\Inc;..\lib;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockSurfaceImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockSurfaceImageSourceFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)unittest1.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceUnitTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

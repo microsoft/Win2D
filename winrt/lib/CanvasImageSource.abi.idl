@@ -1,0 +1,131 @@
+import "inspectable.idl";
+import "Windows.UI.Xaml.Media.Imaging.idl";
+
+import "CanvasDevice.abi.idl";
+
+#include "version.h"
+
+namespace Microsoft.Graphics.Canvas
+{
+    runtimeclass CanvasDrawingSession;
+
+    //
+    // CanvasImageSource - this derives from
+    // Windows.UI.Xaml.Media.Imaging.SurfaceImageSource and extends it so that
+    // it knows about Canvas types.
+    //
+    // Usage (C#):
+    //
+    //   var imageSource = new CanvasImageSource(canvasDevice,
+    //                                           widthInPixels,
+    //                                           heightInPixels);
+    //
+    //   imageControl.Source = imageSource;
+    //
+    //
+    //   using (var ds = imageSource.CreateDrawingSession())
+    //   {
+    //        // drawing code
+    //   }
+    //
+    
+    runtimeclass CanvasImageSource;
+
+    [version(VERSION)]
+    typedef enum CanvasBackground
+    {
+        //
+        // Transparent background is likely to be what most users want by
+        // default.
+        //
+        Transparent,
+        
+        //
+        // Manually specifying opaque allows for increased efficiency.
+        //
+        Opaque
+    } CanvasBackground;
+
+
+    [version(VERSION), 
+     uuid(8596BEDD-D7F7-4C6B-B1AD-41949035E084), 
+     exclusiveto(CanvasImageSource)]
+    interface ICanvasImageSourceFactory : IInspectable
+    {
+        HRESULT Create(
+            [in]          CanvasDevice* device,
+            [in]          INT32 widthInPixels, // INT32 picked to match SurfaceImageSource constructor
+            [in]          INT32 heightInPixels, 
+            [out, retval] CanvasImageSource** imageSource);
+
+        HRESULT CreateWithBackground(
+            [in]          CanvasDevice* device,
+            [in]          INT32 widthInPixels, 
+            [in]          INT32 heightInPixels, 
+            [in]          CanvasBackground background, 
+            [out, retval] CanvasImageSource** imageSource);
+    };
+
+    [version(VERSION), 
+     uuid(3C35E87A-E881-4F44-B0D1-551413AEC66D), 
+     exclusiveto(CanvasImageSource)]
+    interface ICanvasImageSource : IInspectable
+    {
+        //
+        // Returns a new drawing session for redrawing the entire image source.
+        //
+        [overload("CreateDrawingSession")]
+        HRESULT CreateDrawingSession(
+            [out, retval] CanvasDrawingSession** drawingSession);
+
+        //
+        // Returns a new drawing session for updating a region of the image
+        // source.
+        //
+        [overload("CreateDrawingSession")]
+        HRESULT CreateDrawingSessionWithUpdateRegion(
+            [in]          Windows.Foundation.Rect updateRegion,
+            [out, retval] CanvasDrawingSession** drawingSession);
+
+        //
+        // Returns the device used to create this image source
+        //
+        [propget]
+        HRESULT Device(
+            [out, retval] CanvasDevice** value);
+
+        //
+        // Binds this image source to a different device.  This is used after a
+        // new device is recovered after a device lost.
+        //
+        [propput]
+        HRESULT Device(
+            [in] CanvasDevice* value);
+    };
+
+    [version(VERSION), 
+     activatable(ICanvasImageSourceFactory, VERSION), 
+     marshaling_behavior(agile), 
+     threading(both)]
+    runtimeclass CanvasImageSource : Windows.UI.Xaml.Media.Imaging.SurfaceImageSource
+    {
+        [default] interface ICanvasImageSource;
+    };
+
+
+
+    //
+    // stubs
+    //
+
+    [version(VERSION), uuid(F60AFD09-E623-4BE0-B750-578AA920B1DB)]
+    interface ICanvasDrawingSession : IInspectable
+    {
+    };
+
+    [version(VERSION)]
+    runtimeclass CanvasDrawingSession
+    {
+        [default] interface ICanvasDrawingSession;
+    };
+}

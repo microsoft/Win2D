@@ -26,9 +26,6 @@
   </PropertyGroup>
   <Import Project="winrt.test.internal.Shared.vcxitems" Label="Shared" />
   <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\lib;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>d2d1.lib;d3d11.lib;windowscodecs.lib;dwrite.lib;kernel32.lib;runtimeobject.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -57,7 +54,7 @@
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

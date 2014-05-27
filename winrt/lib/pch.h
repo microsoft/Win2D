@@ -14,11 +14,12 @@
 #include <windows.h>
 #include <wrl.h>
 #include <strsafe.h>
+#include <memory>
 #include <map>
 #include <cstdint>
 #include <mutex>
 
-#include <d2d1_1.h>
+#include <d2d1_2.h>
 #include <d3d11.h>
 #include <dwrite.h>
 #include <dxgi1_3.h>
@@ -30,10 +31,10 @@
 
 #include <Microsoft.DirectX.interop.h>
 
+#include <CanvasImageSource.abi.h>
 #include <WinRTGraphicsInterop.h>
 #include <WinRTMath.h>
 
 #include <ErrorHandling.h>
 
 #include "ClosablePtr.h"
-
