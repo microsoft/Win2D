@@ -14,13 +14,13 @@ namespace canvas
         ComPtr<IDXGIDevice3> dxgiDevice3;
         ThrowIfFailed(dxgiDevice->QueryInterface(dxgiDevice3.GetAddressOf()));
 
-        m_DxgiDevice = dxgiDevice3;
+        m_dxgiDevice = dxgiDevice3;
     }
 
 
     IFACEMETHODIMP DirectX11Device::Close()
     {
-        m_DxgiDevice.Close();
+        m_dxgiDevice.Close();
         return S_OK;
     }
 
@@ -30,7 +30,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& device = m_DxgiDevice.EnsureNotClosed();
+                auto& device = m_dxgiDevice.EnsureNotClosed();
                 
                 // Trim() does not return an HRESULT
                 device->Trim();
@@ -40,7 +40,7 @@ namespace canvas
 
     void DirectX11Device::GetDXGIInterface(REFIID iid, void** p)
     {
-        auto& device = m_DxgiDevice.EnsureNotClosed();
+        auto& device = m_dxgiDevice.EnsureNotClosed();
         ThrowIfFailed(device.CopyTo(iid, p));
     }
 }

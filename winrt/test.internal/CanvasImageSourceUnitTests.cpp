@@ -209,57 +209,57 @@ public:
 
 TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
 {
-    ComPtr<StubCanvasDevice> m_CanvasDevice;
-    ComPtr<MockSurfaceImageSource> m_SurfaceImageSource;
-    ComPtr<StubSurfaceImageSourceFactory> m_SurfaceImageSourceFactory;
-    std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> m_CanvasImageSourceDrawingSessionFactory;
-    ComPtr<canvas::CanvasImageSource> m_CanvasImageSource;
-    int m_ImageWidth;
-    int m_ImageHeight;
+    ComPtr<StubCanvasDevice> m_canvasDevice;
+    ComPtr<MockSurfaceImageSource> m_surfaceImageSource;
+    ComPtr<StubSurfaceImageSourceFactory> m_surfaceImageSourceFactory;
+    std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> m_canvasImageSourceDrawingSessionFactory;
+    ComPtr<canvas::CanvasImageSource> m_canvasImageSource;
+    int m_imageWidth;
+    int m_imageHeight;
 
 public:
     TEST_METHOD_INITIALIZE(Init)
     {
         using canvas::CanvasImageSource;
 
-        m_CanvasDevice = Make<StubCanvasDevice>();
-        m_SurfaceImageSource = Make<MockSurfaceImageSource>();
-        m_SurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(m_SurfaceImageSource.Get());
-        m_CanvasImageSourceDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
+        m_canvasDevice = Make<StubCanvasDevice>();
+        m_surfaceImageSource = Make<MockSurfaceImageSource>();
+        m_surfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(m_surfaceImageSource.Get());
+        m_canvasImageSourceDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
 
-        m_SurfaceImageSource->MockSetDevice = [&](IUnknown*) {};
+        m_surfaceImageSource->MockSetDevice = [&](IUnknown*) {};
 
-        m_ImageWidth = 123;
-        m_ImageHeight = 456;
+        m_imageWidth = 123;
+        m_imageHeight = 456;
 
-        m_CanvasImageSource = Make<CanvasImageSource>(
-            m_CanvasDevice.Get(),
-            m_ImageWidth,
-            m_ImageHeight,
+        m_canvasImageSource = Make<CanvasImageSource>(
+            m_canvasDevice.Get(),
+            m_imageWidth,
+            m_imageHeight,
             CanvasBackground::Transparent,
-            m_SurfaceImageSourceFactory.Get(),
-            m_CanvasImageSourceDrawingSessionFactory);
+            m_surfaceImageSourceFactory.Get(),
+            m_canvasImageSourceDrawingSessionFactory);
 
-        m_SurfaceImageSource->MockSetDevice = nullptr;
+        m_surfaceImageSource->MockSetDevice = nullptr;
     }
 
     TEST_METHOD(CanvasImageSource_CreateDrawingSession_PassesEntireImage)
     {
         bool createCalled = false;
-        m_CanvasImageSourceDrawingSessionFactory->MockCreate =
+        m_canvasImageSourceDrawingSessionFactory->MockCreate =
             [&](ICanvasDeviceInternal* internalDevice, const Rect& updateRect)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual<float>(0, updateRect.X);
                 Assert::AreEqual<float>(0, updateRect.Y);
-                Assert::AreEqual<float>(static_cast<float>(m_ImageWidth), updateRect.Width);
-                Assert::AreEqual<float>(static_cast<float>(m_ImageHeight), updateRect.Height);
+                Assert::AreEqual<float>(static_cast<float>(m_imageWidth), updateRect.Width);
+                Assert::AreEqual<float>(static_cast<float>(m_imageHeight), updateRect.Height);
                 createCalled=true;
                 return Make<MockCanvasDrawingSession>();
             };
 
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_CanvasImageSource->CreateDrawingSession(&drawingSession));
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(&drawingSession));
         Assert::IsTrue(createCalled);
         Assert::IsTrue(drawingSession);
     }
@@ -273,7 +273,7 @@ public:
         expectedRect.Height = 4;
 
         bool createCalled = false;
-        m_CanvasImageSourceDrawingSessionFactory->MockCreate = 
+        m_canvasImageSourceDrawingSessionFactory->MockCreate = 
             [&](ICanvasDeviceInternal* internalDevice, const Rect& updateRect)
             {
                 Assert::IsFalse(createCalled);
@@ -287,7 +287,7 @@ public:
 
 
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_CanvasImageSource->CreateDrawingSessionWithUpdateRegion(expectedRect, &drawingSession));
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRegion(expectedRect, &drawingSession));
         Assert::IsTrue(createCalled);
         Assert::IsTrue(drawingSession);
     }

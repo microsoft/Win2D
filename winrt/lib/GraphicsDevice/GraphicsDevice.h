@@ -22,7 +22,7 @@ namespace canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_DirectX11Device, BaseTrust);
 
-        ClosablePtr<IDXGIDevice3> m_DxgiDevice;
+        ClosablePtr<IDXGIDevice3> m_dxgiDevice;
 
     public:
         DirectX11Device(IDXGIDevice* device);

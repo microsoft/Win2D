@@ -58,11 +58,11 @@ public:
 
         class DxgiSurfaceWithToken : public MockDxgiSurface
         {
-            std::shared_ptr<bool> m_Token;
+            std::shared_ptr<bool> m_token;
 
         public:
             DxgiSurfaceWithToken(std::shared_ptr<bool> token)
-                : m_Token(token)
+                : m_token(token)
             {
             }
         };

@@ -10,17 +10,17 @@ namespace canvas
     //
     class StubCanvasDevice : public MockCanvasDevice
     {
-        ComPtr<ID2D1Device1> m_D2DDevice;
+        ComPtr<ID2D1Device1> m_d2DDevice;
 
     public:
         StubCanvasDevice(ComPtr<ID2D1Device1> device = Make<MockD2DDevice>())
-            : m_D2DDevice(device)
+            : m_d2DDevice(device)
         {
         }
 
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override
         {
-            return m_D2DDevice;
+            return m_d2DDevice;
         }
     };
 }

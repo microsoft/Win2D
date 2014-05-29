@@ -61,11 +61,11 @@ public:
 
         class DxgiDeviceWithToken : public MockDxgiDevice
         {
-            std::shared_ptr<bool> m_Token;
+            std::shared_ptr<bool> m_token;
 
         public:
             DxgiDeviceWithToken(std::shared_ptr<bool> token)
-                : m_Token(token)
+                : m_token(token)
             {
             }
         };

@@ -11,13 +11,13 @@ namespace canvas
         if (dxgiSurface == nullptr)
             throw ComException(E_INVALIDARG);
 
-        m_DxgiSurface = dxgiSurface;
+        m_dxgiSurface = dxgiSurface;
     }
 
 
     IFACEMETHODIMP DirectX11Surface::Close()
     {
-        m_DxgiSurface.Close();
+        m_dxgiSurface.Close();
         return S_OK;
     }
 
@@ -31,7 +31,7 @@ namespace canvas
                 if (desc == nullptr)
                     throw ComException(E_INVALIDARG);
 
-                auto& surface = m_DxgiSurface.EnsureNotClosed();
+                auto& surface = m_dxgiSurface.EnsureNotClosed();
 
                 //
                 // IDXGISurface::GetDesc() expects a DXGI_SURFACE_DESC.  We've
@@ -60,7 +60,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& surface = m_DxgiSurface.EnsureNotClosed();
+                auto& surface = m_dxgiSurface.EnsureNotClosed();
 
                 ComPtr<IDXGIResource> resource;
                 ThrowIfFailed(surface.As(&resource));
@@ -75,7 +75,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& surface = m_DxgiSurface.EnsureNotClosed();
+                auto& surface = m_dxgiSurface.EnsureNotClosed();
 
                 ComPtr<IDXGIResource> resource;
                 ThrowIfFailed(surface.As(&resource));
@@ -87,7 +87,7 @@ namespace canvas
     _Use_decl_annotations_
     void DirectX11Surface::GetDXGIInterface(REFIID iid, void** p)
     {
-        auto& surface = m_DxgiSurface.EnsureNotClosed();
+        auto& surface = m_dxgiSurface.EnsureNotClosed();
         ThrowIfFailed(surface.CopyTo(iid, p));
     }
 

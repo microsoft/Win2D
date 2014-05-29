@@ -10,11 +10,11 @@ namespace canvas
 
     class StubSurfaceImageSourceFactory : public MockSurfaceImageSourceFactory
     {
-        ComPtr<ISurfaceImageSource> m_SurfaceImageSource;
+        ComPtr<ISurfaceImageSource> m_surfaceImageSource;
 
     public:
         StubSurfaceImageSourceFactory(ISurfaceImageSource* sis = nullptr)
-            : m_SurfaceImageSource(sis)
+            : m_surfaceImageSource(sis)
         {
         }
 
@@ -41,8 +41,8 @@ namespace canvas
                 {
                     ComPtr<ISurfaceImageSource> s;
 
-                    if (m_SurfaceImageSource)
-                        s = m_SurfaceImageSource;
+                    if (m_surfaceImageSource)
+                        s = m_surfaceImageSource;
                     else
                         s = Make<StubSurfaceImageSource>();
 

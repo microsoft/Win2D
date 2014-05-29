@@ -44,10 +44,10 @@ namespace canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
 
-        ComPtr<ICanvasDevice> m_Device;
-        std::shared_ptr<CanvasImageSourceDrawingSessionFactory> m_DrawingSessionFactory;
-        const int32_t m_WidthInPixels;
-        const int32_t m_HeightInPixels;
+        ComPtr<ICanvasDevice> m_device;
+        std::shared_ptr<CanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
+        const int32_t m_widthInPixels;
+        const int32_t m_heightInPixels;
 
     public:
         CanvasImageSource(

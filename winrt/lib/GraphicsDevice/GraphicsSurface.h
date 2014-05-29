@@ -22,7 +22,7 @@ namespace canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_DirectX11Surface, BaseTrust);
 
-        ClosablePtr<IDXGISurface> m_DxgiSurface;
+        ClosablePtr<IDXGISurface> m_dxgiSurface;
 
     public:
         DirectX11Surface(IDXGISurface* surface);

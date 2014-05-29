@@ -91,9 +91,9 @@ namespace canvas
         CanvasBackground background,
         ISurfaceImageSourceFactory* surfaceImageSourceFactory,
         std::shared_ptr<CanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
-        : m_DrawingSessionFactory(drawingSessionFactory)
-        , m_WidthInPixels(widthInPixels)
-        , m_HeightInPixels(heightInPixels)
+        : m_drawingSessionFactory(drawingSessionFactory)
+        , m_widthInPixels(widthInPixels)
+        , m_heightInPixels(heightInPixels)
     {
         bool isOpaque = (background == CanvasBackground::Opaque);
 
@@ -110,8 +110,8 @@ namespace canvas
         ComPtr<IInspectable> baseInspectable;
 
         ThrowIfFailed(surfaceImageSourceFactory->CreateInstanceWithDimensionsAndOpacity(
-            m_WidthInPixels,
-            m_HeightInPixels,
+            m_widthInPixels,
+            m_heightInPixels,
             isOpaque,
             this,
             &baseInspectable,
@@ -141,9 +141,9 @@ namespace canvas
         //
         // Remember the canvas device we're now using.  We do this after we're
         // certain that all the previous steps succeeded (so we don't end up
-        // with m_Device referencing a device that we failed to set).
+        // with m_device referencing a device that we failed to set).
         //
-        m_Device = device;
+        m_device = device;
     }
     
 
@@ -152,8 +152,8 @@ namespace canvas
         ICanvasDrawingSession** drawingSession)
     {
         Rect updateRegion = {};
-        updateRegion.Width = static_cast<float>(m_WidthInPixels);
-        updateRegion.Height = static_cast<float>(m_HeightInPixels);
+        updateRegion.Width = static_cast<float>(m_widthInPixels);
+        updateRegion.Height = static_cast<float>(m_heightInPixels);
 
         return CreateDrawingSessionWithUpdateRegion(
             updateRegion,
@@ -172,9 +172,9 @@ namespace canvas
                 CheckAndClearOutPointer(drawingSession);
                 
                 ComPtr<ICanvasDeviceInternal> internalDevice;
-                ThrowIfFailed(m_Device.As(&internalDevice));
+                ThrowIfFailed(m_device.As(&internalDevice));
 
-                auto newDrawingSession = m_DrawingSessionFactory->Create(
+                auto newDrawingSession = m_drawingSessionFactory->Create(
                     internalDevice.Get(),
                     updateRegion);
 
@@ -187,7 +187,7 @@ namespace canvas
     IFACEMETHODIMP CanvasImageSource::get_Device(
         ICanvasDevice** value) 
     {
-        return m_Device.CopyTo(value);
+        return m_device.CopyTo(value);
     }
     
 
