@@ -4,7 +4,6 @@
     <ProjectGuid>{8e9fef0d-edb6-4c76-9383-a070314e5ff4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>winrt.lib.Windows</ProjectName>
-    <RootNamespace>Microsoft.DirectX</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
