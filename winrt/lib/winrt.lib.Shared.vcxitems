@@ -46,6 +46,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
@@ -68,7 +70,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.cpp" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\math\Cpp\WindowsMath.inl" />

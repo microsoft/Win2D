@@ -24,11 +24,15 @@
 
 // Headers generated from IDL files
 #include <CanvasDevice.abi.h>
+#include <CanvasDrawingSession.abi.h>
 #include <CanvasImageSource.abi.h>
 
 // winrt.lib
 #include <CanvasDevice.h>
+#include <CanvasDrawingSession.h>
 #include <CanvasImageSource.h>
+#include <CanvasImageSourceDrawingSessionAdapter.h>
+#include <Conversion.h>
 #include <ErrorHandling.h>
 
 // local headers
@@ -41,8 +45,10 @@ using namespace canvas;
 #include "MockCanvasDrawingSession.h"
 #include "MockCanvasImageSourceDrawingSessionFactory.h"
 #include "MockD2DDevice.h"
+#include "MockD2DDeviceContext.h"
 #include "MockSurfaceImageSourceFactory.h"
 #include "MockSurfaceImageSource.h"
 #include "StubCanvasDevice.h"
+#include "StubCanvasDrawingSessionAdapter.h"
 #include "StubSurfaceImageSourceFactory.h"
 #include "StubSurfaceImageSource.h"

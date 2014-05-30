@@ -2,13 +2,12 @@ import "inspectable.idl";
 import "Windows.UI.Xaml.Media.Imaging.idl";
 
 import "CanvasDevice.abi.idl";
+import "CanvasDrawingSession.abi.idl";
 
 #include "version.h"
 
 namespace Microsoft.Graphics.Canvas
 {
-    runtimeclass CanvasDrawingSession;
-
     //
     // CanvasImageSource - this derives from
     // Windows.UI.Xaml.Media.Imaging.SurfaceImageSource and extends it so that
@@ -110,22 +109,5 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasImageSource : Windows.UI.Xaml.Media.Imaging.SurfaceImageSource
     {
         [default] interface ICanvasImageSource;
-    };
-
-
-
-    //
-    // stubs
-    //
-
-    [version(VERSION), uuid(F60AFD09-E623-4BE0-B750-578AA920B1DB)]
-    interface ICanvasDrawingSession : IInspectable
-    {
-    };
-
-    [version(VERSION)]
-    runtimeclass CanvasDrawingSession
-    {
-        [default] interface ICanvasDrawingSession;
     };
 }

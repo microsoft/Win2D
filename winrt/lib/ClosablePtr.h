@@ -79,6 +79,6 @@ namespace canvas
             //
 
             return m_ptr;
-        }        
+        }
     };
 }

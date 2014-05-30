@@ -35,6 +35,7 @@
 #include <WinRTGraphicsInterop.h>
 #include <WinRTMath.h>
 
+#include <Conversion.h>
 #include <ErrorHandling.h>
 
 #include "ClosablePtr.h"

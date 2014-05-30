@@ -4,14 +4,45 @@
 
 #include "CanvasDevice.h"
 #include "CanvasImageSource.h"
+#include "CanvasImageSourceDrawingSessionAdapter.h"
 
 namespace canvas
 {
     using namespace Microsoft::WRL::Wrappers;
 
     //
+    // Drawing session factory
+    //
+
+    class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
+    {
+    public:
+        virtual ComPtr<ICanvasDrawingSession> Create(
+            ISurfaceImageSourceNativeWithD2D* sisNative,
+            const Rect& updateRect) const override
+        {
+            ComPtr<ID2D1DeviceContext1> deviceContext;
+            auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
+                sisNative,
+                ToRECT(updateRect),
+                &deviceContext);
+
+            return Make<CanvasDrawingSession>(
+                deviceContext.Get(),
+                std::move(adapter));
+        }        
+    };
+
+
+    //
     // CanvasImageSourceFactory implementation
     //
+
+    CanvasImageSourceFactory::CanvasImageSourceFactory()
+        : m_drawingSessionFactory(std::make_shared<CanvasImageSourceDrawingSessionFactory>())
+    {
+    }
+    
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSourceFactory::Create(
@@ -55,14 +86,6 @@ namespace canvas
                     &baseFactory));
 
                 //
-                // We need to have an implementation of CanvasDrawingSession
-                // before we can implement CanvasDrawingSessionFactory, as
-                // required by CanvasImageSource's constructor.  So, for now, we
-                // have to fail until these dependencies come online.
-                //
-                throw ComException(E_NOTIMPL);
-
-                //
                 // Now create the object
                 //
                 auto newCanvasImageSource = Make<CanvasImageSource>(
@@ -71,7 +94,7 @@ namespace canvas
                     heightInPixels,
                     background,
                     baseFactory.Get(),
-                    nullptr);   // TODO: the CanvasDrawingSessionFactory goes here
+                    m_drawingSessionFactory);
 
                 CheckMakeResult(newCanvasImageSource);
 
@@ -90,7 +113,7 @@ namespace canvas
         int32_t heightInPixels,
         CanvasBackground background,
         ISurfaceImageSourceFactory* surfaceImageSourceFactory,
-        std::shared_ptr<CanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
+        std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
         : m_drawingSessionFactory(drawingSessionFactory)
         , m_widthInPixels(widthInPixels)
         , m_heightInPixels(heightInPixels)
@@ -170,12 +193,12 @@ namespace canvas
             [&]()
             {
                 CheckAndClearOutPointer(drawingSession);
-                
-                ComPtr<ICanvasDeviceInternal> internalDevice;
-                ThrowIfFailed(m_device.As(&internalDevice));
+                                
+                ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
+                ThrowIfFailed(GetComposableBase().As(&sisNative));
 
                 auto newDrawingSession = m_drawingSessionFactory->Create(
-                    internalDevice.Get(),
+                    sisNative.Get(),
                     updateRegion);
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));

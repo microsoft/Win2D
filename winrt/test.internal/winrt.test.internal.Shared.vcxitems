@@ -14,18 +14,26 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasImageSourceDrawingSessionFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MockSurfaceImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MockSurfaceImageSourceFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubCanvasDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubSurfaceImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubSurfaceImageSourceFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ConversionUnitTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

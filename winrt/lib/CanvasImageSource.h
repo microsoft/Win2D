@@ -9,11 +9,24 @@ namespace canvas
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;
     using namespace Microsoft::WRL;
 
+    class ICanvasImageSourceDrawingSessionFactory
+    {
+    public:
+        virtual ComPtr<ICanvasDrawingSession> Create(
+            ISurfaceImageSourceNativeWithD2D* sisNative,
+            const Rect& updateRect) const = 0;
+    };
+
+
     class CanvasImageSourceFactory : public ActivationFactory<ICanvasImageSourceFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
 
+        std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
+
     public:
+        CanvasImageSourceFactory();
+
         IFACEMETHOD(Create)(
             _In_         ICanvasDevice* device,
             _In_         int32_t widthInPixels,
@@ -29,15 +42,6 @@ namespace canvas
     };
 
 
-    class CanvasImageSourceDrawingSessionFactory
-    {
-    public:
-        virtual ComPtr<ICanvasDrawingSession> Create(
-            ICanvasDeviceInternal* canvasDevice,
-            const Rect& updateRect) = 0;
-    };
-
-
     class CanvasImageSource : public RuntimeClass<
         ICanvasImageSource,
         ComposableBase<ISurfaceImageSourceFactory>>
@@ -45,7 +49,7 @@ namespace canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
 
         ComPtr<ICanvasDevice> m_device;
-        std::shared_ptr<CanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
+        std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
         const int32_t m_widthInPixels;
         const int32_t m_heightInPixels;
 
@@ -56,7 +60,7 @@ namespace canvas
             _In_ int32_t heightInPixels,
             _In_ CanvasBackground background,
             _In_ ISurfaceImageSourceFactory* surfaceImageSourceFactory,
-            _In_ std::shared_ptr<CanvasImageSourceDrawingSessionFactory> drawingSessionFactory);
+            _In_ std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory);
 
         IFACEMETHOD(CreateDrawingSession)(
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;

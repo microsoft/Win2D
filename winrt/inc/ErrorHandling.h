@@ -24,6 +24,14 @@ public:
     }
 };
 
+class InvalidArgException : public ComException
+{
+public:
+    InvalidArgException()
+        : ComException(E_INVALIDARG)
+    {}
+};
+
 template<typename CALLABLE>
 HRESULT ExceptionBoundary(CALLABLE&& fn)
 {

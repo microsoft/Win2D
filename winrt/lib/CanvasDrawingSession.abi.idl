@@ -1,0 +1,26 @@
+import "inspectable.idl";
+
+import "CanvasDevice.abi.idl";
+
+#include "version.h"
+
+namespace Microsoft.Graphics.Canvas
+{
+    [version(VERSION), uuid(F60AFD09-E623-4BE0-B750-578AA920B1DB)]
+    interface ICanvasDrawingSession : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        HRESULT Clear([in] Windows.UI.Color color);
+
+        //
+        // TODO: future work (eg #780, #784, #794 etc.) will add more methods to
+        // this interface.
+        //
+    };
+
+    [version(VERSION)]
+    runtimeclass CanvasDrawingSession
+    {
+        [default] interface ICanvasDrawingSession;
+    };
+}

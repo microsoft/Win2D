@@ -4,14 +4,14 @@
 
 namespace canvas
 {
-    class MockCanvasImageSourceDrawingSessionFactory : public CanvasImageSourceDrawingSessionFactory
+    class MockCanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
     {
     public:
-        std::function<ComPtr<ICanvasDrawingSession>(ICanvasDeviceInternal*,const Rect&)> MockCreate;
+        std::function<ComPtr<ICanvasDrawingSession>(ISurfaceImageSourceNativeWithD2D*,const Rect&)> MockCreate;
 
         virtual ComPtr<ICanvasDrawingSession> Create(
-            ICanvasDeviceInternal* canvasDevice,
-            const Rect& updateRect) override
+            ISurfaceImageSourceNativeWithD2D* sisNative,
+            const Rect& updateRect) const override
         {
             if (!MockCreate)
             {
@@ -19,7 +19,7 @@ namespace canvas
                 throw ComException(E_NOTIMPL);
             }
 
-            return MockCreate(canvasDevice, updateRect);
+            return MockCreate(sisNative, updateRect);
         }
     };
 }

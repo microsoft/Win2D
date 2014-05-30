@@ -11,6 +11,7 @@
     </MidlRT>
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
@@ -46,6 +47,8 @@
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
@@ -64,6 +67,8 @@
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GraphicsDevice">

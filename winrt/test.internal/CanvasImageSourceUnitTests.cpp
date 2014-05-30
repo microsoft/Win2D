@@ -247,7 +247,7 @@ public:
     {
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate =
-            [&](ICanvasDeviceInternal* internalDevice, const Rect& updateRect)
+            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual<float>(0, updateRect.X);
@@ -274,7 +274,7 @@ public:
 
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate = 
-            [&](ICanvasDeviceInternal* internalDevice, const Rect& updateRect)
+            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual(expectedRect.X, updateRect.X);
@@ -290,5 +290,68 @@ public:
         ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRegion(expectedRect, &drawingSession));
         Assert::IsTrue(createCalled);
         Assert::IsTrue(drawingSession);
+    }
+};
+
+TEST_CLASS(CanvasImageSourceDrawingSessionAdapterTests)
+{
+public:
+    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_BeginEndDraw)
+    {
+        auto mockDeviceContext = Make<MockD2DDeviceContext>();
+        auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();        
+        RECT expectedUpdateRect{1, 2, 3, 4};
+        POINT expectedOffset{5, 6};
+
+        bool beginDrawCalled = false;
+        mockSurfaceImageSource->MockBeginDraw =
+            [&](const RECT& updateRect, const IID& iid, void** updateObject, POINT* offset)
+            {
+                Assert::IsFalse(beginDrawCalled);
+                Assert::AreEqual(expectedUpdateRect, updateRect);
+                Assert::AreEqual(_uuidof(ID2D1DeviceContext), iid);
+
+                ThrowIfFailed(mockDeviceContext.CopyTo(iid, updateObject));
+                *offset = expectedOffset;
+                beginDrawCalled = true;
+            };
+
+        bool setTransformCalled=false;
+        mockDeviceContext->MockSetTransform =
+            [&](const D2D1_MATRIX_3X2_F* m)
+            {
+                Assert::IsFalse(setTransformCalled);
+
+                // We expect the transform to be set to just the offset
+                Assert::AreEqual(1.0f, m->_11);
+                Assert::AreEqual(0.0f, m->_12);
+                Assert::AreEqual(0.0f, m->_21);
+                Assert::AreEqual(1.0f, m->_22);
+                Assert::AreEqual(static_cast<float>(expectedOffset.x), m->_31);
+                Assert::AreEqual(static_cast<float>(expectedOffset.y), m->_32);
+
+                setTransformCalled = true;
+            };
+
+        ComPtr<ID2D1DeviceContext1> actualDeviceContext;
+        auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
+            mockSurfaceImageSource.Get(),
+            expectedUpdateRect,
+            &actualDeviceContext);
+
+        Assert::AreEqual<ID2D1DeviceContext1*>(mockDeviceContext.Get(), actualDeviceContext.Get());
+        Assert::IsTrue(beginDrawCalled);
+        Assert::IsTrue(setTransformCalled);
+        
+        bool endDrawCalled = false;
+        mockSurfaceImageSource->MockEndDraw =
+            [&]()
+            {
+                Assert::IsFalse(endDrawCalled);
+                endDrawCalled = true;
+            };
+
+        adapter->EndDraw();
+        Assert::IsTrue(endDrawCalled);
     }
 };
