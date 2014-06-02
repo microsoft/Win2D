@@ -8,8 +8,7 @@ namespace canvas
 {
     DirectX11Device::DirectX11Device(IDXGIDevice* dxgiDevice)
     {
-        if (dxgiDevice == nullptr)
-            throw ComException(E_INVALIDARG);
+        CheckInPointer(dxgiDevice);
 
         ComPtr<IDXGIDevice3> dxgiDevice3;
         ThrowIfFailed(dxgiDevice->QueryInterface(dxgiDevice3.GetAddressOf()));
@@ -40,6 +39,7 @@ namespace canvas
 
     void DirectX11Device::GetDXGIInterface(REFIID iid, void** p)
     {
+        CheckAndClearOutPointer(p);
         auto& device = m_dxgiDevice.EnsureNotClosed();
         ThrowIfFailed(device.CopyTo(iid, p));
     }

@@ -127,6 +127,9 @@ public:
         ThrowIfFailed(canvasImageSource->get_Device(&actualCanvasDevice));
 
         Assert::AreEqual(expectedCanvasDevice.Get(), actualCanvasDevice.Get());
+
+        // Calling get_Device with a nullptr should fail appropriately
+        Assert::AreEqual(E_INVALIDARG, canvasImageSource->get_Device(nullptr));
     }
 
     TEST_METHOD(CanvasImageSourcePutDevice)
@@ -203,7 +206,10 @@ public:
         actualCanvasDevice.Reset();
         ThrowIfFailed(canvasImageSource->get_Device(&actualCanvasDevice));
 
-        Assert::AreEqual(expectedCanvasDevice.Get(), actualCanvasDevice.Get());        
+        Assert::AreEqual(expectedCanvasDevice.Get(), actualCanvasDevice.Get());   
+
+        // Calling put_Device with nullptr should fail appropriately
+        Assert::AreEqual(E_INVALIDARG, canvasImageSource->put_Device(nullptr));
     }
 };
 

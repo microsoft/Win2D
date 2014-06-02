@@ -8,9 +8,7 @@ namespace canvas
 {
     DirectX11Surface::DirectX11Surface(IDXGISurface* dxgiSurface)
     {
-        if (dxgiSurface == nullptr)
-            throw ComException(E_INVALIDARG);
-
+        CheckInPointer(dxgiSurface);
         m_dxgiSurface = dxgiSurface;
     }
 
@@ -28,8 +26,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                if (desc == nullptr)
-                    throw ComException(E_INVALIDARG);
+                CheckInPointer(desc);
 
                 auto& surface = m_dxgiSurface.EnsureNotClosed();
 
@@ -60,6 +57,8 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
+                CheckInPointer(value);
+
                 auto& surface = m_dxgiSurface.EnsureNotClosed();
 
                 ComPtr<IDXGIResource> resource;
@@ -87,6 +86,7 @@ namespace canvas
     _Use_decl_annotations_
     void DirectX11Surface::GetDXGIInterface(REFIID iid, void** p)
     {
+        CheckAndClearOutPointer(p);
         auto& surface = m_dxgiSurface.EnsureNotClosed();
         ThrowIfFailed(surface.CopyTo(iid, p));
     }

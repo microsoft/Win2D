@@ -21,6 +21,8 @@ namespace canvas
             ISurfaceImageSourceNativeWithD2D* sisNative,
             const Rect& updateRect) const override
         {
+            CheckInPointer(sisNative);
+
             ComPtr<ID2D1DeviceContext1> deviceContext;
             auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
                 sisNative,
@@ -148,6 +150,8 @@ namespace canvas
 
     void CanvasImageSource::SetDevice(ICanvasDevice* device)
     {
+        CheckInPointer(device);
+
         //
         // Get the D2D device and pass this to the underlying surface image
         // source.
@@ -210,6 +214,9 @@ namespace canvas
     IFACEMETHODIMP CanvasImageSource::get_Device(
         ICanvasDevice** value) 
     {
+        if (!value)
+            return E_INVALIDARG;
+
         return m_device.CopyTo(value);
     }
     

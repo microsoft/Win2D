@@ -248,26 +248,23 @@ namespace CodeGen
             {
                 QualifiableType typeObject = typeDictionary[m_structFields[i].TypeName];
 
-                outputFiles.CppFile.WriteLine("IFACEMETHOD(get_" + m_structFields[i].PropertyName + ")(_Out_ " + typeObject.ProjectedNameIncludingIndirection + " *pValue) override"); ;
+                outputFiles.CppFile.WriteLine("IFACEMETHOD(get_" + m_structFields[i].PropertyName + ")(_Out_ " + typeObject.ProjectedNameIncludingIndirection + "* value) override"); ;
                 outputFiles.CppFile.WriteLine("{");
                 outputFiles.CppFile.Indent();
 
-                outputFiles.CppFile.WriteLine("if (pValue == nullptr)");
-                outputFiles.CppFile.WriteLine("{");
+                outputFiles.CppFile.WriteLine("if (!value)");
                 outputFiles.CppFile.Indent();
-                outputFiles.CppFile.WriteLine("return E_POINTER;");
+                outputFiles.CppFile.WriteLine("return E_INVALIDARG;");
+                outputFiles.CppFile.WriteLine();
                 outputFiles.CppFile.Unindent();
-                outputFiles.CppFile.WriteLine("}");
-                outputFiles.CppFile.WriteLine("else");
-                outputFiles.CppFile.WriteLine("{");
-                outputFiles.CppFile.Indent();
-                outputFiles.CppFile.WriteLine("*pValue = " + m_structFields[i].PrivateMemberName + typeObject.AccessorSuffix + ";");
+                if (typeObject is Interface)
+                    outputFiles.CppFile.WriteLine(m_structFields[i].PrivateMemberName + ".CopyTo(value);");
+                else
+                    outputFiles.CppFile.WriteLine("*value = " + m_structFields[i].PrivateMemberName + typeObject.AccessorSuffix + ";");
                 outputFiles.CppFile.WriteLine("return S_OK;");
                 outputFiles.CppFile.Unindent();
                 outputFiles.CppFile.WriteLine("}");
 
-                outputFiles.CppFile.Unindent();
-                outputFiles.CppFile.WriteLine("}");
                 outputFiles.CppFile.WriteLine();
                 outputFiles.CppFile.WriteLine("IFACEMETHOD(put_" + m_structFields[i].PropertyName + ")(" + typeObject.ProjectedNameIncludingIndirection + " value) override");
                 outputFiles.CppFile.WriteLine("{");

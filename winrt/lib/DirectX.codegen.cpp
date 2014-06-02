@@ -20,17 +20,13 @@ namespace canvas
         InspectableClass(L"Microsoft.DirectX.LayerParameters", BaseTrust);
 
     public:
-        IFACEMETHOD(get_ContentBounds)(_Out_ Rect *pValue) override
+        IFACEMETHOD(get_ContentBounds)(_Out_ Rect* value) override
         {
-            if (pValue == nullptr)
-            {
-                return E_POINTER;
-            }
-            else
-            {
-                *pValue = m_contentBounds;
-                return S_OK;
-            }
+            if (!value)
+                return E_INVALIDARG;
+
+            *value = m_contentBounds;
+            return S_OK;
         }
 
         IFACEMETHOD(put_ContentBounds)(Rect value) override
@@ -39,17 +35,13 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHOD(get_GeometricMask)(_Out_ ICanvasGeometry* *pValue) override
+        IFACEMETHOD(get_GeometricMask)(_Out_ ICanvasGeometry** value) override
         {
-            if (pValue == nullptr)
-            {
-                return E_POINTER;
-            }
-            else
-            {
-                *pValue = m_geometricMask.Get();
-                return S_OK;
-            }
+            if (!value)
+                return E_INVALIDARG;
+
+            m_geometricMask.CopyTo(value);
+            return S_OK;
         }
 
         IFACEMETHOD(put_GeometricMask)(ICanvasGeometry* value) override
@@ -58,17 +50,13 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHOD(get_MaskAntialiasMode)(_Out_ CanvasAntialiasMode *pValue) override
+        IFACEMETHOD(get_MaskAntialiasMode)(_Out_ CanvasAntialiasMode* value) override
         {
-            if (pValue == nullptr)
-            {
-                return E_POINTER;
-            }
-            else
-            {
-                *pValue = m_maskAntialiasMode;
-                return S_OK;
-            }
+            if (!value)
+                return E_INVALIDARG;
+
+            *value = m_maskAntialiasMode;
+            return S_OK;
         }
 
         IFACEMETHOD(put_MaskAntialiasMode)(CanvasAntialiasMode value) override
@@ -77,17 +65,13 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHOD(get_MaskTransform)(_Out_ Matrix3x2 *pValue) override
+        IFACEMETHOD(get_MaskTransform)(_Out_ Matrix3x2* value) override
         {
-            if (pValue == nullptr)
-            {
-                return E_POINTER;
-            }
-            else
-            {
-                *pValue = m_maskTransform;
-                return S_OK;
-            }
+            if (!value)
+                return E_INVALIDARG;
+
+            *value = m_maskTransform;
+            return S_OK;
         }
 
         IFACEMETHOD(put_MaskTransform)(Matrix3x2 value) override
@@ -96,17 +80,13 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHOD(get_Opacity)(_Out_ FLOAT *pValue) override
+        IFACEMETHOD(get_Opacity)(_Out_ FLOAT* value) override
         {
-            if (pValue == nullptr)
-            {
-                return E_POINTER;
-            }
-            else
-            {
-                *pValue = m_opacity;
-                return S_OK;
-            }
+            if (!value)
+                return E_INVALIDARG;
+
+            *value = m_opacity;
+            return S_OK;
         }
 
         IFACEMETHOD(put_Opacity)(FLOAT value) override
@@ -115,17 +95,13 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHOD(get_OpacityBrush)(_Out_ ICanvasBrush* *pValue) override
+        IFACEMETHOD(get_OpacityBrush)(_Out_ ICanvasBrush** value) override
         {
-            if (pValue == nullptr)
-            {
-                return E_POINTER;
-            }
-            else
-            {
-                *pValue = m_opacityBrush.Get();
-                return S_OK;
-            }
+            if (!value)
+                return E_INVALIDARG;
+
+            m_opacityBrush.CopyTo(value);
+            return S_OK;
         }
 
         IFACEMETHOD(put_OpacityBrush)(ICanvasBrush* value) override
@@ -134,17 +110,13 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHOD(get_LayerOptions)(_Out_ CanvasLayerOptions *pValue) override
+        IFACEMETHOD(get_LayerOptions)(_Out_ CanvasLayerOptions* value) override
         {
-            if (pValue == nullptr)
-            {
-                return E_POINTER;
-            }
-            else
-            {
-                *pValue = m_layerOptions;
-                return S_OK;
-            }
+            if (!value)
+                return E_INVALIDARG;
+
+            *value = m_layerOptions;
+            return S_OK;
         }
 
         IFACEMETHOD(put_LayerOptions)(CanvasLayerOptions value) override
