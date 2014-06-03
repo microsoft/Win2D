@@ -19,7 +19,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <Midl>
-      <AdditionalIncludeDirectories>..\..\Math\WinRT;$(ProjectDir)GraphicsDevice</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Math\WinRT;GraphicsDevice</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
