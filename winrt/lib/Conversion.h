@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include "CanvasBrush.h"
 #include "ErrorHandling.h"
 
 namespace canvas
 {
+    using namespace Microsoft::WRL;
+    using namespace ABI::Microsoft::Graphics::Canvas;
+
     inline float ToNormalizedFloat(uint8_t v)
     {
         return static_cast<float>(v) / 255.0f;
@@ -16,7 +20,7 @@ namespace canvas
         return static_cast<uint8_t>(f * 255.0f);
     }
 
-    inline D2D1_COLOR_F WindowsColorToD2DColor(const ABI::Windows::UI::Color& color)
+    inline D2D1_COLOR_F ToD2DColor(const ABI::Windows::UI::Color& color)
     {
         return D2D1::ColorF(
             ToNormalizedFloat(color.R),
@@ -65,5 +69,47 @@ namespace canvas
         auto bottom = static_cast<long>(floatBottom);
 
         return RECT{left,top,right,bottom}; 
+    }
+
+    inline D2D1_POINT_2F ToD2DPoint(const ABI::Windows::Foundation::Point& point)
+    {
+        return D2D1_POINT_2F{point.X, point.Y};
+    }
+
+    inline D2D1_RECT_F ToD2DRect(const ABI::Windows::Foundation::Rect& rect)
+    {
+        auto left = rect.X;
+        auto right = rect.X + rect.Width;
+        auto top = rect.Y;
+        auto bottom = rect.Y + rect.Height;
+
+        return D2D1_RECT_F{left, top, right, bottom};
+    }
+
+    inline D2D1_ROUNDED_RECT ToD2DRoundedRect(const CanvasRoundedRectangle& roundedRect)
+    {
+        auto rect = ToD2DRect(roundedRect.Rect);
+        auto radiusX = roundedRect.RadiusX;
+        auto radiusY = roundedRect.RadiusY;
+
+        return D2D1_ROUNDED_RECT{rect, radiusX, radiusY};
+    }
+
+    inline const D2D1_ELLIPSE* ToD2DEllipse(const CanvasEllipse* ellipse)
+    {
+        static_assert(offsetof(D2D1_POINT_2F, x) == offsetof(ABI::Windows::Foundation::Point, X), "Point layout must match D2D1_POINT_2F layout");
+        static_assert(offsetof(D2D1_POINT_2F, y) == offsetof(ABI::Windows::Foundation::Point, Y), "Point layout must match D2D1_POINT_2F layout");
+        static_assert(offsetof(D2D1_ELLIPSE, point) == offsetof(CanvasEllipse, Point), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
+        static_assert(offsetof(D2D1_ELLIPSE, radiusX) == offsetof(CanvasEllipse, RadiusX), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
+        static_assert(offsetof(D2D1_ELLIPSE, radiusY) == offsetof(CanvasEllipse, RadiusY), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
+
+        return reinterpret_cast<const D2D1_ELLIPSE*>(ellipse);
+    }
+
+    inline ComPtr<ID2D1Brush> ToD2DBrush(ICanvasBrush* brush)
+    {
+        ComPtr<ICanvasBrushInternal> internal;
+        ThrowIfFailed(brush->QueryInterface(IID_PPV_ARGS(&internal)));
+        return internal->GetD2DBrush();
     }
 }

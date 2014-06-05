@@ -15,9 +15,9 @@ using namespace ABI::Windows::UI;
 
 namespace canvas
 {
-    class LayerParameters : public Microsoft::WRL::RuntimeClass<ILayerParameters>
+    class CanvasLayerParameters : public Microsoft::WRL::RuntimeClass<ICanvasLayerParameters>
     {
-        InspectableClass(L"Microsoft.DirectX.LayerParameters", BaseTrust);
+        InspectableClass(L"Microsoft.DirectX.CanvasLayerParameters", BaseTrust);
 
     public:
         IFACEMETHOD(get_ContentBounds)(_Out_ Rect* value) override

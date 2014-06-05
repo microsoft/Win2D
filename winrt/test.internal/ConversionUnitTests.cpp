@@ -22,9 +22,9 @@ TEST_CLASS(ConversionUnitTests)
         }
     }
 
-    TEST_METHOD(WindowsColorToD2DColor)
+    TEST_METHOD(ColorToD2DColor)
     {
-        using canvas::WindowsColorToD2DColor;
+        using canvas::ToD2DColor;
 
         //
         // Check the components are passed through as expected, above tests
@@ -36,10 +36,10 @@ TEST_CLASS(ConversionUnitTests)
         ABI::Windows::UI::Color green{  0,  0,255,  0};
         ABI::Windows::UI::Color blue {  0,  0,  0,255};
 
-        auto d2dAlpha = WindowsColorToD2DColor(alpha);
-        auto d2dRed   = WindowsColorToD2DColor(red);
-        auto d2dGreen = WindowsColorToD2DColor(green);
-        auto d2dBlue  = WindowsColorToD2DColor(blue);
+        auto d2dAlpha = ToD2DColor(alpha);
+        auto d2dRed   = ToD2DColor(red);
+        auto d2dGreen = ToD2DColor(green);
+        auto d2dBlue  = ToD2DColor(blue);
 
         Assert::AreEqual<float>(d2dAlpha.r, 0);
         Assert::AreEqual<float>(d2dAlpha.g, 0);
@@ -93,6 +93,29 @@ TEST_CLASS(ConversionUnitTests)
 
         Assert::ExpectException<InvalidArgException>(
             [&]() { ToRECT(Rect{0,2,mvf,mvf}); });
+    }
+
+    TEST_METHOD(RectToD2DRect)
+    {
+        using ABI::Windows::Foundation::Rect;
+
+        Assert::AreEqual(D2D_RECT_F{1,2,3,4}, ToD2DRect(Rect{1,2,2,2}));
+    }
+
+    TEST_METHOD(CanvasRoundedRectangleToD2DRoundedRect)
+    {
+        using ABI::Windows::Foundation::Rect;
+
+        Assert::AreEqual(
+            D2D1_ROUNDED_RECT{D2D_RECT_F{1,2,3,4},5,6},
+            ToD2DRoundedRect(CanvasRoundedRectangle{Rect{1,2,2,2},5,6}));
+    }
+
+    TEST_METHOD(CanvasEllipseToD2DEllipse)
+    {
+        Assert::AreEqual(
+            D2D1_ELLIPSE{D2D_POINT_2F{1,2},3,4},
+            *ToD2DEllipse(&CanvasEllipse{Point{1,2},3,4}));
     }
 };
 

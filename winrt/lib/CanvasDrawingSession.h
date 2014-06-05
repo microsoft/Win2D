@@ -39,6 +39,57 @@ namespace canvas
 
         // ICanvasDrawingSession
 
-        IFACEMETHOD(Clear)(ABI::Windows::UI::Color color) override;
+        IFACEMETHOD(Clear)(
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawLine)(
+            ABI::Windows::Foundation::Point point0,
+            ABI::Windows::Foundation::Point point1,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawLineWithStrokeWidth)(
+            ABI::Windows::Foundation::Point point0,
+            ABI::Windows::Foundation::Point point1,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawRectangle)(
+            ABI::Windows::Foundation::Rect rect,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawRectangleWithStrokeWidth)(
+            ABI::Windows::Foundation::Rect rect,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(FillRectangle)(
+            ABI::Windows::Foundation::Rect rect,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawRoundedRectangle)(
+            CanvasRoundedRectangle roundedRectangle,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawRoundedRectangleWithStrokeWidth)(
+            CanvasRoundedRectangle roundedRectangle,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(FillRoundedRectangle)(
+            CanvasRoundedRectangle roundedRectangle,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawEllipse)(
+            CanvasEllipse ellipse,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawEllipseWithStrokeWidth)(
+            CanvasEllipse ellipse,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(FillEllipse)(
+            CanvasEllipse ellipse,
+            ICanvasBrush* brush) override;
     };
 }

@@ -13,8 +13,108 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Clear([in] Windows.UI.Color color);
 
         //
-        // TODO: future work (eg #780, #784, #794 etc.) will add more methods to
-        // this interface.
+        // DrawLine
+        //
+        
+        [overload("DrawLine")]
+        HRESULT DrawLine(
+            [in] Windows.Foundation.Point point0,
+            [in] Windows.Foundation.Point point1,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawLine")]
+        HRESULT DrawLineWithStrokeWidth(
+            [in] Windows.Foundation.Point point0,
+            [in] Windows.Foundation.Point point1,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        //
+        // This shows how the pattern can be extended to support stroke styles
+        // (#1367).  This would be repeated for all the other DrawX() methods
+        // below.
+        //
+        // [overload("DrawLine")]
+        // HRESULT DrawLineWithStrokeStyle(
+        //     [in] Windows.Foundation.Point point0,
+        //     [in] Windows.Foundation.Point point1,
+        //     [in] ICanvasBrush* brush,
+        //     [in] float strokeWidth,
+        //     [in] ICanvasStrokeStyle* strokeStyle);
+        //
+
+        //
+        // DrawRectangle
+        //
+
+        [overload("DrawRectangle")]
+        HRESULT DrawRectangle(
+            [in] Windows.Foundation.Rect rect,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawRectangle")]
+        HRESULT DrawRectangleWithStrokeWidth(
+            [in] Windows.Foundation.Rect rect,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        //
+        // FillRectangle
+        //
+
+        HRESULT FillRectangle(
+            [in] Windows.Foundation.Rect rect,
+            [in] ICanvasBrush* brush);
+
+        //
+        // DrawRoundedRectangle
+        //
+
+        [overload("DrawRoundedRectangle")]
+        HRESULT DrawRoundedRectangle(
+            [in] CanvasRoundedRectangle roundedRectangle,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawRoundedRectangle")]
+        HRESULT DrawRoundedRectangleWithStrokeWidth(
+            [in] CanvasRoundedRectangle roundedRectangle,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        //
+        // FillRoundedRectangle
+        //
+
+        HRESULT FillRoundedRectangle(
+            [in] CanvasRoundedRectangle roundedRectangle,
+            [in] ICanvasBrush* brush);
+
+        //
+        // DrawEllipse
+        //
+
+        [overload("DrawEllipse")]
+        HRESULT DrawEllipse(
+            [in] CanvasEllipse ellipse,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawEllipse")]
+        HRESULT DrawEllipseWithStrokeWidth(
+            [in] CanvasEllipse ellipse,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        //
+        // FillEllipse
+        //
+
+        HRESULT FillEllipse(
+            [in] CanvasEllipse ellipse,
+            [in] ICanvasBrush* brush);
+
+        //
+        // TODO: future work (eg #784, #794, #1367 etc.) will add more methods
+        // to this interface.
         //
     };
 

@@ -94,7 +94,10 @@ namespace CodeGen
 
                 if(overrideData.ProjectedNameOverride != null)
                 {
-                    m_stylizedName = overrideData.ProjectedNameOverride;
+                    if (overrideData.ShouldProject)
+                        m_stylizedName = Formatter.Prefix + overrideData.ProjectedNameOverride;
+                    else
+                        m_stylizedName = overrideData.ProjectedNameOverride;
                 }
 
                 if(overrideData.IdlNamespaceQualifier != null)

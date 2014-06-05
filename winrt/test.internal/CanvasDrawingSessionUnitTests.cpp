@@ -85,17 +85,33 @@ public:
 
 TEST_CLASS(CanvasDrawingSessionUnitTests)
 {
+    ComPtr<MockD2DDeviceContext> m_deviceContext;
+    ComPtr<canvas::CanvasDrawingSession> m_canvasDrawingSession;
+    ComPtr<StubCanvasBrush> m_brush;
+
 public:
-    TEST_METHOD(CanvasDrawingSession_Clear)
+    TEST_METHOD_INITIALIZE(Init)
     {
         using canvas::CanvasDrawingSession;
 
+        m_deviceContext = Make<MockD2DDeviceContext>();
+        m_canvasDrawingSession = Make<CanvasDrawingSession>(
+            m_deviceContext.Get(),
+            std::make_shared<StubCanvasDrawingSessionAdapter>());
+
+        m_brush = Make<StubCanvasBrush>();
+    }
+
+    //
+    // Clear
+    //
+
+    TEST_METHOD(CanvasDrawingSession_Clear)
+    {
         ABI::Windows::UI::Color expectedColor{1,2,3,4};
 
-        auto mockDeviceContext = Make<MockD2DDeviceContext>();
-        
         bool clearCalled = false;
-        mockDeviceContext->MockClear =
+        m_deviceContext->MockClear =
             [&](const D2D1_COLOR_F* color)
             {
                 Assert::IsFalse(clearCalled);
@@ -106,14 +122,377 @@ public:
                 clearCalled = true;
             };
 
-        auto canvasDrawingSession = Make<CanvasDrawingSession>(
-            mockDeviceContext.Get(),
-            std::make_shared<StubCanvasDrawingSessionAdapter>());
-
-        ThrowIfFailed(canvasDrawingSession->Clear(expectedColor));
+        ThrowIfFailed(m_canvasDrawingSession->Clear(expectedColor));
         Assert::IsTrue(clearCalled);
     }
 
+    //
+    // DrawLine
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawLine_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawLine(Point{}, Point{}, nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawLine)
+    {
+        Point expectedP0{1.0f,2.0f};
+        Point expectedP1{3.0f,4.0f};
+        float expectedStrokeWidth = 1.0f;
+
+        bool drawLineCalled = false;
+        m_deviceContext->MockDrawLine = 
+            [&](D2D1_POINT_2F p0, D2D1_POINT_2F p1, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawLineCalled);
+                Assert::AreEqual(expectedP0.X, p0.x);
+                Assert::AreEqual(expectedP0.Y, p0.y);
+                Assert::AreEqual(expectedP1.X, p1.x);
+                Assert::AreEqual(expectedP1.Y, p1.y);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                Assert::IsNull(strokeStyle);
+                drawLineCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawLine(
+            expectedP0,
+            expectedP1,
+            m_brush.Get()));
+
+        Assert::IsTrue(drawLineCalled);
+    }
+
+    //
+    // DrawLineWithStrokeWidth
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawLineWithStrokeWidth_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawLineWithStrokeWidth(Point{}, Point{}, nullptr, 0.0f));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawLineWithStrokeWidth)
+    {
+        Point expectedP0{1.0f,2.0f};
+        Point expectedP1{3.0f,4.0f};
+        float expectedStrokeWidth = 5.0f;
+
+        bool drawLineCalled = false;
+        m_deviceContext->MockDrawLine = 
+            [&](D2D1_POINT_2F p0, D2D1_POINT_2F p1, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawLineCalled);
+                Assert::AreEqual(ToD2DPoint(expectedP0), p0);
+                Assert::AreEqual(ToD2DPoint(expectedP1), p1);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                Assert::IsNull(strokeStyle);
+                drawLineCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawLineWithStrokeWidth(
+            expectedP0,
+            expectedP1,
+            m_brush.Get(),
+            expectedStrokeWidth));
+
+        Assert::IsTrue(drawLineCalled);
+    }
+
+    //
+    // DrawRectangle
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawRectangle_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawRectangle(Rect{}, nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawRectangle)
+    {
+        Rect expectedRect{1,2,3,4};
+        float expectedStrokeWidth = 1.0f;
+
+        bool drawRectangleCalled = false;
+        m_deviceContext->MockDrawRectangle =
+            [&](const D2D_RECT_F* rect, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawRectangleCalled);
+                Assert::AreEqual(ToD2DRect(expectedRect), *rect);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                Assert::IsNull(strokeStyle);
+                drawRectangleCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawRectangle(
+            expectedRect,
+            m_brush.Get()));
+
+        Assert::IsTrue(drawRectangleCalled);
+    }
+
+    //
+    // DrawRectangleWithStrokeWidth
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithStrokeWidth_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawRectangleWithStrokeWidth(Rect{}, nullptr, 0.0f));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithStrokeWidth)
+    {
+        Rect expectedRect{1,2,3,4};
+        float expectedStrokeWidth = 5.0f;
+
+        bool drawRectangleCalled = false;
+        m_deviceContext->MockDrawRectangle =
+            [&](const D2D_RECT_F* rect, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawRectangleCalled);
+                Assert::AreEqual(ToD2DRect(expectedRect), *rect);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                Assert::IsNull(strokeStyle);
+                drawRectangleCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawRectangleWithStrokeWidth(
+            expectedRect,
+            m_brush.Get(),
+            expectedStrokeWidth));
+
+        Assert::IsTrue(drawRectangleCalled);
+    }
+
+    //
+    // FillRectangle
+    //
+
+    TEST_METHOD(CanvasDrawingSession_FillRectangle_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->FillRectangle(Rect{}, nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_FillRectangle)
+    {
+        Rect expectedRect{1,2,3,4};
+
+        bool fillRectangleCalled = false;
+        m_deviceContext->MockFillRectangle =
+            [&](const D2D1_RECT_F* rect, ID2D1Brush* brush)
+            {
+                Assert::IsFalse(fillRectangleCalled);
+                Assert::AreEqual(ToD2DRect(expectedRect), *rect);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                fillRectangleCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->FillRectangle(
+            expectedRect,
+            m_brush.Get()));
+
+        Assert::IsTrue(fillRectangleCalled);
+    }
+
+    //
+    // DrawRoundedRectangle
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangle_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawRoundedRectangle(CanvasRoundedRectangle{}, nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangle)
+    {
+        CanvasRoundedRectangle expectedRoundedRect{Rect{1,2,3,4},5,6};
+        float expectedStrokeWidth = 1.0f;
+
+        bool drawRoundedRectangleCalled = false;
+        m_deviceContext->MockDrawRoundedRectangle =
+            [&](const D2D1_ROUNDED_RECT* rect, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawRoundedRectangleCalled);
+                Assert::AreEqual(ToD2DRoundedRect(expectedRoundedRect), *rect);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                drawRoundedRectangleCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawRoundedRectangle(
+            expectedRoundedRect,
+            m_brush.Get()));
+
+        Assert::IsTrue(drawRoundedRectangleCalled);
+    }
+
+    //
+    // DrawRoundedRectangleWithStrokeWidth
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithStrokeWidth_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawRoundedRectangleWithStrokeWidth(CanvasRoundedRectangle{}, nullptr, 1.0f));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithStrokeWidth)
+    {
+        CanvasRoundedRectangle expectedRoundedRect{Rect{1,2,3,4},5,6};
+        float expectedStrokeWidth = 5.0f;
+
+        bool drawRoundedRectangleCalled = false;
+        m_deviceContext->MockDrawRoundedRectangle =
+            [&](const D2D1_ROUNDED_RECT* rect, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawRoundedRectangleCalled);
+                Assert::AreEqual(ToD2DRoundedRect(expectedRoundedRect), *rect);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                drawRoundedRectangleCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawRoundedRectangleWithStrokeWidth(
+            expectedRoundedRect,
+            m_brush.Get(),
+            expectedStrokeWidth));
+
+        Assert::IsTrue(drawRoundedRectangleCalled);
+    }
+
+    //
+    // FillRoundedRectangle
+    //
+
+    TEST_METHOD(CanvasDrawingSession_FillRoundedRectangle_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->FillRoundedRectangle(CanvasRoundedRectangle{}, nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_FillRoundedRectangle)
+    {
+        CanvasRoundedRectangle expectedRoundedRect{Rect{1,2,3,4},5,6};
+
+        bool fillRoundedRectangleCalled = false;
+        m_deviceContext->MockFillRoundedRectangle =
+            [&](const D2D1_ROUNDED_RECT* rect, ID2D1Brush* brush)
+            {
+                Assert::IsFalse(fillRoundedRectangleCalled);
+                Assert::AreEqual(ToD2DRoundedRect(expectedRoundedRect), *rect);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                fillRoundedRectangleCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->FillRoundedRectangle(
+            expectedRoundedRect,
+            m_brush.Get()));
+
+        Assert::IsTrue(fillRoundedRectangleCalled);
+    }
+
+    //
+    // DrawEllipse
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawEllipse_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawEllipse(CanvasEllipse{}, nullptr));
+    }
+    
+    TEST_METHOD(CanvasDrawingSession_DrawEllipse)
+    {
+        CanvasEllipse expectedEllipse{Point{1,2},3,4};
+        float expectedStrokeWidth = 1.0f;
+
+        bool drawEllipseCalled = false;
+        m_deviceContext->MockDrawEllipse =
+            [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawEllipseCalled);
+                Assert::AreEqual(*ToD2DEllipse(&expectedEllipse), *ellipse);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                Assert::IsNull(strokeStyle);
+                drawEllipseCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawEllipse(
+            expectedEllipse,
+            m_brush.Get()));
+
+        Assert::IsTrue(drawEllipseCalled);
+    }
+
+    //
+    // DrawEllipseWithStrokeWidth
+    //
+
+    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithStrokeWidth_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->DrawEllipseWithStrokeWidth(CanvasEllipse{}, nullptr, 1.0f));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithStrokeWidth)
+    {
+        CanvasEllipse expectedEllipse{Point{1,2},3,4};
+        float expectedStrokeWidth = 5.0f;
+
+        bool drawEllipseCalled = false;
+        m_deviceContext->MockDrawEllipse =
+            [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawEllipseCalled);
+                Assert::AreEqual(*ToD2DEllipse(&expectedEllipse), *ellipse);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                Assert::IsNull(strokeStyle);
+                drawEllipseCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->DrawEllipseWithStrokeWidth(
+            expectedEllipse,
+            m_brush.Get(),
+            expectedStrokeWidth));
+
+        Assert::IsTrue(drawEllipseCalled);
+    }
+
+    //
+    // FillEllipse
+    //
+
+    TEST_METHOD(CanvasDrawingSession_FillEllipse_NullBrush)
+    {
+        Assert::AreEqual(E_INVALIDARG, m_canvasDrawingSession->FillEllipse(CanvasEllipse{}, nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_FillEllipse)
+    {
+        CanvasEllipse expectedEllipse{Point{1,2},3,4};
+
+        bool fillEllipseCalled = false;
+        m_deviceContext->MockFillEllipse =
+            [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush)
+            {
+                Assert::IsFalse(fillEllipseCalled);
+                Assert::AreEqual(*ToD2DEllipse(&expectedEllipse), *ellipse);
+                Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
+                fillEllipseCalled = true;
+            };
+
+        ThrowIfFailed(m_canvasDrawingSession->FillEllipse(
+            expectedEllipse,
+            m_brush.Get()));
+
+        Assert::IsTrue(fillEllipseCalled);
+    }
+};
+
+TEST_CLASS(CanvasDrawingSession_CloseTests)
+{
     TEST_METHOD(CanvasDrawingSession_Close_ReleasesDeviceContextAndOtherMethodsFail)
     {
         using canvas::CanvasDrawingSession;
@@ -165,9 +544,23 @@ public:
         //
         // Calling any other method will return RO_E_CLOSED
         //
+        using namespace ABI::Windows::UI;
+        using namespace ABI::Windows::Foundation;
+
 #define EXPECT_OBJECT_CLOSED(CODE) Assert::AreEqual(RO_E_CLOSED, CODE)
 
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->Clear(ABI::Windows::UI::Color{0,0,0,0}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->Clear(Color{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawLine(Point{}, Point{}, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawLineWithStrokeWidth(Point{}, Point{}, nullptr, 0.0f));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawRectangle(Rect{}, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawRectangleWithStrokeWidth(Rect{}, nullptr, 0.0f));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->FillRectangle(Rect{}, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawRoundedRectangle(CanvasRoundedRectangle{}, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawRoundedRectangleWithStrokeWidth(CanvasRoundedRectangle{}, nullptr, 0.0f));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->FillRoundedRectangle(CanvasRoundedRectangle{}, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawEllipse(CanvasEllipse{}, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawEllipseWithStrokeWidth(CanvasEllipse{}, nullptr, 0.0f));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->FillEllipse(CanvasEllipse{}, nullptr));
 
 #undef EXPECT_OBJECT_CLOSED
     }

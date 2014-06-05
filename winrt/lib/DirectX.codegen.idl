@@ -618,12 +618,12 @@ namespace Microsoft.Graphics.Canvas
     } CanvasQuadraticBezierSegment;
 
     [version(VERSION)]
-    typedef struct RoundedRectangle
+    typedef struct CanvasRoundedRectangle
     {
         Windows.Foundation.Rect Rect;
         FLOAT RadiusX;
         FLOAT RadiusY;
-    } RoundedRectangle;
+    } CanvasRoundedRectangle;
 
     [version(VERSION)]
     typedef struct CanvasLinearGradientBrushProperties
@@ -641,11 +641,11 @@ namespace Microsoft.Graphics.Canvas
         FLOAT RadiusY;
     } CanvasRadialGradientBrushProperties;
 
-    interface ILayerParameters;
-    runtimeclass LayerParameters;
+    interface ICanvasLayerParameters;
+    runtimeclass CanvasLayerParameters;
 
-    [uuid(4a837512-5ca1-46eb-96d1-fcc634796341), version(VERSION), exclusiveto(LayerParameters)]
-    interface ILayerParameters : IInspectable
+    [uuid(4a837512-5ca1-46eb-96d1-fcc634796341), version(VERSION), exclusiveto(CanvasLayerParameters)]
+    interface ICanvasLayerParameters : IInspectable
     {
         [propget] HRESULT ContentBounds([out, retval] Windows.Foundation.Rect* value);
         [propput] HRESULT ContentBounds([in] Windows.Foundation.Rect value);
@@ -670,13 +670,13 @@ namespace Microsoft.Graphics.Canvas
     }
 
     [version(VERSION), activatable(VERSION)]
-    runtimeclass LayerParameters
+    runtimeclass CanvasLayerParameters
     {
-        [default] interface ILayerParameters;
+        [default] interface ICanvasLayerParameters;
     }
 
     [version(VERSION)]
-    typedef struct StrokeStyleProperties
+    typedef struct CanvasStrokeStyleProperties
     {
         CanvasCapStyle StartCap;
         CanvasCapStyle EndCap;
@@ -686,6 +686,6 @@ namespace Microsoft.Graphics.Canvas
         CanvasDashStyle DashStyle;
         FLOAT DashOffset;
         CanvasStrokeTransformType TransformType;
-    } StrokeStyleProperties;
+    } CanvasStrokeStyleProperties;
 
 }

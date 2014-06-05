@@ -11,6 +11,13 @@ namespace canvas
     public:
         std::function<void(const D2D1_COLOR_F*)> MockClear;
         std::function<void(const D2D1_MATRIX_3X2_F*)> MockSetTransform;
+        std::function<void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawLine;
+        std::function<void(const D2D1_RECT_F*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawRectangle;
+        std::function<void(const D2D1_RECT_F*,ID2D1Brush*)> MockFillRectangle;
+        std::function<void(const D2D1_ROUNDED_RECT*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawRoundedRectangle;
+        std::function<void(const D2D1_ROUNDED_RECT*,ID2D1Brush*)> MockFillRoundedRectangle;
+        std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawEllipse;
+        std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*)> MockFillEllipse;
 
         // ID2D1Resource
 
@@ -87,39 +94,81 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP_(void) DrawLine(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush *,FLOAT,ID2D1StrokeStyle *) override
+        IFACEMETHODIMP_(void) DrawLine(D2D1_POINT_2F p0, D2D1_POINT_2F p1, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle) override
         {
-            Assert::Fail(L"Unexpected call to DrawLine");
+            if (!MockDrawLine)
+            {
+                Assert::Fail(L"Unexpected call to DrawLine");
+                return;
+            }
+
+            MockDrawLine(p0, p1, brush, strokeWidth, strokeStyle);
         }
 
-        IFACEMETHODIMP_(void) DrawRectangle(const D2D1_RECT_F *,ID2D1Brush *,FLOAT,ID2D1StrokeStyle *) override
+        IFACEMETHODIMP_(void) DrawRectangle(const D2D1_RECT_F* rect, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle) override
         {
-            Assert::Fail(L"Unexpected call to DrawRectangle");
+            if (!MockDrawRectangle)
+            {
+                Assert::Fail(L"Unexpected call to DrawRectangle");
+                return;
+            }
+
+            MockDrawRectangle(rect, brush, strokeWidth, strokeStyle);
         }
 
-        IFACEMETHODIMP_(void) FillRectangle(const D2D1_RECT_F *,ID2D1Brush *) override
+        IFACEMETHODIMP_(void) FillRectangle(const D2D1_RECT_F* rect, ID2D1Brush* brush) override
         {
-            Assert::Fail(L"Unexpected call to FillRectangle");
+            if (!MockFillRectangle)
+            {
+                Assert::Fail(L"Unexpected call to FillRectangle");
+                return;
+            }
+
+            MockFillRectangle(rect, brush);
         }
 
-        IFACEMETHODIMP_(void) DrawRoundedRectangle(const D2D1_ROUNDED_RECT *,ID2D1Brush *,FLOAT,ID2D1StrokeStyle *) override
+        IFACEMETHODIMP_(void) DrawRoundedRectangle(const D2D1_ROUNDED_RECT* roundedRect, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle) override
         {
-            Assert::Fail(L"Unexpected call to DrawRoundedRectangle");
+            if (!MockDrawRoundedRectangle)
+            {
+                Assert::Fail(L"Unexpected call to DrawRoundedRectangle");
+                return;
+            }
+
+            MockDrawRoundedRectangle(roundedRect, brush, strokeWidth, strokeStyle);
         }
 
-        IFACEMETHODIMP_(void) FillRoundedRectangle(const D2D1_ROUNDED_RECT *,ID2D1Brush *) override
+        IFACEMETHODIMP_(void) FillRoundedRectangle(const D2D1_ROUNDED_RECT* roundedRect, ID2D1Brush* brush) override
         {
-            Assert::Fail(L"Unexpected call to FillRoundedRectangle");
+            if (!MockFillRoundedRectangle)
+            {
+                Assert::Fail(L"Unexpected call to FillRoundedRectangle");
+                return;
+            }
+
+            MockFillRoundedRectangle(roundedRect, brush);
         }
 
-        IFACEMETHODIMP_(void) DrawEllipse(const D2D1_ELLIPSE *,ID2D1Brush *,FLOAT,ID2D1StrokeStyle *) override
+        IFACEMETHODIMP_(void) DrawEllipse(const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle) override
         {
-            Assert::Fail(L"Unexpected call to DrawEllipse");
+            if (!MockDrawEllipse)
+            {
+                Assert::Fail(L"Unexpected call to DrawEllipse");
+                return;
+            }
+
+            MockDrawEllipse(ellipse, brush, strokeWidth, strokeStyle);
         }
 
-        IFACEMETHODIMP_(void) FillEllipse(const D2D1_ELLIPSE *,ID2D1Brush *) override
+        IFACEMETHODIMP_(void) FillEllipse(const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush) override
         {
-            Assert::Fail(L"Unexpected call to FillEllipse");
+            if (!MockFillEllipse)
+            {
+                Assert::Fail(L"Unexpected call to FillEllipse");
+                return;
+            }
+
+            MockFillEllipse(ellipse, brush);
         }
 
         IFACEMETHODIMP_(void) DrawGeometry(ID2D1Geometry *,ID2D1Brush *,FLOAT,ID2D1StrokeStyle *) override
