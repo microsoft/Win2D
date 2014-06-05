@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>winrt_test</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <PrecompiledHeader>Use</PrecompiledHeader>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\Inc;..\lib;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UseFullPaths>true</UseFullPaths>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;windowscodecs.lib;dwrite.lib;kernel32.lib;runtimeobject.lib;rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\winrt.lib.Windows.vcxproj">
+      <Project>{8e9fef0d-edb6-4c76-9383-a070314e5ff4}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="MockCanvasDevice.h" />
+    <ClInclude Include="MockCanvasDrawingSession.h" />
+    <ClInclude Include="MockCanvasImageSourceDrawingSessionFactory.h" />
+    <ClInclude Include="MockD2DDevice.h" />
+    <ClInclude Include="MockSurfaceImageSource.h" />
+    <ClInclude Include="MockSurfaceImageSourceFactory.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StubCanvasDevice.h" />
+    <ClInclude Include="StubSurfaceImageSource.h" />
+    <ClInclude Include="StubSurfaceImageSourceFactory.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="CanvasDrawingSessionUnitTests.cpp" />
+    <ClCompile Include="CanvasImageSourceUnitTests.cpp" />
+    <ClCompile Include="ConversionUnitTests.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -11,6 +11,7 @@
   <PropertyGroup>
     <DeviceType Condition="'$(ApplicationType)' == 'Windows Store'">Windows</DeviceType>
     <DeviceType Condition="'$(ApplicationType)' == 'Windows Phone'">Phone</DeviceType>
+    <DeviceType Condition="'$(ApplicationType)' == ''">Windows</DeviceType>
   </PropertyGroup>
 
   <PropertyGroup>

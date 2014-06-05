@@ -43,7 +43,7 @@ public:
         bool mockCreateInstanceCalled = false;
         IInspectable* actualOuter;
         mockSurfaceImageSourceFactory->MockCreateInstanceWithDimensionsAndOpacity =
-            [&](int32 actualWidth, int32 actualHeight, bool isOpaque, IInspectable* outer)
+            [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
         {
             Assert::IsFalse(mockCreateInstanceCalled);
             Assert::AreEqual(expectedWidth, actualWidth);
