@@ -30,11 +30,11 @@ namespace Windows
             float2(float x, float y);
             explicit float2(float value);
 
+            // Conversion operators.
 #ifdef __cplusplus_winrt
             float2(Windows::Foundation::Point const& value);
             float2(Windows::Foundation::Size const& value);
 
-            // Conversion operators.
             operator Windows::Foundation::Point() const;
             operator Windows::Foundation::Size() const;
 #endif
@@ -44,20 +44,9 @@ namespace Windows
             static float2 one();
             static float2 unit_x();
             static float2 unit_y();
-
-            // Operator overloads.
-            float2 operator -() const;
-            float2& operator +=(float2 const& value);
-            float2& operator -=(float2 const& value);
-            float2& operator *=(float2 const& value);
-            float2& operator *=(float value);
-            float2& operator /=(float2 const& value);
-            float2& operator /=(float value);
-            bool operator ==(float2 const& value) const;
-            bool operator !=(float2 const& value) const;
         };
 
-        // Binary operators.
+        // Operators.
         float2 operator +(float2 const& value1, float2 const& value2);
         float2 operator -(float2 const& value1, float2 const& value2);
         float2 operator *(float2 const& value1, float2 const& value2);
@@ -65,6 +54,15 @@ namespace Windows
         float2 operator *(float value1, float2 const& value2);
         float2 operator /(float2 const& value1, float2 const& value2);
         float2 operator /(float2 const& value1, float value2);
+        float2 operator -(float2 const& value);
+        float2& operator +=(float2& value1, float2 const& value2);
+        float2& operator -=(float2& value1, float2 const& value2);
+        float2& operator *=(float2& value1, float2 const& value2);
+        float2& operator *=(float2& value1, float value2);
+        float2& operator /=(float2& value1, float2 const& value2);
+        float2& operator /=(float2& value1, float value2);
+        bool operator ==(float2 const& value1, float2 const& value2);
+        bool operator !=(float2 const& value1, float2 const& value2);
 
         // Functions.
         float length(float2 const& value);
@@ -101,20 +99,9 @@ namespace Windows
             static float3 unit_x();
             static float3 unit_y();
             static float3 unit_z();
-
-            // Operator overloads.
-            float3 operator -() const;
-            float3& operator +=(float3 const& value);
-            float3& operator -=(float3 const& value);
-            float3& operator *=(float3 const& value);
-            float3& operator *=(float value);
-            float3& operator /=(float3 const& value);
-            float3& operator /=(float value);
-            bool operator ==(float3 const& value) const;
-            bool operator !=(float3 const& value) const;
         };
 
-        // Binary operators.
+        // Operators.
         float3 operator +(float3 const& value1, float3 const& value2);
         float3 operator -(float3 const& value1, float3 const& value2);
         float3 operator *(float3 const& value1, float3 const& value2);
@@ -122,6 +109,15 @@ namespace Windows
         float3 operator *(float value1, float3 const& value2);
         float3 operator /(float3 const& value1, float3 const& value2);
         float3 operator /(float3 const& value1, float value2);
+        float3 operator -(float3 const& value);
+        float3& operator +=(float3& value1, float3 const& value2);
+        float3& operator -=(float3& value1, float3 const& value2);
+        float3& operator *=(float3& value1, float3 const& value2);
+        float3& operator *=(float3& value1, float value2);
+        float3& operator /=(float3& value1, float3 const& value2);
+        float3& operator /=(float3& value1, float value2);
+        bool operator ==(float3 const& value1, float3 const& value2);
+        bool operator !=(float3 const& value1, float3 const& value2);
 
         // Functions.
         float length(float3 const& value);
@@ -159,20 +155,9 @@ namespace Windows
             static float4 unit_y();
             static float4 unit_z();
             static float4 unit_w();
-
-            // Operator overloads.
-            float4 operator -() const;
-            float4& operator +=(float4 const& value);
-            float4& operator -=(float4 const& value);
-            float4& operator *=(float4 const& value);
-            float4& operator *=(float value);
-            float4& operator /=(float4 const& value);
-            float4& operator /=(float value);
-            bool operator ==(float4 const& value) const;
-            bool operator !=(float4 const& value) const;
         };
 
-        // Binary operators.
+        // Operators.
         float4 operator +(float4 const& value1, float4 const& value2);
         float4 operator -(float4 const& value1, float4 const& value2);
         float4 operator *(float4 const& value1, float4 const& value2);
@@ -180,6 +165,15 @@ namespace Windows
         float4 operator *(float value1, float4 const& value2);
         float4 operator /(float4 const& value1, float4 const& value2);
         float4 operator /(float4 const& value1, float value2);
+        float4 operator -(float4 const& value);
+        float4& operator +=(float4& value1, float4 const& value2);
+        float4& operator -=(float4& value1, float4 const& value2);
+        float4& operator *=(float4& value1, float4 const& value2);
+        float4& operator *=(float4& value1, float value2);
+        float4& operator /=(float4& value1, float4 const& value2);
+        float4& operator /=(float4& value1, float value2);
+        bool operator ==(float4 const& value1, float4 const& value2);
+        bool operator !=(float4 const& value1, float4 const& value2);
 
         // Functions.
         float length(float4 const& value);
@@ -226,22 +220,20 @@ namespace Windows
             static float3x2 skew(float radiansX, float radiansY, float2 const& centerPoint);
             static float3x2 rotation(float radians);
             static float3x2 rotation(float radians, float2 const& centerPoint);
-
-            // Operator overloads.
-            float3x2 operator -() const;
-            float3x2& operator +=(float3x2 const& value);
-            float3x2& operator -=(float3x2 const& value);
-            float3x2& operator *=(float3x2 const& value);
-            float3x2& operator *=(float value);
-            bool operator ==(float3x2 const& value) const;
-            bool operator !=(float3x2 const& value) const;
         };
 
-        // Binary operators.
+        // Operators.
         float3x2 operator +(float3x2 const& value1, float3x2 const& value2);
         float3x2 operator -(float3x2 const& value1, float3x2 const& value2);
         float3x2 operator *(float3x2 const& value1, float3x2 const& value2);
         float3x2 operator *(float3x2 const& value1, float value2);
+        float3x2 operator -(float3x2 const& value);
+        float3x2& operator +=(float3x2& value1, float3x2 const& value2);
+        float3x2& operator -=(float3x2& value1, float3x2 const& value2);
+        float3x2& operator *=(float3x2& value1, float3x2 const& value2);
+        float3x2& operator *=(float3x2& value1, float value2);
+        bool operator ==(float3x2 const& value1, float3x2 const& value2);
+        bool operator !=(float3x2 const& value1, float3x2 const& value2);
 
         // Functions.
         bool is_identity(float3x2 const& value);
@@ -295,22 +287,20 @@ namespace Windows
             static float4x4 from_yaw_pitch_roll(float yaw, float pitch, float roll);
             static float4x4 shadow(float3 const& lightDirection, plane const& plane);
             static float4x4 reflection(plane const& value);
-
-            // Operator overloads.
-            float4x4 operator -() const;
-            float4x4& operator +=(float4x4 const& value);
-            float4x4& operator -=(float4x4 const& value);
-            float4x4& operator *=(float4x4 const& value);
-            float4x4& operator *=(float value);
-            bool operator ==(float4x4 const& value) const;
-            bool operator !=(float4x4 const& value) const;
         };
 
-        // Binary operators.
+        // Operators.
         float4x4 operator +(float4x4 const& value1, float4x4 const& value2);
         float4x4 operator -(float4x4 const& value1, float4x4 const& value2);
         float4x4 operator *(float4x4 const& value1, float4x4 const& value2);
         float4x4 operator *(float4x4 const& value1, float value2);
+        float4x4 operator -(float4x4 const& value);
+        float4x4& operator +=(float4x4& value1, float4x4 const& value2);
+        float4x4& operator -=(float4x4& value1, float4x4 const& value2);
+        float4x4& operator *=(float4x4& value1, float4x4 const& value2);
+        float4x4& operator *=(float4x4& value1, float value2);
+        bool operator ==(float4x4 const& value1, float4x4 const& value2);
+        bool operator !=(float4x4 const& value1, float4x4 const& value2);
 
         // Functions.
         bool is_identity(float4x4 const& value);
@@ -336,11 +326,11 @@ namespace Windows
 
             // Factory functions.
             static plane from_vertices(float3 const& point1, float3 const& point2, float3 const& point3);
-
-            // Operator overloads.
-            bool operator ==(plane const& value) const;
-            bool operator !=(plane const& value) const;
         };
+
+        // Operators.
+        bool operator ==(plane const& value1, plane const& value2);
+        bool operator !=(plane const& value1, plane const& value2);
 
         // Functions.
         plane normalize(plane const& value);
@@ -367,24 +357,22 @@ namespace Windows
             static quaternion from_axis_angle(float3 const& axis, float angle);
             static quaternion from_yaw_pitch_roll(float yaw, float pitch, float roll);
             static quaternion from_rotation_matrix(float4x4 const& matrix);
-
-            // Operator overloads.
-            quaternion operator -() const;
-            quaternion& operator +=(quaternion const& value);
-            quaternion& operator -=(quaternion const& value);
-            quaternion& operator *=(quaternion const& value);
-            quaternion& operator *=(float value);
-            quaternion& operator /=(quaternion const& value);
-            bool operator ==(quaternion const& value) const;
-            bool operator !=(quaternion const& value) const;
         };
 
-        // Binary operators.
+        // Operators.
         quaternion operator +(quaternion const& value1, quaternion const& value2);
         quaternion operator -(quaternion const& value1, quaternion const& value2);
         quaternion operator *(quaternion const& value1, quaternion const& value2);
         quaternion operator *(quaternion const& value1, float value2);
         quaternion operator /(quaternion const& value1, quaternion const& value2);
+        quaternion operator -(quaternion const& value);
+        quaternion& operator +=(quaternion& value1, quaternion const& value2);
+        quaternion& operator -=(quaternion& value1, quaternion const& value2);
+        quaternion& operator *=(quaternion& value1, quaternion const& value2);
+        quaternion& operator *=(quaternion& value1, float value2);
+        quaternion& operator /=(quaternion& value1, quaternion const& value2);
+        bool operator ==(quaternion const& value1, quaternion const& value2);
+        bool operator !=(quaternion const& value1, quaternion const& value2);
 
         // Functions.
         bool is_identity(quaternion const& value);

@@ -172,6 +172,158 @@ namespace Windows
         }
 
 
+        inline float2 operator +(float2 const& value1, float2 const& value2)
+        {
+            float2 ans;
+
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
+
+            return ans;
+        }
+
+
+        inline float2 operator -(float2 const& value1, float2 const& value2)
+        {
+            float2 ans;
+
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
+
+            return ans;
+        }
+
+
+        inline float2 operator *(float2 const& value1, float2 const& value2)
+        {
+            float2 ans;
+
+            ans.x = value1.x * value2.x;
+            ans.y = value1.y * value2.y;
+
+            return ans;
+        }
+
+
+        inline float2 operator *(float2 const& value1, float value2)
+        {
+            float2 ans;
+
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
+
+            return ans;
+        }
+
+
+        inline float2 operator *(float value1, float2 const& value2)
+        {
+            float2 ans;
+
+            ans.x = value1 * value2.x;
+            ans.y = value1 * value2.y;
+
+            return ans;
+        }
+
+
+        inline float2 operator /(float2 const& value1, float2 const& value2)
+        {
+            float2 ans;
+
+            ans.x = value1.x / value2.x;
+            ans.y = value1.y / value2.y;
+
+            return ans;
+        }
+
+
+        inline float2 operator /(float2 const& value1, float value2)
+        {
+            float2 ans;
+
+            float invDiv = 1.0f / value2;
+
+            ans.x = value1.x * invDiv;
+            ans.y = value1.y * invDiv;
+
+            return ans;
+        }
+
+
+        inline float2 operator -(float2 const& value)
+        {
+            float2 ans;
+
+            ans.x = -value.x;
+            ans.y = -value.y;
+
+            return ans;
+        }
+
+
+        inline float2& operator +=(float2& value1, float2 const& value2)
+        {
+            value1 = value1 + value2;
+
+            return value1;
+        }
+
+
+        inline float2& operator -=(float2& value1, float2 const& value2)
+        {
+            value1 = value1 - value2;
+
+            return value1;
+        }
+
+
+        inline float2& operator *=(float2& value1, float2 const& value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float2& operator *=(float2& value1, float value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float2& operator /=(float2& value1, float2 const& value2)
+        {
+            value1 = value1 / value2;
+
+            return value1;
+        }
+
+
+        inline float2& operator /=(float2& value1, float value2)
+        {
+            value1 = value1 / value2;
+
+            return value1;
+        }
+
+
+        inline bool operator ==(float2 const& value1, float2 const& value2)
+        {
+            return value1.x == value2.x &&
+                   value1.y == value2.y;
+        }
+
+
+        inline bool operator !=(float2 const& value1, float2 const& value2)
+        {
+            return value1.x != value2.x ||
+                   value1.y != value2.y;
+        }
+
+
         inline float length(float2 const& value)
         {
             float ls = value.x * value.x + value.y * value.y;
@@ -357,158 +509,6 @@ namespace Windows
         }
 
 
-        inline float2 float2::operator -() const
-        {
-            float2 ans;
-
-            ans.x = -x;
-            ans.y = -y;
-
-            return ans;
-        }
-
-
-        inline float2& float2::operator +=(float2 const& value)
-        {
-            *this = *this + value;
-
-            return *this;
-        }
-
-
-        inline float2& float2::operator -=(float2 const& value)
-        {
-            *this = *this - value;
-
-            return *this;
-        }
-
-
-        inline float2& float2::operator *=(float2 const& value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float2& float2::operator *=(float value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float2& float2::operator /=(float2 const& value)
-        {
-            *this = *this / value;
-
-            return *this;
-        }
-
-
-        inline float2& float2::operator /=(float value)
-        {
-            *this = *this / value;
-
-            return *this;
-        }
-
-
-        inline bool float2::operator ==(float2 const& value) const
-        {
-            return x == value.x &&
-                   y == value.y;
-        }
-
-
-        inline bool float2::operator !=(float2 const& value) const
-        {
-            return x != value.x ||
-                   y != value.y;
-        }
-
-
-        inline float2 operator +(float2 const& value1, float2 const& value2)
-        {
-            float2 ans;
-
-            ans.x = value1.x + value2.x;
-            ans.y = value1.y + value2.y;
-
-            return ans;
-        }
-
-
-        inline float2 operator -(float2 const& value1, float2 const& value2)
-        {
-            float2 ans;
-
-            ans.x = value1.x - value2.x;
-            ans.y = value1.y - value2.y;
-
-            return ans;
-        }
-
-
-        inline float2 operator *(float2 const& value1, float2 const& value2)
-        {
-            float2 ans;
-
-            ans.x = value1.x * value2.x;
-            ans.y = value1.y * value2.y;
-
-            return ans;
-        }
-
-
-        inline float2 operator *(float2 const& value1, float value2)
-        {
-            float2 ans;
-
-            ans.x = value1.x * value2;
-            ans.y = value1.y * value2;
-
-            return ans;
-        }
-
-
-        inline float2 operator *(float value1, float2 const& value2)
-        {
-            float2 ans;
-
-            ans.x = value1 * value2.x;
-            ans.y = value1 * value2.y;
-
-            return ans;
-        }
-
-
-        inline float2 operator /(float2 const& value1, float2 const& value2)
-        {
-            float2 ans;
-
-            ans.x = value1.x / value2.x;
-            ans.y = value1.y / value2.y;
-
-            return ans;
-        }
-
-
-        inline float2 operator /(float2 const& value1, float value2)
-        {
-            float2 ans;
-
-            float invDiv = 1.0f / value2;
-
-            ans.x = value1.x * invDiv;
-            ans.y = value1.y * invDiv;
-
-            return ans;
-        }
-
-
         inline float3::float3(float x, float y, float z)
             : x(x), y(y), z(z)
         { }
@@ -551,6 +551,168 @@ namespace Windows
         inline float3 float3::unit_z()
         {
             return float3(0, 0, 1);
+        }
+
+
+        inline float3 operator +(float3 const& value1, float3 const& value2)
+        {
+            float3 ans;
+
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
+            ans.z = value1.z + value2.z;
+
+            return ans;
+        }
+
+
+        inline float3 operator -(float3 const& value1, float3 const& value2)
+        {
+            float3 ans;
+
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
+            ans.z = value1.z - value2.z;
+
+            return ans;
+        }
+
+
+        inline float3 operator *(float3 const& value1, float3 const& value2)
+        {
+            float3 ans;
+
+            ans.x = value1.x * value2.x;
+            ans.y = value1.y * value2.y;
+            ans.z = value1.z * value2.z;
+
+            return ans;
+        }
+
+
+        inline float3 operator *(float3 const& value1, float value2)
+        {
+            float3 ans;
+
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
+            ans.z = value1.z * value2;
+
+            return ans;
+        }
+
+
+        inline float3 operator *(float value1, float3 const& value2)
+        {
+            float3 ans;
+
+            ans.x = value1 * value2.x;
+            ans.y = value1 * value2.y;
+            ans.z = value1 * value2.z;
+
+            return ans;
+        }
+
+
+        inline float3 operator /(float3 const& value1, float3 const& value2)
+        {
+            float3 ans;
+
+            ans.x = value1.x / value2.x;
+            ans.y = value1.y / value2.y;
+            ans.z = value1.z / value2.z;
+
+            return ans;
+        }
+
+
+        inline float3 operator /(float3 const& value1, float value2)
+        {
+            float3 ans;
+
+            float invDiv = 1.0f / value2;
+
+            ans.x = value1.x * invDiv;
+            ans.y = value1.y * invDiv;
+            ans.z = value1.z * invDiv;
+
+            return ans;
+        }
+
+
+        inline float3 operator -(float3 const& value)
+        {
+            float3 ans;
+
+            ans.x = -value.x;
+            ans.y = -value.y;
+            ans.z = -value.z;
+
+            return ans;
+        }
+
+
+        inline float3& operator +=(float3& value1, float3 const& value2)
+        {
+            value1 = value1 + value2;
+
+            return value1;
+        }
+
+
+        inline float3& operator -=(float3& value1, float3 const& value2)
+        {
+            value1 = value1 - value2;
+
+            return value1;
+        }
+
+
+        inline float3& operator *=(float3& value1, float3 const& value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float3& operator *=(float3& value1, float value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float3& operator /=(float3& value1, float3 const& value2)
+        {
+            value1 = value1 / value2;
+
+            return value1;
+        }
+
+
+        inline float3& operator /=(float3& value1, float value2)
+        {
+            value1 = value1 / value2;
+
+            return value1;
+        }
+
+
+        inline bool operator ==(float3 const& value1, float3 const& value2)
+        {
+            return value1.x == value2.x &&
+                   value1.y == value2.y &&
+                   value1.z == value2.z;
+        }
+
+
+        inline bool operator !=(float3 const& value1, float3 const& value2)
+        {
+            return value1.x != value2.x ||
+                   value1.y != value2.y ||
+                   value1.z != value2.z;
         }
 
 
@@ -749,168 +911,6 @@ namespace Windows
         }
 
 
-        inline float3 float3::operator -() const
-        {
-            float3 ans;
-
-            ans.x = -x;
-            ans.y = -y;
-            ans.z = -z;
-
-            return ans;
-        }
-
-
-        inline float3& float3::operator +=(float3 const& value)
-        {
-            *this = *this + value;
-
-            return *this;
-        }
-
-
-        inline float3& float3::operator -=(float3 const& value)
-        {
-            *this = *this - value;
-
-            return *this;
-        }
-
-
-        inline float3& float3::operator *=(float3 const& value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float3& float3::operator *=(float value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float3& float3::operator /=(float3 const& value)
-        {
-            *this = *this / value;
-
-            return *this;
-        }
-
-
-        inline float3& float3::operator /=(float value)
-        {
-            *this = *this / value;
-
-            return *this;
-        }
-
-
-        inline bool float3::operator ==(float3 const& value) const
-        {
-            return x == value.x &&
-                   y == value.y &&
-                   z == value.z;
-        }
-
-
-        inline bool float3::operator !=(float3 const& value) const
-        {
-            return x != value.x ||
-                   y != value.y ||
-                   z != value.z;
-        }
-
-
-        inline float3 operator +(float3 const& value1, float3 const& value2)
-        {
-            float3 ans;
-
-            ans.x = value1.x + value2.x;
-            ans.y = value1.y + value2.y;
-            ans.z = value1.z + value2.z;
-
-            return ans;
-        }
-
-
-        inline float3 operator -(float3 const& value1, float3 const& value2)
-        {
-            float3 ans;
-
-            ans.x = value1.x - value2.x;
-            ans.y = value1.y - value2.y;
-            ans.z = value1.z - value2.z;
-
-            return ans;
-        }
-
-
-        inline float3 operator *(float3 const& value1, float3 const& value2)
-        {
-            float3 ans;
-
-            ans.x = value1.x * value2.x;
-            ans.y = value1.y * value2.y;
-            ans.z = value1.z * value2.z;
-
-            return ans;
-        }
-
-
-        inline float3 operator *(float3 const& value1, float value2)
-        {
-            float3 ans;
-
-            ans.x = value1.x * value2;
-            ans.y = value1.y * value2;
-            ans.z = value1.z * value2;
-
-            return ans;
-        }
-
-
-        inline float3 operator *(float value1, float3 const& value2)
-        {
-            float3 ans;
-
-            ans.x = value1 * value2.x;
-            ans.y = value1 * value2.y;
-            ans.z = value1 * value2.z;
-
-            return ans;
-        }
-
-
-        inline float3 operator /(float3 const& value1, float3 const& value2)
-        {
-            float3 ans;
-
-            ans.x = value1.x / value2.x;
-            ans.y = value1.y / value2.y;
-            ans.z = value1.z / value2.z;
-
-            return ans;
-        }
-
-
-        inline float3 operator /(float3 const& value1, float value2)
-        {
-            float3 ans;
-
-            float invDiv = 1.0f / value2;
-
-            ans.x = value1.x * invDiv;
-            ans.y = value1.y * invDiv;
-            ans.z = value1.z * invDiv;
-
-            return ans;
-        }
-
-
         inline float4::float4(float x, float y, float z, float w)
             : x(x), y(y), z(z), w(w)
         { }
@@ -964,6 +964,178 @@ namespace Windows
         inline float4 float4::unit_w()
         {
             return float4(0, 0, 0, 1);
+        }
+
+
+        inline float4 operator +(float4 const& value1, float4 const& value2)
+        {
+            float4 ans;
+
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
+            ans.z = value1.z + value2.z;
+            ans.w = value1.w + value2.w;
+
+            return ans;
+        }
+
+
+        inline float4 operator -(float4 const& value1, float4 const& value2)
+        {
+            float4 ans;
+
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
+            ans.z = value1.z - value2.z;
+            ans.w = value1.w - value2.w;
+
+            return ans;
+        }
+
+
+        inline float4 operator *(float4 const& value1, float4 const& value2)
+        {
+            float4 ans;
+
+            ans.x = value1.x * value2.x;
+            ans.y = value1.y * value2.y;
+            ans.z = value1.z * value2.z;
+            ans.w = value1.w * value2.w;
+
+            return ans;
+        }
+
+
+        inline float4 operator *(float4 const& value1, float value2)
+        {
+            float4 ans;
+
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
+            ans.z = value1.z * value2;
+            ans.w = value1.w * value2;
+
+            return ans;
+        }
+
+
+        inline float4 operator *(float value1, float4 const& value2)
+        {
+            float4 ans;
+
+            ans.x = value1 * value2.x;
+            ans.y = value1 * value2.y;
+            ans.z = value1 * value2.z;
+            ans.w = value1 * value2.w;
+
+            return ans;
+        }
+
+
+        inline float4 operator /(float4 const& value1, float4 const& value2)
+        {
+            float4 ans;
+
+            ans.x = value1.x / value2.x;
+            ans.y = value1.y / value2.y;
+            ans.z = value1.z / value2.z;
+            ans.w = value1.w / value2.w;
+
+            return ans;
+        }
+
+
+        inline float4 operator /(float4 const& value1, float value2)
+        {
+            float4 ans;
+
+            float invDiv = 1.0f / value2;
+            
+            ans.x = value1.x * invDiv;
+            ans.y = value1.y * invDiv;
+            ans.z = value1.z * invDiv;
+            ans.w = value1.w * invDiv;
+
+            return ans;
+        }
+
+
+        inline float4 operator -(float4 const& value)
+        {
+            float4 ans;
+
+            ans.x = -value.x;
+            ans.y = -value.y;
+            ans.z = -value.z;
+            ans.w = -value.w;
+
+            return ans;
+        }
+
+
+        inline float4& operator +=(float4& value1, float4 const& value2)
+        {
+            value1 = value1 + value2;
+
+            return value1;
+        }
+
+
+        inline float4& operator -=(float4& value1, float4 const& value2)
+        {
+            value1 = value1 - value2;
+
+            return value1;
+        }
+
+
+        inline float4& operator *=(float4& value1, float4 const& value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float4& operator *=(float4& value1, float value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float4& operator /=(float4& value1, float4 const& value2)
+        {
+            value1 = value1 / value2;
+
+            return value1;
+        }
+
+
+        inline float4& operator /=(float4& value1, float value2)
+        {
+            value1 = value1 / value2;
+
+            return value1;
+        }
+
+
+        inline bool operator ==(float4 const& value1, float4 const& value2)
+        {
+            return value1.x == value2.x &&
+                   value1.y == value2.y &&
+                   value1.z == value2.z &&
+                   value1.w == value2.w;
+        }
+
+
+        inline bool operator !=(float4 const& value1, float4 const& value2)
+        {
+            return value1.x != value2.x ||
+                   value1.y != value2.y ||
+                   value1.z != value2.z ||
+                   value1.w != value2.w;
         }
 
 
@@ -1218,178 +1390,6 @@ namespace Windows
         }
 
 
-        inline float4 float4::operator -() const
-        {
-            float4 ans;
-
-            ans.x = -x;
-            ans.y = -y;
-            ans.z = -z;
-            ans.w = -w;
-
-            return ans;
-        }
-
-
-        inline float4& float4::operator +=(float4 const& value)
-        {
-            *this = *this + value;
-
-            return *this;
-        }
-
-
-        inline float4& float4::operator -=(float4 const& value)
-        {
-            *this = *this - value;
-
-            return *this;
-        }
-
-
-        inline float4& float4::operator *=(float4 const& value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float4& float4::operator *=(float value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float4& float4::operator /=(float4 const& value)
-        {
-            *this = *this / value;
-
-            return *this;
-        }
-
-
-        inline float4& float4::operator /=(float value)
-        {
-            *this = *this / value;
-
-            return *this;
-        }
-
-
-        inline bool float4::operator ==(float4 const& value) const
-        {
-            return x == value.x &&
-                   y == value.y &&
-                   z == value.z &&
-                   w == value.w;
-        }
-
-
-        inline bool float4::operator !=(float4 const& value) const
-        {
-            return x != value.x ||
-                   y != value.y ||
-                   z != value.z ||
-                   w != value.w;
-        }
-
-
-        inline float4 operator +(float4 const& value1, float4 const& value2)
-        {
-            float4 ans;
-
-            ans.x = value1.x + value2.x;
-            ans.y = value1.y + value2.y;
-            ans.z = value1.z + value2.z;
-            ans.w = value1.w + value2.w;
-
-            return ans;
-        }
-
-
-        inline float4 operator -(float4 const& value1, float4 const& value2)
-        {
-            float4 ans;
-
-            ans.x = value1.x - value2.x;
-            ans.y = value1.y - value2.y;
-            ans.z = value1.z - value2.z;
-            ans.w = value1.w - value2.w;
-
-            return ans;
-        }
-
-
-        inline float4 operator *(float4 const& value1, float4 const& value2)
-        {
-            float4 ans;
-
-            ans.x = value1.x * value2.x;
-            ans.y = value1.y * value2.y;
-            ans.z = value1.z * value2.z;
-            ans.w = value1.w * value2.w;
-
-            return ans;
-        }
-
-
-        inline float4 operator *(float4 const& value1, float value2)
-        {
-            float4 ans;
-
-            ans.x = value1.x * value2;
-            ans.y = value1.y * value2;
-            ans.z = value1.z * value2;
-            ans.w = value1.w * value2;
-
-            return ans;
-        }
-
-
-        inline float4 operator *(float value1, float4 const& value2)
-        {
-            float4 ans;
-
-            ans.x = value1 * value2.x;
-            ans.y = value1 * value2.y;
-            ans.z = value1 * value2.z;
-            ans.w = value1 * value2.w;
-
-            return ans;
-        }
-
-
-        inline float4 operator /(float4 const& value1, float4 const& value2)
-        {
-            float4 ans;
-
-            ans.x = value1.x / value2.x;
-            ans.y = value1.y / value2.y;
-            ans.z = value1.z / value2.z;
-            ans.w = value1.w / value2.w;
-
-            return ans;
-        }
-
-
-        inline float4 operator /(float4 const& value1, float value2)
-        {
-            float4 ans;
-
-            float invDiv = 1.0f / value2;
-            
-            ans.x = value1.x * invDiv;
-            ans.y = value1.y * invDiv;
-            ans.z = value1.z * invDiv;
-            ans.w = value1.w * invDiv;
-
-            return ans;
-        }
-
-
         inline float3x2::float3x2(float m11, float m12, float m21, float m22, float m31, float m32)
             : m11(m11), m12(m12), m21(m21), m22(m22), m31(m31), m32(m32)
         { }
@@ -1400,32 +1400,6 @@ namespace Windows
             return float3x2(1, 0,
                             0, 1,
                             0, 0);
-        }
-
-
-        inline bool is_identity(float3x2 const& value)
-        {
-            return value.m11 == 1 && value.m22 == 1 && // Check diagonal element first for early out.
-                                     value.m12 == 0 &&
-                   value.m21 == 0                   &&
-                   value.m31 == 0 && value.m32 == 0;
-        }
-
-
-        inline float determinant(float3x2 const& value)
-        {
-            return (value.m11 * value.m22) - (value.m21 * value.m12);
-        }
-
-
-        inline float2 translation(float3x2 const& value)
-        {
-            float2 ans;
-                
-            ans.x = value.m31; 
-            ans.y = value.m32;
-                
-            return ans;
         }
 
 
@@ -1684,113 +1658,6 @@ namespace Windows
         }
 
 
-        inline bool invert(float3x2 const& matrix, _Out_ float3x2* result)
-        {
-            float det = (matrix.m11 * matrix.m22) - (matrix.m21 * matrix.m12);
-
-            if (fabs(det) < FLT_EPSILON)
-            {
-                *result = float3x2(NAN, NAN, NAN, NAN, NAN, NAN);
-                return false;
-            }
-
-            float invDet = 1.0f / det;
-
-            *result = float3x2
-            (
-                matrix.m22 * invDet,
-                -matrix.m12 * invDet,
-                -matrix.m21 * invDet,
-                matrix.m11 * invDet,
-                (matrix.m21 * matrix.m32 - matrix.m31 * matrix.m22) * invDet,
-                (matrix.m31 * matrix.m12 - matrix.m11 * matrix.m32) * invDet
-            );
-
-            return true;
-        }
-
-
-        inline float3x2 lerp(float3x2 const& matrix1, float3x2 const& matrix2, float amount)
-        {
-            float3x2 result;
-            
-            // First row
-            result.m11 = matrix1.m11 + (matrix2.m11 - matrix1.m11) * amount;
-            result.m12 = matrix1.m12 + (matrix2.m12 - matrix1.m12) * amount;
-            
-            // Second row
-            result.m21 = matrix1.m21 + (matrix2.m21 - matrix1.m21) * amount;
-            result.m22 = matrix1.m22 + (matrix2.m22 - matrix1.m22) * amount;
-            
-            // Third row
-            result.m31 = matrix1.m31 + (matrix2.m31 - matrix1.m31) * amount;
-            result.m32 = matrix1.m32 + (matrix2.m32 - matrix1.m32) * amount;
-
-            return result;
-        }
-
-
-        inline float3x2 float3x2::operator -() const
-        {
-            float3x2 m;
-
-            m.m11 = -m11; m.m12 = -m12;
-            m.m21 = -m21; m.m22 = -m22;
-            m.m31 = -m31; m.m32 = -m32;
-
-            return m;
-        }
-
-
-        inline float3x2& float3x2::operator +=(float3x2 const& value)
-        {
-            *this = *this + value;
-
-            return *this;
-        }
-
-
-        inline float3x2& float3x2::operator -=(float3x2 const& value)
-        {
-            *this = *this - value;
-
-            return *this;
-        }
-
-
-        inline float3x2& float3x2::operator *=(float3x2 const& value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float3x2& float3x2::operator *=(float value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline bool float3x2::operator ==(float3x2 const& value) const
-        {
-            return m11 == value.m11 && m22 == value.m22 && // Check diagonal element first for early out.
-                                       m12 == value.m12 &&
-                   m21 == value.m21                     &&
-                   m31 == value.m31 && m32 == value.m32;
-        }
-
-
-        inline bool float3x2::operator !=(float3x2 const& value) const
-        {
-            return m11 != value.m11 || m12 != value.m12 ||
-                   m21 != value.m21 || m22 != value.m22 ||
-                   m31 != value.m31 || m32 != value.m32;
-        }
-
-
         inline float3x2 operator +(float3x2 const& value1, float3x2 const& value2)
         {
             float3x2 m;
@@ -1847,6 +1714,139 @@ namespace Windows
         }
 
 
+        inline float3x2 operator -(float3x2 const& value)
+        {
+            float3x2 m;
+
+            m.m11 = -value.m11; m.m12 = -value.m12;
+            m.m21 = -value.m21; m.m22 = -value.m22;
+            m.m31 = -value.m31; m.m32 = -value.m32;
+
+            return m;
+        }
+
+
+        inline float3x2& operator +=(float3x2& value1, float3x2 const& value2)
+        {
+            value1 = value1 + value2;
+
+            return value1;
+        }
+
+
+        inline float3x2& operator -=(float3x2& value1, float3x2 const& value2)
+        {
+            value1 = value1 - value2;
+
+            return value1;
+        }
+
+
+        inline float3x2& operator *=(float3x2& value1, float3x2 const& value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float3x2& operator *=(float3x2& value1, float value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline bool operator ==(float3x2 const& value1, float3x2 const& value2)
+        {
+            return value1.m11 == value2.m11 && value1.m22 == value2.m22 && // Check diagonal element first for early out.
+                                               value1.m12 == value2.m12 &&
+                   value1.m21 == value2.m21                             &&
+                   value1.m31 == value2.m31 && value1.m32 == value2.m32;
+        }
+
+
+        inline bool operator !=(float3x2 const& value1, float3x2 const& value2)
+        {
+            return value1.m11 != value2.m11 || value1.m12 != value2.m12 ||
+                   value1.m21 != value2.m21 || value1.m22 != value2.m22 ||
+                   value1.m31 != value2.m31 || value1.m32 != value2.m32;
+        }
+
+
+        inline bool is_identity(float3x2 const& value)
+        {
+            return value.m11 == 1 && value.m22 == 1 && // Check diagonal element first for early out.
+                                     value.m12 == 0 &&
+                   value.m21 == 0                   &&
+                   value.m31 == 0 && value.m32 == 0;
+        }
+
+
+        inline float determinant(float3x2 const& value)
+        {
+            return (value.m11 * value.m22) - (value.m21 * value.m12);
+        }
+
+
+        inline float2 translation(float3x2 const& value)
+        {
+            float2 ans;
+                
+            ans.x = value.m31; 
+            ans.y = value.m32;
+                
+            return ans;
+        }
+
+
+        inline bool invert(float3x2 const& matrix, _Out_ float3x2* result)
+        {
+            float det = (matrix.m11 * matrix.m22) - (matrix.m21 * matrix.m12);
+
+            if (fabs(det) < FLT_EPSILON)
+            {
+                *result = float3x2(NAN, NAN, NAN, NAN, NAN, NAN);
+                return false;
+            }
+
+            float invDet = 1.0f / det;
+
+            *result = float3x2
+            (
+                matrix.m22 * invDet,
+                -matrix.m12 * invDet,
+                -matrix.m21 * invDet,
+                matrix.m11 * invDet,
+                (matrix.m21 * matrix.m32 - matrix.m31 * matrix.m22) * invDet,
+                (matrix.m31 * matrix.m12 - matrix.m11 * matrix.m32) * invDet
+            );
+
+            return true;
+        }
+
+
+        inline float3x2 lerp(float3x2 const& matrix1, float3x2 const& matrix2, float amount)
+        {
+            float3x2 result;
+            
+            // First row
+            result.m11 = matrix1.m11 + (matrix2.m11 - matrix1.m11) * amount;
+            result.m12 = matrix1.m12 + (matrix2.m12 - matrix1.m12) * amount;
+            
+            // Second row
+            result.m21 = matrix1.m21 + (matrix2.m21 - matrix1.m21) * amount;
+            result.m22 = matrix1.m22 + (matrix2.m22 - matrix1.m22) * amount;
+            
+            // Third row
+            result.m31 = matrix1.m31 + (matrix2.m31 - matrix1.m31) * amount;
+            result.m32 = matrix1.m32 + (matrix2.m32 - matrix1.m32) * amount;
+
+            return result;
+        }
+
+
         inline float4x4::float4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
             : m11(m11), m12(m12), m13(m13), m14(m14),
               m21(m21), m22(m22), m23(m23), m24(m24),
@@ -1869,70 +1869,6 @@ namespace Windows
                             0, 1, 0, 0,
                             0, 0, 1, 0,
                             0, 0, 0, 1);
-        }
-
-
-        inline bool is_identity(float4x4 const& value)
-        {
-            return value.m11 == 1 && value.m22 == 1 && value.m33 == 1 && value.m44 == 1 && // Check diagonal element first for early out.
-                                     value.m12 == 0 && value.m13 == 0 && value.m14 == 0 &&
-                   value.m21 == 0                   && value.m23 == 0 && value.m24 == 0 &&
-                   value.m31 == 0 && value.m32 == 0                   && value.m34 == 0 &&
-                   value.m41 == 0 && value.m42 == 0 && value.m43 == 0;
-        }
-
-
-        inline float determinant(float4x4 const& value)
-        {
-            // | a b c d |     | f g h |     | e g h |     | e f h |     | e f g |
-            // | e f g h | = a | j k l | - b | i k l | + c | i j l | - d | i j k |
-            // | i j k l |     | n o p |     | m o p |     | m n p |     | m n o |
-            // | m n o p |
-            //
-            //   | f g h |
-            // a | j k l | = a ( f ( kp - lo ) - g ( jp - ln ) + h ( jo - kn ) )
-            //   | n o p |
-            //
-            //   | e g h |     
-            // b | i k l | = b ( e ( kp - lo ) - g ( ip - lm ) + h ( io - km ) )
-            //   | m o p |     
-            //
-            //   | e f h |
-            // c | i j l | = c ( e ( jp - ln ) - f ( ip - lm ) + h ( in - jm ) )
-            //   | m n p |
-            //
-            //   | e f g |
-            // d | i j k | = d ( e ( jo - kn ) - f ( io - km ) + g ( in - jm ) )
-            //   | m n o |
-
-            float a = value.m11, b = value.m12, c = value.m13, d = value.m14;
-            float e = value.m21, f = value.m22, g = value.m23, h = value.m24;
-            float i = value.m31, j = value.m32, k = value.m33, l = value.m34;
-            float m = value.m41, n = value.m42, o = value.m43, p = value.m44;
-
-            float kp_lo = k * p - l * o;
-            float jp_ln = j * p - l * n;
-            float jo_kn = j * o - k * n;
-            float ip_lm = i * p - l * m;
-            float io_km = i * o - k * m;
-            float in_jm = i * n - j * m;
-
-            return a * (f * kp_lo - g * jp_ln + h * jo_kn) -
-                   b * (e * kp_lo - g * ip_lm + h * io_km) +
-                   c * (e * jp_ln - f * ip_lm + h * in_jm) -
-                   d * (e * jo_kn - f * io_km + g * in_jm);
-        }
-
-
-        inline float3 translation(float4x4 const& value)
-        {
-            float3 ans;
-                
-            ans.x = value.m41; 
-            ans.y = value.m42;
-            ans.z = value.m43;
-                
-            return ans;
         }
 
 
@@ -2617,6 +2553,205 @@ namespace Windows
         }
 
 
+        inline float4x4 operator +(float4x4 const& value1, float4x4 const& value2)
+        {
+            float4x4 m;
+
+            m.m11 = value1.m11 + value2.m11; m.m12 = value1.m12 + value2.m12; m.m13 = value1.m13 + value2.m13; m.m14 = value1.m14 + value2.m14;
+            m.m21 = value1.m21 + value2.m21; m.m22 = value1.m22 + value2.m22; m.m23 = value1.m23 + value2.m23; m.m24 = value1.m24 + value2.m24;
+            m.m31 = value1.m31 + value2.m31; m.m32 = value1.m32 + value2.m32; m.m33 = value1.m33 + value2.m33; m.m34 = value1.m34 + value2.m34;
+            m.m41 = value1.m41 + value2.m41; m.m42 = value1.m42 + value2.m42; m.m43 = value1.m43 + value2.m43; m.m44 = value1.m44 + value2.m44;
+
+            return m;
+        }
+
+
+        inline float4x4 operator -(float4x4 const& value1, float4x4 const& value2)
+        {
+            float4x4 m;
+
+            m.m11 = value1.m11 - value2.m11; m.m12 = value1.m12 - value2.m12; m.m13 = value1.m13 - value2.m13; m.m14 = value1.m14 - value2.m14;
+            m.m21 = value1.m21 - value2.m21; m.m22 = value1.m22 - value2.m22; m.m23 = value1.m23 - value2.m23; m.m24 = value1.m24 - value2.m24;
+            m.m31 = value1.m31 - value2.m31; m.m32 = value1.m32 - value2.m32; m.m33 = value1.m33 - value2.m33; m.m34 = value1.m34 - value2.m34;
+            m.m41 = value1.m41 - value2.m41; m.m42 = value1.m42 - value2.m42; m.m43 = value1.m43 - value2.m43; m.m44 = value1.m44 - value2.m44;
+
+            return m;
+        }
+
+
+        inline float4x4 operator *(float4x4 const& value1, float4x4 const& value2)
+        {
+            float4x4 m;
+
+            // First row
+            m.m11 = value1.m11 * value2.m11 + value1.m12 * value2.m21 + value1.m13 * value2.m31 + value1.m14 * value2.m41;
+            m.m12 = value1.m11 * value2.m12 + value1.m12 * value2.m22 + value1.m13 * value2.m32 + value1.m14 * value2.m42;
+            m.m13 = value1.m11 * value2.m13 + value1.m12 * value2.m23 + value1.m13 * value2.m33 + value1.m14 * value2.m43;
+            m.m14 = value1.m11 * value2.m14 + value1.m12 * value2.m24 + value1.m13 * value2.m34 + value1.m14 * value2.m44;
+            
+            // Second row
+            m.m21 = value1.m21 * value2.m11 + value1.m22 * value2.m21 + value1.m23 * value2.m31 + value1.m24 * value2.m41;
+            m.m22 = value1.m21 * value2.m12 + value1.m22 * value2.m22 + value1.m23 * value2.m32 + value1.m24 * value2.m42;
+            m.m23 = value1.m21 * value2.m13 + value1.m22 * value2.m23 + value1.m23 * value2.m33 + value1.m24 * value2.m43;
+            m.m24 = value1.m21 * value2.m14 + value1.m22 * value2.m24 + value1.m23 * value2.m34 + value1.m24 * value2.m44;
+            
+            // Third row
+            m.m31 = value1.m31 * value2.m11 + value1.m32 * value2.m21 + value1.m33 * value2.m31 + value1.m34 * value2.m41;
+            m.m32 = value1.m31 * value2.m12 + value1.m32 * value2.m22 + value1.m33 * value2.m32 + value1.m34 * value2.m42;
+            m.m33 = value1.m31 * value2.m13 + value1.m32 * value2.m23 + value1.m33 * value2.m33 + value1.m34 * value2.m43;
+            m.m34 = value1.m31 * value2.m14 + value1.m32 * value2.m24 + value1.m33 * value2.m34 + value1.m34 * value2.m44;
+            
+            // Fourth row
+            m.m41 = value1.m41 * value2.m11 + value1.m42 * value2.m21 + value1.m43 * value2.m31 + value1.m44 * value2.m41;
+            m.m42 = value1.m41 * value2.m12 + value1.m42 * value2.m22 + value1.m43 * value2.m32 + value1.m44 * value2.m42;
+            m.m43 = value1.m41 * value2.m13 + value1.m42 * value2.m23 + value1.m43 * value2.m33 + value1.m44 * value2.m43;
+            m.m44 = value1.m41 * value2.m14 + value1.m42 * value2.m24 + value1.m43 * value2.m34 + value1.m44 * value2.m44;
+
+            return m;
+        }
+
+
+        inline float4x4 operator *(float4x4 const& value1, float value2)
+        {
+            float4x4 m;
+
+            m.m11 = value1.m11 * value2; m.m12 = value1.m12 * value2; m.m13 = value1.m13 * value2; m.m14 = value1.m14 * value2;
+            m.m21 = value1.m21 * value2; m.m22 = value1.m22 * value2; m.m23 = value1.m23 * value2; m.m24 = value1.m24 * value2;
+            m.m31 = value1.m31 * value2; m.m32 = value1.m32 * value2; m.m33 = value1.m33 * value2; m.m34 = value1.m34 * value2;
+            m.m41 = value1.m41 * value2; m.m42 = value1.m42 * value2; m.m43 = value1.m43 * value2; m.m44 = value1.m44 * value2;
+
+            return m;
+        }
+
+
+        inline float4x4 operator -(float4x4 const& value)
+        {
+            float4x4 m;
+
+            m.m11 = -value.m11; m.m12 = -value.m12; m.m13 = -value.m13; m.m14 = -value.m14;
+            m.m21 = -value.m21; m.m22 = -value.m22; m.m23 = -value.m23; m.m24 = -value.m24;
+            m.m31 = -value.m31; m.m32 = -value.m32; m.m33 = -value.m33; m.m34 = -value.m34;
+            m.m41 = -value.m41; m.m42 = -value.m42; m.m43 = -value.m43; m.m44 = -value.m44;
+
+            return m;
+        }
+
+
+        inline float4x4& operator +=(float4x4& value1, float4x4 const& value2)
+        {
+            value1 = value1 + value2;
+
+            return value1;
+        }
+
+
+        inline float4x4& operator -=(float4x4& value1, float4x4 const& value2)
+        {
+            value1 = value1 - value2;
+
+            return value1;
+        }
+
+
+        inline float4x4& operator *=(float4x4& value1, float4x4 const& value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline float4x4& operator *=(float4x4& value1, float value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline bool operator ==(float4x4 const& value1, float4x4 const& value2)
+        {
+            return value1.m11 == value2.m11 && value1.m22 == value2.m22 && value1.m33 == value2.m33 && value1.m44 == value2.m44 && // Check diagonal element first for early out.
+                                               value1.m12 == value2.m12 && value1.m13 == value2.m13 && value1.m14 == value2.m14 &&
+                   value1.m21 == value2.m21                             && value1.m23 == value2.m23 && value1.m24 == value2.m24 &&
+                   value1.m31 == value2.m31 && value1.m32 == value2.m32                             && value1.m34 == value2.m34 &&
+                   value1.m41 == value2.m41 && value1.m42 == value2.m42 && value1.m43 == value2.m43;
+        }
+
+
+        inline bool operator !=(float4x4 const& value1, float4x4 const& value2)
+        {
+            return value1.m11 != value2.m11 || value1.m12 != value2.m12 || value1.m13 != value2.m13 || value1.m14 != value2.m14 ||
+                   value1.m21 != value2.m21 || value1.m22 != value2.m22 || value1.m23 != value2.m23 || value1.m24 != value2.m24 ||
+                   value1.m31 != value2.m31 || value1.m32 != value2.m32 || value1.m33 != value2.m33 || value1.m34 != value2.m34 ||
+                   value1.m41 != value2.m41 || value1.m42 != value2.m42 || value1.m43 != value2.m43 || value1.m44 != value2.m44;
+        }
+
+
+        inline bool is_identity(float4x4 const& value)
+        {
+            return value.m11 == 1 && value.m22 == 1 && value.m33 == 1 && value.m44 == 1 && // Check diagonal element first for early out.
+                                     value.m12 == 0 && value.m13 == 0 && value.m14 == 0 &&
+                   value.m21 == 0                   && value.m23 == 0 && value.m24 == 0 &&
+                   value.m31 == 0 && value.m32 == 0                   && value.m34 == 0 &&
+                   value.m41 == 0 && value.m42 == 0 && value.m43 == 0;
+        }
+
+
+        inline float determinant(float4x4 const& value)
+        {
+            // | a b c d |     | f g h |     | e g h |     | e f h |     | e f g |
+            // | e f g h | = a | j k l | - b | i k l | + c | i j l | - d | i j k |
+            // | i j k l |     | n o p |     | m o p |     | m n p |     | m n o |
+            // | m n o p |
+            //
+            //   | f g h |
+            // a | j k l | = a ( f ( kp - lo ) - g ( jp - ln ) + h ( jo - kn ) )
+            //   | n o p |
+            //
+            //   | e g h |     
+            // b | i k l | = b ( e ( kp - lo ) - g ( ip - lm ) + h ( io - km ) )
+            //   | m o p |     
+            //
+            //   | e f h |
+            // c | i j l | = c ( e ( jp - ln ) - f ( ip - lm ) + h ( in - jm ) )
+            //   | m n p |
+            //
+            //   | e f g |
+            // d | i j k | = d ( e ( jo - kn ) - f ( io - km ) + g ( in - jm ) )
+            //   | m n o |
+
+            float a = value.m11, b = value.m12, c = value.m13, d = value.m14;
+            float e = value.m21, f = value.m22, g = value.m23, h = value.m24;
+            float i = value.m31, j = value.m32, k = value.m33, l = value.m34;
+            float m = value.m41, n = value.m42, o = value.m43, p = value.m44;
+
+            float kp_lo = k * p - l * o;
+            float jp_ln = j * p - l * n;
+            float jo_kn = j * o - k * n;
+            float ip_lm = i * p - l * m;
+            float io_km = i * o - k * m;
+            float in_jm = i * n - j * m;
+
+            return a * (f * kp_lo - g * jp_ln + h * jo_kn) -
+                   b * (e * kp_lo - g * ip_lm + h * io_km) +
+                   c * (e * jp_ln - f * ip_lm + h * in_jm) -
+                   d * (e * jo_kn - f * io_km + g * in_jm);
+        }
+
+
+        inline float3 translation(float4x4 const& value)
+        {
+            float3 ans;
+                
+            ans.x = value.m41; 
+            ans.y = value.m42;
+            ans.z = value.m43;
+                
+            return ans;
+        }
+
+
         inline bool invert(float4x4 const& matrix, _Out_ float4x4* result)
         {
             //                                       -1
@@ -3077,141 +3212,6 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::operator -() const
-        {
-            float4x4 m;
-
-            m.m11 = -m11; m.m12 = -m12; m.m13 = -m13; m.m14 = -m14;
-            m.m21 = -m21; m.m22 = -m22; m.m23 = -m23; m.m24 = -m24;
-            m.m31 = -m31; m.m32 = -m32; m.m33 = -m33; m.m34 = -m34;
-            m.m41 = -m41; m.m42 = -m42; m.m43 = -m43; m.m44 = -m44;
-
-            return m;
-        }
-
-
-        inline float4x4& float4x4::operator +=(float4x4 const& value)
-        {
-            *this = *this + value;
-
-            return *this;
-        }
-
-
-        inline float4x4& float4x4::operator -=(float4x4 const& value)
-        {
-            *this = *this - value;
-
-            return *this;
-        }
-
-
-        inline float4x4& float4x4::operator *=(float4x4 const& value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline float4x4& float4x4::operator *=(float value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline bool float4x4::operator ==(float4x4 const& value) const
-        {
-            return m11 == value.m11 && m22 == value.m22 && m33 == value.m33 && m44 == value.m44 && // Check diagonal element first for early out.
-                                       m12 == value.m12 && m13 == value.m13 && m14 == value.m14 &&
-                   m21 == value.m21                     && m23 == value.m23 && m24 == value.m24 &&
-                   m31 == value.m31 && m32 == value.m32                     && m34 == value.m34 &&
-                   m41 == value.m41 && m42 == value.m42 && m43 == value.m43;
-        }
-
-
-        inline bool float4x4::operator !=(float4x4 const& value) const
-        {
-            return m11 != value.m11 || m12 != value.m12 || m13 != value.m13 || m14 != value.m14 ||
-                   m21 != value.m21 || m22 != value.m22 || m23 != value.m23 || m24 != value.m24 ||
-                   m31 != value.m31 || m32 != value.m32 || m33 != value.m33 || m34 != value.m34 ||
-                   m41 != value.m41 || m42 != value.m42 || m43 != value.m43 || m44 != value.m44;
-        }
-
-
-        inline float4x4 operator +(float4x4 const& value1, float4x4 const& value2)
-        {
-            float4x4 m;
-
-            m.m11 = value1.m11 + value2.m11; m.m12 = value1.m12 + value2.m12; m.m13 = value1.m13 + value2.m13; m.m14 = value1.m14 + value2.m14;
-            m.m21 = value1.m21 + value2.m21; m.m22 = value1.m22 + value2.m22; m.m23 = value1.m23 + value2.m23; m.m24 = value1.m24 + value2.m24;
-            m.m31 = value1.m31 + value2.m31; m.m32 = value1.m32 + value2.m32; m.m33 = value1.m33 + value2.m33; m.m34 = value1.m34 + value2.m34;
-            m.m41 = value1.m41 + value2.m41; m.m42 = value1.m42 + value2.m42; m.m43 = value1.m43 + value2.m43; m.m44 = value1.m44 + value2.m44;
-
-            return m;
-        }
-
-
-        inline float4x4 operator -(float4x4 const& value1, float4x4 const& value2)
-        {
-            float4x4 m;
-
-            m.m11 = value1.m11 - value2.m11; m.m12 = value1.m12 - value2.m12; m.m13 = value1.m13 - value2.m13; m.m14 = value1.m14 - value2.m14;
-            m.m21 = value1.m21 - value2.m21; m.m22 = value1.m22 - value2.m22; m.m23 = value1.m23 - value2.m23; m.m24 = value1.m24 - value2.m24;
-            m.m31 = value1.m31 - value2.m31; m.m32 = value1.m32 - value2.m32; m.m33 = value1.m33 - value2.m33; m.m34 = value1.m34 - value2.m34;
-            m.m41 = value1.m41 - value2.m41; m.m42 = value1.m42 - value2.m42; m.m43 = value1.m43 - value2.m43; m.m44 = value1.m44 - value2.m44;
-
-            return m;
-        }
-
-
-        inline float4x4 operator *(float4x4 const& value1, float4x4 const& value2)
-        {
-            float4x4 m;
-
-            // First row
-            m.m11 = value1.m11 * value2.m11 + value1.m12 * value2.m21 + value1.m13 * value2.m31 + value1.m14 * value2.m41;
-            m.m12 = value1.m11 * value2.m12 + value1.m12 * value2.m22 + value1.m13 * value2.m32 + value1.m14 * value2.m42;
-            m.m13 = value1.m11 * value2.m13 + value1.m12 * value2.m23 + value1.m13 * value2.m33 + value1.m14 * value2.m43;
-            m.m14 = value1.m11 * value2.m14 + value1.m12 * value2.m24 + value1.m13 * value2.m34 + value1.m14 * value2.m44;
-            
-            // Second row
-            m.m21 = value1.m21 * value2.m11 + value1.m22 * value2.m21 + value1.m23 * value2.m31 + value1.m24 * value2.m41;
-            m.m22 = value1.m21 * value2.m12 + value1.m22 * value2.m22 + value1.m23 * value2.m32 + value1.m24 * value2.m42;
-            m.m23 = value1.m21 * value2.m13 + value1.m22 * value2.m23 + value1.m23 * value2.m33 + value1.m24 * value2.m43;
-            m.m24 = value1.m21 * value2.m14 + value1.m22 * value2.m24 + value1.m23 * value2.m34 + value1.m24 * value2.m44;
-            
-            // Third row
-            m.m31 = value1.m31 * value2.m11 + value1.m32 * value2.m21 + value1.m33 * value2.m31 + value1.m34 * value2.m41;
-            m.m32 = value1.m31 * value2.m12 + value1.m32 * value2.m22 + value1.m33 * value2.m32 + value1.m34 * value2.m42;
-            m.m33 = value1.m31 * value2.m13 + value1.m32 * value2.m23 + value1.m33 * value2.m33 + value1.m34 * value2.m43;
-            m.m34 = value1.m31 * value2.m14 + value1.m32 * value2.m24 + value1.m33 * value2.m34 + value1.m34 * value2.m44;
-            
-            // Fourth row
-            m.m41 = value1.m41 * value2.m11 + value1.m42 * value2.m21 + value1.m43 * value2.m31 + value1.m44 * value2.m41;
-            m.m42 = value1.m41 * value2.m12 + value1.m42 * value2.m22 + value1.m43 * value2.m32 + value1.m44 * value2.m42;
-            m.m43 = value1.m41 * value2.m13 + value1.m42 * value2.m23 + value1.m43 * value2.m33 + value1.m44 * value2.m43;
-            m.m44 = value1.m41 * value2.m14 + value1.m42 * value2.m24 + value1.m43 * value2.m34 + value1.m44 * value2.m44;
-
-            return m;
-        }
-
-
-        inline float4x4 operator *(float4x4 const& value1, float value2)
-        {
-            float4x4 m;
-
-            m.m11 = value1.m11 * value2; m.m12 = value1.m12 * value2; m.m13 = value1.m13 * value2; m.m14 = value1.m14 * value2;
-            m.m21 = value1.m21 * value2; m.m22 = value1.m22 * value2; m.m23 = value1.m23 * value2; m.m24 = value1.m24 * value2;
-            m.m31 = value1.m31 * value2; m.m32 = value1.m32 * value2; m.m33 = value1.m33 * value2; m.m34 = value1.m34 * value2;
-            m.m41 = value1.m41 * value2; m.m42 = value1.m42 * value2; m.m43 = value1.m43 * value2; m.m44 = value1.m44 * value2;
-
-            return m;
-        }
-
-
         inline plane::plane(float a, float b, float c, float d)
             : normal(a, b, c), d(d)
         { }
@@ -3256,6 +3256,24 @@ namespace Windows
             result.d = -(result.normal.x * point1.x + result.normal.y * point1.y + result.normal.z * point1.z);
 
             return result;
+        }
+
+
+        inline bool operator ==(plane const& value1, plane const& value2)
+        {
+            return value1.normal.x == value2.normal.x &&
+                   value1.normal.y == value2.normal.y &&
+                   value1.normal.z == value2.normal.z &&
+                   value1.d == value2.d;
+        }
+
+
+        inline bool operator !=(plane const& value1, plane const& value2)
+        {
+            return value1.normal.x != value2.normal.x ||
+                   value1.normal.y != value2.normal.y || 
+                   value1.normal.z != value2.normal.z ||
+                   value1.d != value2.d;
         }
 
 
@@ -3372,24 +3390,6 @@ namespace Windows
         }
 
 
-        inline bool plane::operator ==(plane const& value) const
-        {
-            return normal.x == value.normal.x &&
-                   normal.y == value.normal.y &&
-                   normal.z == value.normal.z &&
-                   d == value.d;
-        }
-
-
-        inline bool plane::operator !=(plane const& value) const
-        {
-            return normal.x != value.normal.x ||
-                   normal.y != value.normal.y || 
-                   normal.z != value.normal.z ||
-                   d != value.d;
-        }
-
-
         inline quaternion::quaternion(float x, float y, float z, float w)
             : x(x), y(y), z(z), w(w)
         { }
@@ -3403,79 +3403,6 @@ namespace Windows
         inline quaternion quaternion::identity()
         {
             return quaternion(0, 0, 0, 1);
-        }
-
-
-        inline bool is_identity(quaternion const& value)
-        {
-            return value.x == 0 &&
-                   value.y == 0 &&
-                   value.z == 0 &&
-                   value.w == 1;
-        }
-
-
-        inline float length(quaternion const& value)
-        {
-            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-
-            return sqrtf(ls);
-        }
-
-
-        inline float length_squared(quaternion const& value)
-        {
-            return value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-        }
-
-
-        inline quaternion normalize(quaternion const& value)
-        {
-            quaternion ans;
-
-            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-            
-            float invNorm = 1.0f / sqrtf(ls);
-
-            ans.x = value.x * invNorm;
-            ans.y = value.y * invNorm;
-            ans.z = value.z * invNorm;
-            ans.w = value.w * invNorm;
-
-            return ans;
-        }
-
-
-        inline quaternion conjugate(quaternion const& value)
-        {
-            quaternion ans;
-            
-            ans.x = -value.x;
-            ans.y = -value.y;
-            ans.z = -value.z;
-            ans.w = value.w;
-
-            return ans;
-        }
-
-
-        inline quaternion inverse(quaternion const& value)
-        {
-            //  -1   (       a              -v       )
-            // q   = ( -------------   ------------- )
-            //       (  a^2 + |v|^2  ,  a^2 + |v|^2  )
-
-            quaternion ans;
-            
-            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-            float invNorm = 1.0f / ls;
-
-            ans.x = -value.x * invNorm;
-            ans.y = -value.y * invNorm;
-            ans.z = -value.z * invNorm;
-            ans.w = value.w * invNorm;
-
-            return ans;
         }
 
 
@@ -3572,12 +3499,260 @@ namespace Windows
         }
 
 
+        inline quaternion operator +(quaternion const& value1, quaternion const& value2)
+        {
+            quaternion ans;
+
+            ans.x = value1.x + value2.x;
+            ans.y = value1.y + value2.y;
+            ans.z = value1.z + value2.z;
+            ans.w = value1.w + value2.w;
+
+            return ans;
+        }
+
+
+        inline quaternion operator -(quaternion const& value1, quaternion const& value2)
+        {
+            quaternion ans;
+
+            ans.x = value1.x - value2.x;
+            ans.y = value1.y - value2.y;
+            ans.z = value1.z - value2.z;
+            ans.w = value1.w - value2.w;
+
+            return ans;
+        }
+
+
+        inline quaternion operator *(quaternion const& value1, quaternion const& value2)
+        {
+            quaternion ans;
+
+            float q1x = value1.x;
+            float q1y = value1.y;
+            float q1z = value1.z;
+            float q1w = value1.w;
+
+            float q2x = value2.x;
+            float q2y = value2.y;
+            float q2z = value2.z;
+            float q2w = value2.w;
+
+            // cross(av, bv)
+            float cx = q1y * q2z - q1z * q2y;
+            float cy = q1z * q2x - q1x * q2z;
+            float cz = q1x * q2y - q1y * q2x;
+
+            float dot = q1x * q2x + q1y * q2y + q1z * q2z;
+
+            ans.x = q1x * q2w + q2x * q1w + cx;
+            ans.y = q1y * q2w + q2y * q1w + cy;
+            ans.z = q1z * q2w + q2z * q1w + cz;
+            ans.w = q1w * q2w - dot;
+
+            return ans;
+        }
+
+
+        inline quaternion operator *(quaternion const& value1, float value2)
+        {
+            quaternion ans;
+
+            ans.x = value1.x * value2;
+            ans.y = value1.y * value2;
+            ans.z = value1.z * value2;
+            ans.w = value1.w * value2;
+
+            return ans;
+        }
+
+
+        inline quaternion operator /(quaternion const& value1, quaternion const& value2)
+        {
+            quaternion ans;
+
+            float q1x = value1.x;
+            float q1y = value1.y;
+            float q1z = value1.z;
+            float q1w = value1.w;
+
+            // Inverse part.
+            float ls = value2.x * value2.x + value2.y * value2.y +
+                       value2.z * value2.z + value2.w * value2.w;
+            float invNorm = 1.0f / ls;
+
+            float q2x = -value2.x * invNorm;
+            float q2y = -value2.y * invNorm;
+            float q2z = -value2.z * invNorm;
+            float q2w = value2.w * invNorm;
+
+            // Multiply part.
+            float cx = q1y * q2z - q1z * q2y;
+            float cy = q1z * q2x - q1x * q2z;
+            float cz = q1x * q2y - q1y * q2x;
+
+            float dot = q1x * q2x + q1y * q2y + q1z * q2z;
+
+            ans.x = q1x * q2w + q2x * q1w + cx;
+            ans.y = q1y * q2w + q2y * q1w + cy;
+            ans.z = q1z * q2w + q2z * q1w + cz;
+            ans.w = q1w * q2w - dot;
+
+            return ans;
+        }
+
+
+        inline quaternion operator -(quaternion const& value)
+        {
+            quaternion ans;
+
+            ans.x = -value.x;
+            ans.y = -value.y;
+            ans.z = -value.z;
+            ans.w = -value.w;
+
+            return ans;
+        }
+
+
+        inline quaternion& operator +=(quaternion& value1, quaternion const& value2)
+        {
+            value1 = value1 + value2;
+
+            return value1;
+        }
+
+
+        inline quaternion& operator -=(quaternion& value1, quaternion const& value2)
+        {
+            value1 = value1 - value2;
+
+            return value1;
+        }
+
+
+        inline quaternion& operator *=(quaternion& value1, quaternion const& value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline quaternion& operator *=(quaternion& value1, float value2)
+        {
+            value1 = value1 * value2;
+
+            return value1;
+        }
+
+
+        inline quaternion& operator /=(quaternion& value1, quaternion const& value2)
+        {
+            value1 = value1 / value2;
+
+            return value1;
+        }
+
+
+        inline bool operator ==(quaternion const& value1, quaternion const& value2)
+        {
+            return value1.x == value2.x &&
+                   value1.y == value2.y &&
+                   value1.z == value2.z &&
+                   value1.w == value2.w;
+        }
+
+
+        inline bool operator !=(quaternion const& value1, quaternion const& value2)
+        {
+            return value1.x != value2.x ||
+                   value1.y != value2.y ||
+                   value1.z != value2.z ||
+                   value1.w != value2.w;
+        }
+
+
+        inline bool is_identity(quaternion const& value)
+        {
+            return value.x == 0 &&
+                   value.y == 0 &&
+                   value.z == 0 &&
+                   value.w == 1;
+        }
+
+
+        inline float length(quaternion const& value)
+        {
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
+
+            return sqrtf(ls);
+        }
+
+
+        inline float length_squared(quaternion const& value)
+        {
+            return value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
+        }
+
+
         inline float dot(quaternion const& quaternion1, quaternion const& quaternion2)
         {
             return quaternion1.x * quaternion2.x + 
                    quaternion1.y * quaternion2.y + 
                    quaternion1.z * quaternion2.z + 
                    quaternion1.w * quaternion2.w;
+        }
+
+
+        inline quaternion normalize(quaternion const& value)
+        {
+            quaternion ans;
+
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
+            
+            float invNorm = 1.0f / sqrtf(ls);
+
+            ans.x = value.x * invNorm;
+            ans.y = value.y * invNorm;
+            ans.z = value.z * invNorm;
+            ans.w = value.w * invNorm;
+
+            return ans;
+        }
+
+
+        inline quaternion conjugate(quaternion const& value)
+        {
+            quaternion ans;
+            
+            ans.x = -value.x;
+            ans.y = -value.y;
+            ans.z = -value.z;
+            ans.w = value.w;
+
+            return ans;
+        }
+
+
+        inline quaternion inverse(quaternion const& value)
+        {
+            //  -1   (       a              -v       )
+            // q   = ( -------------   ------------- )
+            //       (  a^2 + |v|^2  ,  a^2 + |v|^2  )
+
+            quaternion ans;
+            
+            float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
+            float invNorm = 1.0f / ls;
+
+            ans.x = -value.x * invNorm;
+            ans.y = -value.y * invNorm;
+            ans.z = -value.z * invNorm;
+            ans.w = value.w * invNorm;
+
+            return ans;
         }
 
 
@@ -3683,181 +3858,6 @@ namespace Windows
             float q2w = value1.w;
 
             // cross(av, bv)
-            float cx = q1y * q2z - q1z * q2y;
-            float cy = q1z * q2x - q1x * q2z;
-            float cz = q1x * q2y - q1y * q2x;
-
-            float dot = q1x * q2x + q1y * q2y + q1z * q2z;
-
-            ans.x = q1x * q2w + q2x * q1w + cx;
-            ans.y = q1y * q2w + q2y * q1w + cy;
-            ans.z = q1z * q2w + q2z * q1w + cz;
-            ans.w = q1w * q2w - dot;
-
-            return ans;
-        }
-
-
-        inline quaternion quaternion::operator -() const
-        {
-            quaternion ans;
-
-            ans.x = -x;
-            ans.y = -y;
-            ans.z = -z;
-            ans.w = -w;
-
-            return ans;
-        }
-
-
-        inline quaternion& quaternion::operator +=(quaternion const& value)
-        {
-            *this = *this + value;
-
-            return *this;
-        }
-
-
-        inline quaternion& quaternion::operator -=(quaternion const& value)
-        {
-            *this = *this - value;
-
-            return *this;
-        }
-
-
-        inline quaternion& quaternion::operator *=(quaternion const& value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline quaternion& quaternion::operator *=(float value)
-        {
-            *this = *this * value;
-
-            return *this;
-        }
-
-
-        inline quaternion& quaternion::operator /=(quaternion const& value)
-        {
-            *this = *this / value;
-
-            return *this;
-        }
-
-
-        inline bool quaternion::operator ==(quaternion const& value) const
-        {
-            return x == value.x &&
-                   y == value.y &&
-                   z == value.z &&
-                   w == value.w;
-        }
-
-
-        inline bool quaternion::operator !=(quaternion const& value) const
-        {
-            return x != value.x ||
-                   y != value.y ||
-                   z != value.z ||
-                   w != value.w;
-        }
-
-
-        inline quaternion operator +(quaternion const& value1, quaternion const& value2)
-        {
-            quaternion ans;
-
-            ans.x = value1.x + value2.x;
-            ans.y = value1.y + value2.y;
-            ans.z = value1.z + value2.z;
-            ans.w = value1.w + value2.w;
-
-            return ans;
-        }
-
-
-        inline quaternion operator -(quaternion const& value1, quaternion const& value2)
-        {
-            quaternion ans;
-
-            ans.x = value1.x - value2.x;
-            ans.y = value1.y - value2.y;
-            ans.z = value1.z - value2.z;
-            ans.w = value1.w - value2.w;
-
-            return ans;
-        }
-
-
-        inline quaternion operator *(quaternion const& value1, quaternion const& value2)
-        {
-            quaternion ans;
-
-            float q1x = value1.x;
-            float q1y = value1.y;
-            float q1z = value1.z;
-            float q1w = value1.w;
-
-            float q2x = value2.x;
-            float q2y = value2.y;
-            float q2z = value2.z;
-            float q2w = value2.w;
-
-            // cross(av, bv)
-            float cx = q1y * q2z - q1z * q2y;
-            float cy = q1z * q2x - q1x * q2z;
-            float cz = q1x * q2y - q1y * q2x;
-
-            float dot = q1x * q2x + q1y * q2y + q1z * q2z;
-
-            ans.x = q1x * q2w + q2x * q1w + cx;
-            ans.y = q1y * q2w + q2y * q1w + cy;
-            ans.z = q1z * q2w + q2z * q1w + cz;
-            ans.w = q1w * q2w - dot;
-
-            return ans;
-        }
-
-
-        inline quaternion operator *(quaternion const& value1, float value2)
-        {
-            quaternion ans;
-
-            ans.x = value1.x * value2;
-            ans.y = value1.y * value2;
-            ans.z = value1.z * value2;
-            ans.w = value1.w * value2;
-
-            return ans;
-        }
-
-
-        inline quaternion operator /(quaternion const& value1, quaternion const& value2)
-        {
-            quaternion ans;
-
-            float q1x = value1.x;
-            float q1y = value1.y;
-            float q1z = value1.z;
-            float q1w = value1.w;
-
-            // Inverse part.
-            float ls = value2.x * value2.x + value2.y * value2.y +
-                       value2.z * value2.z + value2.w * value2.w;
-            float invNorm = 1.0f / ls;
-
-            float q2x = -value2.x * invNorm;
-            float q2y = -value2.y * invNorm;
-            float q2z = -value2.z * invNorm;
-            float q2w = value2.w * invNorm;
-
-            // Multiply part.
             float cx = q1y * q2z - q1z * q2y;
             float cy = q1z * q2x - q1x * q2z;
             float cz = q1x * q2y - q1y * q2x;
