@@ -63,12 +63,12 @@ namespace MathTests
         TEST_METHOD(QuaternionLerpTest)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
-            quaternion b = quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
+            quaternion b = make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float t = 0.5f;
 
-            quaternion expected = quaternion::from_axis_angle(axis, ToRadians(20.0f));
+            quaternion expected = make_quaternion_from_axis_angle(axis, ToRadians(20.0f));
             quaternion actual;
 
             actual = lerp(a, b, t);
@@ -84,8 +84,8 @@ namespace MathTests
         TEST_METHOD(QuaternionLerpTest1)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
-            quaternion b = quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
+            quaternion b = make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float t = 0.0f;
 
@@ -98,8 +98,8 @@ namespace MathTests
         TEST_METHOD(QuaternionLerpTest2)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
-            quaternion b = quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
+            quaternion b = make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float t = 1.0f;
 
@@ -112,7 +112,7 @@ namespace MathTests
         TEST_METHOD(QuaternionLerpTest3)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
             quaternion b = -a;
 
             float t = 1.0f;
@@ -286,8 +286,8 @@ namespace MathTests
             quaternion expected(0.0691723f, 0.1383446f, 0.207516879f, 0.9659258f);
             quaternion actual;
 
-            actual = quaternion::from_axis_angle(axis, angle);
-            Assert::IsTrue(Equal(expected, actual), L"quaternion::from_axis_angle did not return the expected value.");
+            actual = make_quaternion_from_axis_angle(axis, angle);
+            Assert::IsTrue(Equal(expected, actual), L"make_quaternion_from_axis_angle did not return the expected value.");
         }
         
         // A test for from_axis_angle (float3, float)
@@ -297,10 +297,10 @@ namespace MathTests
             float angle = ToRadians(-30.0f);
 
             float cos = cosf(angle / 2.0f);
-            quaternion actual = quaternion::from_axis_angle(axis, angle);
+            quaternion actual = make_quaternion_from_axis_angle(axis, angle);
 
             Assert::IsTrue(actual.x == 0.0f && actual.y == 0.0f && actual.z == 0.0f && Equal(cos, actual.w)
-                , L"quaternion::from_axis_angle did not return the expected value.");
+                , L"make_quaternion_from_axis_angle did not return the expected value.");
         }
 
         // A test for from_axis_angle (float3, float)
@@ -310,9 +310,9 @@ namespace MathTests
             float angle1 = ToRadians(30.0f);
             float angle2 = ToRadians(750.0f);
 
-            quaternion actual1 = quaternion::from_axis_angle(axis, angle1);
-            quaternion actual2 = quaternion::from_axis_angle(axis, angle2);
-            Assert::IsTrue(Equal(actual1, actual2), L"quaternion::from_axis_angle did not return the expected value.");
+            quaternion actual1 = make_quaternion_from_axis_angle(axis, angle1);
+            quaternion actual2 = make_quaternion_from_axis_angle(axis, angle2);
+            Assert::IsTrue(Equal(actual1, actual2), L"make_quaternion_from_axis_angle did not return the expected value.");
         }
 
         // A test for from_axis_angle (float3, float)
@@ -322,12 +322,12 @@ namespace MathTests
             float angle1 = ToRadians(30.0f);
             float angle2 = ToRadians(390.0f);
 
-            quaternion actual1 = quaternion::from_axis_angle(axis, angle1);
-            quaternion actual2 = quaternion::from_axis_angle(axis, angle2);
+            quaternion actual1 = make_quaternion_from_axis_angle(axis, angle1);
+            quaternion actual2 = make_quaternion_from_axis_angle(axis, angle2);
             actual1.x = -actual1.x;
             actual1.w = -actual1.w;
 
-            Assert::IsTrue(Equal(actual1, actual2), L"quaternion::from_axis_angle did not return the expected value.");
+            Assert::IsTrue(Equal(actual1, actual2), L"make_quaternion_from_axis_angle did not return the expected value.");
         }
 
         TEST_METHOD(QuaternionCreateFromYawPitchRollTest1)
@@ -336,12 +336,12 @@ namespace MathTests
             float pitchAngle = ToRadians(40.0f);
             float rollAngle = ToRadians(50.0f);
 
-            quaternion yaw = quaternion::from_axis_angle(float3::unit_y(), yawAngle);
-            quaternion pitch = quaternion::from_axis_angle(float3::unit_x(), pitchAngle);
-            quaternion roll = quaternion::from_axis_angle(float3::unit_z(), rollAngle);
+            quaternion yaw = make_quaternion_from_axis_angle(float3::unit_y(), yawAngle);
+            quaternion pitch = make_quaternion_from_axis_angle(float3::unit_x(), pitchAngle);
+            quaternion roll = make_quaternion_from_axis_angle(float3::unit_z(), rollAngle);
 
             quaternion expected = yaw * pitch * roll;
-            quaternion actual = quaternion::from_yaw_pitch_roll(yawAngle, pitchAngle, rollAngle);
+            quaternion actual = make_quaternion_from_yaw_pitch_roll(yawAngle, pitchAngle, rollAngle);
             Assert::IsTrue(Equal(expected, actual));
         }
 
@@ -359,12 +359,12 @@ namespace MathTests
                         float pitchRad = ToRadians(pitchAngle);
                         float rollRad = ToRadians(rollAngle);
 
-                        quaternion yaw = quaternion::from_axis_angle(float3::unit_y(), yawRad);
-                        quaternion pitch = quaternion::from_axis_angle(float3::unit_x(), pitchRad);
-                        quaternion roll = quaternion::from_axis_angle(float3::unit_z(), rollRad);
+                        quaternion yaw = make_quaternion_from_axis_angle(float3::unit_y(), yawRad);
+                        quaternion pitch = make_quaternion_from_axis_angle(float3::unit_x(), pitchRad);
+                        quaternion roll = make_quaternion_from_axis_angle(float3::unit_z(), rollRad);
 
                         quaternion expected = yaw * pitch * roll;
-                        quaternion actual = quaternion::from_yaw_pitch_roll(yawRad, pitchRad, rollRad);
+                        quaternion actual = make_quaternion_from_yaw_pitch_roll(yawRad, pitchRad, rollRad);
                         Assert::IsTrue(Equal(expected, actual));
                     }
                 }
@@ -375,12 +375,12 @@ namespace MathTests
         TEST_METHOD(QuaternionSlerpTest)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
-            quaternion b = quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
+            quaternion b = make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float t = 0.5f;
 
-            quaternion expected = quaternion::from_axis_angle(axis, ToRadians(20.0f));
+            quaternion expected = make_quaternion_from_axis_angle(axis, ToRadians(20.0f));
             quaternion actual;
 
             actual = slerp(a, b, t);
@@ -396,8 +396,8 @@ namespace MathTests
         TEST_METHOD(QuaternionSlerpTest1)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
-            quaternion b = quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
+            quaternion b = make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float t = 0.0f;
 
@@ -410,8 +410,8 @@ namespace MathTests
         TEST_METHOD(QuaternionSlerpTest2)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
-            quaternion b = quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
+            quaternion b = make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float t = 1.0f;
 
@@ -424,7 +424,7 @@ namespace MathTests
         TEST_METHOD(QuaternionSlerpTest3)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
             quaternion b = -a;
 
             float t = 1.0f;
@@ -441,8 +441,8 @@ namespace MathTests
         TEST_METHOD(QuaternionSlerpTest4)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion a = quaternion::from_axis_angle(axis, ToRadians(10.0f));
-            quaternion b = -quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion a = make_quaternion_from_axis_angle(axis, ToRadians(10.0f));
+            quaternion b = -make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float t = 0.0f;
 
@@ -618,12 +618,12 @@ namespace MathTests
             float4x4 matrix = float4x4::identity();
 
             quaternion expected(0.0f, 0.0f, 0.0f, 1.0f);
-            quaternion actual = quaternion::from_rotation_matrix(matrix);
-            Assert::IsTrue(Equal(expected, actual), L"quaternion::from_rotation_matrix did not return the expected value.");
+            quaternion actual = make_quaternion_from_rotation_matrix(matrix);
+            Assert::IsTrue(Equal(expected, actual), L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
             // make sure convert back to matrix is same as we passed matrix.
-            float4x4 m2 = float4x4::from_quaternion(actual);
-            Assert::IsTrue(Equal(matrix, m2), L"quaternion::from_rotation_matrix did not return the expected value.");
+            float4x4 m2 = make_float4x4_from_quaternion(actual);
+            Assert::IsTrue(Equal(matrix, m2), L"make_quaternion_from_rotation_matrix did not return the expected value.");
         }
 
         // A test for from_rotation_matrix (float4x4)
@@ -631,17 +631,17 @@ namespace MathTests
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
-                float4x4 matrix = float4x4::rotation_x(angle);
+                float4x4 matrix = make_float4x4_rotation_x(angle);
 
-                quaternion expected = quaternion::from_axis_angle(float3::unit_x(), angle);
-                quaternion actual = quaternion::from_rotation_matrix(matrix);
+                quaternion expected = make_quaternion_from_axis_angle(float3::unit_x(), angle);
+                quaternion actual = make_quaternion_from_rotation_matrix(matrix);
                 Assert::IsTrue(EqualRotation(expected, actual),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
                 // make sure convert back to matrix is same as we passed matrix.
-                float4x4 m2 = float4x4::from_quaternion(actual);
+                float4x4 m2 = make_float4x4_from_quaternion(actual);
                 Assert::IsTrue(Equal(matrix, m2),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
             }
         }
 
@@ -650,17 +650,17 @@ namespace MathTests
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
-                float4x4 matrix = float4x4::rotation_y(angle);
+                float4x4 matrix = make_float4x4_rotation_y(angle);
 
-                quaternion expected = quaternion::from_axis_angle(float3::unit_y(), angle);
-                quaternion actual = quaternion::from_rotation_matrix(matrix);
+                quaternion expected = make_quaternion_from_axis_angle(float3::unit_y(), angle);
+                quaternion actual = make_quaternion_from_rotation_matrix(matrix);
                 Assert::IsTrue(EqualRotation(expected, actual),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
                 // make sure convert back to matrix is same as we passed matrix.
-                float4x4 m2 = float4x4::from_quaternion(actual);
+                float4x4 m2 = make_float4x4_from_quaternion(actual);
                 Assert::IsTrue(Equal(matrix, m2),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
             }
         }
 
@@ -669,17 +669,17 @@ namespace MathTests
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
-                float4x4 matrix = float4x4::rotation_z(angle);
+                float4x4 matrix = make_float4x4_rotation_z(angle);
 
-                quaternion expected = quaternion::from_axis_angle(float3::unit_z(), angle);
-                quaternion actual = quaternion::from_rotation_matrix(matrix);
+                quaternion expected = make_quaternion_from_axis_angle(float3::unit_z(), angle);
+                quaternion actual = make_quaternion_from_rotation_matrix(matrix);
                 Assert::IsTrue(EqualRotation(expected, actual),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
                 // make sure convert back to matrix is same as we passed matrix.
-                float4x4 m2 = float4x4::from_quaternion(actual);
+                float4x4 m2 = make_float4x4_from_quaternion(actual);
                 Assert::IsTrue(Equal(matrix, m2),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
             }
         }
 
@@ -688,21 +688,21 @@ namespace MathTests
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
-                float4x4 matrix = float4x4::rotation_x(angle) * float4x4::rotation_y(angle) * float4x4::rotation_z(angle);
+                float4x4 matrix = make_float4x4_rotation_x(angle) * make_float4x4_rotation_y(angle) * make_float4x4_rotation_z(angle);
 
                 quaternion expected =
-                    quaternion::from_axis_angle(float3::unit_z(), angle) *
-                    quaternion::from_axis_angle(float3::unit_y(), angle) *
-                    quaternion::from_axis_angle(float3::unit_x(), angle);
+                    make_quaternion_from_axis_angle(float3::unit_z(), angle) *
+                    make_quaternion_from_axis_angle(float3::unit_y(), angle) *
+                    make_quaternion_from_axis_angle(float3::unit_x(), angle);
 
-                quaternion actual = quaternion::from_rotation_matrix(matrix);
+                quaternion actual = make_quaternion_from_rotation_matrix(matrix);
                 Assert::IsTrue(EqualRotation(expected, actual),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
                 // make sure convert back to matrix is same as we passed matrix.
-                float4x4 m2 = float4x4::from_quaternion(actual);
+                float4x4 m2 = make_float4x4_from_quaternion(actual);
                 Assert::IsTrue(Equal(matrix, m2),
-                    L"quaternion::from_rotation_matrix did not return the expected value.");
+                    L"make_quaternion_from_rotation_matrix did not return the expected value.");
             }
         }
 
@@ -710,45 +710,45 @@ namespace MathTests
         TEST_METHOD(QuaternionFromRotationMatrixWithScaledMatrixTest1)
         {
             float angle = ToRadians(180.0f);
-            float4x4 matrix = float4x4::rotation_y(angle) * float4x4::rotation_z(angle);
+            float4x4 matrix = make_float4x4_rotation_y(angle) * make_float4x4_rotation_z(angle);
 
-            quaternion expected = quaternion::from_axis_angle(float3::unit_z(), angle) * quaternion::from_axis_angle(float3::unit_y(), angle);
-            quaternion actual = quaternion::from_rotation_matrix(matrix);
-            Assert::IsTrue(EqualRotation(expected, actual), L"quaternion::from_rotation_matrix did not return the expected value.");
+            quaternion expected = make_quaternion_from_axis_angle(float3::unit_z(), angle) * make_quaternion_from_axis_angle(float3::unit_y(), angle);
+            quaternion actual = make_quaternion_from_rotation_matrix(matrix);
+            Assert::IsTrue(EqualRotation(expected, actual), L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
             // make sure convert back to matrix is same as we passed matrix.
-            float4x4 m2 = float4x4::from_quaternion(actual);
-            Assert::IsTrue(Equal(matrix, m2), L"quaternion::from_rotation_matrix did not return the expected value.");
+            float4x4 m2 = make_float4x4_from_quaternion(actual);
+            Assert::IsTrue(Equal(matrix, m2), L"make_quaternion_from_rotation_matrix did not return the expected value.");
         }
 
         // A test for from_rotation_matrix (float4x4)
         TEST_METHOD(QuaternionFromRotationMatrixWithScaledMatrixTest2)
         {
             float angle = ToRadians(180.0f);
-            float4x4 matrix = float4x4::rotation_x(angle) * float4x4::rotation_z(angle);
+            float4x4 matrix = make_float4x4_rotation_x(angle) * make_float4x4_rotation_z(angle);
 
-            quaternion expected = quaternion::from_axis_angle(float3::unit_z(), angle) * quaternion::from_axis_angle(float3::unit_x(), angle);
-            quaternion actual = quaternion::from_rotation_matrix(matrix);
-            Assert::IsTrue(EqualRotation(expected, actual), L"quaternion::from_rotation_matrix did not return the expected value.");
+            quaternion expected = make_quaternion_from_axis_angle(float3::unit_z(), angle) * make_quaternion_from_axis_angle(float3::unit_x(), angle);
+            quaternion actual = make_quaternion_from_rotation_matrix(matrix);
+            Assert::IsTrue(EqualRotation(expected, actual), L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
             // make sure convert back to matrix is same as we passed matrix.
-            float4x4 m2 = float4x4::from_quaternion(actual);
-            Assert::IsTrue(Equal(matrix, m2), L"quaternion::from_rotation_matrix did not return the expected value.");
+            float4x4 m2 = make_float4x4_from_quaternion(actual);
+            Assert::IsTrue(Equal(matrix, m2), L"make_quaternion_from_rotation_matrix did not return the expected value.");
         }
 
         // A test for from_rotation_matrix (float4x4)
         TEST_METHOD(QuaternionFromRotationMatrixWithScaledMatrixTest3)
         {
             float angle = ToRadians(180.0f);
-            float4x4 matrix = float4x4::rotation_x(angle) * float4x4::rotation_y(angle);
+            float4x4 matrix = make_float4x4_rotation_x(angle) * make_float4x4_rotation_y(angle);
 
-            quaternion expected = quaternion::from_axis_angle(float3::unit_y(), angle) * quaternion::from_axis_angle(float3::unit_x(), angle);
-            quaternion actual = quaternion::from_rotation_matrix(matrix);
-            Assert::IsTrue(EqualRotation(expected, actual), L"quaternion::from_rotation_matrix did not return the expected value.");
+            quaternion expected = make_quaternion_from_axis_angle(float3::unit_y(), angle) * make_quaternion_from_axis_angle(float3::unit_x(), angle);
+            quaternion actual = make_quaternion_from_rotation_matrix(matrix);
+            Assert::IsTrue(EqualRotation(expected, actual), L"make_quaternion_from_rotation_matrix did not return the expected value.");
 
             // make sure convert back to matrix is same as we passed matrix.
-            float4x4 m2 = float4x4::from_quaternion(actual);
-            Assert::IsTrue(Equal(matrix, m2), L"quaternion::from_rotation_matrix did not return the expected value.");
+            float4x4 m2 = make_float4x4_from_quaternion(actual);
+            Assert::IsTrue(Equal(matrix, m2), L"make_quaternion_from_rotation_matrix did not return the expected value.");
         }
 
         // A test for identity

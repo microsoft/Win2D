@@ -71,26 +71,26 @@ namespace MathTests
                 L"plane::cstor did not return the expected value.");
         }
 
-        // A test for plane::from_vertices
+        // A test for make_plane_from_vertices
         TEST_METHOD(PlaneCreateFromVerticesTest)
         {
             float3 point1(0.0f, 1.0f, 1.0f);
             float3 point2(0.0f, 0.0f, 1.0f);
             float3 point3(1.0f, 0.0f, 1.0f);
 
-            plane target = plane::from_vertices(point1, point2, point3);
+            plane target = make_plane_from_vertices(point1, point2, point3);
             plane expected(float3(0, 0, 1), -1.0f);
             Assert::AreEqual(target, expected, L"plane::cstor did not return the expected value.");
         }
         
-        // A test for plane::from_vertices
+        // A test for make_plane_from_vertices
         TEST_METHOD(PlaneCreateFromVerticesTest2)
         {
             float3 point1(0.0f, 0.0f, 1.0f);
             float3 point2(1.0f, 0.0f, 0.0f);
             float3 point3(1.0f, 1.0f, 0.0f);
 
-            plane target = plane::from_vertices(point1, point2, point3);
+            plane target = make_plane_from_vertices(point1, point2, point3);
             float invRoot2 = (float)(1.0f / sqrt(2));
 
             plane expected(float3(invRoot2, 0, invRoot2), -invRoot2);
@@ -172,9 +172,9 @@ namespace MathTests
             target = normalize(target);
 
             float4x4 m =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f));
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f));
             m.m41 = 10.0f;
             m.m42 = 20.0f;
             m.m43 = 30.0f;
@@ -200,10 +200,10 @@ namespace MathTests
             target = normalize(target);
 
             float4x4 m =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f));
-            quaternion q = quaternion::from_rotation_matrix(m);
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f));
+            quaternion q = make_quaternion_from_rotation_matrix(m);
 
             plane expected;
             float x = target.normal.x, y = target.normal.y, z = target.normal.z, w = target.d;

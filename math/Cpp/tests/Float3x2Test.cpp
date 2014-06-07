@@ -24,8 +24,8 @@ namespace MathTests
 
         static float3x2 GenerateTestMatrix()
         {
-            float3x2 m = float3x2::rotation(ToRadians(30.0f)) *
-                         float3x2::translation(111.0f, 222.0f);
+            float3x2 m = make_float3x2_rotation(ToRadians(30.0f)) *
+                         make_float3x2_translation(111.0f, 222.0f);
             return m;
         }
 
@@ -65,7 +65,7 @@ namespace MathTests
         // A test for determinant
         TEST_METHOD(Float3x2DeterminantTest)
         {
-            float3x2 target = float3x2::rotation(ToRadians(30.0f));
+            float3x2 target = make_float3x2_rotation(ToRadians(30.0f));
 
             float val = 1.0f;
             float det = determinant(target);
@@ -98,7 +98,7 @@ namespace MathTests
         // A test for invert (float3x2)
         TEST_METHOD(Float3x2InvertTest)
         {
-            float3x2 mtx = float3x2::rotation(ToRadians(30.0f));
+            float3x2 mtx = make_float3x2_rotation(ToRadians(30.0f));
 
             float3x2 expected;
             expected.m11 = 0.8660254f;
@@ -122,9 +122,9 @@ namespace MathTests
         // A test for invert (float3x2)
         TEST_METHOD(Float3x2InvertInPlaceTest)
         {
-            float3x2 mtx = float3x2::rotation(ToRadians(30.0f)) * 
-                            float3x2::scale(2, 3) * 
-                            float3x2::translation(23, 42);
+            float3x2 mtx = make_float3x2_rotation(ToRadians(30.0f)) * 
+                            make_float3x2_scale(2, 3) * 
+                            make_float3x2_translation(23, 42);
 
             float3x2 expected;
             Assert::IsTrue(invert(mtx, &expected));
@@ -147,7 +147,7 @@ namespace MathTests
         // A test for invert (float3x2)
         TEST_METHOD(Float3x2InvertTranslationTest)
         {
-            float3x2 mtx = float3x2::translation(23, 42);
+            float3x2 mtx = make_float3x2_translation(23, 42);
 
             float3x2 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -159,7 +159,7 @@ namespace MathTests
         // A test for invert (float3x2)
         TEST_METHOD(Float3x2InvertRotationTest)
         {
-            float3x2 mtx = float3x2::rotation(2);
+            float3x2 mtx = make_float3x2_rotation(2);
 
             float3x2 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -171,7 +171,7 @@ namespace MathTests
         // A test for invert (float3x2)
         TEST_METHOD(Float3x2InvertScaleTest)
         {
-            float3x2 mtx = float3x2::scale(23, -42);
+            float3x2 mtx = make_float3x2_scale(23, -42);
 
             float3x2 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -183,9 +183,9 @@ namespace MathTests
         // A test for invert (float3x2)
         TEST_METHOD(Float3x2InvertAffineTest)
         {
-            float3x2 mtx = float3x2::rotation(2) *
-                            float3x2::scale(23, -42) *
-                            float3x2::translation(17, 53);
+            float3x2 mtx = make_float3x2_rotation(2) *
+                            make_float3x2_scale(23, -42) *
+                            make_float3x2_translation(17, 53);
 
             float3x2 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -206,8 +206,8 @@ namespace MathTests
             expected.m22 = 0.642787635f;
 
             float3x2 actual;
-            actual = float3x2::rotation(radians);
-            Assert::IsTrue(Equal(expected, actual), L"float3x2::rotation did not return the expected value.");
+            actual = make_float3x2_rotation(radians);
+            Assert::IsTrue(Equal(expected, actual), L"make_float3x2_rotation did not return the expected value.");
         }
 
         // A test for rotation (float, float2)
@@ -216,12 +216,12 @@ namespace MathTests
             float radians = ToRadians(30.0f);
             float2 center(23, 42);
 
-            float3x2 rotateAroundZero = float3x2::rotation(radians, float2::zero());
-            float3x2 rotateAroundZeroExpected = float3x2::rotation(radians);
+            float3x2 rotateAroundZero = make_float3x2_rotation(radians, float2::zero());
+            float3x2 rotateAroundZeroExpected = make_float3x2_rotation(radians);
             Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
 
-            float3x2 rotateAroundCenter = float3x2::rotation(radians, center);
-            float3x2 rotateAroundCenterExpected = float3x2::translation(-center) * float3x2::rotation(radians) * float3x2::translation(center);
+            float3x2 rotateAroundCenter = make_float3x2_rotation(radians, center);
+            float3x2 rotateAroundCenterExpected = make_float3x2_translation(-center) * make_float3x2_rotation(radians) * make_float3x2_translation(center);
             Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
@@ -229,34 +229,34 @@ namespace MathTests
         TEST_METHOD(Float3x2CreateRotationRightAngleTest)
         {
             // 90 degree rotations must be exact!
-            float3x2 actual = float3x2::rotation(0);
+            float3x2 actual = make_float3x2_rotation(0);
             Assert::AreEqual(float3x2(1, 0, 0, 1, 0, 0), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI / 2);
+            actual = make_float3x2_rotation(DirectX::XM_PI / 2);
             Assert::AreEqual(float3x2(0, 1, -1, 0, 0, 0), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI);
+            actual = make_float3x2_rotation(DirectX::XM_PI);
             Assert::AreEqual(float3x2(-1, 0, 0, -1, 0, 0), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI * 3 / 2);
+            actual = make_float3x2_rotation(DirectX::XM_PI * 3 / 2);
             Assert::AreEqual(float3x2(0, -1, 1, 0, 0, 0), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI * 2);
+            actual = make_float3x2_rotation(DirectX::XM_PI * 2);
             Assert::AreEqual(float3x2(1, 0, 0, 1, 0, 0), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI * 5 / 2);
+            actual = make_float3x2_rotation(DirectX::XM_PI * 5 / 2);
             Assert::AreEqual(float3x2(0, 1, -1, 0, 0, 0), actual);
 
-            actual = float3x2::rotation(-DirectX::XM_PI / 2);
+            actual = make_float3x2_rotation(-DirectX::XM_PI / 2);
             Assert::AreEqual(float3x2(0, -1, 1, 0, 0, 0), actual);
 
             // But merely close-to-90 rotations should not be excessively clamped.
             float delta = ToRadians(0.01f);
 
-            actual = float3x2::rotation(DirectX::XM_PI + delta);
+            actual = make_float3x2_rotation(DirectX::XM_PI + delta);
             Assert::IsFalse(Equal(float3x2(-1, 0, 0, -1, 0, 0), actual));
 
-            actual = float3x2::rotation(DirectX::XM_PI - delta);
+            actual = make_float3x2_rotation(DirectX::XM_PI - delta);
             Assert::IsFalse(Equal(float3x2(-1, 0, 0, -1, 0, 0), actual));
         }
 
@@ -266,34 +266,34 @@ namespace MathTests
             float2 center(3, 7);
 
             // 90 degree rotations must be exact!
-            float3x2 actual = float3x2::rotation(0, center);
+            float3x2 actual = make_float3x2_rotation(0, center);
             Assert::AreEqual(float3x2(1, 0, 0, 1, 0, 0), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI / 2, center);
+            actual = make_float3x2_rotation(DirectX::XM_PI / 2, center);
             Assert::AreEqual(float3x2(0, 1, -1, 0, 10, 4), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI, center);
+            actual = make_float3x2_rotation(DirectX::XM_PI, center);
             Assert::AreEqual(float3x2(-1, 0, 0, -1, 6, 14), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI * 3 / 2, center);
+            actual = make_float3x2_rotation(DirectX::XM_PI * 3 / 2, center);
             Assert::AreEqual(float3x2(0, -1, 1, 0, -4, 10), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI * 2, center);
+            actual = make_float3x2_rotation(DirectX::XM_PI * 2, center);
             Assert::AreEqual(float3x2(1, 0, 0, 1, 0, 0), actual);
 
-            actual = float3x2::rotation(DirectX::XM_PI * 5 / 2, center);
+            actual = make_float3x2_rotation(DirectX::XM_PI * 5 / 2, center);
             Assert::AreEqual(float3x2(0, 1, -1, 0, 10, 4), actual);
 
-            actual = float3x2::rotation(-DirectX::XM_PI / 2, center);
+            actual = make_float3x2_rotation(-DirectX::XM_PI / 2, center);
             Assert::AreEqual(float3x2(0, -1, 1, 0, -4, 10), actual);
 
             // But merely close-to-90 rotations should not be excessively clamped.
             float delta = ToRadians(0.01f);
 
-            actual = float3x2::rotation(DirectX::XM_PI + delta, center);
+            actual = make_float3x2_rotation(DirectX::XM_PI + delta, center);
             Assert::IsFalse(Equal(float3x2(-1, 0, 0, -1, 6, 14), actual));
 
-            actual = float3x2::rotation(DirectX::XM_PI - delta, center);
+            actual = make_float3x2_rotation(DirectX::XM_PI - delta, center);
             Assert::IsFalse(Equal(float3x2(-1, 0, 0, -1, 6, 14), actual));
         }
 
@@ -391,8 +391,8 @@ namespace MathTests
             Assert::IsTrue(Equal(expected, actual), L"float3x2::operator * did not return the expected value.");
 
             // Sanity check by comparison with 4x4 multiply.
-            a = float3x2::rotation(ToRadians(30)) * float3x2::translation(23, 42);
-            b = float3x2::scale(3, 7) * float3x2::translation(666, -1);
+            a = make_float3x2_rotation(ToRadians(30)) * make_float3x2_translation(23, 42);
+            b = make_float3x2_scale(3, 7) * make_float3x2_translation(666, -1);
 
             actual = a * b;
 
@@ -554,8 +554,8 @@ namespace MathTests
                 2.0f, 0.0f,
                 0.0f, 3.0f,
                 0.0f, 0.0f);
-            float3x2 actual = float3x2::scale(scales);
-            Assert::AreEqual(expected, actual, L"float3x2::scale did not return the expected value.");
+            float3x2 actual = make_float3x2_scale(scales);
+            Assert::AreEqual(expected, actual, L"make_float3x2_scale did not return the expected value.");
         }
 
         // A test for scale (float2, float2)
@@ -564,12 +564,12 @@ namespace MathTests
             float2 scale(3, 4);
             float2 center(23, 42);
 
-            float3x2 scaleAroundZero = float3x2::scale(scale, float2::zero());
-            float3x2 scaleAroundZeroExpected = float3x2::scale(scale);
+            float3x2 scaleAroundZero = make_float3x2_scale(scale, float2::zero());
+            float3x2 scaleAroundZeroExpected = make_float3x2_scale(scale);
             Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
 
-            float3x2 scaleAroundCenter = float3x2::scale(scale, center);
-            float3x2 scaleAroundCenterExpected = float3x2::translation(-center) * float3x2::scale(scale) * float3x2::translation(center);
+            float3x2 scaleAroundCenter = make_float3x2_scale(scale, center);
+            float3x2 scaleAroundCenterExpected = make_float3x2_translation(-center) * make_float3x2_scale(scale) * make_float3x2_translation(center);
             Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
@@ -581,8 +581,8 @@ namespace MathTests
                 2.0f, 0.0f,
                 0.0f, 2.0f,
                 0.0f, 0.0f);
-            float3x2 actual = float3x2::scale(scale);
-            Assert::AreEqual(expected, actual, L"float3x2::scale did not return the expected value.");
+            float3x2 actual = make_float3x2_scale(scale);
+            Assert::AreEqual(expected, actual, L"make_float3x2_scale did not return the expected value.");
         }
 
         // A test for scale (float, float2)
@@ -591,12 +591,12 @@ namespace MathTests
             float scale = 5;
             float2 center(23, 42);
 
-            float3x2 scaleAroundZero = float3x2::scale(scale, float2::zero());
-            float3x2 scaleAroundZeroExpected = float3x2::scale(scale);
+            float3x2 scaleAroundZero = make_float3x2_scale(scale, float2::zero());
+            float3x2 scaleAroundZeroExpected = make_float3x2_scale(scale);
             Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
 
-            float3x2 scaleAroundCenter = float3x2::scale(scale, center);
-            float3x2 scaleAroundCenterExpected = float3x2::translation(-center) * float3x2::scale(scale) * float3x2::translation(center);
+            float3x2 scaleAroundCenter = make_float3x2_scale(scale, center);
+            float3x2 scaleAroundCenterExpected = make_float3x2_translation(-center) * make_float3x2_scale(scale) * make_float3x2_translation(center);
             Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
@@ -609,8 +609,8 @@ namespace MathTests
                 2.0f, 0.0f,
                 0.0f, 3.0f,
                 0.0f, 0.0f);
-            float3x2 actual = float3x2::scale(xScale, yScale);
-            Assert::AreEqual(expected, actual, L"float3x2::scale did not return the expected value.");
+            float3x2 actual = make_float3x2_scale(xScale, yScale);
+            Assert::AreEqual(expected, actual, L"make_float3x2_scale did not return the expected value.");
         }
 
         // A test for scale (float, float, float2)
@@ -619,12 +619,12 @@ namespace MathTests
             float2 scale(3, 4);
             float2 center(23, 42);
 
-            float3x2 scaleAroundZero = float3x2::scale(scale.x, scale.y, float2::zero());
-            float3x2 scaleAroundZeroExpected = float3x2::scale(scale.x, scale.y);
+            float3x2 scaleAroundZero = make_float3x2_scale(scale.x, scale.y, float2::zero());
+            float3x2 scaleAroundZeroExpected = make_float3x2_scale(scale.x, scale.y);
             Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
 
-            float3x2 scaleAroundCenter = float3x2::scale(scale.x, scale.y, center);
-            float3x2 scaleAroundCenterExpected = float3x2::translation(-center) * float3x2::scale(scale.x, scale.y) * float3x2::translation(center);
+            float3x2 scaleAroundCenter = make_float3x2_scale(scale.x, scale.y, center);
+            float3x2 scaleAroundCenterExpected = make_float3x2_translation(-center) * make_float3x2_scale(scale.x, scale.y) * make_float3x2_translation(center);
             Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
@@ -637,8 +637,8 @@ namespace MathTests
                 0.0f, 1.0f,
                 2.0f, 3.0f);
 
-            float3x2 actual = float3x2::translation(position);
-            Assert::AreEqual(expected, actual, L"float3x2::translation did not return the expected value.");
+            float3x2 actual = make_float3x2_translation(position);
+            Assert::AreEqual(expected, actual, L"make_float3x2_translation did not return the expected value.");
         }
 
         // A test for translation (float, float)
@@ -652,8 +652,8 @@ namespace MathTests
                 0.0f, 1.0f,
                 2.0f, 3.0f);
 
-            float3x2 actual = float3x2::translation(xPosition, yPosition);
-            Assert::AreEqual(expected, actual, L"float3x2::translation did not return the expected value.");
+            float3x2 actual = make_float3x2_translation(xPosition, yPosition);
+            Assert::AreEqual(expected, actual, L"make_float3x2_translation did not return the expected value.");
         }
 
         // A test for translation()
@@ -670,19 +670,19 @@ namespace MathTests
         TEST_METHOD(Float3x2CreateSkewIdentityTest)
         {
             float3x2 expected = float3x2::identity();
-            float3x2 actual = float3x2::skew(0, 0);
-            Assert::AreEqual(expected, actual, L"float3x2::skew did not return the expected value.");
+            float3x2 actual = make_float3x2_skew(0, 0);
+            Assert::AreEqual(expected, actual, L"make_float3x2_skew did not return the expected value.");
         }
 
         // A test for skew (float, float)
         TEST_METHOD(Float3x2CreateSkewXTest)
         {
             float3x2 expected(1, 0, -0.414213562373095f, 1, 0, 0);
-            float3x2 actual = float3x2::skew(-DirectX::XM_PI / 8, 0);
+            float3x2 actual = make_float3x2_skew(-DirectX::XM_PI / 8, 0);
             Assert::IsTrue(Equal(expected, actual));
 
             expected = float3x2(1, 0, 0.414213562373095f, 1, 0, 0);
-            actual = float3x2::skew(DirectX::XM_PI / 8, 0);
+            actual = make_float3x2_skew(DirectX::XM_PI / 8, 0);
             Assert::IsTrue(Equal(expected, actual));
 
             float2 result = transform(float2(0, 0), actual);
@@ -702,11 +702,11 @@ namespace MathTests
         TEST_METHOD(Float3x2CreateSkewYTest)
         {
             float3x2 expected(1, -0.414213562373095f, 0, 1, 0, 0);
-            float3x2 actual = float3x2::skew(0, -DirectX::XM_PI / 8);
+            float3x2 actual = make_float3x2_skew(0, -DirectX::XM_PI / 8);
             Assert::IsTrue(Equal(expected, actual));
 
             expected = float3x2(1, 0.414213562373095f, 0, 1, 0, 0);
-            actual = float3x2::skew(0, DirectX::XM_PI / 8);
+            actual = make_float3x2_skew(0, DirectX::XM_PI / 8);
             Assert::IsTrue(Equal(expected, actual));
 
             float2 result = transform(float2(0, 0), actual);
@@ -726,7 +726,7 @@ namespace MathTests
         TEST_METHOD(Float3x2CreateSkewXYTest)
         {
             float3x2 expected(1, -0.414213562373095f, 1, 1, 0, 0);
-            float3x2 actual = float3x2::skew(DirectX::XM_PI / 4, -DirectX::XM_PI / 8);
+            float3x2 actual = make_float3x2_skew(DirectX::XM_PI / 4, -DirectX::XM_PI / 8);
             Assert::IsTrue(Equal(expected, actual));
 
             float2 result = transform(float2(0, 0), actual);
@@ -748,12 +748,12 @@ namespace MathTests
             float skewX = 1, skewY = 2;
             float2 center(23, 42);
 
-            float3x2 skewAroundZero = float3x2::skew(skewX, skewY, float2::zero());
-            float3x2 skewAroundZeroExpected = float3x2::skew(skewX, skewY);
+            float3x2 skewAroundZero = make_float3x2_skew(skewX, skewY, float2::zero());
+            float3x2 skewAroundZeroExpected = make_float3x2_skew(skewX, skewY);
             Assert::IsTrue(Equal(skewAroundZero, skewAroundZeroExpected));
 
-            float3x2 skewAroundCenter = float3x2::skew(skewX, skewY, center);
-            float3x2 skewAroundCenterExpected = float3x2::translation(-center) * float3x2::skew(skewX, skewY) * float3x2::translation(center);
+            float3x2 skewAroundCenter = make_float3x2_skew(skewX, skewY, center);
+            float3x2 skewAroundCenterExpected = make_float3x2_translation(-center) * make_float3x2_skew(skewX, skewY) * make_float3x2_translation(center);
             Assert::IsTrue(Equal(skewAroundCenter, skewAroundCenterExpected));
         }
 

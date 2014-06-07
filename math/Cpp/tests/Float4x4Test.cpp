@@ -26,10 +26,10 @@ namespace MathTests
         static float4x4 GenerateTestMatrix()
         {
             float4x4 m =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f)) *
-                float4x4::translation(111.0f, 222.0f, 333.0f);
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f)) *
+                make_float4x4_translation(111.0f, 222.0f, 333.0f);
             return m;
         }
 
@@ -79,9 +79,9 @@ namespace MathTests
         TEST_METHOD(Float4x4DeterminantTest)
         {
             float4x4 target =
-                    float4x4::rotation_x(ToRadians(30.0f)) *
-                    float4x4::rotation_y(ToRadians(30.0f)) *
-                    float4x4::rotation_z(ToRadians(30.0f));
+                    make_float4x4_rotation_x(ToRadians(30.0f)) *
+                    make_float4x4_rotation_y(ToRadians(30.0f)) *
+                    make_float4x4_rotation_z(ToRadians(30.0f));
 
             float val = 1.0f;
             float det = determinant(target);
@@ -112,9 +112,9 @@ namespace MathTests
         TEST_METHOD(Float4x4InvertTest)
         {
             float4x4 mtx =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f));
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f));
 
             float4x4 expected;
             expected.m11 = 0.74999994f;
@@ -151,11 +151,11 @@ namespace MathTests
         TEST_METHOD(Float4x4InvertInPlaceTest)
         {
             float4x4 mtx =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f)) *
-                float4x4::scale(3, 4, 5) *
-                float4x4::translation(23, 42, 666);
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f)) *
+                make_float4x4_scale(3, 4, 5) *
+                make_float4x4_translation(23, 42, 666);
 
             float4x4 expected;
             Assert::IsTrue(invert(mtx, &expected));
@@ -178,7 +178,7 @@ namespace MathTests
         // A test for invert (float4x4)
         TEST_METHOD(Float4x4InvertTranslationTest)
         {
-            float4x4 mtx = float4x4::translation(23, 42, 666);
+            float4x4 mtx = make_float4x4_translation(23, 42, 666);
 
             float4x4 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -190,7 +190,7 @@ namespace MathTests
         // A test for invert (float4x4)
         TEST_METHOD(Float4x4InvertRotationTest)
         {
-            float4x4 mtx = float4x4::from_yaw_pitch_roll(3, 4, 5);
+            float4x4 mtx = make_float4x4_from_yaw_pitch_roll(3, 4, 5);
 
             float4x4 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -202,7 +202,7 @@ namespace MathTests
         // A test for invert (float4x4)
         TEST_METHOD(Float4x4InvertScaleTest)
         {
-            float4x4 mtx = float4x4::scale(23, 42, -666);
+            float4x4 mtx = make_float4x4_scale(23, 42, -666);
 
             float4x4 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -214,7 +214,7 @@ namespace MathTests
         // A test for invert (float4x4)
         TEST_METHOD(Float4x4InvertProjectionTest)
         {
-            float4x4 mtx = float4x4::perspective_field_of_view(1, 1.333f, 0.1f, 666);
+            float4x4 mtx = make_float4x4_perspective_field_of_view(1, 1.333f, 0.1f, 666);
 
             float4x4 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -226,9 +226,9 @@ namespace MathTests
         // A test for invert (float4x4)
         TEST_METHOD(Float4x4InvertAffineTest)
         {
-            float4x4 mtx = float4x4::from_yaw_pitch_roll(3, 4, 5) *
-                            float4x4::scale(23, 42, -666) *
-                            float4x4::translation(17, 53, 89);
+            float4x4 mtx = make_float4x4_from_yaw_pitch_roll(3, 4, 5) *
+                            make_float4x4_scale(23, 42, -666) *
+                            make_float4x4_translation(17, 53, 89);
 
             float4x4 actual;
             Assert::IsTrue(invert(mtx, &actual));
@@ -244,12 +244,12 @@ namespace MathTests
 
         void DecomposeTest(float yaw, float pitch, float roll, float3 expectedTranslation, float3 expectedScales, bool expectedResult)
         {
-            quaternion expectedRotation = quaternion::from_yaw_pitch_roll(
+            quaternion expectedRotation = make_quaternion_from_yaw_pitch_roll(
                 ToRadians(yaw), ToRadians(pitch), ToRadians(roll));
 
-            float4x4 m = float4x4::scale(expectedScales) *
-                float4x4::from_quaternion(expectedRotation) *
-                float4x4::translation(expectedTranslation);
+            float4x4 m = make_float4x4_scale(expectedScales) *
+                make_float4x4_from_quaternion(expectedRotation) *
+                make_float4x4_translation(expectedTranslation);
 
             float3 scales;
             quaternion rotation;
@@ -315,7 +315,7 @@ namespace MathTests
 
         void DecomposeScaleTest(float sx, float sy, float sz)
         {
-            float4x4 m = float4x4::scale(1, 2e-6f, 1e-6f);
+            float4x4 m = make_float4x4_scale(1, 2e-6f, 1e-6f);
             m.m11 = sx;
             m.m12 = sy;
             m.m13 = sz;
@@ -350,11 +350,11 @@ namespace MathTests
             float4x4 target = GenerateMatrixNumberFrom1To16();
 
             float4x4 m =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f));
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f));
 
-            quaternion q = quaternion::from_rotation_matrix(m);
+            quaternion q = make_quaternion_from_rotation_matrix(m);
 
             float4x4 expected = target * m;
             float4x4 actual;
@@ -377,8 +377,8 @@ namespace MathTests
 
             float4x4 actual;
 
-            actual = float4x4::rotation_x(radians);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::rotation_x did not return the expected value.");
+            actual = make_float4x4_rotation_x(radians);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_rotation_x did not return the expected value.");
         }
 
         // A test for rotation_x (float)
@@ -387,8 +387,8 @@ namespace MathTests
             float radians = 0;
 
             float4x4 expected = float4x4::identity();
-            float4x4 actual = float4x4::rotation_x(radians);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::rotation_x did not return the expected value.");
+            float4x4 actual = make_float4x4_rotation_x(radians);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_rotation_x did not return the expected value.");
         }
 
         // A test for rotation_x (float, float3)
@@ -397,12 +397,12 @@ namespace MathTests
             float radians = ToRadians(30.0f);
             float3 center(23, 42, 66);
 
-            float4x4 rotateAroundZero = float4x4::rotation_x(radians, float3::zero());
-            float4x4 rotateAroundZeroExpected = float4x4::rotation_x(radians);
+            float4x4 rotateAroundZero = make_float4x4_rotation_x(radians, float3::zero());
+            float4x4 rotateAroundZeroExpected = make_float4x4_rotation_x(radians);
             Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
 
-            float4x4 rotateAroundCenter = float4x4::rotation_x(radians, center);
-            float4x4 rotateAroundCenterExpected = float4x4::translation(-center) * float4x4::rotation_x(radians) * float4x4::translation(center);
+            float4x4 rotateAroundCenter = make_float4x4_rotation_x(radians, center);
+            float4x4 rotateAroundCenterExpected = make_float4x4_translation(-center) * make_float4x4_rotation_x(radians) * make_float4x4_translation(center);
             Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
@@ -419,8 +419,8 @@ namespace MathTests
             expected.m33 = 0.49999997f;
 
             float4x4 actual;
-            actual = float4x4::rotation_y(radians);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::rotation_y did not return the expected value.");
+            actual = make_float4x4_rotation_y(radians);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_rotation_y did not return the expected value.");
         }
 
         // A test for rotation_y (float)
@@ -435,8 +435,8 @@ namespace MathTests
             expected.m31 = 0.866025448f;
             expected.m33 = 0.49999997f;
 
-            float4x4 actual = float4x4::rotation_y(radians);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::rotation_y did not return the expected value.");
+            float4x4 actual = make_float4x4_rotation_y(radians);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_rotation_y did not return the expected value.");
         }
 
         // A test for rotation_y (float, float3)
@@ -445,12 +445,12 @@ namespace MathTests
             float radians = ToRadians(30.0f);
             float3 center(23, 42, 66);
 
-            float4x4 rotateAroundZero = float4x4::rotation_y(radians, float3::zero());
-            float4x4 rotateAroundZeroExpected = float4x4::rotation_y(radians);
+            float4x4 rotateAroundZero = make_float4x4_rotation_y(radians, float3::zero());
+            float4x4 rotateAroundZeroExpected = make_float4x4_rotation_y(radians);
             Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
 
-            float4x4 rotateAroundCenter = float4x4::rotation_y(radians, center);
-            float4x4 rotateAroundCenterExpected = float4x4::translation(-center) * float4x4::rotation_y(radians) * float4x4::translation(center);
+            float4x4 rotateAroundCenter = make_float4x4_rotation_y(radians, center);
+            float4x4 rotateAroundCenterExpected = make_float4x4_translation(-center) * make_float4x4_rotation_y(radians) * make_float4x4_translation(center);
             Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
@@ -459,20 +459,20 @@ namespace MathTests
         {
             float radians = ToRadians(-30.0f);
 
-            float4x4 expected = float4x4::rotation_x(radians);
-            float4x4 actual = float4x4::from_axis_angle(float3::unit_x(), radians);
+            float4x4 expected = make_float4x4_rotation_x(radians);
+            float4x4 actual = make_float4x4_from_axis_angle(float3::unit_x(), radians);
             Assert::IsTrue(Equal(expected, actual));
 
-            expected = float4x4::rotation_y(radians);
-            actual = float4x4::from_axis_angle(float3::unit_y(), radians);
+            expected = make_float4x4_rotation_y(radians);
+            actual = make_float4x4_from_axis_angle(float3::unit_y(), radians);
             Assert::IsTrue(Equal(expected, actual));
 
-            expected = float4x4::rotation_z(radians);
-            actual = float4x4::from_axis_angle(float3::unit_z(), radians);
+            expected = make_float4x4_rotation_z(radians);
+            actual = make_float4x4_from_axis_angle(float3::unit_z(), radians);
             Assert::IsTrue(Equal(expected, actual));
 
-            expected = float4x4::from_quaternion(quaternion::from_axis_angle(normalize(float3::one()), radians));
-            actual = float4x4::from_axis_angle(normalize(float3::one()), radians);
+            expected = make_float4x4_from_quaternion(make_quaternion_from_axis_angle(normalize(float3::one()), radians));
+            actual = make_float4x4_from_axis_angle(normalize(float3::one()), radians);
             Assert::IsTrue(Equal(expected, actual));
 
             const int rotCount = 16;
@@ -483,13 +483,13 @@ namespace MathTests
                 {
                     float longitude = -DirectX::XM_PIDIV2 + DirectX::XM_PI * ((float)j / (float)rotCount);
 
-                    float4x4 m = float4x4::rotation_z(longitude) * float4x4::rotation_y(latitude);
+                    float4x4 m = make_float4x4_rotation_z(longitude) * make_float4x4_rotation_y(latitude);
                     float3 axis(m.m11, m.m12, m.m13);
                     for (int k = 0; k < rotCount; ++k)
                     {
                         float rot = (2.0f * DirectX::XM_PI) * ((float)k / (float)rotCount);
-                        expected = float4x4::from_quaternion(quaternion::from_axis_angle(axis, rot));
-                        actual = float4x4::from_axis_angle(axis, rot);
+                        expected = make_float4x4_from_quaternion(make_quaternion_from_axis_angle(axis, rot));
+                        actual = make_float4x4_from_axis_angle(axis, rot);
                         Assert::IsTrue(Equal(expected, actual));
                     }
                 }
@@ -502,12 +502,12 @@ namespace MathTests
             float pitchAngle = ToRadians(40.0f);
             float rollAngle = ToRadians(50.0f);
 
-            float4x4 yaw = float4x4::from_axis_angle(float3::unit_y(), yawAngle);
-            float4x4 pitch = float4x4::from_axis_angle(float3::unit_x(), pitchAngle);
-            float4x4 roll = float4x4::from_axis_angle(float3::unit_z(), rollAngle);
+            float4x4 yaw = make_float4x4_from_axis_angle(float3::unit_y(), yawAngle);
+            float4x4 pitch = make_float4x4_from_axis_angle(float3::unit_x(), pitchAngle);
+            float4x4 roll = make_float4x4_from_axis_angle(float3::unit_z(), rollAngle);
 
             float4x4 expected = roll * pitch * yaw;
-            float4x4 actual = float4x4::from_yaw_pitch_roll(yawAngle, pitchAngle, rollAngle);
+            float4x4 actual = make_float4x4_from_yaw_pitch_roll(yawAngle, pitchAngle, rollAngle);
             Assert::IsTrue(Equal(expected, actual));
         }
         
@@ -524,12 +524,12 @@ namespace MathTests
                         float yawRad = ToRadians(yawAngle);
                         float pitchRad = ToRadians(pitchAngle);
                         float rollRad = ToRadians(rollAngle);
-                        float4x4 yaw = float4x4::from_axis_angle(float3::unit_y(), yawRad);
-                        float4x4 pitch = float4x4::from_axis_angle(float3::unit_x(), pitchRad);
-                        float4x4 roll = float4x4::from_axis_angle(float3::unit_z(), rollRad);
+                        float4x4 yaw = make_float4x4_from_axis_angle(float3::unit_y(), yawRad);
+                        float4x4 pitch = make_float4x4_from_axis_angle(float3::unit_x(), pitchRad);
+                        float4x4 roll = make_float4x4_from_axis_angle(float3::unit_z(), rollRad);
 
                         float4x4 expected = roll * pitch * yaw;
-                        float4x4 actual = float4x4::from_yaw_pitch_roll(yawRad, pitchRad, rollRad);
+                        float4x4 actual = make_float4x4_from_yaw_pitch_roll(yawRad, pitchRad, rollRad);
                         Assert::IsTrue(Equal(expected, actual));
                     }
                 }
@@ -541,10 +541,10 @@ namespace MathTests
             float3 lightDir = float3::unit_y();
             plane plane(float3::unit_y(), 0);
 
-            float4x4 expected = float4x4::scale(1, 0, 1);
+            float4x4 expected = make_float4x4_scale(1, 0, 1);
 
-            float4x4 actual = float4x4::shadow(lightDir, plane);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::shadow did not returned expected value.");
+            float4x4 actual = make_float4x4_shadow(lightDir, plane);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_shadow did not returned expected value.");
         }
         
         TEST_METHOD(Float4x4CreateShadowTest02)
@@ -616,7 +616,7 @@ namespace MathTests
 
                     if (dot_normal(plane, lightDir) < 0.1f) continue;
 
-                    float4x4 m = float4x4::shadow(lightDir, plane);
+                    float4x4 m = make_float4x4_shadow(lightDir, plane);
                     float3 pp = -plane.d * plane.normal; // origin of the plane.
 
                     for (int k = 0; k < sizeof(points) / sizeof(points[0]); k++)
@@ -630,13 +630,13 @@ namespace MathTests
                         // Make sure transformed position is on the plane.
                         float3 v = sp - pp;
                         float d = dot(v, plane.normal);
-                        Assert::IsTrue(Equal(d, 0), L"float4x4::shadow did not provide expected value.");
+                        Assert::IsTrue(Equal(d, 0), L"make_float4x4_shadow did not provide expected value.");
 
                         // make sure direction between transformed position and original position are same as light direction.
                         if (dot(point - pp, plane.normal) > 0.0001f)
                         {
                             float3 dir = normalize(point - sp);
-                            Assert::IsTrue(Equal(dir, lightDir), L"float4x4::shadow did not provide expected value.");
+                            Assert::IsTrue(Equal(dir, lightDir), L"make_float4x4_shadow did not provide expected value.");
                         }
                     }
                 }
@@ -645,18 +645,18 @@ namespace MathTests
 
         void CreateReflectionTest(plane plane, float4x4 expected)
         {
-            float4x4 actual = float4x4::reflection(plane);
-            Assert::IsTrue(Equal(actual, expected), L"float4x4::reflection did not return expected value.");
+            float4x4 actual = make_float4x4_reflection(plane);
+            Assert::IsTrue(Equal(actual, expected), L"make_float4x4_reflection did not return expected value.");
         }
 
         TEST_METHOD(Float4x4CreateReflectionTest01)
         {
             // XY plane.
-            CreateReflectionTest(plane(float3::unit_z(), 0), float4x4::scale(1, 1, -1));
+            CreateReflectionTest(plane(float3::unit_z(), 0), make_float4x4_scale(1, 1, -1));
             // XZ plane.
-            CreateReflectionTest(plane(float3::unit_y(), 0), float4x4::scale(1, -1, 1));
+            CreateReflectionTest(plane(float3::unit_y(), 0), make_float4x4_scale(1, -1, 1));
             // YZ plane.
-            CreateReflectionTest(plane(float3::unit_x(), 0), float4x4::scale(-1, 1, 1));
+            CreateReflectionTest(plane(float3::unit_x(), 0), make_float4x4_scale(-1, 1, 1));
 
             // Complex cases.
             plane planes[] =
@@ -679,7 +679,7 @@ namespace MathTests
             for (int i = 0; i < sizeof(planes) / sizeof(planes[0]); i++)
             {
                 plane plane = normalize(planes[i]);
-                float4x4 m = float4x4::reflection(plane);
+                float4x4 m = make_float4x4_reflection(plane);
                 float3 pp = -plane.d * plane.normal; // Position on the plane.
 
                 for (int j = 0; j < sizeof(points) / sizeof(points[0]); j++)
@@ -709,8 +709,8 @@ namespace MathTests
             expected.m22 = 0.642787635f;
 
             float4x4 actual;
-            actual = float4x4::rotation_z(radians);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::rotation_z did not return the expected value.");
+            actual = make_float4x4_rotation_z(radians);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_rotation_z did not return the expected value.");
         }
 
         // A test for rotation_z (float, float3)
@@ -719,12 +719,12 @@ namespace MathTests
             float radians = ToRadians(30.0f);
             float3 center(23, 42, 66);
 
-            float4x4 rotateAroundZero = float4x4::rotation_z(radians, float3::zero());
-            float4x4 rotateAroundZeroExpected = float4x4::rotation_z(radians);
+            float4x4 rotateAroundZero = make_float4x4_rotation_z(radians, float3::zero());
+            float4x4 rotateAroundZeroExpected = make_float4x4_rotation_z(radians);
             Assert::IsTrue(Equal(rotateAroundZero, rotateAroundZeroExpected));
 
-            float4x4 rotateAroundCenter = float4x4::rotation_z(radians, center);
-            float4x4 rotateAroundCenterExpected = float4x4::translation(-center) * float4x4::rotation_z(radians) * float4x4::translation(center);
+            float4x4 rotateAroundCenter = make_float4x4_rotation_z(radians, center);
+            float4x4 rotateAroundCenterExpected = make_float4x4_translation(-center) * make_float4x4_rotation_z(radians) * make_float4x4_translation(center);
             Assert::IsTrue(Equal(rotateAroundCenter, rotateAroundCenterExpected));
         }
 
@@ -752,8 +752,8 @@ namespace MathTests
             expected.m42 = -3.30050683f;
             expected.m43 = -37.0820961f;
 
-            float4x4 actual = float4x4::look_at(cameraPosition, cameraTarget, cameraUpVector);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::look_at did not return the expected value.");
+            float4x4 actual = make_float4x4_look_at(cameraPosition, cameraTarget, cameraUpVector);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_look_at did not return the expected value.");
         }
 
         // A test for world (float3, float3, float3)
@@ -784,8 +784,8 @@ namespace MathTests
             expected.m43 = 30;
             expected.m44 = 1.0f;
 
-            float4x4 actual = float4x4::world(objectPosition, objectForwardDirection, objectUpVector);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::world did not return the expected value.");
+            float4x4 actual = make_float4x4_world(objectPosition, objectForwardDirection, objectUpVector);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_world did not return the expected value.");
 
             Assert::AreEqual(objectPosition, translation(actual));
             Assert::IsTrue(dot(normalize(objectUpVector), float3(actual.m21, actual.m22, actual.m23)) > 0);
@@ -807,7 +807,7 @@ namespace MathTests
             expected.m43 = -0.00150225335f;
 
             float4x4 actual;
-            actual = float4x4::orthographic(width, height, zNearPlane, zFarPlane);
+            actual = make_float4x4_orthographic(width, height, zNearPlane, zFarPlane);
             Assert::IsTrue(Equal(expected, actual), L"float4x4::CreateOrtho did not return the expected value.");
         }
 
@@ -830,7 +830,7 @@ namespace MathTests
             expected.m43 = -0.00150225335f;
 
             float4x4 actual;
-            actual = float4x4::orthographic_off_center(left, right, bottom, top, zNearPlane, zFarPlane);
+            actual = make_float4x4_orthographic_off_center(left, right, bottom, top, zNearPlane, zFarPlane);
             Assert::IsTrue(Equal(expected, actual), L"float4x4::CreateOrthoOffCenter did not return the expected value.");
         }
 
@@ -851,8 +851,8 @@ namespace MathTests
             expected.m44 = 0;
 
             float4x4 actual;
-            actual = float4x4::perspective(width, height, zNearPlane, zFarPlane);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::perspective did not return the expected value.");
+            actual = make_float4x4_perspective(width, height, zNearPlane, zFarPlane);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_perspective did not return the expected value.");
         }
 
         // A test for perspective (float, float, float, float)
@@ -865,7 +865,7 @@ namespace MathTests
                 float zNearPlane = 0.0f;
                 float zFarPlane = 0.0f;
 
-                float4x4 actual = float4x4::perspective(width, height, zNearPlane, zFarPlane);
+                float4x4 actual = make_float4x4_perspective(width, height, zNearPlane, zFarPlane);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -879,7 +879,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 actual = float4x4::perspective(10, 10, -10, 10);
+                float4x4 actual = make_float4x4_perspective(10, 10, -10, 10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -893,7 +893,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 actual = float4x4::perspective(10, 10, 10, -10);
+                float4x4 actual = make_float4x4_perspective(10, 10, 10, -10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -907,7 +907,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 actual = float4x4::perspective(10, 10, 10, 1);
+                float4x4 actual = make_float4x4_perspective(10, 10, 10, 1);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -933,8 +933,8 @@ namespace MathTests
             expected.m44 = 0;
             float4x4 actual;
 
-            actual = float4x4::perspective_field_of_view(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::perspective_field_of_view did not return the expected value.");
+            actual = make_float4x4_perspective_field_of_view(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_perspective_field_of_view did not return the expected value.");
         }
 
         // A test for perspective_field_of_view (float, float, float, float)
@@ -942,7 +942,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 mtx = float4x4::perspective_field_of_view(-1, 1, 1, 10);
+                float4x4 mtx = make_float4x4_perspective_field_of_view(-1, 1, 1, 10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -956,7 +956,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 mtx = float4x4::perspective_field_of_view(DirectX::XM_PI + 0.01f, 1, 1, 10);
+                float4x4 mtx = make_float4x4_perspective_field_of_view(DirectX::XM_PI + 0.01f, 1, 1, 10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -970,7 +970,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 mtx = float4x4::perspective_field_of_view(DirectX::XM_PIDIV4, 1, -1, 10);
+                float4x4 mtx = make_float4x4_perspective_field_of_view(DirectX::XM_PIDIV4, 1, -1, 10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -984,7 +984,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 mtx = float4x4::perspective_field_of_view(DirectX::XM_PIDIV4, 1, 1, -10);
+                float4x4 mtx = make_float4x4_perspective_field_of_view(DirectX::XM_PIDIV4, 1, 1, -10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -998,7 +998,7 @@ namespace MathTests
         {
             try
             {
-                float4x4 mtx = float4x4::perspective_field_of_view(DirectX::XM_PIDIV4, 1, 10, 1);
+                float4x4 mtx = make_float4x4_perspective_field_of_view(DirectX::XM_PIDIV4, 1, 10, 1);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -1028,8 +1028,8 @@ namespace MathTests
             expected.m44 = 0;
 
             float4x4 actual;
-            actual = float4x4::perspective_off_center(left, right, bottom, top, zNearPlane, zFarPlane);
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::perspective_off_center did not return the expected value.");
+            actual = make_float4x4_perspective_off_center(left, right, bottom, top, zNearPlane, zFarPlane);
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_perspective_off_center did not return the expected value.");
         }
 
         // A test for perspective_off_center (float, float, float, float, float, float)
@@ -1038,7 +1038,7 @@ namespace MathTests
             try
             {
                 float left = 10.0f, right = 90.0f, bottom = 20.0f, top = 180.0f;
-                float4x4 actual = float4x4::perspective_off_center(left, right, bottom, top, -1, 10);
+                float4x4 actual = make_float4x4_perspective_off_center(left, right, bottom, top, -1, 10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -1053,7 +1053,7 @@ namespace MathTests
             try
             {
                 float left = 10.0f, right = 90.0f, bottom = 20.0f, top = 180.0f;
-                float4x4 actual = float4x4::perspective_off_center(left, right, bottom, top, 1, -10);
+                float4x4 actual = make_float4x4_perspective_off_center(left, right, bottom, top, 1, -10);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -1068,7 +1068,7 @@ namespace MathTests
             try
             {
                 float left = 10.0f, right = 90.0f, bottom = 20.0f, top = 180.0f;
-                float4x4 actual = float4x4::perspective_off_center(left, right, bottom, top, 10, 1);
+                float4x4 actual = make_float4x4_perspective_off_center(left, right, bottom, top, 10, 1);
 
                 Assert::Fail(L"should have thrown");
             }
@@ -1263,7 +1263,7 @@ namespace MathTests
         TEST_METHOD(Float4x4FromQuaternionTest1)
         {
             float3 axis = normalize(float3(1.0f, 2.0f, 3.0f));
-            quaternion q = quaternion::from_axis_angle(axis, ToRadians(30.0f));
+            quaternion q = make_quaternion_from_axis_angle(axis, ToRadians(30.0f));
 
             float4x4 expected;
             expected.m11 = 0.875595033f;
@@ -1286,7 +1286,7 @@ namespace MathTests
             expected.m43 = 0.0f;
             expected.m44 = 1.0f;
 
-            float4x4 target = float4x4::from_quaternion(q);
+            float4x4 target = make_float4x4_from_quaternion(q);
             Assert::IsTrue(Equal(expected, target), L"float4x4::float4x4(quaternion) did not return the expected value.");
         }
 
@@ -1295,15 +1295,15 @@ namespace MathTests
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
-                quaternion quat = quaternion::from_axis_angle(float3::unit_x(), angle);
+                quaternion quat = make_quaternion_from_axis_angle(float3::unit_x(), angle);
 
-                float4x4 expected = float4x4::rotation_x(angle);
-                float4x4 actual = float4x4::from_quaternion(quat);
+                float4x4 expected = make_float4x4_rotation_x(angle);
+                float4x4 actual = make_float4x4_from_quaternion(quat);
                 Assert::IsTrue(Equal(expected, actual),
                     L"quaternion::FromQuaternion did not return the expected value.");
 
                 // make sure convert back to quaternion is same as we passed quaternion::
-                quaternion q2 = quaternion::from_rotation_matrix(actual);
+                quaternion q2 = make_quaternion_from_rotation_matrix(actual);
                 Assert::IsTrue(EqualRotation(quat, q2),
                     L"quaternion::FromQuaternion did not return the expected value.");
             }
@@ -1314,15 +1314,15 @@ namespace MathTests
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
-                quaternion quat = quaternion::from_axis_angle(float3::unit_y(), angle);
+                quaternion quat = make_quaternion_from_axis_angle(float3::unit_y(), angle);
 
-                float4x4 expected = float4x4::rotation_y(angle);
-                float4x4 actual = float4x4::from_quaternion(quat);
+                float4x4 expected = make_float4x4_rotation_y(angle);
+                float4x4 actual = make_float4x4_from_quaternion(quat);
                 Assert::IsTrue(Equal(expected, actual),
                     L"quaternion::FromQuaternion did not return the expected value.");
 
                 // make sure convert back to quaternion is same as we passed quaternion::
-                quaternion q2 = quaternion::from_rotation_matrix(actual);
+                quaternion q2 = make_quaternion_from_rotation_matrix(actual);
                 Assert::IsTrue(EqualRotation(quat, q2),
                     L"quaternion::FromQuaternion did not return the expected value.");
             }
@@ -1333,15 +1333,15 @@ namespace MathTests
         {
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
-                quaternion quat = quaternion::from_axis_angle(float3::unit_z(), angle);
+                quaternion quat = make_quaternion_from_axis_angle(float3::unit_z(), angle);
 
-                float4x4 expected = float4x4::rotation_z(angle);
-                float4x4 actual = float4x4::from_quaternion(quat);
+                float4x4 expected = make_float4x4_rotation_z(angle);
+                float4x4 actual = make_float4x4_from_quaternion(quat);
                 Assert::IsTrue(Equal(expected, actual),
                     L"quaternion::FromQuaternion did not return the expected value.");
 
                 // make sure convert back to quaternion is same as we passed quaternion::
-                quaternion q2 = quaternion::from_rotation_matrix(actual);
+                quaternion q2 = make_quaternion_from_rotation_matrix(actual);
                 Assert::IsTrue(EqualRotation(quat, q2),
                     L"quaternion::FromQuaternion did not return the expected value.");
             }
@@ -1353,20 +1353,20 @@ namespace MathTests
             for (float angle = 0.0f; angle < 720.0f; angle += 10.0f)
             {
                 quaternion quat =
-                    quaternion::from_axis_angle(float3::unit_z(), angle) *
-                    quaternion::from_axis_angle(float3::unit_y(), angle) *
-                    quaternion::from_axis_angle(float3::unit_x(), angle);
+                    make_quaternion_from_axis_angle(float3::unit_z(), angle) *
+                    make_quaternion_from_axis_angle(float3::unit_y(), angle) *
+                    make_quaternion_from_axis_angle(float3::unit_x(), angle);
 
                 float4x4 expected =
-                    float4x4::rotation_x(angle) *
-                    float4x4::rotation_y(angle) *
-                    float4x4::rotation_z(angle);
-                float4x4 actual = float4x4::from_quaternion(quat);
+                    make_float4x4_rotation_x(angle) *
+                    make_float4x4_rotation_y(angle) *
+                    make_float4x4_rotation_z(angle);
+                float4x4 actual = make_float4x4_from_quaternion(quat);
                 Assert::IsTrue(Equal(expected, actual),
                     L"quaternion::FromQuaternion did not return the expected value.");
 
                 // make sure convert back to quaternion is same as we passed quaternion::
-                quaternion q2 = quaternion::from_rotation_matrix(actual);
+                quaternion q2 = make_quaternion_from_rotation_matrix(actual);
                 Assert::IsTrue(EqualRotation(quat, q2),
                     L"quaternion::FromQuaternion did not return the expected value.");
             }
@@ -1483,37 +1483,37 @@ namespace MathTests
         {
             float3 cameraPosition(3.0f, 4.0f, 5.0f);
             float3 objectPosition = cameraPosition + placeDirection * 10.0f;
-            float4x4 expected = expectedRotation * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::billboard(objectPosition, cameraPosition, cameraUpVector, float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::billboard did not return the expected value.");
+            float4x4 expected = expectedRotation * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_billboard(objectPosition, cameraPosition, cameraUpVector, float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_billboard did not return the expected value.");
         }
 
         // A test for billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateBillboardTest01)
         {
             // Object placed at Forward of camera. result must be same as 180 degrees rotate along y-axis.
-            CreateBillboardTestMethod(float3(0, 0, -1), float3(0, 1, 0), float4x4::rotation_y(ToRadians(180.0f)));
+            CreateBillboardTestMethod(float3(0, 0, -1), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(180.0f)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateBillboardTest02)
         {
             // Object placed at Backward of camera. This result must be same as 0 degrees rotate along y-axis.
-            CreateBillboardTestMethod(float3(0, 0, 1), float3(0, 1, 0), float4x4::rotation_y(ToRadians(0)));
+            CreateBillboardTestMethod(float3(0, 0, 1), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(0)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateBillboardTest03)
         {
             // Place object at Right side of camera. This result must be same as 90 degrees rotate along y-axis.
-            CreateBillboardTestMethod(float3(1, 0, 0), float3(0, 1, 0), float4x4::rotation_y(ToRadians(90)));
+            CreateBillboardTestMethod(float3(1, 0, 0), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(90)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateBillboardTest04)
         {
             // Place object at Left side of camera. This result must be same as -90 degrees rotate along y-axis.
-            CreateBillboardTestMethod(float3(-1, 0, 0), float3(0, 1, 0), float4x4::rotation_y(ToRadians(-90)));
+            CreateBillboardTestMethod(float3(-1, 0, 0), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(-90)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1521,7 +1521,7 @@ namespace MathTests
         {
             // Place object at Up side of camera. result must be same as 180 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateBillboardTestMethod(float3(0, 1, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(180)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(180)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1529,7 +1529,7 @@ namespace MathTests
         {
             // Place object at Down side of camera. result must be same as 0 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateBillboardTestMethod(float3(0, -1, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(0)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(0)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1537,7 +1537,7 @@ namespace MathTests
         {
             // Place object at Right side of camera. result must be same as 90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateBillboardTestMethod(float3(1, 0, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(90.0f)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(90.0f)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1545,7 +1545,7 @@ namespace MathTests
         {
             // Place object at Left side of camera. result must be same as -90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateBillboardTestMethod(float3(-1, 0, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(-90.0f)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(-90.0f)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1553,7 +1553,7 @@ namespace MathTests
         {
             // Place object at Up side of camera. result must be same as -90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateBillboardTestMethod(float3(0, 1, 0), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(-90.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(-90.0f)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1561,7 +1561,7 @@ namespace MathTests
         {
             // Place object at Down side of camera. result must be same as 90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateBillboardTestMethod(float3(0, -1, 0), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(90.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(90.0f)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1569,7 +1569,7 @@ namespace MathTests
         {
             // Place object at Forward side of camera. result must be same as 180 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateBillboardTestMethod(float3(0, 0, -1), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(180.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(180.0f)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1577,7 +1577,7 @@ namespace MathTests
         {
             // Place object at Backward side of camera. result must be same as 0 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateBillboardTestMethod(float3(0, 0, 1), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(0.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(0.0f)));
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1588,9 +1588,9 @@ namespace MathTests
             float3 cameraUpVector(0, 1, 0);
 
             // Doesn't pass camera face direction. billboard uses float3(0, 0, -1) direction. Result must be same as 180 degrees rotate along y-axis.
-            float4x4 expected = float4x4::rotation_y(ToRadians(180.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::billboard(objectPosition, cameraPosition, cameraUpVector, float3(0, 0, 1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_y(ToRadians(180.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_billboard(objectPosition, cameraPosition, cameraUpVector, float3(0, 0, 1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_billboard did not return the expected value.");
         }
 
         // A test for billboard (float3, float3, float3, float3?)
@@ -1601,55 +1601,55 @@ namespace MathTests
             float3 cameraUpVector(0, 1, 0);
 
             // Passes float3::Rgiht as camera face direction. Result must be same as -90 degrees rotate along y-axis.
-            float4x4 expected = float4x4::rotation_y(ToRadians(-90.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::billboard(objectPosition, cameraPosition, cameraUpVector, float3(1, 0, 0));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_y(ToRadians(-90.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_billboard(objectPosition, cameraPosition, cameraUpVector, float3(1, 0, 0));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_billboard did not return the expected value.");
         }
 
         void CreateConstrainedBillboardTestMethod(float3 placeDirection, float3 rotateAxis, float4x4 expectedRotation)
         {
             float3 cameraPosition(3.0f, 4.0f, 5.0f);
             float3 objectPosition = cameraPosition + placeDirection * 10.0f;
-            float4x4 expected = expectedRotation * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = expectedRotation * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
 
             // When you move camera along rotateAxis, result must be same.
             cameraPosition += rotateAxis * 10.0f;
-            actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
 
             cameraPosition -= rotateAxis * 30.0f;
-            actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateConstrainedBillboardTest01)
         {
             // Object placed at Forward of camera. result must be same as 180 degrees rotate along y-axis.
-            CreateConstrainedBillboardTestMethod(float3(0, 0, -1), float3(0, 1, 0), float4x4::rotation_y(ToRadians(180.0f)));
+            CreateConstrainedBillboardTestMethod(float3(0, 0, -1), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(180.0f)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateConstrainedBillboardTest02)
         {
             // Object placed at Backward of camera. This result must be same as 0 degrees rotate along y-axis.
-            CreateConstrainedBillboardTestMethod(float3(0, 0, 1), float3(0, 1, 0), float4x4::rotation_y(ToRadians(0)));
+            CreateConstrainedBillboardTestMethod(float3(0, 0, 1), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(0)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateConstrainedBillboardTest03)
         {
             // Place object at Right side of camera. This result must be same as 90 degrees rotate along y-axis.
-            CreateConstrainedBillboardTestMethod(float3(1, 0, 0), float3(0, 1, 0), float4x4::rotation_y(ToRadians(90)));
+            CreateConstrainedBillboardTestMethod(float3(1, 0, 0), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(90)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
         TEST_METHOD(Float4x4CreateConstrainedBillboardTest04)
         {
             // Place object at Left side of camera. This result must be same as -90 degrees rotate along y-axis.
-            CreateConstrainedBillboardTestMethod(float3(-1, 0, 0), float3(0, 1, 0), float4x4::rotation_y(ToRadians(-90)));
+            CreateConstrainedBillboardTestMethod(float3(-1, 0, 0), float3(0, 1, 0), make_float4x4_rotation_y(ToRadians(-90)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1657,7 +1657,7 @@ namespace MathTests
         {
             // Place object at Up side of camera. result must be same as 180 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateConstrainedBillboardTestMethod(float3(0, 1, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(180)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(180)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1665,7 +1665,7 @@ namespace MathTests
         {
             // Place object at Down side of camera. result must be same as 0 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateConstrainedBillboardTestMethod(float3(0, -1, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(0)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(0)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1673,7 +1673,7 @@ namespace MathTests
         {
             // Place object at Right side of camera. result must be same as 90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateConstrainedBillboardTestMethod(float3(1, 0, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(90.0f)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(90.0f)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1681,7 +1681,7 @@ namespace MathTests
         {
             // Place object at Left side of camera. result must be same as -90 degrees rotate along z-axis after 90 degrees rotate along x-axis.
             CreateConstrainedBillboardTestMethod(float3(-1, 0, 0), float3(0, 0, 1),
-                float4x4::rotation_x(ToRadians(90.0f)) * float4x4::rotation_z(ToRadians(-90.0f)));
+                make_float4x4_rotation_x(ToRadians(90.0f)) * make_float4x4_rotation_z(ToRadians(-90.0f)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1689,7 +1689,7 @@ namespace MathTests
         {
             // Place object at Up side of camera. result must be same as -90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateConstrainedBillboardTestMethod(float3(0, 1, 0), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(-90.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(-90.0f)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1697,7 +1697,7 @@ namespace MathTests
         {
             // Place object at Down side of camera. result must be same as 90 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateConstrainedBillboardTestMethod(float3(0, -1, 0), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(90.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(90.0f)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1705,7 +1705,7 @@ namespace MathTests
         {
             // Place object at Forward side of camera. result must be same as 180 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateConstrainedBillboardTestMethod(float3(0, 0, -1), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(180.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(180.0f)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1713,7 +1713,7 @@ namespace MathTests
         {
             // Place object at Backward side of camera. result must be same as 0 degrees rotate along x-axis after 90 degrees rotate along z-axis.
             CreateConstrainedBillboardTestMethod(float3(0, 0, 1), float3(-1, 0, 0),
-                float4x4::rotation_z(ToRadians(90.0f)) * float4x4::rotation_x(ToRadians(0.0f)));
+                make_float4x4_rotation_z(ToRadians(90.0f)) * make_float4x4_rotation_x(ToRadians(0.0f)));
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1724,9 +1724,9 @@ namespace MathTests
             float3 cameraUpVector(0, 1, 0);
 
             // Doesn't pass camera face direction. constrained_billboard uses float3(0, 0, -1) direction. Result must be same as 180 degrees rotate along y-axis.
-            float4x4 expected = float4x4::rotation_y(ToRadians(180.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, cameraUpVector, float3(0, 0, 1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_y(ToRadians(180.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, cameraUpVector, float3(0, 0, 1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1737,9 +1737,9 @@ namespace MathTests
             float3 cameraUpVector(0, 1, 0);
 
             // Passes float3::Rgiht as camera face direction. Result must be same as -90 degrees rotate along y-axis.
-            float4x4 expected = float4x4::rotation_y(ToRadians(-90.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, cameraUpVector, float3(1, 0, 0), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_y(ToRadians(-90.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, cameraUpVector, float3(1, 0, 0), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1751,9 +1751,9 @@ namespace MathTests
             float3 cameraPosition = objectPosition + rotateAxis * 10.0f;
 
             // In this case, constrained_billboard picks float3(0, 0, -1) as object forward vector.
-            float4x4 expected = float4x4::rotation_y(ToRadians(180.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_y(ToRadians(180.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1765,9 +1765,9 @@ namespace MathTests
             float3 cameraPosition = objectPosition + rotateAxis * 10.0f;
 
             // In this case, constrained_billboard picks float3(1, 0, 0) as object forward vector.
-            float4x4 expected = float4x4::rotation_x(ToRadians(-90.0f)) * float4x4::rotation_z(ToRadians(-90.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_x(ToRadians(-90.0f)) * make_float4x4_rotation_z(ToRadians(-90.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1779,9 +1779,9 @@ namespace MathTests
             float3 cameraPosition = objectPosition + rotateAxis * 10.0f;
 
             // User passes correct objectForwardVector.
-            float4x4 expected = float4x4::rotation_y(ToRadians(180.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_y(ToRadians(180.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1793,9 +1793,9 @@ namespace MathTests
             float3 cameraPosition = objectPosition + rotateAxis * 10.0f;
 
             // User passes correct objectForwardVector.
-            float4x4 expected = float4x4::rotation_y(ToRadians(180.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 1, 0));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_y(ToRadians(180.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 1, 0));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for constrained_billboard (float3, float3, float3, float3?)
@@ -1807,9 +1807,9 @@ namespace MathTests
             float3 cameraPosition = objectPosition + rotateAxis * 10.0f;
 
             // In this case, constrained_billboard picks float3::Right as object forward vector.
-            float4x4 expected = float4x4::rotation_x(ToRadians(-90.0f)) * float4x4::rotation_z(ToRadians(-90.0f)) * float4x4::translation(objectPosition);
-            float4x4 actual = float4x4::constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
-            Assert::IsTrue(Equal(expected, actual), L"float4x4::constrained_billboard did not return the expected value.");
+            float4x4 expected = make_float4x4_rotation_x(ToRadians(-90.0f)) * make_float4x4_rotation_z(ToRadians(-90.0f)) * make_float4x4_translation(objectPosition);
+            float4x4 actual = make_float4x4_constrained_billboard(objectPosition, cameraPosition, rotateAxis, float3(0, 0, -1), float3(0, 0, -1));
+            Assert::IsTrue(Equal(expected, actual), L"make_float4x4_constrained_billboard did not return the expected value.");
         }
 
         // A test for scale (float3)
@@ -1821,8 +1821,8 @@ namespace MathTests
                 0.0f, 3.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 4.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f);
-            float4x4 actual = float4x4::scale(scales);
-            Assert::AreEqual(expected, actual, L"float4x4::scale did not return the expected value.");
+            float4x4 actual = make_float4x4_scale(scales);
+            Assert::AreEqual(expected, actual, L"make_float4x4_scale did not return the expected value.");
         }
 
         // A test for scale (float3, float3)
@@ -1831,12 +1831,12 @@ namespace MathTests
             float3 scale(3, 4, 5);
             float3 center(23, 42, 666);
 
-            float4x4 scaleAroundZero = float4x4::scale(scale, float3::zero());
-            float4x4 scaleAroundZeroExpected = float4x4::scale(scale);
+            float4x4 scaleAroundZero = make_float4x4_scale(scale, float3::zero());
+            float4x4 scaleAroundZeroExpected = make_float4x4_scale(scale);
             Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
 
-            float4x4 scaleAroundCenter = float4x4::scale(scale, center);
-            float4x4 scaleAroundCenterExpected = float4x4::translation(-center) * float4x4::scale(scale) * float4x4::translation(center);
+            float4x4 scaleAroundCenter = make_float4x4_scale(scale, center);
+            float4x4 scaleAroundCenterExpected = make_float4x4_translation(-center) * make_float4x4_scale(scale) * make_float4x4_translation(center);
             Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
@@ -1849,8 +1849,8 @@ namespace MathTests
                 0.0f, 2.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 2.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f);
-            float4x4 actual = float4x4::scale(scale);
-            Assert::AreEqual(expected, actual, L"float4x4::scale did not return the expected value.");
+            float4x4 actual = make_float4x4_scale(scale);
+            Assert::AreEqual(expected, actual, L"make_float4x4_scale did not return the expected value.");
         }
 
         // A test for scale (float, float3)
@@ -1859,12 +1859,12 @@ namespace MathTests
             float scale = 5;
             float3 center(23, 42, 666);
 
-            float4x4 scaleAroundZero = float4x4::scale(scale, float3::zero());
-            float4x4 scaleAroundZeroExpected = float4x4::scale(scale);
+            float4x4 scaleAroundZero = make_float4x4_scale(scale, float3::zero());
+            float4x4 scaleAroundZeroExpected = make_float4x4_scale(scale);
             Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
 
-            float4x4 scaleAroundCenter = float4x4::scale(scale, center);
-            float4x4 scaleAroundCenterExpected = float4x4::translation(-center) * float4x4::scale(scale) * float4x4::translation(center);
+            float4x4 scaleAroundCenter = make_float4x4_scale(scale, center);
+            float4x4 scaleAroundCenterExpected = make_float4x4_translation(-center) * make_float4x4_scale(scale) * make_float4x4_translation(center);
             Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
@@ -1879,8 +1879,8 @@ namespace MathTests
                 0.0f, 3.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 4.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f);
-            float4x4 actual = float4x4::scale(xScale, yScale, zScale);
-            Assert::AreEqual(expected, actual, L"float4x4::scale did not return the expected value.");
+            float4x4 actual = make_float4x4_scale(xScale, yScale, zScale);
+            Assert::AreEqual(expected, actual, L"make_float4x4_scale did not return the expected value.");
         }
 
         // A test for scale (float, float, float, float3)
@@ -1889,12 +1889,12 @@ namespace MathTests
             float3 scale(3, 4, 5);
             float3 center(23, 42, 666);
 
-            float4x4 scaleAroundZero = float4x4::scale(scale.x, scale.y, scale.z, float3::zero());
-            float4x4 scaleAroundZeroExpected = float4x4::scale(scale.x, scale.y, scale.z);
+            float4x4 scaleAroundZero = make_float4x4_scale(scale.x, scale.y, scale.z, float3::zero());
+            float4x4 scaleAroundZeroExpected = make_float4x4_scale(scale.x, scale.y, scale.z);
             Assert::IsTrue(Equal(scaleAroundZero, scaleAroundZeroExpected));
 
-            float4x4 scaleAroundCenter = float4x4::scale(scale.x, scale.y, scale.z, center);
-            float4x4 scaleAroundCenterExpected = float4x4::translation(-center) * float4x4::scale(scale.x, scale.y, scale.z) * float4x4::translation(center);
+            float4x4 scaleAroundCenter = make_float4x4_scale(scale.x, scale.y, scale.z, center);
+            float4x4 scaleAroundCenterExpected = make_float4x4_translation(-center) * make_float4x4_scale(scale.x, scale.y, scale.z) * make_float4x4_translation(center);
             Assert::IsTrue(Equal(scaleAroundCenter, scaleAroundCenterExpected));
         }
 
@@ -1908,8 +1908,8 @@ namespace MathTests
                 0.0f, 0.0f, 1.0f, 0.0f,
                 2.0f, 3.0f, 4.0f, 1.0f);
 
-            float4x4 actual = float4x4::translation(position);
-            Assert::AreEqual(expected, actual, L"float4x4::translation did not return the expected value.");
+            float4x4 actual = make_float4x4_translation(position);
+            Assert::AreEqual(expected, actual, L"make_float4x4_translation did not return the expected value.");
         }
 
         // A test for translation (float, float, float)
@@ -1925,8 +1925,8 @@ namespace MathTests
                 0.0f, 0.0f, 1.0f, 0.0f,
                 2.0f, 3.0f, 4.0f, 1.0f);
 
-            float4x4 actual = float4x4::translation(xPosition, yPosition, zPosition);
-            Assert::AreEqual(expected, actual, L"float4x4::translation did not return the expected value.");
+            float4x4 actual = make_float4x4_translation(xPosition, yPosition, zPosition);
+            Assert::AreEqual(expected, actual, L"make_float4x4_translation did not return the expected value.");
         }
 
         // A test for translation()

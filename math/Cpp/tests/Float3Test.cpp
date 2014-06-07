@@ -330,9 +330,9 @@ namespace MathTests
         {
             float3 v(1.0f, 2.0f, 3.0f);
             float4x4 m =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f));
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f));
             m.m41 = 10.0f;
             m.m42 = 20.0f;
             m.m43 = 30.0f;
@@ -405,9 +405,9 @@ namespace MathTests
         {
             float3 v(1.0f, 2.0f, 3.0f);
             float4x4 m =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f));
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f));
             m.m41 = 10.0f;
             m.m42 = 20.0f;
             m.m43 = 30.0f;
@@ -425,10 +425,10 @@ namespace MathTests
             float3 v(1.0f, 2.0f, 3.0f);
 
             float4x4 m =
-                float4x4::rotation_x(ToRadians(30.0f)) *
-                float4x4::rotation_y(ToRadians(30.0f)) *
-                float4x4::rotation_z(ToRadians(30.0f));
-            quaternion q = quaternion::from_rotation_matrix(m);
+                make_float4x4_rotation_x(ToRadians(30.0f)) *
+                make_float4x4_rotation_y(ToRadians(30.0f)) *
+                make_float4x4_rotation_z(ToRadians(30.0f));
+            quaternion q = make_quaternion_from_rotation_matrix(m);
 
             float3 expected = transform(v, m);
             float3 actual = transform(v, q);

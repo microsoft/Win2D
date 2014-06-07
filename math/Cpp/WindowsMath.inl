@@ -1403,7 +1403,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::translation(float2 const& position)
+        inline float3x2 make_float3x2_translation(float2 const& position)
         {
             float3x2 result;
 
@@ -1417,7 +1417,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::translation(float xPosition, float yPosition)
+        inline float3x2 make_float3x2_translation(float xPosition, float yPosition)
         {
             float3x2 result;
 
@@ -1431,7 +1431,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::scale(float xScale, float yScale)
+        inline float3x2 make_float3x2_scale(float xScale, float yScale)
         {
             float3x2 result;
 
@@ -1443,7 +1443,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::scale(float xScale, float yScale, float2 const& centerPoint)
+        inline float3x2 make_float3x2_scale(float xScale, float yScale, float2 const& centerPoint)
         {
             float3x2 result;
 
@@ -1458,7 +1458,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::scale(float2 const& scales)
+        inline float3x2 make_float3x2_scale(float2 const& scales)
         {
             float3x2 result;
 
@@ -1470,7 +1470,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::scale(float2 const& scales, float2 const& centerPoint)
+        inline float3x2 make_float3x2_scale(float2 const& scales, float2 const& centerPoint)
         {
             float3x2 result;
 
@@ -1485,7 +1485,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::scale(float scale)
+        inline float3x2 make_float3x2_scale(float scale)
         {
             float3x2 result;
 
@@ -1497,7 +1497,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::scale(float scale, float2 const& centerPoint)
+        inline float3x2 make_float3x2_scale(float scale, float2 const& centerPoint)
         {
             float3x2 result;
 
@@ -1512,7 +1512,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::skew(float radiansX, float radiansY)
+        inline float3x2 make_float3x2_skew(float radiansX, float radiansY)
         {
             float3x2 result;
 
@@ -1527,7 +1527,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::skew(float radiansX, float radiansY, float2 const& centerPoint)
+        inline float3x2 make_float3x2_skew(float radiansX, float radiansY, float2 const& centerPoint)
         {
             float3x2 result;
 
@@ -1545,7 +1545,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::rotation(float radians)
+        inline float3x2 make_float3x2_rotation(float radians)
         {
             float3x2 result;
 
@@ -1600,7 +1600,7 @@ namespace Windows
         }
 
 
-        inline float3x2 float3x2::rotation(float radians, float2 const& centerPoint)
+        inline float3x2 make_float3x2_rotation(float radians, float2 const& centerPoint)
         {
             float3x2 result;
 
@@ -1872,7 +1872,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& cameraUpVector, float3 const& cameraForwardVector)
+        inline float4x4 make_float4x4_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& cameraUpVector, float3 const& cameraForwardVector)
         {
             const float epsilon = 1e-4f;
 
@@ -1912,7 +1912,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::constrained_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& rotateAxis, float3 const& cameraForwardVector, float3 const& objectForwardVector)
+        inline float4x4 make_float4x4_constrained_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& rotateAxis, float3 const& cameraForwardVector, float3 const& objectForwardVector)
         {
             const float epsilon = 1e-4f;
             const float minAngle = 1.0f - (0.1f * (DirectX::XM_PI / 180.0f)); // 0.1 degrees
@@ -1973,7 +1973,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::translation(float3 const& position)
+        inline float4x4 make_float4x4_translation(float3 const& position)
         {
             float4x4 result;
 
@@ -1990,7 +1990,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::translation(float xPosition, float yPosition, float zPosition)
+        inline float4x4 make_float4x4_translation(float xPosition, float yPosition, float zPosition)
         {
             float4x4 result;
 
@@ -2007,7 +2007,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::scale(float xScale, float yScale, float zScale)
+        inline float4x4 make_float4x4_scale(float xScale, float yScale, float zScale)
         {
             float4x4 result;
             
@@ -2020,7 +2020,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::scale(float xScale, float yScale, float zScale, float3 const& centerPoint)
+        inline float4x4 make_float4x4_scale(float xScale, float yScale, float zScale, float3 const& centerPoint)
         { 
             float4x4 result;
 
@@ -2037,7 +2037,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::scale(float3 const& scales)
+        inline float4x4 make_float4x4_scale(float3 const& scales)
         {
             float4x4 result;
 
@@ -2050,7 +2050,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::scale(float3 const& scales, float3 const& centerPoint)
+        inline float4x4 make_float4x4_scale(float3 const& scales, float3 const& centerPoint)
         {
             float4x4 result;
 
@@ -2067,7 +2067,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::scale(float scale)
+        inline float4x4 make_float4x4_scale(float scale)
         {
             float4x4 result;
 
@@ -2080,7 +2080,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::scale(float scale, float3 const& centerPoint)
+        inline float4x4 make_float4x4_scale(float scale, float3 const& centerPoint)
         {
             float4x4 result;
 
@@ -2097,7 +2097,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::rotation_x(float radians)
+        inline float4x4 make_float4x4_rotation_x(float radians)
         {
             float4x4 result;
 
@@ -2117,7 +2117,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::rotation_x(float radians, float3 const& centerPoint)
+        inline float4x4 make_float4x4_rotation_x(float radians, float3 const& centerPoint)
         {
             float4x4 result;
 
@@ -2140,7 +2140,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::rotation_y(float radians)
+        inline float4x4 make_float4x4_rotation_y(float radians)
         {
             float4x4 result;
 
@@ -2160,7 +2160,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::rotation_y(float radians, float3 const& centerPoint)
+        inline float4x4 make_float4x4_rotation_y(float radians, float3 const& centerPoint)
         {
             float4x4 result;
 
@@ -2183,7 +2183,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::rotation_z(float radians)
+        inline float4x4 make_float4x4_rotation_z(float radians)
         {
             float4x4 result;
 
@@ -2203,7 +2203,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::rotation_z(float radians, float3 const& centerPoint)
+        inline float4x4 make_float4x4_rotation_z(float radians, float3 const& centerPoint)
         {
             float4x4 result;
 
@@ -2226,7 +2226,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::from_axis_angle(float3 const& axis, float angle)
+        inline float4x4 make_float4x4_from_axis_angle(float3 const& axis, float angle)
         {
             // a: angle
             // x, y, z: unit vector for axis.
@@ -2267,7 +2267,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
+        inline float4x4 make_float4x4_perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
         {
             if (fieldOfView <= 0.0f || fieldOfView >= DirectX::XM_PI)
                 throw std::invalid_argument("fieldOfView");
@@ -2303,7 +2303,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
+        inline float4x4 make_float4x4_perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
                 throw std::invalid_argument("nearPlaneDistance");
@@ -2333,7 +2333,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
+        inline float4x4 make_float4x4_perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
                 throw std::invalid_argument("nearPlaneDistance");
@@ -2364,7 +2364,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::orthographic(float width, float height, float zNearPlane, float zFarPlane)
+        inline float4x4 make_float4x4_orthographic(float width, float height, float zNearPlane, float zFarPlane)
         {
             float4x4 result;
 
@@ -2385,7 +2385,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::orthographic_off_center(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)
+        inline float4x4 make_float4x4_orthographic_off_center(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)
         {
             float4x4 result;
 
@@ -2407,7 +2407,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::look_at(float3 const& cameraPosition, float3 const& cameraTarget, float3 const& cameraUpVector)
+        inline float4x4 make_float4x4_look_at(float3 const& cameraPosition, float3 const& cameraTarget, float3 const& cameraUpVector)
         {
             float3 zaxis = normalize(cameraPosition - cameraTarget);
             float3 xaxis = normalize(cross(cameraUpVector, zaxis));
@@ -2427,7 +2427,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::world(float3 const& position, float3 const& forward, float3 const& up)
+        inline float4x4 make_float4x4_world(float3 const& position, float3 const& forward, float3 const& up)
         {
             float3 zaxis = normalize(-forward);
             float3 xaxis = normalize(cross(up, zaxis));
@@ -2447,7 +2447,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::from_quaternion(quaternion const& quaternion)
+        inline float4x4 make_float4x4_from_quaternion(quaternion const& quaternion)
         {
             float4x4 result;
 
@@ -2471,15 +2471,15 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::from_yaw_pitch_roll(float yaw, float pitch, float roll)
+        inline float4x4 make_float4x4_from_yaw_pitch_roll(float yaw, float pitch, float roll)
         {
-            quaternion q = quaternion::from_yaw_pitch_roll(yaw, pitch, roll);
+            quaternion q = make_quaternion_from_yaw_pitch_roll(yaw, pitch, roll);
 
-            return float4x4::from_quaternion(q);
+            return make_float4x4_from_quaternion(q);
         }
 
 
-        inline float4x4 float4x4::shadow(float3 const& lightDirection, plane const& plane)
+        inline float4x4 make_float4x4_shadow(float3 const& lightDirection, plane const& plane)
         {
             auto p = normalize(plane);
 
@@ -2515,7 +2515,7 @@ namespace Windows
         }
 
 
-        inline float4x4 float4x4::reflection(plane const& value)
+        inline float4x4 make_float4x4_reflection(plane const& value)
         {
             plane v = normalize(value);
 
@@ -3101,7 +3101,7 @@ namespace Windows
             }
             else
             {
-                *rotation = quaternion::from_rotation_matrix(matTemp);
+                *rotation = make_quaternion_from_rotation_matrix(matTemp);
             }
 
             return result;
@@ -3227,7 +3227,7 @@ namespace Windows
         { }
 
 
-        inline plane plane::from_vertices(float3 const& point1, float3 const& point2, float3 const& point3)
+        inline plane make_plane_from_vertices(float3 const& point1, float3 const& point2, float3 const& point3)
         {
             plane result;
 
@@ -3406,7 +3406,7 @@ namespace Windows
         }
 
 
-        inline quaternion quaternion::from_axis_angle(float3 const& axis, float angle)
+        inline quaternion make_quaternion_from_axis_angle(float3 const& axis, float angle)
         {
             quaternion ans;
 
@@ -3423,7 +3423,7 @@ namespace Windows
         }
 
 
-        inline quaternion quaternion::from_yaw_pitch_roll(float yaw, float pitch, float roll)
+        inline quaternion make_quaternion_from_yaw_pitch_roll(float yaw, float pitch, float roll)
         {
             // Roll first, about axis the object is facing, then
             // pitch upward, then yaw to face into the new heading
@@ -3449,7 +3449,7 @@ namespace Windows
         }
 
 
-        inline quaternion quaternion::from_rotation_matrix(float4x4 const& matrix)
+        inline quaternion make_quaternion_from_rotation_matrix(float4x4 const& matrix)
         {
             float trace = matrix.m11 + matrix.m22 + matrix.m33;
             

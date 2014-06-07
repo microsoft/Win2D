@@ -206,21 +206,21 @@ namespace Windows
 
             // Common values.
             static float3x2 identity();
-
-            // Factory functions.
-            static float3x2 translation(float2 const& position);
-            static float3x2 translation(float xPosition, float yPosition);
-            static float3x2 scale(float xScale, float yScale);
-            static float3x2 scale(float xScale, float yScale, float2 const& centerPoint);
-            static float3x2 scale(float2 const& scales);
-            static float3x2 scale(float2 const& scales, float2 const& centerPoint);
-            static float3x2 scale(float scale);
-            static float3x2 scale(float scale, float2 const& centerPoint);
-            static float3x2 skew(float radiansX, float radiansY);
-            static float3x2 skew(float radiansX, float radiansY, float2 const& centerPoint);
-            static float3x2 rotation(float radians);
-            static float3x2 rotation(float radians, float2 const& centerPoint);
         };
+
+        // Factory functions.
+        float3x2 make_float3x2_translation(float2 const& position);
+        float3x2 make_float3x2_translation(float xPosition, float yPosition);
+        float3x2 make_float3x2_scale(float xScale, float yScale);
+        float3x2 make_float3x2_scale(float xScale, float yScale, float2 const& centerPoint);
+        float3x2 make_float3x2_scale(float2 const& scales);
+        float3x2 make_float3x2_scale(float2 const& scales, float2 const& centerPoint);
+        float3x2 make_float3x2_scale(float scale);
+        float3x2 make_float3x2_scale(float scale, float2 const& centerPoint);
+        float3x2 make_float3x2_skew(float radiansX, float radiansY);
+        float3x2 make_float3x2_skew(float radiansX, float radiansY, float2 const& centerPoint);
+        float3x2 make_float3x2_rotation(float radians);
+        float3x2 make_float3x2_rotation(float radians, float2 const& centerPoint);
 
         // Operators.
         float3x2 operator +(float3x2 const& value1, float3x2 const& value2);
@@ -257,37 +257,37 @@ namespace Windows
 
             // Common values.
             static float4x4 identity();
-
-            // Factory functions.
-            static float4x4 billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& cameraUpVector, float3 const& cameraForwardVector);
-            static float4x4 constrained_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& rotateAxis, float3 const& cameraForwardVector, float3 const& objectForwardVector);
-            static float4x4 translation(float3 const& position);
-            static float4x4 translation(float xPosition, float yPosition, float zPosition);
-            static float4x4 scale(float xScale, float yScale, float zScale);
-            static float4x4 scale(float xScale, float yScale, float zScale, float3 const& centerPoint);
-            static float4x4 scale(float3 const& scales);
-            static float4x4 scale(float3 const& scales, float3 const& centerPoint);
-            static float4x4 scale(float scale);
-            static float4x4 scale(float scale, float3 const& centerPoint);
-            static float4x4 rotation_x(float radians);
-            static float4x4 rotation_x(float radians, float3 const& centerPoint);
-            static float4x4 rotation_y(float radians);
-            static float4x4 rotation_y(float radians, float3 const& centerPoint);
-            static float4x4 rotation_z(float radians);
-            static float4x4 rotation_z(float radians, float3 const& centerPoint);
-            static float4x4 from_axis_angle(float3 const& axis, float angle);
-            static float4x4 perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance);
-            static float4x4 perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
-            static float4x4 perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance);
-            static float4x4 orthographic(float width, float height, float zNearPlane, float zFarPlane);
-            static float4x4 orthographic_off_center(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
-            static float4x4 look_at(float3 const& cameraPosition, float3 const& cameraTarget, float3 const& cameraUpVector);
-            static float4x4 world(float3 const& position, float3 const& forward, float3 const& up);
-            static float4x4 from_quaternion(quaternion const& quaternion);
-            static float4x4 from_yaw_pitch_roll(float yaw, float pitch, float roll);
-            static float4x4 shadow(float3 const& lightDirection, plane const& plane);
-            static float4x4 reflection(plane const& value);
         };
+
+        // Factory functions.
+        float4x4 make_float4x4_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& cameraUpVector, float3 const& cameraForwardVector);
+        float4x4 make_float4x4_constrained_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& rotateAxis, float3 const& cameraForwardVector, float3 const& objectForwardVector);
+        float4x4 make_float4x4_translation(float3 const& position);
+        float4x4 make_float4x4_translation(float xPosition, float yPosition, float zPosition);
+        float4x4 make_float4x4_scale(float xScale, float yScale, float zScale);
+        float4x4 make_float4x4_scale(float xScale, float yScale, float zScale, float3 const& centerPoint);
+        float4x4 make_float4x4_scale(float3 const& scales);
+        float4x4 make_float4x4_scale(float3 const& scales, float3 const& centerPoint);
+        float4x4 make_float4x4_scale(float scale);
+        float4x4 make_float4x4_scale(float scale, float3 const& centerPoint);
+        float4x4 make_float4x4_rotation_x(float radians);
+        float4x4 make_float4x4_rotation_x(float radians, float3 const& centerPoint);
+        float4x4 make_float4x4_rotation_y(float radians);
+        float4x4 make_float4x4_rotation_y(float radians, float3 const& centerPoint);
+        float4x4 make_float4x4_rotation_z(float radians);
+        float4x4 make_float4x4_rotation_z(float radians, float3 const& centerPoint);
+        float4x4 make_float4x4_from_axis_angle(float3 const& axis, float angle);
+        float4x4 make_float4x4_perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance);
+        float4x4 make_float4x4_perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
+        float4x4 make_float4x4_perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance);
+        float4x4 make_float4x4_orthographic(float width, float height, float zNearPlane, float zFarPlane);
+        float4x4 make_float4x4_orthographic_off_center(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
+        float4x4 make_float4x4_look_at(float3 const& cameraPosition, float3 const& cameraTarget, float3 const& cameraUpVector);
+        float4x4 make_float4x4_world(float3 const& position, float3 const& forward, float3 const& up);
+        float4x4 make_float4x4_from_quaternion(quaternion const& quaternion);
+        float4x4 make_float4x4_from_yaw_pitch_roll(float yaw, float pitch, float roll);
+        float4x4 make_float4x4_shadow(float3 const& lightDirection, plane const& plane);
+        float4x4 make_float4x4_reflection(plane const& value);
 
         // Operators.
         float4x4 operator +(float4x4 const& value1, float4x4 const& value2);
@@ -323,10 +323,10 @@ namespace Windows
             plane(float a, float b, float c, float d);
             plane(float3 const& normal, float d);
             explicit plane(float4 const& value);
-
-            // Factory functions.
-            static plane from_vertices(float3 const& point1, float3 const& point2, float3 const& point3);
         };
+
+        // Factory functions.
+        plane make_plane_from_vertices(float3 const& point1, float3 const& point2, float3 const& point3);
 
         // Operators.
         bool operator ==(plane const& value1, plane const& value2);
@@ -352,12 +352,12 @@ namespace Windows
 
             // Common values.
             static quaternion identity();
-
-            // Factory functions.
-            static quaternion from_axis_angle(float3 const& axis, float angle);
-            static quaternion from_yaw_pitch_roll(float yaw, float pitch, float roll);
-            static quaternion from_rotation_matrix(float4x4 const& matrix);
         };
+
+        // Factory functions.
+        quaternion make_quaternion_from_axis_angle(float3 const& axis, float angle);
+        quaternion make_quaternion_from_yaw_pitch_roll(float yaw, float pitch, float roll);
+        quaternion make_quaternion_from_rotation_matrix(float4x4 const& matrix);
 
         // Operators.
         quaternion operator +(quaternion const& value1, quaternion const& value2);
