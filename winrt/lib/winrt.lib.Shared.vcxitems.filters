@@ -23,6 +23,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.cpp">
       <Filter>GraphicsDevice</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.h">
       <Filter>GraphicsDevice</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />

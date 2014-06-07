@@ -24,21 +24,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateCompatibleDeviceWithDebugLevel(CanvasDebugLevel,ICanvasDevice **) override
+        IFACEMETHODIMP CreateCompatibleDevice(IDirectX11Device *, ICanvasDevice **) override
         {
-            Assert::Fail(L"Unexpected call to CreateCompatibleDeviceWithDebugLevel");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP CreateCompatibleDeviceWithDirectX11Device(IDirectX11Device *,ICanvasDevice **) override
-        {
-            Assert::Fail(L"Unexpected call to CreateCompatibleDeviceWithDirectX11Device");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP CreateCompatibleDeviceWithDebugLevelAndDirectX11Device(CanvasDebugLevel,IDirectX11Device *,ICanvasDevice **) override
-        {
-            Assert::Fail(L"Unexpected call to CreateCompatibleDeviceWithDebugLevelAndDirectX11Device");
+            Assert::Fail(L"Unexpected call to CreateCompatibleDevice");
             return E_NOTIMPL;
         }
 
@@ -68,6 +56,12 @@ namespace canvas
             }
 
             return MockGetD2DDevice();
+        }
+
+        virtual CanvasHardwareAcceleration GetRoundTripHardwareAcceleration() override
+        {
+            Assert::Fail(L"Unexpected call to GetRoundTripHardwareAcceleration");
+            return static_cast<CanvasHardwareAcceleration>(0);
         }
     };
 }

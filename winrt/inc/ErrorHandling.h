@@ -74,9 +74,16 @@ inline void ThrowIfNullPtr(T* ptr, HRESULT hrToThrow)
 }
 
 template<typename T>
+inline void ThrowInvalidArgIfNullPtr(T* ptr)
+{
+    if (!ptr)
+        throw InvalidArgException();
+}
+
+template<typename T>
 inline void CheckInPointer(T* ptr)
 {
-    ThrowIfNullPtr(ptr, E_INVALIDARG);
+    ThrowInvalidArgIfNullPtr(ptr);
 }
 
 template<typename T>

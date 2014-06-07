@@ -13,6 +13,8 @@
 
 // Win32
 #include <d2d1_2.h>
+#include <d3d11.h>
+#include <dxgi1_3.h>
 #include <wrl.h>
 #include <strsafe.h>
 
@@ -34,6 +36,7 @@
 #include <CanvasImageSourceDrawingSessionAdapter.h>
 #include <Conversion.h>
 #include <ErrorHandling.h>
+#include <GraphicsDevice\GraphicsDevice.h>
 
 // local headers
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -46,6 +49,8 @@ using namespace canvas;
 #include "MockCanvasImageSourceDrawingSessionFactory.h"
 #include "MockD2DDevice.h"
 #include "MockD2DDeviceContext.h"
+#include "MockD2DFactory.h"
+#include "MockD3D11Device.h"
 #include "MockSurfaceImageSource.h"
 #include "MockSurfaceImageSourceFactory.h"
 #include "StubCanvasBrush.h"

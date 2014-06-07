@@ -124,16 +124,36 @@ namespace Microsoft
             TO_STRING(ICanvasDevice);
             TO_STRING(ID2D1Brush);
             TO_STRING(ID2D1DeviceContext1);
+            TO_STRING(ID2D1Device1);
+            TO_STRING(ID2D1Factory);
+            TO_STRING(IDirectX11Device);
 
 #undef TO_STRING
-        }
 
-        inline bool operator==(const RECT& a, const RECT& b)
-        {
-            return a.left == b.left &&
-                a.top == b.top &&
-                a.right == b.right &&
-                a.bottom == b.bottom;
+            template<>
+            static inline std::wstring ToString<CanvasDebugLevel>(const CanvasDebugLevel& value)
+            {
+                switch (value)
+                {
+                case CanvasDebugLevel::None: return L"CanvasDebugLevel::None";
+                case CanvasDebugLevel::Error: return L"CanvasDebugLevel::Error";
+                case CanvasDebugLevel::Warning: return L"CanvasDebugLevel::Warning";
+                case CanvasDebugLevel::Information: return L"CanvasDebugLevel::Information";
+                default: return L"<<invalid CanvasDebugLevel>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<CanvasHardwareAcceleration>(const CanvasHardwareAcceleration& value)
+            {
+                switch (value)
+                {
+                case CanvasHardwareAcceleration::On: return L"CanvasHardwareAcceleration::On";
+                case CanvasHardwareAcceleration::Off: return L"CanvasHardwareAcceleration::Off";
+                default: return L"<<invalid CanvasHardwareAcceleration>>";
+                }
+            }
+
         }
 
         inline bool operator==(const D2D1_POINT_2F& a, const D2D1_POINT_2F& b)

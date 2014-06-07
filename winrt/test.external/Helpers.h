@@ -43,6 +43,18 @@ namespace Microsoft
             {
                 return PointerToString(L"IDXGISurface", value);
             }
+
+            // TODO: Consider sharing these definitions somehow between internal and external tests.
+            #define CX_OBJECT_TO_STRING(T)                         \
+            template<>                                             \
+            static inline std::wstring ToString<T>(const T& value) \
+            {                                                      \
+                return value.ToString()->Data();                   \
+            }
+            
+            CX_OBJECT_TO_STRING(Microsoft::Graphics::Canvas::CanvasHardwareAcceleration);            
+                           
+            #undef CX_OBJECT_TO_STRING
         }
     }
 }

@@ -39,6 +39,7 @@
     <Exec Command='mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial -n:Microsoft.Graphics.Canvas:3'/>
   </Target>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
@@ -49,6 +50,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

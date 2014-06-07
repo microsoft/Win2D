@@ -8,14 +8,26 @@ namespace canvas
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<ID2D1Device1, ID2D1Device, ID2D1Resource>>
     {
+        ComPtr<ID2D1Factory2> m_parentD2DFactory;
+
     public:
+
+        MockD2DDevice()
+            : m_parentD2DFactory(NULL)
+        {}
+
+        // This constructor enables the bare-minimum GetFactory, used by some tests to verify resource domains.
+        MockD2DDevice(ID2D1Factory2* parentD2DFactory) 
+            : m_parentD2DFactory(parentD2DFactory)
+        {}
+
         //
         // ID2D1Resource
         //
 
-        IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **) const override
+        IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **factory) const override
         {
-            Assert::Fail(L"Unexpected call to GetFactory");
+            m_parentD2DFactory.CopyTo(factory);
         }
 
         //

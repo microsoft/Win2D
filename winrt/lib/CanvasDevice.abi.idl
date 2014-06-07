@@ -42,21 +42,7 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasDevice **canvasDevice
             );
 
-        [overload("CreateCompatibleDevice"), default_overload]
-        HRESULT CreateCompatibleDeviceWithDebugLevel(
-            [in] CanvasDebugLevel debugLevel,
-            [out, retval] CanvasDevice **canvasDevice
-            );
-
-        [overload("CreateCompatibleDevice")]
-        HRESULT CreateCompatibleDeviceWithDirectX11Device(
-            [in] DirectX11Device* directX11Device,
-            [out, retval] CanvasDevice **canvasDevice
-            );
-
-        [overload("CreateCompatibleDevice")]
-        HRESULT CreateCompatibleDeviceWithDebugLevelAndDirectX11Device(
-            [in] CanvasDebugLevel debugLevel,
+        HRESULT CreateCompatibleDevice(
             [in] DirectX11Device* directX11Device,
             [out, retval] CanvasDevice **canvasDevice
             );
