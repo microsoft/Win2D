@@ -76,6 +76,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\..\winrt\dll\winrt.dll.WindowsPhone.vcxproj">
+      <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
+      <Name>winrt.dll.Windows</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.WindowsPhone.appxmanifest">
