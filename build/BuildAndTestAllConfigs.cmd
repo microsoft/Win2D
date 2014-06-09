@@ -60,7 +60,7 @@ for %%C in (Debug Release) DO (
         GOTO END
     )
     
-    SET TEST_BINARY_DIR=%BIN_LOCATION%\AnyCPU\%%C\codegen.test\
+    SET TEST_BINARY_DIR=%BIN_LOCATION%\WindowsAnyCPU\%%C\codegen.test\
     SET TEST_BINARY_PATH=!TEST_BINARY_DIR!codegen.test.dll
     
     mstest /testcontainer:!TEST_BINARY_PATH!
