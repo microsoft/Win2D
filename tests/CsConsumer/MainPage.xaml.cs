@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.Foundation;
 
 namespace CsConsumer
 {
@@ -71,7 +72,7 @@ namespace CsConsumer
                 int height = (int)m_heightCombo.SelectedValue;
 
                 m_imageSource = new CanvasImageSource(m_device, width, height);
-                m_theImage.Source = m_imageSource;
+                m_theImage.Source = m_imageSource;                
 
                 m_statusMessage.Text = String.Format("{0}x{1} image source", width, height);
             }
@@ -81,11 +82,28 @@ namespace CsConsumer
             }
         }
 
+        void DrawLines(CanvasDrawingSession ds)
+        {
+            using (var canvasSolidColorBrush = new CanvasSolidColorBrush(m_device, NextRandomColor()))
+            {
+                int horizontalLimit = (int)m_widthCombo.SelectedValue;
+                int verticalLimit = (int)m_heightCombo.SelectedValue;
+
+                ds.DrawLine(new Point(0, 0), new Point(horizontalLimit, verticalLimit), canvasSolidColorBrush);
+                ds.DrawLine(new Point(horizontalLimit, 0), new Point(0, verticalLimit), canvasSolidColorBrush);
+            }
+        }
+
         void DrawStuff()
         {
             using (var ds = m_imageSource.CreateDrawingSession())
             {
                 ds.Clear(NextRandomColor());
+
+                if (m_drawLines.IsChecked == true)
+                {
+                    DrawLines(ds);
+                }
             }
         }
 

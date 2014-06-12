@@ -10,6 +10,8 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
@@ -27,6 +29,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
@@ -42,6 +45,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GraphicsDevice">

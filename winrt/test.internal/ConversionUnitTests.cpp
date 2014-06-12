@@ -62,12 +62,43 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual<float>(d2dBlue.a, 0);
     }
 
+    TEST_METHOD(D2DColorToWindowsColor)
+    {
+        using canvas::ToWindowsColor;
+
+        ABI::Windows::UI::Color alpha{ 255, 0, 0, 0 };
+        Assert::AreEqual(alpha, ToWindowsColor(D2D1::ColorF(0, 0, 0, 1)));
+
+        ABI::Windows::UI::Color red{ 0, 255, 0, 0 };
+        Assert::AreEqual(red, ToWindowsColor(D2D1::ColorF(1, 0, 0, 0)));
+
+        ABI::Windows::UI::Color green{ 0, 0, 255, 0 };
+        Assert::AreEqual(green, ToWindowsColor(D2D1::ColorF(0, 1, 0, 0)));
+
+        ABI::Windows::UI::Color blue{ 0, 0, 0, 255 };
+        Assert::AreEqual(blue, ToWindowsColor(D2D1::ColorF(0, 0, 1, 0)));
+
+        // Verify truncation of high values.
+        Assert::AreEqual(alpha, ToWindowsColor(D2D1::ColorF(0, 0, 0, 2)));
+        Assert::AreEqual(red, ToWindowsColor(D2D1::ColorF(3, 0, 0, 0)));
+        Assert::AreEqual(green, ToWindowsColor(D2D1::ColorF(0, 4, 0, 0)));
+        Assert::AreEqual(blue, ToWindowsColor(D2D1::ColorF(0, 0, 5, 0)));
+
+        // Verify truncation of low values.
+        ABI::Windows::UI::Color black{ 0, 0, 0, 0 };
+        Assert::AreEqual(black, ToWindowsColor(D2D1::ColorF(-6, 0, 0, 0)));
+        Assert::AreEqual(black, ToWindowsColor(D2D1::ColorF(0, -7, 0, 0)));
+        Assert::AreEqual(black, ToWindowsColor(D2D1::ColorF(0, 0, -8, 0)));
+        Assert::AreEqual(black, ToWindowsColor(D2D1::ColorF(0, 0, 0, -9)));
+
+    }
+
     TEST_METHOD(RectToRECT)
     {
         using ABI::Windows::Foundation::Rect;
 
         Assert::AreEqual(RECT{1,2,4,6}, ToRECT(Rect{1,2,3,4}));
-
+        
         //
         // floats can losslessly store integers up to magnitude 2^24 (16777216).
         // This causes us a problem because VirtualImageSources may want to

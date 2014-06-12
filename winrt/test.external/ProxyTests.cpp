@@ -6,6 +6,12 @@ using namespace ABI::Microsoft::Graphics::Canvas;
 class TestResourceImpl : public RuntimeClass<ICanvasResource>
 {
 public:
+
+    IFACEMETHOD(get_Device)(_In_ ICanvasDevice** value)
+    {
+        Assert::Fail(L"Unexpected call to get_Device");
+        return E_NOTIMPL;
+    }
 };
 
 TEST_CLASS(ProxyTests)

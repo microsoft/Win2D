@@ -53,7 +53,6 @@
         <Struct Name="LINEAR_GRADIENT_BRUSH_PROPERTIES" ShouldProject="true" Guid="b687b451-cce0-49a2-b336-60045f341ce0" />
         <Struct Name="GRADIENT_STOP" ShouldProject="true"  Guid="0b329db6-8d06-4db0-8155-88b13de20344"/>
         <Struct Name="STROKE_STYLE_PROPERTIES1" ShouldProject="true" Guid="b48780bf-7eb7-41b0-a56b-1f8837723ab6" ProjectedNameOverride="StrokeStyleProperties"/>
-        <Struct Name="LAYER_PARAMETERS1" ShouldProject="true" Guid="4a837512-5ca1-46eb-96d1-fcc634796341" ProjectedNameOverride="LayerParameters"/>
 
         <Interface Name="IBrush" IsProjectedAsAbstract="true"/>
         <Interface Name="IImage" IsProjectedAsAbstract="true"/>

@@ -1,0 +1,63 @@
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+import "CanvasDevice.abi.idl";
+import "d2dwinrt.idl";
+
+#include "version.h"
+
+namespace Microsoft.Graphics.Canvas
+{
+    //
+    // ICanvasBrush
+    //
+    [version(VERSION), uuid(F5D58591-C803-41B4-878E-79D92AB13295)]
+    interface ICanvasBrush : IInspectable
+        requires Windows.Foundation.IClosable, ICanvasResource
+    {
+        [propget]
+        HRESULT Opacity([out, retval] float* value);
+
+        [propput]
+        HRESULT Opacity([in] float value);
+
+        [propget]
+        HRESULT Transform([out, retval] Microsoft.Graphics.Canvas.Math.Matrix3x2* value);
+
+        [propput]
+        HRESULT Transform([in] Microsoft.Graphics.Canvas.Math.Matrix3x2 value);
+    };
+
+    runtimeclass CanvasSolidColorBrush;
+    runtimeclass CanvasDevice;
+
+    [version(VERSION), uuid(8ABF4780-4EDD-4F2B-BF63-2C385115B201)]
+    interface ICanvasSolidColorBrushFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] CanvasDevice* canvasDevice,
+            [in] Windows.UI.Color color,
+            [out, retval] CanvasSolidColorBrush** canvasSolidColorBrush
+            );
+    };
+
+    [version(VERSION), uuid(8BC30F87-BAD5-4871-88B8-9FE3C63D204A), exclusiveto(CanvasSolidColorBrush)]
+    interface ICanvasSolidColorBrush : IInspectable
+        requires ICanvasBrush
+    {
+        [propget]
+        HRESULT Color(
+            [out, retval] Windows.UI.Color* value
+            );
+
+        [propput]
+        HRESULT Color(
+            [in] Windows.UI.Color value
+            );
+    };
+
+    [version(VERSION), activatable(ICanvasSolidColorBrushFactory, VERSION)]
+    runtimeclass CanvasSolidColorBrush
+    {
+        [default] interface ICanvasSolidColorBrush;
+    }
+}

@@ -69,6 +69,8 @@ namespace canvas
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
 
         virtual CanvasHardwareAcceleration GetRoundTripHardwareAcceleration() = 0;
+
+        virtual ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() = 0;
     };
 
     class CanvasDevice : public RuntimeClass<
@@ -92,6 +94,7 @@ namespace canvas
         
         ClosablePtr<IDirectX11Device> m_directX11Device;
         ClosablePtr<ID2D1Device1> m_d2dDevice;
+        ClosablePtr<ID2D1DeviceContext> m_d2dResourceCreationDeviceContext;
 
     public:
 
@@ -143,6 +146,8 @@ namespace canvas
         ComPtr<ID2D1Device1> GetD2DDevice() override;
 
         CanvasHardwareAcceleration GetRoundTripHardwareAcceleration() override;
+
+        ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() override;
 
     private:
 

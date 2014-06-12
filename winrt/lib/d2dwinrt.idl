@@ -1,6 +1,6 @@
 import "inspectable.idl";
 import "Windows.Foundation.idl";
-import "DirectX.codegen.idl";
+import "CanvasDevice.abi.idl";
 
 #include "version.h"
 
@@ -19,5 +19,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasResource : IInspectable
         requires Windows.Foundation.IClosable
     {
+        [propget]
+        HRESULT Device([out, retval] CanvasDevice** value);
     }
 }

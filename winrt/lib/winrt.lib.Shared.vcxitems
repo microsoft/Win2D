@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -39,6 +39,7 @@
     <Exec Command='mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial -n:Microsoft.Graphics.Canvas:3'/>
   </Target>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -50,13 +51,16 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <MidlRT Include="$(MSBuildThisFileDirectory)d2dwinrt.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)DirectX.codegen.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)DirectX.codegen.idl">
+      <HasInterfaces>false</HasInterfaces>
+    </MidlRT>
     <MidlRT Include="$(MSBuildThisFileDirectory)GraphicsDevice\WinRTGraphicsInterop.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDeviceInterop.cpp" />
     <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl">
@@ -64,12 +68,14 @@
     </MidlRT>
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.cpp" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

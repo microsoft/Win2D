@@ -27,5 +27,25 @@ namespace canvas
         {
             return m_brush;
         }
+
+        IFACEMETHOD(get_Opacity)(_Out_ float *value) override
+        {
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(put_Opacity)(_In_ float value) override
+        {
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(get_Transform)(_Out_ Math::Matrix3x2 *value) override
+        {
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(put_Transform)(_In_ Math::Matrix3x2 value) override
+        {
+            return E_NOTIMPL;
+        }
     };
 }

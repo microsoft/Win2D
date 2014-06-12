@@ -1,5 +1,7 @@
 import "inspectable.idl";
 
+import "CanvasBrush.abi.idl";
+
 import "CanvasDevice.abi.idl";
 
 #include "version.h"

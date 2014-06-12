@@ -20,6 +20,18 @@ namespace canvas
         return static_cast<uint8_t>(f * 255.0f);
     }
 
+    inline float Saturate(float f) // Named after the clamping behavior of HLSL saturate().
+    {
+        f = std::min<float>(1, f);
+        f = std::max<float>(0, f);
+        return f;
+    }
+
+    inline uint8_t SaturateAndNormalizeToUint8(float f)
+    {
+        return NormalizedToUint8(Saturate(f));
+    }
+
     inline D2D1_COLOR_F ToD2DColor(const ABI::Windows::UI::Color& color)
     {
         return D2D1::ColorF(
@@ -27,6 +39,16 @@ namespace canvas
             ToNormalizedFloat(color.G),
             ToNormalizedFloat(color.B),
             ToNormalizedFloat(color.A));
+    }
+
+    inline ABI::Windows::UI::Color ToWindowsColor(const D2D1_COLOR_F color)
+    {
+        ABI::Windows::UI::Color windowsColor;
+        windowsColor.A = SaturateAndNormalizeToUint8(color.a);
+        windowsColor.R = SaturateAndNormalizeToUint8(color.r);
+        windowsColor.G = SaturateAndNormalizeToUint8(color.g);
+        windowsColor.B = SaturateAndNormalizeToUint8(color.b);
+        return windowsColor;
     }
 
     inline RECT ToRECT(const ABI::Windows::Foundation::Rect& rect)
@@ -111,5 +133,24 @@ namespace canvas
         ComPtr<ICanvasBrushInternal> internal;
         ThrowIfFailed(brush->QueryInterface(IID_PPV_ARGS(&internal)));
         return internal->GetD2DBrush();
+    }
+
+    inline D2D1_MATRIX_3X2_F ToD2DMatrix3x2(const Math::Matrix3x2& matrix)
+    {
+        return D2D1::Matrix3x2F(
+            matrix.M11, matrix.M12,
+            matrix.M21, matrix.M22,
+            matrix.M31, matrix.M32
+            );
+    }
+
+    inline Math::Matrix3x2 ToMathMatrix3x2(const D2D1_MATRIX_3X2_F& matrix)
+    {
+        Math::Matrix3x2 mathMatrix = {
+            matrix._11, matrix._12,
+            matrix._21, matrix._22,
+            matrix._31, matrix._32
+        };
+        return mathMatrix;
     }
 }

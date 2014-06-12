@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.  All rights reserved
+
 import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "DirectX.codegen.idl";
@@ -14,7 +16,7 @@ namespace Microsoft.Graphics.Canvas
         On,
         Off
     } CanvasHardwareAcceleration;
-
+    
     runtimeclass CanvasDevice;
 
     [version(VERSION), uuid(e2c2bf21-5418-43b9-a2da-539e287c790f)]

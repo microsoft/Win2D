@@ -7,24 +7,6 @@ import "WinRTMath.idl";
 
 namespace Microsoft.Graphics.Canvas
 {
-    //
-    // ICanvasGeometry
-    //
-    [uuid(A0D3D5DC-A2BD-4E5A-AA75-C13B8FF238C2), version(VERSION)]
-    interface ICanvasGeometry : IInspectable
-        requires Windows.Foundation.IClosable
-    {
-    }
-
-    //
-    // ICanvasBrush
-    //
-    [uuid(718BAB7E-2A06-46DB-8127-11F65291554E), version(VERSION)]
-    interface ICanvasBrush : IInspectable
-        requires Windows.Foundation.IClosable
-    {
-    }
-
     [version(VERSION)]
     typedef enum CanvasArcSize
     {
@@ -640,40 +622,6 @@ namespace Microsoft.Graphics.Canvas
         FLOAT RadiusX;
         FLOAT RadiusY;
     } CanvasRadialGradientBrushProperties;
-
-    interface ICanvasLayerParameters;
-    runtimeclass CanvasLayerParameters;
-
-    [uuid(4a837512-5ca1-46eb-96d1-fcc634796341), version(VERSION), exclusiveto(CanvasLayerParameters)]
-    interface ICanvasLayerParameters : IInspectable
-    {
-        [propget] HRESULT ContentBounds([out, retval] Windows.Foundation.Rect* value);
-        [propput] HRESULT ContentBounds([in] Windows.Foundation.Rect value);
-
-        [propget] HRESULT GeometricMask([out, retval] ICanvasGeometry** value);
-        [propput] HRESULT GeometricMask([in] ICanvasGeometry* value);
-
-        [propget] HRESULT MaskAntialiasMode([out, retval] CanvasAntialiasMode* value);
-        [propput] HRESULT MaskAntialiasMode([in] CanvasAntialiasMode value);
-
-        [propget] HRESULT MaskTransform([out, retval] Microsoft.Graphics.Canvas.Math.Matrix3x2* value);
-        [propput] HRESULT MaskTransform([in] Microsoft.Graphics.Canvas.Math.Matrix3x2 value);
-
-        [propget] HRESULT Opacity([out, retval] FLOAT* value);
-        [propput] HRESULT Opacity([in] FLOAT value);
-
-        [propget] HRESULT OpacityBrush([out, retval] ICanvasBrush** value);
-        [propput] HRESULT OpacityBrush([in] ICanvasBrush* value);
-
-        [propget] HRESULT LayerOptions([out, retval] CanvasLayerOptions* value);
-        [propput] HRESULT LayerOptions([in] CanvasLayerOptions value);
-    }
-
-    [version(VERSION), activatable(VERSION)]
-    runtimeclass CanvasLayerParameters
-    {
-        [default] interface ICanvasLayerParameters;
-    }
 
     [version(VERSION)]
     typedef struct CanvasStrokeStyleProperties

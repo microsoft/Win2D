@@ -10,6 +10,7 @@
 // Standard C++
 #include <functional>
 #include <memory>
+#include <algorithm>
 
 // Win32
 #include <d2d1_2.h>
@@ -34,6 +35,7 @@
 #include <CanvasDrawingSession.h>
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>
+#include <CanvasBrush.h>
 #include <Conversion.h>
 #include <ErrorHandling.h>
 #include <GraphicsDevice\GraphicsDevice.h>
@@ -50,6 +52,7 @@ using namespace canvas;
 #include "MockD2DDevice.h"
 #include "MockD2DDeviceContext.h"
 #include "MockD2DFactory.h"
+#include "MockD2DSolidColorBrush.h"
 #include "MockD3D11Device.h"
 #include "MockSurfaceImageSource.h"
 #include "MockSurfaceImageSourceFactory.h"

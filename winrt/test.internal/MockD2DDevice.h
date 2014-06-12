@@ -4,6 +4,8 @@
 
 namespace canvas
 {
+    class MockD2DDeviceContext;
+
     class MockD2DDevice : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<ID2D1Device1, ID2D1Device, ID2D1Resource>>
@@ -34,10 +36,10 @@ namespace canvas
         // ID2D1Device
         //
 
-        IFACEMETHODIMP CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS,ID2D1DeviceContext **) override
+        IFACEMETHODIMP CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS deviceContextOptions, ID2D1DeviceContext** deviceContext) override
         {
-            Assert::Fail(L"Unexpected call to D2D1DeviceContext");
-            return E_NOTIMPL;
+            auto mockDeviceContext = Make<MockD2DDeviceContext>();
+            return mockDeviceContext.CopyTo(deviceContext);
         }
 
         IFACEMETHODIMP CreatePrintControl(IWICImagingFactory *,IPrintDocumentPackageTarget *,const D2D1_PRINT_CONTROL_PROPERTIES *,ID2D1PrintControl **) override

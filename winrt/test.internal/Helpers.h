@@ -2,7 +2,7 @@
 
 #pragma once
 
-namespace Microsoft 
+namespace Microsoft
 {
     namespace VisualStudio
     {
@@ -115,9 +115,9 @@ namespace Microsoft
 #define TO_STRING(T)                                            \
             template<>                                          \
             static inline std::wstring ToString<T>(T* value)    \
-            {                                                   \
+                        {                                                   \
                 return PointerToString(L#T, value);             \
-            }
+                        }
 
             TO_STRING(IUnknown);
             TO_STRING(IInspectable);
@@ -154,6 +154,68 @@ namespace Microsoft
                 }
             }
 
+            template<>
+            static inline std::wstring ToString<ABI::Windows::UI::Color>(const ABI::Windows::UI::Color& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Windows.UI.Color{A=%i,R=%i,G=%i,B=%i}",
+                    value.A,
+                    value.R,
+                    value.G,
+                    value.B));
+
+                return buf;
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_COLOR_F>(const D2D1_COLOR_F& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_COLOR_F{A=%f,R=%f,G=%f,B=%f}",
+                    value.a,
+                    value.r,
+                    value.g,
+                    value.b));
+
+                return buf;
+            }
+
+            template<>
+            static inline std::wstring ToString<Math::Matrix3x2>(const Math::Matrix3x2& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Math.Matrix{M11=%f,M12=%f,M21=%f,M22=%f,M31=%f,M32=%f}",
+                    value.M11, value.M12,
+                    value.M21, value.M22,
+                    value.M31, value.M32));
+
+                return buf;
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_MATRIX_3X2_F>(const D2D1_MATRIX_3X2_F& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_MATRIX_3X2_F{_11=%f,_12=%f,_21=%f,_22=%f,_31=%f,_32=%f}",
+                    value._11, value._12,
+                    value._21, value._22,
+                    value._31, value._32));
+
+                return buf;
+            }
+
         }
 
         inline bool operator==(const D2D1_POINT_2F& a, const D2D1_POINT_2F& b)
@@ -182,6 +244,38 @@ namespace Microsoft
             return a.point == b.point &&
                 a.radiusX == b.radiusX &&
                 a.radiusY == b.radiusY;
+        }
+
+        inline bool operator==(const ABI::Windows::UI::Color& a, const ABI::Windows::UI::Color& b)
+        {
+            return a.A == b.A &&
+                a.R == b.R &&
+                a.G == b.G &&
+                a.B == b.B;
+        }
+
+        inline bool operator==(const D2D1_COLOR_F& a, const D2D1_COLOR_F& b)
+        {
+            return a.a == b.a &&
+                a.r == b.r &&
+                a.g == b.g &&
+                a.b == b.b;
+        }
+
+        inline bool operator==(const Math::Matrix3x2& a, const Math::Matrix3x2& b)
+        {
+            return
+                a.M11 == b.M11 && a.M12 == b.M12 &&
+                a.M21 == b.M21 && a.M22 == b.M22 &&
+                a.M31 == b.M31 && a.M32 == b.M32;
+        }
+
+        inline bool operator==(const D2D1_MATRIX_3X2_F& a, const D2D1_MATRIX_3X2_F& b)
+        {
+            return
+                a._11 == b._11 && a._12 == b._12 &&
+                a._21 == b._21 && a._22 == b._22 &&
+                a._31 == b._31 && a._32 == b._32;
         }
     }
 }

@@ -63,6 +63,13 @@ namespace canvas
             Assert::Fail(L"Unexpected call to GetRoundTripHardwareAcceleration");
             return static_cast<CanvasHardwareAcceleration>(0);
         }
+
+
+        virtual ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() override
+        {
+            Assert::Fail(L"Unexpected call to GetD2DResourceCreationDeviceContext");
+            return nullptr;
+        }
     };
 }
 

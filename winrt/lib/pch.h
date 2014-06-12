@@ -22,6 +22,7 @@
 #include <map>
 #include <cstdint>
 #include <mutex>
+#include <algorithm>
 
 #include <d2d1_2.h>
 #include <d3d11.h>

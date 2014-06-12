@@ -4,6 +4,8 @@
 
 namespace canvas
 {
+    class MockD2DSolidColorBrush;
+
     class MockD2DDeviceContext : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<ID2D1DeviceContext1, ID2D1DeviceContext, ID2D1RenderTarget, ID2D1Resource>>
@@ -52,10 +54,14 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateSolidColorBrush(const D2D1_COLOR_F *,const D2D1_BRUSH_PROPERTIES *,ID2D1SolidColorBrush **) override
+        IFACEMETHODIMP CreateSolidColorBrush(
+            const D2D1_COLOR_F* color,
+            const D2D1_BRUSH_PROPERTIES* brushProperties,
+            ID2D1SolidColorBrush** solidColorBrush
+            ) override
         {
-            Assert::Fail(L"Unexpected call to CreateSolidColorBrush");
-            return E_NOTIMPL;
+            ComPtr<MockD2DSolidColorBrush> mockD2DSolidColorBrush = Make<MockD2DSolidColorBrush>();
+            return mockD2DSolidColorBrush.CopyTo(solidColorBrush);
         }
 
         IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *,UINT32,D2D1_GAMMA,D2D1_EXTEND_MODE,ID2D1GradientStopCollection **) override

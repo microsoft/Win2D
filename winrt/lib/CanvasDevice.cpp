@@ -314,6 +314,14 @@ namespace canvas
         ThrowIfFailed(d2dBaseDevice.As(&d2dDevice));
 
         m_d2dDevice = d2dDevice; // This assignment is necessary because m_d2dDevice is ClosablePtr.
+
+        ComPtr<ID2D1DeviceContext> d2dResourceCreationDeviceContext;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &d2dResourceCreationDeviceContext
+            ));
+
+        m_d2dResourceCreationDeviceContext = d2dResourceCreationDeviceContext;
     }
 
     ComPtr<ID2D1Factory2> CanvasDevice::GetD2DFactory()
@@ -363,6 +371,7 @@ namespace canvas
     {
         m_directX11Device.Close();
         m_d2dDevice.Close();
+        m_d2dResourceCreationDeviceContext.Close();
         return S_OK;
     }
 
@@ -378,6 +387,12 @@ namespace canvas
     CanvasHardwareAcceleration CanvasDevice::GetRoundTripHardwareAcceleration()
     {
         return m_hardwareAccelerationRoundTrip;
+    }
+
+    ComPtr<ID2D1DeviceContext> CanvasDevice::GetD2DResourceCreationDeviceContext()
+    {
+        ComPtr<ID2D1DeviceContext> d2dResourceCreationDeviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        return d2dResourceCreationDeviceContext;
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
