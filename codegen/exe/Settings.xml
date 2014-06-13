@@ -4,6 +4,10 @@
 
     <Prefix Value="Canvas"/>
 
+    <Subnamespace Value="Canvas"/>
+
+    <FilenameBase Value="Canvas"/>
+
     <Struct Name="D3DCOLORVALUE" ShouldProject="false" ProjectedNameOverride="Color" IdlNamespaceQualifier="Windows.UI."/>
 
     <Namespace Name="D2D" NameOverride="D2D1">

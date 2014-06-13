@@ -241,7 +241,7 @@ namespace CodeGen
             outputFiles.CppFile.WriteLine("{");
 
             outputFiles.CppFile.Indent();
-            outputFiles.CppFile.WriteLine("InspectableClass(L\"Microsoft.DirectX." + m_stylizedName + "\", BaseTrust);");
+            outputFiles.CppFile.WriteLine("InspectableClass(L\"Microsoft." + Formatter.Subnamespace + "." + m_stylizedName + "\", BaseTrust);");
             outputFiles.CppFile.WriteLine();
             outputFiles.CppFile.Unindent();
 

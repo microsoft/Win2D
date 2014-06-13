@@ -100,6 +100,18 @@ namespace CodeGen
                 public string Value;
             }
 
+            public class FilenameBaseNode
+            {
+                [XmlAttributeAttribute]
+                public string Value;
+            }
+
+            public class SubnamespaceNode
+            {
+                [XmlAttributeAttribute]
+                public string Value;
+            }
+
             [XmlRootAttribute]
             public class Settings
             {
@@ -111,6 +123,12 @@ namespace CodeGen
 
                 [XmlElement("Prefix")]
                 public PrefixNode Prefix;
+
+                [XmlElement("FilenameBase")]
+                public FilenameBaseNode FilenameBase;
+
+                [XmlElement("Subnamespace")]
+                public SubnamespaceNode Subnamespace;
             }
         }
     }

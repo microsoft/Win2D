@@ -36,7 +36,7 @@
 #include <windows.ui.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
-#include <Microsoft.DirectX.interop.h>
+#include <Microsoft.Canvas.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 #include <CanvasImageSource.abi.h>

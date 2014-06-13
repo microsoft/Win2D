@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)d2dwinrt.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)DirectX.codegen.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)GraphicsDevice\WinRTGraphicsInterop.idl">
       <Filter>GraphicsDevice</Filter>
     </MidlRT>
@@ -14,7 +14,7 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.cpp">
       <Filter>GraphicsDevice</Filter>

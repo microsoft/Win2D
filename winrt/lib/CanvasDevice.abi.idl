@@ -2,7 +2,7 @@
 
 import "inspectable.idl";
 import "Windows.Foundation.idl";
-import "DirectX.codegen.idl";
+import "Canvas.codegen.idl";
 import "WinRTGraphicsInterop.idl";
 
 #include "version.h"

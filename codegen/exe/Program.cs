@@ -119,8 +119,6 @@ namespace CodeGen
 
         public static void GenerateCode(string inputDir, string outputDir)
         {
-            var filenameBase = "DirectX";
-
             List<string> files = new List<string>();
             files.Add("D2DTypes.xml");
             files.Add("D2DTypes2.xml");
@@ -129,6 +127,9 @@ namespace CodeGen
 
             Overrides.XmlBindings.Settings overridesXmlData = XmlBindings.Utilities.LoadXmlData<Overrides.XmlBindings.Settings>(inputDir, "Settings.xml");
             Formatter.Prefix = overridesXmlData.Prefix.Value;
+            Formatter.Subnamespace = overridesXmlData.Subnamespace.Value;
+
+            var filenameBase = overridesXmlData.FilenameBase.Value;
 
             List<D2DTypes> typeDocuments = new List<D2DTypes>();
             Dictionary<string, QualifiableType> typeDictionary = new Dictionary<string, QualifiableType>();

@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{d6cb5cb7-499b-4980-84c6-f0099cf309da}</ProjectGuid>
-    <RootNamespace>DirectX.Test</RootNamespace>
+    <RootNamespace>Canvas.Test</RootNamespace>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <DefaultLanguage>en-US</DefaultLanguage>

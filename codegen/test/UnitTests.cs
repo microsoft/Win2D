@@ -35,8 +35,8 @@ namespace CodeGen.Test
         }
 
         [TestMethod]
-        [DeploymentItem("Deployed Files/DirectX.codegen.cpp", "codegen/expected")]
-        [DeploymentItem("Deployed Files/DirectX.codegen.idl", "codegen/expected")]
+        [DeploymentItem("Deployed Files/Canvas.codegen.cpp", "codegen/expected")]
+        [DeploymentItem("Deployed Files/Canvas.codegen.idl", "codegen/expected")]
         [DeploymentItem("Deployed Files/D2DEffectAuthor.xml", "codegen/in")]
         [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/in")]
         [DeploymentItem("Deployed Files/D2DTypes2.xml", "codegen/in")]

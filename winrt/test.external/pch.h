@@ -23,7 +23,7 @@
 #include <d2dwinrt.h>
 #include <WinRTGraphicsInterop.h>
 
-#include <Microsoft.DirectX.interop.h>
+#include <Microsoft.Canvas.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

@@ -26,7 +26,7 @@ MainPage::MainPage()
 	InitializeComponent();
 
 #if IMPL
-    using namespace Microsoft::DirectX;
+    using namespace Microsoft::Canvas;
 
     auto x = ref new TestClass(1);
     x->SetValue(x->Value * 2);    

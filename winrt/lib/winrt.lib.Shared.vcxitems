@@ -57,12 +57,12 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)DirectX.codegen.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <MidlRT Include="$(MSBuildThisFileDirectory)d2dwinrt.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)DirectX.codegen.idl">
+    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl">
       <HasInterfaces>false</HasInterfaces>
     </MidlRT>
     <MidlRT Include="$(MSBuildThisFileDirectory)GraphicsDevice\WinRTGraphicsInterop.idl" />

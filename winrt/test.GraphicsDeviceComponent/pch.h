@@ -7,7 +7,7 @@
 
 #include <d3d11.h>
 
-#include <Microsoft.DirectX.interop.h>
+#include <Microsoft.Canvas.interop.h>
 
 #include <ErrorHandling.h>
 
