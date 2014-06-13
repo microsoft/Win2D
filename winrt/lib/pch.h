@@ -18,11 +18,13 @@
 #include <windows.h>
 #include <wrl.h>
 #include <strsafe.h>
+#include <assert.h>
+
+#include <algorithm>
 #include <memory>
 #include <map>
 #include <cstdint>
 #include <mutex>
-#include <algorithm>
 
 #include <d2d1_2.h>
 #include <d3d11.h>
@@ -35,6 +37,7 @@
 #include <windows.ui.xaml.media.dxinterop.h>
 
 #include <Microsoft.DirectX.interop.h>
+#include <Microsoft.Graphics.Canvas.native.h>
 
 #include <CanvasImageSource.abi.h>
 #include <WinRTGraphicsInterop.h>

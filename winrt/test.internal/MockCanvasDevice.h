@@ -58,9 +58,9 @@ namespace canvas
             return MockGetD2DDevice();
         }
 
-        virtual CanvasHardwareAcceleration GetRoundTripHardwareAcceleration() override
+        virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() override
         {
-            Assert::Fail(L"Unexpected call to GetRoundTripHardwareAcceleration");
+            Assert::Fail(L"Unexpected call to GetRequestedHardwareAcceleration");
             return static_cast<CanvasHardwareAcceleration>(0);
         }
 

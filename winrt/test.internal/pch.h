@@ -8,9 +8,13 @@
 #include "targetver.h"
 
 // Standard C++
-#include <functional>
-#include <memory>
+#include <assert.h>
 #include <algorithm>
+#include <functional>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <vector>
 
 // Win32
 #include <d2d1_2.h>
@@ -30,6 +34,12 @@
 #include <CanvasDrawingSession.abi.h>
 #include <CanvasImageSource.abi.h>
 
+// Inc
+#include <ErrorHandling.h>
+
+// Public
+#include <Microsoft.Graphics.Canvas.native.h>
+
 // winrt.lib
 #include <CanvasDevice.h>
 #include <CanvasDrawingSession.h>
@@ -37,8 +47,11 @@
 #include <CanvasImageSourceDrawingSessionAdapter.h>
 #include <CanvasBrush.h>
 #include <Conversion.h>
-#include <ErrorHandling.h>
 #include <GraphicsDevice\GraphicsDevice.h>
+#include <ResourceManager.h>
+#include <ResourceTracker.h>
+#include <ResourceWrapper.h>
+
 
 // local headers
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

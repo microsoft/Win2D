@@ -110,13 +110,12 @@ public:
         using canvas::CanvasDevice;
         using ABI::Windows::UI::Color;
         
-        std::shared_ptr<TestDeviceResourceCreationAdapter> deviceResourceCreationAdapter = 
-            std::make_shared<TestDeviceResourceCreationAdapter>();
+        auto deviceResourceCreationAdapter = std::make_shared<TestDeviceResourceCreationAdapter>();
+        auto deviceManager = std::make_shared<CanvasDeviceManager>(deviceResourceCreationAdapter);
 
-        auto canvasDevice = Make<CanvasDevice>(
+        auto canvasDevice = deviceManager->Create(
             CanvasDebugLevel::Information,
-            CanvasHardwareAcceleration::Auto,
-            deviceResourceCreationAdapter);
+            CanvasHardwareAcceleration::Auto);
 
         Color red = { 255, 255, 0, 0 };
         Color cyan = { 255, 0, 255, 255 };
@@ -193,13 +192,12 @@ public:
         using canvas::CanvasDevice;
         using ABI::Windows::UI::Color;
 
-        std::shared_ptr<TestDeviceResourceCreationAdapter> deviceResourceCreationAdapter =
-            std::make_shared<TestDeviceResourceCreationAdapter>();
+        auto deviceResourceCreationAdapter = std::make_shared<TestDeviceResourceCreationAdapter>();
+        auto deviceManager = std::make_shared<CanvasDeviceManager>(deviceResourceCreationAdapter);
 
-        auto canvasDevice = Make<CanvasDevice>(
+        auto canvasDevice = deviceManager->Create(
             CanvasDebugLevel::Information,
-            CanvasHardwareAcceleration::Auto,
-            deviceResourceCreationAdapter);
+            CanvasHardwareAcceleration::Auto);
 
         Color color = { 255, 127, 127, 127 };
 

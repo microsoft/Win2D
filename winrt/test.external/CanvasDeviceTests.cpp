@@ -33,6 +33,12 @@ TEST_CLASS(CanvasDeviceTests)
         Assert::AreEqual(CanvasHardwareAcceleration::Off, canvasDevice->HardwareAcceleration);
         Assert::IsNotNull(canvasDevice->DirectX11Device);
 
+        auto directX11Device = canvasDevice->DirectX11Device;
+        canvasDevice = CanvasDevice::CreateFromDirectX11Device(
+            CanvasDebugLevel::None,
+            directX11Device);
+        Assert::AreEqual(CanvasHardwareAcceleration::Unknown, canvasDevice->HardwareAcceleration);
+
         delete canvasDevice;
             
         ExpectObjectClosed([&](){ canvasDevice->HardwareAcceleration; });
@@ -80,5 +86,19 @@ TEST_CLASS(CanvasDeviceTests)
         delete canvasDevice;
 
         ExpectObjectClosed([&](){ canvasDevice->CreateCompatibleDevice(directX11Device); });
+    }
+
+    TEST_METHOD(CanvasDevice_NativeInterop)
+    {
+        auto originalCanvasDevice = ref new CanvasDevice();
+
+        auto originalD2DDevice = GetWrappedResource<ID2D1Device1>(originalCanvasDevice);
+
+        auto newCanvasDevice = GetOrCreateCanvasDevice(originalD2DDevice.Get());
+
+        auto newD2DDevice = GetWrappedResource<ID2D1Device1>(newCanvasDevice);
+
+        Assert::AreEqual(originalCanvasDevice, newCanvasDevice);
+        Assert::AreEqual(originalD2DDevice.Get(), newD2DDevice.Get());
     }
 };

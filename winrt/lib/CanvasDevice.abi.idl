@@ -14,53 +14,57 @@ namespace Microsoft.Graphics.Canvas
     {
         Auto, 
         On,
-        Off
+        Off,
+        Unknown
     } CanvasHardwareAcceleration;
     
     runtimeclass CanvasDevice;
 
-    [version(VERSION), uuid(e2c2bf21-5418-43b9-a2da-539e287c790f)]
+    [version(VERSION), uuid(E2C2BF21-5418-43B9-A2DA-539E287C790F)]
     interface ICanvasDeviceFactory : IInspectable
     {
         HRESULT CreateWithDebugLevel(
             [in] CanvasDebugLevel debugLevel,
-            [out, retval] CanvasDevice **canvasDevice
-            );
+            [out, retval] CanvasDevice** canvasDevice);
 
         HRESULT CreateWithDebugLevelAndHardwareAcceleration(
             [in] CanvasDebugLevel debugLevel,
             [in] CanvasHardwareAcceleration hardwareAcceleration,
-            [out, retval] CanvasDevice **canvasDevice
-            );
+            [out, retval] CanvasDevice** canvasDevice);
     };
 
-    [version(VERSION), uuid(a27f0b5d-ec2c-4d4f-948f-0aa1e95e33e6), exclusiveto(CanvasDevice)]
+    [version(VERSION), uuid(9B6E2B27-CD07-421A-8F69-0AE8A787FE8C)]
+    interface ICanvasDeviceStatics : IInspectable
+    {
+        HRESULT CreateFromDirectX11Device(
+            [in] CanvasDebugLevel debugLevel,
+            [in] DirectX11Device* directX11Device,
+            [out, retval] CanvasDevice** canvasDevice);
+    };
+
+    [version(VERSION), uuid(A27F0B5D-EC2C-4D4F-948F-0AA1E95E33E6), exclusiveto(CanvasDevice)]
     interface ICanvasDevice : IInspectable
         requires Windows.Foundation.IClosable
     {
         // Intended for handling device lost. Uses the same D2D resource (and WIC factory and so on), 
         // but creates new D3D device.
         HRESULT RecoverLostDevice(
-            [out, retval] CanvasDevice **canvasDevice
-            );
+            [out, retval] CanvasDevice** canvasDevice);
 
         HRESULT CreateCompatibleDevice(
             [in] DirectX11Device* directX11Device,
-            [out, retval] CanvasDevice **canvasDevice
-            );
+            [out, retval] CanvasDevice** canvasDevice);
 
         [propget] 
         HRESULT HardwareAcceleration(
-            [out, retval] CanvasHardwareAcceleration* value
-            );
+            [out, retval] CanvasHardwareAcceleration* value);
 
         [propget]
         HRESULT DirectX11Device(
-            [out, retval] DirectX11Device** value
-            );
+            [out, retval] DirectX11Device** value);
     };
 
-    [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION)]
+    [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]
     runtimeclass CanvasDevice
     {
         [default] interface ICanvasDevice;

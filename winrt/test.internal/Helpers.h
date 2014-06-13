@@ -119,14 +119,15 @@ namespace Microsoft
                 return PointerToString(L#T, value);             \
                         }
 
-            TO_STRING(IUnknown);
-            TO_STRING(IInspectable);
             TO_STRING(ICanvasDevice);
             TO_STRING(ID2D1Brush);
-            TO_STRING(ID2D1DeviceContext1);
             TO_STRING(ID2D1Device1);
+            TO_STRING(ID2D1DeviceContext1);
             TO_STRING(ID2D1Factory);
+            TO_STRING(IDXGIDevice);
             TO_STRING(IDirectX11Device);
+            TO_STRING(IInspectable);
+            TO_STRING(IUnknown);
 
 #undef TO_STRING
 

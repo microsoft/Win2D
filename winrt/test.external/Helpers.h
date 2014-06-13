@@ -20,29 +20,20 @@ namespace Microsoft
                 return std::wstring(buf);
             }
 
-            template<>
-            static inline std::wstring ToString<IDXGIDevice>(IDXGIDevice* value)
-            {
-                return PointerToString(L"IDXGIDevice", value);
+#define TO_STRING(T)                                            \
+            template<>                                          \
+            static inline std::wstring ToString<T>(T* value)    \
+            {                                                   \
+                return PointerToString(L#T, value);             \
             }
 
-            template<>
-            static inline std::wstring ToString<ID3D11Device>(ID3D11Device* value)
-            {
-                return PointerToString(L"ID3D11Device", value);
-            }
+            TO_STRING(IDXGIDevice);
+            TO_STRING(ID3D11Device);
+            TO_STRING(ID3D11Texture2D);
+            TO_STRING(IDXGISurface);
+            TO_STRING(ID2D1Device1);
 
-            template<>
-            static inline std::wstring ToString<ID3D11Texture2D>(ID3D11Texture2D* value)
-            {
-                return PointerToString(L"ID3D11Texture2D", value);
-            }
-
-            template<>
-            static inline std::wstring ToString<IDXGISurface>(IDXGISurface* value)
-            {
-                return PointerToString(L"IDXGISurface", value);
-            }
+#undef TO_STRING
 
             template<>
             static inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color* value)
@@ -72,16 +63,16 @@ namespace Microsoft
             }
 
             // TODO: Consider sharing these definitions somehow between internal and external tests.
-#define CX_OBJECT_TO_STRING(T)                         \
-            template<>                                             \
-            static inline std::wstring ToString<T>(const T& value) \
-                        {                                                      \
-                return value.ToString()->Data();                   \
-                        }
+#define CX_VALUE_TO_STRING(T)                                       \
+            template<>                                              \
+            static inline std::wstring ToString<T>(const T& value)  \
+            {                                                       \
+                return value.ToString()->Data();                    \
+            }
+            
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasHardwareAcceleration);
 
-            CX_OBJECT_TO_STRING(Microsoft::Graphics::Canvas::CanvasHardwareAcceleration);
-
-#undef CX_OBJECT_TO_STRING
+#undef CX_VALUE_TO_STRING
 
             inline bool operator==(const Windows::UI::Color& a, const Windows::UI::Color& b)
             {

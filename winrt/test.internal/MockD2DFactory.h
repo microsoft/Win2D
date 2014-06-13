@@ -130,10 +130,8 @@ namespace canvas
             _Outptr_ ID2D1Device **d2dDevice
             )
         {
-            ComPtr<MockD2DDevice> mockD2DDevice = Make<MockD2DDevice>(this);
-            *d2dDevice = mockD2DDevice.Detach();
-
-            return S_OK;
+            Assert::Fail(L"Unexpected call to CreateDevice(...ID2D1Device).  ID2D1Device1 overload is expected to be used.");
+            return E_NOTIMPL;
         }
 
         STDMETHOD(CreateStrokeStyle)(
@@ -222,7 +220,8 @@ namespace canvas
             _Outptr_ ID2D1Device1 **d2dDevice1
             )
         {
-            return E_NOTIMPL;
+            ComPtr<MockD2DDevice> mockD2DDevice = Make<MockD2DDevice>(this);
+            return mockD2DDevice.CopyTo(d2dDevice1);
         }
 
     };

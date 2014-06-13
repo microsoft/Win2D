@@ -2,33 +2,41 @@
 
 #pragma once
 
+#include "../test.external/MockDxgiDevice.h" // TODO: move this file (do with #997/#1429)
+#include "MockD2DDeviceContext.h"
+
 namespace canvas
 {
-    class MockD2DDeviceContext;
-
+    [uuid(D5B2FFD5-882E-4CB5-98FA-2342E52FC6F2)]
+    class ID2DDeviceWithDxgiDevice : public IUnknown
+    {
+    public:
+        virtual ComPtr<IDXGIDevice> GetDxgiDevice() = 0;
+    };
+    
     class MockD2DDevice : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<ID2D1Device1, ID2D1Device, ID2D1Resource>>
+        ChainInterfaces<ID2D1Device1, ID2D1Device, ID2D1Resource>,
+        ID2DDeviceWithDxgiDevice>
     {
         ComPtr<ID2D1Factory2> m_parentD2DFactory;
+        ComPtr<IDXGIDevice> m_dxgiDevice;
 
     public:
-
-        MockD2DDevice()
-            : m_parentD2DFactory(NULL)
-        {}
-
-        // This constructor enables the bare-minimum GetFactory, used by some tests to verify resource domains.
-        MockD2DDevice(ID2D1Factory2* parentD2DFactory) 
+        MockD2DDevice(ID2D1Factory2* parentD2DFactory = nullptr)
             : m_parentD2DFactory(parentD2DFactory)
-        {}
-
+            , m_dxgiDevice(Make<MockDxgiDevice>())
+        {            
+        }
+        
         //
         // ID2D1Resource
         //
-
+        
         IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **factory) const override
         {
+            if (!m_parentD2DFactory)
+                Assert::Fail(L"Unexpected call to GetFactory");
             m_parentD2DFactory.CopyTo(factory);
         }
 
@@ -83,6 +91,15 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to D2D1DeviceContext1");
             return E_NOTIMPL;
+        }
+
+        //
+        // ID2DDeviceWithDxgiDevice
+        //
+
+        virtual ComPtr<IDXGIDevice> GetDxgiDevice() override
+        {
+            return m_dxgiDevice;
         }
     };
 }

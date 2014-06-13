@@ -41,14 +41,18 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />

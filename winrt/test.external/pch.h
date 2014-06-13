@@ -24,6 +24,7 @@
 #include <WinRTGraphicsInterop.h>
 
 #include <Microsoft.DirectX.interop.h>
+#include <Microsoft.Graphics.Canvas.native.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;

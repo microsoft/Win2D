@@ -17,9 +17,8 @@ public:
         , m_retrievableHarwareAcceleration(CanvasHardwareAcceleration::Auto)
     {}
 
-    ComPtr<ID2D1Factory2> CreateD2DFactory(
-        CanvasDebugLevel debugLevel
-        )
+    virtual ComPtr<ID2D1Factory2> CreateD2DFactory(
+        CanvasDebugLevel debugLevel) override
     {
         m_numD2DFactoryCreationCalls++;
         m_debugLevel = debugLevel;
@@ -28,7 +27,10 @@ public:
         // actually call methods on the factory and expect them to succeed.
         return Make<MockD2DFactory>();
     }
-    virtual bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device)
+
+    virtual bool TryCreateD3DDevice(
+        CanvasHardwareAcceleration hardwareAcceleration,
+        ComPtr<ID3D11Device>* device) override
     {
         if (!device)
         {
@@ -51,6 +53,14 @@ public:
             *device = Make<MockD3D11Device>();
             return true;
         }
+    }
+
+    virtual ComPtr<IDXGIDevice> GetDxgiDevice(ID2D1Device1* d2dDevice) override
+    {
+        ComPtr<ID2DDeviceWithDxgiDevice> d2dDeviceWithDxgiDevice;
+        ThrowIfFailed(d2dDevice->QueryInterface(d2dDeviceWithDxgiDevice.GetAddressOf()));
+        
+        return d2dDeviceWithDxgiDevice->GetDxgiDevice();
     }
 
     void SetHardwareEnabled(bool enable)

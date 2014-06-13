@@ -56,9 +56,16 @@ namespace canvas
             return *this;
         }
 
-        void Close() throw()
+        auto operator&() -> decltype(&m_ptr)
         {
-            m_ptr.Reset();
+            return &m_ptr;
+        }
+
+        Microsoft::WRL::ComPtr<T> Close() throw()
+        {
+            Microsoft::WRL::ComPtr<T> ptr;
+            std::swap(ptr, m_ptr);
+            return ptr;
         }
 
         const Microsoft::WRL::ComPtr<T>& EnsureNotClosed() const
@@ -79,6 +86,11 @@ namespace canvas
             //
 
             return m_ptr;
+        }
+
+        explicit operator bool() const
+        {
+            return static_cast<bool>(m_ptr);
         }
     };
 }

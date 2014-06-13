@@ -2,57 +2,101 @@
 
 #pragma once
 
-#include "CanvasDevice.abi.h"
-#include <ClosablePtr.h>
+#include <CanvasDevice.abi.h>
+
+#include "ClosablePtr.h"
+#include "ResourceManager.h"
 
 namespace canvas
 {
     using namespace Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas;
 
-    // These interfaces are used to abstract away the creation of a D2D factory / D3D device. Benefit
-    // is for unit tests. Because they are internal, they can return ComPtrs and throw exceptions 
-    // on failure.
+    class CanvasDevice;
+    class CanvasDeviceManager;
+
+    //
+    // Abstracts away the creation of a D2D factory / D3D device, allowing unit
+    // tests to provide test doubles. Because they are internal, they can return
+    // ComPtrs and throw exceptions on failure.
+    //
     class ICanvasDeviceResourceCreationAdapter
     {
     public:
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) = 0;
 
         virtual bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device) = 0;
+
+        virtual ComPtr<IDXGIDevice> GetDxgiDevice(ID2D1Device1* d2dDevice) = 0;
     };
 
+
+    //
+    // Default implementation of the adapter that actually talks to D3D / D2D
+    // that is used in production.
+    //
     class DefaultDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
     {
     public:
-        ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel);
+        virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) override;
 
-        bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device);
+        virtual bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device) override;
+
+        virtual ComPtr<IDXGIDevice> GetDxgiDevice(ID2D1Device1* d2dDevice) override;
     };
 
-    class CanvasDeviceFactory : public ActivationFactory<ICanvasDeviceFactory>
+
+    //
+    // WinRT activation factory for the CanvasDevice runtimeclass.
+    //
+    class CanvasDeviceFactory : public ActivationFactory<
+        ICanvasDeviceFactory, 
+        ICanvasDeviceStatics, 
+        CloakedIid<ICanvasDeviceFactoryNative>>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
-        std::shared_ptr<DefaultDeviceResourceCreationAdapter> m_resourceCreationAdapter;
+        // TODO: #1442 - the factory can't own this since there's no guarantee
+        // the factory stays around.  We need some way for a newly created
+        // factory to find any previous existing manager and use that.
+        std::shared_ptr<CanvasDeviceManager> m_canvasDeviceManager;
 
     public:
-
         CanvasDeviceFactory();
+
+        //
+        // ActivationFactory
+        //
+
+        IFACEMETHOD(ActivateInstance)(_COM_Outptr_ IInspectable** ppvObject) override;
+
+        //
+        // ICanvasDeviceFactory
+        //
 
         IFACEMETHOD(CreateWithDebugLevel)(
             CanvasDebugLevel debugLevel,
-            ICanvasDevice **canvasDevice
-            ) override;
+            ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(CreateWithDebugLevelAndHardwareAcceleration)(
             CanvasDebugLevel debugLevel,
             CanvasHardwareAcceleration hardwareAcceleration,
-            ICanvasDevice **canvasDevice
-            ) override;
+            ICanvasDevice** canvasDevice) override;
 
-        // From ActivationFactory
-        IFACEMETHOD(ActivateInstance)(_Outptr_result_nullonfailure_ IInspectable **ppvObject) override;
+        IFACEMETHOD(CreateFromDirectX11Device)(
+            CanvasDebugLevel debugLevel,
+            IDirectX11Device* directX11Device,
+            ICanvasDevice** canvasDevice) override;
+
+        //
+        // ICanvasDeviceFactoryNative
+        //
+        
+        IFACEMETHOD(GetOrCreate)(
+            ID2D1Device1* d2dDevice,
+            ICanvasDevice** canvasDevice) override;
     };
+
 
     //
     // This internal interface is exposed by the CanvasDevice runtime class and
@@ -67,100 +111,116 @@ namespace canvas
     {
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
-
-        virtual CanvasHardwareAcceleration GetRoundTripHardwareAcceleration() = 0;
-
+        virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() = 0;
         virtual ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() = 0;
     };
 
-    class CanvasDevice : public RuntimeClass<
-        RuntimeClassFlags<WinRtClassicComMix>, 
-        ICanvasDevice, 
-        ABI::Windows::Foundation::IClosable, 
-        CloakedIid<ICanvasDeviceInternal>>
+
+    struct CanvasDeviceTraits
     {
-        // This is used to abstract the D2D stack away from the tests.
-        std::shared_ptr<ICanvasDeviceResourceCreationAdapter> m_resourceCreationAdapter;
+        typedef ID2D1Device1 resource_t;
+        typedef CanvasDevice wrapper_t;
+        typedef ICanvasDevice wrapper_interface_t;
+        typedef CanvasDeviceManager manager_t;
+    };
 
-        // This is the exact same option that the CanvasDevice was created with. 
-        // Compatible devices are created with the same option. Can be Auto.
-        CanvasHardwareAcceleration m_hardwareAccelerationRoundTrip;
+    //
+    // The CanvasDevice class itself.
+    //
+    class CanvasDevice : RESOURCE_WRAPPER_RUNTIME_CLASS(CanvasDeviceTraits, CloakedIid<ICanvasDeviceNative>, CloakedIid<ICanvasDeviceInternal>)
+    {
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
-        // This is used for the public-facing property value. Only valid to have On or Off,
-        // never Auto.
-        CanvasHardwareAcceleration m_hardwareAccelerationRetrievable; 
+        // This is the exact same option that the CanvasDevice was created with.
+        // Compatible devices are created with the same option.
+        CanvasHardwareAcceleration m_requestedHardwareAcceleration;
+
+        // This is used for the public-facing property value. Can be any value
+        // other than Auto.
+        CanvasHardwareAcceleration m_actualHardwareAcceleration; 
 
         CanvasDebugLevel m_debugLevel;
         
         ClosablePtr<IDirectX11Device> m_directX11Device;
-        ClosablePtr<ID2D1Device1> m_d2dDevice;
         ClosablePtr<ID2D1DeviceContext> m_d2dResourceCreationDeviceContext;
 
     public:
-
-        CanvasDevice(std::shared_ptr<ICanvasDeviceResourceCreationAdapter> deviceResourceCreationAdapter);
-
         CanvasDevice(
+            std::shared_ptr<CanvasDeviceManager> deviceManager,
             CanvasDebugLevel debugLevel,
-            CanvasHardwareAcceleration hardwareAcceleration,
-            std::shared_ptr<ICanvasDeviceResourceCreationAdapter> deviceResourceCreationAdapter
-            );
-
-        CanvasDevice(
-            CanvasDebugLevel debugLevel,
-            CanvasHardwareAcceleration hardwareAcceleration,
-            std::shared_ptr<ICanvasDeviceResourceCreationAdapter> deviceResourceCreationAdapter,
-            ComPtr<ID2D1Factory2> d2dFactory
-            );
-
-        CanvasDevice(
-            CanvasDebugLevel debugLevel,
+            CanvasHardwareAcceleration requestedHardwareAcceleration,
+            CanvasHardwareAcceleration actualHardwareAcceleration,
             IDirectX11Device* directX11Device,
-            std::shared_ptr<ICanvasDeviceResourceCreationAdapter> deviceResourceCreationAdapter
-            );
+            ID2D1Device1* d2dDevice);
 
-        CanvasDevice(
-            CanvasDebugLevel debugLevel,
-            IDirectX11Device* directX11Device,
-            std::shared_ptr<ICanvasDeviceResourceCreationAdapter> deviceResourceCreationAdapter,
-            ComPtr<ID2D1Factory2> d2dFactory
-            );
+        //
+        // ICanvasDevice
+        //
 
         IFACEMETHOD(RecoverLostDevice)(
-            ICanvasDevice **canvasDevice
-            ) override;
+            ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(CreateCompatibleDevice)(
             IDirectX11Device* directX11Device,
-            ICanvasDevice **canvasDevice
-            ) override;
+            ICanvasDevice** canvasDevice) override;
 
-        IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration *value) override;
+        IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration* value) override;
 
-        IFACEMETHOD(get_DirectX11Device)(_Out_ IDirectX11Device **value) override;
+        IFACEMETHOD(get_DirectX11Device)(_Out_ IDirectX11Device** value) override;
 
+        //
         // IClosable
+        //
+
         IFACEMETHOD(Close)() override;
 
+        //
+        // ICanvasDeviceNative
+        //
+
+        IFACEMETHOD(GetD2DDevice)(ID2D1Device1** value) override;
+
+        //
         // ICanvasDeviceInternal
-        ComPtr<ID2D1Device1> GetD2DDevice() override;
+        //
 
-        CanvasHardwareAcceleration GetRoundTripHardwareAcceleration() override;
-
+        virtual ComPtr<ID2D1Device1> GetD2DDevice() override;
+        virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() override;
         ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() override;
+        
+    private:
+        ComPtr<ID2D1Factory2> GetD2DFactory();
+    };
+
+
+    //
+    // Responsible for creating and tracking CanvasDevice instances and the
+    // ID2D1Device they wrap.
+    //
+    class CanvasDeviceManager : public ResourceManager<CanvasDeviceTraits>
+    {
+        std::shared_ptr<ICanvasDeviceResourceCreationAdapter> m_adapter;
+    public:
+        CanvasDeviceManager(std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter);
+        
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration);
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration, ID2D1Factory2* d2dFactory);
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirectX11Device* directX11Device);
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirectX11Device* directX11Device, ID2D1Factory2* d2dFactory);
+        ComPtr<ICanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
 
     private:
+        ComPtr<IDirectX11Device> MakeDirectX11Device(
+            CanvasHardwareAcceleration requestedHardwareAcceleration,
+            CanvasHardwareAcceleration* actualHardwareAcceleration) const;
 
-        ComPtr<IDirectX11Device> CreateDirectX11Device();
+        ComPtr<ID3D11Device> MakeD3D11Device(
+            CanvasHardwareAcceleration requestedHardwareAcceleration,
+            CanvasHardwareAcceleration* actualHardwareAcceleration) const;
 
-        void SetDevice(IDirectX11Device* directX11Device, ID2D1Factory2* d2dFactory);
-
-        ComPtr<ID2D1Factory2> GetD2DFactory();
-
-        void ThrowIfClosed();
-
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
-
+        static ComPtr<ID2D1Device1> MakeD2DDevice(
+            IDirectX11Device* device,
+            ID2D1Factory2* d2dFactory);        
     };
 
 }

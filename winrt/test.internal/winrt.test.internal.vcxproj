@@ -47,11 +47,17 @@
     <ClInclude Include="MockCanvasDrawingSession.h" />
     <ClInclude Include="MockCanvasImageSourceDrawingSessionFactory.h" />
     <ClInclude Include="MockD2DDevice.h" />
+    <ClInclude Include="MockD2DDeviceContext.h" />
     <ClInclude Include="MockD2DSolidColorBrush.h" />
+    <ClInclude Include="MockD2DFactory.h" />
+    <ClInclude Include="MockD3D11Device.h" />
     <ClInclude Include="MockSurfaceImageSource.h" />
     <ClInclude Include="MockSurfaceImageSourceFactory.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="StubCanvasBrush.h" />
     <ClInclude Include="StubCanvasDevice.h" />
+    <ClInclude Include="StubCanvasDrawingSessionAdapter.h" />
+    <ClInclude Include="StubD2DBrush.h" />
     <ClInclude Include="StubSurfaceImageSource.h" />
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
     <ClInclude Include="targetver.h" />
@@ -66,6 +72,7 @@
     <ClCompile Include="CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="ConversionUnitTests.cpp" />
+    <ClCompile Include="ResourceTrackerUnitTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

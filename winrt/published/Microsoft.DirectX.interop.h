@@ -46,7 +46,7 @@ namespace Microsoft
                     dxgiDevice, 
                     &inspectableDirectX11Device));
 
-                return reinterpret_cast<DirectX11Device^>(inspectableDirectX11Device.Detach());
+                return safe_cast<DirectX11Device^>(reinterpret_cast<Platform::Object^>(inspectableDirectX11Device.Get()));
             }
 
             inline DirectX11Surface^ CreateDirectX11Surface(
@@ -59,7 +59,7 @@ namespace Microsoft
                     dxgiSurface,
                     &inspectableDirectX11Surface));
 
-                return reinterpret_cast<DirectX11Surface^>(inspectableDirectX11Surface.Detach());
+                return safe_cast<DirectX11Surface^>(reinterpret_cast<Platform::Object^>(inspectableDirectX11Surface.Get()));
             }
 
             template<typename DXGI_TYPE>
