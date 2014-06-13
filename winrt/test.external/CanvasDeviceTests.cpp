@@ -4,8 +4,6 @@
 
 using namespace Microsoft::Graphics::Canvas;
 
-#define EXPECT_OBJECT_CLOSED(CODE) Assert::ExpectException<Platform::ObjectDisposedException^>([&]() { CODE; })
-
 TEST_CLASS(CanvasDeviceTests)
 {
     //
@@ -37,8 +35,8 @@ TEST_CLASS(CanvasDeviceTests)
 
         delete canvasDevice;
             
-        EXPECT_OBJECT_CLOSED(canvasDevice->HardwareAcceleration);
-        EXPECT_OBJECT_CLOSED(canvasDevice->DirectX11Device);
+        ExpectObjectClosed([&](){ canvasDevice->HardwareAcceleration; });
+        ExpectObjectClosed([&](){ canvasDevice->DirectX11Device; });
     }
 
     TEST_METHOD(CanvasDevice_RecoverDevice)
@@ -51,7 +49,7 @@ TEST_CLASS(CanvasDeviceTests)
 
         delete canvasDevice;
 
-        EXPECT_OBJECT_CLOSED(canvasDevice->RecoverLostDevice());
+        ExpectObjectClosed([&](){ canvasDevice->RecoverLostDevice(); });
     }
 
     TEST_METHOD(CanvasDevice_CreateCompatibleDevice)
@@ -81,8 +79,6 @@ TEST_CLASS(CanvasDeviceTests)
 
         delete canvasDevice;
 
-        EXPECT_OBJECT_CLOSED(canvasDevice->CreateCompatibleDevice(directX11Device));
+        ExpectObjectClosed([&](){ canvasDevice->CreateCompatibleDevice(directX11Device); });
     }
 };
-
-#undef EXPECT_OBJECT_CLOSED

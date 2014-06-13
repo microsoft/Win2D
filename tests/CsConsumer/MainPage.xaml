@@ -14,7 +14,7 @@
             <Button Content="Redraw" Click="OnRedrawClicked"/>
             <ComboBox x:Name="m_widthCombo" ItemsSource="{Binding}"/>
             <ComboBox x:Name="m_heightCombo" ItemsSource="{Binding}"/>
-            <CheckBox x:Name="m_drawLines" Content="Draw Lines?" VerticalAlignment="Stretch"/>
+            <ComboBox x:Name="m_drawnContentTypeCombo" ItemsSource="{Binding}"/>
         </StackPanel>
         <TextBlock x:Name="m_statusMessage"/>
         <Image x:Name="m_theImage"/>

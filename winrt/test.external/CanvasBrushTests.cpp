@@ -52,5 +52,3 @@ TEST_CLASS(CanvasBrushTests)
             });
     }
 };
-
-#undef EXPECT_OBJECT_CLOSED

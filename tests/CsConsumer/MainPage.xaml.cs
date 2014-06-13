@@ -13,6 +13,21 @@ namespace CsConsumer
         Random m_random = new Random();
         CanvasDevice m_device = new CanvasDevice();
         CanvasImageSource m_imageSource;
+        enum DrawnContentType
+        {
+            Clear_Only,
+            Line_Thin,
+            Line_Thick,
+            Rectangle_Thin,
+            Rectangle_Thick,
+            Rectangle_Filled,
+            RoundedRectangle_Thin,
+            RoundedRectangle_Thick,
+            Ellipse_Thin,
+            Ellipse_Thick,
+            Ellipse_Fill,
+            Total
+        }
 
         public MainPage()
         {
@@ -35,6 +50,17 @@ namespace CsConsumer
 
             m_widthCombo.SelectionChanged += ImageSizeChangeRequested;
             m_heightCombo.SelectionChanged += ImageSizeChangeRequested;
+
+            // 
+            // Populate the drawnContentType combo box.
+            //
+            var drawnContentElements = new List<DrawnContentType>();
+            for (int i=0; i<(int)(DrawnContentType.Total); ++i)
+            {
+                drawnContentElements.Add((DrawnContentType)(i));
+            }
+            m_drawnContentTypeCombo.ItemsSource = drawnContentElements;
+            m_drawnContentTypeCombo.SelectedIndex = 0;
 
             //
             // Create the initial image source
@@ -82,29 +108,127 @@ namespace CsConsumer
             }
         }
 
-        void DrawLines(CanvasDrawingSession ds)
+        void DrawStuff()
         {
-            using (var canvasSolidColorBrush = new CanvasSolidColorBrush(m_device, NextRandomColor()))
-            {
-                int horizontalLimit = (int)m_widthCombo.SelectedValue;
-                int verticalLimit = (int)m_heightCombo.SelectedValue;
+            int horizontalLimit = (int)m_widthCombo.SelectedValue;
+            int verticalLimit = (int)m_heightCombo.SelectedValue;
+            const float thickStrokeWidth = 80.0f;
 
-                ds.DrawLine(new Point(0, 0), new Point(horizontalLimit, verticalLimit), canvasSolidColorBrush);
-                ds.DrawLine(new Point(horizontalLimit, 0), new Point(0, verticalLimit), canvasSolidColorBrush);
+            using (var ds = m_imageSource.CreateDrawingSession())
+            {
+                DrawnContentType drawnContentType = (DrawnContentType)m_drawnContentTypeCombo.SelectedValue;
+
+                ds.Clear(NextRandomColor());
+
+                using (var canvasSolidColorBrush = new CanvasSolidColorBrush(m_device, NextRandomColor()))
+                {
+                    switch (drawnContentType)
+                    {
+                        case DrawnContentType.Clear_Only:
+                            break;
+
+                        case DrawnContentType.Line_Thin:
+                            ds.DrawLine(
+                                NextRandomPoint(horizontalLimit, verticalLimit),
+                                NextRandomPoint(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush);
+                            break;
+
+                        case DrawnContentType.Line_Thick:
+                            ds.DrawLine(
+                                NextRandomPoint(horizontalLimit, verticalLimit),
+                                NextRandomPoint(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush,
+                                thickStrokeWidth);
+                            break;
+
+                        case DrawnContentType.Rectangle_Thin:
+                            ds.DrawRectangle(
+                                NextRandomRect(horizontalLimit, verticalLimit), 
+                                canvasSolidColorBrush);
+                            break;
+
+                        case DrawnContentType.Rectangle_Thick:
+                            ds.DrawRectangle(
+                                NextRandomRect(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush,
+                                thickStrokeWidth);
+                            break;
+
+                        case DrawnContentType.Rectangle_Filled:
+                            ds.FillRectangle(
+                                NextRandomRect(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush);
+                            break;
+
+                        case DrawnContentType.RoundedRectangle_Thin:
+                            ds.DrawRoundedRectangle(
+                                NextRandomRoundedRect(horizontalLimit, verticalLimit), 
+                                canvasSolidColorBrush);
+                            break;
+
+                        case DrawnContentType.RoundedRectangle_Thick:
+                            ds.DrawRoundedRectangle(
+                                NextRandomRoundedRect(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush,
+                                thickStrokeWidth);
+                            break;
+
+                        case DrawnContentType.Ellipse_Thin:
+                            ds.DrawEllipse(
+                                NextRandomEllipse(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush);
+                            break;
+
+                        case DrawnContentType.Ellipse_Thick:
+                            ds.DrawEllipse(
+                                NextRandomEllipse(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush,
+                                thickStrokeWidth);
+                            break;
+
+                        case DrawnContentType.Ellipse_Fill:
+                            ds.FillEllipse(
+                                NextRandomEllipse(horizontalLimit, verticalLimit),
+                                canvasSolidColorBrush);
+                            break;
+
+                        default:
+                            System.Diagnostics.Debug.Assert(false); // Unexpected
+                            break;
+                    }
+                }
             }
         }
 
-        void DrawStuff()
+        private CanvasEllipse NextRandomEllipse(int horizontalLimit, int verticalLimit)
         {
-            using (var ds = m_imageSource.CreateDrawingSession())
-            {
-                ds.Clear(NextRandomColor());
+            CanvasEllipse ellipse = new CanvasEllipse();
+            ellipse.Point = NextRandomPoint(horizontalLimit, verticalLimit);
+            ellipse.RadiusX = m_random.Next(horizontalLimit / 2);
+            ellipse.RadiusY = m_random.Next(verticalLimit / 2);
+            return ellipse;
+        }
 
-                if (m_drawLines.IsChecked == true)
-                {
-                    DrawLines(ds);
-                }
-            }
+        private CanvasRoundedRectangle NextRandomRoundedRect(int horizontalLimit, int verticalLimit)
+        {
+            CanvasRoundedRectangle roundedRectangle = new CanvasRoundedRectangle();
+            roundedRectangle.Rect = NextRandomRect(horizontalLimit, verticalLimit);
+            roundedRectangle.RadiusX = m_random.Next((int)(roundedRectangle.Rect.Width) / 2);
+            roundedRectangle.RadiusY = m_random.Next((int)(roundedRectangle.Rect.Height) / 2);
+            return roundedRectangle;
+        }
+
+        private Rect NextRandomRect(int horizontalLimit, int verticalLimit)
+        {
+            return new Rect(
+                NextRandomPoint(horizontalLimit, verticalLimit),
+                NextRandomPoint(horizontalLimit, verticalLimit));
+        }
+
+        private Point NextRandomPoint(int horizontalLimit, int verticalLimit)
+        {
+            return new Point(m_random.Next(horizontalLimit), m_random.Next(verticalLimit));
         }
 
         private Color NextRandomColor()
