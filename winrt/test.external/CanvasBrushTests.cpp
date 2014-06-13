@@ -29,8 +29,6 @@ TEST_CLASS(CanvasBrushTests)
         canvasSolidColorBrush->Transform = scaleAndTranslate;
         Assert::AreEqual(scaleAndTranslate, canvasSolidColorBrush->Transform);
 
-        Assert::AreEqual(canvasDevice, canvasSolidColorBrush->Device);
-
         delete canvasSolidColorBrush;
 
         ExpectObjectClosed([&](){ canvasSolidColorBrush->Color; });
@@ -41,8 +39,6 @@ TEST_CLASS(CanvasBrushTests)
 
         ExpectObjectClosed([&](){ canvasSolidColorBrush->Transform; });
         ExpectObjectClosed([&](){ canvasSolidColorBrush->Transform = identity; });
-
-        ExpectObjectClosed([&](){ canvasSolidColorBrush->Device; });
 
         // Test invalid creation parameters.
         Assert::ExpectException<Platform::InvalidArgumentException^>(

@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas
     //
     [version(VERSION), uuid(F5D58591-C803-41B4-878E-79D92AB13295)]
     interface ICanvasBrush : IInspectable
-        requires Windows.Foundation.IClosable, ICanvasResource
+        requires Windows.Foundation.IClosable
     {
         [propget]
         HRESULT Opacity([out, retval] float* value);

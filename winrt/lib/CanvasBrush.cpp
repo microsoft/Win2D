@@ -58,7 +58,6 @@ namespace canvas
         ABI::Windows::UI::Color color,
         std::shared_ptr<ICanvasSolidColorBrushResourceCreationAdapter> resourceCreationAdapter
         ) 
-        : m_device(canvasDevice)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
 
@@ -151,25 +150,9 @@ namespace canvas
             });
     }
 
-    IFACEMETHODIMP CanvasSolidColorBrush::get_Device(_In_ ICanvasDevice** value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckAndClearOutPointer(value);
-
-                auto& device = m_device.EnsureNotClosed();
-
-                device.CopyTo(value);
-            });
-    }
-
     IFACEMETHODIMP CanvasSolidColorBrush::Close()
     {
         m_d2dSolidColorBrush.Close();
-
-        m_device.Close();
-
         return S_OK;
     }
 

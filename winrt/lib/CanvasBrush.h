@@ -51,7 +51,6 @@ namespace canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasSolidColorBrush,
         ICanvasBrush,
-        ICanvasResource,
         ABI::Windows::Foundation::IClosable,
         CloakedIid<ICanvasBrushInternal >>
     {
@@ -59,7 +58,6 @@ namespace canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
 
         ClosablePtr<ID2D1SolidColorBrush> m_d2dSolidColorBrush;
-        ClosablePtr<ICanvasDevice> m_device;
 
     public:
 
@@ -80,8 +78,6 @@ namespace canvas
         IFACEMETHOD(get_Transform)(_Out_ Math::Matrix3x2 *value) override;
 
         IFACEMETHOD(put_Transform)(_In_ Math::Matrix3x2 value) override;
-
-        IFACEMETHOD(get_Device)(_In_ ICanvasDevice** value) override;
 
         // IClosable
         IFACEMETHOD(Close)() override;

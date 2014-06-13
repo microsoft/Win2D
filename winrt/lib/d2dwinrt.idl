@@ -19,7 +19,5 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasResource : IInspectable
         requires Windows.Foundation.IClosable
     {
-        [propget]
-        HRESULT Device([out, retval] CanvasDevice** value);
     }
 }

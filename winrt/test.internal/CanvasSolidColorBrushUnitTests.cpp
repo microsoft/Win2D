@@ -227,10 +227,6 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->get_Transform(&transformActual));
 
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Transform(transformActual));
-
-        ICanvasDevice* deviceActual = reinterpret_cast<ICanvasDevice*>(0x1234);
-        Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->get_Device(&deviceActual));
-        Assert::IsNull(deviceActual);
     }
 
 };
