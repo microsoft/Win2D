@@ -61,6 +61,7 @@ namespace CsConsumer
             }
             m_drawnContentTypeCombo.ItemsSource = drawnContentElements;
             m_drawnContentTypeCombo.SelectedIndex = 0;
+            m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;
 
             //
             // Create the initial image source
@@ -77,6 +78,11 @@ namespace CsConsumer
         private void ImageSizeChangeRequested(object sender, SelectionChangedEventArgs e)
         {
             RecreateImageSource();
+            DrawStuff();
+        }
+
+        private void ImageContentChanged(object sender, SelectionChangedEventArgs e)
+        {
             DrawStuff();
         }
 
