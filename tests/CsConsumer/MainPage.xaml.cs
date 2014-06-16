@@ -26,6 +26,8 @@ namespace CsConsumer
             Ellipse_Thin,
             Ellipse_Thick,
             Ellipse_Fill,
+            Test_Scene_Default,
+            Test_Scene_Wireframe,
             Total
         }
 
@@ -46,7 +48,7 @@ namespace CsConsumer
             m_heightCombo.ItemsSource = sizes;
 
             m_widthCombo.SelectedIndex = sizes.Count / 2;
-            m_heightCombo.SelectedIndex = sizes.Count / 2;
+            m_heightCombo.SelectedIndex = sizes.Count / 2; 
 
             m_widthCombo.SelectionChanged += ImageSizeChangeRequested;
             m_heightCombo.SelectionChanged += ImageSizeChangeRequested;
@@ -197,6 +199,14 @@ namespace CsConsumer
                             ds.FillEllipse(
                                 NextRandomEllipse(horizontalLimit, verticalLimit),
                                 canvasSolidColorBrush);
+                            break;
+
+                        case DrawnContentType.Test_Scene_Default:
+                            GeometryTestScene.DrawGeometryTestScene(ds, canvasSolidColorBrush, GeometryTestScene.RenderingType.Default);
+                            break;
+
+                        case DrawnContentType.Test_Scene_Wireframe:
+                            GeometryTestScene.DrawGeometryTestScene(ds, canvasSolidColorBrush, GeometryTestScene.RenderingType.Wireframe);
                             break;
 
                         default:
