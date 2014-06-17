@@ -5,7 +5,6 @@
 //
 
 #include "pch.h"
-#include "d2dwinrt.h"
 #include <wrl.h>
 using namespace Microsoft::WRL;
 using namespace ABI::Microsoft::Graphics::Canvas;

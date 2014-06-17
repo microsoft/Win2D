@@ -65,7 +65,6 @@ namespace CodeGen
             outputFiles.CppFile.WriteLine();
 
             outputFiles.CppFile.WriteLine("#include \"pch.h\"");
-            outputFiles.CppFile.WriteLine("#include \"d2dwinrt.h\"");
             outputFiles.CppFile.WriteLine("#include <wrl.h>");
             outputFiles.CppFile.WriteLine("using namespace Microsoft::WRL;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas;");

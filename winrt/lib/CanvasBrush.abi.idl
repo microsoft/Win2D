@@ -1,7 +1,6 @@
 import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "CanvasDevice.abi.idl";
-import "d2dwinrt.idl";
 
 #include "version.h"
 

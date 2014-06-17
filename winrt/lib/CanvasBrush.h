@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CanvasBrush.abi.h"
-#include "d2dwinrt.h"
 #include <ClosablePtr.h>
 
 namespace canvas

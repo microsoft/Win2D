@@ -10,7 +10,6 @@
     <ClInclude Include="ClosablePtr.h" />
   </ItemGroup>
   <ItemGroup>
-    <MidlRT Include="d2dwinrt.idl" />
     <MidlRT Include="Canvas.codegen.idl" />
   </ItemGroup>
 </Project>

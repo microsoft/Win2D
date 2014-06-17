@@ -20,7 +20,6 @@
 
 #include <ErrorHandling.h>
 
-#include <d2dwinrt.h>
 #include <WinRTGraphicsInterop.h>
 
 #include <Microsoft.Canvas.interop.h>
