@@ -80,8 +80,47 @@ namespace CsConsumer
         public static void DrawGeometryTestScene(CanvasDrawingSession drawingSession, CanvasSolidColorBrush brush, RenderingType renderingType)
         {
             //
-            // The geometry in this function was produced using external tooling, then fitted to suit
-            // Canvas drawing operations. Dimensions are around 1200x1200.
+            // The geometry in this function was produced from an SVG file, and converted to the code below using VS regular expressions.
+            // 
+            // Below are some handy regular expressions used to convert SVG fragments into Canvas code.
+            // These convert some common forms of <rect>, <line> and <ellipse> elements.
+            //
+            // Lines
+            // -------
+            // Find:
+            // <line stroke="#(?<strokeColor_first>[\d|A-Z][\d|A-Z])(?<strokeColor_second>[\d|A-Z][\d|A-Z])(?<strokeColor_third>[\d|A-Z][\d|A-Z])" stroke-width="(?<strokeWidth>\-?\d*\.?\d*)" x1="(?<x1Coordinate>\-?\d*\.?\d*)" y1="(?<y1Coordinate>\-?\d*\.?\d*)" x2="(?<x2Coordinate>\-?\d*\.?\d*)" y2="(?<y2Coordinate>\-?\d*\.?\d*)"/>
+            // Replace: 
+            // brush.Color = Color.FromArgb(0xFF, 0x${strokeColor_first}, 0x${strokeColor_second}, 0x${strokeColor_third});\nds.DrawLine(new Point(${x1Coordinate}, ${y1Coordinate}), new Point(${x2Coordinate}, ${y2Coordinate}), brush, ${strokeWidth}f);\n
+            //
+            // Filled Rectangles
+            // -----------------
+            // Find:
+            // <rect x="(?<xCoordinate>\-?\d*\.?\d*)" y="(?<yCoordinate>\-?\d*\.?\d*)" fill="#(?<fillColor_first>[\d|A-Z][\d|A-Z])(?<fillColor_second>[\d|A-Z][\d|A-Z])(?<fillColor_third>[\d|A-Z][\d|A-Z])" width="(?<rectWidth>\-?\d*\.?\d*)" height="(?<rectHeight>\-?\d*\.?\d*)"/>
+            // Replace:
+            // brush.Color = Color.FromArgb(0xFF, 0x${fillColor_first}, 0x${fillColor_second}, 0x${fillColor_third});\nds.FillRectangle(new Rect(${xCoordinate}, ${yCoordinate}, ${rectWidth}, ${rectHeight}), brush);\n
+            //
+            //
+            // Filled+Thin Stroked Rectangles
+            // ------------------------------
+            // Find:
+            // <rect x="(?<xCoordinate>\-?\d*\.?\d*)" y="(?<yCoordinate>\-?\d*\.?\d*)" fill="#(?<fillColor_first>[\d|A-Z][\d|A-Z])(?<fillColor_second>[\d|A-Z][\d|A-Z])(?<fillColor_third>[\d|A-Z][\d|A-Z])" stroke="#(?<strokeColor_first>[\d|A-Z][\d|A-Z])(?<strokeColor_second>[\d|A-Z][\d|A-Z])(?<strokeColor_third>[\d|A-Z][\d|A-Z])" width="(?<rectWidth>\-?\d*\.?\d*)" height="(?<rectHeight>\-?\d*\.?\d*)"/>
+            // Replace: 
+            // brush.Color = Color.FromArgb(0xFF, 0x${fillColor_first}, 0x${fillColor_second}, 0x${fillColor_third});\nds.FillRectangle(new Rect(${xCoordinate}, ${yCoordinate}, ${rectWidth}, ${rectHeight}), brush);\nbrush.Color = Color.FromArgb(0xFF, 0x${strokeColor_first}, 0x${strokeColor_second}, 0x${strokeColor_third});\nds.DrawRectangle(new Rect(${xCoordinate}, ${yCoordinate}, ${rectWidth}, ${rectHeight}), brush, 1.0f);\n
+            //
+            // Filled Ellipses
+            // ---------------
+            // Find:
+            // <ellipse fill="#(?<fillColor_first>[\d|A-Z][\d|A-Z])(?<fillColor_second>[\d|A-Z][\d|A-Z])(?<fillColor_third>[\d|A-Z][\d|A-Z])" cx="(?<centerX>\-?\d*\.?\d*)" cy="(?<centerY>\-?\d*\.?\d*)" rx="(?<radiusX>\-?\d*\.?\d*)" ry="(?<radiusY>\-?\d*\.?\d*)"/>
+            // Replace:
+            // {\n\tCanvasEllipse ellipse = new CanvasEllipse();\n\tellipse.Point = new Point(${centerX}, ${centerY});\n\tellipse.RadiusX = ${radiusX}f;\n\tellipse.RadiusY = ${radiusY}f;\n\tbrush.Color = Color.FromArgb(0xFF, 0x${fillColor_first}, 0x${fillColor_second}, 0x${fillColor_third});\n\tds.FillEllipse(ellipse, brush);\n}\n
+            //
+            // Filled+Thin Stroked Ellipses
+            // ----------------------------
+            // Find:
+            // <ellipse fill="#(?<fillColor_first>[\d|A-Z][\d|A-Z])(?<fillColor_second>[\d|A-Z][\d|A-Z])(?<fillColor_third>[\d|A-Z][\d|A-Z])" stroke="#(?<strokeColor_first>[\d|A-Z][\d|A-Z])(?<strokeColor_second>[\d|A-Z][\d|A-Z])(?<strokeColor_third>[\d|A-Z][\d|A-Z])" cx="(?<centerX>\-?\d*\.?\d*)" cy="(?<centerY>\-?\d*\.?\d*)" rx="(?<radiusX>\-?\d*\.?\d*)" ry="(?<radiusY>\-?\d*\.?\d*)"/>
+            // {\n\tCanvasEllipse ellipse = new CanvasEllipse();\n\tellipse.Point = new Point(${centerX}, ${centerY});\n\tellipse.RadiusX = ${radiusX}f;\n\tellipse.RadiusY = ${radiusY}f;\n\tbrush.Color = Color.FromArgb(0xFF, 0x${fillColor_first}, 0x${fillColor_second}, 0x${fillColor_third});\n\tds.FillEllipse(ellipse, brush);\n\tbrush.Color = Color.FromArgb(0xFF, 0x${strokeColor_first}, 0x${strokeColor_second}, 0x${strokeColor_third});\n\tds.DrawEllipse(ellipse, brush, 1.0f);\n}\n
+            //
+            // Dimensions of this are around 1200x1200.
             //
 
             TestSceneRenderer sceneRenderer = new TestSceneRenderer(drawingSession, renderingType);
