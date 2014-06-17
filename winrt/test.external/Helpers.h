@@ -32,6 +32,7 @@ namespace Microsoft
             TO_STRING(ID3D11Texture2D);
             TO_STRING(IDXGISurface);
             TO_STRING(ID2D1Device1);
+            TO_STRING(ID2D1SolidColorBrush);
 
 #undef TO_STRING
 

@@ -3,6 +3,9 @@
 #include "pch.h"
 #include "TestDeviceResourceCreationAdapter.h"
 
+using namespace ABI::Windows::Foundation;
+using namespace ABI::Windows::UI;
+
 struct SolidColorBrushCounters
 {
     SolidColorBrushCounters()
@@ -84,133 +87,136 @@ public:
     SolidColorBrushCounters* m_counters;
 };
 
-class TestCanvasSolidColorBrushResourceCreationAdapter : public ICanvasSolidColorBrushResourceCreationAdapter
-{
-public:
-    ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(
-        ID2D1DeviceContext* deviceContext, 
-        ABI::Windows::UI::Color color
-        ) override
-    {
-        m_d2dSolidColorBrush = Make<TestD2DSolidColorBrush>(ToD2DColor(color), &m_counters);
-        return m_d2dSolidColorBrush;
-    }
-
-    ComPtr<TestD2DSolidColorBrush> m_d2dSolidColorBrush;
-    SolidColorBrushCounters m_counters;
-};
-
 TEST_CLASS(CanvasSolidColorBrushTests)
 {
 public:
+    std::shared_ptr<CanvasSolidColorBrushManager> m_colorBrushManager;
+
+    class StubCanvasDevice : public MockCanvasDevice
+    {
+        SolidColorBrushCounters m_counters;
+    public:
+        StubCanvasDevice()
+        {
+        }
+
+        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override
+        {
+            return Make<TestD2DSolidColorBrush>(color, &m_counters);
+        }
+    };
+
+    TEST_METHOD_INITIALIZE(Reset)
+    {
+        m_colorBrushManager = std::make_shared<CanvasSolidColorBrushManager>();
+    }   
+
+    TEST_METHOD(CanvasSolidColorBrush_Construction)
+    {
+        auto canvasDevice = Make<StubCanvasDevice>();
+
+        Color red = { 255, 255, 0, 0 };
+        D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
+
+        auto canvasSolidColorBrush = m_colorBrushManager->Create(canvasDevice.Get(), red);
+        auto d2dSolidColorBrush = canvasSolidColorBrush->GetD2DSolidColorBrush();
+
+        Assert::AreEqual(d2dRed, d2dSolidColorBrush->GetColor());
+        Assert::AreEqual(1.0f, d2dSolidColorBrush->GetOpacity());
+        
+        D2D1_MATRIX_3X2_F actualTransform;
+        d2dSolidColorBrush->GetTransform(&actualTransform);
+
+        Assert::AreEqual<D2D1_MATRIX_3X2_F>(D2D1::Matrix3x2F::Identity(), actualTransform);
+    }
+
+    TEST_METHOD(CanvasSolidColorBrush_Implements_Expected_Interfaces)
+    {
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto brush = m_colorBrushManager->Create(canvasDevice.Get(), Color{255,0,0,0});
+
+        ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasSolidColorBrush);
+        ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasBrush);
+        ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasBrushInternal);
+        ASSERT_IMPLEMENTS_INTERFACE(brush, ABI::Windows::Foundation::IClosable);
+        ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasResourceWrapperNative);
+    }
 
     TEST_METHOD(CanvasSolidColorBrush_Properties)
     {
-        using canvas::CanvasSolidColorBrush;
-        using canvas::CanvasDevice;
-        using ABI::Windows::UI::Color;
-        
-        auto deviceResourceCreationAdapter = std::make_shared<TestDeviceResourceCreationAdapter>();
-        auto deviceManager = std::make_shared<CanvasDeviceManager>(deviceResourceCreationAdapter);
-
-        auto canvasDevice = deviceManager->Create(
-            CanvasDebugLevel::Information,
-            CanvasHardwareAcceleration::Auto);
-
         Color red = { 255, 255, 0, 0 };
         Color cyan = { 255, 0, 255, 255 };
         D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
         D2D1_COLOR_F d2dCyan = D2D1::ColorF(0, 1, 1);
         D2D1_MATRIX_3X2_F d2dIdentityMatrix = D2D1::Matrix3x2F::Identity();
 
-        std::shared_ptr<TestCanvasSolidColorBrushResourceCreationAdapter> brushResourceCreationAdapter = 
-            std::make_shared<TestCanvasSolidColorBrushResourceCreationAdapter>();
+        SolidColorBrushCounters counters;
+        auto testD2DSolidColorBrush = Make<TestD2DSolidColorBrush>(d2dRed, &counters);
 
-        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-            canvasDevice.Get(),
-            red,
-            brushResourceCreationAdapter
-            );
+        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(testD2DSolidColorBrush.Get());
 
-        ComPtr<TestD2DSolidColorBrush> testD2DSolidColorBrush = brushResourceCreationAdapter->m_d2dSolidColorBrush;
-
-        // Verify the brush resource got initialized correctly.
-        Assert::AreEqual(d2dRed, brushResourceCreationAdapter->m_d2dSolidColorBrush->m_color);
-        Assert::AreEqual(1.0f, brushResourceCreationAdapter->m_d2dSolidColorBrush->m_opacity);
-        Assert::AreEqual(d2dIdentityMatrix, brushResourceCreationAdapter->m_d2dSolidColorBrush->m_transform);
-        Assert::AreEqual(0, brushResourceCreationAdapter->m_counters.NumGetColorCalls);
-        Assert::AreEqual(0, brushResourceCreationAdapter->m_counters.NumSetColorCalls);
-        Assert::AreEqual(0, brushResourceCreationAdapter->m_counters.NumGetOpacityCalls);
-        Assert::AreEqual(0, brushResourceCreationAdapter->m_counters.NumSetOpacityCalls);
-        Assert::AreEqual(0, brushResourceCreationAdapter->m_counters.NumGetTransformCalls);
-        Assert::AreEqual(0, brushResourceCreationAdapter->m_counters.NumSetTransformCalls);
+        // Verify the brush resource got initialized correctly and didn't call
+        // any unexpected methods.
+        Assert::AreEqual(0, counters.NumGetColorCalls);
+        Assert::AreEqual(0, counters.NumSetColorCalls);
+        Assert::AreEqual(0, counters.NumGetOpacityCalls);
+        Assert::AreEqual(0, counters.NumSetOpacityCalls);
+        Assert::AreEqual(0, counters.NumGetTransformCalls);
+        Assert::AreEqual(0, counters.NumSetTransformCalls);
 
         // Verify the Color getter returns the right thing.
         Color colorActual;
-        canvasSolidColorBrush->get_Color(&colorActual);
+        ThrowIfFailed(canvasSolidColorBrush->get_Color(&colorActual));
         Assert::AreEqual(red, colorActual);
-        Assert::AreEqual(1, brushResourceCreationAdapter->m_counters.NumGetColorCalls);
+        Assert::AreEqual(1, counters.NumGetColorCalls);
 
         // Set the Color to a new value, and verify it is correct.
-        canvasSolidColorBrush->put_Color(cyan);
-        Assert::AreEqual(1, brushResourceCreationAdapter->m_counters.NumSetColorCalls);
-        Assert::AreEqual(d2dCyan, brushResourceCreationAdapter->m_d2dSolidColorBrush->m_color);
+        ThrowIfFailed(canvasSolidColorBrush->put_Color(cyan));
+        Assert::AreEqual(1, counters.NumSetColorCalls);
+        Assert::AreEqual(d2dCyan, testD2DSolidColorBrush->m_color);
 
         // Verify the getter works once more.
-        canvasSolidColorBrush->get_Color(&colorActual);
+        ThrowIfFailed(canvasSolidColorBrush->get_Color(&colorActual));
         Assert::AreEqual(cyan, colorActual);
-        Assert::AreEqual(2, brushResourceCreationAdapter->m_counters.NumGetColorCalls);
+        Assert::AreEqual(2, counters.NumGetColorCalls);
 
         // put_Opacity
-        canvasSolidColorBrush->put_Opacity(0.75f);
-        Assert::AreEqual(0.75f, brushResourceCreationAdapter->m_d2dSolidColorBrush->m_opacity);
-        Assert::AreEqual(1, brushResourceCreationAdapter->m_counters.NumSetOpacityCalls);
+        ThrowIfFailed(canvasSolidColorBrush->put_Opacity(0.75f));
+        Assert::AreEqual(0.75f, testD2DSolidColorBrush->m_opacity);
+        Assert::AreEqual(1, counters.NumSetOpacityCalls);
 
         // get_Opacity
         float opacityActual = 0;
-        canvasSolidColorBrush->get_Opacity(&opacityActual);
+        ThrowIfFailed(canvasSolidColorBrush->get_Opacity(&opacityActual));
         Assert::AreEqual(0.75f, opacityActual);
-        Assert::AreEqual(1, brushResourceCreationAdapter->m_counters.NumGetOpacityCalls);
+        Assert::AreEqual(1, counters.NumGetOpacityCalls);
         
         // put_Transform
         Math::Matrix3x2 scaleAndTranslate = { 2, 0, 0, 2, 5, 10 };
         D2D1_MATRIX_3X2_F d2dScaleAndTranslate = D2D1::Matrix3x2F(2, 0, 0, 2, 5, 10);
         canvasSolidColorBrush->put_Transform(scaleAndTranslate);
-        Assert::AreEqual(d2dScaleAndTranslate, brushResourceCreationAdapter->m_d2dSolidColorBrush->m_transform);
-        Assert::AreEqual(1, brushResourceCreationAdapter->m_counters.NumSetTransformCalls);
+        Assert::AreEqual(d2dScaleAndTranslate, testD2DSolidColorBrush->m_transform);
+        Assert::AreEqual(1, counters.NumSetTransformCalls);
 
         // get_Transform
         Math::Matrix3x2 transformActual;
         canvasSolidColorBrush->get_Transform(&transformActual);
         Assert::AreEqual(scaleAndTranslate, transformActual);
-        Assert::AreEqual(1, brushResourceCreationAdapter->m_counters.NumGetTransformCalls);
+        Assert::AreEqual(1, counters.NumGetTransformCalls);
     }
 
     TEST_METHOD(CanvasSolidColorBrush_Closed)
     {
         using canvas::CanvasSolidColorBrush;
         using canvas::CanvasDevice;
-        using ABI::Windows::UI::Color;
-
-        auto deviceResourceCreationAdapter = std::make_shared<TestDeviceResourceCreationAdapter>();
-        auto deviceManager = std::make_shared<CanvasDeviceManager>(deviceResourceCreationAdapter);
-
-        auto canvasDevice = deviceManager->Create(
-            CanvasDebugLevel::Information,
-            CanvasHardwareAcceleration::Auto);
 
         Color color = { 255, 127, 127, 127 };
 
-        std::shared_ptr<TestCanvasSolidColorBrushResourceCreationAdapter> brushResourceCreationAdapter =
-            std::make_shared<TestCanvasSolidColorBrushResourceCreationAdapter>();
-
-        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-            canvasDevice.Get(),
-            color,
-            brushResourceCreationAdapter
-            );
+        auto d2dBrush = Make<MockD2DSolidColorBrush>();
+        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(d2dBrush.Get());
 
         Assert::IsNotNull(canvasSolidColorBrush.Get());
+
         Assert::AreEqual(S_OK, canvasSolidColorBrush->Close());
 
         Color colorActual;
@@ -228,5 +234,4 @@ public:
 
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Transform(transformActual));
     }
-
 };

@@ -115,9 +115,9 @@ namespace Microsoft
 #define TO_STRING(T)                                            \
             template<>                                          \
             static inline std::wstring ToString<T>(T* value)    \
-                        {                                                   \
+            {                                                   \
                 return PointerToString(L#T, value);             \
-                        }
+            }
 
             TO_STRING(ICanvasDevice);
             TO_STRING(ID2D1Brush);
@@ -280,4 +280,12 @@ namespace Microsoft
         }
     }
 }
+
+#define ASSERT_IMPLEMENTS_INTERFACE(obj, INTERFACE)                     \
+    do                                                                  \
+    {                                                                   \
+        ComPtr<INTERFACE> iface;                                        \
+        Assert::AreEqual(S_OK, obj.As(&iface), L"Implements " L#INTERFACE); \
+    } while(false)
+
 

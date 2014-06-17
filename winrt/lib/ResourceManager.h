@@ -39,7 +39,7 @@ namespace canvas
     // };
     //
     // auto w = MyManager.Create(1,2); // will call CreateNew
-    // auto w = MyManager.GetOrCreate(r); // calls CreateWrapper is wrapper needs to be created
+    // auto w = MyManager.GetOrCreate(r); // calls CreateWrapper if wrapper needs to be created
     //
     template<typename TRAITS>
     class ResourceManager : public std::enable_shared_from_this<typename TRAITS::manager_t>
@@ -58,7 +58,7 @@ namespace canvas
             return wrapper;
         }
 
-        ComPtr<wrapper_interface_t> GetOrCreate(resource_t* resource)
+        ComPtr<wrapper_t> GetOrCreate(resource_t* resource)
         {
             return m_tracker.GetOrCreate(
                 resource,

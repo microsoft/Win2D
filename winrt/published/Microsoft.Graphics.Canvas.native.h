@@ -3,6 +3,7 @@
 #pragma once
 
 #include <CanvasDevice.abi.h>   // TODO: #1432 we don't want to be shipping these idls, we should be shipping the ones generated via winmdidl 
+#include <CanvasBrush.abi.h>    // TODO: #1432
 #include <d2d1_2.h>
 
 namespace ABI
@@ -13,18 +14,26 @@ namespace ABI
         {
             namespace Canvas
             {
-                [uuid(8A6C0118-C2E2-4F50-81AD-8E457D02678F)]
-                class ICanvasDeviceFactoryNative : public IInspectable
+                //
+                // Interface provided by the various Canvas factories that is
+                // able to get or create objects that wrap resources.
+                //
+                [uuid(6F18BC37-016D-4510-A0BC-99B523D65E6C)]
+                class ICanvasFactoryNative : public IInspectable
                 {
                 public:
-                    IFACEMETHOD(GetOrCreate)(ID2D1Device1* d2dDevice, ICanvasDevice** canvasDevice) = 0;
+                    IFACEMETHOD(GetOrCreate)(IUnknown* resource, IInspectable** wrapper) = 0;
                 };
 
-                [uuid(1F33032E-BF94-469C-9B14-7751DCCDFF72)]
-                class ICanvasDeviceNative : public IUnknown
+                //
+                // Interface provided by various Canvas objects that is able to
+                // retrieve the wrapped resource.
+                //
+                [uuid(5F10688D-EA55-4D55-A3B0-4DDB55C0C20A)]
+                class ICanvasResourceWrapperNative : public IUnknown
                 {
                 public:
-                    IFACEMETHOD(GetD2DDevice)(ID2D1Device1** d2dDevice) = 0;
+                    IFACEMETHOD(GetResource)(IUnknown** resource) = 0;
                 };
             }
         }
@@ -42,46 +51,47 @@ namespace Microsoft
     {
         namespace Canvas
         {
-            inline CanvasDevice^ GetOrCreateCanvasDevice(ID2D1Device1* d2dDevice)
+            template<class WRAPPER>
+            WRAPPER^ GetOrCreate(IUnknown* resource)
             {
                 using namespace Microsoft::WRL;
                 using namespace Microsoft::WRL::Wrappers;
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
-
-                ComPtr<abi::ICanvasDeviceFactory> factory;
+                
+                ComPtr<abi::ICanvasFactoryNative> factory;
                 __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
-                    HStringReference(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice).Get(),
+                    reinterpret_cast<HSTRING>(WRAPPER::typeid->FullName),
                     &factory));
 
-                ComPtr<abi::ICanvasDeviceFactoryNative> factoryNative;
-                __abi_ThrowIfFailed(factory.As(&factoryNative));
+                ComPtr<IInspectable> inspectableWrapper;
+                __abi_ThrowIfFailed(factory->GetOrCreate(resource, &inspectableWrapper));
 
-                ComPtr<abi::ICanvasDevice> canvasDevice;
-                __abi_ThrowIfFailed(factoryNative->GetOrCreate(d2dDevice, &canvasDevice));
-
-                return reinterpret_cast<CanvasDevice^>(canvasDevice.Get());
+                Platform::Object^ objectWrapper = reinterpret_cast<Platform::Object^>(inspectableWrapper.Get());
+                
+                return safe_cast<WRAPPER^>(objectWrapper);
             }
 
-            template<typename T, typename U>
-            Microsoft::WRL::ComPtr<T> GetWrappedResource(U^ wrapper);
 
-            template<>
-            inline Microsoft::WRL::ComPtr<ID2D1Device1> GetWrappedResource(CanvasDevice^ wrapper)
+            template<typename T, typename U>
+            Microsoft::WRL::ComPtr<T> GetWrappedResource(U^ wrapper)
             {
                 using namespace Microsoft::WRL;
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
 
-                ComPtr<abi::ICanvasDevice> canvasDevice(reinterpret_cast<abi::ICanvasDevice*>(wrapper));
+                Platform::Object^ objectWrapper = wrapper;
+                IInspectable* inspectableWrapper = reinterpret_cast<IInspectable*>(objectWrapper);
 
-                ComPtr<abi::ICanvasDeviceNative> canvasDeviceNative;
-                __abi_ThrowIfFailed(canvasDevice.As(&canvasDeviceNative));
+                ComPtr<abi::ICanvasResourceWrapperNative> nativeWrapper;
+                __abi_ThrowIfFailed(inspectableWrapper->QueryInterface(nativeWrapper.GetAddressOf()));
 
-                ComPtr<ID2D1Device1> d2dDevice;
-                __abi_ThrowIfFailed(canvasDeviceNative->GetD2DDevice(&d2dDevice));
+                ComPtr<IUnknown> unknownResource;
+                __abi_ThrowIfFailed(nativeWrapper->GetResource(&unknownResource));
 
-                return d2dDevice;
+                ComPtr<T> resource;
+                __abi_ThrowIfFailed(unknownResource.As(&resource));
+                
+                return resource;
             }
-            
         }
     }
 }

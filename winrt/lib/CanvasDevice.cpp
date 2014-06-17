@@ -196,7 +196,7 @@ namespace canvas
     }
 
     
-    ComPtr<ICanvasDevice> CanvasDeviceManager::CreateWrapper(
+    ComPtr<CanvasDevice> CanvasDeviceManager::CreateWrapper(
         ID2D1Device1* d2dDevice)
     {
         auto dxgiDevice = m_adapter->GetDxgiDevice(d2dDevice);
@@ -313,7 +313,7 @@ namespace canvas
     }
 
     CanvasDeviceFactory::CanvasDeviceFactory() 
-        : m_canvasDeviceManager(CreateDefaultDeviceManager())
+        : m_manager(CreateDefaultDeviceManager())
     {}
 
     IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevel(
@@ -336,7 +336,7 @@ namespace canvas
             {
                 CheckAndClearOutPointer(canvasDevice);
                 
-                auto newCanvasDevice = m_canvasDeviceManager->Create(debugLevel, hardwareAcceleration);
+                auto newCanvasDevice = m_manager->Create(debugLevel, hardwareAcceleration);
                 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -353,25 +353,28 @@ namespace canvas
                 CheckInPointer(directX11Device);
                 CheckAndClearOutPointer(canvasDevice);
 
-                auto newCanvasDevice = m_canvasDeviceManager->Create(debugLevel, directX11Device);
+                auto newCanvasDevice = m_manager->Create(debugLevel, directX11Device);
 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
     }
 
     IFACEMETHODIMP CanvasDeviceFactory::GetOrCreate(
-        ID2D1Device1* d2dDevice,
-        ICanvasDevice** canvasDevice)
+        IUnknown* resource,
+        IInspectable** wrapper)
     {
         return ExceptionBoundary(
             [&]()
             {
-                CheckInPointer(d2dDevice);
-                CheckAndClearOutPointer(canvasDevice);
+                CheckInPointer(resource);
+                CheckAndClearOutPointer(wrapper);
 
-                auto newCanvasDevice = m_canvasDeviceManager->GetOrCreate(d2dDevice);
+                ComPtr<ID2D1Device1> d2dDevice;
+                ThrowIfFailed(resource->QueryInterface(d2dDevice.GetAddressOf()));
 
-                ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
+                auto newCanvasDevice = m_manager->GetOrCreate(d2dDevice.Get());
+
+                ThrowIfFailed(newCanvasDevice.CopyTo(wrapper));
             });
     }
 
@@ -383,7 +386,7 @@ namespace canvas
             {
                 CheckAndClearOutPointer(object);
 
-                auto newCanvasDevice = m_canvasDeviceManager->Create(
+                auto newCanvasDevice = m_manager->Create(
                     CanvasDebugLevel::None,
                     CanvasHardwareAcceleration::Auto);
 
@@ -497,17 +500,6 @@ namespace canvas
         return S_OK;
     }
 
-    IFACEMETHODIMP CanvasDevice::GetD2DDevice(ID2D1Device1** value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckAndClearOutPointer(value);
-                auto d2dDevice = GetD2DDevice();
-                ThrowIfFailed(d2dDevice.CopyTo(value));
-            });
-    }
-
     ComPtr<ID2D1Device1> CanvasDevice::GetD2DDevice()
     {
         return GetResource();
@@ -518,9 +510,16 @@ namespace canvas
         return m_requestedHardwareAcceleration;
     }
 
-    ComPtr<ID2D1DeviceContext> CanvasDevice::GetD2DResourceCreationDeviceContext()
+    ComPtr<ID2D1SolidColorBrush> CanvasDevice::CreateSolidColorBrush(const D2D1_COLOR_F& color)
     {
-        return m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        // TODO: this isn't very threadsafe - we should really have a different
+        // resource creation context per-thread. Do this as part of #802.
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1SolidColorBrush> brush;
+        ThrowIfFailed(deviceContext->CreateSolidColorBrush(color, &brush));
+
+        return brush;
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

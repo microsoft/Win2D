@@ -65,9 +65,9 @@ namespace canvas
         }
 
 
-        virtual ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() override
+        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override
         {
-            Assert::Fail(L"Unexpected call to GetD2DResourceCreationDeviceContext");
+            Assert::Fail(L"Unexpected call to CreateSolidColorBrush");
             return nullptr;
         }
     };

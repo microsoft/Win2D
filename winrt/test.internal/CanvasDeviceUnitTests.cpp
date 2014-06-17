@@ -25,7 +25,7 @@ public:
         auto d2dDevice = canvasDeviceInternal->GetD2DDevice();
         auto actualCanvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
         
-        Assert::AreEqual(expectedCanvasDevice, actualCanvasDevice.Get());
+        Assert::AreEqual<ICanvasDevice*>(expectedCanvasDevice, actualCanvasDevice.Get());
     }
 
 
@@ -36,6 +36,15 @@ public:
         return canvasDeviceInternal->GetRequestedHardwareAcceleration();
     }
 
+    TEST_METHOD(CanvasDevice_Implements_Expected_Interfaces)
+    {
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::Auto);
+
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasDevice);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ABI::Windows::Foundation::IClosable);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasResourceWrapperNative);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasDeviceInternal);
+    }
 
     TEST_METHOD(CanvasDevice_Defaults_Roundtrip)
     {
@@ -193,9 +202,7 @@ public:
         auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
         Assert::IsNotNull(canvasDevice.Get());
 
-        ComPtr<IClosable> canvasDeviceClosable;
-        ThrowIfFailed(canvasDevice.As(&canvasDeviceClosable));
-        Assert::AreEqual(S_OK, canvasDeviceClosable->Close());
+        Assert::AreEqual(S_OK, canvasDevice->Close());
 
         IDirectX11Device* deviceActual = reinterpret_cast<IDirectX11Device*>(0x1234);
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_DirectX11Device(&deviceActual));
@@ -395,10 +402,7 @@ public:
         // back the same CanvasDevice.
         //
 
-        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
-        ThrowIfFailed(expectedCanvasDevice.As(&canvasDeviceInternal));
-
-        auto d2dDevice = canvasDeviceInternal->GetD2DDevice();
+        auto d2dDevice = expectedCanvasDevice->GetD2DDevice();
 
         auto actualCanvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
 
@@ -413,32 +417,13 @@ public:
         ThrowIfFailed(AsWeak(expectedCanvasDevice.Get(), &weakExpectedCanvasDevice));
         expectedCanvasDevice.Reset();
         actualCanvasDevice.Reset();
-        canvasDeviceInternal.Reset();
 
         actualCanvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
 
         ComPtr<ICanvasDevice> unexpectedCanvasDevice;
         weakExpectedCanvasDevice.As(&unexpectedCanvasDevice);
 
-        Assert::AreNotEqual(unexpectedCanvasDevice.Get(), actualCanvasDevice.Get());
-    }
-
-    TEST_METHOD(CanvasDevice_GetD2DDevice)
-    {
-        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
-
-        ComPtr<ICanvasDeviceInternal> deviceInternal;
-        ThrowIfFailed(canvasDevice.As(&deviceInternal));
-
-        ComPtr<ICanvasDeviceNative> deviceNative;
-        ThrowIfFailed(canvasDevice.As(&deviceNative));
-
-        auto expectedD2DDevice = deviceInternal->GetD2DDevice();
-
-        ComPtr<ID2D1Device1> actualD2DDevice;
-        ThrowIfFailed(deviceNative->GetD2DDevice(&actualD2DDevice));
-
-        Assert::AreEqual(expectedD2DDevice.Get(), actualD2DDevice.Get());
+        Assert::AreNotEqual<ICanvasDevice*>(unexpectedCanvasDevice.Get(), actualCanvasDevice.Get());
     }
 };
 

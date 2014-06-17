@@ -47,4 +47,26 @@ TEST_CLASS(CanvasBrushTests)
                 CanvasSolidColorBrush^ invalidBrush = ref new CanvasSolidColorBrush(nullptr, Windows::UI::Colors::White);
             });
     }
+
+    TEST_METHOD(CanvasSolidColorBrush_Interop)
+    {
+        CanvasDevice^ canvasDevice = ref new CanvasDevice();
+        auto d2dDevice = GetWrappedResource<ID2D1Device1>(canvasDevice);
+
+        ComPtr<ID2D1DeviceContext> context;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &context));
+
+        D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
+
+        ComPtr<ID2D1SolidColorBrush> brush;
+        ThrowIfFailed(context->CreateSolidColorBrush(d2dRed, &brush));
+
+        auto canvasBrush = GetOrCreate<CanvasSolidColorBrush>(brush.Get());
+
+        auto actualBrush = GetWrappedResource<ID2D1SolidColorBrush>(canvasBrush);
+
+        Assert::AreEqual(brush.Get(), actualBrush.Get());
+    }
 };

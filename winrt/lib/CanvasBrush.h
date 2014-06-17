@@ -2,13 +2,18 @@
 
 #pragma once
 
-#include "CanvasBrush.abi.h"
-#include <ClosablePtr.h>
+#include <CanvasBrush.abi.h>
+
+#include "ClosablePtr.h"
+#include "ResourceManager.h"
 
 namespace canvas
 {
     using namespace Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas;
+
+    class CanvasSolidColorBrush;
+    class CanvasSolidColorBrushManager;
 
     [uuid(3A6BF1D2-731A-4EBB-AA40-1419A89302F6)]
     class ICanvasBrushInternal : public IUnknown
@@ -17,54 +22,61 @@ namespace canvas
         virtual ComPtr<ID2D1Brush> GetD2DBrush() = 0;
     };
 
-    //
-    // This allows tests to replace a CanvasSolidColorBrushes's m_d2dSolidColorBrush with
-    // a type of their choosing.
-    //
-    class ICanvasSolidColorBrushResourceCreationAdapter
+    [uuid(8FE46BCD-8594-44F4-AAB2-16E192BDC05F)]
+    class ICanvasSolidColorBrushInternal : public ICanvasBrushInternal
     {
     public:
-        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(
-            ID2D1DeviceContext* deviceContext, 
-            ABI::Windows::UI::Color color
-            ) = 0;
+        virtual ComPtr<ID2D1SolidColorBrush> GetD2DSolidColorBrush() = 0;
     };
-    
-    class CanvasSolidColorBrushFactory : public ActivationFactory<ICanvasSolidColorBrushFactory>
+
+    class CanvasSolidColorBrushFactory : public ActivationFactory<
+        ICanvasSolidColorBrushFactory,
+        CloakedIid<ICanvasFactoryNative>>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
 
-        std::shared_ptr<ICanvasSolidColorBrushResourceCreationAdapter> m_resourceCreationAdapter;
+        std::shared_ptr<CanvasSolidColorBrushManager> m_manager; // TODO: #1442 - see CanvasDevice.h
 
     public:
-
         CanvasSolidColorBrushFactory();
+
+        //
+        // ICanvasSolidColorBrushFactory
+        //
 
         IFACEMETHOD(Create)(
             ICanvasDevice* canvasDevice,
             ABI::Windows::UI::Color color,
-            ICanvasSolidColorBrush **canvasSolidColorBrush) override;
+            ICanvasSolidColorBrush** canvasSolidColorBrush) override;
+
+        //
+        // ICanvasFactoryNative
+        //
+
+        IFACEMETHOD(GetOrCreate)(
+            IUnknown* resource,
+            IInspectable** wrapper) override;
     };
 
-    class CanvasSolidColorBrush : public RuntimeClass<
-        RuntimeClassFlags<WinRtClassicComMix>,
-        ICanvasSolidColorBrush,
-        ICanvasBrush,
-        ABI::Windows::Foundation::IClosable,
-        CloakedIid<ICanvasBrushInternal >>
+    struct CanvasSolidColorBrushTraits
     {
+        typedef ID2D1SolidColorBrush resource_t;
+        typedef CanvasSolidColorBrush wrapper_t;
+        typedef ICanvasSolidColorBrush wrapper_interface_t;
+        typedef CanvasSolidColorBrushManager manager_t;
+    };
 
+    class CanvasSolidColorBrush : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        CanvasSolidColorBrushTraits, 
+        ICanvasBrush, 
+        ChainInterfaces<CloakedIid<ICanvasSolidColorBrushInternal>, CloakedIid<ICanvasBrushInternal>>)
+    {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
 
-        ClosablePtr<ID2D1SolidColorBrush> m_d2dSolidColorBrush;
-
     public:
-
         CanvasSolidColorBrush(
-            ICanvasDevice* canvasDevice,
-            ABI::Windows::UI::Color color,
-            std::shared_ptr<ICanvasSolidColorBrushResourceCreationAdapter> resourceCreationAdapter
-            );
+            std::shared_ptr<CanvasSolidColorBrushManager> manager,
+            ID2D1SolidColorBrush* brush);
 
         IFACEMETHOD(get_Color)(_Out_ ABI::Windows::UI::Color *value) override;
 
@@ -82,6 +94,21 @@ namespace canvas
         IFACEMETHOD(Close)() override;
 
         // ICanvasBrushInternal
-        ComPtr<ID2D1Brush> GetD2DBrush() override;
+        virtual ComPtr<ID2D1Brush> GetD2DBrush() override;
+
+        // ICanvasSolidColorBrushInternal
+        virtual ComPtr<ID2D1SolidColorBrush> GetD2DSolidColorBrush() override;
+    };
+
+
+    class CanvasSolidColorBrushManager : public ResourceManager<CanvasSolidColorBrushTraits>
+    {
+    public:
+        ComPtr<CanvasSolidColorBrush> CreateNew(
+            ICanvasDevice* canvasDevice,
+            ABI::Windows::UI::Color color);
+
+        ComPtr<CanvasSolidColorBrush> CreateWrapper(
+            ID2D1SolidColorBrush* resource);
     };
 }

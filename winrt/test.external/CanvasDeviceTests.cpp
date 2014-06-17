@@ -94,7 +94,7 @@ TEST_CLASS(CanvasDeviceTests)
 
         auto originalD2DDevice = GetWrappedResource<ID2D1Device1>(originalCanvasDevice);
 
-        auto newCanvasDevice = GetOrCreateCanvasDevice(originalD2DDevice.Get());
+        auto newCanvasDevice = GetOrCreate<CanvasDevice>(originalD2DDevice.Get());
 
         auto newD2DDevice = GetWrappedResource<ID2D1Device1>(newCanvasDevice);
 

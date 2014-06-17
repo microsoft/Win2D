@@ -8,26 +8,38 @@ namespace canvas
 {
     using ABI::Windows::UI::Color;
 
-    class DefaultCanvasSolidColorBrushResourceCreationAdapter: public ICanvasSolidColorBrushResourceCreationAdapter
+    ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
+        ICanvasDevice* canvasDevice,
+        Color color)
     {
-    public:
-        ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(ID2D1DeviceContext* deviceContext, Color color) override
-        {
-            ComPtr<ID2D1SolidColorBrush> solidColorBrush;
-            
-            ThrowIfFailed(deviceContext->CreateSolidColorBrush(
-                ToD2DColor(color),
-                &solidColorBrush
-                ));
+        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
+        ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-            return solidColorBrush;            
-        }
+        auto& d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
+
+        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
+            shared_from_this(),
+            d2dBrush.Get());
+        CheckMakeResult(canvasSolidColorBrush);
+        
+        return canvasSolidColorBrush;
     };
 
-    CanvasSolidColorBrushFactory::CanvasSolidColorBrushFactory()
-        : m_resourceCreationAdapter(std::make_shared<DefaultCanvasSolidColorBrushResourceCreationAdapter>())
-    {
 
+    ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateWrapper(
+        ID2D1SolidColorBrush* brush)
+    {
+        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
+            shared_from_this(),
+            brush);
+        CheckMakeResult(canvasSolidColorBrush);
+
+        return canvasSolidColorBrush;
+    }
+
+    CanvasSolidColorBrushFactory::CanvasSolidColorBrushFactory()
+        : m_manager(std::make_shared<CanvasSolidColorBrushManager>())
+    {
     }
 
     IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
@@ -41,35 +53,40 @@ namespace canvas
                 CheckInPointer(canvasDevice);
                 CheckAndClearOutPointer(canvasSolidColorBrush);
 
-                auto newSolidColorBrush = Make<CanvasSolidColorBrush>(
+                auto newSolidColorBrush = m_manager->Create(
                     canvasDevice, 
-                    color,
-                    m_resourceCreationAdapter
-                    );
-
-                CheckMakeResult(newSolidColorBrush);
+                    color);
 
                 ThrowIfFailed(newSolidColorBrush.CopyTo(canvasSolidColorBrush));
             });
     }
 
-    CanvasSolidColorBrush::CanvasSolidColorBrush(
-        ICanvasDevice* canvasDevice,
-        ABI::Windows::UI::Color color,
-        std::shared_ptr<ICanvasSolidColorBrushResourceCreationAdapter> resourceCreationAdapter
-        ) 
+
+    IFACEMETHODIMP CanvasSolidColorBrushFactory::GetOrCreate(
+        IUnknown* resource,
+        IInspectable** wrapper)
     {
-        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
+        return ExceptionBoundary(
+            [&]()
+            {
+                CheckInPointer(resource);
+                CheckAndClearOutPointer(wrapper);
 
-        ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
+                ComPtr<ID2D1SolidColorBrush> d2dBrush;
+                ThrowIfFailed(resource->QueryInterface(d2dBrush.GetAddressOf()));
 
-        ComPtr<ID2D1SolidColorBrush> d2dSolidColorBrush = resourceCreationAdapter->CreateSolidColorBrush(
-            canvasDeviceInternal->GetD2DResourceCreationDeviceContext().Get(),
-            color
-            );
+                auto newBrush = m_manager->GetOrCreate(d2dBrush.Get());
 
-        // This assignment is necessary because m_d2dSolidColorBrush is IClosablePtr.
-        m_d2dSolidColorBrush = d2dSolidColorBrush; 
+                ThrowIfFailed(newBrush.CopyTo(wrapper));
+            });
+    }
+
+
+    CanvasSolidColorBrush::CanvasSolidColorBrush(
+        std::shared_ptr<CanvasSolidColorBrushManager> manager,
+        ID2D1SolidColorBrush* brush)
+        : ResourceWrapper(manager, brush)
+    {
     }
 
     IFACEMETHODIMP CanvasSolidColorBrush::get_Color(_Out_ Color *value)
@@ -78,12 +95,7 @@ namespace canvas
             [&]()
             {
                 CheckInPointer(value);
-                
-                auto& brush = m_d2dSolidColorBrush.EnsureNotClosed();
-
-                D2D1_COLOR_F d2dColor = brush->GetColor();
-
-                *value = ToWindowsColor(d2dColor);
+                *value = ToWindowsColor(GetResource()->GetColor());
             });
     }
 
@@ -92,9 +104,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {                
-                auto& brush = m_d2dSolidColorBrush.EnsureNotClosed();
-
-                brush->SetColor(ToD2DColor(value));
+                GetResource()->SetColor(ToD2DColor(value));
             });
     }
 
@@ -104,10 +114,7 @@ namespace canvas
             [&]()
             {
                 CheckInPointer(value);
-
-                auto& brush = m_d2dSolidColorBrush.EnsureNotClosed();
-
-                *value = brush->GetOpacity();
+                *value = GetResource()->GetOpacity();
             });
     }
 
@@ -116,9 +123,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& brush = m_d2dSolidColorBrush.EnsureNotClosed();
-
-                brush->SetOpacity(value);
+                GetResource()->SetOpacity(value);
             });
     }
 
@@ -130,10 +135,8 @@ namespace canvas
             {
                 CheckInPointer(value);
 
-                auto& brush = m_d2dSolidColorBrush.EnsureNotClosed();
-
                 D2D1_MATRIX_3X2_F d2dTransformMatrix;
-                brush->GetTransform(&d2dTransformMatrix);
+                GetResource()->GetTransform(&d2dTransformMatrix);
 
                 *value = ToMathMatrix3x2(d2dTransformMatrix);
             });
@@ -144,23 +147,24 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& brush = m_d2dSolidColorBrush.EnsureNotClosed();
-
-                brush->SetTransform(ToD2DMatrix3x2(value));
+                GetResource()->SetTransform(ToD2DMatrix3x2(value));
             });
     }
 
     IFACEMETHODIMP CanvasSolidColorBrush::Close()
     {
-        m_d2dSolidColorBrush.Close();
+        ResourceWrapper::Close();
         return S_OK;
     }
 
     ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush()
     {
-        ComPtr<ID2D1SolidColorBrush> brush = m_d2dSolidColorBrush.EnsureNotClosed();
+        return GetResource();
+    }
 
-        return brush;
+    ComPtr<ID2D1SolidColorBrush> CanvasSolidColorBrush::GetD2DSolidColorBrush()
+    {
+        return GetResource();
     }
 
     ActivatableClassWithFactory(CanvasSolidColorBrush, CanvasSolidColorBrushFactory);

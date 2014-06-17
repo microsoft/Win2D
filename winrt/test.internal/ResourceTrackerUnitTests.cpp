@@ -50,6 +50,7 @@ public:
     }
 };
 
+
 class DummyManager : public ResourceManager<DummyTraits>
 {
 public:
@@ -58,12 +59,18 @@ public:
         return Make<DummyWrapper>(shared_from_this(), resource);
     }
 
-    ComPtr<IDummyWrapper> CreateWrapper(DummyResource* resource)
+    ComPtr<DummyWrapper> CreateWrapper(DummyResource* resource)
     {
         return Make<DummyWrapper>(shared_from_this(), resource);
     }
 };
 
+
+template<>
+static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DummyWrapper>(DummyWrapper* value)
+{
+    return PointerToString(L"DummyWrapper", value);
+}
 
 
 TEST_CLASS(ResourceTrackerUnitTests)
@@ -73,7 +80,7 @@ TEST_CLASS(ResourceTrackerUnitTests)
         auto manager = std::make_shared<DummyManager>();
 
         std::vector<ComPtr<DummyResource>> resources;
-        std::vector<ComPtr<IDummyWrapper>> wrappers;
+        std::vector<ComPtr<DummyWrapper>> wrappers;
 
         // initial populate
         for (int i=0; i<5; ++i)
@@ -89,7 +96,7 @@ TEST_CLASS(ResourceTrackerUnitTests)
         for (size_t i=0; i<resources.size(); ++i)
         {
             auto actual = manager->GetOrCreate(resources[i].Get());
-            Assert::AreEqual<IInspectable*>(wrappers[i].Get(), actual.Get());
+            Assert::AreEqual(wrappers[i].Get(), actual.Get());
         }
 
         // destroy an entry and verify a new one is created when asked

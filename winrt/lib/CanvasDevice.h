@@ -52,14 +52,14 @@ namespace canvas
     class CanvasDeviceFactory : public ActivationFactory<
         ICanvasDeviceFactory, 
         ICanvasDeviceStatics, 
-        CloakedIid<ICanvasDeviceFactoryNative>>
+        CloakedIid<ICanvasFactoryNative>>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
         // TODO: #1442 - the factory can't own this since there's no guarantee
         // the factory stays around.  We need some way for a newly created
         // factory to find any previous existing manager and use that.
-        std::shared_ptr<CanvasDeviceManager> m_canvasDeviceManager;
+        std::shared_ptr<CanvasDeviceManager> m_manager;
 
     public:
         CanvasDeviceFactory();
@@ -89,12 +89,12 @@ namespace canvas
             ICanvasDevice** canvasDevice) override;
 
         //
-        // ICanvasDeviceFactoryNative
+        // ICanvasFactoryNative
         //
         
         IFACEMETHOD(GetOrCreate)(
-            ID2D1Device1* d2dDevice,
-            ICanvasDevice** canvasDevice) override;
+            IUnknown* resource,
+            IInspectable** wrapper) override;
     };
 
 
@@ -112,7 +112,7 @@ namespace canvas
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
         virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() = 0;
-        virtual ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() = 0;
+        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) = 0;
     };
 
 
@@ -127,7 +127,9 @@ namespace canvas
     //
     // The CanvasDevice class itself.
     //
-    class CanvasDevice : RESOURCE_WRAPPER_RUNTIME_CLASS(CanvasDeviceTraits, CloakedIid<ICanvasDeviceNative>, CloakedIid<ICanvasDeviceInternal>)
+    class CanvasDevice : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        CanvasDeviceTraits, 
+        CloakedIid<ICanvasDeviceInternal>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
@@ -146,7 +148,7 @@ namespace canvas
 
     public:
         CanvasDevice(
-            std::shared_ptr<CanvasDeviceManager> deviceManager,
+            std::shared_ptr<CanvasDeviceManager> manager,
             CanvasDebugLevel debugLevel,
             CanvasHardwareAcceleration requestedHardwareAcceleration,
             CanvasHardwareAcceleration actualHardwareAcceleration,
@@ -175,18 +177,12 @@ namespace canvas
         IFACEMETHOD(Close)() override;
 
         //
-        // ICanvasDeviceNative
-        //
-
-        IFACEMETHOD(GetD2DDevice)(ID2D1Device1** value) override;
-
-        //
         // ICanvasDeviceInternal
         //
 
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override;
         virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() override;
-        ComPtr<ID2D1DeviceContext> GetD2DResourceCreationDeviceContext() override;
+        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override;
         
     private:
         ComPtr<ID2D1Factory2> GetD2DFactory();
@@ -207,7 +203,7 @@ namespace canvas
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirectX11Device* directX11Device);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirectX11Device* directX11Device, ID2D1Factory2* d2dFactory);
-        ComPtr<ICanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
+        ComPtr<CanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
 
     private:
         ComPtr<IDirectX11Device> MakeDirectX11Device(

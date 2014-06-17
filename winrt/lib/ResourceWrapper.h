@@ -22,7 +22,10 @@ namespace canvas
 
 
     template<typename TRAITS>
-    class ResourceWrapper : public Implements<ABI::Windows::Foundation::IClosable>
+    class ResourceWrapper : public Implements<
+        RuntimeClassFlags<WinRtClassicComMix>,
+        ABI::Windows::Foundation::IClosable, 
+        CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>
     {
         std::shared_ptr<typename TRAITS::manager_t> m_manager;
         ClosablePtr<typename TRAITS::resource_t> m_resource;
@@ -55,15 +58,37 @@ namespace canvas
             return m_manager;
         }
 
+        //
+        // IClosable
+        //
+
         IFACEMETHODIMP Close() override
         {
-            if (m_resource)
-            {
-                auto& resource = m_resource.Close();
-                m_manager->Remove(resource.Get());
-            }
+            return ExceptionBoundary(
+                [&]()
+                {
+                    if (m_resource)
+                    {
+                        auto& resource = m_resource.Close();
+                        m_manager->Remove(resource.Get());
+                    }
+                });
+        }
 
-            return S_OK;
+        //
+        // ICanvasResourceWrapperNative
+        //
+
+        IFACEMETHODIMP GetResource(IUnknown** outResource) override
+        {
+            return ExceptionBoundary(
+                [&]()
+                {
+                    CheckAndClearOutPointer(outResource);
+
+                    auto resource = GetResource();
+                    ThrowIfFailed(resource.CopyTo(outResource));
+                });
         }
     };
 }

@@ -6,11 +6,9 @@ namespace canvas
 {
     class MockD2DSolidColorBrush : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<ID2D1SolidColorBrush, ID2D1Brush, ID2D1Resource >>
+        ChainInterfaces<ID2D1SolidColorBrush, ID2D1Brush, ID2D1Resource>>
     {
-
     public:
-
         //
         // ID2D1SolidColorBrush
         //

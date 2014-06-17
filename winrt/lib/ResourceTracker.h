@@ -42,7 +42,7 @@ namespace canvas
         }
 
         template<typename CONSTRUCT_FN>
-        ComPtr<IVALUE> GetOrCreate(KEY* key, CONSTRUCT_FN&& constructFn)
+        ComPtr<VALUE> GetOrCreate(KEY* key, CONSTRUCT_FN&& constructFn)
         {            
             std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -56,10 +56,20 @@ namespace canvas
                 //
                 auto weakRef = it->second;
 
-                ComPtr<IVALUE> value;
-                (void)weakRef.As(&value);
-                if (value)
+                ComPtr<IVALUE> ivalue;
+                (void)weakRef.As(&ivalue);
+                if (ivalue)
                 {
+                    //
+                    // WeakRef can only give us back an interface (it needs a
+                    // UUID).  However, we want to deal with VALUE which is the
+                    // implementation class (consider canvas::CanvasDevice
+                    // versus ICanvasDevice).
+                    //
+                    // We know that we've only put VALUEs into m_resources, so
+                    // we can safely cast from IVALUE to VALUE.
+                    //
+                    ComPtr<VALUE> value(static_cast<VALUE*>(ivalue.Get()));
                     return value;
                 }
             }
