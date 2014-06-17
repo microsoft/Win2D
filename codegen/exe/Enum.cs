@@ -154,13 +154,10 @@ namespace CodeGen
                 m_enumValues.Add(new EnumValue(valueXml, overridesEnumValue));
             }
 
-            bool shouldProject = true;
+            bool shouldProject = false;
             if(overrides != null)
             {
-                if(!overrides.ShouldProject)
-                {
-                    shouldProject = false;
-                }
+                shouldProject = overrides.ShouldProject;
 
                 if(overrides.ProjectedNameOverride != null)
                 {
