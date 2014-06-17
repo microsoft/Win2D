@@ -206,7 +206,7 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine("interface " + m_idlInterfaceName + ";");
             outputFiles.IdlFile.WriteLine("runtimeclass " + m_stylizedName + ";");
             outputFiles.IdlFile.WriteLine();
-            outputFiles.IdlFile.WriteLine("[uuid(" + m_guid + "), version(VERSION), exclusiveto(" + m_stylizedName + ")]");
+            outputFiles.IdlFile.WriteLine("[uuid(" + m_guid.ToUpper() + "), version(VERSION), exclusiveto(" + m_stylizedName + ")]");
             outputFiles.IdlFile.WriteLine("interface " + m_idlInterfaceName + " : IInspectable");
             outputFiles.IdlFile.WriteLine("{");
             outputFiles.IdlFile.Indent();
