@@ -68,7 +68,7 @@ namespace CodeGen
             outputFiles.CppFile.WriteLine("#include <wrl.h>");
             outputFiles.CppFile.WriteLine("using namespace Microsoft::WRL;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas;");
-            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas::Math;");
+            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas::Numerics;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::Foundation;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::UI;");
             outputFiles.CppFile.WriteLine();
@@ -79,7 +79,7 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine("import \"inspectable.idl\";");
             outputFiles.IdlFile.WriteLine("import \"Windows.Foundation.idl\";");
             outputFiles.IdlFile.WriteLine("import \"Windows.UI.idl\";");
-            outputFiles.IdlFile.WriteLine("import \"WinRTMath.idl\";");
+            outputFiles.IdlFile.WriteLine("import \"WinRTNumerics.idl\";");
             outputFiles.IdlFile.WriteLine();
             outputFiles.IdlFile.WriteLine("#include \"version.h\"");
             outputFiles.IdlFile.WriteLine();

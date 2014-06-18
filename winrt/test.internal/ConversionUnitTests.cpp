@@ -146,7 +146,7 @@ TEST_CLASS(ConversionUnitTests)
     {
         Assert::AreEqual(
             D2D1_ELLIPSE{D2D_POINT_2F{1,2},3,4},
-            *ToD2DEllipse(&CanvasEllipse{Point{1,2},3,4}));
+            *ReinterpretAs<D2D1_ELLIPSE*>(&CanvasEllipse{ Point{ 1, 2 }, 3, 4 }));
     }
 };
 

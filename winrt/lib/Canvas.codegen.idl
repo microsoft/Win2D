@@ -1,7 +1,7 @@
 import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "Windows.UI.idl";
-import "WinRTMath.idl";
+import "WinRTNumerics.idl";
 
 #include "version.h"
 

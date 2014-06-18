@@ -86,9 +86,9 @@ namespace canvas
 
         IFACEMETHOD(put_Opacity)(_In_ float value) override;
 
-        IFACEMETHOD(get_Transform)(_Out_ Math::Matrix3x2 *value) override;
+        IFACEMETHOD(get_Transform)(_Out_ Numerics::Matrix3x2 *value) override;
 
-        IFACEMETHOD(put_Transform)(_In_ Math::Matrix3x2 value) override;
+        IFACEMETHOD(put_Transform)(_In_ Numerics::Matrix3x2 value) override;
 
         // IClosable
         IFACEMETHOD(Close)() override;

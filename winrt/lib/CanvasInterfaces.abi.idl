@@ -2,7 +2,7 @@
 
 import "inspectable.idl";
 import "Windows.Foundation.idl";
-import "WinRTMath.idl";
+import "WinRTNumerics.idl";
 #include "version.h"
 
 namespace Microsoft.Graphics.Canvas

@@ -23,8 +23,8 @@ TEST_CLASS(CanvasBrushTests)
         canvasSolidColorBrush->Opacity = 0.8f;
         Assert::AreEqual(0.8f, canvasSolidColorBrush->Opacity);
 
-        Math::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
-        Math::Matrix3x2 scaleAndTranslate = {3, 0, 0, 3, -4, -2};
+        Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
+        Numerics::Matrix3x2 scaleAndTranslate = { 3, 0, 0, 3, -4, -2 };
         Assert::AreEqual(identity, canvasSolidColorBrush->Transform);
         canvasSolidColorBrush->Transform = scaleAndTranslate;
         Assert::AreEqual(scaleAndTranslate, canvasSolidColorBrush->Transform);

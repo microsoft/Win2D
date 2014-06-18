@@ -5,7 +5,7 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)GraphicsDevice\WinRTGraphicsInterop.idl">
       <Filter>GraphicsDevice</Filter>
     </MidlRT>
-    <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />

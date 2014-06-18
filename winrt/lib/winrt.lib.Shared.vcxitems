@@ -19,7 +19,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <Midl>
-      <AdditionalIncludeDirectories>..\..\Math\WinRT;GraphicsDevice</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Numerics\WinRT;GraphicsDevice</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -66,7 +66,7 @@
     </MidlRT>
     <MidlRT Include="$(MSBuildThisFileDirectory)GraphicsDevice\WinRTGraphicsInterop.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDeviceInterop.cpp" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\WinRTMath.idl">
+    <MidlRT Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl">
       <HasInterfaces>false</HasInterfaces>
     </MidlRT>
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.cpp" />

@@ -12,7 +12,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\WinRTMathTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

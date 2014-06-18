@@ -192,14 +192,14 @@ public:
         Assert::AreEqual(1, counters.NumGetOpacityCalls);
         
         // put_Transform
-        Math::Matrix3x2 scaleAndTranslate = { 2, 0, 0, 2, 5, 10 };
+        Numerics::Matrix3x2 scaleAndTranslate = { 2, 0, 0, 2, 5, 10 };
         D2D1_MATRIX_3X2_F d2dScaleAndTranslate = D2D1::Matrix3x2F(2, 0, 0, 2, 5, 10);
         canvasSolidColorBrush->put_Transform(scaleAndTranslate);
         Assert::AreEqual(d2dScaleAndTranslate, testD2DSolidColorBrush->m_transform);
         Assert::AreEqual(1, counters.NumSetTransformCalls);
 
         // get_Transform
-        Math::Matrix3x2 transformActual;
+        Numerics::Matrix3x2 transformActual;
         canvasSolidColorBrush->get_Transform(&transformActual);
         Assert::AreEqual(scaleAndTranslate, transformActual);
         Assert::AreEqual(1, counters.NumGetTransformCalls);
@@ -229,7 +229,7 @@ public:
 
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Opacity(1));
 
-        Math::Matrix3x2 transformActual;
+        Numerics::Matrix3x2 transformActual;
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->get_Transform(&transformActual));
 
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Transform(transformActual));

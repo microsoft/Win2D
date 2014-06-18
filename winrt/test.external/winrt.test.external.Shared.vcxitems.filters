@@ -6,7 +6,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsErrorTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsSurfaceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\math\WinRT\tests\WinRTMathTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
   </ItemGroup>

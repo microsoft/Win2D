@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Images">
+      <UniqueIdentifier>6a06034a-dfef-4581-a18c-b403d3a254a5</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Helpers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="PlaneTest.cpp" />
+    <ClCompile Include="QuaternionTest.cpp" />
+    <ClCompile Include="Float2Test.cpp" />
+    <ClCompile Include="Float3Test.cpp" />
+    <ClCompile Include="Float4Test.cpp" />
+    <ClCompile Include="Float3x2Test.cpp" />
+    <ClCompile Include="Float4x4Test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\UnitTestLogo.scale-100.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\UnitTestSmallLogo.scale-100.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\UnitTestSplashScreen.scale-100.png">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\UnitTestStoreLogo.scale-100.png">
+      <Filter>Images</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CppNumericsTests_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+</Project>

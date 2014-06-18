@@ -49,13 +49,13 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Microsoft::Graphics::Canvas::Math::Matrix3x2>(const Microsoft::Graphics::Canvas::Math::Matrix3x2& value)
+            static inline std::wstring ToString<Microsoft::Graphics::Canvas::Numerics::Matrix3x2>(const Microsoft::Graphics::Canvas::Numerics::Matrix3x2& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
                     buf,
                     _countof(buf),
-                    L"Math.Matrix{M11=%f,M12=%f,M21=%f,M22=%f,M31=%f,M32=%f}",
+                    L"Numerics.Matrix{M11=%f,M12=%f,M21=%f,M22=%f,M31=%f,M32=%f}",
                     value.M11, value.M12,
                     value.M21, value.M22,
                     value.M31, value.M32));
@@ -83,7 +83,7 @@ namespace Microsoft
                     a.B == b.B;
             }
 
-            inline bool operator==(const Microsoft::Graphics::Canvas::Math::Matrix3x2& a, const Microsoft::Graphics::Canvas::Math::Matrix3x2& b)
+            inline bool operator==(const Microsoft::Graphics::Canvas::Numerics::Matrix3x2& a, const Microsoft::Graphics::Canvas::Numerics::Matrix3x2& b)
             {
                 return
                     a.M11 == b.M11 && a.M12 == b.M12 &&

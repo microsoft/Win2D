@@ -8,7 +8,7 @@
 #include <wrl.h>
 using namespace Microsoft::WRL;
 using namespace ABI::Microsoft::Graphics::Canvas;
-using namespace ABI::Microsoft::Graphics::Canvas::Math;
+using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
 

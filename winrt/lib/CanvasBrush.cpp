@@ -128,26 +128,23 @@ namespace canvas
     }
 
 
-    IFACEMETHODIMP CanvasSolidColorBrush::get_Transform(_Out_ Math::Matrix3x2 *value)
+    IFACEMETHODIMP CanvasSolidColorBrush::get_Transform(_Out_ Numerics::Matrix3x2 *value)
     {
         return ExceptionBoundary(
             [&]()
             {
                 CheckInPointer(value);
 
-                D2D1_MATRIX_3X2_F d2dTransformMatrix;
-                GetResource()->GetTransform(&d2dTransformMatrix);
-
-                *value = ToMathMatrix3x2(d2dTransformMatrix);
+                GetResource()->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
             });
     }
 
-    IFACEMETHODIMP CanvasSolidColorBrush::put_Transform(_In_ Math::Matrix3x2 value)
+    IFACEMETHODIMP CanvasSolidColorBrush::put_Transform(_In_ Numerics::Matrix3x2 value)
     {
         return ExceptionBoundary(
             [&]()
             {
-                GetResource()->SetTransform(ToD2DMatrix3x2(value));
+                GetResource()->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
             });
     }
 

@@ -41,7 +41,7 @@
 
 #include <CanvasImageSource.abi.h>
 #include <WinRTGraphicsInterop.h>
-#include <WinRTMath.h>
+#include <WinRTNumerics.h>
 
 #include <Conversion.h>
 #include <ErrorHandling.h>

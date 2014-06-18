@@ -412,7 +412,7 @@ public:
             [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
             {
                 Assert::IsFalse(drawEllipseCalled);
-                Assert::AreEqual(*ToD2DEllipse(&expectedEllipse), *ellipse);
+                Assert::AreEqual(*ReinterpretAs<D2D1_ELLIPSE*>(&expectedEllipse), *ellipse);
                 Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
                 Assert::AreEqual(expectedStrokeWidth, strokeWidth);
                 Assert::IsNull(strokeStyle);
@@ -445,7 +445,7 @@ public:
             [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
             {
                 Assert::IsFalse(drawEllipseCalled);
-                Assert::AreEqual(*ToD2DEllipse(&expectedEllipse), *ellipse);
+                Assert::AreEqual(*ReinterpretAs<D2D1_ELLIPSE*>(&expectedEllipse), *ellipse);
                 Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
                 Assert::AreEqual(expectedStrokeWidth, strokeWidth);
                 Assert::IsNull(strokeStyle);
@@ -478,7 +478,7 @@ public:
             [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush)
             {
                 Assert::IsFalse(fillEllipseCalled);
-                Assert::AreEqual(*ToD2DEllipse(&expectedEllipse), *ellipse);
+                Assert::AreEqual(*ReinterpretAs<D2D1_ELLIPSE*>(&expectedEllipse), *ellipse);
                 Assert::AreEqual(m_brush->GetD2DBrush().Get(), brush);
                 fillEllipseCalled = true;
             };

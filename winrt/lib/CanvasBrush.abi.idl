@@ -20,10 +20,10 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Opacity([in] float value);
 
         [propget]
-        HRESULT Transform([out, retval] Microsoft.Graphics.Canvas.Math.Matrix3x2* value);
+        HRESULT Transform([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix3x2* value);
 
         [propput]
-        HRESULT Transform([in] Microsoft.Graphics.Canvas.Math.Matrix3x2 value);
+        HRESULT Transform([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
     };
 
     runtimeclass CanvasSolidColorBrush;

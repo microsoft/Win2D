@@ -223,7 +223,7 @@ namespace canvas
                 CheckInPointer(brush);
 
                 deviceContext->DrawEllipse(
-                    ToD2DEllipse(&ellipse),
+                    ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
                     ToD2DBrush(brush).Get(),
                     strokeWidth);
             });
@@ -241,7 +241,7 @@ namespace canvas
                 CheckInPointer(brush);
 
                 deviceContext->FillEllipse(
-                    ToD2DEllipse(&ellipse),
+                    ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
                     ToD2DBrush(brush).Get());
             });
     }

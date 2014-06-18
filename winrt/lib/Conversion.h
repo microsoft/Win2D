@@ -117,17 +117,6 @@ namespace canvas
         return D2D1_ROUNDED_RECT{rect, radiusX, radiusY};
     }
 
-    inline const D2D1_ELLIPSE* ToD2DEllipse(const CanvasEllipse* ellipse)
-    {
-        static_assert(offsetof(D2D1_POINT_2F, x) == offsetof(ABI::Windows::Foundation::Point, X), "Point layout must match D2D1_POINT_2F layout");
-        static_assert(offsetof(D2D1_POINT_2F, y) == offsetof(ABI::Windows::Foundation::Point, Y), "Point layout must match D2D1_POINT_2F layout");
-        static_assert(offsetof(D2D1_ELLIPSE, point) == offsetof(CanvasEllipse, Point), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
-        static_assert(offsetof(D2D1_ELLIPSE, radiusX) == offsetof(CanvasEllipse, RadiusX), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
-        static_assert(offsetof(D2D1_ELLIPSE, radiusY) == offsetof(CanvasEllipse, RadiusY), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
-
-        return reinterpret_cast<const D2D1_ELLIPSE*>(ellipse);
-    }
-
     inline ComPtr<ID2D1Brush> ToD2DBrush(ICanvasBrush* brush)
     {
         ComPtr<ICanvasBrushInternal> internal;
@@ -135,22 +124,34 @@ namespace canvas
         return internal->GetD2DBrush();
     }
 
-    inline D2D1_MATRIX_3X2_F ToD2DMatrix3x2(const Math::Matrix3x2& matrix)
+    template<typename TOutput, typename TInput> TOutput ReinterpretAs(TInput value)
     {
-        return D2D1::Matrix3x2F(
-            matrix.M11, matrix.M12,
-            matrix.M21, matrix.M22,
-            matrix.M31, matrix.M32
-            );
+        ValidateReinterpretAs<TOutput, TInput>();
+
+        return reinterpret_cast<TOutput>(value);
     }
 
-    inline Math::Matrix3x2 ToMathMatrix3x2(const D2D1_MATRIX_3X2_F& matrix)
+    template<typename TOutput, typename TInput> void ValidateReinterpretAs()
     {
-        Math::Matrix3x2 mathMatrix = {
-            matrix._11, matrix._12,
-            matrix._21, matrix._22,
-            matrix._31, matrix._32
-        };
-        return mathMatrix;
+        static_assert(false, "Invalid ReinterpretAs type parameters");
+    }
+
+    template<> inline void ValidateReinterpretAs<D2D1_ELLIPSE*, CanvasEllipse*>()
+    {
+        static_assert(offsetof(D2D1_POINT_2F, x) == offsetof(ABI::Windows::Foundation::Point, X), "Point layout must match D2D1_POINT_2F layout");
+        static_assert(offsetof(D2D1_POINT_2F, y) == offsetof(ABI::Windows::Foundation::Point, Y), "Point layout must match D2D1_POINT_2F layout");
+        static_assert(offsetof(D2D1_ELLIPSE, point) == offsetof(CanvasEllipse, Point), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
+        static_assert(offsetof(D2D1_ELLIPSE, radiusX) == offsetof(CanvasEllipse, RadiusX), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
+        static_assert(offsetof(D2D1_ELLIPSE, radiusY) == offsetof(CanvasEllipse, RadiusY), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
+    }
+
+    template<> inline void ValidateReinterpretAs<D2D1_MATRIX_3X2_F*, Numerics::Matrix3x2*>()
+    {
+        static_assert(offsetof(D2D1_MATRIX_3X2_F, _11) == offsetof(Numerics::Matrix3x2, M11), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
+        static_assert(offsetof(D2D1_MATRIX_3X2_F, _12) == offsetof(Numerics::Matrix3x2, M12), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
+        static_assert(offsetof(D2D1_MATRIX_3X2_F, _21) == offsetof(Numerics::Matrix3x2, M21), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
+        static_assert(offsetof(D2D1_MATRIX_3X2_F, _22) == offsetof(Numerics::Matrix3x2, M22), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
+        static_assert(offsetof(D2D1_MATRIX_3X2_F, _31) == offsetof(Numerics::Matrix3x2, M31), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
+        static_assert(offsetof(D2D1_MATRIX_3X2_F, _32) == offsetof(Numerics::Matrix3x2, M32), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
     }
 }
