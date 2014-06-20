@@ -2,12 +2,12 @@
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
   <Identity Name="4fa3ef4e-3d7a-4bdb-8171-5c4abf712ed4"
-            Publisher="CN=damyanp"
+            Publisher="CN=Microsoft Corporation"
             Version="1.0.0.0" />
   
   <Properties>
     <DisplayName>test.managed</DisplayName>
-    <PublisherDisplayName>damyanp</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Images\UnitTestStoreLogo.png</Logo>
     <Description>test.managed</Description>
   </Properties>

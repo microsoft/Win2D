@@ -2,12 +2,12 @@
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
   <Identity Name="9b227fc5-cc24-4830-a904-59f912bbf806"
-            Publisher="CN=shawnhar"
+            Publisher="CN=Microsoft Corporation"
             Version="1.0.0.0" />
   
   <Properties>
     <DisplayName>DotNetNumericsTests</DisplayName>
-    <PublisherDisplayName>shawnhar</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Images\UnitTestStoreLogo.png</Logo>
     <Description>DotNetNumericsTests</Description>
   </Properties>

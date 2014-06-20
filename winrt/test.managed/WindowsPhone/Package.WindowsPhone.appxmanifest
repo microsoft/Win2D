@@ -2,14 +2,14 @@
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
 
   <Identity Name="a154a610-e292-493c-9880-e765ce81e115"
-            Publisher="CN=damyanp"
+            Publisher="CN=Microsoft Corporation"
             Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="a154a610-e292-493c-9880-e765ce81e115" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>winrt.test.managed.WindowsPhone</DisplayName>
-    <PublisherDisplayName>damyanp</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 

@@ -2,12 +2,12 @@
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
   <Identity Name="8c8b56b5-efc3-4c6e-80cb-671756d2ce4d"
-            Publisher="CN=shawnhar"
+            Publisher="CN=Microsoft Corporation"
             Version="1.0.0.0" />
   
   <Properties>
     <DisplayName>CppNumericsTests</DisplayName>
-    <PublisherDisplayName>shawnhar</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Images\UnitTestStoreLogo.png</Logo>
     <Description>CppNumericsTests</Description>
   </Properties>
