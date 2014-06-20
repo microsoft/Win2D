@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -6,17 +6,17 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9F8A014C-478A-4EC2-8CC2-37CEB3CCFCCF}</ProjectGuid>
+    <ProjectGuid>{860EE6B2-F36C-448E-BA84-607266FB6FBA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>test.managed</RootNamespace>
-    <AssemblyName>test.managed</AssemblyName>
+    <RootNamespace>NumericsTests</RootNamespace>
+    <AssemblyName>DotNetNumericsTests</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>winrt.test.managed_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>DotNetNumericsTests_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\build\canvas.cs.props" />
@@ -86,31 +86,33 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
-    <ProjectReference Include="..\..\dll\winrt.dll.Windows.vcxproj">
-      <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
-      <Name>winrt.dll.Windows</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj">
-      <Project>{e09c8be2-ac5a-4c87-9c2e-35290853448e}</Project>
-      <Name>winrt.test.GraphicsDeviceComponent.Windows</Name>
+    <ProjectReference Include="..\..\DotNetNumerics.Windows.csproj">
+      <Name>DotNetNumerics.Windows</Name>
+      <Project>{3C1B37E8-10D1-4381-882A-9F0C0FD45871}</Project>
     </ProjectReference>
     <SDKReference Include="MSTestFramework, Version=11.0" />
     <SDKReference Include="TestPlatform, Version=11.0" />
@@ -137,12 +139,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="winrt.test.managed_TemporaryKey.pfx" />
+    <None Include="DotNetNumericsTests_TemporaryKey.pfx" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
-  <Import Project="..\Shared\winrt.test.managed.Shared.projitems" Label="Shared" />
+  <Import Project="..\Shared\DotNetNumericsTests.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <Import Project="$(SolutionDir)\build\canvas.cs.targets" />
 </Project>

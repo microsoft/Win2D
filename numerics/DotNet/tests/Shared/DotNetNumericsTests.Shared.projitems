@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>5424A025-3E57-41BE-A03E-9FF00C55B9B5</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>NumericsTests</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\MathHelper.cs">
+      <Link>MathHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Matrix3x2Test.cs">
+      <Link>Matrix3x2Test.cs</Link>
+    </Compile>
+    <Compile Include="..\Matrix4x4Test.cs">
+      <Link>Matrix4x4Test.cs</Link>
+    </Compile>
+    <Compile Include="..\PlaneTest.cs">
+      <Link>PlaneTest.cs</Link>
+    </Compile>
+    <Compile Include="..\QuaternionTest.cs">
+      <Link>QuaternionTest.cs</Link>
+    </Compile>
+    <Compile Include="..\Vector2Test.cs">
+      <Link>Vector2Test.cs</Link>
+    </Compile>
+    <Compile Include="..\Vector3Test.cs">
+      <Link>Vector3Test.cs</Link>
+    </Compile>
+    <Compile Include="..\Vector4Test.cs">
+      <Link>Vector4Test.cs</Link>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+</Project>

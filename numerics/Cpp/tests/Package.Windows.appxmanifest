@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
-  <Identity Name="8c8b56b5-efc3-4c6e-80cb-671756d2ce4d"
-            Publisher="CN=Microsoft Corporation"
+  <Identity Name="B9B32C1A-A45E-4DCD-9267-ED642D6D4837"
+            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
             Version="1.0.0.0" />
   
   <Properties>

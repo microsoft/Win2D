@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>8EAEFD7C-F03A-45C0-8A8A-43B87A884E9C</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Package">
+      <UniqueIdentifier>BA6B6C14-29FA-497C-BF95-8CBE26D55D44</UniqueIdentifier>
+      <Extensions>appxmanifest;tile;settings</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Logo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\SmallLogo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\SplashScreen.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Square71x71Logo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\StoreLogo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\WideLogo.scale-240.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.WindowsPhone.appxmanifest">
+      <Filter>Package</Filter>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CppNumericsTests_TemporaryKey.pfx" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <CodeSharingProject>99CE8A40-353B-4C48-8EC2-F6E81483EF61</CodeSharingProject>
+    <ItemsProjectGuid>{D125D087-F3A5-44C7-9BBF-952FB30B2D7E}</ItemsProjectGuid>
+    <ItemsRootNamespace>NumericsTests</ItemsRootNamespace>
+    <ItemsProjectName>CppNumericsTests.Shared</ItemsProjectName>
+    <HasSharedItems>true</HasSharedItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Float2Test.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Float3Test.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Float4Test.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Float3x2Test.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Float4x4Test.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PlaneTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QuaternionTest.cpp" />
+  </ItemGroup>
+</Project>

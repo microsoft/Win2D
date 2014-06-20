@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
-  <Identity Name="9b227fc5-cc24-4830-a904-59f912bbf806"
+  <Identity Name="B7568DA0-9416-416F-A0CC-C2C4B4DCA1B9"
             Publisher="CN=Microsoft Corporation"
             Version="1.0.0.0" />
   
   <Properties>
-    <DisplayName>DotNetNumericsTests</DisplayName>
+    <DisplayName>test.managed</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Images\UnitTestStoreLogo.png</Logo>
-    <Description>DotNetNumericsTests</Description>
+    <Description>test.managed</Description>
   </Properties>
   
   <Prerequisites>
