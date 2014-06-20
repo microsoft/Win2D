@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)DirectX11EnumTests.cpp" />
@@ -9,6 +9,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

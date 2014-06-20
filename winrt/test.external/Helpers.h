@@ -125,3 +125,58 @@ void ExpectObjectClosed(ACTION_ON_CLOSED_OBJECT&& fn)
             fn();
         });
 }
+
+//
+// Executes the given code on the UI thread.  Any C++ exception that is thrown
+// by this code is captured and re-thrown from the CppUnitTestFramework.Executor
+// thread so that it gets picked up by the test framework.
+//
+// NOTE: unfortunately, it seems that Assert::FailImpl uses SEH rather than C++
+// exceptions, so these don't get caught and transported.  This means that if
+// 'code' contains unit test Asserts that fail then the only way to find out
+// more is to attach a debugger.
+//
+template<typename CODE>
+void RunOnUIThread(CODE&& code)
+{
+    using namespace Microsoft::WRL::Wrappers;
+    using namespace Windows::ApplicationModel::Core;
+    using namespace Windows::UI::Core;
+
+    // 'code' will be executed on the UI thread.  This event is used to notify
+    // this thread when the UI thread has completed executing 'code'.
+    Event event(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+    if (!event.IsValid())
+        throw std::bad_alloc();
+
+    // If 'code' throws then we capture the exception here and rethrow.
+    std::exception_ptr exceptionDuringTest = nullptr;
+
+    // Dispatch 'code' to run on the UI thread
+    CoreWindow^ wnd = CoreApplication::MainView->CoreWindow;
+    CoreDispatcher^ dispatcher = wnd->Dispatcher;
+    dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+        ref new DispatchedHandler(
+            [&event, code, &exceptionDuringTest]() 
+            {
+                try
+                {
+                    code();
+                }
+                catch (...)
+                {
+                    exceptionDuringTest = std::current_exception();
+                }
+
+                SetEvent(event.Get());
+            }));
+
+    // Wait for the UI thread to run 'code', but don't wait forever.
+    auto timeout = 1000 * 5;
+    auto waitResult = WaitForSingleObjectEx(event.Get(), timeout, FALSE);
+    Assert::AreEqual(WAIT_OBJECT_0, waitResult);
+
+    // Rethrow any exception we caught
+    if (exceptionDuringTest)
+        std::rethrow_exception(exceptionDuringTest);
+}
