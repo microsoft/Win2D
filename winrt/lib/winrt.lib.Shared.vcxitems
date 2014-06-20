@@ -9,9 +9,6 @@
     <RootNamespace>Microsoft.Graphics.Canvas</RootNamespace>
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
-  <Import Project="$(SolutionDir)build\midlrt.props" />
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <TargetName>winrt</TargetName>
@@ -83,7 +80,4 @@
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
-  <Import Project="$(SolutionDir)build\midlrt.targets" />
 </Project>

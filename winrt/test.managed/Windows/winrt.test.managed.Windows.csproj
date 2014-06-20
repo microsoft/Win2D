@@ -104,11 +104,11 @@
   </PropertyGroup>
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
-    <ProjectReference Include="..\dll\winrt.dll.Windows.vcxproj">
+    <ProjectReference Include="..\..\dll\winrt.dll.Windows.vcxproj">
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
       <Name>winrt.dll.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj">
+    <ProjectReference Include="..\..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj">
       <Project>{e09c8be2-ac5a-4c87-9c2e-35290853448e}</Project>
       <Name>winrt.test.GraphicsDeviceComponent.Windows</Name>
     </ProjectReference>
@@ -142,6 +142,6 @@
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
-  <Import Project="winrt.test.managed.Shared.projitems" Label="Shared" />
+  <Import Project="..\Shared\winrt.test.managed.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
 </Project>

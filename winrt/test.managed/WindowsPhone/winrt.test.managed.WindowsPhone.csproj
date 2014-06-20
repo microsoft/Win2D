@@ -67,11 +67,11 @@
   </PropertyGroup>
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
-    <ProjectReference Include="..\dll\winrt.dll.WindowsPhone.vcxproj">
+    <ProjectReference Include="..\..\dll\winrt.dll.WindowsPhone.vcxproj">
       <Name>winrt.dll.WindowsPhone</Name>
       <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.WindowsPhone.vcxproj">
+    <ProjectReference Include="..\..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.WindowsPhone.vcxproj">
       <Name>winrt.test.GraphicsDeviceComponent.WindowsPhone</Name>
       <Project>{dd961f31-3142-4e3a-80a9-bc9da5d75816}</Project>
     </ProjectReference>
@@ -101,7 +101,7 @@
   <PropertyGroup Condition=" '$(TargetPlatformIdentifier)' == '' ">
     <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
-  <Import Project="winrt.test.managed.Shared.projitems" Label="Shared" />
+  <Import Project="..\Shared\winrt.test.managed.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
