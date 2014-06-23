@@ -306,15 +306,11 @@ namespace canvas
     // CanvasDeviceFactory
     //
 
-    std::shared_ptr<CanvasDeviceManager> CreateDefaultDeviceManager()
+    std::shared_ptr<CanvasDeviceManager> CanvasDeviceFactory::CreateManager()
     {
         auto adapter = std::make_shared<DefaultDeviceResourceCreationAdapter>();
         return std::make_shared<CanvasDeviceManager>(adapter);
     }
-
-    CanvasDeviceFactory::CanvasDeviceFactory() 
-        : m_manager(CreateDefaultDeviceManager())
-    {}
 
     IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevel(
         CanvasDebugLevel debugLevel,
@@ -336,7 +332,7 @@ namespace canvas
             {
                 CheckAndClearOutPointer(canvasDevice);
                 
-                auto newCanvasDevice = m_manager->Create(debugLevel, hardwareAcceleration);
+                auto newCanvasDevice = GetManager()->Create(debugLevel, hardwareAcceleration);
                 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -353,7 +349,7 @@ namespace canvas
                 CheckInPointer(directX11Device);
                 CheckAndClearOutPointer(canvasDevice);
 
-                auto newCanvasDevice = m_manager->Create(debugLevel, directX11Device);
+                auto newCanvasDevice = GetManager()->Create(debugLevel, directX11Device);
 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -372,7 +368,7 @@ namespace canvas
                 ComPtr<ID2D1Device1> d2dDevice;
                 ThrowIfFailed(resource->QueryInterface(d2dDevice.GetAddressOf()));
 
-                auto newCanvasDevice = m_manager->GetOrCreate(d2dDevice.Get());
+                auto newCanvasDevice = GetManager()->GetOrCreate(d2dDevice.Get());
 
                 ThrowIfFailed(newCanvasDevice.CopyTo(wrapper));
             });
@@ -386,7 +382,7 @@ namespace canvas
             {
                 CheckAndClearOutPointer(object);
 
-                auto newCanvasDevice = m_manager->Create(
+                auto newCanvasDevice = GetManager()->Create(
                     CanvasDebugLevel::None,
                     CanvasHardwareAcceleration::Auto);
 

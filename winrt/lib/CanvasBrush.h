@@ -29,17 +29,15 @@ namespace canvas
         virtual ComPtr<ID2D1SolidColorBrush> GetD2DSolidColorBrush() = 0;
     };
 
-    class CanvasSolidColorBrushFactory : public ActivationFactory<
-        ICanvasSolidColorBrushFactory,
-        CloakedIid<ICanvasFactoryNative>>
+    class CanvasSolidColorBrushFactory 
+        : public ActivationFactory<
+            ICanvasSolidColorBrushFactory,
+            CloakedIid<ICanvasFactoryNative>>,
+          public FactoryWithResourceManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
 
-        std::shared_ptr<CanvasSolidColorBrushManager> m_manager; // TODO: #1442 - see CanvasDevice.h
-
     public:
-        CanvasSolidColorBrushFactory();
-
         //
         // ICanvasSolidColorBrushFactory
         //

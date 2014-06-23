@@ -53,7 +53,7 @@ namespace canvas
         template<typename... Arguments>
         ComPtr<wrapper_t> Create(Arguments&&... args)
         {
-            auto wrapper = Manager()->CreateNew(args...);
+            auto wrapper = GetManager()->CreateNew(args...);
             m_tracker.Add(wrapper->GetResource().Get(), wrapper.Get());
             return wrapper;
         }
@@ -64,7 +64,7 @@ namespace canvas
                 resource,
                 [&]() 
                 {
-                    return Manager()->CreateWrapper(resource); 
+                    return GetManager()->CreateWrapper(resource); 
                 });
         }
 
@@ -81,7 +81,7 @@ namespace canvas
         // from ResourceManager.  This allows ResourceManager to call functions
         // in manager_t.
         //
-        typename TRAITS::manager_t* Manager()
+        typename TRAITS::manager_t* GetManager()
         {
             return static_cast<TRAITS::manager_t*>(this);
         }
@@ -98,4 +98,129 @@ namespace canvas
         // ResourceWrapper needs to be able to call remove
         friend class ResourceWrapper<TRAITS>;
     };
+
+
+    //
+    // Helper for activation factories to manage their manager object.
+    //
+    // ActivationFactories may come and go, but as long as something is holding
+    // a reference to a ResourceManager somewhere we want the factory to
+    // continue to use that one.
+    //
+    // FACTORY is expected to derive from FactoryWithResourceManager.
+    //
+    template<typename FACTORY, typename MANAGER>
+    class FactoryWithResourceManager
+    {
+        std::shared_ptr<MANAGER> m_manager;
+    public:
+        //
+        // Default constructor uses the real CoreApplication statics.
+        //
+        FactoryWithResourceManager()
+            : FactoryWithResourceManager(GetCoreApplication().Get())
+        {
+        }
+
+        //
+        // Constructor that uses a specific ICoreApplication; allows tests to
+        // provide their own instance.
+        //
+        FactoryWithResourceManager(ABI::Windows::ApplicationModel::Core::ICoreApplication* coreApplication)
+        {
+            using namespace Microsoft::WRL::Wrappers;
+            using namespace ABI::Windows::Foundation::Collections;
+
+            //
+            // Look up the manager holder.  This is stored in
+            // CoreApplication.Properties since we can't store any global
+            // references to COM objects (since C++ doesn't have guaranteed
+            // destruction order for global references).
+            //
+
+            ComPtr<IPropertySet> properties;
+            ThrowIfFailed(coreApplication->get_Properties(
+                &properties));
+
+            ComPtr<IMap<HSTRING, IInspectable*>> propertyMap;
+            ThrowIfFailed(properties.As(&propertyMap));
+
+            HStringReference keyName(TEXT(__FUNCDNAME__));
+            ComPtr<ManagerHolder> managerHolder;
+
+            boolean hasKey = false;
+            ThrowIfFailed(propertyMap->HasKey(keyName.Get(), &hasKey));
+
+            if (hasKey)
+            {
+                ComPtr<IInspectable> inspectableManagerHolder;
+                ThrowIfFailed(propertyMap->Lookup(keyName.Get(), &inspectableManagerHolder));
+
+                managerHolder = static_cast<ManagerHolder*>(inspectableManagerHolder.Get());
+            }
+
+            //
+            // Use the existing manager if possible
+            //
+
+            if (managerHolder)
+                m_manager = managerHolder->Manager.lock();
+
+            //
+            // Create, and remember, a new manager if there wasn't one
+            // previously
+            //
+
+            if (!m_manager)
+            {
+                m_manager = FACTORY::CreateManager();
+
+                managerHolder = Make<ManagerHolder>(); // always create a new ManagerHolder
+                managerHolder->Manager = m_manager;
+
+                boolean inserted = false;
+                ThrowIfFailed(propertyMap->Insert(keyName.Get(), managerHolder.Get(), &inserted));
+            }
+        }
+
+        const std::shared_ptr<MANAGER>& GetManager()
+        {
+            return m_manager;
+        }
+
+    private:
+        static ComPtr<ABI::Windows::ApplicationModel::Core::ICoreApplication> GetCoreApplication()
+        {
+            using namespace ABI::Windows::ApplicationModel::Core;
+            using namespace ABI::Windows::Foundation;
+            using namespace Microsoft::WRL::Wrappers;
+
+            ComPtr<ICoreApplication> coreApplication;
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
+                &coreApplication));
+
+            return coreApplication;
+        }
+
+        //
+        // Wrapper about a weak_ptr<MANAGER> that can be stored in a PropertySet
+        // (and therefore on CoreApplication.Properties).
+        //
+        struct ManagerHolder : public RuntimeClass<IInspectable>
+        {
+            std::weak_ptr<MANAGER> Manager;
+        };
+
+
+        //
+        // FACTORY can provide it's own implementation of this if it needs more
+        // explicit control over manager creation.
+        //
+        static std::shared_ptr<MANAGER> CreateManager()
+        {
+            return std::make_shared<MANAGER>();
+        }
+    };
+    
 }

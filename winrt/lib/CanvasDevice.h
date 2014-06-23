@@ -49,21 +49,17 @@ namespace canvas
     //
     // WinRT activation factory for the CanvasDevice runtimeclass.
     //
-    class CanvasDeviceFactory : public ActivationFactory<
-        ICanvasDeviceFactory, 
-        ICanvasDeviceStatics, 
-        CloakedIid<ICanvasFactoryNative>>
+    class CanvasDeviceFactory 
+        : public ActivationFactory<
+            ICanvasDeviceFactory, 
+            ICanvasDeviceStatics, 
+            CloakedIid<ICanvasFactoryNative>>,
+          public FactoryWithResourceManager<CanvasDeviceFactory, CanvasDeviceManager>
+                                
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
-        // TODO: #1442 - the factory can't own this since there's no guarantee
-        // the factory stays around.  We need some way for a newly created
-        // factory to find any previous existing manager and use that.
-        std::shared_ptr<CanvasDeviceManager> m_manager;
-
     public:
-        CanvasDeviceFactory();
-
         //
         // ActivationFactory
         //
@@ -95,6 +91,11 @@ namespace canvas
         IFACEMETHOD(GetOrCreate)(
             IUnknown* resource,
             IInspectable** wrapper) override;
+
+        //
+        // Used by FactoryWithResourceManager
+        //
+        static std::shared_ptr<CanvasDeviceManager> CreateManager();
     };
 
 

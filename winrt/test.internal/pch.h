@@ -56,12 +56,14 @@
 // local headers
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
+using namespace Microsoft::WRL::Wrappers;
 using namespace canvas;
 
 #include "Helpers.h"
 #include "MockCanvasDevice.h"
 #include "MockCanvasDrawingSession.h"
 #include "MockCanvasImageSourceDrawingSessionFactory.h"
+#include "MockCoreApplication.h"
 #include "MockD2DDevice.h"
 #include "MockD2DDeviceContext.h"
 #include "MockD2DFactory.h"

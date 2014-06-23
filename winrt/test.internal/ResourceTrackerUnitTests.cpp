@@ -2,68 +2,71 @@
 
 #include "pch.h"
 
-class DummyResource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
+namespace
 {
-};
-
-[uuid(B7E157E0-99C7-463B-8DDC-F72B10221FEC)]
-class IDummyWrapper : public IInspectable
-{
-public:
-    virtual int GetId() = 0;
-};
-
-class DummyWrapper;
-class DummyManager;
-
-struct DummyTraits
-{
-    typedef DummyResource resource_t;
-    typedef DummyWrapper wrapper_t;
-    typedef IDummyWrapper wrapper_interface_t;
-    typedef DummyManager manager_t;
-};
-
-class DummyWrapper : RESOURCE_WRAPPER_RUNTIME_CLASS(DummyTraits)
-{
-    InspectableClass(L"DummyWrapper", BaseTrust);
-
-    int m_id;
-
-public:
-    DummyWrapper(std::shared_ptr<DummyManager> manager, DummyResource* resource)
-        : ResourceWrapper(manager, resource)
+    class DummyResource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
     {
-        static int nextId = 1;
-        m_id = nextId++;
-    }
+    };
 
-    virtual ~DummyWrapper()
+    [uuid(B7E157E0-99C7-463B-8DDC-F72B10221FEC)]
+    class IDummyWrapper : public IInspectable
     {
-        Close();
-    }
+    public:
+        virtual int GetId() = 0;
+    };
 
-    virtual int GetId() override
+    class DummyWrapper;
+    class DummyManager;
+
+    struct DummyTraits
     {
-        GetResource();      // throws if closed
-        return m_id;
-    }
-};
+        typedef DummyResource resource_t;
+        typedef DummyWrapper wrapper_t;
+        typedef IDummyWrapper wrapper_interface_t;
+        typedef DummyManager manager_t;
+    };
 
-
-class DummyManager : public ResourceManager<DummyTraits>
-{
-public:
-    ComPtr<DummyWrapper> CreateNew(DummyResource* resource)
+    class DummyWrapper : RESOURCE_WRAPPER_RUNTIME_CLASS(DummyTraits)
     {
-        return Make<DummyWrapper>(shared_from_this(), resource);
-    }
+        InspectableClass(L"DummyWrapper", BaseTrust);
 
-    ComPtr<DummyWrapper> CreateWrapper(DummyResource* resource)
+        int m_id;
+
+    public:
+        DummyWrapper(std::shared_ptr<DummyManager> manager, DummyResource* resource)
+            : ResourceWrapper(manager, resource)
+        {
+            static int nextId = 1;
+            m_id = nextId++;
+        }
+
+        virtual ~DummyWrapper()
+        {
+            Close();
+        }
+
+        virtual int GetId() override
+        {
+            GetResource();      // throws if closed
+            return m_id;
+        }
+    };
+
+
+    class DummyManager : public ResourceManager<DummyTraits>
     {
-        return Make<DummyWrapper>(shared_from_this(), resource);
-    }
-};
+    public:
+        ComPtr<DummyWrapper> CreateNew(DummyResource* resource)
+        {
+            return Make<DummyWrapper>(shared_from_this(), resource);
+        }
+
+        ComPtr<DummyWrapper> CreateWrapper(DummyResource* resource)
+        {
+            return Make<DummyWrapper>(shared_from_this(), resource);
+        }
+    };
+}
 
 
 template<>

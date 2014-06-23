@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -46,6 +46,7 @@
     <ClInclude Include="MockCanvasDevice.h" />
     <ClInclude Include="MockCanvasDrawingSession.h" />
     <ClInclude Include="MockCanvasImageSourceDrawingSessionFactory.h" />
+    <ClInclude Include="MockCoreApplication.h" />
     <ClInclude Include="MockD2DDevice.h" />
     <ClInclude Include="MockD2DDeviceContext.h" />
     <ClInclude Include="MockD2DSolidColorBrush.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="ConversionUnitTests.cpp" />
+    <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

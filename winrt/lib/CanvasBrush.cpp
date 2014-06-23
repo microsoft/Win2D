@@ -37,11 +37,6 @@ namespace canvas
         return canvasSolidColorBrush;
     }
 
-    CanvasSolidColorBrushFactory::CanvasSolidColorBrushFactory()
-        : m_manager(std::make_shared<CanvasSolidColorBrushManager>())
-    {
-    }
-
     IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
         ICanvasDevice* canvasDevice,
         ABI::Windows::UI::Color color,
@@ -53,7 +48,7 @@ namespace canvas
                 CheckInPointer(canvasDevice);
                 CheckAndClearOutPointer(canvasSolidColorBrush);
 
-                auto newSolidColorBrush = m_manager->Create(
+                auto newSolidColorBrush = GetManager()->Create(
                     canvasDevice, 
                     color);
 
@@ -75,7 +70,7 @@ namespace canvas
                 ComPtr<ID2D1SolidColorBrush> d2dBrush;
                 ThrowIfFailed(resource->QueryInterface(d2dBrush.GetAddressOf()));
 
-                auto newBrush = m_manager->GetOrCreate(d2dBrush.Get());
+                auto newBrush = GetManager()->GetOrCreate(d2dBrush.Get());
 
                 ThrowIfFailed(newBrush.CopyTo(wrapper));
             });
