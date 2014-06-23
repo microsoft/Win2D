@@ -867,8 +867,7 @@ namespace NumericsTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(QuaternionTypeTraitsTest)
         {
-            // We should be standard layout and trivial, but not POD because we have constructors.
-            Assert::IsTrue(std::is_standard_layout<quaternion>::value);
+            // We should be trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_trivial<quaternion>::value);
             Assert::IsFalse(std::is_pod<quaternion>::value);
 
@@ -880,12 +879,10 @@ namespace NumericsTests
             // Copy constructor is present and trivial.
             Assert::IsTrue(std::is_copy_constructible<quaternion>::value);
             Assert::IsTrue(std::is_trivially_copy_constructible<quaternion>::value);
-            Assert::IsTrue(std::is_nothrow_copy_constructible<quaternion>::value);
 
             // Move constructor is present and trivial.
             Assert::IsTrue(std::is_move_constructible<quaternion>::value);
             Assert::IsTrue(std::is_trivially_move_constructible<quaternion>::value);
-            Assert::IsTrue(std::is_nothrow_move_constructible<quaternion>::value);
 
             // Copy assignment is present and trivial.
             Assert::IsTrue(std::is_copy_assignable<quaternion>::value);
@@ -900,7 +897,6 @@ namespace NumericsTests
             // Destruction is present and trivial.
             Assert::IsTrue(std::is_destructible<quaternion>::value);
             Assert::IsTrue(std::is_trivially_destructible<quaternion>::value);
-            Assert::IsTrue(std::is_nothrow_destructible<quaternion>::value);
         }
     };
 }

@@ -308,8 +308,7 @@ namespace NumericsTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(PlaneTypeTraitsTest)
         {
-            // We should be standard layout and trivial, but not POD because we have constructors.
-            Assert::IsTrue(std::is_standard_layout<plane>::value);
+            // We should be trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_trivial<plane>::value);
             Assert::IsFalse(std::is_pod<plane>::value);
 
@@ -321,12 +320,10 @@ namespace NumericsTests
             // Copy constructor is present and trivial.
             Assert::IsTrue(std::is_copy_constructible<plane>::value);
             Assert::IsTrue(std::is_trivially_copy_constructible<plane>::value);
-            Assert::IsTrue(std::is_nothrow_copy_constructible<plane>::value);
 
             // Move constructor is present and trivial.
             Assert::IsTrue(std::is_move_constructible<plane>::value);
             Assert::IsTrue(std::is_trivially_move_constructible<plane>::value);
-            Assert::IsTrue(std::is_nothrow_move_constructible<plane>::value);
 
             // Copy assignment is present and trivial.
             Assert::IsTrue(std::is_copy_assignable<plane>::value);
@@ -341,7 +338,6 @@ namespace NumericsTests
             // Destruction is present and trivial.
             Assert::IsTrue(std::is_destructible<plane>::value);
             Assert::IsTrue(std::is_trivially_destructible<plane>::value);
-            Assert::IsTrue(std::is_nothrow_destructible<plane>::value);
         }
     };
 }

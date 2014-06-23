@@ -1150,8 +1150,7 @@ namespace NumericsTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(Float4TypeTraitsTest)
         {
-            // We should be standard layout and trivial, but not POD because we have constructors.
-            Assert::IsTrue(std::is_standard_layout<float4>::value);
+            // We should be trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_trivial<float4>::value);
             Assert::IsFalse(std::is_pod<float4>::value);
 
@@ -1163,12 +1162,10 @@ namespace NumericsTests
             // Copy constructor is present and trivial.
             Assert::IsTrue(std::is_copy_constructible<float4>::value);
             Assert::IsTrue(std::is_trivially_copy_constructible<float4>::value);
-            Assert::IsTrue(std::is_nothrow_copy_constructible<float4>::value);
 
             // Move constructor is present and trivial.
             Assert::IsTrue(std::is_move_constructible<float4>::value);
             Assert::IsTrue(std::is_trivially_move_constructible<float4>::value);
-            Assert::IsTrue(std::is_nothrow_move_constructible<float4>::value);
 
             // Copy assignment is present and trivial.
             Assert::IsTrue(std::is_copy_assignable<float4>::value);
@@ -1183,7 +1180,6 @@ namespace NumericsTests
             // Destruction is present and trivial.
             Assert::IsTrue(std::is_destructible<float4>::value);
             Assert::IsTrue(std::is_trivially_destructible<float4>::value);
-            Assert::IsTrue(std::is_nothrow_destructible<float4>::value);
         }
     };
 }

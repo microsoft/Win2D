@@ -904,6 +904,8 @@ namespace NumericsTests
             Assert::IsTrue(Equal(expected, actual), L"reflect did not return the expected value.");
         }
 
+#ifdef __cplusplus_winrt
+
         // A test for float2 -> Size conversion
         TEST_METHOD(Float2ToSizeTest)
         {
@@ -967,6 +969,8 @@ namespace NumericsTests
             Assert::AreEqual(42.0f, result.x);
             Assert::AreEqual(23.0f, result.y);
         }
+
+#endif  // __cplusplus_winrt
 
         struct Vector2_2x
         {
@@ -1032,8 +1036,7 @@ namespace NumericsTests
         // A test to make sure this type matches our expectations for blittability
         TEST_METHOD(Float2TypeTraitsTest)
         {
-            // We should be standard layout and trivial, but not POD because we have constructors.
-            Assert::IsTrue(std::is_standard_layout<float2>::value);
+            // We should be trivial, but not POD because we have constructors.
             Assert::IsTrue(std::is_trivial<float2>::value);
             Assert::IsFalse(std::is_pod<float2>::value);
 
@@ -1045,12 +1048,10 @@ namespace NumericsTests
             // Copy constructor is present and trivial.
             Assert::IsTrue(std::is_copy_constructible<float2>::value);
             Assert::IsTrue(std::is_trivially_copy_constructible<float2>::value);
-            Assert::IsTrue(std::is_nothrow_copy_constructible<float2>::value);
 
             // Move constructor is present and trivial.
             Assert::IsTrue(std::is_move_constructible<float2>::value);
             Assert::IsTrue(std::is_trivially_move_constructible<float2>::value);
-            Assert::IsTrue(std::is_nothrow_move_constructible<float2>::value);
 
             // Copy assignment is present and trivial.
             Assert::IsTrue(std::is_copy_assignable<float2>::value);
@@ -1065,7 +1066,6 @@ namespace NumericsTests
             // Destruction is present and trivial.
             Assert::IsTrue(std::is_destructible<float2>::value);
             Assert::IsTrue(std::is_trivially_destructible<float2>::value);
-            Assert::IsTrue(std::is_nothrow_destructible<float2>::value);
         }
     };
 }

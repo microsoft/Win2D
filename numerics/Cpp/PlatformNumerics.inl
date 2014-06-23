@@ -122,7 +122,35 @@ namespace Platform
         { }
 
 
-#ifdef __cplusplus_winrt
+#ifdef _WINDOWS_NUMERICS_CX_PROJECTION_
+
+
+        inline float2::operator float2(Windows::Foundation::Point value)
+        {
+            return float2(value.X, value.Y);
+        }
+
+
+        inline float2::operator float2(Windows::Foundation::Size value)
+        {
+            return float2(value.Width, value.Height);
+        }
+
+
+        inline float2::operator Windows::Foundation::Point(float2 value)
+        {
+            return Windows::Foundation::Point(value.x, value.y);
+        }
+
+
+        inline float2::operator Windows::Foundation::Size(float2 value)
+        {
+            return Windows::Foundation::Size(value.x, value.y);
+        }
+
+
+#elif defined __cplusplus_winrt // && !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         inline float2::float2(Windows::Foundation::Point const& value)
             : x(value.X), y(value.Y)
@@ -145,7 +173,8 @@ namespace Platform
             return Windows::Foundation::Size(x, y);
         }
 
-#endif  // __cpluspluswinrt
+
+#endif  // __cpluspluswinrt && !_WINDOWS_NUMERICS_CX_PROJECTION_
 
 
         inline float2 float2::zero()

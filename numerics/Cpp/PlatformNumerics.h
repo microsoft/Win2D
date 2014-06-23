@@ -7,11 +7,17 @@
 #include <DirectXMath.h>
 #include <stdexcept>
 
+#if defined __cplusplus_winrt && _MSC_VER >= 1900
+#define _WINDOWS_NUMERICS_CX_PROJECTION_
+#endif
+
 
 namespace Platform
 {
     namespace Numerics
     {
+#ifndef _WINDOWS_NUMERICS_CX_PROJECTION_
+
         struct float2;
         struct float3;
         struct float4;
@@ -45,6 +51,9 @@ namespace Platform
             static float2 unit_x();
             static float2 unit_y();
         };
+
+#endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         // Operators.
         float2 operator +(float2 const& value1, float2 const& value2);
@@ -83,6 +92,8 @@ namespace Platform
         float2 transform(float2 const& value, quaternion const& rotation);
 
 
+#ifndef _WINDOWS_NUMERICS_CX_PROJECTION_
+
         struct float3
         {
             float x, y, z;
@@ -100,6 +111,9 @@ namespace Platform
             static float3 unit_y();
             static float3 unit_z();
         };
+
+#endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         // Operators.
         float3 operator +(float3 const& value1, float3 const& value2);
@@ -137,6 +151,8 @@ namespace Platform
         float3 transform(float3 const& value, quaternion const& rotation);
 
 
+#ifndef _WINDOWS_NUMERICS_CX_PROJECTION_
+
         struct float4
         {
             float x, y, z, w;
@@ -156,6 +172,9 @@ namespace Platform
             static float4 unit_z();
             static float4 unit_w();
         };
+
+#endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         // Operators.
         float4 operator +(float4 const& value1, float4 const& value2);
@@ -194,6 +213,8 @@ namespace Platform
         float4 transform4(float2 const& value, quaternion const& rotation);
 
 
+#ifndef _WINDOWS_NUMERICS_CX_PROJECTION_
+
         struct float3x2
         {
             float m11, m12;
@@ -207,6 +228,9 @@ namespace Platform
             // Common values.
             static float3x2 identity();
         };
+
+#endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         // Factory functions.
         float3x2 make_float3x2_translation(float2 const& position);
@@ -243,6 +267,8 @@ namespace Platform
         float3x2 lerp(float3x2 const& matrix1, float3x2 const& matrix2, float amount);
 
 
+#ifndef _WINDOWS_NUMERICS_CX_PROJECTION_
+
         struct float4x4
         {
             float m11, m12, m13, m14;
@@ -258,6 +284,9 @@ namespace Platform
             // Common values.
             static float4x4 identity();
         };
+
+#endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         // Factory functions.
         float4x4 make_float4x4_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& cameraUpVector, float3 const& cameraForwardVector);
@@ -313,6 +342,8 @@ namespace Platform
         float4x4 lerp(float4x4 const& matrix1, float4x4 const& matrix2, float amount);
 
 
+#ifndef _WINDOWS_NUMERICS_CX_PROJECTION_
+
         struct plane
         {
             float3 normal;
@@ -324,6 +355,9 @@ namespace Platform
             plane(float3 normal, float d);
             explicit plane(float4 value);
         };
+
+#endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         // Factory functions.
         plane make_plane_from_vertices(float3 const& point1, float3 const& point2, float3 const& point3);
@@ -341,6 +375,8 @@ namespace Platform
         float dot_normal(plane const& plane, float3 const& value);
 
 
+#ifndef _WINDOWS_NUMERICS_CX_PROJECTION_
+
         struct quaternion
         {
             float x, y, z, w;
@@ -353,6 +389,9 @@ namespace Platform
             // Common values.
             static quaternion identity();
         };
+
+#endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
+
 
         // Factory functions.
         quaternion make_quaternion_from_axis_angle(float3 const& axis, float angle);
@@ -411,3 +450,6 @@ namespace DirectX
 
 
 #include "PlatformNumerics.inl"
+
+
+#undef _WINDOWS_NUMERICS_CX_PROJECTION_
