@@ -81,8 +81,8 @@ namespace Platform
         float dot(float2 const& value1, float2 const& value2);
         float2 normalize(float2 const& value);
         float2 reflect(float2 const& vector, float2 const& normal);
-        float2 min(float2 const& value1, float2 const& value2);
-        float2 max(float2 const& value1, float2 const& value2);
+        float2 (min)(float2 const& value1, float2 const& value2);
+        float2 (max)(float2 const& value1, float2 const& value2);
         float2 clamp(float2 const& value1, float2 const& min, float2 const& max);
         float2 lerp(float2 const& value1, float2 const& value2, float amount);
         float2 transform(float2 const& position, float3x2 const& matrix);
@@ -142,8 +142,8 @@ namespace Platform
         float3 normalize(float3 const& value);
         float3 cross(float3 const& vector1, float3 const& vector2);
         float3 reflect(float3 const& vector, float3 const& normal);
-        float3 min(float3 const& value1, float3 const& value2);
-        float3 max(float3 const& value1, float3 const& value2);
+        float3 (min)(float3 const& value1, float3 const& value2);
+        float3 (max)(float3 const& value1, float3 const& value2);
         float3 clamp(float3 const& value1, float3 const& min, float3 const& max);
         float3 lerp(float3 const& value1, float3 const& value2, float amount);
         float3 transform(float3 const& position, float4x4 const& matrix);
@@ -201,8 +201,8 @@ namespace Platform
         float distance_squared(float4 const& value1, float4 const& value2);
         float dot(float4 const& vector1, float4 const& vector2);
         float4 normalize(float4 const& vector);
-        float4 min(float4 const& value1, float4 const& value2);
-        float4 max(float4 const& value1, float4 const& value2);
+        float4 (min)(float4 const& value1, float4 const& value2);
+        float4 (max)(float4 const& value1, float4 const& value2);
         float4 clamp(float4 const& value1, float4 const& min, float4 const& max);
         float4 lerp(float4 const& value1, float4 const& value2, float amount);
         float4 transform(float4 const& vector, float4x4 const& matrix);

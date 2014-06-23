@@ -421,7 +421,7 @@ namespace Platform
         }
 
 
-        inline float2 min(float2 const& value1, float2 const& value2)
+        inline float2 (min)(float2 const& value1, float2 const& value2)
         {
             float2 ans;
 
@@ -432,7 +432,7 @@ namespace Platform
         }
 
 
-        inline float2 max(float2 const& value1, float2 const& value2)
+        inline float2 (max)(float2 const& value1, float2 const& value2)
         {
             float2 ans;
 
@@ -830,7 +830,7 @@ namespace Platform
         }
 
 
-        inline float3 min(float3 const& value1, float3 const& value2)
+        inline float3 (min)(float3 const& value1, float3 const& value2)
         {
             float3 ans;
 
@@ -842,7 +842,7 @@ namespace Platform
         }
 
 
-        inline float3 max(float3 const& value1, float3 const& value2)
+        inline float3 (max)(float3 const& value1, float3 const& value2)
         {
             float3 ans;
 
@@ -1231,7 +1231,7 @@ namespace Platform
         }
 
 
-        inline float4 min(float4 const& value1, float4 const& value2)
+        inline float4 (min)(float4 const& value1, float4 const& value2)
         {
             float4 ans;
 
@@ -1244,7 +1244,7 @@ namespace Platform
         }
 
 
-        inline float4 max(float4 const& value1, float4 const& value2)
+        inline float4 (max)(float4 const& value1, float4 const& value2)
         {
             float4 ans;
 
