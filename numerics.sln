@@ -11,8 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppNumericsTests", "numeric
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CppNumerics", "numerics\CppNumerics", "{59EE0893-E280-42CD-92CA-86370F9B349A}"
 	ProjectSection(SolutionItems) = preProject
-		numerics\Cpp\PlatformNumerics.h = numerics\Cpp\PlatformNumerics.h
-		numerics\Cpp\PlatformNumerics.inl = numerics\Cpp\PlatformNumerics.inl
+		numerics\Cpp\WindowsNumerics.h = numerics\Cpp\WindowsNumerics.h
+		numerics\Cpp\WindowsNumerics.inl = numerics\Cpp\WindowsNumerics.inl
 	EndProjectSection
 EndProject
 Global

@@ -6,7 +6,7 @@
 
 #include "pch.h"
 
-using namespace Platform::Numerics;
+using namespace Windows::Foundation::Numerics;
 
 
 namespace NumericsTests

@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "Helpers.h"
 
-using namespace Platform::Numerics;
+using namespace Windows::Foundation::Numerics;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace NumericsTests
