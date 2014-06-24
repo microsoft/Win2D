@@ -38,6 +38,7 @@
 #include <ErrorHandling.h>
 
 // Public
+#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // winrt.lib
@@ -47,7 +48,6 @@
 #include <CanvasImageSourceDrawingSessionAdapter.h>
 #include <CanvasBrush.h>
 #include <Conversion.h>
-#include <GraphicsDevice\GraphicsDevice.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>

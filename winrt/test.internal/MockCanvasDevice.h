@@ -24,7 +24,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateCompatibleDevice(IDirectX11Device *, ICanvasDevice **) override
+        IFACEMETHODIMP CreateCompatibleDevice(IDirect3DDevice *, ICanvasDevice **) override
         {
             Assert::Fail(L"Unexpected call to CreateCompatibleDevice");
             return E_NOTIMPL;
@@ -37,9 +37,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP get_DirectX11Device(IDirectX11Device **) override
+        IFACEMETHODIMP get_Direct3DDevice(IDirect3DDevice **) override
         {
-            Assert::Fail(L"Unexpected call to get_DirectX11Device");
+            Assert::Fail(L"Unexpected call to get_Direct3DDevice");
             return E_NOTIMPL;
         }
 

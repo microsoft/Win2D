@@ -136,16 +136,16 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasDevice_Create_With_Specific_DirectX11Device)
+    TEST_METHOD(CanvasDevice_Create_With_Specific_Direct3DDevice)
     {
-        using canvas::DirectX11Device;
-
         ComPtr<MockD3D11Device> mockD3D11Device = Make<MockD3D11Device>();
-        ComPtr<IDirectX11Device> stubDirectX11Device = Make<DirectX11Device>(mockD3D11Device.Get());
+
+        ComPtr<IDirect3DDevice> stubDirect3DDevice;
+        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(mockD3D11Device.Get(), &stubDirect3DDevice));
 
         auto canvasDevice = m_deviceManager->Create(
             CanvasDebugLevel::None, 
-            stubDirectX11Device.Get());
+            stubDirect3DDevice.Get());
         Assert::IsNotNull(canvasDevice.Get());
 
         // A D2D device should still have been created
@@ -166,7 +166,7 @@ public:
         ComPtr<ICanvasDevice> recoveredDevice;
         Assert::AreEqual(E_INVALIDARG, canvasDevice->RecoverLostDevice(&recoveredDevice));
 
-        // Try a NULL DirectX11Device. 
+        // Try a NULL Direct3DDevice. 
         Assert::ExpectException<InvalidArgException>(
             [&]() { m_deviceManager->Create(CanvasDebugLevel::None, nullptr); });
     }
@@ -197,15 +197,14 @@ public:
     TEST_METHOD(CanvasDevice_Closed)
     {
         using canvas::CanvasDevice;
-        using canvas::DirectX11Device;
 
         auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
         Assert::IsNotNull(canvasDevice.Get());
 
         Assert::AreEqual(S_OK, canvasDevice->Close());
 
-        IDirectX11Device* deviceActual = reinterpret_cast<IDirectX11Device*>(0x1234);
-        Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_DirectX11Device(&deviceActual));
+        IDirect3DDevice* deviceActual = reinterpret_cast<IDirect3DDevice*>(0x1234);
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_Direct3DDevice(&deviceActual));
         Assert::IsNull(deviceActual);
 
         CanvasHardwareAcceleration hardwareAccelerationActual = static_cast<CanvasHardwareAcceleration>(1);
@@ -217,11 +216,12 @@ public:
             Assert::IsNull(recoveredDevice.Get());
         }
 
-        ComPtr<MockD3D11Device> mockD3D11Device = Make<MockD3D11Device>();
-        ComPtr<IDirectX11Device> stubDirectX11Device = Make<canvas::DirectX11Device>(mockD3D11Device.Get());
+        ComPtr<MockD3D11Device> mockD3D11Device = Make<MockD3D11Device>();        
+        ComPtr<IDirect3DDevice> stubDirect3DDevice;
+        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(mockD3D11Device.Get(), &stubDirect3DDevice));
         {
             ComPtr<ICanvasDevice> compatibleDevice;
-            Assert::AreEqual(RO_E_CLOSED, canvasDevice->CreateCompatibleDevice(stubDirectX11Device.Get(), &compatibleDevice));
+            Assert::AreEqual(RO_E_CLOSED, canvasDevice->CreateCompatibleDevice(stubDirect3DDevice.Get(), &compatibleDevice));
             Assert::IsNull(compatibleDevice.Get());
         }
     }
@@ -241,12 +241,12 @@ public:
         // Ensure that the original device and the recovered device have different D2D devices.
         Assert::AreNotEqual(canvasD2DDevice.Get(), recoveredD2DDevice.Get());
 
-        // Verify the higher-level DirectX11Devices are different, as well.
-        ComPtr<IDirectX11Device> canvasDirectX11Device;
-        ComPtr<IDirectX11Device> compatibleDirectX11Device;
-        canvasDevice->get_DirectX11Device(&canvasDirectX11Device);
-        compatibleDevice->get_DirectX11Device(&compatibleDirectX11Device);
-        Assert::AreNotEqual(canvasDirectX11Device.Get(), compatibleDirectX11Device.Get());
+        // Verify the higher-level Direct3DDevices are different, as well.
+        ComPtr<IDirect3DDevice> canvasDirect3DDevice;
+        ComPtr<IDirect3DDevice> compatibleDirect3DDevice;
+        canvasDevice->get_Direct3DDevice(&canvasDirect3DDevice);
+        compatibleDevice->get_Direct3DDevice(&compatibleDirect3DDevice);
+        Assert::AreNotEqual(canvasDirect3DDevice.Get(), compatibleDirect3DDevice.Get());
 
         // Ensure the original device and recovered device have the same D2D factory.   
         ComPtr<ID2D1Factory> canvasD2DFactory;
@@ -269,23 +269,24 @@ public:
 
     TEST_METHOD(CanvasDevice_CreateCompatibleDevice)
     {
-        using canvas::DirectX11Device;
+        using canvas::Direct3DDevice;
 
         auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
         ComPtr<ICanvasDevice> compatibleDevice;
             
         ComPtr<MockD3D11Device> mockD3D11Device = Make<MockD3D11Device>();
-        ComPtr<IDirectX11Device> stubDirectX11Device = Make<DirectX11Device>(mockD3D11Device.Get());
+        ComPtr<IDirect3DDevice> stubDirect3DDevice;
+        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(mockD3D11Device.Get(), &stubDirect3DDevice));
 
-        Assert::AreEqual(S_OK, canvasDevice->CreateCompatibleDevice(stubDirectX11Device.Get(), &compatibleDevice));
+        Assert::AreEqual(S_OK, canvasDevice->CreateCompatibleDevice(stubDirect3DDevice.Get(), &compatibleDevice));
 
         VerifyCompatibleDevices(canvasDevice, compatibleDevice);
         AssertDeviceManagerRoundtrip(compatibleDevice.Get());
 
-        // Additionally, verify that the compatible device has the correct original DirectX11Device.
-        ComPtr<IDirectX11Device> deviceActual;
-        Assert::AreEqual(S_OK, compatibleDevice->get_DirectX11Device(&deviceActual));
-        Assert::AreEqual(static_cast<IDirectX11Device*>(stubDirectX11Device.Get()), deviceActual.Get());
+        // Additionally, verify that the compatible device has the correct original Direct3DDevice.
+        ComPtr<IDirect3DDevice> deviceActual;
+        Assert::AreEqual(S_OK, compatibleDevice->get_Direct3DDevice(&deviceActual));
+        Assert::AreEqual(static_cast<IDirect3DDevice*>(stubDirect3DDevice.Get()), deviceActual.Get());
     }
 
     TEST_METHOD(CanvasDevice_HwSwFallback)

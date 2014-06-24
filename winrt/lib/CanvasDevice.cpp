@@ -137,12 +137,12 @@ namespace canvas
 
         CanvasHardwareAcceleration actualHardwareAcceleration;
 
-        auto directX11Device = MakeDirectX11Device(
+        auto direct3DDevice = MakeDirect3DDevice(
             requestedHardwareAcceleration,
             &actualHardwareAcceleration);
 
         auto d2dDevice = MakeD2DDevice(
-            directX11Device.Get(), 
+            direct3DDevice.Get(), 
             d2dFactory);
         
         auto device = Make<CanvasDevice>(
@@ -150,7 +150,7 @@ namespace canvas
             debugLevel,
             requestedHardwareAcceleration,
             actualHardwareAcceleration,
-            directX11Device.Get(),
+            direct3DDevice.Get(),
             d2dDevice.Get());
         CheckMakeResult(device);
 
@@ -160,27 +160,27 @@ namespace canvas
     
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
         CanvasDebugLevel debugLevel,
-        IDirectX11Device* directX11Device)
+        IDirect3DDevice* direct3DDevice)
     {
         ThrowIfInvalid(debugLevel);
-        CheckInPointer(directX11Device);
+        CheckInPointer(direct3DDevice);
         auto d2dFactory = m_adapter->CreateD2DFactory(debugLevel);
 
-        return CreateNew(debugLevel, directX11Device, d2dFactory.Get());
+        return CreateNew(debugLevel, direct3DDevice, d2dFactory.Get());
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
         CanvasDebugLevel debugLevel,
-        IDirectX11Device* directX11Device,
+        IDirect3DDevice* direct3DDevice,
         ID2D1Factory2* d2dFactory)
     {
         ThrowIfInvalid(debugLevel);
-        CheckInPointer(directX11Device);
+        CheckInPointer(direct3DDevice);
         CheckInPointer(d2dFactory);
 
         auto d2dDevice = MakeD2DDevice(
-            directX11Device, 
+            direct3DDevice, 
             d2dFactory);
         
         auto device = Make<CanvasDevice>(
@@ -188,7 +188,7 @@ namespace canvas
             debugLevel, 
             CanvasHardwareAcceleration::Unknown,
             CanvasHardwareAcceleration::Unknown,
-            directX11Device, 
+            direct3DDevice, 
             d2dDevice.Get());
         CheckMakeResult(device);
 
@@ -201,15 +201,15 @@ namespace canvas
     {
         auto dxgiDevice = m_adapter->GetDxgiDevice(d2dDevice);
 
-        ComPtr<IDirectX11Device> directX11Device;
-        ThrowIfFailed(CreateDirectX11DeviceFromDXGIDevice(dxgiDevice.Get(), &directX11Device));
+        ComPtr<IDirect3DDevice> direct3DDevice;
+        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(dxgiDevice.Get(), &direct3DDevice));
 
         auto canvasDevice = Make<CanvasDevice>(
             shared_from_this(),
             CanvasDebugLevel::None,
             CanvasHardwareAcceleration::Unknown,
             CanvasHardwareAcceleration::Unknown,
-            directX11Device.Get(),
+            direct3DDevice.Get(),
             d2dDevice);
         CheckMakeResult(canvasDevice);
         
@@ -217,7 +217,7 @@ namespace canvas
     }
 
 
-    ComPtr<IDirectX11Device> CanvasDeviceManager::MakeDirectX11Device(
+    ComPtr<IDirect3DDevice> CanvasDeviceManager::MakeDirect3DDevice(
         CanvasHardwareAcceleration requestedHardwareAcceleration,
         CanvasHardwareAcceleration* actualHardwareAccelerationOut) const
     {
@@ -230,16 +230,16 @@ namespace canvas
             requestedHardwareAcceleration,
             &actualHardwareAcceleration);
 
-        // Wrap the native D3D device in a projected DirectX11Device object.
+        // Wrap the native D3D device in a projected Direct3DDevice object.
         ComPtr<IDXGIDevice> dxgiDevice;
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
 
-        ComPtr<IDirectX11Device> directX11Device;
-        ThrowIfFailed(CreateDirectX11DeviceFromDXGIDevice(dxgiDevice.Get(), &directX11Device));
+        ComPtr<IDirect3DDevice> direct3DDevice;
+        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(dxgiDevice.Get(), &direct3DDevice));
 
         *actualHardwareAccelerationOut = actualHardwareAcceleration;
 
-        return directX11Device;
+        return direct3DDevice;
     }
 
 
@@ -289,11 +289,11 @@ namespace canvas
 
     /*static*/
     ComPtr<ID2D1Device1> CanvasDeviceManager::MakeD2DDevice(
-        IDirectX11Device* directX11Device,
+        IDirect3DDevice* direct3DDevice,
         ID2D1Factory2* d2dFactory)
     {
         ComPtr<IDXGIDevice> dxgiDevice;
-        ThrowIfFailed(GetDXGIInterfaceFromDirectX11Device(directX11Device, __uuidof(IDXGIDevice), &dxgiDevice));
+        ThrowIfFailed(GetDXGIInterfaceFromDirect3D11Device(direct3DDevice, __uuidof(IDXGIDevice), &dxgiDevice));
 
         ComPtr<ID2D1Device1> d2dDevice;
         ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
@@ -338,18 +338,18 @@ namespace canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::CreateFromDirectX11Device(
+    IFACEMETHODIMP CanvasDeviceFactory::CreateFromDirect3D11Device(
         CanvasDebugLevel debugLevel,
-        IDirectX11Device* directX11Device,
+        IDirect3DDevice* direct3DDevice,
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
             [&]()
             {
-                CheckInPointer(directX11Device);
+                CheckInPointer(direct3DDevice);
                 CheckAndClearOutPointer(canvasDevice);
 
-                auto newCanvasDevice = GetManager()->Create(debugLevel, directX11Device);
+                auto newCanvasDevice = GetManager()->Create(debugLevel, direct3DDevice);
 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -399,15 +399,15 @@ namespace canvas
         CanvasDebugLevel debugLevel,
         CanvasHardwareAcceleration requestedHardwareAcceleration,
         CanvasHardwareAcceleration actualHardwareAcceleration,
-        IDirectX11Device* directX11Device,
+        IDirect3DDevice* direct3DDevice,
         ID2D1Device1* d2dDevice)
         : ResourceWrapper(deviceManager, d2dDevice)
         , m_requestedHardwareAcceleration(requestedHardwareAcceleration)
         , m_actualHardwareAcceleration(actualHardwareAcceleration)
         , m_debugLevel(debugLevel)
-        , m_directX11Device(directX11Device)
+        , m_direct3DDevice(direct3DDevice)
     {
-        CheckInPointer(directX11Device);
+        CheckInPointer(direct3DDevice);
 
         ThrowIfFailed(d2dDevice->CreateDeviceContext(
             D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
@@ -433,7 +433,7 @@ namespace canvas
     }
 
     IFACEMETHODIMP CanvasDevice::CreateCompatibleDevice(
-        IDirectX11Device* directX11Device,
+        IDirect3DDevice* direct3DDevice,
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
@@ -443,7 +443,7 @@ namespace canvas
 
                 auto newCanvasDevice = Manager()->Create(
                     m_debugLevel,
-                    directX11Device,
+                    direct3DDevice,
                     GetD2DFactory().Get());
 
                 CheckMakeResult(newCanvasDevice);
@@ -477,21 +477,21 @@ namespace canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDevice::get_DirectX11Device(_Out_ IDirectX11Device **value)
+    IFACEMETHODIMP CanvasDevice::get_Direct3DDevice(_Out_ IDirect3DDevice **value)
     {
         return ExceptionBoundary(
             [&]()
             {
                 CheckAndClearOutPointer(value);
-                ComPtr<IDirectX11Device> directX11Device = m_directX11Device.EnsureNotClosed();
-                ThrowIfFailed(directX11Device.CopyTo(value));
+                ComPtr<IDirect3DDevice> direct3DDevice = m_direct3DDevice.EnsureNotClosed();
+                ThrowIfFailed(direct3DDevice.CopyTo(value));
             });
     }
 
     IFACEMETHODIMP CanvasDevice::Close()
     {
         ResourceWrapper::Close();
-        m_directX11Device.Close();
+        m_direct3DDevice.Close();
         m_d2dResourceCreationDeviceContext.Close();
         return S_OK;
     }

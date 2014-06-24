@@ -1,0 +1,128 @@
+// Copyright (c) Microsoft Corporation.  All rights reserved
+
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+import "WinRTDirectXCommon.idl";
+
+#include "../version.h"
+
+//
+// Types that are bound to Direct3D 11.
+//
+
+namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
+{
+    runtimeclass Direct3DDevice;
+    runtimeclass Direct3DSurface;
+
+    //
+    // Direct3DMultisampleDescription -- this is a WinRT projection of
+    // DXGI_SAMPLE_DESC
+    //
+    [version(VERSION)]
+    typedef struct Direct3DMultisampleDescription
+    {
+        INT32 Count;
+        INT32 Quality;
+    } Direct3DMultisampleDescription;
+
+
+    //
+    // Direct3DSurfaceDescription -- this is a WinRT projection of
+    // DXGI_SURFACE_DESC.
+    //
+    [version(VERSION)]
+    typedef struct Direct3DSurfaceDescription
+    {
+        INT32 Width;
+        INT32 Height;
+        Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat Format;
+        Direct3DMultisampleDescription MultisampleDescription;
+    } Direct3DSurfaceDescription;
+
+
+    //
+    // Direct3DUsage -- this is a WinRT projection of D3D11_USAGE
+    //
+    [version(VERSION)]
+    typedef enum Direct3DUsage
+    {
+        Default = 0,            // D3D11_USAGE_DEFAULT
+        Immutable = 1,          // D3D11_USAGE_IMMUTABLE
+        Dynamic = 2,            // D3D11_USAGE_DYNAMIC
+        Staging = 3             // D3D11_USAGE_STAGING
+    } Direct3DUsage;
+
+
+    //
+    // Direct3DBindings -- this is a WinRT projection of D3D11_BIND_FLAG
+    //
+    // WinRT bans 'Flags' as an enum name suffix.
+    //
+    [version(VERSION), flags]
+    typedef enum Direct3DBindings
+    {
+        VertexBuffer    = 0x001, // D3D11_BIND_VERTEX_BUFFER
+        IndexBuffer     = 0x002, // D3D11_BIND_INDEX_BUFFER
+        ConstantBuffer  = 0x004, // D3D11_BIND_CONSTANT_BUFFER
+        ShaderResource  = 0x008, // D3D11_BIND_SHADER_RESOURCE
+        StreamOutput    = 0x010, // D3D11_BIND_STREAM_OUTPUT
+        RenderTarget    = 0x020, // D3D11_BIND_RENDER_TARGET
+        DepthStencil    = 0x040, // D3D11_BIND_DEPTH_STENCIL
+        UnorderedAccess = 0x080, // D3D11_BIND_UNORDERED_ACCESS
+        Decoder         = 0x200, // D3D11_BIND_DECODER
+        VideoEncoder    = 0x400  // D3D11_BIND_VIDEO_ENCODER
+    } Direct3DBindings;
+
+
+    //
+    // runtimeclass: Direct3DDevice
+    //
+    // This represents an IDXGIDevice and can be used to interop between
+    // components that need to exchange IDXGIDevice references.
+    //
+
+    [version(VERSION), 
+     uuid(A37624AB-8D5F-4650-9D3E-9EAE3D9BC670), 
+     exclusiveto(Direct3DDevice)]
+    interface IDirect3DDevice : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        //
+        // Calls IDXGIDevice3::Trim()
+        //
+        HRESULT Trim();
+    }
+
+    [version(VERSION), 
+     marshaling_behavior(agile)]
+    runtimeclass Direct3DDevice
+    {
+        [default] interface IDirect3DDevice;
+    }
+
+
+    //
+    // runtimeclass: Direct3DSurface
+    //
+    // This represents an IDXGISurface and can be used to interop between
+    // components that need to exchange IDXGISurface references.
+    //
+
+    [version(VERSION),
+     uuid(0BF4A146-13C1-4694-BEE3-7ABF15EAF586),
+     exclusiveto(Direct3DSurface)]
+    interface IDirect3DSurface : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [propget] HRESULT Description(
+            [out, retval] Direct3DSurfaceDescription* value);
+    }
+
+    [version(VERSION), 
+     marshaling_behavior(agile)]
+    runtimeclass Direct3DSurface
+    {
+        [default] interface IDirect3DSurface;
+    }
+}

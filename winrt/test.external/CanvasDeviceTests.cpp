@@ -3,6 +3,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
 TEST_CLASS(CanvasDeviceTests)
 {
@@ -23,26 +24,26 @@ TEST_CLASS(CanvasDeviceTests)
 
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
         Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
-        Assert::IsNotNull(canvasDevice->DirectX11Device);
+        Assert::IsNotNull(canvasDevice->Direct3DDevice);
 
         canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
         Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
-        Assert::IsNotNull(canvasDevice->DirectX11Device);
+        Assert::IsNotNull(canvasDevice->Direct3DDevice);
 
         canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Warning, CanvasHardwareAcceleration::Off);
         Assert::AreEqual(CanvasHardwareAcceleration::Off, canvasDevice->HardwareAcceleration);
-        Assert::IsNotNull(canvasDevice->DirectX11Device);
+        Assert::IsNotNull(canvasDevice->Direct3DDevice);
 
-        auto directX11Device = canvasDevice->DirectX11Device;
-        canvasDevice = CanvasDevice::CreateFromDirectX11Device(
+        auto direct3DDevice = canvasDevice->Direct3DDevice;
+        canvasDevice = CanvasDevice::CreateFromDirect3D11Device(
             CanvasDebugLevel::None,
-            directX11Device);
+            direct3DDevice);
         Assert::AreEqual(CanvasHardwareAcceleration::Unknown, canvasDevice->HardwareAcceleration);
 
         delete canvasDevice;
             
         ExpectObjectClosed([&](){ canvasDevice->HardwareAcceleration; });
-        ExpectObjectClosed([&](){ canvasDevice->DirectX11Device; });
+        ExpectObjectClosed([&](){ canvasDevice->Direct3DDevice; });
     }
 
     TEST_METHOD(CanvasDevice_RecoverDevice)
@@ -51,7 +52,7 @@ TEST_CLASS(CanvasDeviceTests)
 
         CanvasDevice^ recoveredDevice = canvasDevice->RecoverLostDevice();
 
-        Assert::AreNotEqual(canvasDevice->DirectX11Device, recoveredDevice->DirectX11Device);
+        Assert::AreNotEqual(canvasDevice->Direct3DDevice, recoveredDevice->Direct3DDevice);
 
         delete canvasDevice;
 
@@ -79,13 +80,13 @@ TEST_CLASS(CanvasDeviceTests)
 
         ComPtr<IDXGIDevice> dxgiDevice;
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
-        DirectX11Device^ directX11Device = CreateDirectX11Device(dxgiDevice.Get());
+        Direct3DDevice^ direct3DDevice = CreateDirect3DDevice(dxgiDevice.Get());
 
-        CanvasDevice^ compatibleDevice = canvasDevice->CreateCompatibleDevice(directX11Device);
+        CanvasDevice^ compatibleDevice = canvasDevice->CreateCompatibleDevice(direct3DDevice);
 
         delete canvasDevice;
 
-        ExpectObjectClosed([&](){ canvasDevice->CreateCompatibleDevice(directX11Device); });
+        ExpectObjectClosed([&](){ canvasDevice->CreateCompatibleDevice(direct3DDevice); });
     }
 
     TEST_METHOD(CanvasDevice_NativeInterop)

@@ -5,16 +5,18 @@
 namespace GraphicsDeviceComponent
 {
     using namespace Microsoft::Graphics::Canvas;
+    using namespace Microsoft::Graphics::Canvas::DirectX;
+    using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
     using namespace Microsoft::WRL;
 
     public ref class SurfaceCreator sealed
     {
     public:
-        static DirectX11Surface^ CreateSurface(
-            DirectX11Device^ device,
-            uint32_t width,
-            uint32_t height,
-            GraphicsResourceFormat format)
+        static Direct3DSurface^ CreateSurface(
+            Direct3DDevice^ device,
+            int32_t width,
+            int32_t height,
+            DirectXPixelFormat format)
         {
             ComPtr<ID3D11Device> d3dDevice;
             ThrowIfFailed(GetDXGIInterface(device, d3dDevice.GetAddressOf()));
@@ -36,7 +38,7 @@ namespace GraphicsDeviceComponent
             ComPtr<IDXGISurface> dxgiSurface;
             ThrowIfFailed(texture.As(&dxgiSurface));
 
-            return CreateDirectX11Surface(dxgiSurface.Get());
+            return CreateDirect3DSurface(dxgiSurface.Get());
         }
     };
 }

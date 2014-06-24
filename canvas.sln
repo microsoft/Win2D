@@ -82,6 +82,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.dll.WindowsPhone", "w
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.internal", "winrt\test.internal\winrt.test.internal.vcxproj", "{1FE831F7-6773-4445-B570-1F5570FAD88D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Published", "Published", "{5FE06651-5284-42B5-AEC4-280FBA034126}"
+	ProjectSection(SolutionItems) = preProject
+		winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h = winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
+		winrt\published\Microsoft.Graphics.Canvas.native.h = winrt\published\Microsoft.Graphics.Canvas.native.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		tests\CppConsumer\CppConsumer.Shared.vcxitems*{78468973-6e77-44f0-8257-91acb2a23ec4}*SharedItemsImports = 4
@@ -354,5 +360,6 @@ Global
 		{0AE978BB-52E2-40FB-9D0F-2E3A4BD64837} = {FD915EAF-4152-48C0-B5DD-603865B78B49}
 		{6EABD217-3FD8-4298-929D-857811D8F3FA} = {FD915EAF-4152-48C0-B5DD-603865B78B49}
 		{1FE831F7-6773-4445-B570-1F5570FAD88D} = {0F212400-0A8B-4E26-9BA8-CE7165FF8717}
+		{5FE06651-5284-42B5-AEC4-280FBA034126} = {0F212400-0A8B-4E26-9BA8-CE7165FF8717}
 	EndGlobalSection
 EndGlobal

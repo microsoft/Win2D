@@ -2,14 +2,14 @@
 
 #include "pch.h"
 
-using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
-TEST_CLASS(DirectX11EnumTests)
+TEST_CLASS(Direct3D11EnumTests)
 {
 public:
-    TEST_METHOD(DirectX11UsageMatchesD3D11_USAGE)
+    TEST_METHOD(Direct3DUsageMatchesD3D11_USAGE)
     {
-#define CHECK(WINRT, D3D11) Assert::AreEqual(static_cast<int>(DirectX11Usage::WINRT), static_cast<int>(D3D11))
+#define CHECK(WINRT, D3D11) Assert::AreEqual(static_cast<int>(Direct3DUsage::WINRT), static_cast<int>(D3D11))
 
         CHECK(Default   , D3D11_USAGE_DEFAULT);
         CHECK(Immutable , D3D11_USAGE_IMMUTABLE);
@@ -19,9 +19,9 @@ public:
 #undef CHECK
     }
 
-    TEST_METHOD(DirectX11BindingsMatchesD3D11_BIND_FLAG)
+    TEST_METHOD(Direct3DBindingsMatchesD3D11_BIND_FLAG)
     {
-#define CHECK(WINRT, D3D11) Assert::AreEqual(static_cast<uint32>(DirectX11Bindings::WINRT), static_cast<uint32>(D3D11))
+#define CHECK(WINRT, D3D11) Assert::AreEqual(static_cast<uint32>(Direct3DBindings::WINRT), static_cast<uint32>(D3D11))
 
         CHECK(VertexBuffer    , D3D11_BIND_VERTEX_BUFFER);
         CHECK(IndexBuffer     , D3D11_BIND_INDEX_BUFFER);
@@ -37,4 +37,3 @@ public:
 #undef CHECK
     }
 };
-

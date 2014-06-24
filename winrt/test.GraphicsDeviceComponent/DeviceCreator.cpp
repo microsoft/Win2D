@@ -5,11 +5,12 @@
 namespace GraphicsDeviceComponent
 {
     using namespace Microsoft::Graphics::Canvas;
+    using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
     public ref class DeviceCreator sealed
     {
     public:
-        static DirectX11Device^ CreateDevice()
+        static Direct3DDevice^ CreateDevice()
         {
             using namespace Microsoft::WRL;
 
@@ -29,7 +30,7 @@ namespace GraphicsDeviceComponent
 
             ComPtr<IDXGIDevice> dxgiDevice;
             ThrowIfFailed(d3dDevice.As(&dxgiDevice));
-            return CreateDirectX11Device(dxgiDevice.Get());
+            return CreateDirect3DDevice(dxgiDevice.Get());
         }
     };
 }

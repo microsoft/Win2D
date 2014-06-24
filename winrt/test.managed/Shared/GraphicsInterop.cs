@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.DirectX;
+using Microsoft.Graphics.Canvas.DirectX.Direct3D11;
 
 namespace test.managed
 {
@@ -16,23 +18,23 @@ namespace test.managed
         {
             //
             // This test interops a C# component (ie this one) with a C++/CX 
-            // component (GraphicsDeviceComponent) using DirectX11Device and 
-            // DirectX11Surface to pass a IDXGIDevice and IDXGISurface between 
+            // component (GraphicsDeviceComponent) using Direct3DDevice and 
+            // Direct3DSurface to pass a IDXGIDevice and IDXGISurface between 
             // them.
             //
 
             // Create a device.
-            DirectX11Device graphicsDevice = GraphicsDeviceComponent.DeviceCreator.CreateDevice();
+            Direct3DDevice graphicsDevice = GraphicsDeviceComponent.DeviceCreator.CreateDevice();
 
             // We should be able to call Trim() without anything bad happening
             graphicsDevice.Trim();
 
             // Now create a surface using this device. 
-            uint expectedWidth = 128;
-            uint expectedHeight = 256;
-            var expectedGraphicsFormat = GraphicsResourceFormat.R32_FLOAT;
+            int expectedWidth = 128;
+            int expectedHeight = 256;
+            var expectedGraphicsFormat = DirectXPixelFormat.R32Float;
 
-            DirectX11Surface surface = GraphicsDeviceComponent.SurfaceCreator.CreateSurface(
+            Direct3DSurface surface = GraphicsDeviceComponent.SurfaceCreator.CreateSurface(
                 graphicsDevice,
                 expectedWidth,
                 expectedHeight,
@@ -44,8 +46,8 @@ namespace test.managed
             Assert.AreEqual(expectedWidth, desc.Width);
             Assert.AreEqual(expectedHeight, desc.Height);
             Assert.AreEqual(expectedGraphicsFormat, desc.Format);
-            Assert.AreEqual(1U, desc.MultisampleDescription.Count);
-            Assert.AreEqual(0U, desc.MultisampleDescription.Quality);
+            Assert.AreEqual(1, desc.MultisampleDescription.Count);
+            Assert.AreEqual(0, desc.MultisampleDescription.Quality);
         }
     }
 }

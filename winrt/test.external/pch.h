@@ -20,9 +20,7 @@
 
 #include <ErrorHandling.h>
 
-#include <WinRTGraphicsInterop.h>
-
-#include <Microsoft.Canvas.interop.h>
+#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

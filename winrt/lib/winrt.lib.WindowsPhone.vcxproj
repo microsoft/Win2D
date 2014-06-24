@@ -11,12 +11,10 @@
   </PropertyGroup>
   
   <Import Project="$(SolutionDir)build\canvas.cpp.props" />
-  <Import Project="$(SolutionDir)build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
   <Import Project="winrt.lib.Shared.vcxitems" Label="Shared" />
   
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
-  <Import Project="$(SolutionDir)build\midlrt.targets" />
 </Project>

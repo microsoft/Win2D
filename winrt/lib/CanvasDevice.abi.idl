@@ -3,7 +3,7 @@
 import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "Canvas.codegen.idl";
-import "WinRTGraphicsInterop.idl";
+import "WinRTDirect3D11.idl";
 
 #include "version.h"
 
@@ -36,9 +36,9 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION), uuid(9B6E2B27-CD07-421A-8F69-0AE8A787FE8C)]
     interface ICanvasDeviceStatics : IInspectable
     {
-        HRESULT CreateFromDirectX11Device(
+        HRESULT CreateFromDirect3D11Device(
             [in] CanvasDebugLevel debugLevel,
-            [in] DirectX11Device* directX11Device,
+            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice* direct3DDevice,
             [out, retval] CanvasDevice** canvasDevice);
     };
 
@@ -52,7 +52,7 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasDevice** canvasDevice);
 
         HRESULT CreateCompatibleDevice(
-            [in] DirectX11Device* directX11Device,
+            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice* direct3DDevice,
             [out, retval] CanvasDevice** canvasDevice);
 
         [propget] 
@@ -60,8 +60,8 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasHardwareAcceleration* value);
 
         [propget]
-        HRESULT DirectX11Device(
-            [out, retval] DirectX11Device** value);
+        HRESULT Direct3DDevice(
+            [out, retval] Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice** value);
     };
 
     [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]

@@ -36,11 +36,13 @@
 #include <windows.ui.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
-#include <Microsoft.Canvas.interop.h>
+
+#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 #include <CanvasImageSource.abi.h>
-#include <WinRTGraphicsInterop.h>
+#include <WinRTDirect3D11.h>
+#include <WinRTDirectXCommon.h>
 #include <WinRTNumerics.h>
 
 #include <Conversion.h>

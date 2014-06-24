@@ -13,10 +13,11 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <TargetName>winrt</TargetName>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <Midl>
-      <AdditionalIncludeDirectories>..\..\Numerics\WinRT;GraphicsDevice</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Numerics\WinRT;WinRTDirectX</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -30,10 +31,8 @@
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
   </ItemDefinitionGroup>
-  <Target Name="mdmerge" AfterTargets="Midl"
-          Inputs="@(Midl -> '%(MetadataFileName)')"
-          Outputs="$(MergedWinmdDirectory)\$(RootNamespace).winmd">
-    <Exec Command='mdmerge -metadata_dir "$(WindowsSDK_MetadataPath)" -o $(MergedWinmdDirectory) -i "$(UnmergedWinmdDirectory)" -v -partial -n:Microsoft.Graphics.Canvas:3'/>
+  <Target Name="mdmerge" AfterTargets="Midl" Inputs="@(Midl -> '%(MetadataFileName)')" Outputs="$(MergedWinmdDirectory)\$(RootNamespace).winmd">
+    <Exec Command="mdmerge -metadata_dir &quot;$(WindowsSDK_MetadataPath)&quot; -o $(MergedWinmdDirectory) -i &quot;$(UnmergedWinmdDirectory)&quot; -v -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
@@ -43,8 +42,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
@@ -61,13 +58,15 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl">
       <HasInterfaces>false</HasInterfaces>
     </MidlRT>
-    <MidlRT Include="$(MSBuildThisFileDirectory)GraphicsDevice\WinRTGraphicsInterop.idl" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDeviceInterop.cpp" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl">
+      <HasInterfaces>false</HasInterfaces>
+    </MidlRT>
     <MidlRT Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl">
       <HasInterfaces>false</HasInterfaces>
     </MidlRT>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)GraphicsDevice\GraphicsSurface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
@@ -80,4 +79,5 @@
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
+  <Import Project="$(SolutionDir)build\midlrt.targets" />
 </Project>

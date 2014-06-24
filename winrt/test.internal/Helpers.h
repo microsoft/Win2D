@@ -125,7 +125,7 @@ namespace Microsoft
             TO_STRING(ID2D1DeviceContext1);
             TO_STRING(ID2D1Factory);
             TO_STRING(IDXGIDevice);
-            TO_STRING(IDirectX11Device);
+            TO_STRING(IDirect3DDevice);
             TO_STRING(IInspectable);
             TO_STRING(IUnknown);
 

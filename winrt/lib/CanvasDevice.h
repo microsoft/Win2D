@@ -11,6 +11,7 @@ namespace canvas
 {
     using namespace Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas;
+    using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
     class CanvasDevice;
     class CanvasDeviceManager;
@@ -79,9 +80,9 @@ namespace canvas
             CanvasHardwareAcceleration hardwareAcceleration,
             ICanvasDevice** canvasDevice) override;
 
-        IFACEMETHOD(CreateFromDirectX11Device)(
+        IFACEMETHOD(CreateFromDirect3D11Device)(
             CanvasDebugLevel debugLevel,
-            IDirectX11Device* directX11Device,
+            IDirect3DDevice* direct3DDevice,
             ICanvasDevice** canvasDevice) override;
 
         //
@@ -144,7 +145,7 @@ namespace canvas
 
         CanvasDebugLevel m_debugLevel;
         
-        ClosablePtr<IDirectX11Device> m_directX11Device;
+        ClosablePtr<IDirect3DDevice> m_direct3DDevice;
         ClosablePtr<ID2D1DeviceContext> m_d2dResourceCreationDeviceContext;
 
     public:
@@ -153,7 +154,7 @@ namespace canvas
             CanvasDebugLevel debugLevel,
             CanvasHardwareAcceleration requestedHardwareAcceleration,
             CanvasHardwareAcceleration actualHardwareAcceleration,
-            IDirectX11Device* directX11Device,
+            IDirect3DDevice* direct3DDevice,
             ID2D1Device1* d2dDevice);
 
         //
@@ -164,12 +165,12 @@ namespace canvas
             ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(CreateCompatibleDevice)(
-            IDirectX11Device* directX11Device,
+            IDirect3DDevice* direct3DDevice,
             ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration* value) override;
 
-        IFACEMETHOD(get_DirectX11Device)(_Out_ IDirectX11Device** value) override;
+        IFACEMETHOD(get_Direct3DDevice)(_Out_ IDirect3DDevice** value) override;
 
         //
         // IClosable
@@ -202,12 +203,12 @@ namespace canvas
         
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration, ID2D1Factory2* d2dFactory);
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirectX11Device* directX11Device);
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirectX11Device* directX11Device, ID2D1Factory2* d2dFactory);
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice);
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
 
     private:
-        ComPtr<IDirectX11Device> MakeDirectX11Device(
+        ComPtr<IDirect3DDevice> MakeDirect3DDevice(
             CanvasHardwareAcceleration requestedHardwareAcceleration,
             CanvasHardwareAcceleration* actualHardwareAcceleration) const;
 
@@ -216,7 +217,7 @@ namespace canvas
             CanvasHardwareAcceleration* actualHardwareAcceleration) const;
 
         static ComPtr<ID2D1Device1> MakeD2DDevice(
-            IDirectX11Device* device,
+            IDirect3DDevice* device,
             ID2D1Factory2* d2dFactory);        
     };
 
