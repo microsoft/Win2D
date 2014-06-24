@@ -27,12 +27,13 @@ namespace Microsoft
                 return PointerToString(L#T, value);             \
             }
 
-            TO_STRING(IDXGIDevice);
+            TO_STRING(ID2D1Device1);
+            TO_STRING(ID2D1DeviceContext1);
+            TO_STRING(ID2D1SolidColorBrush);
             TO_STRING(ID3D11Device);
             TO_STRING(ID3D11Texture2D);
+            TO_STRING(IDXGIDevice);
             TO_STRING(IDXGISurface);
-            TO_STRING(ID2D1Device1);
-            TO_STRING(ID2D1SolidColorBrush);
 
 #undef TO_STRING
 

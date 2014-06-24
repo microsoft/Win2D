@@ -145,8 +145,7 @@ namespace canvas
 
     IFACEMETHODIMP CanvasSolidColorBrush::Close()
     {
-        ResourceWrapper::Close();
-        return S_OK;
+        return ResourceWrapper::Close();
     }
 
     ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush()

@@ -118,7 +118,7 @@ namespace canvas
         // Default constructor uses the real CoreApplication statics.
         //
         FactoryWithResourceManager()
-            : FactoryWithResourceManager(GetCoreApplication().Get())
+            : m_manager(GetOrCreateManager())
         {
         }
 
@@ -127,6 +127,21 @@ namespace canvas
         // provide their own instance.
         //
         FactoryWithResourceManager(ABI::Windows::ApplicationModel::Core::ICoreApplication* coreApplication)
+            : m_manager(GetOrCreateManager(coreApplication))
+        {
+        }
+
+        const std::shared_ptr<MANAGER>& GetManager()
+        {
+            return m_manager;
+        }
+
+        static std::shared_ptr<MANAGER> GetOrCreateManager()
+        {
+            return GetOrCreateManager(GetCoreApplication().Get());
+        }
+
+        static std::shared_ptr<MANAGER> GetOrCreateManager(ABI::Windows::ApplicationModel::Core::ICoreApplication* coreApplication)
         {
             using namespace Microsoft::WRL::Wrappers;
             using namespace ABI::Windows::Foundation::Collections;
@@ -164,28 +179,26 @@ namespace canvas
             //
 
             if (managerHolder)
-                m_manager = managerHolder->Manager.lock();
+            {
+                auto manager = managerHolder->Manager.lock();
+                if (manager)
+                    return manager;
+            }
 
             //
             // Create, and remember, a new manager if there wasn't one
             // previously
             //
 
-            if (!m_manager)
-            {
-                m_manager = FACTORY::CreateManager();
+            auto manager = FACTORY::CreateManager();
 
-                managerHolder = Make<ManagerHolder>(); // always create a new ManagerHolder
-                managerHolder->Manager = m_manager;
+            managerHolder = Make<ManagerHolder>();
+            managerHolder->Manager = manager;
+            
+            boolean inserted = false;
+            ThrowIfFailed(propertyMap->Insert(keyName.Get(), managerHolder.Get(), &inserted)); // Insert will replace an existing entry
 
-                boolean inserted = false;
-                ThrowIfFailed(propertyMap->Insert(keyName.Get(), managerHolder.Get(), &inserted));
-            }
-        }
-
-        const std::shared_ptr<MANAGER>& GetManager()
-        {
-            return m_manager;
+            return manager;
         }
 
     private:

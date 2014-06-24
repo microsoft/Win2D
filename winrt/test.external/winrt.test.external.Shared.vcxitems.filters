@@ -9,6 +9,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EnumTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SurfaceTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

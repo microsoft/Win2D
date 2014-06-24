@@ -17,17 +17,43 @@ namespace canvas
         virtual void EndDraw() = 0;
     };
 
-    class CanvasDrawingSession : public RuntimeClass<
-        ICanvasDrawingSession,
-        IClosable>
+    class CanvasDrawingSessionManager;
+    class CanvasDrawingSession;
+
+    class CanvasDrawingSessionFactory
+        : public ActivationFactory<ICanvasDrawingSessionStatics, CloakedIid<ICanvasFactoryNative>>,
+          public FactoryWithResourceManager<CanvasDrawingSessionFactory, CanvasDrawingSessionManager>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
+
+    public:
+        //
+        // ICanvasFactoryNative
+        //
+
+        IFACEMETHOD(GetOrCreate)(
+            IUnknown* resource,
+            IInspectable** wrapper) override;        
+    };
+
+    struct CanvasDrawingSessionTraits
+    {
+        typedef ID2D1DeviceContext1 resource_t;
+        typedef CanvasDrawingSession wrapper_t;
+        typedef ICanvasDrawingSession wrapper_interface_t;
+        typedef CanvasDrawingSessionManager manager_t;
+    };
+
+    class CanvasDrawingSession : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        CanvasDrawingSessionTraits)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
 
-        ClosablePtr<ID2D1DeviceContext1> m_deviceContext;
         std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
 
     public:
         CanvasDrawingSession(
+            std::shared_ptr<CanvasDrawingSessionManager> manager,
             ID2D1DeviceContext1* deviceContext,
             std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
 
@@ -91,5 +117,21 @@ namespace canvas
         IFACEMETHOD(FillEllipse)(
             CanvasEllipse ellipse,
             ICanvasBrush* brush) override;
+    };
+
+
+    class CanvasDrawingSessionManager : public ResourceManager<CanvasDrawingSessionTraits>
+    {
+        std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
+
+    public:
+        CanvasDrawingSessionManager();
+
+        ComPtr<CanvasDrawingSession> CreateNew(
+            ID2D1DeviceContext1* deviceContext,
+            std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
+
+        ComPtr<CanvasDrawingSession> CreateWrapper(
+            ID2D1DeviceContext1* resource);
     };
 }

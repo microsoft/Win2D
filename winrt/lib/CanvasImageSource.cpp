@@ -16,7 +16,14 @@ namespace canvas
 
     class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
     {
+        std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
+
     public:
+        CanvasImageSourceDrawingSessionFactory()
+            : m_drawingSessionManager(CanvasDrawingSessionFactory::GetOrCreateManager())
+        {
+        }
+
         virtual ComPtr<ICanvasDrawingSession> Create(
             ISurfaceImageSourceNativeWithD2D* sisNative,
             const Rect& updateRect) const override
@@ -29,7 +36,7 @@ namespace canvas
                 ToRECT(updateRect),
                 &deviceContext);
 
-            return Make<CanvasDrawingSession>(
+            return m_drawingSessionManager->Create(
                 deviceContext.Get(),
                 std::move(adapter));
         }        

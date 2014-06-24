@@ -6,13 +6,71 @@
 
 namespace canvas
 {
+    IFACEMETHODIMP CanvasDrawingSessionFactory::GetOrCreate(
+        IUnknown* resource,
+        IInspectable** wrapper)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                CheckInPointer(resource);
+                CheckAndClearOutPointer(wrapper);
+
+                ComPtr<ID2D1DeviceContext1> deviceContext;
+                ThrowIfFailed(resource->QueryInterface(deviceContext.GetAddressOf()));
+
+                auto newDrawingSession = GetManager()->GetOrCreate(deviceContext.Get());
+
+                ThrowIfFailed(newDrawingSession.CopyTo(wrapper));
+            });
+    }
+
+
+    //
+    // This drawing session adapter is used when wrapping an existing
+    // ID2D1DeviceContext.  In this wrapper, interop, case we don't want
+    // CanvasDrawingSession to call any additional methods in the device context.
+    //
+    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
+    {
+    public:
+        virtual void EndDraw() override
+        {
+            // nothing
+        }
+    };
+
+
+    CanvasDrawingSessionManager::CanvasDrawingSessionManager()
+        : m_adapter(std::make_shared<NoopCanvasDrawingSessionAdapter>())
+    {
+    }
+
+
+    ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateNew(
+        ID2D1DeviceContext1* deviceContext,
+        std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter)
+    {
+        return Make<CanvasDrawingSession>(shared_from_this(), deviceContext, drawingSessionAdapter);
+    }
+
+
+    ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateWrapper(
+        ID2D1DeviceContext1* resource)
+    {
+        auto drawingSession = Make<CanvasDrawingSession>(shared_from_this(), resource, m_adapter);
+        CheckMakeResult(drawingSession);
+        return drawingSession;
+    }
+
+
     CanvasDrawingSession::CanvasDrawingSession(
+        std::shared_ptr<CanvasDrawingSessionManager> manager,
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> adapter)
-        : m_deviceContext(deviceContext)
+        : ResourceWrapper(manager, deviceContext)
         , m_adapter(adapter)
     {
-        CheckInPointer(deviceContext);
         CheckInPointer(adapter.get());
     }
 
@@ -40,11 +98,15 @@ namespace canvas
 
     IFACEMETHODIMP CanvasDrawingSession::Close()
     {
+        // Base class Close() called outside of ExceptionBoundary since this
+        // already has it's own boundary.
+        HRESULT hr = ResourceWrapper::Close();
+        if (FAILED(hr))
+            return hr;
+
         return ExceptionBoundary(
             [&]()
             {
-                m_deviceContext.Close();
-
                 if (m_adapter)
                 {
                     // Arrange it so that m_adapter will always get
@@ -64,7 +126,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
 
                 auto d2dColor = ToD2DColor(color);
                 deviceContext->Clear(&d2dColor);
@@ -94,7 +156,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
                 CheckInPointer(brush);
 
                 deviceContext->DrawLine(
@@ -125,7 +187,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
                 CheckInPointer(brush);
 
                 deviceContext->DrawRectangle(
@@ -143,7 +205,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
                 CheckInPointer(brush);
 
                 deviceContext->FillRectangle(
@@ -172,7 +234,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
                 CheckInPointer(brush);
                 
                 deviceContext->DrawRoundedRectangle(
@@ -190,7 +252,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
                 CheckInPointer(brush);
 
                 deviceContext->FillRoundedRectangle(
@@ -219,7 +281,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
                 CheckInPointer(brush);
 
                 deviceContext->DrawEllipse(
@@ -237,7 +299,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                auto& deviceContext = m_deviceContext.EnsureNotClosed();
+                auto& deviceContext = GetResource();
                 CheckInPointer(brush);
 
                 deviceContext->FillEllipse(
@@ -245,4 +307,6 @@ namespace canvas
                     ToD2DBrush(brush).Get());
             });
     }
+
+    ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
 }

@@ -51,7 +51,9 @@ public:
         using canvas::CanvasDrawingSession;
         m_expectedDeviceContext = Make<MockD2DDeviceContext>();
         m_mockAdapter = std::make_shared<MockCanvasDrawingSessionAdapter>();
-        m_canvasDrawingSession = Make<CanvasDrawingSession>(m_expectedDeviceContext.Get(), m_mockAdapter);
+
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        m_canvasDrawingSession = manager->Create(m_expectedDeviceContext.Get(), m_mockAdapter);
     }
 
     TEST_METHOD(CanvasDrawingSession_Calls_Adapter_BeginDraw_EndDraw_When_Closed)
@@ -95,7 +97,9 @@ public:
         using canvas::CanvasDrawingSession;
 
         m_deviceContext = Make<MockD2DDeviceContext>();
-        m_canvasDrawingSession = Make<CanvasDrawingSession>(
+
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        m_canvasDrawingSession = manager->Create(
             m_deviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());
 
@@ -523,7 +527,8 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         // Create a drawing session using this device context, verifying that
         // this has taken ownership of the token.
         //
-        auto canvasDrawingSession = Make<CanvasDrawingSession>(
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        auto canvasDrawingSession = manager->Create(
             deviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());
 
@@ -566,3 +571,34 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
     }
 };
 
+TEST_CLASS(CanvasDrawingSession_Interop)
+{
+    TEST_METHOD(CanvasDrawingSession_Wrapper_DoesNotAutomaticallyCallAnyMethods)
+    {
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        
+        // This mock device context will cause the test to fail if BeginDraw()
+        // or EndDraw() is called on it.  When wrapping a drawing session like
+        // this we don't want these methods to be called automatically.
+        auto deviceContext = Make<MockD2DDeviceContext>();
+
+        auto drawingSession = manager->GetOrCreate(deviceContext.Get());
+
+        // Check one method - we assume that the previous tests are enough to
+        // exercise all the methods appropriately.
+        bool clearCalled = false;
+        deviceContext->MockClear =
+            [&](const D2D1_COLOR_F*)
+            {
+                Assert::IsFalse(clearCalled);
+                clearCalled = true;
+            };
+
+        ThrowIfFailed(drawingSession->Clear(ABI::Windows::UI::Color{1,2,3,4}));
+        Assert::IsTrue(clearCalled);
+
+        // Closing the drawing session should not result in any methods on the
+        // deviceContext getting called.
+        ThrowIfFailed(drawingSession->Close());
+    }
+};

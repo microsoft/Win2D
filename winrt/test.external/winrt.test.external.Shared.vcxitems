@@ -15,6 +15,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceTests.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />

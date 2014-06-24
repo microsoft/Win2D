@@ -40,6 +40,7 @@ namespace canvas
             : m_manager(manager)
             , m_resource(resource)
         {
+            CheckInPointer(manager.get());
             CheckInPointer(resource);
         }
 

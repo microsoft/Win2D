@@ -8,6 +8,16 @@ import "CanvasDevice.abi.idl";
 
 namespace Microsoft.Graphics.Canvas
 {
+    //
+    // CanvasDrawingSession needs to be activatable in order to support interop
+    // (so we can have a ICanvasFactoryNative on the activation factory).  An
+    // empty statics interface provides this.
+    //
+    [version(VERSION), uuid(21729CFC-1D7A-434E-B19B-8B15306B0DA8)]
+    interface ICanvasDrawingSessionStatics : IInspectable
+    {
+    }
+
     [version(VERSION), uuid(F60AFD09-E623-4BE0-B750-578AA920B1DB)]
     interface ICanvasDrawingSession : IInspectable
         requires Windows.Foundation.IClosable
@@ -120,7 +130,7 @@ namespace Microsoft.Graphics.Canvas
         //
     };
 
-    [version(VERSION)]
+    [version(VERSION), static(ICanvasDrawingSessionStatics, VERSION)]
     runtimeclass CanvasDrawingSession
     {
         [default] interface ICanvasDrawingSession;

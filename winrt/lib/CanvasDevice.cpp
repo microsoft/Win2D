@@ -490,7 +490,10 @@ namespace canvas
 
     IFACEMETHODIMP CanvasDevice::Close()
     {
-        ResourceWrapper::Close();
+        HRESULT hr = ResourceWrapper::Close();
+        if (FAILED(hr))
+            return hr;
+        
         m_direct3DDevice.Close();
         m_d2dResourceCreationDeviceContext.Close();
         return S_OK;
