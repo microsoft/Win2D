@@ -9,28 +9,28 @@
     <Import_RootNamespace>NumericsTests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\MathHelper.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\MathHelper.cs">
       <Link>MathHelper.cs</Link>
     </Compile>
-    <Compile Include="..\Matrix3x2Test.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\Matrix3x2Test.cs">
       <Link>Matrix3x2Test.cs</Link>
     </Compile>
-    <Compile Include="..\Matrix4x4Test.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\Matrix4x4Test.cs">
       <Link>Matrix4x4Test.cs</Link>
     </Compile>
-    <Compile Include="..\PlaneTest.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\PlaneTest.cs">
       <Link>PlaneTest.cs</Link>
     </Compile>
-    <Compile Include="..\QuaternionTest.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\QuaternionTest.cs">
       <Link>QuaternionTest.cs</Link>
     </Compile>
-    <Compile Include="..\Vector2Test.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\Vector2Test.cs">
       <Link>Vector2Test.cs</Link>
     </Compile>
-    <Compile Include="..\Vector3Test.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\Vector3Test.cs">
       <Link>Vector3Test.cs</Link>
     </Compile>
-    <Compile Include="..\Vector4Test.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)..\Vector4Test.cs">
       <Link>Vector4Test.cs</Link>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
