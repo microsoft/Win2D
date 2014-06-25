@@ -12,10 +12,16 @@
     <DeviceType Condition="'$(ApplicationType)' == 'Windows Store'">Windows</DeviceType>
     <DeviceType Condition="'$(ApplicationType)' == 'Windows Phone'">Phone</DeviceType>
     <DeviceType Condition="'$(ApplicationType)' == ''">Windows</DeviceType>
+    <DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</DeviceType>
   </PropertyGroup>
 
   <PropertyGroup>
-    <FullPlatform>$(DeviceType)$(Platform)</FullPlatform>
+    <__Platform Condition="'$(Platform)' == 'Win32'">x86</__Platform>
+    <__Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</__Platform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <FullPlatform>$(DeviceType)$(__Platform)</FullPlatform>
   </PropertyGroup>
 
   <PropertyGroup>
