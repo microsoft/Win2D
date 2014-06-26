@@ -14,7 +14,6 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{76F1466A-8B6D-4E39-A767-685A06062A39};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>DotNetNumericsTests.WindowsPhone_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxBundle>Never</AppxBundle>
     <IsTargetingWindowsPhonePlatform>true</IsTargetingWindowsPhonePlatform>
     <AllowCrossPlatformRetargeting>False</AllowCrossPlatformRetargeting>
@@ -28,6 +27,9 @@
     <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\build\canvas.cs.props" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
@@ -78,18 +80,30 @@
     <SDKReference Include="TestPlatform, Version=12.0" />
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.WindowsPhone.appxmanifest">
+    <AppxManifest Include="DotNetNumericsTests.WindowsPhone.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="DotNetNumericsTests.WindowsPhone_TemporaryKey.pfx" />
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\Logo.scale-240.png" />
-    <Content Include="Images\SmallLogo.scale-240.png" />
-    <Content Include="Images\SplashScreen.scale-240.png" />
-    <Content Include="Images\Square71x71Logo.scale-240.png" />
-    <Content Include="Images\StoreLogo.scale-240.png" />
-    <Content Include="Images\WideLogo.scale-240.png" />
+    <Content Include="$(AssetDir)Logo.scale-240.png">
+      <Link>Assets\Logo.scale-240.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)SmallLogo.scale-240.png">
+      <Link>Assets\SmallLogo.scale-240.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)SplashScreen.scale-240.png">
+      <Link>Assets\SplashScreen.scale-240.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)Square71x71Logo.scale-240.png">
+      <Link>Assets\Square71x71Logo.scale-240.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)StoreLogo.scale-240.png">
+      <Link>Assets\StoreLogo.scale-240.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)WideLogo.scale-240.png">
+      <Link>Assets\WideLogo.scale-240.png</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

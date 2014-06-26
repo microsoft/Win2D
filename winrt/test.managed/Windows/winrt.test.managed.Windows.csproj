@@ -16,10 +16,12 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>winrt.test.managed_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\build\canvas.cs.props" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
@@ -118,26 +120,26 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.Windows.appxmanifest">
+    <AppxManifest Include="winrt.test.managed.Windows.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\UnitTestLogo.scale-100.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="$(AssetDir)UnitTestLogo.scale-100.png">
+      <Link>Assets\UnitTestLogo.scale-100.png</Link>
     </Content>
-    <Content Include="Images\UnitTestSmallLogo.scale-100.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="$(AssetDir)UnitTestSmallLogo.scale-100.png">
+      <Link>Assets\UnitTestSmallLogo.scale-100.png</Link>
     </Content>
-    <Content Include="Images\UnitTestSplashScreen.scale-100.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="$(AssetDir)UnitTestSplashScreen.scale-100.png">
+      <Link>Assets\UnitTestSplashScreen.scale-100.png</Link>
     </Content>
-    <Content Include="Images\UnitTestStoreLogo.scale-100.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="$(AssetDir)UnitTestStoreLogo.scale-100.png">
+      <Link>Assets\UnitTestStoreLogo.scale-100.png</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="winrt.test.managed_TemporaryKey.pfx" />
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

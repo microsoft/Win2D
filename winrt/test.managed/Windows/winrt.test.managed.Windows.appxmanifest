@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
-  <Identity Name="7c8d979d-648a-4da1-8df1-96a9f70c2c2b"
-            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+  <Identity Name="4fa3ef4e-3d7a-4bdb-8171-5c4abf712ed4"
+            Publisher="CN=Microsoft Corporation"
             Version="1.0.0.0" />
   
   <Properties>
-    <DisplayName>test_external</DisplayName>
+    <DisplayName>test.managed</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
-    <Logo>Images\UnitTestStoreLogo.png</Logo>
-    <Description>test_external</Description>
+    <Logo>Assets\UnitTestStoreLogo.png</Logo>
+    <Description>test.managed</Description>
   </Properties>
   
   <Prerequisites>
@@ -27,25 +27,26 @@
         EntryPoint="vstest.executionengine.App">
         <VisualElements 
             DisplayName="NoUIEntryPoints"
-            Logo="Images\UnitTestLogo.png"
-            SmallLogo="Images\UnitTestSmallLogo.png"
+            Logo="Assets\UnitTestLogo.png"
+            SmallLogo="Assets\UnitTestSmallLogo.png"
             Description="vstest.executionengine.App"
             ForegroundText="light"
             BackgroundColor="#0084FF">
-            <SplashScreen Image="Images\UnitTestSplashScreen.png" />
+            <SplashScreen Image="Assets\UnitTestSplashScreen.png" />
         </VisualElements>
     </Application>
+
     <Application Id="vstest.executionengine.x86.App" 
         Executable="vstest.executionengine.appcontainer.x86.exe" 
         EntryPoint="vstest.executionengine.x86.App">
         <VisualElements 
             DisplayName="NoUIEntryPoints"
-            Logo="Images\UnitTestLogo.png"
-            SmallLogo="Images\UnitTestSmallLogo.png"
+            Logo="Assets\UnitTestLogo.png"
+            SmallLogo="Assets\UnitTestSmallLogo.png"
             Description="vstest.executionengine.x86.App"
             ForegroundText="light"
             BackgroundColor="#0084FF">
-            <SplashScreen Image="Images\UnitTestSplashScreen.png" />
+            <SplashScreen Image="Assets\UnitTestSplashScreen.png" />
         </VisualElements>
     </Application>
   </Applications>

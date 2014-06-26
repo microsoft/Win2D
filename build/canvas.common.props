@@ -39,6 +39,7 @@
     <__OutputPath>$(SolutionDir)bin\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
     <BaseIntermediateOutputPath>$(SolutionDir)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(FullPlatform)\$(Configuration)\</IntermediateOutputPath>
+    <AssetDir>$(SolutionDir)build\assets\</AssetDir>
   </PropertyGroup>
 
 </Project>

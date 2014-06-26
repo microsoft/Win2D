@@ -14,9 +14,11 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>..\CsConsumer_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\build\canvas.cs.props" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
@@ -85,16 +87,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.Windows.appxmanifest">
+    <AppxManifest Include="CsConsumer.Windows.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="..\CsConsumer_TemporaryKey.pfx" />
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Logo.scale-100.png" />
-    <Content Include="Assets\SmallLogo.scale-100.png" />
-    <Content Include="Assets\SplashScreen.scale-100.png" />
-    <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="$(AssetDir)Logo.scale-100.png">
+      <Link>Assets\Logo.scale-100.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)SmallLogo.scale-100.png">
+      <Link>Assets\SmallLogo.scale-100.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)SplashScreen.scale-100.png">
+      <Link>Assets\SplashScreen.scale-100.png</Link>
+    </Content>
+    <Content Include="$(AssetDir)StoreLogo.scale-100.png">
+      <Link>Assets\StoreLogo.scale-100.png</Link>
+    </Content>
   </ItemGroup>
   <Import Project="..\Shared\CsConsumer.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

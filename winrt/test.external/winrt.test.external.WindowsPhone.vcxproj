@@ -10,12 +10,14 @@
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <TestApplication>true</TestApplication>
     <AppxPackage>True</AppxPackage>
-    <PackageCertificateKeyFile>test.external.WindowsPhone_TemporaryKey.pfx</PackageCertificateKeyFile>
     <DoNotBuild Condition="'$(TF_BUILD)' == 'true'">true</DoNotBuild>
   </PropertyGroup>
   <Import Project="$(SolutionDir)build\canvas.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
   <PropertyGroup Label="UserMacros">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
@@ -33,18 +35,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.WindowsPhone.appxmanifest">
+    <AppxManifest Include="winrt.test.external.WindowsPhone.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="test.external.WindowsPhone_TemporaryKey.pfx" />
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Images\Logo.scale-240.png" />
-    <Image Include="Images\SmallLogo.scale-240.png" />
-    <Image Include="Images\SplashScreen.scale-240.png" />
-    <Image Include="Images\Square71x71Logo.scale-240.png" />
-    <Image Include="Images\StoreLogo.scale-240.png" />
-    <Image Include="Images\WideLogo.scale-240.png" />
+    <Image Include="$(AssetDir)Logo.scale-240.png">
+      <Link>Assets\Logo.scale-240.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)SmallLogo.scale-240.png">
+      <Link>Assets\SmallLogo.scale-240.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)SplashScreen.scale-240.png">
+      <Link>Assets\SplashScreen.scale-240.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)Square71x71Logo.scale-240.png">
+      <Link>Assets\Square71x71Logo.scale-240.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)StoreLogo.scale-240.png">
+      <Link>Assets\StoreLogo.scale-240.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)WideLogo.scale-240.png">
+      <Link>Assets\WideLogo.scale-240.png</Link>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="CppUnitTestFramework, Version=12.0" />

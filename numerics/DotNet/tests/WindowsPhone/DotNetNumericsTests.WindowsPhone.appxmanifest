@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
 
-  <Identity Name="a154a610-e292-493c-9880-e765ce81e115"
+  <Identity Name="1971FCD5-F36E-4AD4-8F52-ACBBB892EA3D"
             Publisher="CN=Microsoft Corporation"
             Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="a154a610-e292-493c-9880-e765ce81e115" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="1971FCD5-F36E-4AD4-8F52-ACBBB892EA3D" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>winrt.test.managed.WindowsPhone</DisplayName>
+    <DisplayName>DotNetNumericsTests.WindowsPhone</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
-    <Logo>Images\StoreLogo.png</Logo>
+    <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
   <Prerequisites>
@@ -25,14 +25,14 @@
         Executable="vstest.executionengine.appcontainer.exe" 
         EntryPoint="Microsoft.VisualStudio.TestPlatform.TestExecutor.AppContainer.App">
         <m3:VisualElements
-            DisplayName="winrt.test.managed.WindowsPhone"
-            Square150x150Logo="Images\Logo.png"
-            Square44x44Logo="Images\SmallLogo.png"
-            Description="winrt.test.managed.WindowsPhone"
+            DisplayName="DotNetNumericsTests.WindowsPhone"
+            Square150x150Logo="Assets\Logo.png"
+            Square44x44Logo="Assets\SmallLogo.png"
+            Description="DotNetNumericsTests.WindowsPhone"
             ForegroundText="light"
             BackgroundColor="#464646">
-            <m3:DefaultTile Wide310x150Logo="Images\WideLogo.png" Square71x71Logo="Images\Square71x71Logo.png"/>
-            <m3:SplashScreen Image="Images\SplashScreen.png"/>
+            <m3:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png"/>
+            <m3:SplashScreen Image="Assets\SplashScreen.png"/>
             <m3:ApplicationView MinWidth="width320"/> <!--Used in XAML Designer. DO NOT REMOVE-->
         </m3:VisualElements>
     </Application>

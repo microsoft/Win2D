@@ -8,12 +8,9 @@
     <ItemsProjectGuid>{c6b817f7-7b67-4ed0-a668-cb365dc32a7a}</ItemsProjectGuid>
     <ItemsRootNamespace>CppConsumer</ItemsRootNamespace>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
@@ -50,6 +47,4 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
 </Project>

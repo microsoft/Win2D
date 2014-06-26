@@ -9,20 +9,31 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
-    <PackageCertificateKeyFile>CppConsumer_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.Windows.appxmanifest">
+    <AppxManifest Include="CppConsumer.Windows.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="CppConsumer_TemporaryKey.pfx" />
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\Logo.scale-100.png" />
-    <Image Include="Assets\SmallLogo.scale-100.png" />
-    <Image Include="Assets\StoreLogo.scale-100.png" />
-    <Image Include="Assets\SplashScreen.scale-100.png" />
+    <Image Include="$(AssetDir)Logo.scale-100.png">
+      <Link>Assets\Logo.scale-100.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)SmallLogo.scale-100.png">
+      <Link>Assets\SmallLogo.scale-100.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)StoreLogo.scale-100.png">
+      <Link>Assets\StoreLogo.scale-100.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)SplashScreen.scale-100.png">
+      <Link>Assets\SplashScreen.scale-100.png</Link>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\winrt\dll\winrt.dll.Windows.vcxproj">
@@ -30,4 +41,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="CppConsumer.Shared.vcxitems" Label="Shared" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
 </Project>
