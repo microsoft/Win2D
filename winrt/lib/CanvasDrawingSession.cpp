@@ -3,9 +3,26 @@
 #include "pch.h"
 
 #include "CanvasDrawingSession.h"
+#include "CanvasStrokeStyle.h"
 
 namespace canvas
 {
+    inline ComPtr<ID2D1StrokeStyle1> ToD2DStrokeStyle(ICanvasStrokeStyle* strokeStyle, ID2D1DeviceContext* deviceContext)
+    {
+        if (!strokeStyle) return nullptr;
+
+        ComPtr<ID2D1Factory> d2dBaseFactory;
+        deviceContext->GetFactory(&d2dBaseFactory);
+
+        ComPtr<ID2D1Factory2> d2dFactory;
+        ThrowIfFailed(d2dBaseFactory.As(&d2dFactory));
+
+        ComPtr<ICanvasStrokeStyleInternal> internal;
+        ThrowIfFailed(strokeStyle->QueryInterface(internal.GetAddressOf()));
+
+        return internal->GetRealizedD2DStrokeStyle(d2dFactory.Get());
+    }
+    
     IFACEMETHODIMP CanvasDrawingSessionFactory::GetOrCreate(
         IUnknown* resource,
         IInspectable** wrapper)
@@ -17,6 +34,7 @@ namespace canvas
                 CheckAndClearOutPointer(wrapper);
 
                 ComPtr<ID2D1DeviceContext1> deviceContext;
+
                 ThrowIfFailed(resource->QueryInterface(deviceContext.GetAddressOf()));
 
                 auto newDrawingSession = GetManager()->GetOrCreate(deviceContext.Get());
@@ -51,7 +69,10 @@ namespace canvas
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter)
     {
-        return Make<CanvasDrawingSession>(shared_from_this(), deviceContext, drawingSessionAdapter);
+        return Make<CanvasDrawingSession>(
+            shared_from_this(),
+            deviceContext, 
+            drawingSessionAdapter);
     }
 
 
@@ -139,11 +160,12 @@ namespace canvas
         ABI::Windows::Foundation::Point point1,
         ICanvasBrush* brush) 
     {
-        return DrawLineWithStrokeWidth(
+        return DrawLineWithStrokeWidthAndStrokeStyle(
             point0,
             point1,
             brush,
-            1.0f);
+            1.0f,
+            nullptr);
     }
 
 
@@ -153,18 +175,35 @@ namespace canvas
         ICanvasBrush* brush,
         float strokeWidth) 
     {
+        return DrawLineWithStrokeWidthAndStrokeStyle(
+            point0,
+            point1,
+            brush,
+            strokeWidth,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithStrokeWidthAndStrokeStyle(
+        ABI::Windows::Foundation::Point point0,
+        ABI::Windows::Foundation::Point point1,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
         return ExceptionBoundary(
             [&]()
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
+        {
+            auto& deviceContext = GetResource();
+            CheckInPointer(brush);
 
-                deviceContext->DrawLine(
-                    ToD2DPoint(point0),
-                    ToD2DPoint(point1),
-                    ToD2DBrush(brush).Get(),
-                    strokeWidth);
-            });
+            deviceContext->DrawLine(
+                ToD2DPoint(point0),
+                ToD2DPoint(point1),
+                ToD2DBrush(brush).Get(),
+                strokeWidth,
+                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+        });
     }
 
 
@@ -172,10 +211,11 @@ namespace canvas
         ABI::Windows::Foundation::Rect rect,
         ICanvasBrush* brush) 
     {
-        return DrawRectangleWithStrokeWidth(
+        return DrawRectangleWithStrokeWidthAndStrokeStyle(
             rect,
             brush,
-            1.0f);
+            1.0f,
+            nullptr);
     }
 
 
@@ -184,17 +224,31 @@ namespace canvas
         ICanvasBrush* brush,
         float strokeWidth) 
     {
+        return DrawRectangleWithStrokeWidthAndStrokeStyle(
+            rect,
+            brush,
+            strokeWidth,
+            nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithStrokeWidthAndStrokeStyle(
+        ABI::Windows::Foundation::Rect rect,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
         return ExceptionBoundary(
             [&]()
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
+        {
+            auto& deviceContext = GetResource();
+            CheckInPointer(brush);
 
-                deviceContext->DrawRectangle(
-                    ToD2DRect(rect),
-                    ToD2DBrush(brush).Get(),
-                    strokeWidth);
-            });
+            deviceContext->DrawRectangle(
+                ToD2DRect(rect),
+                ToD2DBrush(brush).Get(),
+                strokeWidth,
+                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+        });
     }
 
 
@@ -219,10 +273,11 @@ namespace canvas
         CanvasRoundedRectangle roundedRectangle,
         ICanvasBrush* brush) 
     {
-        return DrawRoundedRectangleWithStrokeWidth(
+        return DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
             roundedRectangle,
             brush,
-            1.0f);
+            1.0f,
+            nullptr);
     }
 
 
@@ -231,17 +286,31 @@ namespace canvas
         ICanvasBrush* brush,
         float strokeWidth) 
     {
+        return DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
+            roundedRectangle,
+            brush,
+            strokeWidth,
+            nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
+        CanvasRoundedRectangle roundedRectangle,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
         return ExceptionBoundary(
             [&]()
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
-                
-                deviceContext->DrawRoundedRectangle(
-                    ToD2DRoundedRect(roundedRectangle),
-                    ToD2DBrush(brush).Get(),
-                    strokeWidth);
-            });
+        {
+            auto& deviceContext = GetResource();  
+            CheckInPointer(brush);
+
+            deviceContext->DrawRoundedRectangle(
+                ToD2DRoundedRect(roundedRectangle),
+                ToD2DBrush(brush).Get(),
+                strokeWidth,
+                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+        });
     }
 
 
@@ -266,10 +335,11 @@ namespace canvas
         CanvasEllipse ellipse,
         ICanvasBrush* brush) 
     {
-        return DrawEllipseWithStrokeWidth(
+        return DrawEllipseWithStrokeWidthAndStrokeStyle(
             ellipse,
             brush,
-            1.0f);
+            1.0f,
+            nullptr);
     }
 
 
@@ -278,17 +348,32 @@ namespace canvas
         ICanvasBrush* brush,
         float strokeWidth) 
     {
+        return DrawEllipseWithStrokeWidthAndStrokeStyle(
+            ellipse,
+            brush,
+            strokeWidth,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithStrokeWidthAndStrokeStyle(
+        CanvasEllipse ellipse,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
         return ExceptionBoundary(
             [&]()
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
+        {
+            auto& deviceContext = GetResource(); 
+            CheckInPointer(brush);
 
-                deviceContext->DrawEllipse(
-                    ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
-                    ToD2DBrush(brush).Get(),
-                    strokeWidth);
-            });
+            deviceContext->DrawEllipse(
+                ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
+                ToD2DBrush(brush).Get(),
+                strokeWidth,
+                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+        });
     }
 
 

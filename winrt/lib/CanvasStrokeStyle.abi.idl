@@ -1,0 +1,111 @@
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+import "Canvas.codegen.idl";
+
+#include "version.h"
+
+namespace Microsoft.Graphics.Canvas
+{
+    //
+    // ICanvasStrokeStyleProperties
+    //
+    // Example usage:
+    // 
+    // CanvasStrokeStyle style = new CanvasStrokeStyle()
+    // {
+    //     StartCap = CanvasCapStyle.Round;
+    //     EndCap = CanvasCapStyle.Round;
+    // }
+    // 
+    // ds.DrawLine(..., style);      <---- Note: D2D object is created here.
+    // 
+    // style.StartCap = CanvasCapStyle.Triangle; 
+    //
+    // ds.DrawLine(..., style);      <---- Note: New D2D object is created here.
+    //
+    // To use custom dash patterns, simply set the CustomDashStyle array.
+    //
+    // For example:
+    // style.CustomDashStyle = new float[] {1, 1, 2, 1};
+    //
+    // Note that the DashStyle remains whatever it was set to, despite a non-null
+    // CustomDashStyle being set. In this case, the CustomDashStyle is used. 
+    // It takes precedence over the DashStyle.
+    //  
+    // Implication worth spelling out: if an app wraps a native stroke style with
+    // type CUSTOM and then calls get_DashStyle on the wrapper, the retrieved
+    // dash style is simply Solid (the default).
+    //
+    
+    runtimeclass CanvasStrokeStyle;
+
+    [version(VERSION), uuid(FD3E1CD2-6019-40A1-B315-267EEF6C2AEB), exclusiveto(CanvasStrokeStyle)]
+    interface ICanvasStrokeStyle : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [propget]
+        HRESULT StartCap([out, retval] CanvasCapStyle* value);
+
+        [propput]
+        HRESULT StartCap([in] CanvasCapStyle value);
+
+        [propget]
+        HRESULT EndCap([out, retval] CanvasCapStyle* value);
+
+        [propput]
+        HRESULT EndCap([in] CanvasCapStyle value);
+
+        [propget]
+        HRESULT DashCap([out, retval] CanvasCapStyle* value);
+
+        [propput]
+        HRESULT DashCap([in] CanvasCapStyle value);
+
+        [propget]
+        HRESULT LineJoin([out, retval] CanvasLineJoin* value);
+
+        [propput]
+        HRESULT LineJoin([in] CanvasLineJoin value);
+
+        [propget]
+        HRESULT MiterLimit([out, retval] float* value);
+
+        [propput]
+        HRESULT MiterLimit([in] float value);
+
+        [propget]
+        HRESULT DashStyle([out, retval] CanvasDashStyle* value);
+
+        [propput]
+        HRESULT DashStyle([in] CanvasDashStyle value);
+
+        [propget]
+        HRESULT DashOffset([out, retval] float* value);
+
+        [propput]
+        HRESULT DashOffset([in] float value);
+
+        [propget]
+        HRESULT CustomDashStyle(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] float** valueElements);
+
+        [propput]
+        HRESULT CustomDashStyle(
+            [in] UINT32 valueCount,
+            [in, size_is(valueCount)] float* valueElements);
+
+        [propget]
+        HRESULT TransformBehavior([out, retval] CanvasStrokeTransformBehavior* value);
+
+        [propput]
+        HRESULT TransformBehavior([in] CanvasStrokeTransformBehavior value);
+    }
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass CanvasStrokeStyle
+    {
+        [default] interface ICanvasStrokeStyle;
+    }
+    
+}

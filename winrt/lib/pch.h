@@ -25,6 +25,7 @@
 #include <map>
 #include <cstdint>
 #include <mutex>
+#include <vector>
 
 #include <d2d1_2.h>
 #include <d3d11.h>

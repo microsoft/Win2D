@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
@@ -71,9 +72,11 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
   </ItemGroup>
   <ItemGroup>

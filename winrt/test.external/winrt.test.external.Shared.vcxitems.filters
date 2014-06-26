@@ -6,10 +6,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceTests.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)EnumTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SurfaceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EnumTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

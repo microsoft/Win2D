@@ -40,11 +40,19 @@ namespace CodeGen
 
             public class EnumValue
             {
+                public EnumValue()
+                {
+                    ShouldProject = true;
+                }
+
                 [XmlAttributeAttribute]
                 public string Name;
 
                 [XmlAttributeAttribute]
                 public string ProjectedNameOverride;
+
+                [XmlAttributeAttribute]
+                public bool ShouldProject;
             }
 
             public class Enum

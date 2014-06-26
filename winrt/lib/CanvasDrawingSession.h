@@ -79,6 +79,13 @@ namespace canvas
             ICanvasBrush* brush,
             float strokeWidth) override;
 
+        IFACEMETHOD(DrawLineWithStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Point point0,
+            ABI::Windows::Foundation::Point point1,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
         IFACEMETHOD(DrawRectangle)(
             ABI::Windows::Foundation::Rect rect,
             ICanvasBrush* brush) override;
@@ -87,6 +94,12 @@ namespace canvas
             ABI::Windows::Foundation::Rect rect,
             ICanvasBrush* brush,
             float strokeWidth) override;
+
+        IFACEMETHOD(DrawRectangleWithStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Rect rect,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
 
         IFACEMETHOD(FillRectangle)(
             ABI::Windows::Foundation::Rect rect,
@@ -101,6 +114,12 @@ namespace canvas
             ICanvasBrush* brush,
             float strokeWidth) override;
 
+        IFACEMETHOD(DrawRoundedRectangleWithStrokeWidthAndStrokeStyle)(
+            CanvasRoundedRectangle roundedRectangle,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
         IFACEMETHOD(FillRoundedRectangle)(
             CanvasRoundedRectangle roundedRectangle,
             ICanvasBrush* brush) override;
@@ -113,6 +132,12 @@ namespace canvas
             CanvasEllipse ellipse,
             ICanvasBrush* brush,
             float strokeWidth) override;
+
+        IFACEMETHOD(DrawEllipseWithStrokeWidthAndStrokeStyle)(
+            CanvasEllipse ellipse,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
 
         IFACEMETHOD(FillEllipse)(
             CanvasEllipse ellipse,

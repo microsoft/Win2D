@@ -36,6 +36,17 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHODIMP DrawLineWithStrokeWidthAndStrokeStyle(
+            ABI::Windows::Foundation::Point point0,
+            ABI::Windows::Foundation::Point point1,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override
+        {
+            Assert::Fail(L"Unexpected call to DrawLineWithStrokeWidthAndStrokeStyle");
+            return E_NOTIMPL;
+        }
+
         IFACEMETHODIMP DrawRectangle(
             ABI::Windows::Foundation::Rect rect,
             ICanvasBrush* brush) override
@@ -50,6 +61,16 @@ namespace canvas
             float strokeWidth) override
         {
             Assert::Fail(L"Unexpected call to DrawRectangleWithStrokeWidth");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP DrawRectangleWithStrokeWidthAndStrokeStyle(
+            ABI::Windows::Foundation::Rect rect,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override
+        {
+            Assert::Fail(L"Unexpected call to DrawRectangleWithStrokeWidthAndStrokeStyle");
             return E_NOTIMPL;
         }
 
@@ -78,6 +99,16 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHODIMP DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
+            CanvasRoundedRectangle roundedRectangle,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override
+        {
+            Assert::Fail(L"Unexpected call to DrawRoundedRectangleWithStrokeWidthAndStrokeStyle");
+            return E_NOTIMPL;
+        }
+
         IFACEMETHODIMP FillRoundedRectangle(
             CanvasRoundedRectangle roundedRectangle,
             ICanvasBrush* brush) override
@@ -100,6 +131,16 @@ namespace canvas
             float strokeWidth) override
         {
             Assert::Fail(L"Unexpected call to DrawEllipseWithStrokeWidth");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP DrawEllipseWithStrokeWidthAndStrokeStyle(
+            CanvasEllipse ellipse,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override
+        {
+            Assert::Fail(L"Unexpected call to DrawEllipseWithStrokeWidthAndStrokeStyle");
             return E_NOTIMPL;
         }
 

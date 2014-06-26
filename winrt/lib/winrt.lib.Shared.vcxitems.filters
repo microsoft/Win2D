@@ -2,33 +2,27 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
     <MidlRT Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl">
-      <Filter>WinRTDirectX</Filter>
-    </MidlRT>
-    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl">
-      <Filter>WinRTDirectX</Filter>
-    </MidlRT>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp">
-      <Filter>WinRTDirectX</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp">
-      <Filter>WinRTDirectX</Filter>
-    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
@@ -36,6 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
@@ -43,10 +38,5 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="WinRTDirectX">
-      <UniqueIdentifier>{b9cc7e9b-d35a-40d6-9bfd-46f269a5e6ae}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

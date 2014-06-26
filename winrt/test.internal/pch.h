@@ -47,6 +47,7 @@
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>
 #include <CanvasBrush.h>
+#include <CanvasStrokeStyle.h>
 #include <Conversion.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
@@ -68,6 +69,7 @@ using namespace canvas;
 #include "MockD2DDeviceContext.h"
 #include "MockD2DFactory.h"
 #include "MockD2DSolidColorBrush.h"
+#include "MockD2DStrokeStyle.h"
 #include "MockD3D11Device.h"
 #include "MockSurfaceImageSource.h"
 #include "MockSurfaceImageSourceFactory.h"

@@ -8,6 +8,16 @@ import "WinRTNumerics.idl";
 namespace Microsoft.Graphics.Canvas
 {
     [version(VERSION)]
+    typedef enum CanvasDashStyle
+    {
+        Solid = (int)0,
+        Dash = (int)1,
+        Dot = (int)2,
+        DashDot = (int)3,
+        DashDotDot = (int)4,
+    } CanvasDashStyle;
+
+    [version(VERSION)]
     typedef enum CanvasDebugLevel
     {
         None = (int)0,
@@ -15,6 +25,32 @@ namespace Microsoft.Graphics.Canvas
         Warning = (int)2,
         Information = (int)3
     } CanvasDebugLevel;
+
+    [version(VERSION)]
+    typedef enum CanvasCapStyle
+    {
+        Flat = (int)0,
+        Square = (int)1,
+        Round = (int)2,
+        Triangle = (int)3
+    } CanvasCapStyle;
+
+    [version(VERSION)]
+    typedef enum CanvasLineJoin
+    {
+        Miter = (int)0,
+        Bevel = (int)1,
+        Round = (int)2,
+        MiterOrBevel = (int)3
+    } CanvasLineJoin;
+
+    [version(VERSION)]
+    typedef enum CanvasStrokeTransformBehavior
+    {
+        Normal = (int)0,
+        Fixed = (int)1,
+        Hairline = (int)2
+    } CanvasStrokeTransformBehavior;
 
     [version(VERSION)]
     typedef struct CanvasEllipse

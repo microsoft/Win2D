@@ -217,6 +217,111 @@ namespace Microsoft
                 return buf;
             }
 
+            template<>
+            static inline std::wstring ToString<CanvasCapStyle>(const CanvasCapStyle& value)
+            {
+                switch (value)
+                {
+                case CanvasCapStyle::Flat: return L"CanvasCapStyle::Flat";
+                case CanvasCapStyle::Round: return L"CanvasCapStyle::Round";
+                case CanvasCapStyle::Square: return L"CanvasCapStyle::Square";
+                case CanvasCapStyle::Triangle: return L"CanvasCapStyle::Triangle";
+                default: return L"<<invalid CanvasCapStyle>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<CanvasLineJoin>(const CanvasLineJoin& value)
+            {
+                switch (value)
+                {
+                case CanvasLineJoin::Miter: return L"CanvasLineJoin::Miter";
+                case CanvasLineJoin::Bevel: return L"CanvasLineJoin::Bevel";
+                case CanvasLineJoin::Round: return L"CanvasLineJoin::Round";
+                case CanvasLineJoin::MiterOrBevel: return L"CanvasLineJoin::MiterOrBevel";
+                default: return L"<<invalid CanvasLineJoin>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<CanvasDashStyle>(const CanvasDashStyle& value)
+            {
+                switch (value)
+                {
+                case CanvasDashStyle::Solid: return L"CanvasDashStyle::Solid";
+                case CanvasDashStyle::Dash: return L"CanvasDashStyle::Dash";
+                case CanvasDashStyle::Dot: return L"CanvasDashStyle::Dot";
+                case CanvasDashStyle::DashDot: return L"CanvasDashStyle::DashDot";
+                case CanvasDashStyle::DashDotDot: return L"CanvasDashStyle::DashDotDot";
+                default: return L"<<invalid CanvasDashStyle>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<CanvasStrokeTransformBehavior>(const CanvasStrokeTransformBehavior& value)
+            {
+                switch (value)
+                {
+                case CanvasStrokeTransformBehavior::Normal: return L"CanvasStrokeTransformBehavior::Normal";
+                case CanvasStrokeTransformBehavior::Fixed: return L"CanvasStrokeTransformBehavior::Fixed";
+                case CanvasStrokeTransformBehavior::Hairline: return L"CanvasStrokeTransformBehavior::Hairline";
+                default: return L"<<invalid CanvasStrokeTransformBehavior>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_CAP_STYLE>(const D2D1_CAP_STYLE& value)
+            {
+                switch (value)
+                {
+                case D2D1_CAP_STYLE_FLAT: return L"D2D1_CAP_STYLE_FLAT";
+                case D2D1_CAP_STYLE_SQUARE: return L"D2D1_CAP_STYLE_SQUARE";
+                case D2D1_CAP_STYLE_ROUND: return L"D2D1_CAP_STYLE_ROUND";
+                case D2D1_CAP_STYLE_TRIANGLE: return L"D2D1_CAP_STYLE_TRIANGLE";
+                default: return L"<<invalid D2D1_CAP_STYLE>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_LINE_JOIN>(const D2D1_LINE_JOIN& value)
+            {
+                switch (value)
+                {
+                case D2D1_LINE_JOIN_MITER: return L"D2D1_LINE_JOIN_MITER";
+                case D2D1_LINE_JOIN_BEVEL: return L"D2D1_LINE_JOIN_BEVEL";
+                case D2D1_LINE_JOIN_ROUND: return L"D2D1_LINE_JOIN_ROUND";
+                case D2D1_LINE_JOIN_MITER_OR_BEVEL: return L"D2D1_LINE_JOIN_MITER_OR_BEVEL";
+                default: return L"<<invalid D2D1_LINE_JOIN>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_DASH_STYLE>(const D2D1_DASH_STYLE& value)
+            {
+                switch (value)
+                {
+                case D2D1_DASH_STYLE_SOLID: return L"D2D1_DASH_STYLE_SOLID";
+                case D2D1_DASH_STYLE_DASH: return L"D2D1_DASH_STYLE_DASH";
+                case D2D1_DASH_STYLE_DOT: return L"D2D1_DASH_STYLE_DOT";
+                case D2D1_DASH_STYLE_DASH_DOT: return L"D2D1_DASH_STYLE_DASH_DOT";
+                case D2D1_DASH_STYLE_DASH_DOT_DOT: return L"D2D1_DASH_STYLE_DASH_DOT_DOT";
+                case D2D1_DASH_STYLE_CUSTOM: return L"D2D1_DASH_STYLE_CUSTOM";
+                default: return L"<<invalid D2D1_DASH_STYLE>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_STROKE_TRANSFORM_TYPE>(const D2D1_STROKE_TRANSFORM_TYPE& value)
+            {
+                switch (value)
+                {
+                case D2D1_STROKE_TRANSFORM_TYPE_NORMAL: return L"D2D1_STROKE_TRANSFORM_TYPE_NORMAL";
+                case D2D1_STROKE_TRANSFORM_TYPE_FIXED: return L"D2D1_STROKE_TRANSFORM_TYPE_FIXED";
+                case D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE: return L"D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE";
+                default: return L"<<invalid D2D1_STROKE_TRANSFORM_TYPE>>";
+                }
+            }
+
         }
 
         inline bool operator==(const D2D1_POINT_2F& a, const D2D1_POINT_2F& b)
@@ -278,6 +383,7 @@ namespace Microsoft
                 a._21 == b._21 && a._22 == b._22 &&
                 a._31 == b._31 && a._32 == b._32;
         }
+
     }
 }
 

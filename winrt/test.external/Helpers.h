@@ -34,6 +34,7 @@ namespace Microsoft
             TO_STRING(ID3D11Texture2D);
             TO_STRING(IDXGIDevice);
             TO_STRING(IDXGISurface);
+            TO_STRING(ID2D1StrokeStyle1);
 
 #undef TO_STRING
 
@@ -73,6 +74,10 @@ namespace Microsoft
             }
             
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasHardwareAcceleration);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasCapStyle);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasLineJoin);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasDashStyle);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasStrokeTransformBehavior);
 
 #undef CX_VALUE_TO_STRING
 
@@ -106,7 +111,7 @@ inline ComPtr<ID3D11Device> CreateD3DDevice()
         nullptr,            // adapter
         D3D_DRIVER_TYPE_WARP,
         nullptr,            // software
-        D3D11_CREATE_DEVICE_DEBUG,
+        D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT,
         nullptr,            // feature levels
         0,                  // feature levels count
         D3D11_SDK_VERSION,

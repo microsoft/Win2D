@@ -33,13 +33,17 @@ namespace CodeGen
     {
         public EnumValue(XmlBindings.EnumValue xmlData, Overrides.XmlBindings.EnumValue overrides)
         {
-            if (overrides != null && overrides.ProjectedNameOverride != null)
+            m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
+            m_shouldProject = true;
+
+            if (overrides != null)
             {
-                m_stylizedName = overrides.ProjectedNameOverride;
-            }
-            else
-            {
-                m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
+                if (overrides.ProjectedNameOverride != null)
+                {
+                    m_stylizedName = overrides.ProjectedNameOverride;
+                }
+
+                m_shouldProject = overrides.ShouldProject;
             }
 
             m_valueExpression = GetValueExpression(xmlData);
@@ -75,6 +79,8 @@ namespace CodeGen
 
         public void OutputCode(bool isLast, bool isFlags, OutputFiles outputFiles)
         {
+            if (!m_shouldProject) return;
+
             outputFiles.IdlFile.WriteIndent();
 
             //
@@ -99,6 +105,7 @@ namespace CodeGen
         }
         string m_stylizedName;
         string m_valueExpression;
+        bool m_shouldProject;
 
     }
 

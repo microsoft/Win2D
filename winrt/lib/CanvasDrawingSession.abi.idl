@@ -4,6 +4,8 @@ import "CanvasBrush.abi.idl";
 
 import "CanvasDevice.abi.idl";
 
+import "CanvasStrokeStyle.abi.idl";
+
 #include "version.h"
 
 namespace Microsoft.Graphics.Canvas
@@ -41,19 +43,13 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasBrush* brush,
             [in] float strokeWidth);
 
-        //
-        // This shows how the pattern can be extended to support stroke styles
-        // (#1367).  This would be repeated for all the other DrawX() methods
-        // below.
-        //
-        // [overload("DrawLine")]
-        // HRESULT DrawLineWithStrokeStyle(
-        //     [in] Windows.Foundation.Point point0,
-        //     [in] Windows.Foundation.Point point1,
-        //     [in] ICanvasBrush* brush,
-        //     [in] float strokeWidth,
-        //     [in] ICanvasStrokeStyle* strokeStyle);
-        //
+        [overload("DrawLine")]
+        HRESULT DrawLineWithStrokeWidthAndStrokeStyle(
+            [in] Windows.Foundation.Point point0,
+            [in] Windows.Foundation.Point point1,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
 
         //
         // DrawRectangle
@@ -69,6 +65,13 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Rect rect,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth);
+
+        [overload("DrawRectangle")]
+        HRESULT DrawRectangleWithStrokeWidthAndStrokeStyle(
+            [in] Windows.Foundation.Rect rect,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
 
         //
         // FillRectangle
@@ -93,6 +96,13 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasBrush* brush,
             [in] float strokeWidth);
 
+        [overload("DrawRoundedRectangle")]
+        HRESULT DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
+            [in] CanvasRoundedRectangle roundedRectangle,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
         //
         // FillRoundedRectangle
         //
@@ -115,6 +125,13 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasEllipse ellipse,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth);
+
+        [overload("DrawEllipse")]
+        HRESULT DrawEllipseWithStrokeWidthAndStrokeStyle(
+            [in] CanvasEllipse ellipse,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
 
         //
         // FillEllipse

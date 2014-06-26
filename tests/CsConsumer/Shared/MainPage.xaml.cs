@@ -28,6 +28,7 @@ namespace CsConsumer
             Ellipse_Fill,
             Test_Scene_Default,
             Test_Scene_Wireframe,
+            Dashed_Lines,
             Total
         }
 
@@ -113,6 +114,24 @@ namespace CsConsumer
             catch (Exception e)
             {
                 m_statusMessage.Text = e.Message;
+            }
+        }
+        void DrawDashedLines(
+            CanvasDrawingSession ds, 
+            CanvasSolidColorBrush canvasSolidColorBrush, 
+            int horizontalLimit, 
+            int verticalLimit)
+        {
+            CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle();
+            strokeStyle.DashStyle = CanvasDashStyle.Dash;
+
+            for(int i=0; i<100; i++)
+            {
+                ds.DrawLine(
+                    NextRandomPoint(horizontalLimit, verticalLimit),
+                    NextRandomPoint(horizontalLimit, verticalLimit), canvasSolidColorBrush,
+                    5.0f,
+                    strokeStyle);
             }
         }
 
@@ -207,6 +226,10 @@ namespace CsConsumer
 
                         case DrawnContentType.Test_Scene_Wireframe:
                             GeometryTestScene.DrawGeometryTestScene(ds, canvasSolidColorBrush, GeometryTestScene.RenderingType.Wireframe);
+                            break;
+
+                        case DrawnContentType.Dashed_Lines:
+                            DrawDashedLines(ds, canvasSolidColorBrush, horizontalLimit, verticalLimit);
                             break;
 
                         default:

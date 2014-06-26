@@ -18,6 +18,12 @@
     <!-- Todo: Sanity check that the same element isn't specified twice for overrides. See backlog item #1140.-->
 
     <Enum Name="DEBUG_LEVEL" ShouldProject="true"/>
+    <Enum Name="CAP_STYLE" ShouldProject="true"/>
+    <Enum Name="DASH_STYLE" ShouldProject="true">
+        <Field Name="CUSTOM" ShouldProject="false" />
+    </Enum>
+    <Enum Name="LINE_JOIN" ShouldProject="true"/>
+    <Enum Name="STROKE_TRANSFORM_TYPE" ShouldProject="true" ProjectedNameOverride="StrokeTransformBehavior"/>"
 
     <Struct Name="ROUNDED_RECT" ShouldProject="true" ProjectedNameOverride="RoundedRectangle"/>
     <Struct Name="ELLIPSE" ShouldProject="true"/>
