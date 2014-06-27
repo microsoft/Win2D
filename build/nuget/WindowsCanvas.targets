@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Reference Include="Microsoft.Graphics.Canvas">
+      <HintPath>$(MSBuildThisFileDirectory)..\bin\$(windowscanvas-Configuration)\$(windowscanvas-DeviceType)\$(windowscanvas-Platform)\Microsoft.Graphics.Canvas.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(Language)' != 'C++'">
+    <Reference Include="Microsoft.Graphics.Canvas.Numerics" Condition="'$(Language)' != 'C++'">
+      <HintPath>$(MSBuildThisFileDirectory)..\bin\$(windowscanvas-Configuration)\$(windowscanvas-DeviceType)\$(windowscanvas-Platform)\Microsoft.Graphics.Canvas.Numerics.dll</HintPath>
+    </Reference>
+
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0" Condition="'$(Language)' != 'C++'">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
+    </SDKReference>
+  </ItemGroup>
+</Project>
