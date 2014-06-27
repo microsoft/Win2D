@@ -339,5 +339,22 @@ namespace NumericsTests
             Assert::IsTrue(std::is_destructible<plane>::value);
             Assert::IsTrue(std::is_trivially_destructible<plane>::value);
         }
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+        TEST_METHOD(PlaneWinRTInteropTest)
+        {
+            plane a(23, 42, 100, -1);
+
+            Microsoft::Graphics::Canvas::Numerics::Plane b = a;
+
+            Assert::AreEqual(a.normal.x, b.Normal.X);
+            Assert::AreEqual(a.normal.y, b.Normal.Y);
+            Assert::AreEqual(a.normal.z, b.Normal.Z);
+            Assert::AreEqual(a.d, b.D);
+
+            plane c = b;
+
+            Assert::AreEqual(a, c);
+        }
     };
 }

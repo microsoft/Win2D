@@ -57,6 +57,9 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.WindowsPhone.vcxproj">
+      <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
+    </ProjectReference>
     <SDKReference Include="CppUnitTestFramework, Version=12.0" />
     <SDKReference Include="TestPlatform, Version=12.0" />
   </ItemGroup>

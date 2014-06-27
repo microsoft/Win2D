@@ -365,5 +365,23 @@ namespace NumericsTests
             Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->Normal));
             Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->D));
         }
+
+        // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)
+        [TestMethod]
+        public void PlaneWinRTInteropTest()
+        {
+            Plane a = new Plane(23, 42, 100, -1);
+
+            Microsoft.Graphics.Canvas.Numerics.Plane b = a;
+
+            Assert.AreEqual(a.Normal.X, b.Normal.X);
+            Assert.AreEqual(a.Normal.Y, b.Normal.Y);
+            Assert.AreEqual(a.Normal.Z, b.Normal.Z);
+            Assert.AreEqual(a.D, b.D);
+
+            Plane c = b;
+
+            Assert.AreEqual(a, c);
+        }
     }
 }

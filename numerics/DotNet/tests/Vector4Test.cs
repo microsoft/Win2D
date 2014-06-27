@@ -1295,5 +1295,23 @@ namespace NumericsTests
             Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->Z));
             Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->W));
         }
+
+        // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)
+        [TestMethod]
+        public void Vector4WinRTInteropTest()
+        {
+            Vector4 a = new Vector4(23, 42, 100, -1);
+
+            Microsoft.Graphics.Canvas.Numerics.Vector4 b = a;
+
+            Assert.AreEqual(a.X, b.X);
+            Assert.AreEqual(a.Y, b.Y);
+            Assert.AreEqual(a.Z, b.Z);
+            Assert.AreEqual(a.W, b.W);
+
+            Vector4 c = b;
+
+            Assert.AreEqual(a, c);
+        }
     }
 }

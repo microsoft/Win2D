@@ -7,8 +7,41 @@
 #include <DirectXMath.h>
 #include <stdexcept>
 
+
 #if defined __cplusplus_winrt && _MSC_VER >= 1900
+
+// C++/CX mode with a newer compiler.
 #define _WINDOWS_NUMERICS_CX_PROJECTION_
+
+#elif defined __cplusplus_winrt
+
+// C++/CX mode with an older compiler.
+#define _WINDOWS_NUMERICS_INTEROP_NAMESPACE_ Microsoft::Graphics::Canvas::Numerics
+
+#elif defined __windows2Efoundation2Enumerics_h__
+
+// Raw COM mode using ABI interop (after including windows.foundation.numerics.h).
+#define _WINDOWS_NUMERICS_INTEROP_NAMESPACE_ ABI::Windows::Foundation::Numerics
+
+#endif
+
+
+#ifdef _WINDOWS_NUMERICS_INTEROP_NAMESPACE_
+
+// Define conversion operators between these C++ structs and a set of WinRT ABI types with matching layouts.
+#define _DEFINE_WINDOWS_NUMERICS_INTEROP_(CppName, WinRTName)                                       \
+                                                                                                    \
+    CppName(_WINDOWS_NUMERICS_INTEROP_NAMESPACE_::WinRTName const& value)                           \
+        : CppName(*reinterpret_cast<CppName const*>(&value))                                        \
+    { }                                                                                             \
+                                                                                                    \
+    operator _WINDOWS_NUMERICS_INTEROP_NAMESPACE_::WinRTName() const                                \
+    {                                                                                               \
+        return *reinterpret_cast<_WINDOWS_NUMERICS_INTEROP_NAMESPACE_::WinRTName const*>(this);     \
+    }
+
+#else
+#define _DEFINE_WINDOWS_NUMERICS_INTEROP_(CppType, WinRTType)
 #endif
 
 
@@ -35,6 +68,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         explicit float2(float value);
 
         // Conversion operators.
+        _DEFINE_WINDOWS_NUMERICS_INTEROP_(float2, Vector2)
+
 #ifdef __cplusplus_winrt
         float2(Windows::Foundation::Point const& value);
         float2(Windows::Foundation::Size const& value);
@@ -102,6 +137,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         float3(float2 value, float z);
         explicit float3(float value);
 
+        _DEFINE_WINDOWS_NUMERICS_INTEROP_(float3, Vector3)
+
         // Common values.
         static float3 zero();
         static float3 one();
@@ -161,6 +198,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         float4(float2 value, float z, float w);
         float4(float3 value, float w);
         explicit float4(float value);
+
+        _DEFINE_WINDOWS_NUMERICS_INTEROP_(float4, Vector4)
 
         // Common values.
         static float4 zero();
@@ -223,6 +262,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         float3x2() = default;
         float3x2(float m11, float m12, float m21, float m22, float m31, float m32);
 
+        _DEFINE_WINDOWS_NUMERICS_INTEROP_(float3x2, Matrix3x2)
+
         // Common values.
         static float3x2 identity();
     };
@@ -278,6 +319,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         float4x4() = default;
         float4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44);
         explicit float4x4(float3x2 value);
+        
+        _DEFINE_WINDOWS_NUMERICS_INTEROP_(float4x4, Matrix4x4)
 
         // Common values.
         static float4x4 identity();
@@ -352,6 +395,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         plane(float a, float b, float c, float d);
         plane(float3 normal, float d);
         explicit plane(float4 value);
+
+        _DEFINE_WINDOWS_NUMERICS_INTEROP_(plane, Plane)
     };
 
 #endif  // !_WINDOWS_NUMERICS_CX_PROJECTION_
@@ -383,6 +428,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         quaternion() = default;
         quaternion(float x, float y, float z, float w);
         quaternion(float3 vectorPart, float scalarPart);
+
+        _DEFINE_WINDOWS_NUMERICS_INTEROP_(quaternion, Quaternion)
 
         // Common values.
         static quaternion identity();
@@ -450,3 +497,5 @@ namespace DirectX
 
 
 #undef _WINDOWS_NUMERICS_CX_PROJECTION_
+#undef _WINDOWS_NUMERICS_INTEROP_NAMESPACE_
+#undef _DEFINE_WINDOWS_NUMERICS_INTEROP_

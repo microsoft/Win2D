@@ -116,6 +116,10 @@
       <Name>DotNetNumerics.Windows</Name>
       <Project>{3C1B37E8-10D1-4381-882A-9F0C0FD45871}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\winrt\dll\winrt.dll.Windows.vcxproj">
+      <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
+      <Name>winrt.dll.Windows</Name>
+    </ProjectReference>
     <SDKReference Include="MSTestFramework, Version=11.0" />
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>

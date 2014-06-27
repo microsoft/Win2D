@@ -581,5 +581,21 @@ namespace System.Numerics
                    M21.GetHashCode() + M22.GetHashCode() +
                    M31.GetHashCode() + M32.GetHashCode();
         }
+
+
+#if INCLUDE_WINRT_CANVAS_INTEROP
+
+        public static unsafe implicit operator Microsoft.Graphics.Canvas.Numerics.Matrix3x2(Matrix3x2 value)
+        {
+            return *(Microsoft.Graphics.Canvas.Numerics.Matrix3x2*)&value;
+        }
+
+
+        public static unsafe implicit operator Matrix3x2(Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value)
+        {
+            return *(Matrix3x2*)&value;
+        }
+
+#endif
     }
 }

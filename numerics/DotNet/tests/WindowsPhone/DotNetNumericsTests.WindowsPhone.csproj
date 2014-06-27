@@ -76,6 +76,14 @@
   </PropertyGroup>
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
+    <ProjectReference Include="..\..\DotNetNumerics.WindowsPhone.csproj">
+      <Project>{2585abb8-67d5-48a9-806d-9ceecdbfe413}</Project>
+      <Name>DotNetNumerics.WindowsPhone</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\winrt\dll\winrt.dll.WindowsPhone.vcxproj">
+      <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
+      <Name>winrt.dll.WindowsPhone</Name>
+    </ProjectReference>
     <SDKReference Include="MSTestFramework, Version=12.0" />
     <SDKReference Include="TestPlatform, Version=12.0" />
   </ItemGroup>
@@ -107,12 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\DotNetNumerics.WindowsPhone.csproj">
-      <Project>{2585abb8-67d5-48a9-806d-9ceecdbfe413}</Project>
-      <Name>DotNetNumerics.WindowsPhone</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

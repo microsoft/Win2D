@@ -2223,5 +2223,37 @@ namespace NumericsTests
             Assert::IsTrue(std::is_destructible<float4x4>::value);
             Assert::IsTrue(std::is_trivially_destructible<float4x4>::value);
         }
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+        TEST_METHOD(Float4x4WinRTInteropTest)
+        {
+            float4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+            Microsoft::Graphics::Canvas::Numerics::Matrix4x4 b = a;
+
+            Assert::AreEqual(a.m11, b.M11);
+            Assert::AreEqual(a.m12, b.M12);
+            Assert::AreEqual(a.m13, b.M13);
+            Assert::AreEqual(a.m14, b.M14);
+
+            Assert::AreEqual(a.m21, b.M21);
+            Assert::AreEqual(a.m22, b.M22);
+            Assert::AreEqual(a.m23, b.M23);
+            Assert::AreEqual(a.m24, b.M24);
+
+            Assert::AreEqual(a.m31, b.M31);
+            Assert::AreEqual(a.m32, b.M32);
+            Assert::AreEqual(a.m33, b.M33);
+            Assert::AreEqual(a.m34, b.M34);
+
+            Assert::AreEqual(a.m41, b.M41);
+            Assert::AreEqual(a.m42, b.M42);
+            Assert::AreEqual(a.m43, b.M43);
+            Assert::AreEqual(a.m44, b.M44);
+
+            float4x4 c = b;
+
+            Assert::AreEqual(a, c);
+        }
     };
 }

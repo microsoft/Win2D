@@ -473,5 +473,21 @@ namespace System.Numerics
         {
             return X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode();
         }
+
+
+#if INCLUDE_WINRT_CANVAS_INTEROP
+
+        public static unsafe implicit operator Microsoft.Graphics.Canvas.Numerics.Vector3(Vector3 value)
+        {
+            return *(Microsoft.Graphics.Canvas.Numerics.Vector3*)&value;
+        }
+
+
+        public static unsafe implicit operator Vector3(Microsoft.Graphics.Canvas.Numerics.Vector3 value)
+        {
+            return *(Vector3*)&value;
+        }
+
+#endif
     }
 }

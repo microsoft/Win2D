@@ -2418,5 +2418,38 @@ namespace NumericsTests
             Assert.AreEqual(new IntPtr(56), new IntPtr(&ptr->M43));
             Assert.AreEqual(new IntPtr(60), new IntPtr(&ptr->M44));
         }
+
+        // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)
+        [TestMethod]
+        public void Matrix4x4WinRTInteropTest()
+        {
+            Matrix4x4 a = new Matrix4x4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+            Microsoft.Graphics.Canvas.Numerics.Matrix4x4 b = a;
+
+            Assert.AreEqual(a.M11, b.M11);
+            Assert.AreEqual(a.M12, b.M12);
+            Assert.AreEqual(a.M13, b.M13);
+            Assert.AreEqual(a.M14, b.M14);
+
+            Assert.AreEqual(a.M21, b.M21);
+            Assert.AreEqual(a.M22, b.M22);
+            Assert.AreEqual(a.M23, b.M23);
+            Assert.AreEqual(a.M24, b.M24);
+
+            Assert.AreEqual(a.M31, b.M31);
+            Assert.AreEqual(a.M32, b.M32);
+            Assert.AreEqual(a.M33, b.M33);
+            Assert.AreEqual(a.M34, b.M34);
+
+            Assert.AreEqual(a.M41, b.M41);
+            Assert.AreEqual(a.M42, b.M42);
+            Assert.AreEqual(a.M43, b.M43);
+            Assert.AreEqual(a.M44, b.M44);
+
+            Matrix4x4 c = b;
+
+            Assert.AreEqual(a, c);
+        }
     }
 }

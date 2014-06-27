@@ -468,5 +468,21 @@ namespace System.Numerics
         {
             return X.GetHashCode() + Y.GetHashCode();
         }
+
+        
+#if INCLUDE_WINRT_CANVAS_INTEROP
+
+        public static unsafe implicit operator Microsoft.Graphics.Canvas.Numerics.Vector2(Vector2 value)
+        {
+            return *(Microsoft.Graphics.Canvas.Numerics.Vector2*)&value;
+        }
+
+
+        public static unsafe implicit operator Vector2(Microsoft.Graphics.Canvas.Numerics.Vector2 value)
+        {
+            return *(Vector2*)&value;
+        }
+
+#endif
     }
 }

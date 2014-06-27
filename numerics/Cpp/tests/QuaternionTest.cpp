@@ -898,5 +898,22 @@ namespace NumericsTests
             Assert::IsTrue(std::is_destructible<quaternion>::value);
             Assert::IsTrue(std::is_trivially_destructible<quaternion>::value);
         }
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+        TEST_METHOD(QuaternionWinRTInteropTest)
+        {
+            quaternion a(23, 42, 100, -1);
+
+            Microsoft::Graphics::Canvas::Numerics::Quaternion b = a;
+
+            Assert::AreEqual(a.x, b.X);
+            Assert::AreEqual(a.y, b.Y);
+            Assert::AreEqual(a.z, b.Z);
+            Assert::AreEqual(a.w, b.W);
+
+            quaternion c = b;
+
+            Assert::AreEqual(a, c);
+        }
     };
 }

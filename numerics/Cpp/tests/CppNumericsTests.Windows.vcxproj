@@ -33,6 +33,9 @@
   </ItemDefinitionGroup>
   <Import Project="CppNumericsTests.Shared.vcxitems" Label="Shared" />
   <ItemGroup>
+    <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.Windows.vcxproj">
+      <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
+    </ProjectReference>
     <SDKReference Include="CppUnitTestFramework, Version=11.0" />
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>

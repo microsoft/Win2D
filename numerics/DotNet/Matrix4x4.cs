@@ -1539,5 +1539,21 @@ namespace System.Numerics
                    M31.GetHashCode() + M32.GetHashCode() + M33.GetHashCode() + M34.GetHashCode() +
                    M41.GetHashCode() + M42.GetHashCode() + M43.GetHashCode() + M44.GetHashCode();
         }
+
+
+#if INCLUDE_WINRT_CANVAS_INTEROP
+
+        public static unsafe implicit operator Microsoft.Graphics.Canvas.Numerics.Matrix4x4(Matrix4x4 value)
+        {
+            return *(Microsoft.Graphics.Canvas.Numerics.Matrix4x4*)&value;
+        }
+
+
+        public static unsafe implicit operator Matrix4x4(Microsoft.Graphics.Canvas.Numerics.Matrix4x4 value)
+        {
+            return *(Matrix4x4*)&value;
+        }
+
+#endif
     }
 }

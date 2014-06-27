@@ -977,5 +977,23 @@ namespace NumericsTests
             Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->Z));
             Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->W));
         }
+
+        // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)
+        [TestMethod]
+        public void QuaternionWinRTInteropTest()
+        {
+            Quaternion a = new Quaternion(23, 42, 100, -1);
+
+            Microsoft.Graphics.Canvas.Numerics.Quaternion b = a;
+
+            Assert.AreEqual(a.X, b.X);
+            Assert.AreEqual(a.Y, b.Y);
+            Assert.AreEqual(a.Z, b.Z);
+            Assert.AreEqual(a.W, b.W);
+
+            Quaternion c = b;
+
+            Assert.AreEqual(a, c);
+        }
     }
 }

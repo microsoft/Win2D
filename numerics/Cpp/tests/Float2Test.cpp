@@ -1067,5 +1067,20 @@ namespace NumericsTests
             Assert::IsTrue(std::is_destructible<float2>::value);
             Assert::IsTrue(std::is_trivially_destructible<float2>::value);
         }
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+        TEST_METHOD(Float2WinRTInteropTest)
+        {
+            float2 a(23, 42);
+
+            Microsoft::Graphics::Canvas::Numerics::Vector2 b = a;
+
+            Assert::AreEqual(a.x, b.X);
+            Assert::AreEqual(a.y, b.Y);
+
+            float2 c = b;
+
+            Assert::AreEqual(a, c);
+        }
     };
 }

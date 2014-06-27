@@ -996,5 +996,25 @@ namespace NumericsTests
             Assert.AreEqual(new IntPtr(16), new IntPtr(&ptr->M31));
             Assert.AreEqual(new IntPtr(20), new IntPtr(&ptr->M32));
         }
+
+        // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)
+        [TestMethod]
+        public void Matrix3x2WinRTInteropTest()
+        {
+            Matrix3x2 a = new Matrix3x2(1, 2, 3, 4, 5, 6);
+
+            Microsoft.Graphics.Canvas.Numerics.Matrix3x2 b = a;
+
+            Assert.AreEqual(a.M11, b.M11);
+            Assert.AreEqual(a.M12, b.M12);
+            Assert.AreEqual(a.M21, b.M21);
+            Assert.AreEqual(a.M22, b.M22);
+            Assert.AreEqual(a.M31, b.M31);
+            Assert.AreEqual(a.M32, b.M32);
+
+            Matrix3x2 c = b;
+
+            Assert.AreEqual(a, c);
+        }
     }
 }

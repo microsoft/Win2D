@@ -237,5 +237,21 @@ namespace System.Numerics
         {
             return Normal.GetHashCode() + D.GetHashCode();
         }
+
+
+#if INCLUDE_WINRT_CANVAS_INTEROP
+
+        public static unsafe implicit operator Microsoft.Graphics.Canvas.Numerics.Plane(Plane value)
+        {
+            return *(Microsoft.Graphics.Canvas.Numerics.Plane*)&value;
+        }
+
+
+        public static unsafe implicit operator Plane(Microsoft.Graphics.Canvas.Numerics.Plane value)
+        {
+            return *(Plane*)&value;
+        }
+
+#endif
     }
 }

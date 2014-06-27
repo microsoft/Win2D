@@ -622,5 +622,21 @@ namespace System.Numerics
         {
             return X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode() + W.GetHashCode();
         }
+
+
+#if INCLUDE_WINRT_CANVAS_INTEROP
+
+        public static unsafe implicit operator Microsoft.Graphics.Canvas.Numerics.Quaternion(Quaternion value)
+        {
+            return *(Microsoft.Graphics.Canvas.Numerics.Quaternion*)&value;
+        }
+
+
+        public static unsafe implicit operator Quaternion(Microsoft.Graphics.Canvas.Numerics.Quaternion value)
+        {
+            return *(Quaternion*)&value;
+        }
+
+#endif
     }
 }
