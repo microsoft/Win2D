@@ -27,7 +27,7 @@ namespace canvas
         Direct3DDevice(IDXGIDevice* dxgiDevice)
         {
             if (dxgiDevice == nullptr)
-                throw InvalidArgException();
+                ThrowHR(E_INVALIDARG);
 
             ComPtr<IDXGIDevice3> dxgiDevice3;
             ThrowIfFailed(dxgiDevice->QueryInterface(dxgiDevice3.GetAddressOf()));

@@ -27,7 +27,7 @@ namespace canvas
         Direct3DSurface(IDXGISurface* surface)
         {
             if (surface == nullptr)
-                throw InvalidArgException();
+                ThrowHR(E_INVALIDARG);
 
             m_DxgiSurface = surface;
         }
@@ -50,7 +50,7 @@ namespace canvas
                     using ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::Direct3DMultisampleDescription;
 
                     if (value == nullptr)
-                        throw InvalidArgException();
+                        ThrowHR(E_INVALIDARG);
 
                     auto& surface = m_DxgiSurface.EnsureNotClosed();
 

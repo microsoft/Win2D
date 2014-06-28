@@ -71,7 +71,7 @@ namespace canvas
         const Microsoft::WRL::ComPtr<T>& EnsureNotClosed() const
         {
             if (!m_ptr)
-                throw ComException(RO_E_CLOSED);
+                ThrowHR(RO_E_CLOSED);
             
             //
             // There's a potential race condition here -- if another thread

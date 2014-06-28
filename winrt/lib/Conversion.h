@@ -74,16 +74,16 @@ namespace canvas
         const float minMagnitude = -maxMagnitude;
 
         if (rect.X < minMagnitude || rect.X > maxMagnitude)
-            throw InvalidArgException();
+            ThrowHR(E_INVALIDARG);
 
         if (rect.Y < minMagnitude || rect.Y > maxMagnitude)
-            throw InvalidArgException();
+            ThrowHR(E_INVALIDARG);
 
         if (floatRight < minMagnitude || floatRight > maxMagnitude)
-            throw InvalidArgException();
+            ThrowHR(E_INVALIDARG);
 
         if (floatBottom < minMagnitude || floatBottom > maxMagnitude)
-            throw InvalidArgException();
+            ThrowHR(E_INVALIDARG);
 
         auto left   = static_cast<long>(rect.X);
         auto top    = static_cast<long>(rect.Y);

@@ -39,7 +39,7 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
             m_endDrawCalled = true;
 
             if (m_endDrawShouldThrow)
-                throw ComException(DXGI_ERROR_DEVICE_REMOVED);
+                ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
         }
     };
 

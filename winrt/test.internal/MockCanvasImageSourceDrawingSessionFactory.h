@@ -16,7 +16,7 @@ namespace canvas
             if (!MockCreate)
             {
                 Assert::Fail(L"Unexpected call to Create");
-                throw ComException(E_NOTIMPL);
+                ThrowHR(E_NOTIMPL);
             }
 
             return MockCreate(sisNative, updateRect);

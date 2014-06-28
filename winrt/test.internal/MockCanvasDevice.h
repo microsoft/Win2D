@@ -52,7 +52,7 @@ namespace canvas
             if (!MockGetD2DDevice)
             {
                 Assert::Fail(L"Unexpected call to GetDevice");
-                throw ComException(E_NOTIMPL);
+                ThrowHR(E_NOTIMPL);
             }
 
             return MockGetD2DDevice();

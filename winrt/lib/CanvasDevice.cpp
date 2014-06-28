@@ -104,7 +104,7 @@ namespace canvas
         case CanvasDebugLevel::Information:
             break;
         default:
-            throw InvalidArgException();
+            ThrowHR(E_INVALIDARG);
         }
     }
 
@@ -279,11 +279,11 @@ namespace canvas
             break;
 
         default:
-            throw InvalidArgException();
+            ThrowHR(E_INVALIDARG);
         }
 
         // If we end up here then we failed to create a d3d device
-        throw ComException(E_FAIL);
+        ThrowHR(E_FAIL);
     }
 
 

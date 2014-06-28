@@ -223,7 +223,7 @@ namespace canvas
 
                 (*valueCount) = static_cast<UINT32>(m_customDashElements.size());
                 (*valueElements) = static_cast<float*>(CoTaskMemAlloc(m_customDashElements.size() * sizeof(float)));
-                ThrowIfNullPtr(*valueElements, E_OUTOFMEMORY);
+                ThrowIfNullPointer(*valueElements, E_OUTOFMEMORY);
 
                 if (m_customDashElements.size() > 0)
                 {
@@ -344,7 +344,7 @@ namespace canvas
     {
         if (m_closed)
         {
-            throw ComException(RO_E_CLOSED);
+            ThrowHR(RO_E_CLOSED);
         }
     }
 

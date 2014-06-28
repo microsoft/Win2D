@@ -191,7 +191,7 @@ public:
             {
                 Assert::IsFalse(setDeviceCalled);
                 setDeviceCalled = true;
-                throw ComException(E_FAIL);
+                ThrowHR(E_FAIL);
             };
 
         Assert::IsTrue(FAILED(canvasImageSource->put_Device(secondCanvasDevice.Get())));

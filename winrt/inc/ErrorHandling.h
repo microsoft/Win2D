@@ -9,29 +9,132 @@
 // Methods that need to return HRESULTs wrap their body inside an
 // ExceptionBoundary.
 //
-class ComException
+
+
+//
+// Generally all errors are reported with an associated HRESULT.  These are
+// represented as an HResultException, or a subclass of it.  Use
+// ExceptionBoundary() to catch exceptions and translate them to HRESULTs.
+//
+// As the constructor is protected, only ThrowHR() can be used to throw an
+// HResultException.  This allows ThrowHR() to pick the right exception for an
+// HRESULT.
+//
+// This is useful because sometimes (eg test code) it is useful to be able to
+// catch a specific HRESULT.  For example, ThrowHR(E_INVALIDARG) will throw
+// InvalidArgException rather than HResultException.  This allows test code to
+// use Assert::ExpectException<InvalidArgException>.
+//
+class HResultException
 {
     HRESULT m_Hr;
 
-public:
-    explicit ComException(HRESULT hr)
+protected:
+    explicit HResultException(HRESULT hr)
         : m_Hr(hr)
     {}
 
+public:
     HRESULT GetHr() const
     {
         return m_Hr;
     }
+
+    __declspec(noreturn)
+    friend void ThrowHR(HRESULT);
 };
 
-class InvalidArgException : public ComException
+//
+// Specialized exception type for E_INVALIDARG.  Allows tests to write
+// Assert::ExpectException<InvalidArgException>.
+//
+class InvalidArgException : public HResultException
 {
-public:
+protected:
     InvalidArgException()
-        : ComException(E_INVALIDARG)
+        : HResultException(E_INVALIDARG)
     {}
+
+    __declspec(noreturn)
+    friend void ThrowHR(HRESULT);
 };
 
+//
+// Throws the appropriate exception for the given HRESULT.
+//
+__declspec(noreturn)
+inline void ThrowHR(HRESULT hr)
+{
+    switch (hr)
+    {
+    case E_INVALIDARG: throw InvalidArgException();
+    default:           throw HResultException(hr);
+    }
+}
+
+//
+// Throws if the HR fails.  This is the workhorse helper for converting calls to
+// functions that return HRESULTs to exceptions. eg:
+//
+//    ThrowIfFailed(myObj->MethodThatReturnsHRESULT());
+//
+inline void ThrowIfFailed(HRESULT hr)
+{
+    if (FAILED(hr))
+        ThrowHR(hr);
+}
+
+//
+// Throws if the given pointer is null.
+//
+template<typename T>
+inline void ThrowIfNullPointer(T* ptr, HRESULT hrToThrow)
+{
+    if (ptr == nullptr)
+        ThrowHR(hrToThrow);
+}
+
+//
+// Checks that a given pointer argument is valid (ie non-null).  This is
+// expected to be used at the beginning of methods to validate pointer
+// parameters that are marked as [in].
+//
+template<typename T>
+inline void CheckInPointer(T* ptr)
+{
+    ThrowIfNullPointer(ptr, E_INVALIDARG);
+}
+
+//
+// Checks that a given output pointer parameter is valid (ie non-null), and sets
+// it to null.  This is expected to be used at the beginning of methods to
+// validate out pointer parameters that are marked as [out].
+//
+template<typename T>
+inline void CheckAndClearOutPointer(T** ptr)
+{
+    CheckInPointer(ptr);
+    *ptr = nullptr;
+}
+
+//
+// WRL's Make<>() function returns an empty ComPtr on failure rather than
+// throwing an exception.  This checks the result and throws bad_alloc.
+//
+// Note: generally we use exceptions inside constructors to report errors.
+// Therefore the only way that Make() will return an error is if an allocation
+// fails.
+//
+inline void CheckMakeResult(bool result)
+{
+    if (!result)
+        throw std::bad_alloc();
+}
+
+
+//
+// Converts exceptions in the callable code into HRESULTs.
+//
 template<typename CALLABLE>
 HRESULT ExceptionBoundary(CALLABLE&& fn)
 {
@@ -40,7 +143,7 @@ HRESULT ExceptionBoundary(CALLABLE&& fn)
         fn();
         return S_OK;
     }
-    catch (const ComException& e)
+    catch (const HResultException& e)
     {
         return e.GetHr();
     }
@@ -54,47 +157,3 @@ HRESULT ExceptionBoundary(CALLABLE&& fn)
     }
 }
 
-inline void ThrowIfFailed(HRESULT hr)
-{
-    if (FAILED(hr))
-        throw ComException(hr);
-}
-
-inline void ThrowIfFalse(bool value, HRESULT hrToThrow)
-{
-    if (!value)
-        throw ComException(hrToThrow);
-}
-
-template<typename T>
-inline void ThrowIfNullPtr(T* ptr, HRESULT hrToThrow)
-{
-    if (!ptr)
-        throw ComException(hrToThrow);
-}
-
-template<typename T>
-inline void ThrowInvalidArgIfNullPtr(T* ptr)
-{
-    if (!ptr)
-        throw InvalidArgException();
-}
-
-template<typename T>
-inline void CheckInPointer(T* ptr)
-{
-    ThrowInvalidArgIfNullPtr(ptr);
-}
-
-template<typename T>
-inline void CheckAndClearOutPointer(T** ptr)
-{
-    ThrowIfNullPtr(ptr, E_INVALIDARG);
-    *ptr = nullptr;
-}
-
-inline void CheckMakeResult(bool result)
-{
-    if (!result)
-        throw ComException(E_OUTOFMEMORY);
-}

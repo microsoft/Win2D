@@ -33,7 +33,7 @@ namespace canvas
                 // we expect resources to remove themselves.
                 //
                 assert(false);
-                throw ComException(E_UNEXPECTED);
+                ThrowHR(E_UNEXPECTED);
             }
 
             m_resources.insert(
@@ -96,7 +96,7 @@ namespace canvas
             if (it == m_resources.end())
             {
                 assert(false);
-                throw ComException(E_UNEXPECTED);
+                ThrowHR(E_UNEXPECTED);
             }
 
             m_resources.erase(it);
