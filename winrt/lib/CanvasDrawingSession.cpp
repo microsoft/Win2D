@@ -98,22 +98,8 @@ namespace canvas
 
     CanvasDrawingSession::~CanvasDrawingSession()
     {
-        try
-        {
-            if (m_adapter)
-                m_adapter->EndDraw();
-        }
-        catch (...)
-        {
-            // Ignore any exceptions thrown during destruction.
-
-            //
-            // TODO: should it be an error for the destructor to be called on
-            // something that hasn't been closed?  I'm pretty sure that this
-            // would always be an indication of an error.  Maybe something to
-            // warn about somehow?
-            //
-        }
+        // Ignore any errors when closing during destruction
+        (void)Close();
     }
 
 
