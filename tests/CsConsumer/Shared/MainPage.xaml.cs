@@ -26,9 +26,12 @@ namespace CsConsumer
             Ellipse_Thin,
             Ellipse_Thick,
             Ellipse_Fill,
-            Test_Scene_Default,
-            Test_Scene_Wireframe,
             Dashed_Lines,
+            Test_Scene0_Default,
+            Test_Scene0_Wireframe,
+            Test_Scene1_Default,
+            Test_Scene1_Randomized,
+            Test_Scene1_Wireframe,
             Total
         }
 
@@ -220,16 +223,28 @@ namespace CsConsumer
                                 canvasSolidColorBrush);
                             break;
 
-                        case DrawnContentType.Test_Scene_Default:
-                            GeometryTestScene.DrawGeometryTestScene(ds, canvasSolidColorBrush, GeometryTestScene.RenderingType.Default);
+                        case DrawnContentType.Test_Scene0_Default:
+                            GeometryTestScene0.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Default);
                             break;
 
-                        case DrawnContentType.Test_Scene_Wireframe:
-                            GeometryTestScene.DrawGeometryTestScene(ds, canvasSolidColorBrush, GeometryTestScene.RenderingType.Wireframe);
+                        case DrawnContentType.Test_Scene0_Wireframe:
+                            GeometryTestScene0.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Wireframe);
                             break;
 
                         case DrawnContentType.Dashed_Lines:
                             DrawDashedLines(ds, canvasSolidColorBrush, horizontalLimit, verticalLimit);
+                            break;
+
+                        case DrawnContentType.Test_Scene1_Default:
+                            GeometryTestScene1.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Default);
+                            break;
+
+                        case DrawnContentType.Test_Scene1_Randomized:
+                            GeometryTestScene1.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Randomized);
+                            break;
+
+                        case DrawnContentType.Test_Scene1_Wireframe:
+                            GeometryTestScene1.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Wireframe);
                             break;
 
                         default:

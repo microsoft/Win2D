@@ -9,7 +9,9 @@
     <Import_RootNamespace>CsConsumer</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)GeometryTestScene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GeometryTestScene0.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GeometryTestScene1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestSceneRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

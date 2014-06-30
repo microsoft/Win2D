@@ -5,79 +5,15 @@ using System.Text;
 using Windows.UI;
 using Windows.Foundation;
 using System.Diagnostics;
-
 namespace CsConsumer
 {
-    class GeometryTestScene
+    class GeometryTestScene0
     {
         //
         // Factored into a separate file for readability.
         // This test renders a number of geometry primitives using basic drawing functions.
         // 
-        public enum RenderingType { Default, Wireframe }
-
-        class TestSceneRenderer // Used to abstract out a wireframe view.
-        {
-            public TestSceneRenderer(CanvasDrawingSession drawingSession, RenderingType renderingType)
-            {
-                m_drawingSession = drawingSession;
-                m_renderingType = renderingType;
-                Debug.Assert(m_renderingType == RenderingType.Default || m_renderingType == RenderingType.Wireframe);
-            }
-            public void Clear(Color color)
-            {
-                if (m_renderingType == RenderingType.Default)
-                {
-                    m_drawingSession.Clear(color);
-                }
-                else
-                {
-                    m_drawingSession.Clear(Colors.White);
-                }
-            }
-
-            public void FillRectangle(Rect rect, CanvasSolidColorBrush brush)
-            {
-                if (m_renderingType == RenderingType.Default)
-                {
-                    m_drawingSession.FillRectangle(rect, brush);
-                }
-                else
-                {
-                    brush.Color = Colors.Black;
-                    m_drawingSession.DrawRectangle(rect, brush);
-                }
-            }
-            public void DrawLine(Point p1, Point p2, CanvasSolidColorBrush brush, float strokeWidth)
-            {
-                if (m_renderingType == RenderingType.Default)
-                {
-                    m_drawingSession.DrawLine(p1, p2, brush, strokeWidth);
-                }
-                else
-                {
-                    brush.Color = Colors.Black;
-                    m_drawingSession.DrawLine(p1, p2, brush);
-                }
-            }
-            public void FillEllipse(CanvasEllipse ellipse, CanvasSolidColorBrush brush)
-            {
-                if (m_renderingType == RenderingType.Default)
-                {
-                    m_drawingSession.FillEllipse(ellipse, brush);
-                }
-                else
-                {
-                    brush.Color = Colors.Black;
-                    m_drawingSession.DrawEllipse(ellipse, brush);
-                }
-            }
-
-            CanvasDrawingSession m_drawingSession;
-            RenderingType m_renderingType;
-        }
-        
-        public static void DrawGeometryTestScene(CanvasDrawingSession drawingSession, CanvasSolidColorBrush brush, RenderingType renderingType)
+        public static void DrawGeometryTestScene(CanvasDrawingSession drawingSession, CanvasSolidColorBrush brush, TestSceneRenderingType renderingType)
         {
             //
             // The geometry in this function was produced from an SVG file, and converted to the code below using VS regular expressions.
@@ -125,8 +61,8 @@ namespace CsConsumer
 
             TestSceneRenderer sceneRenderer = new TestSceneRenderer(drawingSession, renderingType);
 
-            sceneRenderer.Clear(Color.FromArgb(0xFF,112, 107, 103));
-            
+            sceneRenderer.Clear(Color.FromArgb(0xFF, 112, 107, 103));
+
             brush.Color = Color.FromArgb(0xFF, 0xA6, 0xC7, 0x46);
             sceneRenderer.FillRectangle(new Rect(275, 60, 141, 96), brush);
 
