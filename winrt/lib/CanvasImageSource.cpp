@@ -185,19 +185,19 @@ namespace canvas
     IFACEMETHODIMP CanvasImageSource::CreateDrawingSession(
         ICanvasDrawingSession** drawingSession)
     {
-        Rect updateRegion = {};
-        updateRegion.Width = static_cast<float>(m_widthInPixels);
-        updateRegion.Height = static_cast<float>(m_heightInPixels);
+        Rect updateRectangle = {};
+        updateRectangle.Width = static_cast<float>(m_widthInPixels);
+        updateRectangle.Height = static_cast<float>(m_heightInPixels);
 
-        return CreateDrawingSessionWithUpdateRegion(
-            updateRegion,
+        return CreateDrawingSessionWithUpdateRectangle(
+            updateRectangle,
             drawingSession);
     }
 
     
     _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRegion(
-        Rect updateRegion,
+    IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
+        Rect updateRectangle,
         ICanvasDrawingSession** drawingSession)
     {
         return ExceptionBoundary(
@@ -210,7 +210,7 @@ namespace canvas
 
                 auto newDrawingSession = m_drawingSessionFactory->Create(
                     sisNative.Get(),
-                    updateRegion);
+                    updateRectangle);
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
             });

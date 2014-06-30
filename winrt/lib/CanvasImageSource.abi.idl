@@ -82,8 +82,8 @@ namespace Microsoft.Graphics.Canvas
         // source.
         //
         [overload("CreateDrawingSession")]
-        HRESULT CreateDrawingSessionWithUpdateRegion(
-            [in]          Windows.Foundation.Rect updateRegion,
+        HRESULT CreateDrawingSessionWithUpdateRectangle(
+            [in]          Windows.Foundation.Rect updateRectangle,
             [out, retval] CanvasDrawingSession** drawingSession);
 
         //

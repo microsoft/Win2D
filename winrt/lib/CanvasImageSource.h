@@ -65,8 +65,8 @@ namespace canvas
         IFACEMETHOD(CreateDrawingSession)(
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
 
-        IFACEMETHOD(CreateDrawingSessionWithUpdateRegion)(
-            _In_         Rect updateRegion,
+        IFACEMETHOD(CreateDrawingSessionWithUpdateRectangle)(
+            _In_         Rect updateRectangle,
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
 
         IFACEMETHOD(get_Device)(

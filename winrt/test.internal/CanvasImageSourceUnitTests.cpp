@@ -293,7 +293,7 @@ public:
 
 
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRegion(expectedRect, &drawingSession));
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedRect, &drawingSession));
         Assert::IsTrue(createCalled);
         Assert::IsTrue(drawingSession);
     }
