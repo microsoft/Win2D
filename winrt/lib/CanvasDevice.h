@@ -113,7 +113,6 @@ namespace canvas
     {
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
-        virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() = 0;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) = 0;
     };
 
@@ -135,13 +134,9 @@ namespace canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
-        // This is the exact same option that the CanvasDevice was created with.
-        // Compatible devices are created with the same option.
-        CanvasHardwareAcceleration m_requestedHardwareAcceleration;
-
         // This is used for the public-facing property value. Can be any value
         // other than Auto.
-        CanvasHardwareAcceleration m_actualHardwareAcceleration; 
+        CanvasHardwareAcceleration m_hardwareAcceleration; 
 
         CanvasDebugLevel m_debugLevel;
         
@@ -152,21 +147,13 @@ namespace canvas
         CanvasDevice(
             std::shared_ptr<CanvasDeviceManager> manager,
             CanvasDebugLevel debugLevel,
-            CanvasHardwareAcceleration requestedHardwareAcceleration,
-            CanvasHardwareAcceleration actualHardwareAcceleration,
+            CanvasHardwareAcceleration hardwareAcceleration,
             IDirect3DDevice* direct3DDevice,
             ID2D1Device1* d2dDevice);
 
         //
         // ICanvasDevice
         //
-
-        IFACEMETHOD(RecoverLostDevice)(
-            ICanvasDevice** canvasDevice) override;
-
-        IFACEMETHOD(CreateCompatibleDevice)(
-            IDirect3DDevice* direct3DDevice,
-            ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration* value) override;
 
@@ -183,7 +170,6 @@ namespace canvas
         //
 
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override;
-        virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() override;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override;
         
     private:

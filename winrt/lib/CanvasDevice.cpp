@@ -135,11 +135,11 @@ namespace canvas
         ThrowIfInvalid(debugLevel);
         CheckInPointer(d2dFactory);
 
-        CanvasHardwareAcceleration actualHardwareAcceleration;
+        CanvasHardwareAcceleration hardwareAcceleration;
 
         auto direct3DDevice = MakeDirect3DDevice(
             requestedHardwareAcceleration,
-            &actualHardwareAcceleration);
+            &hardwareAcceleration);
 
         auto d2dDevice = MakeD2DDevice(
             direct3DDevice.Get(), 
@@ -148,8 +148,7 @@ namespace canvas
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
             debugLevel,
-            requestedHardwareAcceleration,
-            actualHardwareAcceleration,
+            hardwareAcceleration,
             direct3DDevice.Get(),
             d2dDevice.Get());
         CheckMakeResult(device);
@@ -187,7 +186,6 @@ namespace canvas
             shared_from_this(), 
             debugLevel, 
             CanvasHardwareAcceleration::Unknown,
-            CanvasHardwareAcceleration::Unknown,
             direct3DDevice, 
             d2dDevice.Get());
         CheckMakeResult(device);
@@ -207,7 +205,6 @@ namespace canvas
         auto canvasDevice = Make<CanvasDevice>(
             shared_from_this(),
             CanvasDebugLevel::None,
-            CanvasHardwareAcceleration::Unknown,
             CanvasHardwareAcceleration::Unknown,
             direct3DDevice.Get(),
             d2dDevice);
@@ -397,13 +394,11 @@ namespace canvas
     CanvasDevice::CanvasDevice(
         std::shared_ptr<CanvasDeviceManager> deviceManager,
         CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration requestedHardwareAcceleration,
-        CanvasHardwareAcceleration actualHardwareAcceleration,
+        CanvasHardwareAcceleration hardwareAcceleration,
         IDirect3DDevice* direct3DDevice,
         ID2D1Device1* d2dDevice)
         : ResourceWrapper(deviceManager, d2dDevice)
-        , m_requestedHardwareAcceleration(requestedHardwareAcceleration)
-        , m_actualHardwareAcceleration(actualHardwareAcceleration)
+        , m_hardwareAcceleration(hardwareAcceleration)
         , m_debugLevel(debugLevel)
         , m_direct3DDevice(direct3DDevice)
     {
@@ -412,44 +407,6 @@ namespace canvas
         ThrowIfFailed(d2dDevice->CreateDeviceContext(
             D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
             &m_d2dResourceCreationDeviceContext));
-    }
-
-    
-    IFACEMETHODIMP CanvasDevice::RecoverLostDevice(
-        ICanvasDevice **canvasDevice)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckAndClearOutPointer(canvasDevice);
-
-                auto newCanvasDevice = Manager()->Create(
-                    m_debugLevel,
-                    m_requestedHardwareAcceleration,
-                    GetD2DFactory().Get());
-
-                ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
-            });
-    }
-
-    IFACEMETHODIMP CanvasDevice::CreateCompatibleDevice(
-        IDirect3DDevice* direct3DDevice,
-        ICanvasDevice** canvasDevice)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckAndClearOutPointer(canvasDevice);
-
-                auto newCanvasDevice = Manager()->Create(
-                    m_debugLevel,
-                    direct3DDevice,
-                    GetD2DFactory().Get());
-
-                CheckMakeResult(newCanvasDevice);
-
-                ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
-            });
     }
 
     ComPtr<ID2D1Factory2> CanvasDevice::GetD2DFactory()
@@ -472,7 +429,7 @@ namespace canvas
             {
                 CheckInPointer(value);
                 GetResource();  // this ensures that Close() hasn't been called
-                *value = m_actualHardwareAcceleration;
+                *value = m_hardwareAcceleration;
                 return S_OK;
             });
     }
@@ -502,11 +459,6 @@ namespace canvas
     ComPtr<ID2D1Device1> CanvasDevice::GetD2DDevice()
     {
         return GetResource();
-    }
-
-    CanvasHardwareAcceleration CanvasDevice::GetRequestedHardwareAcceleration()
-    {
-        return m_requestedHardwareAcceleration;
     }
 
     ComPtr<ID2D1SolidColorBrush> CanvasDevice::CreateSolidColorBrush(const D2D1_COLOR_F& color)

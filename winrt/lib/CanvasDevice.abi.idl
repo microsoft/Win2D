@@ -46,15 +46,6 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasDevice : IInspectable
         requires Windows.Foundation.IClosable
     {
-        // Intended for handling device lost. Uses the same D2D resource (and WIC factory and so on), 
-        // but creates new D3D device.
-        HRESULT RecoverLostDevice(
-            [out, retval] CanvasDevice** canvasDevice);
-
-        HRESULT CreateCompatibleDevice(
-            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice* direct3DDevice,
-            [out, retval] CanvasDevice** canvasDevice);
-
         [propget] 
         HRESULT HardwareAcceleration(
             [out, retval] CanvasHardwareAcceleration* value);

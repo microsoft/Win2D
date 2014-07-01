@@ -17,19 +17,6 @@ namespace canvas
         //
         // ICanvasDevice
         //
-        
-        IFACEMETHODIMP RecoverLostDevice(ICanvasDevice **) override
-        {
-            Assert::Fail(L"Unexpected call to RecoverLostDevice");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP CreateCompatibleDevice(IDirect3DDevice *, ICanvasDevice **) override
-        {
-            Assert::Fail(L"Unexpected call to CreateCompatibleDevice");
-            return E_NOTIMPL;
-        }
-
 
         IFACEMETHODIMP get_HardwareAcceleration(CanvasHardwareAcceleration *) override
         {
@@ -57,13 +44,6 @@ namespace canvas
 
             return MockGetD2DDevice();
         }
-
-        virtual CanvasHardwareAcceleration GetRequestedHardwareAcceleration() override
-        {
-            Assert::Fail(L"Unexpected call to GetRequestedHardwareAcceleration");
-            return static_cast<CanvasHardwareAcceleration>(0);
-        }
-
 
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override
         {

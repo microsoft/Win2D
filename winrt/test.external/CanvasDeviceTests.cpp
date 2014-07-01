@@ -46,49 +46,6 @@ TEST_CLASS(CanvasDeviceTests)
         ExpectObjectClosed([&](){ canvasDevice->Direct3DDevice; });
     }
 
-    TEST_METHOD(CanvasDevice_RecoverDevice)
-    {
-        CanvasDevice^ canvasDevice = ref new CanvasDevice();
-
-        CanvasDevice^ recoveredDevice = canvasDevice->RecoverLostDevice();
-
-        Assert::AreNotEqual(canvasDevice->Direct3DDevice, recoveredDevice->Direct3DDevice);
-
-        delete canvasDevice;
-
-        ExpectObjectClosed([&](){ canvasDevice->RecoverLostDevice(); });
-    }
-
-    TEST_METHOD(CanvasDevice_CreateCompatibleDevice)
-    {
-        CanvasDevice^ canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
-        using namespace Microsoft::WRL;
-
-        ComPtr<ID3D11Device> d3dDevice;
-
-        ThrowIfFailed(D3D11CreateDevice(
-            nullptr,            // adapter
-            D3D_DRIVER_TYPE_WARP,
-            nullptr,            // software
-            D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT, // BGRA required for D2D
-            nullptr,            // feature levels
-            0,                  // feature levels count
-            D3D11_SDK_VERSION,
-            &d3dDevice,
-            nullptr,        // feature level
-            nullptr));      // immediate context
-
-        ComPtr<IDXGIDevice> dxgiDevice;
-        ThrowIfFailed(d3dDevice.As(&dxgiDevice));
-        Direct3DDevice^ direct3DDevice = CreateDirect3DDevice(dxgiDevice.Get());
-
-        CanvasDevice^ compatibleDevice = canvasDevice->CreateCompatibleDevice(direct3DDevice);
-
-        delete canvasDevice;
-
-        ExpectObjectClosed([&](){ canvasDevice->CreateCompatibleDevice(direct3DDevice); });
-    }
-
     TEST_METHOD(CanvasDevice_NativeInterop)
     {
         auto originalCanvasDevice = ref new CanvasDevice();

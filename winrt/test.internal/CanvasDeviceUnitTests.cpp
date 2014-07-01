@@ -28,14 +28,6 @@ public:
         Assert::AreEqual<ICanvasDevice*>(expectedCanvasDevice, actualCanvasDevice.Get());
     }
 
-
-    CanvasHardwareAcceleration GetRequestedHardwareAcceleration(const ComPtr<ICanvasDevice>& canvasDevice)
-    {
-        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
-        Assert::AreEqual(S_OK, canvasDevice.As(&canvasDeviceInternal));
-        return canvasDeviceInternal->GetRequestedHardwareAcceleration();
-    }
-
     TEST_METHOD(CanvasDevice_Implements_Expected_Interfaces)
     {
         auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::Auto);
@@ -55,7 +47,6 @@ public:
         Assert::AreEqual(CanvasDebugLevel::None, m_resourceCreationAdapter->m_debugLevel);
         Assert::AreEqual(1, m_resourceCreationAdapter->m_numD3dDeviceCreationCalls);
         Assert::AreEqual(CanvasHardwareAcceleration::On, m_resourceCreationAdapter->m_retrievableHarwareAcceleration); // Hardware is the default, and should be used here.
-        Assert::AreEqual(CanvasHardwareAcceleration::Auto, GetRequestedHardwareAcceleration(canvasDevice));
 
         AssertDeviceManagerRoundtrip(canvasDevice.Get());
     }
@@ -103,9 +94,6 @@ public:
             CanvasHardwareAcceleration hardwareAccelerationActual;
             canvasDevice->get_HardwareAcceleration(&hardwareAccelerationActual);
             Assert::AreEqual(expectedHardwareAcceleration, hardwareAccelerationActual);
-
-            // Verify the roundtrip field was stored correctly
-            Assert::AreEqual(expectedHardwareAcceleration, GetRequestedHardwareAcceleration(canvasDevice));
 
             // Ensure that the getter returns E_INVALIDARG with null ptr.
             Assert::AreEqual(E_INVALIDARG, canvasDevice->get_HardwareAcceleration(NULL));
@@ -157,14 +145,9 @@ public:
 
         AssertDeviceManagerRoundtrip(canvasDevice.Get());
 
-        CanvasHardwareAcceleration actualHardwareAcceleration{};
-        ThrowIfFailed(canvasDevice->get_HardwareAcceleration(&actualHardwareAcceleration));
-        Assert::AreEqual(CanvasHardwareAcceleration::Unknown, actualHardwareAcceleration);
-
-        // RecoverLostDevice can't succeed because CanvasDevice doesn't know how
-        // to recreate the underlying DXGI device
-        ComPtr<ICanvasDevice> recoveredDevice;
-        Assert::AreEqual(E_INVALIDARG, canvasDevice->RecoverLostDevice(&recoveredDevice));
+        CanvasHardwareAcceleration hardwareAcceleration{};
+        ThrowIfFailed(canvasDevice->get_HardwareAcceleration(&hardwareAcceleration));
+        Assert::AreEqual(CanvasHardwareAcceleration::Unknown, hardwareAcceleration);
 
         // Try a NULL Direct3DDevice. 
         Assert::ExpectException<InvalidArgException>(
@@ -184,14 +167,9 @@ public:
 
         AssertDeviceManagerRoundtrip(canvasDevice.Get());
 
-        CanvasHardwareAcceleration actualHardwareAcceleration{};
-        ThrowIfFailed(canvasDevice->get_HardwareAcceleration(&actualHardwareAcceleration));
-        Assert::AreEqual(CanvasHardwareAcceleration::Unknown, actualHardwareAcceleration);
-
-        // RecoverLostDevice can't succeed because CanvasDevice doesn't know how
-        // to recreate the underlying DXGI device
-        ComPtr<ICanvasDevice> recoveredDevice;
-        Assert::AreEqual(E_INVALIDARG, canvasDevice->RecoverLostDevice(&recoveredDevice));
+        CanvasHardwareAcceleration hardwareAcceleration{};
+        ThrowIfFailed(canvasDevice->get_HardwareAcceleration(&hardwareAcceleration));
+        Assert::AreEqual(CanvasHardwareAcceleration::Unknown, hardwareAcceleration);
     }
 
     TEST_METHOD(CanvasDevice_Closed)
@@ -209,21 +187,6 @@ public:
 
         CanvasHardwareAcceleration hardwareAccelerationActual = static_cast<CanvasHardwareAcceleration>(1);
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_HardwareAcceleration(&hardwareAccelerationActual));
-
-        {
-            ComPtr<ICanvasDevice> recoveredDevice;
-            Assert::AreEqual(RO_E_CLOSED, canvasDevice->RecoverLostDevice(&recoveredDevice));
-            Assert::IsNull(recoveredDevice.Get());
-        }
-
-        ComPtr<MockD3D11Device> mockD3D11Device = Make<MockD3D11Device>();        
-        ComPtr<IDirect3DDevice> stubDirect3DDevice;
-        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(mockD3D11Device.Get(), &stubDirect3DDevice));
-        {
-            ComPtr<ICanvasDevice> compatibleDevice;
-            Assert::AreEqual(RO_E_CLOSED, canvasDevice->CreateCompatibleDevice(stubDirect3DDevice.Get(), &compatibleDevice));
-            Assert::IsNull(compatibleDevice.Get());
-        }
     }
 
     ComPtr<ID2D1Device1> GetD2DDevice(const ComPtr<ICanvasDevice>& canvasDevice)
@@ -256,39 +219,6 @@ public:
         Assert::AreEqual(canvasD2DFactory.Get(), recoveredD2DFactory.Get());
     }
 
-    TEST_METHOD(CanvasDevice_RecoverLostDevice)
-    {
-        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
-
-        ComPtr<ICanvasDevice> recoveredDevice;
-        Assert::AreEqual(S_OK, canvasDevice->RecoverLostDevice(&recoveredDevice));
-
-        VerifyCompatibleDevices(canvasDevice, recoveredDevice);
-        AssertDeviceManagerRoundtrip(recoveredDevice.Get());
-    }
-
-    TEST_METHOD(CanvasDevice_CreateCompatibleDevice)
-    {
-        using canvas::Direct3DDevice;
-
-        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
-        ComPtr<ICanvasDevice> compatibleDevice;
-            
-        ComPtr<MockD3D11Device> mockD3D11Device = Make<MockD3D11Device>();
-        ComPtr<IDirect3DDevice> stubDirect3DDevice;
-        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(mockD3D11Device.Get(), &stubDirect3DDevice));
-
-        Assert::AreEqual(S_OK, canvasDevice->CreateCompatibleDevice(stubDirect3DDevice.Get(), &compatibleDevice));
-
-        VerifyCompatibleDevices(canvasDevice, compatibleDevice);
-        AssertDeviceManagerRoundtrip(compatibleDevice.Get());
-
-        // Additionally, verify that the compatible device has the correct original Direct3DDevice.
-        ComPtr<IDirect3DDevice> deviceActual;
-        Assert::AreEqual(S_OK, compatibleDevice->get_Direct3DDevice(&deviceActual));
-        Assert::AreEqual(static_cast<IDirect3DDevice*>(stubDirect3DDevice.Get()), deviceActual.Get());
-    }
-
     TEST_METHOD(CanvasDevice_HwSwFallback)
     {
         Reset();
@@ -304,7 +234,6 @@ public:
         d3dDeviceCreationCount++;
 
         Assert::AreEqual(CanvasHardwareAcceleration::On, m_resourceCreationAdapter->m_retrievableHarwareAcceleration);
-        Assert::AreEqual(CanvasHardwareAcceleration::Auto, GetRequestedHardwareAcceleration(canvasDevice));
         Assert::AreEqual(d3dDeviceCreationCount, m_resourceCreationAdapter->m_numD3dDeviceCreationCalls);
 
         // Now disable the hardware path.
@@ -319,51 +248,16 @@ public:
 
             // Ensure the software path was used.
             Assert::AreEqual(CanvasHardwareAcceleration::Off, m_resourceCreationAdapter->m_retrievableHarwareAcceleration);
-            Assert::AreEqual(CanvasHardwareAcceleration::Auto, GetRequestedHardwareAcceleration(canvasDevice));
             Assert::AreEqual(d3dDeviceCreationCount, m_resourceCreationAdapter->m_numD3dDeviceCreationCalls);
 
             // Ensure the HardwareAcceleration property getter returns the right thing.
-            CanvasHardwareAcceleration actualHardwareAcceleration;
-            canvasDevice->get_HardwareAcceleration(&actualHardwareAcceleration);
-            Assert::AreEqual(CanvasHardwareAcceleration::Off, actualHardwareAcceleration);
+            CanvasHardwareAcceleration hardwareAcceleration;
+            canvasDevice->get_HardwareAcceleration(&hardwareAcceleration);
+            Assert::AreEqual(CanvasHardwareAcceleration::Off, hardwareAcceleration);
         }
-
-        // Ensure RecoverLostDevice will yield another software device, and that it has the correct properties.
-        {
-            ComPtr<ICanvasDevice> recoveredSoftwareDevice;
-            ThrowIfFailed(canvasDevice->RecoverLostDevice(&recoveredSoftwareDevice));
-            d3dDeviceCreationCount++;
-            Assert::AreEqual(d3dDeviceCreationCount, m_resourceCreationAdapter->m_numD3dDeviceCreationCalls);
-            Assert::AreEqual(CanvasHardwareAcceleration::Off, m_resourceCreationAdapter->m_retrievableHarwareAcceleration);
-            Assert::AreEqual(CanvasHardwareAcceleration::Auto, GetRequestedHardwareAcceleration(recoveredSoftwareDevice));
-
-            CanvasHardwareAcceleration actualHardwareAcceleration;
-            recoveredSoftwareDevice->get_HardwareAcceleration(&actualHardwareAcceleration);
-            Assert::AreEqual(CanvasHardwareAcceleration::Off, actualHardwareAcceleration);
-        }
-
-        // Re-enable the hardware path, and do another RecoverLostDevice. 
-        m_resourceCreationAdapter->SetHardwareEnabled(true);
-        {
-            ComPtr<ICanvasDevice> recoveredHardwareDevice;
-            ThrowIfFailed(canvasDevice->RecoverLostDevice(&recoveredHardwareDevice));
-            d3dDeviceCreationCount++;
-
-            // Internally, this device should also be created against Requested CanvasHardwareAcceleration::Auto.
-            // Ensure that this is the case.
-            Assert::AreEqual(CanvasHardwareAcceleration::Auto, GetRequestedHardwareAcceleration(recoveredHardwareDevice));
-
-            // This causes the retrievable option to, then, be CanvasHardwareAcceleration::On.
-            Assert::AreEqual(d3dDeviceCreationCount, m_resourceCreationAdapter->m_numD3dDeviceCreationCalls);
-            Assert::AreEqual(CanvasHardwareAcceleration::On, m_resourceCreationAdapter->m_retrievableHarwareAcceleration);
-
-            CanvasHardwareAcceleration actualHardwareAcceleration;
-            recoveredHardwareDevice->get_HardwareAcceleration(&actualHardwareAcceleration);
-            Assert::AreEqual(CanvasHardwareAcceleration::On, actualHardwareAcceleration);
-        }
-
         {
             // Re-create another whole device with the hardware path on, ensuring there isn't some weird statefulness problem.
+            m_resourceCreationAdapter->SetHardwareEnabled(true);
             canvasDevice = m_deviceManager->Create(
                 CanvasDebugLevel::None,
                 CanvasHardwareAcceleration::Auto);
@@ -372,25 +266,11 @@ public:
             // Ensure the hardware path was used.
             Assert::AreEqual(CanvasHardwareAcceleration::On, m_resourceCreationAdapter->m_retrievableHarwareAcceleration);
             Assert::AreEqual(d3dDeviceCreationCount, m_resourceCreationAdapter->m_numD3dDeviceCreationCalls);
-            Assert::AreEqual(CanvasHardwareAcceleration::Auto, GetRequestedHardwareAcceleration(canvasDevice));
 
             // Ensure the HardwareAcceleration property getter returns HW again.
-            CanvasHardwareAcceleration actualHardwareAcceleration;
-            canvasDevice->get_HardwareAcceleration(&actualHardwareAcceleration);
-            Assert::AreEqual(CanvasHardwareAcceleration::On, actualHardwareAcceleration);
-        }
-
-        {
-            // Ensure RecoverLostDevice will now yield a HW device, too.
-            ComPtr<ICanvasDevice> recoveredHardwareDevice;
-            ThrowIfFailed(canvasDevice->RecoverLostDevice(&recoveredHardwareDevice));
-            d3dDeviceCreationCount++;
-            Assert::AreEqual(d3dDeviceCreationCount, m_resourceCreationAdapter->m_numD3dDeviceCreationCalls);
-            Assert::AreEqual(CanvasHardwareAcceleration::On, m_resourceCreationAdapter->m_retrievableHarwareAcceleration);
-
-            CanvasHardwareAcceleration actualHardwareAcceleration;
-            recoveredHardwareDevice->get_HardwareAcceleration(&actualHardwareAcceleration);
-            Assert::AreEqual(CanvasHardwareAcceleration::On, actualHardwareAcceleration);
+            CanvasHardwareAcceleration hardwareAcceleration;
+            canvasDevice->get_HardwareAcceleration(&hardwareAcceleration);
+            Assert::AreEqual(CanvasHardwareAcceleration::On, hardwareAcceleration);
         }
     }
 
