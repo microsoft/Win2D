@@ -22,9 +22,14 @@ namespace canvas
         ThrowIfFailed(sisNative->BeginDraw(
             updateRect,
             IID_PPV_ARGS(&deviceContext),
-            &offset));            
+            &offset));
 
-        ThrowIfFailed(deviceContext.CopyTo(outDeviceContext)); // TODO: what happens if this fails?  Do we need to call EndDraw?
+        //
+        // If this function fails then we need to call EndDraw
+        //
+        auto endDrawWarden = MakeScopeWarden([&]() { sisNative->EndDraw(); });
+
+        ThrowIfFailed(deviceContext.CopyTo(outDeviceContext));
 
         //
         // ISurfaceImageSourceNativeWithD2D is operating in batched mode.  This
@@ -39,9 +44,16 @@ namespace canvas
         deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
             static_cast<float>(offset.x),
             static_cast<float>(offset.y)));            
-        
-        return std::make_shared<CanvasImageSourceDrawingSessionAdapter>(
+
+        auto adapter = std::make_shared<CanvasImageSourceDrawingSessionAdapter>(
             sisNative);
+
+        //
+        // This function can't fail now, so we can dismiss the end draw warden.
+        //
+        endDrawWarden.Dismiss();
+
+        return adapter;
     }
 
 

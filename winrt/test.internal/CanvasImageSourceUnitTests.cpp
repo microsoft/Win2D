@@ -360,4 +360,64 @@ public:
         adapter->EndDraw();
         Assert::IsTrue(endDrawCalled);
     }
+
+    struct CrippledDeviceContext : public MockD2DDeviceContext
+    {
+        //
+        // Cripple this device context implementation so that it can only be
+        // QI'd for ID2D1DeviceContext.
+        //
+        STDMETHOD(QueryInterface)(REFIID riid, _Outptr_result_nullonfailure_ void **ppvObject)
+        {
+            if (riid == __uuidof(ID2D1DeviceContext))
+                return RuntimeClass::QueryInterface(riid, ppvObject);
+
+            return E_NOINTERFACE;
+        }
+    };
+
+    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_When_SisNative_Gives_Unusuable_DeviceContext_Then_EndDraw_Called)
+    {
+        auto sis = Make<MockSurfaceImageSource>();
+        bool beginDrawCalled = false;
+        sis->MockBeginDraw = 
+            [&](const RECT&, const IID& iid, void** obj, POINT*)
+            {
+                Assert::IsFalse(beginDrawCalled);
+                beginDrawCalled = true;
+                auto crippledDeviceContext = Make<CrippledDeviceContext>();
+                ThrowIfFailed(crippledDeviceContext.CopyTo(iid, obj));
+            };
+
+        bool endDrawCalled = false;
+        sis->MockEndDraw =
+            [&]()
+            {
+                Assert::IsFalse(endDrawCalled);
+                endDrawCalled = true;
+            };
+
+        //
+        // We expect creating the adapter to fail since our SurfaceImageSource
+        // implementation returns a device context that only implements
+        // ID2D1DeviceContext.  We require ID2D1DeviceContext1.
+        //
+        ComPtr<ID2D1DeviceContext1> actualDeviceContext;
+        Assert::ExpectException<NoSuchInterfaceException>(
+            [&]()
+            {
+                CanvasImageSourceDrawingSessionAdapter::Create(
+                    sis.Get(),
+                    RECT{1,2,3,4},
+                    &actualDeviceContext);
+            });
+
+        //
+        // If this happens we expect BeginDraw to have been called.  Then, after
+        // the failure, we expect EndDraw to have been called in order to clean
+        // up properly.
+        //
+        Assert::IsTrue(beginDrawCalled);
+        Assert::IsTrue(endDrawCalled);
+    }
 };

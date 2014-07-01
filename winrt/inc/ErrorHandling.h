@@ -59,6 +59,17 @@ protected:
     friend void ThrowHR(HRESULT);
 };
 
+class NoSuchInterfaceException : public HResultException
+{
+public:
+    NoSuchInterfaceException()
+        : HResultException(E_NOINTERFACE)
+    {}
+
+    __declspec(noreturn)
+    friend void ThrowHR(HRESULT);
+};
+
 //
 // Throws the appropriate exception for the given HRESULT.
 //
@@ -67,8 +78,9 @@ inline void ThrowHR(HRESULT hr)
 {
     switch (hr)
     {
-    case E_INVALIDARG: throw InvalidArgException();
-    default:           throw HResultException(hr);
+    case E_INVALIDARG:  throw InvalidArgException();
+    case E_NOINTERFACE: throw NoSuchInterfaceException();
+    default:            throw HResultException(hr);
     }
 }
 
