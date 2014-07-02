@@ -39,5 +39,6 @@ IF NOT "%1" == "/n" (
 )
 
 nuget pack WindowsCanvas.nuspec -nopackageanalysis -outputdirectory %~p0..\..\bin
+nuget pack WindowsCanvas-debug.nuspec -nopackageanalysis -outputdirectory %~p0..\..\bin
 
 :END

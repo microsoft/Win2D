@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>WindowsCanvas-debug</id>
+        <version>0.0.2</version>
+        <title>Windows Canvas (debug)</title>
+        <authors>Microsoft Corportation</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Windows Canvas debug build.  Suitable for debugging Windows Canvas itself.</description>
+
+        <dependencies>
+          <dependency id="WindowsCanvas"/>
+        </dependencies>
+   </metadata>
+
+    <files>
+      <!-- 
+           These generate warnings about the files being outside of the lib
+           directory.  We want it that way because we don't want to reference
+           the DLL files as they're not necessarly .NET assemblies.
+
+           Running with -NoPackageAnalysis suppresses the warnings.
+      -->
+      <file src="..\..\bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
+      <file src="..\..\bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
+      <file src="..\..\bin\windowsx86\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
+
+      <file src="..\..\bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
+      <file src="..\..\bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
+      <file src="..\..\bin\windowsarm\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
+
+      <file src="..\..\bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
+      <file src="..\..\bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
+      <file src="..\..\bin\windowsx64\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
+
+      <file src="..\..\bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
+      <file src="..\..\bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
+      <file src="..\..\bin\phonex86\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
+
+      <file src="..\..\bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
+      <file src="..\..\bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
+      <file src="..\..\bin\phonearm\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
+
+      <file src="WindowsCanvas-debug.props" target="build" />
+    </files>
+</package>

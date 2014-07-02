@@ -11,7 +11,9 @@
     <windowscanvas-Platform Condition="'$(Platform)' == 'Win32'">x86</windowscanvas-Platform>
     <windowscanvas-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</windowscanvas-Platform>
 
-    <windowscanvas-Configuration Condition="'$(windowscanvas-Configuration)' == ''">debug</windowscanvas-Configuration>
+    <!-- This directory may be overridden by other packages that provide
+         different binaries (eg for debugging Windows Canvas itself). -->
+    <windowscanvas-BinDir Condition="'$(windowscanvas-BinDir)' == ''">$(MSBuildThisFileDirectory)..\bin\</windowscanvas-BinDir>
   </PropertyGroup>
 
   <ItemDefinitionGroup>

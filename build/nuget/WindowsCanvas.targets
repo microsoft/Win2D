@@ -2,14 +2,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Reference Include="Microsoft.Graphics.Canvas">
-      <HintPath>$(MSBuildThisFileDirectory)..\bin\$(windowscanvas-Configuration)\$(windowscanvas-DeviceType)\$(windowscanvas-Platform)\Microsoft.Graphics.Canvas.winmd</HintPath>
+      <HintPath>$(windowscanvas-BinDir)$(windowscanvas-DeviceType)\$(windowscanvas-Platform)\Microsoft.Graphics.Canvas.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
   
   <ItemGroup Condition="'$(Language)' != 'C++'">
-    <Reference Include="Microsoft.Graphics.Canvas.Numerics" Condition="'$(Language)' != 'C++'">
-      <HintPath>$(MSBuildThisFileDirectory)..\bin\$(windowscanvas-Configuration)\$(windowscanvas-DeviceType)\$(windowscanvas-Platform)\Microsoft.Graphics.Canvas.Numerics.dll</HintPath>
+    <Reference Include="Microsoft.Graphics.Canvas.Numerics" Condition="'$(Language)' != 'C++'"> <!-- TODO: redundant condition? -->
+      <HintPath>$(windowscanvas-BinDir)$(windowscanvas-DeviceType)\$(windowscanvas-Platform)\Microsoft.Graphics.Canvas.Numerics.dll</HintPath>
     </Reference>
 
     <SDKReference Include="Microsoft.VCLibs, Version=12.0" Condition="'$(Language)' != 'C++'">

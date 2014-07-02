@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>WindowsCanvas</id>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
         <title>Windows Canvas</title>
         <authors>Microsoft Corportation</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -17,46 +17,25 @@
 
            Running with -NoPackageAnalysis suppresses the warnings.
       -->
-      <file src="..\..\bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\debug\Windows\x86" />
-      <file src="..\..\bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\debug\Windows\x86" />
-      <file src="..\..\bin\windowsx86\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\debug\Windows\x86" />
+      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
+      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
+      <file src="..\..\bin\windowsx86\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
 
-      <file src="..\..\bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\debug\Windows\arm" />
-      <file src="..\..\bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\debug\Windows\arm" />
-      <file src="..\..\bin\windowsarm\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\debug\Windows\arm" />
+      <file src="..\..\bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
+      <file src="..\..\bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
+      <file src="..\..\bin\windowsarm\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
 
-      <file src="..\..\bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\debug\Windows\x64" />
-      <file src="..\..\bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\debug\Windows\x64" />
-      <file src="..\..\bin\windowsx64\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\debug\Windows\x64" />
+      <file src="..\..\bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
+      <file src="..\..\bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
+      <file src="..\..\bin\windowsx64\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
 
-      <file src="..\..\bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\debug\Phone\x86" />
-      <file src="..\..\bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\debug\Phone\x86" />
-      <file src="..\..\bin\phonex86\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\debug\Phone\x86" />
+      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
+      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
+      <file src="..\..\bin\phonex86\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
 
-      <file src="..\..\bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\debug\Phone\arm" />
-      <file src="..\..\bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\debug\Phone\arm" />
-      <file src="..\..\bin\phonearm\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\debug\Phone\arm" />
-
-
-      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\release\Windows\x86" />
-      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\release\Windows\x86" />
-      <file src="..\..\bin\windowsx86\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\release\Windows\x86" />
-
-      <file src="..\..\bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\release\Windows\arm" />
-      <file src="..\..\bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\release\Windows\arm" />
-      <file src="..\..\bin\windowsarm\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\release\Windows\arm" />
-
-      <file src="..\..\bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\release\Windows\x64" />
-      <file src="..\..\bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\release\Windows\x64" />
-      <file src="..\..\bin\windowsx64\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\release\Windows\x64" />
-
-      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\release\Phone\x86" />
-      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\release\Phone\x86" />
-      <file src="..\..\bin\phonex86\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\release\Phone\x86" />
-
-      <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\release\Phone\arm" />
-      <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\release\Phone\arm" />
-      <file src="..\..\bin\phonearm\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\release\Phone\arm" />
+      <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
+      <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
+      <file src="..\..\bin\phonearm\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
 
 
       <file src="WindowsCanvas.props" target="build" />
