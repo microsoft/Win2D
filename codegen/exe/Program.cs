@@ -1,6 +1,14 @@
-﻿//
-// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 //
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
 
 using System;
 using System.Collections.Generic;
@@ -57,12 +65,7 @@ namespace CodeGen
 
         private void OutputLeadingCode(OutputFiles outputFiles)
         {
-            outputFiles.CppFile.WriteLine("//");
-            outputFiles.CppFile.WriteLine("// Copyright (c) Microsoft Corporation.  All rights reserved.");
-            outputFiles.CppFile.WriteLine("//");
-            outputFiles.CppFile.WriteLine("// This file was automatically generated. Please do not edit it manually.");
-            outputFiles.CppFile.WriteLine("//");
-            outputFiles.CppFile.WriteLine();
+            OutputLeadingComment(outputFiles.CppFile);
 
             outputFiles.CppFile.WriteLine("#include \"pch.h\"");
             outputFiles.CppFile.WriteLine("#include <wrl.h>");
@@ -76,6 +79,8 @@ namespace CodeGen
             outputFiles.CppFile.WriteLine("{");
             outputFiles.CppFile.Indent();
 
+            OutputLeadingComment(outputFiles.IdlFile);
+
             outputFiles.IdlFile.WriteLine("import \"inspectable.idl\";");
             outputFiles.IdlFile.WriteLine("import \"Windows.Foundation.idl\";");
             outputFiles.IdlFile.WriteLine("import \"Windows.UI.idl\";");
@@ -87,6 +92,25 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine("namespace Microsoft.Graphics.Canvas");
             outputFiles.IdlFile.WriteLine("{");
             outputFiles.IdlFile.Indent();
+        }
+
+        private void OutputLeadingComment(Formatter output)
+        {
+            output.WriteLine("// Copyright (c) Microsoft Corporation. All rights reserved.");
+            output.WriteLine("//");
+            output.WriteLine("// Licensed under the Apache License, Version 2.0 (the \"License\"); you may");
+            output.WriteLine("// not use these files except in compliance with the License. You may obtain");
+            output.WriteLine("// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0");
+            output.WriteLine("//");
+            output.WriteLine("// Unless required by applicable law or agreed to in writing, software");
+            output.WriteLine("// distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT");
+            output.WriteLine("// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the");
+            output.WriteLine("// License for the specific language governing permissions and limitations");
+            output.WriteLine("// under the License.");
+            output.WriteLine();
+
+            output.WriteLine("// This file was automatically generated. Please do not edit it manually.");
+            output.WriteLine();
         }
 
         private void OutputEndingCode(OutputFiles outputFiles)
