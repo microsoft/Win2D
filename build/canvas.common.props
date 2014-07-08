@@ -25,6 +25,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <BinariesDirectory Condition="'$(TF_BUILD_BINARIESDIRECTORY)' == ''">$(SolutionDir)bin</BinariesDirectory>
+    <BinariesDirectory Condition="'$(TF_BUILD_BINARIESDIRECTORY)' != ''">$(TF_BUILD_BINARIESDIRECTORY)</BinariesDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup>
     
     <!--
 
@@ -36,7 +41,7 @@
 
     -->
 
-    <__OutputPath>$(SolutionDir)bin\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
+    <__OutputPath>$(BinariesDirectory)\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
     <BaseIntermediateOutputPath>$(SolutionDir)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(FullPlatform)\$(Configuration)\</IntermediateOutputPath>
     <AssetDir>$(SolutionDir)build\assets\</AssetDir>
