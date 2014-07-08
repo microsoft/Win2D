@@ -41,9 +41,9 @@
     <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store'">v120</PlatformToolset>
     <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Phone'">v120_wp81</PlatformToolset>
     <UnmergedWinmdDirectory>$(IntermediateOutputPath)UnmergedWinMD</UnmergedWinmdDirectory>
-    <MergedWinmdDirectory>$(SolutionDir)bin\$(FullPlatform)\$(Configuration)\MergedWinMD</MergedWinmdDirectory>
-    <IdlHeaderDirectory>$(SolutionDir)\bin\$(FullPlatform)\$(Configuration)\IdlHeader</IdlHeaderDirectory>
-    <PublishedHeaderDirectory>$(SolutionDir)winrt\published</PublishedHeaderDirectory>
+    <MergedWinmdDirectory>$(MSBuildThisFileDirectory)..\bin\$(FullPlatform)\$(Configuration)\MergedWinMD</MergedWinmdDirectory>
+    <IdlHeaderDirectory>$(MSBuildThisFileDirectory)..\bin\$(FullPlatform)\$(Configuration)\IdlHeader</IdlHeaderDirectory>
+    <PublishedHeaderDirectory>$(MSBuildThisFileDirectory)..\winrt\published</PublishedHeaderDirectory>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">

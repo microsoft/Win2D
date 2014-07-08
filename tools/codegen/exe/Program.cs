@@ -137,7 +137,7 @@ namespace CodeGen
         
         public static string GetDefaultOutputLocation(string inputDir)
         {
-            return Path.GetFullPath(Path.Combine(inputDir, "..", "..", "winrt", "lib"));
+            return Path.GetFullPath(Path.Combine(inputDir, "..", "..", "..", "winrt", "lib"));
         }
 
         public static void GenerateCode(string inputDir, string outputDir)
@@ -183,7 +183,7 @@ namespace CodeGen
             string[] candidates = new string[] {
                 ".",
                 "codegen/exe",
-                "../../../../codegen/exe",
+                "../../../../tools/codegen/exe",
             };
 
             foreach (var candidate in candidates)
