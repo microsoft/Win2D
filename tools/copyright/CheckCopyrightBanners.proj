@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    To validate that all files have the right copyright banners:
+
+        msbuild CheckCopyrightBanners.proj
+
+
+    To fix all files that have wrong copyright banners:
+
+        msbuild CheckCopyrightBanners.proj /p:Fix=true
+
+
+    To fix only files that currently have the specified copyright banner:
+
+        msbuild CheckCopyrightBanners.proj /p:Fix=true /p:PreviousCopyright=prev.txt
+-->
+
+<Project ToolsVersion="12.0" DefaultTargets="CheckCopyrightBanners" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+
+    <!-- Paths -->
+    <Executable>$(MSBuildThisFileDirectory)..\..\bin\WindowsAnyCPU\$(Configuration)\Copyright\Copyright.exe</Executable>
+    <CopyrightFile>$(MSBuildThisFileDirectory)copyright.txt</CopyrightFile>
+    <RootDir>$(MSBuildThisFileDirectory)..\..</RootDir>
+
+    <!-- File extensions and directories to check vs. ignore -->
+    <Ext>cpp;h;inl;cs;idl</Ext>
+    <SkipExt>gitattributes;gitignore;png;txt;md;xml;xaml;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;config;appxmanifest;suo;ipch;sdf;log;opensdf;user</SkipExt>
+    <SkipDir>.git;obj;bin;AppPackages;TestResults</SkipDir>
+
+    <!-- Commandline arguments for the Copyright.exe tool -->
+    <Args>$(CopyrightFile) /rootdir:$(RootDir) /ext:$(Ext) /skipext:$(SkipExt) /skipdir:$(SkipDir)</Args>
+
+    <!-- Add /validate option if Fix parameter not specified? -->
+    <Args Condition=" '$(Fix)' == '' or !'$(Fix)' ">$(Args) /validate</Args>
+
+    <!-- Add /previouscopyright option? -->
+    <Args Condition=" '$(PreviousCopyright)' != '' ">$(Args) /previouscopyright:$(PreviousCopyright)</Args>
+  </PropertyGroup>
+
+  <Target Name="CheckCopyrightBanners">
+    <Exec Command="$(Executable) $(Args)" />
+  </Target>
+
+</Project>

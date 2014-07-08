@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30303.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{2AF99CB6-C70F-4579-90FD-679EDF8ED741}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,6 +13,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codegen.exe", "codegen\exe\codegen.exe.csproj", "{984ABFAE-12D5-4929-AF2B-A733341BCCCF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codegen.test", "codegen\test\codegen.test.csproj", "{A8B337FF-9174-4B20-A976-CFE52657CE07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "copyright", "copyright\copyright.csproj", "{4D0E8606-F235-4879-934A-D954CE94D69F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +30,10 @@ Global
 		{A8B337FF-9174-4B20-A976-CFE52657CE07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8B337FF-9174-4B20-A976-CFE52657CE07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8B337FF-9174-4B20-A976-CFE52657CE07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D0E8606-F235-4879-934A-D954CE94D69F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D0E8606-F235-4879-934A-D954CE94D69F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D0E8606-F235-4879-934A-D954CE94D69F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D0E8606-F235-4879-934A-D954CE94D69F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
