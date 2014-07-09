@@ -18,11 +18,14 @@
 
 <Project ToolsVersion="12.0" DefaultTargets="CheckCopyrightBanners" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <Import Project="$(MsBuildThisFileDirectory)..\..\build\canvas.common.props" />
+
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <CheckThisConfiguration Condition=" '$(Platform)' == '' or '$(Configuration)|$(Platform)' == 'Release|Any CPU' ">true</CheckThisConfiguration>
 
     <!-- Paths -->
-    <Executable>$(MSBuildThisFileDirectory)..\..\bin\WindowsAnyCPU\$(Configuration)\Copyright\Copyright.exe</Executable>
+    <Executable>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\Copyright\Copyright.exe</Executable>
     <CopyrightFile>$(MSBuildThisFileDirectory)copyright.txt</CopyrightFile>
     <RootDir>$(MSBuildThisFileDirectory)..\..</RootDir>
 
@@ -41,8 +44,12 @@
     <Args Condition=" '$(PreviousCopyright)' != '' ">$(Args) /previouscopyright:$(PreviousCopyright)</Args>
   </PropertyGroup>
 
-  <Target Name="CheckCopyrightBanners">
+  <Target Name="CheckCopyrightBanners" Condition="$(CheckThisConfiguration) == true" DependsOnTargets="BuildCopyrightTool">
     <Exec Command="$(Executable) $(Args)" />
+  </Target>
+
+  <Target Name="BuildCopyrightTool">
+    <MSBuild Projects="copyright.csproj" Properties="Configuration=$(Configuration);Platform=AnyCPU" />
   </Target>
 
 </Project>
