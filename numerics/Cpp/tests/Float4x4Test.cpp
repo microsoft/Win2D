@@ -1427,7 +1427,7 @@ namespace NumericsTests
             float4x4& ret = a += b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
             
             // Pointer aliasing where object is applied to itself.
             expected = b + b;
@@ -1446,7 +1446,7 @@ namespace NumericsTests
             float4x4& ret = a -= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
             
             // Pointer aliasing where object is applied to itself.
             expected = b - b;
@@ -1465,7 +1465,7 @@ namespace NumericsTests
             float4x4& ret = a *= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
             
             // Pointer aliasing where object is applied to itself.
             expected = b * b;
@@ -1484,7 +1484,7 @@ namespace NumericsTests
             float4x4& ret = a *= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
         }
 
         void CreateBillboardTestMethod(float3 placeDirection, float3 cameraUpVector, float4x4 expectedRotation)
@@ -2213,19 +2213,16 @@ namespace NumericsTests
             Assert::IsTrue(std::is_copy_constructible<float4x4>::value);
             Assert::IsTrue(std::is_trivially_copy_constructible<float4x4>::value);
 
-            // Move constructor is present and trivial.
+            // Move constructor is present.
             Assert::IsTrue(std::is_move_constructible<float4x4>::value);
-            Assert::IsTrue(std::is_trivially_move_constructible<float4x4>::value);
 
             // Copy assignment is present and trivial.
             Assert::IsTrue(std::is_copy_assignable<float4x4>::value);
             Assert::IsTrue(std::is_trivially_copy_assignable<float4x4>::value);
             Assert::IsTrue(std::is_nothrow_copy_assignable<float4x4>::value);
 
-            // Move assignment is present and trivial.
+            // Move assignment is present.
             Assert::IsTrue(std::is_move_assignable<float4x4>::value);
-            Assert::IsTrue(std::is_trivially_move_assignable<float4x4>::value);
-            Assert::IsTrue(std::is_nothrow_move_assignable<float4x4>::value);
 
             // Destruction is present and trivial.
             Assert::IsTrue(std::is_destructible<float4x4>::value);

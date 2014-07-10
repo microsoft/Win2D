@@ -739,7 +739,7 @@ namespace NumericsTests
             float2& ret = a += b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
             
             // Pointer aliasing where object is applied to itself.
             expected = b + b;
@@ -758,7 +758,7 @@ namespace NumericsTests
             float2& ret = a -= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
             
             // Pointer aliasing where object is applied to itself.
             expected = b - b;
@@ -777,7 +777,7 @@ namespace NumericsTests
             float2& ret = a *= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
             
             // Pointer aliasing where object is applied to itself.
             expected = b * b;
@@ -796,7 +796,7 @@ namespace NumericsTests
             float2& ret = a *= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
         }
 
         // A test for operator /=
@@ -810,7 +810,7 @@ namespace NumericsTests
             float2& ret = a /= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
             
             // Pointer aliasing where object is applied to itself.
             expected = b / b;
@@ -829,7 +829,7 @@ namespace NumericsTests
             float2& ret = a /= b;
             
             Assert::AreEqual(a, expected);
-            Assert::AreEqual<void*>(&a, &ret);
+            Assert::AreEqual(&a, &ret);
         }
 
         // A test for float2 (float)
@@ -1057,19 +1057,16 @@ namespace NumericsTests
             Assert::IsTrue(std::is_copy_constructible<float2>::value);
             Assert::IsTrue(std::is_trivially_copy_constructible<float2>::value);
 
-            // Move constructor is present and trivial.
+            // Move constructor is present.
             Assert::IsTrue(std::is_move_constructible<float2>::value);
-            Assert::IsTrue(std::is_trivially_move_constructible<float2>::value);
 
             // Copy assignment is present and trivial.
             Assert::IsTrue(std::is_copy_assignable<float2>::value);
             Assert::IsTrue(std::is_trivially_copy_assignable<float2>::value);
             Assert::IsTrue(std::is_nothrow_copy_assignable<float2>::value);
 
-            // Move assignment is present and trivial.
+            // Move assignment is present.
             Assert::IsTrue(std::is_move_assignable<float2>::value);
-            Assert::IsTrue(std::is_trivially_move_assignable<float2>::value);
-            Assert::IsTrue(std::is_nothrow_move_assignable<float2>::value);
 
             // Destruction is present and trivial.
             Assert::IsTrue(std::is_destructible<float2>::value);

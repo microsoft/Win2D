@@ -16,3 +16,5 @@
 
 #include <SDKDDKVer.h>
 #include <CppUnitTest.h>
+
+#include "Helpers.h"

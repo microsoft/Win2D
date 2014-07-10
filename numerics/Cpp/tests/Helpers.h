@@ -12,9 +12,15 @@
 
 #pragma once
 
-#include "pch.h"
-
 using namespace Windows::Foundation::Numerics;
+
+
+// Support older C runtimes that didn't define these.
+#ifndef NAN
+#define NAN             std::numeric_limits<float>::quiet_NaN()
+#define isnan(value)    (_isnan(value) != 0)
+#define isinf(value)    (_finite(value) == 0)
+#endif
 
 
 namespace NumericsTests
@@ -98,28 +104,28 @@ namespace Microsoft
     { 
         namespace CppUnitTestFramework
         {
-            template<> static std::wstring ToString<float2>(float2 const& value)
+            template<> inline std::wstring ToString<float2>(float2 const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{x:%f y:%f}", value.x, value.y);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<float3>(float3 const& value)
+            template<> inline std::wstring ToString<float3>(float3 const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{x:%f y:%f z:%f}", value.x, value.y, value.z);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<float4>(float4 const& value)
+            template<> inline std::wstring ToString<float4>(float4 const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{x:%f y:%f z:%f w:%f}", value.x, value.y, value.z, value.w);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<float4x4>(float4x4 const& value)
+            template<> inline std::wstring ToString<float4x4>(float4x4 const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{ {%f %f %f %f} {%f %f %f %f} {%f %f %f %f} {%f %f %f %f} }",
@@ -130,7 +136,7 @@ namespace Microsoft
                 return tmp;
             }
 
-            template<> static std::wstring ToString<float3x2>(float3x2 const& value)
+            template<> inline std::wstring ToString<float3x2>(float3x2 const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{ {%f %f} {%f %f} {%f %f} }",
@@ -140,19 +146,27 @@ namespace Microsoft
                 return tmp;
             }
 
-            template<> static std::wstring ToString<plane>(plane const& value)
+            template<> inline std::wstring ToString<plane>(plane const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{Normal:{x:%f y:%f z:%f} d:%f}", value.normal.x, value.normal.y, value.normal.z, value.d);
                 return tmp;
             }
 
-            template<> static std::wstring ToString<quaternion>(quaternion const& value)
+            template<> inline std::wstring ToString<quaternion>(quaternion const& value)
             {
                 wchar_t tmp[256];
                 swprintf_s(tmp, L"{x:%f y:%f z:%f w:%f}", value.x, value.y, value.z, value.w);
                 return tmp;
             }
+
+            template<> inline std::wstring ToString<float2>    (float2*     value)  { return ToString((void*)value); }
+            template<> inline std::wstring ToString<float3>    (float3*     value)  { return ToString((void*)value); }
+            template<> inline std::wstring ToString<float4>    (float4*     value)  { return ToString((void*)value); }
+            template<> inline std::wstring ToString<float4x4>  (float4x4*   value)  { return ToString((void*)value); }
+            template<> inline std::wstring ToString<float3x2>  (float3x2*   value)  { return ToString((void*)value); }
+            template<> inline std::wstring ToString<plane>     (plane*      value)  { return ToString((void*)value); }
+            template<> inline std::wstring ToString<quaternion>(quaternion* value)  { return ToString((void*)value); }
         }
     }
 }

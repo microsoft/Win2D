@@ -14,6 +14,7 @@
 
 #include <DirectXMath.h>
 #include <stdexcept>
+#include <limits>
 
 
 #if defined __cplusplus_winrt && _MSC_VER >= 1900

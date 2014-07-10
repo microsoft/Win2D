@@ -1842,7 +1842,8 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (fabs(det) < FLT_EPSILON)
         {
-            *result = float3x2(NAN, NAN, NAN, NAN, NAN, NAN);
+            const float nan = std::numeric_limits<float>::quiet_NaN();
+            *result = float3x2(nan, nan, nan, nan, nan, nan);
             return false;
         }
 
@@ -2900,10 +2901,12 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (fabs(det) < FLT_EPSILON)
         {
-            *result = float4x4(NAN, NAN, NAN, NAN,
-                                NAN, NAN, NAN, NAN,
-                                NAN, NAN, NAN, NAN,
-                                NAN, NAN, NAN, NAN);
+            const float nan = std::numeric_limits<float>::quiet_NaN();
+
+            *result = float4x4(nan, nan, nan, nan,
+                               nan, nan, nan, nan,
+                               nan, nan, nan, nan,
+                               nan, nan, nan, nan);
             return false;
         }
 

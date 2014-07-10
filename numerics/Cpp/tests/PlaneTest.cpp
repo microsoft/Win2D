@@ -329,19 +329,16 @@ namespace NumericsTests
             Assert::IsTrue(std::is_copy_constructible<plane>::value);
             Assert::IsTrue(std::is_trivially_copy_constructible<plane>::value);
 
-            // Move constructor is present and trivial.
+            // Move constructor is present.
             Assert::IsTrue(std::is_move_constructible<plane>::value);
-            Assert::IsTrue(std::is_trivially_move_constructible<plane>::value);
 
             // Copy assignment is present and trivial.
             Assert::IsTrue(std::is_copy_assignable<plane>::value);
             Assert::IsTrue(std::is_trivially_copy_assignable<plane>::value);
             Assert::IsTrue(std::is_nothrow_copy_assignable<plane>::value);
 
-            // Move assignment is present and trivial.
+            // Move assignment is present.
             Assert::IsTrue(std::is_move_assignable<plane>::value);
-            Assert::IsTrue(std::is_trivially_move_assignable<plane>::value);
-            Assert::IsTrue(std::is_nothrow_move_assignable<plane>::value);
 
             // Destruction is present and trivial.
             Assert::IsTrue(std::is_destructible<plane>::value);
