@@ -10,14 +10,20 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
-{
-    //
-    // ICanvasGeometry
-    //
-    [version(VERSION), uuid(A0D3D5DC-A2BD-4E5A-AA75-C13B8FF238C2)]
-    interface ICanvasGeometry : IInspectable
-        requires Windows.Foundation.IClosable
-    {
-    }
-}
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+import "Windows.UI.idl";
+import "Windows.UI.Xaml.Media.Imaging.idl";
+
+#include "version.h"
+
+#include "..\..\numerics\WinRT\WinRTNumerics.idl"
+#include "Canvas.codegen.idl"
+#include "WinRTDirectX\WinRTDirectXCommon.idl"
+#include "WinRTDirectX\WinRTDirect3D11.idl"
+#include "CanvasInterfaces.abi.idl"
+#include "CanvasDevice.abi.idl"
+#include "CanvasBrush.abi.idl"
+#include "CanvasStrokeStyle.abi.idl"
+#include "CanvasDrawingSession.abi.idl"
+#include "CanvasImageSource.abi.idl"

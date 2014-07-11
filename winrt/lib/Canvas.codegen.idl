@@ -12,13 +12,6 @@
 
 // This file was automatically generated. Please do not edit it manually.
 
-import "inspectable.idl";
-import "Windows.Foundation.idl";
-import "Windows.UI.idl";
-import "WinRTNumerics.idl";
-
-#include "version.h"
-
 namespace Microsoft.Graphics.Canvas
 {
     [version(VERSION)]

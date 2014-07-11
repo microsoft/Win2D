@@ -57,10 +57,7 @@
 #include <ScopeWarden.h>
 
 // Generated from local IDLs
-#include <CanvasImageSource.abi.h>
-#include <WinRTDirect3D11.h>
-#include <WinRTDirectXCommon.h>
-#include <WinRTNumerics.h>
+#include <Canvas.abi.h>
 
 // local
 #include "ClosablePtr.h"

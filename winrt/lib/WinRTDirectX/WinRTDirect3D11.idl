@@ -10,12 +10,6 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-import "inspectable.idl";
-import "Windows.Foundation.idl";
-import "WinRTDirectXCommon.idl";
-
-#include "../version.h"
-
 //
 // Types that are bound to Direct3D 11.
 //

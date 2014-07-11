@@ -10,13 +10,6 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-import "inspectable.idl";
-import "Windows.Foundation.idl";
-import "Canvas.codegen.idl";
-import "WinRTDirect3D11.idl";
-
-#include "version.h"
-
 namespace Microsoft.Graphics.Canvas
 {
     [version(VERSION)]

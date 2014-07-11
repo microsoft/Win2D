@@ -10,14 +10,6 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-import "inspectable.idl";
-import "Windows.UI.Xaml.Media.Imaging.idl";
-
-import "CanvasDevice.abi.idl";
-import "CanvasDrawingSession.abi.idl";
-
-#include "version.h"
-
 namespace Microsoft.Graphics.Canvas
 {
     //

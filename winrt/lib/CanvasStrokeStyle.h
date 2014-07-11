@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <CanvasStrokeStyle.abi.h>
+#include <Canvas.abi.h>
 #include <ClosablePtr.h>
 
 namespace canvas

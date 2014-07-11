@@ -37,9 +37,7 @@
 #include <CppUnitTest.h>
 
 // Headers generated from IDL files
-#include <CanvasDevice.abi.h>
-#include <CanvasDrawingSession.abi.h>
-#include <CanvasImageSource.abi.h>
+#include <Canvas.abi.h>
 
 // Inc
 #include <ErrorHandling.h>

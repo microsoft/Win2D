@@ -12,8 +12,7 @@
 
 #pragma once
 
-#include <CanvasDevice.abi.h>   // TODO: #1432 we don't want to be shipping these idls, we should be shipping the ones generated via winmdidl 
-#include <CanvasBrush.abi.h>    // TODO: #1432
+#include <Canvas.abi.h>   // TODO: #1432 we don't want to be shipping these idls, we should be shipping the ones generated via winmdidl 
 #include <d2d1_2.h>
 
 namespace ABI

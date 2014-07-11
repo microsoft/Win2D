@@ -56,28 +56,25 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl">
-      <HasInterfaces>false</HasInterfaces>
-    </MidlRT>
-    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl">
-      <HasInterfaces>false</HasInterfaces>
-    </MidlRT>
-    <MidlRT Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl">
-      <HasInterfaces>false</HasInterfaces>
-    </MidlRT>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
-    <MidlRT Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />
+    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

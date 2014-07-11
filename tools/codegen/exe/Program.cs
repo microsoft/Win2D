@@ -81,14 +81,6 @@ namespace CodeGen
 
             OutputLeadingComment(outputFiles.IdlFile);
 
-            outputFiles.IdlFile.WriteLine("import \"inspectable.idl\";");
-            outputFiles.IdlFile.WriteLine("import \"Windows.Foundation.idl\";");
-            outputFiles.IdlFile.WriteLine("import \"Windows.UI.idl\";");
-            outputFiles.IdlFile.WriteLine("import \"WinRTNumerics.idl\";");
-            outputFiles.IdlFile.WriteLine();
-            outputFiles.IdlFile.WriteLine("#include \"version.h\"");
-            outputFiles.IdlFile.WriteLine();
-
             outputFiles.IdlFile.WriteLine("namespace Microsoft.Graphics.Canvas");
             outputFiles.IdlFile.WriteLine("{");
             outputFiles.IdlFile.Indent();

@@ -10,11 +10,6 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-import "inspectable.idl";
-import "Windows.Foundation.idl";
-
-#include "../version.h"
-
 //
 // Common / fundamental DirectX types.  These types are expected to remain
 // common between Direct3D 11 and Direct3D 12.

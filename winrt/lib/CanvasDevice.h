@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <CanvasDevice.abi.h>
+#include <Canvas.abi.h>
 
 #include "ClosablePtr.h"
 #include "ResourceManager.h"
