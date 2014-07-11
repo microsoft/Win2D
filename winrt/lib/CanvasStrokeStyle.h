@@ -26,6 +26,7 @@ namespace canvas
     class ICanvasStrokeStyleInternal : public IUnknown
     {
     public:
+        // This realizes the stroke style if necessary.
         virtual ComPtr<ID2D1StrokeStyle1>  GetRealizedD2DStrokeStyle(ID2D1Factory2* d2dFactory) = 0;
     };
 

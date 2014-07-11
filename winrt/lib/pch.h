@@ -32,6 +32,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <iterator>
 
 // Win32
 #include <wrl.h>

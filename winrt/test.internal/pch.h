@@ -86,3 +86,5 @@ using namespace canvas;
 #include "StubD2DBrush.h"
 #include "StubSurfaceImageSource.h"
 #include "StubSurfaceImageSourceFactory.h"
+#include "StubD2DFactoryWithCreateStrokeStyle.h"
+#include "StubD2DStrokeStyle.h"

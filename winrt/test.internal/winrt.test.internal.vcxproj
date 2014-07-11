@@ -60,6 +60,7 @@
     <ClInclude Include="StubCanvasDevice.h" />
     <ClInclude Include="StubCanvasDrawingSessionAdapter.h" />
     <ClInclude Include="StubD2DBrush.h" />
+    <ClInclude Include="StubD2DStrokeStyle.h" />
     <ClInclude Include="StubSurfaceImageSource.h" />
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
     <ClInclude Include="targetver.h" />
@@ -78,6 +79,7 @@
     <ClCompile Include="ConversionUnitTests.cpp" />
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
+    <ClCompile Include="StubD2DFactoryWithCreateStrokeStyle.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

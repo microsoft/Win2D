@@ -138,6 +138,7 @@ namespace Microsoft
             TO_STRING(IDirect3DDevice);
             TO_STRING(IInspectable);
             TO_STRING(IUnknown);
+            TO_STRING(ID2D1StrokeStyle1);
 
 #undef TO_STRING
 

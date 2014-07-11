@@ -184,27 +184,50 @@ public:
         RealizationBehaviorVerifier(
             ComPtr<canvas::CanvasStrokeStyle> canvasStrokeStyle,
             ComPtr<StubD2DFactoryWithCreateStrokeStyle> testFactory)
-            : m_realizationCounter(0)
-            , m_canvasStrokeStyle(canvasStrokeStyle)
+            : m_canvasStrokeStyle(canvasStrokeStyle)
             , m_testFactory(testFactory)
         {}
 
         template<typename STROKE_STYLE_PROPERTY>
-        void VerifyProperty(
+        void VerifyEffectiveSetter(
             STROKE_STYLE_PROPERTY&& fn)
         {
-            auto realizedD2DStrokeStyle = m_canvasStrokeStyle->GetRealizedD2DStrokeStyle(m_testFactory.Get());
-            m_realizationCounter++;
-            Assert::IsNotNull(realizedD2DStrokeStyle.Get());
-            Assert::AreEqual(m_realizationCounter, m_testFactory->m_numCallsToCreateStrokeStyle);
+            //
+            // This initial call might, or might not create a new stroke style realization - for example,
+            // the usage in CanvasStrokeStyle_Setters_Invalidate_Realization will create a new realization here, 
+            // but some of the usage in CanvasStrokeStyle_RedundantSettersDoNotCauseRealization will not.
+            // Therefore, this function doesn't try to verify it.
+            //
+            auto realizedD2DStrokeStyle0 = m_canvasStrokeStyle->GetRealizedD2DStrokeStyle(m_testFactory.Get());
+            Assert::IsNotNull(realizedD2DStrokeStyle0.Get());
 
             fn();
 
-            Assert::AreEqual(m_realizationCounter, m_testFactory->m_numCallsToCreateStrokeStyle);
+            int prevRealizationCount = m_testFactory->m_numCallsToCreateStrokeStyle;
+            auto realizedD2DStrokeStyle1 = m_canvasStrokeStyle->GetRealizedD2DStrokeStyle(m_testFactory.Get());
+            Assert::AreEqual(prevRealizationCount + 1, m_testFactory->m_numCallsToCreateStrokeStyle);
+            Assert::AreNotEqual(realizedD2DStrokeStyle0.Get(), realizedD2DStrokeStyle1.Get());
         }
+
+
+        template<typename STROKE_STYLE_PROPERTY>
+        void VerifyRedundantSetter(
+            STROKE_STYLE_PROPERTY&& fn)
+        {
+            auto realizedD2DStrokeStyle0 = m_canvasStrokeStyle->GetRealizedD2DStrokeStyle(m_testFactory.Get());
+            Assert::IsNotNull(realizedD2DStrokeStyle0.Get());
+
+            fn();
+
+            // Ensure the same realization gets returned as before.
+            int prevRealizationCount = m_testFactory->m_numCallsToCreateStrokeStyle;
+            auto realizedD2DStrokeStyle1 = m_canvasStrokeStyle->GetRealizedD2DStrokeStyle(m_testFactory.Get());
+            Assert::AreEqual(prevRealizationCount, m_testFactory->m_numCallsToCreateStrokeStyle);
+            Assert::AreEqual(realizedD2DStrokeStyle0.Get(), realizedD2DStrokeStyle1.Get());
+        }
+
     private:
 
-        int m_realizationCounter;
         ComPtr<canvas::CanvasStrokeStyle> m_canvasStrokeStyle;
         ComPtr<StubD2DFactoryWithCreateStrokeStyle> m_testFactory;
     };
@@ -218,32 +241,32 @@ public:
 
         RealizationBehaviorVerifier verifier(canvasStrokeStyle, testFactory);
 
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_StartCap(CanvasCapStyle::Triangle); });
 
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_EndCap(CanvasCapStyle::Triangle); });
 
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_DashCap(CanvasCapStyle::Triangle); });
 
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_LineJoin(CanvasLineJoin::Round); });
 
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_MiterLimit(123.0f); });
 
-        verifier.VerifyProperty(
-            [&](){canvasStrokeStyle->put_DashStyle(CanvasDashStyle::Solid); });
+        verifier.VerifyEffectiveSetter(
+            [&](){canvasStrokeStyle->put_DashStyle(CanvasDashStyle::DashDot); });
 
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_DashOffset(1.0f); });
 
         float customDashPattern[6] = { 0, 2, 0, 1, 44, 55};
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern); });
 
-        verifier.VerifyProperty(
+        verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Fixed); });
     }
 
@@ -297,6 +320,61 @@ public:
             Assert::AreEqual(RO_E_CLOSED, canvasStrokeStyle->put_CustomDashStyle(4, customDashPattern));
             Assert::AreEqual(RO_E_CLOSED, canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Normal));
         }
+    }
+
+    TEST_METHOD(CanvasStrokeStyle_RedundantSettersDoNotCauseRealization)
+    {
+        using canvas::CanvasStrokeStyle;
+
+        auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
+        auto testFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();
+
+        RealizationBehaviorVerifier verifier(canvasStrokeStyle, testFactory);
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_StartCap(CanvasCapStyle::Flat); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_EndCap(CanvasCapStyle::Flat); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_DashCap(CanvasCapStyle::Flat); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_LineJoin(CanvasLineJoin::Miter); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_MiterLimit(10.0f); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_DashStyle(CanvasDashStyle::Solid); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_DashOffset(0.0f); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Normal); });
+
+        // Extra testing for custom dash styles, which use an array.
+        float customDashPattern0[2] = { 1, 2 };
+        verifier.VerifyEffectiveSetter(
+            [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern0); });
+
+        float customDashPattern1[2] = { 10, 1 };
+        verifier.VerifyEffectiveSetter(
+            [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern1); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern1); });
+
+        verifier.VerifyEffectiveSetter(
+            [&](){canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+
+        verifier.VerifyRedundantSetter(
+            [&](){canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
     }
 
 };

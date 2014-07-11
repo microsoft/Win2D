@@ -81,8 +81,11 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_startCap = value;
+                if (m_startCap != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_startCap = value;
+                }
             });
     }
 
@@ -103,8 +106,11 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_endCap = value;
+                if (m_endCap != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_endCap = value;
+                }
             });
     }
 
@@ -125,8 +131,11 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_dashCap = value;
+                if (m_dashCap != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_dashCap = value;
+                }
             });
     }
 
@@ -147,8 +156,11 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_lineJoin = value;
+                if (m_lineJoin != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_lineJoin = value;
+                }
             });
     }
 
@@ -169,8 +181,11 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_miterLimit = value;
+                if (m_miterLimit != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_miterLimit = value;
+                }
             });
     }
 
@@ -191,8 +206,11 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_dashStyle = value;
+                if (m_dashStyle != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_dashStyle = value;
+                }
             });
     }
 
@@ -213,8 +231,11 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_dashOffset = value;
+                if (m_dashOffset != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_dashOffset = value;
+                }
             });
     }
 
@@ -250,8 +271,16 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_customDashElements.assign(valueElements, valueElements + valueCount);
+                
+                if ((m_customDashElements.size() != valueCount) ||
+                    !std::equal(
+                        m_customDashElements.begin(),
+                        m_customDashElements.end(),
+                        stdext::checked_array_iterator<float*>(valueElements, valueCount)))
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_customDashElements.assign(valueElements, valueElements + valueCount);
+                }
             });
     }
 
@@ -272,8 +301,12 @@ namespace canvas
             [&]()
             {
                 ThrowIfClosed();
-                m_d2dStrokeStyle.Reset();
-                m_transformBehavior = value;
+
+                if (m_transformBehavior != value)
+                {
+                    m_d2dStrokeStyle.Reset();
+                    m_transformBehavior = value;
+                }
             });
     }
 
