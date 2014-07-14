@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
@@ -14,6 +14,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
@@ -29,6 +30,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinStringBuilder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinStringWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -40,6 +44,7 @@
     <None Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
   </ItemGroup>
 </Project>

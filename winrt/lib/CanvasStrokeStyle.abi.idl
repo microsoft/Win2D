@@ -13,7 +13,7 @@
 namespace Microsoft.Graphics.Canvas
 {
     //
-    // ICanvasStrokeStyleProperties
+    // ICanvasStrokeStyle
     //
     // Example usage:
     // 

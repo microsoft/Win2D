@@ -396,7 +396,7 @@ namespace canvas
     //
 
     _Use_decl_annotations_
-    IFACEMETHODIMP CanvasStrokeStyleFactory::ActivateInstance(IInspectable **object)
+    IFACEMETHODIMP CanvasStrokeStyleFactory::ActivateInstance(IInspectable** object)
     {
         return ExceptionBoundary(
             [&]()

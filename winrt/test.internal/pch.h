@@ -26,6 +26,7 @@
 // Win32
 #include <d2d1_2.h>
 #include <d3d11.h>
+#include <dwrite_2.h>
 #include <dxgi1_3.h>
 #include <wrl.h>
 #include <strsafe.h>
@@ -54,15 +55,17 @@
 #include <CanvasBrush.h>
 #include <CanvasStrokeStyle.h>
 #include <Conversion.h>
+#include <CanvasTextFormat.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>
+#include <WinStringWrapper.h>
 
 
 // local headers
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
-using namespace Microsoft::WRL::Wrappers;
+
 using namespace canvas;
 
 #include "Helpers.h"

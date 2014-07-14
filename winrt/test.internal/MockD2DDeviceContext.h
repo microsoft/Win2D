@@ -30,6 +30,7 @@ namespace canvas
         std::function<void(const D2D1_ROUNDED_RECT*,ID2D1Brush*)> MockFillRoundedRectangle;
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawEllipse;
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*)> MockFillEllipse;
+        std::function<void(const wchar_t*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE)> MockDrawText;
 
         // ID2D1Resource
 
@@ -212,9 +213,15 @@ namespace canvas
             Assert::Fail(L"Unexpected call to DrawBitmap");
         }
 
-        IFACEMETHODIMP_(void) DrawText(const WCHAR *,UINT32,IDWriteTextFormat *,const D2D1_RECT_F *,ID2D1Brush *,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE) override
+        IFACEMETHODIMP_(void) DrawText(const wchar_t* text, uint32_t textLength, IDWriteTextFormat* format, const D2D1_RECT_F* rect, ID2D1Brush* brush, D2D1_DRAW_TEXT_OPTIONS options, DWRITE_MEASURING_MODE measuringMode) override
         {
-            Assert::Fail(L"Unexpected call to DrawText");
+            if (!MockDrawText)
+            {
+                Assert::Fail(L"Unexpected call to MockDrawText");
+                return;
+            }
+
+            MockDrawText(text, textLength, format, *rect, brush, options, measuringMode);
         }
 
         IFACEMETHODIMP_(void) DrawTextLayout(D2D1_POINT_2F,IDWriteTextLayout *,ID2D1Brush *,D2D1_DRAW_TEXT_OPTIONS) override

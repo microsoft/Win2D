@@ -144,7 +144,38 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasBrush* brush);
 
         //
-        // TODO: future work (eg #784, #794, #1367 etc.) will add more methods
+        // DrawText
+        //
+
+        [overload("DrawText")]
+        HRESULT DrawTextAtPoint(
+            [in] HSTRING text,
+            [in] Windows.Foundation.Point point,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawText")]
+        HRESULT DrawTextAtPointWithFormat(
+            [in] HSTRING text,
+            [in] Windows.Foundation.Point point,
+            [in] ICanvasBrush* brush,
+            [in] CanvasTextFormat* format);
+
+        [overload("DrawText"), default_overload]
+        HRESULT DrawText(
+            [in] HSTRING text,
+            [in] Windows.Foundation.Rect rectangle,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawText"), default_overload]
+        HRESULT DrawTextWithFormat(
+            [in] HSTRING text,
+            [in] Windows.Foundation.Rect rectangle,
+            [in] ICanvasBrush* brush,
+            [in] CanvasTextFormat* format);
+
+
+        //
+        // TODO: future work (eg #794, #1367 etc.) will add more methods
         // to this interface.
         //
     };

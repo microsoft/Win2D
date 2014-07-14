@@ -45,6 +45,7 @@ namespace Microsoft
             TO_STRING(IDXGIDevice);
             TO_STRING(IDXGISurface);
             TO_STRING(ID2D1StrokeStyle1);
+            TO_STRING(IDWriteFactory2);
 
 #undef TO_STRING
 

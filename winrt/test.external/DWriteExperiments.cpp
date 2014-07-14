@@ -10,30 +10,29 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-#pragma once
+#include "pch.h"
 
-#include "targetver.h"
-
-#include <memory>
-#include <functional>
-
-#include <wrl.h>
-#include <strsafe.h>
-#include <CppUnitTest.h>
-
-#include <d3d11.h>
-#include <dxgi1_3.h>
-#include <dwrite_2.h>
-#include <DirectXMath.h>
-
-#include <ErrorHandling.h>
-
-#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
-#include <Microsoft.Graphics.Canvas.native.h>
-
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
 
-#include "Helpers.h"
-#include "MockDxgiDevice.h"
-#include "MockDxgiSurface.h"
+TEST_CLASS(DWriteExperiments)
+{
+public:
+    TEST_METHOD(DWriteCreateFactory_Shared_ReturnsSameObject)
+    {
+        ComPtr<IDWriteFactory2> factory1;
+        ComPtr<IDWriteFactory2> factory2;
+
+        ThrowIfFailed(DWriteCreateFactory(
+            DWRITE_FACTORY_TYPE_SHARED,
+            __uuidof(&factory1),
+            static_cast<IUnknown**>(&factory1)));
+
+        ThrowIfFailed(DWriteCreateFactory(
+            DWRITE_FACTORY_TYPE_SHARED,
+            __uuidof(&factory2),
+            static_cast<IUnknown**>(&factory2)));
+
+        Assert::AreEqual(factory1.Get(), factory2.Get());
+    }
+};
+

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{d6cb5cb7-499b-4980-84c6-f0099cf309da}</ProjectGuid>
@@ -29,10 +29,10 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared"/>
+  <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
   <ItemGroup>
     <SDKReference Include="CppUnitTestFramework, Version=11.0" />
     <SDKReference Include="TestPlatform, Version=11.0" />

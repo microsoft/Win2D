@@ -153,7 +153,7 @@ namespace canvas
 
         static std::shared_ptr<MANAGER> GetOrCreateManager(ABI::Windows::ApplicationModel::Core::ICoreApplication* coreApplication)
         {
-            using namespace Microsoft::WRL::Wrappers;
+            using Microsoft::WRL::Wrappers::HStringReference;
             using namespace ABI::Windows::Foundation::Collections;
 
             //

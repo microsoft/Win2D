@@ -14,6 +14,7 @@
 
 #include "CanvasDrawingSession.h"
 #include "CanvasStrokeStyle.h"
+#include "CanvasTextFormat.h"
 
 namespace canvas
 {
@@ -388,6 +389,124 @@ namespace canvas
                     ToD2DBrush(brush).Get());
             });
     }
+
+
+    void CanvasDrawingSession::DrawTextImpl(
+        ID2D1DeviceContext* deviceContext,
+        HSTRING text,
+        const ABI::Windows::Foundation::Rect& rect,
+        ICanvasBrush* brush,
+        ICanvasTextFormat* format)
+    {
+        CheckInPointer(text);
+        CheckInPointer(brush);
+        CheckInPointer(format);
+
+        ComPtr<ICanvasTextFormatInternal> formatInternal;
+        ThrowIfFailed(format->QueryInterface(formatInternal.GetAddressOf()));
+
+        uint32_t textLength;
+        auto textBuffer = WindowsGetStringRawBuffer(text, &textLength);
+        ThrowIfNullPointer(textBuffer, E_INVALIDARG);
+
+        deviceContext->DrawText(
+            textBuffer,
+            textLength,
+            formatInternal->GetRealizedTextFormat().Get(),
+            &ToD2DRect(rect),
+            ToD2DBrush(brush).Get(),
+            static_cast<D2D1_DRAW_TEXT_OPTIONS>(formatInternal->GetDrawTextOptions()));
+    }
+
+    
+    void CanvasDrawingSession::DrawTextAtPointImpl(
+        ID2D1DeviceContext* deviceContext,
+        HSTRING text,
+        const ABI::Windows::Foundation::Point& point,
+        ICanvasBrush* brush,
+        ICanvasTextFormat* format)
+    {
+        CheckInPointer(format);
+
+        // When drawing using just a point we specify a zero sized rectangle and
+        // disable word wrapping.
+        ABI::Windows::Foundation::Rect rect{point.X, point.Y, 0, 0};
+        
+        //
+        // TODO: there's a thread-safety implication since we're modifying state
+        // on something that _may_ be being used on another thread.  Should
+        // address this as part of #802.
+        //
+        CanvasWordWrapping oldWordWrapping{};
+        ThrowIfFailed(format->get_WordWrapping(&oldWordWrapping));
+
+        ThrowIfFailed(format->put_WordWrapping(CanvasWordWrapping::NoWrap));
+
+        auto restoreWordWrapping = MakeScopeWarden(
+            [&]()
+            {
+                format->put_WordWrapping(oldWordWrapping);
+            });
+
+        DrawTextImpl(deviceContext, text, rect, brush, format);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPoint(
+        HSTRING text,
+        ABI::Windows::Foundation::Point point,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto defaultFormat = Make<CanvasTextFormat>();
+                DrawTextAtPointImpl(GetResource().Get(), text, point, brush, defaultFormat.Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithFormat(
+        HSTRING text,
+        ABI::Windows::Foundation::Point point,
+        ICanvasBrush* brush,
+        ICanvasTextFormat* format)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                DrawTextAtPointImpl(GetResource().Get(), text, point, brush, format);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawText(
+        HSTRING text,
+        ABI::Windows::Foundation::Rect rect,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto defaultFormat = Make<CanvasTextFormat>();
+                DrawTextImpl(GetResource().Get(), text, rect, brush, defaultFormat.Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextWithFormat(
+        HSTRING text,
+        ABI::Windows::Foundation::Rect rect,
+        ICanvasBrush* brush,
+        ICanvasTextFormat* format)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                DrawTextImpl(GetResource().Get(), text, rect, brush, format);
+            });
+    }
+
 
     ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
 }

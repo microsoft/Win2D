@@ -18,6 +18,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyleTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)DWriteExperiments.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />

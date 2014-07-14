@@ -13,7 +13,6 @@
 #pragma once
 
 #include <Canvas.abi.h>
-#include <ClosablePtr.h>
 
 namespace canvas
 {
@@ -27,7 +26,7 @@ namespace canvas
     {
     public:
         // This realizes the stroke style if necessary.
-        virtual ComPtr<ID2D1StrokeStyle1>  GetRealizedD2DStrokeStyle(ID2D1Factory2* d2dFactory) = 0;
+        virtual ComPtr<ID2D1StrokeStyle1> GetRealizedD2DStrokeStyle(ID2D1Factory2* d2dFactory) = 0;
     };
 
     class CanvasStrokeStyleFactory : public ActivationFactory<
@@ -58,7 +57,6 @@ namespace canvas
         ABI::Windows::Foundation::IClosable,
         CloakedIid<ICanvasStrokeStyleInternal>>
     {
-
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasStrokeStyle, BaseTrust);
 
         CanvasCapStyle m_startCap;
@@ -80,7 +78,6 @@ namespace canvas
         ComPtr<ID2D1StrokeStyle1> m_d2dStrokeStyle;
 
     public:
-
         CanvasStrokeStyle();
 
         CanvasStrokeStyle(ID2D1StrokeStyle1* d2dStrokeStyle);

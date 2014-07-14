@@ -25,5 +25,6 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 #include "CanvasDevice.abi.idl"
 #include "CanvasBrush.abi.idl"
 #include "CanvasStrokeStyle.abi.idl"
+#include "CanvasTextFormat.abi.idl"
 #include "CanvasDrawingSession.abi.idl"
 #include "CanvasImageSource.abi.idl"

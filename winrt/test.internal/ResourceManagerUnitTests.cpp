@@ -57,7 +57,7 @@ TEST_CLASS(FactoryWithResourceManagerUnitTests)
         //
         ComPtr<IActivationFactory> propertySetActivationFactory;
         ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_Foundation_Collections_PropertySet).Get(),
+            WinString(RuntimeClass_Windows_Foundation_Collections_PropertySet),
             &propertySetActivationFactory));
 
         ComPtr<IPropertySet> propertySet;

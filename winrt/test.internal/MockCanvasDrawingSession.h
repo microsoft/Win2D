@@ -161,5 +161,43 @@ namespace canvas
             Assert::Fail(L"Unexpected call to FillEllipse");
             return E_NOTIMPL;
         }
+        
+        IFACEMETHODIMP DrawTextAtPoint(
+            HSTRING,
+            ABI::Windows::Foundation::Point,
+            ICanvasBrush*) override
+        {
+            Assert::Fail(L"Unexpected call to DrawTextAtPoint");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP DrawTextAtPointWithFormat(
+            HSTRING,
+            ABI::Windows::Foundation::Point,
+            ICanvasBrush*,
+            ICanvasTextFormat*) override
+        {
+            Assert::Fail(L"Unexpected call to DrawTextAtPointWithFormat");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP DrawText(
+            HSTRING,
+            ABI::Windows::Foundation::Rect,
+            ICanvasBrush*) override
+        {
+            Assert::Fail(L"Unexpected call to DrawText");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP DrawTextWithFormat(
+            HSTRING,
+            ABI::Windows::Foundation::Rect,
+            ICanvasBrush*,
+            ICanvasTextFormat*) override
+        {
+            Assert::Fail(L"Unexpected call to DrawTextWithFormat");
+            return E_NOTIMPL;
+        }
     };
 }

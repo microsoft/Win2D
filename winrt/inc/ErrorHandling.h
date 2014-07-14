@@ -80,6 +80,17 @@ public:
     friend void ThrowHR(HRESULT);
 };
 
+class ObjectDisposedException : public HResultException
+{
+public:
+    ObjectDisposedException()
+        : HResultException(RO_E_CLOSED)
+    {}
+
+    __declspec(noreturn)
+    friend void ThrowHR(HRESULT);
+};
+
 //
 // Throws the appropriate exception for the given HRESULT.
 //
@@ -90,6 +101,7 @@ inline void ThrowHR(HRESULT hr)
     {
     case E_INVALIDARG:  throw InvalidArgException();
     case E_NOINTERFACE: throw NoSuchInterfaceException();
+    case RO_E_CLOSED:   throw ObjectDisposedException();
     default:            throw HResultException(hr);
     }
 }

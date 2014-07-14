@@ -17,6 +17,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Foundation;
+using Windows.UI.Text;
 
 namespace CsConsumer
 {
@@ -39,6 +40,7 @@ namespace CsConsumer
             Ellipse_Thick,
             Ellipse_Fill,
             Dashed_Lines,
+            Text,
             Test_Scene0_Default,
             Test_Scene0_Wireframe,
             Test_Scene1_Default,
@@ -63,8 +65,8 @@ namespace CsConsumer
             m_widthCombo.ItemsSource = sizes;
             m_heightCombo.ItemsSource = sizes;
 
-            m_widthCombo.SelectedIndex = sizes.Count / 2;
-            m_heightCombo.SelectedIndex = sizes.Count / 2; 
+            m_widthCombo.SelectedItem = 1024;
+            m_heightCombo.SelectedItem = 1024;
 
             m_widthCombo.SelectionChanged += ImageSizeChangeRequested;
             m_heightCombo.SelectionChanged += ImageSizeChangeRequested;
@@ -235,16 +237,50 @@ namespace CsConsumer
                                 canvasSolidColorBrush);
                             break;
 
+                        case DrawnContentType.Dashed_Lines:
+                            DrawDashedLines(ds, canvasSolidColorBrush, horizontalLimit, verticalLimit);
+                            break;
+
+                        case DrawnContentType.Text:                            
+                            var p = NextRandomPoint(horizontalLimit, verticalLimit);
+                            var x = p.X;
+                            var y = p.Y;
+                            ds.DrawLine(new Point(x, 0), new Point(x, verticalLimit), canvasSolidColorBrush);
+                            ds.DrawLine(new Point(0, y), new Point(horizontalLimit, y), canvasSolidColorBrush);
+                            ds.DrawText(
+                                "Centered", 
+                                p, 
+                                canvasSolidColorBrush, 
+                                new CanvasTextFormat() 
+                                { 
+                                    FontSize = 18,
+                                    VerticalAlignment = CanvasVerticalAlignment.Center, 
+                                    ParagraphAlignment = ParagraphAlignment.Center 
+                                });
+
+                            var r = NextRandomRect(horizontalLimit, verticalLimit);
+                            ds.DrawRectangle(r, canvasSolidColorBrush);
+                            ds.DrawText(
+                                m_quiteLongText,
+                                r,
+                                canvasSolidColorBrush,
+                                new CanvasTextFormat()
+                                {
+                                    FontFamilyName = "Comic Sans MS",
+                                    FontSize = 18,
+                                    ParagraphAlignment = ParagraphAlignment.Justify,
+                                    Options = CanvasDrawTextOptions.Clip
+                                });
+                            
+
+                            break;
+
                         case DrawnContentType.Test_Scene0_Default:
                             GeometryTestScene0.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Default);
                             break;
 
                         case DrawnContentType.Test_Scene0_Wireframe:
                             GeometryTestScene0.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Wireframe);
-                            break;
-
-                        case DrawnContentType.Dashed_Lines:
-                            DrawDashedLines(ds, canvasSolidColorBrush, horizontalLimit, verticalLimit);
                             break;
 
                         case DrawnContentType.Test_Scene1_Default:
@@ -305,5 +341,11 @@ namespace CsConsumer
                                 (byte)m_random.Next(256),
                                 (byte)m_random.Next(256));
         }
+
+        // http://www.gutenberg.org/files/32572/32572-0.txt
+        static string m_quiteLongText = "Many years ago there was an emperor who was so fond of new clothes that he spent all his money on them. " +
+            "He did not give himself any concern about his army; he cared nothing about the theater or for driving about in the woods, " +
+            "except for the sake of showing himself off in new clothes. He had a costume for every hour in the day, and just as they say " +
+            "of a king or emperor, \"He is in his council chamber,\" they said of him, \"The emperor is in his dressing room.\"";
     }
 }

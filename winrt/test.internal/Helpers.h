@@ -18,6 +18,9 @@ namespace Microsoft
     {
         namespace CppUnitTestFramework
         {
+
+            // TODO #1716: update rest of file to use the ENUM_TO_STRING macro below
+
             template<>
             static inline std::wstring ToString<CanvasBackground>(const CanvasBackground& value)
             {
@@ -134,6 +137,7 @@ namespace Microsoft
             TO_STRING(ID2D1Device1);
             TO_STRING(ID2D1DeviceContext1);
             TO_STRING(ID2D1Factory);
+            TO_STRING(IDWriteTextFormat);
             TO_STRING(IDXGIDevice);
             TO_STRING(IDirect3DDevice);
             TO_STRING(IInspectable);
@@ -242,6 +246,19 @@ namespace Microsoft
             }
 
             template<>
+            static inline std::wstring ToString<CanvasTextDirection>(const CanvasTextDirection& value)
+            {
+                switch (value)
+                {
+                case CanvasTextDirection::TopToBottom: return L"CanvasTextDirection::TopToBottom";
+                case CanvasTextDirection::BottomToTop: return L"CanvasTextDirection::BottomToTop";
+                case CanvasTextDirection::LeftToRight: return L"CanvasTextDirection::LeftToRight";
+                case CanvasTextDirection::RightToLeft: return L"CanvasTextDirection::RightToLeft";
+                default: return L"<<invalid CanvasTextDirection>>";
+                }
+            }
+
+            template<>
             static inline std::wstring ToString<CanvasLineJoin>(const CanvasLineJoin& value)
             {
                 switch (value)
@@ -333,6 +350,219 @@ namespace Microsoft
                 }
             }
 
+            template<>
+            static inline std::wstring ToString<DWRITE_FLOW_DIRECTION>(const DWRITE_FLOW_DIRECTION& value)
+            {
+                switch (value)
+                {
+                case DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM: return L"DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM";
+                case DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP: return L"DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP";
+                case DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT: return L"DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT";
+                case DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT: return L"DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT";
+                default: return L"<<invalid DWRITE_FLOW_DIRECTION>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<CanvasLineSpacingMethod>(const CanvasLineSpacingMethod& value)
+            {
+                switch (value)
+                {
+                case CanvasLineSpacingMethod::Default: return L"CanvasLineSpacingMethod::Default";
+                case CanvasLineSpacingMethod::Uniform: return L"CanvasLineSpacingMethod::Uniform";
+                default: return L"<<invalid CanvasLineSpacingMethod>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<DWRITE_LINE_SPACING_METHOD>(const DWRITE_LINE_SPACING_METHOD& value)
+            {
+                switch (value)
+                {
+                case DWRITE_LINE_SPACING_METHOD_DEFAULT: return L"DWRITE_LINE_SPACING_METHOD_DEFAULT";
+                case DWRITE_LINE_SPACING_METHOD_UNIFORM: return L"DWRITE_LINE_SPACING_METHOD_UNIFORM";
+                default: return L"<<invalid DWRITE_LINE_SPACING_METHOD>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<ABI::Windows::UI::Text::FontStretch>(const ABI::Windows::UI::Text::FontStretch& value)
+            {
+                switch (value)
+                {
+                case ABI::Windows::UI::Text::FontStretch_Undefined: return L"FontStretch::Undefined";
+                case ABI::Windows::UI::Text::FontStretch_UltraCondensed: return L"FontStretch::UltraCondensed";
+                case ABI::Windows::UI::Text::FontStretch_ExtraCondensed: return L"FontStretch::ExtraCondensed";
+                case ABI::Windows::UI::Text::FontStretch_Condensed: return L"FontStretch::Condensed";
+                case ABI::Windows::UI::Text::FontStretch_SemiCondensed: return L"FontStretch::SemiCondensed";
+                case ABI::Windows::UI::Text::FontStretch_Normal: return L"FontStretch::Normal";
+                case ABI::Windows::UI::Text::FontStretch_SemiExpanded: return L"FontStretch::SemiExpanded";
+                case ABI::Windows::UI::Text::FontStretch_Expanded: return L"FontStretch::Expanded";
+                case ABI::Windows::UI::Text::FontStretch_ExtraExpanded: return L"FontStretch::ExtraExpanded";
+                case ABI::Windows::UI::Text::FontStretch_UltraExpanded: return L"FontStretch::UltraExpanded";
+                default: return L"<<invalid FontStretch>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<DWRITE_FONT_STRETCH>(const DWRITE_FONT_STRETCH& value)
+            {
+                switch (value)
+                {
+                case DWRITE_FONT_STRETCH_UNDEFINED: return L"DWRITE_FONT_STRETCH_UNDEFINED";
+                case DWRITE_FONT_STRETCH_ULTRA_CONDENSED: return L"DWRITE_FONT_STRETCH_ULTRA_CONDENSED";
+                case DWRITE_FONT_STRETCH_EXTRA_CONDENSED: return L"DWRITE_FONT_STRETCH_EXTRA_CONDENSED";
+                case DWRITE_FONT_STRETCH_CONDENSED: return L"DWRITE_FONT_STRETCH_CONDENSED";
+                case DWRITE_FONT_STRETCH_SEMI_CONDENSED: return L"DWRITE_FONT_STRETCH_SEMI_CONDENSED";
+                case DWRITE_FONT_STRETCH_NORMAL: return L"DWRITE_FONT_STRETCH_NORMAL/MEDIUM";
+                case DWRITE_FONT_STRETCH_SEMI_EXPANDED: return L"DWRITE_FONT_STRETCH_SEMI_EXPANDED";
+                case DWRITE_FONT_STRETCH_EXPANDED: return L"DWRITE_FONT_STRETCH_EXPANDED";
+                case DWRITE_FONT_STRETCH_EXTRA_EXPANDED: return L"DWRITE_FONT_STRETCH_EXTRA_EXPANDED";
+                case DWRITE_FONT_STRETCH_ULTRA_EXPANDED: return L"DWRITE_FONT_STRETCH_ULTRA_EXPANDED";
+                default: return L"<<invalid DWRITE_FONT_STRETCH>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<ABI::Windows::UI::Text::FontStyle>(const ABI::Windows::UI::Text::FontStyle& value)
+            {
+                switch (value)
+                {
+                case ABI::Windows::UI::Text::FontStyle_Normal: return L"FontStyle::Normal";
+                case ABI::Windows::UI::Text::FontStyle_Oblique: return L"FontStyle::Oblique";
+                case ABI::Windows::UI::Text::FontStyle_Italic: return L"FontStyle::Italic";
+                default: return L"<<invalid FontStyle>>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<DWRITE_FONT_STYLE>(const DWRITE_FONT_STYLE& value)
+            {
+                switch (value)
+                {
+                case DWRITE_FONT_STYLE_NORMAL: return L"DWRITE_FONT_STYLE_NORMAL";
+                case DWRITE_FONT_STYLE_OBLIQUE: return L"DWRITE_FONT_STYLE_OBLIQUE";
+                case DWRITE_FONT_STYLE_ITALIC: return L"DWRITE_FONT_STYLE_ITALIC";
+                default: return L"<<invalid DWRITE_FONT_STYLE>>";
+                }
+            }
+
+#define ENUM_TO_STRING(TYPE)                                            \
+    template<> static inline std::wstring ToString<TYPE>(const TYPE& value) \
+    {                                                                   \
+        switch (value)                                                  
+
+#define ENUM_VALUE(NAME) case NAME: return WIDEN(#NAME)
+#define END_ENUM(TYPE) default: return L"<<invalid " WIDEN(#TYPE) L">>"; }
+
+            ENUM_TO_STRING(CanvasVerticalAlignment)
+            {
+                ENUM_VALUE(CanvasVerticalAlignment::Top);
+                ENUM_VALUE(CanvasVerticalAlignment::Bottom);
+                ENUM_VALUE(CanvasVerticalAlignment::Center);
+                END_ENUM(CanvasVerticalAlignment);
+            }
+            
+            ENUM_TO_STRING(DWRITE_PARAGRAPH_ALIGNMENT)
+            {
+                ENUM_VALUE(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+                ENUM_VALUE(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
+                ENUM_VALUE(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+                END_ENUM(DWRITE_PARAGRAPH_ALIGNMENT);
+            }
+
+            ENUM_TO_STRING(DWRITE_READING_DIRECTION)
+            {
+                ENUM_VALUE(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT);
+                ENUM_VALUE(DWRITE_READING_DIRECTION_RIGHT_TO_LEFT);
+                ENUM_VALUE(DWRITE_READING_DIRECTION_TOP_TO_BOTTOM);
+                ENUM_VALUE(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP);
+                END_ENUM(DWRITE_READING_DIRECTION);
+            }
+
+            ENUM_TO_STRING(ABI::Windows::UI::Text::ParagraphAlignment)
+            {
+                ENUM_VALUE(ABI::Windows::UI::Text::ParagraphAlignment_Undefined);
+                ENUM_VALUE(ABI::Windows::UI::Text::ParagraphAlignment_Left);
+                ENUM_VALUE(ABI::Windows::UI::Text::ParagraphAlignment_Center);
+                ENUM_VALUE(ABI::Windows::UI::Text::ParagraphAlignment_Right);
+                ENUM_VALUE(ABI::Windows::UI::Text::ParagraphAlignment_Justify);
+                END_ENUM(ABI::Windows::UI::Text::ParagraphAlignment);
+            }
+
+            ENUM_TO_STRING(DWRITE_TEXT_ALIGNMENT)
+            {
+                ENUM_VALUE(DWRITE_TEXT_ALIGNMENT_LEADING);
+                ENUM_VALUE(DWRITE_TEXT_ALIGNMENT_TRAILING);
+                ENUM_VALUE(DWRITE_TEXT_ALIGNMENT_CENTER);
+                ENUM_VALUE(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
+                END_ENUM(DWRITE_TEXT_ALIGNMENT);
+            }
+
+            ENUM_TO_STRING(CanvasTextTrimmingGranularity)
+            {
+                ENUM_VALUE(CanvasTextTrimmingGranularity::None);
+                ENUM_VALUE(CanvasTextTrimmingGranularity::Character);
+                ENUM_VALUE(CanvasTextTrimmingGranularity::Word);
+                END_ENUM(CanvasTextTrimmingGranularity);
+            }
+            
+            ENUM_TO_STRING(DWRITE_TRIMMING_GRANULARITY)
+            {
+                ENUM_VALUE(DWRITE_TRIMMING_GRANULARITY_NONE);
+                ENUM_VALUE(DWRITE_TRIMMING_GRANULARITY_CHARACTER);
+                ENUM_VALUE(DWRITE_TRIMMING_GRANULARITY_WORD);
+                END_ENUM(DWRITE_TRIMMING_GRANULARITY);
+            }
+
+            ENUM_TO_STRING(CanvasWordWrapping)
+            {
+                ENUM_VALUE(CanvasWordWrapping::Wrap);
+                ENUM_VALUE(CanvasWordWrapping::NoWrap);
+                ENUM_VALUE(CanvasWordWrapping::EmergencyBreak);
+                ENUM_VALUE(CanvasWordWrapping::WholeWord);
+                ENUM_VALUE(CanvasWordWrapping::Character);
+                END_ENUM(CanvasWordWrapping);
+            }
+
+            ENUM_TO_STRING(DWRITE_WORD_WRAPPING)
+            {
+                ENUM_VALUE(DWRITE_WORD_WRAPPING_WRAP);
+                ENUM_VALUE(DWRITE_WORD_WRAPPING_NO_WRAP);
+                ENUM_VALUE(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK);
+                ENUM_VALUE(DWRITE_WORD_WRAPPING_WHOLE_WORD);
+                ENUM_VALUE(DWRITE_WORD_WRAPPING_CHARACTER);
+                END_ENUM(DWRITE_WORD_WRAPPING);
+            }
+
+            template<typename T>
+            static inline std::wstring ToStringAsInt(T value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"%d",
+                    static_cast<int>(value)));
+                return buf;
+            }
+
+            template<>
+            static inline std::wstring ToString<ABI::Windows::UI::Text::FontWeight>(const ABI::Windows::UI::Text::FontWeight& value)
+            {
+                return ToStringAsInt(value.Weight);
+            }
+
+#define TO_STRING_AS_INT(TYPE)                                          \
+            template<>                                                  \
+            static inline std::wstring ToString<TYPE>(const TYPE& value) \
+            {                                                           \
+                return ToStringAsInt(value);                            \
+            }
+
+            TO_STRING_AS_INT(DWRITE_FONT_WEIGHT);
+            TO_STRING_AS_INT(CanvasDrawTextOptions);
+            TO_STRING_AS_INT(D2D1_DRAW_TEXT_OPTIONS);
         }
 
         inline bool operator==(const D2D1_POINT_2F& a, const D2D1_POINT_2F& b)
@@ -395,6 +625,10 @@ namespace Microsoft
                 a._31 == b._31 && a._32 == b._32;
         }
 
+        inline bool operator==(const ABI::Windows::UI::Text::FontWeight& a, const ABI::Windows::UI::Text::FontWeight& b)
+        {
+            return a.Weight == b.Weight;
+        }
     }
 }
 

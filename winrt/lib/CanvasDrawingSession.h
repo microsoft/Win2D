@@ -152,6 +152,43 @@ namespace canvas
         IFACEMETHOD(FillEllipse)(
             CanvasEllipse ellipse,
             ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawTextAtPoint)(
+            HSTRING text,
+            ABI::Windows::Foundation::Point point,
+            ICanvasBrush* brush) override;
+        
+        IFACEMETHOD(DrawTextAtPointWithFormat)(
+            HSTRING text,
+            ABI::Windows::Foundation::Point point,
+            ICanvasBrush* brush,
+            ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(DrawText)(
+            HSTRING text,
+            ABI::Windows::Foundation::Rect rectangle,
+            ICanvasBrush* brush) override;
+        
+        IFACEMETHOD(DrawTextWithFormat)(
+            HSTRING text,
+            ABI::Windows::Foundation::Rect rectangle,
+            ICanvasBrush* brush,
+            ICanvasTextFormat* format) override;
+
+    private:
+        void DrawTextAtPointImpl(
+            ID2D1DeviceContext* deviceContext,
+            HSTRING text,
+            const ABI::Windows::Foundation::Point& point,
+            ICanvasBrush* brush,
+            ICanvasTextFormat* format);
+
+        void DrawTextImpl(
+            ID2D1DeviceContext* deviceContext,
+            HSTRING text,
+            const ABI::Windows::Foundation::Rect& rect,
+            ICanvasBrush* brush,
+            ICanvasTextFormat* format);
     };
 
 

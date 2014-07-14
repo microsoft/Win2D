@@ -17,6 +17,6 @@
             <ComboBox x:Name="m_drawnContentTypeCombo" ItemsSource="{Binding}"/>
         </StackPanel>
         <TextBlock x:Name="m_statusMessage"/>
-        <Image x:Name="m_theImage"/>
+        <Image x:Name="m_theImage" Stretch="None"/>
     </StackPanel>
 </Page>

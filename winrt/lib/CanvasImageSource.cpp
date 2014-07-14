@@ -18,8 +18,6 @@
 
 namespace canvas
 {
-    using namespace Microsoft::WRL::Wrappers;
-
     //
     // Drawing session factory
     //
@@ -90,6 +88,8 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
+                using Microsoft::WRL::Wrappers::HStringReference;
+
                 CheckInPointer(device);
                 CheckAndClearOutPointer(imageSource);
 

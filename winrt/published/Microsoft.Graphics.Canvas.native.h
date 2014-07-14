@@ -64,7 +64,6 @@ namespace Microsoft
             WRAPPER^ GetOrCreate(IUnknown* resource)
             {
                 using namespace Microsoft::WRL;
-                using namespace Microsoft::WRL::Wrappers;
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
                 
                 ComPtr<abi::ICanvasFactoryNative> factory;
