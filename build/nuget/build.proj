@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <Target Name="binaries" Outputs="%(Configuration.Identity)">
-    <Message Importance="High" Text="&#10;-- x86 %(Configuration.Identity) --&#10;"/>
-    <MSBuild Projects="$(SolutionDir)canvas.sln" Targets="winrt\winrt_dll\winrt_dll_Windows;winrt\winrt_dll\winrt_dll_WindowsPhone;Numerics\DotNetNumerics\DotNetNumerics_Windows;Numerics\DotNetNumerics\DotNetNumerics_WindowsPhone" Properties="Platform=x86;Configuration=%(Configuration.Identity)"/>
+    <Message Importance="High" Text="&#10;-- Win32 %(Configuration.Identity) --&#10;"/>
+    <MSBuild Projects="$(SolutionDir)canvas.sln" Targets="winrt\winrt_dll\winrt_dll_Windows;winrt\winrt_dll\winrt_dll_WindowsPhone;Numerics\DotNetNumerics\DotNetNumerics_Windows;Numerics\DotNetNumerics\DotNetNumerics_WindowsPhone" Properties="Platform=Win32;Configuration=%(Configuration.Identity)"/>
     <Message Importance="High" Text="&#10;-- ARM %(Configuration.Identity) --&#10;"/>
     <MSBuild Projects="$(SolutionDir)canvas.sln" Targets="winrt\winrt_dll\winrt_dll_Windows;winrt\winrt_dll\winrt_dll_WindowsPhone;Numerics\DotNetNumerics\DotNetNumerics_Windows;Numerics\DotNetNumerics\DotNetNumerics_WindowsPhone" Properties="Platform=ARM;Configuration=%(Configuration.Identity)"/>
     <Message Importance="High" Text="&#10;-- x64 %(Configuration.Identity) --&#10;"/>
