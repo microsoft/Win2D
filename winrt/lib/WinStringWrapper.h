@@ -25,64 +25,69 @@ namespace canvas
     // Note: we can't call this file "WinString.h" because that will conflict
     // with the system header of the same name.
     //
-    // TODO #1675: tests for this to convince ourselves that we can't leak
-    // strings.
-    //
-    class WinString
+
+
+    // For testing purposes, WinStringT is templated on a base class.  This
+    // allows tests to replace the various Windows APIs (eg WindowsCreateString)
+    // with test doubles.
+    struct Empty {};
+
+    template<typename Base=Empty>
+    class WinStringT : public Base
     {
         HSTRING m_value;
 
     public:
-        WinString()
+        WinStringT()
             : m_value(nullptr)
         {
         }
 
-        explicit WinString(const wchar_t* str)
+        explicit WinStringT(const wchar_t* str)
         {
             auto length = wcslen(str);
             ThrowIfFailed(WindowsCreateString(str, static_cast<uint32_t>(length), &m_value));
         }
 
-        explicit WinString(const std::wstring& str)
-            : WinString(str.c_str())
+        explicit WinStringT(const std::wstring& str)
+            : WinStringT(str.c_str())
         {}
 
-        WinString(const WinString& other)
+        WinStringT(const WinStringT& other)
             : m_value(nullptr)
         {
             other.CopyTo(GetAddressOf());
         }
 
-        WinString(WinString&& other)
+        WinStringT(WinStringT&& other)
             : m_value(nullptr)
         {
             std::swap(m_value, other.m_value);
         }
 
-        ~WinString()
+        ~WinStringT()
         {
             Release();
         }
 
-        WinString& operator=(const wchar_t* str)
+        WinStringT& operator=(const wchar_t* str)
         {
             return operator=(WinString(str));
         }
 
-        WinString& operator=(HSTRING str)
+        WinStringT& operator=(HSTRING str)
         {
             Release();
             ThrowIfFailed(WindowsDuplicateString(str, &m_value));
             return *this;
         }
 
-        WinString& operator=(const WinString& other)
+        WinStringT& operator=(const WinStringT& other)
         {
             return operator=(other.m_value);
         }
 
-        WinString& operator=(WinString&& other)
+        WinStringT& operator=(WinStringT&& other)
         {
             std::swap(m_value, other.m_value);
             return *this;
@@ -126,5 +131,7 @@ namespace canvas
             return (result == 0);
         }
     };
+
+    typedef WinStringT<> WinString;
 }
 

@@ -81,6 +81,7 @@
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DFactoryWithCreateStrokeStyle.cpp" />
+    <ClCompile Include="WinStringTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
