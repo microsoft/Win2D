@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <Canvas.abi.h>   // TODO: #1432 we don't want to be shipping these idls, we should be shipping the ones generated via winmdidl 
-#include <d2d1_2.h>
+#include <inspectable.h>
+#include <wrl.h>
 
 namespace ABI
 {

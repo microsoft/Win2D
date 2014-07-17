@@ -23,6 +23,7 @@
 
 #include <d3d11.h>
 #include <dxgi1_3.h>
+#include <d2d1_2.h>
 #include <dwrite_2.h>
 #include <DirectXMath.h>
 
@@ -30,6 +31,7 @@
 
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
+#include <Canvas.abi.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
