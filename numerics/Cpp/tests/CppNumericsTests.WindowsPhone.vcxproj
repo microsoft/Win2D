@@ -12,7 +12,7 @@
     <AppxPackage>True</AppxPackage>
     <DoNotBuild Condition="'$(TF_BUILD)' == 'true'">true</DoNotBuild>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\..\build\canvas.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="CppNumericsTests.Shared.vcxitems" Label="Shared" />
   <PropertyGroup Label="UserMacros">
@@ -69,5 +69,5 @@
   <PropertyGroup>
     <_DefineDefaultConvergedProjectType>False</_DefineDefaultConvergedProjectType>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\..\build\canvas.cpp.targets" />
 </Project>

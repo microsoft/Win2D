@@ -10,7 +10,7 @@
     <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)build\canvas.cpp.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.props" />
 
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
@@ -48,7 +48,7 @@
     <CopyMergedWinMD Include="$(MergedWinmdDirectory)\$(ItemsRootNamespace).winmd" />
   </ItemGroup>
   <Target Name="CopyMergedWinMD" BeforeTargets="Link" Outputs="@(CopiedWinMDFile)">
-    <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)">
+    <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)" SkipUnchangedFiles="true">
       <Output TaskParameter="CopiedFiles" ItemName="CopiedWinMDFile"/>
     </Copy>
   </Target>
@@ -63,6 +63,6 @@
 
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(SolutionDir)build\canvas.cpp.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.targets" />
 
 </Project>

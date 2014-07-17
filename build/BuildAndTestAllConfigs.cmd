@@ -38,10 +38,6 @@ IF "%1"=="/?" (
     GOTO END
 )
 
-SET ENABLE_PARALLEL=/m
-
-SET BUILD_FLAGS=%ENABLE_PARALLEL%
-
 SET GIT_TREE_LOCATION=%~dp0..\
 
 IF NOT "%1"=="" (
@@ -50,15 +46,16 @@ IF NOT "%1"=="" (
 
 set BIN_LOCATION=%GIT_TREE_LOCATION%\bin\
 
-:: Codegen.sln
-:: The codegen solution is intended to build on one platform, Any CPU. 
+msbuild /maxcpucount %GIT_TREE_LOCATION%\canvas.proj
+IF !ERRORLEVEL! NEQ 0 ( 
+    ECHO.
+    ECHO A build error occurred.
+    GOTO END
+)
+
+:: tools\tools.sln
+:: The tools solution is intended to build on one platform, Any CPU. 
 for %%C in (Debug Release) DO (
-    msbuild %GIT_TREE_LOCATION%\Codegen.sln %BUILD_FLAGS% /p:Configuration="%%C" /p:Platform="Any CPU"
-    IF !ERRORLEVEL! NEQ 0 ( 
-        ECHO.
-        ECHO A build error occurred. Stopping at codegen.sln build, configuration %%C.
-        GOTO END
-    )
     
     SET TEST_BINARY_DIR=%BIN_LOCATION%\WindowsAnyCPU\%%C\codegen.test\
     SET TEST_BINARY_PATH=!TEST_BINARY_DIR!codegen.test.dll
@@ -67,7 +64,7 @@ for %%C in (Debug Release) DO (
     
     IF !ERRORLEVEL! NEQ 0 ( 
             ECHO.
-            ECHO One or more tests have failed. Stopping at codegen.sln build, configuration %%C.
+            ECHO One or more tests have failed.
             GOTO END
     )
 )
@@ -75,16 +72,6 @@ for %%C in (Debug Release) DO (
 :: CANVAS.sln
 :: TODO: Enable tests for this solution. The Canvas tests are a bit different from the codegen ones in that
 :: they require being run in an AppContainer. See task #1053.
-for %%P in (x86 x64 ARM) DO (
-    for %%C in (Debug Release) DO (
-        msbuild %GIT_TREE_LOCATION%\canvas.sln %BUILD_FLAGS% /p:Configuration="%%C" /p:Platform="%%P"
-        IF !ERRORLEVEL! NEQ 0 ( 
-            ECHO.
-            ECHO A build error occurred. Stopping at canvas.sln build, configuration %%C, platform %%P.
-            GOTO END
-        )
-    )
-)
 
 ECHO.
 ECHO All builds succeeded. All tests succeeded.

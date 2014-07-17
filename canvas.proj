@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Master script for building all permutations of project * platform * configuration.
+
+    For best performance, enable parallel builds:
+
+        msbuild canvas.proj /maxcpucount
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0" DefaultTargets="Build">
+
+  <!-- Parameters that can be configured by the caller, eg. "msbuild canvas.proj /p:BuildPhone=false" -->
+  <PropertyGroup>
+    <BuildPlatforms>Win32;x64;ARM;AnyCPU</BuildPlatforms>
+    <BuildConfigurations>Debug;Release</BuildConfigurations>
+    <BuildWindows>true</BuildWindows>
+    <BuildPhone>true</BuildPhone>
+    <BuildTests>true</BuildTests>
+    <BuildTools>true</BuildTools>
+  </PropertyGroup>
+
+  <!-- Set default platforms and build phase for each project type -->
+  <!-- Projects within each phase are built in parallel, and must only depend on outputs from earlier phases -->
+  <ItemDefinitionGroup>
+    <WindowsProject>
+      <Platforms>Win32;x64;ARM</Platforms>
+      <Phase>4</Phase>
+    </WindowsProject>
+    <PhoneProject>
+      <Platforms>Win32;ARM</Platforms>
+      <Phase>4</Phase>
+    </PhoneProject>
+    <AnyCPUProject>
+      <Platforms>AnyCPU</Platforms>
+      <Phase>1</Phase>
+    </AnyCPUProject>
+  </ItemDefinitionGroup>
+
+  <!-- Windows projects implementing the Canvas API -->
+  <ItemGroup Condition="$(BuildWindows)">
+    <WindowsProject Include="winrt\lib\winrt.lib.Windows.vcxproj">
+      <Phase>1</Phase>
+    </WindowsProject>
+    <WindowsProject Include="winrt\dll\winrt.dll.Windows.vcxproj">
+      <Phase>2</Phase>
+    </WindowsProject>
+    <WindowsProject Include="numerics\DotNet\DotNetNumerics.Windows.csproj">
+      <Phase>3</Phase>
+    </WindowsProject>
+  </ItemGroup>
+
+  <!-- Windows Phone projects implementing the Canvas API -->
+  <ItemGroup Condition="$(BuildPhone)">
+    <PhoneProject Include="winrt\lib\winrt.lib.WindowsPhone.vcxproj">
+      <Phase>1</Phase>
+    </PhoneProject>
+    <PhoneProject Include="winrt\dll\winrt.dll.WindowsPhone.vcxproj">
+      <Phase>2</Phase>
+    </PhoneProject>
+    <PhoneProject Include="numerics\DotNet\DotNetNumerics.WindowsPhone.csproj">
+      <Phase>3</Phase>
+    </PhoneProject>
+  </ItemGroup>
+
+  <!-- Windows test projects -->
+  <ItemGroup Condition="$(BuildWindows) and $(BuildTests)">
+    <WindowsProject Include="winrt\test.internal\winrt.test.internal.vcxproj">
+      <Platforms>Win32;x64</Platforms>
+    </WindowsProject>
+    <WindowsProject Include="winrt\test.external\winrt.test.external.Windows.vcxproj" />
+    <WindowsProject Include="winrt\test.managed\Windows\winrt.test.managed.Windows.csproj" />
+    <WindowsProject Include="winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj" />
+    <WindowsProject Include="tests\CsConsumer\Windows\CsConsumer.Windows.csproj" />
+    <WindowsProject Include="tests\CppConsumer\CppConsumer.Windows.vcxproj" />
+    <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj" />
+    <WindowsProject Include="numerics\DotNet\tests\Windows\DotNetNumericsTests.Windows.csproj" />
+  </ItemGroup>
+
+  <!-- Windows Phone test projects -->
+  <ItemGroup Condition="$(BuildPhone) and $(BuildTests)">
+    <PhoneProject Include="winrt\test.external\winrt.test.external.WindowsPhone.vcxproj" />
+    <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
+    <PhoneProject Include="winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.WindowsPhone.vcxproj" />
+    <PhoneProject Include="tests\CsConsumer\WindowsPhone\CsConsumer.WindowsPhone.csproj" />
+    <PhoneProject Include="tests\CppConsumer\CppConsumer.WindowsPhone.vcxproj" />
+    <PhoneProject Include="numerics\Cpp\tests\CppNumericsTests.WindowsPhone.vcxproj" />
+    <PhoneProject Include="numerics\DotNet\tests\WindowsPhone\DotNetNumericsTests.WindowsPhone.csproj" />
+  </ItemGroup>
+
+  <!-- Tools projects -->
+  <ItemGroup Condition="$(BuildTools)">
+    <AnyCPUProject Include="tools\copyright\copyright.csproj" />
+    <AnyCPUProject Include="tools\codegen\exe\codegen.exe.csproj" />
+    <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj">
+      <Phase>2</Phase>
+    </AnyCPUProject>
+  </ItemGroup>
+
+  <!-- Master target just chains to a couple of workers -->
+  <Target Name="Build" DependsOnTargets="ChooseProjectsToBuild;BuildProjectsByPhase" />
+
+  <Target Name="ChooseProjectsToBuild">
+    <ItemGroup>
+      <!-- Expand parameter properties into item groups, so we can batch over them -->
+      <BuildPlatform Include="$(BuildPlatforms)" />
+      <BuildConfiguration Include="$(BuildConfigurations)" />
+
+      <!-- Generate the cartesian product of all projects * all platforms we are building -->
+      <CandidateProjects Include="@(WindowsProject);@(PhoneProject);@(AnyCPUProject)">
+        <Platform>%(BuildPlatform.Identity)</Platform>
+      </CandidateProjects>
+
+      <!-- Filter the list to include only project/platform pairs where the project actually supports that platform -->
+      <FilteredProjects Include="@(CandidateProjects)" Condition="$([System.String]::new('%(CandidateProjects.Platforms)').Contains('%(CandidateProjects.Platform)'))" />
+
+      <!-- Generate the cartesian product of our filtered project list * the configurations we are building -->
+      <ProjectsPerConfig Include="@(FilteredProjects)">
+        <Configuration>%(BuildConfiguration.Identity)</Configuration>
+      </ProjectsPerConfig>
+
+      <!-- Move platform and configuration into the AdditionalProperties metadata -->
+      <ProjectsToBuild Include="@(ProjectsPerConfig)">
+        <AdditionalProperties>Platform=%(ProjectsPerConfig.Platform);Configuration=%(ProjectsPerConfig.Configuration)</AdditionalProperties>
+      </ProjectsToBuild>
+    </ItemGroup>
+  </Target>
+
+  <!-- Use batching to build each phase in turn -->
+  <Target Name="BuildProjectsByPhase" Inputs="@(ProjectsToBuild)" Outputs="%(Phase)" >
+    <Message Importance="High" Text="Building phase %(ProjectsToBuild.Phase) projects:" />
+    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
+
+    <!-- All the projects within a single phase can be built in parallel -->
+    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="true" />
+  </Target>
+</Project>

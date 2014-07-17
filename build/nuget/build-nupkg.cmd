@@ -26,7 +26,7 @@ IF NOT "%1" == "/n" (
         ECHO Please run this script from a Visual Studio command prompt.
         GOTO END
     )
-    msbuild build.proj /v:m
+    msbuild ..\..\canvas.proj /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false
 
     IF %ERRORLEVEL% NEQ 0 (
         ECHO Build failed; aborting.  Use /n to skip building.

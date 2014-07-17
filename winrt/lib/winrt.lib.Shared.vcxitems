@@ -13,7 +13,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <TargetName>winrt</TargetName>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)build\midlrt.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <Midl>
@@ -84,5 +84,5 @@
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
-  <Import Project="$(SolutionDir)build\midlrt.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.targets" />
 </Project>
