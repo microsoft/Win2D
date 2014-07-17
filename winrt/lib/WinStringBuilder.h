@@ -58,6 +58,17 @@ namespace canvas
             WinString value;
             ThrowIfFailed(WindowsPromoteStringBuffer(m_hstringBuffer, value.GetAddressOf()));
 
+            //
+            // If the string has embedded nulls then we almost certainly don't
+            // want to keep them around.  This can happen when, eg,
+            // IDWriteTextFormat::GetFontFamilyName has to supply the
+            // null-terminator on a string, while WindowsPreallocateStringBuffer
+            // will include the null-terminator as part of the string.
+            //
+
+            if (value.HasEmbeddedNull())
+                value = value.GetCopyWithoutEmbeddedNull();
+
             m_hstringBuffer = nullptr;
 
             return value;

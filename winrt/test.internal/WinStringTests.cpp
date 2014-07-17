@@ -39,7 +39,11 @@ public:
             return it->second;
     }
 
-protected:
+    //
+    // These static functions will be picked up by WinStringT and so replace the
+    // global functions of the same name.
+    //
+
     static HRESULT WindowsCreateString(const wchar_t* str, uint32_t length, HSTRING* value)
     {
         HRESULT hr = ::WindowsCreateString(str, length, value);
@@ -225,6 +229,23 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(1, s1.RefCount());
         Assert::AreEqual(1, s2.RefCount());
         Assert::IsTrue(s1.Equals(s2));            
+    }
+
+    TEST_METHOD(WinString_EmbeddedNulls)
+    {
+        CountWinString s1;
+        ThrowIfFailed(CountWinString::WindowsCreateString(L"hello\0", 6, s1.GetAddressOf()));
+
+        CountWinString s2(L"hello");
+
+        Assert::IsTrue(s1.HasEmbeddedNull());
+        Assert::IsFalse(s2.HasEmbeddedNull());
+        Assert::IsFalse(s1.Equals(s2));
+
+        s1 = s1.GetCopyWithoutEmbeddedNull();
+
+        Assert::IsFalse(s1.HasEmbeddedNull());
+        Assert::IsTrue(s1.Equals(s2));
     }
 };
 

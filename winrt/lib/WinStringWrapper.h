@@ -130,6 +130,21 @@ namespace canvas
             ThrowIfFailed(WindowsCompareStringOrdinal(m_value, other, &result));
             return (result == 0);
         }
+
+        bool HasEmbeddedNull() const
+        {
+            BOOL hasEmbeddedNull = FALSE;
+            ThrowIfFailed(WindowsStringHasEmbeddedNull(m_value, &hasEmbeddedNull));
+
+            return !!hasEmbeddedNull;
+        }
+
+        WinStringT GetCopyWithoutEmbeddedNull() const
+        {
+            // Recreate the string from the c-style string.  This will only copy
+            // up to the first null character.
+            return WinStringT(static_cast<const wchar_t*>(*this));
+        }
     };
 
     typedef WinStringT<> WinString;
