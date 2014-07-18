@@ -653,13 +653,6 @@ namespace canvas
                 Options,
                 static_cast<CanvasDrawTextOptions>(999));
         }
-
-        //
-        // TODO #1663: interop tests - create a IDWriteTextFormat with a bunch of
-        // settings, wrap a CanvasTextFormat around it, do something that make
-        // it re-realized, and check things match.
-        //
-
     };
 
 #undef TEST_SIMPLE_PROPERTY

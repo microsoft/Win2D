@@ -52,6 +52,12 @@ namespace canvas
     };
 
 
+    //
+    // CanvasTextFormat provides a IDWriteTextFormat object.  Since some members
+    // of IDWriteTextFormat are immutable (eg FontFamilyName), CanvasTextFormat
+    // keeps track of shadow copies of properties and recreates ("realizes") an
+    // IDWriteTextFormat as necessary.
+    //
     class CanvasTextFormat : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasTextFormat,
@@ -60,9 +66,19 @@ namespace canvas
         CloakedIid<ICanvasResourceWrapperNative>>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextFormat, BaseTrust);
-
+        
+        //
+        // Has Close() been called?  It is tempting to use a null m_format to
+        // indicated closed, but we need to be able to tell the difference
+        // between not having created m_format yet and being closed.
+        //
         bool m_closed;
 
+        //
+        // Shadow properties.  These values are used to recreate m_format when
+        // it is required.
+        //
+        ComPtr<IDWriteFontCollection> m_fontCollection;
         CanvasTextDirection m_flowDirection;
         WinString m_fontFamilyName;
         float m_fontSize;
@@ -82,12 +98,21 @@ namespace canvas
         int32_t m_trimmingDelimiterCount;
         CanvasWordWrapping m_wordWrapping;
 
+        //
+        // Draw text options are not part of m_format, but are stored in
+        // CanvasTextFormat.
+        //
         CanvasDrawTextOptions m_drawTextOptions;
 
+        //
+        // The IDWriteTextFormat object itself.  This is created on demand from
+        // the shadow properties.
+        //
         ComPtr<IDWriteTextFormat> m_format;
 
     public:
         CanvasTextFormat();
+        CanvasTextFormat(IDWriteTextFormat* format);
 
         //
         // ICanvasTextFormat
@@ -145,10 +170,12 @@ namespace canvas
         HRESULT __declspec(nothrow) PropertyGet(T* value, const ST& shadowValue, FN realizedGetter);
 
         template<typename T, typename TT, typename FNV>
-        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)());
+        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)() = nullptr);
         
         template<typename T, typename TT>
-        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)());
+        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)() = nullptr);
+
+        void SetShadowPropertiesFromDWrite();
 
         void Unrealize();
         void RealizeFlowDirection();

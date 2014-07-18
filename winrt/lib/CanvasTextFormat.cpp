@@ -321,7 +321,7 @@ namespace canvas
     }
 
 
-    static CanvasTextDirection ToCanvasReadingDirection(DWRITE_READING_DIRECTION value)
+    static CanvasTextDirection ToCanvasTextDirection(DWRITE_READING_DIRECTION value)
     {
         switch (value)
         {
@@ -447,6 +447,25 @@ namespace canvas
     }
 
 
+    static WinString GetFontFamilyName(IDWriteTextFormat* format)
+    {
+        WinStringBuilder stringBuilder;
+        auto length = format->GetFontFamilyNameLength() + 1;
+        auto buffer = stringBuilder.Allocate(length);
+        ThrowIfFailed(format->GetFontFamilyName(buffer, length));
+        return stringBuilder.Get();
+    }
+
+
+    static WinString GetLocaleName(IDWriteTextFormat* format)
+    {
+        WinStringBuilder stringBuilder;
+        auto length = format->GetLocaleNameLength() + 1;
+        auto buffer = stringBuilder.Allocate(length);
+        ThrowIfFailed(format->GetLocaleName(buffer, length));
+        return stringBuilder.Get();
+    }
+
     //
     // CanvasTextFormatFactory implementation
     //
@@ -468,10 +487,16 @@ namespace canvas
         IUnknown* resource,
         IInspectable** wrapper)
     {
-        //
-        // TODO #1663: CanvasTextFormat / IDWriteTextFormat interop
-        //
-        return E_NOTIMPL;
+        return ExceptionBoundary(
+            [&]()
+            {
+                ComPtr<IDWriteTextFormat> dwriteTextFormat;
+                ThrowIfFailed(resource->QueryInterface(dwriteTextFormat.GetAddressOf()));
+
+                auto newCanvasTextFormat = Make<CanvasTextFormat>(dwriteTextFormat.Get());
+                CheckMakeResult(newCanvasTextFormat);
+                ThrowIfFailed(newCanvasTextFormat.CopyTo(wrapper));
+            });
     }
 
 
@@ -500,6 +525,14 @@ namespace canvas
         , m_wordWrapping(CanvasWordWrapping::Wrap)
         , m_drawTextOptions(CanvasDrawTextOptions::Default)
     {
+    }
+
+
+    CanvasTextFormat::CanvasTextFormat(IDWriteTextFormat* format)
+        : m_closed(false)
+        , m_format(format)
+    {
+        SetShadowPropertiesFromDWrite();
     }
 
 
@@ -541,7 +574,7 @@ namespace canvas
 
         ThrowIfFailed(factory->CreateTextFormat(
             static_cast<const wchar_t*>(m_fontFamilyName),
-            nullptr,            // font collection
+            m_fontCollection.Get(),
             ToFontWeight(m_fontWeight),
             ToFontStyle(m_fontStyle),
             ToFontStretch(m_fontStretch),
@@ -570,7 +603,50 @@ namespace canvas
 
     void CanvasTextFormat::Unrealize()
     {
+        //
+        // We're about to throw away m_format, so we need to extract all the
+        // values stored on it into our shadow copies.
+        //
+        if (m_format)
+            SetShadowPropertiesFromDWrite();
+
         m_format.Reset();
+    }
+
+
+    void CanvasTextFormat::SetShadowPropertiesFromDWrite()
+    {
+        assert(m_format);
+
+        ThrowIfFailed(m_format->GetFontCollection(&m_fontCollection));
+
+        m_flowDirection      = ToCanvasTextDirection(m_format->GetFlowDirection());
+        m_fontFamilyName     = GetFontFamilyName(m_format.Get());
+        m_fontSize           = m_format->GetFontSize();
+        m_fontStretch        = ToWindowsFontStretch(m_format->GetFontStretch());
+        m_fontStyle          = ToWindowsFontStyle(m_format->GetFontStyle());
+        m_fontWeight         = ToWindowsFontWeight(m_format->GetFontWeight());
+        m_incrementalTabStop = m_format->GetIncrementalTabStop();
+        m_localeName         = GetLocaleName(m_format.Get());
+        m_verticalAlignment  = ToCanvasVerticalAlignment(m_format->GetParagraphAlignment());
+        m_paragraphAlignment = ToWindowsParagraphAlignment(m_format->GetTextAlignment());
+        m_readingDirection   = ToCanvasTextDirection(m_format->GetReadingDirection());
+        m_wordWrapping       = ToCanvasWordWrapping(m_format->GetWordWrapping());
+        m_drawTextOptions    = CanvasDrawTextOptions::Default;
+
+        DWRITE_LINE_SPACING_METHOD method{};
+        ThrowIfFailed(m_format->GetLineSpacing(&method, &m_lineSpacing, &m_lineSpacingBaseline));
+        m_lineSpacingMethod = ToCanvasLineSpacingMethod(method);
+
+        DWRITE_TRIMMING trimmingOptions{};
+        ComPtr<IDWriteInlineObject> inlineObject;
+        ThrowIfFailed(m_format->GetTrimming(
+            &trimmingOptions,
+            &inlineObject));
+
+        m_trimmingGranularity = ToCanvasTextTrimmingGranularity(trimmingOptions.granularity);
+        m_trimmingDelimiter = ToCanvasTrimmingDelimiter(trimmingOptions.delimiter);
+        m_trimmingDelimiterCount = trimmingOptions.delimiterCount;
     }
 
 
@@ -581,40 +657,54 @@ namespace canvas
     //
 
     template<typename T>
-    static bool SetFrom(T* outputValue, const T& value)
+    static bool IsSame(T* outputValue, const T& value)
     {
-        if ((*outputValue) == value)
-            return false;
-
-        *outputValue = value;
-        return true;
+        return ((*outputValue) == value);
     }
 
     template<>
-    static bool SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, const ABI::Windows::UI::Text::FontWeight& value)
+    static bool IsSame(ABI::Windows::UI::Text::FontWeight* outputValue, const ABI::Windows::UI::Text::FontWeight& value)
     {
-        return SetFrom(&outputValue->Weight, value.Weight);
+        return IsSame(&outputValue->Weight, value.Weight);
     }
 
     template<typename WinString>
-    static bool SetFrom(HSTRING* outputValue, const WinString& value)
+    static bool IsSame(HSTRING* outputValue, const WinString& value)
     {
-        if (value.Equals(*outputValue))
-            return false;
-
-        value.CopyTo(outputValue);
-        return true;
+        return value.Equals(*outputValue);
     }
 
     template<typename HSTRING>
-    static bool SetFrom(WinString* outputValue, const HSTRING& value)
+    static bool IsSame(WinString* outputValue, const HSTRING& value)
     {
-        if (outputValue->Equals(value))
-            return false;
-
-        *outputValue = value;
-        return true;
+        return outputValue->Equals(value);
     }
+
+
+    template<typename T>
+    static void SetFrom(T* outputValue, const T& value)
+    {
+        *outputValue = value;
+    }
+
+    template<>
+    static void SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, const ABI::Windows::UI::Text::FontWeight& value)
+    {
+        SetFrom(&outputValue->Weight, value.Weight);
+    }
+
+    template<typename WinString>
+    static void SetFrom(HSTRING* outputValue, const WinString& value)
+    {
+        value.CopyTo(outputValue);
+    }
+
+    template<typename HSTRING>
+    static void SetFrom(WinString* outputValue, const HSTRING& value)
+    {
+        *outputValue = value;
+    }
+
 
     template<typename T, typename ST, typename FN>
     HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, const ST& shadowValue, FN realizedGetter)
@@ -643,12 +733,27 @@ namespace canvas
 
                 ThrowIfClosed();
 
-                if (SetFrom(dest, value))
+                if (IsSame(dest, value))
                 {
-                    // If the value changed then we need to call realizer().
-                    if (m_format && realizer)
-                        (this->*realizer)();
+                    // Don't do anything if the value we're setting is the same
+                    // as the current value.
+                    return;
                 }
+
+                if (!realizer)
+                {
+                    // If there's no realizer set then we're going to have to
+                    // throw away m_format (ready to be recreated the next time
+                    // it is needed)
+                    Unrealize();
+                }
+
+                // Set the shadow value
+                SetFrom(dest, value);
+
+                // Realize the value on the dwrite object, if we can
+                if (m_format && realizer)
+                    (this->*realizer)();
             });
     }
 
@@ -697,11 +802,7 @@ namespace canvas
             m_fontFamilyName,
             [&]()
             {
-                WinStringBuilder stringBuilder;
-                auto length = m_format->GetFontFamilyNameLength() + 1;
-                auto buffer = stringBuilder.Allocate(length);
-                ThrowIfFailed(m_format->GetFontFamilyName(buffer, length));
-                return stringBuilder.Get();
+                return GetFontFamilyName(m_format.Get());
             });
     }
 
@@ -710,8 +811,7 @@ namespace canvas
     {
         return PropertyPut(
             value,
-            &m_fontFamilyName,
-            &CanvasTextFormat::Unrealize);
+            &m_fontFamilyName);
     }
 
     //
@@ -732,8 +832,7 @@ namespace canvas
         return PropertyPut(
             value, 
             &m_fontSize,
-            ThrowIfNegativeOrNan,
-            &CanvasTextFormat::Unrealize);
+            ThrowIfNegativeOrNan);
     }
 
     //
@@ -754,8 +853,7 @@ namespace canvas
         return PropertyPut(
             value, 
             &m_fontStretch, 
-            ThrowIfInvalid<ABI::Windows::UI::Text::FontStretch>,
-            &CanvasTextFormat::Unrealize);
+            ThrowIfInvalid<ABI::Windows::UI::Text::FontStretch>);
     }
 
     //
@@ -776,8 +874,7 @@ namespace canvas
         return PropertyPut(
             value, 
             &m_fontStyle, 
-            ThrowIfInvalid<ABI::Windows::UI::Text::FontStyle>,
-            &CanvasTextFormat::Unrealize);
+            ThrowIfInvalid<ABI::Windows::UI::Text::FontStyle>);
     }
 
     //
@@ -798,8 +895,7 @@ namespace canvas
         return PropertyPut(
             value, 
             &m_fontWeight,
-            ThrowIfInvalidFontWeight,
-            &CanvasTextFormat::Unrealize);
+            ThrowIfInvalidFontWeight);
     }
 
     //
@@ -908,6 +1004,7 @@ namespace canvas
             m_lineSpacingBaseline));
     }
 
+
     //
     // CanvasTextFormat.LocaleName
     //
@@ -919,11 +1016,7 @@ namespace canvas
             m_localeName,
             [&]()
             {
-                WinStringBuilder stringBuilder;
-                auto length = m_format->GetLocaleNameLength() + 1;
-                auto buffer = stringBuilder.Allocate(length);
-                ThrowIfFailed(m_format->GetLocaleName(buffer, length));
-                return stringBuilder.Get();
+                return GetLocaleName(m_format.Get());
             });
     }
 
@@ -932,8 +1025,7 @@ namespace canvas
     {
         return PropertyPut(
             value, 
-            &m_localeName,
-            &CanvasTextFormat::Unrealize);
+            &m_localeName);
     }
 
     //
@@ -974,7 +1066,7 @@ namespace canvas
         return PropertyGet(
             value,
             m_readingDirection,
-            [&]() { return ToCanvasReadingDirection(m_format->GetReadingDirection()); });
+            [&]() { return ToCanvasTextDirection(m_format->GetReadingDirection()); });
     }
 
 
@@ -1099,6 +1191,7 @@ namespace canvas
             &trimmingOptions,
             nullptr));        
     }
+
 
     //
     // CanvasTextFormat.WordWrapping

@@ -107,6 +107,11 @@ namespace Microsoft
                     a.M21 == b.M21 && a.M22 == b.M22 &&
                     a.M31 == b.M31 && a.M32 == b.M32;
             }
+
+            inline bool operator==(const Windows::UI::Text::FontWeight& a, const Windows::UI::Text::FontWeight& b)
+            {
+                return a.Weight == b.Weight;
+            }
         }
     }
 }
