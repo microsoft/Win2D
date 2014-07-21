@@ -799,7 +799,7 @@ namespace System.Numerics
         }
 
 
-        public float Determinant()
+        public float GetDeterminant()
         {
             // | a b c d |     | f g h |     | e g h |     | e f h |     | e f g |
             // | e f g h | = a | j k l | - b | i k l | + c | i j l | - d | i j k |
@@ -1183,7 +1183,7 @@ namespace System.Numerics
 
                     *pVectorBasis[c] = Vector3.Normalize(*pVectorBasis[c]);
 
-                    det = matTemp.Determinant();
+                    det = matTemp.GetDeterminant();
 
                     // use Kramer's rule to check for handedness of coordinate system
                     if (det < 0.0f)

@@ -334,7 +334,7 @@ namespace System.Numerics
         }
 
 
-        public float Determinant()
+        public float GetDeterminant()
         {
             // There isn't actually any such thing as a determinant for a non-square matrix,
             // but this 3x2 type is really just an optimization of a 3x3 where we happen to

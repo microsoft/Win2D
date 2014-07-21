@@ -3250,8 +3250,8 @@ namespace Windows { namespace Foundation { namespace Numerics
     }
 
 
-    inline plane::plane(float a, float b, float c, float d)
-        : normal(a, b, c), d(d)
+    inline plane::plane(float x, float y, float z, float d)
+        : normal(x, y, z), d(d)
     { }
 
 

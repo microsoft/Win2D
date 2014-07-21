@@ -23,11 +23,11 @@ namespace System.Numerics
         public float D;
 
 
-        public Plane(float a, float b, float c, float d)
+        public Plane(float x, float y, float z, float d)
         {
-            Normal.X = a;
-            Normal.Y = b;
-            Normal.Z = c;
+            Normal.X = x;
+            Normal.Y = y;
+            Normal.Z = z;
             D = d;
         }
 

@@ -53,9 +53,9 @@ namespace NumericsTests
             Matrix3x2 target = Matrix3x2.CreateRotation(MathHelper.ToRadians(30.0f));
 
             float val = 1.0f;
-            float det = target.Determinant();
+            float det = target.GetDeterminant();
 
-            Assert.IsTrue(MathHelper.Equal(val, det), "Matrix3x2.Determinant was not set correctly.");
+            Assert.IsTrue(MathHelper.Equal(val, det), "Matrix3x2.GetDeterminant was not set correctly.");
         }
 
         // A test for Determinant
@@ -70,16 +70,16 @@ namespace NumericsTests
             Matrix3x2 i;
             Assert.IsTrue(Matrix3x2.Invert(a, out i));
 
-            float detA = a.Determinant();
-            float detI = i.Determinant();
+            float detA = a.GetDeterminant();
+            float detI = i.GetDeterminant();
             float t = 1.0f / detI;
 
             // only accurate to 3 precision
-            Assert.IsTrue(System.Math.Abs(detA - t) < 1e-3, "Matrix3x2.Determinant was not set correctly.");
+            Assert.IsTrue(System.Math.Abs(detA - t) < 1e-3, "Matrix3x2.GetDeterminant was not set correctly.");
 
             // sanity check against 4x4 version
-            Assert.AreEqual(new Matrix4x4(a).Determinant(), detA);
-            Assert.AreEqual(new Matrix4x4(i).Determinant(), detI);
+            Assert.AreEqual(new Matrix4x4(a).GetDeterminant(), detA);
+            Assert.AreEqual(new Matrix4x4(i).GetDeterminant(), detI);
         }
 
         // A test for Invert (Matrix3x2)
@@ -290,7 +290,7 @@ namespace NumericsTests
             a.M21 = 0.0f; a.M22 = 4.0f;
             a.M31 = 5.0f; a.M32 = 6.0f;
 
-            float detA = a.Determinant();
+            float detA = a.GetDeterminant();
             Assert.IsTrue(MathHelper.Equal(detA, 0.0f), "Matrix3x2.Invert did not return the expected value.");
 
             Matrix3x2 actual;

@@ -401,7 +401,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         // Constructors.
         plane() = default;
-        plane(float a, float b, float c, float d);
+        plane(float x, float y, float z, float d);
         plane(float3 normal, float d);
         explicit plane(float4 value);
 
