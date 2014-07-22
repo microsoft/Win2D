@@ -14,10 +14,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
@@ -30,6 +32,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RegisteredEventList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinStringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinStringWrapper.h" />
@@ -46,5 +49,6 @@
     <None Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasControl.abi.idl" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -36,6 +36,7 @@
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RegisteredEventList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinStringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinStringWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
@@ -65,12 +67,14 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasControl.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />

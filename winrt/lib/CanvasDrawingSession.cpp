@@ -433,9 +433,8 @@ namespace canvas
         ABI::Windows::Foundation::Rect rect{point.X, point.Y, 0, 0};
         
         //
-        // TODO: there's a thread-safety implication since we're modifying state
-        // on something that _may_ be being used on another thread.  Should
-        // address this as part of #802.
+        // TODO #802: there's a thread-safety implication since we're modifying state
+        // on something that _may_ be being used on another thread.
         //
         CanvasWordWrapping oldWordWrapping{};
         ThrowIfFailed(format->get_WordWrapping(&oldWordWrapping));

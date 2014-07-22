@@ -473,8 +473,8 @@ namespace canvas
 
     ComPtr<ID2D1SolidColorBrush> CanvasDevice::CreateSolidColorBrush(const D2D1_COLOR_F& color)
     {
-        // TODO: this isn't very threadsafe - we should really have a different
-        // resource creation context per-thread. Do this as part of #802.
+        // TODO #802: this isn't very threadsafe - we should really have a different
+        // resource creation context per-thread.
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 
         ComPtr<ID2D1SolidColorBrush> brush;

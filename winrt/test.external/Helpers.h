@@ -76,7 +76,6 @@ namespace Microsoft
                 return buf;
             }
 
-            // TODO: Consider sharing these definitions somehow between internal and external tests.
 #define CX_VALUE_TO_STRING(T)                                       \
             template<>                                              \
             static inline std::wstring ToString<T>(const T& value)  \

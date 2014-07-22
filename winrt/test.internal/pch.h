@@ -54,6 +54,7 @@
 #include <CanvasImageSourceDrawingSessionAdapter.h>
 #include <CanvasBrush.h>
 #include <CanvasStrokeStyle.h>
+#include <CanvasControl.h>
 #include <Conversion.h>
 #include <CanvasTextFormat.h>
 #include <ResourceManager.h>
@@ -85,7 +86,9 @@ using namespace canvas;
 #include "StubCanvasDevice.h"
 #include "StubCanvasDrawingSessionAdapter.h"
 #include "StubD2DBrush.h"
-#include "StubSurfaceImageSource.h"
-#include "StubSurfaceImageSourceFactory.h"
 #include "StubD2DFactoryWithCreateStrokeStyle.h"
 #include "StubD2DStrokeStyle.h"
+#include "StubImageControl.h"
+#include "StubSurfaceImageSource.h"
+#include "StubSurfaceImageSourceFactory.h"
+#include "StubUserControl.h"

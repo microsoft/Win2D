@@ -1,0 +1,86 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+namespace Microsoft.Graphics.Canvas
+{
+    runtimeclass CanvasCreatingResourcesEventArgs;
+
+    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
+    interface ICanvasCreatingResourcesEventArgsFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] CanvasDevice* canvasDrawingSession,
+            [out, retval] CanvasCreatingResourcesEventArgs** creatingResourcesArgs);
+    };
+
+    [version(VERSION), uuid(12868FCE-FB92-4DBF-B26B-57DB036F5CF6), exclusiveto(CanvasCreatingResourcesEventArgs)]
+    interface ICanvasCreatingResourcesEventArgs : IInspectable
+    {
+        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+    }
+
+    [version(VERSION), activatable(ICanvasCreatingResourcesEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasCreatingResourcesEventArgs : Windows.UI.Xaml.DependencyObject
+    {
+        [default] interface ICanvasCreatingResourcesEventArgs;
+    }
+
+    runtimeclass CanvasDrawingEventArgs;
+
+    [version(VERSION), uuid(7299D72C-F8E4-4A2F-9E30-7CDFCCF31C44)]
+    interface ICanvasDrawingEventArgsFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] CanvasDrawingSession* canvasDrawingSession,
+            [out, retval] CanvasDrawingEventArgs** drawEventArgs
+            );
+    };
+
+    [version(VERSION), uuid(FB86169F-25D4-4551-BD8F-214BEAF0AC24), exclusiveto(CanvasDrawingEventArgs)]
+    interface ICanvasDrawingEventArgs : IInspectable
+    {
+        [propget] HRESULT DrawingSession([out, retval] CanvasDrawingSession** value);
+    }
+
+    [version(VERSION), activatable(ICanvasDrawingEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasDrawingEventArgs : Windows.UI.Xaml.DependencyObject
+    {
+        [default] interface ICanvasDrawingEventArgs;
+    }
+
+    runtimeclass CanvasControl;
+
+    [version(VERSION), uuid(F006E06D-79DB-484F-B898-479CF069C0F5), exclusiveto(CanvasControl)]
+    interface ICanvasControl : IInspectable
+    {
+        [eventadd] HRESULT CreatingResources(
+            [in] Windows.Foundation.TypedEventHandler<CanvasControl*, CanvasCreatingResourcesEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT CreatingResources([in] EventRegistrationToken token);
+
+        [eventadd] HRESULT Drawing(
+            [in] Windows.Foundation.TypedEventHandler<CanvasControl*, CanvasDrawingEventArgs*>* value, 
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT Drawing([in] EventRegistrationToken token);
+
+        HRESULT Invalidate();
+    }
+
+    [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
+    runtimeclass CanvasControl : Windows.UI.Xaml.Controls.UserControl
+    {
+        [default] interface ICanvasControl;
+    }
+
+}

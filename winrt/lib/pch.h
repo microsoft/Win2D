@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may
 // not use these files except in compliance with the License. You may obtain
@@ -46,6 +46,7 @@
 // WinRT
 #include <windows.foundation.h>
 #include <windows.ui.h>
+#include <windows.ui.xaml.controls.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
 // Public

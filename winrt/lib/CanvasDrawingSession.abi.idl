@@ -172,12 +172,6 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Rect rectangle,
             [in] ICanvasBrush* brush,
             [in] CanvasTextFormat* format);
-
-
-        //
-        // TODO: future work (eg #794, #1367 etc.) will add more methods
-        // to this interface.
-        //
     };
 
     [version(VERSION), static(ICanvasDrawingSessionStatics, VERSION)]

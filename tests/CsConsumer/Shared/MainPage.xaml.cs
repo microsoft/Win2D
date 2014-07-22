@@ -24,8 +24,8 @@ namespace CsConsumer
     public sealed partial class MainPage : Page
     {
         Random m_random = new Random();
-        CanvasDevice m_device = new CanvasDevice();
-        CanvasImageSource m_imageSource;
+        CanvasSolidColorBrush m_brush;
+
         enum DrawnContentType
         {
             Clear_Only,
@@ -53,80 +53,55 @@ namespace CsConsumer
         {
             this.InitializeComponent();
 
-            //
-            // Set up the width/height combo boxes.
-            //
-            var sizes = new List<int>();
-            for (int i = 0; i < 16; ++i)
-            {
-                sizes.Add(1 << i);
-            }
-
-            m_widthCombo.ItemsSource = sizes;
-            m_heightCombo.ItemsSource = sizes;
-
-            m_widthCombo.SelectedItem = 1024;
-            m_heightCombo.SelectedItem = 1024;
-
-            m_widthCombo.SelectionChanged += ImageSizeChangeRequested;
-            m_heightCombo.SelectionChanged += ImageSizeChangeRequested;
+            m_canvasControl.CreatingResources += canvasControl_CreatingResources;
+            m_canvasControl.Drawing += m_canvasControl_Drawing;
 
             // 
             // Populate the drawnContentType combo box.
             //
             var drawnContentElements = new List<DrawnContentType>();
-            for (int i=0; i<(int)(DrawnContentType.Total); ++i)
+            for (int i = 0; i < (int)(DrawnContentType.Total); ++i)
             {
                 drawnContentElements.Add((DrawnContentType)(i));
             }
             m_drawnContentTypeCombo.ItemsSource = drawnContentElements;
             m_drawnContentTypeCombo.SelectedIndex = 0;
-            m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;
+            m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;            
+        }
 
-            //
-            // Create the initial image source
-            //
-            RecreateImageSource();
-            DrawStuff();
+        void m_canvasControl_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        {
+            DrawStuff(args.DrawingSession);
+        }
+
+        void canvasControl_CreatingResources(CanvasControl sender, CanvasCreatingResourcesEventArgs args)
+        {
+            UpdateCanvasControlSize(); 
+            m_brush = new CanvasSolidColorBrush(args.Device, Colors.White);
         }
 
         private void OnRedrawClicked(object sender, RoutedEventArgs e)
         {
-            DrawStuff();
+            m_canvasControl.Invalidate();
         }
 
-        private void ImageSizeChangeRequested(object sender, SelectionChangedEventArgs e)
-        {
-            RecreateImageSource();
-            DrawStuff();
-        }
 
         private void ImageContentChanged(object sender, SelectionChangedEventArgs e)
         {
-            DrawStuff();
+            m_canvasControl.Invalidate();
         }
 
-        private void RecreateImageSource()
+        private void UpdateCanvasControlSize()
         {
             try
             {
                 //
-                // Wipe current state -- so if this fails for some reason we're 
-                // left with no image source rather than the previous image source.
-                //
-                m_imageSource = null;
-                m_theImage.Source = null;
-
-                //
                 // Create a new image source for the specified width/height
                 //
-                int width = (int)m_widthCombo.SelectedValue;
-                int height = (int)m_heightCombo.SelectedValue;
+                int width = (int)m_canvasControl.ActualWidth;
+                int height = (int)m_canvasControl.ActualHeight;
 
-                m_imageSource = new CanvasImageSource(m_device, width, height);
-                m_theImage.Source = m_imageSource;                
-
-                m_statusMessage.Text = String.Format("{0}x{1} image source", width, height);
+                m_statusMessage.Text = String.Format("{0}x{1} canvas control", width, height);
             }
             catch (Exception e)
             {
@@ -134,15 +109,15 @@ namespace CsConsumer
             }
         }
         void DrawDashedLines(
-            CanvasDrawingSession ds, 
-            CanvasSolidColorBrush canvasSolidColorBrush, 
-            int horizontalLimit, 
+            CanvasDrawingSession ds,
+            CanvasSolidColorBrush canvasSolidColorBrush,
+            int horizontalLimit,
             int verticalLimit)
         {
             CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle();
             strokeStyle.DashStyle = CanvasDashStyle.Dash;
 
-            for(int i=0; i<100; i++)
+            for (int i = 0; i < 100; i++)
             {
                 ds.DrawLine(
                     NextRandomPoint(horizontalLimit, verticalLimit),
@@ -152,154 +127,150 @@ namespace CsConsumer
             }
         }
 
-        void DrawStuff()
+        void DrawStuff(CanvasDrawingSession ds)
         {
-            int horizontalLimit = (int)m_widthCombo.SelectedValue;
-            int verticalLimit = (int)m_heightCombo.SelectedValue;
+            int horizontalLimit = (int)m_canvasControl.ActualWidth;
+            int verticalLimit = (int)m_canvasControl.ActualHeight;
             const float thickStrokeWidth = 80.0f;
 
-            using (var ds = m_imageSource.CreateDrawingSession())
+            DrawnContentType drawnContentType = (DrawnContentType)m_drawnContentTypeCombo.SelectedValue;
+
+            ds.Clear(NextRandomColor());
+
+            m_brush.Color = NextRandomColor();
+
+            switch (drawnContentType)
             {
-                DrawnContentType drawnContentType = (DrawnContentType)m_drawnContentTypeCombo.SelectedValue;
+                case DrawnContentType.Clear_Only:
+                    break;
 
-                ds.Clear(NextRandomColor());
+                case DrawnContentType.Line_Thin:
+                    ds.DrawLine(
+                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        m_brush);
+                    break;
 
-                using (var canvasSolidColorBrush = new CanvasSolidColorBrush(m_device, NextRandomColor()))
-                {
-                    switch (drawnContentType)
-                    {
-                        case DrawnContentType.Clear_Only:
-                            break;
+                case DrawnContentType.Line_Thick:
+                    ds.DrawLine(
+                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        m_brush,
+                        thickStrokeWidth);
+                    break;
 
-                        case DrawnContentType.Line_Thin:
-                            ds.DrawLine(
-                                NextRandomPoint(horizontalLimit, verticalLimit),
-                                NextRandomPoint(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush);
-                            break;
+                case DrawnContentType.Rectangle_Thin:
+                    ds.DrawRectangle(
+                        NextRandomRect(horizontalLimit, verticalLimit),
+                        m_brush);
+                    break;
 
-                        case DrawnContentType.Line_Thick:
-                            ds.DrawLine(
-                                NextRandomPoint(horizontalLimit, verticalLimit),
-                                NextRandomPoint(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush,
-                                thickStrokeWidth);
-                            break;
+                case DrawnContentType.Rectangle_Thick:
+                    ds.DrawRectangle(
+                        NextRandomRect(horizontalLimit, verticalLimit),
+                        m_brush,
+                        thickStrokeWidth);
+                    break;
 
-                        case DrawnContentType.Rectangle_Thin:
-                            ds.DrawRectangle(
-                                NextRandomRect(horizontalLimit, verticalLimit), 
-                                canvasSolidColorBrush);
-                            break;
+                case DrawnContentType.Rectangle_Filled:
+                    ds.FillRectangle(
+                        NextRandomRect(horizontalLimit, verticalLimit),
+                        m_brush);
+                    break;
 
-                        case DrawnContentType.Rectangle_Thick:
-                            ds.DrawRectangle(
-                                NextRandomRect(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush,
-                                thickStrokeWidth);
-                            break;
+                case DrawnContentType.RoundedRectangle_Thin:
+                    ds.DrawRoundedRectangle(
+                        NextRandomRoundedRect(horizontalLimit, verticalLimit),
+                        m_brush);
+                    break;
 
-                        case DrawnContentType.Rectangle_Filled:
-                            ds.FillRectangle(
-                                NextRandomRect(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush);
-                            break;
+                case DrawnContentType.RoundedRectangle_Thick:
+                    ds.DrawRoundedRectangle(
+                        NextRandomRoundedRect(horizontalLimit, verticalLimit),
+                        m_brush,
+                        thickStrokeWidth);
+                    break;
 
-                        case DrawnContentType.RoundedRectangle_Thin:
-                            ds.DrawRoundedRectangle(
-                                NextRandomRoundedRect(horizontalLimit, verticalLimit), 
-                                canvasSolidColorBrush);
-                            break;
+                case DrawnContentType.Ellipse_Thin:
+                    ds.DrawEllipse(
+                        NextRandomEllipse(horizontalLimit, verticalLimit),
+                        m_brush);
+                    break;
 
-                        case DrawnContentType.RoundedRectangle_Thick:
-                            ds.DrawRoundedRectangle(
-                                NextRandomRoundedRect(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush,
-                                thickStrokeWidth);
-                            break;
+                case DrawnContentType.Ellipse_Thick:
+                    ds.DrawEllipse(
+                        NextRandomEllipse(horizontalLimit, verticalLimit),
+                        m_brush,
+                        thickStrokeWidth);
+                    break;
 
-                        case DrawnContentType.Ellipse_Thin:
-                            ds.DrawEllipse(
-                                NextRandomEllipse(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush);
-                            break;
+                case DrawnContentType.Ellipse_Fill:
+                    ds.FillEllipse(
+                        NextRandomEllipse(horizontalLimit, verticalLimit),
+                        m_brush);
+                    break;
 
-                        case DrawnContentType.Ellipse_Thick:
-                            ds.DrawEllipse(
-                                NextRandomEllipse(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush,
-                                thickStrokeWidth);
-                            break;
+                case DrawnContentType.Dashed_Lines:
+                    DrawDashedLines(ds, m_brush, horizontalLimit, verticalLimit);
+                    break;
 
-                        case DrawnContentType.Ellipse_Fill:
-                            ds.FillEllipse(
-                                NextRandomEllipse(horizontalLimit, verticalLimit),
-                                canvasSolidColorBrush);
-                            break;
+                case DrawnContentType.Text:
+                    var p = NextRandomPoint(horizontalLimit, verticalLimit);
+                    var x = p.X;
+                    var y = p.Y;
+                    ds.DrawLine(new Point(x, 0), new Point(x, verticalLimit), m_brush);
+                    ds.DrawLine(new Point(0, y), new Point(horizontalLimit, y), m_brush);
+                    ds.DrawText(
+                        "Centered",
+                        p,
+                        m_brush,
+                        new CanvasTextFormat()
+                        {
+                            FontSize = 18,
+                            VerticalAlignment = CanvasVerticalAlignment.Center,
+                            ParagraphAlignment = ParagraphAlignment.Center
+                        });
 
-                        case DrawnContentType.Dashed_Lines:
-                            DrawDashedLines(ds, canvasSolidColorBrush, horizontalLimit, verticalLimit);
-                            break;
+                    var r = NextRandomRect(horizontalLimit, verticalLimit);
+                    ds.DrawRectangle(r, m_brush);
+                    ds.DrawText(
+                        m_quiteLongText,
+                        r,
+                        m_brush,
+                        new CanvasTextFormat()
+                        {
+                            FontFamilyName = "Comic Sans MS",
+                            FontSize = 18,
+                            ParagraphAlignment = ParagraphAlignment.Justify,
+                            Options = CanvasDrawTextOptions.Clip
+                        });
 
-                        case DrawnContentType.Text:                            
-                            var p = NextRandomPoint(horizontalLimit, verticalLimit);
-                            var x = p.X;
-                            var y = p.Y;
-                            ds.DrawLine(new Point(x, 0), new Point(x, verticalLimit), canvasSolidColorBrush);
-                            ds.DrawLine(new Point(0, y), new Point(horizontalLimit, y), canvasSolidColorBrush);
-                            ds.DrawText(
-                                "Centered", 
-                                p, 
-                                canvasSolidColorBrush, 
-                                new CanvasTextFormat() 
-                                { 
-                                    FontSize = 18,
-                                    VerticalAlignment = CanvasVerticalAlignment.Center, 
-                                    ParagraphAlignment = ParagraphAlignment.Center 
-                                });
 
-                            var r = NextRandomRect(horizontalLimit, verticalLimit);
-                            ds.DrawRectangle(r, canvasSolidColorBrush);
-                            ds.DrawText(
-                                m_quiteLongText,
-                                r,
-                                canvasSolidColorBrush,
-                                new CanvasTextFormat()
-                                {
-                                    FontFamilyName = "Comic Sans MS",
-                                    FontSize = 18,
-                                    ParagraphAlignment = ParagraphAlignment.Justify,
-                                    Options = CanvasDrawTextOptions.Clip
-                                });
-                            
+                    break;
 
-                            break;
+                case DrawnContentType.Test_Scene0_Default:
+                    GeometryTestScene0.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Default);
+                    break;
 
-                        case DrawnContentType.Test_Scene0_Default:
-                            GeometryTestScene0.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Default);
-                            break;
+                case DrawnContentType.Test_Scene0_Wireframe:
+                    GeometryTestScene0.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Wireframe);
+                    break;
 
-                        case DrawnContentType.Test_Scene0_Wireframe:
-                            GeometryTestScene0.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Wireframe);
-                            break;
+                case DrawnContentType.Test_Scene1_Default:
+                    GeometryTestScene1.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Default);
+                    break;
 
-                        case DrawnContentType.Test_Scene1_Default:
-                            GeometryTestScene1.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Default);
-                            break;
+                case DrawnContentType.Test_Scene1_Randomized:
+                    GeometryTestScene1.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Randomized);
+                    break;
 
-                        case DrawnContentType.Test_Scene1_Randomized:
-                            GeometryTestScene1.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Randomized);
-                            break;
+                case DrawnContentType.Test_Scene1_Wireframe:
+                    GeometryTestScene1.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Wireframe);
+                    break;
 
-                        case DrawnContentType.Test_Scene1_Wireframe:
-                            GeometryTestScene1.DrawGeometryTestScene(ds, canvasSolidColorBrush, TestSceneRenderingType.Wireframe);
-                            break;
-
-                        default:
-                            System.Diagnostics.Debug.Assert(false); // Unexpected
-                            break;
-                    }
-                }
+                default:
+                    System.Diagnostics.Debug.Assert(false); // Unexpected
+                    break;
             }
         }
 

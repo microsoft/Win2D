@@ -15,10 +15,12 @@
 namespace canvas
 {
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;
+    using namespace ABI::Windows::UI::Xaml::Media;
 
     class MockSurfaceImageSource : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ISurfaceImageSource,
+        IImageSource,
         ISurfaceImageSourceNativeWithD2D>
     {
     public:

@@ -28,3 +28,4 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 #include "CanvasTextFormat.abi.idl"
 #include "CanvasDrawingSession.abi.idl"
 #include "CanvasImageSource.abi.idl"
+#include "CanvasControl.abi.idl"

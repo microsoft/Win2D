@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "../test.external/MockDxgiDevice.h" // TODO: move this file (do with #997/#1429)
+#include "../test.external/MockDxgiDevice.h" // TODO #997/#1429: move this file
 #include "MockD2DDeviceContext.h"
 
 namespace canvas

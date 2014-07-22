@@ -133,6 +133,7 @@ namespace Microsoft
             }
 
             TO_STRING(ICanvasDevice);
+            TO_STRING(ICanvasDrawingSession);
             TO_STRING(ID2D1Brush);
             TO_STRING(ID2D1Device1);
             TO_STRING(ID2D1DeviceContext1);
@@ -348,6 +349,19 @@ namespace Microsoft
                 case D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE: return L"D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE";
                 default: return L"<<invalid D2D1_STROKE_TRANSFORM_TYPE>>";
                 }
+            }
+
+            template<>
+            static inline std::wstring ToString<__int64>(const __int64& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"%I64d",
+                    value));
+
+                return buf;
             }
 
             template<>
@@ -624,7 +638,6 @@ namespace Microsoft
                 a._21 == b._21 && a._22 == b._22 &&
                 a._31 == b._31 && a._32 == b._32;
         }
-
         inline bool operator==(const ABI::Windows::UI::Text::FontWeight& a, const ABI::Windows::UI::Text::FontWeight& b)
         {
             return a.Weight == b.Weight;

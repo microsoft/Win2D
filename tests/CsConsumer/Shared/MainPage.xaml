@@ -5,18 +5,25 @@
     xmlns:local="using:CsConsumer"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock FontSize="36">Canvas C# Consumer</TextBlock>
-        <TextBlock>Image using CanvasImageSource:</TextBlock>
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Redraw" Click="OnRedrawClicked"/>
-            <ComboBox x:Name="m_widthCombo" ItemsSource="{Binding}"/>
-            <ComboBox x:Name="m_heightCombo" ItemsSource="{Binding}"/>
-            <ComboBox x:Name="m_drawnContentTypeCombo" ItemsSource="{Binding}"/>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+            <TextBlock FontSize="36">Canvas C# Consumer</TextBlock>
+            <TextBlock>Image using CanvasImageSource:</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Redraw" Click="OnRedrawClicked"/>
+                <ComboBox x:Name="m_drawnContentTypeCombo" ItemsSource="{Binding}"/>
+            </StackPanel>
+            <TextBlock x:Name="m_statusMessage"/>
         </StackPanel>
-        <TextBlock x:Name="m_statusMessage"/>
-        <Image x:Name="m_theImage" Stretch="None"/>
-    </StackPanel>
+        <canvas:CanvasControl Grid.Row="1" x:Name="m_canvasControl"/>
+    </Grid>
 </Page>

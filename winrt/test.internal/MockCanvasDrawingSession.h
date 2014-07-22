@@ -15,11 +15,18 @@
 namespace canvas
 {
     using namespace ABI::Microsoft::Graphics::Canvas;
+    using namespace ABI::Windows::Foundation;
 
     class MockCanvasDrawingSession : public RuntimeClass<
-        ICanvasDrawingSession>
+        ICanvasDrawingSession,
+        IClosable>
     {
     public:
+        IFACEMETHODIMP Close() override
+        {
+            return S_OK;
+        }
+
         IFACEMETHODIMP Clear(
             ABI::Windows::UI::Color color) override
         {

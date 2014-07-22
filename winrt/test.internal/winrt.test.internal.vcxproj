@@ -68,6 +68,7 @@
     <ClInclude Include="TestDeviceResourceCreationAdapter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CanvasControlUnitTests.cpp" />
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="CanvasTextFormatTests.cpp" />
@@ -78,6 +79,7 @@
     <ClCompile Include="CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="ConversionUnitTests.cpp" />
+    <ClCompile Include="RegisteredEventListTests.cpp" />
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DFactoryWithCreateStrokeStyle.cpp" />
