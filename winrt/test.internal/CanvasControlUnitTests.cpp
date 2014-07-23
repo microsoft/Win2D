@@ -193,14 +193,14 @@ TEST_CLASS(CanvasControlTests)
 
         // Invalidate and ensure the drawing and create resources callbacks are called.
         canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent(canvasControl.Get());
+        m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
         Assert::AreEqual(1, m_creatingResourcesCallbackCount);
         Assert::AreEqual(1, m_drawingCallbackCount);
 
         // Ensure a subsequent invalidation doesn't recreate resources.
         canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent(canvasControl.Get());
+        m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
         Assert::AreEqual(1, m_creatingResourcesCallbackCount);
         Assert::AreEqual(2, m_drawingCallbackCount);
@@ -209,7 +209,7 @@ TEST_CLASS(CanvasControlTests)
         ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken));
         ThrowIfFailed(canvasControl->remove_Drawing(drawingEventToken));
         canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent(canvasControl.Get());
+        m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
         Assert::AreEqual(1, m_creatingResourcesCallbackCount);
         Assert::AreEqual(2, m_drawingCallbackCount);

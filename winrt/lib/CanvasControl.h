@@ -89,6 +89,7 @@ namespace canvas
 
     class CanvasControl : public RuntimeClass<
         ICanvasControl,
+        ABI::Windows::UI::Xaml::IFrameworkElementOverrides,
         ComposableBase<ABI::Windows::UI::Xaml::Controls::IUserControl>>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasControl, BaseTrust);
@@ -113,6 +114,10 @@ namespace canvas
         CanvasControl(
             std::shared_ptr<ICanvasControlAdapter> adapter);
 
+        //
+        // ICanvasControl
+        //
+
         IFACEMETHODIMP add_CreatingResources(
             CreateResourcesEventHandlerType* value,
             EventRegistrationToken *token);
@@ -129,8 +134,21 @@ namespace canvas
 
         IFACEMETHODIMP Invalidate();
 
-        HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
+        //
+        // IFrameworkElementOverrides
+        //
 
+        IFACEMETHODIMP MeasureOverride(
+            ABI::Windows::Foundation::Size availableSize, 
+            ABI::Windows::Foundation::Size* returnValue);
+
+        IFACEMETHODIMP ArrangeOverride(
+            ABI::Windows::Foundation::Size finalSize, 
+            ABI::Windows::Foundation::Size* returnValue);
+
+        IFACEMETHODIMP OnApplyTemplate();
+
+        HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
         HRESULT OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args);
 
     private:

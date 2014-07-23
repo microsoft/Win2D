@@ -219,7 +219,7 @@ namespace canvas
 
     void CanvasControl::CreateBaseClass()
     {
-        auto base = m_adapter->CreateUserControl(this);
+        auto base = m_adapter->CreateUserControl(static_cast<ICanvasControl*>(this));
         ThrowIfFailed(SetComposableBasePointers(base.first.Get(), base.second.Get()));
     }
 
@@ -455,6 +455,59 @@ namespace canvas
         m_drawNeeded = true;
         ComPtr<IEventHandler<IInspectable*>> renderingEventHandler = Callback<IEventHandler<IInspectable*>, CanvasControl>(this, &CanvasControl::OnRenderCallback);
         m_renderingEventToken = m_adapter->AddCompositionRenderingCallback(renderingEventHandler.Get());
+    }
+
+    IFACEMETHODIMP CanvasControl::MeasureOverride(
+        ABI::Windows::Foundation::Size availableSize, 
+        ABI::Windows::Foundation::Size* returnValue)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                //
+                // MeasureOverride must call Measure on its children (in this
+                // case this is just the image control).
+                //
+                ComPtr<IUIElement> imageOverrides;
+                ThrowIfFailed(m_imageControl.As(&imageOverrides));
+                ThrowIfFailed(imageOverrides->Measure(availableSize));
+
+                //
+                // However, we ignore how they respond and reply that we're
+                // happy to be sized however the layout engine wants to size us.
+                //
+                *returnValue = ABI::Windows::Foundation::Size{};
+            });
+    }
+    
+    IFACEMETHODIMP CanvasControl::ArrangeOverride(
+        ABI::Windows::Foundation::Size finalSize, 
+        ABI::Windows::Foundation::Size* returnValue)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                //
+                // Allow base class to handle this
+                //
+                ComPtr<IFrameworkElementOverrides> base;
+                ThrowIfFailed(GetComposableBase().As(&base));
+                ThrowIfFailed(base->ArrangeOverride(finalSize, returnValue));
+            });
+    }
+    
+    IFACEMETHODIMP CanvasControl::OnApplyTemplate()
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                //
+                // Allow base class to handle this
+                //
+                ComPtr<IFrameworkElementOverrides> base;
+                ThrowIfFailed(GetComposableBase().As(&base));
+                ThrowIfFailed(base->OnApplyTemplate());
+            });
     }
 
     ActivatableClassWithFactory(CanvasCreatingResourcesEventArgs, CanvasCreatingResourcesEventArgsFactory);
