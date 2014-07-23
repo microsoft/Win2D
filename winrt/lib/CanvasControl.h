@@ -101,6 +101,7 @@ namespace canvas
         EventRegistrationToken m_renderingEventToken;
 
         ComPtr<ICanvasDevice> m_canvasDevice;
+        ComPtr<IImage> m_imageControl;
         ComPtr<ICanvasImageSource> m_canvasImageSource;
         bool m_drawNeeded;
         bool m_isLoaded;
@@ -134,9 +135,11 @@ namespace canvas
 
     private:
         void CreateBaseClass();
+        void CreateImageControl();
         void RegisterEventHandlers();
 
         void EnsureSizeDependentResources();
+        void InvalidateImpl();
 
         HRESULT OnRenderCallback(IInspectable *pSender, IInspectable *pArgs);        
     };

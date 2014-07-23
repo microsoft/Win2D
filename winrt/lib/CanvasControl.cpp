@@ -213,6 +213,7 @@ namespace canvas
         , m_currentHeight(0)
     {
         CreateBaseClass();
+        CreateImageControl();
         RegisterEventHandlers();
     }
 
@@ -220,6 +221,29 @@ namespace canvas
     {
         auto base = m_adapter->CreateUserControl(this);
         ThrowIfFailed(SetComposableBasePointers(base.first.Get(), base.second.Get()));
+    }
+
+    void CanvasControl::CreateImageControl()
+    {
+        m_imageControl = m_adapter->CreateImageControl();
+
+        //
+        // Set the stretch mode to None; this will prevent the control from
+        // resizing itself when we change its source.  Instead we allow the
+        // layout to pick the control size and we ensure that we set the source
+        // to an appropriately sized CanvasImageSource.
+        //
+        ThrowIfFailed(m_imageControl->put_Stretch(ABI::Windows::UI::Xaml::Media::Stretch_None));
+
+        //
+        // Set the image control as the content of this control.
+        //
+        ComPtr<IUIElement> imageAsUIElement;
+        ThrowIfFailed(m_imageControl.As(&imageAsUIElement));
+
+        ComPtr<IUserControl> thisAsUserControl;
+        ThrowIfFailed(GetComposableBase().As(&thisAsUserControl));
+        thisAsUserControl->put_Content(imageAsUIElement.Get());
     }
 
     void CanvasControl::RegisterEventHandlers()
@@ -262,8 +286,8 @@ namespace canvas
         ThrowIfFailed(thisAsFrameworkElement->get_ActualWidth(&actualWidth));
         ThrowIfFailed(thisAsFrameworkElement->get_ActualHeight(&actualHeight));
 
-        assert(actualWidth <= INT_MAX);
-        assert(actualHeight <= INT_MAX);
+        assert(actualWidth <= static_cast<double>(INT_MAX));
+        assert(actualHeight <= static_cast<double>(INT_MAX));
 
         auto width = static_cast<int>(actualWidth);
         auto height = static_cast<int>(actualHeight);
@@ -288,22 +312,20 @@ namespace canvas
         m_currentHeight = height;
 
         //
-        // TODO #1770: avoid recreating the image when resizing
+        // Set this new image source on the image control
         //
-        auto image = m_adapter->CreateImageControl();
-
         ComPtr<IImageSource> baseImageSource;
         ThrowIfFailed(m_canvasImageSource.As(&baseImageSource));
-        ThrowIfFailed(image->put_Source(baseImageSource.Get()));
+        ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
 
-        ComPtr<IUIElement> imageAsUIElement;
-        ThrowIfFailed(image.As(&imageAsUIElement));
-
-        ComPtr<IUserControl> thisAsUserControl;
-        ThrowIfFailed(GetComposableBase().As(&thisAsUserControl));
-        thisAsUserControl->put_Content(imageAsUIElement.Get());
-
+        //
+        // TODO #1849: this shouldn't be done just because we created the
+        // control.  Figure out the right places to do this (eg before drawing
+        // for the first time, after device lost; ensure callback called when
+        // adding a new handler, even if first draw has already happened etc.)
+        //
         // Notify the application-defined resource creation callback.
+        //
         if (!m_createResourcesEventList.IsEmpty())
         {
             ComPtr<CanvasCreatingResourcesEventArgs> createResourcesArgs = Make<CanvasCreatingResourcesEventArgs>(m_canvasDevice.Get());
@@ -318,13 +340,31 @@ namespace canvas
             [&]()
             {
                 m_isLoaded = true;
-                Invalidate();
+                InvalidateImpl();
             });
     }
 
     HRESULT CanvasControl::OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args)
     {
-        return Invalidate();
+        return ExceptionBoundary(
+            [&]()
+            {
+                //
+                // OnSizeChanged can get called multiple times.  We only want to
+                // invalidate if it represents a size change from what the
+                // control was last set to.
+                //
+                ABI::Windows::Foundation::Size newSize{};                
+                ThrowIfFailed(args->get_NewSize(&newSize));
+
+                auto newWidth = static_cast<int>(newSize.Width);
+                auto newHeight = static_cast<int>(newSize.Height);
+
+                if (newWidth == m_currentWidth && newHeight == m_currentHeight)
+                    return;
+
+                InvalidateImpl();
+            });
     }
 
     IFACEMETHODIMP CanvasControl::add_CreatingResources(
@@ -393,6 +433,16 @@ namespace canvas
 
     IFACEMETHODIMP CanvasControl::Invalidate()
     {
+        return ExceptionBoundary(
+            [&]()
+            {
+                InvalidateImpl();
+            });
+    }
+
+
+    void CanvasControl::InvalidateImpl()
+    {
         //
         // TODO #1771: Invalidate() could be called from any thread, so we need to
         // have some lock protecting m_DrawNeeded and adding/removing the
@@ -400,15 +450,11 @@ namespace canvas
         //
 
         if (m_drawNeeded)
-            return S_OK;
+            return;
 
-        return ExceptionBoundary(
-            [&]()
-            {
-                m_drawNeeded = true;
-                ComPtr<IEventHandler<IInspectable*>> renderingEventHandler = Callback<IEventHandler<IInspectable*>, CanvasControl>(this, &CanvasControl::OnRenderCallback);
-                m_renderingEventToken = m_adapter->AddCompositionRenderingCallback(renderingEventHandler.Get());
-            });
+        m_drawNeeded = true;
+        ComPtr<IEventHandler<IInspectable*>> renderingEventHandler = Callback<IEventHandler<IInspectable*>, CanvasControl>(this, &CanvasControl::OnRenderCallback);
+        m_renderingEventToken = m_adapter->AddCompositionRenderingCallback(renderingEventHandler.Get());
     }
 
     ActivatableClassWithFactory(CanvasCreatingResourcesEventArgs, CanvasCreatingResourcesEventArgsFactory);
