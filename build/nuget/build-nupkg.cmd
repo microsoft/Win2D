@@ -11,7 +11,7 @@ IF "%1" == "/?" (
 )
 
 WHERE /Q nuget >NUL
-IF NOT EXIST nuget.exe (
+IF %ERRORLEVEL% NEQ 0 ( 
     ECHO nuget not found.
     ECHO.
     ECHO Run "%~pd0download-nuget.cmd" to download the latest version, or update PATH as appropriate.
