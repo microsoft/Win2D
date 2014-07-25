@@ -350,6 +350,13 @@ namespace canvas
             [&]()
             {
                 //
+                // If we get a size changed before we've loaded then we don't do
+                // anything.
+                //
+                if (!m_isLoaded)
+                    return;
+
+                //
                 // OnSizeChanged can get called multiple times.  We only want to
                 // invalidate if it represents a size change from what the
                 // control was last set to.
