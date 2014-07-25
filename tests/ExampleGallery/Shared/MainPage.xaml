@@ -1,0 +1,42 @@
+﻿<Page
+    x:Class="ExampleGallery.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ExampleGallery"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ItemTemplate">
+            <Grid Style="{StaticResource ExampleListGridStyle}">
+                <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Style="{StaticResource HeaderTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0,0,0,10">Windows Canvas Example Gallery</TextBlock>
+            <GridView Grid.Row="1" ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding Definitions}" VerticalContentAlignment="Top" ItemClick="GridView_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
+                <GridView.ItemContainerTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition IsStaggeringEnabled="true"/>
+                    </TransitionCollection>
+                </GridView.ItemContainerTransitions>
+                <GridView.DataContext>
+                    <local:ExampleDefinitions/>
+                </GridView.DataContext>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
+        </Grid>
+    </ScrollViewer></Page>

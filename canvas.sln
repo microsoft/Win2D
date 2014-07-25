@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30303.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{154A70F8-A0A3-4A30-9E04-57450F442DCB}"
 	ProjectSection(SolutionItems) = preProject
@@ -119,6 +119,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetNumerics", "DotNetNum
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNumerics.WindowsPhone", "numerics\DotNet\DotNetNumerics.WindowsPhone.csproj", "{2585ABB8-67D5-48A9-806D-9CEECDBFE413}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExampleGallery", "ExampleGallery", "{671EACB0-6255-4050-B092-1A874625AD5C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleGallery.Shared", "tests\ExampleGallery\Shared\ExampleGallery.Shared.shproj", "{F6F2B4AD-0B11-4919-BF8B-08DE6FE76170}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.Windows", "tests\ExampleGallery\Windows\ExampleGallery.Windows.csproj", "{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.WindowsPhone", "tests\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj", "{6F06C88D-B227-405B-A0D4-8E03DCBA8191}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		tests\CppConsumer\CppConsumer.Shared.vcxitems*{78468973-6e77-44f0-8257-91acb2a23ec4}*SharedItemsImports = 4
@@ -139,11 +147,14 @@ Global
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{9f8a014c-478a-4ec2-8cc2-37ceb3ccfccf}*SharedItemsImports = 4
 		numerics\Cpp\tests\CppNumericsTests.Shared.vcxitems*{f1fbb8c5-f507-4c69-908c-f46231b78c46}*SharedItemsImports = 4
 		winrt\lib\winrt.lib.Shared.vcxitems*{8c279709-e303-4546-a218-9b6e03521574}*SharedItemsImports = 4
+		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
 		winrt\test.external\winrt.test.external.Shared.vcxitems*{fbb57887-39f9-47e2-bca9-c4b620223610}*SharedItemsImports = 4
+		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{5c9d7c27-14c6-44f7-8a1b-447cdb939cbc}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{198d676f-fed6-4501-a083-ea9d288db611}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{860ee6b2-f36c-448e-ba84-607266fb6fba}*SharedItemsImports = 4
 		tests\CppConsumer\CppConsumer.Shared.vcxitems*{55928c84-e2f9-4d22-81b9-867a8214909a}*SharedItemsImports = 4
 		winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Shared.vcxitems*{dd961f31-3142-4e3a-80a9-bc9da5d75816}*SharedItemsImports = 4
+		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{6f06c88d-b227-405b-a0d4-8e03dcba8191}*SharedItemsImports = 4
 		winrt\test.external\winrt.test.external.Shared.vcxitems*{d6cb5cb7-499b-4980-84c6-f0099cf309da}*SharedItemsImports = 4
 		winrt\dll\winrt.dll.Shared.vcxitems*{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}*SharedItemsImports = 4
 		tests\CppConsumer\CppConsumer.Shared.vcxitems*{c6b817f7-7b67-4ed0-a668-cb365dc32a7a}*SharedItemsImports = 9
@@ -450,6 +461,38 @@ Global
 		{2585ABB8-67D5-48A9-806D-9CEECDBFE413}.Release|Win32.ActiveCfg = Release|Win32
 		{2585ABB8-67D5-48A9-806D-9CEECDBFE413}.Release|Win32.Build.0 = Release|Win32
 		{2585ABB8-67D5-48A9-806D-9CEECDBFE413}.Release|x64.ActiveCfg = Release|Win32
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|ARM.Build.0 = Debug|ARM
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|ARM.Deploy.0 = Debug|ARM
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|Win32.ActiveCfg = Debug|x86
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|Win32.Build.0 = Debug|x86
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|Win32.Deploy.0 = Debug|x86
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|x64.ActiveCfg = Debug|x64
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|x64.Build.0 = Debug|x64
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Debug|x64.Deploy.0 = Debug|x64
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|ARM.ActiveCfg = Release|ARM
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|ARM.Build.0 = Release|ARM
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|ARM.Deploy.0 = Release|ARM
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|Win32.ActiveCfg = Release|x86
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|Win32.Build.0 = Release|x86
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|Win32.Deploy.0 = Release|x86
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|x64.ActiveCfg = Release|x64
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|x64.Build.0 = Release|x64
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}.Release|x64.Deploy.0 = Release|x64
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Debug|ARM.ActiveCfg = Debug|ARM
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Debug|ARM.Build.0 = Debug|ARM
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Debug|ARM.Deploy.0 = Debug|ARM
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Debug|Win32.ActiveCfg = Debug|x86
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Debug|Win32.Build.0 = Debug|x86
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Debug|Win32.Deploy.0 = Debug|x86
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Debug|x64.ActiveCfg = Debug|x86
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Release|ARM.ActiveCfg = Release|ARM
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Release|ARM.Build.0 = Release|ARM
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Release|ARM.Deploy.0 = Release|ARM
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Release|Win32.ActiveCfg = Release|x86
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Release|Win32.Build.0 = Release|x86
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Release|Win32.Deploy.0 = Release|x86
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191}.Release|x64.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -498,5 +541,9 @@ Global
 		{D5E0912C-636C-484B-A459-539A26DA9CC2} = {157C5D2D-2085-4910-BE39-86DE963D8A5E}
 		{A80BDDF8-CDBB-4B2C-9B4F-D97E51529AFD} = {2C61CE25-E156-4ED4-86B2-E0B2D2F219F4}
 		{2585ABB8-67D5-48A9-806D-9CEECDBFE413} = {A80BDDF8-CDBB-4B2C-9B4F-D97E51529AFD}
+		{671EACB0-6255-4050-B092-1A874625AD5C} = {EC7BD4FF-9DAE-4698-9FDA-244478B0203B}
+		{F6F2B4AD-0B11-4919-BF8B-08DE6FE76170} = {671EACB0-6255-4050-B092-1A874625AD5C}
+		{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC} = {671EACB0-6255-4050-B092-1A874625AD5C}
+		{6F06C88D-B227-405B-A0D4-8E03DCBA8191} = {671EACB0-6255-4050-B092-1A874625AD5C}
 	EndGlobalSection
 EndGlobal
