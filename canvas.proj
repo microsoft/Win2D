@@ -18,64 +18,60 @@
     <BuildPhone>true</BuildPhone>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
+    <RunTests>true</RunTests>
   </PropertyGroup>
 
-  <!-- Set default platforms and build phase for each project type -->
-  <!-- Projects within each phase are built in parallel, and must only depend on outputs from earlier phases -->
+
+  <!-- Set default platforms for each project type -->
   <ItemDefinitionGroup>
     <WindowsProject>
       <Platforms>Win32;x64;ARM</Platforms>
-      <Phase>4</Phase>
     </WindowsProject>
     <PhoneProject>
       <Platforms>Win32;ARM</Platforms>
-      <Phase>4</Phase>
     </PhoneProject>
     <AnyCPUProject>
       <Platforms>AnyCPU</Platforms>
-      <Phase>1</Phase>
     </AnyCPUProject>
   </ItemDefinitionGroup>
 
+
   <!-- Windows projects implementing the Canvas API -->
   <ItemGroup Condition="$(BuildWindows)">
-    <WindowsProject Include="winrt\lib\winrt.lib.Windows.vcxproj">
-      <Phase>1</Phase>
-    </WindowsProject>
-    <WindowsProject Include="winrt\dll\winrt.dll.Windows.vcxproj">
-      <Phase>2</Phase>
-    </WindowsProject>
-    <WindowsProject Include="numerics\DotNet\DotNetNumerics.Windows.csproj">
-      <Phase>3</Phase>
-    </WindowsProject>
+    <WindowsProject Include="winrt\lib\winrt.lib.Windows.vcxproj" />
+    <WindowsProject Include="winrt\dll\winrt.dll.Windows.vcxproj" />
+    <WindowsProject Include="numerics\DotNet\DotNetNumerics.Windows.csproj" />
   </ItemGroup>
 
   <!-- Windows Phone projects implementing the Canvas API -->
   <ItemGroup Condition="$(BuildPhone)">
-    <PhoneProject Include="winrt\lib\winrt.lib.WindowsPhone.vcxproj">
-      <Phase>1</Phase>
-    </PhoneProject>
-    <PhoneProject Include="winrt\dll\winrt.dll.WindowsPhone.vcxproj">
-      <Phase>2</Phase>
-    </PhoneProject>
-    <PhoneProject Include="numerics\DotNet\DotNetNumerics.WindowsPhone.csproj">
-      <Phase>3</Phase>
-    </PhoneProject>
+    <PhoneProject Include="winrt\lib\winrt.lib.WindowsPhone.vcxproj" />
+    <PhoneProject Include="winrt\dll\winrt.dll.WindowsPhone.vcxproj" />
+    <PhoneProject Include="numerics\DotNet\DotNetNumerics.WindowsPhone.csproj" />
   </ItemGroup>
 
   <!-- Windows test projects -->
   <ItemGroup Condition="$(BuildWindows) and $(BuildTests)">
     <WindowsProject Include="winrt\test.internal\winrt.test.internal.vcxproj">
       <Platforms>Win32;x64</Platforms>
+      <AutomatedTests>desktop</AutomatedTests>
     </WindowsProject>
-    <WindowsProject Include="winrt\test.external\winrt.test.external.Windows.vcxproj" />
-    <WindowsProject Include="winrt\test.managed\Windows\winrt.test.managed.Windows.csproj" />
+    <WindowsProject Include="winrt\test.external\winrt.test.external.Windows.vcxproj">
+      <AutomatedTests>store</AutomatedTests>
+    </WindowsProject>
+    <WindowsProject Include="winrt\test.managed\Windows\winrt.test.managed.Windows.csproj">
+      <AutomatedTests>store</AutomatedTests>
+    </WindowsProject>
     <WindowsProject Include="winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj" />
     <WindowsProject Include="tests\CsConsumer\Windows\CsConsumer.Windows.csproj" />
     <WindowsProject Include="tests\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
     <WindowsProject Include="tests\CppConsumer\CppConsumer.Windows.vcxproj" />
-    <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj" />
-    <WindowsProject Include="numerics\DotNet\tests\Windows\DotNetNumericsTests.Windows.csproj" />
+    <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj">
+      <AutomatedTests>store</AutomatedTests>
+    </WindowsProject>
+    <WindowsProject Include="numerics\DotNet\tests\Windows\DotNetNumericsTests.Windows.csproj">
+      <AutomatedTests>store</AutomatedTests>
+    </WindowsProject>
   </ItemGroup>
 
   <!-- Windows Phone test projects -->
@@ -94,13 +90,30 @@
   <ItemGroup Condition="$(BuildTools)">
     <AnyCPUProject Include="tools\copyright\copyright.csproj" />
     <AnyCPUProject Include="tools\codegen\exe\codegen.exe.csproj" />
-    <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj">
-      <Phase>2</Phase>
+    <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj" Condition="$(BuildTests)">
+      <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
   </ItemGroup>
 
-  <!-- Master target just chains to a couple of workers -->
-  <Target Name="Build" DependsOnTargets="ChooseProjectsToBuild;BuildProjectsByPhase" />
+
+  <!-- Master target just chains to a bunch of workers -->
+  <Target Name="Build"
+          DependsOnTargets="BuildProjects; CheckCopyrightBanners; RunTests" />
+
+
+  <!-- Use batching to build each project in turn -->
+  <Target Name="BuildProjects"
+          DependsOnTargets="ChooseProjectsToBuild"
+          Inputs="@(ProjectsToBuild)"
+          Outputs="%(PlatformIndependentName)">
+
+    <Message Importance="High" Text="Building all variants of project %(ProjectsToBuild.PlatformIndependentName):" />
+    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
+
+    <!-- All the variants (platform and configuration) of a project can be built in parallel -->
+    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="true" />
+  </Target>
+
 
   <Target Name="ChooseProjectsToBuild">
     <ItemGroup>
@@ -121,19 +134,60 @@
         <Configuration>%(BuildConfiguration.Identity)</Configuration>
       </ProjectsPerConfig>
 
-      <!-- Move platform and configuration into the AdditionalProperties metadata -->
+      <!-- Move platform and configuration into the AdditionalProperties metadata, and generate a
+           platform independent name that will be the same for Windows and Phone project variants -->
       <ProjectsToBuild Include="@(ProjectsPerConfig)">
         <AdditionalProperties>Platform=%(ProjectsPerConfig.Platform);Configuration=%(ProjectsPerConfig.Configuration)</AdditionalProperties>
+        <PlatformIndependentName>$([System.String]::new('%(ProjectsPerConfig.Filename)').Replace('Windows', '').Replace('Phone', '').TrimEnd('.'))</PlatformIndependentName>
       </ProjectsToBuild>
     </ItemGroup>
   </Target>
 
-  <!-- Use batching to build each phase in turn -->
-  <Target Name="BuildProjectsByPhase" Inputs="@(ProjectsToBuild)" Outputs="%(Phase)" >
-    <Message Importance="High" Text="Building phase %(ProjectsToBuild.Phase) projects:" />
-    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
 
-    <!-- All the projects within a single phase can be built in parallel -->
-    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="true" />
+  <!-- Make sure all our source files have the right copyright -->
+  <Target Name="CheckCopyrightBanners"
+          Condition="$(BuildTools) and $(BuildPlatforms.Contains('AnyCPU')) and $(BuildConfigurations.Contains('Release'))">
+
+    <Message Importance="High" Text="Checking copyright banners" />
+
+    <MSBuild Projects="tools\copyright\CheckCopyrightBanners.proj" />
+  </Target>
+
+
+  <!-- Run the automated tests -->
+  <Target Name="RunTests"
+          Condition="$(BuildTests) and $(RunTests)"
+          DependsOnTargets="ChooseProjectsToBuild; ChooseTestsToRun"
+          Inputs="@(TestProjects)"
+          Outputs="%(TestProjects.TestAppX)">
+
+    <Message Importance="High" Text="Running tests: %(TestProjects.Filename) (%(TestProjects.Configuration)|%(TestProjects.Platform))" />
+
+    <Exec Command="vstest.console %(TestProjects.TestBinary)%(TestProjects.TestArgs)" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+
+  <Target Name="ChooseTestsToRun">
+    <ItemGroup>
+      <TestProjects Include="@(ProjectsToBuild)" Condition="%(ProjectsToBuild.AutomatedTests) != '' and %(ProjectsToBuild.Platform) != ARM">
+        <!-- Remap Win32 to x86 -->
+        <TestPlatform Condition="%(ProjectsToBuild.Platform) == Win32">x86</TestPlatform>
+        <TestPlatform Condition="%(ProjectsToBuild.Platform) != Win32">%(ProjectsToBuild.Platform)</TestPlatform>
+
+        <!-- Work out where the test binaries are located -->
+        <TestPath>bin\Windows%(TestProjects.TestPlatform)\%(ProjectsToBuild.Configuration)</TestPath>
+
+        <TestAppX Condition="%(ProjectsToBuild.Configuration) == Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)</TestAppX>
+        <TestAppX Condition="%(ProjectsToBuild.Configuration) != Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)_%(ProjectsToBuild.Configuration)</TestAppX>
+
+        <!-- Binaries can be either a .dll for desktop tests, or .appx for store app tests -->
+        <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == desktop">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\%(ProjectsToBuild.Filename).dll</TestBinary>
+        <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == store">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\AppPackages\%(TestProjects.TestAppX)_Test\%(TestProjects.TestAppX).appx</TestBinary>
+
+        <!-- Do we need the /Platform or /InIsolation arguments for this test project? -->
+        <TestArgs Condition="%(ProjectsToBuild.Platform) == x64">%(TestProjects.TestArgs) /Platform:x64</TestArgs>
+        <TestArgs Condition="%(ProjectsToBuild.Platform) == x64 or %(ProjectsToBuild.AutomatedTests) == store">%(TestProjects.TestArgs) /InIsolation</TestArgs>
+      </TestProjects>
+    </ItemGroup>
   </Target>
 </Project>

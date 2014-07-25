@@ -1,15 +1,5 @@
 @ECHO OFF
 
-IF "%1" == "/?" (
-    ECHO Usage: %0 [/n]
-    ECHO.
-    ECHO Generates the Windows Canvas NuGet package.
-    ECHO.
-    ECHO     /n: Don't rebuild code
-    ECHO.
-    GOTO END
-)
-
 WHERE /Q nuget >NUL
 IF %ERRORLEVEL% NEQ 0 ( 
     ECHO nuget not found.
@@ -18,27 +8,7 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END
 )
 
-
-IF NOT "%1" == "/n" (
-    WHERE /Q msbuild >NUL
-    IF %ERRORLEVEL% NEQ 0 ( 
-        ECHO Error: It appears that 'msbuild' is not available in this environment. 
-        ECHO Please run this script from a Visual Studio command prompt.
-        GOTO END
-    )
-    msbuild ..\..\canvas.proj /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false
-
-    IF %ERRORLEVEL% NEQ 0 (
-        ECHO Build failed; aborting.  Use /n to skip building.
-        GOTO END
-    )
-
-    ECHO.
-    ECHO.
-    ECHO.
-)
-
-nuget pack WindowsCanvas.nuspec -nopackageanalysis -outputdirectory %~p0..\..\bin
-nuget pack WindowsCanvas-debug.nuspec -nopackageanalysis -outputdirectory %~p0..\..\bin
+nuget pack %~dp0WindowsCanvas.nuspec -nopackageanalysis -outputdirectory %~dp0..\..\bin %*
+nuget pack %~dp0WindowsCanvas-debug.nuspec -nopackageanalysis -outputdirectory %~dp0..\..\bin %*
 
 :END

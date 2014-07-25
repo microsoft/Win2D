@@ -120,7 +120,7 @@ namespace Copyright
             // Warn about it?
             if (!unknownExtensions.Contains(ext, StringComparer.OrdinalIgnoreCase))
             {
-                Console.WriteLine("Warning: unknown extension .{0} ({1})", ext, GetRelativeName(filename));
+                Console.WriteLine("Error: Unknown extension .{0} ({1})", ext, GetRelativeName(filename));
 
                 unknownExtensions.Add(ext);
             }

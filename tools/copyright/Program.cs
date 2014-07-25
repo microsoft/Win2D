@@ -55,12 +55,12 @@ namespace Copyright
             // Report errors if anything went wrong.
             if (options.Validate && badFileCount > 0)
             {
-                throw new Exception(string.Format("Files with wrong copyright banner: {0}", badFileCount));
+                throw new Exception(string.Format("Encountered files with wrong copyright banner ({0})", badFileCount));
             }
 
             if (options.UnknownExtensionCount > 0)
             {
-                throw new Exception(string.Format("Encountered unknown file extensions: {0}", options.UnknownExtensionCount));
+                throw new Exception(string.Format("Encountered unknown file extensions ({0})", options.UnknownExtensionCount));
             }
         }
 
@@ -105,7 +105,7 @@ namespace Copyright
                 if (options.Validate)
                 {
                     // Just report that the copyright does not match.
-                    Console.WriteLine("Wrong copyright: {0}", options.GetRelativeName(filename));
+                    Console.WriteLine("Error: Wrong copyright: {0}", options.GetRelativeName(filename));
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace Copyright
                     if (options.PreviousCopyrightBanner != null && !Enumerable.SequenceEqual(existingCopyright, options.PreviousCopyrightBanner))
                     {
                         // Warn if what we tried to overwrite doesn't match the expected previous (then don't actually edit anything).
-                        Console.WriteLine("Warning: skipping {0} - doesn't match previous copyright", options.GetRelativeName(filename));
+                        Console.WriteLine("Warning: Skipping {0}: doesn't match previous copyright", options.GetRelativeName(filename));
                     }
                     else
                     {
@@ -128,7 +128,7 @@ namespace Copyright
                         var withNewCopyright = options.CopyrightBanner.Concat(withoutOldCopyright);
 
                         // Write out the new file.
-                        Console.WriteLine("Updating copyright: {0}", options.GetRelativeName(filename));
+                        Console.WriteLine("Warning: Updating copyright: {0}", options.GetRelativeName(filename));
 
                         File.WriteAllLines(filename, withNewCopyright);
                     }

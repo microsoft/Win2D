@@ -11,6 +11,8 @@
 
   <PropertyGroup>
     <OutputPath>$(__OutputPath)</OutputPath>
+    <OutDir>$(__OutputPath)\</OutDir>
+    <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 </Project>
