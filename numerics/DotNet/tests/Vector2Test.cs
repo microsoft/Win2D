@@ -1133,10 +1133,10 @@ namespace NumericsTests
         [TestMethod]
         public unsafe void Vector2FieldOffsetTest()
         {
-            Vector2* ptr = (Vector2*)0;
+            Vector2 value;
 
-            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->X));
-            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->Y));
+            Assert.AreEqual(0 + new IntPtr(&value).ToInt64(), new IntPtr(&value.X).ToInt64());
+            Assert.AreEqual(4 + new IntPtr(&value).ToInt64(), new IntPtr(&value.Y).ToInt64());
         }
 
         // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)

@@ -368,10 +368,10 @@ namespace NumericsTests
         [TestMethod]
         public unsafe void PlaneFieldOffsetTest()
         {
-            Plane* ptr = (Plane*)0;
+            Plane value;
 
-            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->Normal));
-            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->D));
+            Assert.AreEqual(0 + new IntPtr(&value).ToInt64(), new IntPtr(&value.Normal).ToInt64());
+            Assert.AreEqual(12 + new IntPtr(&value).ToInt64(), new IntPtr(&value.D).ToInt64());
         }
 
         // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)

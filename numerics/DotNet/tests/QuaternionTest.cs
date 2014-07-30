@@ -978,12 +978,12 @@ namespace NumericsTests
         [TestMethod]
         public unsafe void QuaternionFieldOffsetTest()
         {
-            Quaternion* ptr = (Quaternion*)0;
+            Quaternion value;
 
-            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->X));
-            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->Y));
-            Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->Z));
-            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->W));
+            Assert.AreEqual(0 + new IntPtr(&value).ToInt64(), new IntPtr(&value.X).ToInt64());
+            Assert.AreEqual(4 + new IntPtr(&value).ToInt64(), new IntPtr(&value.Y).ToInt64());
+            Assert.AreEqual(8 + new IntPtr(&value).ToInt64(), new IntPtr(&value.Z).ToInt64());
+            Assert.AreEqual(12 + new IntPtr(&value).ToInt64(), new IntPtr(&value.W).ToInt64());
         }
 
         // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)

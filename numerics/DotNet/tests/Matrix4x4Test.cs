@@ -2404,27 +2404,27 @@ namespace NumericsTests
         [TestMethod]
         public unsafe void Matrix4x4FieldOffsetTest()
         {
-            Matrix4x4* ptr = (Matrix4x4*)0;
+            Matrix4x4 value;
 
-            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->M11));
-            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->M12));
-            Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->M13));
-            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->M14));
+            Assert.AreEqual(0 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M11).ToInt64());
+            Assert.AreEqual(4 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M12).ToInt64());
+            Assert.AreEqual(8 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M13).ToInt64());
+            Assert.AreEqual(12 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M14).ToInt64());
 
-            Assert.AreEqual(new IntPtr(16), new IntPtr(&ptr->M21));
-            Assert.AreEqual(new IntPtr(20), new IntPtr(&ptr->M22));
-            Assert.AreEqual(new IntPtr(24), new IntPtr(&ptr->M23));
-            Assert.AreEqual(new IntPtr(28), new IntPtr(&ptr->M24));
+            Assert.AreEqual(16 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M21).ToInt64());
+            Assert.AreEqual(20 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M22).ToInt64());
+            Assert.AreEqual(24 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M23).ToInt64());
+            Assert.AreEqual(28 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M24).ToInt64());
 
-            Assert.AreEqual(new IntPtr(32), new IntPtr(&ptr->M31));
-            Assert.AreEqual(new IntPtr(36), new IntPtr(&ptr->M32));
-            Assert.AreEqual(new IntPtr(40), new IntPtr(&ptr->M33));
-            Assert.AreEqual(new IntPtr(44), new IntPtr(&ptr->M34));
+            Assert.AreEqual(32 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M31).ToInt64());
+            Assert.AreEqual(36 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M32).ToInt64());
+            Assert.AreEqual(40 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M33).ToInt64());
+            Assert.AreEqual(44 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M34).ToInt64());
 
-            Assert.AreEqual(new IntPtr(48), new IntPtr(&ptr->M41));
-            Assert.AreEqual(new IntPtr(52), new IntPtr(&ptr->M42));
-            Assert.AreEqual(new IntPtr(56), new IntPtr(&ptr->M43));
-            Assert.AreEqual(new IntPtr(60), new IntPtr(&ptr->M44));
+            Assert.AreEqual(48 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M41).ToInt64());
+            Assert.AreEqual(52 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M42).ToInt64());
+            Assert.AreEqual(56 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M43).ToInt64());
+            Assert.AreEqual(60 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M44).ToInt64());
         }
 
         // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)

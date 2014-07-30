@@ -993,16 +993,16 @@ namespace NumericsTests
         [TestMethod]
         public unsafe void Matrix3x2FieldOffsetTest()
         {
-            Matrix3x2* ptr = (Matrix3x2*)0;
+            Matrix3x2 value;
 
-            Assert.AreEqual(new IntPtr(0), new IntPtr(&ptr->M11));
-            Assert.AreEqual(new IntPtr(4), new IntPtr(&ptr->M12));
+            Assert.AreEqual(0 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M11).ToInt64());
+            Assert.AreEqual(4 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M12).ToInt64());
 
-            Assert.AreEqual(new IntPtr(8), new IntPtr(&ptr->M21));
-            Assert.AreEqual(new IntPtr(12), new IntPtr(&ptr->M22));
+            Assert.AreEqual(8 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M21).ToInt64());
+            Assert.AreEqual(12 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M22).ToInt64());
 
-            Assert.AreEqual(new IntPtr(16), new IntPtr(&ptr->M31));
-            Assert.AreEqual(new IntPtr(20), new IntPtr(&ptr->M32));
+            Assert.AreEqual(16 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M31).ToInt64());
+            Assert.AreEqual(20 + new IntPtr(&value).ToInt64(), new IntPtr(&value.M32).ToInt64());
         }
 
         // A test to validate interop between .NET (System.Numerics) and WinRT (Microsoft.Graphics.Canvas.Numerics)
