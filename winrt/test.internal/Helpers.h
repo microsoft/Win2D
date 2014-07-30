@@ -19,17 +19,25 @@ namespace Microsoft
         namespace CppUnitTestFramework
         {
 
-            // TODO #1716: update rest of file to use the ENUM_TO_STRING macro below
-
-            template<>
-            static inline std::wstring ToString<CanvasBackground>(const CanvasBackground& value)
-            {
+#define ENUM_TO_STRING(TYPE)                                                        \
+            template<> static inline std::wstring ToString<TYPE>(const TYPE& value) \
+            {                                                                       \
                 switch (value)
-                {
-                case CanvasBackground::Transparent: return L"CanvasBackground::Transparent";
-                case CanvasBackground::Opaque: return L"CanvasBackground::Opaque";
-                default: return L"<<invalid CanvasBackground>>";
+
+#define ENUM_VALUE(NAME)                                                            \
+                case NAME:                                                          \
+                    return WIDEN(#NAME)
+
+#define END_ENUM(TYPE)                                                              \
+                default:                                                            \
+                    return L"<<invalid " WIDEN(#TYPE) L">>";                        \
                 }
+
+            ENUM_TO_STRING(CanvasBackground)
+            {
+                ENUM_VALUE(CanvasBackground::Transparent);
+                ENUM_VALUE(CanvasBackground::Opaque);
+                END_ENUM(CanvasBackground);
             }
 
             template<>
@@ -147,28 +155,20 @@ namespace Microsoft
 
 #undef TO_STRING
 
-            template<>
-            static inline std::wstring ToString<CanvasDebugLevel>(const CanvasDebugLevel& value)
+            ENUM_TO_STRING(CanvasDebugLevel)
             {
-                switch (value)
-                {
-                case CanvasDebugLevel::None: return L"CanvasDebugLevel::None";
-                case CanvasDebugLevel::Error: return L"CanvasDebugLevel::Error";
-                case CanvasDebugLevel::Warning: return L"CanvasDebugLevel::Warning";
-                case CanvasDebugLevel::Information: return L"CanvasDebugLevel::Information";
-                default: return L"<<invalid CanvasDebugLevel>>";
-                }
+                ENUM_VALUE(CanvasDebugLevel::None);
+                ENUM_VALUE(CanvasDebugLevel::Error);
+                ENUM_VALUE(CanvasDebugLevel::Warning);
+                ENUM_VALUE(CanvasDebugLevel::Information);
+                END_ENUM(CanvasDebugLevel);
             }
 
-            template<>
-            static inline std::wstring ToString<CanvasHardwareAcceleration>(const CanvasHardwareAcceleration& value)
+            ENUM_TO_STRING(CanvasHardwareAcceleration)
             {
-                switch (value)
-                {
-                case CanvasHardwareAcceleration::On: return L"CanvasHardwareAcceleration::On";
-                case CanvasHardwareAcceleration::Off: return L"CanvasHardwareAcceleration::Off";
-                default: return L"<<invalid CanvasHardwareAcceleration>>";
-                }
+                ENUM_VALUE(CanvasHardwareAcceleration::On);
+                ENUM_VALUE(CanvasHardwareAcceleration::Off);
+                END_ENUM(CanvasHardwareAcceleration);
             }
 
             template<>
@@ -233,122 +233,86 @@ namespace Microsoft
                 return buf;
             }
 
-            template<>
-            static inline std::wstring ToString<CanvasCapStyle>(const CanvasCapStyle& value)
+            ENUM_TO_STRING(CanvasCapStyle)
             {
-                switch (value)
-                {
-                case CanvasCapStyle::Flat: return L"CanvasCapStyle::Flat";
-                case CanvasCapStyle::Round: return L"CanvasCapStyle::Round";
-                case CanvasCapStyle::Square: return L"CanvasCapStyle::Square";
-                case CanvasCapStyle::Triangle: return L"CanvasCapStyle::Triangle";
-                default: return L"<<invalid CanvasCapStyle>>";
-                }
+                ENUM_VALUE(CanvasCapStyle::Flat);
+                ENUM_VALUE(CanvasCapStyle::Round);
+                ENUM_VALUE(CanvasCapStyle::Square);
+                ENUM_VALUE(CanvasCapStyle::Triangle);
+                END_ENUM(CanvasCapStyle);
             }
 
-            template<>
-            static inline std::wstring ToString<CanvasTextDirection>(const CanvasTextDirection& value)
+            ENUM_TO_STRING(CanvasTextDirection)
             {
-                switch (value)
-                {
-                case CanvasTextDirection::TopToBottom: return L"CanvasTextDirection::TopToBottom";
-                case CanvasTextDirection::BottomToTop: return L"CanvasTextDirection::BottomToTop";
-                case CanvasTextDirection::LeftToRight: return L"CanvasTextDirection::LeftToRight";
-                case CanvasTextDirection::RightToLeft: return L"CanvasTextDirection::RightToLeft";
-                default: return L"<<invalid CanvasTextDirection>>";
-                }
+                ENUM_VALUE(CanvasTextDirection::TopToBottom);
+                ENUM_VALUE(CanvasTextDirection::BottomToTop);
+                ENUM_VALUE(CanvasTextDirection::LeftToRight);
+                ENUM_VALUE(CanvasTextDirection::RightToLeft);
+                END_ENUM(CanvasTextDirection);
             }
 
-            template<>
-            static inline std::wstring ToString<CanvasLineJoin>(const CanvasLineJoin& value)
+            ENUM_TO_STRING(CanvasLineJoin)
             {
-                switch (value)
-                {
-                case CanvasLineJoin::Miter: return L"CanvasLineJoin::Miter";
-                case CanvasLineJoin::Bevel: return L"CanvasLineJoin::Bevel";
-                case CanvasLineJoin::Round: return L"CanvasLineJoin::Round";
-                case CanvasLineJoin::MiterOrBevel: return L"CanvasLineJoin::MiterOrBevel";
-                default: return L"<<invalid CanvasLineJoin>>";
-                }
+                ENUM_VALUE(CanvasLineJoin::Miter);
+                ENUM_VALUE(CanvasLineJoin::Bevel);
+                ENUM_VALUE(CanvasLineJoin::Round);
+                ENUM_VALUE(CanvasLineJoin::MiterOrBevel);
+                END_ENUM(CanvasLineJoin);
             }
 
-            template<>
-            static inline std::wstring ToString<CanvasDashStyle>(const CanvasDashStyle& value)
+            ENUM_TO_STRING(CanvasDashStyle)
             {
-                switch (value)
-                {
-                case CanvasDashStyle::Solid: return L"CanvasDashStyle::Solid";
-                case CanvasDashStyle::Dash: return L"CanvasDashStyle::Dash";
-                case CanvasDashStyle::Dot: return L"CanvasDashStyle::Dot";
-                case CanvasDashStyle::DashDot: return L"CanvasDashStyle::DashDot";
-                case CanvasDashStyle::DashDotDot: return L"CanvasDashStyle::DashDotDot";
-                default: return L"<<invalid CanvasDashStyle>>";
-                }
+                ENUM_VALUE(CanvasDashStyle::Solid);
+                ENUM_VALUE(CanvasDashStyle::Dash);
+                ENUM_VALUE(CanvasDashStyle::Dot);
+                ENUM_VALUE(CanvasDashStyle::DashDot);
+                ENUM_VALUE(CanvasDashStyle::DashDotDot);
+                END_ENUM(CanvasDashStyle);
             }
 
-            template<>
-            static inline std::wstring ToString<CanvasStrokeTransformBehavior>(const CanvasStrokeTransformBehavior& value)
+            ENUM_TO_STRING(CanvasStrokeTransformBehavior)
             {
-                switch (value)
-                {
-                case CanvasStrokeTransformBehavior::Normal: return L"CanvasStrokeTransformBehavior::Normal";
-                case CanvasStrokeTransformBehavior::Fixed: return L"CanvasStrokeTransformBehavior::Fixed";
-                case CanvasStrokeTransformBehavior::Hairline: return L"CanvasStrokeTransformBehavior::Hairline";
-                default: return L"<<invalid CanvasStrokeTransformBehavior>>";
-                }
+                ENUM_VALUE(CanvasStrokeTransformBehavior::Normal);
+                ENUM_VALUE(CanvasStrokeTransformBehavior::Fixed);
+                ENUM_VALUE(CanvasStrokeTransformBehavior::Hairline);
+                END_ENUM(CanvasStrokeTransformBehavior);
             }
 
-            template<>
-            static inline std::wstring ToString<D2D1_CAP_STYLE>(const D2D1_CAP_STYLE& value)
+            ENUM_TO_STRING(D2D1_CAP_STYLE)
             {
-                switch (value)
-                {
-                case D2D1_CAP_STYLE_FLAT: return L"D2D1_CAP_STYLE_FLAT";
-                case D2D1_CAP_STYLE_SQUARE: return L"D2D1_CAP_STYLE_SQUARE";
-                case D2D1_CAP_STYLE_ROUND: return L"D2D1_CAP_STYLE_ROUND";
-                case D2D1_CAP_STYLE_TRIANGLE: return L"D2D1_CAP_STYLE_TRIANGLE";
-                default: return L"<<invalid D2D1_CAP_STYLE>>";
-                }
+                ENUM_VALUE(D2D1_CAP_STYLE_FLAT);
+                ENUM_VALUE(D2D1_CAP_STYLE_SQUARE);
+                ENUM_VALUE(D2D1_CAP_STYLE_ROUND);
+                ENUM_VALUE(D2D1_CAP_STYLE_TRIANGLE);
+                END_ENUM(D2D1_CAP_STYLE_TRIANGLE);
             }
 
-            template<>
-            static inline std::wstring ToString<D2D1_LINE_JOIN>(const D2D1_LINE_JOIN& value)
+            ENUM_TO_STRING(D2D1_LINE_JOIN)
             {
-                switch (value)
-                {
-                case D2D1_LINE_JOIN_MITER: return L"D2D1_LINE_JOIN_MITER";
-                case D2D1_LINE_JOIN_BEVEL: return L"D2D1_LINE_JOIN_BEVEL";
-                case D2D1_LINE_JOIN_ROUND: return L"D2D1_LINE_JOIN_ROUND";
-                case D2D1_LINE_JOIN_MITER_OR_BEVEL: return L"D2D1_LINE_JOIN_MITER_OR_BEVEL";
-                default: return L"<<invalid D2D1_LINE_JOIN>>";
-                }
+                ENUM_VALUE(D2D1_LINE_JOIN_MITER);
+                ENUM_VALUE(D2D1_LINE_JOIN_BEVEL);
+                ENUM_VALUE(D2D1_LINE_JOIN_ROUND);
+                ENUM_VALUE(D2D1_LINE_JOIN_MITER_OR_BEVEL);
+                END_ENUM(D2D1_LINE_JOIN_MITER_OR_BEVEL);
             }
 
-            template<>
-            static inline std::wstring ToString<D2D1_DASH_STYLE>(const D2D1_DASH_STYLE& value)
+            ENUM_TO_STRING(D2D1_DASH_STYLE)
             {
-                switch (value)
-                {
-                case D2D1_DASH_STYLE_SOLID: return L"D2D1_DASH_STYLE_SOLID";
-                case D2D1_DASH_STYLE_DASH: return L"D2D1_DASH_STYLE_DASH";
-                case D2D1_DASH_STYLE_DOT: return L"D2D1_DASH_STYLE_DOT";
-                case D2D1_DASH_STYLE_DASH_DOT: return L"D2D1_DASH_STYLE_DASH_DOT";
-                case D2D1_DASH_STYLE_DASH_DOT_DOT: return L"D2D1_DASH_STYLE_DASH_DOT_DOT";
-                case D2D1_DASH_STYLE_CUSTOM: return L"D2D1_DASH_STYLE_CUSTOM";
-                default: return L"<<invalid D2D1_DASH_STYLE>>";
-                }
+                ENUM_VALUE(D2D1_DASH_STYLE_SOLID);
+                ENUM_VALUE(D2D1_DASH_STYLE_DASH);
+                ENUM_VALUE(D2D1_DASH_STYLE_DOT);
+                ENUM_VALUE(D2D1_DASH_STYLE_DASH_DOT);
+                ENUM_VALUE(D2D1_DASH_STYLE_DASH_DOT_DOT);
+                ENUM_VALUE(D2D1_DASH_STYLE_CUSTOM);
+                END_ENUM(D2D1_DASH_STYLE_CUSTOM);
             }
 
-            template<>
-            static inline std::wstring ToString<D2D1_STROKE_TRANSFORM_TYPE>(const D2D1_STROKE_TRANSFORM_TYPE& value)
+            ENUM_TO_STRING(D2D1_STROKE_TRANSFORM_TYPE)
             {
-                switch (value)
-                {
-                case D2D1_STROKE_TRANSFORM_TYPE_NORMAL: return L"D2D1_STROKE_TRANSFORM_TYPE_NORMAL";
-                case D2D1_STROKE_TRANSFORM_TYPE_FIXED: return L"D2D1_STROKE_TRANSFORM_TYPE_FIXED";
-                case D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE: return L"D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE";
-                default: return L"<<invalid D2D1_STROKE_TRANSFORM_TYPE>>";
-                }
+                ENUM_VALUE(D2D1_STROKE_TRANSFORM_TYPE_NORMAL);
+                ENUM_VALUE(D2D1_STROKE_TRANSFORM_TYPE_FIXED);
+                ENUM_VALUE(D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE);
+                END_ENUM(D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE);
             }
 
             template<>
@@ -364,110 +328,74 @@ namespace Microsoft
                 return buf;
             }
 
-            template<>
-            static inline std::wstring ToString<DWRITE_FLOW_DIRECTION>(const DWRITE_FLOW_DIRECTION& value)
+            ENUM_TO_STRING(DWRITE_FLOW_DIRECTION)
             {
-                switch (value)
-                {
-                case DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM: return L"DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM";
-                case DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP: return L"DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP";
-                case DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT: return L"DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT";
-                case DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT: return L"DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT";
-                default: return L"<<invalid DWRITE_FLOW_DIRECTION>>";
-                }
+                ENUM_VALUE(DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM);
+                ENUM_VALUE(DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP);
+                ENUM_VALUE(DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT);
+                ENUM_VALUE(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT);
+                END_ENUM(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT);
             }
 
-            template<>
-            static inline std::wstring ToString<CanvasLineSpacingMethod>(const CanvasLineSpacingMethod& value)
+            ENUM_TO_STRING(CanvasLineSpacingMethod)
             {
-                switch (value)
-                {
-                case CanvasLineSpacingMethod::Default: return L"CanvasLineSpacingMethod::Default";
-                case CanvasLineSpacingMethod::Uniform: return L"CanvasLineSpacingMethod::Uniform";
-                default: return L"<<invalid CanvasLineSpacingMethod>>";
-                }
+                ENUM_VALUE(CanvasLineSpacingMethod::Default);
+                ENUM_VALUE(CanvasLineSpacingMethod::Uniform);
+                END_ENUM(CanvasLineSpacingMethod);
             }
 
-            template<>
-            static inline std::wstring ToString<DWRITE_LINE_SPACING_METHOD>(const DWRITE_LINE_SPACING_METHOD& value)
+            ENUM_TO_STRING(DWRITE_LINE_SPACING_METHOD)
             {
-                switch (value)
-                {
-                case DWRITE_LINE_SPACING_METHOD_DEFAULT: return L"DWRITE_LINE_SPACING_METHOD_DEFAULT";
-                case DWRITE_LINE_SPACING_METHOD_UNIFORM: return L"DWRITE_LINE_SPACING_METHOD_UNIFORM";
-                default: return L"<<invalid DWRITE_LINE_SPACING_METHOD>>";
-                }
+                ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_DEFAULT);
+                ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_UNIFORM);
+                END_ENUM(DWRITE_LINE_SPACING_METHOD);
             }
 
-            template<>
-            static inline std::wstring ToString<ABI::Windows::UI::Text::FontStretch>(const ABI::Windows::UI::Text::FontStretch& value)
+            ENUM_TO_STRING(ABI::Windows::UI::Text::FontStretch)
             {
-                switch (value)
-                {
-                case ABI::Windows::UI::Text::FontStretch_Undefined: return L"FontStretch::Undefined";
-                case ABI::Windows::UI::Text::FontStretch_UltraCondensed: return L"FontStretch::UltraCondensed";
-                case ABI::Windows::UI::Text::FontStretch_ExtraCondensed: return L"FontStretch::ExtraCondensed";
-                case ABI::Windows::UI::Text::FontStretch_Condensed: return L"FontStretch::Condensed";
-                case ABI::Windows::UI::Text::FontStretch_SemiCondensed: return L"FontStretch::SemiCondensed";
-                case ABI::Windows::UI::Text::FontStretch_Normal: return L"FontStretch::Normal";
-                case ABI::Windows::UI::Text::FontStretch_SemiExpanded: return L"FontStretch::SemiExpanded";
-                case ABI::Windows::UI::Text::FontStretch_Expanded: return L"FontStretch::Expanded";
-                case ABI::Windows::UI::Text::FontStretch_ExtraExpanded: return L"FontStretch::ExtraExpanded";
-                case ABI::Windows::UI::Text::FontStretch_UltraExpanded: return L"FontStretch::UltraExpanded";
-                default: return L"<<invalid FontStretch>>";
-                }
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_Undefined);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_UltraCondensed);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_ExtraCondensed);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_Condensed);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_SemiCondensed);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_Normal);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_SemiExpanded);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_Expanded);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_ExtraExpanded);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStretch_UltraExpanded);
+                END_ENUM(ABI);
             }
 
-            template<>
-            static inline std::wstring ToString<DWRITE_FONT_STRETCH>(const DWRITE_FONT_STRETCH& value)
+            ENUM_TO_STRING(DWRITE_FONT_STRETCH)
             {
-                switch (value)
-                {
-                case DWRITE_FONT_STRETCH_UNDEFINED: return L"DWRITE_FONT_STRETCH_UNDEFINED";
-                case DWRITE_FONT_STRETCH_ULTRA_CONDENSED: return L"DWRITE_FONT_STRETCH_ULTRA_CONDENSED";
-                case DWRITE_FONT_STRETCH_EXTRA_CONDENSED: return L"DWRITE_FONT_STRETCH_EXTRA_CONDENSED";
-                case DWRITE_FONT_STRETCH_CONDENSED: return L"DWRITE_FONT_STRETCH_CONDENSED";
-                case DWRITE_FONT_STRETCH_SEMI_CONDENSED: return L"DWRITE_FONT_STRETCH_SEMI_CONDENSED";
-                case DWRITE_FONT_STRETCH_NORMAL: return L"DWRITE_FONT_STRETCH_NORMAL/MEDIUM";
-                case DWRITE_FONT_STRETCH_SEMI_EXPANDED: return L"DWRITE_FONT_STRETCH_SEMI_EXPANDED";
-                case DWRITE_FONT_STRETCH_EXPANDED: return L"DWRITE_FONT_STRETCH_EXPANDED";
-                case DWRITE_FONT_STRETCH_EXTRA_EXPANDED: return L"DWRITE_FONT_STRETCH_EXTRA_EXPANDED";
-                case DWRITE_FONT_STRETCH_ULTRA_EXPANDED: return L"DWRITE_FONT_STRETCH_ULTRA_EXPANDED";
-                default: return L"<<invalid DWRITE_FONT_STRETCH>>";
-                }
+                ENUM_VALUE(DWRITE_FONT_STRETCH_UNDEFINED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_ULTRA_CONDENSED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_EXTRA_CONDENSED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_CONDENSED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_SEMI_CONDENSED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_NORMAL);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_SEMI_EXPANDED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_EXPANDED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_EXTRA_EXPANDED);
+                ENUM_VALUE(DWRITE_FONT_STRETCH_ULTRA_EXPANDED);
+                END_ENUM(DWRITE_FONT_STRETCH_ULTRA_EXPANDED);
             }
 
-            template<>
-            static inline std::wstring ToString<ABI::Windows::UI::Text::FontStyle>(const ABI::Windows::UI::Text::FontStyle& value)
+            ENUM_TO_STRING(ABI::Windows::UI::Text::FontStyle)
             {
-                switch (value)
-                {
-                case ABI::Windows::UI::Text::FontStyle_Normal: return L"FontStyle::Normal";
-                case ABI::Windows::UI::Text::FontStyle_Oblique: return L"FontStyle::Oblique";
-                case ABI::Windows::UI::Text::FontStyle_Italic: return L"FontStyle::Italic";
-                default: return L"<<invalid FontStyle>>";
-                }
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStyle_Normal);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStyle_Oblique);
+                ENUM_VALUE(ABI::Windows::UI::Text::FontStyle_Italic);
+                END_ENUM(ABI);
             }
 
-            template<>
-            static inline std::wstring ToString<DWRITE_FONT_STYLE>(const DWRITE_FONT_STYLE& value)
+            ENUM_TO_STRING(DWRITE_FONT_STYLE)
             {
-                switch (value)
-                {
-                case DWRITE_FONT_STYLE_NORMAL: return L"DWRITE_FONT_STYLE_NORMAL";
-                case DWRITE_FONT_STYLE_OBLIQUE: return L"DWRITE_FONT_STYLE_OBLIQUE";
-                case DWRITE_FONT_STYLE_ITALIC: return L"DWRITE_FONT_STYLE_ITALIC";
-                default: return L"<<invalid DWRITE_FONT_STYLE>>";
-                }
+                ENUM_VALUE(DWRITE_FONT_STYLE_NORMAL);
+                ENUM_VALUE(DWRITE_FONT_STYLE_OBLIQUE);
+                ENUM_VALUE(DWRITE_FONT_STYLE_ITALIC);
+                END_ENUM(DWRITE_FONT_STYLE_ITALIC);
             }
-
-#define ENUM_TO_STRING(TYPE)                                            \
-    template<> static inline std::wstring ToString<TYPE>(const TYPE& value) \
-    {                                                                   \
-        switch (value)                                                  
-
-#define ENUM_VALUE(NAME) case NAME: return WIDEN(#NAME)
-#define END_ENUM(TYPE) default: return L"<<invalid " WIDEN(#TYPE) L">>"; }
 
             ENUM_TO_STRING(CanvasVerticalAlignment)
             {
@@ -638,6 +566,7 @@ namespace Microsoft
                 a._21 == b._21 && a._22 == b._22 &&
                 a._31 == b._31 && a._32 == b._32;
         }
+
         inline bool operator==(const ABI::Windows::UI::Text::FontWeight& a, const ABI::Windows::UI::Text::FontWeight& b)
         {
             return a.Weight == b.Weight;
