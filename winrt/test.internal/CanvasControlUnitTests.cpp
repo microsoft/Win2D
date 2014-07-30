@@ -175,47 +175,58 @@ TEST_CLASS(CanvasControlTests)
         using canvas::CanvasControl;
 
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
-        canvasControl->OnLoaded(nullptr, nullptr);
-
         Assert::AreEqual(0, m_creatingResourcesCallbackCount);
         Assert::AreEqual(0, m_drawingCallbackCount);
 
-        // Register callbacks.
+        // Register one CreateResources handler.
+        // Note that Loaded hasn't occured yet, so it shouldn't actually be fired.
         auto onCreatingResourcesFn = Callback<CreateResourcesEventHandlerType>(this, &CanvasControlTests::OnCreatingResources);
+        EventRegistrationToken creatingResourcesEventToken0;
+        ThrowIfFailed(canvasControl->add_CreatingResources(onCreatingResourcesFn.Get(), &creatingResourcesEventToken0));
+        Assert::AreEqual(0, m_creatingResourcesCallbackCount);
 
-        EventRegistrationToken creatingResourcesEventToken;
-        ThrowIfFailed(canvasControl->add_CreatingResources(onCreatingResourcesFn.Get(), &creatingResourcesEventToken));
+        // Issue a Loaded.
+        // Should fire CreateResources.
+        canvasControl->OnLoaded(nullptr, nullptr);
+        Assert::AreEqual(1, m_creatingResourcesCallbackCount);
 
+        // Register the CreateResources handler again.
+        // Because the Loaded event has already occurred, add_CreatingResources should immediately fire the event too.
+        EventRegistrationToken creatingResourcesEventToken1;
+        ThrowIfFailed(canvasControl->add_CreatingResources(onCreatingResourcesFn.Get(), &creatingResourcesEventToken1));
+        Assert::AreEqual(2, m_creatingResourcesCallbackCount);
+
+        // Register the Drawing handler.
         auto onDrawingFn = Callback<DrawingEventHandlerType>(this, &CanvasControlTests::OnDrawing);
-
         EventRegistrationToken drawingEventToken;
         ThrowIfFailed(canvasControl->add_Drawing(onDrawingFn.Get(), &drawingEventToken));
 
-        // Invalidate and ensure the drawing and create resources callbacks are called.
+        // Invalidate and ensure the drawing callback is called.
         canvasControl->Invalidate();
         m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
-        Assert::AreEqual(1, m_creatingResourcesCallbackCount);
         Assert::AreEqual(1, m_drawingCallbackCount);
 
         // Ensure a subsequent invalidation doesn't recreate resources.
         canvasControl->Invalidate();
         m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
-        Assert::AreEqual(1, m_creatingResourcesCallbackCount);
+        Assert::AreEqual(2, m_creatingResourcesCallbackCount);
         Assert::AreEqual(2, m_drawingCallbackCount);
 
-        // Unregister the event. Call invalidate. Ensure invalidate doesn't get called again (the event was correctly unregistered).
-        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken));
+        // Unregister the events. Call invalidate. Ensure the handler doesn't get called again (the event was correctly unregistered).
+        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken0));
+        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken1));
         ThrowIfFailed(canvasControl->remove_Drawing(drawingEventToken));
         canvasControl->Invalidate();
         m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
-        Assert::AreEqual(1, m_creatingResourcesCallbackCount);
+        Assert::AreEqual(2, m_creatingResourcesCallbackCount);
         Assert::AreEqual(2, m_drawingCallbackCount);
 
         // Unregistering the same event twice should do nothing.
-        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken));
+        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken0));
+        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken1));
         ThrowIfFailed(canvasControl->remove_Drawing(drawingEventToken));
     }
 

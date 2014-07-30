@@ -32,6 +32,7 @@ namespace canvas
             CheckAndClearOutPointer(createResourcesArgs);
 
             auto newCanvasCreatingResourcesEventArgs = Make<CanvasCreatingResourcesEventArgs>(device);
+            CheckMakeResult(newCanvasCreatingResourcesEventArgs);
 
             ThrowIfFailed(newCanvasCreatingResourcesEventArgs.CopyTo(createResourcesArgs));
         });
@@ -63,6 +64,7 @@ namespace canvas
                 CheckAndClearOutPointer(drawEventArgs);
 
                 auto newCanvasDrawingEventArgs = Make<CanvasDrawingEventArgs>(drawingSession);
+                CheckMakeResult(newCanvasDrawingEventArgs);
 
                 ThrowIfFailed(newCanvasDrawingEventArgs.CopyTo(drawEventArgs));
             });
@@ -317,21 +319,6 @@ namespace canvas
         ComPtr<IImageSource> baseImageSource;
         ThrowIfFailed(m_canvasImageSource.As(&baseImageSource));
         ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
-
-        //
-        // TODO #1849: this shouldn't be done just because we created the
-        // control.  Figure out the right places to do this (eg before drawing
-        // for the first time, after device lost; ensure callback called when
-        // adding a new handler, even if first draw has already happened etc.)
-        //
-        // Notify the application-defined resource creation callback.
-        //
-        if (!m_createResourcesEventList.IsEmpty())
-        {
-            ComPtr<CanvasCreatingResourcesEventArgs> createResourcesArgs = Make<CanvasCreatingResourcesEventArgs>(m_canvasDevice.Get());
-            m_createResourcesEventList.FireAll(this, createResourcesArgs.Get());
-        }
-
     }
 
     HRESULT CanvasControl::OnLoaded(IInspectable* sender, IRoutedEventArgs* args)
@@ -340,6 +327,21 @@ namespace canvas
             [&]()
             {
                 m_isLoaded = true;
+
+                // The scheme for the CreateResources event is:
+                // - On Loaded, all handlers are fired.
+                // - If any handler is added thereafter, it is fired as soon as it is added.
+                //
+                // And so, there isn't a need to keep track of which handlers have been fired and which have not.
+                //
+
+                if (!m_createResourcesEventList.IsEmpty())
+                {
+                    ComPtr<CanvasCreatingResourcesEventArgs> createResourcesArgs = Make<CanvasCreatingResourcesEventArgs>(m_canvasDevice.Get());
+                    CheckMakeResult(createResourcesArgs);
+                    m_createResourcesEventList.FireAll(this, createResourcesArgs.Get());
+                }
+
                 InvalidateImpl();
             });
     }
@@ -382,6 +384,14 @@ namespace canvas
             [&]()
             {
                 *token = m_createResourcesEventList.Add(value);
+
+                if (m_isLoaded)
+                {
+                    // TODO #1922 Ensure that this operation is threadsafe.
+                    ComPtr<CanvasCreatingResourcesEventArgs> createResourcesArgs = Make<CanvasCreatingResourcesEventArgs>(m_canvasDevice.Get());
+                    CheckMakeResult(createResourcesArgs);
+                    ThrowIfFailed(value->Invoke(this, createResourcesArgs.Get()));
+                }
             });
     }
 
@@ -429,6 +439,7 @@ namespace canvas
                 ComPtr<ICanvasDrawingSession> drawingSession;
                 ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(&drawingSession));
                 ComPtr<CanvasDrawingEventArgs> drawEventArgs = Make<CanvasDrawingEventArgs>(drawingSession.Get());
+                CheckMakeResult(drawEventArgs);
 
                 m_drawEventList.FireAll(this, drawEventArgs.Get());
 
