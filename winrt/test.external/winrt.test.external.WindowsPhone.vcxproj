@@ -15,6 +15,9 @@
   <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
   <PropertyGroup Label="UserMacros">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
@@ -35,6 +38,7 @@
     <AppxManifest Include="winrt.test.external.WindowsPhone.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(AssetDir)Logo.scale-240.png">

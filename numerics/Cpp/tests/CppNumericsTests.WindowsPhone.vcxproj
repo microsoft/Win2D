@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F1FBB8C5-F507-4C69-908C-F46231B78C46}</ProjectGuid>
@@ -34,6 +34,7 @@
     <AppxManifest Include="CppNumericsTests.WindowsPhone.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(AssetDir)Logo.scale-240.png">
