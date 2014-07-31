@@ -42,8 +42,8 @@
     -->
 
     <__OutputPath>$(BinariesDirectory)\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
-    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(FullPlatform)\$(Configuration)\</IntermediateOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\obj\$(MSBuildProjectName)\$(FullPlatform)\$(Configuration)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <AssetDir>$(MSBuildThisFileDirectory)assets\</AssetDir>
   </PropertyGroup>
 
