@@ -361,14 +361,14 @@ public:
         // Extra testing for custom dash styles, which use an array.
         float customDashPattern0[2] = { 1, 2 };
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern0); });
+            [&](){canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern0); });
 
         float customDashPattern1[2] = { 10, 1 };
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern1); });
+            [&](){canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern1); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern1); });
+            [&](){canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern1); });
 
         verifier.VerifyEffectiveSetter(
             [&](){canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
