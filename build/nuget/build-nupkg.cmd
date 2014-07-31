@@ -1,5 +1,7 @@
 @ECHO OFF
 
+PUSHD %~dp0
+
 WHERE /Q nuget >NUL
 IF %ERRORLEVEL% NEQ 0 ( 
     ECHO nuget not found.
@@ -12,3 +14,5 @@ nuget pack %~dp0WindowsCanvas.nuspec -nopackageanalysis -outputdirectory %~dp0..
 nuget pack %~dp0WindowsCanvas-debug.nuspec -nopackageanalysis -outputdirectory %~dp0..\..\bin %*
 
 :END
+
+POPD
