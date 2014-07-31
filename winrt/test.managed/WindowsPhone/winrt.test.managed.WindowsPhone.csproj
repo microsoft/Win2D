@@ -27,9 +27,6 @@
     <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\..\build\canvas.cs.props" />
-  <PropertyGroup>
-    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
@@ -87,7 +84,6 @@
     <AppxManifest Include="winrt.test.managed.WindowsPhone.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(AssetDir)Logo.scale-240.png">

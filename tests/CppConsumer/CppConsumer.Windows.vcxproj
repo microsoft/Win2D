@@ -12,14 +12,10 @@
   <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <PropertyGroup>
-    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="CppConsumer.Windows.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(AssetDir)Logo.scale-100.png">

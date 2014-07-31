@@ -20,9 +20,6 @@
     <TargetFrameworkVersion />
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\..\build\canvas.cs.props" />
-  <PropertyGroup>
-    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
@@ -120,9 +117,6 @@
     <Content Include="$(AssetDir)UnitTestStoreLogo.scale-100.png">
       <Link>Assets\UnitTestStoreLogo.scale-100.png</Link>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
