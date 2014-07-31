@@ -273,6 +273,20 @@ namespace canvas
             &sizeChangedToken));
     }
 
+    void CanvasControl::ClearDrawNeeded()
+    {
+        //
+        // Note that this lock is scoped to release before the m_drawEventList.FireAll().
+        // This is necessary, since handlers themselves may call Invalidate().
+        //
+        std::unique_lock<std::mutex> lock(m_drawLock);
+        m_drawNeeded = false;
+
+        // TODO #1953 Consider clearing m_renderingEventToken, or coalescing m_renderingEventToken
+        // and m_drawNeeded into one variable.
+        m_adapter->RemoveCompositionRenderingCallback(m_renderingEventToken);
+    }
+
     void CanvasControl::EnsureSizeDependentResources()
     {
         // CanvasControl should always have a device
@@ -319,6 +333,20 @@ namespace canvas
         ComPtr<IImageSource> baseImageSource;
         ThrowIfFailed(m_canvasImageSource.As(&baseImageSource));
         ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
+    }
+
+    void CanvasControl::CallDrawHandlers()
+    {
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(&drawingSession));
+        ComPtr<CanvasDrawingEventArgs> drawEventArgs = Make<CanvasDrawingEventArgs>(drawingSession.Get());
+        CheckMakeResult(drawEventArgs);
+
+        m_drawEventList.FireAll(this, drawEventArgs.Get());
+
+        ComPtr<IClosable> drawingSessionClosable;
+        ThrowIfFailed(drawingSession.As(&drawingSessionClosable));
+        ThrowIfFailed(drawingSessionClosable->Close()); // Device removal should be handled here.
     }
 
     HRESULT CanvasControl::OnLoaded(IInspectable* sender, IRoutedEventArgs* args)
@@ -431,21 +459,11 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                m_drawNeeded = false;
-                m_adapter->RemoveCompositionRenderingCallback(m_renderingEventToken);
+                ClearDrawNeeded();
 
                 EnsureSizeDependentResources();
 
-                ComPtr<ICanvasDrawingSession> drawingSession;
-                ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(&drawingSession));
-                ComPtr<CanvasDrawingEventArgs> drawEventArgs = Make<CanvasDrawingEventArgs>(drawingSession.Get());
-                CheckMakeResult(drawEventArgs);
-
-                m_drawEventList.FireAll(this, drawEventArgs.Get());
-
-                ComPtr<IClosable> drawingSessionClosable;
-                ThrowIfFailed(drawingSession.As(&drawingSessionClosable));
-                ThrowIfFailed(drawingSessionClosable->Close()); // Device removal should be handled here.
+                CallDrawHandlers();
             });
     }
 
@@ -461,11 +479,7 @@ namespace canvas
 
     void CanvasControl::InvalidateImpl()
     {
-        //
-        // TODO #1771: Invalidate() could be called from any thread, so we need to
-        // have some lock protecting m_DrawNeeded and adding/removing the
-        // rendering event.
-        //
+        std::lock_guard<std::mutex> lock(m_drawLock);
 
         if (m_drawNeeded)
             return;

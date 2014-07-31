@@ -94,6 +94,8 @@ namespace canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasControl, BaseTrust);
 
+        std::mutex m_drawLock;
+
         std::shared_ptr<ICanvasControlAdapter> m_adapter;
 
         RegisteredEventList<CreateResourcesEventHandlerType> m_createResourcesEventList;
@@ -156,7 +158,9 @@ namespace canvas
         void CreateImageControl();
         void RegisterEventHandlers();
 
+        void ClearDrawNeeded();
         void EnsureSizeDependentResources();
+        void CallDrawHandlers();
         void InvalidateImpl();
 
         HRESULT OnRenderCallback(IInspectable *pSender, IInspectable *pArgs);        
