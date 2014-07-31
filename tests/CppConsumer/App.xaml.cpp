@@ -29,8 +29,6 @@ using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
-
 /// <summary>
 /// Initializes the singleton application object.  This is the first line of authored code
 /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -73,13 +71,6 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 
 		rootFrame->NavigationFailed += ref new Windows::UI::Xaml::Navigation::NavigationFailedEventHandler(this, &App::OnNavigationFailed);
 
-		if (e->PreviousExecutionState == ApplicationExecutionState::Terminated)
-		{
-			// TODO: Restore the saved session state only when appropriate, scheduling the
-			// final launch steps after the restore is complete
-
-		}
-
 		if (rootFrame->Content == nullptr)
 		{
 			// When the navigation stack isn't restored navigate to the first page,
@@ -117,8 +108,6 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
 {
 	(void) sender;	// Unused parameter
 	(void) e;	// Unused parameter
-
-	//TODO: Save application state and stop any background activity
 }
 
 /// <summary>

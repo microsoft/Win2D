@@ -63,13 +63,7 @@ namespace ExampleGallery
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
-                // TODO: change this value to a cache size that is appropriate for your application
                 rootFrame.CacheSize = 1;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    // TODO: Load state from previously suspended application
-                }
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
@@ -130,7 +124,6 @@ namespace ExampleGallery
         {
             var deferral = e.SuspendingOperation.GetDeferral();
 
-            // TODO: Save application state and stop any background activity
             deferral.Complete();
         }
     }
