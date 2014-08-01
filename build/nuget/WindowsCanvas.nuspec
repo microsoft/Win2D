@@ -7,10 +7,33 @@
         <authors>Microsoft Corportation</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Windows Canvas</description>
+
+        <!-- 
+             The reference listed here is to enable the Visual Studio designer
+             to know about the reference.  The targets file will override this
+             to point at the appropriate reference.
+        -->
+        <references>
+          <reference file="Microsoft.Graphics.Canvas.winmd" />
+        </references>
     </metadata>
 
     <files>
+
+      <!--
+          These files are copied to the lib directory so that the Visual Studio
+          designer can find them.  We need versions for Windows Store Apps (win)
+          and Windows Phone Apps (wpa).
+      -->
+
+      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="lib\win" />
+      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="lib\win" />
+      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="lib\wpa" />
+      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="lib\wpa" />
+
       <!-- 
+           These are the actual files that will be referenced by the project.
+
            These generate warnings about the files being outside of the lib
            directory.  We want it that way because we don't want to reference
            the DLL files as they're not necessarly .NET assemblies.
@@ -37,10 +60,19 @@
       <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
       <file src="..\..\bin\phonearm\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
 
+      <!-- Build scripts used by managed Windows Store Apps -->
+      <file src="WindowsCanvas.props" target="build\win\WindowsCanvas.props" />
+      <file src="WindowsCanvas-managed.targets" target="build\win\WindowsCanvas.targets" />
 
-      <file src="WindowsCanvas.props" target="build" />
-      <file src="WindowsCanvas.targets" target="build" />
+      <!-- Build scripts used by managed Windows Phone Apps -->
+      <file src="WindowsCanvas.props" target="build\wpa\WindowsCanvas.props" />
+      <file src="WindowsCanvas-managed.targets" target="build\wpa\WindowsCanvas.targets" />
 
+      <!-- Build scripts used by native apps (Windows Store and Windows Phone) -->
+      <file src="WindowsCanvas-native.targets" target="build\native\WindowsCanvas.targets" />
+      <file src="WindowsCanvas.props" target="build\native\WindowsCanvas.props" />
+
+      <!-- Header files used by native apps -->
       <file src="..\..\winrt\published\*" target="Include"/>
       <file src="..\..\numerics\cpp\WindowsNumerics.*" target="Include"/>
     </files>

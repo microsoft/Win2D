@@ -3,22 +3,17 @@
   <!-- This file is imported by csproj / vcxproj's that have installed the Windows Canvas package -->
 
   <PropertyGroup>
-    <windowscanvas-DeviceType Condition="'$(ApplicationType)' == 'Windows Store'">Windows</windowscanvas-DeviceType>
-    <windowscanvas-DeviceType Condition="'$(ApplicationType)' == 'Windows Phone'">Phone</windowscanvas-DeviceType>
-    <windowscanvas-DeviceType Condition="'$(ApplicationType)' == ''">Windows</windowscanvas-DeviceType>
-    <windowscanvas-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</windowscanvas-DeviceType>
-
     <windowscanvas-Platform Condition="'$(Platform)' == 'Win32'">x86</windowscanvas-Platform>
     <windowscanvas-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</windowscanvas-Platform>
 
     <!-- This directory may be overridden by other packages that provide
          different binaries (eg for debugging Windows Canvas itself). -->
-    <windowscanvas-BinDir Condition="'$(windowscanvas-BinDir)' == ''">$(MSBuildThisFileDirectory)..\bin\</windowscanvas-BinDir>
+    <windowscanvas-BinDir Condition="'$(windowscanvas-BinDir)' == ''">$(MSBuildThisFileDirectory)..\..\bin\</windowscanvas-BinDir>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>
