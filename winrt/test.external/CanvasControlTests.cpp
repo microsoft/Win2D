@@ -62,7 +62,11 @@ TEST_CLASS(CanvasControlTests)
     {
         // Verify that interop directly with canvas control fails.
         //
-        // TODO #1768: is it possible to meaningfully test GetOrCreate similarly?
+        // GetOrCreate is intentionally not tested here. There 
+        // isn't a way of, say, iterating over every native type in the 
+        // world, and verifying it fails with CanvasControl type.
+        // 
+        // The other direction, however, is verified in this test.
         //
         RunOnUIThread(
             []()
