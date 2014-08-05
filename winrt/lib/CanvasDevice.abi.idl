@@ -47,7 +47,7 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(A27F0B5D-EC2C-4D4F-948F-0AA1E95E33E6), exclusiveto(CanvasDevice)]
     interface ICanvasDevice : IInspectable
-        requires Windows.Foundation.IClosable
+        requires Windows.Foundation.IClosable, ICanvasResourceCreator
     {
         [propget] 
         HRESULT HardwareAcceleration(

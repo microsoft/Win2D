@@ -316,6 +316,18 @@ public:
 
         Assert::AreNotEqual<ICanvasDevice*>(unexpectedCanvasDevice.Get(), actualCanvasDevice.Get());
     }
+
+    TEST_METHOD(CanvasDevice_DeviceProperty)
+    {
+        using canvas::CanvasDevice;
+        auto device = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);;
+
+        Assert::AreEqual(E_INVALIDARG, device->get_Device(nullptr));
+
+        ComPtr<ICanvasDevice> deviceVerify;
+        ThrowIfFailed(device->get_Device(&deviceVerify));
+        Assert::AreEqual(static_cast<ICanvasDevice*>(device.Get()), deviceVerify.Get());
+    }
 };
 
 TEST_CLASS(DefaultDeviceResourceCreationAdapterTests)

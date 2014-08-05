@@ -114,12 +114,18 @@ public:
         {
             return Make<TestD2DSolidColorBrush>(color, &m_counters);
         }
+
+        IFACEMETHODIMP get_Device(ICanvasDevice** value)
+        {
+            ComPtr<ICanvasDevice> device = this;
+            return device.CopyTo(value);
+        }
     };
 
     TEST_METHOD_INITIALIZE(Reset)
     {
         m_colorBrushManager = std::make_shared<CanvasSolidColorBrushManager>();
-    }   
+    } 
 
     TEST_METHOD(CanvasSolidColorBrush_Construction)
     {
@@ -143,7 +149,7 @@ public:
     TEST_METHOD(CanvasSolidColorBrush_Implements_Expected_Interfaces)
     {
         auto canvasDevice = Make<StubCanvasDevice>();
-        auto brush = m_colorBrushManager->Create(canvasDevice.Get(), Color{255,0,0,0});
+        auto brush = m_colorBrushManager->Create(canvasDevice.Get(), Color{ 255, 0, 0, 0 });
 
         ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasSolidColorBrush);
         ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasBrush);
@@ -218,7 +224,6 @@ public:
     TEST_METHOD(CanvasSolidColorBrush_Closed)
     {
         using canvas::CanvasSolidColorBrush;
-        using canvas::CanvasDevice;
 
         Color color = { 255, 127, 127, 127 };
 
@@ -243,5 +248,52 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->get_Transform(&transformActual));
 
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Transform(transformActual));
+    }
+
+    class BrushConstructionVerifyingDevice : public MockCanvasDevice
+    {
+    public:
+        BrushConstructionVerifyingDevice() : m_brushConstructed(false) {}
+        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override
+        {
+            m_brushConstructed = true;
+            return Make<MockD2DSolidColorBrush>();
+        }
+        bool m_brushConstructed;
+    };
+
+    class CanvasControlBrushConstructionVerifyingAdapter : public CanvasControlTestAdapter
+    {
+    public:
+        virtual ComPtr<ICanvasDevice> CreateCanvasDevice() override
+        {
+            Assert::IsNull(m_device.Get());
+
+            m_device = Make<BrushConstructionVerifyingDevice>();
+
+            return m_device;
+        }
+
+        ComPtr<BrushConstructionVerifyingDevice> m_device;
+    };
+
+    TEST_METHOD(CanvasSolidColorBrush_CreateThroughCanvasControl)
+    {
+        using canvas::CanvasControl;
+
+        std::shared_ptr<CanvasControlBrushConstructionVerifyingAdapter> canvasControlAdapter = 
+            std::make_shared<CanvasControlBrushConstructionVerifyingAdapter>();
+        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter);
+
+        auto brush = m_colorBrushManager->Create(canvasControl.Get(), Color{ 255, 0, 0, 0 });
+
+        // This will only be true if the brush was constructed on the correct device.
+        Assert::IsTrue(canvasControlAdapter->m_device->m_brushConstructed);
+
+        ComPtr<ICanvasDevice> verifyDevice;
+        ThrowIfFailed(canvasControl->get_Device(&verifyDevice));
+        ComPtr<ICanvasDevice> adapterDevice;
+        ThrowIfFailed(canvasControlAdapter->m_device.As(&adapterDevice));
+        Assert::AreEqual(adapterDevice.Get(), verifyDevice.Get());
     }
 };

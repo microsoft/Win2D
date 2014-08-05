@@ -53,7 +53,7 @@ namespace CsConsumer
         {
             this.InitializeComponent();
 
-            m_canvasControl.CreatingResources += canvasControl_CreatingResources;
+            m_canvasControl.CreatingResources += m_canvasControl_CreatingResources;
             m_canvasControl.Drawing += m_canvasControl_Drawing;
 
             // 
@@ -66,7 +66,7 @@ namespace CsConsumer
             }
             m_drawnContentTypeCombo.ItemsSource = drawnContentElements;
             m_drawnContentTypeCombo.SelectedIndex = 0;
-            m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;            
+            m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;                     
         }
 
         void m_canvasControl_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
@@ -74,10 +74,10 @@ namespace CsConsumer
             DrawStuff(args.DrawingSession);
         }
 
-        void canvasControl_CreatingResources(CanvasControl sender, CanvasCreatingResourcesEventArgs args)
+        void m_canvasControl_CreatingResources(CanvasControl sender, object args)
         {
-            UpdateCanvasControlSize(); 
-            m_brush = new CanvasSolidColorBrush(args.Device, Colors.White);
+            UpdateCanvasControlSize();
+            m_brush = new CanvasSolidColorBrush(sender, Colors.White);
         }
 
         private void OnRedrawClicked(object sender, RoutedEventArgs e)

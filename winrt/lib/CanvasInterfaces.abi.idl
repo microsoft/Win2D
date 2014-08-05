@@ -20,4 +20,15 @@ namespace Microsoft.Graphics.Canvas
         requires Windows.Foundation.IClosable
     {
     }
+
+    //
+    // ICanvasResourceCreator
+    //
+    runtimeclass CanvasDevice;
+
+    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
+    interface ICanvasResourceCreator : IInspectable
+    {
+        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+    };
 }

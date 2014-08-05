@@ -143,9 +143,9 @@ namespace ExampleGallery
                 this.strokeStyle);
         }
 
-        private void Canvas_CreatingResources(CanvasControl sender, CanvasCreatingResourcesEventArgs args)
+        private void Canvas_CreatingResources(CanvasControl sender, object args)
         {
-            this.brush = new CanvasSolidColorBrush(args.Device, Colors.AntiqueWhite);
+            this.brush = new CanvasSolidColorBrush(sender, Colors.AntiqueWhite);
         }
 
         private void SettingsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

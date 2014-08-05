@@ -22,38 +22,6 @@ namespace canvas
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Media;
 
-    IFACEMETHODIMP CanvasCreatingResourcesEventArgsFactory::Create(
-        ICanvasDevice* device,
-        ICanvasCreatingResourcesEventArgs** createResourcesArgs)
-    {
-        return ExceptionBoundary(
-            [&]()
-        {
-            CheckAndClearOutPointer(createResourcesArgs);
-
-            auto newCanvasCreatingResourcesEventArgs = Make<CanvasCreatingResourcesEventArgs>(device);
-            CheckMakeResult(newCanvasCreatingResourcesEventArgs);
-
-            ThrowIfFailed(newCanvasCreatingResourcesEventArgs.CopyTo(createResourcesArgs));
-        });
-    }
-
-    CanvasCreatingResourcesEventArgs::CanvasCreatingResourcesEventArgs(ICanvasDevice* device)
-        : m_device(device)
-    {}
-
-    IFACEMETHODIMP CanvasCreatingResourcesEventArgs::get_Device(ICanvasDevice** value)
-    {
-        return ExceptionBoundary(
-            [&]()
-        {
-            CheckAndClearOutPointer(value);
-            ComPtr<ICanvasDevice> device = m_device.EnsureNotClosed();
-            ThrowIfFailed(device.CopyTo(value));
-        });
-    }
-
-
     IFACEMETHODIMP CanvasDrawingEventArgsFactory::Create(
         ICanvasDrawingSession* drawingSession,
         ICanvasDrawingEventArgs** drawEventArgs)
@@ -363,12 +331,7 @@ namespace canvas
                 // And so, there isn't a need to keep track of which handlers have been fired and which have not.
                 //
 
-                if (!m_createResourcesEventList.IsEmpty())
-                {
-                    ComPtr<CanvasCreatingResourcesEventArgs> createResourcesArgs = Make<CanvasCreatingResourcesEventArgs>(m_canvasDevice.Get());
-                    CheckMakeResult(createResourcesArgs);
-                    m_createResourcesEventList.FireAll(this, createResourcesArgs.Get());
-                }
+                m_createResourcesEventList.FireAll(this, static_cast<IInspectable*>(nullptr));
 
                 InvalidateImpl();
             });
@@ -405,7 +368,7 @@ namespace canvas
     }
 
     IFACEMETHODIMP CanvasControl::add_CreatingResources(
-        ABI::Windows::Foundation::ITypedEventHandler<ABI::Microsoft::Graphics::Canvas::CanvasControl*, ABI::Microsoft::Graphics::Canvas::CanvasCreatingResourcesEventArgs*>* value,
+        ABI::Windows::Foundation::ITypedEventHandler<ABI::Microsoft::Graphics::Canvas::CanvasControl*, IInspectable*>* value,
         EventRegistrationToken *token)
     {
         return ExceptionBoundary(
@@ -416,9 +379,7 @@ namespace canvas
                 if (m_isLoaded)
                 {
                     // TODO #1922 Ensure that this operation is threadsafe.
-                    ComPtr<CanvasCreatingResourcesEventArgs> createResourcesArgs = Make<CanvasCreatingResourcesEventArgs>(m_canvasDevice.Get());
-                    CheckMakeResult(createResourcesArgs);
-                    ThrowIfFailed(value->Invoke(this, createResourcesArgs.Get()));
+                    ThrowIfFailed(value->Invoke(this, nullptr));
                 }
             });
     }
@@ -542,7 +503,16 @@ namespace canvas
             });
     }
 
-    ActivatableClassWithFactory(CanvasCreatingResourcesEventArgs, CanvasCreatingResourcesEventArgsFactory);
+    IFACEMETHODIMP CanvasControl::get_Device(ICanvasDevice** value)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                CheckAndClearOutPointer(value);
+                ThrowIfFailed(m_canvasDevice.CopyTo(value));
+            });
+    }
+
     ActivatableClassWithFactory(CanvasDrawingEventArgs, CanvasDrawingEventArgsFactory);
     ActivatableClassWithFactory(CanvasControl, CanvasControlFactory);
 }

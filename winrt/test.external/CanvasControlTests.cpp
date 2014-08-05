@@ -27,7 +27,7 @@ TEST_CLASS(CanvasControlTests)
 
             Windows::Foundation::EventRegistrationToken creatingResourcesRegistrationToken;
 
-            creatingResourcesRegistrationToken = canvasControl->CreatingResources += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, CanvasCreatingResourcesEventArgs^>(this, &CallbackVerifier::OnCreatingResources);
+            creatingResourcesRegistrationToken = canvasControl->CreatingResources += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, Object^>(this, &CallbackVerifier::OnCreatingResources);
 
             canvasControl->CreatingResources -= creatingResourcesRegistrationToken;
 
@@ -38,7 +38,7 @@ TEST_CLASS(CanvasControlTests)
             canvasControl->Drawing -= drawingRegistrationToken;
         }
 
-        void OnCreatingResources(CanvasControl^ sender, CanvasCreatingResourcesEventArgs^ args)
+        void OnCreatingResources(CanvasControl^ sender, Object^ args)
         {
         }
 
@@ -80,14 +80,26 @@ TEST_CLASS(CanvasControlTests)
     {
         RunOnUIThread(
             []()
-        {
-            auto device = ref new CanvasDevice();
-            auto imageSource = ref new CanvasImageSource(device, 1, 1);
-            auto drawingSession = imageSource->CreateDrawingSession();
+            {
+                auto device = ref new CanvasDevice();
+                auto imageSource = ref new CanvasImageSource(device, 1, 1);
+                auto drawingSession = imageSource->CreateDrawingSession();
 
-            CanvasDrawingEventArgs^ drawingEventArgs = ref new CanvasDrawingEventArgs(drawingSession);
+                CanvasDrawingEventArgs^ drawingEventArgs = ref new CanvasDrawingEventArgs(drawingSession);
+            });
+    }
 
-            CanvasCreatingResourcesEventArgs^ resourceEventArgs = ref new CanvasCreatingResourcesEventArgs(device);
-        });
+    TEST_METHOD(CanvasControl_ControlAsResourceAllocator)
+    {
+        RunOnUIThread(
+            []()
+            {
+                CanvasControl^ canvasControl = ref new CanvasControl();
+
+                CanvasSolidColorBrush^ brush = ref new CanvasSolidColorBrush(
+                    canvasControl,
+                    Windows::UI::Colors::Magenta
+                    );
+            });
     }
 };

@@ -12,28 +12,6 @@
 
 namespace Microsoft.Graphics.Canvas
 {
-    runtimeclass CanvasCreatingResourcesEventArgs;
-
-    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
-    interface ICanvasCreatingResourcesEventArgsFactory : IInspectable
-    {
-        HRESULT Create(
-            [in] CanvasDevice* canvasDrawingSession,
-            [out, retval] CanvasCreatingResourcesEventArgs** creatingResourcesArgs);
-    };
-
-    [version(VERSION), uuid(12868FCE-FB92-4DBF-B26B-57DB036F5CF6), exclusiveto(CanvasCreatingResourcesEventArgs)]
-    interface ICanvasCreatingResourcesEventArgs : IInspectable
-    {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
-    }
-
-    [version(VERSION), activatable(ICanvasCreatingResourcesEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
-    runtimeclass CanvasCreatingResourcesEventArgs : Windows.UI.Xaml.DependencyObject
-    {
-        [default] interface ICanvasCreatingResourcesEventArgs;
-    }
-
     runtimeclass CanvasDrawingEventArgs;
 
     [version(VERSION), uuid(7299D72C-F8E4-4A2F-9E30-7CDFCCF31C44)]
@@ -61,9 +39,10 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(F006E06D-79DB-484F-B898-479CF069C0F5), exclusiveto(CanvasControl)]
     interface ICanvasControl : IInspectable
+        requires ICanvasResourceCreator
     {
         [eventadd] HRESULT CreatingResources(
-            [in] Windows.Foundation.TypedEventHandler<CanvasControl*, CanvasCreatingResourcesEventArgs*>* value,
+            [in] Windows.Foundation.TypedEventHandler<CanvasControl*, IInspectable*>* value,
             [out, retval] EventRegistrationToken* token);
 
         [eventremove] HRESULT CreatingResources([in] EventRegistrationToken token);

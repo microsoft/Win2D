@@ -483,5 +483,16 @@ namespace canvas
         return brush;
     }
 
+    IFACEMETHODIMP CanvasDevice::get_Device(ICanvasDevice** value)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                CheckAndClearOutPointer(value);
+                ComPtr<ICanvasDevice> device(this);
+                *value = device.Detach();
+            });
+    }
+
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
 }

@@ -39,7 +39,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasSolidColorBrushFactory : IInspectable
     {
         HRESULT Create(
-            [in] CanvasDevice* canvasDevice,
+            [in] ICanvasResourceCreator* canvasDevice,
             [in] Windows.UI.Color color,
             [out, retval] CanvasSolidColorBrush** canvasSolidColorBrush
             );

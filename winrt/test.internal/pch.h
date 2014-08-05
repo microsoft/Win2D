@@ -92,3 +92,4 @@ using namespace canvas;
 #include "StubSurfaceImageSource.h"
 #include "StubSurfaceImageSourceFactory.h"
 #include "StubUserControl.h"
+#include "CanvasControlTestAdapter.h"

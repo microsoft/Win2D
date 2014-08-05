@@ -42,6 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CanvasControlTestAdapter.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="MockCanvasDevice.h" />
     <ClInclude Include="MockCanvasDrawingSession.h" />

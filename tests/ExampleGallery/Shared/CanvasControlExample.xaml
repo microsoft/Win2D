@@ -72,10 +72,10 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="15" Style="{ThemeResource SubheaderTextBlockStyle}">
             Tap on a Canvas control to see it resize
         </TextBlock>
-        
-        <canvas:CanvasControl x:Name="canvas01" Grid.Column="0" Grid.Row="1" MinWidth="100" MinHeight="100" Drawing="Canvas01_Drawing" CreatingResources="Canvas01_CreatingResources" Tapped="Canvas01_Tapped"/>
-        <canvas:CanvasControl x:Name="canvas11" Grid.Column="1" Grid.Row="1" MinWidth="100" MinHeight="100" Drawing="Canvas11_Drawing" CreatingResources="Canvas11_CreatingResources" Tapped="Canvas11_Tapped"/>
-        <canvas:CanvasControl x:Name="canvas02" Grid.Column="0" Grid.Row="2" MinWidth="100" MinHeight="100" Drawing="Canvas02_Drawing" CreatingResources="Canvas02_CreatingResources" Tapped="Canvas02_Tapped"/>
-        <canvas:CanvasControl x:Name="canvas12" Grid.Column="1" Grid.Row="2" MinWidth="100" MinHeight="100" Drawing="Canvas12_Drawing" CreatingResources="Canvas12_CreatingResources" Tapped="Canvas12_Tapped"/>
+
+        <canvas:CanvasControl x:Name="canvas01" Grid.Column="0" Grid.Row="1" MinWidth="100" MinHeight="100" Drawing="Canvas01_Drawing" Tapped="Canvas01_Tapped"/>
+        <canvas:CanvasControl x:Name="canvas11" Grid.Column="1" Grid.Row="1" MinWidth="100" MinHeight="100" Drawing="Canvas11_Drawing" Tapped="Canvas11_Tapped"/>
+        <canvas:CanvasControl x:Name="canvas02" Grid.Column="0" Grid.Row="2" MinWidth="100" MinHeight="100" Drawing="Canvas02_Drawing" Tapped="Canvas02_Tapped"/>
+        <canvas:CanvasControl x:Name="canvas12" Grid.Column="1" Grid.Row="2" MinWidth="100" MinHeight="100" Drawing="Canvas12_Drawing" Tapped="Canvas12_Tapped"/>
     </Grid>
 </UserControl>

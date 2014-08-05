@@ -23,15 +23,6 @@ namespace ExampleGallery
 {
     public sealed partial class CanvasControlExample : UserControl
     {
-        //
-        // TODO #1836: Once multiple CanvasControls share a single device we won't need to have four brushes.
-        //
-
-        CanvasSolidColorBrush brush01;
-        CanvasSolidColorBrush brush11;
-        CanvasSolidColorBrush brush02;
-        CanvasSolidColorBrush brush12;
-
         int drawCount01;
         int drawCount11;
         int drawCount02;
@@ -67,7 +58,7 @@ namespace ExampleGallery
             ds.Clear(Color.FromArgb(0, 0, 0, 0));
 
             brush.Color = Colors.Aqua;
-            ds.DrawLine(new Point(0,0), new Point(canvas.ActualWidth, canvas.ActualHeight), brush);
+            ds.DrawLine(new Point(0, 0), new Point(canvas.ActualWidth, canvas.ActualHeight), brush);
             ds.DrawLine(new Point(0, canvas.ActualHeight), new Point(canvas.ActualWidth, 0), brush);
 
             brush.Color = Colors.FloralWhite;
@@ -82,54 +73,49 @@ namespace ExampleGallery
                 {
                     VerticalAlignment = CanvasVerticalAlignment.Top,
                     ParagraphAlignment = ParagraphAlignment.Left,
-                    FontSize=10
+                    FontSize = 10
                 });
         }
 
+        //
+        // TODO #1836: Once multiple CanvasControls share a single device we 
+        // won't need to have a 'new CanvasSolidColorBrush' per handler.
+        //
+        // While it is possible to create resources from a CanvasControl rather 
+        // than a Device directly, different CanvasControls still have 
+        // different devices, and different resource domains.
+        //
 
         private void Canvas01_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
         {
-            DrawCanvasState(sender, args.DrawingSession, brush01, ++drawCount01);
+            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
+            {
+                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount01);
+            }
         }
 
         private void Canvas11_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
         {
-            DrawCanvasState(sender, args.DrawingSession, brush11, ++drawCount11);
+            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
+            {
+                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount11);
+            }
         }
 
         private void Canvas02_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
         {
-            DrawCanvasState(sender, args.DrawingSession, brush02, ++drawCount02);
+            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
+            {
+                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount02);
+            }
         }
 
         private void Canvas12_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
         {
-            DrawCanvasState(sender, args.DrawingSession, brush12, ++drawCount12);
-        }
-
-        //
-        // TODO #1847: Once we're able to create resources against CanvasControl then we can
-        // create the brushes inside the Drawing handler without needing to store them in the class.
-        //
-
-        private void Canvas01_CreatingResources(CanvasControl sender, CanvasCreatingResourcesEventArgs args)
-        {
-            brush01 = new CanvasSolidColorBrush(args.Device, Colors.FloralWhite);
-        }
-
-        private void Canvas11_CreatingResources(CanvasControl sender, CanvasCreatingResourcesEventArgs args)
-        {
-            brush11 = new CanvasSolidColorBrush(args.Device, Colors.FloralWhite);
-        }
-
-        private void Canvas02_CreatingResources(CanvasControl sender, CanvasCreatingResourcesEventArgs args)
-        {
-            brush02 = new CanvasSolidColorBrush(args.Device, Colors.FloralWhite);
-        }
-
-        private void Canvas12_CreatingResources(CanvasControl sender, CanvasCreatingResourcesEventArgs args)
-        {
-            brush12 = new CanvasSolidColorBrush(args.Device, Colors.FloralWhite);
+            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
+            {
+                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount12);
+            }
         }
 
         private void Canvas01_Tapped(object sender, TappedRoutedEventArgs e)

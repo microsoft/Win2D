@@ -27,29 +27,6 @@ namespace canvas
     // This helps with cases where we need to explicitly qualify types
     namespace canvasABI = ABI::Microsoft::Graphics::Canvas;
 
-    class CanvasCreatingResourcesEventArgsFactory : public ActivationFactory<ICanvasCreatingResourcesEventArgsFactory>
-    {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCreatingResourcesEventArgs, BaseTrust);
-
-    public:
-        IFACEMETHOD(Create)(
-            ICanvasDevice* device,
-            ICanvasCreatingResourcesEventArgs** creatingResourcesArgs) override;
-    };
-
-    class CanvasCreatingResourcesEventArgs : public RuntimeClass<
-        ICanvasCreatingResourcesEventArgs>
-    {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCreatingResourcesEventArgs, BaseTrust);
-
-        ClosablePtr<ICanvasDevice> m_device;
-
-    public:
-        CanvasCreatingResourcesEventArgs(ICanvasDevice* device);
-
-        IFACEMETHODIMP get_Device(ICanvasDevice** value);
-    };
-
     class CanvasDrawingEventArgsFactory : public ActivationFactory<ICanvasDrawingEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingEventArgs, BaseTrust);
@@ -73,7 +50,7 @@ namespace canvas
          IFACEMETHODIMP get_DrawingSession(ICanvasDrawingSession** value);
     };
 
-    typedef ITypedEventHandler<canvasABI::CanvasControl*, canvasABI::CanvasCreatingResourcesEventArgs*> CreateResourcesEventHandlerType;
+    typedef ITypedEventHandler<canvasABI::CanvasControl*, IInspectable*> CreateResourcesEventHandlerType;
     typedef ITypedEventHandler<canvasABI::CanvasControl*, canvasABI::CanvasDrawingEventArgs*> DrawingEventHandlerType;
 
     class ICanvasControlAdapter
@@ -88,7 +65,9 @@ namespace canvas
     };
 
     class CanvasControl : public RuntimeClass<
+        RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasControl,
+        ICanvasResourceCreator,
         ABI::Windows::UI::Xaml::IFrameworkElementOverrides,
         ComposableBase<ABI::Windows::UI::Xaml::Controls::IUserControl>>
     {
@@ -133,6 +112,12 @@ namespace canvas
 
         IFACEMETHODIMP remove_Drawing(
             EventRegistrationToken token);
+
+        //
+        // ICanvasResourceCreator
+        //
+
+        IFACEMETHODIMP get_Device(ICanvasDevice** value);
 
         IFACEMETHODIMP Invalidate();
 

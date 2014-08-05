@@ -53,7 +53,7 @@ namespace canvas
         //
 
         IFACEMETHOD(Create)(
-            ICanvasDevice* canvasDevice,
+            ICanvasResourceCreator* resourceAllocator,
             ABI::Windows::UI::Color color,
             ICanvasSolidColorBrush** canvasSolidColorBrush) override;
 
@@ -113,7 +113,7 @@ namespace canvas
     {
     public:
         ComPtr<CanvasSolidColorBrush> CreateNew(
-            ICanvasDevice* canvasDevice,
+            ICanvasResourceCreator* resourceAllocator,
             ABI::Windows::UI::Color color);
 
         ComPtr<CanvasSolidColorBrush> CreateWrapper(

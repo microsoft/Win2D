@@ -19,7 +19,8 @@ namespace canvas
     class MockCanvasDevice : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasDevice,
-        CloakedIid<ICanvasDeviceInternal>>
+        CloakedIid<ICanvasDeviceInternal>,
+        ICanvasResourceCreator>
     {
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
@@ -37,6 +38,16 @@ namespace canvas
         IFACEMETHODIMP get_Direct3DDevice(IDirect3DDevice **) override
         {
             Assert::Fail(L"Unexpected call to get_Direct3DDevice");
+            return E_NOTIMPL;
+        }
+
+        //
+        // ICanvasResourceCreator
+        //
+
+        IFACEMETHODIMP get_Device(ICanvasDevice** value)
+        {
+            Assert::Fail(L"Unexpected call to get_Device");
             return E_NOTIMPL;
         }
 

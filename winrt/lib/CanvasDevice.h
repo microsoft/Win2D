@@ -140,7 +140,8 @@ namespace canvas
     //
     class CanvasDevice : RESOURCE_WRAPPER_RUNTIME_CLASS(
         CanvasDeviceTraits, 
-        CloakedIid<ICanvasDeviceInternal>)
+        CloakedIid<ICanvasDeviceInternal>,
+        ICanvasResourceCreator)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
@@ -168,6 +169,12 @@ namespace canvas
         IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration* value) override;
 
         IFACEMETHOD(get_Direct3DDevice)(_Out_ IDirect3DDevice** value) override;
+
+        //
+        // ICanvasResourceCreator
+        //
+
+        IFACEMETHODIMP get_Device(ICanvasDevice** value);
 
         //
         // IClosable
@@ -216,5 +223,4 @@ namespace canvas
             IDirect3DDevice* device,
             ID2D1Factory2* d2dFactory);        
     };
-
 }
