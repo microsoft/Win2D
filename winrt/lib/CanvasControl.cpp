@@ -276,9 +276,6 @@ namespace canvas
         auto width = static_cast<int>(actualWidth);
         auto height = static_cast<int>(actualHeight);
 
-        //
-        // TODO #1769: unit test for resizing behavior.
-        //
         if (m_canvasImageSource)
         {
             // If we already have an image source that's the right size we don't

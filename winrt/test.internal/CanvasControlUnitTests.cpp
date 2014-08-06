@@ -16,8 +16,7 @@ using namespace canvas;
 using namespace ABI::Microsoft::Graphics::Canvas;
 namespace canvasABI = ABI::Microsoft::Graphics::Canvas;
 
-
-TEST_CLASS(CanvasControlTests)
+TEST_CLASS(CanvasControlTests_CommonAdapter)
 {
     std::shared_ptr<CanvasControlTestAdapter> m_adapter;
 
@@ -102,7 +101,7 @@ TEST_CLASS(CanvasControlTests)
 
         // Register one CreateResources handler.
         // Note that Loaded hasn't occured yet, so it shouldn't actually be fired.
-        auto onCreatingResourcesFn = Callback<CreateResourcesEventHandlerType>(this, &CanvasControlTests::OnCreatingResources);
+        auto onCreatingResourcesFn = Callback<CreateResourcesEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnCreatingResources);
         EventRegistrationToken creatingResourcesEventToken0;
         ThrowIfFailed(canvasControl->add_CreatingResources(onCreatingResourcesFn.Get(), &creatingResourcesEventToken0));
         Assert::AreEqual(0, m_creatingResourcesCallbackCount);
@@ -119,7 +118,7 @@ TEST_CLASS(CanvasControlTests)
         Assert::AreEqual(2, m_creatingResourcesCallbackCount);
 
         // Register the Drawing handler.
-        auto onDrawingFn = Callback<DrawingEventHandlerType>(this, &CanvasControlTests::OnDrawing);
+        auto onDrawingFn = Callback<DrawingEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnDrawing);
         EventRegistrationToken drawingEventToken;
         ThrowIfFailed(canvasControl->add_Drawing(onDrawingFn.Get(), &drawingEventToken));
 
@@ -154,4 +153,107 @@ TEST_CLASS(CanvasControlTests)
 
     int m_creatingResourcesCallbackCount;
     int m_drawingCallbackCount;
+};
+
+TEST_CLASS(CanvasControlTests_AdapterWithResizing)
+{
+    class SizableTestControl : public StubUserControl
+    {
+    public:
+        double m_width;
+        double m_height;
+
+        SizableTestControl()
+            : m_width(128)
+            , m_height(128) {}
+
+        IFACEMETHODIMP get_ActualWidth(double* value) override
+        {
+            *value = m_width;
+            return S_OK;
+        }
+
+        IFACEMETHODIMP get_ActualHeight(double* value) override
+        {
+            *value = m_height;
+            return S_OK;
+        }
+    };
+
+    class CanvasControlTestAdapter_VerifyCreateImageSource : public CanvasControlTestAdapter
+    {
+    public:
+
+        int m_imageSourceCount;
+        int m_lastImageSourceWidth;
+        int m_lastImageSourceHeight;
+        ComPtr<SizableTestControl> m_userControl;
+
+        CanvasControlTestAdapter_VerifyCreateImageSource()
+            : m_imageSourceCount(0)
+            , m_lastImageSourceWidth(0)
+            , m_lastImageSourceHeight(0)
+            , m_userControl(Make<SizableTestControl>())
+        {}
+
+
+        virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
+        {
+            ComPtr<IInspectable> inspectableControl;
+            ThrowIfFailed(m_userControl.As(&inspectableControl));
+
+            return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, m_userControl);
+        }
+
+        virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+        {
+            m_imageSourceCount++;
+            m_lastImageSourceWidth = width;
+            m_lastImageSourceHeight = height;
+
+            return __super::CreateCanvasImageSource(device, width, height);
+        }
+    };
+
+    TEST_METHOD(CanvasControl_Resizing)
+    {
+        using canvas::CanvasControl;
+
+        std::shared_ptr<CanvasControlTestAdapter_VerifyCreateImageSource> adapter =
+            std::make_shared<CanvasControlTestAdapter_VerifyCreateImageSource>();
+
+        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
+        canvasControl->OnLoaded(nullptr, nullptr);
+        Assert::AreEqual(0, adapter->m_imageSourceCount);
+        Assert::AreEqual(0, adapter->m_lastImageSourceWidth);
+        Assert::AreEqual(0, adapter->m_lastImageSourceHeight);
+
+        struct TestCase
+        {
+            int ResizeWidth;
+            int ResizeHeight;
+            bool ExpectRecreation;
+        } testSteps[]
+        {
+            { 100, 100, true }, // Initial sizing; resource always re-created
+            { 123, 456, true }, // Change width and height
+            { 50, 456, true }, // Change width only
+            { 50, 51, true }, // Change height only
+            { 50, 51, false }, // Change nothing
+        };
+
+        int expectedImageSourceCount = 0;
+        for (size_t i = 0; i < _countof(testSteps); ++i)
+        {
+            if (testSteps[i].ExpectRecreation) expectedImageSourceCount++;
+
+            adapter->m_userControl->m_width = testSteps[i].ResizeWidth;
+            adapter->m_userControl->m_height = testSteps[i].ResizeHeight;
+            canvasControl->Invalidate();
+            adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
+            Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
+            Assert::AreEqual(testSteps[i].ResizeWidth, adapter->m_lastImageSourceWidth);
+            Assert::AreEqual(testSteps[i].ResizeHeight, adapter->m_lastImageSourceHeight);
+        }
+    }
 };
