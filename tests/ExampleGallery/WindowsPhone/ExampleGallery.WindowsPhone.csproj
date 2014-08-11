@@ -69,7 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
+    <AppxManifest Include="ExampleGallery.WindowsPhone.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
   </ItemGroup>
