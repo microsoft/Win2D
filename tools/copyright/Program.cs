@@ -13,6 +13,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Shared;
 
 namespace Copyright
 {

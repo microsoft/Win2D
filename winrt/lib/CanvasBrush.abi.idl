@@ -35,7 +35,7 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasSolidColorBrush;
     runtimeclass CanvasDevice;
 
-    [version(VERSION), uuid(8ABF4780-4EDD-4F2B-BF63-2C385115B201)]
+    [version(VERSION), uuid(8ABF4780-4EDD-4F2B-BF63-2C385115B201), exclusiveto(CanvasSolidColorBrush)]
     interface ICanvasSolidColorBrushFactory : IInspectable
     {
         HRESULT Create(

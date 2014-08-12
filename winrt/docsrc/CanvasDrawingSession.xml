@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasDrawingSession">
+            <summary>The main interface for drawing stuff</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">
+            <summary>Clears to a solid color</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary>Draws a line (overload #1)</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+            <summary>Draws a line (overload #2)</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+            <summary>Draws a line (overload #3)</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary>Draws a rectangle (overload #1)</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+            <summary>Draws a rectangle (overload #2)</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+            <summary>Draws a rectangle (overload #3)</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary>Fills a rectangle</summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Dispose">
+            <summary>Cleans up the object</summary>
+        </member>
+    </members>
+</doc>

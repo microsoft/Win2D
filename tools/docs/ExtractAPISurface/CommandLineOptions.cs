@@ -10,16 +10,19 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
-{
-    //
-    // ICanvasResourceCreator
-    //
-    runtimeclass CanvasDevice;
+using System.Collections.Generic;
+using Shared;
 
-    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
-    interface ICanvasResourceCreator : IInspectable
+namespace ExtractAPISurface
+{
+    public class CommandLineOptions
     {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
-    };
+        [CommandLineParser.Required]
+        public readonly List<string> InputAssemblies = new List<string>();
+
+        [CommandLineParser.Name("ReferenceAssembly")]
+        public readonly List<string> ReferenceAssemblies = new List<string>();
+
+        public string OutputPath;
+    }
 }

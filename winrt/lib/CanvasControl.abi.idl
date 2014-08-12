@@ -14,7 +14,7 @@ namespace Microsoft.Graphics.Canvas
 {
     runtimeclass CanvasDrawingEventArgs;
 
-    [version(VERSION), uuid(7299D72C-F8E4-4A2F-9E30-7CDFCCF31C44)]
+    [version(VERSION), uuid(7299D72C-F8E4-4A2F-9E30-7CDFCCF31C44), exclusiveto(CanvasDrawingEventArgs)]
     interface ICanvasDrawingEventArgsFactory : IInspectable
     {
         HRESULT Create(

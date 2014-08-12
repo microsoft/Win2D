@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas.Numerics</name>
+    </assembly>
+    <members>
+        <member name="T:System.Numerics.Vector4">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.#ctor(System.Single,System.Single,System.Single,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.#ctor(System.Numerics.Vector2,System.Single,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.#ctor(System.Numerics.Vector3,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.#ctor(System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Length">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.LengthSquared">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Distance(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.DistanceSquared(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Dot(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Normalize(System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Min(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Max(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Clamp(System.Numerics.Vector4,System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Lerp(System.Numerics.Vector4,System.Numerics.Vector4,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector2,System.Numerics.Matrix4x4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector3,System.Numerics.Matrix4x4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector4,System.Numerics.Matrix4x4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector2,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector3,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector4,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Negate(System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Add(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Subtract(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Multiply(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Multiply(System.Numerics.Vector4,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Divide(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Divide(System.Numerics.Vector4,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_UnaryNegation(System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Addition(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Subtraction(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Multiply(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Multiply(System.Numerics.Vector4,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Multiply(System.Single,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Division(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Division(System.Numerics.Vector4,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Equality(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Inequality(System.Numerics.Vector4,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Equals(System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.Equals(System.Object)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.ToString">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.GetHashCode">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Implicit(System.Numerics.Vector4)~Microsoft.Graphics.Canvas.Numerics.Vector4">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Vector4.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Vector4)~System.Numerics.Vector4">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Vector4.X">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Vector4.Y">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Vector4.Z">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Vector4.W">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Vector4.Zero">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Vector4.One">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Vector4.UnitX">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Vector4.UnitY">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Vector4.UnitZ">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Vector4.UnitW">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.ICanvasBrush">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Opacity">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Transform">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,Windows.UI.Color)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Dispose">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Color">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Transform">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Opacity">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

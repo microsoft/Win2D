@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas.Numerics</name>
+    </assembly>
+    <members>
+        <member name="T:System.Numerics.Quaternion">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.#ctor(System.Single,System.Single,System.Single,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.#ctor(System.Numerics.Vector3,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Length">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.LengthSquared">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Normalize(System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Conjugate(System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Inverse(System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.CreateFromAxisAngle(System.Numerics.Vector3,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.CreateFromYawPitchRoll(System.Single,System.Single,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.CreateFromRotationMatrix(System.Numerics.Matrix4x4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Dot(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Slerp(System.Numerics.Quaternion,System.Numerics.Quaternion,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Lerp(System.Numerics.Quaternion,System.Numerics.Quaternion,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Concatenate(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Negate(System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Add(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Subtract(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Multiply(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Multiply(System.Numerics.Quaternion,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Divide(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_UnaryNegation(System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Addition(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Subtraction(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Multiply(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Multiply(System.Numerics.Quaternion,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Division(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Equality(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Inequality(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Equals(System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.Equals(System.Object)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.ToString">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.GetHashCode">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Implicit(System.Numerics.Quaternion)~Microsoft.Graphics.Canvas.Numerics.Quaternion">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Quaternion.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Quaternion)~System.Numerics.Quaternion">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Quaternion.X">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Quaternion.Y">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Quaternion.Z">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Quaternion.W">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Quaternion.Identity">
+            <summary></summary>
+        </member>
+        <member name="P:System.Numerics.Quaternion.IsIdentity">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

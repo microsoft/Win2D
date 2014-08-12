@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="BuildDocs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MsBuildThisFileDirectory)..\..\build\canvas.common.props" />
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <IntermediateOutputPath>$(MSBuildThisFileDirectory)..\..\obj\docs\</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- Binaries containing the API to be documented -->
+  <ItemGroup>
+    <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
+    <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\DotNetNumerics.Windows\Microsoft.Graphics.Canvas.Numerics.dll">
+      <References>$(IntermediateOutputPath)Microsoft.Graphics.Canvas.winmd</References>
+    </InputAssembly>
+  </ItemGroup>
+
+  <!-- Other files that are not part of the API, but which define types used by it -->
+  <ItemGroup>
+    <ReferenceAssembly Include="$(WindowsSdkDir)References\CommonConfiguration\Neutral\Windows.winmd" />
+  </ItemGroup>
+
+  <!-- Tools used to generate the documentation -->
+  <ItemGroup>
+    <ToolProject Include="ExtractAPISurface\ExtractAPISurface.csproj" />
+  </ItemGroup>
+
+  <!-- Master target just chains to a bunch of workers -->
+  <Target Name="BuildDocs"
+          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; RunSandcastle" />
+
+  <!-- Build our custom tools -->
+  <Target Name="BuildTools">
+    <MSBuild Projects="@(ToolProject)" Properties="Configuration=$(Configuration);Platform=AnyCPU" BuildInParallel="true" />
+  </Target>
+
+  <!-- Generate new C# code which defines only the API surface without any implementation details or ties to WinRT -->
+  <Target Name="ExtractAPISurface">
+    <PropertyGroup>
+      <ExtractAPISurfaceTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\ExtractAPISurface\ExtractAPISurface.exe</ExtractAPISurfaceTool>
+    </PropertyGroup>
+
+    <Exec Command="$(ExtractAPISurfaceTool) /OutputPath:$(IntermediateOutputPath) @(InputAssembly, ' ') @(ReferenceAssembly->'/ReferenceAssembly:&quot;%(identity)&quot;', ' ')" />
+  </Target>
+
+  <!-- Compile the generated C# code to create new assemblies -->
+  <Target Name="CompileAPISurface">
+    <Csc Sources="$(IntermediateOutputPath)%(InputAssembly.Filename).cs"
+         OutputAssembly="$(IntermediateOutputPath)%(InputAssembly.Filename)%(InputAssembly.Extension)"
+         DocumentationFile="$(IntermediateOutputPath)%(InputAssembly.Filename).xml"
+         References="%(InputAssembly.References)"
+         TargetType="library"
+         DisabledWarnings="67;1591" />
+  </Target>
+
+  <!-- Run the Sandcastle tool to create HTML reference documentation -->
+  <Target Name="RunSandcastle">
+    <Error Condition="'$(SHFBROOT)' == ''" Text="Sandcastle not found. Get it at http://shfb.codeplex.com." />
+
+    <MSBuild Projects="BuildDocs.shfbproj" />
+  </Target>
+
+</Project>

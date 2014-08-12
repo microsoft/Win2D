@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasDrawTextOptions">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasLineSpacingMethod">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasTextDirection">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasTextFormat">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasTextFormat.#ctor">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasTextFormat.Dispose">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.WordWrapping">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.VerticalAlignment">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.TrimmingGranularity">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.TrimmingDelimiterCount">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.TrimmingDelimiter">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.ReadingDirection">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.ParagraphAlignment">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.Options">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LocaleName">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LineSpacingMethod">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LineSpacingBaseline">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LineSpacing">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.IncrementalTabStop">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontWeight">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontStyle">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontStretch">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontSize">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontFamilyName">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FlowDirection">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasTextTrimmingGranularity">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasVerticalAlignment">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasWordWrapping">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

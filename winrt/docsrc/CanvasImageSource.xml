@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasBackground">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasImageSource">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasBackground)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.Foundation.Rect)">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Device">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

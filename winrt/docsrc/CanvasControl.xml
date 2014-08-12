@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasControl">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasControl.#ctor">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasControl.Invalidate">
+            <summary></summary>
+        </member>
+        <member name="E:Microsoft.Graphics.Canvas.CanvasControl.CreatingResources">
+            <summary></summary>
+        </member>
+        <member name="E:Microsoft.Graphics.Canvas.CanvasControl.Drawing">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasCreatingResourcesEventArgs">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasCreatingResourcesEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDevice)">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasCreatingResourcesEventArgs.Device">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs.DrawingSession">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

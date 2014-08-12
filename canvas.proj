@@ -18,6 +18,7 @@
     <BuildPhone>true</BuildPhone>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
+    <BuildDocs>true</BuildDocs>
     <RunTests>true</RunTests>
   </PropertyGroup>
 
@@ -93,12 +94,13 @@
     <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj" Condition="$(BuildTests)">
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
+    <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
   </ItemGroup>
 
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="Build"
-          DependsOnTargets="BuildProjects; CheckCopyrightBanners; RunTests" />
+          DependsOnTargets="BuildProjects; CheckCopyrightBanners; BuildDocs; RunTests" />
 
 
   <!-- Use batching to build each project in turn -->
@@ -154,6 +156,21 @@
   </Target>
 
 
+  <!-- Build the reference documentation -->
+  <Target Name="BuildDocs"
+          Condition="$(BuildDocs) and
+                     $(BuildTools) and
+                     $(BuildWindows) and
+                     $(BuildPlatforms.Contains('AnyCPU')) and
+                     $(BuildPlatforms.Contains('Win32')) and
+                     $(BuildConfigurations.Contains('Release'))">
+
+    <Message Importance="High" Text="Building documentation" />
+
+    <MSBuild Projects="tools\docs\BuildDocs.proj" />
+  </Target>
+
+
   <!-- Run the automated tests -->
   <Target Name="RunTests"
           Condition="$(BuildTests) and $(RunTests)"
@@ -190,4 +207,5 @@
       </TestProjects>
     </ItemGroup>
   </Target>
+
 </Project>

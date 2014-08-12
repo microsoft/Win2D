@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ec5bd60b-d070-432b-bf14-ab50cfc1d7f8}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <HtmlHelpName>Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <BuildAssemblerVerbosity>OnlyErrors</BuildAssemblerVerbosity>
+    <HelpFileFormat>Website</HelpFileFormat>
+    <IndentHtml>False</IndentHtml>
+    <KeepLogFile>False</KeepLogFile>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <CleanIntermediates>True</CleanIntermediates>
+    <MaximumGroupParts>2</MaximumGroupParts>
+    <NamespaceGrouping>False</NamespaceGrouping>
+    <SyntaxFilters>C#</SyntaxFilters>
+    <SdkLinkTarget>Self</SdkLinkTarget>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <PresentationStyle>VS2013</PresentationStyle>
+    <Preliminary>False</Preliminary>
+    <NamingMethod>MemberName</NamingMethod>
+    <HelpTitle>Windows Canvas</HelpTitle>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
+    <VisibleItems>InheritedMembers, Protected, ProtectedInternalAsProtected</VisibleItems>
+    <OutputPath>$(MSBuildThisFileDirectory)..\..\bin\docs</OutputPath>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.winmd" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.dll" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\numerics\DotNet\docsrc\*.xml" />
+    </DocumentationSources>
+    <ApiFilter>
+      <Filter entryType="Namespace" fullName="Windows.Foundation" isExposed="False" />
+      <Filter entryType="Namespace" fullName="Windows.UI" isExposed="False" />
+      <Filter entryType="Namespace" fullName="Windows.UI.Text" isExposed="False" />
+      <Filter entryType="Namespace" fullName="Windows.UI.Xaml" isExposed="False" />
+      <Filter entryType="Namespace" fullName="Windows.UI.Xaml.Controls" isExposed="False" />
+      <Filter entryType="Namespace" fullName="Windows.UI.Xaml.Media.Imaging" isExposed="False" />
+    </ApiFilter>
+  </PropertyGroup>
+  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+</Project>

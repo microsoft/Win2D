@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasDevice">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel,Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.Dispose">
+            <summary></summary>
+        </member>
+        <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.CreateFromDirect3D11Device(Microsoft.Graphics.Canvas.CanvasDebugLevel,Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice)">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.Direct3DDevice">
+            <summary></summary>
+        </member>
+        <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.HardwareAcceleration">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

@@ -19,7 +19,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace Copyright
+namespace Shared
 {
     // Reusable, reflection based helper for parsing commandline options.
     public class CommandLineParser

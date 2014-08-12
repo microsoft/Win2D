@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasCapStyle">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasDashStyle">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasDebugLevel">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasEllipse">
+            <summary></summary>
+        </member>
+        <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.Point">
+            <summary></summary>
+        </member>
+        <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusX">
+            <summary></summary>
+        </member>
+        <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusY">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasLineJoin">
+            <summary></summary>
+        </member>
+        <member name="T:Microsoft.Graphics.Canvas.CanvasRoundedRectangle">
+            <summary></summary>
+        </member>
+        <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.Rect">
+            <summary></summary>
+        </member>
+        <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusX">
+            <summary></summary>
+        </member>
+        <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusY">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

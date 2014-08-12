@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Graphics.Canvas.Numerics</name>
+    </assembly>
+    <members>
+        <member name="T:System.Numerics.Plane">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.#ctor(System.Single,System.Single,System.Single,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.#ctor(System.Numerics.Vector3,System.Single)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.#ctor(System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.CreateFromVertices(System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.Normalize(System.Numerics.Plane)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.Transform(System.Numerics.Plane,System.Numerics.Matrix4x4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.Transform(System.Numerics.Plane,System.Numerics.Quaternion)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.Dot(System.Numerics.Plane,System.Numerics.Vector4)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.DotCoordinate(System.Numerics.Plane,System.Numerics.Vector3)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.DotNormal(System.Numerics.Plane,System.Numerics.Vector3)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.op_Equality(System.Numerics.Plane,System.Numerics.Plane)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.op_Inequality(System.Numerics.Plane,System.Numerics.Plane)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.Equals(System.Numerics.Plane)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.Equals(System.Object)">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.ToString">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.GetHashCode">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.op_Implicit(System.Numerics.Plane)~Microsoft.Graphics.Canvas.Numerics.Plane">
+            <summary></summary>
+        </member>
+        <member name="M:System.Numerics.Plane.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Plane)~System.Numerics.Plane">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Plane.Normal">
+            <summary></summary>
+        </member>
+        <member name="F:System.Numerics.Plane.D">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

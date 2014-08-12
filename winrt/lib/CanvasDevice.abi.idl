@@ -23,7 +23,7 @@ namespace Microsoft.Graphics.Canvas
     
     runtimeclass CanvasDevice;
 
-    [version(VERSION), uuid(E2C2BF21-5418-43B9-A2DA-539E287C790F)]
+    [version(VERSION), uuid(E2C2BF21-5418-43B9-A2DA-539E287C790F), exclusiveto(CanvasDevice)]
     interface ICanvasDeviceFactory : IInspectable
     {
         HRESULT CreateWithDebugLevel(
@@ -36,7 +36,7 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasDevice** canvasDevice);
     };
 
-    [version(VERSION), uuid(9B6E2B27-CD07-421A-8F69-0AE8A787FE8C)]
+    [version(VERSION), uuid(9B6E2B27-CD07-421A-8F69-0AE8A787FE8C), exclusiveto(CanvasDevice)]
     interface ICanvasDeviceStatics : IInspectable
     {
         HRESULT CreateFromDirect3D11Device(
