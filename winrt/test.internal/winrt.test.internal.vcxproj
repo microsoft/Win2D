@@ -80,7 +80,6 @@
     <ClCompile Include="CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="ConversionUnitTests.cpp" />
-    <ClCompile Include="RegisteredEventListTests.cpp" />
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DFactoryWithCreateStrokeStyle.cpp" />

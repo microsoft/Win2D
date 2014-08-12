@@ -14,7 +14,7 @@
 
 class CanvasControlTestAdapter : public ICanvasControlAdapter
 {
-    RegisteredEventList<IEventHandler<IInspectable*>> m_compositionRenderingEventList;
+    EventSource<IEventHandler<IInspectable*>> m_compositionRenderingEventList;
 
 public:
     virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
@@ -34,19 +34,20 @@ public:
 
     virtual EventRegistrationToken AddCompositionRenderingCallback(IEventHandler<IInspectable*>* value) override
     {
-        EventRegistrationToken token = m_compositionRenderingEventList.Add(value);
+        EventRegistrationToken token;
+        ThrowIfFailed(m_compositionRenderingEventList.Add(value, &token));
         return token;
     }
 
     virtual void RemoveCompositionRenderingCallback(EventRegistrationToken token) override
     {
-        m_compositionRenderingEventList.Remove(token);
+        ThrowIfFailed(m_compositionRenderingEventList.Remove(token));
     }
 
     void FireCompositionRenderingEvent(IInspectable* sender)
     {
         IInspectable* arg = nullptr;
-        m_compositionRenderingEventList.FireAll(sender, arg);
+        ThrowIfFailed(m_compositionRenderingEventList.InvokeAll(sender, arg));
     }
 
     virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override

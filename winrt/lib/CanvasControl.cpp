@@ -307,7 +307,7 @@ namespace canvas
         ComPtr<CanvasDrawingEventArgs> drawEventArgs = Make<CanvasDrawingEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 
-        m_drawEventList.FireAll(this, drawEventArgs.Get());
+        ThrowIfFailed(m_drawEventList.InvokeAll(this, drawEventArgs.Get()));
 
         ComPtr<IClosable> drawingSessionClosable;
         ThrowIfFailed(drawingSession.As(&drawingSessionClosable));
@@ -328,7 +328,7 @@ namespace canvas
                 // And so, there isn't a need to keep track of which handlers have been fired and which have not.
                 //
 
-                m_createResourcesEventList.FireAll(this, static_cast<IInspectable*>(nullptr));
+                ThrowIfFailed(m_createResourcesEventList.InvokeAll(this, static_cast<IInspectable*>(nullptr)));
 
                 InvalidateImpl();
             });
@@ -371,7 +371,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                *token = m_createResourcesEventList.Add(value);
+                ThrowIfFailed(m_createResourcesEventList.Add(value, token));
 
                 if (m_isLoaded)
                 {
@@ -387,7 +387,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                m_createResourcesEventList.Remove(token);
+                ThrowIfFailed(m_createResourcesEventList.Remove(token));
             });
     }
 
@@ -398,7 +398,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                *token = m_drawEventList.Add(value);
+                ThrowIfFailed(m_drawEventList.Add(value, token));
             });
     }
 
@@ -408,7 +408,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                m_drawEventList.Remove(token);
+                ThrowIfFailed(m_drawEventList.Remove(token));
             });
     }
 

@@ -14,8 +14,6 @@
 
 #include <Canvas.abi.h>
 
-#include "RegisteredEventList.h"
-
 namespace canvas
 {
     using namespace ABI::Windows::Foundation;
@@ -77,8 +75,8 @@ namespace canvas
 
         std::shared_ptr<ICanvasControlAdapter> m_adapter;
 
-        RegisteredEventList<CreateResourcesEventHandlerType> m_createResourcesEventList;
-        RegisteredEventList<DrawingEventHandlerType> m_drawEventList;
+        EventSource<CreateResourcesEventHandlerType> m_createResourcesEventList;
+        EventSource<DrawingEventHandlerType> m_drawEventList;
 
         EventRegistrationToken m_renderingEventToken;
 

@@ -45,7 +45,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)RegisteredEventList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinStringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinStringWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
