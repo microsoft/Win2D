@@ -95,6 +95,7 @@
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
     <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
+    <AnyCPUProject Include="tools\docs\MergeIntellisense\MergeIntellisense.csproj" />
   </ItemGroup>
 
 

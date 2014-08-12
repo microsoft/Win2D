@@ -3,40 +3,54 @@
 
   <Import Project="$(MsBuildThisFileDirectory)..\..\build\canvas.common.props" />
 
+
+  <!-- Settings -->
   <PropertyGroup>
+    <IntellisenseOnly>false</IntellisenseOnly>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <IntermediateOutputPath>$(MSBuildThisFileDirectory)..\..\obj\docs\</IntermediateOutputPath>
   </PropertyGroup>
 
+
   <!-- Binaries containing the API to be documented -->
   <ItemGroup>
-    <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
+    <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd">
+      <DocSrc>..\..\winrt\docsrc\*.xml</DocSrc>
+    </InputAssembly>
+
     <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\DotNetNumerics.Windows\Microsoft.Graphics.Canvas.Numerics.dll">
+      <DocSrc>..\..\numerics\DotNet\docsrc\*.xml</DocSrc>
       <References>$(IntermediateOutputPath)Microsoft.Graphics.Canvas.winmd</References>
     </InputAssembly>
   </ItemGroup>
+
 
   <!-- Other files that are not part of the API, but which define types used by it -->
   <ItemGroup>
     <ReferenceAssembly Include="$(WindowsSdkDir)References\CommonConfiguration\Neutral\Windows.winmd" />
   </ItemGroup>
 
+
   <!-- Tools used to generate the documentation -->
   <ItemGroup>
-    <ToolProject Include="ExtractAPISurface\ExtractAPISurface.csproj" />
+    <ToolProject Include="ExtractAPISurface\ExtractAPISurface.csproj" Condition="!$(IntellisenseOnly)" />
+    <ToolProject Include="MergeIntellisense\MergeIntellisense.csproj" />
   </ItemGroup>
+
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="BuildDocs"
-          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; RunSandcastle" />
+          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; RunSandcastle; MergeIntellisense" />
+
 
   <!-- Build our custom tools -->
   <Target Name="BuildTools">
     <MSBuild Projects="@(ToolProject)" Properties="Configuration=$(Configuration);Platform=AnyCPU" BuildInParallel="true" />
   </Target>
 
+
   <!-- Generate new C# code which defines only the API surface without any implementation details or ties to WinRT -->
-  <Target Name="ExtractAPISurface">
+  <Target Name="ExtractAPISurface" Condition="!$(IntellisenseOnly)">
     <PropertyGroup>
       <ExtractAPISurfaceTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\ExtractAPISurface\ExtractAPISurface.exe</ExtractAPISurfaceTool>
     </PropertyGroup>
@@ -44,8 +58,10 @@
     <Exec Command="$(ExtractAPISurfaceTool) /OutputPath:$(IntermediateOutputPath) @(InputAssembly, ' ') @(ReferenceAssembly->'/ReferenceAssembly:&quot;%(identity)&quot;', ' ')" />
   </Target>
 
+
   <!-- Compile the generated C# code to create new assemblies -->
-  <Target Name="CompileAPISurface">
+  <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)">
+
     <Csc Sources="$(IntermediateOutputPath)%(InputAssembly.Filename).cs"
          OutputAssembly="$(IntermediateOutputPath)%(InputAssembly.Filename)%(InputAssembly.Extension)"
          DocumentationFile="$(IntermediateOutputPath)%(InputAssembly.Filename).xml"
@@ -54,11 +70,28 @@
          DisabledWarnings="67;1591" />
   </Target>
 
-  <!-- Run the Sandcastle tool to create HTML reference documentation -->
-  <Target Name="RunSandcastle">
-    <Error Condition="'$(SHFBROOT)' == ''" Text="Sandcastle not found. Get it at http://shfb.codeplex.com." />
 
+  <!-- Run the Sandcastle tool to create HTML reference documentation -->
+  <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)">
+    <Error Condition="'$(SHFBROOT)' == ''" Text="Sandcastle not found. Get it at http://shfb.codeplex.com." />
     <MSBuild Projects="BuildDocs.shfbproj" />
+  </Target>
+
+
+  <!-- Merge documentation source files to create a single intellisense XML per assembly -->
+  <Target Name="MergeIntellisense"
+          Inputs="@(InputAssembly)"
+          Outputs="%(Filename)">
+
+    <ItemGroup>
+      <DocSrc Include="%(InputAssembly.DocSrc)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <MergeIntellisenseTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\MergeIntellisense\MergeIntellisense.exe</MergeIntellisenseTool>
+    </PropertyGroup>
+
+    <Exec Command="$(MergeIntellisenseTool) $(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml @(DocSrc, ' ')" />
   </Target>
 
 </Project>
