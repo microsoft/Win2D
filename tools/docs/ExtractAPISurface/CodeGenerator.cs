@@ -13,14 +13,18 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using System.Reflection;
+using System.IO;
 
 namespace ExtractAPISurface
 {
-    class CodeGenerator
+    class CodeGenerator : IDisposable
     {
-        CodeWriter output;
+        CommandLineOptions options;
         AssemblyCollection assemblies;
+        Assembly assembly;
+        CodeWriter output;
 
         // Track all the types we have seen used as parameters, return values, base classes, etc.
         HashSet<Type> seenTypes = new HashSet<Type>();
@@ -28,10 +32,19 @@ namespace ExtractAPISurface
         static HashSet<Type> placeholdersWritten = new HashSet<Type>();
 
 
-        public CodeGenerator(CodeWriter output, AssemblyCollection assemblies)
+        public CodeGenerator(CommandLineOptions options, AssemblyCollection assemblies, Assembly assembly)
         {
-            this.output = output;
+            this.options = options;
             this.assemblies = assemblies;
+            this.assembly = assembly;
+
+            output = new CodeWriter(options.OutputPath, assembly.GetName().Name + ".cs");
+        }
+
+
+        public void Dispose()
+        {
+            output.Dispose();
         }
 
 
@@ -454,37 +467,139 @@ namespace ExtractAPISurface
             // WinRT references even though we can't tell that from relecting over the .NET version of the type.
             const string magicWinRTAssembly = "System.Runtime.WindowsRuntime";
 
-            var placeholders = from type in seenTypes
-                               where assemblies.TypeIsFromReferenceAssembly(type) || type.Assembly.GetName().Name == magicWinRTAssembly
-                               where !placeholdersWritten.Contains(type)
-                               select type;
+            var placeholders = (from type in seenTypes
+                                where assemblies.TypeIsFromReferenceAssembly(type) || type.Assembly.GetName().Name == magicWinRTAssembly
+                                where !placeholdersWritten.Contains(type)
+                                select type).ToList();
 
-            WriteTypesByNamespace(placeholders, type =>
+            WriteTypesByNamespace(placeholders, WriteReferencedTypePlaceholder);
+
+            WriteReferencedTypeXmlDocs(placeholders);
+        }
+
+
+        void WriteReferencedTypePlaceholder(Type type)
+        {
+            // Get the type name.
+            var name = type.Name;
+
+            if (type.IsGenericType)
             {
-                // Get the type name.
-                var name = type.Name;
+                var genericArguments = from i in Enumerable.Range(0, type.GetGenericArguments().Length)
+                                       select "T" + i;
 
-                if (type.IsGenericType)
+                name = FormatGenericTypeName(name, genericArguments);
+            }
+
+            // Write an empty type placeholder.
+            if (type.IsDelegate())
+            {
+                output.WriteLine("public delegate void {0}();", name);
+            }
+            else if (type.IsEnum)
+            {
+                output.WriteLine("public enum {0} {{ }}", name);
+            }
+            else if (type.IsValueType)
+            {
+                output.WriteLine("public struct {0} {{ }}", name);
+            }
+            else
+            {
+                output.WriteLine("public class {0} {{ internal {0}() {{ }} }}", name);
+            }
+
+            // Record that we have seen this type.
+            placeholdersWritten.Add(type);
+        }
+
+
+        // Generates XML docs linking our placeholder types to their real documentation on MSDN.
+        void WriteReferencedTypeXmlDocs(IEnumerable<Type> placeholderTypes)
+        {
+            var xml = new XDocument(
+                new XElement("doc",
+                    new XElement("assembly",
+                        new XElement("name", assembly.GetName().Name)
+                    ),
+                    new XElement("members",
+                        from type in placeholderTypes
+                        select new XElement("member",
+                            new XAttribute("name", "T:" + type.FullName),
+                            new XElement("tocexclude"),
+                            new XElement("summary",
+                                new XElement("b",
+                                    new XElement("a",
+                                        new XAttribute("href", GetReferencedTypeMsdnUrl(type.FullName)),
+                                        "This type is documented on MSDN."
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+
+            xml.Save(Path.Combine(options.OutputPath, assembly.GetName().Name + ".placeholders.xml"));
+        }
+
+
+        // Generates a Sandcastle project fragment summarizing all our namespaces.
+        public static void WriteNamespaceSummaries(CommandLineOptions options)
+        {
+            XNamespace xmlns = "http://schemas.microsoft.com/developer/msbuild/2003";
+
+            var documentedNamespaces = string.IsNullOrEmpty(options.NamespaceSummaries)
+                                        ? null
+                                        : XDocument.Load(options.NamespaceSummaries).Element(xmlns + "NamespaceSummaries").Elements();
+
+            var placeholderNamespaces = from ns in placeholdersWritten.Select(type => type.Namespace).Distinct()
+                                        select new XElement(xmlns + "NamespaceSummaryItem",
+                                            new XAttribute("name", ns),
+                                            new XAttribute("isDocumented", "True"),
+                                            string.Format("<a href=\"{0}\">This namespace is documented on MSDN.</a>", GetReferencedTypeMsdnUrl(ns))
+                                        );
+
+            var xml = new XDocument(
+                new XElement(xmlns + "Project",
+                    new XElement(xmlns + "PropertyGroup",
+                        new XElement(xmlns + "NamespaceSummaries",
+                            documentedNamespaces,
+                            placeholderNamespaces
+                        )
+                    )
+                )
+            );
+
+            xml.Save(Path.Combine(options.OutputPath, "NamespaceSummaries.shfbproj"));
+        }
+
+
+        static string GetReferencedTypeMsdnUrl(string typeName)
+        {
+            const string msdnPrefix = "http://msdn.microsoft.com/library/windows/apps/";
+
+            if (typeName.Contains('`'))
+            {
+                // MSDN uses weird mangled URLs for generic types, so we just hardcode the ones we care about.
+                if (typeName == "Windows.Foundation.TypedEventHandler`2")
                 {
-                    var genericArguments = from i in Enumerable.Range(0, type.GetGenericArguments().Length)
-                                           select "T" + i;
-
-                    name = FormatGenericTypeName(name, genericArguments);
+                    return msdnPrefix + "br225997";
                 }
-
-                // Write either a delegate or empty class. No need to bother with structs, enums, etc, because
-                // this is just a placeholder to make code compile, for which purpose a class does just as well.
-                if (type.IsDelegate())
+                else if (typeName == "Windows.Foundation.IAsyncOperation`1")
                 {
-                    output.WriteLine("public delegate void {0}();", name);
+                    return msdnPrefix + "br206598";
                 }
                 else
                 {
-                    output.WriteLine("public class {0} {{ }}", name);
+                    throw new NotSupportedException(string.Format("Please add MSDN link for new generic type {0} to GetReferencedTypeMsdnUrl method in CodeGenerator.cs.", typeName));
                 }
-
-                placeholdersWritten.Add(type);
-            });
+            }
+            else
+            {
+                // Non generic type URLs are simple and consistent.
+                return msdnPrefix + typeName;
+            }
         }
 
 

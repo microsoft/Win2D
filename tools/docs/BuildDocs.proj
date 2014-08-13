@@ -55,7 +55,7 @@
       <ExtractAPISurfaceTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\ExtractAPISurface\ExtractAPISurface.exe</ExtractAPISurfaceTool>
     </PropertyGroup>
 
-    <Exec Command="$(ExtractAPISurfaceTool) /OutputPath:$(IntermediateOutputPath) @(InputAssembly, ' ') @(ReferenceAssembly->'/ReferenceAssembly:&quot;%(identity)&quot;', ' ')" />
+    <Exec Command="$(ExtractAPISurfaceTool) /OutputPath:$(IntermediateOutputPath) /NamespaceSummaries:NamespaceSummaries.xml @(InputAssembly, ' ') @(ReferenceAssembly->'/ReferenceAssembly:&quot;%(identity)&quot;', ' ')" />
   </Target>
 
 

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NamespaceSummaries xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <NamespaceSummaryItem name="Microsoft.Graphics.Canvas" isDocumented="True">The main Windows Canvas API for drawing 2D graphics.</NamespaceSummaryItem>
+  <NamespaceSummaryItem name="Microsoft.Graphics.Canvas.DirectX" isDocumented="True">DirectX types, used for interop with other components.</NamespaceSummaryItem>
+  <NamespaceSummaryItem name="Microsoft.Graphics.Canvas.DirectX.Direct3D11" isDocumented="True">Direct3D11 types, used for interop with other components.</NamespaceSummaryItem>
+  <NamespaceSummaryItem name="Microsoft.Graphics.Canvas.Numerics" isDocumented="True">Windows Runtime vector and matrix types. These are only used for data exchange, and do not include any methods for doing math with the values. For more complete functionality, see the System.Numerics namespace.</NamespaceSummaryItem>
+  <NamespaceSummaryItem name="System.Numerics" isDocumented="True">.NET vector and matrix types. This namespace extends the structs from Microsoft.Graphics.Canvas.Numerics with a range of mathematical operators and functions.</NamespaceSummaryItem>
+</NamespaceSummaries>

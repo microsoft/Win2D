@@ -18,7 +18,7 @@
     <NamespaceGrouping>False</NamespaceGrouping>
     <SyntaxFilters>C#</SyntaxFilters>
     <SdkLinkTarget>Self</SdkLinkTarget>
-    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <RootNamespaceContainer>True</RootNamespaceContainer>
     <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
@@ -30,17 +30,25 @@
     <DocumentationSources>
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.winmd" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.dll" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.placeholders.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.placeholders.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\numerics\DotNet\docsrc\*.xml" />
     </DocumentationSources>
-    <ApiFilter>
-      <Filter entryType="Namespace" fullName="Windows.Foundation" isExposed="False" />
-      <Filter entryType="Namespace" fullName="Windows.UI" isExposed="False" />
-      <Filter entryType="Namespace" fullName="Windows.UI.Text" isExposed="False" />
-      <Filter entryType="Namespace" fullName="Windows.UI.Xaml" isExposed="False" />
-      <Filter entryType="Namespace" fullName="Windows.UI.Xaml.Controls" isExposed="False" />
-      <Filter entryType="Namespace" fullName="Windows.UI.Xaml.Media.Imaging" isExposed="False" />
-    </ApiFilter>
+    <CopyrightText>Copyright %28c%29 Microsoft Corporation. All rights reserved.</CopyrightText>
+    <CopyrightHref>http://github.com/Microsoft/WindowsCanvas/blob/master/LICENSE.txt</CopyrightHref>
+    <ProjectSummary>
+      &lt;p&gt;Windows Canvas is an easy-to-use Windows Runtime API for immediate mode 2D graphics rendering with GPU acceleration. It is available to C# and C++ developers writing Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of Direct2D, and integrates seamlessly with XAML and ICoreWindow.&lt;/p&gt;
+      &lt;p&gt;Windows Canvas is work in progress and evolving rapidly. The goal of releasing this code in an early, incomplete state is to solicit early developer feedback. The &lt;a href=&quot;http://github.com/Microsoft/WindowsCanvas/wiki/Backlog&quot;&gt;project backlog&lt;/a&gt; shows what we plan to add in the future, and the order in which we plan to add it.&lt;/p&gt;
+      &lt;p&gt;Source code and issue tracking are available at &lt;a href=&quot;http://github.com/Microsoft/WindowsCanvas&quot;&gt;http://github.com/Microsoft/WindowsCanvas&lt;/a&gt;.&lt;/p&gt;
+    </ProjectSummary>
+    <RootNamespaceTitle>Windows Canvas</RootNamespaceTitle>
+    <PlugInConfigurations>
+      <PlugInConfig id="Table of Contents Exclusion" enabled="True" xmlns="">
+        <configuration />
+      </PlugInConfig>
+    </PlugInConfigurations>
   </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\..\obj\docs\NamespaceSummaries.shfbproj" />
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
 </Project>

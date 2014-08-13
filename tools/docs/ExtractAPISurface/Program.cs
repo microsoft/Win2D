@@ -52,15 +52,13 @@ namespace ExtractAPISurface
             foreach (var assembly in assemblies.InputAssemblies)
             {
                 // Generate C# code containing only the public API surface of each assembly.
-                var outputName = assembly.GetName().Name + ".cs";
-
-                using (var output = new CodeWriter(options.OutputPath, outputName))
+                using (var generator = new CodeGenerator(options, assemblies, assembly))
                 {
-                    var generator = new CodeGenerator(output, assemblies);
-
                     generator.GenerateAPISurface(assembly);
                 }
             }
+
+            CodeGenerator.WriteNamespaceSummaries(options);
         }
     }
 }
