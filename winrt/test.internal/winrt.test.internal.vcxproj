@@ -48,6 +48,7 @@
     <ClInclude Include="MockCanvasDrawingSession.h" />
     <ClInclude Include="MockCanvasImageSourceDrawingSessionFactory.h" />
     <ClInclude Include="MockCoreApplication.h" />
+    <ClInclude Include="MockD2DBitmap.h" />
     <ClInclude Include="MockD2DDevice.h" />
     <ClInclude Include="MockD2DDeviceContext.h" />
     <ClInclude Include="MockD2DSolidColorBrush.h" />
@@ -56,6 +57,8 @@
     <ClInclude Include="MockD3D11Device.h" />
     <ClInclude Include="MockSurfaceImageSource.h" />
     <ClInclude Include="MockSurfaceImageSourceFactory.h" />
+    <ClInclude Include="MockWICBitmap.h" />
+    <ClInclude Include="MockWICFormatConverter.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="StubCanvasBrush.h" />
     <ClInclude Include="StubCanvasDevice.h" />
@@ -66,10 +69,12 @@
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="StubD2DFactoryWithCreateStrokeStyle.h" />
+    <ClInclude Include="TestBitmapResourceCreationAdapter.h" />
     <ClInclude Include="TestDeviceResourceCreationAdapter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CanvasControlUnitTests.cpp" />
+    <ClCompile Include="CanvasBitmapUnitTest.cpp" />
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="CanvasTextFormatTests.cpp" />

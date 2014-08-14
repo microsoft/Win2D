@@ -12,6 +12,12 @@
 
 #pragma once
 
+#include <ppl.h>
+#include <ppltasks.h>
+
+using namespace concurrency;
+using namespace Windows::Foundation;
+
 namespace Microsoft
 {
     namespace VisualStudio
@@ -201,3 +207,35 @@ void RunOnUIThread(CODE&& code)
     if (exceptionDuringTest)
         std::rethrow_exception(exceptionDuringTest);
 }
+
+template<typename T>
+T WaitExecution(IAsyncOperation<T>^ asyncOperation)
+{
+    HANDLE emptyEvent = CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
+    if (emptyEvent == NULL)
+    {
+        throw std::bad_alloc();
+    }
+
+    task_options options;
+    options.set_continuation_context(task_continuation_context::use_arbitrary());
+
+    task<T> asyncTask(asyncOperation);
+
+    asyncTask.then([&](task<T>)
+    {
+        SetEvent(emptyEvent);
+    }, options);
+
+    // waiting before event executed
+    while (WaitForSingleObjectEx(emptyEvent, 0, true)) {};
+
+    if (!CloseHandle(emptyEvent))
+    {
+        std::ostringstream os;
+        os << GetLastError();
+        throw std::runtime_error(os.str());
+    }
+
+    return asyncTask.get();
+};

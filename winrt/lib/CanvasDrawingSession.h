@@ -78,6 +78,13 @@ namespace canvas
         IFACEMETHOD(Clear)(
             ABI::Windows::UI::Color color) override;
 
+        IFACEMETHOD(DrawImage)(
+            ICanvasImage* image) override;
+
+        IFACEMETHOD(DrawImageWithOffset)(
+            ICanvasImage* image,
+            ABI::Windows::Foundation::Point offset) override;
+
         IFACEMETHOD(DrawLine)(
             ABI::Windows::Foundation::Point point0,
             ABI::Windows::Foundation::Point point1,

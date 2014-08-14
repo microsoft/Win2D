@@ -33,9 +33,12 @@
 #include <mutex>
 #include <vector>
 #include <iterator>
+#include <future>
 
 // Win32
+#include <initguid.h>
 #include <wrl.h>
+#include <wrl\async.h>
 #include <strsafe.h>
 #include <d2d1_2.h>
 #include <d3d11.h>
@@ -45,6 +48,7 @@
 
 // WinRT
 #include <windows.foundation.h>
+#include <windows.foundation.collections.h>
 #include <windows.ui.h>
 #include <windows.ui.xaml.controls.h>
 #include <windows.ui.xaml.media.dxinterop.h>
@@ -63,3 +67,4 @@
 // local
 #include "ClosablePtr.h"
 #include "Conversion.h"
+#include "WinStringWrapper.h"

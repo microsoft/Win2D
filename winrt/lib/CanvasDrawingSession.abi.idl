@@ -30,6 +30,22 @@ namespace Microsoft.Graphics.Canvas
     {
         HRESULT Clear([in] Windows.UI.Color color);
 
+        // 
+        // DrawImage
+        // 
+
+        // TODO #2104: consider overloads for different interpolation and composite modes 
+        // as well as overload with rectangle for cutting image 
+
+        [overload("DrawImage")]
+        HRESULT DrawImage(
+            [in] ICanvasImage* image);
+
+        [overload("DrawImage")]
+        HRESULT DrawImageWithOffset(
+            [in] ICanvasImage* image,
+            [in] Windows.Foundation.Point offset);
+
         //
         // DrawLine
         //

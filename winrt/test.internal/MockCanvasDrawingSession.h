@@ -34,6 +34,21 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHOD(DrawImage)(
+            ICanvasImage* image) override
+        {
+            Assert::Fail(L"Unexpected call to DrawImage");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(DrawImageWithOffset)(
+            ICanvasImage* image,
+            ABI::Windows::Foundation::Point offset) override
+        {
+            Assert::Fail(L"Unexpected call to DrawImageWithOffset");
+            return E_NOTIMPL;
+        }
+
         IFACEMETHODIMP DrawLine(
             ABI::Windows::Foundation::Point point0,
             ABI::Windows::Foundation::Point point1,

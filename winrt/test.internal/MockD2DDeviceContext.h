@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "MockD2DBitmap.h"
+
 namespace canvas
 {
     class MockD2DSolidColorBrush;
@@ -31,6 +33,7 @@ namespace canvas
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawEllipse;
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*)> MockFillEllipse;
         std::function<void(const wchar_t*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE)> MockDrawText;
+        std::function<void(ID2D1Image*)> MockDrawImage;
 
         // ID2D1Resource
 
@@ -47,7 +50,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateBitmapFromWicBitmap(IWICBitmapSource *,const D2D1_BITMAP_PROPERTIES *,ID2D1Bitmap **) override
+        IFACEMETHODIMP CreateBitmapFromWicBitmap(IWICBitmapSource *,const D2D1_BITMAP_PROPERTIES *,ID2D1Bitmap ** bitmap) override
         {
             Assert::Fail(L"Unexpected call to CreateBitmapFromWicBitmap");
             return E_NOTIMPL;
@@ -232,6 +235,18 @@ namespace canvas
         IFACEMETHODIMP_(void) DrawGlyphRun(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,ID2D1Brush *,DWRITE_MEASURING_MODE) override
         {
             Assert::Fail(L"Unexpected call to DrawGlyphRun");
+        }
+
+        IFACEMETHODIMP_(void) DrawImage(_In_ ID2D1Image *image, _In_opt_ CONST D2D1_POINT_2F *targetOffset, _In_opt_ CONST D2D1_RECT_F *imageRectangle,
+            D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode) override
+        {
+            if (!MockDrawImage)
+            {
+                Assert::Fail(L"Unexpected call to DrawImage");
+                return;
+            }
+
+            MockDrawImage(image);
         }
 
         IFACEMETHODIMP_(void) SetTransform(const D2D1_MATRIX_3X2_F* m) override
@@ -538,11 +553,6 @@ namespace canvas
         IFACEMETHODIMP_(void) DrawGlyphRun(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,const DWRITE_GLYPH_RUN_DESCRIPTION *,ID2D1Brush *,DWRITE_MEASURING_MODE) override
         {
             Assert::Fail(L"Unexpected call to DrawGlyphRun");
-        }
-
-        IFACEMETHODIMP_(void) DrawImage(ID2D1Image *,const D2D1_POINT_2F *,const D2D1_RECT_F *,D2D1_INTERPOLATION_MODE,D2D1_COMPOSITE_MODE) override
-        {
-            Assert::Fail(L"Unexpected call to DrawImage");
         }
 
         IFACEMETHODIMP_(void) DrawGdiMetafile(ID2D1GdiMetafile *,const D2D1_POINT_2F *) override

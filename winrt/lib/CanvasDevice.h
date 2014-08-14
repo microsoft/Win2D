@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-
 #include "ClosablePtr.h"
 #include "ResourceManager.h"
 
@@ -124,6 +122,7 @@ namespace canvas
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) = 0;
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* wicConverter) = 0;
     };
 
 
@@ -188,7 +187,8 @@ namespace canvas
 
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override;
-        
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* wicConverter) override;
+
     private:
         ComPtr<ID2D1Factory2> GetD2DFactory();
     };

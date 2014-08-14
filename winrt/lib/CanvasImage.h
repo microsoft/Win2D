@@ -10,25 +10,17 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
-{
-    //
-    // ICanvasImage
-    //
-    [version(VERSION), uuid(794966D3-6A64-47E9-8DA8-B46AAA24D53B)]
-    interface ICanvasImage : IInspectable
-        requires Windows.Foundation.IClosable
-    {
-    }
-    
-    //
-    // ICanvasResourceCreator
-    //
-    runtimeclass CanvasDevice;
+#pragma once
 
-    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
-    interface ICanvasResourceCreator : IInspectable
+#include "pch.h"
+
+namespace canvas
+{
+    [uuid(2F434224-053C-4978-87C4-CFAAFA2F4FAC)]
+    class ICanvasImageInternal : public IUnknown
     {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+    public:
+        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) = 0;
     };
+
 }

@@ -30,6 +30,8 @@
 #include <dxgi1_3.h>
 #include <wrl.h>
 #include <strsafe.h>
+#include <wincodec.h>
+#include <winstringwrapper.h>
 
 // WinRT
 #include <windows.ui.xaml.media.dxinterop.h>

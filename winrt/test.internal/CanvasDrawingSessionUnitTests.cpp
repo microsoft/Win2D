@@ -14,6 +14,10 @@
 
 #include "StubD2DFactoryWithCreateStrokeStyle.h"
 
+#include "CanvasBitmap.h"
+#include "TestBitmapResourceCreationAdapter.h"
+#include "MockWICFormatConverter.h"
+
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
     class MockCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
@@ -116,7 +120,6 @@ public:
     }
 };
 
-
 class CanvasDrawingSessionFixture
 {
 public:
@@ -169,6 +172,56 @@ public:
     }
 
     //
+    // DrawImage
+    //
+    TEST_METHOD(CanvasDrawingSession_DrawImage_NullImage)
+    {
+        CanvasDrawingSessionFixture f;
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImage(nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawImage_Bitmap)
+    {
+        CanvasDrawingSessionFixture f;
+
+        int testWidth = 16;
+        int testHeight = 32;
+
+        WinString testFileName(L"fakeFileName.jpg");
+
+        auto converter = Make<MockWICFormatConverter>();
+        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
+
+        ComPtr<MockD2DBitmap>  bitmap = Make<MockD2DBitmap>();
+
+        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
+        canvasDevice->MockCreateBitmap = 
+            [&]() -> ComPtr<ID2D1Bitmap1>
+            {
+                return bitmap;
+            };
+
+        ComPtr<canvas::CanvasBitmap> canvasBitmap = Make<canvas::CanvasBitmap>(canvasDevice.Get(), testFileName, adapter);
+
+        ComPtr<ICanvasImageInternal> internalImage;
+        ThrowIfFailed(canvasBitmap.As(&internalImage));
+
+        bool drawImageCalled = false;
+        f.DeviceContext->MockDrawImage = 
+            [&](ID2D1Image* image)
+            {
+                Assert::IsFalse(drawImageCalled);
+                Assert::IsNotNull(image);
+                Assert::AreEqual(internalImage->GetD2DImage(f.DeviceContext.Get()).Get(), image);
+                drawImageCalled = true;
+            };
+
+        ThrowIfFailed(f.DS->DrawImage(canvasBitmap.Get()));
+        Assert::IsTrue(drawImageCalled);
+    }
+
+    //
     // DrawLine
     //
 
@@ -201,7 +254,7 @@ public:
                 Assert::IsNull(strokeStyle);
                 drawLineCalled = true;
             };
-
+        
         ThrowIfFailed(f.DS->DrawLine(
             expectedP0,
             expectedP1,

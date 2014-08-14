@@ -483,6 +483,16 @@ namespace canvas
         return brush;
     }
 
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmap(IWICFormatConverter* wicConverter)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1Bitmap1> bitmap;
+        ThrowIfFailed(deviceContext->CreateBitmapFromWicBitmap(wicConverter, &bitmap));
+
+        return bitmap;
+    }
+    
     IFACEMETHODIMP CanvasDevice::get_Device(ICanvasDevice** value)
     {
         return ExceptionBoundary(

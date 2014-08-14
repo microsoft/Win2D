@@ -25,10 +25,12 @@ namespace CsConsumer
     {
         Random m_random = new Random();
         CanvasSolidColorBrush m_brush;
+        ICanvasBitmap m_bitmap_tiger;
 
         enum DrawnContentType
         {
             Clear_Only,
+            Bitmap,
             Line_Thin,
             Line_Thick,
             Rectangle_Thin,
@@ -136,12 +138,21 @@ namespace CsConsumer
             DrawnContentType drawnContentType = (DrawnContentType)m_drawnContentTypeCombo.SelectedValue;
 
             ds.Clear(NextRandomColor());
-
+                
             m_brush.Color = NextRandomColor();
-
+            
             switch (drawnContentType)
             {
                 case DrawnContentType.Clear_Only:
+                    break;
+
+                case DrawnContentType.Bitmap:
+                    if (m_bitmap_tiger != null)
+                    {
+                        ds.DrawImage(m_bitmap_tiger, NextRandomPoint(horizontalLimit, verticalLimit));
+                    }
+                    else
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
                     break;
 
                 case DrawnContentType.Line_Thin:
@@ -244,8 +255,6 @@ namespace CsConsumer
                             ParagraphAlignment = ParagraphAlignment.Justify,
                             Options = CanvasDrawTextOptions.Clip
                         });
-
-
                     break;
 
                 case DrawnContentType.Test_Scene0_Default:
@@ -313,10 +322,32 @@ namespace CsConsumer
                                 (byte)m_random.Next(256));
         }
 
+        private void DrawNoBitmapErrorMessage(CanvasDrawingSession ds, int x, int y)
+        {
+            ds.DrawText(
+                "Please load bitmap before drawing it",
+                new Point(x, y),
+                m_brush,
+                new CanvasTextFormat()
+                {
+                    FontSize = 24,
+                    VerticalAlignment = CanvasVerticalAlignment.Center,
+                    ParagraphAlignment = ParagraphAlignment.Center
+                });
+        }
+
         // http://www.gutenberg.org/files/32572/32572-0.txt
         static string m_quiteLongText = "Many years ago there was an emperor who was so fond of new clothes that he spent all his money on them. " +
             "He did not give himself any concern about his army; he cared nothing about the theater or for driving about in the woods, " +
             "except for the sake of showing himself off in new clothes. He had a costume for every hour in the day, and just as they say " +
             "of a king or emperor, \"He is in his council chamber,\" they said of him, \"The emperor is in his dressing room.\"";
+
+        async private void OnLoadBitmapAsyncClicked(object sender, RoutedEventArgs e)
+        {
+            string fileNameTiger = "imageTiger.jpg";
+            m_bitmap_tiger = await CanvasBitmap.LoadAsync(m_canvasControl, fileNameTiger);
+
+            m_canvasControl.Invalidate();
+        }
     }
 }

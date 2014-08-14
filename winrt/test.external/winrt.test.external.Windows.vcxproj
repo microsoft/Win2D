@@ -56,6 +56,9 @@
     <Image Include="$(AssetDir)UnitTestStoreLogo.scale-100.png">
       <Link>Assets\UnitTestStoreLogo.scale-100.png</Link>
     </Image>
+	<Image Include="$(AssetDir)imageTiger.jpg">
+      <Link>Assets\imageTiger.jpg</Link>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dll\winrt.dll.Windows.vcxproj">

@@ -143,6 +143,7 @@ namespace Microsoft
             TO_STRING(ICanvasDevice);
             TO_STRING(ICanvasDrawingSession);
             TO_STRING(ID2D1Brush);
+            TO_STRING(ID2D1Image);
             TO_STRING(ID2D1Device1);
             TO_STRING(ID2D1DeviceContext1);
             TO_STRING(ID2D1Factory);

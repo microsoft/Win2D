@@ -15,6 +15,7 @@
 #include "CanvasDrawingSession.h"
 #include "CanvasStrokeStyle.h"
 #include "CanvasTextFormat.h"
+#include "CanvasImage.h"
 
 namespace canvas
 {
@@ -151,6 +152,34 @@ namespace canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDrawingSession::DrawImage(
+        ICanvasImage* image)
+    {
+        ABI::Windows::Foundation::Point point;
+        point.X = 0;
+        point.Y = 0;
+
+        return DrawImageWithOffset(
+            image,
+            point);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithOffset(
+        ICanvasImage* image,
+        ABI::Windows::Foundation::Point offset)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                CheckInPointer(image);
+                auto& deviceContext = GetResource();
+
+                ComPtr<ICanvasImageInternal> internal;
+                ThrowIfFailed(image->QueryInterface(IID_PPV_ARGS(&internal)));
+
+                deviceContext->DrawImage(internal->GetD2DImage(deviceContext.Get()).Get(), ToD2DPoint(offset));
+            });
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawLine(
         ABI::Windows::Foundation::Point point0,

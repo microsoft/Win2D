@@ -10,25 +10,24 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+#include "CanvasBitmap.h"
+
+class TestBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
 {
-    //
-    // ICanvasImage
-    //
-    [version(VERSION), uuid(794966D3-6A64-47E9-8DA8-B46AAA24D53B)]
-    interface ICanvasImage : IInspectable
-        requires Windows.Foundation.IClosable
+    ComPtr<IWICFormatConverter> m_converter;
+
+public:
+    std::function<void()> MockCreateWICFormatConverter;
+
+    TestBitmapResourceCreationAdapter(ComPtr<IWICFormatConverter> converter)
+        : m_converter(converter)
     {
     }
-    
-    //
-    // ICanvasResourceCreator
-    //
-    runtimeclass CanvasDevice;
 
-    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
-    interface ICanvasResourceCreator : IInspectable
+    ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName)
     {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
-    };
-}
+        if (MockCreateWICFormatConverter)
+            MockCreateWICFormatConverter();
+        return m_converter;
+    }
+};

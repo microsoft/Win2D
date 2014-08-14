@@ -20,6 +20,7 @@
             <TextBlock>Image using CanvasImageSource:</TextBlock>
             <StackPanel Orientation="Horizontal">
                 <Button Content="Redraw" Click="OnRedrawClicked"/>
+                <Button Content="Load Bitmap Async" Click="OnLoadBitmapAsyncClicked"/>
                 <ComboBox x:Name="m_drawnContentTypeCombo" ItemsSource="{Binding}"/>
             </StackPanel>
             <TextBlock x:Name="m_statusMessage"/>

@@ -41,6 +41,11 @@
       <Link>Assets\WideLogo.scale-240.png</Link>
     </Image>
   </ItemGroup>
+    <ItemGroup>
+    <ProjectReference Include="..\..\winrt\dll\winrt.dll.WindowsPhone.vcxproj">
+      <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="CppConsumer.Shared.vcxitems" Label="Shared" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.targets" />

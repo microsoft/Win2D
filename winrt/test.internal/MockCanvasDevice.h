@@ -71,6 +71,12 @@ namespace canvas
             Assert::Fail(L"Unexpected call to CreateSolidColorBrush");
             return nullptr;
         }
+
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* converter) override
+        {
+            Assert::Fail(L"Unexpected call to CreateBitmap");
+            return nullptr;
+        }
     };
 }
 
