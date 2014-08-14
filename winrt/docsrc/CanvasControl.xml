@@ -19,15 +19,6 @@
         <member name="E:Microsoft.Graphics.Canvas.CanvasControl.Drawing">
             <summary></summary>
         </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasCreatingResourcesEventArgs">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasCreatingResourcesEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDevice)">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasCreatingResourcesEventArgs.Device">
-            <summary></summary>
-        </member>
         <member name="T:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs">
             <summary></summary>
         </member>

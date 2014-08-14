@@ -33,6 +33,7 @@
 
   <!-- Tools used to generate the documentation -->
   <ItemGroup>
+    <ToolProject Include="DocDiff\DocDiff.csproj" Condition="!$(IntellisenseOnly)" />
     <ToolProject Include="ExtractAPISurface\ExtractAPISurface.csproj" Condition="!$(IntellisenseOnly)" />
     <ToolProject Include="MergeIntellisense\MergeIntellisense.csproj" />
   </ItemGroup>
@@ -40,7 +41,7 @@
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="BuildDocs"
-          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; RunSandcastle; MergeIntellisense" />
+          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; DiffDocs; RunSandcastle; MergeIntellisense" />
 
 
   <!-- Build our custom tools -->
@@ -71,6 +72,23 @@
   </Target>
 
 
+  <!-- Compare the docsrc files against generated API reference XML,
+       to make sure everything that should be documented actually is -->
+  <Target Name="DiffDocs" Condition="!$(IntellisenseOnly)">
+
+    <ItemGroup>
+      <DocSrc Remove="@(DocSrc)" />
+      <DocSrc Include="%(InputAssembly.DocSrc)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <DocDiffTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocDiff\DocDiff.exe</DocDiffTool>
+    </PropertyGroup>
+
+    <Exec Command="$(DocDiffTool) /LogMissingDocs:$(IntermediateOutputPath)MissingDocs.xml @(DocSrc->'/DocSrc:%(Identity)', ' ') @(InputAssembly->'/ApiRef:$(IntermediateOutputPath)%(Filename).xml', ' ')" />
+  </Target>
+
+
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
   <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)">
     <Error Condition="'$(SHFBROOT)' == ''" Text="Sandcastle not found. Get it at http://shfb.codeplex.com." />
@@ -84,6 +102,7 @@
           Outputs="%(Filename)">
 
     <ItemGroup>
+      <DocSrc Remove="@(DocSrc)" />
       <DocSrc Include="%(InputAssembly.DocSrc)" />
     </ItemGroup>
 

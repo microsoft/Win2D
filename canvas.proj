@@ -94,6 +94,7 @@
     <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj" Condition="$(BuildTests)">
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
+    <AnyCPUProject Include="tools\docs\DocDiff\DocDiff.csproj" />
     <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
     <AnyCPUProject Include="tools\docs\MergeIntellisense\MergeIntellisense.csproj" />
   </ItemGroup>

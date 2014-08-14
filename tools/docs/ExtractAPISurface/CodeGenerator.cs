@@ -115,6 +115,7 @@ namespace ExtractAPISurface
 
                 foreach (var value in enumValues)
                 {
+                    output.WriteDocComment();
                     output.WriteLine("{0} = {1},", value.Name, value.Value);
                 }
             }
