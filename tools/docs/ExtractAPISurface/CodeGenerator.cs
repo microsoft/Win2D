@@ -505,6 +505,10 @@ namespace ExtractAPISurface
             {
                 output.WriteLine("public struct {0} {{ }}", name);
             }
+            else if (type.IsInterface)
+            {
+                output.WriteLine("public interface {0} {{ }}", name);
+            }
             else
             {
                 output.WriteLine("public class {0} {{ internal {0}() {{ }} }}", name);
