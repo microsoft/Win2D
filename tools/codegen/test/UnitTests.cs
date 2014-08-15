@@ -13,6 +13,9 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text;
+using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace CodeGen.Test
 {
@@ -98,6 +101,56 @@ namespace CodeGen.Test
 
                 Assert.AreEqual(expectedFileContent, actualFileContent);
             }            
+        }
+
+        [TestMethod]
+        [DeploymentItem("Deployed Files/D2DEffectAuthor.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/D2DTypes2.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/D2DTypes3.xml", "codegen/in")]
+        [DeploymentItem("Deployed Files/Settings.xml", "codegen/in")]
+        public void OverridesAreWellFormed()
+        {
+            List<string> files = CodeGen.Program.GetInputFileList();
+
+            string inputDir = "codegen/in";
+
+            Overrides.XmlBindings.Settings overridesXmlData = XmlBindings.Utilities.LoadXmlData<Overrides.XmlBindings.Settings>(inputDir, "Settings.xml");
+            Formatter.Prefix = overridesXmlData.Prefix.Value;
+            Formatter.Subnamespace = overridesXmlData.Subnamespace.Value;
+            
+            List<D2DTypes> typeDocuments = new List<D2DTypes>();
+            Dictionary<string, QualifiableType> typeDictionary = new Dictionary<string, QualifiableType>();
+            OutputDataTypes outputDataTypes = new OutputDataTypes();
+            foreach (string fileName in files)
+            {
+                XmlBindings.D2DTypes xmlDocument = XmlBindings.Utilities.LoadXmlData<XmlBindings.D2DTypes>(inputDir, fileName);
+                typeDocuments.Add(new D2DTypes(xmlDocument, overridesXmlData, typeDictionary, outputDataTypes));
+            }
+
+            foreach(Overrides.XmlBindings.Namespace overrideNamespace in overridesXmlData.Namespaces)
+            {
+                Assert.IsTrue(overrideNamespace.Name == "D2D" || overrideNamespace.Name == "D2D1", "Unexpected override namespace: " + overrideNamespace.Name);
+
+                foreach(Overrides.XmlBindings.Struct overrideStruct in overrideNamespace.Structs)
+                {
+                    string nameKey = overrideNamespace.Name + "::" + overrideStruct.Name;
+                    Assert.IsTrue(typeDictionary.ContainsKey(nameKey), "Unexpected override struct: " + overrideStruct.Name);
+                }
+
+                foreach (Overrides.XmlBindings.Enum overrideEnum in overrideNamespace.Enums)
+                {
+                    string nameKey = overrideNamespace.Name + "::" + overrideEnum.Name;
+                    Assert.IsTrue(typeDictionary.ContainsKey(nameKey), "Unexpected override enum: " + overrideEnum.Name);
+
+                    CodeGen.Enum e = (CodeGen.Enum)(typeDictionary[nameKey]);
+                    foreach(Overrides.XmlBindings.EnumValue overrideEnumValue in overrideEnum.Values)
+                    {
+                        CodeGen.EnumValue match = e.Values.Find(x => x.NativeName == overrideEnumValue.Name);
+                        Assert.IsNotNull(match, "Unexpected override enum value: " + overrideEnum + "::" + overrideEnumValue.Name);
+                    }
+                }
+            }
         }
     }
 }

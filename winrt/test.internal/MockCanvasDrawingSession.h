@@ -221,5 +221,65 @@ namespace canvas
             Assert::Fail(L"Unexpected call to DrawTextWithFormat");
             return E_NOTIMPL;
         }
+
+        IFACEMETHODIMP get_Antialiasing(CanvasAntialiasing* value)
+		{
+			Assert::Fail(L"Unexpected call to get_Antialiasing");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP put_Antialiasing(CanvasAntialiasing value)
+		{
+			Assert::Fail(L"Unexpected call to put_Antialiasing");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP get_Blend(CanvasBlend* value)
+		{
+			Assert::Fail(L"Unexpected call to get_Blend");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP put_Blend(CanvasBlend value)
+		{
+			Assert::Fail(L"Unexpected call to put_Blend");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP get_TextAntialiasing(CanvasTextAntialiasing* value)
+		{
+			Assert::Fail(L"Unexpected call to get_TextAntialiasing");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP put_TextAntialiasing(CanvasTextAntialiasing value)
+		{
+			Assert::Fail(L"Unexpected call to put_TextAntialiasing");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP get_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value)
+		{
+			Assert::Fail(L"Unexpected call to get_Transform");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP put_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value)
+		{
+			Assert::Fail(L"Unexpected call to put_Transform");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP get_Units(CanvasUnits* value)
+		{
+			Assert::Fail(L"Unexpected call to get_Units");
+			return E_NOTIMPL;
+		}
+
+        IFACEMETHODIMP put_Units(CanvasUnits value)
+		{
+			Assert::Fail(L"Unexpected call to put_Units");
+			return E_NOTIMPL;
+		}
     };
 }

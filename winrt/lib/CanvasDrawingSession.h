@@ -24,6 +24,7 @@ namespace canvas
     {
     public:
         virtual ~ICanvasDrawingSessionAdapter() = default;
+        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() = 0;
         virtual void EndDraw() = 0;
     };
 
@@ -181,6 +182,22 @@ namespace canvas
             ABI::Windows::Foundation::Rect rectangle,
             ICanvasBrush* brush,
             ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(get_Antialiasing)(CanvasAntialiasing* value);
+        IFACEMETHOD(put_Antialiasing)(CanvasAntialiasing value);
+
+        IFACEMETHOD(get_Blend)(CanvasBlend* value);
+        IFACEMETHOD(put_Blend)(CanvasBlend value);
+
+        IFACEMETHOD(get_TextAntialiasing)(CanvasTextAntialiasing* value);
+        IFACEMETHOD(put_TextAntialiasing)(CanvasTextAntialiasing value);
+
+        IFACEMETHOD(get_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value);
+        IFACEMETHOD(put_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value);
+
+        IFACEMETHOD(get_Units)(CanvasUnits* value);
+        IFACEMETHOD(put_Units)(CanvasUnits value);
+
 
     private:
         void DrawTextAtPointImpl(

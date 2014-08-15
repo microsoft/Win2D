@@ -50,7 +50,7 @@ namespace CodeGen
         }
     }
 
-    class Namespace
+    public class Namespace
     {
         public Namespace(XmlBindings.Namespace xmlData, Overrides.XmlBindings.Namespace overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {

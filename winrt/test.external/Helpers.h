@@ -94,8 +94,60 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasLineJoin);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasDashStyle);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasStrokeTransformBehavior);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasAntialiasing);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasBlend);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasTextAntialiasing);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasUnits);
 
 #undef CX_VALUE_TO_STRING
+
+            template<>
+            static inline std::wstring ToString<D2D1_ANTIALIAS_MODE>(const D2D1_ANTIALIAS_MODE& value)
+            {
+                switch (value)
+                {
+                    case D2D1_ANTIALIAS_MODE_PER_PRIMITIVE: return L"D2D1_ANTIALIAS_MODE_PER_PRIMITIVE";
+                    case D2D1_ANTIALIAS_MODE_ALIASED: return L"D2D1_ANTIALIAS_MODE_ALIASED";
+                    default: assert(false); return L"<unknown D2D1_ANTIALIAS_MODE>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_PRIMITIVE_BLEND>(const D2D1_PRIMITIVE_BLEND& value)
+            {
+                switch (value)
+                {
+                    case D2D1_PRIMITIVE_BLEND_SOURCE_OVER: return L"D2D1_PRIMITIVE_BLEND_SOURCE_OVER";
+                    case D2D1_PRIMITIVE_BLEND_COPY: return L"D2D1_PRIMITIVE_BLEND_COPY";
+                    case D2D1_PRIMITIVE_BLEND_MIN: return L"D2D1_PRIMITIVE_BLEND_MIN";
+                    case D2D1_PRIMITIVE_BLEND_ADD: return L"D2D1_PRIMITIVE_BLEND_ADD";
+                    default: assert(false); return L"<unknown D2D1_PRIMITIVE_BLEND>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_TEXT_ANTIALIAS_MODE>(const D2D1_TEXT_ANTIALIAS_MODE& value)
+            {
+                switch (value)
+                {
+                    case D2D1_TEXT_ANTIALIAS_MODE_DEFAULT: return L"D2D1_TEXT_ANTIALIAS_MODE_DEFAULT";
+                    case D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE: return L"D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE";
+                    case D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE: return L"D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE";
+                    case D2D1_TEXT_ANTIALIAS_MODE_ALIASED: return L"D2D1_TEXT_ANTIALIAS_MODE_ALIASED";
+                    default: assert(false); return L"<unknown D2D1_TEXT_ANTIALIAS_MODE>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_UNIT_MODE>(const D2D1_UNIT_MODE& value)
+            {
+                switch (value)
+                {
+                    case D2D1_UNIT_MODE_DIPS: return L"D2D1_UNIT_MODE_DIPS";
+                    case D2D1_UNIT_MODE_PIXELS: return L"D2D1_UNIT_MODE_PIXELS";
+                    default: assert(false); return L"<unknown D2D1_UNIT_MODE>";
+                }
+            }
 
             inline bool operator==(const Windows::UI::Color& a, const Windows::UI::Color& b)
             {

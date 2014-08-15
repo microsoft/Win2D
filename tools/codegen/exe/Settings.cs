@@ -57,10 +57,10 @@ namespace CodeGen
                 public string Name;
 
                 [XmlAttributeAttribute]
-                public string ProjectedNameOverride;
+                public bool ShouldProject;
 
                 [XmlAttributeAttribute]
-                public bool ShouldProject;
+                public string ProjectedNameOverride;
             }
 
             public class Enum

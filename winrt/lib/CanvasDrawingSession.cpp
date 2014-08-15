@@ -64,6 +64,12 @@ namespace canvas
     class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
     {
     public:
+
+        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
+        {
+            return D2D1::Point2F(0, 0);
+        }
+
         virtual void EndDraw() override
         {
             // nothing
@@ -535,6 +541,141 @@ namespace canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDrawingSession::get_Antialiasing(CanvasAntialiasing* value)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(value);
+
+                *value = static_cast<CanvasAntialiasing>(deviceContext->GetAntialiasMode());
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::put_Antialiasing(CanvasAntialiasing value)
+	{
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+
+                deviceContext->SetAntialiasMode(static_cast<D2D1_ANTIALIAS_MODE>(value));
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::get_Blend(CanvasBlend* value)
+	{
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(value);
+
+                *value = static_cast<CanvasBlend>(deviceContext->GetPrimitiveBlend());
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::put_Blend(CanvasBlend value)
+	{
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+
+                deviceContext->SetPrimitiveBlend(static_cast<D2D1_PRIMITIVE_BLEND>(value));
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::get_TextAntialiasing(CanvasTextAntialiasing* value)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(value);
+
+                *value = static_cast<CanvasTextAntialiasing>(deviceContext->GetTextAntialiasMode());
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::put_TextAntialiasing(CanvasTextAntialiasing value)
+	{
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+
+                deviceContext->SetTextAntialiasMode(static_cast<D2D1_TEXT_ANTIALIAS_MODE>(value));
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::get_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(value);
+
+                D2D1_MATRIX_3X2_F transform;
+                deviceContext->GetTransform(&transform);
+                
+                //
+                // Un-apply the offset transform. This could be done with a matrix invert, 
+                // but this is cheaper.
+                //
+                // This polls from the wrapped object, rather than stores a local transform 
+                // member. This ensures that any transforms performed in native interop
+                // will be retrievable here.
+                //
+                const D2D1_POINT_2F renderingSurfaceOffset = m_adapter->GetRenderingSurfaceOffset();
+                transform._31 -= renderingSurfaceOffset.x;
+                transform._32 -= renderingSurfaceOffset.y;
+
+                *value = *reinterpret_cast<ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2*>(&transform);
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::put_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value)
+	{
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+                
+                D2D1_POINT_2F offset = m_adapter->GetRenderingSurfaceOffset();
+
+                D2D1_MATRIX_3X2_F transform = *(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
+                transform._31 += offset.x;
+                transform._32 += offset.y;
+
+                deviceContext->SetTransform(transform);
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::get_Units(CanvasUnits* value)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(value);
+
+                *value = static_cast<CanvasUnits>(deviceContext->GetUnitMode());
+            });
+	}
+
+    IFACEMETHODIMP CanvasDrawingSession::put_Units(CanvasUnits value)
+	{
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+
+                deviceContext->SetUnitMode(static_cast<D2D1_UNIT_MODE>(value));
+            });
+	}
 
     ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
 }

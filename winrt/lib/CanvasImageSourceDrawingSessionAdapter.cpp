@@ -51,12 +51,21 @@ namespace canvas
         // so when we ask to render to (0,0) we actually render to the
         // appropriate location in the atlased surface.
         //
-        deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
+        const D2D1_POINT_2F renderingSurfaceOffset = D2D1::Point2F(
             static_cast<float>(offset.x),
-            static_cast<float>(offset.y)));            
+            static_cast<float>(offset.y));       
 
         auto adapter = std::make_shared<CanvasImageSourceDrawingSessionAdapter>(
-            sisNative);
+            sisNative,
+            renderingSurfaceOffset);
+
+        //
+        // TODO #2140 Use a separate code path, responsible for resetting  
+        // transforms for non-SiS drawing sessions.
+        //
+        deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
+            renderingSurfaceOffset.x,
+            renderingSurfaceOffset.y));
 
         //
         // This function can't fail now, so we can dismiss the end draw warden.
@@ -68,8 +77,10 @@ namespace canvas
 
 
     CanvasImageSourceDrawingSessionAdapter::CanvasImageSourceDrawingSessionAdapter(
-        ISurfaceImageSourceNativeWithD2D* sisNative)
+        ISurfaceImageSourceNativeWithD2D* sisNative,
+        const D2D1_POINT_2F& renderingSurfaceOffset)
         : m_sisNative(sisNative)
+        , m_renderingSurfaceOffset(renderingSurfaceOffset)
     {
         CheckInPointer(sisNative);
     }
@@ -78,5 +89,10 @@ namespace canvas
     void CanvasImageSourceDrawingSessionAdapter::EndDraw()
     {
         ThrowIfFailed(m_sisNative->EndDraw());
+    }
+
+    D2D1_POINT_2F CanvasImageSourceDrawingSessionAdapter::GetRenderingSurfaceOffset()
+    {
+        return m_renderingSurfaceOffset;
     }
 }

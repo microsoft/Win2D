@@ -34,6 +34,13 @@ namespace Microsoft.Graphics.Canvas
     } CanvasDebugLevel;
 
     [version(VERSION)]
+    typedef enum CanvasAntialiasing
+    {
+        Antialiased = (int)0,
+        Aliased = (int)1
+    } CanvasAntialiasing;
+
+    [version(VERSION)]
     typedef enum CanvasCapStyle
     {
         Flat = (int)0,
@@ -52,12 +59,37 @@ namespace Microsoft.Graphics.Canvas
     } CanvasLineJoin;
 
     [version(VERSION)]
+    typedef enum CanvasTextAntialiasing
+    {
+        Default = (int)0,
+        ClearType = (int)1,
+        Grayscale = (int)2,
+        Aliased = (int)3
+    } CanvasTextAntialiasing;
+
+    [version(VERSION)]
+    typedef enum CanvasUnits
+    {
+        Dips = (int)0,
+        Pixels = (int)1
+    } CanvasUnits;
+
+    [version(VERSION)]
     typedef enum CanvasStrokeTransformBehavior
     {
         Normal = (int)0,
         Fixed = (int)1,
         Hairline = (int)2
     } CanvasStrokeTransformBehavior;
+
+    [version(VERSION)]
+    typedef enum CanvasBlend
+    {
+        SourceOver = (int)0,
+        Copy = (int)1,
+        Min = (int)2,
+        Add = (int)3
+    } CanvasBlend;
 
     [version(VERSION)]
     typedef struct CanvasEllipse

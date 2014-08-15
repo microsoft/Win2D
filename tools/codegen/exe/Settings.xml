@@ -24,6 +24,14 @@
     </Enum>
     <Enum Name="LINE_JOIN" ShouldProject="true"/>
     <Enum Name="STROKE_TRANSFORM_TYPE" ShouldProject="true" ProjectedNameOverride="StrokeTransformBehavior"/>"
+    <Enum Name="ANTIALIAS_MODE" ShouldProject="true" ProjectedNameOverride="Antialiasing">
+        <Field Name="PER_PRIMITIVE" ProjectedNameOverride="Antialiased"/>
+    </Enum>
+    <Enum Name="PRIMITIVE_BLEND" ShouldProject="true" ProjectedNameOverride="Blend"/>
+    <Enum Name="TEXT_ANTIALIAS_MODE" ShouldProject="true" ProjectedNameOverride="TextAntialiasing">
+        <Field Name="CLEARTYPE" ProjectedNameOverride="ClearType"/>
+    </Enum>
+    <Enum Name="UNIT_MODE" ShouldProject="true" ProjectedNameOverride="Units"/>
 
     <Struct Name="ROUNDED_RECT" ShouldProject="true" ProjectedNameOverride="RoundedRectangle"/>
     <Struct Name="ELLIPSE" ShouldProject="true"/>

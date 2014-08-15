@@ -24,5 +24,10 @@ namespace canvas
         {
             // nothing
         }
+
+        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
+        {
+            return D2D1::Point2F(0, 0);
+        }
     };
 }

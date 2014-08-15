@@ -22,6 +22,8 @@ namespace canvas
     {
         ComPtr<ISurfaceImageSourceNativeWithD2D> m_sisNative;
 
+        D2D1_POINT_2F m_renderingSurfaceOffset;
+
     public:
         static std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> Create(
             ISurfaceImageSourceNativeWithD2D* sisNative,
@@ -29,10 +31,13 @@ namespace canvas
             ID2D1DeviceContext1** outDeviceContext);
 
         CanvasImageSourceDrawingSessionAdapter(
-            ISurfaceImageSourceNativeWithD2D* sisNative);
+            ISurfaceImageSourceNativeWithD2D* sisNative,
+            const D2D1_POINT_2F& renderingSurfaceOffset);
 
         virtual ~CanvasImageSourceDrawingSessionAdapter() = default;
 
         virtual void EndDraw() override;
+
+        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
     };
 }

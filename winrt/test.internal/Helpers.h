@@ -478,6 +478,70 @@ namespace Microsoft
                 END_ENUM(DWRITE_WORD_WRAPPING);
             }
 
+            ENUM_TO_STRING(D2D1_ANTIALIAS_MODE)
+            {
+                ENUM_VALUE(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+                ENUM_VALUE(D2D1_ANTIALIAS_MODE_ALIASED);
+                END_ENUM(D2D1_ANTIALIAS_MODE);
+            }
+
+            ENUM_TO_STRING(CanvasAntialiasing)
+            {
+                ENUM_VALUE(CanvasAntialiasing::Antialiased);
+                ENUM_VALUE(CanvasAntialiasing::Aliased);
+                END_ENUM(CanvasAntialiasing);
+            }
+
+            ENUM_TO_STRING(D2D1_PRIMITIVE_BLEND)
+            {
+                ENUM_VALUE(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+                ENUM_VALUE(D2D1_PRIMITIVE_BLEND_COPY);
+                ENUM_VALUE(D2D1_PRIMITIVE_BLEND_MIN);
+                ENUM_VALUE(D2D1_PRIMITIVE_BLEND_ADD);
+                END_ENUM(D2D1_PRIMITIVE_BLEND);
+            }
+
+            ENUM_TO_STRING(CanvasBlend)
+            {
+                ENUM_VALUE(CanvasBlend::SourceOver);
+                ENUM_VALUE(CanvasBlend::Copy);
+                ENUM_VALUE(CanvasBlend::Min);
+                ENUM_VALUE(CanvasBlend::Add);
+                END_ENUM(CanvasBlend);
+            }
+
+            ENUM_TO_STRING(D2D1_TEXT_ANTIALIAS_MODE)
+            {
+                ENUM_VALUE(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
+                ENUM_VALUE(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
+                ENUM_VALUE(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
+                ENUM_VALUE(D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
+                END_ENUM(D2D1_TEXT_ANTIALIAS_MODE);
+            }
+
+            ENUM_TO_STRING(CanvasTextAntialiasing)
+            {
+                ENUM_VALUE(CanvasTextAntialiasing::Default);
+                ENUM_VALUE(CanvasTextAntialiasing::ClearType);
+                ENUM_VALUE(CanvasTextAntialiasing::Grayscale);
+                ENUM_VALUE(CanvasTextAntialiasing::Aliased);
+                END_ENUM(CanvasTextAntialiasing);
+            }
+
+            ENUM_TO_STRING(D2D1_UNIT_MODE)
+            {
+                ENUM_VALUE(D2D1_UNIT_MODE_DIPS);
+                ENUM_VALUE(D2D1_UNIT_MODE_PIXELS);
+                END_ENUM(D2D1_UNIT_MODE);
+            }
+
+            ENUM_TO_STRING(CanvasUnits)
+            {
+                ENUM_VALUE(CanvasUnits::Dips);
+                ENUM_VALUE(CanvasUnits::Pixels);
+                END_ENUM(CanvasUnits);
+            }
+
             template<typename T>
             static inline std::wstring ToStringAsInt(T value)
             {
@@ -560,19 +624,20 @@ namespace Microsoft
                 a.M31 == b.M31 && a.M32 == b.M32;
         }
 
-        inline bool operator==(const D2D1_MATRIX_3X2_F& a, const D2D1_MATRIX_3X2_F& b)
-        {
-            return
-                a._11 == b._11 && a._12 == b._12 &&
-                a._21 == b._21 && a._22 == b._22 &&
-                a._31 == b._31 && a._32 == b._32;
-        }
-
         inline bool operator==(const ABI::Windows::UI::Text::FontWeight& a, const ABI::Windows::UI::Text::FontWeight& b)
         {
             return a.Weight == b.Weight;
         }
+
     }
+}
+
+inline bool operator==(const D2D1_MATRIX_3X2_F& a, const D2D1_MATRIX_3X2_F& b)
+{
+    return
+        a._11 == b._11 && a._12 == b._12 &&
+        a._21 == b._21 && a._22 == b._22 &&
+        a._31 == b._31 && a._32 == b._32;
 }
 
 #define ASSERT_IMPLEMENTS_INTERFACE(obj, INTERFACE)                     \

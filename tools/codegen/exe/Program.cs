@@ -22,13 +22,13 @@ using System.Diagnostics;
 
 namespace CodeGen
 {
-    struct OutputFiles
+    public struct OutputFiles
     {
         public Formatter CppFile;
         public Formatter IdlFile;
     }
 
-    class OutputDataTypes
+    public class OutputDataTypes
     {
         public OutputDataTypes()
         {
@@ -131,14 +131,19 @@ namespace CodeGen
         {
             return Path.GetFullPath(Path.Combine(inputDir, "..", "..", "..", "winrt", "lib"));
         }
-
-        public static void GenerateCode(string inputDir, string outputDir)
+        public static List<string> GetInputFileList()
         {
             List<string> files = new List<string>();
             files.Add("D2DTypes.xml");
             files.Add("D2DTypes2.xml");
             files.Add("D2DEffectAuthor.xml");
             files.Add("D2DTypes3.xml");
+            return files;
+        }
+
+        public static void GenerateCode(string inputDir, string outputDir)
+        {
+            List<string> files = GetInputFileList();
 
             Overrides.XmlBindings.Settings overridesXmlData = XmlBindings.Utilities.LoadXmlData<Overrides.XmlBindings.Settings>(inputDir, "Settings.xml");
             Formatter.Prefix = overridesXmlData.Prefix.Value;

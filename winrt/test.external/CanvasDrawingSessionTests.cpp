@@ -16,11 +16,7 @@ using namespace Microsoft::Graphics::Canvas;
 
 TEST_CLASS(CanvasDrawingSessionTests)
 {
-    //
-    // CanvasDrawingSession interop is tested more directly in test.internal.
-    // This exercises the published API.
-    //
-    TEST_METHOD(CanvasDrawingSession_Interop)
+    ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext()
     {
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
         auto d2dDevice = GetWrappedResource<ID2D1Device1>(canvasDevice);
@@ -30,10 +26,62 @@ TEST_CLASS(CanvasDrawingSessionTests)
             D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
             &context));
 
+        return context;
+    }
+
+    //
+    // CanvasDrawingSession interop is tested more directly in test.internal.
+    // This exercises the published API.
+    //
+    TEST_METHOD(CanvasDrawingSession_Interop)
+    {
+        ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
+
         auto drawingSession = GetOrCreate<CanvasDrawingSession>(context.Get());
         auto actualContext = GetWrappedResource<ID2D1DeviceContext1>(drawingSession);
 
         Assert::AreEqual(context.Get(), actualContext.Get());
+    }
+
+    //
+    // Tests the projections of the state properties, and that they actually 
+    // call through to D2D.
+    //
+    TEST_METHOD(CanvasDrawingSession_StateProperties)
+    {
+        ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
+
+        Numerics::Matrix3x2 someTransform = { 1, 2, 3, 4, 5, 6 };
+        Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0};
+
+        context->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+        context->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
+        context->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
+        context->SetTransform(reinterpret_cast<const D2D1_MATRIX_3X2_F*>(&someTransform));
+        context->SetUnitMode(D2D1_UNIT_MODE_PIXELS);
+
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(context.Get());
+
+        Assert::AreEqual(CanvasAntialiasing::Aliased, drawingSession->Antialiasing);
+        Assert::AreEqual(CanvasBlend::Copy, drawingSession->Blend);
+        Assert::AreEqual(CanvasTextAntialiasing::Aliased, drawingSession->TextAntialiasing);
+        Assert::AreEqual(someTransform, drawingSession->Transform);
+        Assert::AreEqual(CanvasUnits::Pixels, drawingSession->Units);
+
+        drawingSession->Antialiasing = CanvasAntialiasing::Antialiased;
+        drawingSession->Blend = CanvasBlend::SourceOver;
+        drawingSession->TextAntialiasing = CanvasTextAntialiasing::Default;
+        drawingSession->Transform = identity;
+        drawingSession->Units = CanvasUnits::Dips;
+
+        Assert::AreEqual(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE, context->GetAntialiasMode());
+        Assert::AreEqual(D2D1_PRIMITIVE_BLEND_SOURCE_OVER, context->GetPrimitiveBlend());
+        Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT, context->GetTextAntialiasMode());
+        Assert::AreEqual(D2D1_UNIT_MODE_DIPS, context->GetUnitMode());
+
+        Numerics::Matrix3x2 verifyTransform;
+        context->GetTransform(reinterpret_cast<D2D1_MATRIX_3X2_F*>(&verifyTransform));
+        Assert::AreEqual(identity, verifyTransform);
     }
 };
 

@@ -55,6 +55,12 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
             if (m_endDrawShouldThrow)
                 ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
         }
+
+        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
+        {
+            Assert::IsFalse(m_endDrawCalled);
+            return D2D1::Point2F(0, 0);
+        }
     };
 
     ComPtr<ID2D1DeviceContext1> m_expectedDeviceContext;
@@ -139,6 +145,20 @@ public:
             std::make_shared<StubCanvasDrawingSessionAdapter>());
 
         Brush = Make<StubCanvasBrush>();
+    }
+};
+
+class CanvasDrawingSessionAdapter_ChangeableOffset : public StubCanvasDrawingSessionAdapter
+{
+public:
+    D2D1_POINT_2F m_offset;
+
+    CanvasDrawingSessionAdapter_ChangeableOffset()
+        : m_offset(D2D1::Point2F(0, 0)) {}
+
+    virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
+    {
+        return m_offset;
     }
 };
 
@@ -813,6 +833,219 @@ public:
 
         Assert::IsTrue(fillEllipseCalled);
     }
+
+    TEST_METHOD(CanvasDrawingSession_StateGettersWithNull)
+    {
+        CanvasDrawingSessionFixture f;
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->get_Antialiasing(nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->get_Blend(nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->get_TextAntialiasing(nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->get_Transform(nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->get_Units(nullptr));
+    }
+
+    TEST_METHOD(CanvasDrawingSession_StateProperties)
+    {
+        CanvasDrawingSessionFixture f;
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockSetAntialiasMode =
+                [&](const D2D1_ANTIALIAS_MODE m)
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                Assert::AreEqual(m, D2D1_ANTIALIAS_MODE_ALIASED);
+            };
+            ThrowIfFailed(f.DS->put_Antialiasing(CanvasAntialiasing_Aliased));
+            Assert::IsTrue(propertyFunctionCalled);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockGetAntialiasMode =
+                [&]()
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                return D2D1_ANTIALIAS_MODE_ALIASED;
+            };
+            CanvasAntialiasing antialiasMode;
+            ThrowIfFailed(f.DS->get_Antialiasing(&antialiasMode));
+            Assert::IsTrue(propertyFunctionCalled);
+            Assert::AreEqual(CanvasAntialiasing_Aliased, antialiasMode);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockSetPrimitiveBlend =
+                [&](const D2D1_PRIMITIVE_BLEND b)
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                Assert::AreEqual(b, D2D1_PRIMITIVE_BLEND_MIN);
+            };
+            ThrowIfFailed(f.DS->put_Blend(CanvasBlend_Min));
+            Assert::IsTrue(propertyFunctionCalled);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockGetPrimitiveBlend =
+                [&]()
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                return D2D1_PRIMITIVE_BLEND_COPY;
+            };
+            CanvasBlend blend;
+            ThrowIfFailed(f.DS->get_Blend(&blend));
+            Assert::IsTrue(propertyFunctionCalled);
+            Assert::AreEqual(CanvasBlend_Copy, blend);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockSetTextAntialiasMode =
+                [&](const D2D1_TEXT_ANTIALIAS_MODE m)
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                Assert::AreEqual(m, D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
+            };
+            ThrowIfFailed(f.DS->put_TextAntialiasing(CanvasTextAntialiasing_ClearType));
+            Assert::IsTrue(propertyFunctionCalled);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockGetTextAntialiasMode =
+                [&]()
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                return D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE;
+            };
+            CanvasTextAntialiasing textAntialiasing;
+            ThrowIfFailed(f.DS->get_TextAntialiasing(&textAntialiasing));
+            Assert::IsTrue(propertyFunctionCalled);
+            Assert::AreEqual(CanvasTextAntialiasing_Grayscale, textAntialiasing);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            Numerics::Matrix3x2 matrix = { 1, 2, 3, 5, 8, 13 };
+            f.DeviceContext->MockSetTransform =
+                [&](const D2D1_MATRIX_3X2_F* m)
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+
+                const D2D1_MATRIX_3X2_F* asD2DMatrix = reinterpret_cast<D2D1_MATRIX_3X2_F*>(&matrix);
+                Assert::AreEqual(*asD2DMatrix, *m);
+            };
+            ThrowIfFailed(f.DS->put_Transform(matrix));
+            Assert::IsTrue(propertyFunctionCalled);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            Numerics::Matrix3x2 matrix = { 13, 8, 5, 3, 2, 1 };
+            f.DeviceContext->MockGetTransform =
+                [&](D2D1_MATRIX_3X2_F* m)
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                const D2D1_MATRIX_3X2_F* asD2DMatrix = reinterpret_cast<D2D1_MATRIX_3X2_F*>(&matrix);
+                *m = *asD2DMatrix;
+            };
+            Numerics::Matrix3x2 transform;
+            ThrowIfFailed(f.DS->get_Transform(&transform));
+            Assert::IsTrue(propertyFunctionCalled);
+            Assert::AreEqual(matrix, transform);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockSetUnitMode =
+                [&](const D2D1_UNIT_MODE m)
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                Assert::AreEqual(m, D2D1_UNIT_MODE_PIXELS);
+            };
+            ThrowIfFailed(f.DS->put_Units(CanvasUnits_Pixels));
+            Assert::IsTrue(propertyFunctionCalled);
+        }
+
+        {
+            bool propertyFunctionCalled = false;
+            f.DeviceContext->MockGetUnitMode =
+                [&]()
+            {
+                Assert::IsFalse(propertyFunctionCalled);
+                propertyFunctionCalled = true;
+                return D2D1_UNIT_MODE_PIXELS;
+            };
+            CanvasUnits units;
+            ThrowIfFailed(f.DS->get_Units(&units));
+            Assert::IsTrue(propertyFunctionCalled);
+            Assert::AreEqual(CanvasUnits_Pixels, units);
+        }
+    }
+
+    TEST_METHOD(CanvasDrawingSession_SiSOffsetIsHiddenFromTransformProperty)
+    {
+        using canvas::CanvasDrawingSession;
+
+        ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = 
+            Make<StubD2DDeviceContextWithGetFactory>();
+
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
+        auto drawingSession = manager->Create(deviceContext.Get(), adapter);
+
+        //
+        // The adapter sets the native transform to the offset on BeginDraw. 
+        // This test doesn't verify that - the test CanvasImageSourceDrawingSessionAdapter_BeginEndDraw 
+        // does. This test just replicates the behavior.
+        //
+        adapter->m_offset = D2D1::Point2F(1, 1);
+        D2D1_MATRIX_3X2_F nativeTransform = D2D1::Matrix3x2F::Translation(
+            adapter->m_offset.x,
+            adapter->m_offset.y);
+
+        deviceContext->MockSetTransform =
+            [&](const D2D1_MATRIX_3X2_F* m)
+            {
+                nativeTransform = *m;
+            };
+
+        deviceContext->MockGetTransform =
+            [&](D2D1_MATRIX_3X2_F* m)
+            {
+                *m = nativeTransform;
+            };
+        
+        Numerics::Matrix3x2 transform;
+        ThrowIfFailed(drawingSession->get_Transform(&transform));
+        Assert::AreEqual(0.0f, transform.M31);
+        Assert::AreEqual(0.0f, transform.M32);
+
+        Numerics::Matrix3x2 interestingTranslation = { 1, 0, 0, 1, 123, 456 };
+        ThrowIfFailed(drawingSession->put_Transform(interestingTranslation));
+
+        ThrowIfFailed(drawingSession->get_Transform(&transform));
+        Assert::AreEqual(interestingTranslation, transform);
+
+        // Verify that the native resource out of interop, too, reflects the SiS offset.
+        ComPtr<ID2D1DeviceContext> nativeResource = drawingSession->GetResource();
+        D2D1_MATRIX_3X2_F wrappedResourceTransform;
+        nativeResource->GetTransform(&wrappedResourceTransform);
+        D2D1_MATRIX_3X2_F expectedTransform = D2D1::Matrix3x2F(1, 0, 0, 1, 123 + adapter->m_offset.x, 456 + adapter->m_offset.y);
+        Assert::AreEqual(expectedTransform, wrappedResourceTransform);
+    }
 };
 
 TEST_CLASS(CanvasDrawingSession_DrawTextTests)
@@ -1118,6 +1351,17 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtPointWithFormat(nullptr, Point{}, nullptr, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawText(nullptr, Rect{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextWithFormat(nullptr, Rect{}, nullptr, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Antialiasing(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Antialiasing(CanvasAntialiasing::Aliased));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Blend(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Blend(CanvasBlend::SourceOver));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_TextAntialiasing(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_TextAntialiasing(CanvasTextAntialiasing::Default));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Transform(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Transform(Numerics::Matrix3x2()));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Units(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Units(CanvasUnits::Dips));
+
 
 #undef EXPECT_OBJECT_CLOSED
     }

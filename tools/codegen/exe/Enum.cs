@@ -37,10 +37,11 @@ namespace CodeGen
         }
     }
 
-    class EnumValue
+    public class EnumValue
     {
         public EnumValue(XmlBindings.EnumValue xmlData, Overrides.XmlBindings.EnumValue overrides)
         {
+            m_nativeName = xmlData.Name;
             m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
             m_shouldProject = true;
 
@@ -111,6 +112,10 @@ namespace CodeGen
             outputFiles.IdlFile.Write(suffix);
             outputFiles.IdlFile.WriteLine();
         }
+
+        public string NativeName { get { return m_nativeName; } }
+
+        string m_nativeName;
         string m_stylizedName;
         string m_valueExpression;
         bool m_shouldProject;
@@ -136,7 +141,7 @@ namespace CodeGen
         }
     }
 
-    class Enum : QualifiableType
+    public class Enum : QualifiableType
     {
         public Enum(Namespace parentNamespace, XmlBindings.Enum xmlData, Overrides.XmlBindings.Enum overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {
@@ -168,7 +173,7 @@ namespace CodeGen
 
                 m_enumValues.Add(new EnumValue(valueXml, overridesEnumValue));
             }
-
+            
             bool shouldProject = false;
             if(overrides != null)
             {
@@ -177,7 +182,7 @@ namespace CodeGen
                 if(overrides.ProjectedNameOverride != null)
                 {
                     m_stylizedName = Formatter.Prefix + overrides.ProjectedNameOverride;
-                }
+                } 
 
             }
 
@@ -201,6 +206,11 @@ namespace CodeGen
         public override string ProjectedNameIncludingIndirection
         {
             get { return m_stylizedName; }
+        }
+
+        public List<EnumValue> Values
+        {
+            get { return m_enumValues; }
         }
 
         // Used for code generation.

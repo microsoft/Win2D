@@ -47,7 +47,7 @@ namespace CodeGen
         }
     }
 
-    class D2DTypes 
+    public class D2DTypes 
     {
         public D2DTypes(XmlBindings.D2DTypes xmlData, Overrides.XmlBindings.Settings overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {

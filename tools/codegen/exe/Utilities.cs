@@ -22,7 +22,7 @@ namespace CodeGen
 {
     namespace XmlBindings
     {
-        class Utilities
+        public class Utilities
         {
             public static DocumentType LoadXmlData<DocumentType>(string inputDir, string fileName) where DocumentType : class
             {

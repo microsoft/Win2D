@@ -24,7 +24,16 @@ namespace canvas
     {
     public:
         std::function<void(const D2D1_COLOR_F*)> MockClear;
+        std::function<void(D2D1_MATRIX_3X2_F*)> MockGetTransform;
         std::function<void(const D2D1_MATRIX_3X2_F*)> MockSetTransform;
+        std::function<D2D1_ANTIALIAS_MODE()> MockGetAntialiasMode;
+        std::function<void(const D2D1_ANTIALIAS_MODE)> MockSetAntialiasMode;
+        std::function<D2D1_PRIMITIVE_BLEND()> MockGetPrimitiveBlend;
+        std::function<void(const D2D1_PRIMITIVE_BLEND)> MockSetPrimitiveBlend;
+        std::function<D2D1_TEXT_ANTIALIAS_MODE()> MockGetTextAntialiasMode;
+        std::function<void(const D2D1_TEXT_ANTIALIAS_MODE)> MockSetTextAntialiasMode;
+        std::function<D2D1_UNIT_MODE()> MockGetUnitMode;
+        std::function<void(const D2D1_UNIT_MODE)> MockSetUnitMode;
         std::function<void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawLine;
         std::function<void(const D2D1_RECT_F*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawRectangle;
         std::function<void(const D2D1_RECT_F*,ID2D1Brush*)> MockFillRectangle;
@@ -260,31 +269,59 @@ namespace canvas
             MockSetTransform(m);
         }
 
-        IFACEMETHODIMP_(void) GetTransform(D2D1_MATRIX_3X2_F *) const override
+        IFACEMETHODIMP_(void) GetTransform(D2D1_MATRIX_3X2_F *m) const override
         {
-            Assert::Fail(L"Unexpected call to GetTransform");
+            if (!MockGetTransform)
+            {
+                Assert::Fail(L"Unexpected call to GetTransform");
+                return;
+            }
+
+            MockGetTransform(m);
         }
 
-        IFACEMETHODIMP_(void) SetAntialiasMode(D2D1_ANTIALIAS_MODE) override
+        IFACEMETHODIMP_(void) SetAntialiasMode(D2D1_ANTIALIAS_MODE m) override
         {
-            Assert::Fail(L"Unexpected call to SetAntialiasMode");
+            if (!MockSetAntialiasMode)
+            {
+                Assert::Fail(L"Unexpected call to SetAntialiasMode");
+                return;
+            }
+
+            MockSetAntialiasMode(m);
         }
 
         IFACEMETHODIMP_(D2D1_ANTIALIAS_MODE) GetAntialiasMode() const override
         {
-            Assert::Fail(L"Unexpected call to GetAntialiasMode");
-            return D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
+            if (!MockGetAntialiasMode)
+            {
+                Assert::Fail(L"Unexpected call to GetAntialiasMode");
+                return D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
+            }
+
+            return MockGetAntialiasMode();
         }
 
-        IFACEMETHODIMP_(void) SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE) override
+        IFACEMETHODIMP_(void) SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE m) override
         {
-            Assert::Fail(L"Unexpected call to SetTextAntialiasMode");
+            if (!MockSetTextAntialiasMode)
+            {
+                Assert::Fail(L"Unexpected call to SetTextAntialiasMode");
+                return;
+            }
+
+            MockSetTextAntialiasMode(m);
         }
 
         IFACEMETHODIMP_(D2D1_TEXT_ANTIALIAS_MODE) GetTextAntialiasMode() const override
         {
-            Assert::Fail(L"Unexpected call to GetTextAntialiasMode");
-            return D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
+            if (!MockGetTextAntialiasMode)
+            {
+                Assert::Fail(L"Unexpected call to GetTextAntialiasMode");
+                return D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
+            }
+
+            return MockGetTextAntialiasMode();
         }
 
         IFACEMETHODIMP_(void) SetTextRenderingParams(IDWriteRenderingParams *) override
@@ -528,26 +565,48 @@ namespace canvas
             Assert::Fail(L"Unexpected call to GetRenderingControls");
         }
 
-        IFACEMETHODIMP_(void) SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND) override
+        IFACEMETHODIMP_(void) SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND b) override
         {
-            Assert::Fail(L"Unexpected call to SetPrimitiveBlend");
+            if (!MockSetPrimitiveBlend)
+            {
+                Assert::Fail(L"Unexpected call to SetPrimitiveBlend");
+                return;
+            }
+
+            MockSetPrimitiveBlend(b);
         }
 
         IFACEMETHODIMP_(D2D1_PRIMITIVE_BLEND) GetPrimitiveBlend() const override
         {
-            Assert::Fail(L"Unexpected call to GetPrimitiveBlend");
-            return D2D1_PRIMITIVE_BLEND_SOURCE_OVER;
+            if (!MockGetPrimitiveBlend)
+            {
+                Assert::Fail(L"Unexpected call to GetPrimitiveBlend");
+                return D2D1_PRIMITIVE_BLEND_SOURCE_OVER;
+            }
+
+            return MockGetPrimitiveBlend();
         }
 
-        IFACEMETHODIMP_(void) SetUnitMode(D2D1_UNIT_MODE) override
+        IFACEMETHODIMP_(void) SetUnitMode(D2D1_UNIT_MODE m) override
         {
-            Assert::Fail(L"Unexpected call to SetUnitMode");
+            if (!MockSetUnitMode)
+            {
+                Assert::Fail(L"Unexpected call to SetUnitMode");
+                return;
+            }
+
+            MockSetUnitMode(m);
         }
 
         IFACEMETHODIMP_(D2D1_UNIT_MODE) GetUnitMode() const override
         {
-            Assert::Fail(L"Unexpected call to GetUnitMode");
-            return D2D1_UNIT_MODE_DIPS;
+            if (!MockGetUnitMode)
+            {
+                Assert::Fail(L"Unexpected call to GetUnitMode");
+                return D2D1_UNIT_MODE_DIPS;
+            }
+
+            return MockGetUnitMode();
         }
 
         IFACEMETHODIMP_(void) DrawGlyphRun(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,const DWRITE_GLYPH_RUN_DESCRIPTION *,ID2D1Brush *,DWRITE_MEASURING_MODE) override

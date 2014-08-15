@@ -190,6 +190,25 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Rect rectangle,
             [in] ICanvasBrush* brush,
             [in] CanvasTextFormat* format);
+
+        //
+        // State properties
+        //
+
+        [propget] HRESULT Antialiasing([out, retval] CanvasAntialiasing* value);
+        [propput] HRESULT Antialiasing([in] CanvasAntialiasing value);
+
+        [propget] HRESULT Blend([out, retval] CanvasBlend* value);
+        [propput] HRESULT Blend([in] CanvasBlend value);
+
+        [propget] HRESULT TextAntialiasing([out, retval] CanvasTextAntialiasing* value);
+        [propput] HRESULT TextAntialiasing([in] CanvasTextAntialiasing value);
+
+        [propget] HRESULT Transform([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix3x2* value);
+        [propput] HRESULT Transform([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
+
+        [propget] HRESULT Units([out, retval] CanvasUnits* value);
+        [propput] HRESULT Units([in] CanvasUnits value);
     };
 
     [version(VERSION), static(ICanvasDrawingSessionStatics, VERSION)]

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace CodeGen
 {
-    abstract class QualifiableType
+    public abstract class QualifiableType
     {
         public abstract string ProjectedName { get; }
         public abstract string ProjectedNameIncludingIndirection { get; }

@@ -76,7 +76,7 @@ namespace CodeGen
         }
     }
 
-    class Struct : QualifiableType
+    public class Struct : QualifiableType
     {
         public Struct(Namespace parentNamespace, XmlBindings.Struct xmlData, Overrides.XmlBindings.Struct overrideData, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {
