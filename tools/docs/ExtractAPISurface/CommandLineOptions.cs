@@ -24,7 +24,5 @@ namespace ExtractAPISurface
         public readonly List<string> ReferenceAssemblies = new List<string>();
 
         public string OutputPath;
-
-        public string NamespaceSummaries;
     }
 }

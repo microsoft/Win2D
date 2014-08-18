@@ -126,7 +126,10 @@ namespace ExtractAPISurface
         {
             output.WriteLine("public struct {0}", type.Name);
 
-            WriteTypeBody(type);
+            using (output.WriteBraces())
+            {
+                WriteTypeBody(type);
+            }
         }
 
 
@@ -134,7 +137,10 @@ namespace ExtractAPISurface
         {
             output.WriteLine("public interface {0}{1}", type.Name, FormatBaseTypes(type));
 
-            WriteTypeBody(type);
+            using (output.WriteBraces())
+            {
+                WriteTypeBody(type);
+            }
         }
 
 
@@ -147,33 +153,41 @@ namespace ExtractAPISurface
 
             output.WriteLine("public sealed class {0}{1}", type.Name, FormatBaseTypes(type));
 
-            WriteTypeBody(type);
+            using (output.WriteBraces())
+            {
+                // If the type has no public constructors, give it an internal one. Otherwise
+                // the C# compiler will helpfully insert an unwanted public default constructor.
+                if (!type.DeclaredConstructors.Any(constructor => constructor.IsPublic))
+                {
+                    output.WriteLine("internal {0}() {{ }}", type.Name);
+                    output.WriteSeparator();
+                }
+
+                WriteTypeBody(type);
+            }
         }
 
 
         void WriteTypeBody(TypeInfo type)
         {
-            using (output.WriteBraces())
+            WriteMembers(type.DeclaredConstructors, constructor => constructor.IsPublic, DocumentConstructor, WriteConstructor);
+            WriteMembers(type.DeclaredMethods,      WantMethod,                          DocumentMethod,      WriteMethod);
+            WriteMembers(type.DeclaredProperties,   property => property.IsPublic(),     null,                WriteProperty);
+            WriteMembers(type.DeclaredFields,       field => field.IsPublic,             null,                WriteField);
+            WriteMembers(type.DeclaredEvents,       eventInfo => eventInfo.IsPublic(),   null,                WriteEvent);
+
+            if (type.DeclaredNestedTypes.Any(nestedType => nestedType.IsPublic))
             {
-                WriteMembers(type.DeclaredConstructors, constructor => constructor.IsPublic, WriteConstructor);
-                WriteMembers(type.DeclaredMethods,      WantMethod,                          WriteMethod);
-                WriteMembers(type.DeclaredProperties,   property => property.IsPublic(),     WriteProperty);
-                WriteMembers(type.DeclaredFields,       field => field.IsPublic,             WriteField);
-                WriteMembers(type.DeclaredEvents,       eventInfo => eventInfo.IsPublic(),   WriteEvent);
-                
-                if (type.DeclaredNestedTypes.Any(nestedType => nestedType.IsPublic))
-                {
-                    throw new NotImplementedException("Don't support nested types.");
-                }
+                throw new NotImplementedException("Don't support nested types.");
             }
         }
 
 
-        void WriteMembers<T>(IEnumerable<T> members, Func<T, bool> wantMember, Action<T> writeMember)
+        void WriteMembers<T>(IEnumerable<T> members, Func<T, bool> wantMember, Func<T, string> documentMember, Action<T> writeMember)
         {
             foreach (var member in members.Where(wantMember))
             {
-                output.WriteDocComment();
+                output.WriteDocComment(documentMember != null ? documentMember(member) : null);
 
                 writeMember(member);
 
@@ -461,6 +475,29 @@ namespace ExtractAPISurface
         }
 
 
+        // Automatically fill in formulaic documentation text, to save time for those writing the actual docs.
+        static string DocumentConstructor(ConstructorInfo constructor)
+        {
+            string typeOfType = constructor.DeclaringType.IsClass ? "class" : "structure";
+
+            return string.Format("Initializes a new instance of the {0} {1}.", constructor.DeclaringType.Name, typeOfType);
+        }
+
+
+        // Automatically fill in formulaic documentation text, to save time for those writing the actual docs.
+        static string DocumentMethod(MethodInfo method)
+        {
+            switch (method.Name)
+            {
+                case "Dispose":
+                    return string.Format("Releases all resources used by the {0}.", method.DeclaringType.Name);
+
+                default:
+                    return null;
+            }
+        }
+
+
         // Writes dummy versions of WinRT system types, which are not part of our API but needed to compile the generated C#.
         void WriteReferencedTypePlaceholders()
         {
@@ -549,34 +586,29 @@ namespace ExtractAPISurface
         }
 
 
-        // Generates a Sandcastle project fragment summarizing all our namespaces.
-        public static void WriteNamespaceSummaries(CommandLineOptions options)
+        // Generates XML doc summaries for placeholder namespaces.
+        public static void WritePlaceholderNamespaceSummaries(CommandLineOptions options)
         {
-            XNamespace xmlns = "http://schemas.microsoft.com/developer/msbuild/2003";
-
-            var documentedNamespaces = string.IsNullOrEmpty(options.NamespaceSummaries)
-                                        ? null
-                                        : XDocument.Load(options.NamespaceSummaries).Element(xmlns + "NamespaceSummaries").Elements();
-
             var placeholderNamespaces = from ns in placeholdersWritten.Select(type => type.Namespace).Distinct()
-                                        select new XElement(xmlns + "NamespaceSummaryItem",
-                                            new XAttribute("name", ns),
-                                            new XAttribute("isDocumented", "True"),
-                                            string.Format("<a href=\"{0}\">This namespace is documented on MSDN.</a>", GetReferencedTypeMsdnUrl(ns))
+                                        select new XElement("member",
+                                            new XAttribute("name", "N:" + ns),
+                                            new XElement("summary",
+                                                new XElement("a",
+                                                    new XAttribute("href", GetReferencedTypeMsdnUrl(ns)),
+                                                    "This namespace is documented on MSDN."
+                                                )
+                                            )
                                         );
 
             var xml = new XDocument(
-                new XElement(xmlns + "Project",
-                    new XElement(xmlns + "PropertyGroup",
-                        new XElement(xmlns + "NamespaceSummaries",
-                            documentedNamespaces,
-                            placeholderNamespaces
-                        )
+                new XElement("doc",
+                    new XElement("members",
+                        placeholderNamespaces
                     )
                 )
             );
 
-            xml.Save(Path.Combine(options.OutputPath, "NamespaceSummaries.shfbproj"));
+            xml.Save(Path.Combine(options.OutputPath, "PlaceholderNamespaces.xml"));
         }
 
 

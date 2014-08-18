@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="N:Microsoft.Graphics.Canvas">
+	  <summary>The main Windows Canvas API for drawing 2D graphics.</summary>
+	</member>
+
+    <member name="N:Microsoft.Graphics.Canvas.DirectX">
+	  <summary>DirectX types, used for interop with other components.</summary>
+	</member>
+
+    <member name="N:Microsoft.Graphics.Canvas.DirectX.Direct3D11">
+	  <summary>Direct3D11 types, used for interop with other components.</summary>
+	</member>
+
+    <member name="N:Microsoft.Graphics.Canvas.Numerics">
+	  <summary>Windows Runtime vector and matrix types. These are only used for data 
+	           exchange, and do not include any methods for doing math with the values. 
+			   For more complete functionality, see the System.Numerics namespace.</summary>
+	</member>
+
+  </members>
+</doc>

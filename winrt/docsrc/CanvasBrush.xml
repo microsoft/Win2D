@@ -1,32 +1,52 @@
 <?xml version="1.0"?>
 <doc>
-    <assembly>
-        <name>Microsoft.Graphics.Canvas</name>
-    </assembly>
-    <members>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.ICanvasBrush">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Opacity">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Transform">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Dispose">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Color">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Transform">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Opacity">
-            <summary></summary>
-        </member>
-    </members>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    
+    <member name="T:Microsoft.Graphics.Canvas.ICanvasBrush">
+      <summary>A brush defines the color of things being drawn. It can be a solid color, or a bitmap pattern, or a gradient.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Opacity">
+      <summary>Gets or sets the opacity of the brush.</summary>
+      <remarks>1 is fully opaque, 0 fully transparent.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Transform">
+      <summary>Gets or sets the brush transform matrix.</summary>
+
+      <remarks>
+        <p>When you paint with a brush, it paints in the coordinate space of the render target.
+           Brushes do not automatically position themselves to align with the object being painted;
+           by default, they begin painting at the origin (0, 0) of the render target.</p>
+
+        <p>To align the content of an bitmap brush to the area being painted, you can use the
+           Transform property to translate the bitmap to the desired location. This transform
+           only affects the brush; it does not affect any other content drawn by the render target.</p>
+      </remarks>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush">
+      <summary>The simplest kind of brush. Paints things a solid color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color)">
+      <summary>Initializes a new instance of the CanvasSolidColorBrush class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Dispose">
+      <summary>Releases all resources used by the CanvasSolidColorBrush.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Transform">
+      <summary>Gets or sets the brush transform matrix.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Opacity">
+      <summary>Gets or sets the opacity of the brush.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Color">
+      <summary>Gets or sets the color of the solid brush.</summary>
+    </member>
+    
+  </members>
 </doc>

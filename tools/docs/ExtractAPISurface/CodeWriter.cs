@@ -77,9 +77,9 @@ namespace ExtractAPISurface
 
 
         // Placeholder comment to be picked up by the C# compiler /doc feature.
-        public void WriteDocComment()
+        public void WriteDocComment(string summary = null)
         {
-            WriteLine("/// <summary></summary>");
+            WriteLine("/// <summary>{0}</summary>", summary);
         }
 
 

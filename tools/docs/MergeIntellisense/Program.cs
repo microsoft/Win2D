@@ -80,6 +80,25 @@ namespace MergeIntellisense
                                 from member in input.Element("doc").Element("members").Elements()
                                 select member;
 
+            // Remove documentation tags that Intellisense does not use, to minimize the size of the shipping XML files.
+            string[] tagsSupportedByIntellisense =
+            {
+                "summary",
+                "param",
+                "returns",
+                "exception",
+            };
+
+            var unsupportedTags = from member in mergedMembers
+                                  from tag in member.Elements()
+                                  where !tagsSupportedByIntellisense.Contains(tag.Name.LocalName, StringComparer.OrdinalIgnoreCase)
+                                  select tag;
+
+            foreach (var unsupported in unsupportedTags)
+            {
+                unsupported.Remove();
+            }
+
             // Generate new Intellisense XML.
             return new XDocument(
                 new XElement("doc",

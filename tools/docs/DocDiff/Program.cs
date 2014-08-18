@@ -57,8 +57,16 @@ namespace DocDiff
             var apiRef = LoadApiMembers(options.ApiRef);
 
             // Diff them.
-            var missingDocs = apiRef.Except(docSrc);
-            var orphanedDocs = docSrc.Except(apiRef);
+            var docsWithSummaries = from doc in docSrc
+                                    where doc.MemberElement.Element("summary") != null
+                                    select doc;
+
+            var docsThatArentNamespaces = from doc in docSrc
+                                          where !doc.MemberElement.Attribute("name").Value.StartsWith("N:")
+                                          select doc;
+
+            var missingDocs = apiRef.Except(docsWithSummaries);
+            var orphanedDocs = docsThatArentNamespaces.Except(apiRef);
 
             // Report missing docs for things that were found in the API but are not documented.
             int missingCount = missingDocs.Count();
@@ -77,10 +85,7 @@ namespace DocDiff
                     new XElement("doc",
                         new XElement("members",
                             from member in missingDocs
-                            select new XElement("member",
-                                new XAttribute("name", member.ApiName),
-                                new XElement("summary")
-                            )
+                            select member.MemberElement
                         )
                     )
                 );
@@ -101,7 +106,7 @@ namespace DocDiff
         {
             var members = from filename in filenames
                           from member in XDocument.Load(filename).Element("doc").Element("members").Elements()
-                          select new ApiMember(member.Attribute("name").Value, filename);
+                          select new ApiMember(member, filename);
 
             return members.ToList();
         }

@@ -1,44 +1,57 @@
 <?xml version="1.0"?>
 <doc>
-    <assembly>
-        <name>Microsoft.Graphics.Canvas</name>
-    </assembly>
-    <members>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasStrokeStyle">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasStrokeStyle.#ctor">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasStrokeStyle.Dispose">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.TransformBehavior">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.StartCap">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.MiterLimit">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.LineJoin">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.EndCap">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashStyle">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashOffset">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashCap">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.CustomDashStyle">
-            <summary></summary>
-        </member>
-    </members>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasStrokeStyle">
+      <summary>Defines a stroke style for drawing lines. Dashes, dots, how to join segments, how to cap the ends, etc.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasStrokeStyle.#ctor">
+      <summary>Initializes a new instance of the CanvasStrokeStyle class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasStrokeStyle.Dispose">
+      <summary>Releases all resources used by the CanvasStrokeStyle.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.TransformBehavior">
+      <summary>Gets or sets how the world transform, dots per inch (DPI), and stroke width affect the shape of the pen.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.StartCap">
+      <summary>Gets or sets the type of shape used at the beginning of a stroke.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.MiterLimit">
+      <summary>Gets or sets the limit on the ratio of the miter length to half the stroke's thickness.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.LineJoin">
+      <summary>Gets or sets the type of joint used at the vertices of a shape's outline.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.EndCap">
+      <summary>Gets or sets the type of shape used at the end of a stroke.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashStyle">
+      <summary>Gets or sets the stroke's dash pattern.
+               This is ignored if <see cref="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.CustomDashStyle"/> has been set.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashOffset">
+      <summary>Gets or sets how far into the dash sequence the stroke will start.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashCap">
+      <summary>Gets or sets how the ends of each dash are drawn.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.CustomDashStyle">
+      <summary>Gets or sets an array describing a custom dash pattern.
+               This overrides the <see cref="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashStyle"/>
+               property, which is only used when CustomDashStyle is set to null.</summary>
+
+      <remarks>
+        <p>A custom dash style is an array whose elements specify the length of each dash and space in the pattern.
+           The first element sets the length of a dash, the second element sets the length of a space,
+           the third element sets the length of a dash, and so on. The length of each dash and space in
+           the dash pattern is the product of the element value in the array and the stroke width.</p>
+        <p>This array must contain an even number of elements.</p>
+      </remarks>
+    </member>
+
+  </members>
 </doc>

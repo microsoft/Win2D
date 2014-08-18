@@ -1,74 +1,108 @@
 <?xml version="1.0"?>
 <doc>
-    <assembly>
-        <name>Microsoft.Graphics.Canvas</name>
-    </assembly>
-    <members>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasDrawingSession">
-            <summary>The main interface for drawing stuff</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">
-            <summary>Clears to a solid color</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary>Draws a line (overload #1)</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-            <summary>Draws a line (overload #2)</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-            <summary>Draws a line (overload #3)</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary>Draws a rectangle (overload #1)</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-            <summary>Draws a rectangle (overload #2)</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-            <summary>Draws a rectangle (overload #3)</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary>Fills a rectangle</summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Dispose">
-            <summary>Cleans up the object</summary>
-        </member>
-    </members>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasDrawingSession">
+      <summary>Drawing sessions are used to issue graphics drawing commands. This is the main way to draw things onto a canvas.</summary>
+      <remarks>
+        <p>For best performance, graphics drawing commands need to be batched into groups so the GPU hardware
+           can process as many operations as possible in parallel. Windows Canvas achieves this through the
+           CanvasDrawingSession API. A drawing session represents an active batch of commands that are in the
+           process of being generated. Use its various methods to indicate what you want to draw, then when
+           you dispose the CanvasDrawingSession the entire batch will be optimized and submitted for the GPU
+           hardware to carry out the drawing.</p>
+
+        <p>Drawing sessions can be obtained in various different ways. Most often, you should use the one that
+           is passed in to the CanvasControl.Drawing event handler.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">
+      <summary>Clears to the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)">
+      <summary>Draws an image positioned at the origin.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Point)">
+      <summary>Draws an image at the specified position.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a line of single pixel width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a line of the specified width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a line of the specified width, using a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a rectangle using single pixel width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a rectangle using the specified width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rectangle using the specified width and a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the inside of a rectangle.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a rectangle with rounded corners and single pixel width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a rectangle with rounded corners using the specified width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rectangle with rounded corners using the specified width and a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the inside of a rounded rectangle.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws an ellipse using single pixel width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws an ellipse using the specified width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws an ellipse using the specified width and a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the inside of an ellipse.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws text using a default font.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text using the specified text format.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws text using a default font.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text using the specified text format.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Dispose">
+      <summary>Releases all resources used by the CanvasDrawingSession.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Units">
+      <summary>Sets what units are used to specifiy coordinates for this drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Transform">
+      <summary>Sets the transform matrix for this drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.TextAntialiasing">
+      <summary>Sets the text antialiasing mode for this drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend">
+      <summary>Sets the blend mode for this drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing">
+      <summary>Enables or disables primitive edge antialiasing for this drawing session.</summary>
+    </member>
+  
+  </members>
 </doc>

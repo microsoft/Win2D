@@ -1,29 +1,53 @@
 <?xml version="1.0"?>
 <doc>
-    <assembly>
-        <name>Microsoft.Graphics.Canvas</name>
-    </assembly>
-    <members>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasBackground">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasImageSource">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasBackground)">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.Foundation.Rect)">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Device">
-            <summary></summary>
-        </member>
-    </members>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasBackground">
+      <summary>Specifies whether the background of a canvas is transparent or opaque.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBackground.Transparent">
+      <summary>Transparent background, likely to be what most users want by default.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBackground.Opaque">
+      <summary>Opaque background, can allow for increased efficiency.</summary>
+    </member>
+    
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasImageSource">
+      <summary>Derives from Windows.UI.Xaml.Media.Imaging.SurfaceImageSource and extends it to know about Canvas types.
+               Most apps should use the CanvasControl wrapper instead of directly managing their own CanvasImageSource.</summary>
+
+      <example><code>
+        var imageSource = new CanvasImageSource(canvasDevice, widthInPixels, heightInPixels);
+                                                
+        imageControl.Source = imageSource;
+        
+        using (var ds = imageSource.CreateDrawingSession())
+        {
+            // drawing code
+        }
+      </code></example>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32)">
+      <summary>Initializes a new instance of the CanvasImageSource class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasBackground)">
+      <summary>Initializes a new instance of the CanvasImageSource class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession">
+      <summary>Returns a new drawing session for redrawing the entire image source.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.Foundation.Rect)">
+      <summary>Returns a new drawing session for updating a region of the image source.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Device">
+      <summary>Gets or sets the device used by this image source.
+               Changing this property binds the image source to a different device.
+               This is used after a new device is recovered after a device lost.</summary>
+    </member>
+    
+  </members>
 </doc>

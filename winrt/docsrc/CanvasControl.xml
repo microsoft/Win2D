@@ -1,32 +1,67 @@
 <?xml version="1.0"?>
 <doc>
-    <assembly>
-        <name>Microsoft.Graphics.Canvas</name>
-    </assembly>
-    <members>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasControl">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasControl.#ctor">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasControl.Invalidate">
-            <summary></summary>
-        </member>
-        <member name="E:Microsoft.Graphics.Canvas.CanvasControl.CreatingResources">
-            <summary></summary>
-        </member>
-        <member name="E:Microsoft.Graphics.Canvas.CanvasControl.Drawing">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs">
-            <summary></summary>
-        </member>
-        <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-            <summary></summary>
-        </member>
-        <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs.DrawingSession">
-            <summary></summary>
-        </member>
-    </members>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasControl">
+      <summary>XAML control providing immediate mode 2D rendering. Start here if you are new to the Windows Canvas API.</summary>
+      <remarks>To get started using Windows Canvas, simply add a CanvasControl to your XAML
+               tree, subscribe to its CanvasControl.Drawing event, and use the methods of
+               CanvasDrawingEventArgs.DrawingSession to draw your immediate mode 2D graphics.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasControl.#ctor">
+      <summary>Initializes a new instance of the CanvasControl class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasControl.Invalidate">
+      <summary>Indicates that the contents of the CanvasControl need to be redrawn.
+               Calling Invalidate results in the Drawing event being raised shortly afterward.</summary>
+      <remarks>
+        <p>Normally, the contents of a CanvasControl are drawn only once when it first becomes visible.
+           If you want to change those contents, call Invalidate to tell the control it must redraw itself.</p>
+
+        <p>This is a lightweight method, so it is reasonable to call it many times in rapid succession.
+           High frequency calls to Invalidate will be merged, with the control only actually redrawing
+           at a maximum of the display refresh rate. It will not redraw once for every Invalidate call
+           if these are happening faster than the display can keep up.</p>
+
+        <p>If you want to animate the contents of a CanvasControl, simply call Invalidate at the end of
+           your Drawing event handler. This will result in the control being redrawn over and over again.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasControl.Device">
+      <summary>Gets the underlying device used by this control.</summary>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.CanvasControl.CreatingResources">
+      <summary>Hook this event to create any resources needed for your drawing.</summary>
+      <remarks>The CreatingResources event is raised once when the CanvasControl is first initialized, then
+               again any time the resources need to be recreated, for instance if the underlying GPU gets reset.</remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.CanvasControl.Drawing">
+      <summary>This is where the magic happens! Hook this event to issue your immediate mode 2D drawing calls.</summary>
+      <remarks>
+        <p>The Drawing event is raised once when the CanvasControl first becomes visible, then again
+           any time its contents need to be redrawn. This can occur if the control is resized, or in
+           response to the Invalidate method being called.</p>
+        
+        <p>If you want to animate the contents of a CanvasControl, simply call Invalidate at the end of
+           your Drawing event handler. This will result in the control being redrawn over and over again,
+           so you can draw different things each time.</p>
+      </remarks>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs">
+      <summary>Information passed to the CanvasControl.Drawing event.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Initializes a new instance of the CanvasDrawingEventArgs class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingEventArgs.DrawingSession">
+      <summary>Gets the drawing session for use by the current event handler.
+               This provides methods to draw lines, rectangles, text etc.</summary>
+    </member>
+
+  </members>
 </doc>

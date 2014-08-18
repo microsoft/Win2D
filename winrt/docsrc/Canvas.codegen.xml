@@ -1,44 +1,199 @@
 <?xml version="1.0"?>
 <doc>
-    <assembly>
-        <name>Microsoft.Graphics.Canvas</name>
-    </assembly>
-    <members>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasCapStyle">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasDashStyle">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasDebugLevel">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasEllipse">
-            <summary></summary>
-        </member>
-        <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.Point">
-            <summary></summary>
-        </member>
-        <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusX">
-            <summary></summary>
-        </member>
-        <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusY">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasLineJoin">
-            <summary></summary>
-        </member>
-        <member name="T:Microsoft.Graphics.Canvas.CanvasRoundedRectangle">
-            <summary></summary>
-        </member>
-        <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.Rect">
-            <summary></summary>
-        </member>
-        <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusX">
-            <summary></summary>
-        </member>
-        <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusY">
-            <summary></summary>
-        </member>
-    </members>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasAntialiasing">
+      <summary>Specifies the antialiasing mode for non-text primitives.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Antialiased">
+      <summary>Edges are antialiased using a high quality per-primitive method.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased">
+      <summary>Edges are aliased.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasBlend">
+      <summary>Specifies the blend mode used to draw primitives.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBlend.SourceOver">
+      <summary>The standard source-over-destination blend mode, also known as premultiplied alpha blending.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBlend.Copy">
+      <summary>The source is copied to the destination; destination pixels are ignored.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBlend.Min">
+      <summary>Use the minimum of the source and destination pixel values.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBlend.Add">
+      <summary>Take the sum of the source and destination pixel values.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasCapStyle">
+      <summary>Describes the shape at the end of a line or segment.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Flat">
+      <summary>A cap that does not extend past the last point of the line.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Square">
+      <summary>Half of a square that has a length equal to the line thickness.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Round">
+      <summary>A semicircle that has a diameter equal to the line thickness.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Triangle">
+      <summary>An isosceles right triangle whose hypotenuse is equal in length to the thickness of the line.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasDashStyle">
+      <summary>Describes the sequence of dashes, dots, and gaps in a stroke style.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.Solid">
+      <summary>A solid line with no breaks.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.Dash">
+      <summary>A dash followed by a gap of equal length.
+               The dash and the gap are each twice as long as the stroke thickness.
+               The equivalent custom dash style is { 2, 2 }.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.Dot">
+      <summary>A dot followed by a longer gap.
+               The equivalent custom dash style is { 0, 2 }.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.DashDot">
+      <summary>A dash, followed by a gap, followed by a dot, followed by another gap.
+               The equivalent custom dash style is { 2, 2, 0, 2 }.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.DashDotDot">
+      <summary>A dash, followed by a gap, followed by a dot, followed by another gap, followed by another dot, followed by another gap.
+               The equivalent custom dash style is { 2, 2, 0, 2, 0, 2 }.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasDebugLevel">
+      <summary>Indicates the type of information provided when the Direct2D Debug Layer is enabled.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDebugLevel.None">
+      <summary>No debugging output.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDebugLevel.Error">
+      <summary>Only error messages are output.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDebugLevel.Warning">
+      <summary>Error messages and warnings are output.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDebugLevel.Information">
+      <summary>Error messages, warnings, and additional diagnostic information that can help improve performance are output.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasEllipse">
+      <summary>It's like a circle, but squashed.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.Point">
+      <summary>The center point of the ellipse.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusX">
+      <summary>The X axis (horizontal) radius of the ellipse.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusY">
+      <summary>The Y axis (vertical) radius of the ellipse.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasLineJoin">
+      <summary>Describes the shape that joins two lines or segments.</summary>
+      
+      <remarks>A miter limit affects how sharp miter joins are allowed to be. If the line join style is
+               MiterOrBevel, then the join will be mitered with regular angular vertices if it doesn't
+               extend beyond the miter limit; otherwise, the line join will be beveled.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.Miter">
+      <summary>Regular angular vertices.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.Bevel">
+      <summary>Beveled vertices.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.Round">
+      <summary>Rounded vertices.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.MiterOrBevel">
+      <summary>Regular angular vertices unless the join would extend beyond the miter limit; otherwise, beveled vertices.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasRoundedRectangle">
+      <summary>Describes a rectangle with rounded corners.</summary>
+      <remarks>
+        <p>Each corner of the rectangle specified by Rect is replaced with a quarter ellipse,
+           with a radius in each direction specified by RadiusX and RadiusY.</p>
+
+        <p>If the RadiusX is greater than or equal to half the width of the rectangle,
+           and the RadiusY is greater than or equal to one-half the height, the 
+           rounded rectangle is an ellipse with the same width and height as the rect.</p>
+
+        <p>Even when both RadiusX and RadiusY are zero, the rounded rectangle is 
+           different from a rectangle. When stroked, the corners of the rounded 
+           rectangle are roundly joined, not mitered (square).</p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.Rect">
+      <summary>The coordinates of the rectangle.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusX">
+      <summary>The X axis (horizontal) radius for the quarter ellipse that is drawn to replace every corner of the rectangle.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusY">
+      <summary>The Y axis (vertical) radius for the quarter ellipse that is drawn to replace every corner of the rectangle.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior">
+      <summary>Defines how the world transform, dots per inch (DPI), and stroke width affect the shape of the pen used to stroke a primitive.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior.Normal">
+      <summary>The stroke respects the currently set world transform, the DPI, and the stroke width.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior.Fixed">
+      <summary>The stroke does not respect the world transform but it does respect the DPI and stroke width.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior.Hairline">
+      <summary>The stroke is forced to 1 pixel wide (in device space) and does not respect the world transform, the DPI, or the stroke width.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasTextAntialiasing">
+      <summary>Specifies the antialiasing mode for drawing text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.Default">
+      <summary>Use the system default.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.ClearType">
+      <summary>Use ClearType antialiasing.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.Grayscale">
+      <summary>Use grayscale antialiasing.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.Aliased">
+      <summary>Do not use antialiasing.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasUnits">
+      <summary>Specifies what units coordinates are in. This is important for making sure
+               everything stays in the right place when running on high DPI devices.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasUnits.Dips">
+      <summary>Units are interpreted as device-independent pixels. This matches the behavior of the XAML UI framework.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasUnits.Pixels">
+      <summary>Units are interpreted as pixels. This matches the Direct3D graphics API.</summary>
+    </member>
+
+  </members>
 </doc>

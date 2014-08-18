@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.ICanvasBitmap">
+      <summary>TODO #2138: ICanvasBitmap interface should be internal. In the meantime, please just use CanvasBitmap instead.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasBitmap.SizeInDips">
+      <summary>TODO #2138: ICanvasBitmap interface should be internal.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasBitmap.SizeInPixels">
+      <summary>TODO #2138: ICanvasBitmap interface should be internal.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasBitmap">
+      <summary>A bitmap is a 2D grid of pixels that form an image.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.Dispose">
+      <summary>Releases all resources used by the CanvasBitmap.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
+      <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.SizeInDips">
+      <summary>Gets the size of the bitmap, in device independent pixels (dips).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.SizeInPixels">
+      <summary>Gets the size of the bitmap, in pixels.</summary>
+    </member>
+  
+  </members>
+</doc>

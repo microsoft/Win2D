@@ -58,7 +58,7 @@ namespace ExtractAPISurface
                 }
             }
 
-            CodeGenerator.WriteNamespaceSummaries(options);
+            CodeGenerator.WritePlaceholderNamespaceSummaries(options);
         }
     }
 }

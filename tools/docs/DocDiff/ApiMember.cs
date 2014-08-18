@@ -11,19 +11,22 @@
 // under the License.
 
 using System;
+using System.Xml.Linq;
 
 namespace DocDiff
 {
-    // Stores the name of a member of our API (class, method, enum value, etc.) plus what XML doc file it was found in.
+    // Stores docs describing a member of our API (class, method, enum value, etc.) plus what XML file it was found in.
     class ApiMember : IEquatable<ApiMember>
     {
+        public XElement MemberElement { get; private set; }
         public string ApiName { get; private set; }
         public string FileName { get; private set; }
 
 
-        public ApiMember(string apiName, string fileName)
+        public ApiMember(XElement memberElement, string fileName)
         {
-            ApiName = apiName;
+            MemberElement = memberElement;
+            ApiName = memberElement.Attribute("name").Value;
             FileName = fileName;
         }
 

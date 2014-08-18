@@ -34,6 +34,7 @@
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.placeholders.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\numerics\DotNet\docsrc\*.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\PlaceholderNamespaces.xml" />
     </DocumentationSources>
     <CopyrightText>Copyright %28c%29 Microsoft Corporation. All rights reserved.</CopyrightText>
     <CopyrightHref>http://github.com/Microsoft/WindowsCanvas/blob/master/LICENSE.txt</CopyrightHref>
@@ -49,6 +50,5 @@
       </PlugInConfig>
     </PlugInConfigurations>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDirectory)..\..\obj\docs\NamespaceSummaries.shfbproj" />
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
 </Project>

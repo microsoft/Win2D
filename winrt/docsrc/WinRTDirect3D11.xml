@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings">
+      <summary>Identifies the ways in which a resource may be bound to the graphics pipeline.</summary>
+      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ff476085">D3D11_BIND_FLAG</a> enum.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.VertexBuffer">
+      <summary>Bind a buffer as a vertex buffer to the input-assembler stage.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.IndexBuffer">
+      <summary>Bind a buffer as an index buffer to the input-assembler stage.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.ConstantBuffer">
+      <summary>Bind a buffer as a constant buffer to a shader stage.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.ShaderResource">
+      <summary>Bind a buffer or texture to a shader stage.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.StreamOutput">
+      <summary>Bind an output buffer for the stream-output stage.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.RenderTarget">
+      <summary>Bind a texture as a render target for the output-merger stage.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.DepthStencil">
+      <summary>Bind a texture as a depth-stencil target for the output-merger stage.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.UnorderedAccess">
+      <summary>Bind an unordered access resource.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.Decoder">
+      <summary>Set this flag to indicate that a 2D texture is used to receive output from the decoder API.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.VideoEncoder">
+      <summary>Set this flag to indicate that a 2D texture is used to receive input from the video encoder API.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice">
+      <summary>A GPU rendering device, used for interop between different APIs.</summary>
+      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174527">IDXGIDevice</a> interface.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice.Trim">
+      <summary>Trims any graphics memory allocated by the graphics device on the app's behalf.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice.Dispose">
+      <summary>Releases all resources used by the Direct3DDevice.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DMultisampleDescription">
+      <summary>Describes multi-sampling parameters for a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface"/>.</summary>
+      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173072">DXGI_SAMPLE_DESC</a> structure.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DMultisampleDescription.Count">
+      <summary>The number of multisamples per pixel.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DMultisampleDescription.Quality">
+      <summary>The image quality level. The higher the quality, the lower the performance.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface">
+      <summary>A GPU format 2D bitmap surface, used for interop between different APIs.</summary>
+      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174565">IDXGISurface</a> interface.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface.Dispose">
+      <summary>Releases all resources used by the Direct3DSurface.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface.Description">
+      <summary>Gets a description of the surface.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription">
+      <summary>Describes a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface"/>.</summary>
+      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173074">DXGI_SURFACE_DESC</a> structure.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription.Width">
+      <summary>Width of the surface.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription.Height">
+      <summary>Height of the surface.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription.Format">
+      <summary>Pixel format of the surface.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription.MultisampleDescription">
+      <summary>Multi-sampling parameters for the surface.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DUsage">
+      <summary>Identifies expected resource use during rendering.
+               The usage directly reflects whether a resource is accessible by the CPU and/or the graphics processing unit (GPU).</summary>
+      
+      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ff476259">D3D11_USAGE</a> enum.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DUsage.Default">
+      <summary>A resource that requires read and write access by the GPU.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DUsage.Immutable">
+      <summary>A resource that can only be read by the GPU.
+               It cannot be written by the GPU, and cannot be accessed at all by the CPU.
+               This type of resource must be initialized when it is created, since it cannot be changed after creation.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DUsage.Dynamic">
+      <summary>A resource that is accessible by both the GPU (read only) and the CPU (write only).
+               A dynamic resource is a good choice for a resource that will be updated by the CPU at least once per frame.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DUsage.Staging">
+      <summary>A resource that supports data transfer (copy) from the GPU to the CPU.</summary>
+    </member>
+
+  </members>
+</doc>

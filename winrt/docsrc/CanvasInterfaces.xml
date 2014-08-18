@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.ICanvasImage">
+      <summary>Abstract interface representing anything that stores or is able to create a 2D image.
+               This can be a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>,
+               command list, or image processing effect.</summary>
+    </member>
+
+    
+    <member name="T:Microsoft.Graphics.Canvas.ICanvasResourceCreator">
+      <summary>Represents any object that can create graphics resources.
+               Implemented by <see cref="T:Microsoft.Graphics.Canvas.CanvasDevice"/> 
+               and <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/>.</summary>
+
+      <remarks>
+        <p>Many types of graphics resource are attached to a graphics device object. Their constructors take
+           a <see cref="T:Microsoft.Graphics.Canvas.CanvasDevice"/> parameter, so in order to create such
+           a resource you must first have access to a CanvasDevice.</p>
+
+        <p>But what if you don't have a CanvasDevice lying around handy? Much of the time, you will
+           be dealing with a CanvasControl object instead. You can always get a CanvasDevice from a
+           CanvasControl, so you could create resources like this:</p>
+
+        <code>var brush = new CanvasSolidColorBrush(canvasControl.Device, Colors.OliveDrab);</code>
+
+        <p>but it soon gets annoying having to keep typing ".Device" all over the place!</p>
+
+        <p>For those of us with less patience, ICanvasResourceCreator allows resource constructors 
+           to accept either a CanvasDevice OR a CanvasControl, so we can call them more conveniently:</p>
+
+        <code>var brush = new CanvasSolidColorBrush(canvasControl, Colors.MistyRose);</code>
+      </remarks>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasResourceCreator.Device">
+      <summary>The device that will be used to create resources.</summary>
+    </member>
+
+  </members>
+</doc>
