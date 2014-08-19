@@ -7,9 +7,49 @@
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasControl">
       <summary>XAML control providing immediate mode 2D rendering. Start here if you are new to the Windows Canvas API.</summary>
-      <remarks>To get started using Windows Canvas, simply add a CanvasControl to your XAML
-               tree, subscribe to its CanvasControl.Drawing event, and use the methods of
-               CanvasDrawingEventArgs.DrawingSession to draw your immediate mode 2D graphics.</remarks>
+      <remarks>
+        To get started using Windows Canvas, simply add a CanvasControl to your XAML
+        tree, subscribe to its CanvasControl.Drawing event, and use the methods of
+        CanvasDrawingEventArgs.DrawingSession to draw your immediate mode 2D graphics.
+      </remarks>
+      <example>
+        <p>Starting with the "Blank App" XAML project template, edit MainPage.xaml and add the namespace:</p>
+        <code>
+          xmlns:canvas="using:Microsoft.Graphics.Canvas"
+        </code>
+        <p>Add a CanvasControl to the page:</p>
+        <code>
+          &lt;Grid&gt;
+            &lt;canvas:CanvasControl x:Name="myWidget"/&gt;
+          &lt;/Grid&gt;
+        </code>
+        <p>Edit MainPage.xaml.cs, and add some drawing code:</p>
+        <code>
+          public sealed partial class MainPage : Page
+          {
+              CanvasSolidColorBrush redBrush;
+
+              public MainPage()
+              {
+                  this.InitializeComponent();
+
+                  myWidget.CreatingResources += myWidget_CreatingResources;
+                  myWidget.Drawing += myWidget_Drawing;
+              }
+
+              void myWidget_CreatingResources(CanvasControl sender, object args)
+              {
+                  redBrush = new CanvasSolidColorBrush(sender, Colors.Red);
+              }
+
+              void myWidget_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+              {
+                  args.DrawingSession.Clear(Colors.CornflowerBlue);
+                  args.DrawingSession.DrawText("Hello, world!", new Point(42, 42), redBrush);
+              }
+          }
+        </code>
+      </example>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasControl.#ctor">
       <summary>Initializes a new instance of the CanvasControl class.</summary>

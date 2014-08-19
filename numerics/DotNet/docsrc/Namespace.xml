@@ -6,10 +6,10 @@
   <members>
 
     <member name="N:System.Numerics">.
-	  <summary>NET vector and matrix types. This namespace extends the structs from 
-	           Microsoft.Graphics.Canvas.Numerics with a range of mathematical operators 
-	           and functions.</summary>
-	</member>
+      <summary>This namespace defines .NET vector and matrix types. It extends the structs from 
+               <see cref="N:Microsoft.Graphics.Canvas.Numerics"/> with a range of mathematical 
+               operators and functions.</summary>
+    </member>
 
   </members>
 </doc>

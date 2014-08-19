@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="cfc0e7b7-c020-4ec2-8817-4200465582f2" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Windows Canvas is an easy-to-use Windows Runtime API for immediate mode 2D graphics 
+        rendering with GPU acceleration. It is available to C# and C++ developers writing 
+        Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of 
+        Direct2D, and integrates seamlessly with XAML and ICoreWindow.
+      </para>
+
+      <para>
+        Windows Canvas is work in progress and evolving rapidly. The goal of releasing this
+        code in an early, incomplete state is to solicit early developer feedback. The
+        <externalLink>
+          <linkUri>http://github.com/Microsoft/WindowsCanvas/wiki/Backlog</linkUri>
+          <linkText>project backlog</linkText>
+        </externalLink>
+        shows what we plan to add in the future, and the order in which we plan to add it.
+      </para>
+
+      <para>
+        Source code and issue tracking are available at
+        <externalLink>
+          <linkUri>http://github.com/Microsoft/WindowsCanvas</linkUri>
+          <linkText>http://github.com/Microsoft/WindowsCanvas</linkText>
+        </externalLink>
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Getting Started</title>
+      <content>
+        <para>
+          To get started using Windows Canvas:
+
+          <list class="bullet">
+            <listItem>Clone the source code from github</listItem>
+            <listItem>Run build.cmd to compile it</listItem>
+            <listItem>Point Visual Studio at the resulting NuGet packages</listItem>
+            <listItem>Add a <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasControl</codeEntityReference> to your XAML page</listItem>
+          </list>
+
+          See the
+          <externalLink>
+            <linkUri>https://github.com/Microsoft/WindowsCanvas/blob/master/README.md</linkUri>
+            <linkText>readme</linkText>
+          </externalLink>
+          for more detailed instructions.
+        </para>
+      </content>
+    </section>
+  
+  </developerConceptualDocument>
+</topic>

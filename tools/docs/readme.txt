@@ -16,8 +16,8 @@ The documentation build process works like so:
    exist in the API.
 
 5) The Sandcastle tool (http://shfb.codeplex.com) combines the generated temporary 
-   assemblies and docsrc XML files to create HTML reference documentation, which ends up 
-   in bin\docs.
+   assemblies, docsrc XML files, and overview pages from the Conceptual folder, creating 
+   HTML reference documentation which ends up in bin\docs.
 
 6) The MergeIntellisense tool combines all the XML files from the docsrc folders to 
    create a single merged XML per assembly, which is used by Visual Studio intellisense. 

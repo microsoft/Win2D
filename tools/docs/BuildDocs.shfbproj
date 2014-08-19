@@ -18,11 +18,11 @@
     <NamespaceGrouping>False</NamespaceGrouping>
     <SyntaxFilters>C#</SyntaxFilters>
     <SdkLinkTarget>Self</SdkLinkTarget>
-    <RootNamespaceContainer>True</RootNamespaceContainer>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
     <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
-    <HelpTitle>Windows Canvas</HelpTitle>
+    <HelpTitle>Windows Canvas documentation</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
     <VisibleItems>InheritedMembers, Protected, ProtectedInternalAsProtected</VisibleItems>
@@ -38,17 +38,27 @@
     </DocumentationSources>
     <CopyrightText>Copyright %28c%29 Microsoft Corporation. All rights reserved.</CopyrightText>
     <CopyrightHref>http://github.com/Microsoft/WindowsCanvas/blob/master/LICENSE.txt</CopyrightHref>
-    <ProjectSummary>
-      &lt;p&gt;Windows Canvas is an easy-to-use Windows Runtime API for immediate mode 2D graphics rendering with GPU acceleration. It is available to C# and C++ developers writing Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of Direct2D, and integrates seamlessly with XAML and ICoreWindow.&lt;/p&gt;
-      &lt;p&gt;Windows Canvas is work in progress and evolving rapidly. The goal of releasing this code in an early, incomplete state is to solicit early developer feedback. The &lt;a href=&quot;http://github.com/Microsoft/WindowsCanvas/wiki/Backlog&quot;&gt;project backlog&lt;/a&gt; shows what we plan to add in the future, and the order in which we plan to add it.&lt;/p&gt;
-      &lt;p&gt;Source code and issue tracking are available at &lt;a href=&quot;http://github.com/Microsoft/WindowsCanvas&quot;&gt;http://github.com/Microsoft/WindowsCanvas&lt;/a&gt;.&lt;/p&gt;
-    </ProjectSummary>
-    <RootNamespaceTitle>Windows Canvas</RootNamespaceTitle>
     <PlugInConfigurations>
       <PlugInConfig id="Table of Contents Exclusion" enabled="True" xmlns="">
         <configuration />
       </PlugInConfig>
     </PlugInConfigurations>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="Conceptual\Introduction.aml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ContentLayout Include="Layout.content" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Conceptual\" />
+    <Folder Include="images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WildcardImages Include="..\..\winrt\docsrc\images\*.png" />
+    <Content Include="@(WildcardImages)">
+      <Link>images\%(WildcardImages.Filename).png</Link>
+    </Content>
+  </ItemGroup>
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
 </Project>

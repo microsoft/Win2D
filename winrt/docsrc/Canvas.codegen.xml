@@ -18,6 +18,10 @@
     
     <member name="T:Microsoft.Graphics.Canvas.CanvasBlend">
       <summary>Specifies the blend mode used to draw primitives.</summary>
+      <remarks>
+        <p>This illustration shows the available blend modes with varying opacity and backgrounds.</p>
+        <img src="../images/Blend.png" alt="CanvasBlend diagram" />
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasBlend.SourceOver">
       <summary>The standard source-over-destination blend mode, also known as premultiplied alpha blending.</summary>
@@ -35,6 +39,11 @@
     
     <member name="T:Microsoft.Graphics.Canvas.CanvasCapStyle">
       <summary>Describes the shape at the end of a line or segment.</summary>
+      <remarks>
+        <p>This illustration shows the available cap styles.
+           The red portion of the line shows the extra area added by the cap setting.</p>
+        <img src="../images/CapStyle.png" alt="CanvasCapStyle diagram" />
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Flat">
       <summary>A cap that does not extend past the last point of the line.</summary>
@@ -108,10 +117,14 @@
     
     <member name="T:Microsoft.Graphics.Canvas.CanvasLineJoin">
       <summary>Describes the shape that joins two lines or segments.</summary>
-      
-      <remarks>A miter limit affects how sharp miter joins are allowed to be. If the line join style is
-               MiterOrBevel, then the join will be mitered with regular angular vertices if it doesn't
-               extend beyond the miter limit; otherwise, the line join will be beveled.</remarks>
+      <remarks>
+        <p>A miter limit affects how sharp miter joins are allowed to be. If the line join style is
+        MiterOrBevel, then the join will be mitered with regular angular vertices if it doesn't
+        extend beyond the miter limit; otherwise, the line join will be beveled.</p>
+
+        <p>This illustration shows different line join settings for the same stroked path geometry.</p>
+        <img src="../images/LineJoin.png" alt="CanvasLineJoin diagram" />
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.Miter">
       <summary>Regular angular vertices.</summary>
