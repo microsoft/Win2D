@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas.Numerics</name>
+  </assembly>
+  <members>
+    <member name="T:System.Numerics.VectorExtensions">
+      <summary>Extension methods for converting between Vector2, Point, and Size types.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToPoint(System.Numerics.Vector2)">
+      <summary>Converts a Vector2 to a Windows.Foundation.Point.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToSize(System.Numerics.Vector2)">
+      <summary>Converts a Vector2 to a Windows.Foundation.Size.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToVector2(Windows.Foundation.Point)">
+      <summary>Converts a Windows.Foundation.Point to a Vector2.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToVector2(Windows.Foundation.Size)">
+      <summary>Converts a Windows.Foundation.Size to a Vector2.</summary>
+    </member>
+  </members>
+</doc>

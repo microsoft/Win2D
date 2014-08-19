@@ -42,40 +42,6 @@ namespace System.Numerics
         }
 
 
-        public static implicit operator global::Windows.Foundation.Point(Vector2 value)
-        {
-            return new global::Windows.Foundation.Point(value.X, value.Y);
-        }
-
-
-        public static implicit operator global::Windows.Foundation.Size(Vector2 value)
-        {
-            return new global::Windows.Foundation.Size(value.X, value.Y);
-        }
-
-
-        public static implicit operator Vector2(global::Windows.Foundation.Point value)
-        {
-            Vector2 result;
-
-            result.X = (float)value.X;
-            result.Y = (float)value.Y;
-
-            return result;
-        }
-
-
-        public static implicit operator Vector2(global::Windows.Foundation.Size value)
-        {
-            Vector2 result;
-
-            result.X = (float)value.Width;
-            result.Y = (float)value.Height;
-
-            return result;
-        }
-
-
         public float Length()
         {
             float ls = X * X + Y * Y;

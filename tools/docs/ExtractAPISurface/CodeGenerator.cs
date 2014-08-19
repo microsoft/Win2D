@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.IO;
 
 namespace ExtractAPISurface
@@ -151,13 +152,18 @@ namespace ExtractAPISurface
                 throw new NotImplementedException("Huh, shouldn't all WinRT runtime classes be sealed?");
             }
 
-            output.WriteLine("public sealed class {0}{1}", type.Name, FormatBaseTypes(type));
+            // .NET lacks a dedicated flag for static classes, so it represents them by combining IsSealed and IsAbstract.
+            bool isStatic = type.IsAbstract;
+
+            string modifier = isStatic ? "static" : "sealed";
+
+            output.WriteLine("public {0} class {1}{2}", modifier, type.Name, FormatBaseTypes(type));
 
             using (output.WriteBraces())
             {
                 // If the type has no public constructors, give it an internal one. Otherwise
                 // the C# compiler will helpfully insert an unwanted public default constructor.
-                if (!type.DeclaredConstructors.Any(constructor => constructor.IsPublic))
+                if (!isStatic && !type.DeclaredConstructors.Any(constructor => constructor.IsPublic))
                 {
                     output.WriteLine("internal {0}() {{ }}", type.Name);
                     output.WriteSeparator();
@@ -369,13 +375,18 @@ namespace ExtractAPISurface
             }
 
             var parameterType = parameter.ParameterType;
-
-            // Handle out/ref modifiers.
             string modifier = string.Empty;
 
+            // Handle extension methods.
+            if (parameter.Position == 0 && parameter.Member.HasAttribute<ExtensionAttribute>())
+            {
+                modifier += "this ";
+            }
+            
+            // Handle out/ref modifiers.
             if (parameterType.IsByRef)
             {
-                modifier = parameter.IsOut ? "out " : "ref ";
+                modifier += parameter.IsOut ? "out " : "ref ";
                 parameterType = parameterType.GetElementType();
             }
 

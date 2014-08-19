@@ -141,18 +141,6 @@
       <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Vector2 to a System.Numerics.Vector2.</summary>
       <remarks>This allows application code to use the rich System.Numerics math types, and assign to these objects directly from the return values of WinRT APIs that use the WinRT structs from Microsoft.Graphics.Canvas.Numerics.</remarks>
     </member>
-    <member name="M:System.Numerics.Vector2.op_Implicit(System.Numerics.Vector2)~Windows.Foundation.Point">
-      <summary>Converts a Vector2 to a Windows.Foundation.Point.</summary>
-    </member>
-    <member name="M:System.Numerics.Vector2.op_Implicit(System.Numerics.Vector2)~Windows.Foundation.Size">
-      <summary>Converts a Vector2 to a Windows.Foundation.Size.</summary>
-    </member>
-    <member name="M:System.Numerics.Vector2.op_Implicit(Windows.Foundation.Point)~System.Numerics.Vector2">
-      <summary>Converts a Windows.Foundation.Point to a Vector2.</summary>
-    </member>
-    <member name="M:System.Numerics.Vector2.op_Implicit(Windows.Foundation.Size)~System.Numerics.Vector2">
-      <summary>Converts a Windows.Foundation.Size to a Vector2.</summary>
-    </member>
     <member name="F:System.Numerics.Vector2.X">
       <summary>X component of the vector.</summary>
     </member>

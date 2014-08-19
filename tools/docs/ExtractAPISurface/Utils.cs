@@ -20,7 +20,7 @@ namespace ExtractAPISurface
     static class Utils
     {
         // Checks whether an attribute is defined on a type, in a way that works in the reflection only context.
-        public static bool HasAttribute<TAttribute>(this Type type)
+        public static bool HasAttribute<TAttribute>(this MemberInfo type)
         {
             return type.GetCustomAttributesData().Any(attribute => attribute.AttributeType == typeof(TAttribute));
         }

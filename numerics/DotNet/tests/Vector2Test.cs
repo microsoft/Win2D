@@ -1056,7 +1056,7 @@ namespace NumericsTests
         {
             Vector2 vector = new Vector2(23, 42);
 
-            Windows.Foundation.Size result = vector;
+            Windows.Foundation.Size result = vector.ToSize();
 
             Assert.AreEqual(23.0, result.Width);
             Assert.AreEqual(42.0, result.Height);
@@ -1068,7 +1068,7 @@ namespace NumericsTests
         {
             Vector2 vector = new Vector2(23, 42);
 
-            Windows.Foundation.Point result = vector;
+            Windows.Foundation.Point result = vector.ToPoint();
 
             Assert.AreEqual(23.0, result.X);
             Assert.AreEqual(42.0, result.Y);
@@ -1080,7 +1080,7 @@ namespace NumericsTests
         {
             var size = new Windows.Foundation.Size(23, 42);
 
-            Vector2 result = size;
+            Vector2 result = size.ToVector2();
 
             Assert.AreEqual(23.0f, result.X);
             Assert.AreEqual(42.0f, result.Y);
@@ -1092,7 +1092,7 @@ namespace NumericsTests
         {
             var point = new Windows.Foundation.Point(23, 42);
 
-            Vector2 result = point;
+            Vector2 result = point.ToVector2();
 
             Assert.AreEqual(23.0f, result.X);
             Assert.AreEqual(42.0f, result.Y);
