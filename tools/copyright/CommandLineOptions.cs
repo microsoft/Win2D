@@ -29,7 +29,8 @@ namespace Copyright
         public string PreviousCopyright;
 
         // File extensions to check for copyright banners (optionally semicolon separated).
-        public List<string> Ext = new List<string>();
+        public List<string> CppExt = new List<string>();
+        public List<string> XmlExt = new List<string>();
 
         // File extensions to skip (optionally semicolon separated).
         public List<string> SkipExt = new List<string>();
@@ -55,13 +56,13 @@ namespace Copyright
 
 
         // Cache the loaded copyright banner text.
-        public string[] CopyrightBanner
+        public Dictionary<FileType, string[]> CopyrightBanner
         {
             get;
             private set;
         }
 
-        public string[] PreviousCopyrightBanner
+        public Dictionary<FileType, string[]> PreviousCopyrightBanner
         {
             get;
             private set;
@@ -70,7 +71,8 @@ namespace Copyright
 
         public void Initialize()
         {
-            Ext = ExpandSemicolons(Ext);
+            CppExt = ExpandSemicolons(CppExt);
+            XmlExt = ExpandSemicolons(XmlExt);
             SkipExt = ExpandSemicolons(SkipExt);
             SkipDir = ExpandSemicolons(SkipDir);
 
@@ -79,12 +81,25 @@ namespace Copyright
                 RootDir = Directory.GetCurrentDirectory();
             }
 
-            CopyrightBanner = File.ReadAllLines(CopyrightFile);
+            CopyrightBanner = ReadCopyrightBanner(CopyrightFile);
 
             if (!string.IsNullOrEmpty(PreviousCopyright))
             {
-                PreviousCopyrightBanner = File.ReadAllLines(PreviousCopyright);
+                PreviousCopyrightBanner = ReadCopyrightBanner(PreviousCopyright);
             }
+        }
+
+
+        static Dictionary<FileType, string[]> ReadCopyrightBanner(string filename)
+        {
+            var copyrightBanner = File.ReadAllLines(filename);
+
+            // Format the copyright differently for C-style vs. XML files.
+            return new Dictionary<FileType, string[]>
+            {
+                { FileType.Cpp, FileType.Cpp.FormatCopyrightBanner(copyrightBanner) },
+                { FileType.Xml, FileType.Xml.FormatCopyrightBanner(copyrightBanner) }
+            };
         }
 
 
@@ -96,17 +111,25 @@ namespace Copyright
         }
 
 
-        public bool WantFile(string filename)
+        public FileType? WantFile(string filename)
         {
             string ext = Path.GetExtension(filename).TrimStart('.');
 
             // Want it?
-            if (Ext.Contains(ext, StringComparer.OrdinalIgnoreCase))
+            if (CppExt.Contains(ext, StringComparer.OrdinalIgnoreCase))
             {
                 if (Verbose)
                     Console.WriteLine("Checking {0}", GetRelativeName(filename));
 
-                return true;
+                return FileType.Cpp;
+            }
+
+            if (XmlExt.Contains(ext, StringComparer.OrdinalIgnoreCase))
+            {
+                if (Verbose)
+                    Console.WriteLine("Checking {0}", GetRelativeName(filename));
+
+                return FileType.Xml;
             }
 
             // Skip it?
@@ -115,7 +138,7 @@ namespace Copyright
                 if (Verbose)
                     Console.WriteLine("Skipping {0}", GetRelativeName(filename));
 
-                return false;
+                return null;
             }
 
             // Warn about it?
@@ -126,7 +149,7 @@ namespace Copyright
                 unknownExtensions.Add(ext);
             }
 
-            return false;
+            return null;
         }
 
 

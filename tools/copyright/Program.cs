@@ -82,9 +82,11 @@ namespace Copyright
             // Check files.
             foreach (var filename in Directory.GetFiles(dirname))
             { 
-                if (options.WantFile(filename))
+                FileType? fileType = options.WantFile(filename);
+
+                if (fileType.HasValue)
                 {
-                    badFileCount += CheckFile(filename, options);
+                    badFileCount += CheckFile(filename, options, fileType.Value);
                 }
             }
 
@@ -92,11 +94,11 @@ namespace Copyright
         }
 
 
-        static int CheckFile(string filename, CommandLineOptions options)
+        static int CheckFile(string filename, CommandLineOptions options, FileType fileType)
         {
             var fileContents = File.ReadAllLines(filename);
 
-            if (Enumerable.SequenceEqual(options.CopyrightBanner, fileContents.Take(options.CopyrightBanner.Length)))
+            if (Enumerable.SequenceEqual(options.CopyrightBanner[fileType], fileContents.Take(options.CopyrightBanner[fileType].Length)))
             {
                 // This file already has the correct copyright.
                 return 0;
@@ -111,11 +113,9 @@ namespace Copyright
                 else
                 {
                     // Find any existing copyright.
-                    var existingComment = fileContents.TakeWhile(line => line.TrimStart().StartsWith("//"));
-                    var existingBlanks = fileContents.Skip(existingComment.Count()).TakeWhile(line => line.All(char.IsWhiteSpace));
-                    var existingCopyright = existingComment.Concat(existingBlanks);
+                    var existingCopyright = fileType.GetExistingCopyrightBanner(fileContents);
 
-                    if (options.PreviousCopyrightBanner != null && !Enumerable.SequenceEqual(existingCopyright, options.PreviousCopyrightBanner))
+                    if (options.PreviousCopyrightBanner != null && !Enumerable.SequenceEqual(existingCopyright, options.PreviousCopyrightBanner[fileType]))
                     {
                         // Warn if what we tried to overwrite doesn't match the expected previous (then don't actually edit anything).
                         Console.WriteLine("Warning: Skipping {0}: doesn't match previous copyright", options.GetRelativeName(filename));
@@ -126,7 +126,7 @@ namespace Copyright
                         var withoutOldCopyright = fileContents.Skip(existingCopyright.Count());
 
                         // Insert the new copyright.
-                        var withNewCopyright = options.CopyrightBanner.Concat(withoutOldCopyright);
+                        var withNewCopyright = options.CopyrightBanner[fileType].Concat(withoutOldCopyright);
 
                         // Write out the new file.
                         Console.WriteLine("Warning: Updating copyright: {0}", options.GetRelativeName(filename));

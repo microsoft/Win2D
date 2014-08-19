@@ -23,13 +23,6 @@
 ::     your Git repository path from its location (works
 ::     so long as it hasn't been copied someplace else).
 ::
-::
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::
-:: Config
-:: ::::::
-::
-SET D2D_API_REVISION_NUMBER=3
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 IF NOT DEFINED SDXROOT (
@@ -45,15 +38,15 @@ IF "%1"=="/?" (
     GOTO END
 )
 
-SET GIT_TREE_LOCATION=%~dp0..\..\
+SET GIT_TREE_LOCATION=%~dp0..\..\..
 
 IF NOT "%1"=="" (
    SET GIT_TREE_LOCATION=%1
 )
 
 SET SOURCE_DIR=%SDXROOT%\windows\wgi\codegen\publish\
-SET DEST_DIR=%GIT_TREE_LOCATION%\codegen\exe\
-SET COPYRIGHT_BANNER_FILENAME=%GIT_TREE_LOCATION%\codegen\exe\CopyrightBanner.txt
+SET DEST_DIR=%GIT_TREE_LOCATION%\tools\codegen\exe\
+SET COPYRIGHT_BANNER_FILENAME=%GIT_TREE_LOCATION%\tools\copyright\copyright.txt
 
 IF NOT EXIST %SOURCE_DIR% (
     ECHO The source location %SOURCE_DIR% was not available.
@@ -68,21 +61,20 @@ PUSHD %SOURCE_DIR%
 :: <xml> declaration. This is because XML files aren't allowed to lead with
 :: a comment if there is an <xml> declaration.
 
-FOR /L %%A IN (1, 1, %D2D_API_REVISION_NUMBER%) DO ( 
-    IF "%%A"=="1" ( 
-        SET D2D_API_REVISION_SUFFIX=
-    ) ELSE ( 
-        SET D2D_API_REVISION_SUFFIX=%%A
-    )
-    
-    SET FILENAME=D2DTypes!D2D_API_REVISION_SUFFIX!.xml
+FOR %%A IN (D2DTypes.xml D2DTypes2.xml D2DTypes3.xml D2DEffectAuthor.xml) DO ( 
+    SET FILENAME=%%A
     
     SET SOURCE_PATH=%SOURCE_DIR%!FILENAME!
     SET DEST_PATH=%DEST_DIR%!FILENAME!
     
     sd sync !SOURCE_PATH!
     
-    MORE %COPYRIGHT_BANNER_FILENAME% > !DEST_PATH!
+    ECHO ^<?xml version="1.0"?^>> !DEST_PATH!
+    ECHO ^<^^!-->> !DEST_PATH!
+    MORE %COPYRIGHT_BANNER_FILENAME% >> !DEST_PATH!
+    ECHO --^>>> !DEST_PATH!
+    ECHO.>> !DEST_PATH!
+
     MORE +1 !SOURCE_PATH! >> !DEST_PATH!
 )
 

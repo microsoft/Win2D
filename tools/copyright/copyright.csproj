@@ -40,6 +40,7 @@
       <Link>CommandLineParser.cs</Link>
     </Compile>
     <Compile Include="CommandLineOptions.cs" />
+    <Compile Include="FileType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
