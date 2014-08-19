@@ -30,7 +30,7 @@
 
     <!-- File extensions and directories to check vs. ignore -->
     <Ext>cpp;h;inl;cs;idl</Ext>
-    <SkipExt>;gitattributes;gitignore;orig;jpg;png;txt;md;xml;xaml;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe</SkipExt>
+    <SkipExt>;gitattributes;gitignore;orig;jpg;png;txt;md;xml;xaml;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;aml;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe</SkipExt>
     <SkipDir>.git;obj;bin;AppPackages;TestResults</SkipDir>
 
     <!-- Commandline arguments for the Copyright.exe tool -->
