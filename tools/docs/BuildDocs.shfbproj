@@ -46,6 +46,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="Conceptual\Introduction.aml" />
+    <None Include="Conceptual\Interop.aml" />
   </ItemGroup>
   <ItemGroup>
     <ContentLayout Include="Layout.content" />

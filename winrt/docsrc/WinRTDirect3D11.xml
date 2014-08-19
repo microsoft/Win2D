@@ -43,7 +43,47 @@
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice">
       <summary>A GPU rendering device, used for interop between different APIs.</summary>
-      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174527">IDXGIDevice</a> interface.</remarks>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174527">IDXGIDevice</a> interface.</p>
+        <p>To move back and forth between Direct3DDevice and IDXGIDevice, use the methods:</p>
+        <code>
+          // header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
+          // namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
+          
+          template&lt;typename DXGI_TYPE&gt;
+          HRESULT GetDXGIInterface(_In_ Direct3DDevice^ device, _COM_Outptr_ DXGI_TYPE** dxgi);
+
+          Direct3DDevice^ CreateDirect3DDevice(_In_ IDXGIDevice* dxgiDevice);
+        </code>
+      </remarks>
+      <example>
+        <p>First include the necessary headers and namespaces:</p>
+        
+        <code>
+          #include &lt;Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h&gt;
+          #include &lt;d2d1_2.h&gt;
+
+          using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+          using namespace Microsoft::WRL;
+        </code>
+
+        <p>To get the native DirectX device that is wrapped by a Windows Runtime device:</p>
+
+        <code>
+          Direct3DDevice^ winRTDevice = ...;
+          ComPtr&lt;IDXGIDevice&gt; nativeDevice;
+
+          HRESULT hr = GetDXGIInterface(winRTDevice, nativeDevice.GetAddressOf());
+        </code>
+
+        <p>To create a new Windows Runtime device wrapping a native DirectX device:</p>
+
+        <code>
+          ComPtr&lt;IDXGIDevice&gt; nativeDevice = ...;
+
+          Direct3DDevice^ winRTDevice = CreateDirect3DDevice(nativeDevice.Get());
+        </code>
+      </example>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice.Trim">
       <summary>Trims any graphics memory allocated by the graphics device on the app's behalf.</summary>
@@ -67,7 +107,47 @@
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface">
       <summary>A GPU format 2D bitmap surface, used for interop between different APIs.</summary>
-      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174565">IDXGISurface</a> interface.</remarks>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174565">IDXGISurface</a> interface.</p>
+        <p>To move back and forth between Direct3DSurface and IDXGISurface, use the methods:</p>
+        <code>
+          // header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
+          // namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
+          
+          template&lt;typename DXGI_TYPE&gt;
+          HRESULT GetDXGIInterface(_In_ Direct3DSurface^ surface, _COM_Outptr_ DXGI_TYPE** dxgi);
+
+          Direct3DSurface^ CreateDirect3DSurface(_In_ IDXGISurface* dxgiSurface);
+        </code>
+      </remarks>
+      <example>
+        <p>First include the necessary headers and namespaces:</p>
+        
+        <code>
+          #include &lt;Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h&gt;
+          #include &lt;d2d1_2.h&gt;
+
+          using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+          using namespace Microsoft::WRL;
+        </code>
+
+        <p>To get the native DirectX surface that is wrapped by a Windows Runtime surface:</p>
+
+        <code>
+          Direct3DSurface^ winRTSurface = ...;
+          ComPtr&lt;IDXGISurface&gt; nativeSurface;
+
+          HRESULT hr = GetDXGIInterface(winRTSurface, nativeSurface.GetAddressOf());
+        </code>
+
+        <p>To create a new Windows Runtime surface wrapping a native DirectX surface:</p>
+
+        <code>
+          ComPtr&lt;IDXGISurface&gt; nativeSurface = ...;
+
+          Direct3DSurface^ winRTSurface = CreateDirect3DSurface(nativeSurface.Get());
+        </code>
+      </example>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface.Dispose">
       <summary>Releases all resources used by the Direct3DSurface.</summary>

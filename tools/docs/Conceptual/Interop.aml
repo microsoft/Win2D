@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="849b41a6-5953-4400-b4ed-7976aa5c7b57" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Windows Canvas is implemented as a layer on top of 
+        <externalLink>
+          <linkUri>http://msdn.microsoft.com/en-us/library/windows/desktop/dd370990</linkUri>
+          <linkText>Direct2D</linkText>
+        </externalLink>,
+        and supports interop in both directions. If you have a Windows Canvas object, you can
+        access the native Direct2D object that is used to implement it. If you have a Direct2D 
+        object, you can look up the Windows Canvas object that wraps it, or create a new wrapper 
+        if one did not already exist.
+      </para>
+
+      <para>
+        Interop allows you to mix and match Windows Canvas with native DirectX APIs. You can write
+        an app that mostly uses Windows Canvas, but drop down to native DirectX at any point -
+        perhaps to call into some other API or 3rd party component that requires native interfaces.
+        Or your app can be mostly native DirectX, yet you can switch over to Windows Canvas in specific
+        places where you want its extra convenience or C# support.
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Interop APIs</title>
+      <content>
+        <para>To move back and forth between Windows Canvas and native Direct2D interfaces, use the methods:</para>
+
+        <code>
+        // header: Microsoft.Graphics.Canvas.native.h
+        // namespace: Microsoft::Graphics::Canvas
+
+        template&lt;typename WRAPPER&gt;
+        WRAPPER^ GetOrCreate(IUnknown* resource);
+
+        template&lt;typename T, typename U&gt;
+        Microsoft::WRL::ComPtr&lt;T&gt; GetWrappedResource(U^ wrapper);
+        </code>
+
+        <para>
+          GetOrCreate returns an existing wrapper instance if one already exists, or creates a new
+          wrapper if one does not. Calling it repeatedly on the same native object will return the
+          same wrapper each time, as long as that wrapper instance continues to exist. If all references
+          to the wrapper are released such that its reference count goes to zero and it is destroyed,
+          any later call to GetOrCreate will have to create a new wrapper.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Examples</title>
+      <content>
+        <para>First include the necessary headers and namespaces:</para>
+
+        <code>
+          #include &lt;Microsoft.Graphics.Canvas.native.h&gt;
+          #include &lt;d2d1_2.h&gt;
+
+          using namespace Microsoft::Graphics::Canvas;
+          using namespace Microsoft::WRL;
+        </code>
+
+        <para>To get the native Direct2D object that is wrapped by a Windows Canvas object:</para>
+
+        <code>
+          CanvasDevice^ canvasDevice = ...;
+          
+          ComPtr&lt;ID2D1Device&gt; nativeDevice = GetWrappedResource&lt;ID2D1Device&gt;(canvasDevice);
+        </code>
+
+        <para>To get a Windows Canvas object wrapping a native Direct2D object:</para>
+
+        <code>
+          ComPtr&lt;ID2D1Device&gt; nativeDevice = ...;
+
+          CanvasDevice^ canvasDevice = GetOrCreate&lt;CanvasDevice&gt;(nativeDevice.Get());
+        </code>
+      </content>
+    </section>
+    
+  </developerConceptualDocument>
+</topic>

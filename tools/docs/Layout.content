@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="cfc0e7b7-c020-4ec2-8817-4200465582f2" visible="True" isDefault="true" isSelected="true" apiParentMode="InsertAfter" />
+  <Topic id="cfc0e7b7-c020-4ec2-8817-4200465582f2" visible="True" isDefault="true" apiParentMode="InsertAfter" />
+  <Topic id="849b41a6-5953-4400-b4ed-7976aa5c7b57" visible="True" title="Interop with Direct2D" />
 </Topics>
