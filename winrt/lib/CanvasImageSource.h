@@ -24,7 +24,8 @@ namespace canvas
     public:
         virtual ComPtr<ICanvasDrawingSession> Create(
             ISurfaceImageSourceNativeWithD2D* sisNative,
-            const Rect& updateRect) const = 0;
+            const Rect& updateRect,
+            float dpi) const = 0;
     };
 
 
@@ -79,6 +80,10 @@ namespace canvas
             _In_         Rect updateRectangle,
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
 
+        IFACEMETHOD(CreateDrawingSessionWithDpi)(
+            float dpi,
+            _COM_Outptr_ ICanvasDrawingSession** drawingSession);
+
         IFACEMETHOD(get_Device)(
             _COM_Outptr_ ICanvasDevice** value) override;
 
@@ -91,5 +96,30 @@ namespace canvas
             bool isOpaque);
 
         void SetDevice(ICanvasDevice* device);
+
+        IFACEMETHOD(CreateDrawingSessionWithUpdateRectangleAndDpi)(
+            Rect updateRectangle,
+            float dpi,
+            _COM_Outptr_ ICanvasDrawingSession** drawingSession);
+    };
+
+
+    //
+    // Drawing session factory
+    //
+
+    class CanvasDrawingSessionManager;
+
+    class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
+    {
+        std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
+
+    public:
+        CanvasImageSourceDrawingSessionFactory();
+
+        virtual ComPtr<ICanvasDrawingSession> Create(
+            ISurfaceImageSourceNativeWithD2D* sisNative,
+            const Rect& updateRect,
+            float dpi) const override;
     };
 }

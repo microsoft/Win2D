@@ -35,6 +35,7 @@
 
 // WinRT
 #include <windows.ui.xaml.media.dxinterop.h>
+#include <windows.graphics.display.h>
 
 // UnitTest
 #include <CppUnitTest.h>
@@ -44,6 +45,7 @@
 
 // Inc
 #include <ErrorHandling.h>
+#include <Constants.h>
 
 // Public
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>

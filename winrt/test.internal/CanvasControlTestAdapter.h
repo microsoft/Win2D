@@ -12,9 +12,13 @@
 
 #pragma once
 
+using ABI::Windows::Graphics::Display::DisplayInformation;
+
 class CanvasControlTestAdapter : public ICanvasControlAdapter
 {
     EventSource<IEventHandler<IInspectable*>> m_compositionRenderingEventList;
+
+    EventSource<ITypedEventHandler<DisplayInformation*, IInspectable*>> m_dpiChangedEventList;
 
 public:
     virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
@@ -63,7 +67,7 @@ public:
 
         auto dsFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         dsFactory->MockCreate =
-            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect)
+            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
         {
             return Make<MockCanvasDrawingSession>();
         };
@@ -80,5 +84,22 @@ public:
     virtual ComPtr<IImage> CreateImageControl() override
     {
         return Make<StubImageControl>();
+    }
+
+    virtual float GetLogicalDpi() override
+    {
+        return DEFAULT_DPI;
+    }
+
+    virtual EventRegistrationToken AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
+    {
+        EventRegistrationToken token;
+        ThrowIfFailed(m_dpiChangedEventList.Add(handler, &token));
+        return token;
+    }
+
+    virtual void FireDpiChangedEvent()
+    {
+        ThrowIfFailed(m_dpiChangedEventList.InvokeAll(nullptr, nullptr));
     }
 };

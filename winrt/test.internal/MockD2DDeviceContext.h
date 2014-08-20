@@ -34,6 +34,7 @@ namespace canvas
         std::function<void(const D2D1_TEXT_ANTIALIAS_MODE)> MockSetTextAntialiasMode;
         std::function<D2D1_UNIT_MODE()> MockGetUnitMode;
         std::function<void(const D2D1_UNIT_MODE)> MockSetUnitMode;
+        std::function<void(float dpiX, float dpiY)> MockSetDpi;
         std::function<void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawLine;
         std::function<void(const D2D1_RECT_F*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawRectangle;
         std::function<void(const D2D1_RECT_F*,ID2D1Brush*)> MockFillRectangle;
@@ -408,9 +409,15 @@ namespace canvas
             return D2D1::PixelFormat();
         }
 
-        IFACEMETHODIMP_(void) SetDpi(FLOAT,FLOAT) override
+        IFACEMETHODIMP_(void) SetDpi(FLOAT dpiX, FLOAT dpiY) override
         {
-            Assert::Fail(L"Unexpected call to SetDpi");
+            if (!MockSetDpi)
+            {
+                Assert::Fail(L"Unexpected call to SetDpi");
+                return;
+            }
+
+            MockSetDpi(dpiX, dpiY);
         }
 
         IFACEMETHODIMP_(void) GetDpi(FLOAT *,FLOAT *) const override

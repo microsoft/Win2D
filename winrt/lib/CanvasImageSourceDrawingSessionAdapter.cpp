@@ -20,6 +20,7 @@ namespace canvas
     std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawingSessionAdapter::Create(
         ISurfaceImageSourceNativeWithD2D* sisNative,
         const RECT& updateRect,
+        float dpi,
         ID2D1DeviceContext1** outDeviceContext)
     {
         //
@@ -66,6 +67,8 @@ namespace canvas
         deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
             renderingSurfaceOffset.x,
             renderingSurfaceOffset.y));
+
+        deviceContext->SetDpi(dpi, dpi);
 
         //
         // This function can't fail now, so we can dismiss the end draw warden.

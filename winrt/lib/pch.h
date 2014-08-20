@@ -52,6 +52,7 @@
 #include <windows.ui.h>
 #include <windows.ui.xaml.controls.h>
 #include <windows.ui.xaml.media.dxinterop.h>
+#include <windows.graphics.display.h>
 
 // Public
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
@@ -60,6 +61,7 @@
 // Inc
 #include <ErrorHandling.h>
 #include <ScopeWarden.h>
+#include <Constants.h>
 
 // Generated from local IDLs
 #include <Canvas.abi.h>

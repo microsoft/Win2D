@@ -21,6 +21,7 @@ namespace canvas
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace ABI::Windows::UI::Xaml::Media;
+    using namespace ABI::Windows::Graphics::Display;
 
     // This helps with cases where we need to explicitly qualify types
     namespace canvasABI = ABI::Microsoft::Graphics::Canvas;
@@ -60,6 +61,8 @@ namespace canvas
         virtual void RemoveCompositionRenderingCallback(EventRegistrationToken token) = 0;
         virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
+        virtual float GetLogicalDpi() = 0;
+        virtual EventRegistrationToken AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) = 0;
     };
 
     class CanvasControl : public RuntimeClass<
@@ -146,6 +149,8 @@ namespace canvas
         void CallDrawHandlers();
         void InvalidateImpl();
 
-        HRESULT OnRenderCallback(IInspectable *pSender, IInspectable *pArgs);        
+        HRESULT OnRenderCallback(IInspectable *sender, IInspectable *args);   
+        
+        HRESULT OnDpiChangedCallback(IDisplayInformation* sender, IInspectable* args);
     };
 }

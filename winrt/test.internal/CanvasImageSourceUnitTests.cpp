@@ -263,7 +263,7 @@ public:
     {
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate =
-            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect)
+            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual<float>(0, updateRect.X);
@@ -290,7 +290,7 @@ public:
 
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate = 
-            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect)
+            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual(expectedRect.X, updateRect.X);
@@ -332,7 +332,7 @@ public:
                 beginDrawCalled = true;
             };
 
-        bool setTransformCalled=false;
+        bool setTransformCalled = false;
         mockDeviceContext->MockSetTransform =
             [&](const D2D1_MATRIX_3X2_F* m)
             {
@@ -349,15 +349,26 @@ public:
                 setTransformCalled = true;
             };
 
+        bool setDpiCalled = false;
+        mockDeviceContext->MockSetDpi =
+            [&](float dpiX, float dpiY)
+            {
+                Assert::AreEqual(DEFAULT_DPI, dpiX);
+                Assert::AreEqual(DEFAULT_DPI, dpiY);
+                setDpiCalled = true;
+            };
+
         ComPtr<ID2D1DeviceContext1> actualDeviceContext;
         auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
             mockSurfaceImageSource.Get(),
             expectedUpdateRect,
+            DEFAULT_DPI,
             &actualDeviceContext);
 
         Assert::AreEqual<ID2D1DeviceContext1*>(mockDeviceContext.Get(), actualDeviceContext.Get());
         Assert::IsTrue(beginDrawCalled);
         Assert::IsTrue(setTransformCalled);
+        Assert::IsTrue(setDpiCalled);
         
         bool endDrawCalled = false;
         mockSurfaceImageSource->MockEndDraw =
@@ -419,6 +430,7 @@ public:
                 CanvasImageSourceDrawingSessionAdapter::Create(
                     sis.Get(),
                     RECT{1,2,3,4},
+                    0.0f,
                     &actualDeviceContext);
             });
 

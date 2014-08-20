@@ -18,38 +18,29 @@
 
 namespace canvas
 {
-    //
-    // Drawing session factory
-    //
-
-    class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
+    CanvasImageSourceDrawingSessionFactory::CanvasImageSourceDrawingSessionFactory()
+        : m_drawingSessionManager(CanvasDrawingSessionFactory::GetOrCreateManager())
     {
-        std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
+    }
 
-    public:
-        CanvasImageSourceDrawingSessionFactory()
-            : m_drawingSessionManager(CanvasDrawingSessionFactory::GetOrCreateManager())
-        {
-        }
+    ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
+        ISurfaceImageSourceNativeWithD2D* sisNative,
+        const Rect& updateRect,
+        float dpi) const
+    {
+        CheckInPointer(sisNative);
 
-        virtual ComPtr<ICanvasDrawingSession> Create(
-            ISurfaceImageSourceNativeWithD2D* sisNative,
-            const Rect& updateRect) const override
-        {
-            CheckInPointer(sisNative);
+        ComPtr<ID2D1DeviceContext1> deviceContext;
+        auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
+            sisNative,
+            ToRECT(updateRect),
+            dpi,
+            &deviceContext);
 
-            ComPtr<ID2D1DeviceContext1> deviceContext;
-            auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
-                sisNative,
-                ToRECT(updateRect),
-                &deviceContext);
-
-            return m_drawingSessionManager->Create(
-                deviceContext.Get(),
-                std::move(adapter));
-        }        
-    };
-
+        return m_drawingSessionManager->Create(
+            deviceContext.Get(),
+            std::move(adapter));
+    }
 
     //
     // CanvasImageSourceFactory implementation
@@ -195,13 +186,7 @@ namespace canvas
     IFACEMETHODIMP CanvasImageSource::CreateDrawingSession(
         ICanvasDrawingSession** drawingSession)
     {
-        Rect updateRectangle = {};
-        updateRectangle.Width = static_cast<float>(m_widthInPixels);
-        updateRectangle.Height = static_cast<float>(m_heightInPixels);
-
-        return CreateDrawingSessionWithUpdateRectangle(
-            updateRectangle,
-            drawingSession);
+        return CreateDrawingSessionWithDpi(DEFAULT_DPI, drawingSession);
     }
 
     
@@ -210,22 +195,50 @@ namespace canvas
         Rect updateRectangle,
         ICanvasDrawingSession** drawingSession)
     {
+        return CreateDrawingSessionWithUpdateRectangleAndDpi(
+            updateRectangle, 
+            DEFAULT_DPI,
+            drawingSession);
+    }
+
+
+    _Use_decl_annotations_
+        IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithDpi(
+        float dpi,
+        ICanvasDrawingSession** drawingSession)
+    {
+        Rect updateRectangle = {};
+        updateRectangle.Width = static_cast<float>(m_widthInPixels);
+        updateRectangle.Height = static_cast<float>(m_heightInPixels);
+
+        return CreateDrawingSessionWithUpdateRectangleAndDpi(
+            updateRectangle,
+            dpi,
+            drawingSession);
+    }
+
+
+    IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangleAndDpi(
+        Rect updateRectangle,
+        float dpi,
+        _COM_Outptr_ ICanvasDrawingSession** drawingSession)
+    {
         return ExceptionBoundary(
             [&]()
-            {
-                CheckAndClearOutPointer(drawingSession);
-                                
-                ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
-                ThrowIfFailed(GetComposableBase().As(&sisNative));
+        {
+            CheckAndClearOutPointer(drawingSession);
 
-                auto newDrawingSession = m_drawingSessionFactory->Create(
-                    sisNative.Get(),
-                    updateRectangle);
+            ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
+            ThrowIfFailed(GetComposableBase().As(&sisNative));
 
-                ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
-            });
+            auto newDrawingSession = m_drawingSessionFactory->Create(
+                sisNative.Get(),
+                updateRectangle,
+                dpi);
+
+            ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
+        });
     }
-    
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSource::get_Device(

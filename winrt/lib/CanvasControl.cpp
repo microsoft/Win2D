@@ -21,6 +21,7 @@ namespace canvas
     using namespace Microsoft::WRL::Wrappers;
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Media;
+    using namespace ABI::Windows::Graphics::Display;
 
     IFACEMETHODIMP CanvasDrawingEventArgsFactory::Create(
         ICanvasDrawingSession* drawingSession,
@@ -61,6 +62,7 @@ namespace canvas
         ComPtr<ICompositionTargetStatics> m_compositionTargetStatics;
         ComPtr<ICanvasImageSourceFactory> m_canvasImageSourceFactory;
         ComPtr<IActivationFactory> m_imageControlFactory;
+        ComPtr<IDisplayInformationStatics> m_displayInformationStatics;
 
     public:
         CanvasControlAdapter()
@@ -89,6 +91,10 @@ namespace canvas
             ThrowIfFailed(GetActivationFactory(
                 HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_Image).Get(),
                 &m_imageControlFactory));
+
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_Graphics_Display_DisplayInformation).Get(), 
+                &m_displayInformationStatics));
         }
 
         virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override 
@@ -144,6 +150,26 @@ namespace canvas
 
             return image;
         }
+
+        float GetLogicalDpi() override
+        {
+            ComPtr<IDisplayInformation> displayInformation;
+            ThrowIfFailed(m_displayInformationStatics->GetForCurrentView(&displayInformation));
+
+            FLOAT logicalDpi;
+            ThrowIfFailed(displayInformation->get_LogicalDpi(&logicalDpi));
+            return logicalDpi;
+        }
+
+        virtual EventRegistrationToken AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
+        {
+            ComPtr<IDisplayInformation> displayInformation;
+            ThrowIfFailed(m_displayInformationStatics->GetForCurrentView(&displayInformation));
+
+            EventRegistrationToken token;
+            ThrowIfFailed(displayInformation->add_DpiChanged(handler, &token));
+            return token;
+        }
     };
 
 
@@ -198,12 +224,15 @@ namespace canvas
         m_imageControl = m_adapter->CreateImageControl();
 
         //
-        // Set the stretch mode to None; this will prevent the control from
-        // resizing itself when we change its source.  Instead we allow the
-        // layout to pick the control size and we ensure that we set the source
-        // to an appropriately sized CanvasImageSource.
+        // Set the stretch mode to Fill. This will ensure that on high DPI, the
+        // layout will confine the control to the correct area even when the
+        // backing image has a different physical size from the control's
+        // device-independent size.
         //
-        ThrowIfFailed(m_imageControl->put_Stretch(ABI::Windows::UI::Xaml::Media::Stretch_None));
+        // The logic in EnsureSizeDependentResources ensures that the Source
+        // assigned to the Image control matches the CanvasImageSource extents.
+        //
+        ThrowIfFailed(m_imageControl->put_Stretch(ABI::Windows::UI::Xaml::Media::Stretch_Fill));
 
         //
         // Set the image control as the content of this control.
@@ -232,6 +261,8 @@ namespace canvas
             onLoadedFn.Get(),
             &loadedToken));
 
+        // TODO #2189 Investigate a potential leak, with events that are registered but not unregistered.
+
         //  Register for SizeChanged event
         auto onSizeChangedFn = Callback<ISizeChangedEventHandler>(this, &CanvasControl::OnSizeChanged);
         EventRegistrationToken sizeChangedToken{};
@@ -239,6 +270,11 @@ namespace canvas
         ThrowIfFailed(thisAsFrameworkElement->add_SizeChanged(
             onSizeChangedFn.Get(),
             &sizeChangedToken));
+
+        // Register for DpiChanged event
+        auto dpiChangedEventHandler = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChangedCallback);
+        EventRegistrationToken dpiChangedToken{};
+        dpiChangedToken = m_adapter->AddDpiChangedCallback(dpiChangedEventHandler.Get());
     }
 
     void CanvasControl::ClearDrawNeeded()
@@ -272,9 +308,18 @@ namespace canvas
 
         assert(actualWidth <= static_cast<double>(INT_MAX));
         assert(actualHeight <= static_cast<double>(INT_MAX));
+        
+        const float logicalDpi = m_adapter->GetLogicalDpi();
+        const double dpiScalingFactor = logicalDpi / DEFAULT_DPI;
 
-        auto width = static_cast<int>(actualWidth);
-        auto height = static_cast<int>(actualHeight);
+        const double deviceDependentWidth = actualWidth * dpiScalingFactor;
+        const double deviceDependentHeight = actualHeight * dpiScalingFactor;
+
+        assert(deviceDependentWidth <= static_cast<double>(INT_MAX));
+        assert(deviceDependentHeight <= static_cast<double>(INT_MAX));
+
+        auto width = static_cast<int>(ceil(deviceDependentWidth));
+        auto height = static_cast<int>(ceil(deviceDependentHeight));
 
         if (m_canvasImageSource)
         {
@@ -302,8 +347,16 @@ namespace canvas
 
     void CanvasControl::CallDrawHandlers()
     {
+        if (m_drawEventList.GetSize() == 0)
+        {
+            return;
+        }
+
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(&drawingSession));
+        ComPtr<CanvasImageSource> imageSourceImplementation = 
+            static_cast<CanvasImageSource*>(m_canvasImageSource.Get());
+
+        ThrowIfFailed(imageSourceImplementation->CreateDrawingSessionWithDpi(m_adapter->GetLogicalDpi(), &drawingSession));
         ComPtr<CanvasDrawingEventArgs> drawEventArgs = Make<CanvasDrawingEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 
@@ -507,6 +560,15 @@ namespace canvas
             {
                 CheckAndClearOutPointer(value);
                 ThrowIfFailed(m_canvasDevice.CopyTo(value));
+            });
+    }
+    
+    HRESULT CanvasControl::OnDpiChangedCallback(IDisplayInformation* sender, IInspectable* args)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                InvalidateImpl();
             });
     }
 

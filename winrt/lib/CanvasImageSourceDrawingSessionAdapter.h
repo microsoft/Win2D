@@ -28,6 +28,7 @@ namespace canvas
         static std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> Create(
             ISurfaceImageSourceNativeWithD2D* sisNative,
             const RECT& updateRect,
+            float dpi,
             ID2D1DeviceContext1** outDeviceContext);
 
         CanvasImageSourceDrawingSessionAdapter(
