@@ -34,7 +34,8 @@ under the License.
     <member name="N:Microsoft.Graphics.Canvas.Numerics">
       <summary>This namespace defines Windows Runtime vector and matrix types. These are only used
                for data exchange, and do not include any methods for doing math with the values.
-               For more complete functionality, see the <see cref="N:System.Numerics"/> namespace.</summary>
+               For more complete functionality, see the .NET <see cref="N:System.Numerics"/> and
+               C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</summary>
     </member>
 
   </members>

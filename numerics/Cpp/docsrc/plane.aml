@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="WindowsNumerics_plane" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>This structure represents a plane using a 3D vector normal and a distance value.</para>
+      <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Plane</codeEntityReference>.</para>
+      <para>
+        <markup><br/></markup>
+        <legacyBold>Namespace:</legacyBold> <link xlink:href="WindowsNumerics">Windows::Foundation::Numerics</link>
+        <markup><br/></markup>
+        <legacyBold>Header:</legacyBold> WindowsNumerics.h
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Constructors</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>plane()</codeInline></entry>
+            <entry>Creates an uninitialized plane.</entry>
+          </row>
+          <row>
+            <entry><codeInline>plane(float x, float y, float z, float d)</codeInline></entry>
+            <entry>Creates a plane with the specified values.</entry>
+          </row>
+          <row>
+            <entry><codeInline>plane(float3 normal, float d)</codeInline></entry>
+            <entry>Creates a plane from a float3 and a distance.</entry>
+          </row>
+          <row>
+            <entry><codeInline>explicit plane(float4 value)</codeInline></entry>
+            <entry>Creates a plane from a float4.</entry>
+          </row>
+          <row>
+            <entry><codeInline>plane(Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Plane const&amp; value)</codeInline></entry>
+            <entry>Converts a Microsoft.Graphics.Canvas.Numerics.Plane to a plane.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Functions</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>plane make_plane_from_vertices(float3 const&amp; point1, float3 const&amp; point2, float3 const&amp; point3)</codeInline></entry>
+            <entry>Creates a plane from a set of three vertex positions, which must all be different and not in a straight line.</entry>
+          </row>
+          <row>
+            <entry><codeInline>plane normalize(plane const&amp; value)</codeInline></entry>
+            <entry>Changes the coefficients of the normal vector of a plane to make it of unit length.</entry>
+          </row>
+          <row>
+            <entry><codeInline>plane transform(plane const&amp; plane, float4x4 const&amp; matrix)</codeInline></entry>
+            <entry>Transforms a normalized plane by a matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>plane transform(plane const&amp; plane, quaternion const&amp; rotation)</codeInline></entry>
+            <entry>Transforms a normalized plane by a quaternion rotation.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float dot(plane const&amp; plane, float4 const&amp; value)</codeInline></entry>
+            <entry>Calculates the dot product of a plane with a vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float dot_coordinate(plane const&amp; plane, float3 const&amp; value)</codeInline></entry>
+            <entry>Calculates the dot product of a plane with a float3 coordinate. Unlike dot_normal, this computation includes the plane d value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float dot_normal(plane const&amp; plane, float3 const&amp; value)</codeInline></entry>
+            <entry>Calculates the dot product of a plane with a float3 normal. Unlike dot_coordinate, this computation ignores the plane d value.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+    
+    <section>
+      <title>Operators</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>bool operator== (plane const&amp; value1, plane const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of plane are equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool operator!= (plane const&amp; value1, plane const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of plane are not equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>operator Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Plane() const</codeInline></entry>
+            <entry>Converts a plane to a Microsoft.Graphics.Canvas.Numerics.Plane.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Fields</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float3 normal</codeInline></entry>
+            <entry>Normal vector of the plane.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float d</codeInline></entry>
+            <entry>Distance of the plane along its normal from the origin.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

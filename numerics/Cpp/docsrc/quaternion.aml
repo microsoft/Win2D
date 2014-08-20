@@ -1,0 +1,246 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="WindowsNumerics_quaternion" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>A four dimensional vector, used to represent a rotation.</para>
+      <para>Quaternions can efficiently rotate an object about the (x, y, z) vector by the angle theta, where w = cos(theta/2). They are typically used for smooth interpolation between two angles, and for avoiding the gimbal lock problem that can occur with Euler angles.</para>
+      <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Quaternion</codeEntityReference>.</para>
+      <para>
+        <markup><br/></markup>
+        <legacyBold>Namespace:</legacyBold> <link xlink:href="WindowsNumerics">Windows::Foundation::Numerics</link>
+        <markup><br/></markup>
+        <legacyBold>Header:</legacyBold> WindowsNumerics.h
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Constructors</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>quaternion()</codeInline></entry>
+            <entry>Creates an uninitialized quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion(float x, float y, float z, float w)</codeInline></entry>
+            <entry>Creates a quaternion with the specified values.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion(float3 vectorPart, float scalarPart)</codeInline></entry>
+            <entry>Creates a quaternion from a float3 and scalar.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion(Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Quaternion const&amp; value)</codeInline></entry>
+            <entry>Converts a Microsoft.Graphics.Canvas.Numerics.Quaternion to a quaternion.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Functions</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>quaternion make_quaternion_from_axis_angle(float3 const&amp; axis, float angle)</codeInline></entry>
+            <entry>Creates a quaternion from a vector and an angle to rotate about the vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion make_quaternion_from_yaw_pitch_roll(float yaw, float pitch, float roll)</codeInline></entry>
+            <entry>Creates a quaternion from specified yaw, pitch, and roll angles.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion make_quaternion_from_rotation_matrix(float4x4 const&amp; matrix)</codeInline></entry>
+            <entry>Creates a quaternion from a rotation matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool is_identity(quaternion const&amp; value)</codeInline></entry>
+            <entry>Checks whether this is an identity (no rotation) quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float length(quaternion const&amp; value)</codeInline></entry>
+            <entry>Calculates the length of a quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float length_squared(quaternion const&amp; value)</codeInline></entry>
+            <entry>Calculates the length squared of a quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float dot(quaternion const&amp; quaternion1, quaternion const&amp; quaternion2)</codeInline></entry>
+            <entry>Calculates the dot product of two quaternions.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion normalize(quaternion const&amp; value)</codeInline></entry>
+            <entry>Divides each component of a quaternion by the length of the quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion conjugate(quaternion const&amp; value)</codeInline></entry>
+            <entry>Calculates the conjugate of a quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion inverse(quaternion const&amp; value)</codeInline></entry>
+            <entry>Calculates the inverse of a quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion slerp(quaternion const&amp; quaternion1, quaternion const&amp; quaternion2, float amount)</codeInline></entry>
+            <entry>Interpolates between two quaternions, using spherical linear interpolation.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion lerp(quaternion const&amp; quaternion1, quaternion const&amp; quaternion2, float amount)</codeInline></entry>
+            <entry>Linearly interpolates between two quaternions.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion concatenate(quaternion const&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>Concatenates two quaternions; the result represents the first rotation followed by the second rotation.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+    
+    <section>
+      <title>Methods</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>static quaternion identity()</codeInline></entry>
+            <entry>Returns a quaternion representing no rotation.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Operators</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>quaternion operator+ (quaternion const&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>Adds two quaternions.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion operator- (quaternion const&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>Subtracts a quaternion from another quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion operator* (quaternion const&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>Multiplies a quaternion by another quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion operator* (quaternion const&amp; value1, float value2)</codeInline></entry>
+            <entry>Multiplies a quaternion by a scalar value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion operator/ (quaternion const&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>Divides a quaternion by another quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion operator- (quaternion const&amp; value)</codeInline></entry>
+            <entry>Flips the sign of each component of the quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion&amp; operator+= (quaternion&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>In-place adds two quaternions.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion&amp; operator-= (quaternion&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>In-place subtracts a quaternion from another quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion&amp; operator*= (quaternion&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>In-place multiplies a quaternion by another quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion&amp; operator*= (quaternion&amp; value1, float value2)</codeInline></entry>
+            <entry>In-place nultiplies a quaternion by a scalar value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>quaternion&amp; operator/= (quaternion&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>In-place divides a quaternion by another quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool operator== (quaternion const&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of quaternion are equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool operator!= (quaternion const&amp; value1, quaternion const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of quaternion are not equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>operator Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Quaternion() const</codeInline></entry>
+            <entry>Converts a quaternion to a Microsoft.Graphics.Canvas.Numerics.Quaternion.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Fields</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float x</codeInline></entry>
+            <entry>X value of the vector component of the quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float y</codeInline></entry>
+            <entry>Y value of the vector component of the quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float z</codeInline></entry>
+            <entry>Z value of the vector component of the quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float w</codeInline></entry>
+            <entry>Rotation component of the quaternion.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

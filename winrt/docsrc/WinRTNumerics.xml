@@ -20,16 +20,21 @@ under the License.
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.Numerics.Matrix3x2">
-      <summary>A 3x2 matrix, used for 2D transforms. To manipulate matrix values, use the System.Numerics <see cref="T:System.Numerics.Matrix3x2"/> type instead.</summary>
+      <summary>
+        <p>A 3x2 matrix, used for 2D transforms.</p>
+        <p>To manipulate matrix values, use the .NET <see cref="T:System.Numerics.Matrix3x2"/>
+           or C++ <a href="WindowsNumerics_float3x2.htm">float3x2</a> types instead.</p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
-           For more complete functionality, use the <see cref="N:System.Numerics"/> namespace instead.</p>
+           For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
+           and C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</p>
         
-        <p>System.Numerics.Matrix3x2 provides implicit conversion operators to and from
-           Microsoft.Graphics.Canvas.Numerics.Matrix3x2, so you can use System.Numerics
-           types in your application code, then pass these values directly to Windows Runtime
-           APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
+        <p>System.Numerics.Matrix3x2 and Windows.Foundation.Numerics.float3x2 provide implicit 
+           conversion operators to and from Microsoft.Graphics.Canvas.Numerics.Matrix3x2, so you 
+           can use these richer types in your application code, then pass them directly to Windows 
+           Runtime APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Numerics.Matrix3x2.M11">
@@ -53,16 +58,21 @@ under the License.
 
 
     <member name="T:Microsoft.Graphics.Canvas.Numerics.Matrix4x4">
-      <summary>A 4x4 matrix, used for 3D transforms. To manipulate matrix values, use the System.Numerics <see cref="T:System.Numerics.Matrix4x4"/> type instead.</summary>
+      <summary>
+        <p>A 4x4 matrix, used for 3D transforms.</p>
+        <p>To manipulate matrix values, use the .NET <see cref="T:System.Numerics.Matrix4x4"/>
+           or C++ <a href="WindowsNumerics_float4x4.htm">float4x4</a> types instead.</p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
-           For more complete functionality, use the <see cref="N:System.Numerics"/> namespace instead.</p>
+           For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
+           and C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</p>
         
-        <p>System.Numerics.Matrix4x4 provides implicit conversion operators to and from
-           Microsoft.Graphics.Canvas.Numerics.Matrix4x4, so you can use System.Numerics
-           types in your application code, then pass these values directly to Windows Runtime
-           APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
+        <p>System.Numerics.Matrix4x4 and Windows.Foundation.Numerics.float4x4 provide implicit 
+           conversion operators to and from Microsoft.Graphics.Canvas.Numerics.Matrix4x4, so you 
+           can use these richer types in your application code, then pass them directly to Windows 
+           Runtime APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Numerics.Matrix4x4.M11">
@@ -116,16 +126,21 @@ under the License.
 
 
     <member name="T:Microsoft.Graphics.Canvas.Numerics.Plane">
-      <summary>A plane. To manipulate plane values, use the System.Numerics <see cref="T:System.Numerics.Plane"/> type instead.</summary>
+      <summary>
+        <p>A plane.</p>
+        <p>To manipulate plane values, use the .NET <see cref="T:System.Numerics.Plane"/>
+           or C++ <a href="WindowsNumerics_plane.htm">plane</a> types instead.</p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
-           For more complete functionality, use the <see cref="N:System.Numerics"/> namespace instead.</p>
+           For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
+           and C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</p>
         
-        <p>System.Numerics.Plane provides implicit conversion operators to and from
-           Microsoft.Graphics.Canvas.Numerics.Plane, so you can use System.Numerics
-           types in your application code, then pass these values directly to Windows Runtime
-           APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
+        <p>System.Numerics.Plane and Windows.Foundation.Numerics.plane provide implicit 
+           conversion operators to and from Microsoft.Graphics.Canvas.Numerics.Plane, so you 
+           can use these richer types in your application code, then pass them directly to Windows 
+           Runtime APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Numerics.Plane.Normal">
@@ -137,16 +152,21 @@ under the License.
 
 
     <member name="T:Microsoft.Graphics.Canvas.Numerics.Quaternion">
-      <summary>A four dimensional vector, used to represent a rotation. To manipulate quaternion values, use the System.Numerics <see cref="T:System.Numerics.Quaternion"/> type instead.</summary>
+      <summary>
+        <p>A four dimensional vector, used to represent a rotation.</p>
+        <p>To manipulate quaternion values, use the .NET <see cref="T:System.Numerics.Quaternion"/>
+           or C++ <a href="WindowsNumerics_quaternion.htm">quaternion</a> types instead.</p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
-           For more complete functionality, use the <see cref="N:System.Numerics"/> namespace instead.</p>
+           For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
+           and C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</p>
         
-        <p>System.Numerics.Quaternion provides implicit conversion operators to and from
-           Microsoft.Graphics.Canvas.Numerics.Quaternion, so you can use System.Numerics
-           types in your application code, then pass these values directly to Windows Runtime
-           APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
+        <p>System.Numerics.Quaternion and Windows.Foundation.Numerics.quaternion provide implicit 
+           conversion operators to and from Microsoft.Graphics.Canvas.Numerics.Quaternion, so you 
+           can use these richer types in your application code, then pass them directly to Windows 
+           Runtime APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Numerics.Quaternion.X">
@@ -164,16 +184,21 @@ under the License.
 
 
     <member name="T:Microsoft.Graphics.Canvas.Numerics.Vector2">
-      <summary>A vector with two components. To manipulate vector values, use the System.Numerics <see cref="T:System.Numerics.Vector2"/> type instead.</summary>
+      <summary>
+        <p>A vector with two components.</p>
+        <p>To manipulate vector values, use the .NET <see cref="T:System.Numerics.Vector2"/>
+           or C++ <a href="WindowsNumerics_float2.htm">float2</a> types instead.</p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
-           For more complete functionality, use the <see cref="N:System.Numerics"/> namespace instead.</p>
+           For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
+           and C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</p>
         
-        <p>System.Numerics.Vector2 provides implicit conversion operators to and from
-           Microsoft.Graphics.Canvas.Numerics.Vector2, so you can use System.Numerics
-           types in your application code, then pass these values directly to Windows Runtime
-           APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
+        <p>System.Numerics.Vector2 and Windows.Foundation.Numerics.float2 provide implicit 
+           conversion operators to and from Microsoft.Graphics.Canvas.Numerics.Vector2, so you 
+           can use these richer types in your application code, then pass them directly to Windows 
+           Runtime APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Numerics.Vector2.X">
@@ -185,16 +210,21 @@ under the License.
 
 
     <member name="T:Microsoft.Graphics.Canvas.Numerics.Vector3">
-      <summary>A vector with three components. To manipulate vector values, use the System.Numerics <see cref="T:System.Numerics.Vector3"/> type instead.</summary>
+      <summary>
+        <p>A vector with three components.</p>
+        <p>To manipulate vector values, use the .NET <see cref="T:System.Numerics.Vector3"/>
+           or C++ <a href="WindowsNumerics_float3.htm">float3</a> types instead.</p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
-           For more complete functionality, use the <see cref="N:System.Numerics"/> namespace instead.</p>
+           For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
+           and C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</p>
         
-        <p>System.Numerics.Vector3 provides implicit conversion operators to and from
-           Microsoft.Graphics.Canvas.Numerics.Vector3, so you can use System.Numerics
-           types in your application code, then pass these values directly to Windows Runtime
-           APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
+        <p>System.Numerics.Vector3 and Windows.Foundation.Numerics.float3 provide implicit 
+           conversion operators to and from Microsoft.Graphics.Canvas.Numerics.Vector3, so you 
+           can use these richer types in your application code, then pass them directly to Windows 
+           Runtime APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Numerics.Vector3.X">
@@ -209,16 +239,21 @@ under the License.
 
 
     <member name="T:Microsoft.Graphics.Canvas.Numerics.Vector4">
-      <summary>A vector with four components. To manipulate vector values, use the System.Numerics <see cref="T:System.Numerics.Vector4"/> type instead.</summary>
+      <summary>
+        <p>A vector with four components.</p>
+        <p>To manipulate vector values, use the .NET <see cref="T:System.Numerics.Vector4"/>
+           or C++ <a href="WindowsNumerics_float4.htm">float4</a> types instead.</p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
-           For more complete functionality, use the <see cref="N:System.Numerics"/> namespace instead.</p>
+           For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
+           and C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</p>
         
-        <p>System.Numerics.Vector4 provides implicit conversion operators to and from
-           Microsoft.Graphics.Canvas.Numerics.Vector4, so you can use System.Numerics
-           types in your application code, then pass these values directly to Windows Runtime
-           APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
+        <p>System.Numerics.Vector4 and Windows.Foundation.Numerics.float4 provide implicit 
+           conversion operators to and from Microsoft.Graphics.Canvas.Numerics.Vector4, so you 
+           can use these richer types in your application code, then pass them directly to Windows 
+           Runtime APIs that consume the Microsoft.Graphics.Canvas.Numerics types.</p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Numerics.Vector4.X">

@@ -19,7 +19,10 @@ under the License.
   </assembly>
   <members>
     <member name="T:System.Numerics.Plane">
-      <summary>A plane.</summary>
+      <summary>
+        <p>A plane.</p>
+        <p intellisense="false">This type is only available in .NET. Its C++ equivalent is <a href="WindowsNumerics_plane.htm">plane</a>.</p>
+      </summary>
       <remarks>The Plane structure represents a plane using a 3D vector normal and a distance value.</remarks>
     </member>
     <member name="M:System.Numerics.Plane.#ctor(System.Single,System.Single,System.Single,System.Single)">

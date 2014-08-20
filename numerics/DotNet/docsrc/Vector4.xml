@@ -19,7 +19,10 @@ under the License.
   </assembly>
   <members>
     <member name="T:System.Numerics.Vector4">
-      <summary>A vector with four components.</summary>
+      <summary>
+        <p>A vector with four components.</p>
+        <p intellisense="false">This type is only available in .NET. Its C++ equivalent is <a href="WindowsNumerics_float4.htm">float4</a>.</p>
+      </summary>
     </member>
     <member name="M:System.Numerics.Vector4.#ctor(System.Single,System.Single,System.Single,System.Single)">
       <summary>Creates a new instance of Vector4.</summary>

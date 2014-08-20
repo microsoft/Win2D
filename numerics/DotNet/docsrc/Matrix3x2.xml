@@ -19,7 +19,10 @@ under the License.
   </assembly>
   <members>
     <member name="T:System.Numerics.Matrix3x2">
-      <summary>A 3x2 matrix, used for 2D transforms.</summary>
+      <summary>
+        <p>A 3x2 matrix, used for 2D transforms.</p>
+        <p intellisense="false">This type is only available in .NET. Its C++ equivalent is <a href="WindowsNumerics_float3x2.htm">float3x2</a>.</p>
+      </summary>
       <remarks>This matrix type uses a row vector layout. Matrices can be either row vector or column vector. Row vector matrices view vectors as a row from left to right, while column vector matrices view vectors as a column from top to bottom. For example, the x and y of this matrix's translation vector correspond to the fields M31, M32.</remarks>
     </member>
     <member name="M:System.Numerics.Matrix3x2.#ctor(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
@@ -56,10 +59,10 @@ under the License.
       <summary>Creates a skew matrix, centered on the specified point.</summary>
     </member>
     <member name="M:System.Numerics.Matrix3x2.CreateRotation(System.Single)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the origin.</summary>
+      <summary>Creates a rotation matrix, centered on the origin.</summary>
     </member>
     <member name="M:System.Numerics.Matrix3x2.CreateRotation(System.Single,System.Numerics.Vector2)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the specified point.</summary>
+      <summary>Creates a rotation matrix, centered on the specified point.</summary>
     </member>
     <member name="M:System.Numerics.Matrix3x2.GetDeterminant">
       <summary>Calculates the determinant of the matrix.</summary>

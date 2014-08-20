@@ -19,7 +19,10 @@ under the License.
   </assembly>
   <members>
     <member name="T:System.Numerics.Matrix4x4">
-      <summary>A 4x4 matrix, used for 3D transforms.</summary>
+      <summary>
+        <p>A 4x4 matrix, used for 3D transforms.</p>
+        <p intellisense="false">This type is only available in .NET. Its C++ equivalent is <a href="WindowsNumerics_float4x4.htm">float4x4</a>.</p>
+      </summary>
       <remarks>This matrix type uses a row vector layout. Matrices can be either row vector or column vector. Row vector matrices view vectors as a row from left to right, while column vector matrices view vectors as a column from top to bottom. For example, the x, y, and z of this matrix's translation vector correspond to the fields M41, M42, M43.</remarks>
     </member>
     <member name="M:System.Numerics.Matrix4x4.#ctor(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
@@ -61,22 +64,22 @@ under the License.
       <summary>Creates a scaling matrix, centered on the specified point.</summary>
     </member>
     <member name="M:System.Numerics.Matrix4x4.CreateRotationX(System.Single)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the x-axis, centered on the origin.</summary>
+      <summary>Creates an x-axis rotation matrix, centered on the origin.</summary>
     </member>
     <member name="M:System.Numerics.Matrix4x4.CreateRotationX(System.Single,System.Numerics.Vector3)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the x-axis, centered on the specified point.</summary>
+      <summary>Creates an x-axis rotation matrix, centered on the specified point.</summary>
     </member>
     <member name="M:System.Numerics.Matrix4x4.CreateRotationY(System.Single)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the y-axis, centered on the origin.</summary>
+      <summary>Creates a y-axis rotation matrix, centered on the origin.</summary>
     </member>
     <member name="M:System.Numerics.Matrix4x4.CreateRotationY(System.Single,System.Numerics.Vector3)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the y-axis, centered on the specified point.</summary>
+      <summary>Creates a y-axis rotation matrix, centered on the specified point.</summary>
     </member>
     <member name="M:System.Numerics.Matrix4x4.CreateRotationZ(System.Single)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the z-axis, centered on the origin.</summary>
+      <summary>Creates a z-axis rotation matrix, centered on the origin.</summary>
     </member>
     <member name="M:System.Numerics.Matrix4x4.CreateRotationZ(System.Single,System.Numerics.Vector3)">
-      <summary>Creates a matrix that can be used to rotate a set of vertices around the z-axis, centered on the specified point.</summary>
+      <summary>Creates a z-axis rotation matrix, centered on the specified point.</summary>
     </member>
     <member name="M:System.Numerics.Matrix4x4.CreateFromAxisAngle(System.Numerics.Vector3,System.Single)">
       <summary>Creates a matrix that rotates around an arbitrary vector.</summary>

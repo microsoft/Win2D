@@ -20,9 +20,14 @@ under the License.
   <members>
 
     <member name="N:System.Numerics">.
-      <summary>This namespace defines .NET vector and matrix types. It extends the structs from 
-               <see cref="N:Microsoft.Graphics.Canvas.Numerics"/> with a range of mathematical 
-               operators and functions.</summary>
+      <summary>
+        <p>This namespace defines .NET vector and matrix types. It extends the structs from
+           <see cref="N:Microsoft.Graphics.Canvas.Numerics"/> with a range of mathematical
+           operators and functions.</p>
+
+        <p>This namespace is only available in .NET.
+           Its C++ equivalent is <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a>.</p>
+      </summary>
     </member>
 
   </members>

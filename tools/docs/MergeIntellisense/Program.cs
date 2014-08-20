@@ -13,6 +13,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 using Shared;
@@ -78,6 +79,7 @@ namespace MergeIntellisense
             // Merge all the member documentation into a single list.
             var mergedMembers = from input in inputs
                                 from member in input.Element("doc").Element("members").Elements()
+                                where !IsNamespace(member)
                                 select member;
 
             // Remove documentation tags that Intellisense does not use, to minimize the size of the shipping XML files.
@@ -94,9 +96,15 @@ namespace MergeIntellisense
                                   where !tagsSupportedByIntellisense.Contains(tag.Name.LocalName, StringComparer.OrdinalIgnoreCase)
                                   select tag;
 
-            foreach (var unsupported in unsupportedTags)
+            var markedToSkip = from element in mergedMembers.Descendants()
+                               where MarkedToSkip(element)
+                               select element;
+
+            var unwantedElements = unsupportedTags.Concat(markedToSkip);
+
+            foreach (var unwanted in unwantedElements.ToList())
             {
-                unsupported.Remove();
+                unwanted.Remove();
             }
 
             // Generate new Intellisense XML.
@@ -116,6 +124,25 @@ namespace MergeIntellisense
         static string GetAssemblyName(XDocument xml)
         {
             return xml.Element("doc").Element("assembly").Element("name").Value;
+        }
+        
+        
+        static bool IsNamespace(XElement member)
+        {
+            return member.Attribute("name").Value.StartsWith("N:");
+        }
+        
+        
+        static bool MarkedToSkip(XElement element)
+        {
+            var attribute = element.Attribute("intellisense");
+            
+            if (attribute == null)
+            {
+                return false;
+            }
+
+            return !XmlConvert.ToBoolean(attribute.Value);
         }
     }
 }

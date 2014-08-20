@@ -13,7 +13,7 @@ License for the specific language governing permissions and limitations
 under the License.
 -->
 
-<topic id="849b41a6-5953-4400-b4ed-7976aa5c7b57" revisionNumber="1">
+<topic id="Interop" revisionNumber="1">
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 
     <introduction>
@@ -41,7 +41,7 @@ under the License.
     <section>
       <title>Interop APIs</title>
       <content>
-        <para>To move back and forth between Windows Canvas and native Direct2D interfaces, use the methods:</para>
+        <para>To move back and forth between Windows Canvas and native Direct2D interfaces, use the C++/CX methods:</para>
 
         <code>
         // header: Microsoft.Graphics.Canvas.native.h

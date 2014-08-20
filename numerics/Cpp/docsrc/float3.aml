@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="WindowsNumerics_float3" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>A vector with three components.</para>
+      <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Vector3</codeEntityReference>.</para>
+      <para>
+        <markup><br/></markup>
+        <legacyBold>Namespace:</legacyBold> <link xlink:href="WindowsNumerics">Windows::Foundation::Numerics</link>
+        <markup><br/></markup>
+        <legacyBold>Header:</legacyBold> WindowsNumerics.h
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Constructors</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float3()</codeInline></entry>
+            <entry>Creates an uninitialized float3.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3(float x, float y, float z)</codeInline></entry>
+            <entry>Creates a float3 with the specified values.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3(float2 value, float z)</codeInline></entry>
+            <entry>Creates a float3 with x and y copied from a float2 plus the specified z value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>explicit float3(float value)</codeInline></entry>
+            <entry>Creates a float3 with all components set to the specified value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3(Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Vector3 const&amp; value)</codeInline></entry>
+            <entry>Converts a Microsoft.Graphics.Canvas.Numerics.Vector3 to a float3.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Functions</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float length(float3 const&amp; value)</codeInline></entry>
+            <entry>Calculates the length, or Euclidean distance, of the vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float length_squared(float3 const&amp; value)</codeInline></entry>
+            <entry>Calculates the length, or Euclidean distance, of the vector squared.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float distance(float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Calculates the Euclidean distance between two vectors.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float distance_squared(float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Calculates the Euclidean distance between two vectors squared.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float dot(float3 const&amp; vector1, float3 const&amp; vector2)</codeInline></entry>
+            <entry>Calculates the dot product of two vectors.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 normalize(float3 const&amp; value)</codeInline></entry>
+            <entry>Creates a unit vector from the specified vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 cross(float3 const&amp; vector1, float3 const&amp; vector2)</codeInline></entry>
+            <entry>Calculates the cross product of two vectors.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 reflect(float3 const&amp; vector, float3 const&amp; normal)</codeInline></entry>
+            <entry>Determines the reflect vector of the given vector and normal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 min(float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Returns a vector that contains the lowest value from each matching pair of components.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 max(float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Returns a vector that contains the highest value from each matching pair of components.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 clamp(float3 const&amp; value1, float3 const&amp; min, float3 const&amp; max)</codeInline></entry>
+            <entry>Restricts a value to be within a specified range.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 lerp(float3 const&amp; value1, float3 const&amp; value2, float amount)</codeInline></entry>
+            <entry>Performs a linear interpolation between two vectors.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 transform(float3 const&amp; position, float4x4 const&amp; matrix)</codeInline></entry>
+            <entry>Transforms the vector (x, y, z, 1) by the specified matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 transform_normal(float3 const&amp; normal, float4x4 const&amp; matrix)</codeInline></entry>
+            <entry>Transforms the normal vector (x, y, z, 0) by the specified matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 transform(float3 const&amp; value, quaternion const&amp; rotation)</codeInline></entry>
+            <entry>Transforms a float3 by the given quaternion.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+    
+    <section>
+      <title>Methods</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>static float3 zero()</codeInline></entry>
+            <entry>Returns a float3 with all of its components set to zero.</entry>
+          </row>
+          <row>
+            <entry><codeInline>static float3 one()</codeInline></entry>
+            <entry>Returns a float3 with all of its components set to one.</entry>
+          </row>
+          <row>
+            <entry><codeInline>static float3 unit_x()</codeInline></entry>
+            <entry>Returns the float3 (1, 0, 0).</entry>
+          </row>
+          <row>
+            <entry><codeInline>static float3 unit_y()</codeInline></entry>
+            <entry>Returns the float3 (0, 1, 0).</entry>
+          </row>
+          <row>
+            <entry><codeInline>static float3 unit_z()</codeInline></entry>
+            <entry>Returns the float3 (0, 0, 1).</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Operators</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float3 operator+ (float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Adds two vectors.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 operator- (float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Subtracts a vector from a vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 operator* (float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Multiplies the components of two vectors by each other.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 operator* (float3 const&amp; value1, float value2)</codeInline></entry>
+            <entry>Multiplies a vector by a scalar.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 operator* (float value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Multiplies a vector by a scalar.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 operator/ (float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Divides the components of a vector by the components of another vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 operator/ (float3 const&amp; value1, float value2)</codeInline></entry>
+            <entry>Divides a vector by a scalar value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 operator- (float3 const&amp; value)</codeInline></entry>
+            <entry>Returns a vector pointing in the opposite direction.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3&amp; operator+= (float3&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>In-place adds two vectors.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3&amp; operator-= (float3&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>In-place subtracts a vector from a vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3&amp; operator*= (float3&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>In-place multiplies the components of two vectors by each other.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3&amp; operator*= (float3&amp; value1, float value2)</codeInline></entry>
+            <entry>In-place multiplies a vector by a scalar.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3&amp; operator/= (float3&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>In-place divides the components of a vector by the components of another vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3&amp; operator/= (float3&amp; value1, float value2)</codeInline></entry>
+            <entry>In-place divides a vector by a scalar value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool operator== (float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of float3 are equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool operator!= (float3 const&amp; value1, float3 const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of float3 are not equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>operator Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Vector3() const</codeInline></entry>
+            <entry>Converts a float3 to a Microsoft.Graphics.Canvas.Numerics.Vector3.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Fields</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float x</codeInline></entry>
+            <entry>X component of the vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float y</codeInline></entry>
+            <entry>Y component of the vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float z</codeInline></entry>
+            <entry>Z component of the vector.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+
+    <!-- Sandcastle configuration options -->
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ec5bd60b-d070-432b-bf14-ab50cfc1d7f8}</ProjectGuid>
     <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
@@ -22,44 +24,58 @@
     <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
-    <HelpTitle>Windows Canvas documentation</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
     <VisibleItems>InheritedMembers, Protected, ProtectedInternalAsProtected</VisibleItems>
-    <OutputPath>$(MSBuildThisFileDirectory)..\..\bin\docs</OutputPath>
-    <DocumentationSources>
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.winmd" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.dll" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.placeholders.xml" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.placeholders.xml" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.xml" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\numerics\DotNet\docsrc\*.xml" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\PlaceholderNamespaces.xml" />
-    </DocumentationSources>
-    <CopyrightText>Copyright %28c%29 Microsoft Corporation. All rights reserved.</CopyrightText>
-    <CopyrightHref>http://github.com/Microsoft/WindowsCanvas/blob/master/LICENSE.txt</CopyrightHref>
     <PlugInConfigurations>
       <PlugInConfig id="Table of Contents Exclusion" enabled="True" xmlns="">
         <configuration />
       </PlugInConfig>
     </PlugInConfigurations>
+    <OutputPath>$(MSBuildThisFileDirectory)..\..\bin\docs</OutputPath>
+
+    <!-- Header and footer applied to all doc pages -->
+    <HelpTitle>Windows Canvas documentation</HelpTitle>
+    <CopyrightText>Copyright %28c%29 Microsoft Corporation. All rights reserved.</CopyrightText>
+    <CopyrightHref>http://github.com/Microsoft/WindowsCanvas/blob/master/LICENSE.txt</CopyrightHref>
+
+    <DocumentationSources>
+      <!-- Reference assemblies -->
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.winmd" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.dll" />
+
+      <!-- Reference documentation source XML -->
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\numerics\DotNet\docsrc\*.xml" />
+
+      <!-- Generated placeholder documentation linking to types on MSDN -->
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.placeholders.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.placeholders.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\PlaceholderNamespaces.xml" />
+    </DocumentationSources>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="Conceptual\Introduction.aml" />
-    <None Include="Conceptual\Interop.aml" />
-  </ItemGroup>
-  <ItemGroup>
+    <!-- Layout specifies where to put conceptual doc pages -->
     <ContentLayout Include="Layout.content" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Conceptual\" />
-    <Folder Include="images\" />
-  </ItemGroup>
-  <ItemGroup>
+
+    <!-- Conceptual documentation source XML -->
+    <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.aml" />
+    <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\numerics\Cpp\docsrc\*.aml" />
+
+    <!-- Image files -->
     <WildcardImages Include="..\..\winrt\docsrc\images\*.png" />
+
+    <!-- Expand wildcards and fill in their Link metadata -->
+    <None Include="@(WildcardConceptual)">
+      <Link>conceptual\%(WildcardConceptual.Filename)%(WildcardConceptual.Extension)</Link>
+    </None>
+
     <Content Include="@(WildcardImages)">
-      <Link>images\%(WildcardImages.Filename).png</Link>
+      <Link>images\%(WildcardImages.Filename)%(WildcardImages.Extension)</Link>
     </Content>
   </ItemGroup>
+
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+
 </Project>

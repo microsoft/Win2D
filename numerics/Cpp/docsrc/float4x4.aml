@@ -1,0 +1,378 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="WindowsNumerics_float4x4" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>A 4x4 matrix, used for 3D transforms.</para>
+      <para>This matrix type uses a row vector layout. The x, y, and z of this matrix's translation vector correspond to the fields m41, m42, m43.</para>
+      <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Matrix4x4</codeEntityReference>.</para>
+      <para>
+        <markup><br/></markup>
+        <legacyBold>Namespace:</legacyBold> <link xlink:href="WindowsNumerics">Windows::Foundation::Numerics</link>
+        <markup><br/></markup>
+        <legacyBold>Header:</legacyBold> WindowsNumerics.h
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Constructors</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float4x4()</codeInline></entry>
+            <entry>Creates an uninitialized float4x4.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)</codeInline></entry>
+            <entry>Creates a float4x4 with the specified values.</entry>
+          </row>
+          <row>
+            <entry><codeInline>explicit float4x4(float3x2 value)</codeInline></entry>
+            <entry>Creates a float4x4 from a float3x2.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4(Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Matrix4x4 const&amp; value)</codeInline></entry>
+            <entry>Converts a Microsoft.Graphics.Canvas.Numerics.Matrix4x4 to a float4x4.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+    
+    <section>
+      <title>Functions</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_billboard(float3 const&amp; objectPosition, float3 const&amp; cameraPosition, float3 const&amp; cameraUpVector, float3 const&amp; cameraForwardVector)</codeInline></entry>
+            <entry>Creates a spherical billboard that rotates around a specified object position, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_&#8203;constrained_billboard(float3 const&amp; objectPosition, float3 const&amp; cameraPosition, float3 const&amp; rotateAxis, float3 const&amp; cameraForwardVector, float3 const&amp; objectForwardVector)</codeInline></entry>
+            <entry>Creates a cylindrical billboard that rotates around a specified axis, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_translation(float3 const&amp; position)</codeInline></entry>
+            <entry>Creates a translation matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_translation(float xPosition, float yPosition, float zPosition)</codeInline></entry>
+            <entry>Creates a translation matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_scale(float xScale, float yScale, float zScale)</codeInline></entry>
+            <entry>Creates a scaling matrix, centered on the origin.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_scale(float xScale, float yScale, float zScale, float3 const&amp; centerPoint)</codeInline></entry>
+            <entry>Creates a scaling matrix, centered on the specified point.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_scale(float3 const&amp; scales)</codeInline></entry>
+            <entry>Creates a scaling matrix, centered on the origin.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_scale(float3 const&amp; scales, float3 const&amp; centerPoint)</codeInline></entry>
+            <entry>Creates a scaling matrix, centered on the specified point.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_scale(float scale)</codeInline></entry>
+            <entry>Creates a scaling matrix, centered on the origin.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_scale(float scale, float3 const&amp; centerPoint)</codeInline></entry>
+            <entry>Creates a scaling matrix, centered on the specified point.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_rotation_x(float radians)</codeInline></entry>
+            <entry>Creates an x-axis rotation matrix, centered on the origin.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_rotation_x(float radians, float3 const&amp; centerPoint)</codeInline></entry>
+            <entry>Creates an x-axis rotation matrix, centered on the specified point.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_rotation_y(float radians)</codeInline></entry>
+            <entry>Creates a y-axis rotation matrix, centered on the origin.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_rotation_y(float radians, float3 const&amp; centerPoint)</codeInline></entry>
+            <entry>Creates a y-axis rotation matrix, centered on the specified point.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_rotation_z(float radians)</codeInline></entry>
+            <entry>Creates a z-axis rotation matrix, centered on the origin.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_rotation_z(float radians, float3 const&amp; centerPoint)</codeInline></entry>
+            <entry>Creates a z-axis rotation matrix, centered on the specified point.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_from_axis_angle(float3 const&amp; axis, float angle)</codeInline></entry>
+            <entry>Creates a matrix that rotates around an arbitrary vector.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_&#8203;perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)</codeInline></entry>
+            <entry>Creates a perspective projection matrix based on a field of view, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)</codeInline></entry>
+            <entry>Creates a perspective projection matrix, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_&#8203;perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)</codeInline></entry>
+            <entry>Creates a customized perspective projection matrix, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_orthographic(float width, float height, float zNearPlane, float zFarPlane)</codeInline></entry>
+            <entry>Creates an orthographic projection matrix, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_&#8203;orthographic_off_center(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)</codeInline></entry>
+            <entry>Creates a customized orthographic projection matrix, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_look_at(float3 const&amp; cameraPosition, float3 const&amp; cameraTarget, float3 const&amp; cameraUpVector)</codeInline></entry>
+            <entry>Creates a view matrix, using a right handed coordinate system.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_world(float3 const&amp; position, float3 const&amp; forward, float3 const&amp; up)</codeInline></entry>
+            <entry>Creates a world matrix, using a right handed coordinate system. This can be used to position objects in 3D space.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_&#8203;from_quaternion(quaternion const&amp; quaternion)</codeInline></entry>
+            <entry>Creates a rotation matrix from a quaternion.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_&#8203;from_yaw_pitch_roll(float yaw, float pitch, float roll)</codeInline></entry>
+            <entry>Creates a rotation matrix from a specified yaw, pitch, and roll.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_shadow(float3 const&amp; lightDirection, plane const&amp; plane)</codeInline></entry>
+            <entry>Creates a matrix that flattens geometry into a specified plane as if casting a shadow from a specified light source.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 make_float4x4_reflection(plane const&amp; value)</codeInline></entry>
+            <entry>Creates a matrix that reflects the coordinate system about a specified plane.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool is_identity(float4x4 const&amp; value)</codeInline></entry>
+            <entry>Checks whether this is an identity matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float determinant(float4x4 const&amp; value)</codeInline></entry>
+            <entry>Calculates the determinant of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float3 translation(float4x4 const&amp; value)</codeInline></entry>
+            <entry>Gets the translation vector of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool invert(float4x4 const&amp; matrix, _Out_ float4x4* result)</codeInline></entry>
+            <entry>Calculates the inverse of a matrix. Returns true if the matrix can be inverted; false otherwise.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool decompose(float4x4 const&amp; matrix, _Out_ float3* scale, _Out_ quaternion* rotation, _Out_ float3* translation)</codeInline></entry>
+            <entry>Extracts the scalar, translation, and rotation components from a 3D scale/rotate/translate (SRT) matrix. Returns true if the matrix can be decomposed; false otherwise.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 transform(float4x4 const&amp; value, quaternion const&amp; rotation)</codeInline></entry>
+            <entry>Transforms a matrix by applying a quaternion rotation.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 transpose(float4x4 const&amp; matrix)</codeInline></entry>
+            <entry>Transposes the components of a matrix along its diagonal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 lerp(float4x4 const&amp; matrix1, float4x4 const&amp; matrix2, float amount)</codeInline></entry>
+            <entry>Linearly interpolates between the corresponding values of two matrices.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+    
+    <section>
+      <title>Methods</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>static float4x4 identity()</codeInline></entry>
+            <entry>Returns an instance of the identity matrix.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Operators</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float4x4 operator+ (float4x4 const&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>Adds each component of a matrix to another matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 operator- (float4x4 const&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>Subtracts each component of a matrix from another matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 operator* (float4x4 const&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>Multiplies a matrix by another matrix. This has the effect of concatenating two transforms.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 operator* (float4x4 const&amp; value1, float value2)</codeInline></entry>
+            <entry>Multiplies each component of a matrix by a scalar value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4 operator- (float4x4 const&amp; value)</codeInline></entry>
+            <entry>Negates each component of a matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4&amp; operator+= (float4x4&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>In-place adds each component of a matrix to another matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4&amp; operator-= (float4x4&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>In-place subtracts each component of a matrix from another matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4&amp; operator*= (float4x4&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>In-place multiplies a matrix by another matrix. This has the effect of concatenating two transforms.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float4x4&amp; operator*= (float4x4&amp; value1, float value2)</codeInline></entry>
+            <entry>In-place multiplies each component of a matrix by a scalar value.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool operator== (float4x4 const&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of float4x4 are equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>bool operator!= (float4x4 const&amp; value1, float4x4 const&amp; value2)</codeInline></entry>
+            <entry>Determines whether two instances of float4x4 are not equal.</entry>
+          </row>
+          <row>
+            <entry><codeInline>operator Microsoft::&#8203;Graphics::&#8203;Canvas::&#8203;Numerics::&#8203;Matrix4x4() const</codeInline></entry>
+            <entry>Converts a float4x4 to a Microsoft.Graphics.Canvas.Numerics.Matrix4x4.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Fields</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeInline>float m11</codeInline></entry>
+            <entry>Value at row 1 column 1 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m12</codeInline></entry>
+            <entry>Value at row 1 column 2 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m13</codeInline></entry>
+            <entry>Value at row 1 column 3 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m14</codeInline></entry>
+            <entry>Value at row 1 column 4 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m21</codeInline></entry>
+            <entry>Value at row 2 column 1 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m22</codeInline></entry>
+            <entry>Value at row 2 column 2 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m23</codeInline></entry>
+            <entry>Value at row 2 column 3 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m24</codeInline></entry>
+            <entry>Value at row 2 column 4 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m31</codeInline></entry>
+            <entry>Value at row 3 column 1 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m32</codeInline></entry>
+            <entry>Value at row 3 column 2 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m33</codeInline></entry>
+            <entry>Value at row 3 column 3 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m34</codeInline></entry>
+            <entry>Value at row 3 column 4 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m41</codeInline></entry>
+            <entry>Value at row 4 column 1 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m42</codeInline></entry>
+            <entry>Value at row 4 column 2 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m43</codeInline></entry>
+            <entry>Value at row 4 column 3 of the matrix.</entry>
+          </row>
+          <row>
+            <entry><codeInline>float m44</codeInline></entry>
+            <entry>Value at row 4 column 4 of the matrix.</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>
