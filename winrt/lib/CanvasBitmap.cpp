@@ -93,6 +93,11 @@ namespace canvas
                 }));
                 CheckMakeResult(asyncTask);
                 ThrowIfFailed(asyncTask.CopyTo(canvasBitmap));
+
+                // TODO #2185: Prevent IAsyncOperation() from being destructed by C# GC before completing.
+                // Temporary solution with Detach() used for preventing access violation error. 
+                // This will cause small memory leak since asyncTask object will never be destructed. 
+                asyncTask.Detach();
             });
     }
 
