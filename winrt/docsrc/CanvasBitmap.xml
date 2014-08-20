@@ -30,9 +30,9 @@
 
           bool isLoaded;
         </code>
-        <p>Use the CreatingResources event to asynchronously load the bitmap:</p>
+        <p>Use the CreateResources event to asynchronously load the bitmap:</p>
         <code>
-          async void myWidget_CreatingResources(CanvasControl sender, object args)
+          async void myWidget_CreateResources(CanvasControl sender, object args)
           {
               cat = await CanvasBitmap.LoadAsync(sender, "ShawnsCat.jpg");
 
@@ -40,9 +40,9 @@
               myWidget.Invalidate();
           }
         </code>
-        <p>Use the Drawing event to display it:</p>
+        <p>Use the Draw event to display it:</p>
         <code>
-          void myWidget_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+          void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
           {
               args.DrawingSession.Clear(Colors.CornflowerBlue);
 

@@ -26,31 +26,31 @@ namespace canvas
     // This helps with cases where we need to explicitly qualify types
     namespace canvasABI = ABI::Microsoft::Graphics::Canvas;
 
-    class CanvasDrawingEventArgsFactory : public ActivationFactory<ICanvasDrawingEventArgsFactory>
+    class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingEventArgs, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawEventArgs, BaseTrust);
 
     public:
         IFACEMETHOD(Create)(
             ICanvasDrawingSession* drawingSession,
-            ICanvasDrawingEventArgs** drawEventArgs) override;
+            ICanvasDrawEventArgs** drawEventArgs) override;
     };
 
-    class CanvasDrawingEventArgs : public RuntimeClass<
-        ICanvasDrawingEventArgs>
+    class CanvasDrawEventArgs : public RuntimeClass<
+        ICanvasDrawEventArgs>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingEventArgs, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawEventArgs, BaseTrust);
 
         ClosablePtr<ICanvasDrawingSession> m_drawingSession;
 
      public:
-         CanvasDrawingEventArgs(ICanvasDrawingSession* drawingSession);
+         CanvasDrawEventArgs(ICanvasDrawingSession* drawingSession);
 
          IFACEMETHODIMP get_DrawingSession(ICanvasDrawingSession** value);
     };
 
     typedef ITypedEventHandler<canvasABI::CanvasControl*, IInspectable*> CreateResourcesEventHandlerType;
-    typedef ITypedEventHandler<canvasABI::CanvasControl*, canvasABI::CanvasDrawingEventArgs*> DrawingEventHandlerType;
+    typedef ITypedEventHandler<canvasABI::CanvasControl*, canvasABI::CanvasDrawEventArgs*> DrawEventHandlerType;
 
     class ICanvasControlAdapter
     {
@@ -79,7 +79,7 @@ namespace canvas
         std::shared_ptr<ICanvasControlAdapter> m_adapter;
 
         EventSource<CreateResourcesEventHandlerType> m_createResourcesEventList;
-        EventSource<DrawingEventHandlerType> m_drawEventList;
+        EventSource<DrawEventHandlerType> m_drawEventList;
 
         EventRegistrationToken m_renderingEventToken;
 
@@ -100,18 +100,18 @@ namespace canvas
         // ICanvasControl
         //
 
-        IFACEMETHODIMP add_CreatingResources(
+        IFACEMETHODIMP add_CreateResources(
             CreateResourcesEventHandlerType* value,
             EventRegistrationToken *token);
 
-        IFACEMETHODIMP remove_CreatingResources(
+        IFACEMETHODIMP remove_CreateResources(
             EventRegistrationToken token);
 
-        IFACEMETHODIMP add_Drawing(
-            DrawingEventHandlerType* value,
+        IFACEMETHODIMP add_Draw(
+            DrawEventHandlerType* value,
             EventRegistrationToken* token);
 
-        IFACEMETHODIMP remove_Drawing(
+        IFACEMETHODIMP remove_Draw(
             EventRegistrationToken token);
 
         //

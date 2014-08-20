@@ -51,9 +51,9 @@ A working sample can be found in the Samples directory.
 ## Code Example
 To give you a flavor of what the code looks like, here is a snippet:
 ```cs
-canvasControl.Drawing += canvasControl_Drawing; 
+canvasControl.Draw += canvasControl_Draw; 
 ...
-void canvasControl_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
 {
     args.DrawingSession.Clear(Colors.BlueViolet);
 }

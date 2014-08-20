@@ -25,24 +25,24 @@ TEST_CLASS(CanvasControlTests)
         {
             CanvasControl^ canvasControl = ref new CanvasControl();
 
-            Windows::Foundation::EventRegistrationToken creatingResourcesRegistrationToken;
+            Windows::Foundation::EventRegistrationToken createResourcesRegistrationToken;
 
-            creatingResourcesRegistrationToken = canvasControl->CreatingResources += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, Object^>(this, &CallbackVerifier::OnCreatingResources);
+            createResourcesRegistrationToken = canvasControl->CreateResources += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, Object^>(this, &CallbackVerifier::OnCreateResources);
 
-            canvasControl->CreatingResources -= creatingResourcesRegistrationToken;
+            canvasControl->CreateResources -= createResourcesRegistrationToken;
 
-            Windows::Foundation::EventRegistrationToken drawingRegistrationToken;
+            Windows::Foundation::EventRegistrationToken drawRegistrationToken;
 
-            drawingRegistrationToken = canvasControl->Drawing += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, CanvasDrawingEventArgs^>(this, &CallbackVerifier::OnDrawing);
+            drawRegistrationToken = canvasControl->Draw += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>(this, &CallbackVerifier::OnDraw);
 
-            canvasControl->Drawing -= drawingRegistrationToken;
+            canvasControl->Draw -= drawRegistrationToken;
         }
 
-        void OnCreatingResources(CanvasControl^ sender, Object^ args)
+        void OnCreateResources(CanvasControl^ sender, Object^ args)
         {
         }
 
-        void OnDrawing(CanvasControl^ sender, CanvasDrawingEventArgs^ args)
+        void OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         {
         }
         
@@ -89,7 +89,7 @@ TEST_CLASS(CanvasControlTests)
                 auto imageSource = ref new CanvasImageSource(device, 1, 1);
                 auto drawingSession = imageSource->CreateDrawingSession();
 
-                CanvasDrawingEventArgs^ drawingEventArgs = ref new CanvasDrawingEventArgs(drawingSession);
+                CanvasDrawEventArgs^ drawEventArgs = ref new CanvasDrawEventArgs(drawingSession);
             });
     }
 

@@ -53,7 +53,7 @@
             </StackPanel>
         </ScrollViewer>
         <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"
-                              Drawing="Canvas_Drawing"
-                              CreatingResources="Canvas_CreatingResources"/>
+                              Draw="Canvas_Draw"
+                              CreateResources="Canvas_CreateResources"/>
     </Grid>
 </UserControl>

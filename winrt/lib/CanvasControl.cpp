@@ -23,27 +23,27 @@ namespace canvas
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::Graphics::Display;
 
-    IFACEMETHODIMP CanvasDrawingEventArgsFactory::Create(
+    IFACEMETHODIMP CanvasDrawEventArgsFactory::Create(
         ICanvasDrawingSession* drawingSession,
-        ICanvasDrawingEventArgs** drawEventArgs)
+        ICanvasDrawEventArgs** drawEventArgs)
     {
         return ExceptionBoundary(
             [&]()
             {
                 CheckAndClearOutPointer(drawEventArgs);
 
-                auto newCanvasDrawingEventArgs = Make<CanvasDrawingEventArgs>(drawingSession);
-                CheckMakeResult(newCanvasDrawingEventArgs);
+                auto newCanvasDrawEventArgs = Make<CanvasDrawEventArgs>(drawingSession);
+                CheckMakeResult(newCanvasDrawEventArgs);
 
-                ThrowIfFailed(newCanvasDrawingEventArgs.CopyTo(drawEventArgs));
+                ThrowIfFailed(newCanvasDrawEventArgs.CopyTo(drawEventArgs));
             });
     }
 
-    CanvasDrawingEventArgs::CanvasDrawingEventArgs(ICanvasDrawingSession* drawingSession) 
+    CanvasDrawEventArgs::CanvasDrawEventArgs(ICanvasDrawingSession* drawingSession) 
         : m_drawingSession(drawingSession)
     {}
 
-    IFACEMETHODIMP CanvasDrawingEventArgs::get_DrawingSession(ICanvasDrawingSession** value)
+    IFACEMETHODIMP CanvasDrawEventArgs::get_DrawingSession(ICanvasDrawingSession** value)
     {
         return ExceptionBoundary(
             [&]()
@@ -357,7 +357,7 @@ namespace canvas
             static_cast<CanvasImageSource*>(m_canvasImageSource.Get());
 
         ThrowIfFailed(imageSourceImplementation->CreateDrawingSessionWithDpi(m_adapter->GetLogicalDpi(), &drawingSession));
-        ComPtr<CanvasDrawingEventArgs> drawEventArgs = Make<CanvasDrawingEventArgs>(drawingSession.Get());
+        ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 
         ThrowIfFailed(m_drawEventList.InvokeAll(this, drawEventArgs.Get()));
@@ -417,7 +417,7 @@ namespace canvas
             });
     }
 
-    IFACEMETHODIMP CanvasControl::add_CreatingResources(
+    IFACEMETHODIMP CanvasControl::add_CreateResources(
         ABI::Windows::Foundation::ITypedEventHandler<ABI::Microsoft::Graphics::Canvas::CanvasControl*, IInspectable*>* value,
         EventRegistrationToken *token)
     {
@@ -434,7 +434,7 @@ namespace canvas
             });
     }
 
-    IFACEMETHODIMP CanvasControl::remove_CreatingResources(
+    IFACEMETHODIMP CanvasControl::remove_CreateResources(
         EventRegistrationToken token)
     {
         return ExceptionBoundary(
@@ -444,8 +444,8 @@ namespace canvas
             });
     }
 
-    IFACEMETHODIMP CanvasControl::add_Drawing(
-        ABI::Windows::Foundation::ITypedEventHandler<ABI::Microsoft::Graphics::Canvas::CanvasControl*, ABI::Microsoft::Graphics::Canvas::CanvasDrawingEventArgs*>* value,
+    IFACEMETHODIMP CanvasControl::add_Draw(
+        ABI::Windows::Foundation::ITypedEventHandler<ABI::Microsoft::Graphics::Canvas::CanvasControl*, ABI::Microsoft::Graphics::Canvas::CanvasDrawEventArgs*>* value,
         EventRegistrationToken* token)
     {
         return ExceptionBoundary(
@@ -455,7 +455,7 @@ namespace canvas
             });
     }
 
-    IFACEMETHODIMP CanvasControl::remove_Drawing(
+    IFACEMETHODIMP CanvasControl::remove_Draw(
         EventRegistrationToken token)
     {
         return ExceptionBoundary(
@@ -572,6 +572,6 @@ namespace canvas
             });
     }
 
-    ActivatableClassWithFactory(CanvasDrawingEventArgs, CanvasDrawingEventArgsFactory);
+    ActivatableClassWithFactory(CanvasDrawEventArgs, CanvasDrawEventArgsFactory);
     ActivatableClassWithFactory(CanvasControl, CanvasControlFactory);
 }

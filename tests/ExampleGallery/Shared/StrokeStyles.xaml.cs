@@ -56,7 +56,7 @@ namespace ExampleGallery
             TransformBehavior = CanvasStrokeTransformBehavior.Hairline
         };
 
-        private void Canvas_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             strokeStyle.StartCap = StartCap;
             strokeStyle.EndCap = EndCap;
@@ -143,7 +143,7 @@ namespace ExampleGallery
                 this.strokeStyle);
         }
 
-        private void Canvas_CreatingResources(CanvasControl sender, object args)
+        private void Canvas_CreateResources(CanvasControl sender, object args)
         {
             this.brush = new CanvasSolidColorBrush(sender, Colors.AntiqueWhite);
         }

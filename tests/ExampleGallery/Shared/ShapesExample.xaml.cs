@@ -58,12 +58,12 @@ namespace ExampleGallery
 
         CanvasSolidColorBrush brush;
 
-        void Canvas_CreatingResources(CanvasControl sender, object args)
+        void Canvas_CreateResources(CanvasControl sender, object args)
         {
             this.brush = new CanvasSolidColorBrush(sender, Colors.AntiqueWhite);
         }
 
-        void Canvas_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var ds = args.DrawingSession;
             ds.Clear(Color.FromArgb(0,0,0,0));

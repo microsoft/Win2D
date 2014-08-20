@@ -55,8 +55,8 @@ namespace CsConsumer
         {
             this.InitializeComponent();
 
-            m_canvasControl.CreatingResources += m_canvasControl_CreatingResources;
-            m_canvasControl.Drawing += m_canvasControl_Drawing;
+            m_canvasControl.CreateResources += m_canvasControl_CreateResources;
+            m_canvasControl.Draw += m_canvasControl_Draw;
 
             // 
             // Populate the drawnContentType combo box.
@@ -71,12 +71,12 @@ namespace CsConsumer
             m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;                     
         }
 
-        void m_canvasControl_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        void m_canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             DrawStuff(args.DrawingSession);
         }
 
-        void m_canvasControl_CreatingResources(CanvasControl sender, object args)
+        void m_canvasControl_CreateResources(CanvasControl sender, object args)
         {
             UpdateCanvasControlSize();
             m_brush = new CanvasSolidColorBrush(sender, Colors.White);

@@ -26,10 +26,10 @@ namespace SimpleSample
             this.InitializeComponent();
 
             // Register our event handler that will draw onto the Canvas
-            canvasControl.Drawing += canvasControl_Drawing;
+            canvasControl.Draw += canvasControl_Draw;
         }
 
-        void canvasControl_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             args.DrawingSession.Clear(Colors.BlanchedAlmond);
         }

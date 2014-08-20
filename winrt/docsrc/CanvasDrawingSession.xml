@@ -16,7 +16,7 @@
            hardware to carry out the drawing.</p>
 
         <p>Drawing sessions can be obtained in various different ways. Most often, you should use the one that
-           is passed in to the CanvasControl.Drawing event handler.</p>
+           is passed in to the CanvasControl.Draw event handler.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">

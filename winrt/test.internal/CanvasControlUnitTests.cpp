@@ -23,8 +23,8 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     TEST_METHOD_INITIALIZE(Init)
     {
         m_adapter = std::make_shared<CanvasControlTestAdapter>();
-        m_creatingResourcesCallbackCount = 0;
-        m_drawingCallbackCount = 0;
+        m_createResourcesCallbackCount = 0;
+        m_drawCallbackCount = 0;
     }
 
     TEST_METHOD(CanvasControl_Implements_Expected_Interfaces)
@@ -45,47 +45,47 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(E_INVALIDARG, canvasControl->get_Device(nullptr));
     }
 
-    TEST_METHOD(CanvasControl_DrawingEventArgs_Getter)
+    TEST_METHOD(CanvasControl_DrawEventArgs_Getter)
     {
-        using canvas::CanvasDrawingEventArgs;
+        using canvas::CanvasDrawEventArgs;
 
         ComPtr<ICanvasDrawingSession> drawingSession = Make<MockCanvasDrawingSession>();
 
-        auto drawingEventArgs = Make<CanvasDrawingEventArgs>(drawingSession.Get());
+        auto drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
 
         // Verify that an exception is returned for nullptr on getter
-        Assert::AreEqual(E_INVALIDARG, drawingEventArgs->get_DrawingSession(nullptr));
+        Assert::AreEqual(E_INVALIDARG, drawEventArgs->get_DrawingSession(nullptr));
 
         // Verify that the getter in a typical case works
         ComPtr<ICanvasDrawingSession> drawingSessionRetrieved;
-        drawingEventArgs->get_DrawingSession(&drawingSessionRetrieved);
+        drawEventArgs->get_DrawingSession(&drawingSessionRetrieved);
 
         Assert::AreEqual(drawingSession.Get(), drawingSessionRetrieved.Get());
     }
 
-    HRESULT OnCreatingResources(canvasABI::ICanvasControl* sender, IInspectable* args)
+    HRESULT OnCreateResources(canvasABI::ICanvasControl* sender, IInspectable* args)
     {
         Assert::IsNotNull(sender);
         Assert::IsNull(args); // Args are never used.
 
-        m_creatingResourcesCallbackCount++;
+        m_createResourcesCallbackCount++;
 
         return S_OK;
     }
 
-    HRESULT OnDrawing(ICanvasControl* sender, ICanvasDrawingEventArgs* args)
+    HRESULT OnDraw(ICanvasControl* sender, ICanvasDrawEventArgs* args)
     {
         Assert::IsNotNull(sender);
         Assert::IsNotNull(args);
 
-        m_drawingCallbackCount++;
+        m_drawCallbackCount++;
 
         return S_OK;
     }
 
-    HRESULT OnDrawing_NoNullCheck(ICanvasControl* sender, ICanvasDrawingEventArgs* args)
+    HRESULT OnDraw_NoNullCheck(ICanvasControl* sender, ICanvasDrawEventArgs* args)
     {
-        m_drawingCallbackCount++;
+        m_drawCallbackCount++;
 
         return S_OK;
     }
@@ -96,63 +96,63 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         using canvas::CanvasControl;
 
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
-        Assert::AreEqual(0, m_creatingResourcesCallbackCount);
-        Assert::AreEqual(0, m_drawingCallbackCount);
+        Assert::AreEqual(0, m_createResourcesCallbackCount);
+        Assert::AreEqual(0, m_drawCallbackCount);
 
         // Register one CreateResources handler.
         // Note that Loaded hasn't occured yet, so it shouldn't actually be fired.
-        auto onCreatingResourcesFn = Callback<CreateResourcesEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnCreatingResources);
-        EventRegistrationToken creatingResourcesEventToken0;
-        ThrowIfFailed(canvasControl->add_CreatingResources(onCreatingResourcesFn.Get(), &creatingResourcesEventToken0));
-        Assert::AreEqual(0, m_creatingResourcesCallbackCount);
+        auto onCreateResourcesFn = Callback<CreateResourcesEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnCreateResources);
+        EventRegistrationToken createResourcesEventToken0;
+        ThrowIfFailed(canvasControl->add_CreateResources(onCreateResourcesFn.Get(), &createResourcesEventToken0));
+        Assert::AreEqual(0, m_createResourcesCallbackCount);
 
         // Issue a Loaded.
         // Should fire CreateResources.
         canvasControl->OnLoaded(nullptr, nullptr);
-        Assert::AreEqual(1, m_creatingResourcesCallbackCount);
+        Assert::AreEqual(1, m_createResourcesCallbackCount);
 
         // Register the CreateResources handler again.
-        // Because the Loaded event has already occurred, add_CreatingResources should immediately fire the event too.
-        EventRegistrationToken creatingResourcesEventToken1;
-        ThrowIfFailed(canvasControl->add_CreatingResources(onCreatingResourcesFn.Get(), &creatingResourcesEventToken1));
-        Assert::AreEqual(2, m_creatingResourcesCallbackCount);
+        // Because the Loaded event has already occurred, add_CreateResources should immediately fire the event too.
+        EventRegistrationToken createResourcesEventToken1;
+        ThrowIfFailed(canvasControl->add_CreateResources(onCreateResourcesFn.Get(), &createResourcesEventToken1));
+        Assert::AreEqual(2, m_createResourcesCallbackCount);
 
-        // Register the Drawing handler.
-        auto onDrawingFn = Callback<DrawingEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnDrawing);
-        EventRegistrationToken drawingEventToken;
-        ThrowIfFailed(canvasControl->add_Drawing(onDrawingFn.Get(), &drawingEventToken));
+        // Register the Draw handler.
+        auto onDrawFn = Callback<DrawEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnDraw);
+        EventRegistrationToken drawEventToken;
+        ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
 
-        // Invalidate and ensure the drawing callback is called.
+        // Invalidate and ensure the Draw callback is called.
         canvasControl->Invalidate();
         m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
-        Assert::AreEqual(1, m_drawingCallbackCount);
+        Assert::AreEqual(1, m_drawCallbackCount);
 
         // Ensure a subsequent invalidation doesn't recreate resources.
         canvasControl->Invalidate();
         m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
-        Assert::AreEqual(2, m_creatingResourcesCallbackCount);
-        Assert::AreEqual(2, m_drawingCallbackCount);
+        Assert::AreEqual(2, m_createResourcesCallbackCount);
+        Assert::AreEqual(2, m_drawCallbackCount);
 
         // Unregister the events. Call invalidate. Ensure the handler doesn't get called again (the event was correctly unregistered).
-        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken0));
-        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken1));
-        ThrowIfFailed(canvasControl->remove_Drawing(drawingEventToken));
+        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken0));
+        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken1));
+        ThrowIfFailed(canvasControl->remove_Draw(drawEventToken));
         canvasControl->Invalidate();
         m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
 
-        Assert::AreEqual(2, m_creatingResourcesCallbackCount);
-        Assert::AreEqual(2, m_drawingCallbackCount);
+        Assert::AreEqual(2, m_createResourcesCallbackCount);
+        Assert::AreEqual(2, m_drawCallbackCount);
 
         // Unregistering the same event twice should do nothing.
-        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken0));
-        ThrowIfFailed(canvasControl->remove_CreatingResources(creatingResourcesEventToken1));
-        ThrowIfFailed(canvasControl->remove_Drawing(drawingEventToken));
+        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken0));
+        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken1));
+        ThrowIfFailed(canvasControl->remove_Draw(drawEventToken));
     }
 
-    int m_creatingResourcesCallbackCount;
-    int m_drawingCallbackCount;
+    int m_createResourcesCallbackCount;
+    int m_drawCallbackCount;
 };
 
 TEST_CLASS(CanvasControlTests_AdapterWithResizing)
@@ -359,7 +359,7 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
         ComPtr<MockD2DDeviceContext> m_mockD2DDeviceContext; 
     };
 
-    HRESULT OnDrawing(ICanvasControl* sender, ICanvasDrawingEventArgs* args)
+    HRESULT OnDraw(ICanvasControl* sender, ICanvasDrawEventArgs* args)
     {
         return S_OK;
     }
@@ -389,10 +389,10 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
             canvasControl->OnLoaded(nullptr, nullptr);
 
             // An event handler needs to be registered for a drawing session to be contructed.
-            auto onDrawingFn = 
-                Callback<DrawingEventHandlerType>(this, &CanvasControlTests_AdapterWithResizing::OnDrawing);
-            EventRegistrationToken drawingEventToken;
-            ThrowIfFailed(canvasControl->add_Drawing(onDrawingFn.Get(), &drawingEventToken));
+            auto onDrawFn = 
+                Callback<DrawEventHandlerType>(this, &CanvasControlTests_AdapterWithResizing::OnDraw);
+            EventRegistrationToken drawEventToken;
+            ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
 
             canvasControl->Invalidate();
             adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));

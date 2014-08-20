@@ -73,9 +73,9 @@
             Tap on a Canvas control to see it resize
         </TextBlock>
 
-        <canvas:CanvasControl x:Name="canvas01" Grid.Column="0" Grid.Row="1" MinWidth="100" MinHeight="100" Drawing="Canvas01_Drawing" Tapped="Canvas01_Tapped"/>
-        <canvas:CanvasControl x:Name="canvas11" Grid.Column="1" Grid.Row="1" MinWidth="100" MinHeight="100" Drawing="Canvas11_Drawing" Tapped="Canvas11_Tapped"/>
-        <canvas:CanvasControl x:Name="canvas02" Grid.Column="0" Grid.Row="2" MinWidth="100" MinHeight="100" Drawing="Canvas02_Drawing" Tapped="Canvas02_Tapped"/>
-        <canvas:CanvasControl x:Name="canvas12" Grid.Column="1" Grid.Row="2" MinWidth="100" MinHeight="100" Drawing="Canvas12_Drawing" Tapped="Canvas12_Tapped"/>
+        <canvas:CanvasControl x:Name="canvas01" Grid.Column="0" Grid.Row="1" MinWidth="100" MinHeight="100" Draw="Canvas01_Draw" Tapped="Canvas01_Tapped"/>
+        <canvas:CanvasControl x:Name="canvas11" Grid.Column="1" Grid.Row="1" MinWidth="100" MinHeight="100" Draw="Canvas11_Draw" Tapped="Canvas11_Tapped"/>
+        <canvas:CanvasControl x:Name="canvas02" Grid.Column="0" Grid.Row="2" MinWidth="100" MinHeight="100" Draw="Canvas02_Draw" Tapped="Canvas02_Tapped"/>
+        <canvas:CanvasControl x:Name="canvas12" Grid.Column="1" Grid.Row="2" MinWidth="100" MinHeight="100" Draw="Canvas12_Draw" Tapped="Canvas12_Tapped"/>
     </Grid>
 </UserControl>

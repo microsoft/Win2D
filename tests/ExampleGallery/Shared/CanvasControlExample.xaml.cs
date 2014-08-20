@@ -86,7 +86,7 @@ namespace ExampleGallery
         // different devices, and different resource domains.
         //
 
-        private void Canvas01_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        private void Canvas01_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
             {
@@ -94,7 +94,7 @@ namespace ExampleGallery
             }
         }
 
-        private void Canvas11_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        private void Canvas11_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
             {
@@ -102,7 +102,7 @@ namespace ExampleGallery
             }
         }
 
-        private void Canvas02_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        private void Canvas02_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
             {
@@ -110,7 +110,7 @@ namespace ExampleGallery
             }
         }
 
-        private void Canvas12_Drawing(CanvasControl sender, CanvasDrawingEventArgs args)
+        private void Canvas12_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
             {
