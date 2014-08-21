@@ -39,13 +39,13 @@ namespace canvas
         CanvasImageSourceFactory();
 
         IFACEMETHOD(Create)(
-            _In_         ICanvasDevice* device,
+            _In_         ICanvasResourceCreator* resourceCreator,
             _In_         int32_t widthInPixels,
             _In_         int32_t heightInPixels,
             _COM_Outptr_ ICanvasImageSource** imageSource) override;
 
         IFACEMETHOD(CreateWithBackground)(
-            _In_         ICanvasDevice* device,
+            _In_         ICanvasResourceCreator* resourceCreator,
             _In_         int32_t widthInPixels,
             _In_         int32_t heightInPixels,
             _In_         CanvasBackground background,
@@ -66,7 +66,7 @@ namespace canvas
 
     public:
         CanvasImageSource(
-            _In_ ICanvasDevice* device,
+            _In_ ICanvasResourceCreator* resourceCreator,
             _In_ int32_t widthInPixels,
             _In_ int32_t heightInPixels,
             _In_ CanvasBackground background,
@@ -95,7 +95,7 @@ namespace canvas
             ISurfaceImageSourceFactory* surfaceImageSourceFactory,
             bool isOpaque);
 
-        void SetDevice(ICanvasDevice* device);
+        void SetResourceCreator(ICanvasResourceCreator* resourceCreator);
 
         IFACEMETHOD(CreateDrawingSessionWithUpdateRectangleAndDpi)(
             Rect updateRectangle,

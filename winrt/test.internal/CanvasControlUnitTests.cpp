@@ -340,8 +340,11 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
 
             auto dsFactory = std::make_shared<CanvasImageSourceDrawingSessionFactory>();
 
+            ComPtr<ICanvasResourceCreator> resourceCreator;
+            ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
+
             return Make<CanvasImageSource>(
-                device,
+                resourceCreator.Get(),
                 width,
                 height,
                 CanvasBackground::Transparent,

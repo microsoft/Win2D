@@ -74,9 +74,17 @@ public:
         //
         mockCanvasDevice->MockGetD2DDevice =
             [&]()
-        {
-            return mockD2DDevice;
-        };
+            {
+                return mockD2DDevice;
+            };
+
+        mockCanvasDevice->Mockget_Device = 
+            [&](ICanvasDevice** value)
+            {
+                ComPtr<ICanvasDevice> device(mockCanvasDevice.Get());
+
+                *value = device.Detach();
+            };
 
         bool mockSetDeviceCalled = false;
         mockSurfaceImageSource->MockSetDevice =
@@ -126,7 +134,7 @@ public:
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
 
         auto canvasImageSource = Make<CanvasImageSource>(
-            expectedCanvasDevice.Get(),
+            static_cast<ICanvasResourceCreator*>(static_cast<StubCanvasDevice*>(expectedCanvasDevice.Get())),
             1,
             1,
             CanvasBackground::Transparent,
@@ -441,5 +449,36 @@ public:
         //
         Assert::IsTrue(beginDrawCalled);
         Assert::IsTrue(endDrawCalled);
+    }
+
+    TEST_METHOD(CanvasImageSource_CreateFromCanvasControl)
+    {
+        using canvas::CanvasControl;
+        using canvas::CanvasImageSource;
+
+        std::shared_ptr<CanvasControlTestAdapter> canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
+        
+        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter);
+
+        auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
+
+        auto canvasImageSource = Make<CanvasImageSource>(
+            canvasControl.Get(),
+            123,
+            456,
+            CanvasBackground::Opaque,
+            stubSurfaceImageSourceFactory.Get(),
+            std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
+
+        //
+        // Verify that the image source and the control are compatible.
+        //
+        ComPtr<ICanvasDevice> controlDevice;
+        ThrowIfFailed(canvasControl->get_Device(&controlDevice));
+
+        ComPtr<ICanvasDevice> sisDevice;
+        ThrowIfFailed(canvasImageSource->get_Device(&sisDevice));
+
+        Assert::AreEqual(controlDevice.Get(), sisDevice.Get());
     }
 };

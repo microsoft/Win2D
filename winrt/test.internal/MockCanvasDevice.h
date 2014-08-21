@@ -24,6 +24,7 @@ namespace canvas
     {
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
+        std::function<void(ICanvasDevice**)> Mockget_Device;
 
         //
         // ICanvasDevice
@@ -47,8 +48,14 @@ namespace canvas
 
         IFACEMETHODIMP get_Device(ICanvasDevice** value)
         {
-            Assert::Fail(L"Unexpected call to get_Device");
-            return E_NOTIMPL;
+            if (!Mockget_Device)
+            {
+                Assert::Fail(L"Unexpected call to get_Device");
+                return E_NOTIMPL;
+            }
+
+            Mockget_Device(value);
+            return S_OK;
         }
 
         //

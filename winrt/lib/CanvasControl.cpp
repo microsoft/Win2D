@@ -135,8 +135,16 @@ namespace canvas
 
         virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override 
         {
+            ComPtr<ICanvasResourceCreator> resourceCreator;
+            ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
+
             ComPtr<ICanvasImageSource> imageSource;
-            ThrowIfFailed(m_canvasImageSourceFactory->Create(device, width, height, &imageSource));
+            ThrowIfFailed(m_canvasImageSourceFactory->Create(
+                resourceCreator.Get(),
+                width, 
+                height, 
+                &imageSource));
+
             return imageSource;
         }
 

@@ -54,13 +54,13 @@ namespace canvas
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSourceFactory::Create(
-        ICanvasDevice* device,
+        ICanvasResourceCreator* resourceCreator,
         int32_t widthInPixels,
         int32_t heightInPixels,
         ICanvasImageSource** imageSource)
     {
         return CreateWithBackground(
-            device,
+            resourceCreator,
             widthInPixels,
             heightInPixels,
             CanvasBackground::Transparent,
@@ -70,7 +70,7 @@ namespace canvas
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSourceFactory::CreateWithBackground(
-        ICanvasDevice* device,
+        ICanvasResourceCreator* resourceCreator,
         int32_t widthInPixels,
         int32_t heightInPixels,
         CanvasBackground background,
@@ -81,7 +81,7 @@ namespace canvas
             {
                 using Microsoft::WRL::Wrappers::HStringReference;
 
-                CheckInPointer(device);
+                CheckInPointer(resourceCreator);
                 CheckAndClearOutPointer(imageSource);
 
                 //
@@ -99,7 +99,7 @@ namespace canvas
                 // Now create the object
                 //
                 auto newCanvasImageSource = Make<CanvasImageSource>(
-                    device,
+                    resourceCreator,
                     widthInPixels,
                     heightInPixels,
                     background,
@@ -118,7 +118,7 @@ namespace canvas
     
     _Use_decl_annotations_
     CanvasImageSource::CanvasImageSource(
-        ICanvasDevice* device,
+        ICanvasResourceCreator* resourceCreator,
         int32_t widthInPixels,
         int32_t heightInPixels,
         CanvasBackground background,
@@ -131,7 +131,7 @@ namespace canvas
         bool isOpaque = (background == CanvasBackground::Opaque);
 
         CreateBaseClass(surfaceImageSourceFactory, isOpaque);
-        SetDevice(device);
+        SetResourceCreator(resourceCreator);
     }
 
 
@@ -156,16 +156,19 @@ namespace canvas
     }
 
 
-    void CanvasImageSource::SetDevice(ICanvasDevice* device)
+    void CanvasImageSource::SetResourceCreator(ICanvasResourceCreator* resourceCreator)
     {
-        CheckInPointer(device);
+        CheckInPointer(resourceCreator);
+
+        ComPtr<ICanvasDevice> device;
+        ThrowIfFailed(resourceCreator->get_Device(&device));
 
         //
         // Get the D2D device and pass this to the underlying surface image
         // source.
         //
         ComPtr<ICanvasDeviceInternal> deviceInternal;
-        ThrowIfFailed(device->QueryInterface(deviceInternal.GetAddressOf()));
+        ThrowIfFailed(device.As(&deviceInternal));
         ComPtr<ID2D1Device1> d2dDevice = deviceInternal->GetD2DDevice();
 
         ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
@@ -258,7 +261,12 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                SetDevice(value);
+                CheckInPointer(value);
+
+                ComPtr<ICanvasResourceCreator> resourceCreator;
+                ThrowIfFailed(value->QueryInterface(resourceCreator.GetAddressOf()));
+
+                SetResourceCreator(resourceCreator.Get());
             });
     }
 

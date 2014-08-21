@@ -26,6 +26,7 @@ TEST_CLASS(CanvasImageSourceTests)
         RunOnUIThread(
             []()
             {
+                // Verify creation off of a device.
                 auto canvasDevice = ref new CanvasDevice();
                     
                 auto canvasImageSource = ref new CanvasImageSource(
@@ -35,6 +36,16 @@ TEST_CLASS(CanvasImageSourceTests)
                     
                 auto drawingSession = canvasImageSource->CreateDrawingSession();
                 delete drawingSession;
+
+                delete canvasImageSource;
+
+                // Verify creation off of a canvas control.
+                CanvasControl^ canvasControl = ref new CanvasControl();
+
+                canvasImageSource = ref new CanvasImageSource(
+                    canvasControl,
+                    1,
+                    1);
             });
     }
 };

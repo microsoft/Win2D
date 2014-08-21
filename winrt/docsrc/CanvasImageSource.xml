@@ -31,10 +31,10 @@
         }
       </code></example>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.CanvasDevice,System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasBackground)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasBackground)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession">

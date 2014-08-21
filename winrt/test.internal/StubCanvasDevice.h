@@ -44,5 +44,14 @@ namespace canvas
             }
             return MockCreateBitmap();
         }
+
+        IFACEMETHODIMP get_Device(ICanvasDevice** value) override
+        {
+            ComPtr<ICanvasDevice> device(this);
+
+            *value = device.Detach();
+
+            return S_OK;
+        }
     };
 }

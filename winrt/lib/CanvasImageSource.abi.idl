@@ -56,13 +56,13 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasImageSourceFactory : IInspectable
     {
         HRESULT Create(
-            [in]          CanvasDevice* device,
+            [in]          ICanvasResourceCreator* resourceCreator,
             [in]          INT32 widthInPixels, // INT32 picked to match SurfaceImageSource constructor
             [in]          INT32 heightInPixels, 
             [out, retval] CanvasImageSource** imageSource);
 
         HRESULT CreateWithBackground(
-            [in]          CanvasDevice* device,
+            [in]          ICanvasResourceCreator* resourceCreator,
             [in]          INT32 widthInPixels, 
             [in]          INT32 heightInPixels, 
             [in]          CanvasBackground background, 
