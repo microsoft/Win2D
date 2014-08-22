@@ -16,6 +16,7 @@
 #include "CanvasStrokeStyle.h"
 #include "CanvasTextFormat.h"
 #include "CanvasImage.h"
+#include "CanvasDevice.h"
 
 namespace canvas
 {
@@ -82,14 +83,22 @@ namespace canvas
     {
     }
 
+    ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateNew(
+        ID2D1DeviceContext1* deviceContext,
+        std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter)
+    {
+        return CreateNew(nullptr, deviceContext, drawingSessionAdapter);
+    }
 
     ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateNew(
+        ICanvasDevice* owner,
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter)
     {
         return Make<CanvasDrawingSession>(
             shared_from_this(),
-            deviceContext, 
+            owner,
+            deviceContext,
             drawingSessionAdapter);
     }
 
@@ -97,7 +106,11 @@ namespace canvas
     ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateWrapper(
         ID2D1DeviceContext1* resource)
     {
-        auto drawingSession = Make<CanvasDrawingSession>(shared_from_this(), resource, m_adapter);
+        auto drawingSession = Make<CanvasDrawingSession>(
+            shared_from_this(), 
+            nullptr,
+            resource, 
+            m_adapter);
         CheckMakeResult(drawingSession);
         return drawingSession;
     }
@@ -105,9 +118,11 @@ namespace canvas
 
     CanvasDrawingSession::CanvasDrawingSession(
         std::shared_ptr<CanvasDrawingSessionManager> manager,
+        ICanvasDevice* owner,
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> adapter)
         : ResourceWrapper(manager, deviceContext)
+        , m_owner(owner)
         , m_adapter(adapter)
     {
         CheckInPointer(adapter.get());
@@ -675,7 +690,35 @@ namespace canvas
 
                 deviceContext->SetUnitMode(static_cast<D2D1_UNIT_MODE>(value));
             });
-	}
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::get_Device(ICanvasDevice** value)
+    {
+        using namespace Microsoft::WRL::Wrappers;
+
+        return ExceptionBoundary(
+            [&]()
+            {
+                CheckInPointer(value);
+
+                if (!m_owner)
+                {
+                    auto& deviceContext = GetResource();
+
+                    ComPtr<ID2D1Device> d2dDeviceBase;
+                    deviceContext->GetDevice(&d2dDeviceBase);
+
+                    ComPtr<ID2D1Device1> d2dDevice;
+                    ThrowIfFailed(d2dDeviceBase.As(&d2dDevice));
+
+                    auto canvasDeviceManager = CanvasDeviceFactory::GetOrCreateManager();
+
+                    m_owner = canvasDeviceManager->GetOrCreate(d2dDevice.Get());
+                }
+
+                ThrowIfFailed(m_owner.CopyTo(value));
+        });
+    }
 
     ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
 }

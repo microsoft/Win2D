@@ -250,6 +250,7 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Transform(transformActual));
     }
 
+    // TODO #2203:: Change this to use MockCreateSolidColorBrush instead.
     class BrushConstructionVerifyingDevice : public MockCanvasDevice
     {
     public:
@@ -295,5 +296,38 @@ public:
         ComPtr<ICanvasDevice> adapterDevice;
         ThrowIfFailed(canvasControlAdapter->m_device.As(&adapterDevice));
         Assert::AreEqual(adapterDevice.Get(), verifyDevice.Get());
+    }
+
+    TEST_METHOD(CanvasSolidColorBrush_CreateThroughDrawingSession)
+    {
+        ComPtr<MockCanvasDevice> canvasDevice = Make<MockCanvasDevice>();
+        ComPtr<MockD2DSolidColorBrush> expectedBrush = Make<MockD2DSolidColorBrush>();
+
+        bool createSolidColorBrushCalled = false;
+        canvasDevice->MockCreateSolidColorBrush =
+            [&](const D2D1_COLOR_F& color)
+            {
+                createSolidColorBrushCalled = true;
+                return expectedBrush;
+            };
+
+        ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
+            Make<StubD2DDeviceContextWithGetFactory>();
+
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        ComPtr<canvas::CanvasDrawingSession> drawingSession = manager->Create(
+            canvasDevice.Get(),
+            d2dDeviceContext.Get(),
+            std::make_shared<StubCanvasDrawingSessionAdapter>());
+
+        auto createdBrush = m_colorBrushManager->Create(drawingSession.Get(), Color{ 255, 0, 0, 0 });
+
+        // Verify that the Create occurred on the DrawingSession device, and not on some
+        // other device. Verify it wrapped around the correct brush.
+        Assert::IsTrue(createSolidColorBrushCalled);
+        ComPtr<ICanvasBrushInternal> createdBrushInternal;
+        ThrowIfFailed(createdBrush.As(&createdBrushInternal));
+        ComPtr<ID2D1Brush> createdD2DBrush = createdBrushInternal->GetD2DBrush();
+        Assert::AreEqual(static_cast<ID2D1Brush*>(expectedBrush.Get()), createdD2DBrush.Get());
     }
 };

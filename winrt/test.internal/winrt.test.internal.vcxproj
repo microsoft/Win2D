@@ -68,7 +68,7 @@
     <ClInclude Include="StubSurfaceImageSource.h" />
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="StubD2DFactoryWithCreateStrokeStyle.h" />
+    <ClInclude Include="StubD2DResources.h" />
     <ClInclude Include="TestBitmapResourceCreationAdapter.h" />
     <ClInclude Include="TestDeviceResourceCreationAdapter.h" />
   </ItemGroup>
@@ -87,7 +87,7 @@
     <ClCompile Include="ConversionUnitTests.cpp" />
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
-    <ClCompile Include="StubD2DFactoryWithCreateStrokeStyle.cpp" />
+    <ClCompile Include="StubD2DResources.cpp" />
     <ClCompile Include="WinStringTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

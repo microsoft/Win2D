@@ -83,5 +83,31 @@ TEST_CLASS(CanvasDrawingSessionTests)
         context->GetTransform(reinterpret_cast<D2D1_MATRIX_3X2_F*>(&verifyTransform));
         Assert::AreEqual(identity, verifyTransform);
     }
+
+    TEST_METHOD(CanvasDrawingSession_Interop_get_Device)
+    {
+        //
+        // This verifes that the device retrieved from get_Device returns 
+        // something which is actually compatible with the drawing session. 
+        //
+        const D2D1_BITMAP_PROPERTIES1 bitmapProperties = 
+            D2D1::BitmapProperties1(
+                D2D1_BITMAP_OPTIONS_NONE,
+                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+
+        CanvasDevice^ canvasDeviceA = ref new CanvasDevice();
+        auto d2dDeviceA = GetWrappedResource<ID2D1Device1>(canvasDeviceA);
+        ComPtr<ID2D1DeviceContext1> d2dDeviceContextA;
+        ThrowIfFailed(d2dDeviceA->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &d2dDeviceContextA));
+
+        auto drawingSessionA = GetOrCreate<CanvasDrawingSession>(d2dDeviceContextA.Get());
+
+        CanvasDevice^ deviceB = drawingSessionA->Device;
+        auto d2dDeviceB = GetWrappedResource<ID2D1Device1>(deviceB);
+
+        Assert::AreEqual(d2dDeviceA.Get(), d2dDeviceB.Get());
+    }
 };
 

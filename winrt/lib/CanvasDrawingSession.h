@@ -13,6 +13,7 @@
 #pragma once
 
 #include "ClosablePtr.h"
+#include "ErrorHandling.h"
 
 namespace canvas
 {
@@ -56,15 +57,30 @@ namespace canvas
     };
 
     class CanvasDrawingSession : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasDrawingSessionTraits)
+        CanvasDrawingSessionTraits,
+        ICanvasResourceCreator)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
 
         std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
 
+        //
+        // Contract:
+        //     Drawing sessions created conventionally initialize this member.
+        //     Drawing sessions created through interop set this member to null.
+        //
+        //     The thing this affects is DrawingSession's use as an ICanvasResourceCreator.
+        //     If the backpointer is initialized, that is the resource creator's device.
+        //     If the backpointer is null, a CanvasDevice wrapper is produced based on 
+        //     this drawing session's device context. That wrapper is created on demand 
+        //     by get_Device.
+        //
+        ComPtr<ICanvasDevice> m_owner;
+
     public:
         CanvasDrawingSession(
             std::shared_ptr<CanvasDrawingSessionManager> manager,
+            ICanvasDevice* owner,
             ID2D1DeviceContext1* deviceContext,
             std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
 
@@ -198,6 +214,11 @@ namespace canvas
         IFACEMETHOD(get_Units)(CanvasUnits* value);
         IFACEMETHOD(put_Units)(CanvasUnits value);
 
+        //
+        // ICanvasResourceCreator
+        //
+
+        IFACEMETHODIMP get_Device(ICanvasDevice** value);
 
     private:
         void DrawTextAtPointImpl(
@@ -222,6 +243,11 @@ namespace canvas
 
     public:
         CanvasDrawingSessionManager();
+
+        ComPtr<CanvasDrawingSession> CreateNew(
+            ICanvasDevice* owner,
+            ID2D1DeviceContext1* deviceContext,
+            std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
 
         ComPtr<CanvasDrawingSession> CreateNew(
             ID2D1DeviceContext1* deviceContext,

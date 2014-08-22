@@ -67,7 +67,7 @@ public:
 
         auto dsFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         dsFactory->MockCreate =
-            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
         {
             return Make<MockCanvasDrawingSession>();
         };

@@ -271,7 +271,7 @@ public:
     {
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate =
-            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual<float>(0, updateRect.X);
@@ -298,7 +298,7 @@ public:
 
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate = 
-            [&](ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual(expectedRect.X, updateRect.X);
@@ -480,5 +480,40 @@ public:
         ThrowIfFailed(canvasImageSource->get_Device(&sisDevice));
 
         Assert::AreEqual(controlDevice.Get(), sisDevice.Get());
+    }
+
+    TEST_METHOD(CanvasImageSource_CreateFromDrawingSession)
+    {
+        using canvas::CanvasControl;
+        using canvas::CanvasImageSource;
+
+        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
+
+        ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
+            Make<StubD2DDeviceContextWithGetFactory>();
+
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        ComPtr<canvas::CanvasDrawingSession> drawingSession = manager->Create(
+            canvasDevice.Get(),
+            d2dDeviceContext.Get(),
+            std::make_shared<StubCanvasDrawingSessionAdapter>());
+
+        auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
+
+        auto canvasImageSource = Make<CanvasImageSource>(
+            drawingSession.Get(),
+            5,
+            10,
+            CanvasBackground::Opaque,
+            stubSurfaceImageSourceFactory.Get(),
+            std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
+
+        //
+        // Verify that the image source and the drawing session are compatible.
+        //
+        ComPtr<ICanvasDevice> sisDevice;
+        ThrowIfFailed(canvasImageSource->get_Device(&sisDevice));
+
+        Assert::AreEqual(static_cast<ICanvasDevice*>(canvasDevice.Get()), sisDevice.Get());
     }
 };

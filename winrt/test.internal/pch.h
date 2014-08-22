@@ -90,7 +90,7 @@ using namespace canvas;
 #include "StubCanvasDevice.h"
 #include "StubCanvasDrawingSessionAdapter.h"
 #include "StubD2DBrush.h"
-#include "StubD2DFactoryWithCreateStrokeStyle.h"
+#include "StubD2DResources.h"
 #include "StubD2DStrokeStyle.h"
 #include "StubImageControl.h"
 #include "StubSurfaceImageSource.h"

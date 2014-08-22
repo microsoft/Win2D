@@ -42,3 +42,15 @@ STDMETHODIMP StubD2DFactoryWithCreateStrokeStyle::CreateStrokeStyle(
 
     return S_OK;
 }
+
+IFACEMETHODIMP StubD2DDeviceContextWithGetFactory::CreateBitmap(
+    D2D1_SIZE_U size,
+    const void *data,
+    UINT32 dataSize,
+    const D2D1_BITMAP_PROPERTIES1* properties,
+    ID2D1Bitmap1** out)
+{
+    ComPtr<ID2D1Bitmap> bitmap = Make<StubD2DBitmap>();
+
+    return bitmap.CopyTo(out);
+}

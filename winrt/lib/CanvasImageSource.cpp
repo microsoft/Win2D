@@ -24,6 +24,7 @@ namespace canvas
     }
 
     ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
+        ICanvasDevice* owner,
         ISurfaceImageSourceNativeWithD2D* sisNative,
         const Rect& updateRect,
         float dpi) const
@@ -38,6 +39,7 @@ namespace canvas
             &deviceContext);
 
         return m_drawingSessionManager->Create(
+            owner,
             deviceContext.Get(),
             std::move(adapter));
     }
@@ -235,6 +237,7 @@ namespace canvas
             ThrowIfFailed(GetComposableBase().As(&sisNative));
 
             auto newDrawingSession = m_drawingSessionFactory->Create(
+                m_device.Get(),
                 sisNative.Get(),
                 updateRectangle,
                 dpi);

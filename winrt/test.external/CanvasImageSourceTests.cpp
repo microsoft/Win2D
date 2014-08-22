@@ -35,6 +35,7 @@ TEST_CLASS(CanvasImageSourceTests)
                     1);
                     
                 auto drawingSession = canvasImageSource->CreateDrawingSession();
+                Assert::AreEqual(drawingSession->Device, canvasImageSource->Device);
                 delete drawingSession;
 
                 delete canvasImageSource;

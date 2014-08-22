@@ -44,6 +44,7 @@ namespace canvas
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*)> MockFillEllipse;
         std::function<void(const wchar_t*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE)> MockDrawText;
         std::function<void(ID2D1Image*)> MockDrawImage;
+        std::function<void(ID2D1Device**)> MockGetDevice;
 
         // ID2D1Resource
 
@@ -547,9 +548,15 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP_(void) GetDevice(ID2D1Device **) const override
+        IFACEMETHODIMP_(void) GetDevice(ID2D1Device** device) const override
         {
-            Assert::Fail(L"Unexpected call to GetDevice");
+            if (!MockGetDevice)
+            {
+                Assert::Fail(L"Unexpected call to GetDevice");
+                return;
+            }
+
+            MockGetDevice(device);
         }
 
         IFACEMETHODIMP_(void) SetTarget(ID2D1Image *) override

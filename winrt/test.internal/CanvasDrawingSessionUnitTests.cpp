@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-#include "StubD2DFactoryWithCreateStrokeStyle.h"
+#include "StubD2DResources.h"
 
 #include "CanvasBitmap.h"
 #include "TestBitmapResourceCreationAdapter.h"
@@ -105,25 +105,6 @@ public:
         m_canvasDrawingSession.Reset();
         m_mockAdapter->AssertEndDrawCalled();
     }    
-};
-
-class StubD2DDeviceContextWithGetFactory : public MockD2DDeviceContext
-{
-public:
-
-    ComPtr<StubD2DFactoryWithCreateStrokeStyle> m_factory;
-
-    StubD2DDeviceContextWithGetFactory()
-    {
-        m_factory = Make<StubD2DFactoryWithCreateStrokeStyle>();
-
-        CheckMakeResult(m_factory);
-    }
-
-    IFACEMETHODIMP_(void) GetFactory(ID2D1Factory** factory) const override
-    {
-        ThrowIfFailed(m_factory.CopyTo(factory));
-    }
 };
 
 class CanvasDrawingSessionFixture
@@ -1046,6 +1027,83 @@ public:
         D2D1_MATRIX_3X2_F expectedTransform = D2D1::Matrix3x2F(1, 0, 0, 1, 123 + adapter->m_offset.x, 456 + adapter->m_offset.y);
         Assert::AreEqual(expectedTransform, wrappedResourceTransform);
     }
+
+    TEST_METHOD(CanvasDrawingSession_get_Device)
+    {
+        //
+        // In the interop case, where NULL is passed to the drawing session
+        // manager, get_Device should create a new D2D device, and a new 
+        // CanvasDevice on the fly. 
+        //
+        // In the non-interop case, the device is passed to the manager and
+        // the drawing session keeps a reference to it.
+        //
+        // That resource domains of of get_Device is not verified here for
+        // the interop case. They are verified in the external test 
+        // CanvasDrawingSession_Interop_get_Device.
+        //
+
+        using canvas::CanvasDrawingSession;
+
+        ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
+            Make<StubD2DDeviceContextWithGetFactory>();
+
+        ComPtr<StubD2DFactoryWithCreateStrokeStyle> d2dFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();
+        d2dDeviceContext->m_factory = d2dFactory;
+
+        bool getDeviceCalled = false;
+        d2dDeviceContext->MockGetDevice =
+            [&](ID2D1Device** d2dDevice)
+            {
+                getDeviceCalled = true;
+                ComPtr<StubD2DDevice> stubDevice = Make<StubD2DDevice>();
+                stubDevice.CopyTo(d2dDevice);
+            };
+
+        ComPtr<StubCanvasDevice> stubCanvasDevice = Make<StubCanvasDevice>();
+
+        struct TestCase
+        {
+            ICanvasDevice* ManagerDevice;
+            bool ExpectGetDeviceCalled;
+
+        } testCases[] =
+        {
+            { nullptr, true },
+            { stubCanvasDevice.Get(), false }
+        };
+
+        for (size_t i = 0; i < _countof(testCases); ++i)
+        {
+            getDeviceCalled = false;
+
+            auto manager = std::make_shared<CanvasDrawingSessionManager>();
+            ComPtr<canvas::CanvasDrawingSession> drawingSession = manager->Create(
+                testCases[i].ManagerDevice,
+                d2dDeviceContext.Get(),
+                std::make_shared<StubCanvasDrawingSessionAdapter>());
+
+            ComPtr<ICanvasDevice> deviceVerify;
+            ThrowIfFailed(drawingSession->get_Device(&deviceVerify));
+
+            Assert::IsNotNull(deviceVerify.Get());
+            Assert::AreEqual(testCases[i].ExpectGetDeviceCalled, getDeviceCalled);
+
+            if (testCases[i].ManagerDevice)
+            {
+                Assert::AreEqual(testCases[i].ManagerDevice, deviceVerify.Get());
+            }
+
+            // Do get_Device again. Even in the interop case, it should never 
+            // cause GetDevice to be called again.
+            getDeviceCalled = false;
+            ComPtr<ICanvasDevice> deviceReverify;
+            ThrowIfFailed(drawingSession->get_Device(&deviceReverify));
+
+            Assert::IsFalse(getDeviceCalled);
+            Assert::AreEqual(deviceVerify.Get(), deviceReverify.Get());
+        }
+    }
 };
 
 TEST_CLASS(CanvasDrawingSession_DrawTextTests)
@@ -1327,6 +1385,8 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         //
         ThrowIfFailed(canvasDrawingSession->Close());
 
+        ComPtr<ICanvasDevice> deviceVerify;
+
         //
         // Calling any other method will return RO_E_CLOSED
         //
@@ -1361,9 +1421,24 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Transform(Numerics::Matrix3x2()));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Units(nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Units(CanvasUnits::Dips));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Device(&deviceVerify));
 
 
 #undef EXPECT_OBJECT_CLOSED
+    }
+
+    TEST_METHOD(CanvasDrawingSession_Implements_ExpectedInterfaces)
+    {
+        CanvasDrawingSessionFixture f;
+
+        ASSERT_IMPLEMENTS_INTERFACE(f.DS, ICanvasResourceCreator);
+    }
+
+    TEST_METHOD(CanvasDrawingSession_get_Device_NullArg)
+    {
+        CanvasDrawingSessionFixture f;
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->get_Device(nullptr));
     }
 };
 
@@ -1397,4 +1472,5 @@ TEST_CLASS(CanvasDrawingSession_Interop)
         // deviceContext getting called.
         ThrowIfFailed(drawingSession->Close());
     }
+
 };

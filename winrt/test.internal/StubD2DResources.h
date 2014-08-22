@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "../test.external/MockDxgiSurface.h" // TODO #997/#1429: move this file
+
 // This device derives from MockCanvasDevice, but it allows creation of stroke styles.
 class StubD2DFactoryWithCreateStrokeStyle : public MockD2DFactory
 {
@@ -46,4 +48,65 @@ public:
     float m_dashOffset;
     std::vector<float> m_customDashElements;
     D2D1_STROKE_TRANSFORM_TYPE m_transformBehavior;
+};
+
+class StubD2DDeviceContextWithGetFactory : public MockD2DDeviceContext
+{
+public:
+
+    ComPtr<StubD2DFactoryWithCreateStrokeStyle> m_factory;
+
+    StubD2DDeviceContextWithGetFactory()
+    {
+        m_factory = Make<StubD2DFactoryWithCreateStrokeStyle>();
+
+        CheckMakeResult(m_factory);
+    }
+
+    IFACEMETHODIMP_(void) GetFactory(ID2D1Factory** factory) const override
+    {
+        ThrowIfFailed(m_factory.CopyTo(factory));
+    }
+
+    IFACEMETHODIMP CreateBitmap(
+        D2D1_SIZE_U size,
+        const void *data,
+        UINT32 dataSize,
+        const D2D1_BITMAP_PROPERTIES1* properties,
+        ID2D1Bitmap1** out) override;
+};
+
+class StubD2DDevice : public MockD2DDevice
+{
+    IFACEMETHODIMP CreateDeviceContext(
+        D2D1_DEVICE_CONTEXT_OPTIONS deviceContextOptions, 
+        ID2D1DeviceContext** deviceContext) override
+    {
+        auto stubDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        return stubDeviceContext.CopyTo(deviceContext);
+    }
+};
+
+class StubDxgiSurface : public MockDxgiSurface
+{
+public:
+    STDMETHODIMP GetDevice(const IID& iid, void ** out) override
+    {
+        ComPtr<IDXGIDevice> device = Make<MockDxgiDevice>();
+
+        return device.CopyTo(reinterpret_cast<IDXGIDevice**>(out));
+    }
+};
+
+class StubD2DBitmap : public MockD2DBitmap
+{
+public:
+    STDMETHOD(GetSurface)(
+        IDXGISurface **out
+        ) CONST override
+    {
+        ComPtr<IDXGISurface> surface = Make<StubDxgiSurface>();
+
+        return surface.CopyTo(out);
+    }
 };

@@ -12,7 +12,7 @@
 
 #include "pch.h"
 #include "TestDeviceResourceCreationAdapter.h"
-#include "StubD2DFactoryWithCreateStrokeStyle.h"
+#include "StubD2DResources.h"
 
 TEST_CLASS(CanvasStrokeStyleTests)
 {

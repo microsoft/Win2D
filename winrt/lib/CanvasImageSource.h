@@ -23,6 +23,7 @@ namespace canvas
     {
     public:
         virtual ComPtr<ICanvasDrawingSession> Create(
+            ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
             const Rect& updateRect,
             float dpi) const = 0;
@@ -118,6 +119,7 @@ namespace canvas
         CanvasImageSourceDrawingSessionFactory();
 
         virtual ComPtr<ICanvasDrawingSession> Create(
+            ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
             const Rect& updateRect,
             float dpi) const override;

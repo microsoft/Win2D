@@ -117,6 +117,9 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing">
       <summary>Enables or disables primitive edge antialiasing for this drawing session.</summary>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Device">
+      <summary>Gets the underlying device used by this drawing session.</summary>
+    </member>
   
   </members>
 </doc>

@@ -18,6 +18,9 @@ namespace canvas
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces < ID2D1Factory2, ID2D1Factory1, ID2D1Factory >>
     {
+    public:
+        std::function<void(IDXGIDevice *dxgiDevice, ID2D1Device1 **d2dDevice1)> MockCreateDevice;
+
         STDMETHOD(ReloadSystemMetrics)(
             )
         {
@@ -230,8 +233,16 @@ namespace canvas
             _Outptr_ ID2D1Device1 **d2dDevice1
             )
         {
-            ComPtr<MockD2DDevice> mockD2DDevice = Make<MockD2DDevice>(this);
-            return mockD2DDevice.CopyTo(d2dDevice1);
+            if (MockCreateDevice)
+            {
+                MockCreateDevice(dxgiDevice, d2dDevice1);
+                return S_OK;
+            }
+            else
+            {
+                ComPtr<MockD2DDevice> mockD2DDevice = Make<MockD2DDevice>(this);
+                return mockD2DDevice.CopyTo(d2dDevice1);
+            }
         }
 
     };
