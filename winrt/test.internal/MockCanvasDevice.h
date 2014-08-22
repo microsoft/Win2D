@@ -25,6 +25,7 @@ namespace canvas
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
         std::function<void(ICanvasDevice**)> Mockget_Device;
+        std::function<ComPtr<ID2D1SolidColorBrush>(const D2D1_COLOR_F&)> MockCreateSolidColorBrush;
 
         //
         // ICanvasDevice
@@ -75,8 +76,13 @@ namespace canvas
 
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override
         {
-            Assert::Fail(L"Unexpected call to CreateSolidColorBrush");
-            return nullptr;
+            if (!MockCreateSolidColorBrush)
+            {
+                Assert::Fail(L"Unexpected call to CreateSolidColorBrush");
+                return nullptr;
+            }
+
+            return MockCreateSolidColorBrush(color);
         }
 
         virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* converter) override
