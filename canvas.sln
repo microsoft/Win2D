@@ -27,8 +27,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppConsumer.Windows", "test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D50-41BE-B46D-A61FF19B4694}"
 	ProjectSection(SolutionItems) = preProject
+		winrt\inc\AsyncUtility.h = winrt\inc\AsyncUtility.h
+		winrt\inc\ClosablePtr.h = winrt\inc\ClosablePtr.h
+		winrt\inc\Constants.h = winrt\inc\Constants.h
 		winrt\inc\ErrorHandling.h = winrt\inc\ErrorHandling.h
 		winrt\inc\ScopeWarden.h = winrt\inc\ScopeWarden.h
+		winrt\inc\WinStringBuilder.h = winrt\inc\WinStringBuilder.h
+		winrt\inc\WinStringWrapper.h = winrt\inc\WinStringWrapper.h
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.GraphicsDeviceComponent.Windows", "winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj", "{E09C8BE2-AC5A-4C87-9C2E-35290853448E}"

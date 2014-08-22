@@ -19,7 +19,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
-  	<ClInclude Include="$(MSBuildThisFileDirectory)AsyncUtility.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImage.h" />
@@ -29,7 +28,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
@@ -37,8 +35,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)WinStringBuilder.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)WinStringWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

@@ -35,7 +35,6 @@
     <Exec Command="mdmerge -metadata_dir &quot;$(WindowsSDK_MetadataPath)&quot; -o $(MergedWinmdDirectory) -i &quot;$(UnmergedWinmdDirectory)&quot; -v -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
-  	<ClInclude Include="$(MSBuildThisFileDirectory)AsyncUtility.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImage.h" />
@@ -46,10 +45,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ClosablePtr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)WinStringBuilder.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)WinStringWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
@@ -58,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
-	<ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmap.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">

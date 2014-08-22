@@ -22,12 +22,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Content Include="$(AssetDir)imageTiger.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Content Include="$(MSBuildThisFileDirectory)leaf.png" />
   </ItemGroup>
 </Project>

@@ -92,6 +92,11 @@
       <Link>Assets\WideLogo.scale-240.png</Link>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(AssetDir)imageTiger.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
