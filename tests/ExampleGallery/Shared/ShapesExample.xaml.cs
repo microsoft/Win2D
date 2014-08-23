@@ -46,7 +46,8 @@ namespace ExampleGallery
             {
                 new Shape() { Name = "Line", Drawer = this.DrawLine },
                 new Shape() { Name = "Rectangle", Drawer = this.DrawRectangle },
-                new Shape() { Name = "Rounded Rectangle", Drawer = this.DrawRoundedRectangle }
+                new Shape() { Name = "Rounded Rectangle", Drawer = this.DrawRoundedRectangle },
+                new Shape() { Name = "Circle", Drawer = this.DrawCircles }
             };
             this.Shapes.SelectedIndex = 0;
         }
@@ -164,6 +165,55 @@ namespace ExampleGallery
                     this.brush,
                     2.0f);
             }
+        }
+
+        private void DrawCircles(CanvasControl sender, CanvasDrawingSession ds)
+        {
+            var width = sender.ActualWidth;
+            var height = sender.ActualHeight;
+
+            float endpointMargin = 100;
+            float controlMarginX = endpointMargin * 4;
+            float controlMarginY = endpointMargin * 2;
+
+            for (int i = 0; i < 25; i++)
+            {
+                Point[] bez = new Point[4];
+                int n = (i * 24) + 9 - (i / 2);
+
+                for (int k = 0; k < 3; k++)
+                {
+                    int j = 4 - (2 * k);
+                    bez[k].X = (0 + (((n >> (j + 1)) & 1) * (width - controlMarginX)));
+                    bez[k].Y = (0 + (((n >> j) & 1) * (height - controlMarginY)));
+                }
+                bez[3].X = width - endpointMargin; // Collect the ends in the lower right
+                bez[3].Y = height - endpointMargin;
+
+                const int nSteps = 80;
+                const float tStep = 1.0f / nSteps;
+                float t = 0;
+                for (int step = 0; step < nSteps; step++)
+                {
+                    double s = 1 - t;
+                    double ss = s * s;
+                    double sss = ss * s;
+                    double tt = t * t;
+                    double ttt = tt * t;
+                    double x = (sss * bez[0].X) + (3 * ss * t * bez[1].X) + (3 * s * tt * bez[2].X) + (ttt * bez[3].X);
+                    double y = (sss * bez[0].Y) + (3 * ss * t * bez[1].Y) + (3 * s * tt * bez[2].Y) + (ttt * bez[3].Y);
+                    float radius = (float)(ttt * 100);
+                    float strokeWidth = (float)((0.5 - Math.Abs(ss - 0.5)) * 10);
+
+                    var a = t * Math.PI * 2;
+                    byte c = (byte)((Math.Sin(a) + 1) * 127.5);
+                    this.brush.Color = Color.FromArgb(255, 90, 128, c);
+
+                    ds.DrawCircle(new Point(x, y), radius, this.brush, strokeWidth);
+                    t += tStep;
+                }
+            }
+
         }
     }
 }

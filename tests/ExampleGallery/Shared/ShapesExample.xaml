@@ -34,6 +34,7 @@ under the License.
             <ListBox.Items>
                 <local:Shape Name="Lines"/>
                 <local:Shape Name="Rectangles"/>
+                <local:Shape Name="Circles"/>
             </ListBox.Items>
         </ListBox>
         <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"

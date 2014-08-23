@@ -177,6 +177,29 @@ namespace canvas
             CanvasEllipse ellipse,
             ICanvasBrush* brush) override;
 
+        IFACEMETHOD(DrawCircle)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawCircleWithStrokeWidth)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawCircleWithStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(FillCircle)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush) override;
+
         IFACEMETHOD(DrawTextAtPoint)(
             HSTRING text,
             ABI::Windows::Foundation::Point point,

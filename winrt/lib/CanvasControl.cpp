@@ -22,6 +22,7 @@ namespace canvas
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::Graphics::Display;
+    using namespace ABI::Windows::ApplicationModel;
 
     IFACEMETHODIMP CanvasDrawEventArgsFactory::Create(
         ICanvasDrawingSession* drawingSession,
@@ -63,6 +64,7 @@ namespace canvas
         ComPtr<ICanvasImageSourceFactory> m_canvasImageSourceFactory;
         ComPtr<IActivationFactory> m_imageControlFactory;
         ComPtr<IDisplayInformationStatics> m_displayInformationStatics;
+        ComPtr<IDesignModeStatics> m_designModeStatics;
 
     public:
         CanvasControlAdapter()
@@ -95,6 +97,10 @@ namespace canvas
             ThrowIfFailed(GetActivationFactory(
                 HStringReference(RuntimeClass_Windows_Graphics_Display_DisplayInformation).Get(), 
                 &m_displayInformationStatics));
+
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_ApplicationModel_DesignMode).Get(),
+                &m_designModeStatics));
         }
 
         virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override 
@@ -177,6 +183,13 @@ namespace canvas
             EventRegistrationToken token;
             ThrowIfFailed(displayInformation->add_DpiChanged(handler, &token));
             return token;
+        }
+
+        bool IsDesignModeEnabled() override
+        {
+            boolean enabled;
+            ThrowIfFailed(m_designModeStatics->get_DesignModeEnabled(&enabled));
+            return !!enabled;
         }
     };
 
@@ -280,9 +293,13 @@ namespace canvas
             &sizeChangedToken));
 
         // Register for DpiChanged event
-        auto dpiChangedEventHandler = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChangedCallback);
-        EventRegistrationToken dpiChangedToken{};
-        dpiChangedToken = m_adapter->AddDpiChangedCallback(dpiChangedEventHandler.Get());
+        // TODO #2199: Investigate why this doesn't agree with the designer.
+        if (!m_adapter->IsDesignModeEnabled())
+        {
+            auto dpiChangedEventHandler = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChangedCallback);
+            EventRegistrationToken dpiChangedToken{};
+            dpiChangedToken = m_adapter->AddDpiChangedCallback(dpiChangedEventHandler.Get());
+        }
     }
 
     void CanvasControl::ClearDrawNeeded()

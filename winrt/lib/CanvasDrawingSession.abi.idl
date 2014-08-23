@@ -162,6 +162,40 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasBrush* brush);
 
         //
+        // FillCircle
+        //
+
+        HRESULT FillCircle(
+            [in] Windows.Foundation.Point centerPoint,
+            [in] float radius,
+            [in] ICanvasBrush* brush);
+
+        //
+        // DrawCircle
+        //
+
+        [overload("DrawCircle")]
+        HRESULT DrawCircle(
+            [in] Windows.Foundation.Point centerPoint,
+            [in] float radius,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawCircle")]
+        HRESULT DrawCircleWithStrokeWidth(
+            [in] Windows.Foundation.Point centerPoint,
+            [in] float radius,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        [overload("DrawCircle")]
+        HRESULT DrawCircleWithStrokeWidthAndStrokeStyle(
+            [in] Windows.Foundation.Point centerPoint,
+            [in] float radius,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
+        //
         // DrawText
         //
 

@@ -122,6 +122,45 @@ namespace CsConsumer
             }
         }
 
+        public void FillCircle(Point centerPoint, float radius, CanvasSolidColorBrush brush)
+        {
+            if (m_renderingType == TestSceneRenderingType.Default)
+            {
+                m_drawingSession.FillCircle(centerPoint, radius, brush);
+            }
+            else
+            {
+                brush.Color = Colors.Black;
+                m_drawingSession.DrawCircle(centerPoint, radius, brush);
+            }
+        }
+
+        public void DrawCircle(Point centerPoint, float radius, CanvasSolidColorBrush brush, float strokeWidth)
+        {
+            if (m_renderingType == TestSceneRenderingType.Default)
+            {
+                m_drawingSession.DrawCircle(centerPoint, radius, brush, strokeWidth);
+            }
+            else
+            {
+                brush.Color = Colors.Black;
+                m_drawingSession.DrawCircle(centerPoint, radius, brush);
+            }
+        }
+
+        public void DrawCircle(Point centerPoint, float radius, CanvasSolidColorBrush brush, float strokeWidth, CanvasStrokeStyle strokeStyle)
+        {
+            if (m_renderingType == TestSceneRenderingType.Default)
+            {
+                m_drawingSession.DrawCircle(centerPoint, radius, brush, strokeWidth, strokeStyle);
+            }
+            else
+            {
+                brush.Color = Colors.Black;
+                m_drawingSession.DrawCircle(centerPoint, radius, brush);
+            }
+        }
+
         CanvasDrawingSession m_drawingSession;
         TestSceneRenderingType m_renderingType;
     }

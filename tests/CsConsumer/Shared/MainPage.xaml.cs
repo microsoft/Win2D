@@ -41,6 +41,7 @@ namespace CsConsumer
             Ellipse_Thin,
             Ellipse_Thick,
             Ellipse_Fill,
+            Circle_Fill,
             Dashed_Lines,
             Text,
             Test_Scene0_Default,
@@ -218,6 +219,13 @@ namespace CsConsumer
                 case DrawnContentType.Ellipse_Fill:
                     ds.FillEllipse(
                         NextRandomEllipse(horizontalLimit, verticalLimit),
+                        m_brush);
+                    break;
+
+                case DrawnContentType.Circle_Fill:
+                    ds.FillCircle(
+                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        100,
                         m_brush);
                     break;
 

@@ -411,16 +411,16 @@ namespace canvas
     {
         return ExceptionBoundary(
             [&]()
-        {
-            auto& deviceContext = GetResource(); 
-            CheckInPointer(brush);
+            {
+                auto& deviceContext = GetResource(); 
+                CheckInPointer(brush);
 
-            deviceContext->DrawEllipse(
-                ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
-                ToD2DBrush(brush).Get(),
-                strokeWidth,
-                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
-        });
+                deviceContext->DrawEllipse(
+                    ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+            });
     }
 
 
@@ -440,6 +440,70 @@ namespace canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircle(
+        ABI::Windows::Foundation::Point centerPoint,
+        float radius,
+        ICanvasBrush* brush)
+    {
+        return DrawCircleWithStrokeWidthAndStrokeStyle(
+            centerPoint,
+            radius,
+            brush,
+            1.0f,
+            nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithStrokeWidth(
+        ABI::Windows::Foundation::Point centerPoint,
+        float radius,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawCircleWithStrokeWidthAndStrokeStyle(
+            centerPoint,
+            radius,
+            brush,
+            strokeWidth,
+            nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithStrokeWidthAndStrokeStyle(
+        ABI::Windows::Foundation::Point centerPoint,
+        float radius,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource(); 
+                CheckInPointer(brush);
+
+                deviceContext->DrawEllipse(
+                    ToD2DEllipse(centerPoint, radius),
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::FillCircle(
+        ABI::Windows::Foundation::Point centerPoint,
+        float radius,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(brush);
+
+                deviceContext->FillEllipse(
+                    ToD2DEllipse(centerPoint, radius),
+                    ToD2DBrush(brush).Get());
+            });
+    }
 
     void CanvasDrawingSession::DrawTextImpl(
         ID2D1DeviceContext* deviceContext,

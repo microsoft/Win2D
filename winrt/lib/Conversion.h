@@ -127,6 +127,13 @@ namespace canvas
         return D2D1_ROUNDED_RECT{rect, radiusX, radiusY};
     }
 
+    inline D2D1_ELLIPSE ToD2DEllipse(
+        const ABI::Windows::Foundation::Point& point,
+        float radius)
+    {
+        return D2D1::Ellipse(ToD2DPoint(point), radius, radius);
+    }
+
     inline ComPtr<ID2D1Brush> ToD2DBrush(ICanvasBrush* brush)
     {
         ComPtr<ICanvasBrushInternal> internal;

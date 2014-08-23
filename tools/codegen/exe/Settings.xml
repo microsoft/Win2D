@@ -23,6 +23,8 @@ under the License.
 
   <FilenameBase Value="Canvas"/>
   
+  <Primitive Name="FLOAT" ProjectedNameOverride="float"/>
+  
   <Namespace Name="D2D" NameOverride="D2D1">
     <Struct Name="POINT_2F" ShouldProject="false" ProjectedNameOverride="Point" IdlNamespaceQualifier="Windows.Foundation."/>
     <Struct Name="RECT_F" ShouldProject="false" ProjectedNameOverride="Rect" IdlNamespaceQualifier="Windows.Foundation."/>

@@ -110,6 +110,15 @@ namespace CodeGen
                 public List<Interface> Interfaces { get; set; }
             }
 
+            public class Primitive
+            {
+                [XmlAttributeAttribute]
+                public string Name;
+
+                [XmlAttributeAttribute]
+                public string ProjectedNameOverride;
+            }
+
             public class PrefixNode
             {
                 [XmlAttributeAttribute]
@@ -139,6 +148,9 @@ namespace CodeGen
 
                 [XmlElement("Prefix")]
                 public PrefixNode Prefix;
+
+                [XmlElement("Primitive")]
+                public List<Overrides.XmlBindings.Primitive> Primitives { get; set; }
 
                 [XmlElement("FilenameBase")]
                 public FilenameBaseNode FilenameBase;

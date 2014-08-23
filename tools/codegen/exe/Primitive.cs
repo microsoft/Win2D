@@ -40,15 +40,21 @@ namespace CodeGen
 
     class Primitive : QualifiableType
     {
-        public Primitive(XmlBindings.Primitive xmlData, Dictionary<string, QualifiableType> typeDictionary)
+        public Primitive(XmlBindings.Primitive xmlData, Overrides.XmlBindings.Primitive overrides, Dictionary<string, QualifiableType> typeDictionary)
         {
             m_name = xmlData.Name;
             typeDictionary[m_name] = this;
+
+            m_projectedName = m_name;
+            if(overrides != null && overrides.ProjectedNameOverride != null)
+            {
+                m_projectedName = overrides.ProjectedNameOverride;
+            }
         }
 
         public override string ProjectedName
         {
-            get { return m_name; } 
+            get { return m_projectedName; } 
         }
         public override string NativeName
         {
@@ -57,9 +63,10 @@ namespace CodeGen
 
         public override string ProjectedNameIncludingIndirection
         {
-            get { return m_name; }
+            get { return m_projectedName; }
         }
 
         string m_name;
+        string m_projectedName;
     }
 }

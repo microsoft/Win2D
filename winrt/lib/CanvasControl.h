@@ -63,6 +63,7 @@ namespace canvas
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
         virtual EventRegistrationToken AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) = 0;
+        virtual bool IsDesignModeEnabled() = 0;
     };
 
     class CanvasControl : public RuntimeClass<

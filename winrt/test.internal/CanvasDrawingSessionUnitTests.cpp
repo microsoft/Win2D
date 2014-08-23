@@ -815,6 +815,139 @@ public:
         Assert::IsTrue(fillEllipseCalled);
     }
 
+
+    TEST_METHOD(CanvasDrawingSession_Circle_NullArgs)
+    {
+        using canvas::CanvasStrokeStyle;
+
+        CanvasDrawingSessionFixture f;
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCircle(Point{}, 0.0f, nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCircleWithStrokeWidth(Point{}, 0.0f, nullptr, 0.0f));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCircleWithStrokeWidthAndStrokeStyle(Point{}, 0.0f, nullptr, 0.0f, nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillCircle(Point{}, 0.0f, nullptr));
+    }
+
+    void VerifyD2DEllipseMatchesCircle(
+        const D2D1_ELLIPSE* ellipse,
+        const Point& expectedCenterPoint,
+        float expectedRadius)
+    {
+        Assert::AreEqual(ellipse->point.x, expectedCenterPoint.X);
+        Assert::AreEqual(ellipse->point.y, expectedCenterPoint.Y);
+        Assert::AreEqual(ellipse->radiusX, expectedRadius);
+        Assert::AreEqual(ellipse->radiusY, expectedRadius);
+    }
+
+    TEST_METHOD(CanvasDrawingSession_FillCircle)
+    {
+        CanvasDrawingSessionFixture f;
+        const Point expectedCenterPoint = { 33, 44 };
+        const float expectedRadius = 5;
+
+        bool fillEllipseCalled = false;
+        f.DeviceContext->MockFillEllipse =
+            [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush)
+            {
+                Assert::IsFalse(fillEllipseCalled);
+                VerifyD2DEllipseMatchesCircle(ellipse, expectedCenterPoint, expectedRadius);
+                Assert::AreEqual(f.Brush->GetD2DBrush().Get(), brush);
+                fillEllipseCalled = true;
+            };
+
+        ThrowIfFailed(f.DS->FillCircle(
+            expectedCenterPoint,
+            expectedRadius,
+            f.Brush.Get()));
+
+        Assert::IsTrue(fillEllipseCalled);
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawCircle)
+    {
+        CanvasDrawingSessionFixture f;
+        const Point expectedCenterPoint = { 33, 44 };
+        const float expectedRadius = 5;
+
+        bool drawEllipseCalled = false;
+        f.DeviceContext->MockDrawEllipse =
+            [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::IsFalse(drawEllipseCalled);
+                VerifyD2DEllipseMatchesCircle(ellipse, expectedCenterPoint, expectedRadius);
+                Assert::AreEqual(f.Brush->GetD2DBrush().Get(), brush);
+                Assert::AreEqual(1.0f, strokeWidth);
+                Assert::IsNull(strokeStyle);
+                drawEllipseCalled = true;
+            };
+
+        ThrowIfFailed(f.DS->DrawCircle(expectedCenterPoint, expectedRadius,f.Brush.Get()));
+
+        Assert::IsTrue(drawEllipseCalled);
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawCircleWithStrokeWidth)
+    {
+        CanvasDrawingSessionFixture f;
+        const Point expectedCenterPoint = { 33, 44 };
+        const float expectedRadius = 5;
+        const float expectedStrokeWidth = 11.11f;
+
+        bool drawEllipseCalled = false;
+        f.DeviceContext->MockDrawEllipse =
+            [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+        {
+            Assert::IsFalse(drawEllipseCalled);
+            VerifyD2DEllipseMatchesCircle(ellipse, expectedCenterPoint, expectedRadius);
+            Assert::AreEqual(f.Brush->GetD2DBrush().Get(), brush);
+            Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+            Assert::IsNull(strokeStyle);
+            drawEllipseCalled = true;
+        };
+
+        ThrowIfFailed(f.DS->DrawCircleWithStrokeWidth(expectedCenterPoint, expectedRadius, f.Brush.Get(), expectedStrokeWidth));
+
+        Assert::IsTrue(drawEllipseCalled);
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawCircleWithStrokeWidthAndStrokeStyle)
+    {
+        using canvas::CanvasStrokeStyle;
+
+        CanvasDrawingSessionFixture f;
+        const Point expectedCenterPoint = { 33, 44 };
+        const float expectedRadius = 5;
+        const float expectedStrokeWidth = 11.11f;
+
+        bool drawEllipseCalled = false;
+        f.DeviceContext->MockDrawEllipse =
+            [&](const D2D1_ELLIPSE* ellipse, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+        {
+            Assert::IsFalse(drawEllipseCalled);
+            VerifyD2DEllipseMatchesCircle(ellipse, expectedCenterPoint, expectedRadius);
+            Assert::AreEqual(f.Brush->GetD2DBrush().Get(), brush);
+            Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+            Assert::IsNotNull(strokeStyle);
+            Assert::AreEqual(D2D1_LINE_JOIN_MITER_OR_BEVEL, f.DeviceContext->m_factory->m_lineJoin);
+            drawEllipseCalled = true;
+        };
+
+        auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
+        canvasStrokeStyle->put_LineJoin(CanvasLineJoin::MiterOrBevel);
+
+        ThrowIfFailed(f.DS->DrawCircleWithStrokeWidthAndStrokeStyle(
+            expectedCenterPoint, 
+            expectedRadius, 
+            f.Brush.Get(), 
+            expectedStrokeWidth,
+            canvasStrokeStyle.Get()));
+
+        Assert::IsTrue(drawEllipseCalled);
+    }
+
     TEST_METHOD(CanvasDrawingSession_StateGettersWithNull)
     {
         CanvasDrawingSessionFixture f;
@@ -1406,7 +1539,12 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->FillRoundedRectangle(CanvasRoundedRectangle{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawEllipse(CanvasEllipse{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawEllipseWithStrokeWidth(CanvasEllipse{}, nullptr, 0.0f));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawEllipseWithStrokeWidthAndStrokeStyle(CanvasEllipse{}, nullptr, 0.0f, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->FillEllipse(CanvasEllipse{}, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawCircle(Point{}, 0.0f, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawCircleWithStrokeWidth(Point{}, 0.0f, nullptr, 0.0f));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawCircleWithStrokeWidthAndStrokeStyle(Point{}, 0.0f, nullptr, 0.0f, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->FillCircle(Point{}, 0.0f, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtPoint(nullptr, Point{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtPointWithFormat(nullptr, Point{}, nullptr, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawText(nullptr, Rect{}, nullptr));

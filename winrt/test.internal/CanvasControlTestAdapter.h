@@ -105,4 +105,9 @@ public:
     {
         ThrowIfFailed(m_dpiChangedEventList.InvokeAll(nullptr, nullptr));
     }
+
+    virtual bool IsDesignModeEnabled()
+    {
+        return false;
+    }
 };

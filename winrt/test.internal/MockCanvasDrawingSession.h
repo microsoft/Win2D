@@ -183,6 +183,45 @@ namespace canvas
             Assert::Fail(L"Unexpected call to FillEllipse");
             return E_NOTIMPL;
         }
+
+        IFACEMETHODIMP DrawCircle(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush)
+        {
+            Assert::Fail(L"Unexpected call to DrawCircle");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP DrawCircleWithStrokeWidth(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush,
+            float strokeWidth)
+        {
+            Assert::Fail(L"Unexpected call to DrawCircleWithStrokeWidth");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP DrawCircleWithStrokeWidthAndStrokeStyle(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle)
+        {
+            Assert::Fail(L"Unexpected call to DrawCircleWithStrokeWidthAndStrokeStyle");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP FillCircle(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ICanvasBrush* brush)
+        {
+            Assert::Fail(L"Unexpected call to FillCircle");
+            return E_NOTIMPL;
+        }
         
         IFACEMETHODIMP DrawTextAtPoint(
             HSTRING,

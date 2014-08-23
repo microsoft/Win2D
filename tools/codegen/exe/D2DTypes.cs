@@ -56,7 +56,10 @@ namespace CodeGen
             m_primitiveList = new List<Primitive>();
             foreach(XmlBindings.Primitive p in xmlData.Primitives)
             {
-                m_primitiveList.Add(new Primitive(p, typeDictionary));
+                Overrides.XmlBindings.Primitive overridePrimitive = null;
+                if (overrides != null) overridePrimitive = overrides.Primitives.Find(x => x.Name == p.Name);
+
+                m_primitiveList.Add(new Primitive(p, overridePrimitive, typeDictionary));
             }
 
             m_structList = new List<Struct>();

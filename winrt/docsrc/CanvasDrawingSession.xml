@@ -43,7 +43,7 @@ under the License.
       <summary>Draws an image at the specified position.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a line of single pixel width.</summary>
+      <summary>Draws a line of single unit width.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
       <summary>Draws a line of the specified width.</summary>
@@ -52,7 +52,7 @@ under the License.
       <summary>Draws a line of the specified width, using a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a rectangle using single pixel width.</summary>
+      <summary>Draws a rectangle using single unit width.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
       <summary>Draws a rectangle using the specified width.</summary>
@@ -64,7 +64,7 @@ under the License.
       <summary>Fills the inside of a rectangle.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a rectangle with rounded corners and single pixel width.</summary>
+      <summary>Draws a rectangle with rounded corners and single unit width.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
       <summary>Draws a rectangle with rounded corners using the specified width.</summary>
@@ -76,7 +76,7 @@ under the License.
       <summary>Fills the inside of a rounded rectangle.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws an ellipse using single pixel width.</summary>
+      <summary>Draws an ellipse using single unit width.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
       <summary>Draws an ellipse using the specified width.</summary>
@@ -116,10 +116,21 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing">
       <summary>Enables or disables primitive edge antialiasing for this drawing session.</summary>
-    </member>
+    </member>  
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Device">
       <summary>Gets the underlying device used by this drawing session.</summary>
+   </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+        <summary>Fills the interior of a circle.</summary>
     </member>
-  
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+        <summary>Draws a circle using a single unit width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+        <summary>Draws a circle using the specified width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+        <summary>Draws a circle using the specified width, and the specified stroke style.</summary>
+    </member>
   </members>
 </doc>

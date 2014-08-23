@@ -79,25 +79,17 @@ namespace CsConsumer
             }
 
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(484.5, 351);
-                ellipse.RadiusX = 305f;
-                ellipse.RadiusY = 305f;
                 brush.Color = colors[0];
-                ds.DrawEllipse(ellipse, brush, 6f);
+                ds.DrawCircle(new Point(484.5, 351), 305f, brush, 6f);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(485, 351.5);
-                ellipse.RadiusX = 294.5f;
-                ellipse.RadiusY = 294.5f;
                 brush.Color = colors[0];
                 CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle();
                 strokeStyle.StartCap = dotCapStyle;
                 strokeStyle.EndCap = dotCapStyle;
                 strokeStyle.DashCap = dotCapStyle;
                 strokeStyle.CustomDashStyle = dottedDashStyle;
-                ds.DrawEllipse(ellipse, brush, 6f, strokeStyle);
+                ds.DrawCircle(new Point(485, 351.5), 294.5f, brush, 6f, strokeStyle);
             }
             {
                 CanvasEllipse ellipse = new CanvasEllipse();
@@ -700,28 +692,16 @@ namespace CsConsumer
                 ds.DrawEllipse(ellipse, brush, 6f, strokeStyle);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(297.5, 267.333);
-                ellipse.RadiusX = 11.333f;
-                ellipse.RadiusY = 11.333f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(297.5, 267.333), 11.333f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(413.167, 153.667);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(413.167, 153.667), 9f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(384.5, 239.334);
-                ellipse.RadiusX = 6.667f;
-                ellipse.RadiusY = 6.667f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(384.5, 239.334), 6.667f, brush);
             }
             {
                 brush.Color = Colors.White;
@@ -832,12 +812,8 @@ namespace CsConsumer
                 ds.DrawLine(new Point(270.5, 126.667), new Point(260.5, 126), brush, 12f);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(254.167, 105.001);
-                ellipse.RadiusX = 6.667f;
-                ellipse.RadiusY = 6.667f;
                 brush.Color = colors[5];
-                ds.DrawEllipse(ellipse, brush, 5f);
+                ds.DrawCircle(new Point(254.167, 105.001), 6.667f, brush, 5f);
             }
             {
                 brush.Color = colors[6];
@@ -2158,20 +2134,12 @@ namespace CsConsumer
                 ds.DrawEllipse(ellipse, brush, 6f, strokeStyle);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(574.833, 156.833);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(574.833, 156.833), 9f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(601.5, 245);
-                ellipse.RadiusX = 6.667f;
-                ellipse.RadiusY = 6.667f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(601.5, 245), 6.667f, brush);
             }
             {
                 brush.Color = Colors.White;
@@ -2226,12 +2194,8 @@ namespace CsConsumer
                 ds.DrawLine(new Point(701.5, 138.333), new Point(711.5, 137.667), brush, 12f);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(716.833, 115.667);
-                ellipse.RadiusX = 6.667f;
-                ellipse.RadiusY = 6.667f;
                 brush.Color = colors[5];
-                ds.DrawEllipse(ellipse, brush, 5f);
+                ds.DrawCircle(new Point(716.833, 115.667), 6.667f, brush, 5f);
             }
             {
                 brush.Color = colors[6];
@@ -3288,36 +3252,20 @@ namespace CsConsumer
                 ds.DrawLine(new Point(568.167, 143.667), new Point(575.5, 157.667), brush, 5f, strokeStyle);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(294.5, 437);
-                ellipse.RadiusX = 11.333f;
-                ellipse.RadiusY = 11.333f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(294.5, 437), 11.333f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(600.834, 463.333);
-                ellipse.RadiusX = 8.667f;
-                ellipse.RadiusY = 8.667f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(600.834, 463.333), 8.667f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(686.167, 432.332);
-                ellipse.RadiusX = 11.333f;
-                ellipse.RadiusY = 11.333f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(686.167, 432.332), 11.333f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(381.501, 465.666);
-                ellipse.RadiusX = 8.667f;
-                ellipse.RadiusY = 8.667f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(381.501, 465.666), 8.667f, brush);
             }
             {
                 brush.Color = colors[6];
@@ -3384,12 +3332,8 @@ namespace CsConsumer
                 ds.DrawLine(new Point(387.167, 481.336), new Point(406.5, 534.002), brush, 5f);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(413.167, 549.667);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(413.167, 549.667), 9f, brush);
             }
             {
                 brush.Color = colors[6];
@@ -4225,12 +4169,8 @@ namespace CsConsumer
                 ds.DrawLine(new Point(551, 555.5), new Point(559.5, 539), brush, 5f);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(573.666, 547.667);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(573.666, 547.667), 9f, brush);
             }
             {
                 brush.Color = colors[6];
@@ -5250,12 +5190,8 @@ namespace CsConsumer
                 ds.DrawLine(new Point(493.834, 4.672), new Point(471.167, 24.338), brush, 5f);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(491.833, 46.667);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(491.833, 46.667), 9f, brush);
             }
             {
                 brush.Color = colors[6];
@@ -6219,12 +6155,8 @@ namespace CsConsumer
                 ds.DrawLine(new Point(155, 352.5), new Point(182, 380), brush, 5f);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(183.333, 351.167);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(183.333, 351.167), 9f, brush);
             }
             {
                 brush.Color = colors[6];
@@ -6483,20 +6415,12 @@ namespace CsConsumer
                 ds.DrawLine(new Point(544.5, 629.5), new Point(521, 654.5), brush, 5f, strokeStyle);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(493.833, 657.167);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(493.833, 657.167), 9f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(785.833, 352.167);
-                ellipse.RadiusX = 9f;
-                ellipse.RadiusY = 9f;
                 brush.Color = colors[1];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(785.833, 352.167), 9f, brush);
             }
             {
                 brush.Color = colors[6];
@@ -10415,20 +10339,12 @@ namespace CsConsumer
                 ds.DrawLine(new Point(371.167, 296.667), new Point(378.5, 242), brush, 5f, strokeStyle);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(493.5, 297);
-                ellipse.RadiusX = 53f;
-                ellipse.RadiusY = 53f;
                 brush.Color = colors[7];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(493.5, 297), 53f, brush);
             }
             {
-                CanvasEllipse ellipse = new CanvasEllipse();
-                ellipse.Point = new Point(492.5, 401);
-                ellipse.RadiusX = 53f;
-                ellipse.RadiusY = 53f;
                 brush.Color = colors[7];
-                ds.FillEllipse(ellipse, brush);
+                ds.FillCircle(new Point(492.5, 401), 53f, brush);
             }
             {
                 CanvasEllipse ellipse = new CanvasEllipse();

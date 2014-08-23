@@ -128,6 +128,11 @@ namespace CodeGen.Test
                 typeDocuments.Add(new D2DTypes(xmlDocument, overridesXmlData, typeDictionary, outputDataTypes));
             }
 
+            foreach(Overrides.XmlBindings.Primitive overridePrimitive in overridesXmlData.Primitives)
+            {
+                Assert.IsTrue(typeDictionary.ContainsKey(overridePrimitive.Name), "Unexpected override primitive: " + overridePrimitive.Name);
+            }
+
             foreach(Overrides.XmlBindings.Namespace overrideNamespace in overridesXmlData.Namespaces)
             {
                 Assert.IsTrue(overrideNamespace.Name == "D2D" || overrideNamespace.Name == "D2D1", "Unexpected override namespace: " + overrideNamespace.Name);
