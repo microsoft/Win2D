@@ -234,20 +234,20 @@ namespace canvas
                 static_cast<CanvasTextDirection>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_FontFamilyName)
+        TEST_METHOD(CanvasTextFormat_FontFamily)
         {
             auto canvasGetter =
                 [](CanvasTextFormat* ctf)
                 {
                     WinString value;
-                    ThrowIfFailed(ctf->get_FontFamilyName(value.GetAddressOf()));
+                    ThrowIfFailed(ctf->get_FontFamily(value.GetAddressOf()));
                     return std::wstring(static_cast<const wchar_t*>(value));
                 };
 
             auto canvasSetter =
                 [](CanvasTextFormat* ctf, std::wstring value)
                 {
-                    ThrowIfFailed(ctf->put_FontFamilyName(WinString(value)));
+                    ThrowIfFailed(ctf->put_FontFamily(WinString(value)));
                 };
 
             auto dwriteGetter =
@@ -259,7 +259,7 @@ namespace canvas
                     return std::wstring(buf.begin(), buf.end() - 1); // - 1 since we don't want NULL terminator in string
                 };
 
-            auto dwriteSetter = nullptr; // FontFamilyName can't be set from dwrite
+            auto dwriteSetter = nullptr; // FontFamily name can't be set from dwrite
 
             TestSimpleProperty<std::wstring, std::wstring>(
                 canvasGetter,

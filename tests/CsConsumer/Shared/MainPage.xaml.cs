@@ -258,7 +258,7 @@ namespace CsConsumer
                         m_brush,
                         new CanvasTextFormat()
                         {
-                            FontFamilyName = "Comic Sans MS",
+                            FontFamily = "Comic Sans MS",
                             FontSize = 18,
                             ParagraphAlignment = ParagraphAlignment.Justify,
                             Options = CanvasDrawTextOptions.Clip

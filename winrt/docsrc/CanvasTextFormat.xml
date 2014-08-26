@@ -127,7 +127,7 @@ under the License.
         <code>
           var format = new CanvasTextFormat()
           {
-              FontFamilyName = "Arial"
+              FontFamily = "Arial"
           };
         </code>
 
@@ -198,7 +198,7 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontSize">
       <summary>Specifies the font size.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontFamilyName">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontFamily">
       <summary>Specifies the font family name (Arial, Times New Roman, etc.)</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FlowDirection">

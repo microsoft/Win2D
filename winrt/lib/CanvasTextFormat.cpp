@@ -792,10 +792,10 @@ namespace canvas
     }
 
     //
-    // CanvasTextFormat.FontFamilyName
+    // CanvasTextFormat.FontFamily
     //
 
-    IFACEMETHODIMP CanvasTextFormat::get_FontFamilyName(HSTRING* value)
+    IFACEMETHODIMP CanvasTextFormat::get_FontFamily(HSTRING* value)
     {
         return PropertyGet(
             value,
@@ -807,7 +807,7 @@ namespace canvas
     }
 
 
-    IFACEMETHODIMP CanvasTextFormat::put_FontFamilyName(HSTRING value)
+    IFACEMETHODIMP CanvasTextFormat::put_FontFamily(HSTRING value)
     {
         return PropertyPut(
             value,

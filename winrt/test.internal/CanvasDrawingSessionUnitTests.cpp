@@ -1340,7 +1340,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         ThrowIfFailed(f.Format->put_WordWrapping(expectedWordWrapping));
 
         auto expectedFontFamilyName = L"Ariel";
-        ThrowIfFailed(f.Format->put_FontFamilyName(WinString(expectedFontFamilyName)));
+        ThrowIfFailed(f.Format->put_FontFamily(WinString(expectedFontFamilyName)));
 
         ThrowIfFailed(f.Format->put_Options(CanvasDrawTextOptions::Clip));
 
@@ -1429,7 +1429,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         ThrowIfFailed(f.Format->put_WordWrapping(expectedWordWrapping));
 
         auto expectedFontFamilyName = L"Ariel";
-        ThrowIfFailed(f.Format->put_FontFamilyName(WinString(expectedFontFamilyName)));
+        ThrowIfFailed(f.Format->put_FontFamily(WinString(expectedFontFamilyName)));
 
         ThrowIfFailed(f.Format->put_Options(CanvasDrawTextOptions::Clip));
 

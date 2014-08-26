@@ -122,7 +122,7 @@ namespace Microsoft.Graphics.Canvas
         requires Windows.Foundation.IClosable
     {
         PROPERTY(FlowDirection,          CanvasTextDirection);
-        PROPERTY(FontFamilyName,         HSTRING);
+        PROPERTY(FontFamily,             HSTRING);
         PROPERTY(FontSize,               float);
         PROPERTY(FontStretch,            Windows.UI.Text.FontStretch);
         PROPERTY(FontStyle,              Windows.UI.Text.FontStyle);

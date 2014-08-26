@@ -78,7 +78,7 @@ TEST_CLASS(CanvasTextFormatTests)
         } while(false)
 
         CHECK(FlowDirection,          CanvasTextDirection::RightToLeft);
-        CHECK(FontFamilyName,         L"Arial");
+        CHECK(FontFamily,             L"Arial");
         CHECK(FontSize,               12.0f);
         CHECK(FontStretch,            Windows::UI::Text::FontStretch::UltraExpanded);
         CHECK(FontStyle,              Windows::UI::Text::FontStyle::Oblique);
@@ -120,7 +120,7 @@ TEST_CLASS(CanvasTextFormatTests)
         // Set a property that would cause it to recreate.
         //
 
-        canvasTextFormat->FontFamilyName = L"Comic Sans MS";
+        canvasTextFormat->FontFamily = L"Comic Sans MS";
 
         //
         // Verify that it still shows all the right values.  At this point the
@@ -128,7 +128,7 @@ TEST_CLASS(CanvasTextFormatTests)
         //
 
         CHECK(FlowDirection,          CanvasTextDirection::BottomToTop);
-        CHECK(FontFamilyName,         L"Comic Sans MS");
+        CHECK(FontFamily,             L"Comic Sans MS");
         CHECK(FontSize,               12.0f);
         CHECK(FontStretch,            Windows::UI::Text::FontStretch::UltraExpanded);
         CHECK(FontStyle,              Windows::UI::Text::FontStyle::Oblique);

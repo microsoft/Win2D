@@ -54,7 +54,7 @@ namespace canvas
 
     //
     // CanvasTextFormat provides a IDWriteTextFormat object.  Since some members
-    // of IDWriteTextFormat are immutable (eg FontFamilyName), CanvasTextFormat
+    // of IDWriteTextFormat are immutable (eg FontFamily), CanvasTextFormat
     // keeps track of shadow copies of properties and recreates ("realizes") an
     // IDWriteTextFormat as necessary.
     //
@@ -122,7 +122,7 @@ namespace canvas
         IFACEMETHOD(put_##NAME)(TYPE value) override
 
         PROPERTY(FlowDirection,          CanvasTextDirection);
-        PROPERTY(FontFamilyName,         HSTRING);
+        PROPERTY(FontFamily,             HSTRING);
         PROPERTY(FontSize,               float);
         PROPERTY(FontStretch,            ABI::Windows::UI::Text::FontStretch);
         PROPERTY(FontStyle,              ABI::Windows::UI::Text::FontStyle);
