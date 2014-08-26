@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{dd961f31-3142-4e3a-80a9-bc9da5d75816}</ProjectGuid>
-    <RootNamespace>GraphicsDeviceComponent</RootNamespace>
+    <ProjectGuid>{e09c8be2-ac5a-4c87-9c2e-35290853448e}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>winrt.test.nativecomponent.Windows</ProjectName>
+    <RootNamespace>NativeComponent</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
-    <ApplicationType>Windows Phone</ApplicationType>
+    <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
-    <ProjectName>winrt.test.GraphicsDeviceComponent.WindowsPhone</ProjectName>
   </PropertyGroup>
-  <Import Project="GraphicsDeviceComponent.Shared.vcxitems" Label="Shared" />
+  <Import Project="winrt.test.nativecomponent.Shared.vcxitems" Label="Shared" />
   <ItemGroup>
-    <ProjectReference Include="..\..\winrt\dll\winrt.dll.WindowsPhone.vcxproj">
-      <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
+    <ProjectReference Include="..\..\winrt\dll\winrt.dll.Windows.vcxproj">
+      <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
     </ProjectReference>
   </ItemGroup>
 </Project>

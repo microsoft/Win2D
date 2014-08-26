@@ -32,11 +32,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D5
 		winrt\inc\Constants.h = winrt\inc\Constants.h
 		winrt\inc\ErrorHandling.h = winrt\inc\ErrorHandling.h
 		winrt\inc\ScopeWarden.h = winrt\inc\ScopeWarden.h
+		winrt\inc\Vector.h = winrt\inc\Vector.h
 		winrt\inc\WinStringBuilder.h = winrt\inc\WinStringBuilder.h
 		winrt\inc\WinStringWrapper.h = winrt\inc\WinStringWrapper.h
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.GraphicsDeviceComponent.Windows", "winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj", "{E09C8BE2-AC5A-4C87-9C2E-35290853448E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.nativecomponent.Windows", "winrt\test.nativecomponent\winrt.test.nativecomponent.Windows.vcxproj", "{E09C8BE2-AC5A-4C87-9C2E-35290853448E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "winrt.test.managed.Windows", "winrt\test.managed\Windows\winrt.test.managed.Windows.csproj", "{9F8A014C-478A-4EC2-8CC2-37CEB3CCFCCF}"
 EndProject
@@ -56,11 +57,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.external", "winr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.WindowsPhone", "winrt\test.external\winrt.test.external.WindowsPhone.vcxproj", "{FBB57887-39F9-47E2-BCA9-C4B620223610}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.GraphicsDeviceComponent", "winrt.test.GraphicsDeviceComponent", "{EA4A8B3A-56D1-4B01-BBAE-8F00F818CAA8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.nativecomponent", "winrt.test.nativecomponent", "{EA4A8B3A-56D1-4B01-BBAE-8F00F818CAA8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.GraphicsDeviceComponent.Shared", "winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Shared.vcxitems", "{7C0A8506-002B-4169-989F-EA5723DAD6FB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.nativecomponent.Shared", "winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems", "{7C0A8506-002B-4169-989F-EA5723DAD6FB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.GraphicsDeviceComponent.WindowsPhone", "winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.WindowsPhone.vcxproj", "{DD961F31-3142-4E3A-80A9-BC9DA5D75816}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.nativecomponent.WindowsPhone", "winrt\test.nativecomponent\winrt.test.nativecomponent.WindowsPhone.vcxproj", "{DD961F31-3142-4E3A-80A9-BC9DA5D75816}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.managed", "winrt.test.managed", "{79418A70-2C3F-4A6E-9443-FFD655B85916}"
 EndProject
@@ -137,7 +138,7 @@ Global
 		tests\CppConsumer\CppConsumer.Shared.vcxitems*{78468973-6e77-44f0-8257-91acb2a23ec4}*SharedItemsImports = 4
 		numerics\Cpp\tests\CppNumericsTests.Shared.vcxitems*{2d1259ac-e4c6-4345-af91-5962e0c5112d}*SharedItemsImports = 4
 		tests\CsConsumer\Shared\CsConsumer.Shared.projitems*{114e4b4c-ab6d-4b1a-beeb-2bc25ed058de}*SharedItemsImports = 4
-		winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
+		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{6d29a10e-e538-47fc-9775-143df718a78d}*SharedItemsImports = 4
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
 		tests\CsConsumer\Shared\CsConsumer.Shared.projitems*{5e3a65be-ec00-4fe7-a3bc-129bf8afc7aa}*SharedItemsImports = 4
@@ -158,12 +159,12 @@ Global
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{198d676f-fed6-4501-a083-ea9d288db611}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{860ee6b2-f36c-448e-ba84-607266fb6fba}*SharedItemsImports = 4
 		tests\CppConsumer\CppConsumer.Shared.vcxitems*{55928c84-e2f9-4d22-81b9-867a8214909a}*SharedItemsImports = 4
-		winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Shared.vcxitems*{dd961f31-3142-4e3a-80a9-bc9da5d75816}*SharedItemsImports = 4
+		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{dd961f31-3142-4e3a-80a9-bc9da5d75816}*SharedItemsImports = 4
 		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{6f06c88d-b227-405b-a0d4-8e03dcba8191}*SharedItemsImports = 4
 		winrt\test.external\winrt.test.external.Shared.vcxitems*{d6cb5cb7-499b-4980-84c6-f0099cf309da}*SharedItemsImports = 4
 		winrt\dll\winrt.dll.Shared.vcxitems*{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}*SharedItemsImports = 4
 		tests\CppConsumer\CppConsumer.Shared.vcxitems*{c6b817f7-7b67-4ed0-a668-cb365dc32a7a}*SharedItemsImports = 9
-		winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Shared.vcxitems*{e09c8be2-ac5a-4c87-9c2e-35290853448e}*SharedItemsImports = 4
+		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{e09c8be2-ac5a-4c87-9c2e-35290853448e}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM

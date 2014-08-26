@@ -93,9 +93,9 @@
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
       <Name>winrt.dll.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj">
+    <ProjectReference Include="..\..\test.nativecomponent\winrt.test.nativecomponent.Windows.vcxproj">
       <Project>{e09c8be2-ac5a-4c87-9c2e-35290853448e}</Project>
-      <Name>winrt.test.GraphicsDeviceComponent.Windows</Name>
+      <Name>winrt.test.nativecomponent.Windows</Name>
     </ProjectReference>
     <SDKReference Include="MSTestFramework, Version=11.0" />
     <SDKReference Include="TestPlatform, Version=11.0" />

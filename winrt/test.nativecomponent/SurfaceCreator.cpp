@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-namespace GraphicsDeviceComponent
+namespace NativeComponent
 {
     using namespace Microsoft::Graphics::Canvas;
     using namespace Microsoft::Graphics::Canvas::DirectX;

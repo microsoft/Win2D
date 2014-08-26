@@ -46,6 +46,8 @@
 // Inc
 #include <ErrorHandling.h>
 #include <Constants.h>
+#include <Vector.h>
+#include <WinStringWrapper.h>
 
 // Public
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
@@ -64,7 +66,6 @@
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>
-#include <WinStringWrapper.h>
 
 
 // local headers

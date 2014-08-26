@@ -76,8 +76,8 @@
       <Name>winrt.dll.WindowsPhone</Name>
       <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\test.GraphicsDeviceComponent\GraphicsDeviceComponent.WindowsPhone.vcxproj">
-      <Name>winrt.test.GraphicsDeviceComponent.WindowsPhone</Name>
+    <ProjectReference Include="..\..\test.nativecomponent\winrt.test.nativecomponent.WindowsPhone.vcxproj">
+      <Name>winrt.test.nativecomponent.WindowsPhone</Name>
       <Project>{dd961f31-3142-4e3a-80a9-bc9da5d75816}</Project>
     </ProjectReference>
     <SDKReference Include="MSTestFramework, Version=12.0" />

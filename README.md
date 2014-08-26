@@ -112,3 +112,4 @@ verification.
 - /test.external - Automated tests that use only the public WinRT interface
 - /test.internal - Automated tests that link directly with winrt.lib to access internals of the implementation
 - /test.managed - Automated tests written in C#
+- /test.nativecomponent - C++/CX component that exposes native functionality for use by test.managed

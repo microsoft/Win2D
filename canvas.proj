@@ -60,10 +60,10 @@
     <WindowsProject Include="winrt\test.external\winrt.test.external.Windows.vcxproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
+    <WindowsProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.Windows.vcxproj" />
     <WindowsProject Include="winrt\test.managed\Windows\winrt.test.managed.Windows.csproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
-    <WindowsProject Include="winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.Windows.vcxproj" />
     <WindowsProject Include="tests\CsConsumer\Windows\CsConsumer.Windows.csproj" />
     <WindowsProject Include="tests\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
     <WindowsProject Include="tests\CppConsumer\CppConsumer.Windows.vcxproj" />
@@ -78,8 +78,8 @@
   <!-- Windows Phone test projects -->
   <ItemGroup Condition="$(BuildPhone) and $(BuildTests)">
     <PhoneProject Include="winrt\test.external\winrt.test.external.WindowsPhone.vcxproj" />
+    <PhoneProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.WindowsPhone.vcxproj" />
     <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
-    <PhoneProject Include="winrt\test.GraphicsDeviceComponent\GraphicsDeviceComponent.WindowsPhone.vcxproj" />
     <PhoneProject Include="tests\CsConsumer\WindowsPhone\CsConsumer.WindowsPhone.csproj" />
     <PhoneProject Include="tests\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj"/>
     <PhoneProject Include="tests\CppConsumer\CppConsumer.WindowsPhone.vcxproj" />

@@ -59,14 +59,15 @@
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // Inc
+#include <ClosablePtr.h>
+#include <Constants.h>
 #include <ErrorHandling.h>
 #include <ScopeWarden.h>
-#include <Constants.h>
+#include <Vector.h>
+#include <WinStringWrapper.h>
 
 // Generated from local IDLs
 #include <Canvas.abi.h>
 
 // local
-#include "ClosablePtr.h"
 #include "Conversion.h"
-#include "WinStringWrapper.h"

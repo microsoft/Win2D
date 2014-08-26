@@ -36,7 +36,7 @@ namespace test.managed
             //
 
             // Create a device.
-            Direct3DDevice graphicsDevice = GraphicsDeviceComponent.DeviceCreator.CreateDevice();
+            Direct3DDevice graphicsDevice = NativeComponent.DeviceCreator.CreateDevice();
 
             // We should be able to call Trim() without anything bad happening
             graphicsDevice.Trim();
@@ -46,7 +46,7 @@ namespace test.managed
             int expectedHeight = 256;
             var expectedGraphicsFormat = DirectXPixelFormat.R32Float;
 
-            Direct3DSurface surface = GraphicsDeviceComponent.SurfaceCreator.CreateSurface(
+            Direct3DSurface surface = NativeComponent.SurfaceCreator.CreateSurface(
                 graphicsDevice,
                 expectedWidth,
                 expectedHeight,
