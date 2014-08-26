@@ -292,8 +292,7 @@ namespace canvas
             onSizeChangedFn.Get(),
             &sizeChangedToken));
 
-        // Register for DpiChanged event
-        // TODO #2199: Investigate why this doesn't agree with the designer.
+        // Register for DpiChanged event.
         if (!m_adapter->IsDesignModeEnabled())
         {
             auto dpiChangedEventHandler = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChangedCallback);
