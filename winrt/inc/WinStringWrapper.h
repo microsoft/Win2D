@@ -16,137 +16,133 @@
 
 #include <ErrorHandling.h>
 
-namespace canvas
+//
+// Wrapper around HSTRING that uses exceptions for error handling so that it
+// can nicely support copying and assignment.
+//
+// Note: we can't call this file "WinString.h" because that will conflict
+// with the system header of the same name.
+//
+
+
+// For testing purposes, WinStringT is templated on a base class.  This
+// allows tests to replace the various Windows APIs (eg WindowsCreateString)
+// with test doubles.
+struct Empty {};
+
+template<typename Base=Empty>
+class WinStringT : public Base
 {
-    //
-    // Wrapper around HSTRING that uses exceptions for error handling so that it
-    // can nicely support copying and assignment.
-    //
-    // Note: we can't call this file "WinString.h" because that will conflict
-    // with the system header of the same name.
-    //
+    HSTRING m_value;
 
-
-    // For testing purposes, WinStringT is templated on a base class.  This
-    // allows tests to replace the various Windows APIs (eg WindowsCreateString)
-    // with test doubles.
-    struct Empty {};
-
-    template<typename Base=Empty>
-    class WinStringT : public Base
+public:
+    WinStringT()
+        : m_value(nullptr)
     {
-        HSTRING m_value;
+    }
 
-    public:
-        WinStringT()
-            : m_value(nullptr)
+    explicit WinStringT(const wchar_t* str)
+    {
+        auto length = wcslen(str);
+        ThrowIfFailed(WindowsCreateString(str, static_cast<uint32_t>(length), &m_value));
+    }
+
+    explicit WinStringT(const std::wstring& str)
+        : WinStringT(str.c_str())
+    {}
+
+    WinStringT(const WinStringT& other)
+        : m_value(nullptr)
+    {
+        other.CopyTo(GetAddressOf());
+    }
+
+    WinStringT(WinStringT&& other)
+        : m_value(nullptr)
+    {
+        std::swap(m_value, other.m_value);
+    }
+
+    ~WinStringT()
+    {
+        Release();
+    }
+
+    WinStringT& operator=(const wchar_t* str)
+    {
+        return operator=(WinString(str));
+    }
+
+    WinStringT& operator=(HSTRING str)
+    {
+        Release();
+        ThrowIfFailed(WindowsDuplicateString(str, &m_value));
+        return *this;
+    }
+
+    WinStringT& operator=(const WinStringT& other)
+    {
+        return operator=(other.m_value);
+    }
+
+    WinStringT& operator=(WinStringT&& other)
+    {
+        std::swap(m_value, other.m_value);
+        return *this;
+    }
+
+    void Release()
+    {
+        if (m_value)
         {
+            WindowsDeleteString(m_value);
+            m_value = nullptr;
         }
+    }
 
-        explicit WinStringT(const wchar_t* str)
-        {
-            auto length = wcslen(str);
-            ThrowIfFailed(WindowsCreateString(str, static_cast<uint32_t>(length), &m_value));
-        }
+    HSTRING* GetAddressOf()
+    {
+        Release();
+        return &m_value;
+    }
 
-        explicit WinStringT(const std::wstring& str)
-            : WinStringT(str.c_str())
-        {}
-
-        WinStringT(const WinStringT& other)
-            : m_value(nullptr)
-        {
-            other.CopyTo(GetAddressOf());
-        }
-
-        WinStringT(WinStringT&& other)
-            : m_value(nullptr)
-        {
-            std::swap(m_value, other.m_value);
-        }
-
-        ~WinStringT()
-        {
-            Release();
-        }
-
-        WinStringT& operator=(const wchar_t* str)
-        {
-            return operator=(WinString(str));
-        }
-
-        WinStringT& operator=(HSTRING str)
-        {
-            Release();
-            ThrowIfFailed(WindowsDuplicateString(str, &m_value));
-            return *this;
-        }
-
-        WinStringT& operator=(const WinStringT& other)
-        {
-            return operator=(other.m_value);
-        }
-
-        WinStringT& operator=(WinStringT&& other)
-        {
-            std::swap(m_value, other.m_value);
-            return *this;
-        }
-
-        void Release()
-        {
-            if (m_value)
-            {
-                WindowsDeleteString(m_value);
-                m_value = nullptr;
-            }
-        }
-
-        HSTRING* GetAddressOf()
-        {
-            Release();
-            return &m_value;
-        }
-
-        void CopyTo(HSTRING* dest) const
-        {
-            ThrowIfFailed(WindowsDuplicateString(m_value, dest));
-        }
+    void CopyTo(HSTRING* dest) const
+    {
+        ThrowIfFailed(WindowsDuplicateString(m_value, dest));
+    }
 
 
-        explicit operator const wchar_t*() const
-        {
-            return WindowsGetStringRawBuffer(m_value, nullptr);
-        }
+    explicit operator const wchar_t*() const
+    {
+        return WindowsGetStringRawBuffer(m_value, nullptr);
+    }
 
-        operator HSTRING() const
-        {
-            return m_value;
-        }
+    operator HSTRING() const
+    {
+        return m_value;
+    }
 
-        bool Equals(HSTRING other) const
-        {
-            int32_t result{};
-            ThrowIfFailed(WindowsCompareStringOrdinal(m_value, other, &result));
-            return (result == 0);
-        }
+    bool Equals(HSTRING other) const
+    {
+        int32_t result{};
+        ThrowIfFailed(WindowsCompareStringOrdinal(m_value, other, &result));
+        return (result == 0);
+    }
 
-        bool HasEmbeddedNull() const
-        {
-            BOOL hasEmbeddedNull = FALSE;
-            ThrowIfFailed(WindowsStringHasEmbeddedNull(m_value, &hasEmbeddedNull));
+    bool HasEmbeddedNull() const
+    {
+        BOOL hasEmbeddedNull = FALSE;
+        ThrowIfFailed(WindowsStringHasEmbeddedNull(m_value, &hasEmbeddedNull));
 
-            return !!hasEmbeddedNull;
-        }
+        return !!hasEmbeddedNull;
+    }
 
-        WinStringT GetCopyWithoutEmbeddedNull() const
-        {
-            // Recreate the string from the c-style string.  This will only copy
-            // up to the first null character.
-            return WinStringT(static_cast<const wchar_t*>(*this));
-        }
-    };
+    WinStringT GetCopyWithoutEmbeddedNull() const
+    {
+        // Recreate the string from the c-style string.  This will only copy
+        // up to the first null character.
+        return WinStringT(static_cast<const wchar_t*>(*this));
+    }
+};
 
-    typedef WinStringT<> WinString;
-}
-
+typedef WinStringT<> WinString;

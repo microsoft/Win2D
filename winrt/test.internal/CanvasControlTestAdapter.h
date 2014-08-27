@@ -56,8 +56,6 @@ public:
 
     virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
     {
-        using canvas::CanvasImageSource;
-
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
             [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)

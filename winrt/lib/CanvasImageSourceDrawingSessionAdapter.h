@@ -14,7 +14,7 @@
 
 #include "CanvasDrawingSession.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;
 
@@ -41,4 +41,4 @@ namespace canvas
 
         virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
     };
-}
+}}}}

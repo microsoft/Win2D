@@ -14,10 +14,9 @@
 
 #include <Canvas.abi.h>
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas;
+    using namespace ::Microsoft::WRL;
 
     class CanvasStrokeStyle;
 
@@ -131,4 +130,4 @@ namespace canvas
     private:
         void ThrowIfClosed();
     };
-}
+}}}}

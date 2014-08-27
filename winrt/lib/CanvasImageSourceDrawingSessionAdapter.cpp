@@ -14,7 +14,7 @@
 
 #include "CanvasImageSourceDrawingSessionAdapter.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     // static
     std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawingSessionAdapter::Create(
@@ -98,4 +98,4 @@ namespace canvas
     {
         return m_renderingSurfaceOffset;
     }
-}
+}}}}

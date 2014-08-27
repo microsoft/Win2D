@@ -57,7 +57,7 @@ public:
 
     TEST_METHOD(CanvasBitmap_Implements_Expected_Interfaces)
 	{
-        auto canvasBitmap = Make<canvas::CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
         
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmap);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImage);
@@ -68,7 +68,7 @@ public:
     TEST_METHOD(CanvasBitmap_Closed)
     {
         ABI::Windows::Foundation::Size size;
-        auto canvasBitmap = Make<canvas::CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
 
         Assert::IsNotNull(canvasBitmap.Get());
 
@@ -104,7 +104,7 @@ public:
                 *height = m_testImageHeightDip;
             };
 
-        auto canvasBitmap = Make<canvas::CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
         Assert::AreEqual(true, isConverterCreated);
 
         HRESULT result = canvasBitmap->get_SizeInPixels(&size);

@@ -65,12 +65,11 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 
     ComPtr<ID2D1DeviceContext1> m_expectedDeviceContext;
     std::shared_ptr<MockCanvasDrawingSessionAdapter> m_mockAdapter;
-    ComPtr<canvas::CanvasDrawingSession> m_canvasDrawingSession;
+    ComPtr<CanvasDrawingSession> m_canvasDrawingSession;
 
 public:
     TEST_METHOD_INITIALIZE(Init)
     {
-        using canvas::CanvasDrawingSession;
         m_expectedDeviceContext = Make<MockD2DDeviceContext>();
         m_mockAdapter = std::make_shared<MockCanvasDrawingSessionAdapter>();
 
@@ -111,13 +110,11 @@ class CanvasDrawingSessionFixture
 {
 public:
     ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
-    ComPtr<canvas::CanvasDrawingSession> DS;
+    ComPtr<CanvasDrawingSession> DS;
     ComPtr<StubCanvasBrush> Brush;
 
     CanvasDrawingSessionFixture()
     {
-        using canvas::CanvasDrawingSession;
-
         DeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
@@ -203,7 +200,7 @@ public:
                 return bitmap;
             };
 
-        ComPtr<canvas::CanvasBitmap> canvasBitmap = Make<canvas::CanvasBitmap>(canvasDevice.Get(), testFileName, adapter);
+        ComPtr<CanvasBitmap> canvasBitmap = Make<CanvasBitmap>(canvasDevice.Get(), testFileName, adapter);
 
         ComPtr<ICanvasImageInternal> internalImage;
         ThrowIfFailed(canvasBitmap.As(&internalImage));
@@ -319,8 +316,6 @@ public:
     TEST_METHOD(CanvasDrawingSession_DrawLineWithStrokeWidthAndStrokeStyle)
     {
         CanvasDrawingSessionFixture f;
-
-        using canvas::CanvasStrokeStyle;
 
         Point expectedP0{ 1.0f, 2.0f };
         Point expectedP1{ 3.0f, 4.0f };
@@ -442,8 +437,6 @@ public:
     TEST_METHOD(CanvasDrawingSession_DrawRectangleWithStrokeWidthAndStrokeStyle)
     {
         CanvasDrawingSessionFixture f;
-
-        using canvas::CanvasStrokeStyle;
 
         Rect expectedRect{ 1, 2, 3, 4 };
         float expectedStrokeWidth = 5.0f;
@@ -597,8 +590,6 @@ public:
     {
         CanvasDrawingSessionFixture f;
 
-        using canvas::CanvasStrokeStyle;
-
         CanvasRoundedRectangle expectedRoundedRect{ Rect{ 1, 2, 3, 4 }, 5, 6 };
         float expectedStrokeWidth = 5.0f;
 
@@ -751,8 +742,6 @@ public:
     {
         CanvasDrawingSessionFixture f;
 
-        using canvas::CanvasStrokeStyle;
-
         CanvasEllipse expectedEllipse{ Point{ 1, 2 }, 3, 4 };
         float expectedStrokeWidth = 5.0f;
 
@@ -818,8 +807,6 @@ public:
 
     TEST_METHOD(CanvasDrawingSession_Circle_NullArgs)
     {
-        using canvas::CanvasStrokeStyle;
-
         CanvasDrawingSessionFixture f;
 
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawCircle(Point{}, 0.0f, nullptr));
@@ -915,8 +902,6 @@ public:
 
     TEST_METHOD(CanvasDrawingSession_DrawCircleWithStrokeWidthAndStrokeStyle)
     {
-        using canvas::CanvasStrokeStyle;
-
         CanvasDrawingSessionFixture f;
         const Point expectedCenterPoint = { 33, 44 };
         const float expectedRadius = 5;
@@ -1111,8 +1096,6 @@ public:
 
     TEST_METHOD(CanvasDrawingSession_SiSOffsetIsHiddenFromTransformProperty)
     {
-        using canvas::CanvasDrawingSession;
-
         ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = 
             Make<StubD2DDeviceContextWithGetFactory>();
 
@@ -1176,8 +1159,6 @@ public:
         // CanvasDrawingSession_Interop_get_Device.
         //
 
-        using canvas::CanvasDrawingSession;
-
         ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
             Make<StubD2DDeviceContextWithGetFactory>();
 
@@ -1211,7 +1192,7 @@ public:
             getDeviceCalled = false;
 
             auto manager = std::make_shared<CanvasDrawingSessionManager>();
-            ComPtr<canvas::CanvasDrawingSession> drawingSession = manager->Create(
+            ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
                 testCases[i].ManagerDevice,
                 d2dDeviceContext.Get(),
                 std::make_shared<StubCanvasDrawingSessionAdapter>());
@@ -1246,12 +1227,12 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         bool m_drawTextCalled;
 
     public:
-        ComPtr<canvas::CanvasTextFormat> Format;
+        ComPtr<CanvasTextFormat> Format;
 
         Fixture()
             : m_drawTextCalled(false)
         {
-            Format = Make<canvas::CanvasTextFormat>();
+            Format = Make<CanvasTextFormat>();
         }
 
         template<typename FORMAT_VALIDATOR>
@@ -1471,8 +1452,6 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 {
     TEST_METHOD(CanvasDrawingSession_Close_ReleasesDeviceContextAndOtherMethodsFail)
     {
-        using canvas::CanvasDrawingSession;
-
         //
         // Set up a device context that tracks when it was deleted (via the
         // token)

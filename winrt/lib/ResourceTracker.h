@@ -12,9 +12,9 @@
 
 #pragma once
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace Microsoft::WRL;
+    using namespace ::Microsoft::WRL;
 
     template<typename RESOURCE>
     class ResourceTracker
@@ -112,4 +112,4 @@ namespace canvas
             m_resources.erase(it);
         }
     };
-}
+}}}}

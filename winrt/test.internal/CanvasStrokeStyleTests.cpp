@@ -19,7 +19,6 @@ TEST_CLASS(CanvasStrokeStyleTests)
 public: 
     TEST_METHOD(CanvasStrokeStyle_Implements_Expected_Interfaces)
     {
-        using canvas::CanvasStrokeStyle;
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasStrokeStyle, ICanvasStrokeStyle);
@@ -30,7 +29,6 @@ public:
     TEST_METHOD(CanvasStrokeStyle_NullOnGetters)
     {
         // Test that getters return the expected error for nullptr in pointer.
-        using canvas::CanvasStrokeStyle;
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
         UINT32 placeholderDashCount;
         float* placeholderDashElements;
@@ -53,8 +51,6 @@ public:
 
     TEST_METHOD(CanvasStrokeStyle_Properties)
     {
-        using canvas::CanvasDevice;
-        using canvas::CanvasStrokeStyle;
         using ABI::Windows::UI::Color;
 
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
@@ -182,7 +178,7 @@ public:
     {
     public:
         RealizationBehaviorVerifier(
-            ComPtr<canvas::CanvasStrokeStyle> canvasStrokeStyle,
+            ComPtr<CanvasStrokeStyle> canvasStrokeStyle,
             ComPtr<StubD2DFactoryWithCreateStrokeStyle> testFactory)
             : m_canvasStrokeStyle(canvasStrokeStyle)
             , m_testFactory(testFactory)
@@ -228,14 +224,12 @@ public:
 
     private:
 
-        ComPtr<canvas::CanvasStrokeStyle> m_canvasStrokeStyle;
+        ComPtr<CanvasStrokeStyle> m_canvasStrokeStyle;
         ComPtr<StubD2DFactoryWithCreateStrokeStyle> m_testFactory;
     };
 
     TEST_METHOD(CanvasStrokeStyle_Setters_Invalidate_Realization)
     {
-        using canvas::CanvasStrokeStyle;
-
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
         auto testFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();
 
@@ -272,8 +266,6 @@ public:
 
     TEST_METHOD(CanvasStrokeStyle_Closed)
     {
-        using canvas::CanvasStrokeStyle;
-
         auto testFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();
 
         CanvasCapStyle capStyle;
@@ -324,8 +316,6 @@ public:
 
     TEST_METHOD(CanvasStrokeStyle_RedundantSettersDoNotCauseRealization)
     {
-        using canvas::CanvasStrokeStyle;
-
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
         auto testFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();
 

@@ -16,10 +16,9 @@
 
 #include "WinStringWrapper.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas;
+    using namespace ::Microsoft::WRL;
 
     class CanvasTextFormatFactory : public ActivationFactory<
         CloakedIid<ICanvasFactoryNative>>
@@ -216,4 +215,4 @@ namespace canvas
         DWRITE_TRIMMING Options;
         ComPtr<IDWriteInlineObject> Sign;
     };
-}
+}}}}

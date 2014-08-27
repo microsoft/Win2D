@@ -12,12 +12,11 @@
 
 #pragma once
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;
-    using namespace Microsoft::WRL;
+    using namespace ::Microsoft::WRL;
 
     class ICanvasImageSourceDrawingSessionFactory
     {
@@ -124,4 +123,4 @@ namespace canvas
             const Rect& updateRect,
             float dpi) const override;
     };
-}
+}}}}

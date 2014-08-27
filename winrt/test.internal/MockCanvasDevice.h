@@ -14,8 +14,6 @@
 
 namespace canvas
 {
-    using namespace ABI::Microsoft::Graphics::Canvas;
-
     class MockCanvasDevice : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasDevice,

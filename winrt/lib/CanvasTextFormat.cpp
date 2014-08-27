@@ -15,7 +15,7 @@
 #include "CanvasTextFormat.h"
 #include "WinStringBuilder.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //
     // Parameter validation functions
@@ -1258,4 +1258,4 @@ namespace canvas
 
 
     ActivatableClassWithFactory(CanvasTextFormat, CanvasTextFormatFactory);
-}
+}}}}

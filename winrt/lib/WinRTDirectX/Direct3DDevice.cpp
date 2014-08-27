@@ -14,7 +14,7 @@
 
 using namespace Microsoft::WRL;
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11
 {
     [uuid(0A55F0AC-0BDD-4CFA-A9E7-8B2743AD33B7)]
     class IDirect3DDeviceInternal : public IUnknown
@@ -70,7 +70,10 @@ namespace canvas
             ThrowIfFailed(device.CopyTo(iid, p));
         }
     };
-}
+}}}}}}
+
+
+using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
 
 _Use_decl_annotations_
@@ -81,7 +84,7 @@ STDAPI CreateDirect3D11DeviceFromDXGIDevice(
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<canvas::Direct3DDevice> direct3DDevice = Make<canvas::Direct3DDevice>(dxgiDevice);
+            ComPtr<Direct3DDevice> direct3DDevice = Make<Direct3DDevice>(dxgiDevice);
             if (!direct3DDevice)
                 ThrowIfFailed(E_OUTOFMEMORY);
 
@@ -99,7 +102,7 @@ STDAPI GetDXGIInterfaceFromDirect3D11Device(
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<canvas::IDirect3DDeviceInternal> deviceInternal;
+            ComPtr<IDirect3DDeviceInternal> deviceInternal;
             ThrowIfFailed(direct3DDevice->QueryInterface(deviceInternal.GetAddressOf()));
             deviceInternal->GetDXGIInterface(iid, p);
         });

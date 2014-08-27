@@ -14,7 +14,6 @@
 
 namespace canvas
 {
-    using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ABI::Windows::Foundation;
 
     class MockCanvasDrawingSession : public RuntimeClass<

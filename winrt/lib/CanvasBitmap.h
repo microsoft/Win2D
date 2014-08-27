@@ -18,10 +18,9 @@
 #include "ResourceManager.h"
 #include "AsyncUtility.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas;
+    using namespace ::Microsoft::WRL;
 
     class ICanvasBitmapResourceCreationAdapter
     {
@@ -82,4 +81,4 @@ namespace canvas
         // ICanvasImageInternal
         virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override;
     };
-}
+}}}}

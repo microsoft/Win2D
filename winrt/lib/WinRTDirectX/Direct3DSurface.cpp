@@ -14,7 +14,7 @@
 
 using namespace Microsoft::WRL;
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11
 {
     [uuid(4D1CE3D8-3EED-4D43-8CDA-1C4A1190844F)]
     class IDirect3DSurfaceInternal : public IUnknown
@@ -93,7 +93,10 @@ namespace canvas
             ThrowIfFailed(surface.CopyTo(iid, p));
         }        
     };
-}
+}}}}}}
+
+
+using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
 
 _Use_decl_annotations_
@@ -104,7 +107,7 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<canvas::Direct3DSurface> direct3DSurface = Make<canvas::Direct3DSurface>(dxgiSurface);
+            ComPtr<Direct3DSurface> direct3DSurface = Make<Direct3DSurface>(dxgiSurface);
             if (!direct3DSurface)
                 ThrowIfFailed(E_OUTOFMEMORY);
 
@@ -122,7 +125,7 @@ STDAPI GetDXGIInterfaceFromDirect3D11Surface(
     return ExceptionBoundary(
         [&]()
         {
-            ComPtr<canvas::IDirect3DSurfaceInternal> surfaceInternal;
+            ComPtr<IDirect3DSurfaceInternal> surfaceInternal;
             ThrowIfFailed(direct3DSurface->QueryInterface(surfaceInternal.GetAddressOf()));
             surfaceInternal->GetDXGIInterface(iid, p);
         });

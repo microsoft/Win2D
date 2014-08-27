@@ -15,10 +15,9 @@
 #include "ClosablePtr.h"
 #include "ResourceManager.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas;
+    using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
     class CanvasDevice;
@@ -223,4 +222,4 @@ namespace canvas
             IDirect3DDevice* device,
             ID2D1Factory2* d2dFactory);        
     };
-}
+}}}}

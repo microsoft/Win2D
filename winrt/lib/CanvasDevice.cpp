@@ -13,7 +13,7 @@
 #include "pch.h"
 #include "CanvasDevice.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //
     // This implementation of the adapter does the normal thing, and calls into
@@ -505,4 +505,4 @@ namespace canvas
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
-}
+}}}}

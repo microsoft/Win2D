@@ -14,7 +14,7 @@
 #include "CanvasStrokeStyle.h"
 #include "CanvasDevice.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     CanvasStrokeStyle::CanvasStrokeStyle()
         : m_startCap(CanvasCapStyle::Flat)
@@ -431,4 +431,4 @@ namespace canvas
     }
 
     ActivatableClassWithFactory(CanvasStrokeStyle, CanvasStrokeStyleFactory);
-}
+}}}}

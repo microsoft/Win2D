@@ -217,8 +217,6 @@ public:
 
     TEST_METHOD(CanvasSolidColorBrush_Closed)
     {
-        using canvas::CanvasSolidColorBrush;
-
         Color color = { 255, 127, 127, 127 };
 
         auto d2dBrush = Make<MockD2DSolidColorBrush>();
@@ -260,8 +258,6 @@ public:
 
     TEST_METHOD(CanvasSolidColorBrush_CreateThroughCanvasControl)
     {
-        using canvas::CanvasControl;
-
         ComPtr<MockCanvasDevice> canvasDevice = Make<MockCanvasDevice>();
 
         bool createSolidColorBrushCalled = false;
@@ -304,7 +300,7 @@ public:
             Make<StubD2DDeviceContextWithGetFactory>();
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        ComPtr<canvas::CanvasDrawingSession> drawingSession = manager->Create(
+        ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
             canvasDevice.Get(),
             d2dDeviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());

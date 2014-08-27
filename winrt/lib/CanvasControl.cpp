@@ -16,9 +16,9 @@
 #include "CanvasDevice.h"
 #include "CanvasImageSource.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace Microsoft::WRL::Wrappers;
+    using namespace ::Microsoft::WRL::Wrappers;
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::Graphics::Display;
@@ -209,7 +209,6 @@ namespace canvas
             return ExceptionBoundary(
                 [&]()
                 {
-                    using canvas::CanvasControl;
                     CheckAndClearOutPointer(obj);
 
                     auto control = Make<CanvasControl>(m_adapter);
@@ -598,4 +597,4 @@ namespace canvas
 
     ActivatableClassWithFactory(CanvasDrawEventArgs, CanvasDrawEventArgsFactory);
     ActivatableClassWithFactory(CanvasControl, CanvasControlFactory);
-}
+}}}}

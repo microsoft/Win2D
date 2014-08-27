@@ -14,17 +14,13 @@
 
 #include <Canvas.abi.h>
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Foundation;
-    using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::Graphics::Display;
-
-    // This helps with cases where we need to explicitly qualify types
-    namespace canvasABI = ABI::Microsoft::Graphics::Canvas;
 
     class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>
     {
@@ -49,8 +45,8 @@ namespace canvas
          IFACEMETHODIMP get_DrawingSession(ICanvasDrawingSession** value);
     };
 
-    typedef ITypedEventHandler<canvasABI::CanvasControl*, IInspectable*> CreateResourcesEventHandlerType;
-    typedef ITypedEventHandler<canvasABI::CanvasControl*, canvasABI::CanvasDrawEventArgs*> DrawEventHandlerType;
+    typedef ITypedEventHandler<CanvasControl*, IInspectable*> CreateResourcesEventHandlerType;
+    typedef ITypedEventHandler<CanvasControl*, CanvasDrawEventArgs*> DrawEventHandlerType;
 
     class ICanvasControlAdapter
     {
@@ -154,4 +150,4 @@ namespace canvas
         
         HRESULT OnDpiChangedCallback(IDisplayInformation* sender, IInspectable* args);
     };
-}
+}}}}

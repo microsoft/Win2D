@@ -14,7 +14,7 @@
 
 #include "pch.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     [uuid(2F434224-053C-4978-87C4-CFAAFA2F4FAC)]
     class ICanvasImageInternal : public IUnknown
@@ -22,5 +22,4 @@ namespace canvas
     public:
         virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) = 0;
     };
-
-}
+}}}}

@@ -14,7 +14,7 @@
 #include "CanvasBitmap.h"
 #include "CanvasDevice.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
     {
@@ -159,4 +159,4 @@ namespace canvas
     }
 
     ActivatableClassWithFactory(CanvasBitmap, CanvasBitmapFactory);
-}
+}}}}

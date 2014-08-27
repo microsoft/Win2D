@@ -34,8 +34,6 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD(ColorToD2DColor)
     {
-        using canvas::ToD2DColor;
-
         //
         // Check the components are passed through as expected, above tests
         // convince us that the per-component conversion is correct.
@@ -74,8 +72,6 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD(D2DColorToWindowsColor)
     {
-        using canvas::ToWindowsColor;
-
         ABI::Windows::UI::Color alpha{ 255, 0, 0, 0 };
         Assert::AreEqual(alpha, ToWindowsColor(D2D1::ColorF(0, 0, 0, 1)));
 

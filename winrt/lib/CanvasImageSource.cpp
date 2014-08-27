@@ -16,7 +16,7 @@
 #include "CanvasImageSource.h"
 #include "CanvasImageSourceDrawingSessionAdapter.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     CanvasImageSourceDrawingSessionFactory::CanvasImageSourceDrawingSessionFactory()
         : m_drawingSessionManager(CanvasDrawingSessionFactory::GetOrCreateManager())
@@ -81,7 +81,7 @@ namespace canvas
         return ExceptionBoundary(
             [&]()
             {
-                using Microsoft::WRL::Wrappers::HStringReference;
+                using ::Microsoft::WRL::Wrappers::HStringReference;
 
                 CheckInPointer(resourceCreator);
                 CheckAndClearOutPointer(imageSource);
@@ -279,4 +279,4 @@ namespace canvas
     //
 
     ActivatableClassWithFactory(CanvasImageSource, CanvasImageSourceFactory);
-}
+}}}}

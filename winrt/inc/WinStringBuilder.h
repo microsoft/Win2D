@@ -14,70 +14,67 @@
 
 #include "WinStringWrapper.h"
 
-namespace canvas
+//
+// WinStringBuilder helps building up an HSTRING that will be populated by an
+// API that expects to fill a sized buffer.
+//
+// Example:
+//
+//   WinStringBuilder stringBuilder;
+//   auto length = m_format->GetFontFamilyNameLength() + 1;
+//   auto buffer = stringBuilder.Allocate(length);
+//   ThrowIfFailed(m_format->GetFontFamilyName(buffer, length));
+//   WinString theWinString = stringBuilder.Get();
+//
+class WinStringBuilder
 {
-    //
-    // WinStringBuilder helps building up an HSTRING that will be populated by an
-    // API that expects to fill a sized buffer.
-    //
-    // Example:
-    //
-    //   WinStringBuilder stringBuilder;
-    //   auto length = m_format->GetFontFamilyNameLength() + 1;
-    //   auto buffer = stringBuilder.Allocate(length);
-    //   ThrowIfFailed(m_format->GetFontFamilyName(buffer, length));
-    //   WinString theWinString = stringBuilder.Get();
-    //
-    class WinStringBuilder
+    HSTRING_BUFFER m_hstringBuffer;
+public:
+    WinStringBuilder()
+        : m_hstringBuffer(nullptr)
     {
-        HSTRING_BUFFER m_hstringBuffer;
-    public:
-        WinStringBuilder()
-            : m_hstringBuffer(nullptr)
-        {
-        }
+    }
 
-        ~WinStringBuilder()
-        {
-            if (m_hstringBuffer)
-                (void)WindowsDeleteStringBuffer(m_hstringBuffer);
-        }
+    ~WinStringBuilder()
+    {
+        if (m_hstringBuffer)
+            (void)WindowsDeleteStringBuffer(m_hstringBuffer);
+    }
 
-        wchar_t* Allocate(uint32_t length)
-        {
-            wchar_t* buffer = nullptr;
-            ThrowIfFailed(WindowsPreallocateStringBuffer(length, &buffer, &m_hstringBuffer));
-            return buffer;
-        }
+    wchar_t* Allocate(uint32_t length)
+    {
+        wchar_t* buffer = nullptr;
+        ThrowIfFailed(WindowsPreallocateStringBuffer(length, &buffer, &m_hstringBuffer));
+        return buffer;
+    }
 
-        WinString Get()
-        {
-            if (!m_hstringBuffer)
-                ThrowHR(E_UNEXPECTED);
+    WinString Get()
+    {
+        if (!m_hstringBuffer)
+            ThrowHR(E_UNEXPECTED);
 
-            WinString value;
-            ThrowIfFailed(WindowsPromoteStringBuffer(m_hstringBuffer, value.GetAddressOf()));
+        WinString value;
+        ThrowIfFailed(WindowsPromoteStringBuffer(m_hstringBuffer, value.GetAddressOf()));
 
-            //
-            // If the string has embedded nulls then we almost certainly don't
-            // want to keep them around.  This can happen when, eg,
-            // IDWriteTextFormat::GetFontFamilyName has to supply the
-            // null-terminator on a string, while WindowsPreallocateStringBuffer
-            // will include the null-terminator as part of the string.
-            //
+        //
+        // If the string has embedded nulls then we almost certainly don't
+        // want to keep them around.  This can happen when, eg,
+        // IDWriteTextFormat::GetFontFamilyName has to supply the
+        // null-terminator on a string, while WindowsPreallocateStringBuffer
+        // will include the null-terminator as part of the string.
+        //
 
-            if (value.HasEmbeddedNull())
-                value = value.GetCopyWithoutEmbeddedNull();
+        if (value.HasEmbeddedNull())
+            value = value.GetCopyWithoutEmbeddedNull();
 
-            m_hstringBuffer = nullptr;
+        m_hstringBuffer = nullptr;
 
-            return value;
-        }
+        return value;
+    }
 
 
-        WinStringBuilder(const WinStringBuilder&) = delete;
-        WinStringBuilder& operator=(const WinStringBuilder&) = delete;
-        WinStringBuilder(WinStringBuilder&&) = delete;
-        WinStringBuilder& operator=(WinStringBuilder&&) = delete;        
-    };
-}
+    WinStringBuilder(const WinStringBuilder&) = delete;
+    WinStringBuilder& operator=(const WinStringBuilder&) = delete;
+    WinStringBuilder(WinStringBuilder&&) = delete;
+    WinStringBuilder& operator=(WinStringBuilder&&) = delete;        
+};

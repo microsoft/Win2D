@@ -12,10 +12,6 @@
 
 #include "pch.h"
 
-using namespace canvas;
-using namespace ABI::Microsoft::Graphics::Canvas;
-namespace canvasABI = ABI::Microsoft::Graphics::Canvas;
-
 TEST_CLASS(CanvasControlTests_CommonAdapter)
 {
     std::shared_ptr<CanvasControlTestAdapter> m_adapter;
@@ -29,7 +25,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
     TEST_METHOD(CanvasControl_Implements_Expected_Interfaces)
     {
-        using canvas::CanvasControl;
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasControl, ICanvasControl);
@@ -39,7 +34,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
     TEST_METHOD(CanvasControl_DeviceProperty_Null)
     {
-        using canvas::CanvasControl;
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
 
         Assert::AreEqual(E_INVALIDARG, canvasControl->get_Device(nullptr));
@@ -47,8 +41,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
     TEST_METHOD(CanvasControl_DrawEventArgs_Getter)
     {
-        using canvas::CanvasDrawEventArgs;
-
         ComPtr<ICanvasDrawingSession> drawingSession = Make<MockCanvasDrawingSession>();
 
         auto drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
@@ -63,7 +55,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(drawingSession.Get(), drawingSessionRetrieved.Get());
     }
 
-    HRESULT OnCreateResources(canvasABI::ICanvasControl* sender, IInspectable* args)
+    HRESULT OnCreateResources(ICanvasControl* sender, IInspectable* args)
     {
         Assert::IsNotNull(sender);
         Assert::IsNull(args); // Args are never used.
@@ -93,7 +85,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     TEST_METHOD(CanvasControl_Callbacks)
     {
         using namespace ABI::Windows::Foundation;
-        using canvas::CanvasControl;
 
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
         Assert::AreEqual(0, m_createResourcesCallbackCount);
@@ -217,8 +208,6 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
 
     TEST_METHOD(CanvasControl_Resizing)
     {
-        using canvas::CanvasControl;
-
         std::shared_ptr<CanvasControlTestAdapter_VerifyCreateImageSource> adapter =
             std::make_shared<CanvasControlTestAdapter_VerifyCreateImageSource>();
 
@@ -293,9 +282,6 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
 
         virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
         {
-            using canvas::CanvasImageSource;
-            using canvas::CanvasImageSourceDrawingSessionFactory;
-
             m_lastImageSourceWidth = width;
             m_lastImageSourceHeight = height;
             m_imageSourceCount++;
@@ -369,8 +355,6 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
 
     TEST_METHOD(CanvasControl_Dpi)
     {
-        using canvas::CanvasControl;
-
         float dpiCases[] = {
             50, 
             DEFAULT_DPI - (DEFAULT_DPI * FLT_EPSILON),

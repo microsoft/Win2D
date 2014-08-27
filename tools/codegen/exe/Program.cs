@@ -70,12 +70,11 @@ namespace CodeGen
             outputFiles.CppFile.WriteLine("#include \"pch.h\"");
             outputFiles.CppFile.WriteLine("#include <wrl.h>");
             outputFiles.CppFile.WriteLine("using namespace Microsoft::WRL;");
-            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas::Numerics;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::Foundation;");
             outputFiles.CppFile.WriteLine("using namespace ABI::Windows::UI;");
             outputFiles.CppFile.WriteLine();
-            outputFiles.CppFile.WriteLine("namespace canvas");
+            outputFiles.CppFile.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas");
             outputFiles.CppFile.WriteLine("{");
             outputFiles.CppFile.Indent();
 
@@ -108,7 +107,7 @@ namespace CodeGen
         private void OutputEndingCode(OutputFiles outputFiles)
         {
             outputFiles.CppFile.Unindent();
-            outputFiles.CppFile.WriteLine("}");
+            outputFiles.CppFile.WriteLine("}}}}");
 
             outputFiles.IdlFile.Unindent();
             outputFiles.IdlFile.WriteLine("}");

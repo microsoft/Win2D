@@ -14,7 +14,7 @@
 #include "CanvasBrush.h"
 #include "CanvasDevice.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using ABI::Windows::UI::Color;
 
@@ -172,4 +172,4 @@ namespace canvas
     }
 
     ActivatableClassWithFactory(CanvasSolidColorBrush, CanvasSolidColorBrushFactory);
-}
+}}}}

@@ -72,7 +72,9 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
 
+namespace canvas {}
 using namespace canvas;
+using namespace ABI::Microsoft::Graphics::Canvas;
 
 #include "Helpers.h"
 #include "MockCanvasDevice.h"

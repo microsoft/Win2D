@@ -17,7 +17,7 @@
 #include "ResourceTracker.h"
 #include "ResourceWrapper.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //
     // Manages idempotent resource wrapping.  This is intended to be used in
@@ -153,7 +153,7 @@ namespace canvas
 
         static std::shared_ptr<MANAGER> GetOrCreateManager(ABI::Windows::ApplicationModel::Core::ICoreApplication* coreApplication)
         {
-            using Microsoft::WRL::Wrappers::HStringReference;
+            using ::Microsoft::WRL::Wrappers::HStringReference;
             using namespace ABI::Windows::Foundation::Collections;
 
             //
@@ -216,7 +216,7 @@ namespace canvas
         {
             using namespace ABI::Windows::ApplicationModel::Core;
             using namespace ABI::Windows::Foundation;
-            using namespace Microsoft::WRL::Wrappers;
+            using namespace ::Microsoft::WRL::Wrappers;
 
             ComPtr<ICoreApplication> coreApplication;
             ThrowIfFailed(GetActivationFactory(
@@ -245,5 +245,4 @@ namespace canvas
             return std::make_shared<MANAGER>();
         }
     };
-    
-}
+}}}}

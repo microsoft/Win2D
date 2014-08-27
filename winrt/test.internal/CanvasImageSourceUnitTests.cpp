@@ -18,8 +18,6 @@ TEST_CLASS(CanvasImageSourceUnitTests)
 public:
     TEST_METHOD(CanvasImageSourceConstruction)
     {
-        using canvas::CanvasImageSource;
-
         //
         // On construction the CanvasImageSource is expected to:
         //
@@ -128,8 +126,6 @@ public:
 
     TEST_METHOD(CanvasImageSourceGetDevice)
     {
-        using canvas::CanvasImageSource;
-
         ComPtr<ICanvasDevice> expectedCanvasDevice = Make<StubCanvasDevice>();
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
 
@@ -152,8 +148,6 @@ public:
 
     TEST_METHOD(CanvasImageSourcePutDevice)
     {
-        using canvas::CanvasImageSource;
-
         auto firstCanvasDevice = Make<StubCanvasDevice>();
 
         auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
@@ -237,15 +231,13 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
     ComPtr<MockSurfaceImageSource> m_surfaceImageSource;
     ComPtr<StubSurfaceImageSourceFactory> m_surfaceImageSourceFactory;
     std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> m_canvasImageSourceDrawingSessionFactory;
-    ComPtr<canvas::CanvasImageSource> m_canvasImageSource;
+    ComPtr<CanvasImageSource> m_canvasImageSource;
     int m_imageWidth;
     int m_imageHeight;
 
 public:
     TEST_METHOD_INITIALIZE(Init)
     {
-        using canvas::CanvasImageSource;
-
         m_canvasDevice = Make<StubCanvasDevice>();
         m_surfaceImageSource = Make<MockSurfaceImageSource>();
         m_surfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(m_surfaceImageSource.Get());
@@ -453,9 +445,6 @@ public:
 
     TEST_METHOD(CanvasImageSource_CreateFromCanvasControl)
     {
-        using canvas::CanvasControl;
-        using canvas::CanvasImageSource;
-
         std::shared_ptr<CanvasControlTestAdapter> canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
         
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter);
@@ -484,16 +473,13 @@ public:
 
     TEST_METHOD(CanvasImageSource_CreateFromDrawingSession)
     {
-        using canvas::CanvasControl;
-        using canvas::CanvasImageSource;
-
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
 
         ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
             Make<StubD2DDeviceContextWithGetFactory>();
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        ComPtr<canvas::CanvasDrawingSession> drawingSession = manager->Create(
+        ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
             canvasDevice.Get(),
             d2dDeviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());

@@ -17,10 +17,9 @@
 #include "ClosablePtr.h"
 #include "ResourceManager.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas;
+    using namespace ::Microsoft::WRL;
 
     class CanvasSolidColorBrush;
     class CanvasSolidColorBrushManager;
@@ -119,4 +118,4 @@ namespace canvas
         ComPtr<CanvasSolidColorBrush> CreateWrapper(
             ID2D1SolidColorBrush* resource);
     };
-}
+}}}}

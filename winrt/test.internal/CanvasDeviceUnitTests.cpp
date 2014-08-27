@@ -184,8 +184,6 @@ public:
 
     TEST_METHOD(CanvasDevice_Closed)
     {
-        using canvas::CanvasDevice;
-
         auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
         Assert::IsNotNull(canvasDevice.Get());
 
@@ -232,8 +230,6 @@ public:
     TEST_METHOD(CanvasDevice_HwSwFallback)
     {
         Reset();
-
-        using canvas::CanvasDevice;
 
         int d3dDeviceCreationCount = 0;
 
@@ -319,7 +315,6 @@ public:
 
     TEST_METHOD(CanvasDevice_DeviceProperty)
     {
-        using canvas::CanvasDevice;
         auto device = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);;
 
         Assert::AreEqual(E_INVALIDARG, device->get_Device(nullptr));

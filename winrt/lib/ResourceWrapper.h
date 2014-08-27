@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //
     // ResourceWrapper is a helper for implementing WinRT types that are
@@ -102,4 +102,4 @@ namespace canvas
                 });
         }
     };
-}
+}}}}

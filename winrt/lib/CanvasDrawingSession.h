@@ -15,11 +15,10 @@
 #include "ClosablePtr.h"
 #include "ErrorHandling.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ABI::Windows::Foundation;
-    using namespace Microsoft::WRL;
+    using namespace ::Microsoft::WRL;
 
     class ICanvasDrawingSessionAdapter
     {
@@ -279,4 +278,4 @@ namespace canvas
         ComPtr<CanvasDrawingSession> CreateWrapper(
             ID2D1DeviceContext1* resource);
     };
-}
+}}}}

@@ -18,7 +18,7 @@
 #include "CanvasImage.h"
 #include "CanvasDevice.h"
 
-namespace canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     inline ComPtr<ID2D1StrokeStyle1> ToD2DStrokeStyle(ICanvasStrokeStyle* strokeStyle, ID2D1DeviceContext* deviceContext)
     {
@@ -758,7 +758,7 @@ namespace canvas
 
     IFACEMETHODIMP CanvasDrawingSession::get_Device(ICanvasDevice** value)
     {
-        using namespace Microsoft::WRL::Wrappers;
+        using namespace ::Microsoft::WRL::Wrappers;
 
         return ExceptionBoundary(
             [&]()
@@ -785,4 +785,4 @@ namespace canvas
     }
 
     ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
-}
+}}}}
