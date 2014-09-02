@@ -51,14 +51,14 @@ TEST_CLASS(CanvasBitmapTests)
 
         // Test invalid bitmap parameter.
         Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [&]()
+            [&]
         {
             ICanvasBitmap^ bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, nullptr));
         });
 
         // Test invalid device parameter.
         Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [&]()
+            [&]
         {
             ICanvasBitmap^ bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(nullptr, realJpegImage.fileName));
         });

@@ -199,7 +199,7 @@ template<typename ACTION_ON_CLOSED_OBJECT>
 void ExpectObjectClosed(ACTION_ON_CLOSED_OBJECT&& fn)
 {
     Assert::ExpectException<Platform::ObjectDisposedException^>(
-        [&]()
+        [&]
         {
             fn();
         });
@@ -236,7 +236,7 @@ void RunOnUIThread(CODE&& code)
     CoreDispatcher^ dispatcher = wnd->Dispatcher;
     dispatcher->RunAsync(CoreDispatcherPriority::Normal,
         ref new DispatchedHandler(
-            [&event, code, &exceptionDuringTest]() 
+            [&event, code, &exceptionDuringTest]
             {
                 try
                 {

@@ -67,7 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_StartCap(_Out_ CanvasCapStyle* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -78,7 +78,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_StartCap(_In_ CanvasCapStyle value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 if (m_startCap != value)
@@ -92,7 +92,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_EndCap(_Out_ CanvasCapStyle* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -103,7 +103,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_EndCap(_In_ CanvasCapStyle value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 if (m_endCap != value)
@@ -117,7 +117,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_DashCap(_Out_ CanvasCapStyle* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -128,7 +128,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_DashCap(_In_ CanvasCapStyle value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 if (m_dashCap != value)
@@ -142,7 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_LineJoin(_Out_ CanvasLineJoin* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -153,7 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_LineJoin(_In_ CanvasLineJoin value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 if (m_lineJoin != value)
@@ -167,7 +167,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_MiterLimit(_Out_ float* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -178,7 +178,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_MiterLimit(_In_ float value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 if (m_miterLimit != value)
@@ -192,7 +192,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_DashStyle(_Out_ CanvasDashStyle* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -203,7 +203,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_DashStyle(_In_ CanvasDashStyle value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 if (m_dashStyle != value)
@@ -217,7 +217,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_DashOffset(_Out_ float* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -228,7 +228,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_DashOffset(_In_ float value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 if (m_dashOffset != value)
@@ -244,7 +244,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float **valueElements)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(valueCount);
                 CheckAndClearOutPointer(valueElements);
@@ -268,7 +268,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float *valueElements)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
                 
@@ -287,7 +287,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::get_TransformBehavior(_Out_ CanvasStrokeTransformBehavior* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -298,7 +298,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyle::put_TransformBehavior(_In_ CanvasStrokeTransformBehavior value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
 
@@ -399,7 +399,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasStrokeStyleFactory::ActivateInstance(IInspectable** object)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto newCanvasStrokeStyle = Make<CanvasStrokeStyle>();
 
@@ -416,7 +416,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         // Call Create here
         return ExceptionBoundary(
-            [&]()
+            [&]
         {
             ComPtr<ID2D1StrokeStyle1> d2dStrokeStyle;
 

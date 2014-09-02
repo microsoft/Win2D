@@ -56,7 +56,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(Trim)() override
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     auto& device = m_DxgiDevice.EnsureNotClosed();
                     device->Trim();
@@ -82,7 +82,7 @@ STDAPI CreateDirect3D11DeviceFromDXGIDevice(
     IInspectable** inspectableDirect3DDevice)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
             ComPtr<Direct3DDevice> direct3DDevice = Make<Direct3DDevice>(dxgiDevice);
             if (!direct3DDevice)
@@ -100,7 +100,7 @@ STDAPI GetDXGIInterfaceFromDirect3D11Device(
     void** p)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
             ComPtr<IDirect3DDeviceInternal> deviceInternal;
             ThrowIfFailed(direct3DDevice->QueryInterface(deviceInternal.GetAddressOf()));

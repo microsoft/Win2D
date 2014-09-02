@@ -26,7 +26,7 @@ TEST_CLASS(CanvasStrokeStyleTests)
         // This should yield an exception on deletion of the drawing session,
         // but right now it does not, seemingly due to a pre-existing issue.
         RunOnUIThread(
-            []()
+            []
             {
                 // Create a drawing session on one factory.
                 CanvasDrawingSession^ drawingSession;
@@ -62,7 +62,7 @@ TEST_CLASS(CanvasStrokeStyleTests)
     TEST_METHOD(CanvasStrokeStyleTests_DrawForcesRealization)
     {
         RunOnUIThread(
-            []()
+            []
             {
                 // Create a drawing session on one factory.
                 CanvasDrawingSession^ drawingSession;

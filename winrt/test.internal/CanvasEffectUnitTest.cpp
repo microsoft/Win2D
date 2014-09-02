@@ -134,7 +134,7 @@ public:
 
         bool isSetPropertyCalled = false;
         m_testEffect->MockSetProperty =
-            [&]()
+            [&]
             {
             Assert::IsFalse(isSetPropertyCalled);
                 isSetPropertyCalled = true;
@@ -142,7 +142,7 @@ public:
 
         bool isGetPropertyCalled = false;
         m_testEffect->MockGetProperty =
-            [&]()
+            [&]
             {
             Assert::IsFalse(isGetPropertyCalled);
                 isGetPropertyCalled = true;
@@ -173,7 +173,7 @@ public:
 
         bool isSetInputCalled = false;
         m_testEffect->MockSetInput =
-            [&]()
+            [&]
             {
                 Assert::IsFalse(isSetInputCalled);
                 isSetInputCalled = true;
@@ -181,7 +181,7 @@ public:
 
         bool isGetInputCalled = false;
         m_testEffect->MockGetInput =
-            [&]()
+            [&]
             {
                 Assert::IsFalse(isGetInputCalled);
                 isGetInputCalled = true;

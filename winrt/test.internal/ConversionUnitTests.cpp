@@ -120,16 +120,16 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(RECT{0,0,mv,mv}, ToRECT(Rect{0,0,mvf,mvf}));
 
         Assert::ExpectException<InvalidArgException>(
-            [&]() { ToRECT(Rect{0,0,mvf+2,mvf}); });
+            [&] { ToRECT(Rect{0,0,mvf+2,mvf}); });
 
         Assert::ExpectException<InvalidArgException>(
-            [&]() { ToRECT(Rect{0,0,mvf,mvf+2}); });
+            [&] { ToRECT(Rect{0,0,mvf,mvf+2}); });
 
         Assert::ExpectException<InvalidArgException>(
-            [&]() { ToRECT(Rect{2,0,mvf,mvf}); });
+            [&] { ToRECT(Rect{2,0,mvf,mvf}); });
 
         Assert::ExpectException<InvalidArgException>(
-            [&]() { ToRECT(Rect{0,2,mvf,mvf}); });
+            [&] { ToRECT(Rect{0,2,mvf,mvf}); });
     }
 
     TEST_METHOD(RectToD2DRect)

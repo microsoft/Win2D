@@ -38,7 +38,7 @@ namespace canvas
             }
 
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     MockSetDevice(device);
                 });
@@ -53,7 +53,7 @@ namespace canvas
             }
 
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     MockBeginDraw(updateRect, iid, updateObject, offset);
                 });
@@ -68,7 +68,7 @@ namespace canvas
             }
 
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     MockEndDraw();
                 });

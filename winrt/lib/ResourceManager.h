@@ -72,7 +72,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             return m_tracker.GetOrCreate(
                 resource,
-                [&]() 
+                [&] 
                 {
                     return GetManager()->CreateWrapper(resource); 
                 });

@@ -76,7 +76,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP Close() override
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     if (m_resource)
                     {
@@ -93,7 +93,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP GetResource(IUnknown** outResource) override
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     CheckAndClearOutPointer(outResource);
 

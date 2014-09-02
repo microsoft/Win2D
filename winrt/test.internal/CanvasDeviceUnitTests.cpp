@@ -79,7 +79,7 @@ public:
         // Try an invalid debug level
         Reset();
         Assert::ExpectException<InvalidArgException>(
-            [&]()
+            [&]
             {
                 m_deviceManager->Create(
                     static_cast<CanvasDebugLevel>(1234),
@@ -125,7 +125,7 @@ public:
         for (auto invalidCase : invalidCases)
         {
             Assert::ExpectException<InvalidArgException>(
-                [&]() 
+                [&] 
                 { 
                     m_deviceManager->Create(
                         CanvasDebugLevel::None,
@@ -161,7 +161,7 @@ public:
 
         // Try a NULL Direct3DDevice. 
         Assert::ExpectException<InvalidArgException>(
-            [&]() { m_deviceManager->Create(CanvasDebugLevel::None, nullptr); });
+            [&] { m_deviceManager->Create(CanvasDebugLevel::None, nullptr); });
     }
 
     TEST_METHOD(CanvasDevice_Create_From_D2DDevice)

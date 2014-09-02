@@ -41,7 +41,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IInspectable** wrapper)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(resource);
                 CheckAndClearOutPointer(wrapper);
@@ -145,7 +145,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return hr;
 
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 if (m_adapter)
                 {
@@ -164,7 +164,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ABI::Windows::UI::Color color)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
 
@@ -190,7 +190,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ABI::Windows::Foundation::Point offset)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(image);
                 auto& deviceContext = GetResource();
@@ -239,7 +239,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
         {
             auto& deviceContext = GetResource();
             CheckInPointer(brush);
@@ -285,7 +285,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
         {
             auto& deviceContext = GetResource();
             CheckInPointer(brush);
@@ -304,7 +304,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush) 
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(brush);
@@ -347,7 +347,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
         {
             auto& deviceContext = GetResource();  
             CheckInPointer(brush);
@@ -366,7 +366,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush) 
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(brush);
@@ -410,7 +410,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource(); 
                 CheckInPointer(brush);
@@ -429,7 +429,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush) 
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(brush);
@@ -475,7 +475,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource(); 
                 CheckInPointer(brush);
@@ -494,7 +494,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(brush);
@@ -556,7 +556,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(format->put_WordWrapping(CanvasWordWrapping::NoWrap));
 
         auto restoreWordWrapping = MakeScopeWarden(
-            [&]()
+            [&]
             {
                 format->put_WordWrapping(oldWordWrapping);
             });
@@ -571,7 +571,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto defaultFormat = Make<CanvasTextFormat>();
                 DrawTextAtPointImpl(GetResource().Get(), text, point, brush, defaultFormat.Get());
@@ -586,7 +586,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasTextFormat* format)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 DrawTextAtPointImpl(GetResource().Get(), text, point, brush, format);
             });
@@ -599,7 +599,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto defaultFormat = Make<CanvasTextFormat>();
                 DrawTextImpl(GetResource().Get(), text, rect, brush, defaultFormat.Get());
@@ -614,7 +614,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasTextFormat* format)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 DrawTextImpl(GetResource().Get(), text, rect, brush, format);
             });
@@ -623,7 +623,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::get_Antialiasing(CanvasAntialiasing* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(value);
@@ -635,7 +635,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::put_Antialiasing(CanvasAntialiasing value)
 	{
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
 
@@ -646,7 +646,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::get_Blend(CanvasBlend* value)
 	{
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(value);
@@ -658,7 +658,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::put_Blend(CanvasBlend value)
 	{
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
 
@@ -669,7 +669,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::get_TextAntialiasing(CanvasTextAntialiasing* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(value);
@@ -681,7 +681,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::put_TextAntialiasing(CanvasTextAntialiasing value)
 	{
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
 
@@ -692,7 +692,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::get_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(value);
@@ -719,7 +719,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::put_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value)
 	{
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 
@@ -736,7 +736,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::get_Units(CanvasUnits* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
                 CheckInPointer(value);
@@ -748,7 +748,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::put_Units(CanvasUnits value)
 	{
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto& deviceContext = GetResource();
 
@@ -761,7 +761,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         using namespace ::Microsoft::WRL::Wrappers;
 
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
 

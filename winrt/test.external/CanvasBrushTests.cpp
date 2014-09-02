@@ -41,18 +41,18 @@ TEST_CLASS(CanvasBrushTests)
 
         delete canvasSolidColorBrush;
 
-        ExpectObjectClosed([&](){ canvasSolidColorBrush->Color; });
-        ExpectObjectClosed([&](){ canvasSolidColorBrush->Color = Windows::UI::Colors::Orange; });
+        ExpectObjectClosed([&]{ canvasSolidColorBrush->Color; });
+        ExpectObjectClosed([&]{ canvasSolidColorBrush->Color = Windows::UI::Colors::Orange; });
 
-        ExpectObjectClosed([&](){ canvasSolidColorBrush->Opacity; });
-        ExpectObjectClosed([&](){ canvasSolidColorBrush->Opacity = 3; });
+        ExpectObjectClosed([&]{ canvasSolidColorBrush->Opacity; });
+        ExpectObjectClosed([&]{ canvasSolidColorBrush->Opacity = 3; });
 
-        ExpectObjectClosed([&](){ canvasSolidColorBrush->Transform; });
-        ExpectObjectClosed([&](){ canvasSolidColorBrush->Transform = identity; });
+        ExpectObjectClosed([&]{ canvasSolidColorBrush->Transform; });
+        ExpectObjectClosed([&]{ canvasSolidColorBrush->Transform = identity; });
 
         // Test invalid creation parameters.
         Assert::ExpectException<Platform::InvalidArgumentException^>(
-            []()
+            []
             {
                 CanvasSolidColorBrush^ invalidBrush = ref new CanvasSolidColorBrush(nullptr, Windows::UI::Colors::White);
             });

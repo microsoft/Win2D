@@ -39,14 +39,14 @@ TEST_CLASS(CanvasBitmapTests)
 
         // Try to set more inputs in fixed size input effect
         Assert::ExpectException<NotImplementedException^>(
-            [&]()
+            [&]
             {
                 inputs->Append(blurEffect);
             });
 
         // Try to remove input in fixed size input effect
         Assert::ExpectException<NotImplementedException^>(
-            [&]()
+            [&]
             {
                 inputs->RemoveAt(0);
             });
@@ -61,7 +61,7 @@ TEST_CLASS(CanvasBitmapTests)
 
         // Try to set more properties in effect
         Assert::ExpectException<NotImplementedException^>(
-            [&]()
+            [&]
             {
                 IPropertyValue^ value = nullptr;
                 properties->Append(value);
@@ -69,7 +69,7 @@ TEST_CLASS(CanvasBitmapTests)
 
         // Try to remove property in effect
         Assert::ExpectException<NotImplementedException^>(
-            [&]()
+            [&]
             {
                 properties->RemoveAt(0);
             });
@@ -96,12 +96,12 @@ TEST_CLASS(CanvasBitmapTests)
         // Try setting not valid data. 
         // For StandardDeviation in GaussianBlur valid range is (0.0f;250.0f)
         Assert::ExpectException<InvalidArgException>(
-            [&]()
+            [&]
             {
                 blurEffect->StandardDeviation = -1.0f;
             });
         Assert::ExpectException<InvalidArgException>(
-            [&]()
+            [&]
             {
                 blurEffect->StandardDeviation = 300.0f;
             });

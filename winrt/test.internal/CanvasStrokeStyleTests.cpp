@@ -236,32 +236,32 @@ public:
         RealizationBehaviorVerifier verifier(canvasStrokeStyle, testFactory);
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_StartCap(CanvasCapStyle::Triangle); });
+            [&]{canvasStrokeStyle->put_StartCap(CanvasCapStyle::Triangle); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_EndCap(CanvasCapStyle::Triangle); });
+            [&]{canvasStrokeStyle->put_EndCap(CanvasCapStyle::Triangle); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_DashCap(CanvasCapStyle::Triangle); });
+            [&]{canvasStrokeStyle->put_DashCap(CanvasCapStyle::Triangle); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_LineJoin(CanvasLineJoin::Round); });
+            [&]{canvasStrokeStyle->put_LineJoin(CanvasLineJoin::Round); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_MiterLimit(123.0f); });
+            [&]{canvasStrokeStyle->put_MiterLimit(123.0f); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_DashStyle(CanvasDashStyle::DashDot); });
+            [&]{canvasStrokeStyle->put_DashStyle(CanvasDashStyle::DashDot); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_DashOffset(1.0f); });
+            [&]{canvasStrokeStyle->put_DashOffset(1.0f); });
 
         float customDashPattern[6] = { 0, 2, 0, 1, 44, 55};
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern); });
+            [&]{canvasStrokeStyle->put_CustomDashStyle(6, customDashPattern); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Fixed); });
+            [&]{canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Fixed); });
     }
 
     TEST_METHOD(CanvasStrokeStyle_Closed)
@@ -322,49 +322,49 @@ public:
         RealizationBehaviorVerifier verifier(canvasStrokeStyle, testFactory);
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_StartCap(CanvasCapStyle::Flat); });
+            [&]{canvasStrokeStyle->put_StartCap(CanvasCapStyle::Flat); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_EndCap(CanvasCapStyle::Flat); });
+            [&]{canvasStrokeStyle->put_EndCap(CanvasCapStyle::Flat); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_DashCap(CanvasCapStyle::Flat); });
+            [&]{canvasStrokeStyle->put_DashCap(CanvasCapStyle::Flat); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_LineJoin(CanvasLineJoin::Miter); });
+            [&]{canvasStrokeStyle->put_LineJoin(CanvasLineJoin::Miter); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_MiterLimit(10.0f); });
+            [&]{canvasStrokeStyle->put_MiterLimit(10.0f); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_DashStyle(CanvasDashStyle::Solid); });
+            [&]{canvasStrokeStyle->put_DashStyle(CanvasDashStyle::Solid); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_DashOffset(0.0f); });
+            [&]{canvasStrokeStyle->put_DashOffset(0.0f); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+            [&]{canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Normal); });
+            [&]{canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Normal); });
 
         // Extra testing for custom dash styles, which use an array.
         float customDashPattern0[2] = { 1, 2 };
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern0); });
+            [&]{canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern0); });
 
         float customDashPattern1[2] = { 10, 1 };
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern1); });
+            [&]{canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern1); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern1); });
+            [&]{canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern1); });
 
         verifier.VerifyEffectiveSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+            [&]{canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
 
         verifier.VerifyRedundantSetter(
-            [&](){canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+            [&]{canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
     }
 
 };

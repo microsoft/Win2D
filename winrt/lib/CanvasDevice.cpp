@@ -335,7 +335,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(canvasDevice);
                 
@@ -351,7 +351,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(direct3DDevice);
                 CheckAndClearOutPointer(canvasDevice);
@@ -367,7 +367,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IInspectable** wrapper)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(resource);
                 CheckAndClearOutPointer(wrapper);
@@ -385,7 +385,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDeviceFactory::ActivateInstance(IInspectable **object)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(object);
 
@@ -435,7 +435,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDevice::get_HardwareAcceleration(_Out_ CanvasHardwareAcceleration *value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 GetResource();  // this ensures that Close() hasn't been called
@@ -447,7 +447,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDevice::get_Direct3DDevice(_Out_ IDirect3DDevice **value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(value);
                 ComPtr<IDirect3DDevice> direct3DDevice = m_direct3DDevice.EnsureNotClosed();
@@ -496,7 +496,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDevice::get_Device(ICanvasDevice** value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(value);
                 ComPtr<ICanvasDevice> device(this);

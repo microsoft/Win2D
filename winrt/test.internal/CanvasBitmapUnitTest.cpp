@@ -84,7 +84,7 @@ public:
 
         bool isConverterCreated = false;
         m_adapter->MockCreateWICFormatConverter =
-            [&]()
+            [&]
             {
                 Assert::AreEqual(isConverterCreated, false);
                 isConverterCreated = true;

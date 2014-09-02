@@ -79,7 +79,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasImageSource** imageSource)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 using ::Microsoft::WRL::Wrappers::HStringReference;
 
@@ -229,7 +229,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         _COM_Outptr_ ICanvasDrawingSession** drawingSession)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
         {
             CheckAndClearOutPointer(drawingSession);
 
@@ -262,7 +262,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice* value) 
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
 

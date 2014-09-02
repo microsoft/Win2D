@@ -24,7 +24,7 @@ TEST_CLASS(CanvasImageSourceTests)
     TEST_METHOD(CanvasImageSource_Exercise)
     {
         RunOnUIThread(
-            []()
+            []
             {
                 // Verify creation off of a device.
                 auto canvasDevice = ref new CanvasDevice();

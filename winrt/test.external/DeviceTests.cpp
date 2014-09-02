@@ -57,7 +57,7 @@ public:
     TEST_METHOD(CreateDirect3DDeviceFailsOnNullDxgiDevice)
     {
         Assert::ExpectException<Platform::InvalidArgumentException^>(
-            []()
+            []
             {
                 CreateDirect3DDevice(nullptr);
             });
@@ -115,7 +115,7 @@ public:
         // Attempting to call any other method gives RO_E_CLOSED
         //
         Assert::ExpectException<Platform::ObjectDisposedException^>(
-            [&]()
+            [&]
             {
                 graphicsDevice->Trim();
             });
@@ -131,7 +131,7 @@ public:
 
         bool trimCalled = false;
         mockDxgiDevice->MockTrim =
-            [&trimCalled]()
+            [&trimCalled]
             {
                 Assert::IsFalse(trimCalled);
                 trimCalled=true;

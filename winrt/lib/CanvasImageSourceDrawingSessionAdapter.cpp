@@ -38,7 +38,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         // If this function fails then we need to call EndDraw
         //
-        auto endDrawWarden = MakeScopeWarden([&]() { sisNative->EndDraw(); });
+        auto endDrawWarden = MakeScopeWarden([&] { sisNative->EndDraw(); });
 
         ThrowIfFailed(deviceContext.CopyTo(outDeviceContext));
 

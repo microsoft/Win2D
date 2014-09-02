@@ -42,7 +42,7 @@ namespace canvas
             }
 
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     auto sis = MockCreateInstanceWithDimensionsAndOpacity(width, height, !!opaque, outer);
                     ThrowIfFailed(sis.CopyTo(inner));

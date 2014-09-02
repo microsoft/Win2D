@@ -317,7 +317,7 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
                         };
                                         
                     mockSurfaceImageSource->MockEndDraw =
-                        [&]()
+                        [&]
                         {
                         };
 

@@ -474,7 +474,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasTextFormatFactory::ActivateInstance(IInspectable** object)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 auto newCanvasTextFormat = Make<CanvasTextFormat>();
                 CheckMakeResult(newCanvasTextFormat);
@@ -488,7 +488,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IInspectable** wrapper)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ComPtr<IDWriteTextFormat> dwriteTextFormat;
                 ThrowIfFailed(resource->QueryInterface(dwriteTextFormat.GetAddressOf()));
@@ -553,7 +553,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasTextFormat::GetResource(IUnknown** value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(value);
                 ThrowIfFailed(GetRealizedTextFormat().CopyTo(value));
@@ -710,7 +710,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, const ST& shadowValue, FN realizedGetter)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -727,7 +727,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)())
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 validator(value);
 
@@ -772,7 +772,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_flowDirection,
-            [&]() { return ToCanvasTextDirection(m_format->GetFlowDirection()); });
+            [&] { return ToCanvasTextDirection(m_format->GetFlowDirection()); });
     }
 
 
@@ -800,7 +800,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_fontFamilyName,
-            [&]()
+            [&]
             {
                 return GetFontFamilyName(m_format.Get());
             });
@@ -823,7 +823,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_fontSize,
-            [&]() { return m_format->GetFontSize(); });
+            [&] { return m_format->GetFontSize(); });
     }
 
 
@@ -844,7 +844,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_fontStretch,
-            [&]() { return ToWindowsFontStretch(m_format->GetFontStretch()); });
+            [&] { return ToWindowsFontStretch(m_format->GetFontStretch()); });
     }
 
 
@@ -865,7 +865,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_fontStyle,
-            [&]() { return ToWindowsFontStyle(m_format->GetFontStyle()); });
+            [&] { return ToWindowsFontStyle(m_format->GetFontStyle()); });
     }
 
 
@@ -886,7 +886,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_fontWeight,
-            [&]() { return ToWindowsFontWeight(m_format->GetFontWeight()); });
+            [&] { return ToWindowsFontWeight(m_format->GetFontWeight()); });
     }
 
 
@@ -907,7 +907,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_incrementalTabStop,
-            [&]() { return m_format->GetIncrementalTabStop(); });
+            [&] { return m_format->GetIncrementalTabStop(); });
     }
 
 
@@ -938,7 +938,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_lineSpacingMethod,
-            [&]() { return ToCanvasLineSpacingMethod(DWriteLineSpacing(m_format.Get()).Method); });
+            [&] { return ToCanvasLineSpacingMethod(DWriteLineSpacing(m_format.Get()).Method); });
     }
 
 
@@ -960,7 +960,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_lineSpacing,
-            [&]() { return DWriteLineSpacing(m_format.Get()).Spacing; });
+            [&] { return DWriteLineSpacing(m_format.Get()).Spacing; });
     }
 
 
@@ -982,7 +982,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_lineSpacingBaseline,
-            [&]() { return DWriteLineSpacing(m_format.Get()).Baseline; });
+            [&] { return DWriteLineSpacing(m_format.Get()).Baseline; });
     }
 
 
@@ -1014,7 +1014,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_localeName,
-            [&]()
+            [&]
             {
                 return GetLocaleName(m_format.Get());
             });
@@ -1038,7 +1038,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_verticalAlignment,
-            [&]() { return ToCanvasVerticalAlignment(m_format->GetParagraphAlignment()); });
+            [&] { return ToCanvasVerticalAlignment(m_format->GetParagraphAlignment()); });
     }
 
 
@@ -1066,7 +1066,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_readingDirection,
-            [&]() { return ToCanvasTextDirection(m_format->GetReadingDirection()); });
+            [&] { return ToCanvasTextDirection(m_format->GetReadingDirection()); });
     }
 
 
@@ -1095,7 +1095,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_paragraphAlignment,
-            [&]() { return ToWindowsParagraphAlignment(m_format->GetTextAlignment()); });
+            [&] { return ToWindowsParagraphAlignment(m_format->GetTextAlignment()); });
     }
 
 
@@ -1122,7 +1122,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_trimmingGranularity,
-            [&]() { return ToCanvasTextTrimmingGranularity(DWriteTrimming(m_format.Get()).Options.granularity); });
+            [&] { return ToCanvasTextTrimmingGranularity(DWriteTrimming(m_format.Get()).Options.granularity); });
     }
 
 
@@ -1144,7 +1144,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_trimmingDelimiter,
-            [&]() { return ToCanvasTrimmingDelimiter(DWriteTrimming(m_format.Get()).Options.delimiter); });
+            [&] { return ToCanvasTrimmingDelimiter(DWriteTrimming(m_format.Get()).Options.delimiter); });
     }
 
 
@@ -1166,7 +1166,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_trimmingDelimiterCount,
-            [&]() { return static_cast<int32_t>(DWriteTrimming(m_format.Get()).Options.delimiterCount); });
+            [&] { return static_cast<int32_t>(DWriteTrimming(m_format.Get()).Options.delimiterCount); });
     }
 
 
@@ -1202,7 +1202,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return PropertyGet(
             value,
             m_wordWrapping,
-            [&]() { return ToCanvasWordWrapping(m_format->GetWordWrapping()); });
+            [&] { return ToCanvasWordWrapping(m_format->GetWordWrapping()); });
     }
 
 
@@ -1228,7 +1228,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasTextFormat::get_Options(CanvasDrawTextOptions* value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 ThrowIfClosed();
@@ -1240,7 +1240,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasTextFormat::put_Options(CanvasDrawTextOptions value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
 

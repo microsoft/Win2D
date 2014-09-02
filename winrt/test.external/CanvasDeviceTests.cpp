@@ -52,8 +52,8 @@ TEST_CLASS(CanvasDeviceTests)
 
         delete canvasDevice;
             
-        ExpectObjectClosed([&](){ canvasDevice->HardwareAcceleration; });
-        ExpectObjectClosed([&](){ canvasDevice->Direct3DDevice; });
+        ExpectObjectClosed([&]{ canvasDevice->HardwareAcceleration; });
+        ExpectObjectClosed([&]{ canvasDevice->Direct3DDevice; });
     }
 
     TEST_METHOD(CanvasDevice_NativeInterop)

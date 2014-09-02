@@ -71,7 +71,7 @@ public:
         // correct D2D device
         //
         mockCanvasDevice->MockGetD2DDevice =
-            [&]()
+            [&]
             {
                 return mockD2DDevice;
             };
@@ -372,7 +372,7 @@ public:
         
         bool endDrawCalled = false;
         mockSurfaceImageSource->MockEndDraw =
-            [&]()
+            [&]
             {
                 Assert::IsFalse(endDrawCalled);
                 endDrawCalled = true;
@@ -412,7 +412,7 @@ public:
 
         bool endDrawCalled = false;
         sis->MockEndDraw =
-            [&]()
+            [&]
             {
                 Assert::IsFalse(endDrawCalled);
                 endDrawCalled = true;
@@ -425,7 +425,7 @@ public:
         //
         ComPtr<ID2D1DeviceContext1> actualDeviceContext;
         Assert::ExpectException<NoSuchInterfaceException>(
-            [&]()
+            [&]
             {
                 CanvasImageSourceDrawingSessionAdapter::Create(
                     sis.Get(),

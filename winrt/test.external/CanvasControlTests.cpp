@@ -51,7 +51,7 @@ TEST_CLASS(CanvasControlTests)
     TEST_METHOD(CanvasControl_Construction_And_Closure)
     {
         RunOnUIThread(
-            []()
+            []
             {
                 CallbackVerifier verifier;
                 verifier.VerifyCallbacks();
@@ -69,10 +69,10 @@ TEST_CLASS(CanvasControlTests)
         // The other direction, however, is verified in this test.
         //
         RunOnUIThread(
-            []()
+            []
             {
                 Assert::ExpectException< Platform::InvalidCastException^>(
-                    []()
+                    []
                     {
                         CanvasControl^ canvasControl = ref new CanvasControl();
                         GetWrappedResource<ID2D1Factory>(canvasControl);
@@ -83,7 +83,7 @@ TEST_CLASS(CanvasControlTests)
     TEST_METHOD(CanvasControl_EventArgs_Construction)
     {
         RunOnUIThread(
-            []()
+            []
             {
                 auto device = ref new CanvasDevice();
                 auto imageSource = ref new CanvasImageSource(device, 1, 1);
@@ -96,7 +96,7 @@ TEST_CLASS(CanvasControlTests)
     TEST_METHOD(CanvasControl_ControlAsResourceAllocator)
     {
         RunOnUIThread(
-            []()
+            []
             {
                 CanvasControl^ canvasControl = ref new CanvasControl();
 

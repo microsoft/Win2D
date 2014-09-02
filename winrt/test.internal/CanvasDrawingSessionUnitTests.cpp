@@ -234,7 +234,7 @@ public:
         
         bool setInputCalled = false;
         mockEffect->MockSetInput = 
-            [&]()
+            [&]
             {
                 Assert::IsFalse(setInputCalled);
                 setInputCalled = true;
@@ -242,7 +242,7 @@ public:
 
         bool setValueCalled = false;
         mockEffect->MockSetValue = 
-            [&]() -> HRESULT
+            [&]
             {
                 setValueCalled = true;
                 return S_OK;
@@ -1034,7 +1034,7 @@ public:
         {
             bool propertyFunctionCalled = false;
             f.DeviceContext->MockGetAntialiasMode =
-                [&]()
+                [&]
             {
                 Assert::IsFalse(propertyFunctionCalled);
                 propertyFunctionCalled = true;
@@ -1062,7 +1062,7 @@ public:
         {
             bool propertyFunctionCalled = false;
             f.DeviceContext->MockGetPrimitiveBlend =
-                [&]()
+                [&]
             {
                 Assert::IsFalse(propertyFunctionCalled);
                 propertyFunctionCalled = true;
@@ -1090,7 +1090,7 @@ public:
         {
             bool propertyFunctionCalled = false;
             f.DeviceContext->MockGetTextAntialiasMode =
-                [&]()
+                [&]
             {
                 Assert::IsFalse(propertyFunctionCalled);
                 propertyFunctionCalled = true;
@@ -1151,7 +1151,7 @@ public:
         {
             bool propertyFunctionCalled = false;
             f.DeviceContext->MockGetUnitMode =
-                [&]()
+                [&]
             {
                 Assert::IsFalse(propertyFunctionCalled);
                 propertyFunctionCalled = true;

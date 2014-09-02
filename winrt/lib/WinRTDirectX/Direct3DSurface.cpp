@@ -54,7 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             _Out_ ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::Direct3DSurfaceDescription* value) override
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     using ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::Direct3DSurfaceDescription;
                     using ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::Direct3DMultisampleDescription;
@@ -105,7 +105,7 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
     IInspectable** inspectableDirect3DSurface)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
             ComPtr<Direct3DSurface> direct3DSurface = Make<Direct3DSurface>(dxgiSurface);
             if (!direct3DSurface)
@@ -123,7 +123,7 @@ STDAPI GetDXGIInterfaceFromDirect3D11Surface(
     void** p)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
             ComPtr<IDirect3DSurfaceInternal> surfaceInternal;
             ThrowIfFailed(direct3DSurface->QueryInterface(surfaceInternal.GetAddressOf()));

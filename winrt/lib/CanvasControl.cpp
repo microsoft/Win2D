@@ -29,7 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDrawEventArgs** drawEventArgs)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(drawEventArgs);
 
@@ -47,7 +47,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawEventArgs::get_DrawingSession(ICanvasDrawingSession** value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(value);
                 ComPtr<ICanvasDrawingSession> drawingSession = m_drawingSession.EnsureNotClosed();
@@ -207,7 +207,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP ActivateInstance(IInspectable** obj) override
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     CheckAndClearOutPointer(obj);
 
@@ -393,7 +393,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     HRESULT CanvasControl::OnLoaded(IInspectable* sender, IRoutedEventArgs* args)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 m_isLoaded = true;
 
@@ -413,7 +413,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     HRESULT CanvasControl::OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 //
                 // If we get a size changed before we've loaded then we don't do
@@ -445,7 +445,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventRegistrationToken *token)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfFailed(m_createResourcesEventList.Add(value, token));
 
@@ -461,7 +461,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventRegistrationToken token)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfFailed(m_createResourcesEventList.Remove(token));
             });
@@ -472,7 +472,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventRegistrationToken* token)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfFailed(m_drawEventList.Add(value, token));
             });
@@ -482,7 +482,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventRegistrationToken token)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfFailed(m_drawEventList.Remove(token));
             });
@@ -491,7 +491,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     HRESULT CanvasControl::OnRenderCallback(IInspectable *pSender, IInspectable *pArgs)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ClearDrawNeeded();
 
@@ -504,7 +504,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasControl::Invalidate()
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 InvalidateImpl();
             });
@@ -528,7 +528,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ABI::Windows::Foundation::Size* returnValue)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 //
                 // MeasureOverride must call Measure on its children (in this
@@ -551,7 +551,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ABI::Windows::Foundation::Size* returnValue)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 //
                 // Allow base class to handle this
@@ -565,7 +565,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasControl::OnApplyTemplate()
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 //
                 // Allow base class to handle this
@@ -579,7 +579,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasControl::get_Device(ICanvasDevice** value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(value);
                 ThrowIfFailed(m_canvasDevice.CopyTo(value));
@@ -589,7 +589,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     HRESULT CanvasControl::OnDpiChangedCallback(IDisplayInformation* sender, IInspectable* args)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 InvalidateImpl();
             });

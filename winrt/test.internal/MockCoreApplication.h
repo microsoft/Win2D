@@ -61,7 +61,7 @@ namespace canvas
             }
 
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     auto properties = MockGetProperties();
                     ThrowIfFailed(properties.CopyTo(propertySet));

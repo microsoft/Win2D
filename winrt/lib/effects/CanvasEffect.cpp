@@ -108,7 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IFACEMETHODIMP CanvasEffect::get_Inputs(_Out_ IVector<IEffectInput*>** inputs)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(inputs);
                 ThrowIfFailed(m_inputs.CopyTo(inputs));
@@ -118,7 +118,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IFACEMETHODIMP CanvasEffect::get_Properties(_Out_ IVector<IPropertyValue*>** properties)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckAndClearOutPointer(properties);
                 ThrowIfFailed(m_properties.CopyTo(properties));

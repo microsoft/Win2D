@@ -56,7 +56,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasSolidColorBrush** canvasSolidColorBrush)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(resourceCreator);
                 CheckAndClearOutPointer(canvasSolidColorBrush);
@@ -75,7 +75,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IInspectable** wrapper)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(resource);
                 CheckAndClearOutPointer(wrapper);
@@ -100,7 +100,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasSolidColorBrush::get_Color(_Out_ Color *value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 *value = ToWindowsColor(GetResource()->GetColor());
@@ -110,7 +110,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasSolidColorBrush::put_Color(_In_ Color value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {                
                 GetResource()->SetColor(ToD2DColor(value));
             });
@@ -119,7 +119,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasSolidColorBrush::get_Opacity(_Out_ float *value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
                 *value = GetResource()->GetOpacity();
@@ -129,7 +129,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasSolidColorBrush::put_Opacity(_In_ float value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 GetResource()->SetOpacity(value);
             });
@@ -139,7 +139,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasSolidColorBrush::get_Transform(_Out_ Numerics::Matrix3x2 *value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(value);
 
@@ -150,7 +150,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasSolidColorBrush::put_Transform(_In_ Numerics::Matrix3x2 value)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 GetResource()->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
             });

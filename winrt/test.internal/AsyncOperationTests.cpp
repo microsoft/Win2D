@@ -57,7 +57,7 @@ TEST_CLASS(AsyncOperationTests)
         Event asyncCanFinishNow(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
-        auto async = Make<AsyncOperation<MockAsyncResult>>([&]()
+        auto async = Make<AsyncOperation<MockAsyncResult>>([&]
         {
             // Block until the calling code says it's ready for the async operation to complete.
             Assert::AreEqual(WAIT_OBJECT_0, WaitForSingleObjectEx(asyncCanFinishNow.Get(), waitTimeout, false));
@@ -147,7 +147,7 @@ TEST_CLASS(AsyncOperationTests)
     {
         MockAsyncResult expectedResult;
 
-        auto async = Make<AsyncOperation<MockAsyncResult>>([&]()
+        auto async = Make<AsyncOperation<MockAsyncResult>>([&]
         {
             return &expectedResult;
         });
@@ -207,7 +207,7 @@ TEST_CLASS(AsyncOperationTests)
     {
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
-        auto async = Make<AsyncOperation<MockAsyncResult>>([&]()
+        auto async = Make<AsyncOperation<MockAsyncResult>>([&]
         {
             return nullptr;
         });
@@ -247,7 +247,7 @@ TEST_CLASS(AsyncOperationTests)
     {
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
-        auto async = Make<AsyncOperation<MockAsyncResult>>([&]()
+        auto async = Make<AsyncOperation<MockAsyncResult>>([&]
         {
             ThrowHR(E_INVALIDARG);
             return nullptr;
@@ -296,7 +296,7 @@ TEST_CLASS(AsyncOperationTests)
         Event asyncCanFinishNow(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
-        auto async = Make<AsyncOperation<MockAsyncResult>>([&]()
+        auto async = Make<AsyncOperation<MockAsyncResult>>([&]
         {
             // Block until the calling code says it's ready for the async operation to complete.
             Assert::AreEqual(WAIT_OBJECT_0, WaitForSingleObjectEx(asyncCanFinishNow.Get(), waitTimeout, false));

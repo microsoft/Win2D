@@ -53,7 +53,7 @@ public:
         auto threadPoolFunction = Callback<CallbackType>([=](IAsyncAction*)
         {
             // Run the worker function.
-            HRESULT hr = ExceptionBoundary([&]()
+            HRESULT hr = ExceptionBoundary([&]
             {
                 m_result = workerFunction();
             });

@@ -162,7 +162,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ TYPE* value)           \
         {                                                                           \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     UINT32 uintValue;                                               \
                     GetProperty(PROPERTY_INDEX, &uintValue);                        \
@@ -173,7 +173,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(_In_ TYPE value)             \
         {                                                                           \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     UINT32 uintValue = static_cast<UINT32>(value);                  \
                     SetProperty(PROPERTY_INDEX, uintValue);                         \
@@ -184,7 +184,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP CLASS_NAME::get_##INPUT_NAME(_Out_ IEffectInput** input)     \
         {                                                                           \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     GetInput(INPUT_INDEX, input);                                   \
                 });                                                                 \
@@ -193,7 +193,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP CLASS_NAME::put_##INPUT_NAME(_In_ IEffectInput* input)       \
         {                                                                           \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     SetInput(INPUT_INDEX, input);                                   \
                 });                                                                 \
@@ -204,7 +204,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ TYPE* value)           \
         {                                                                           \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     GetProperty(PROPERTY_INDEX, value);                             \
                 });                                                                 \
@@ -218,7 +218,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }                                                                       \
                                                                                     \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     SetProperty(PROPERTY_INDEX, value);                             \
                 });                                                                 \
@@ -228,7 +228,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ TYPE* value)           \
         {                                                                           \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     GetProperty(PROPERTY_INDEX, value);                             \
                 });                                                                 \
@@ -237,7 +237,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(_In_ TYPE value)             \
         {                                                                           \
             return ExceptionBoundary(                                               \
-                [&]()                                                               \
+                [&]                                                                 \
                 {                                                                   \
                     SetProperty(PROPERTY_INDEX, value);                             \
                 });                                                                 \

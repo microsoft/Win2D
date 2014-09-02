@@ -138,7 +138,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE get_Size(_Out_ unsigned *size)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 CheckInPointer(size);
 
@@ -149,7 +149,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE GetAt(_In_opt_ unsigned index, _Out_ T_abi *item)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 CheckInPointer(item);
                 ZeroMemory(item, sizeof(*item));
@@ -164,7 +164,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE IndexOf(_In_opt_ T_abi value, _Out_ unsigned *index, _Out_ boolean *found)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 CheckInPointer(index);
                 CheckInPointer(found);
@@ -187,7 +187,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE SetAt(_In_ unsigned index, _In_opt_ T_abi item)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 if (index >= mVector.size())
                     ThrowHR(E_BOUNDS);
@@ -200,7 +200,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE InsertAt(_In_ unsigned index, _In_opt_ T_abi item)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
@@ -216,7 +216,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE RemoveAt(_In_ unsigned index)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
@@ -232,7 +232,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE Append(_In_opt_ T_abi item)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
@@ -245,7 +245,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE RemoveAtEnd()
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
@@ -261,7 +261,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE Clear()
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
@@ -274,7 +274,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE ReplaceAll(_In_ unsigned count, _In_reads_(count) T_abi *value)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 if (isFixedSize && count != mVector.size())
                     ThrowHR(E_NOTIMPL);
@@ -295,7 +295,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE GetView(_Outptr_result_maybenull_ ABI::Windows::Foundation::Collections::IVectorView<T> **view)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 CheckAndClearOutPointer(view);
 
@@ -309,7 +309,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE First(_Outptr_result_maybenull_ ABI::Windows::Foundation::Collections::IIterator<T> **first)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 CheckAndClearOutPointer(first);
 
@@ -392,7 +392,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE get_HasCurrent(_Out_ boolean *hasCurrent)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 CheckInPointer(hasCurrent);
 
@@ -403,7 +403,7 @@ namespace collections
 
         virtual HRESULT STDMETHODCALLTYPE MoveNext(_Out_ boolean *hasCurrent)
         {
-            return ExceptionBoundary([&]()
+            return ExceptionBoundary([&]
             {
                 CheckInPointer(hasCurrent);
 

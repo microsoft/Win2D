@@ -53,7 +53,7 @@ TEST_CLASS(SurfaceTests)
     TEST_METHOD(CreateDirect3DSurfaceFailsOnNullDxgiSurface)
     {
         Assert::ExpectException<Platform::InvalidArgumentException^>(
-            []()
+            []
             {
                 CreateDirect3DSurface(nullptr);
             });
@@ -110,7 +110,7 @@ TEST_CLASS(SurfaceTests)
         // Attempting to call any other method gives RO_E_CLOSED
         //
         Assert::ExpectException<Platform::ObjectDisposedException^>(
-            [&]() 
+            [&] 
             {
                 graphicsSurface->Description;
             });
@@ -134,7 +134,7 @@ TEST_CLASS(SurfaceTests)
         expectedDesc.SampleDesc.Quality = 10;
 
         mockDxgiSurface->MockGetDesc = 
-            [&]()
+            [&]
             {
                 Assert::IsFalse(getDescCalled);
                 getDescCalled = true;

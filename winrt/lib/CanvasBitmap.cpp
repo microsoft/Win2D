@@ -72,7 +72,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(resourceCreator);
                 CheckInPointer(rawFileName);
@@ -85,7 +85,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 WinString fileName;
                 fileName = rawFileName;
 
-                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>([=]()
+                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>([=]
                 {
                     auto bitmap = Make<CanvasBitmap>(canvasDevice.Get(), fileName, m_adapter);
                     CheckMakeResult(bitmap);
@@ -109,7 +109,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasBitmap::get_SizeInPixels(_Out_ ABI::Windows::Foundation::Size* size)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(size);
 
@@ -123,7 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasBitmap::get_SizeInDips(_Out_ ABI::Windows::Foundation::Size* size)
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 CheckInPointer(size);
 
@@ -137,7 +137,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasBitmap::Close()
     {
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 m_resource.Close();
             });

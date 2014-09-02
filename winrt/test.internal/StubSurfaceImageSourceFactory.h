@@ -47,7 +47,7 @@ namespace canvas
             ISurfaceImageSource** surfaceImageSource) override
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     ComPtr<ISurfaceImageSource> s;
 
