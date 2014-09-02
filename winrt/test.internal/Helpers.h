@@ -542,6 +542,15 @@ namespace Microsoft
                 END_ENUM(CanvasUnits);
             }
 
+            ENUM_TO_STRING(AsyncStatus)
+            {
+                ENUM_VALUE(AsyncStatus::Started);
+                ENUM_VALUE(AsyncStatus::Completed);
+                ENUM_VALUE(AsyncStatus::Canceled);
+                ENUM_VALUE(AsyncStatus::Error);
+                END_ENUM(AsyncStatus);
+            }
+
             template<typename T>
             static inline std::wstring ToStringAsInt(T value)
             {

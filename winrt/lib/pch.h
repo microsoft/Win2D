@@ -59,6 +59,7 @@
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // Inc
+#include <AsyncOperation.h>
 #include <ClosablePtr.h>
 #include <Constants.h>
 #include <ErrorHandling.h>

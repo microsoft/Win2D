@@ -16,7 +16,6 @@
 
 #include "ClosablePtr.h"
 #include "ResourceManager.h"
-#include "AsyncUtility.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -45,9 +44,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasBitmapStatics
         //
         IFACEMETHOD(LoadAsync)(
-            ICanvasResourceCreator* resourceAllocator,
+            ICanvasResourceCreator* resourceCreator,
             HSTRING fileName,
-            ABI::Windows::Foundation::IAsyncOperation<ICanvasBitmap*>** canvasBitmap) override;
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap) override;
     };
 
     class CanvasBitmap : public RuntimeClass<

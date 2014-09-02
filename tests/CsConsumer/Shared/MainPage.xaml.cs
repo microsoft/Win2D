@@ -26,7 +26,7 @@ namespace CsConsumer
     {
         Random m_random = new Random();
         CanvasSolidColorBrush m_brush;
-        ICanvasBitmap m_bitmap_tiger;
+        CanvasBitmap m_bitmap_tiger;
 
         enum DrawnContentType
         {

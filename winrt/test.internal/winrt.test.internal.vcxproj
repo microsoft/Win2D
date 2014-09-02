@@ -74,6 +74,7 @@
     <ClInclude Include="TestDeviceResourceCreationAdapter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AsyncOperationTests.cpp" />
     <ClCompile Include="CanvasControlUnitTests.cpp" />
     <ClCompile Include="CanvasBitmapUnitTest.cpp" />
     <ClCompile Include="CanvasEffectUnitTest.cpp" />

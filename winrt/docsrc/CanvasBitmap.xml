@@ -19,17 +19,6 @@ under the License.
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.ICanvasBitmap">
-      <summary>TODO #2138: ICanvasBitmap interface should be internal. In the meantime, please just use CanvasBitmap instead.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasBitmap.SizeInDips">
-      <summary>TODO #2138: ICanvasBitmap interface should be internal.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasBitmap.SizeInPixels">
-      <summary>TODO #2138: ICanvasBitmap interface should be internal.</summary>
-    </member>
-
-    
     <member name="T:Microsoft.Graphics.Canvas.CanvasBitmap">
       <summary>A bitmap is a 2D grid of pixels that form an image.</summary>
       <example>
@@ -38,9 +27,8 @@ under the License.
            and make sure its Build Action is set to Content.</p>
         <p>In the page implementation class (eg. MainPage.xaml.cs), declare a field to hold the bitmap,
            and another to indicate when the asynchronous load has completed:</p>
-        <!-- TODO #2138: change ICanvasBitmap to CanvasBitmap -->
         <code>
-          ICanvasBitmap cat;
+          CanvasBitmap cat;
 
           bool isLoaded;
         </code>

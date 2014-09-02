@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasBitmap;
     runtimeclass CanvasDevice;
 
-    [version(VERSION), uuid(C57532ED-709E-4AC2-86BE-A1EC3A7FA8FE)]
+    [version(VERSION), uuid(C57532ED-709E-4AC2-86BE-A1EC3A7FA8FE), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmap : IInspectable
         requires ICanvasImage
     {
@@ -38,11 +38,10 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasBitmapStatics : IInspectable
     {
         // TODO #2053: add load from URL functionality
-        // TODO #2054: change return type to IAsyncOperation<CavasBitmap*>
         HRESULT LoadAsync(
-            [in] ICanvasResourceCreator* canvasDevice,
+            [in] ICanvasResourceCreator* resourceCreator,
             [in] HSTRING fileName,
-            [out, retval] Windows.Foundation.IAsyncOperation<ICanvasBitmap*>** canvasBitmap);
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
     };
 
     [version(VERSION), activatable(ICanvasBitmapFactory, VERSION), static(ICanvasBitmapStatics, VERSION)]

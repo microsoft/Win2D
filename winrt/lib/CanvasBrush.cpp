@@ -19,11 +19,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using ABI::Windows::UI::Color;
 
     ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
-        ICanvasResourceCreator* resourceAllocator,
+        ICanvasResourceCreator* resourceCreator,
         Color color)
     {
         ComPtr<ICanvasDevice> device;
-        resourceAllocator->get_Device(&device);
+        resourceCreator->get_Device(&device);
 
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(device.As(&canvasDeviceInternal));
@@ -51,18 +51,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
-        ICanvasResourceCreator* resourceAllocator,
+        ICanvasResourceCreator* resourceCreator,
         ABI::Windows::UI::Color color,
         ICanvasSolidColorBrush** canvasSolidColorBrush)
     {
         return ExceptionBoundary(
             [&]()
             {
-                CheckInPointer(resourceAllocator);
+                CheckInPointer(resourceCreator);
                 CheckAndClearOutPointer(canvasSolidColorBrush);
 
                 auto newSolidColorBrush = GetManager()->Create(
-                    resourceAllocator,
+                    resourceCreator,
                     color);
 
                 ThrowIfFailed(newSolidColorBrush.CopyTo(canvasSolidColorBrush));

@@ -67,37 +67,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsync(
-        ICanvasResourceCreator* resourceAllocator,
+        ICanvasResourceCreator* resourceCreator,
         HSTRING rawFileName,
-        ABI::Windows::Foundation::IAsyncOperation<ICanvasBitmap*>** canvasBitmap)
+        ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap)
     {
         return ExceptionBoundary(
             [&]()
             {
-                CheckInPointer(resourceAllocator);
+                CheckInPointer(resourceCreator);
                 CheckInPointer(rawFileName);
                 CheckAndClearOutPointer(canvasBitmap);
 
                 ComPtr<ICanvasDevice> canvasDevice;
-                resourceAllocator->get_Device(&canvasDevice);
+                resourceCreator->get_Device(&canvasDevice);
 
                 // TODO #2052: use WinString constructor with HSTRING later
                 WinString fileName;
                 fileName = rawFileName;
-                ComPtr<task_based_async_operation<ICanvasBitmap>> asyncTask = Make<task_based_async_operation<ICanvasBitmap>>(
-                    std::async([=]()->ICanvasBitmap*
-                {
-                    ComPtr<CanvasBitmap> bitmap = Make<CanvasBitmap>(canvasDevice.Get(), fileName, m_adapter);
-                    CheckMakeResult(bitmap);
-                    return bitmap.Detach();
-                }));
-                CheckMakeResult(asyncTask);
-                ThrowIfFailed(asyncTask.CopyTo(canvasBitmap));
 
-                // TODO #2185: Prevent IAsyncOperation() from being destructed by C# GC before completing.
-                // Temporary solution with Detach() used for preventing access violation error. 
-                // This will cause small memory leak since asyncTask object will never be destructed. 
-                asyncTask.Detach();
+                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>([=]()
+                {
+                    auto bitmap = Make<CanvasBitmap>(canvasDevice.Get(), fileName, m_adapter);
+                    CheckMakeResult(bitmap);
+                    return bitmap;
+                });
+
+                CheckMakeResult(asyncOperation);
+                ThrowIfFailed(asyncOperation.CopyTo(canvasBitmap));
             });
     }
 

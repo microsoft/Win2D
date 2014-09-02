@@ -263,11 +263,11 @@ void RunOnUIThread(CODE&& code)
 template<typename T>
 T WaitExecution(IAsyncOperation<T>^ asyncOperation)
 {
-    HANDLE emptyEvent = CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
-    if (emptyEvent == NULL)
-    {
+    using namespace Microsoft::WRL::Wrappers;
+
+    Event emptyEvent(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+    if (!emptyEvent.IsValid())
         throw std::bad_alloc();
-    }
 
     task_options options;
     options.set_continuation_context(task_continuation_context::use_arbitrary());
@@ -276,18 +276,13 @@ T WaitExecution(IAsyncOperation<T>^ asyncOperation)
 
     asyncTask.then([&](task<T>)
     {
-        SetEvent(emptyEvent);
+        SetEvent(emptyEvent.Get());
     }, options);
 
     // waiting before event executed
-    while (WaitForSingleObjectEx(emptyEvent, 0, true)) {};
-
-    if (!CloseHandle(emptyEvent))
-    {
-        std::ostringstream os;
-        os << GetLastError();
-        throw std::runtime_error(os.str());
-    }
+    auto timeout = 1000 * 5;
+    auto waitResult = WaitForSingleObjectEx(emptyEvent.Get(), timeout, true);
+    Assert::AreEqual(WAIT_OBJECT_0, waitResult);
 
     return asyncTask.get();
 };

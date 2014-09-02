@@ -44,8 +44,9 @@
 #include <Canvas.abi.h>
 
 // Inc
-#include <ErrorHandling.h>
+#include <AsyncOperation.h>
 #include <Constants.h>
+#include <ErrorHandling.h>
 #include <Vector.h>
 #include <WinStringWrapper.h>
 
