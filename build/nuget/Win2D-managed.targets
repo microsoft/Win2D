@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'Windows'">Windows</win2d-DeviceType>
+    <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</win2d-DeviceType>
+  </PropertyGroup>
+
+  <Target Name="win2d-DeviceType-Check" BeforeTargets="InjectReference">
+      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if Windows or Windows Phone app" />
+  </Target>
+
+  <Target Name="InjectReference" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Include="Microsoft.Graphics.Canvas">
+        <HintPath>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform)\Microsoft.Graphics.Canvas.winmd</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Graphics.Canvas.Numerics">
+        <HintPath>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform)\Microsoft.Graphics.Canvas.Numerics.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
+    </SDKReference>
+  </ItemGroup>
+
+</Project>

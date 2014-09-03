@@ -35,9 +35,9 @@
     <OutputPath>$(MSBuildThisFileDirectory)..\..\bin\docs</OutputPath>
 
     <!-- Header and footer applied to all doc pages -->
-    <HelpTitle>Windows Canvas documentation</HelpTitle>
+    <HelpTitle>Win2D documentation</HelpTitle>
     <CopyrightText>Copyright %28c%29 Microsoft Corporation. All rights reserved.</CopyrightText>
-    <CopyrightHref>http://github.com/Microsoft/WindowsCanvas/blob/master/LICENSE.txt</CopyrightHref>
+    <CopyrightHref>http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt</CopyrightHref>
 
     <DocumentationSources>
       <!-- Reference assemblies -->

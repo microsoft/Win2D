@@ -5,7 +5,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>winrt_test</RootNamespace>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <PlatformToolset>v120</PlatformToolset>

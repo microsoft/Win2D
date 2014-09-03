@@ -10,7 +10,7 @@
     <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
 
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
@@ -63,6 +63,6 @@
 
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
 
 </Project>

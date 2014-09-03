@@ -9,7 +9,7 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
@@ -42,5 +42,5 @@
   </ItemGroup>
   <Import Project="CppConsumer.Shared.vcxitems" Label="Shared" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\build\canvas.cpp.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
 </Project>

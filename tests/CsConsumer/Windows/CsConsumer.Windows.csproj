@@ -16,7 +16,7 @@
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkVersion />
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\..\build\canvas.cs.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cs.props" />
   <PropertyGroup>
     <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>

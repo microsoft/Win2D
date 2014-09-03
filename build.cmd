@@ -13,7 +13,7 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END
 )
 
-msbuild %~dp0canvas.proj /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false
+msbuild %~dp0Win2D.proj /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false
 
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Build failed; aborting.

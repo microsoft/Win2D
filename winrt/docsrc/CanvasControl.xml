@@ -20,9 +20,9 @@ under the License.
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasControl">
-      <summary>XAML control providing immediate mode 2D rendering. Start here if you are new to the Windows Canvas API.</summary>
+      <summary>XAML control providing immediate mode 2D rendering. Start here if you are new to the Win2D API.</summary>
       <remarks>
-        To get started using Windows Canvas, simply add a CanvasControl to your XAML
+        To get started using Win2D, simply add a CanvasControl to your XAML
         tree, subscribe to its CanvasControl.Draw event, and use the methods of
         CanvasDrawEventArgs.DrawingSession to draw your immediate mode 2D graphics.
       </remarks>

@@ -18,22 +18,22 @@ under the License.
 
     <introduction>
       <para>
-        Windows Canvas is implemented as a layer on top of 
+        Win2D is implemented as a layer on top of 
         <externalLink>
           <linkUri>http://msdn.microsoft.com/en-us/library/windows/desktop/dd370990</linkUri>
           <linkText>Direct2D</linkText>
         </externalLink>,
-        and supports interop in both directions. If you have a Windows Canvas object, you can
+        and supports interop in both directions. If you have a Win2D object, you can
         access the native Direct2D object that is used to implement it. If you have a Direct2D 
-        object, you can look up the Windows Canvas object that wraps it, or create a new wrapper 
+        object, you can look up the Win2D object that wraps it, or create a new wrapper 
         if one did not already exist.
       </para>
 
       <para>
-        Interop allows you to mix and match Windows Canvas with native DirectX APIs. You can write
-        an app that mostly uses Windows Canvas, but drop down to native DirectX at any point -
+        Interop allows you to mix and match Win2D with native DirectX APIs. You can write
+        an app that mostly uses Win2D, but drop down to native DirectX at any point -
         perhaps to call into some other API or 3rd party component that requires native interfaces.
-        Or your app can be mostly native DirectX, yet you can switch over to Windows Canvas in specific
+        Or your app can be mostly native DirectX, yet you can switch over to Win2D in specific
         places where you want its extra convenience or C# support.
       </para>
     </introduction>
@@ -41,7 +41,7 @@ under the License.
     <section>
       <title>Interop APIs</title>
       <content>
-        <para>To move back and forth between Windows Canvas and native Direct2D interfaces, use the C++/CX methods:</para>
+        <para>To move back and forth between Win2D and native Direct2D interfaces, use the C++/CX methods:</para>
 
         <code>
         // header: Microsoft.Graphics.Canvas.native.h
@@ -77,7 +77,7 @@ under the License.
           using namespace Microsoft::WRL;
         </code>
 
-        <para>To get the native Direct2D object that is wrapped by a Windows Canvas object:</para>
+        <para>To get the native Direct2D object that is wrapped by a Win2D object:</para>
 
         <code>
           CanvasDevice^ canvasDevice = ...;
@@ -85,7 +85,7 @@ under the License.
           ComPtr&lt;ID2D1Device&gt; nativeDevice = GetWrappedResource&lt;ID2D1Device&gt;(canvasDevice);
         </code>
 
-        <para>To get a Windows Canvas object wrapping a native Direct2D object:</para>
+        <para>To get a Win2D object wrapping a native Direct2D object:</para>
 
         <code>
           ComPtr&lt;ID2D1Device&gt; nativeDevice = ...;

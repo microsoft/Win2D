@@ -14,7 +14,7 @@
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\..\build\canvas.cpp.props" />
+  <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -62,5 +62,5 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
   <Import Project="$(VCInstallDir)\..\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.TestTools.Cpp.targets" Condition="Exists('$(VCInstallDir)\..\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.TestTools.Cpp.targets')" />
-  <Import Project="$(MSBuildThisFileDir)..\..\..\build\canvas.cpp.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cpp.targets" />
 </Project>

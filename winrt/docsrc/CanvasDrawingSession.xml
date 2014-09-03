@@ -23,7 +23,7 @@ under the License.
       <summary>Drawing sessions are used to issue graphics drawing commands. This is the main way to draw things onto a canvas.</summary>
       <remarks>
         <p>For best performance, graphics drawing commands need to be batched into groups so the GPU hardware
-           can process as many operations as possible in parallel. Windows Canvas achieves this through the
+           can process as many operations as possible in parallel. Win2D achieves this through the
            CanvasDrawingSession API. A drawing session represents an active batch of commands that are in the
            process of being generated. Use its various methods to indicate what you want to draw, then when
            you dispose the CanvasDrawingSession the entire batch will be optimized and submitted for the GPU

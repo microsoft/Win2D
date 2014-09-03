@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>WindowsCanvas</id>
+        <id>Win2D</id>
         <version>0.0.2</version>
-        <title>Windows Canvas</title>
+        <title>Win2D</title>
         <authors>Microsoft Corportation</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Windows Canvas</description>
+        <description>Win2D</description>
 
         <!-- 
              The reference listed here is to enable the Visual Studio designer
@@ -71,16 +71,16 @@
       <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
 
       <!-- Build scripts used by managed Windows Store Apps -->
-      <file src="WindowsCanvas.props" target="build\win\WindowsCanvas.props" />
-      <file src="WindowsCanvas-managed.targets" target="build\win\WindowsCanvas.targets" />
+      <file src="Win2D.props" target="build\win\Win2D.props" />
+      <file src="Win2D-managed.targets" target="build\win\Win2D.targets" />
 
       <!-- Build scripts used by managed Windows Phone Apps -->
-      <file src="WindowsCanvas.props" target="build\wpa\WindowsCanvas.props" />
-      <file src="WindowsCanvas-managed.targets" target="build\wpa\WindowsCanvas.targets" />
+      <file src="Win2D.props" target="build\wpa\Win2D.props" />
+      <file src="Win2D-managed.targets" target="build\wpa\Win2D.targets" />
 
       <!-- Build scripts used by native apps (Windows Store and Windows Phone) -->
-      <file src="WindowsCanvas-native.targets" target="build\native\WindowsCanvas.targets" />
-      <file src="WindowsCanvas.props" target="build\native\WindowsCanvas.props" />
+      <file src="Win2D-native.targets" target="build\native\Win2D.targets" />
+      <file src="Win2D.props" target="build\native\Win2D.props" />
 
       <!-- Header files used by native apps -->
       <file src="..\..\winrt\published\*" target="Include"/>

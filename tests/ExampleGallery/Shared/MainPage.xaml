@@ -37,7 +37,7 @@ under the License.
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Style="{StaticResource HeaderTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0,0,0,10">Windows Canvas Example Gallery</TextBlock>
+            <TextBlock Grid.Row="0" Style="{StaticResource HeaderTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0,0,0,10">Win2D Example Gallery</TextBlock>
             <GridView Grid.Row="1" ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding Definitions}" VerticalContentAlignment="Top" ItemClick="GridView_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>

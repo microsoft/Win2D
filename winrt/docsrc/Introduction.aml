@@ -18,17 +18,17 @@ under the License.
 
     <introduction>
       <para>
-        Windows Canvas is an easy-to-use Windows Runtime API for immediate mode 2D graphics 
+        Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics 
         rendering with GPU acceleration. It is available to C# and C++ developers writing 
         Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of 
         Direct2D, and integrates seamlessly with XAML and ICoreWindow.
       </para>
 
       <para>
-        Windows Canvas is work in progress and evolving rapidly. The goal of releasing this
+        Win2D is work in progress and evolving rapidly. The goal of releasing this
         code in an early, incomplete state is to solicit early developer feedback. The
         <externalLink>
-          <linkUri>http://github.com/Microsoft/WindowsCanvas/wiki/Backlog</linkUri>
+          <linkUri>http://github.com/Microsoft/Win2D/wiki/Backlog</linkUri>
           <linkText>project backlog</linkText>
         </externalLink>
         shows what we plan to add in the future, and the order in which we plan to add it.
@@ -37,8 +37,8 @@ under the License.
       <para>
         Source code and issue tracking are available at
         <externalLink>
-          <linkUri>http://github.com/Microsoft/WindowsCanvas</linkUri>
-          <linkText>http://github.com/Microsoft/WindowsCanvas</linkText>
+          <linkUri>http://github.com/Microsoft/Win2D</linkUri>
+          <linkText>http://github.com/Microsoft/Win2D</linkText>
         </externalLink>
       </para>
     </introduction>
@@ -47,7 +47,7 @@ under the License.
       <title>Getting Started</title>
       <content>
         <para>
-          To get started using Windows Canvas:
+          To get started using Win2D:
 
           <list class="bullet">
             <listItem>Clone the source code from github</listItem>
@@ -58,7 +58,7 @@ under the License.
 
           See the
           <externalLink>
-            <linkUri>https://github.com/Microsoft/WindowsCanvas/blob/master/README.md</linkUri>
+            <linkUri>https://github.com/Microsoft/Win2D/blob/master/README.md</linkUri>
             <linkText>readme</linkText>
           </externalLink>
           for more detailed instructions.
