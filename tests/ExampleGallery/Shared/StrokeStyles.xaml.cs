@@ -68,15 +68,18 @@ namespace ExampleGallery
 
             ds.Clear(Color.FromArgb(0, 0, 0, 0));
 
-            var width = sender.ActualWidth;
-            var height = sender.ActualHeight;
+            var width = (float)sender.ActualWidth;
+            var height = (float)sender.ActualHeight;
 
-            var topLeftRect = new Rect(new Point(width * 0.1, height * 0.1), new Point(width * 0.4, height * 0.4));
-            var topRightRect = new Rect(new Point(width * 0.6, height * 0.1), new Point(width * 0.9, height * 0.4));
-            var bottomLeftRect = new Rect(new Point(width * 0.1, height * 0.6), new Point(width * 0.4, height * 0.9));
-            var bottomRightRect = new Rect(new Point(width * 0.6, height * 0.6), new Point(width * 0.9, height * 0.9));
+            var col1Left = width * 0.1f;
+            var col1Right = width * 0.4f;
+            var col2Left = width * 0.6f;
+            var col2Right = width * 0.9f;
 
-            var topLeftMiddle = topLeftRect.Top + topLeftRect.Height * 0.5;
+            var row1Top = height * 0.1f;
+            var row1Bottom = height * 0.4f;
+            var row2Top = height * 0.6f;
+            var row2Bottom = height * 0.9f;
 
             //
             // Draw hairlines showing the start/end points of the line.  
@@ -85,15 +88,19 @@ namespace ExampleGallery
             this.brush.Color = Colors.Aqua;
 
             ds.DrawLine(
-                new Point(topLeftRect.Left, topLeftRect.Top),
-                new Point(topLeftRect.Left, topLeftRect.Bottom),
+                col1Left,
+                row1Top,
+                col1Left,
+                row1Bottom,
                 this.brush,
                 1.0f,
                 this.hairlineStrokeStyle);
 
             ds.DrawLine(
-                new Point(topLeftRect.Right, topLeftRect.Top),
-                new Point(topLeftRect.Right, topLeftRect.Bottom),
+                col1Right,
+                row1Top,
+                col1Right,
+                row1Bottom,
                 this.brush,
                 1.0f,
                 this.hairlineStrokeStyle);
@@ -106,31 +113,33 @@ namespace ExampleGallery
             var strokeWidth = (float)Math.Max(5, Math.Min(30, width / 50));
 
             ds.DrawLine(
-                new Point(topLeftRect.Left, topLeftMiddle),
-                new Point(topLeftRect.Right, topLeftMiddle),
+                col1Left, 
+                (row1Top + row1Bottom) / 2,
+                col1Right,
+                (row1Top + row1Bottom) / 2,
                 this.brush,
                 strokeWidth,
                 this.strokeStyle);
 
             ds.DrawRectangle(
-                topRightRect,
+                new Rect(new Point(col2Left, row1Top), new Point(col2Right, row1Bottom)),
                 this.brush,
                 strokeWidth,
                 this.strokeStyle);
 
             ds.DrawRoundedRectangle(
-                bottomLeftRect,
-                (float)(width * 0.1),
-                (float)(height * 0.1),
+                new Rect(new Point(col1Left, row2Top), new Point(col1Right, row2Bottom)),
+                width * 0.1f,
+                height * 0.1f,
                 this.brush,
                 strokeWidth,
                 this.strokeStyle);
 
             ds.DrawEllipse(
-                (float)(bottomRightRect.Left + bottomRightRect.Width * 0.5),
-                (float)(bottomRightRect.Top + bottomRightRect.Height * 0.5),
-                (float)(bottomRightRect.Width * 0.5),
-                (float)(bottomRightRect.Height * 0.5),
+                (col2Left + col2Right) / 2,
+                (row2Top + row2Bottom) / 2,
+                (col2Right - col2Left) / 2,
+                (row2Bottom - row2Top) / 2,
                 this.brush,
                 strokeWidth,
                 this.strokeStyle);

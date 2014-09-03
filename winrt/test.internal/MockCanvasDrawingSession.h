@@ -36,21 +36,21 @@ namespace canvas
 
         DONT_EXPECT(Clear , Color);
 
-        DONT_EXPECT(DrawImage         , ICanvasImage*, Point);
+        DONT_EXPECT(DrawImage         , ICanvasImage*, Vector2);
         DONT_EXPECT(DrawImageAtCoords , ICanvasImage*, float, float);
         DONT_EXPECT(DrawImageAtOrigin , ICanvasImage*);
 
-        DONT_EXPECT(DrawLineWithBrush                                     , Point, Point, ICanvasBrush*);
+        DONT_EXPECT(DrawLineWithBrush                                     , Vector2, Vector2, ICanvasBrush*);
         DONT_EXPECT(DrawLineAtCoordsWithBrush                             , float, float, float, float, ICanvasBrush*);
-        DONT_EXPECT(DrawLineWithColor                                     , Point, Point, Color);
+        DONT_EXPECT(DrawLineWithColor                                     , Vector2, Vector2, Color);
         DONT_EXPECT(DrawLineAtCoordsWithColor                             , float, float, float, float, Color);
-        DONT_EXPECT(DrawLineWithBrushAndStrokeWidth                       , Point, Point, ICanvasBrush*, float);
+        DONT_EXPECT(DrawLineWithBrushAndStrokeWidth                       , Vector2, Vector2, ICanvasBrush*, float);
         DONT_EXPECT(DrawLineAtCoordsWithBrushAndStrokeWidth               , float, float, float, float, ICanvasBrush*, float);
-        DONT_EXPECT(DrawLineWithColorAndStrokeWidth                       , Point, Point, Color, float);
+        DONT_EXPECT(DrawLineWithColorAndStrokeWidth                       , Vector2, Vector2, Color, float);
         DONT_EXPECT(DrawLineAtCoordsWithColorAndStrokeWidth               , float, float, float, float, Color, float);
-        DONT_EXPECT(DrawLineWithBrushAndStrokeWidthAndStrokeStyle         , Point, Point, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawLineWithBrushAndStrokeWidthAndStrokeStyle         , Vector2, Vector2, ICanvasBrush*, float, ICanvasStrokeStyle*);
         DONT_EXPECT(DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
-        DONT_EXPECT(DrawLineWithColorAndStrokeWidthAndStrokeStyle         , Point, Point, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawLineWithColorAndStrokeWidthAndStrokeStyle         , Vector2, Vector2, Color, float, ICanvasStrokeStyle*);
         DONT_EXPECT(DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, float, Color, float, ICanvasStrokeStyle*);
 
         DONT_EXPECT(DrawRectangleWithBrush                                     , Rect, ICanvasBrush*);
@@ -89,49 +89,49 @@ namespace canvas
         DONT_EXPECT(FillRoundedRectangleWithColor         , Rect, float, float, Color);
         DONT_EXPECT(FillRoundedRectangleAtCoordsWithColor , float, float, float, float, float, float, Color);
         
-        DONT_EXPECT(DrawEllipseWithBrush                                     , Point, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawEllipseWithBrush                                     , Vector2, float, float, ICanvasBrush*);
         DONT_EXPECT(DrawEllipseAtCoordsWithBrush                             , float, float, float, float, ICanvasBrush*);
-        DONT_EXPECT(DrawEllipseWithColor                                     , Point, float, float, Color);
+        DONT_EXPECT(DrawEllipseWithColor                                     , Vector2, float, float, Color);
         DONT_EXPECT(DrawEllipseAtCoordsWithColor                             , float, float, float, float, Color);
-        DONT_EXPECT(DrawEllipseWithBrushAndStrokeWidth                       , Point, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawEllipseWithBrushAndStrokeWidth                       , Vector2, float, float, ICanvasBrush*, float);
         DONT_EXPECT(DrawEllipseAtCoordsWithBrushAndStrokeWidth               , float, float, float, float, ICanvasBrush*, float);
-        DONT_EXPECT(DrawEllipseWithColorAndStrokeWidth                       , Point, float, float, Color, float);
+        DONT_EXPECT(DrawEllipseWithColorAndStrokeWidth                       , Vector2, float, float, Color, float);
         DONT_EXPECT(DrawEllipseAtCoordsWithColorAndStrokeWidth               , float, float, float, float, Color, float);
-        DONT_EXPECT(DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle         , Point, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle         , Vector2, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
         DONT_EXPECT(DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
-        DONT_EXPECT(DrawEllipseWithColorAndStrokeWidthAndStrokeStyle         , Point, float, float, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawEllipseWithColorAndStrokeWidthAndStrokeStyle         , Vector2, float, float, Color, float, ICanvasStrokeStyle*);
         DONT_EXPECT(DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, float, Color, float, ICanvasStrokeStyle*);
 
-        DONT_EXPECT(FillEllipseWithBrush         , Point, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillEllipseWithBrush         , Vector2, float, float, ICanvasBrush*);
         DONT_EXPECT(FillEllipseAtCoordsWithBrush , float, float, float, float, ICanvasBrush*);
-        DONT_EXPECT(FillEllipseWithColor         , Point, float, float, Color);
+        DONT_EXPECT(FillEllipseWithColor         , Vector2, float, float, Color);
         DONT_EXPECT(FillEllipseAtCoordsWithColor , float, float, float, float, Color);
         
-        DONT_EXPECT(DrawCircleWithBrush                                     , Point, float, ICanvasBrush*);
+        DONT_EXPECT(DrawCircleWithBrush                                     , Vector2, float, ICanvasBrush*);
         DONT_EXPECT(DrawCircleAtCoordsWithBrush                             , float, float, float, ICanvasBrush*);
-        DONT_EXPECT(DrawCircleWithColor                                     , Point, float, Color);
+        DONT_EXPECT(DrawCircleWithColor                                     , Vector2, float, Color);
         DONT_EXPECT(DrawCircleAtCoordsWithColor                             , float, float, float, Color);
-        DONT_EXPECT(DrawCircleWithBrushAndStrokeWidth                       , Point, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawCircleWithBrushAndStrokeWidth                       , Vector2, float, ICanvasBrush*, float);
         DONT_EXPECT(DrawCircleAtCoordsWithBrushAndStrokeWidth               , float, float, float, ICanvasBrush*, float);
-        DONT_EXPECT(DrawCircleWithColorAndStrokeWidth                       , Point, float, Color, float);
+        DONT_EXPECT(DrawCircleWithColorAndStrokeWidth                       , Vector2, float, Color, float);
         DONT_EXPECT(DrawCircleAtCoordsWithColorAndStrokeWidth               , float, float, float, Color, float);
-        DONT_EXPECT(DrawCircleWithBrushAndStrokeWidthAndStrokeStyle         , Point, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawCircleWithBrushAndStrokeWidthAndStrokeStyle         , Vector2, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
         DONT_EXPECT(DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
-        DONT_EXPECT(DrawCircleWithColorAndStrokeWidthAndStrokeStyle         , Point, float, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawCircleWithColorAndStrokeWidthAndStrokeStyle         , Vector2, float, Color, float, ICanvasStrokeStyle*);
         DONT_EXPECT(DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, Color, float, ICanvasStrokeStyle*);
 
-        DONT_EXPECT(FillCircleWithBrush         , Point, float, ICanvasBrush*);
+        DONT_EXPECT(FillCircleWithBrush         , Vector2, float, ICanvasBrush*);
         DONT_EXPECT(FillCircleAtCoordsWithBrush , float, float, float, ICanvasBrush*);
-        DONT_EXPECT(FillCircleWithColor         , Point, float, Color);
+        DONT_EXPECT(FillCircleWithColor         , Vector2, float, Color);
         DONT_EXPECT(FillCircleAtCoordsWithColor , float, float, float, Color);
 
-        DONT_EXPECT(DrawTextAtPointWithColor                , HSTRING, Point, Color);
+        DONT_EXPECT(DrawTextAtPointWithColor                , HSTRING, Vector2, Color);
         DONT_EXPECT(DrawTextAtPointCoordsWithColor          , HSTRING, float, float, Color);
-        DONT_EXPECT(DrawTextAtPointWithBrushAndFormat       , HSTRING, Point, ICanvasBrush*, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtPointWithBrushAndFormat       , HSTRING, Vector2, ICanvasBrush*, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtRectWithBrushAndFormat        , HSTRING, Rect, ICanvasBrush*, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtPointCoordsWithBrushAndFormat , HSTRING, float, float, ICanvasBrush*, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtRectCoordsWithBrushAndFormat  , HSTRING, float, float, float, float, ICanvasBrush*, ICanvasTextFormat*);
-        DONT_EXPECT(DrawTextAtPointWithColorAndFormat       , HSTRING, Point, Color, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtPointWithColorAndFormat       , HSTRING, Vector2, Color, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtRectWithColorAndFormat        , HSTRING, Rect, Color, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtPointCoordsWithColorAndFormat , HSTRING, float, float, Color, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtRectCoordsWithColorAndFormat  , HSTRING, float, float, float, float, Color, ICanvasTextFormat*);

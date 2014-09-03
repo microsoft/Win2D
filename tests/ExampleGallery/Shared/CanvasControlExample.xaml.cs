@@ -53,22 +53,19 @@ namespace ExampleGallery
             this.storyboardD.Begin();
         }
 
-        private void DrawCanvasState(CanvasControl canvas, CanvasDrawingSession ds, CanvasSolidColorBrush brush, int drawCount)
+        private void DrawCanvasState(CanvasControl canvas, CanvasDrawingSession ds, int drawCount)
         {
             ds.Clear(Color.FromArgb(0, 0, 0, 0));
 
-            brush.Color = Colors.Aqua;
-            ds.DrawLine(new Point(0, 0), new Point(canvas.ActualWidth, canvas.ActualHeight), brush);
-            ds.DrawLine(new Point(0, canvas.ActualHeight), new Point(canvas.ActualWidth, 0), brush);
-
-            brush.Color = Colors.FloralWhite;
+            ds.DrawLine(0, 0, (float)canvas.ActualWidth, (float)canvas.ActualHeight, Colors.Aqua);
+            ds.DrawLine(0, (float)canvas.ActualHeight, (float)canvas.ActualWidth, 0, Colors.Aqua);
 
             var text = String.Format("{0}x{1}\n{2} redraws", (int)canvas.ActualWidth, (int)canvas.ActualHeight, drawCount);
 
             ds.DrawText(
                 text,
-                new Point(0, 0),
-                brush,
+                0, 0,
+                Colors.FloralWhite,
                 new CanvasTextFormat()
                 {
                     VerticalAlignment = CanvasVerticalAlignment.Top,
@@ -77,45 +74,24 @@ namespace ExampleGallery
                 });
         }
 
-        //
-        // TODO #1836: Once multiple CanvasControls share a single device we 
-        // won't need to have a 'new CanvasSolidColorBrush' per handler.
-        //
-        // While it is possible to create resources from a CanvasControl rather 
-        // than a Device directly, different CanvasControls still have 
-        // different devices, and different resource domains.
-        //
-
         private void Canvas01_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
-            {
-                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount01);
-            }
+            DrawCanvasState(sender, args.DrawingSession, ++drawCount01);
         }
 
         private void Canvas11_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
-            {
-                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount11);
-            }
+            DrawCanvasState(sender, args.DrawingSession, ++drawCount11);
         }
 
         private void Canvas02_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
-            {
-                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount02);
-            }
+            DrawCanvasState(sender, args.DrawingSession, ++drawCount02);
         }
 
         private void Canvas12_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            using (CanvasSolidColorBrush brush = new CanvasSolidColorBrush(sender, Colors.FloralWhite))
-            {
-                DrawCanvasState(sender, args.DrawingSession, brush, ++drawCount12);
-            }
+            DrawCanvasState(sender, args.DrawingSession, ++drawCount12);
         }
 
         private void Canvas01_Tapped(object sender, TappedRoutedEventArgs e)

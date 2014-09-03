@@ -42,9 +42,9 @@ namespace Microsoft.Graphics.Canvas
         //
         // Examples:
         //
-        //   DrawLineWithBrush(Point, Point, Brush)   (0 additional parameters)
+        //   DrawLineWithBrush(Vector2, Vector2, Brush)   (0 additional parameters)
         //   DrawLineAtCoordsWithBrush(float, float, float, float, Brush)  (0 additional parameters)
-        //   DrawLineWithColor(Point, Point, Color)   (0 additional parameters)
+        //   DrawLineWithColor(Vector2, Vector2, Color)   (0 additional parameters)
         //   DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(float, float, float, float, Brush, float, StrokeStyle) (2 additional parameters)
         //
         // The overloads are sorted by:
@@ -56,7 +56,7 @@ namespace Microsoft.Graphics.Canvas
         // Default overloads are chosen by picking the richest and most complete functionality:
         //
         //   - Prefer WithBrush over WithColor
-        //   - Prefer packed structures (eg. Point) over expanded (AtCoords) variants
+        //   - Prefer packed structures (eg. Vector2) over expanded (AtCoords) variants
         //
 
            
@@ -70,7 +70,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawImage")]
         HRESULT DrawImage(
             [in] ICanvasImage* image,
-            [in] Windows.Foundation.Point offset);
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 offset);
 
         [overload("DrawImage")]
         HRESULT DrawImageAtCoords(
@@ -90,8 +90,8 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawLine"), default_overload]
         HRESULT DrawLineWithBrush(
-            [in] Windows.Foundation.Point point0,
-            [in] Windows.Foundation.Point point1,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point0,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point1,
             [in] ICanvasBrush* brush);
 
         [overload("DrawLine")]
@@ -104,8 +104,8 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawLine")]
         HRESULT DrawLineWithColor(
-            [in] Windows.Foundation.Point point0,
-            [in] Windows.Foundation.Point point1,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point0,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point1,
             [in] Windows.UI.Color color);
 
         [overload("DrawLine")]
@@ -120,8 +120,8 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawLine"), default_overload]
         HRESULT DrawLineWithBrushAndStrokeWidth(
-            [in] Windows.Foundation.Point point0,
-            [in] Windows.Foundation.Point point1,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point0,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point1,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth);
 
@@ -136,8 +136,8 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawLine")]
         HRESULT DrawLineWithColorAndStrokeWidth(
-            [in] Windows.Foundation.Point point0,
-            [in] Windows.Foundation.Point point1,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point0,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point1,
             [in] Windows.UI.Color color,
             [in] float strokeWidth);
 
@@ -154,8 +154,8 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawLine"), default_overload]
         HRESULT DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
-            [in] Windows.Foundation.Point point0,
-            [in] Windows.Foundation.Point point1,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point0,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point1,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle);
@@ -172,8 +172,8 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawLine")]
         HRESULT DrawLineWithColorAndStrokeWidthAndStrokeStyle(
-            [in] Windows.Foundation.Point point0,
-            [in] Windows.Foundation.Point point1,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point0,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point1,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle);
@@ -488,7 +488,7 @@ namespace Microsoft.Graphics.Canvas
         
         [overload("DrawEllipse"), default_overload]
         HRESULT DrawEllipseWithBrush(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] ICanvasBrush* brush);
@@ -503,7 +503,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawEllipse")]
         HRESULT DrawEllipseWithColor(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] Windows.UI.Color color);
@@ -520,7 +520,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawEllipse"), default_overload]
         HRESULT DrawEllipseWithBrushAndStrokeWidth(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] ICanvasBrush* brush,
@@ -537,7 +537,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawEllipse")]
         HRESULT DrawEllipseWithColorAndStrokeWidth(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] Windows.UI.Color color,
@@ -556,7 +556,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawEllipse"), default_overload]
         HRESULT DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] ICanvasBrush* brush,
@@ -575,7 +575,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawEllipse")]
         HRESULT DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] Windows.UI.Color color,
@@ -598,7 +598,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("FillEllipse"), default_overload]
         HRESULT FillEllipseWithBrush(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] ICanvasBrush* brush);
@@ -613,7 +613,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("FillEllipse")]
         HRESULT FillEllipseWithColor(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] Windows.UI.Color color);
@@ -634,7 +634,7 @@ namespace Microsoft.Graphics.Canvas
         
         [overload("DrawCircle"), default_overload]
         HRESULT DrawCircleWithBrush(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] ICanvasBrush* brush);
 
@@ -647,7 +647,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawCircle")]
         HRESULT DrawCircleWithColor(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] Windows.UI.Color color);
 
@@ -662,7 +662,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawCircle"), default_overload]
         HRESULT DrawCircleWithBrushAndStrokeWidth(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth);
@@ -677,7 +677,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawCircle")]
         HRESULT DrawCircleWithColorAndStrokeWidth(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] Windows.UI.Color color,
             [in] float strokeWidth);
@@ -694,7 +694,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawCircle"), default_overload]
         HRESULT DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth,
@@ -711,7 +711,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawCircle")]
         HRESULT DrawCircleWithColorAndStrokeWidthAndStrokeStyle(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
@@ -732,7 +732,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("FillCircle"), default_overload]
         HRESULT FillCircleWithBrush(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] ICanvasBrush* brush);
 
@@ -745,7 +745,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("FillCircle")]
         HRESULT FillCircleWithColor(
-            [in] Windows.Foundation.Point centerPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
             [in] float radius,
             [in] Windows.UI.Color color);
 
@@ -765,7 +765,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawText")]
         HRESULT DrawTextAtPointWithColor(
             [in] HSTRING text,
-            [in] Windows.Foundation.Point point,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
             [in] Windows.UI.Color color);
 
         [overload("DrawText")]
@@ -780,7 +780,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawText")]
         HRESULT DrawTextAtPointWithBrushAndFormat(
             [in] HSTRING text,
-            [in] Windows.Foundation.Point point,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
             [in] ICanvasBrush* brush,
             [in] CanvasTextFormat* format);
 
@@ -812,7 +812,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawText")]
         HRESULT DrawTextAtPointWithColorAndFormat(
             [in] HSTRING text,
-            [in] Windows.Foundation.Point point,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
             [in] Windows.UI.Color color,
             [in] CanvasTextFormat* format);
 

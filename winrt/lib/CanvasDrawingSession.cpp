@@ -183,7 +183,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImage(
         ICanvasImage* image,
-        Point offset)
+        Vector2 offset)
     {
         return ExceptionBoundary(
             [&]
@@ -206,7 +206,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         return DrawImage(
             image, 
-            Point{ x, y });
+            Vector2{ x, y });
     }
 
 
@@ -215,7 +215,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         return DrawImage(
             image, 
-            Point{ 0, 0 });
+            Vector2{ 0, 0 });
     }
 
 
@@ -224,8 +224,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     
     IFACEMETHODIMP CanvasDrawingSession::DrawLineWithBrush(
-        Point point0,
-        Point point1,
+        Vector2 point0,
+        Vector2 point1,
         ICanvasBrush* brush)
     {
         return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
@@ -245,8 +245,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x0, y0 }, 
-            Point{ x1, y1 }, 
+            Vector2{ x0, y0 }, 
+            Vector2{ x1, y1 }, 
             brush, 
             1.0f, 
             nullptr);
@@ -254,8 +254,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawLineWithColor(
-        Point point0,
-        Point point1,
+        Vector2 point0,
+        Vector2 point1,
         Color color)
     {
         return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
@@ -275,8 +275,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color color)
     {
         return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x0, y0 }, 
-            Point{ x1, y1 }, 
+            Vector2{ x0, y0 }, 
+            Vector2{ x1, y1 }, 
             color, 
             1.0f, 
             nullptr);
@@ -284,8 +284,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawLineWithBrushAndStrokeWidth(
-        Point point0,
-        Point point1,
+        Vector2 point0,
+        Vector2 point1,
         ICanvasBrush* brush,
         float strokeWidth)
     {
@@ -307,8 +307,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float strokeWidth)
     {
         return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x0, y0 }, 
-            Point{ x1, y1 }, 
+            Vector2{ x0, y0 }, 
+            Vector2{ x1, y1 }, 
             brush, 
             strokeWidth, 
             nullptr);
@@ -316,8 +316,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawLineWithColorAndStrokeWidth(
-        Point point0,
-        Point point1,
+        Vector2 point0,
+        Vector2 point1,
         Color color,
         float strokeWidth)
     {
@@ -339,8 +339,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float strokeWidth)
     {
         return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x0, y0 }, 
-            Point{ x1, y1 }, 
+            Vector2{ x0, y0 }, 
+            Vector2{ x1, y1 }, 
             color, 
             strokeWidth, 
             nullptr);
@@ -348,8 +348,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
-        Point point0,
-        Point point1,
+        Vector2 point0,
+        Vector2 point1,
         ICanvasBrush* brush,
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
@@ -377,8 +377,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x0, y0 }, 
-            Point{ x1, y1 }, 
+            Vector2{ x0, y0 }, 
+            Vector2{ x1, y1 }, 
             brush, 
             strokeWidth, 
             strokeStyle);
@@ -386,8 +386,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawLineWithColorAndStrokeWidthAndStrokeStyle(
-        Point point0,
-        Point point1,
+        Vector2 point0,
+        Vector2 point1,
         Color color,
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
@@ -415,8 +415,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x0, y0 }, 
-            Point{ x1, y1 }, 
+            Vector2{ x0, y0 }, 
+            Vector2{ x1, y1 }, 
             color, 
             strokeWidth, 
             strokeStyle);
@@ -424,8 +424,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::DrawLineImpl(
-        const Point& point0,
-        const Point& point1,
+        const Vector2& point0,
+        const Vector2& point1,
         ID2D1Brush* brush,
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
@@ -1063,7 +1063,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithBrush(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         ICanvasBrush* brush)
@@ -1086,7 +1086,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radiusX, 
             radiusY, 
             brush, 
@@ -1096,7 +1096,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithColor(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         Color color)
@@ -1119,7 +1119,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color color)
     {
         return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radiusX, 
             radiusY, 
             color, 
@@ -1129,7 +1129,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithBrushAndStrokeWidth(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         ICanvasBrush* brush,
@@ -1154,7 +1154,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float strokeWidth)
     {
         return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radiusX, 
             radiusY, 
             brush, 
@@ -1164,7 +1164,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithColorAndStrokeWidth(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         Color color,
@@ -1189,7 +1189,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float strokeWidth)
     {
         return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radiusX, 
             radiusY, 
             color, 
@@ -1199,7 +1199,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         ICanvasBrush* brush,
@@ -1230,7 +1230,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radiusX, 
             radiusY, 
             brush, 
@@ -1240,7 +1240,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         Color color,
@@ -1271,7 +1271,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radiusX, 
             radiusY, 
             color, 
@@ -1281,7 +1281,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::DrawEllipseImpl(
-        const Point& centerPoint,
+        const Vector2& centerPoint,
         float radiusX,
         float radiusY,
         ID2D1Brush* brush,
@@ -1304,7 +1304,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     IFACEMETHODIMP CanvasDrawingSession::FillEllipseWithBrush(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         ICanvasBrush* brush)
@@ -1329,7 +1329,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return FillEllipseWithBrush(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radiusX, 
             radiusY, 
             brush);
@@ -1337,7 +1337,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::FillEllipseWithColor(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radiusX,
         float radiusY,
         Color color)
@@ -1362,7 +1362,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color color)
     {
         return FillEllipseWithColor(
-            Point{ x, y, }, 
+            Vector2{ x, y, }, 
             radiusX, 
             radiusY, 
             color);
@@ -1370,7 +1370,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::FillEllipseImpl(
-        const Point& centerPoint,
+        const Vector2& centerPoint,
         float radiusX,
         float radiusY,
         ID2D1Brush* brush)
@@ -1389,7 +1389,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithBrush(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         ICanvasBrush* brush)
     {
@@ -1410,7 +1410,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             brush, 
@@ -1420,7 +1420,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithColor(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         Color color)
     {
@@ -1441,7 +1441,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color color)
     {
         return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             color, 
@@ -1451,7 +1451,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithBrushAndStrokeWidth(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         ICanvasBrush* brush,
         float strokeWidth)
@@ -1474,7 +1474,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float strokeWidth)
     {
         return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             brush, 
@@ -1484,7 +1484,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithColorAndStrokeWidth(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         Color color,
         float strokeWidth)
@@ -1507,7 +1507,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float strokeWidth)
     {
         return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             color, 
@@ -1517,7 +1517,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         ICanvasBrush* brush,
         float strokeWidth,
@@ -1542,7 +1542,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             brush, 
@@ -1552,7 +1552,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithColorAndStrokeWidthAndStrokeStyle(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         Color color,
         float strokeWidth,
@@ -1577,7 +1577,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasStrokeStyle* strokeStyle)
     {
         return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             color, 
@@ -1591,7 +1591,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     IFACEMETHODIMP CanvasDrawingSession::FillCircleWithBrush(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         ICanvasBrush* brush)
     {
@@ -1610,7 +1610,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBrush* brush)
     {
         return FillEllipseWithBrush(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             brush);
@@ -1618,7 +1618,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::FillCircleWithColor(
-        Point centerPoint,
+        Vector2 centerPoint,
         float radius,
         Color color)
     {
@@ -1637,7 +1637,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color color)
     {
         return FillEllipseWithColor(
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             radius, 
             radius, 
             color);
@@ -1650,7 +1650,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithColor(
         HSTRING text,
-        Point point,
+        Vector2 point,
         Color color)
     {
         return DrawTextAtPointWithColorAndFormat(
@@ -1669,7 +1669,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         return DrawTextAtPointWithColorAndFormat(
             text, 
-            Point{ x, y }, 
+            Vector2{ x, y }, 
             color, 
             nullptr);
     }
@@ -1677,7 +1677,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithBrushAndFormat(
         HSTRING text,
-        Point point,
+        Vector2 point,
         ICanvasBrush* brush,
         ICanvasTextFormat* format)
     {
@@ -1720,7 +1720,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         return DrawTextAtPointWithBrushAndFormat(
             text,
-            Point{ x, y },
+            Vector2{ x, y },
             brush,
             format);
     }
@@ -1745,7 +1745,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithColorAndFormat(
         HSTRING text,
-        Point point,
+        Vector2 point,
         Color color,
         ICanvasTextFormat* format)
     {
@@ -1788,7 +1788,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         return DrawTextAtPointWithColorAndFormat(
             text,
-            Point{ x, y },
+            Vector2{ x, y },
             color,
             format);
     }
@@ -1844,7 +1844,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasDrawingSession::DrawTextAtPointImpl(
         HSTRING text,
-        const Point& point,
+        const Vector2& point,
         ID2D1Brush* brush,
         ICanvasTextFormat* format)
     {

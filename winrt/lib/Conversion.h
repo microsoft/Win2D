@@ -102,7 +102,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return RECT{left,top,right,bottom}; 
     }
 
-    inline D2D1_POINT_2F ToD2DPoint(const ABI::Windows::Foundation::Point& point)
+    inline D2D1_POINT_2F ToD2DPoint(const Numerics::Vector2& point)
     {
         return D2D1_POINT_2F{ point.X, point.Y };
     }
@@ -122,7 +122,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1_ROUNDED_RECT{ ToD2DRect(rect), rx, ry };
     }
 
-    inline D2D1_ELLIPSE ToD2DEllipse(const ABI::Windows::Foundation::Point& point, float rx, float ry)
+    inline D2D1_ELLIPSE ToD2DEllipse(const Numerics::Vector2& point, float rx, float ry)
     {
         return D2D1::Ellipse(ToD2DPoint(point), rx, ry);
     }

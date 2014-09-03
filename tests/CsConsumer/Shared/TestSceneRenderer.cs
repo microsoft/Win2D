@@ -10,13 +10,11 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using Microsoft.Graphics.Canvas;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.Numerics;
 using Windows.UI;
 using Windows.Foundation;
-using System.Diagnostics;
+using Microsoft.Graphics.Canvas;
 
 namespace CsConsumer
 {
@@ -56,7 +54,7 @@ namespace CsConsumer
             }
         }
 
-        public void DrawLine(Point p1, Point p2, Color color, float strokeWidth)
+        public void DrawLine(Vector2 p1, Vector2 p2, Color color, float strokeWidth)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
@@ -68,7 +66,7 @@ namespace CsConsumer
             }
         }
 
-        public void DrawLine(Point p1, Point p2, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
+        public void DrawLine(Vector2 p1, Vector2 p2, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
@@ -80,7 +78,7 @@ namespace CsConsumer
             }
         }
 
-        public void FillEllipse(Point center, float radiusX, float radiusY, Color color)
+        public void FillEllipse(Vector2 center, float radiusX, float radiusY, Color color)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
@@ -92,7 +90,7 @@ namespace CsConsumer
             }
         }
 
-        public void DrawEllipse(Point center, float radiusX, float radiusY, Color color, float strokeWidth)
+        public void DrawEllipse(Vector2 center, float radiusX, float radiusY, Color color, float strokeWidth)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
@@ -104,7 +102,7 @@ namespace CsConsumer
             }
         }
 
-        public void DrawEllipse(Point center, float radiusX, float radiusY, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
+        public void DrawEllipse(Vector2 center, float radiusX, float radiusY, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
@@ -116,7 +114,7 @@ namespace CsConsumer
             }
         }
 
-        public void FillCircle(Point centerPoint, float radius, Color color)
+        public void FillCircle(Vector2 centerPoint, float radius, Color color)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
@@ -128,7 +126,7 @@ namespace CsConsumer
             }
         }
 
-        public void DrawCircle(Point centerPoint, float radius, Color color, float strokeWidth)
+        public void DrawCircle(Vector2 centerPoint, float radius, Color color, float strokeWidth)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
@@ -140,7 +138,7 @@ namespace CsConsumer
             }
         }
 
-        public void DrawCircle(Point centerPoint, float radius, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
+        public void DrawCircle(Vector2 centerPoint, float radius, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {

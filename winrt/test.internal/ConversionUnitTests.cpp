@@ -101,8 +101,6 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD(RectToRECT)
     {
-        using ABI::Windows::Foundation::Rect;
-
         Assert::AreEqual(RECT{1,2,4,6}, ToRECT(Rect{1,2,3,4}));
         
         //
@@ -134,15 +132,11 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD(PointToD2DPoint)
     {
-        using ABI::Windows::Foundation::Point;
-
-        Assert::AreEqual(D2D1_POINT_2F{ 1, 2 }, ToD2DPoint(Point{ 1, 2 }));
+        Assert::AreEqual(D2D1_POINT_2F{ 1, 2 }, ToD2DPoint(Vector2{ 1, 2 }));
     }
 
     TEST_METHOD(RectToD2DRect)
     {
-        using ABI::Windows::Foundation::Rect;
-
         Assert::AreEqual(D2D_RECT_F{ 1, 2, 3, 4 }, ToD2DRect(Rect{ 1, 2, 2, 2 }));
     }
 
@@ -163,9 +157,7 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD(PointAndRadiusToD2DEllipse)
     {
-        using ABI::Windows::Foundation::Point;
-
-        Point point{ 1, 2 };
+        Vector2 point{ 1, 2 };
         float rx = 3;
         float ry = 4;
 

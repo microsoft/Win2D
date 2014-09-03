@@ -10,15 +10,16 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.Foundation;
 using Windows.UI.Text;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 
 namespace CsConsumer
 {
@@ -123,8 +124,8 @@ namespace CsConsumer
             for (int i = 0; i < 100; i++)
             {
                 ds.DrawLine(
-                    NextRandomPoint(horizontalLimit, verticalLimit),
-                    NextRandomPoint(horizontalLimit, verticalLimit),
+                    NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),
+                    NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),
                     color,
                     5.0f,
                     strokeStyle);
@@ -142,7 +143,7 @@ namespace CsConsumer
             ds.Clear(NextRandomColor());
                 
             Rect rect;
-            Point point;
+            Vector2 point;
             float radiusX;
             float radiusY;
 
@@ -154,37 +155,39 @@ namespace CsConsumer
                 case DrawnContentType.Bitmap:
                     if (m_bitmap_tiger != null)
                     {
-                        ds.DrawImage(m_bitmap_tiger, NextRandomPoint(horizontalLimit, verticalLimit));
+                        ds.DrawImage(m_bitmap_tiger, NextRandomPoint(horizontalLimit, verticalLimit).ToVector2());
                     }
                     else
                     {
                         DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
                     }
                     break;
+
                 case DrawnContentType.Effect_Blur:
                     if (m_bitmap_tiger != null)
                     {
                         GaussianBlurEffect blurEffect = new GaussianBlurEffect();
                         blurEffect.StandardDeviation = 2.0f;
                         blurEffect.Source = m_bitmap_tiger;
-                        ds.DrawImage(blurEffect, NextRandomPoint(horizontalLimit, verticalLimit));
+                        ds.DrawImage(blurEffect, NextRandomPoint(horizontalLimit, verticalLimit).ToVector2());
                     }
                     else
                     {
                         DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
                     }
                     break;
+
                 case DrawnContentType.Line_Thin:
                     ds.DrawLine(
-                        NextRandomPoint(horizontalLimit, verticalLimit),
-                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),
+                        NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),
                         NextRandomColor());
                     break;
 
                 case DrawnContentType.Line_Thick:
                     ds.DrawLine(
-                        NextRandomPoint(horizontalLimit, verticalLimit),
-                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),
+                        NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),
                         NextRandomColor(),
                         thickStrokeWidth);
                     break;
@@ -247,7 +250,7 @@ namespace CsConsumer
 
                 case DrawnContentType.Circle_Fill:
                     ds.FillCircle(
-                        NextRandomPoint(horizontalLimit, verticalLimit),
+                        NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),
                         100,
                         NextRandomColor());
                     break;
@@ -258,14 +261,14 @@ namespace CsConsumer
 
                 case DrawnContentType.Text:
                     var p = NextRandomPoint(horizontalLimit, verticalLimit);
-                    var x = p.X;
-                    var y = p.Y;
+                    var x = (float)p.X;
+                    var y = (float)p.Y;
                     var color = NextRandomColor();
-                    ds.DrawLine(new Point(x, 0), new Point(x, verticalLimit), color);
-                    ds.DrawLine(new Point(0, y), new Point(horizontalLimit, y), color);
+                    ds.DrawLine(new Vector2(x, 0), new Vector2(x, verticalLimit), color);
+                    ds.DrawLine(new Vector2(0, y), new Vector2(horizontalLimit, y), color);
                     ds.DrawText(
                         "Centered",
-                        p,
+                        p.ToVector2(),
                         color,
                         new CanvasTextFormat()
                         {
@@ -315,9 +318,9 @@ namespace CsConsumer
             }
         }
 
-        private void NextRandomEllipse(int horizontalLimit, int verticalLimit, out Point point, out float radiusX, out float radiusY)
+        private void NextRandomEllipse(int horizontalLimit, int verticalLimit, out Vector2 point, out float radiusX, out float radiusY)
         {
-            point = NextRandomPoint(horizontalLimit, verticalLimit);
+            point = NextRandomPoint(horizontalLimit, verticalLimit).ToVector2();
             radiusX = m_random.Next(horizontalLimit / 2);
             radiusY = m_random.Next(verticalLimit / 2);
         }
@@ -354,7 +357,7 @@ namespace CsConsumer
         {
             ds.DrawText(
                 "Please load bitmap before drawing it",
-                new Point(x, y),
+                new Vector2(x, y),
                 Colors.Red,
                 new CanvasTextFormat()
                 {

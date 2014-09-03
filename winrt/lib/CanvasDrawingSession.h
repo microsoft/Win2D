@@ -17,6 +17,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
     using namespace ::Microsoft::WRL;
 
@@ -102,7 +103,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(DrawImage)(
             ICanvasImage* image,
-            ABI::Windows::Foundation::Point offset) override;
+            Vector2 offset) override;
 
         IFACEMETHOD(DrawImageAtCoords)(
             ICanvasImage* image,
@@ -119,8 +120,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 0 additional parameters
 
         IFACEMETHOD(DrawLineWithBrush)(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
+            Vector2 point0,
+            Vector2 point1,
             ICanvasBrush* brush) override;
 
         IFACEMETHOD(DrawLineAtCoordsWithBrush)(
@@ -131,8 +132,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasBrush* brush) override;
 
         IFACEMETHOD(DrawLineWithColor)(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
+            Vector2 point0,
+            Vector2 point1,
             ABI::Windows::UI::Color color) override;
 
         IFACEMETHOD(DrawLineAtCoordsWithColor)(
@@ -145,8 +146,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 1 additional parameter (StrokeWidth)
 
         IFACEMETHOD(DrawLineWithBrushAndStrokeWidth)(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
+            Vector2 point0,
+            Vector2 point1,
             ICanvasBrush* brush,
             float strokeWidth) override;
 
@@ -159,8 +160,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth) override;
 
         IFACEMETHOD(DrawLineWithColorAndStrokeWidth)(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
+            Vector2 point0,
+            Vector2 point1,
             ABI::Windows::UI::Color color,
             float strokeWidth) override;
 
@@ -175,8 +176,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 2 additional parameters (StrokeWidth, StrokeStyle)
 
         IFACEMETHOD(DrawLineWithBrushAndStrokeWidthAndStrokeStyle)(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
+            Vector2 point0,
+            Vector2 point1,
             ICanvasBrush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle) override;
@@ -191,8 +192,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasStrokeStyle* strokeStyle) override;
 
         IFACEMETHOD(DrawLineWithColorAndStrokeWidthAndStrokeStyle)(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
+            Vector2 point0,
+            Vector2 point1,
             ABI::Windows::UI::Color color,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle) override;
@@ -473,7 +474,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 0 additional parameters
         
         IFACEMETHOD(DrawEllipseWithBrush)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ICanvasBrush* brush) override;
@@ -486,7 +487,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasBrush* brush) override;
 
         IFACEMETHOD(DrawEllipseWithColor)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ABI::Windows::UI::Color color) override;
@@ -501,7 +502,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 1 additional parameter (StrokeWidth)
 
         IFACEMETHOD(DrawEllipseWithBrushAndStrokeWidth)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ICanvasBrush* brush,
@@ -516,7 +517,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth) override;
 
         IFACEMETHOD(DrawEllipseWithColorAndStrokeWidth)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ABI::Windows::UI::Color color,
@@ -533,7 +534,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 2 additional parameters (StrokeWidth, StrokeStyle)
 
         IFACEMETHOD(DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ICanvasBrush* brush,
@@ -550,7 +551,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasStrokeStyle* strokeStyle) override;
 
         IFACEMETHOD(DrawEllipseWithColorAndStrokeWidthAndStrokeStyle)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ABI::Windows::UI::Color color,
@@ -571,7 +572,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         IFACEMETHOD(FillEllipseWithBrush)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ICanvasBrush* brush) override;
@@ -584,7 +585,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasBrush* brush) override;
 
         IFACEMETHOD(FillEllipseWithColor)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radiusX,
             float radiusY,
             ABI::Windows::UI::Color color) override;
@@ -603,7 +604,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 0 additional parameters
         
         IFACEMETHOD(DrawCircleWithBrush)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ICanvasBrush* brush) override;
 
@@ -614,7 +615,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasBrush* brush) override;
 
         IFACEMETHOD(DrawCircleWithColor)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ABI::Windows::UI::Color color) override;
 
@@ -627,7 +628,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 1 additional parameter (StrokeWidth)
 
         IFACEMETHOD(DrawCircleWithBrushAndStrokeWidth)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ICanvasBrush* brush,
             float strokeWidth) override;
@@ -640,7 +641,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth) override;
 
         IFACEMETHOD(DrawCircleWithColorAndStrokeWidth)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ABI::Windows::UI::Color color,
             float strokeWidth) override;
@@ -655,7 +656,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 2 additional parameters (StrokeWidth, StrokeStyle)
 
         IFACEMETHOD(DrawCircleWithBrushAndStrokeWidthAndStrokeStyle)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ICanvasBrush* brush,
             float strokeWidth,
@@ -670,7 +671,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasStrokeStyle* strokeStyle) override;
 
         IFACEMETHOD(DrawCircleWithColorAndStrokeWidthAndStrokeStyle)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ABI::Windows::UI::Color color,
             float strokeWidth,
@@ -689,7 +690,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         IFACEMETHOD(FillCircleWithBrush)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ICanvasBrush* brush) override;
 
@@ -700,7 +701,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasBrush* brush) override;
 
         IFACEMETHOD(FillCircleWithColor)(
-            ABI::Windows::Foundation::Point centerPoint,
+            Vector2 centerPoint,
             float radius,
             ABI::Windows::UI::Color color) override;
 
@@ -718,7 +719,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(DrawTextAtPointWithColor)(
             HSTRING text,
-            ABI::Windows::Foundation::Point point,
+            Vector2 point,
             ABI::Windows::UI::Color color) override;
 
         IFACEMETHOD(DrawTextAtPointCoordsWithColor)(
@@ -731,7 +732,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(DrawTextAtPointWithBrushAndFormat)(
             HSTRING text,
-            ABI::Windows::Foundation::Point point,
+            Vector2 point,
             ICanvasBrush* brush,
             ICanvasTextFormat* format) override;
 
@@ -759,7 +760,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(DrawTextAtPointWithColorAndFormat)(
             HSTRING text,
-            ABI::Windows::Foundation::Point point,
+            Vector2 point,
             ABI::Windows::UI::Color color,
             ICanvasTextFormat* format) override;
 
@@ -812,8 +813,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     private:
         void DrawLineImpl(
-            const Point& p0,
-            const Point& p1,
+            const Vector2& p0,
+            const Vector2& p1,
             ID2D1Brush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle);
@@ -843,7 +844,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1Brush* brush);
 
         void DrawEllipseImpl(
-            const Point& centerPoint,
+            const Vector2& centerPoint,
             float radiusX,
             float radiusY,
             ID2D1Brush* brush,
@@ -851,7 +852,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasStrokeStyle* strokeStyle);
 
         void FillEllipseImpl(
-            const Point& centerPoint,
+            const Vector2& centerPoint,
             float radiusX,
             float radiusY,
             ID2D1Brush* brush);
@@ -864,7 +865,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void DrawTextAtPointImpl(
             HSTRING text,
-            const Point& point,
+            const Vector2& point,
             ID2D1Brush* brush,
             ICanvasTextFormat* format);
 

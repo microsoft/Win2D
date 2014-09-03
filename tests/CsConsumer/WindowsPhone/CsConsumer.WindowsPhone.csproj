@@ -66,6 +66,10 @@
       <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
       <Name>winrt.dll.WindowsPhone</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\numerics\DotNet\DotNetNumerics.WindowsPhone.csproj">
+      <Project>{2585abb8-67d5-48a9-806d-9ceecdbfe413}</Project>
+      <Name>DotNetNumerics.WindowsPhone</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="CsConsumer.WindowsPhone.appxmanifest">

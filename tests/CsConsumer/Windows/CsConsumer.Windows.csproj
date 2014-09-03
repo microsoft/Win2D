@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -85,6 +85,10 @@
     <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.Windows.vcxproj">
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
       <Name>winrt.dll.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\numerics\DotNet\DotNetNumerics.Windows.csproj">
+      <Name>DotNetNumerics.Windows</Name>
+      <Project>{3C1B37E8-10D1-4381-882A-9F0C0FD45871}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
