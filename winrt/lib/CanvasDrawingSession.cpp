@@ -20,7 +20,10 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    inline ComPtr<ID2D1StrokeStyle1> ToD2DStrokeStyle(ICanvasStrokeStyle* strokeStyle, ID2D1DeviceContext* deviceContext)
+    using namespace ABI::Windows::Foundation;
+    using namespace ABI::Windows::UI;
+
+    ComPtr<ID2D1StrokeStyle1> ToD2DStrokeStyle(ICanvasStrokeStyle* strokeStyle, ID2D1DeviceContext* deviceContext)
     {
         if (!strokeStyle) return nullptr;
 
@@ -139,7 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasDrawingSession::Close()
     {
         // Base class Close() called outside of ExceptionBoundary since this
-        // already has it's own boundary.
+        // already has its own boundary.
         HRESULT hr = ResourceWrapper::Close();
         if (FAILED(hr))
             return hr;
@@ -161,7 +164,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasDrawingSession::Clear(
-        ABI::Windows::UI::Color color)
+        Color color)
     {
         return ExceptionBoundary(
             [&]
@@ -173,27 +176,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+
+    // 
+    // DrawImage
+    // 
+
     IFACEMETHODIMP CanvasDrawingSession::DrawImage(
-        ICanvasImage* image)
-    {
-        ABI::Windows::Foundation::Point point;
-        point.X = 0;
-        point.Y = 0;
-
-        return DrawImageWithOffset(
-            image,
-            point);
-    }
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithOffset(
         ICanvasImage* image,
-        ABI::Windows::Foundation::Point offset)
+        Point offset)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(image);
                 auto& deviceContext = GetResource();
+                CheckInPointer(image);
 
                 ComPtr<ICanvasImageInternal> internal;
                 ThrowIfFailed(image->QueryInterface(IID_PPV_ARGS(&internal)));
@@ -202,209 +198,158 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawLine(
-        ABI::Windows::Foundation::Point point0,
-        ABI::Windows::Foundation::Point point1,
-        ICanvasBrush* brush) 
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoords(
+        ICanvasImage* image,
+        float x,
+        float y)
     {
-        return DrawLineWithStrokeWidthAndStrokeStyle(
-            point0,
-            point1,
-            brush,
-            1.0f,
+        return DrawImage(
+            image, 
+            Point{ x, y });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOrigin(
+        ICanvasImage* image)
+    {
+        return DrawImage(
+            image, 
+            Point{ 0, 0 });
+    }
+
+
+    //
+    // DrawLine
+    //
+    
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithBrush(
+        Point point0,
+        Point point1,
+        ICanvasBrush* brush)
+    {
+        return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
+            point0, 
+            point1, 
+            brush, 
+            1.0f, 
             nullptr);
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithStrokeWidth(
-        ABI::Windows::Foundation::Point point0,
-        ABI::Windows::Foundation::Point point1,
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineAtCoordsWithBrush(
+        float x0,
+        float y0,
+        float x1,
+        float y1,
+        ICanvasBrush* brush)
+    {
+        return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x0, y0 }, 
+            Point{ x1, y1 }, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithColor(
+        Point point0,
+        Point point1,
+        Color color)
+    {
+        return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
+            point0, 
+            point1, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineAtCoordsWithColor(
+        float x0,
+        float y0,
+        float x1,
+        float y1,
+        Color color)
+    {
+        return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x0, y0 }, 
+            Point{ x1, y1 }, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithBrushAndStrokeWidth(
+        Point point0,
+        Point point1,
         ICanvasBrush* brush,
-        float strokeWidth) 
+        float strokeWidth)
     {
-        return DrawLineWithStrokeWidthAndStrokeStyle(
-            point0,
-            point1,
-            brush,
-            strokeWidth,
+        return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
+            point0, 
+            point1, 
+            brush, 
+            strokeWidth, 
             nullptr);
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithStrokeWidthAndStrokeStyle(
-        ABI::Windows::Foundation::Point point0,
-        ABI::Windows::Foundation::Point point1,
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineAtCoordsWithBrushAndStrokeWidth(
+        float x0,
+        float y0,
+        float x1,
+        float y1,
         ICanvasBrush* brush,
-        float strokeWidth,
-        ICanvasStrokeStyle* strokeStyle)
+        float strokeWidth)
     {
-        return ExceptionBoundary(
-            [&]
-        {
-            auto& deviceContext = GetResource();
-            CheckInPointer(brush);
-
-            deviceContext->DrawLine(
-                ToD2DPoint(point0),
-                ToD2DPoint(point1),
-                ToD2DBrush(brush).Get(),
-                strokeWidth,
-                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
-        });
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawRectangle(
-        ABI::Windows::Foundation::Rect rect,
-        ICanvasBrush* brush) 
-    {
-        return DrawRectangleWithStrokeWidthAndStrokeStyle(
-            rect,
-            brush,
-            1.0f,
+        return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x0, y0 }, 
+            Point{ x1, y1 }, 
+            brush, 
+            strokeWidth, 
             nullptr);
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithStrokeWidth(
-        ABI::Windows::Foundation::Rect rect,
-        ICanvasBrush* brush,
-        float strokeWidth) 
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithColorAndStrokeWidth(
+        Point point0,
+        Point point1,
+        Color color,
+        float strokeWidth)
     {
-        return DrawRectangleWithStrokeWidthAndStrokeStyle(
-            rect,
-            brush,
-            strokeWidth,
-            nullptr);
-    }
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithStrokeWidthAndStrokeStyle(
-        ABI::Windows::Foundation::Rect rect,
-        ICanvasBrush* brush,
-        float strokeWidth,
-        ICanvasStrokeStyle* strokeStyle)
-    {
-        return ExceptionBoundary(
-            [&]
-        {
-            auto& deviceContext = GetResource();
-            CheckInPointer(brush);
-
-            deviceContext->DrawRectangle(
-                ToD2DRect(rect),
-                ToD2DBrush(brush).Get(),
-                strokeWidth,
-                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
-        });
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::FillRectangle(
-        ABI::Windows::Foundation::Rect rect,
-        ICanvasBrush* brush) 
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
-
-                deviceContext->FillRectangle(
-                    ToD2DRect(rect),
-                    ToD2DBrush(brush).Get());
-            });
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangle(
-        CanvasRoundedRectangle roundedRectangle,
-        ICanvasBrush* brush) 
-    {
-        return DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
-            roundedRectangle,
-            brush,
-            1.0f,
+        return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
+            point0, 
+            point1, 
+            color, 
+            strokeWidth, 
             nullptr);
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithStrokeWidth(
-        CanvasRoundedRectangle roundedRectangle,
-        ICanvasBrush* brush,
-        float strokeWidth) 
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineAtCoordsWithColorAndStrokeWidth(
+        float x0,
+        float y0,
+        float x1,
+        float y1,
+        Color color,
+        float strokeWidth)
     {
-        return DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
-            roundedRectangle,
-            brush,
-            strokeWidth,
-            nullptr);
-    }
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
-        CanvasRoundedRectangle roundedRectangle,
-        ICanvasBrush* brush,
-        float strokeWidth,
-        ICanvasStrokeStyle* strokeStyle)
-    {
-        return ExceptionBoundary(
-            [&]
-        {
-            auto& deviceContext = GetResource();  
-            CheckInPointer(brush);
-
-            deviceContext->DrawRoundedRectangle(
-                ToD2DRoundedRect(roundedRectangle),
-                ToD2DBrush(brush).Get(),
-                strokeWidth,
-                ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
-        });
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::FillRoundedRectangle(
-        CanvasRoundedRectangle roundedRectangle,
-        ICanvasBrush* brush) 
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
-
-                deviceContext->FillRoundedRectangle(
-                    ToD2DRoundedRect(roundedRectangle),
-                    ToD2DBrush(brush).Get());
-            });
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawEllipse(
-        CanvasEllipse ellipse,
-        ICanvasBrush* brush) 
-    {
-        return DrawEllipseWithStrokeWidthAndStrokeStyle(
-            ellipse,
-            brush,
-            1.0f,
+        return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x0, y0 }, 
+            Point{ x1, y1 }, 
+            color, 
+            strokeWidth, 
             nullptr);
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithStrokeWidth(
-        CanvasEllipse ellipse,
-        ICanvasBrush* brush,
-        float strokeWidth) 
-    {
-        return DrawEllipseWithStrokeWidthAndStrokeStyle(
-            ellipse,
-            brush,
-            strokeWidth,
-            nullptr);
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithStrokeWidthAndStrokeStyle(
-        CanvasEllipse ellipse,
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
+        Point point0,
+        Point point1,
         ICanvasBrush* brush,
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
@@ -412,109 +357,1473 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource(); 
-                CheckInPointer(brush);
-
-                deviceContext->DrawEllipse(
-                    ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
+                DrawLineImpl(
+                    point0,
+                    point1,
                     ToD2DBrush(brush).Get(),
                     strokeWidth,
-                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+                    strokeStyle);
             });
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::FillEllipse(
-        CanvasEllipse ellipse,
-        ICanvasBrush* brush) 
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
+        float x0,
+        float y0,
+        float x1,
+        float y1,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x0, y0 }, 
+            Point{ x1, y1 }, 
+            brush, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineWithColorAndStrokeWidthAndStrokeStyle(
+        Point point0,
+        Point point1,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
     {
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
+                DrawLineImpl(
+                    point0,
+                    point1,
+                    GetColorBrush(color),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
 
-                deviceContext->FillEllipse(
-                    ReinterpretAs<D2D1_ELLIPSE*>(&ellipse),
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
+        float x0,
+        float y0,
+        float x1,
+        float y1,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawLineWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x0, y0 }, 
+            Point{ x1, y1 }, 
+            color, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    void CanvasDrawingSession::DrawLineImpl(
+        const Point& point0,
+        const Point& point1,
+        ID2D1Brush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        deviceContext->DrawLine(
+            ToD2DPoint(point0),
+            ToD2DPoint(point1),
+            brush,
+            strokeWidth,
+            ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+    }
+
+
+    //
+    // DrawRectangle
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithBrush(
+        Rect rect,
+        ICanvasBrush* brush)
+    {
+        return DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            rect, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleAtCoordsWithBrush(
+        float x,
+        float y,
+        float w,
+        float h,
+        ICanvasBrush* brush)
+    {
+        return DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithColor(
+        Rect rect,
+        Color color)
+    {
+        return DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            rect, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleAtCoordsWithColor(
+        float x,
+        float y,
+        float w,
+        float h,
+        Color color)
+    {
+        return DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithBrushAndStrokeWidth(
+        Rect rect,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            rect, 
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleAtCoordsWithBrushAndStrokeWidth(
+        float x,
+        float y,
+        float w,
+        float h,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithColorAndStrokeWidth(
+        Rect rect,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            rect, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleAtCoordsWithColorAndStrokeWidth(
+        float x,
+        float y,
+        float w,
+        float h,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+        Rect rect,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawRectangleImpl(
+                    rect,
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float w,
+        float h,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            brush, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(
+        Rect rect,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawRectangleImpl(
+                    rect,
+                    GetColorBrush(color),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float w,
+        float h,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            color, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    void CanvasDrawingSession::DrawRectangleImpl(
+        const Rect& rect,
+        ID2D1Brush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        deviceContext->DrawRectangle(
+            &ToD2DRect(rect),
+            brush,
+            strokeWidth,
+            ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+    }
+
+
+    //
+    // FillRectangle
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRectangleWithBrush(
+        Rect rect,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                FillRectangleImpl(
+                    rect,
                     ToD2DBrush(brush).Get());
             });
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawCircle(
-        ABI::Windows::Foundation::Point centerPoint,
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRectangleAtCoordsWithBrush(
+        float x,
+        float y,
+        float w,
+        float h,
+        ICanvasBrush* brush)
+    {
+        return FillRectangleWithBrush(
+            Rect{ x, y, w, h }, 
+            brush);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRectangleWithColor(
+        Rect rect,
+        Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                FillRectangleImpl(
+                    rect,
+                    GetColorBrush(color));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRectangleAtCoordsWithColor(
+        float x,
+        float y,
+        float w,
+        float h,
+        Color color)
+    {
+        return FillRectangleWithColor(
+            Rect{ x, y, w, h }, 
+            color);
+    }
+
+
+    void CanvasDrawingSession::FillRectangleImpl(
+        const Rect& rect,
+        ID2D1Brush* brush)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        deviceContext->FillRectangle(
+            &ToD2DRect(rect),
+            brush);
+    }
+
+
+    //
+    // DrawRoundedRectangle
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithBrush(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            rect, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleAtCoordsWithBrush(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithColor(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            rect, 
+            radiusX, 
+            radiusY, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleAtCoordsWithColor(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithBrushAndStrokeWidth(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            rect, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithColorAndStrokeWidth(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            rect, 
+            radiusX, 
+            radiusY, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawRoundedRectangleImpl(
+                    rect,
+                    radiusX,
+                    radiusY,
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawRoundedRectangleImpl(
+                    rect, 
+                    radiusX, 
+                    radiusY,
+                    GetColorBrush(color),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            color, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    void CanvasDrawingSession::DrawRoundedRectangleImpl(
+        const Rect& rect,
+        float radiusX,
+        float radiusY,
+        ID2D1Brush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        deviceContext->DrawRoundedRectangle(
+            &ToD2DRoundedRect(rect, radiusX, radiusY),
+            brush,
+            strokeWidth,
+            ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+    }
+
+
+    //
+    // FillRoundedRectangle
+    //
+    
+    IFACEMETHODIMP CanvasDrawingSession::FillRoundedRectangleWithBrush(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                FillRoundedRectangleImpl(
+                    rect,
+                    radiusX,
+                    radiusY,
+                    ToD2DBrush(brush).Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRoundedRectangleAtCoordsWithBrush(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return FillRoundedRectangleWithBrush(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            brush);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRoundedRectangleWithColor(
+        Rect rect,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                FillRoundedRectangleImpl(
+                    rect, 
+                    radiusX, 
+                    radiusY,
+                    GetColorBrush(color));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRoundedRectangleAtCoordsWithColor(
+        float x,
+        float y,
+        float w,
+        float h,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return FillRoundedRectangleWithColor(
+            Rect{ x, y, w, h }, 
+            radiusX, 
+            radiusY, 
+            color);
+    }
+
+
+    void CanvasDrawingSession::FillRoundedRectangleImpl(
+        const Rect& rect,
+        float radiusX,
+        float radiusY,
+        ID2D1Brush* brush)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        deviceContext->FillRoundedRectangle(
+            &ToD2DRoundedRect(rect, radiusX, radiusY),
+            brush);
+    }
+
+
+    //
+    // DrawEllipse
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithBrush(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseAtCoordsWithBrush(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithColor(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radiusX, 
+            radiusY, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseAtCoordsWithColor(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radiusX, 
+            radiusY, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithBrushAndStrokeWidth(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseAtCoordsWithBrushAndStrokeWidth(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithColorAndStrokeWidth(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radiusX, 
+            radiusY, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseAtCoordsWithColorAndStrokeWidth(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radiusX, 
+            radiusY, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawEllipseImpl(
+                    centerPoint, 
+                    radiusX, 
+                    radiusY,
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radiusX, 
+            radiusY, 
+            brush, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawEllipseImpl(
+                    centerPoint, 
+                    radiusX, 
+                    radiusY,
+                    GetColorBrush(color),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radiusX, 
+            radiusY, 
+            color, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    void CanvasDrawingSession::DrawEllipseImpl(
+        const Point& centerPoint,
+        float radiusX,
+        float radiusY,
+        ID2D1Brush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        deviceContext->DrawEllipse(
+            &ToD2DEllipse(centerPoint, radiusX, radiusY),
+            brush,
+            strokeWidth,
+            ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+    }
+
+
+    //
+    // FillEllipse
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::FillEllipseWithBrush(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                FillEllipseImpl(
+                    centerPoint, 
+                    radiusX, 
+                    radiusY,
+                    ToD2DBrush(brush).Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillEllipseAtCoordsWithBrush(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        ICanvasBrush* brush)
+    {
+        return FillEllipseWithBrush(
+            Point{ x, y }, 
+            radiusX, 
+            radiusY, 
+            brush);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillEllipseWithColor(
+        Point centerPoint,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                FillEllipseImpl(
+                    centerPoint, 
+                    radiusX, 
+                    radiusY,
+                    GetColorBrush(color));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillEllipseAtCoordsWithColor(
+        float x,
+        float y,
+        float radiusX,
+        float radiusY,
+        Color color)
+    {
+        return FillEllipseWithColor(
+            Point{ x, y, }, 
+            radiusX, 
+            radiusY, 
+            color);
+    }
+
+
+    void CanvasDrawingSession::FillEllipseImpl(
+        const Point& centerPoint,
+        float radiusX,
+        float radiusY,
+        ID2D1Brush* brush)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        deviceContext->FillEllipse(
+            &ToD2DEllipse(centerPoint, radiusX, radiusY),
+            brush);
+    }
+
+
+    //
+    // DrawCircle
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithBrush(
+        Point centerPoint,
         float radius,
         ICanvasBrush* brush)
     {
-        return DrawCircleWithStrokeWidthAndStrokeStyle(
-            centerPoint,
-            radius,
-            brush,
-            1.0f,
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radius, 
+            radius, 
+            brush, 
+            1.0f, 
             nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithStrokeWidth(
-        ABI::Windows::Foundation::Point centerPoint,
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleAtCoordsWithBrush(
+        float x,
+        float y,
+        float radius,
+        ICanvasBrush* brush)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithColor(
+        Point centerPoint,
+        float radius,
+        Color color)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radius, 
+            radius, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleAtCoordsWithColor(
+        float x,
+        float y,
+        float radius,
+        Color color)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithBrushAndStrokeWidth(
+        Point centerPoint,
         float radius,
         ICanvasBrush* brush,
         float strokeWidth)
     {
-        return DrawCircleWithStrokeWidthAndStrokeStyle(
-            centerPoint,
-            radius,
-            brush,
-            strokeWidth,
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radius, 
+            radius, 
+            brush, 
+            strokeWidth, 
             nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithStrokeWidthAndStrokeStyle(
-        ABI::Windows::Foundation::Point centerPoint,
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleAtCoordsWithBrushAndStrokeWidth(
+        float x,
+        float y,
+        float radius,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithColorAndStrokeWidth(
+        Point centerPoint,
+        float radius,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radius, 
+            radius, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleAtCoordsWithColorAndStrokeWidth(
+        float x,
+        float y,
+        float radius,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(
+        Point centerPoint,
         float radius,
         ICanvasBrush* brush,
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& deviceContext = GetResource(); 
-                CheckInPointer(brush);
-
-                deviceContext->DrawEllipse(
-                    ToD2DEllipse(centerPoint, radius),
-                    ToD2DBrush(brush).Get(),
-                    strokeWidth,
-                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
-            });
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radius, 
+            radius, 
+            brush, 
+            strokeWidth, 
+            strokeStyle);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::FillCircle(
-        ABI::Windows::Foundation::Point centerPoint,
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float radius,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            brush, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleWithColorAndStrokeWidthAndStrokeStyle(
+        Point centerPoint,
+        float radius,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            centerPoint, 
+            radius, 
+            radius, 
+            color, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
+        float x,
+        float y,
+        float radius,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            color, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    //
+    // FillCircle
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::FillCircleWithBrush(
+        Point centerPoint,
         float radius,
         ICanvasBrush* brush)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(brush);
-
-                deviceContext->FillEllipse(
-                    ToD2DEllipse(centerPoint, radius),
-                    ToD2DBrush(brush).Get());
-            });
+        return FillEllipseWithBrush(
+            centerPoint, 
+            radius, 
+            radius, 
+            brush);
     }
 
-    void CanvasDrawingSession::DrawTextImpl(
-        ID2D1DeviceContext* deviceContext,
+
+    IFACEMETHODIMP CanvasDrawingSession::FillCircleAtCoordsWithBrush(
+        float x,
+        float y,
+        float radius,
+        ICanvasBrush* brush)
+    {
+        return FillEllipseWithBrush(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            brush);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillCircleWithColor(
+        Point centerPoint,
+        float radius,
+        Color color)
+    {
+        return FillEllipseWithColor(
+            centerPoint, 
+            radius, 
+            radius, 
+            color);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillCircleAtCoordsWithColor(
+        float x,
+        float y,
+        float radius,
+        Color color)
+    {
+        return FillEllipseWithColor(
+            Point{ x, y }, 
+            radius, 
+            radius, 
+            color);
+    }
+
+
+    //
+    // DrawText
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithColor(
         HSTRING text,
-        const ABI::Windows::Foundation::Rect& rect,
+        Point point,
+        Color color)
+    {
+        return DrawTextAtPointWithColorAndFormat(
+            text, 
+            point, 
+            color, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointCoordsWithColor(
+        HSTRING text,
+        float x,
+        float y,
+        Color color)
+    {
+        return DrawTextAtPointWithColorAndFormat(
+            text, 
+            Point{ x, y }, 
+            color, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithBrushAndFormat(
+        HSTRING text,
+        Point point,
         ICanvasBrush* brush,
         ICanvasTextFormat* format)
     {
-        CheckInPointer(text);
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawTextAtPointImpl(
+                    text, 
+                    point, 
+                    ToD2DBrush(brush).Get(), 
+                    format);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtRectWithBrushAndFormat(
+        HSTRING text,
+        Rect rectangle,
+        ICanvasBrush* brush,
+        ICanvasTextFormat* format)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawTextAtRectImpl(
+                    text,
+                    rectangle,
+                    ToD2DBrush(brush).Get(),
+                    format);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointCoordsWithBrushAndFormat(
+        HSTRING text,
+        float x,
+        float y,
+        ICanvasBrush* brush,
+        ICanvasTextFormat* format)
+    {
+        return DrawTextAtPointWithBrushAndFormat(
+            text,
+            Point{ x, y },
+            brush,
+            format);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtRectCoordsWithBrushAndFormat(
+        HSTRING text,
+        float x,
+        float y,
+        float w,
+        float h,
+        ICanvasBrush* brush,
+        ICanvasTextFormat* format)
+    {
+        return DrawTextAtRectWithBrushAndFormat(
+            text,
+            Rect{ x, y, w, h },
+            brush,
+            format);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithColorAndFormat(
+        HSTRING text,
+        Point point,
+        Color color,
+        ICanvasTextFormat* format)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawTextAtPointImpl(
+                    text, 
+                    point, 
+                    GetColorBrush(color), 
+                    format);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtRectWithColorAndFormat(
+        HSTRING text,
+        Rect rectangle,
+        Color color,
+        ICanvasTextFormat* format)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawTextAtRectImpl(
+                    text, 
+                    rectangle, 
+                    GetColorBrush(color), 
+                    format);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointCoordsWithColorAndFormat(
+        HSTRING text,
+        float x,
+        float y,
+        Color color,
+        ICanvasTextFormat* format)
+    {
+        return DrawTextAtPointWithColorAndFormat(
+            text,
+            Point{ x, y },
+            color,
+            format);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtRectCoordsWithColorAndFormat(
+        HSTRING text,
+        float x,
+        float y,
+        float w,
+        float h,
+        Color color,
+        ICanvasTextFormat* format)
+    {
+        return DrawTextAtRectWithColorAndFormat(
+            text,
+            Rect{ x, y, w, h },
+            color,
+            format);
+    }
+
+
+    void CanvasDrawingSession::DrawTextAtRectImpl(
+        HSTRING text,
+        const Rect& rect,
+        ID2D1Brush* brush,
+        ICanvasTextFormat* format)
+    {
+        auto& deviceContext = GetResource();
         CheckInPointer(brush);
-        CheckInPointer(format);
+
+        if (!format)
+        {
+            format = GetDefaultTextFormat();
+        }
 
         ComPtr<ICanvasTextFormatInternal> formatInternal;
         ThrowIfFailed(format->QueryInterface(formatInternal.GetAddressOf()));
@@ -528,24 +1837,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             textLength,
             formatInternal->GetRealizedTextFormat().Get(),
             &ToD2DRect(rect),
-            ToD2DBrush(brush).Get(),
+            brush,
             static_cast<D2D1_DRAW_TEXT_OPTIONS>(formatInternal->GetDrawTextOptions()));
     }
 
-    
+
     void CanvasDrawingSession::DrawTextAtPointImpl(
-        ID2D1DeviceContext* deviceContext,
         HSTRING text,
-        const ABI::Windows::Foundation::Point& point,
-        ICanvasBrush* brush,
+        const Point& point,
+        ID2D1Brush* brush,
         ICanvasTextFormat* format)
     {
-        CheckInPointer(format);
+        if (!format)
+        {
+            format = GetDefaultTextFormat();
+        }
 
         // When drawing using just a point we specify a zero sized rectangle and
         // disable word wrapping.
-        ABI::Windows::Foundation::Rect rect{point.X, point.Y, 0, 0};
-        
+        Rect rect{ point.X, point.Y, 0, 0 };
+
         //
         // TODO #802: there's a thread-safety implication since we're modifying state
         // on something that _may_ be being used on another thread.
@@ -557,68 +1868,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto restoreWordWrapping = MakeScopeWarden(
             [&]
-            {
-                format->put_WordWrapping(oldWordWrapping);
-            });
+        {
+            format->put_WordWrapping(oldWordWrapping);
+        });
 
-        DrawTextImpl(deviceContext, text, rect, brush, format);
+        DrawTextAtRectImpl(text, rect, brush, format);
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPoint(
-        HSTRING text,
-        ABI::Windows::Foundation::Point point,
-        ICanvasBrush* brush)
+    ICanvasTextFormat* CanvasDrawingSession::GetDefaultTextFormat()
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto defaultFormat = Make<CanvasTextFormat>();
-                DrawTextAtPointImpl(GetResource().Get(), text, point, brush, defaultFormat.Get());
-            });
+        if (!m_defaultTextFormat)
+        {
+            m_defaultTextFormat = Make<CanvasTextFormat>();
+            CheckMakeResult(m_defaultTextFormat);
+        }
+
+        return m_defaultTextFormat.Get();
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawTextAtPointWithFormat(
-        HSTRING text,
-        ABI::Windows::Foundation::Point point,
-        ICanvasBrush* brush,
-        ICanvasTextFormat* format)
+    ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(const Color& color)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                DrawTextAtPointImpl(GetResource().Get(), text, point, brush, format);
-            });
+        if (m_solidColorBrush)
+        {
+            m_solidColorBrush->SetColor(ToD2DColor(color));
+        }
+        else
+        {
+            // TODO #802: pool and reuse this brush along with the device context?
+            auto& deviceContext = GetResource();
+            ThrowIfFailed(deviceContext->CreateSolidColorBrush(ToD2DColor(color), &m_solidColorBrush));
+        }
+
+        return m_solidColorBrush.Get();
     }
 
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawText(
-        HSTRING text,
-        ABI::Windows::Foundation::Rect rect,
-        ICanvasBrush* brush)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto defaultFormat = Make<CanvasTextFormat>();
-                DrawTextImpl(GetResource().Get(), text, rect, brush, defaultFormat.Get());
-            });
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawTextWithFormat(
-        HSTRING text,
-        ABI::Windows::Foundation::Rect rect,
-        ICanvasBrush* brush,
-        ICanvasTextFormat* format)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                DrawTextImpl(GetResource().Get(), text, rect, brush, format);
-            });
-    }
 
     IFACEMETHODIMP CanvasDrawingSession::get_Antialiasing(CanvasAntialiasing* value)
     {

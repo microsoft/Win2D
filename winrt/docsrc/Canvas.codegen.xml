@@ -115,20 +115,6 @@ under the License.
     </member>
 
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasEllipse">
-      <summary>It's like a circle, but squashed.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.Point">
-      <summary>The center point of the ellipse.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusX">
-      <summary>The X axis (horizontal) radius of the ellipse.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasEllipse.RadiusY">
-      <summary>The Y axis (vertical) radius of the ellipse.</summary>
-    </member>
-
-    
     <member name="T:Microsoft.Graphics.Canvas.CanvasLineJoin">
       <summary>Describes the shape that joins two lines or segments.</summary>
       <remarks>
@@ -151,32 +137,6 @@ under the License.
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.MiterOrBevel">
       <summary>Regular angular vertices unless the join would extend beyond the miter limit; otherwise, beveled vertices.</summary>
-    </member>
-
-    
-    <member name="T:Microsoft.Graphics.Canvas.CanvasRoundedRectangle">
-      <summary>Describes a rectangle with rounded corners.</summary>
-      <remarks>
-        <p>Each corner of the rectangle specified by Rect is replaced with a quarter ellipse,
-           with a radius in each direction specified by RadiusX and RadiusY.</p>
-
-        <p>If the RadiusX is greater than or equal to half the width of the rectangle,
-           and the RadiusY is greater than or equal to one-half the height, the 
-           rounded rectangle is an ellipse with the same width and height as the rect.</p>
-
-        <p>Even when both RadiusX and RadiusY are zero, the rounded rectangle is 
-           different from a rectangle. When stroked, the corners of the rounded 
-           rectangle are roundly joined, not mitered (square).</p>
-      </remarks>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.Rect">
-      <summary>The coordinates of the rectangle.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusX">
-      <summary>The X axis (horizontal) radius for the quarter ellipse that is drawn to replace every corner of the rectangle.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasRoundedRectangle.RadiusY">
-      <summary>The Y axis (vertical) radius for the quarter ellipse that is drawn to replace every corner of the rectangle.</summary>
     </member>
 
     

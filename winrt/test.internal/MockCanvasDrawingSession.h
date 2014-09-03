@@ -15,6 +15,7 @@
 namespace canvas
 {
     using namespace ABI::Windows::Foundation;
+    using namespace ABI::Windows::UI;
 
     class MockCanvasDrawingSession : public RuntimeClass<
         ICanvasDrawingSession,
@@ -26,298 +27,126 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHODIMP Clear(
-            ABI::Windows::UI::Color color) override
-        {
-            Assert::Fail(L"Unexpected call to Clear");
-            return E_NOTIMPL;
+#define DONT_EXPECT(name, ...)                                  \
+        IFACEMETHODIMP name(__VA_ARGS__) override               \
+        {                                                       \
+            Assert::Fail(L"Unexpected call to " WIDEN(#name));  \
+            return E_NOTIMPL;                                   \
         }
 
-        IFACEMETHOD(DrawImage)(
-            ICanvasImage* image) override
-        {
-            Assert::Fail(L"Unexpected call to DrawImage");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(Clear , Color);
 
-        IFACEMETHOD(DrawImageWithOffset)(
-            ICanvasImage* image,
-            ABI::Windows::Foundation::Point offset) override
-        {
-            Assert::Fail(L"Unexpected call to DrawImageWithOffset");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(DrawImage         , ICanvasImage*, Point);
+        DONT_EXPECT(DrawImageAtCoords , ICanvasImage*, float, float);
+        DONT_EXPECT(DrawImageAtOrigin , ICanvasImage*);
 
-        IFACEMETHODIMP DrawLine(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
-            ICanvasBrush* brush) override
-        {
-            Assert::Fail(L"Unexpected call to DrawLine");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(DrawLineWithBrush                                     , Point, Point, ICanvasBrush*);
+        DONT_EXPECT(DrawLineAtCoordsWithBrush                             , float, float, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawLineWithColor                                     , Point, Point, Color);
+        DONT_EXPECT(DrawLineAtCoordsWithColor                             , float, float, float, float, Color);
+        DONT_EXPECT(DrawLineWithBrushAndStrokeWidth                       , Point, Point, ICanvasBrush*, float);
+        DONT_EXPECT(DrawLineAtCoordsWithBrushAndStrokeWidth               , float, float, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawLineWithColorAndStrokeWidth                       , Point, Point, Color, float);
+        DONT_EXPECT(DrawLineAtCoordsWithColorAndStrokeWidth               , float, float, float, float, Color, float);
+        DONT_EXPECT(DrawLineWithBrushAndStrokeWidthAndStrokeStyle         , Point, Point, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawLineWithColorAndStrokeWidthAndStrokeStyle         , Point, Point, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, float, Color, float, ICanvasStrokeStyle*);
 
-        IFACEMETHODIMP DrawLineWithStrokeWidth(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
-            ICanvasBrush* brush,
-            float strokeWidth) override
-        {
-            Assert::Fail(L"Unexpected call to DrawLineWithStrokeWidth");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(DrawRectangleWithBrush                                     , Rect, ICanvasBrush*);
+        DONT_EXPECT(DrawRectangleAtCoordsWithBrush                             , float, float, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawRectangleWithColor                                     , Rect, Color);
+        DONT_EXPECT(DrawRectangleAtCoordsWithColor                             , float, float, float, float, Color);
+        DONT_EXPECT(DrawRectangleWithBrushAndStrokeWidth                       , Rect, ICanvasBrush*, float);
+        DONT_EXPECT(DrawRectangleAtCoordsWithBrushAndStrokeWidth               , float, float, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawRectangleWithColorAndStrokeWidth                       , Rect, Color, float);
+        DONT_EXPECT(DrawRectangleAtCoordsWithColorAndStrokeWidth               , float, float, float, float, Color, float);
+        DONT_EXPECT(DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle         , Rect, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawRectangleWithColorAndStrokeWidthAndStrokeStyle         , Rect, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, float, Color, float, ICanvasStrokeStyle*);
 
-        IFACEMETHODIMP DrawLineWithStrokeWidthAndStrokeStyle(
-            ABI::Windows::Foundation::Point point0,
-            ABI::Windows::Foundation::Point point1,
-            ICanvasBrush* brush,
-            float strokeWidth,
-            ICanvasStrokeStyle* strokeStyle) override
-        {
-            Assert::Fail(L"Unexpected call to DrawLineWithStrokeWidthAndStrokeStyle");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(FillRectangleWithBrush         , Rect, ICanvasBrush*);
+        DONT_EXPECT(FillRectangleAtCoordsWithBrush , float, float, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillRectangleWithColor         , Rect, Color);
+        DONT_EXPECT(FillRectangleAtCoordsWithColor , float, float, float, float, Color);
 
-        IFACEMETHODIMP DrawRectangle(
-            ABI::Windows::Foundation::Rect rect,
-            ICanvasBrush* brush) override
-        {
-            Assert::Fail(L"Unexpected call to DrawRectangle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawRectangleWithStrokeWidth(
-            ABI::Windows::Foundation::Rect rect,
-            ICanvasBrush* brush,
-            float strokeWidth) override
-        {
-            Assert::Fail(L"Unexpected call to DrawRectangleWithStrokeWidth");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawRectangleWithStrokeWidthAndStrokeStyle(
-            ABI::Windows::Foundation::Rect rect,
-            ICanvasBrush* brush,
-            float strokeWidth,
-            ICanvasStrokeStyle* strokeStyle) override
-        {
-            Assert::Fail(L"Unexpected call to DrawRectangleWithStrokeWidthAndStrokeStyle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP FillRectangle(
-            ABI::Windows::Foundation::Rect rect,
-            ICanvasBrush* brush) override
-        {
-            Assert::Fail(L"Unexpected call to FillRectangle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawRoundedRectangle(
-            CanvasRoundedRectangle roundedRectangle,
-            ICanvasBrush* brush) override
-        {
-            Assert::Fail(L"Unexpected call to DrawRoundedRectangle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawRoundedRectangleWithStrokeWidth(
-            CanvasRoundedRectangle roundedRectangle,
-            ICanvasBrush* brush,
-            float strokeWidth) override
-        {
-            Assert::Fail(L"Unexpected call to DrawRoundedRectangleWithStrokeWidth");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawRoundedRectangleWithStrokeWidthAndStrokeStyle(
-            CanvasRoundedRectangle roundedRectangle,
-            ICanvasBrush* brush,
-            float strokeWidth,
-            ICanvasStrokeStyle* strokeStyle) override
-        {
-            Assert::Fail(L"Unexpected call to DrawRoundedRectangleWithStrokeWidthAndStrokeStyle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP FillRoundedRectangle(
-            CanvasRoundedRectangle roundedRectangle,
-            ICanvasBrush* brush) override
-        {
-            Assert::Fail(L"Unexpected call to FillRoundedRectangle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawEllipse(
-            CanvasEllipse ellipse,
-            ICanvasBrush* brush) override
-        {
-            Assert::Fail(L"Unexpected call to DrawEllipse");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawEllipseWithStrokeWidth(
-            CanvasEllipse ellipse,
-            ICanvasBrush* brush,
-            float strokeWidth) override
-        {
-            Assert::Fail(L"Unexpected call to DrawEllipseWithStrokeWidth");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawEllipseWithStrokeWidthAndStrokeStyle(
-            CanvasEllipse ellipse,
-            ICanvasBrush* brush,
-            float strokeWidth,
-            ICanvasStrokeStyle* strokeStyle) override
-        {
-            Assert::Fail(L"Unexpected call to DrawEllipseWithStrokeWidthAndStrokeStyle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP FillEllipse(
-            CanvasEllipse ellipse,
-            ICanvasBrush* brush) override
-        {
-            Assert::Fail(L"Unexpected call to FillEllipse");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawCircle(
-            ABI::Windows::Foundation::Point centerPoint,
-            float radius,
-            ICanvasBrush* brush)
-        {
-            Assert::Fail(L"Unexpected call to DrawCircle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawCircleWithStrokeWidth(
-            ABI::Windows::Foundation::Point centerPoint,
-            float radius,
-            ICanvasBrush* brush,
-            float strokeWidth)
-        {
-            Assert::Fail(L"Unexpected call to DrawCircleWithStrokeWidth");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP DrawCircleWithStrokeWidthAndStrokeStyle(
-            ABI::Windows::Foundation::Point centerPoint,
-            float radius,
-            ICanvasBrush* brush,
-            float strokeWidth,
-            ICanvasStrokeStyle* strokeStyle)
-        {
-            Assert::Fail(L"Unexpected call to DrawCircleWithStrokeWidthAndStrokeStyle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP FillCircle(
-            ABI::Windows::Foundation::Point centerPoint,
-            float radius,
-            ICanvasBrush* brush)
-        {
-            Assert::Fail(L"Unexpected call to FillCircle");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(DrawRoundedRectangleWithBrush                                     , Rect, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawRoundedRectangleAtCoordsWithBrush                             , float, float, float, float, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawRoundedRectangleWithColor                                     , Rect, float, float, Color);
+        DONT_EXPECT(DrawRoundedRectangleAtCoordsWithColor                             , float, float, float, float, float, float, Color);
+        DONT_EXPECT(DrawRoundedRectangleWithBrushAndStrokeWidth                       , Rect, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth               , float, float, float, float, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawRoundedRectangleWithColorAndStrokeWidth                       , Rect, float, float, Color, float);
+        DONT_EXPECT(DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth               , float, float, float, float, float, float, Color, float);
+        DONT_EXPECT(DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle         , Rect, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle         , Rect, float, float, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, float, float, float, Color, float, ICanvasStrokeStyle*);
         
-        IFACEMETHODIMP DrawTextAtPoint(
-            HSTRING,
-            ABI::Windows::Foundation::Point,
-            ICanvasBrush*) override
-        {
-            Assert::Fail(L"Unexpected call to DrawTextAtPoint");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(FillRoundedRectangleWithBrush         , Rect, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillRoundedRectangleAtCoordsWithBrush , float, float, float, float, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillRoundedRectangleWithColor         , Rect, float, float, Color);
+        DONT_EXPECT(FillRoundedRectangleAtCoordsWithColor , float, float, float, float, float, float, Color);
+        
+        DONT_EXPECT(DrawEllipseWithBrush                                     , Point, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawEllipseAtCoordsWithBrush                             , float, float, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawEllipseWithColor                                     , Point, float, float, Color);
+        DONT_EXPECT(DrawEllipseAtCoordsWithColor                             , float, float, float, float, Color);
+        DONT_EXPECT(DrawEllipseWithBrushAndStrokeWidth                       , Point, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawEllipseAtCoordsWithBrushAndStrokeWidth               , float, float, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawEllipseWithColorAndStrokeWidth                       , Point, float, float, Color, float);
+        DONT_EXPECT(DrawEllipseAtCoordsWithColorAndStrokeWidth               , float, float, float, float, Color, float);
+        DONT_EXPECT(DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle         , Point, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawEllipseWithColorAndStrokeWidthAndStrokeStyle         , Point, float, float, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, float, Color, float, ICanvasStrokeStyle*);
 
-        IFACEMETHODIMP DrawTextAtPointWithFormat(
-            HSTRING,
-            ABI::Windows::Foundation::Point,
-            ICanvasBrush*,
-            ICanvasTextFormat*) override
-        {
-            Assert::Fail(L"Unexpected call to DrawTextAtPointWithFormat");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(FillEllipseWithBrush         , Point, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillEllipseAtCoordsWithBrush , float, float, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillEllipseWithColor         , Point, float, float, Color);
+        DONT_EXPECT(FillEllipseAtCoordsWithColor , float, float, float, float, Color);
+        
+        DONT_EXPECT(DrawCircleWithBrush                                     , Point, float, ICanvasBrush*);
+        DONT_EXPECT(DrawCircleAtCoordsWithBrush                             , float, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawCircleWithColor                                     , Point, float, Color);
+        DONT_EXPECT(DrawCircleAtCoordsWithColor                             , float, float, float, Color);
+        DONT_EXPECT(DrawCircleWithBrushAndStrokeWidth                       , Point, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawCircleAtCoordsWithBrushAndStrokeWidth               , float, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawCircleWithColorAndStrokeWidth                       , Point, float, Color, float);
+        DONT_EXPECT(DrawCircleAtCoordsWithColorAndStrokeWidth               , float, float, float, Color, float);
+        DONT_EXPECT(DrawCircleWithBrushAndStrokeWidthAndStrokeStyle         , Point, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle , float, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawCircleWithColorAndStrokeWidthAndStrokeStyle         , Point, float, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle , float, float, float, Color, float, ICanvasStrokeStyle*);
 
-        IFACEMETHODIMP DrawText(
-            HSTRING,
-            ABI::Windows::Foundation::Rect,
-            ICanvasBrush*) override
-        {
-            Assert::Fail(L"Unexpected call to DrawText");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(FillCircleWithBrush         , Point, float, ICanvasBrush*);
+        DONT_EXPECT(FillCircleAtCoordsWithBrush , float, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillCircleWithColor         , Point, float, Color);
+        DONT_EXPECT(FillCircleAtCoordsWithColor , float, float, float, Color);
 
-        IFACEMETHODIMP DrawTextWithFormat(
-            HSTRING,
-            ABI::Windows::Foundation::Rect,
-            ICanvasBrush*,
-            ICanvasTextFormat*) override
-        {
-            Assert::Fail(L"Unexpected call to DrawTextWithFormat");
-            return E_NOTIMPL;
-        }
+        DONT_EXPECT(DrawTextAtPointWithColor                , HSTRING, Point, Color);
+        DONT_EXPECT(DrawTextAtPointCoordsWithColor          , HSTRING, float, float, Color);
+        DONT_EXPECT(DrawTextAtPointWithBrushAndFormat       , HSTRING, Point, ICanvasBrush*, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtRectWithBrushAndFormat        , HSTRING, Rect, ICanvasBrush*, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtPointCoordsWithBrushAndFormat , HSTRING, float, float, ICanvasBrush*, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtRectCoordsWithBrushAndFormat  , HSTRING, float, float, float, float, ICanvasBrush*, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtPointWithColorAndFormat       , HSTRING, Point, Color, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtRectWithColorAndFormat        , HSTRING, Rect, Color, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtPointCoordsWithColorAndFormat , HSTRING, float, float, Color, ICanvasTextFormat*);
+        DONT_EXPECT(DrawTextAtRectCoordsWithColorAndFormat  , HSTRING, float, float, float, float, Color, ICanvasTextFormat*);
 
-        IFACEMETHODIMP get_Antialiasing(CanvasAntialiasing* value)
-		{
-			Assert::Fail(L"Unexpected call to get_Antialiasing");
-			return E_NOTIMPL;
-		}
+        DONT_EXPECT(get_Antialiasing     , CanvasAntialiasing*);
+        DONT_EXPECT(put_Antialiasing     , CanvasAntialiasing);
+        DONT_EXPECT(get_Blend            , CanvasBlend*);
+        DONT_EXPECT(put_Blend            , CanvasBlend);
+        DONT_EXPECT(get_TextAntialiasing , CanvasTextAntialiasing*);
+        DONT_EXPECT(put_TextAntialiasing , CanvasTextAntialiasing);
+        DONT_EXPECT(get_Transform        , ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2*);
+        DONT_EXPECT(put_Transform        , ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2);
+        DONT_EXPECT(get_Units            , CanvasUnits*);
+        DONT_EXPECT(put_Units            , CanvasUnits);
 
-        IFACEMETHODIMP put_Antialiasing(CanvasAntialiasing value)
-		{
-			Assert::Fail(L"Unexpected call to put_Antialiasing");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP get_Blend(CanvasBlend* value)
-		{
-			Assert::Fail(L"Unexpected call to get_Blend");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP put_Blend(CanvasBlend value)
-		{
-			Assert::Fail(L"Unexpected call to put_Blend");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP get_TextAntialiasing(CanvasTextAntialiasing* value)
-		{
-			Assert::Fail(L"Unexpected call to get_TextAntialiasing");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP put_TextAntialiasing(CanvasTextAntialiasing value)
-		{
-			Assert::Fail(L"Unexpected call to put_TextAntialiasing");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP get_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value)
-		{
-			Assert::Fail(L"Unexpected call to get_Transform");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP put_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value)
-		{
-			Assert::Fail(L"Unexpected call to put_Transform");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP get_Units(CanvasUnits* value)
-		{
-			Assert::Fail(L"Unexpected call to get_Units");
-			return E_NOTIMPL;
-		}
-
-        IFACEMETHODIMP put_Units(CanvasUnits value)
-		{
-			Assert::Fail(L"Unexpected call to put_Units");
-			return E_NOTIMPL;
-		}
+#undef DONT_EXPECT
     };
 }

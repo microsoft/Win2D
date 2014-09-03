@@ -25,7 +25,6 @@ namespace CsConsumer
     public sealed partial class MainPage : Page
     {
         Random m_random = new Random();
-        CanvasSolidColorBrush m_brush;
         CanvasBitmap m_bitmap_tiger;
 
         enum DrawnContentType
@@ -82,7 +81,6 @@ namespace CsConsumer
         void m_canvasControl_CreateResources(CanvasControl sender, object args)
         {
             UpdateCanvasControlSize();
-            m_brush = new CanvasSolidColorBrush(sender, Colors.White);
         }
 
         private void OnRedrawClicked(object sender, RoutedEventArgs e)
@@ -115,7 +113,7 @@ namespace CsConsumer
         }
         void DrawDashedLines(
             CanvasDrawingSession ds,
-            CanvasSolidColorBrush canvasSolidColorBrush,
+            Color color,
             int horizontalLimit,
             int verticalLimit)
         {
@@ -126,7 +124,8 @@ namespace CsConsumer
             {
                 ds.DrawLine(
                     NextRandomPoint(horizontalLimit, verticalLimit),
-                    NextRandomPoint(horizontalLimit, verticalLimit), canvasSolidColorBrush,
+                    NextRandomPoint(horizontalLimit, verticalLimit),
+                    color,
                     5.0f,
                     strokeStyle);
             }
@@ -142,8 +141,11 @@ namespace CsConsumer
 
             ds.Clear(NextRandomColor());
                 
-            m_brush.Color = NextRandomColor();
-            
+            Rect rect;
+            Point point;
+            float radiusX;
+            float radiusY;
+
             switch (drawnContentType)
             {
                 case DrawnContentType.Clear_Only:
@@ -176,89 +178,95 @@ namespace CsConsumer
                     ds.DrawLine(
                         NextRandomPoint(horizontalLimit, verticalLimit),
                         NextRandomPoint(horizontalLimit, verticalLimit),
-                        m_brush);
+                        NextRandomColor());
                     break;
 
                 case DrawnContentType.Line_Thick:
                     ds.DrawLine(
                         NextRandomPoint(horizontalLimit, verticalLimit),
                         NextRandomPoint(horizontalLimit, verticalLimit),
-                        m_brush,
+                        NextRandomColor(),
                         thickStrokeWidth);
                     break;
 
                 case DrawnContentType.Rectangle_Thin:
                     ds.DrawRectangle(
                         NextRandomRect(horizontalLimit, verticalLimit),
-                        m_brush);
+                        NextRandomColor());
                     break;
 
                 case DrawnContentType.Rectangle_Thick:
                     ds.DrawRectangle(
                         NextRandomRect(horizontalLimit, verticalLimit),
-                        m_brush,
+                        NextRandomColor(),
                         thickStrokeWidth);
                     break;
 
                 case DrawnContentType.Rectangle_Filled:
                     ds.FillRectangle(
                         NextRandomRect(horizontalLimit, verticalLimit),
-                        m_brush);
+                        NextRandomColor());
                     break;
 
                 case DrawnContentType.RoundedRectangle_Thin:
+                    NextRandomRoundedRect(horizontalLimit, verticalLimit, out rect, out radiusX, out radiusY);
                     ds.DrawRoundedRectangle(
-                        NextRandomRoundedRect(horizontalLimit, verticalLimit),
-                        m_brush);
+                        rect, radiusX, radiusY,
+                        NextRandomColor());
                     break;
 
                 case DrawnContentType.RoundedRectangle_Thick:
+                    NextRandomRoundedRect(horizontalLimit, verticalLimit, out rect, out radiusX, out radiusY);
                     ds.DrawRoundedRectangle(
-                        NextRandomRoundedRect(horizontalLimit, verticalLimit),
-                        m_brush,
+                        rect, radiusX, radiusY,
+                        NextRandomColor(),
                         thickStrokeWidth);
                     break;
 
                 case DrawnContentType.Ellipse_Thin:
+                    NextRandomEllipse(horizontalLimit, verticalLimit, out point, out radiusX, out radiusY);
                     ds.DrawEllipse(
-                        NextRandomEllipse(horizontalLimit, verticalLimit),
-                        m_brush);
+                        point, radiusX, radiusY,
+                        NextRandomColor());
                     break;
 
                 case DrawnContentType.Ellipse_Thick:
+                    NextRandomEllipse(horizontalLimit, verticalLimit, out point, out radiusX, out radiusY);
                     ds.DrawEllipse(
-                        NextRandomEllipse(horizontalLimit, verticalLimit),
-                        m_brush,
+                        point, radiusX, radiusY,
+                        NextRandomColor(),
                         thickStrokeWidth);
                     break;
 
                 case DrawnContentType.Ellipse_Fill:
+                    NextRandomEllipse(horizontalLimit, verticalLimit, out point, out radiusX, out radiusY);
                     ds.FillEllipse(
-                        NextRandomEllipse(horizontalLimit, verticalLimit),
-                        m_brush);
+                        point, radiusX, radiusY,
+                        NextRandomColor());
                     break;
 
                 case DrawnContentType.Circle_Fill:
                     ds.FillCircle(
                         NextRandomPoint(horizontalLimit, verticalLimit),
                         100,
-                        m_brush);
+                        NextRandomColor());
                     break;
 
                 case DrawnContentType.Dashed_Lines:
-                    DrawDashedLines(ds, m_brush, horizontalLimit, verticalLimit);
+                    DrawDashedLines(ds, NextRandomColor(), horizontalLimit, verticalLimit);
                     break;
 
                 case DrawnContentType.Text:
                     var p = NextRandomPoint(horizontalLimit, verticalLimit);
                     var x = p.X;
                     var y = p.Y;
-                    ds.DrawLine(new Point(x, 0), new Point(x, verticalLimit), m_brush);
-                    ds.DrawLine(new Point(0, y), new Point(horizontalLimit, y), m_brush);
+                    var color = NextRandomColor();
+                    ds.DrawLine(new Point(x, 0), new Point(x, verticalLimit), color);
+                    ds.DrawLine(new Point(0, y), new Point(horizontalLimit, y), color);
                     ds.DrawText(
                         "Centered",
                         p,
-                        m_brush,
+                        color,
                         new CanvasTextFormat()
                         {
                             FontSize = 18,
@@ -267,11 +275,11 @@ namespace CsConsumer
                         });
 
                     var r = NextRandomRect(horizontalLimit, verticalLimit);
-                    ds.DrawRectangle(r, m_brush);
+                    ds.DrawRectangle(r, color);
                     ds.DrawText(
                         m_quiteLongText,
                         r,
-                        m_brush,
+                        NextRandomColor(),
                         new CanvasTextFormat()
                         {
                             FontFamily = "Comic Sans MS",
@@ -282,23 +290,23 @@ namespace CsConsumer
                     break;
 
                 case DrawnContentType.Test_Scene0_Default:
-                    GeometryTestScene0.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Default);
+                    GeometryTestScene0.DrawGeometryTestScene(ds, TestSceneRenderingType.Default);
                     break;
 
                 case DrawnContentType.Test_Scene0_Wireframe:
-                    GeometryTestScene0.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Wireframe);
+                    GeometryTestScene0.DrawGeometryTestScene(ds, TestSceneRenderingType.Wireframe);
                     break;
 
                 case DrawnContentType.Test_Scene1_Default:
-                    GeometryTestScene1.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Default);
+                    GeometryTestScene1.DrawGeometryTestScene(ds, TestSceneRenderingType.Default);
                     break;
 
                 case DrawnContentType.Test_Scene1_Randomized:
-                    GeometryTestScene1.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Randomized);
+                    GeometryTestScene1.DrawGeometryTestScene(ds, TestSceneRenderingType.Randomized);
                     break;
 
                 case DrawnContentType.Test_Scene1_Wireframe:
-                    GeometryTestScene1.DrawGeometryTestScene(ds, m_brush, TestSceneRenderingType.Wireframe);
+                    GeometryTestScene1.DrawGeometryTestScene(ds, TestSceneRenderingType.Wireframe);
                     break;
 
                 default:
@@ -307,22 +315,18 @@ namespace CsConsumer
             }
         }
 
-        private CanvasEllipse NextRandomEllipse(int horizontalLimit, int verticalLimit)
+        private void NextRandomEllipse(int horizontalLimit, int verticalLimit, out Point point, out float radiusX, out float radiusY)
         {
-            CanvasEllipse ellipse = new CanvasEllipse();
-            ellipse.Point = NextRandomPoint(horizontalLimit, verticalLimit);
-            ellipse.RadiusX = m_random.Next(horizontalLimit / 2);
-            ellipse.RadiusY = m_random.Next(verticalLimit / 2);
-            return ellipse;
+            point = NextRandomPoint(horizontalLimit, verticalLimit);
+            radiusX = m_random.Next(horizontalLimit / 2);
+            radiusY = m_random.Next(verticalLimit / 2);
         }
 
-        private CanvasRoundedRectangle NextRandomRoundedRect(int horizontalLimit, int verticalLimit)
+        private void NextRandomRoundedRect(int horizontalLimit, int verticalLimit, out Rect rectangle, out float radiusX, out float radiusY)
         {
-            CanvasRoundedRectangle roundedRectangle = new CanvasRoundedRectangle();
-            roundedRectangle.Rect = NextRandomRect(horizontalLimit, verticalLimit);
-            roundedRectangle.RadiusX = m_random.Next((int)(roundedRectangle.Rect.Width) / 2);
-            roundedRectangle.RadiusY = m_random.Next((int)(roundedRectangle.Rect.Height) / 2);
-            return roundedRectangle;
+            rectangle = NextRandomRect(horizontalLimit, verticalLimit);
+            radiusX = m_random.Next((int)(rectangle.Width) / 2);
+            radiusY = m_random.Next((int)(rectangle.Height) / 2);
         }
 
         private Rect NextRandomRect(int horizontalLimit, int verticalLimit)
@@ -351,7 +355,7 @@ namespace CsConsumer
             ds.DrawText(
                 "Please load bitmap before drawing it",
                 new Point(x, y),
-                m_brush,
+                Colors.Red,
                 new CanvasTextFormat()
                 {
                     FontSize = 24,

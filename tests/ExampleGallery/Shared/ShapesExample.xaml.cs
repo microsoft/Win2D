@@ -11,6 +11,7 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Numerics;
 using System;
 using System.Collections.Generic;
 using Windows.Foundation;
@@ -57,13 +58,6 @@ namespace ExampleGallery
             this.canvas.Invalidate();
         }
 
-        CanvasSolidColorBrush brush;
-
-        void Canvas_CreateResources(CanvasControl sender, object args)
-        {
-            this.brush = new CanvasSolidColorBrush(sender, Colors.AntiqueWhite);
-        }
-
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var ds = args.DrawingSession;
@@ -82,8 +76,8 @@ namespace ExampleGallery
 
         private void DrawLine(CanvasControl sender, CanvasDrawingSession ds)
         {
-            var width = sender.ActualWidth;
-            var height = sender.ActualHeight;
+            var width = (float)sender.ActualWidth;
+            var height = (float)sender.ActualHeight;
 
             var middle = height / 2;
 
@@ -91,86 +85,80 @@ namespace ExampleGallery
 
             for (int i = 0; i < steps; ++i)
             {
-                var mu = (double)i / steps;
-                var a = mu * Math.PI * 2;
+                var mu = (float)i / steps;
+                var a = (float)(mu * Math.PI * 2);
 
-                byte c = (byte)((Math.Sin(a) + 1) * 127.5);
-                this.brush.Color = Color.FromArgb(255, 128, 128, c);
+                var color = GradientColor(mu);
 
                 var x = width * mu;
-                var y = middle + Math.Sin(a) * (middle * 0.3);
+                var y = (float)(middle + Math.Sin(a) * (middle * 0.3));
 
                 var strokeWidth = (float)(Math.Cos(a) + 1) * 5;
 
-                ds.DrawLine(new Point(x, 0), new Point(x, y), this.brush, strokeWidth);
-                ds.DrawLine(new Point(x, height), new Point(x, y), this.brush, 10 - strokeWidth);
+                ds.DrawLine(x, 0, x, y, color, strokeWidth);
+                ds.DrawLine(x, height, x, y, color, 10 - strokeWidth);
             }
         }
 
         private void DrawRectangle(CanvasControl sender, CanvasDrawingSession ds)
         {
-            var width = sender.ActualWidth;
-            var height = sender.ActualHeight;
+            var width = (float)sender.ActualWidth;
+            var height = (float)sender.ActualHeight;
 
             int steps = Math.Min((int)(width / 10), 20);
 
             for (int i = 0; i < steps; ++i)
             {
-                var mu = (double)i / steps;
-                var a = mu * Math.PI * 2;
+                var mu = (float)i / steps;
 
-                mu *= 0.5;
+                var color = GradientColor(mu);
+
+                mu *= 0.5f;
                 var x = mu * width;
                 var y = mu * height;
 
                 var xx = (1 - mu) * width;
                 var yy = (1 - mu) * height;
 
-                byte c = (byte)((Math.Sin(a) + 1) * 127.5);
-                this.brush.Color = Color.FromArgb(255, 90, 128, c);
-
-                ds.DrawRectangle(new Rect(new Point(x, y), new Point(xx, yy)), this.brush, 2.0f);
+                ds.DrawRectangle(x, y, xx - x, yy - y, color, 2.0f);
             }
         }
 
         private void DrawRoundedRectangle(CanvasControl sender, CanvasDrawingSession ds)
         {
-            var width = sender.ActualWidth;
-            var height = sender.ActualHeight;
+            var width = (float)sender.ActualWidth;
+            var height = (float)sender.ActualHeight;
 
             int steps = Math.Min((int)(width / 30), 10);
 
             for (int i = 0; i < steps; ++i)
             {
-                var mu = (double)i / steps;
-                var a = mu * Math.PI * 2;
+                var mu = (float)i / steps;
 
-                mu *= 0.5;
+                var color = GradientColor(mu);
+
+                mu *= 0.5f;
                 var x = mu * width;
                 var y = mu * height;
 
                 var xx = (1 - mu) * width;
                 var yy = (1 - mu) * height;
 
-                byte c = (byte)((Math.Sin(a) + 1) * 127.5);
-                this.brush.Color = Color.FromArgb(255, 90, 128, c);
+                var radius = mu * 50.0f;
 
                 ds.DrawRoundedRectangle(
-                    new CanvasRoundedRectangle()
-                    {
-                        RadiusX=(float)(mu * 50),
-                        RadiusY = (float)(mu * 50),
-                        Rect=new Rect(new Point(x,y), new Point(xx,yy))              
-                    },
-                    this.brush,
+                    x, y,
+                    xx-x, yy-y,
+                    radius, radius,
+                    color,
                     2.0f);
             }
         }
 
         private void DrawCircles(CanvasControl sender, CanvasDrawingSession ds)
         {
-            var width = sender.ActualWidth;
-            var height = sender.ActualHeight;
+            float width = (float)sender.ActualWidth;
+            float height = (float)sender.ActualHeight;
 
             float endpointMargin = 100;
             float controlMarginX = endpointMargin * 4;
@@ -178,7 +166,7 @@ namespace ExampleGallery
 
             for (int i = 0; i < 25; i++)
             {
-                Point[] bez = new Point[4];
+                Vector2[] bez = new Vector2[4];
                 int n = (i * 24) + 9 - (i / 2);
 
                 for (int k = 0; k < 3; k++)
@@ -195,25 +183,27 @@ namespace ExampleGallery
                 float t = 0;
                 for (int step = 0; step < nSteps; step++)
                 {
-                    double s = 1 - t;
-                    double ss = s * s;
-                    double sss = ss * s;
-                    double tt = t * t;
-                    double ttt = tt * t;
-                    double x = (sss * bez[0].X) + (3 * ss * t * bez[1].X) + (3 * s * tt * bez[2].X) + (ttt * bez[3].X);
-                    double y = (sss * bez[0].Y) + (3 * ss * t * bez[1].Y) + (3 * s * tt * bez[2].Y) + (ttt * bez[3].Y);
-                    float radius = (float)(ttt * 100);
-                    float strokeWidth = (float)((0.5 - Math.Abs(ss - 0.5)) * 10);
+                    float s = 1 - t;
+                    float ss = s * s;
+                    float sss = ss * s;
+                    float tt = t * t;
+                    float ttt = tt * t;
+                    float x = (sss * bez[0].X) + (3 * ss * t * bez[1].X) + (3 * s * tt * bez[2].X) + (ttt * bez[3].X);
+                    float y = (sss * bez[0].Y) + (3 * ss * t * bez[1].Y) + (3 * s * tt * bez[2].Y) + (ttt * bez[3].Y);
+                    float radius = ttt * 100;
+                    float strokeWidth = (0.5f - Math.Abs(ss - 0.5f)) * 10;
 
-                    var a = t * Math.PI * 2;
-                    byte c = (byte)((Math.Sin(a) + 1) * 127.5);
-                    this.brush.Color = Color.FromArgb(255, 90, 128, c);
-
-                    ds.DrawCircle(new Point(x, y), radius, this.brush, strokeWidth);
+                    ds.DrawCircle(x, y, radius, GradientColor(t), strokeWidth);
                     t += tStep;
                 }
             }
+        }
 
+        private static Color GradientColor(float mu)
+        {
+            byte c = (byte)((Math.Sin(mu * Math.PI * 2) + 1) * 127.5);
+            
+            return Color.FromArgb(255, 90, 128, c);
         }
     }
 }

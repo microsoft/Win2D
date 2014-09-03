@@ -119,25 +119,18 @@ namespace ExampleGallery
                 this.strokeStyle);
 
             ds.DrawRoundedRectangle(
-                new CanvasRoundedRectangle()
-                {
-                    Rect = bottomLeftRect,
-                    RadiusX = (float)(width * 0.1),
-                    RadiusY = (float)(height * 0.1)
-                },
+                bottomLeftRect,
+                (float)(width * 0.1),
+                (float)(height * 0.1),
                 this.brush,
                 strokeWidth,
                 this.strokeStyle);
 
             ds.DrawEllipse(
-                new CanvasEllipse()
-                {
-                    Point = new Point(
-                        bottomRightRect.Left + bottomRightRect.Width * 0.5,
-                        bottomRightRect.Top + bottomRightRect.Height * 0.5),
-                    RadiusX = (float)(bottomRightRect.Width * 0.5),
-                    RadiusY = (float)(bottomRightRect.Height * 0.5)
-                },
+                (float)(bottomRightRect.Left + bottomRightRect.Width * 0.5),
+                (float)(bottomRightRect.Top + bottomRightRect.Height * 0.5),
+                (float)(bottomRightRect.Width * 0.5),
+                (float)(bottomRightRect.Height * 0.5),
                 this.brush,
                 strokeWidth,
                 this.strokeStyle);

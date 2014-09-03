@@ -47,6 +47,7 @@ namespace canvas
         std::function<void(ID2D1Image*)> MockDrawImage;
         std::function<void(ID2D1Device**)> MockGetDevice;
         std::function<HRESULT(ID2D1Effect **)> MockCreateEffect;
+        std::function<HRESULT(const D2D1_COLOR_F* color, const D2D1_BRUSH_PROPERTIES* brushProperties, ID2D1SolidColorBrush** solidColorBrush)> MockCreateSolidColorBrush;
 
         // ID2D1Resource
 
@@ -87,8 +88,15 @@ namespace canvas
             ID2D1SolidColorBrush** solidColorBrush
             ) override
         {
-            ComPtr<MockD2DSolidColorBrush> mockD2DSolidColorBrush = Make<MockD2DSolidColorBrush>();
-            return mockD2DSolidColorBrush.CopyTo(solidColorBrush);
+            if (MockCreateSolidColorBrush)
+            {
+                return MockCreateSolidColorBrush(color, brushProperties, solidColorBrush);
+            }
+            else
+            {
+                ComPtr<MockD2DSolidColorBrush> mockD2DSolidColorBrush = Make<MockD2DSolidColorBrush>();
+                return mockD2DSolidColorBrush.CopyTo(solidColorBrush);
+            }
         }
 
         IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *,UINT32,D2D1_GAMMA,D2D1_EXTEND_MODE,ID2D1GradientStopCollection **) override

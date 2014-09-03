@@ -44,120 +44,111 @@ namespace CsConsumer
             }
         }
 
-        public void FillRectangle(Rect rect, CanvasSolidColorBrush brush)
+        public void FillRectangle(Rect rect, Color color)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.FillRectangle(rect, brush);
+                m_drawingSession.FillRectangle(rect, color);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawRectangle(rect, brush);
+                m_drawingSession.DrawRectangle(rect, Colors.Black);
             }
         }
 
-        public void DrawLine(Point p1, Point p2, CanvasSolidColorBrush brush, float strokeWidth)
+        public void DrawLine(Point p1, Point p2, Color color, float strokeWidth)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.DrawLine(p1, p2, brush, strokeWidth);
+                m_drawingSession.DrawLine(p1, p2, color, strokeWidth);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawLine(p1, p2, brush);
+                m_drawingSession.DrawLine(p1, p2, Colors.Black);
             }
         }
 
-        public void DrawLine(Point p1, Point p2, CanvasSolidColorBrush brush, float strokeWidth, CanvasStrokeStyle strokeStyle)
+        public void DrawLine(Point p1, Point p2, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.DrawLine(p1, p2, brush, strokeWidth, strokeStyle);
+                m_drawingSession.DrawLine(p1, p2, color, strokeWidth, strokeStyle);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawLine(p1, p2, brush);
+                m_drawingSession.DrawLine(p1, p2, Colors.Black);
             }
         }
 
-        public void FillEllipse(CanvasEllipse ellipse, CanvasSolidColorBrush brush)
+        public void FillEllipse(Point center, float radiusX, float radiusY, Color color)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.FillEllipse(ellipse, brush);
+                m_drawingSession.FillEllipse(center, radiusX, radiusY, color);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawEllipse(ellipse, brush);
+                m_drawingSession.DrawEllipse(center, radiusX, radiusY, Colors.Black);
             }
         }
 
-        public void DrawEllipse(CanvasEllipse ellipse, CanvasSolidColorBrush brush, float strokeWidth)
+        public void DrawEllipse(Point center, float radiusX, float radiusY, Color color, float strokeWidth)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.DrawEllipse(ellipse, brush, strokeWidth);
+                m_drawingSession.DrawEllipse(center, radiusX, radiusY, color, strokeWidth);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawEllipse(ellipse, brush);
+                m_drawingSession.DrawEllipse(center, radiusX, radiusY, Colors.Black);
             }
         }
 
-        public void DrawEllipse(CanvasEllipse ellipse, CanvasSolidColorBrush brush, float strokeWidth, CanvasStrokeStyle strokeStyle)
+        public void DrawEllipse(Point center, float radiusX, float radiusY, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.DrawEllipse(ellipse, brush, strokeWidth, strokeStyle);
+                m_drawingSession.DrawEllipse(center, radiusX, radiusY, color, strokeWidth, strokeStyle);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawEllipse(ellipse, brush);
+                m_drawingSession.DrawEllipse(center, radiusX, radiusY, Colors.Black);
             }
         }
 
-        public void FillCircle(Point centerPoint, float radius, CanvasSolidColorBrush brush)
+        public void FillCircle(Point centerPoint, float radius, Color color)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.FillCircle(centerPoint, radius, brush);
+                m_drawingSession.FillCircle(centerPoint, radius, color);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawCircle(centerPoint, radius, brush);
+                m_drawingSession.DrawCircle(centerPoint, radius, Colors.Black);
             }
         }
 
-        public void DrawCircle(Point centerPoint, float radius, CanvasSolidColorBrush brush, float strokeWidth)
+        public void DrawCircle(Point centerPoint, float radius, Color color, float strokeWidth)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.DrawCircle(centerPoint, radius, brush, strokeWidth);
+                m_drawingSession.DrawCircle(centerPoint, radius, color, strokeWidth);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawCircle(centerPoint, radius, brush);
+                m_drawingSession.DrawCircle(centerPoint, radius, Colors.Black);
             }
         }
 
-        public void DrawCircle(Point centerPoint, float radius, CanvasSolidColorBrush brush, float strokeWidth, CanvasStrokeStyle strokeStyle)
+        public void DrawCircle(Point centerPoint, float radius, Color color, float strokeWidth, CanvasStrokeStyle strokeStyle)
         {
             if (m_renderingType == TestSceneRenderingType.Default)
             {
-                m_drawingSession.DrawCircle(centerPoint, radius, brush, strokeWidth, strokeStyle);
+                m_drawingSession.DrawCircle(centerPoint, radius, color, strokeWidth, strokeStyle);
             }
             else
             {
-                brush.Color = Colors.Black;
-                m_drawingSession.DrawCircle(centerPoint, radius, brush);
+                m_drawingSession.DrawCircle(centerPoint, radius, Colors.Black);
             }
         }
 

@@ -19,6 +19,8 @@ namespace canvas
         ChainInterfaces<ID2D1SolidColorBrush, ID2D1Brush, ID2D1Resource>>
     {
     public:
+        std::function<void(const D2D1_COLOR_F* color)> MockSetColor;
+
         //
         // ID2D1SolidColorBrush
         //
@@ -26,7 +28,14 @@ namespace canvas
             _In_ CONST D2D1_COLOR_F *color
             )
         {
-            Assert::Fail(L"Unexpected call to SetColor");
+            if (MockSetColor)
+            {
+                MockSetColor(color);
+            }
+            else
+            {
+                Assert::Fail(L"Unexpected call to SetColor");
+            }
         }
 
         STDMETHOD_(D2D1_COLOR_F, GetColor)(

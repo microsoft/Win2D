@@ -509,7 +509,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : m_closed(false)
         , m_flowDirection(CanvasTextDirection::TopToBottom)
         , m_fontFamilyName(L"Segoe UI")
-        , m_fontSize(96.0f)
+        , m_fontSize(32.0f)
         , m_fontStretch(ABI::Windows::UI::Text::FontStretch_Normal)
         , m_fontStyle(ABI::Windows::UI::Text::FontStyle_Normal)
         , m_fontWeight(ToWindowsFontWeight(DWRITE_FONT_WEIGHT_NORMAL))

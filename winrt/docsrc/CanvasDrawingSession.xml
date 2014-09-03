@@ -36,69 +36,285 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">
       <summary>Clears to the specified color.</summary>
     </member>
+
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)">
       <summary>Draws an image positioned at the origin.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single)">
+      <summary>Draws an image at the specified position.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Point)">
       <summary>Draws an image at the specified position.</summary>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a line of single unit width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a line of the specified width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a line of the specified width, using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a line of single unit width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>Draws a line of the specified width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a line of the specified width and color, with a custom stroke style.</summary>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a line of single unit width.</summary>
+      <summary>Draws a line of single unit width, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-      <summary>Draws a line of the specified width.</summary>
+      <summary>Draws a line of the specified width, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-      <summary>Draws a line of the specified width, using a custom stroke style.</summary>
+      <summary>Draws a line of the specified width, using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Windows.UI.Color)">
+      <summary>Draws a line of single unit width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Windows.UI.Color,System.Single)">
+      <summary>Draws a line of the specified width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Windows.Foundation.Point,Windows.Foundation.Point,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a line of the specified width and color, with a custom stroke style.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a rectangle of single unit stroke width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a rectangle of the specified stroke width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a rectangle of single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>Draws a rectangle of the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rectangle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a rectangle using single unit width.</summary>
+      <summary>Draws a rectangle of single unit stroke width, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-      <summary>Draws a rectangle using the specified width.</summary>
+      <summary>Draws a rectangle of the specified stroke width, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-      <summary>Draws a rectangle using the specified width and a custom stroke style.</summary>
+      <summary>Draws a rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color)">
+      <summary>Draws a rectangle of single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color,System.Single)">
+      <summary>Draws a rectangle of the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rectangle of the specified stroke width and color, with a custom stroke style.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of a rectangle, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Fills the interior of a rectangle with the specified color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Fills the inside of a rectangle.</summary>
+      <summary>Fills the interior of a rectangle, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a rectangle with rounded corners and single unit width.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Windows.UI.Color)">
+      <summary>Fills the interior of a rectangle with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-      <summary>Draws a rectangle with rounded corners using the specified width.</summary>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a rounded rectangle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-      <summary>Draws a rectangle with rounded corners using the specified width and a custom stroke style.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Microsoft.Graphics.Canvas.CanvasRoundedRectangle,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Fills the inside of a rounded rectangle.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws an ellipse using single unit width.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a rounded rectangle of single unit stroke width and the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-      <summary>Draws an ellipse using the specified width.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>Draws a rounded rectangle of the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-      <summary>Draws an ellipse using the specified width and a custom stroke style.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rounded rectangle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Microsoft.Graphics.Canvas.CanvasEllipse,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Fills the inside of an ellipse.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a rounded rectangle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a rounded rectangle of single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>Draws a rounded rectangle of the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a rounded rectangle of the specified stroke width and color, with a custom stroke style.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of a rounded rectangle, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Fills the interior of a rounded rectangle with the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of a rounded rectangle, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Fills the interior of a rounded rectangle with the specified color.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>It's like a circle, but squashed. Using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>It's like a circle, but squashed.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>It's like a circle, but squashed.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>It's like a circle, but squashed.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Windows.Foundation.Point,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Windows.Foundation.Point,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Windows.Foundation.Point,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>It's like a circle, but squashed. Using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Windows.Foundation.Point,System.Single,System.Single,Windows.UI.Color)">
+      <summary>It's like a circle, but squashed.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Windows.Foundation.Point,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>It's like a circle, but squashed.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Windows.Foundation.Point,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>It's like a circle, but squashed.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of an ellipse, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Fills the interior of a ellipse with the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Windows.Foundation.Point,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of an ellipse, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Windows.Foundation.Point,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Fills the interior of a ellipse with the specified color.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a circle of single unit stroke width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a circle of the specified stroke width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a circle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a circle of single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>Draws a circle of the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a circle of the specified stroke width and color, with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a circle of single unit stroke width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a circle of the specified stroke width, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a circle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Windows.UI.Color)">
+      <summary>Draws a circle of single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Windows.UI.Color,System.Single)">
+      <summary>Draws a circle of the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a circle of the specified stroke width and color, with a custom stroke style.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of a circle, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(System.Single,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Fills the interior of a circle with the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of a circle, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(Windows.Foundation.Point,System.Single,Windows.UI.Color)">
+      <summary>Fills the interior of a circle with the specified color.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Windows.UI.Color)">
       <summary>Draws text using a default font.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Windows.UI.Color)">
+      <summary>Draws text using a default font.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text at the specified position, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text at the specified position.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
-      <summary>Draws text using the specified text format.</summary>
+      <summary>Draws text at the specified position, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws text using a default font.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Point,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text at the specified position.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text inside the specified rectangle, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text inside the specified rectangle.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
-      <summary>Draws text using the specified text format.</summary>
+      <summary>Draws text inside the specified rectangle, using a brush to define the color.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+      <summary>Draws text inside the specified rectangle.</summary>
+    </member>
+
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Dispose">
       <summary>Releases all resources used by the CanvasDrawingSession.</summary>
     </member>
@@ -120,17 +336,5 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Device">
       <summary>Gets the underlying device used by this drawing session.</summary>
    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
-        <summary>Fills the interior of a circle.</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
-        <summary>Draws a circle using a single unit width.</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-        <summary>Draws a circle using the specified width.</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Windows.Foundation.Point,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-        <summary>Draws a circle using the specified width, and the specified stroke style.</summary>
-    </member>
   </members>
 </doc>

@@ -132,27 +132,47 @@ TEST_CLASS(ConversionUnitTests)
             [&] { ToRECT(Rect{0,2,mvf,mvf}); });
     }
 
+    TEST_METHOD(PointToD2DPoint)
+    {
+        using ABI::Windows::Foundation::Point;
+
+        Assert::AreEqual(D2D1_POINT_2F{ 1, 2 }, ToD2DPoint(Point{ 1, 2 }));
+    }
+
     TEST_METHOD(RectToD2DRect)
     {
         using ABI::Windows::Foundation::Rect;
 
-        Assert::AreEqual(D2D_RECT_F{1,2,3,4}, ToD2DRect(Rect{1,2,2,2}));
+        Assert::AreEqual(D2D_RECT_F{ 1, 2, 3, 4 }, ToD2DRect(Rect{ 1, 2, 2, 2 }));
     }
 
-    TEST_METHOD(CanvasRoundedRectangleToD2DRoundedRect)
+    TEST_METHOD(RectAndRadiusToD2DRoundedRect)
     {
         using ABI::Windows::Foundation::Rect;
 
-        Assert::AreEqual(
-            D2D1_ROUNDED_RECT{D2D_RECT_F{1,2,3,4},5,6},
-            ToD2DRoundedRect(CanvasRoundedRectangle{Rect{1,2,2,2},5,6}));
+        Rect rect{ 1, 2, 3, 4 };
+        float rx = 5;
+        float ry = 6;
+
+        auto result = ToD2DRoundedRect(rect, rx, ry);
+
+        Assert::AreEqual(ToD2DRect(rect), result.rect);
+        Assert::AreEqual(rx, result.radiusX);
+        Assert::AreEqual(ry, result.radiusY);
     }
 
-    TEST_METHOD(CanvasEllipseToD2DEllipse)
+    TEST_METHOD(PointAndRadiusToD2DEllipse)
     {
-        Assert::AreEqual(
-            D2D1_ELLIPSE{D2D_POINT_2F{1,2},3,4},
-            *ReinterpretAs<D2D1_ELLIPSE*>(&CanvasEllipse{ Point{ 1, 2 }, 3, 4 }));
+        using ABI::Windows::Foundation::Point;
+
+        Point point{ 1, 2 };
+        float rx = 3;
+        float ry = 4;
+
+        auto result = ToD2DEllipse(point, rx, ry);
+
+        Assert::AreEqual(ToD2DPoint(point), result.point);
+        Assert::AreEqual(rx, result.radiusX);
+        Assert::AreEqual(ry, result.radiusY);
     }
 };
-

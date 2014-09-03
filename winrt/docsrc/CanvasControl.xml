@@ -53,13 +53,15 @@ under the License.
 
               void myWidget_CreateResources(CanvasControl sender, object args)
               {
-                  redBrush = new CanvasSolidColorBrush(sender, Colors.Red);
+                  // Create any resources needed by the Draw event handler.
+                  // Load bitmaps, create brushes, etc.
               }
 
               void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
               {
                   args.DrawingSession.Clear(Colors.CornflowerBlue);
-                  args.DrawingSession.DrawText("Hello, world!", new Point(42, 42), redBrush);
+                  args.DrawingSession.DrawEllipse(190, 125, 140, 40, Colors.Black, 6);
+                  args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
               }
           }
         </code>

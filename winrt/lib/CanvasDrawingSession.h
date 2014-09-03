@@ -62,6 +62,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
 
         std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
+        ComPtr<ID2D1SolidColorBrush> m_solidColorBrush;
+        ComPtr<ICanvasTextFormat> m_defaultTextFormat;
 
         //
         // Contract:
@@ -94,132 +96,698 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Clear)(
             ABI::Windows::UI::Color color) override;
 
-        IFACEMETHOD(DrawImage)(
-            ICanvasImage* image) override;
+        // 
+        // DrawImage
+        // 
 
-        IFACEMETHOD(DrawImageWithOffset)(
+        IFACEMETHOD(DrawImage)(
             ICanvasImage* image,
             ABI::Windows::Foundation::Point offset) override;
 
-        IFACEMETHOD(DrawLine)(
+        IFACEMETHOD(DrawImageAtCoords)(
+            ICanvasImage* image,
+            float x,
+            float y) override;
+
+        IFACEMETHOD(DrawImageAtOrigin)(
+            ICanvasImage* image) override;
+
+        //
+        // DrawLine
+        //
+        
+        // 0 additional parameters
+
+        IFACEMETHOD(DrawLineWithBrush)(
             ABI::Windows::Foundation::Point point0,
             ABI::Windows::Foundation::Point point1,
             ICanvasBrush* brush) override;
 
-        IFACEMETHOD(DrawLineWithStrokeWidth)(
+        IFACEMETHOD(DrawLineAtCoordsWithBrush)(
+            float x0,
+            float y0,
+            float x1,
+            float y1,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawLineWithColor)(
+            ABI::Windows::Foundation::Point point0,
+            ABI::Windows::Foundation::Point point1,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawLineAtCoordsWithColor)(
+            float x0,
+            float y0,
+            float x1,
+            float y1,
+            ABI::Windows::UI::Color color) override;
+
+        // 1 additional parameter (StrokeWidth)
+
+        IFACEMETHOD(DrawLineWithBrushAndStrokeWidth)(
             ABI::Windows::Foundation::Point point0,
             ABI::Windows::Foundation::Point point1,
             ICanvasBrush* brush,
             float strokeWidth) override;
 
-        IFACEMETHOD(DrawLineWithStrokeWidthAndStrokeStyle)(
+        IFACEMETHOD(DrawLineAtCoordsWithBrushAndStrokeWidth)(
+            float x0,
+            float y0,
+            float x1,
+            float y1,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawLineWithColorAndStrokeWidth)(
+            ABI::Windows::Foundation::Point point0,
+            ABI::Windows::Foundation::Point point1,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawLineAtCoordsWithColorAndStrokeWidth)(
+            float x0,
+            float y0,
+            float x1,
+            float y1,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        // 2 additional parameters (StrokeWidth, StrokeStyle)
+
+        IFACEMETHOD(DrawLineWithBrushAndStrokeWidthAndStrokeStyle)(
             ABI::Windows::Foundation::Point point0,
             ABI::Windows::Foundation::Point point1,
             ICanvasBrush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle) override;
 
-        IFACEMETHOD(DrawRectangle)(
+        IFACEMETHOD(DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)(
+            float x0,
+            float y0,
+            float x1,
+            float y1,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawLineWithColorAndStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Point point0,
+            ABI::Windows::Foundation::Point point1,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle)(
+            float x0,
+            float y0,
+            float x1,
+            float y1,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        //
+        // DrawRectangle
+        //
+
+        // 0 additional parameters
+
+        IFACEMETHOD(DrawRectangleWithBrush)(
             ABI::Windows::Foundation::Rect rect,
             ICanvasBrush* brush) override;
 
-        IFACEMETHOD(DrawRectangleWithStrokeWidth)(
+        IFACEMETHOD(DrawRectangleAtCoordsWithBrush)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawRectangleWithColor)(
+            ABI::Windows::Foundation::Rect rect,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawRectangleAtCoordsWithColor)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ABI::Windows::UI::Color color) override;
+
+        // 1 additional parameter (StrokeWidth)
+
+        IFACEMETHOD(DrawRectangleWithBrushAndStrokeWidth)(
             ABI::Windows::Foundation::Rect rect,
             ICanvasBrush* brush,
             float strokeWidth) override;
 
-        IFACEMETHOD(DrawRectangleWithStrokeWidthAndStrokeStyle)(
+        IFACEMETHOD(DrawRectangleAtCoordsWithBrushAndStrokeWidth)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawRectangleWithColorAndStrokeWidth)(
+            ABI::Windows::Foundation::Rect rect,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawRectangleAtCoordsWithColorAndStrokeWidth)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        // 2 additional parameters (StrokeWidth, StrokeStyle)
+
+        IFACEMETHOD(DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle)(
             ABI::Windows::Foundation::Rect rect,
             ICanvasBrush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle) override;
 
-        IFACEMETHOD(FillRectangle)(
+        IFACEMETHOD(DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawRectangleWithColorAndStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Rect rect,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        //
+        // FillRectangle
+        //
+
+        IFACEMETHOD(FillRectangleWithBrush)(
             ABI::Windows::Foundation::Rect rect,
             ICanvasBrush* brush) override;
 
-        IFACEMETHOD(DrawRoundedRectangle)(
-            CanvasRoundedRectangle roundedRectangle,
+        IFACEMETHOD(FillRectangleAtCoordsWithBrush)(
+            float x,
+            float y,
+            float w,
+            float h,
             ICanvasBrush* brush) override;
 
-        IFACEMETHOD(DrawRoundedRectangleWithStrokeWidth)(
-            CanvasRoundedRectangle roundedRectangle,
+        IFACEMETHOD(FillRectangleWithColor)(
+            ABI::Windows::Foundation::Rect rect,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(FillRectangleAtCoordsWithColor)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ABI::Windows::UI::Color color) override;
+
+        //
+        // DrawRoundedRectangle
+        //
+
+        // 0 additional parameters
+
+        IFACEMETHOD(DrawRoundedRectangleWithBrush)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawRoundedRectangleAtCoordsWithBrush)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawRoundedRectangleWithColor)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawRoundedRectangleAtCoordsWithColor)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        // 1 additional parameter (StrokeWidth)
+
+        IFACEMETHOD(DrawRoundedRectangleWithBrushAndStrokeWidth)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
             ICanvasBrush* brush,
             float strokeWidth) override;
 
-        IFACEMETHOD(DrawRoundedRectangleWithStrokeWidthAndStrokeStyle)(
-            CanvasRoundedRectangle roundedRectangle,
+        IFACEMETHOD(DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawRoundedRectangleWithColorAndStrokeWidth)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        // 2 additional parameters (StrokeWidth, StrokeStyle)
+
+        IFACEMETHOD(DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
             ICanvasBrush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle) override;
 
-        IFACEMETHOD(FillRoundedRectangle)(
-            CanvasRoundedRectangle roundedRectangle,
-            ICanvasBrush* brush) override;
-
-        IFACEMETHOD(DrawEllipse)(
-            CanvasEllipse ellipse,
-            ICanvasBrush* brush) override;
-
-        IFACEMETHOD(DrawEllipseWithStrokeWidth)(
-            CanvasEllipse ellipse,
-            ICanvasBrush* brush,
-            float strokeWidth) override;
-
-        IFACEMETHOD(DrawEllipseWithStrokeWidthAndStrokeStyle)(
-            CanvasEllipse ellipse,
+        IFACEMETHOD(DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
             ICanvasBrush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle) override;
 
-        IFACEMETHOD(FillEllipse)(
-            CanvasEllipse ellipse,
+        IFACEMETHOD(DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        //
+        // FillRoundedRectangle
+        //
+        
+        IFACEMETHOD(FillRoundedRectangleWithBrush)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
             ICanvasBrush* brush) override;
 
-        IFACEMETHOD(DrawCircle)(
+        IFACEMETHOD(FillRoundedRectangleAtCoordsWithBrush)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(FillRoundedRectangleWithColor)(
+            ABI::Windows::Foundation::Rect rect,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(FillRoundedRectangleAtCoordsWithColor)(
+            float x,
+            float y,
+            float w,
+            float h,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        //
+        // DrawEllipse
+        //
+
+        // 0 additional parameters
+        
+        IFACEMETHOD(DrawEllipseWithBrush)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawEllipseAtCoordsWithBrush)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawEllipseWithColor)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawEllipseAtCoordsWithColor)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        // 1 additional parameter (StrokeWidth)
+
+        IFACEMETHOD(DrawEllipseWithBrushAndStrokeWidth)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawEllipseAtCoordsWithBrushAndStrokeWidth)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawEllipseWithColorAndStrokeWidth)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawEllipseAtCoordsWithColorAndStrokeWidth)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        // 2 additional parameters (StrokeWidth, StrokeStyle)
+
+        IFACEMETHOD(DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawEllipseWithColorAndStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        //
+        // FillEllipse
+        //
+
+        IFACEMETHOD(FillEllipseWithBrush)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(FillEllipseAtCoordsWithBrush)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(FillEllipseWithColor)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(FillEllipseAtCoordsWithColor)(
+            float x,
+            float y,
+            float radiusX,
+            float radiusY,
+            ABI::Windows::UI::Color color) override;
+
+        //
+        // DrawCircle
+        //
+
+        // 0 additional parameters
+        
+        IFACEMETHOD(DrawCircleWithBrush)(
             ABI::Windows::Foundation::Point centerPoint,
             float radius,
             ICanvasBrush* brush) override;
 
-        IFACEMETHOD(DrawCircleWithStrokeWidth)(
+        IFACEMETHOD(DrawCircleAtCoordsWithBrush)(
+            float x,
+            float y,
+            float radius,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawCircleWithColor)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawCircleAtCoordsWithColor)(
+            float x,
+            float y,
+            float radius,
+            ABI::Windows::UI::Color color) override;
+
+        // 1 additional parameter (StrokeWidth)
+
+        IFACEMETHOD(DrawCircleWithBrushAndStrokeWidth)(
             ABI::Windows::Foundation::Point centerPoint,
             float radius,
             ICanvasBrush* brush,
             float strokeWidth) override;
 
-        IFACEMETHOD(DrawCircleWithStrokeWidthAndStrokeStyle)(
+        IFACEMETHOD(DrawCircleAtCoordsWithBrushAndStrokeWidth)(
+            float x,
+            float y,
+            float radius,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawCircleWithColorAndStrokeWidth)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawCircleAtCoordsWithColorAndStrokeWidth)(
+            float x,
+            float y,
+            float radius,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        // 2 additional parameters (StrokeWidth, StrokeStyle)
+
+        IFACEMETHOD(DrawCircleWithBrushAndStrokeWidthAndStrokeStyle)(
             ABI::Windows::Foundation::Point centerPoint,
             float radius,
             ICanvasBrush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle) override;
 
-        IFACEMETHOD(FillCircle)(
+        IFACEMETHOD(DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float radius,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawCircleWithColorAndStrokeWidthAndStrokeStyle)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        IFACEMETHOD(DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)(
+            float x,
+            float y,
+            float radius,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        //
+        // FillCircle
+        //
+
+        IFACEMETHOD(FillCircleWithBrush)(
             ABI::Windows::Foundation::Point centerPoint,
             float radius,
             ICanvasBrush* brush) override;
 
-        IFACEMETHOD(DrawTextAtPoint)(
+        IFACEMETHOD(FillCircleAtCoordsWithBrush)(
+            float x,
+            float y,
+            float radius,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(FillCircleWithColor)(
+            ABI::Windows::Foundation::Point centerPoint,
+            float radius,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(FillCircleAtCoordsWithColor)(
+            float x,
+            float y,
+            float radius,
+            ABI::Windows::UI::Color color) override;
+
+        //
+        // DrawText
+        //
+
+        // 0 additional parameters
+
+        IFACEMETHOD(DrawTextAtPointWithColor)(
             HSTRING text,
             ABI::Windows::Foundation::Point point,
-            ICanvasBrush* brush) override;
-        
-        IFACEMETHOD(DrawTextAtPointWithFormat)(
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawTextAtPointCoordsWithColor)(
+            HSTRING text,
+            float x,
+            float y,
+            ABI::Windows::UI::Color color) override;
+
+        // 1 additional parameter (TextFormat)
+
+        IFACEMETHOD(DrawTextAtPointWithBrushAndFormat)(
             HSTRING text,
             ABI::Windows::Foundation::Point point,
             ICanvasBrush* brush,
             ICanvasTextFormat* format) override;
 
-        IFACEMETHOD(DrawText)(
-            HSTRING text,
-            ABI::Windows::Foundation::Rect rectangle,
-            ICanvasBrush* brush) override;
-        
-        IFACEMETHOD(DrawTextWithFormat)(
+        IFACEMETHOD(DrawTextAtRectWithBrushAndFormat)(
             HSTRING text,
             ABI::Windows::Foundation::Rect rectangle,
             ICanvasBrush* brush,
             ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(DrawTextAtPointCoordsWithBrushAndFormat)(
+            HSTRING text,
+            float x,
+            float y,
+            ICanvasBrush* brush,
+            ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(DrawTextAtRectCoordsWithBrushAndFormat)(
+            HSTRING text,
+            float x,
+            float y,
+            float w,
+            float h,
+            ICanvasBrush* brush,
+            ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(DrawTextAtPointWithColorAndFormat)(
+            HSTRING text,
+            ABI::Windows::Foundation::Point point,
+            ABI::Windows::UI::Color color,
+            ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(DrawTextAtRectWithColorAndFormat)(
+            HSTRING text,
+            ABI::Windows::Foundation::Rect rectangle,
+            ABI::Windows::UI::Color color,
+            ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(DrawTextAtPointCoordsWithColorAndFormat)(
+            HSTRING text,
+            float x,
+            float y,
+            ABI::Windows::UI::Color color,
+            ICanvasTextFormat* format) override;
+
+        IFACEMETHOD(DrawTextAtRectCoordsWithColorAndFormat)(
+            HSTRING text,
+            float x,
+            float y,
+            float w,
+            float h,
+            ABI::Windows::UI::Color color,
+            ICanvasTextFormat* format) override;
+
+        //
+        // State properties
+        //
 
         IFACEMETHOD(get_Antialiasing)(CanvasAntialiasing* value);
         IFACEMETHOD(put_Antialiasing)(CanvasAntialiasing value);
@@ -243,19 +811,66 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP get_Device(ICanvasDevice** value);
 
     private:
-        void DrawTextAtPointImpl(
-            ID2D1DeviceContext* deviceContext,
+        void DrawLineImpl(
+            const Point& p0,
+            const Point& p1,
+            ID2D1Brush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle);
+
+        void DrawRectangleImpl(
+            const Rect& rect,
+            ID2D1Brush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle);
+
+        void FillRectangleImpl(
+            const Rect& rect,
+            ID2D1Brush* brush);
+
+        void DrawRoundedRectangleImpl(
+            const Rect& rect,
+            float radiusX,
+            float radiusY,
+            ID2D1Brush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle);
+
+        void FillRoundedRectangleImpl(
+            const Rect& rect,
+            float radiusX,
+            float radiusY,
+            ID2D1Brush* brush);
+
+        void DrawEllipseImpl(
+            const Point& centerPoint,
+            float radiusX,
+            float radiusY,
+            ID2D1Brush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle);
+
+        void FillEllipseImpl(
+            const Point& centerPoint,
+            float radiusX,
+            float radiusY,
+            ID2D1Brush* brush);
+
+        void DrawTextAtRectImpl(
             HSTRING text,
-            const ABI::Windows::Foundation::Point& point,
-            ICanvasBrush* brush,
+            const Rect& rect,
+            ID2D1Brush* brush,
             ICanvasTextFormat* format);
 
-        void DrawTextImpl(
-            ID2D1DeviceContext* deviceContext,
+        void DrawTextAtPointImpl(
             HSTRING text,
-            const ABI::Windows::Foundation::Rect& rect,
-            ICanvasBrush* brush,
+            const Point& point,
+            ID2D1Brush* brush,
             ICanvasTextFormat* format);
+
+        ICanvasTextFormat* GetDefaultTextFormat();
+
+        ID2D1SolidColorBrush* GetColorBrush(const ABI::Windows::UI::Color& color);
     };
 
 

@@ -91,20 +91,4 @@ namespace Microsoft.Graphics.Canvas
         Add = (int)3
     } CanvasBlend;
 
-    [version(VERSION)]
-    typedef struct CanvasEllipse
-    {
-        Windows.Foundation.Point Point;
-        float RadiusX;
-        float RadiusY;
-    } CanvasEllipse;
-
-    [version(VERSION)]
-    typedef struct CanvasRoundedRectangle
-    {
-        Windows.Foundation.Rect Rect;
-        float RadiusX;
-        float RadiusY;
-    } CanvasRoundedRectangle;
-
 }

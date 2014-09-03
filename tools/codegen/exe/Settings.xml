@@ -49,8 +49,5 @@ under the License.
         <Field Name="CLEARTYPE" ProjectedNameOverride="ClearType"/>
     </Enum>
     <Enum Name="UNIT_MODE" ShouldProject="true" ProjectedNameOverride="Units"/>
-
-    <Struct Name="ROUNDED_RECT" ShouldProject="true" ProjectedNameOverride="RoundedRectangle"/>
-    <Struct Name="ELLIPSE" ShouldProject="true"/>
   </Namespace>
 </Settings>

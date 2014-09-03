@@ -104,7 +104,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     inline D2D1_POINT_2F ToD2DPoint(const ABI::Windows::Foundation::Point& point)
     {
-        return D2D1_POINT_2F{point.X, point.Y};
+        return D2D1_POINT_2F{ point.X, point.Y };
     }
 
     inline D2D1_RECT_F ToD2DRect(const ABI::Windows::Foundation::Rect& rect)
@@ -114,27 +114,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto top = rect.Y;
         auto bottom = rect.Y + rect.Height;
 
-        return D2D1_RECT_F{left, top, right, bottom};
+        return D2D1_RECT_F{ left, top, right, bottom };
     }
 
-    inline D2D1_ROUNDED_RECT ToD2DRoundedRect(const CanvasRoundedRectangle& roundedRect)
+    inline D2D1_ROUNDED_RECT ToD2DRoundedRect(const ABI::Windows::Foundation::Rect& rect, float rx, float ry)
     {
-        auto rect = ToD2DRect(roundedRect.Rect);
-        auto radiusX = roundedRect.RadiusX;
-        auto radiusY = roundedRect.RadiusY;
-
-        return D2D1_ROUNDED_RECT{rect, radiusX, radiusY};
+        return D2D1_ROUNDED_RECT{ ToD2DRect(rect), rx, ry };
     }
 
-    inline D2D1_ELLIPSE ToD2DEllipse(
-        const ABI::Windows::Foundation::Point& point,
-        float radius)
+    inline D2D1_ELLIPSE ToD2DEllipse(const ABI::Windows::Foundation::Point& point, float rx, float ry)
     {
-        return D2D1::Ellipse(ToD2DPoint(point), radius, radius);
+        return D2D1::Ellipse(ToD2DPoint(point), rx, ry);
     }
 
     inline ComPtr<ID2D1Brush> ToD2DBrush(ICanvasBrush* brush)
     {
+        if (!brush)
+            return nullptr;
+
         ComPtr<ICanvasBrushInternal> internal;
         ThrowIfFailed(brush->QueryInterface(IID_PPV_ARGS(&internal)));
         return internal->GetD2DBrush();
@@ -150,15 +147,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     template<typename TOutput, typename TInput> void ValidateReinterpretAs()
     {
         static_assert(false, "Invalid ReinterpretAs type parameters");
-    }
-
-    template<> inline void ValidateReinterpretAs<D2D1_ELLIPSE*, CanvasEllipse*>()
-    {
-        static_assert(offsetof(D2D1_POINT_2F, x) == offsetof(ABI::Windows::Foundation::Point, X), "Point layout must match D2D1_POINT_2F layout");
-        static_assert(offsetof(D2D1_POINT_2F, y) == offsetof(ABI::Windows::Foundation::Point, Y), "Point layout must match D2D1_POINT_2F layout");
-        static_assert(offsetof(D2D1_ELLIPSE, point) == offsetof(CanvasEllipse, Point), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
-        static_assert(offsetof(D2D1_ELLIPSE, radiusX) == offsetof(CanvasEllipse, RadiusX), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
-        static_assert(offsetof(D2D1_ELLIPSE, radiusY) == offsetof(CanvasEllipse, RadiusY), "CanvasEllipse layout must match D2D1_ELLIPSE layout");
     }
 
     template<> inline void ValidateReinterpretAs<D2D1_MATRIX_3X2_F*, Numerics::Matrix3x2*>()

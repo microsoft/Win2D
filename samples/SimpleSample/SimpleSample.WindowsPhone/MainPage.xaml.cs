@@ -34,7 +34,9 @@ namespace SimpleSample
 
         void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            args.DrawingSession.Clear(Colors.BlanchedAlmond);
+            args.DrawingSession.Clear(Colors.CornflowerBlue);
+            args.DrawingSession.DrawEllipse(190, 125, 140, 40, Colors.Black, 6);
+            args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
         }
     }
 }
