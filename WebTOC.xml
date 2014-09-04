@@ -2,103 +2,175 @@
 <HelpTOC>
 
   <HelpTOCNode Title="Introduction" Url="html/Introduction.htm" />
-  <HelpTOCNode Id="8b9bd959-8378-4099-82f4-e94c23bd02b9" Title="Microsoft.Graphics.Canvas" Url="html/N_Microsoft_Graphics_Canvas.htm">
+  <HelpTOCNode Id="5217056e-d256-4a67-a7ea-afceb022821d" Title="Microsoft.Graphics.Canvas" Url="html/N_Microsoft_Graphics_Canvas.htm">
     <HelpTOCNode Title="CanvasAntialiasing Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasAntialiasing.htm" />
     <HelpTOCNode Title="CanvasBackground Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasBackground.htm" />
-    <HelpTOCNode Id="ceb1cbac-2eb8-4c92-8b31-784088803084" Title="CanvasBitmap Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">
-      <HelpTOCNode Id="d556e598-6d2a-4971-b3ed-935a9eb7ff39" Title="CanvasBitmap Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">
+    <HelpTOCNode Id="e85483bc-6995-4bb0-bb56-87aae4e7b601" Title="CanvasBitmap Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">
+      <HelpTOCNode Id="eed9ce24-a9c9-43e7-a2e9-0ae8c0e4856a" Title="CanvasBitmap Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasBitmap_Dispose.htm" />
         <HelpTOCNode Title="LoadAsync Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasBitmap_LoadAsync.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="23a9e76d-ecd3-4710-b4b9-e3791659ab87" Title="CanvasBitmap Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">
+      <HelpTOCNode Id="19811186-f0a1-413a-83a3-7e3d8a2296cf" Title="CanvasBitmap Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">
         <HelpTOCNode Title="SizeInDips Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasBitmap_SizeInDips.htm" />
         <HelpTOCNode Title="SizeInPixels Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasBitmap_SizeInPixels.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="CanvasBlend Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasBlend.htm" />
     <HelpTOCNode Title="CanvasCapStyle Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasCapStyle.htm" />
-    <HelpTOCNode Id="988d9dbe-0846-4c53-b6b6-36d690902f14" Title="CanvasControl Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasControl.htm">
+    <HelpTOCNode Id="72bf7085-9084-43ad-8ca7-db6a3d342c6e" Title="CanvasControl Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasControl.htm">
       <HelpTOCNode Title="CanvasControl Constructor " Url="html/M_Microsoft_Graphics_Canvas_CanvasControl__ctor.htm" />
-      <HelpTOCNode Id="dfed04e0-9293-43d7-8d6b-f4910e5c9455" Title="CanvasControl Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasControl.htm">
+      <HelpTOCNode Id="30680062-2001-4449-b535-1f6a50305f82" Title="CanvasControl Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasControl.htm">
         <HelpTOCNode Title="Invalidate Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasControl_Invalidate.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="50ec9838-d614-454f-85e8-784f0b050326" Title="CanvasControl Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasControl.htm">
+      <HelpTOCNode Id="22339921-a9b3-4012-b0eb-40ac17c970fb" Title="CanvasControl Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasControl.htm">
         <HelpTOCNode Title="Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasControl_Device.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="47ace1d4-9d13-486f-9796-1b057be34af1" Title="CanvasControl Events" Url="html/Events_T_Microsoft_Graphics_Canvas_CanvasControl.htm">
+      <HelpTOCNode Id="ea2a22d9-59dd-4645-8e67-9b9f7062fa1c" Title="CanvasControl Events" Url="html/Events_T_Microsoft_Graphics_Canvas_CanvasControl.htm">
         <HelpTOCNode Title="CreateResources Event" Url="html/E_Microsoft_Graphics_Canvas_CanvasControl_CreateResources.htm" />
         <HelpTOCNode Title="Draw Event" Url="html/E_Microsoft_Graphics_Canvas_CanvasControl_Draw.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="CanvasDashStyle Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasDashStyle.htm" />
     <HelpTOCNode Title="CanvasDebugLevel Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasDebugLevel.htm" />
-    <HelpTOCNode Id="3402cb75-9aab-44d4-81b3-4a75b5a06a1d" Title="CanvasDevice Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasDevice.htm">
-      <HelpTOCNode Id="f97ef780-22f3-456e-978b-a1cf4e75c79d" Title="CanvasDevice Constructor " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDevice__ctor.htm">
+    <HelpTOCNode Id="38fb2e09-6f1d-480d-90b1-ae0fea16284f" Title="CanvasDevice Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasDevice.htm">
+      <HelpTOCNode Id="7cf901b6-d501-4181-a33b-c8fc785c9aad" Title="CanvasDevice Constructor " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDevice__ctor.htm">
         <HelpTOCNode Title="CanvasDevice Constructor " Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice__ctor.htm" />
         <HelpTOCNode Title="CanvasDevice Constructor (CanvasDebugLevel)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice__ctor_1.htm" />
         <HelpTOCNode Title="CanvasDevice Constructor (CanvasDebugLevel, CanvasHardwareAcceleration)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice__ctor_2.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="da2dc6e0-f55a-4e6e-be8f-9c507824818b" Title="CanvasDevice Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasDevice.htm">
+      <HelpTOCNode Id="d62bc2c5-beb7-443d-a5db-f7099a1d6d2a" Title="CanvasDevice Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasDevice.htm">
         <HelpTOCNode Title="CreateFromDirect3D11Device Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_CreateFromDirect3D11Device.htm" />
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_Dispose.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="9bbb12c7-4519-4407-ac46-9f9cf8327e2e" Title="CanvasDevice Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasDevice.htm">
+      <HelpTOCNode Id="63d573c4-dce4-4f36-a37e-343abfcb6016" Title="CanvasDevice Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasDevice.htm">
         <HelpTOCNode Title="Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDevice_Device.htm" />
         <HelpTOCNode Title="Direct3DDevice Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDevice_Direct3DDevice.htm" />
         <HelpTOCNode Title="HardwareAcceleration Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDevice_HardwareAcceleration.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="1a807843-8e6c-4d7a-86a6-4ad184cc05c7" Title="CanvasDrawEventArgs Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasDrawEventArgs.htm">
+    <HelpTOCNode Id="eb12e1b2-95f6-4882-bc6b-24d41f148bb5" Title="CanvasDrawEventArgs Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasDrawEventArgs.htm">
       <HelpTOCNode Title="CanvasDrawEventArgs Constructor " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawEventArgs__ctor.htm" />
-      <HelpTOCNode Id="deab367c-6176-4aeb-89ad-4fe6de8f3f91" Title="CanvasDrawEventArgs Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasDrawEventArgs.htm">
+      <HelpTOCNode Id="8b69566c-3434-40c4-b150-27d1494bb46b" Title="CanvasDrawEventArgs Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasDrawEventArgs.htm">
         <HelpTOCNode Title="DrawingSession Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawEventArgs_DrawingSession.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="65982a35-7cec-4794-8d43-c9d85cee4686" Title="CanvasDrawingSession Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">
-      <HelpTOCNode Id="6288de9f-989e-4afa-b90b-f722e31db8a1" Title="CanvasDrawingSession Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">
+    <HelpTOCNode Id="5f0ee942-bbc7-489f-8b73-9dd0918bf4c1" Title="CanvasDrawingSession Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">
+      <HelpTOCNode Id="4dbbfe95-c8cf-44de-8265-8dabf53d5305" Title="CanvasDrawingSession Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">
         <HelpTOCNode Title="Clear Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_Clear.htm" />
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_Dispose.htm" />
-        <HelpTOCNode Id="c89516f5-dbef-4e21-b25f-deaf985bc911" Title="DrawCircle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle.htm">
-          <HelpTOCNode Title="DrawCircle Method (Point, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle.htm" />
-          <HelpTOCNode Title="DrawCircle Method (Point, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_1.htm" />
-          <HelpTOCNode Title="DrawCircle Method (Point, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_2.htm" />
+        <HelpTOCNode Id="9a57e908-aff3-41d0-9ed5-f6ffaa31274d" Title="DrawCircle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle.htm">
+          <HelpTOCNode Title="DrawCircle Method (Vector2, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Vector2, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_3.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_6.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_9.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Vector2, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_1.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Vector2, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_4.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Single, Single, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_7.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Single, Single, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_10.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Vector2, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_2.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Vector2, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_5.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Single, Single, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_8.htm" />
+          <HelpTOCNode Title="DrawCircle Method (Single, Single, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle_11.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="839e0af9-aed1-4822-9cc6-785b4d4a923d" Title="DrawEllipse Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse.htm">
-          <HelpTOCNode Title="DrawEllipse Method (CanvasEllipse, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse.htm" />
-          <HelpTOCNode Title="DrawEllipse Method (CanvasEllipse, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_1.htm" />
-          <HelpTOCNode Title="DrawEllipse Method (CanvasEllipse, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_2.htm" />
+        <HelpTOCNode Id="a0c90ccd-58cf-423e-835e-f6ddc9fa6cdd" Title="DrawEllipse Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse.htm">
+          <HelpTOCNode Title="DrawEllipse Method (Vector2, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Vector2, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_3.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Single, Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_6.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Single, Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_9.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Vector2, Single, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_1.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Vector2, Single, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_4.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Single, Single, Single, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_7.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Single, Single, Single, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_10.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Vector2, Single, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_2.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Vector2, Single, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_5.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Single, Single, Single, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_8.htm" />
+          <HelpTOCNode Title="DrawEllipse Method (Single, Single, Single, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse_11.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="4dbdf7db-46b0-41a8-b6c4-ee09be879342" Title="DrawImage Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage.htm">
+        <HelpTOCNode Id="5f3a7296-cc2c-42fe-a946-bc06d8c8fe35" Title="DrawImage Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage.htm">
           <HelpTOCNode Title="DrawImage Method (ICanvasImage)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage.htm" />
-          <HelpTOCNode Title="DrawImage Method (ICanvasImage, Point)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage_1.htm" />
+          <HelpTOCNode Title="DrawImage Method (ICanvasImage, Vector2)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage_1.htm" />
+          <HelpTOCNode Title="DrawImage Method (ICanvasImage, Single, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage_2.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="8bbc239a-5c71-4ecb-9d96-2b346b98f2ca" Title="DrawLine Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine.htm">
-          <HelpTOCNode Title="DrawLine Method (Point, Point, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine.htm" />
-          <HelpTOCNode Title="DrawLine Method (Point, Point, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_1.htm" />
-          <HelpTOCNode Title="DrawLine Method (Point, Point, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_2.htm" />
+        <HelpTOCNode Id="11cf770e-53b0-44a2-8302-50942e2eaf30" Title="DrawLine Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine.htm">
+          <HelpTOCNode Title="DrawLine Method (Vector2, Vector2, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine.htm" />
+          <HelpTOCNode Title="DrawLine Method (Vector2, Vector2, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_3.htm" />
+          <HelpTOCNode Title="DrawLine Method (Vector2, Vector2, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_1.htm" />
+          <HelpTOCNode Title="DrawLine Method (Vector2, Vector2, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_4.htm" />
+          <HelpTOCNode Title="DrawLine Method (Single, Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_6.htm" />
+          <HelpTOCNode Title="DrawLine Method (Single, Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_9.htm" />
+          <HelpTOCNode Title="DrawLine Method (Vector2, Vector2, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_2.htm" />
+          <HelpTOCNode Title="DrawLine Method (Vector2, Vector2, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_5.htm" />
+          <HelpTOCNode Title="DrawLine Method (Single, Single, Single, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_7.htm" />
+          <HelpTOCNode Title="DrawLine Method (Single, Single, Single, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_10.htm" />
+          <HelpTOCNode Title="DrawLine Method (Single, Single, Single, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_8.htm" />
+          <HelpTOCNode Title="DrawLine Method (Single, Single, Single, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine_11.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="c7715fd6-2cd7-425e-ab15-fed21ae59cce" Title="DrawRectangle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle.htm">
-          <HelpTOCNode Title="DrawRectangle Method (Rect, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle.htm" />
-          <HelpTOCNode Title="DrawRectangle Method (Rect, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_1.htm" />
-          <HelpTOCNode Title="DrawRectangle Method (Rect, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_2.htm" />
+        <HelpTOCNode Id="064474ad-a759-4f37-b32c-55df3625b8cd" Title="DrawRectangle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle.htm">
+          <HelpTOCNode Title="DrawRectangle Method (Rect, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_6.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Rect, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_9.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Rect, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_7.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Rect, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_10.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Rect, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_8.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Rect, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_11.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Single, Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Single, Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_3.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Single, Single, Single, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_1.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Single, Single, Single, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_4.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Single, Single, Single, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_2.htm" />
+          <HelpTOCNode Title="DrawRectangle Method (Single, Single, Single, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle_5.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="52266d4e-00e5-466f-a9ae-fa0e30a4c70a" Title="DrawRoundedRectangle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle.htm">
-          <HelpTOCNode Title="DrawRoundedRectangle Method (CanvasRoundedRectangle, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle.htm" />
-          <HelpTOCNode Title="DrawRoundedRectangle Method (CanvasRoundedRectangle, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_1.htm" />
-          <HelpTOCNode Title="DrawRoundedRectangle Method (CanvasRoundedRectangle, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_2.htm" />
+        <HelpTOCNode Id="7b86158f-84a4-45d3-afe7-e8700366d41c" Title="DrawRoundedRectangle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle.htm">
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Rect, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_6.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Rect, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_9.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Rect, Single, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_7.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Rect, Single, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_10.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Rect, Single, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_8.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Rect, Single, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_11.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Single, Single, Single, Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Single, Single, Single, Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_3.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Single, Single, Single, Single, Single, Single, ICanvasBrush, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_1.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Single, Single, Single, Single, Single, Single, Color, Single)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_4.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Single, Single, Single, Single, Single, Single, ICanvasBrush, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_2.htm" />
+          <HelpTOCNode Title="DrawRoundedRectangle Method (Single, Single, Single, Single, Single, Single, Color, Single, CanvasStrokeStyle)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle_5.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="16788a20-cd95-48ed-bbd4-5e979f1cc9cb" Title="DrawText Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText.htm">
-          <HelpTOCNode Title="DrawText Method (String, Point, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText.htm" />
-          <HelpTOCNode Title="DrawText Method (String, Rect, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_2.htm" />
-          <HelpTOCNode Title="DrawText Method (String, Point, ICanvasBrush, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_1.htm" />
-          <HelpTOCNode Title="DrawText Method (String, Rect, ICanvasBrush, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_3.htm" />
+        <HelpTOCNode Id="1964b1f3-779f-4b9b-9151-572ef6c96caa" Title="DrawText Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText.htm">
+          <HelpTOCNode Title="DrawText Method (String, Vector2, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_1.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Vector2, ICanvasBrush, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Vector2, Color, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_2.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_6.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Rect, ICanvasBrush, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_8.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Rect, Color, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_9.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Single, Single, ICanvasBrush, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_3.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Single, Single, Color, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_7.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Single, Single, Single, Single, ICanvasBrush, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_4.htm" />
+          <HelpTOCNode Title="DrawText Method (String, Single, Single, Single, Single, Color, CanvasTextFormat)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText_5.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Title="FillCircle Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillCircle.htm" />
-        <HelpTOCNode Title="FillEllipse Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillEllipse.htm" />
-        <HelpTOCNode Title="FillRectangle Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRectangle.htm" />
-        <HelpTOCNode Title="FillRoundedRectangle Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRoundedRectangle.htm" />
+        <HelpTOCNode Id="53dd6552-4e75-4181-b18b-94b8a5c274bd" Title="FillCircle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillCircle.htm">
+          <HelpTOCNode Title="FillCircle Method (Vector2, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillCircle.htm" />
+          <HelpTOCNode Title="FillCircle Method (Vector2, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillCircle_1.htm" />
+          <HelpTOCNode Title="FillCircle Method (Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillCircle_2.htm" />
+          <HelpTOCNode Title="FillCircle Method (Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillCircle_3.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="cce89e4c-769a-4176-bd7b-c6e891ad580d" Title="FillEllipse Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillEllipse.htm">
+          <HelpTOCNode Title="FillEllipse Method (Vector2, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillEllipse.htm" />
+          <HelpTOCNode Title="FillEllipse Method (Vector2, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillEllipse_1.htm" />
+          <HelpTOCNode Title="FillEllipse Method (Single, Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillEllipse_2.htm" />
+          <HelpTOCNode Title="FillEllipse Method (Single, Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillEllipse_3.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="0379d524-dd84-48c6-9523-7f1efba87c61" Title="FillRectangle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRectangle.htm">
+          <HelpTOCNode Title="FillRectangle Method (Rect, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRectangle_2.htm" />
+          <HelpTOCNode Title="FillRectangle Method (Rect, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRectangle_3.htm" />
+          <HelpTOCNode Title="FillRectangle Method (Single, Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRectangle.htm" />
+          <HelpTOCNode Title="FillRectangle Method (Single, Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRectangle_1.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="37ce4dea-8593-4bae-9150-8770bcd26419" Title="FillRoundedRectangle Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRoundedRectangle.htm">
+          <HelpTOCNode Title="FillRoundedRectangle Method (Rect, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRoundedRectangle_2.htm" />
+          <HelpTOCNode Title="FillRoundedRectangle Method (Rect, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRoundedRectangle_3.htm" />
+          <HelpTOCNode Title="FillRoundedRectangle Method (Single, Single, Single, Single, Single, Single, ICanvasBrush)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRoundedRectangle.htm" />
+          <HelpTOCNode Title="FillRoundedRectangle Method (Single, Single, Single, Single, Single, Single, Color)" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRoundedRectangle_1.htm" />
+        </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="d966229e-efab-48e0-af1a-d681346f475e" Title="CanvasDrawingSession Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">
+      <HelpTOCNode Id="1e31008d-021e-4856-82c0-668e23f2aafe" Title="CanvasDrawingSession Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">
         <HelpTOCNode Title="Antialiasing Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Antialiasing.htm" />
         <HelpTOCNode Title="Blend Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Blend.htm" />
         <HelpTOCNode Title="Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Device.htm" />
@@ -108,55 +180,41 @@
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="CanvasDrawTextOptions Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasDrawTextOptions.htm" />
-    <HelpTOCNode Id="9c5f2122-30a1-49dc-a3d8-eeda072f9ab2" Title="CanvasEllipse Structure" Url="html/T_Microsoft_Graphics_Canvas_CanvasEllipse.htm">
-      <HelpTOCNode Id="8f3f7785-8bf5-466a-a30f-ce2062742872" Title="CanvasEllipse Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_CanvasEllipse.htm">
-        <HelpTOCNode Title="Point Field" Url="html/F_Microsoft_Graphics_Canvas_CanvasEllipse_Point.htm" />
-        <HelpTOCNode Title="RadiusX Field" Url="html/F_Microsoft_Graphics_Canvas_CanvasEllipse_RadiusX.htm" />
-        <HelpTOCNode Title="RadiusY Field" Url="html/F_Microsoft_Graphics_Canvas_CanvasEllipse_RadiusY.htm" />
-      </HelpTOCNode>
-    </HelpTOCNode>
     <HelpTOCNode Title="CanvasHardwareAcceleration Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasHardwareAcceleration.htm" />
-    <HelpTOCNode Id="a12fd1c4-cb00-4c65-a558-d94141c07ac1" Title="CanvasImageSource Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasImageSource.htm">
-      <HelpTOCNode Id="68d7d4ac-c45b-4f1b-92ba-86f6374aebb9" Title="CanvasImageSource Constructor " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasImageSource__ctor.htm">
+    <HelpTOCNode Id="0c86aae9-7f87-4100-97e0-647be703b2d8" Title="CanvasImageSource Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasImageSource.htm">
+      <HelpTOCNode Id="a3ee6d15-dbbe-4753-8a17-e20dec8f5eb8" Title="CanvasImageSource Constructor " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasImageSource__ctor.htm">
         <HelpTOCNode Title="CanvasImageSource Constructor (ICanvasResourceCreator, Int32, Int32)" Url="html/M_Microsoft_Graphics_Canvas_CanvasImageSource__ctor.htm" />
         <HelpTOCNode Title="CanvasImageSource Constructor (ICanvasResourceCreator, Int32, Int32, CanvasBackground)" Url="html/M_Microsoft_Graphics_Canvas_CanvasImageSource__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="5e653111-569e-40f6-894e-96fb2fc83f77" Title="CanvasImageSource Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasImageSource.htm">
-        <HelpTOCNode Id="1a40708c-551a-4fe6-8817-140998e37935" Title="CreateDrawingSession Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasImageSource_CreateDrawingSession.htm">
+      <HelpTOCNode Id="43e15ffc-ef7d-4336-8863-3b53dfdfc573" Title="CanvasImageSource Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasImageSource.htm">
+        <HelpTOCNode Id="cb719565-8da7-40b2-9205-b6fa9542599a" Title="CreateDrawingSession Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasImageSource_CreateDrawingSession.htm">
           <HelpTOCNode Title="CreateDrawingSession Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasImageSource_CreateDrawingSession.htm" />
           <HelpTOCNode Title="CreateDrawingSession Method (Rect)" Url="html/M_Microsoft_Graphics_Canvas_CanvasImageSource_CreateDrawingSession_1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="cb9f5f4a-d1ff-45a9-b465-eecd1434f255" Title="CanvasImageSource Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasImageSource.htm">
+      <HelpTOCNode Id="086c3dc1-8c34-452d-97ab-8798cf591d62" Title="CanvasImageSource Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasImageSource.htm">
         <HelpTOCNode Title="Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasImageSource_Device.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="CanvasLineJoin Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasLineJoin.htm" />
     <HelpTOCNode Title="CanvasLineSpacingMethod Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasLineSpacingMethod.htm" />
-    <HelpTOCNode Id="9705445f-33b1-44df-93dc-a321b106be34" Title="CanvasRoundedRectangle Structure" Url="html/T_Microsoft_Graphics_Canvas_CanvasRoundedRectangle.htm">
-      <HelpTOCNode Id="8a6f1f69-2c1d-4be7-b8c5-67714d9fc6d2" Title="CanvasRoundedRectangle Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_CanvasRoundedRectangle.htm">
-        <HelpTOCNode Title="RadiusX Field" Url="html/F_Microsoft_Graphics_Canvas_CanvasRoundedRectangle_RadiusX.htm" />
-        <HelpTOCNode Title="RadiusY Field" Url="html/F_Microsoft_Graphics_Canvas_CanvasRoundedRectangle_RadiusY.htm" />
-        <HelpTOCNode Title="Rect Field" Url="html/F_Microsoft_Graphics_Canvas_CanvasRoundedRectangle_Rect.htm" />
-      </HelpTOCNode>
-    </HelpTOCNode>
-    <HelpTOCNode Id="94b4df56-73de-4776-a4c4-1bd8c4292000" Title="CanvasSolidColorBrush Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasSolidColorBrush.htm">
+    <HelpTOCNode Id="fb036f5c-e450-45ee-b3dc-26c7a3f661f0" Title="CanvasSolidColorBrush Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasSolidColorBrush.htm">
       <HelpTOCNode Title="CanvasSolidColorBrush Constructor " Url="html/M_Microsoft_Graphics_Canvas_CanvasSolidColorBrush__ctor.htm" />
-      <HelpTOCNode Id="b198e34c-023d-4a6b-9caa-ad89b16ef669" Title="CanvasSolidColorBrush Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasSolidColorBrush.htm">
+      <HelpTOCNode Id="4cb94550-4417-4921-b8d7-54c1483f00a1" Title="CanvasSolidColorBrush Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasSolidColorBrush.htm">
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasSolidColorBrush_Dispose.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="0a3f0b64-d3a2-4f95-b15e-786208b9ee19" Title="CanvasSolidColorBrush Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasSolidColorBrush.htm">
+      <HelpTOCNode Id="d7a76ab8-fe51-4a10-b88a-6e4705d7f880" Title="CanvasSolidColorBrush Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasSolidColorBrush.htm">
         <HelpTOCNode Title="Color Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasSolidColorBrush_Color.htm" />
         <HelpTOCNode Title="Opacity Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasSolidColorBrush_Opacity.htm" />
         <HelpTOCNode Title="Transform Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasSolidColorBrush_Transform.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="81e7ce93-ef77-4b96-9318-5966d0a4b7d7" Title="CanvasStrokeStyle Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasStrokeStyle.htm">
+    <HelpTOCNode Id="6a48240a-69c9-4bd1-8ab4-620436e24037" Title="CanvasStrokeStyle Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasStrokeStyle.htm">
       <HelpTOCNode Title="CanvasStrokeStyle Constructor " Url="html/M_Microsoft_Graphics_Canvas_CanvasStrokeStyle__ctor.htm" />
-      <HelpTOCNode Id="be930152-b133-4b12-827f-30b530571814" Title="CanvasStrokeStyle Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasStrokeStyle.htm">
+      <HelpTOCNode Id="cf82df6b-7ae7-4959-8e48-df2514110764" Title="CanvasStrokeStyle Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasStrokeStyle.htm">
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasStrokeStyle_Dispose.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="20189623-800e-41ab-a99f-ce71d680b4ec" Title="CanvasStrokeStyle Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasStrokeStyle.htm">
+      <HelpTOCNode Id="fb189cde-11aa-401c-880f-0e8ab27738d6" Title="CanvasStrokeStyle Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasStrokeStyle.htm">
         <HelpTOCNode Title="CustomDashStyle Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasStrokeStyle_CustomDashStyle.htm" />
         <HelpTOCNode Title="DashCap Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasStrokeStyle_DashCap.htm" />
         <HelpTOCNode Title="DashOffset Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasStrokeStyle_DashOffset.htm" />
@@ -171,12 +229,12 @@
     <HelpTOCNode Title="CanvasStrokeTransformBehavior Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasStrokeTransformBehavior.htm" />
     <HelpTOCNode Title="CanvasTextAntialiasing Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextAntialiasing.htm" />
     <HelpTOCNode Title="CanvasTextDirection Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextDirection.htm" />
-    <HelpTOCNode Id="20eec804-c16d-4283-9581-34bf388f5518" Title="CanvasTextFormat Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextFormat.htm">
+    <HelpTOCNode Id="1489cea6-04b8-4735-92a1-72acae6734c3" Title="CanvasTextFormat Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextFormat.htm">
       <HelpTOCNode Title="CanvasTextFormat Constructor " Url="html/M_Microsoft_Graphics_Canvas_CanvasTextFormat__ctor.htm" />
-      <HelpTOCNode Id="4b6faae8-3110-4747-8dcc-c41800a949ae" Title="CanvasTextFormat Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasTextFormat.htm">
+      <HelpTOCNode Id="b341e5bc-888c-4b18-ba24-44e1b27a4849" Title="CanvasTextFormat Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasTextFormat.htm">
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasTextFormat_Dispose.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="9217e69b-0d4f-4c04-a771-7c27fdd64c11" Title="CanvasTextFormat Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasTextFormat.htm">
+      <HelpTOCNode Id="5c28dc46-67b0-4a39-846f-bba8d24180cb" Title="CanvasTextFormat Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasTextFormat.htm">
         <HelpTOCNode Title="FlowDirection Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasTextFormat_FlowDirection.htm" />
         <HelpTOCNode Title="FontFamily Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasTextFormat_FontFamily.htm" />
         <HelpTOCNode Title="FontSize Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasTextFormat_FontSize.htm" />
@@ -202,52 +260,46 @@
     <HelpTOCNode Title="CanvasUnits Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasUnits.htm" />
     <HelpTOCNode Title="CanvasVerticalAlignment Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasVerticalAlignment.htm" />
     <HelpTOCNode Title="CanvasWordWrapping Enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasWordWrapping.htm" />
-    <HelpTOCNode Id="798d59c2-af02-40e8-aea2-a2345432e373" Title="ICanvasBitmap Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasBitmap.htm">
-      <HelpTOCNode Id="1cf19a63-6f36-46ad-a2f8-8c1b49c08637" Title="ICanvasBitmap Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_ICanvasBitmap.htm">
-        <HelpTOCNode Title="SizeInDips Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasBitmap_SizeInDips.htm" />
-        <HelpTOCNode Title="SizeInPixels Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasBitmap_SizeInPixels.htm" />
-      </HelpTOCNode>
-    </HelpTOCNode>
-    <HelpTOCNode Id="9bd3445e-440f-4c8f-954c-69ca08bf40f7" Title="ICanvasBrush Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasBrush.htm">
-      <HelpTOCNode Id="0feac1a4-c4bf-4a6d-ae26-bddeb3eb37e8" Title="ICanvasBrush Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_ICanvasBrush.htm">
+    <HelpTOCNode Id="a110b311-a402-4c48-8864-5b5d87afa148" Title="ICanvasBrush Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasBrush.htm">
+      <HelpTOCNode Id="95fbf4f0-2c99-4354-a7c5-ccb4c48a45f3" Title="ICanvasBrush Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_ICanvasBrush.htm">
         <HelpTOCNode Title="Opacity Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasBrush_Opacity.htm" />
         <HelpTOCNode Title="Transform Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasBrush_Transform.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
     <HelpTOCNode Title="ICanvasImage Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasImage.htm" />
-    <HelpTOCNode Id="8a5871f2-e5c2-4b12-8a8e-0c8211f223f6" Title="ICanvasResourceCreator Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasResourceCreator.htm">
-      <HelpTOCNode Id="9e0d8dac-95c8-4bec-b5cf-fef017e510d7" Title="ICanvasResourceCreator Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_ICanvasResourceCreator.htm">
+    <HelpTOCNode Id="6edde745-1db7-4375-baff-6d88f5fffd39" Title="ICanvasResourceCreator Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasResourceCreator.htm">
+      <HelpTOCNode Id="6b8db780-9905-4c0f-ae7c-8c4d68dc92bc" Title="ICanvasResourceCreator Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_ICanvasResourceCreator.htm">
         <HelpTOCNode Title="Device Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasResourceCreator_Device.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
   </HelpTOCNode>
-  <HelpTOCNode Id="f13d18a8-5bec-499a-a1ff-6f2f2be69eb6" Title="Microsoft.Graphics.Canvas.DirectX" Url="html/N_Microsoft_Graphics_Canvas_DirectX.htm">
+  <HelpTOCNode Id="37f56210-2b9f-4a96-a5cf-a76c36824803" Title="Microsoft.Graphics.Canvas.DirectX" Url="html/N_Microsoft_Graphics_Canvas_DirectX.htm">
     <HelpTOCNode Title="DirectXPixelFormat Enumeration" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   </HelpTOCNode>
-  <HelpTOCNode Id="255e390f-8730-4a08-b417-c160fb5f99c3" Title="Microsoft.Graphics.Canvas.DirectX.Direct3D11" Url="html/N_Microsoft_Graphics_Canvas_DirectX_Direct3D11.htm">
+  <HelpTOCNode Id="9366d189-8745-4e85-9cb5-24ead832ad90" Title="Microsoft.Graphics.Canvas.DirectX.Direct3D11" Url="html/N_Microsoft_Graphics_Canvas_DirectX_Direct3D11.htm">
     <HelpTOCNode Title="Direct3DBindings Enumeration" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DBindings.htm" />
-    <HelpTOCNode Id="b9586326-6ae9-43de-9f02-a11e60bff877" Title="Direct3DDevice Class" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DDevice.htm">
-      <HelpTOCNode Id="25f6410c-c5f7-4d43-839c-435a007e0637" Title="Direct3DDevice Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DDevice.htm">
+    <HelpTOCNode Id="4ea6deaa-8ea4-42f7-8f04-20f25e0f95a7" Title="Direct3DDevice Class" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DDevice.htm">
+      <HelpTOCNode Id="e7d3433f-e946-459f-850c-e7520b4e6316" Title="Direct3DDevice Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DDevice.htm">
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DDevice_Dispose.htm" />
         <HelpTOCNode Title="Trim Method " Url="html/M_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DDevice_Trim.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="e8344770-aeee-43ca-b32c-236d1558d7e4" Title="Direct3DMultisampleDescription Structure" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DMultisampleDescription.htm">
-      <HelpTOCNode Id="1a8ce02f-92a1-4126-b96e-dce424168ed0" Title="Direct3DMultisampleDescription Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DMultisampleDescription.htm">
+    <HelpTOCNode Id="8d172f5d-916d-43ed-9a1c-38a9a6bcac8f" Title="Direct3DMultisampleDescription Structure" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DMultisampleDescription.htm">
+      <HelpTOCNode Id="317ee285-a903-4218-b44f-aae39941303a" Title="Direct3DMultisampleDescription Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DMultisampleDescription.htm">
         <HelpTOCNode Title="Count Field" Url="html/F_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DMultisampleDescription_Count.htm" />
         <HelpTOCNode Title="Quality Field" Url="html/F_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DMultisampleDescription_Quality.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="f1fd0661-74c5-4c19-a8be-b2858eb35ecc" Title="Direct3DSurface Class" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface.htm">
-      <HelpTOCNode Id="840460a7-f908-4b0e-96c9-42b35390988c" Title="Direct3DSurface Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface.htm">
+    <HelpTOCNode Id="8964f927-2c0b-4399-bc0e-2d5be991fd0a" Title="Direct3DSurface Class" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface.htm">
+      <HelpTOCNode Id="be91c5d5-171d-465e-8a43-0e8db1fd2d2e" Title="Direct3DSurface Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface.htm">
         <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface_Dispose.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="ec7efb9e-8088-4f00-be87-9637007ac992" Title="Direct3DSurface Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface.htm">
+      <HelpTOCNode Id="fdea1c7b-5159-4992-a8d2-d53577975fa8" Title="Direct3DSurface Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface.htm">
         <HelpTOCNode Title="Description Property " Url="html/P_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface_Description.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="f3b08278-0dfa-4a63-8bb5-a95906586133" Title="Direct3DSurfaceDescription Structure" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurfaceDescription.htm">
-      <HelpTOCNode Id="4198f267-0a9c-400a-8626-58326a51238d" Title="Direct3DSurfaceDescription Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurfaceDescription.htm">
+    <HelpTOCNode Id="8497fbd6-cc4c-40de-8d37-4eb9fa9cc785" Title="Direct3DSurfaceDescription Structure" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurfaceDescription.htm">
+      <HelpTOCNode Id="acab67f0-44c9-428a-858e-1f471193ace0" Title="Direct3DSurfaceDescription Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurfaceDescription.htm">
         <HelpTOCNode Title="Format Field" Url="html/F_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurfaceDescription_Format.htm" />
         <HelpTOCNode Title="Height Field" Url="html/F_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurfaceDescription_Height.htm" />
         <HelpTOCNode Title="MultisampleDescription Field" Url="html/F_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurfaceDescription_MultisampleDescription.htm" />
@@ -256,9 +308,36 @@
     </HelpTOCNode>
     <HelpTOCNode Title="Direct3DUsage Enumeration" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DUsage.htm" />
   </HelpTOCNode>
-  <HelpTOCNode Id="febaeb8f-d46d-4623-9496-0897f6cf84b5" Title="Microsoft.Graphics.Canvas.Numerics" Url="html/N_Microsoft_Graphics_Canvas_Numerics.htm">
-    <HelpTOCNode Id="2882a637-5b14-4a17-81fc-e43c2c7aa17b" Title="Matrix3x2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm">
-      <HelpTOCNode Id="732cf8c2-2235-441f-a74c-3fe93f5f4d8e" Title="Matrix3x2 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm">
+  <HelpTOCNode Id="41875fc8-11c8-4728-ab28-2eeb3eb16b65" Title="Microsoft.Graphics.Canvas.Effects" Url="html/N_Microsoft_Graphics_Canvas_Effects.htm">
+    <HelpTOCNode Title="EffectBorderMode Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectBorderMode.htm" />
+    <HelpTOCNode Title="EffectOptimization Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectOptimization.htm" />
+    <HelpTOCNode Id="ed2bec7b-7160-4917-9b40-3ebfe633ed10" Title="GaussianBlurEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect.htm">
+      <HelpTOCNode Title="GaussianBlurEffect Constructor " Url="html/M_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect__ctor.htm" />
+      <HelpTOCNode Id="4117bb31-782b-4042-b057-45669800c739" Title="GaussianBlurEffect Methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect.htm">
+        <HelpTOCNode Title="Dispose Method " Url="html/M_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_Dispose.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="acf637dd-7c14-4b2a-a09a-78b661ab8d44" Title="GaussianBlurEffect Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect.htm">
+        <HelpTOCNode Title="BorderMode Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_BorderMode.htm" />
+        <HelpTOCNode Title="EffectId Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_EffectId.htm" />
+        <HelpTOCNode Title="Inputs Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_Inputs.htm" />
+        <HelpTOCNode Title="Optimization Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_Optimization.htm" />
+        <HelpTOCNode Title="Properties Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_Properties.htm" />
+        <HelpTOCNode Title="Source Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_Source.htm" />
+        <HelpTOCNode Title="StandardDeviation Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect_StandardDeviation.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="9d41809d-4cec-4981-8901-4c9e0b4cf9c1" Title="IEffect Interface" Url="html/T_Microsoft_Graphics_Canvas_Effects_IEffect.htm">
+      <HelpTOCNode Id="66e5c77e-8e90-4389-a8fb-eb63ec897991" Title="IEffect Properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_Effects_IEffect.htm">
+        <HelpTOCNode Title="EffectId Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_IEffect_EffectId.htm" />
+        <HelpTOCNode Title="Inputs Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_IEffect_Inputs.htm" />
+        <HelpTOCNode Title="Properties Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_IEffect_Properties.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="IEffectInput Interface" Url="html/T_Microsoft_Graphics_Canvas_Effects_IEffectInput.htm" />
+  </HelpTOCNode>
+  <HelpTOCNode Id="00590282-9ad1-422f-a0a1-65b2e2673baf" Title="Microsoft.Graphics.Canvas.Numerics" Url="html/N_Microsoft_Graphics_Canvas_Numerics.htm">
+    <HelpTOCNode Id="4a389f1b-e102-4d6b-9d75-31fddb86b974" Title="Matrix3x2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm">
+      <HelpTOCNode Id="39ea44dd-8934-4f08-abcb-0c580e6667f8" Title="Matrix3x2 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm">
         <HelpTOCNode Title="M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M11.htm" />
         <HelpTOCNode Title="M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M12.htm" />
         <HelpTOCNode Title="M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M21.htm" />
@@ -267,8 +346,8 @@
         <HelpTOCNode Title="M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M32.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="a4566815-7767-40d8-9b63-176ccb6e206f" Title="Matrix4x4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm">
-      <HelpTOCNode Id="7619d279-b575-41d8-922d-ed8cb1fcee74" Title="Matrix4x4 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm">
+    <HelpTOCNode Id="4867eb18-4780-4c94-ac73-dc5d5a29c198" Title="Matrix4x4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm">
+      <HelpTOCNode Id="521e334f-1b67-4bbb-b7e9-79faec4198a5" Title="Matrix4x4 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm">
         <HelpTOCNode Title="M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M11.htm" />
         <HelpTOCNode Title="M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M12.htm" />
         <HelpTOCNode Title="M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M13.htm" />
@@ -287,35 +366,35 @@
         <HelpTOCNode Title="M44 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M44.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="6b8a833e-a9da-4cc0-b819-a351a577c7b5" Title="Plane Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm">
-      <HelpTOCNode Id="6258d605-9442-4da1-a65b-c801c2a280cd" Title="Plane Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Plane.htm">
+    <HelpTOCNode Id="346c88c7-4a3d-4bff-a721-0b645b4da09a" Title="Plane Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm">
+      <HelpTOCNode Id="84c934f6-cc3b-4f53-b60c-d47596e92ca2" Title="Plane Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Plane.htm">
         <HelpTOCNode Title="D Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_D.htm" />
         <HelpTOCNode Title="Normal Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_Normal.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="6f70b903-5b0b-414b-94d3-fd9e23917a6a" Title="Quaternion Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm">
-      <HelpTOCNode Id="2830fc1e-69d9-48f2-a114-c7cda8719a06" Title="Quaternion Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm">
+    <HelpTOCNode Id="c7e5a3de-b6e0-4c4b-85dd-ea6015017c48" Title="Quaternion Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm">
+      <HelpTOCNode Id="5e7bed83-e1da-4454-a8e8-608fa55d45d5" Title="Quaternion Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm">
         <HelpTOCNode Title="W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_W.htm" />
         <HelpTOCNode Title="X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Y.htm" />
         <HelpTOCNode Title="Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="ed2e7d14-da8d-45c6-b09a-c50b789df5b3" Title="Vector2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm">
-      <HelpTOCNode Id="0170c77f-2e60-4080-9ce7-b42123c7daa1" Title="Vector2 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm">
+    <HelpTOCNode Id="205c511f-a5de-499b-b96f-30059930b596" Title="Vector2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm">
+      <HelpTOCNode Id="6784c4de-1101-4b0f-a754-1395fd256f68" Title="Vector2 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm">
         <HelpTOCNode Title="X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_Y.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="71744245-3186-414f-a79b-c7dc869effc2" Title="Vector3 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm">
-      <HelpTOCNode Id="b19dc118-5b3b-4d19-ad96-df57b99a2747" Title="Vector3 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm">
+    <HelpTOCNode Id="81674354-5812-4e64-a95f-8e1ac6b935ce" Title="Vector3 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm">
+      <HelpTOCNode Id="93517272-7459-40f1-8a9f-0e383d4e3513" Title="Vector3 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm">
         <HelpTOCNode Title="X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Y.htm" />
         <HelpTOCNode Title="Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Z.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="e2f516ff-1c57-4f3f-a76c-48d013a5dc8b" Title="Vector4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm">
-      <HelpTOCNode Id="91980682-b076-42e0-b4ed-a11edfe61f66" Title="Vector4 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm">
+    <HelpTOCNode Id="aebc9bc5-b13e-4b54-962a-b085890b2044" Title="Vector4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm">
+      <HelpTOCNode Id="47f846af-3426-40bb-a687-cd79501f5f38" Title="Vector4 Fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm">
         <HelpTOCNode Title="W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_W.htm" />
         <HelpTOCNode Title="X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Y.htm" />
@@ -323,10 +402,10 @@
       </HelpTOCNode>
     </HelpTOCNode>
   </HelpTOCNode>
-  <HelpTOCNode Id="53380873-a556-4f46-bdf4-301ba2a03a13" Title="System.Numerics" Url="html/N_System_Numerics.htm">
-    <HelpTOCNode Id="9319c2b3-d001-4307-8260-42d33a673638" Title="Matrix3x2 Structure" Url="html/T_System_Numerics_Matrix3x2.htm">
+  <HelpTOCNode Id="48c0022f-e8af-46a0-ac27-b155bcc0dcc1" Title="System.Numerics" Url="html/N_System_Numerics.htm">
+    <HelpTOCNode Id="a1eba0a2-4ed3-46df-9f05-cbe31a85be90" Title="Matrix3x2 Structure" Url="html/T_System_Numerics_Matrix3x2.htm">
       <HelpTOCNode Title="Matrix3x2 Constructor " Url="html/M_System_Numerics_Matrix3x2__ctor.htm" />
-      <HelpTOCNode Id="f8a09964-aa5e-4a2c-b466-f4ee0becff32" Title="Matrix3x2 Fields" Url="html/Fields_T_System_Numerics_Matrix3x2.htm">
+      <HelpTOCNode Id="0d2b9149-cd06-4a4e-b233-69f7394ee3e9" Title="Matrix3x2 Fields" Url="html/Fields_T_System_Numerics_Matrix3x2.htm">
         <HelpTOCNode Title="M11 Field" Url="html/F_System_Numerics_Matrix3x2_M11.htm" />
         <HelpTOCNode Title="M12 Field" Url="html/F_System_Numerics_Matrix3x2_M12.htm" />
         <HelpTOCNode Title="M21 Field" Url="html/F_System_Numerics_Matrix3x2_M21.htm" />
@@ -334,13 +413,13 @@
         <HelpTOCNode Title="M31 Field" Url="html/F_System_Numerics_Matrix3x2_M31.htm" />
         <HelpTOCNode Title="M32 Field" Url="html/F_System_Numerics_Matrix3x2_M32.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="20aa2a80-b8ca-407b-8436-0d547647b625" Title="Matrix3x2 Methods" Url="html/Methods_T_System_Numerics_Matrix3x2.htm">
+      <HelpTOCNode Id="7af6220b-46b0-4377-8f12-5de14cf55da5" Title="Matrix3x2 Methods" Url="html/Methods_T_System_Numerics_Matrix3x2.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_System_Numerics_Matrix3x2_Add.htm" />
-        <HelpTOCNode Id="e13e1406-843c-4bed-a44f-59373d67415b" Title="CreateRotation Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateRotation.htm">
+        <HelpTOCNode Id="0baf8af5-3059-4069-9bc8-53ce2faaeea2" Title="CreateRotation Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateRotation.htm">
           <HelpTOCNode Title="CreateRotation Method (Single)" Url="html/M_System_Numerics_Matrix3x2_CreateRotation.htm" />
           <HelpTOCNode Title="CreateRotation Method (Single, Vector2)" Url="html/M_System_Numerics_Matrix3x2_CreateRotation_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="ee97ad78-8612-4423-a3d8-eb72a48b4c94" Title="CreateScale Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateScale.htm">
+        <HelpTOCNode Id="34a9d67b-3889-4c91-98bb-817107d973ea" Title="CreateScale Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateScale.htm">
           <HelpTOCNode Title="CreateScale Method (Single)" Url="html/M_System_Numerics_Matrix3x2_CreateScale_2.htm" />
           <HelpTOCNode Title="CreateScale Method (Vector2)" Url="html/M_System_Numerics_Matrix3x2_CreateScale.htm" />
           <HelpTOCNode Title="CreateScale Method (Single, Vector2)" Url="html/M_System_Numerics_Matrix3x2_CreateScale_3.htm" />
@@ -348,15 +427,15 @@
           <HelpTOCNode Title="CreateScale Method (Vector2, Vector2)" Url="html/M_System_Numerics_Matrix3x2_CreateScale_1.htm" />
           <HelpTOCNode Title="CreateScale Method (Single, Single, Vector2)" Url="html/M_System_Numerics_Matrix3x2_CreateScale_5.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="2a2256e0-c7ff-4d03-8676-541e78086620" Title="CreateSkew Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateSkew.htm">
+        <HelpTOCNode Id="bba407aa-3a19-455d-a6ad-fb211b01a57d" Title="CreateSkew Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateSkew.htm">
           <HelpTOCNode Title="CreateSkew Method (Single, Single)" Url="html/M_System_Numerics_Matrix3x2_CreateSkew.htm" />
           <HelpTOCNode Title="CreateSkew Method (Single, Single, Vector2)" Url="html/M_System_Numerics_Matrix3x2_CreateSkew_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="0c3ce8fd-dfb6-4c9a-9e03-0f8b6c363afa" Title="CreateTranslation Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateTranslation.htm">
+        <HelpTOCNode Id="c578b7c8-c448-42bf-a33d-78f845156b6b" Title="CreateTranslation Method " Url="html/Overload_System_Numerics_Matrix3x2_CreateTranslation.htm">
           <HelpTOCNode Title="CreateTranslation Method (Vector2)" Url="html/M_System_Numerics_Matrix3x2_CreateTranslation.htm" />
           <HelpTOCNode Title="CreateTranslation Method (Single, Single)" Url="html/M_System_Numerics_Matrix3x2_CreateTranslation_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="50498619-5f80-4271-96fd-6c2d3f04ff22" Title="Equals Method " Url="html/Overload_System_Numerics_Matrix3x2_Equals.htm">
+        <HelpTOCNode Id="9105dcd8-514d-4ae7-88e7-16c170fd58d6" Title="Equals Method " Url="html/Overload_System_Numerics_Matrix3x2_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_System_Numerics_Matrix3x2_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_Equals.htm" />
         </HelpTOCNode>
@@ -364,7 +443,7 @@
         <HelpTOCNode Title="GetHashCode Method " Url="html/M_System_Numerics_Matrix3x2_GetHashCode.htm" />
         <HelpTOCNode Title="Invert Method " Url="html/M_System_Numerics_Matrix3x2_Invert.htm" />
         <HelpTOCNode Title="Lerp Method " Url="html/M_System_Numerics_Matrix3x2_Lerp.htm" />
-        <HelpTOCNode Id="90ef8a25-79c8-4a29-8c9d-6a2ddbb1b601" Title="Multiply Method " Url="html/Overload_System_Numerics_Matrix3x2_Multiply.htm">
+        <HelpTOCNode Id="1ab35b78-d840-4b7b-8330-4680aedad264" Title="Multiply Method " Url="html/Overload_System_Numerics_Matrix3x2_Multiply.htm">
           <HelpTOCNode Title="Multiply Method (Matrix3x2, Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_Multiply.htm" />
           <HelpTOCNode Title="Multiply Method (Matrix3x2, Single)" Url="html/M_System_Numerics_Matrix3x2_Multiply_1.htm" />
         </HelpTOCNode>
@@ -372,33 +451,33 @@
         <HelpTOCNode Title="Subtract Method " Url="html/M_System_Numerics_Matrix3x2_Subtract.htm" />
         <HelpTOCNode Title="ToString Method " Url="html/M_System_Numerics_Matrix3x2_ToString.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="71cc7046-7722-4ea8-a312-30d8d5b37171" Title="Matrix3x2 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Matrix3x2.htm">
+      <HelpTOCNode Id="de25dea5-4291-4ba6-bf56-35034ba1942f" Title="Matrix3x2 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Matrix3x2.htm">
         <HelpTOCNode Title="Addition Operator " Url="html/M_System_Numerics_Matrix3x2_op_Addition.htm" />
         <HelpTOCNode Title="Equality Operator " Url="html/M_System_Numerics_Matrix3x2_op_Equality.htm" />
-        <HelpTOCNode Id="82c55dff-e76e-4e5a-a2a1-a60d5da7f6ad" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Matrix3x2_op_Implicit.htm">
+        <HelpTOCNode Id="d2244eb5-c1fb-43d5-9b1f-49537870e7d0" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Matrix3x2_op_Implicit.htm">
           <HelpTOCNode Title="Implicit Conversion (Matrix3x2 to Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_op_Implicit.htm" />
           <HelpTOCNode Title="Implicit Conversion (Matrix3x2 to Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_op_Implicit_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Inequality Operator " Url="html/M_System_Numerics_Matrix3x2_op_Inequality.htm" />
-        <HelpTOCNode Id="eb70dfde-cf79-444f-b878-e0cf82f81d00" Title="Multiply Operator " Url="html/Overload_System_Numerics_Matrix3x2_op_Multiply.htm">
+        <HelpTOCNode Id="c8096d2a-9d8f-484d-9f93-dfe4f6f12cfb" Title="Multiply Operator " Url="html/Overload_System_Numerics_Matrix3x2_op_Multiply.htm">
           <HelpTOCNode Title="Multiply Operator (Matrix3x2, Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_op_Multiply.htm" />
           <HelpTOCNode Title="Multiply Operator (Matrix3x2, Single)" Url="html/M_System_Numerics_Matrix3x2_op_Multiply_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Subtraction Operator " Url="html/M_System_Numerics_Matrix3x2_op_Subtraction.htm" />
         <HelpTOCNode Title="UnaryNegation Operator " Url="html/M_System_Numerics_Matrix3x2_op_UnaryNegation.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="04d2dc58-c7d6-40e6-a1a7-0da2c8a42220" Title="Matrix3x2 Properties" Url="html/Properties_T_System_Numerics_Matrix3x2.htm">
+      <HelpTOCNode Id="35c05c4e-d15a-4a54-ae97-92fbb562cc18" Title="Matrix3x2 Properties" Url="html/Properties_T_System_Numerics_Matrix3x2.htm">
         <HelpTOCNode Title="Identity Property " Url="html/P_System_Numerics_Matrix3x2_Identity.htm" />
         <HelpTOCNode Title="IsIdentity Property " Url="html/P_System_Numerics_Matrix3x2_IsIdentity.htm" />
         <HelpTOCNode Title="Translation Property " Url="html/P_System_Numerics_Matrix3x2_Translation.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="11ad1c5e-4017-4c27-bd17-e37b70d18a5d" Title="Matrix4x4 Structure" Url="html/T_System_Numerics_Matrix4x4.htm">
-      <HelpTOCNode Id="738f136b-44ff-4663-bb01-867ae6182fae" Title="Matrix4x4 Constructor " Url="html/Overload_System_Numerics_Matrix4x4__ctor.htm">
+    <HelpTOCNode Id="a6996167-fb88-468a-96ac-231f45370c00" Title="Matrix4x4 Structure" Url="html/T_System_Numerics_Matrix4x4.htm">
+      <HelpTOCNode Id="e751a083-850e-42df-b476-d996e1ef269c" Title="Matrix4x4 Constructor " Url="html/Overload_System_Numerics_Matrix4x4__ctor.htm">
         <HelpTOCNode Title="Matrix4x4 Constructor (Matrix3x2)" Url="html/M_System_Numerics_Matrix4x4__ctor.htm" />
         <HelpTOCNode Title="Matrix4x4 Constructor (Single, Single, Single, Single, Single, Single, Single, Single, Single, Single, Single, Single, Single, Single, Single, Single)" Url="html/M_System_Numerics_Matrix4x4__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="1b2dbfed-afd2-4589-a23a-06e9c3ea7470" Title="Matrix4x4 Fields" Url="html/Fields_T_System_Numerics_Matrix4x4.htm">
+      <HelpTOCNode Id="55fa5f01-491e-47a2-8c2a-345df206c9be" Title="Matrix4x4 Fields" Url="html/Fields_T_System_Numerics_Matrix4x4.htm">
         <HelpTOCNode Title="M11 Field" Url="html/F_System_Numerics_Matrix4x4_M11.htm" />
         <HelpTOCNode Title="M12 Field" Url="html/F_System_Numerics_Matrix4x4_M12.htm" />
         <HelpTOCNode Title="M13 Field" Url="html/F_System_Numerics_Matrix4x4_M13.htm" />
@@ -416,7 +495,7 @@
         <HelpTOCNode Title="M43 Field" Url="html/F_System_Numerics_Matrix4x4_M43.htm" />
         <HelpTOCNode Title="M44 Field" Url="html/F_System_Numerics_Matrix4x4_M44.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="c82c0a56-31fe-4246-b27a-c99421bef0ea" Title="Matrix4x4 Methods" Url="html/Methods_T_System_Numerics_Matrix4x4.htm">
+      <HelpTOCNode Id="491eef0f-e979-4b29-9751-97a669699936" Title="Matrix4x4 Methods" Url="html/Methods_T_System_Numerics_Matrix4x4.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_System_Numerics_Matrix4x4_Add.htm" />
         <HelpTOCNode Title="CreateBillboard Method " Url="html/M_System_Numerics_Matrix4x4_CreateBillboard.htm" />
         <HelpTOCNode Title="CreateConstrainedBillboard Method " Url="html/M_System_Numerics_Matrix4x4_CreateConstrainedBillboard.htm" />
@@ -430,19 +509,19 @@
         <HelpTOCNode Title="CreatePerspectiveFieldOfView Method " Url="html/M_System_Numerics_Matrix4x4_CreatePerspectiveFieldOfView.htm" />
         <HelpTOCNode Title="CreatePerspectiveOffCenter Method " Url="html/M_System_Numerics_Matrix4x4_CreatePerspectiveOffCenter.htm" />
         <HelpTOCNode Title="CreateReflection Method " Url="html/M_System_Numerics_Matrix4x4_CreateReflection.htm" />
-        <HelpTOCNode Id="a7a70b6e-0f39-4f62-9dc7-8c87dcdebec5" Title="CreateRotationX Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationX.htm">
+        <HelpTOCNode Id="efd13086-2011-4646-b241-3f413c1d304b" Title="CreateRotationX Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationX.htm">
           <HelpTOCNode Title="CreateRotationX Method (Single)" Url="html/M_System_Numerics_Matrix4x4_CreateRotationX.htm" />
           <HelpTOCNode Title="CreateRotationX Method (Single, Vector3)" Url="html/M_System_Numerics_Matrix4x4_CreateRotationX_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="11fa1983-633a-464c-ac8b-fc780a9f8ff3" Title="CreateRotationY Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationY.htm">
+        <HelpTOCNode Id="5e06fd48-4deb-43d9-b212-1f90202da6db" Title="CreateRotationY Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationY.htm">
           <HelpTOCNode Title="CreateRotationY Method (Single)" Url="html/M_System_Numerics_Matrix4x4_CreateRotationY.htm" />
           <HelpTOCNode Title="CreateRotationY Method (Single, Vector3)" Url="html/M_System_Numerics_Matrix4x4_CreateRotationY_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="653fc6ab-af8f-4f4f-a0f0-e5b50afc666a" Title="CreateRotationZ Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationZ.htm">
+        <HelpTOCNode Id="e6f9950e-3c81-4b34-95dd-cb0951fec24e" Title="CreateRotationZ Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationZ.htm">
           <HelpTOCNode Title="CreateRotationZ Method (Single)" Url="html/M_System_Numerics_Matrix4x4_CreateRotationZ.htm" />
           <HelpTOCNode Title="CreateRotationZ Method (Single, Vector3)" Url="html/M_System_Numerics_Matrix4x4_CreateRotationZ_1.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="fc8b9cae-a3d3-430b-9f4e-461e16a05821" Title="CreateScale Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateScale.htm">
+        <HelpTOCNode Id="cb568880-793c-48e4-b3ff-a511c8a14bbe" Title="CreateScale Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateScale.htm">
           <HelpTOCNode Title="CreateScale Method (Single)" Url="html/M_System_Numerics_Matrix4x4_CreateScale_2.htm" />
           <HelpTOCNode Title="CreateScale Method (Vector3)" Url="html/M_System_Numerics_Matrix4x4_CreateScale.htm" />
           <HelpTOCNode Title="CreateScale Method (Single, Vector3)" Url="html/M_System_Numerics_Matrix4x4_CreateScale_3.htm" />
@@ -451,13 +530,13 @@
           <HelpTOCNode Title="CreateScale Method (Single, Single, Single, Vector3)" Url="html/M_System_Numerics_Matrix4x4_CreateScale_5.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="CreateShadow Method " Url="html/M_System_Numerics_Matrix4x4_CreateShadow.htm" />
-        <HelpTOCNode Id="b99b356b-6824-485e-9fda-4467bd98c2d5" Title="CreateTranslation Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateTranslation.htm">
+        <HelpTOCNode Id="9f20b791-ceff-4c22-a6da-a1803feb38e6" Title="CreateTranslation Method " Url="html/Overload_System_Numerics_Matrix4x4_CreateTranslation.htm">
           <HelpTOCNode Title="CreateTranslation Method (Vector3)" Url="html/M_System_Numerics_Matrix4x4_CreateTranslation.htm" />
           <HelpTOCNode Title="CreateTranslation Method (Single, Single, Single)" Url="html/M_System_Numerics_Matrix4x4_CreateTranslation_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="CreateWorld Method " Url="html/M_System_Numerics_Matrix4x4_CreateWorld.htm" />
         <HelpTOCNode Title="Decompose Method " Url="html/M_System_Numerics_Matrix4x4_Decompose.htm" />
-        <HelpTOCNode Id="aeeff82b-4cd4-4315-bf42-072df0330e50" Title="Equals Method " Url="html/Overload_System_Numerics_Matrix4x4_Equals.htm">
+        <HelpTOCNode Id="f5f4dbb0-7610-47a0-aced-71aad7d17946" Title="Equals Method " Url="html/Overload_System_Numerics_Matrix4x4_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_System_Numerics_Matrix4x4_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_Equals.htm" />
         </HelpTOCNode>
@@ -465,7 +544,7 @@
         <HelpTOCNode Title="GetHashCode Method " Url="html/M_System_Numerics_Matrix4x4_GetHashCode.htm" />
         <HelpTOCNode Title="Invert Method " Url="html/M_System_Numerics_Matrix4x4_Invert.htm" />
         <HelpTOCNode Title="Lerp Method " Url="html/M_System_Numerics_Matrix4x4_Lerp.htm" />
-        <HelpTOCNode Id="8aa0107d-e193-41d5-97bf-a227d7e98136" Title="Multiply Method " Url="html/Overload_System_Numerics_Matrix4x4_Multiply.htm">
+        <HelpTOCNode Id="b5bd0245-a771-442f-a810-c9619d4c0e49" Title="Multiply Method " Url="html/Overload_System_Numerics_Matrix4x4_Multiply.htm">
           <HelpTOCNode Title="Multiply Method (Matrix4x4, Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_Multiply.htm" />
           <HelpTOCNode Title="Multiply Method (Matrix4x4, Single)" Url="html/M_System_Numerics_Matrix4x4_Multiply_1.htm" />
         </HelpTOCNode>
@@ -475,75 +554,75 @@
         <HelpTOCNode Title="Transform Method " Url="html/M_System_Numerics_Matrix4x4_Transform.htm" />
         <HelpTOCNode Title="Transpose Method " Url="html/M_System_Numerics_Matrix4x4_Transpose.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="d3954a79-a8dc-400b-9c2c-8bee1f9d9e0e" Title="Matrix4x4 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Matrix4x4.htm">
+      <HelpTOCNode Id="ddba14d4-733d-4739-a2ea-71bc7d2fa61f" Title="Matrix4x4 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Matrix4x4.htm">
         <HelpTOCNode Title="Addition Operator " Url="html/M_System_Numerics_Matrix4x4_op_Addition.htm" />
         <HelpTOCNode Title="Equality Operator " Url="html/M_System_Numerics_Matrix4x4_op_Equality.htm" />
-        <HelpTOCNode Id="befc3a8d-1218-4893-b3d9-27d6dd2fcfcc" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Matrix4x4_op_Implicit.htm">
+        <HelpTOCNode Id="e9968466-b92e-4156-95ca-a089570af51f" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Matrix4x4_op_Implicit.htm">
           <HelpTOCNode Title="Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit.htm" />
           <HelpTOCNode Title="Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Inequality Operator " Url="html/M_System_Numerics_Matrix4x4_op_Inequality.htm" />
-        <HelpTOCNode Id="38ebd341-2d9b-4e5d-b21d-580543fedbfd" Title="Multiply Operator " Url="html/Overload_System_Numerics_Matrix4x4_op_Multiply.htm">
+        <HelpTOCNode Id="dcd27dbb-f0d8-43ee-b752-11b576e77312" Title="Multiply Operator " Url="html/Overload_System_Numerics_Matrix4x4_op_Multiply.htm">
           <HelpTOCNode Title="Multiply Operator (Matrix4x4, Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Multiply.htm" />
           <HelpTOCNode Title="Multiply Operator (Matrix4x4, Single)" Url="html/M_System_Numerics_Matrix4x4_op_Multiply_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Subtraction Operator " Url="html/M_System_Numerics_Matrix4x4_op_Subtraction.htm" />
         <HelpTOCNode Title="UnaryNegation Operator " Url="html/M_System_Numerics_Matrix4x4_op_UnaryNegation.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="6f8c3664-55f1-4278-96fb-0b3e3f7ce7e1" Title="Matrix4x4 Properties" Url="html/Properties_T_System_Numerics_Matrix4x4.htm">
+      <HelpTOCNode Id="2d50737e-f20c-4fff-9d1f-af534474c9c5" Title="Matrix4x4 Properties" Url="html/Properties_T_System_Numerics_Matrix4x4.htm">
         <HelpTOCNode Title="Identity Property " Url="html/P_System_Numerics_Matrix4x4_Identity.htm" />
         <HelpTOCNode Title="IsIdentity Property " Url="html/P_System_Numerics_Matrix4x4_IsIdentity.htm" />
         <HelpTOCNode Title="Translation Property " Url="html/P_System_Numerics_Matrix4x4_Translation.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="8935c4ac-3b68-4a62-bbb1-a5f1fdbc9af6" Title="Plane Structure" Url="html/T_System_Numerics_Plane.htm">
-      <HelpTOCNode Id="01102906-5570-4545-86ce-eaffab8342c4" Title="Plane Constructor " Url="html/Overload_System_Numerics_Plane__ctor.htm">
+    <HelpTOCNode Id="1676a2ed-fe55-4d68-9ffe-430094bd89ad" Title="Plane Structure" Url="html/T_System_Numerics_Plane.htm">
+      <HelpTOCNode Id="b09e406c-49e8-408f-af5b-3df9924e2863" Title="Plane Constructor " Url="html/Overload_System_Numerics_Plane__ctor.htm">
         <HelpTOCNode Title="Plane Constructor (Vector4)" Url="html/M_System_Numerics_Plane__ctor_1.htm" />
         <HelpTOCNode Title="Plane Constructor (Vector3, Single)" Url="html/M_System_Numerics_Plane__ctor.htm" />
         <HelpTOCNode Title="Plane Constructor (Single, Single, Single, Single)" Url="html/M_System_Numerics_Plane__ctor_2.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="bebea5a2-b79e-4902-8c1c-f2bc97c41ee2" Title="Plane Fields" Url="html/Fields_T_System_Numerics_Plane.htm">
+      <HelpTOCNode Id="60fabff5-23e8-4ed1-b446-043b6d52ca05" Title="Plane Fields" Url="html/Fields_T_System_Numerics_Plane.htm">
         <HelpTOCNode Title="D Field" Url="html/F_System_Numerics_Plane_D.htm" />
         <HelpTOCNode Title="Normal Field" Url="html/F_System_Numerics_Plane_Normal.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="71fcd690-c6e2-49d7-bbfc-b21e37a9efe9" Title="Plane Methods" Url="html/Methods_T_System_Numerics_Plane.htm">
+      <HelpTOCNode Id="bb81e99f-668b-44c1-922e-ba4b52b707d1" Title="Plane Methods" Url="html/Methods_T_System_Numerics_Plane.htm">
         <HelpTOCNode Title="CreateFromVertices Method " Url="html/M_System_Numerics_Plane_CreateFromVertices.htm" />
         <HelpTOCNode Title="Dot Method " Url="html/M_System_Numerics_Plane_Dot.htm" />
         <HelpTOCNode Title="DotCoordinate Method " Url="html/M_System_Numerics_Plane_DotCoordinate.htm" />
         <HelpTOCNode Title="DotNormal Method " Url="html/M_System_Numerics_Plane_DotNormal.htm" />
-        <HelpTOCNode Id="8f90dfc7-e7cb-46e8-a5d8-a3c4317a0daf" Title="Equals Method " Url="html/Overload_System_Numerics_Plane_Equals.htm">
+        <HelpTOCNode Id="ae1978d4-da15-49a0-b2a7-fb680f33483b" Title="Equals Method " Url="html/Overload_System_Numerics_Plane_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_System_Numerics_Plane_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (Plane)" Url="html/M_System_Numerics_Plane_Equals.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="GetHashCode Method " Url="html/M_System_Numerics_Plane_GetHashCode.htm" />
         <HelpTOCNode Title="Normalize Method " Url="html/M_System_Numerics_Plane_Normalize.htm" />
         <HelpTOCNode Title="ToString Method " Url="html/M_System_Numerics_Plane_ToString.htm" />
-        <HelpTOCNode Id="b6c83764-8e42-4fc7-a12f-3f759ad933ab" Title="Transform Method " Url="html/Overload_System_Numerics_Plane_Transform.htm">
+        <HelpTOCNode Id="8e31a103-be31-4d2f-a1d1-92343d1892a0" Title="Transform Method " Url="html/Overload_System_Numerics_Plane_Transform.htm">
           <HelpTOCNode Title="Transform Method (Plane, Matrix4x4)" Url="html/M_System_Numerics_Plane_Transform.htm" />
           <HelpTOCNode Title="Transform Method (Plane, Quaternion)" Url="html/M_System_Numerics_Plane_Transform_1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="63a53bdc-c09d-4b98-bc09-c28e1ed4b58f" Title="Plane Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Plane.htm">
+      <HelpTOCNode Id="9c66ab87-4192-4098-b81a-d32fb68b201d" Title="Plane Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Plane.htm">
         <HelpTOCNode Title="Equality Operator " Url="html/M_System_Numerics_Plane_op_Equality.htm" />
-        <HelpTOCNode Id="c87be0d2-03f0-491e-a2a1-c917a25856ad" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Plane_op_Implicit.htm">
+        <HelpTOCNode Id="49ecf491-3a89-4e0b-aaa2-c97a8b110dbb" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Plane_op_Implicit.htm">
           <HelpTOCNode Title="Implicit Conversion (Plane to Plane)" Url="html/M_System_Numerics_Plane_op_Implicit.htm" />
           <HelpTOCNode Title="Implicit Conversion (Plane to Plane)" Url="html/M_System_Numerics_Plane_op_Implicit_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Inequality Operator " Url="html/M_System_Numerics_Plane_op_Inequality.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="f604de68-1297-41d6-8453-87eaeb48af09" Title="Quaternion Structure" Url="html/T_System_Numerics_Quaternion.htm">
-      <HelpTOCNode Id="6887a4bd-4440-4a32-8954-b3bccdc55f8f" Title="Quaternion Constructor " Url="html/Overload_System_Numerics_Quaternion__ctor.htm">
+    <HelpTOCNode Id="e3f7d400-722f-4e5d-8bda-0b3a83a1326f" Title="Quaternion Structure" Url="html/T_System_Numerics_Quaternion.htm">
+      <HelpTOCNode Id="24ca90be-83f0-4c04-8f92-f20070b478f4" Title="Quaternion Constructor " Url="html/Overload_System_Numerics_Quaternion__ctor.htm">
         <HelpTOCNode Title="Quaternion Constructor (Vector3, Single)" Url="html/M_System_Numerics_Quaternion__ctor.htm" />
         <HelpTOCNode Title="Quaternion Constructor (Single, Single, Single, Single)" Url="html/M_System_Numerics_Quaternion__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="11155d8e-825a-493e-b698-7a82ee41e018" Title="Quaternion Fields" Url="html/Fields_T_System_Numerics_Quaternion.htm">
+      <HelpTOCNode Id="13213106-1686-447b-a276-08430116a7de" Title="Quaternion Fields" Url="html/Fields_T_System_Numerics_Quaternion.htm">
         <HelpTOCNode Title="W Field" Url="html/F_System_Numerics_Quaternion_W.htm" />
         <HelpTOCNode Title="X Field" Url="html/F_System_Numerics_Quaternion_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_System_Numerics_Quaternion_Y.htm" />
         <HelpTOCNode Title="Z Field" Url="html/F_System_Numerics_Quaternion_Z.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="9b148e89-de00-4962-bc1c-1044382a065d" Title="Quaternion Methods" Url="html/Methods_T_System_Numerics_Quaternion.htm">
+      <HelpTOCNode Id="0a09a422-83ea-46e8-822c-ab7c9a9b797c" Title="Quaternion Methods" Url="html/Methods_T_System_Numerics_Quaternion.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_System_Numerics_Quaternion_Add.htm" />
         <HelpTOCNode Title="Concatenate Method " Url="html/M_System_Numerics_Quaternion_Concatenate.htm" />
         <HelpTOCNode Title="Conjugate Method " Url="html/M_System_Numerics_Quaternion_Conjugate.htm" />
@@ -552,7 +631,7 @@
         <HelpTOCNode Title="CreateFromYawPitchRoll Method " Url="html/M_System_Numerics_Quaternion_CreateFromYawPitchRoll.htm" />
         <HelpTOCNode Title="Divide Method " Url="html/M_System_Numerics_Quaternion_Divide.htm" />
         <HelpTOCNode Title="Dot Method " Url="html/M_System_Numerics_Quaternion_Dot.htm" />
-        <HelpTOCNode Id="bdc754a2-3b8a-446c-bbb7-32dc2e9f1e40" Title="Equals Method " Url="html/Overload_System_Numerics_Quaternion_Equals.htm">
+        <HelpTOCNode Id="5a2ab5de-adb3-4e79-b758-6e8362931784" Title="Equals Method " Url="html/Overload_System_Numerics_Quaternion_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_System_Numerics_Quaternion_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (Quaternion)" Url="html/M_System_Numerics_Quaternion_Equals.htm" />
         </HelpTOCNode>
@@ -561,7 +640,7 @@
         <HelpTOCNode Title="Length Method " Url="html/M_System_Numerics_Quaternion_Length.htm" />
         <HelpTOCNode Title="LengthSquared Method " Url="html/M_System_Numerics_Quaternion_LengthSquared.htm" />
         <HelpTOCNode Title="Lerp Method " Url="html/M_System_Numerics_Quaternion_Lerp.htm" />
-        <HelpTOCNode Id="17a742ae-6bd9-4a0f-aaaf-6e08f4b6ef6a" Title="Multiply Method " Url="html/Overload_System_Numerics_Quaternion_Multiply.htm">
+        <HelpTOCNode Id="8179720a-6627-49ad-b036-bf98557d7f0f" Title="Multiply Method " Url="html/Overload_System_Numerics_Quaternion_Multiply.htm">
           <HelpTOCNode Title="Multiply Method (Quaternion, Quaternion)" Url="html/M_System_Numerics_Quaternion_Multiply.htm" />
           <HelpTOCNode Title="Multiply Method (Quaternion, Single)" Url="html/M_System_Numerics_Quaternion_Multiply_1.htm" />
         </HelpTOCNode>
@@ -571,47 +650,47 @@
         <HelpTOCNode Title="Subtract Method " Url="html/M_System_Numerics_Quaternion_Subtract.htm" />
         <HelpTOCNode Title="ToString Method " Url="html/M_System_Numerics_Quaternion_ToString.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="451525e9-5647-4e94-a5b9-cda4f0dcf21a" Title="Quaternion Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Quaternion.htm">
+      <HelpTOCNode Id="e4a4e60e-a973-4545-bc2f-bfea9dd0d6b8" Title="Quaternion Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Quaternion.htm">
         <HelpTOCNode Title="Addition Operator " Url="html/M_System_Numerics_Quaternion_op_Addition.htm" />
         <HelpTOCNode Title="Division Operator " Url="html/M_System_Numerics_Quaternion_op_Division.htm" />
         <HelpTOCNode Title="Equality Operator " Url="html/M_System_Numerics_Quaternion_op_Equality.htm" />
-        <HelpTOCNode Id="f2f791e0-2855-4af1-a40c-5ca874db0235" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Quaternion_op_Implicit.htm">
+        <HelpTOCNode Id="a9012652-3378-4422-bdbc-e56e5996a219" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Quaternion_op_Implicit.htm">
           <HelpTOCNode Title="Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit.htm" />
           <HelpTOCNode Title="Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Inequality Operator " Url="html/M_System_Numerics_Quaternion_op_Inequality.htm" />
-        <HelpTOCNode Id="b1a58690-6dfd-4107-bd91-192468f2ffc4" Title="Multiply Operator " Url="html/Overload_System_Numerics_Quaternion_op_Multiply.htm">
+        <HelpTOCNode Id="4a786ebf-00ac-4e5c-937b-22d576fda669" Title="Multiply Operator " Url="html/Overload_System_Numerics_Quaternion_op_Multiply.htm">
           <HelpTOCNode Title="Multiply Operator (Quaternion, Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Multiply.htm" />
           <HelpTOCNode Title="Multiply Operator (Quaternion, Single)" Url="html/M_System_Numerics_Quaternion_op_Multiply_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Subtraction Operator " Url="html/M_System_Numerics_Quaternion_op_Subtraction.htm" />
         <HelpTOCNode Title="UnaryNegation Operator " Url="html/M_System_Numerics_Quaternion_op_UnaryNegation.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="170065e6-8893-4395-ae52-27afd2e4aa43" Title="Quaternion Properties" Url="html/Properties_T_System_Numerics_Quaternion.htm">
+      <HelpTOCNode Id="673e47bd-712b-4b7f-bb57-79b6ec57d709" Title="Quaternion Properties" Url="html/Properties_T_System_Numerics_Quaternion.htm">
         <HelpTOCNode Title="Identity Property " Url="html/P_System_Numerics_Quaternion_Identity.htm" />
         <HelpTOCNode Title="IsIdentity Property " Url="html/P_System_Numerics_Quaternion_IsIdentity.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="4df53384-08f6-494e-846c-f1c4ba2e0ac3" Title="Vector2 Structure" Url="html/T_System_Numerics_Vector2.htm">
-      <HelpTOCNode Id="21a97645-133d-4b04-ac8c-2dc12ab6d8b9" Title="Vector2 Constructor " Url="html/Overload_System_Numerics_Vector2__ctor.htm">
+    <HelpTOCNode Id="6a32bde0-2feb-4b1d-882a-0c7a6d4b6da1" Title="Vector2 Structure" Url="html/T_System_Numerics_Vector2.htm">
+      <HelpTOCNode Id="a2676210-60eb-46ee-a21f-84ad0e894a1a" Title="Vector2 Constructor " Url="html/Overload_System_Numerics_Vector2__ctor.htm">
         <HelpTOCNode Title="Vector2 Constructor (Single)" Url="html/M_System_Numerics_Vector2__ctor.htm" />
         <HelpTOCNode Title="Vector2 Constructor (Single, Single)" Url="html/M_System_Numerics_Vector2__ctor_1.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="cbac4a10-ea05-452d-89ba-675ab498b732" Title="Vector2 Fields" Url="html/Fields_T_System_Numerics_Vector2.htm">
+      <HelpTOCNode Id="830b1d03-14e1-48f4-99f0-1db5498051f9" Title="Vector2 Fields" Url="html/Fields_T_System_Numerics_Vector2.htm">
         <HelpTOCNode Title="X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_System_Numerics_Vector2_Y.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="70ce08e1-fb26-453f-9994-4853347b1f97" Title="Vector2 Methods" Url="html/Methods_T_System_Numerics_Vector2.htm">
+      <HelpTOCNode Id="41fae7df-4014-4f07-86bb-d3bb27f180f3" Title="Vector2 Methods" Url="html/Methods_T_System_Numerics_Vector2.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_System_Numerics_Vector2_Add.htm" />
         <HelpTOCNode Title="Clamp Method " Url="html/M_System_Numerics_Vector2_Clamp.htm" />
         <HelpTOCNode Title="Distance Method " Url="html/M_System_Numerics_Vector2_Distance.htm" />
         <HelpTOCNode Title="DistanceSquared Method " Url="html/M_System_Numerics_Vector2_DistanceSquared.htm" />
-        <HelpTOCNode Id="97e25592-4798-417b-b478-5eb75d8bd94c" Title="Divide Method " Url="html/Overload_System_Numerics_Vector2_Divide.htm">
+        <HelpTOCNode Id="5a02213d-558d-4315-a2cc-1e4b95343f2a" Title="Divide Method " Url="html/Overload_System_Numerics_Vector2_Divide.htm">
           <HelpTOCNode Title="Divide Method (Vector2, Vector2)" Url="html/M_System_Numerics_Vector2_Divide.htm" />
           <HelpTOCNode Title="Divide Method (Vector2, Single)" Url="html/M_System_Numerics_Vector2_Divide_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Dot Method " Url="html/M_System_Numerics_Vector2_Dot.htm" />
-        <HelpTOCNode Id="5068915b-e082-41ca-83c1-0668bce1b095" Title="Equals Method " Url="html/Overload_System_Numerics_Vector2_Equals.htm">
+        <HelpTOCNode Id="a385e75c-5a57-40cd-a3d0-548564b42a02" Title="Equals Method " Url="html/Overload_System_Numerics_Vector2_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_System_Numerics_Vector2_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (Vector2)" Url="html/M_System_Numerics_Vector2_Equals.htm" />
         </HelpTOCNode>
@@ -621,7 +700,7 @@
         <HelpTOCNode Title="Lerp Method " Url="html/M_System_Numerics_Vector2_Lerp.htm" />
         <HelpTOCNode Title="Max Method " Url="html/M_System_Numerics_Vector2_Max.htm" />
         <HelpTOCNode Title="Min Method " Url="html/M_System_Numerics_Vector2_Min.htm" />
-        <HelpTOCNode Id="f42951c8-9db2-4667-b8aa-4b1c300c9ed6" Title="Multiply Method " Url="html/Overload_System_Numerics_Vector2_Multiply.htm">
+        <HelpTOCNode Id="3322724b-c322-4fde-bf0a-39eb18ecf8a8" Title="Multiply Method " Url="html/Overload_System_Numerics_Vector2_Multiply.htm">
           <HelpTOCNode Title="Multiply Method (Vector2, Vector2)" Url="html/M_System_Numerics_Vector2_Multiply.htm" />
           <HelpTOCNode Title="Multiply Method (Vector2, Single)" Url="html/M_System_Numerics_Vector2_Multiply_1.htm" />
         </HelpTOCNode>
@@ -630,29 +709,29 @@
         <HelpTOCNode Title="Reflect Method " Url="html/M_System_Numerics_Vector2_Reflect.htm" />
         <HelpTOCNode Title="Subtract Method " Url="html/M_System_Numerics_Vector2_Subtract.htm" />
         <HelpTOCNode Title="ToString Method " Url="html/M_System_Numerics_Vector2_ToString.htm" />
-        <HelpTOCNode Id="174b5df6-5426-4521-8fcb-8ad728f2eda3" Title="Transform Method " Url="html/Overload_System_Numerics_Vector2_Transform.htm">
+        <HelpTOCNode Id="76ef2ec8-c8cd-4954-9ab7-970969ae4a63" Title="Transform Method " Url="html/Overload_System_Numerics_Vector2_Transform.htm">
           <HelpTOCNode Title="Transform Method (Vector2, Matrix3x2)" Url="html/M_System_Numerics_Vector2_Transform.htm" />
           <HelpTOCNode Title="Transform Method (Vector2, Matrix4x4)" Url="html/M_System_Numerics_Vector2_Transform_1.htm" />
           <HelpTOCNode Title="Transform Method (Vector2, Quaternion)" Url="html/M_System_Numerics_Vector2_Transform_2.htm" />
         </HelpTOCNode>
-        <HelpTOCNode Id="c7d315a2-388b-424a-873d-55d1e04973b2" Title="TransformNormal Method " Url="html/Overload_System_Numerics_Vector2_TransformNormal.htm">
+        <HelpTOCNode Id="ac65393c-3e21-4cfd-846a-e5d586b896cc" Title="TransformNormal Method " Url="html/Overload_System_Numerics_Vector2_TransformNormal.htm">
           <HelpTOCNode Title="TransformNormal Method (Vector2, Matrix3x2)" Url="html/M_System_Numerics_Vector2_TransformNormal.htm" />
           <HelpTOCNode Title="TransformNormal Method (Vector2, Matrix4x4)" Url="html/M_System_Numerics_Vector2_TransformNormal_1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="7dd9817a-abdf-44a6-933a-85e37c24b428" Title="Vector2 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Vector2.htm">
+      <HelpTOCNode Id="8b4df96a-4c84-4eec-88a7-f26279fc497a" Title="Vector2 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Vector2.htm">
         <HelpTOCNode Title="Addition Operator " Url="html/M_System_Numerics_Vector2_op_Addition.htm" />
-        <HelpTOCNode Id="130b600d-93de-4ba7-81b2-260cca53b6ba" Title="Division Operator " Url="html/Overload_System_Numerics_Vector2_op_Division.htm">
+        <HelpTOCNode Id="62b26245-fa5d-4944-946a-b58871fa6800" Title="Division Operator " Url="html/Overload_System_Numerics_Vector2_op_Division.htm">
           <HelpTOCNode Title="Division Operator (Vector2, Vector2)" Url="html/M_System_Numerics_Vector2_op_Division.htm" />
           <HelpTOCNode Title="Division Operator (Vector2, Single)" Url="html/M_System_Numerics_Vector2_op_Division_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Equality Operator " Url="html/M_System_Numerics_Vector2_op_Equality.htm" />
-        <HelpTOCNode Id="975e3219-80e7-477f-9e14-dc284b0e1fd6" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Vector2_op_Implicit.htm">
+        <HelpTOCNode Id="7ec210d3-6996-4c91-a5e2-0ef4537dd3df" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Vector2_op_Implicit.htm">
           <HelpTOCNode Title="Implicit Conversion (Vector2 to Vector2)" Url="html/M_System_Numerics_Vector2_op_Implicit.htm" />
           <HelpTOCNode Title="Implicit Conversion (Vector2 to Vector2)" Url="html/M_System_Numerics_Vector2_op_Implicit_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Inequality Operator " Url="html/M_System_Numerics_Vector2_op_Inequality.htm" />
-        <HelpTOCNode Id="7bd4587d-15e8-4736-ac04-5f19bbb6c6d0" Title="Multiply Operator " Url="html/Overload_System_Numerics_Vector2_op_Multiply.htm">
+        <HelpTOCNode Id="640a50da-9a60-461a-aac3-673593ed3826" Title="Multiply Operator " Url="html/Overload_System_Numerics_Vector2_op_Multiply.htm">
           <HelpTOCNode Title="Multiply Operator (Single, Vector2)" Url="html/M_System_Numerics_Vector2_op_Multiply_2.htm" />
           <HelpTOCNode Title="Multiply Operator (Vector2, Vector2)" Url="html/M_System_Numerics_Vector2_op_Multiply.htm" />
           <HelpTOCNode Title="Multiply Operator (Vector2, Single)" Url="html/M_System_Numerics_Vector2_op_Multiply_1.htm" />
@@ -660,36 +739,36 @@
         <HelpTOCNode Title="Subtraction Operator " Url="html/M_System_Numerics_Vector2_op_Subtraction.htm" />
         <HelpTOCNode Title="UnaryNegation Operator " Url="html/M_System_Numerics_Vector2_op_UnaryNegation.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="d2462b58-ff7f-40da-8a19-4e0d18cc57d2" Title="Vector2 Properties" Url="html/Properties_T_System_Numerics_Vector2.htm">
+      <HelpTOCNode Id="82ab96fb-36e4-4fbf-bf2b-64b672b7c1c5" Title="Vector2 Properties" Url="html/Properties_T_System_Numerics_Vector2.htm">
         <HelpTOCNode Title="One Property " Url="html/P_System_Numerics_Vector2_One.htm" />
         <HelpTOCNode Title="UnitX Property " Url="html/P_System_Numerics_Vector2_UnitX.htm" />
         <HelpTOCNode Title="UnitY Property " Url="html/P_System_Numerics_Vector2_UnitY.htm" />
         <HelpTOCNode Title="Zero Property " Url="html/P_System_Numerics_Vector2_Zero.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="63e5e33f-c6e0-4c76-bc68-2b9b142fde79" Title="Vector3 Structure" Url="html/T_System_Numerics_Vector3.htm">
-      <HelpTOCNode Id="68624ea1-fe3f-44de-a2a7-ab48a207c292" Title="Vector3 Constructor " Url="html/Overload_System_Numerics_Vector3__ctor.htm">
+    <HelpTOCNode Id="e4514ab1-8273-4f5d-be41-95d83c1bf53f" Title="Vector3 Structure" Url="html/T_System_Numerics_Vector3.htm">
+      <HelpTOCNode Id="9246eef2-b4a4-4d27-9701-1e1e17bb2543" Title="Vector3 Constructor " Url="html/Overload_System_Numerics_Vector3__ctor.htm">
         <HelpTOCNode Title="Vector3 Constructor (Single)" Url="html/M_System_Numerics_Vector3__ctor_1.htm" />
         <HelpTOCNode Title="Vector3 Constructor (Vector2, Single)" Url="html/M_System_Numerics_Vector3__ctor.htm" />
         <HelpTOCNode Title="Vector3 Constructor (Single, Single, Single)" Url="html/M_System_Numerics_Vector3__ctor_2.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="03d10e21-5148-4857-8a88-084aaf209c70" Title="Vector3 Fields" Url="html/Fields_T_System_Numerics_Vector3.htm">
+      <HelpTOCNode Id="137e7181-6fc4-4675-ba68-9a61595475f4" Title="Vector3 Fields" Url="html/Fields_T_System_Numerics_Vector3.htm">
         <HelpTOCNode Title="X Field" Url="html/F_System_Numerics_Vector3_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_System_Numerics_Vector3_Y.htm" />
         <HelpTOCNode Title="Z Field" Url="html/F_System_Numerics_Vector3_Z.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="fa4dad41-f4d6-4f38-824c-c527a749a44a" Title="Vector3 Methods" Url="html/Methods_T_System_Numerics_Vector3.htm">
+      <HelpTOCNode Id="0b2c2245-c37e-4b4e-bc17-51b0f9b9881d" Title="Vector3 Methods" Url="html/Methods_T_System_Numerics_Vector3.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_System_Numerics_Vector3_Add.htm" />
         <HelpTOCNode Title="Clamp Method " Url="html/M_System_Numerics_Vector3_Clamp.htm" />
         <HelpTOCNode Title="Cross Method " Url="html/M_System_Numerics_Vector3_Cross.htm" />
         <HelpTOCNode Title="Distance Method " Url="html/M_System_Numerics_Vector3_Distance.htm" />
         <HelpTOCNode Title="DistanceSquared Method " Url="html/M_System_Numerics_Vector3_DistanceSquared.htm" />
-        <HelpTOCNode Id="6fd63d68-3015-4ddd-bd23-78fe4d9ac8e5" Title="Divide Method " Url="html/Overload_System_Numerics_Vector3_Divide.htm">
+        <HelpTOCNode Id="35ca9ea7-39d2-4c52-9a60-e8f89812f1f4" Title="Divide Method " Url="html/Overload_System_Numerics_Vector3_Divide.htm">
           <HelpTOCNode Title="Divide Method (Vector3, Vector3)" Url="html/M_System_Numerics_Vector3_Divide.htm" />
           <HelpTOCNode Title="Divide Method (Vector3, Single)" Url="html/M_System_Numerics_Vector3_Divide_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Dot Method " Url="html/M_System_Numerics_Vector3_Dot.htm" />
-        <HelpTOCNode Id="69a93021-b20d-4da5-945a-3e435d3239f7" Title="Equals Method " Url="html/Overload_System_Numerics_Vector3_Equals.htm">
+        <HelpTOCNode Id="7a747dd6-8db0-497c-9fda-4d552db55adc" Title="Equals Method " Url="html/Overload_System_Numerics_Vector3_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_System_Numerics_Vector3_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (Vector3)" Url="html/M_System_Numerics_Vector3_Equals.htm" />
         </HelpTOCNode>
@@ -699,7 +778,7 @@
         <HelpTOCNode Title="Lerp Method " Url="html/M_System_Numerics_Vector3_Lerp.htm" />
         <HelpTOCNode Title="Max Method " Url="html/M_System_Numerics_Vector3_Max.htm" />
         <HelpTOCNode Title="Min Method " Url="html/M_System_Numerics_Vector3_Min.htm" />
-        <HelpTOCNode Id="b3f21d6f-accd-435a-9d7f-760b8045bbb4" Title="Multiply Method " Url="html/Overload_System_Numerics_Vector3_Multiply.htm">
+        <HelpTOCNode Id="dbbe80aa-7baa-400c-8496-6c53df6322e4" Title="Multiply Method " Url="html/Overload_System_Numerics_Vector3_Multiply.htm">
           <HelpTOCNode Title="Multiply Method (Vector3, Vector3)" Url="html/M_System_Numerics_Vector3_Multiply.htm" />
           <HelpTOCNode Title="Multiply Method (Vector3, Single)" Url="html/M_System_Numerics_Vector3_Multiply_1.htm" />
         </HelpTOCNode>
@@ -708,25 +787,25 @@
         <HelpTOCNode Title="Reflect Method " Url="html/M_System_Numerics_Vector3_Reflect.htm" />
         <HelpTOCNode Title="Subtract Method " Url="html/M_System_Numerics_Vector3_Subtract.htm" />
         <HelpTOCNode Title="ToString Method " Url="html/M_System_Numerics_Vector3_ToString.htm" />
-        <HelpTOCNode Id="9a4f3dfc-372a-4074-9f50-fd5a5587c54a" Title="Transform Method " Url="html/Overload_System_Numerics_Vector3_Transform.htm">
+        <HelpTOCNode Id="a222f9fb-fdd4-4aff-9f41-3fc76dbeba7f" Title="Transform Method " Url="html/Overload_System_Numerics_Vector3_Transform.htm">
           <HelpTOCNode Title="Transform Method (Vector3, Matrix4x4)" Url="html/M_System_Numerics_Vector3_Transform.htm" />
           <HelpTOCNode Title="Transform Method (Vector3, Quaternion)" Url="html/M_System_Numerics_Vector3_Transform_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="TransformNormal Method " Url="html/M_System_Numerics_Vector3_TransformNormal.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="52009f33-629d-49d4-91dc-47fe24c1845c" Title="Vector3 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Vector3.htm">
+      <HelpTOCNode Id="b8e85f07-21c9-4558-8565-e03aae32c464" Title="Vector3 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Vector3.htm">
         <HelpTOCNode Title="Addition Operator " Url="html/M_System_Numerics_Vector3_op_Addition.htm" />
-        <HelpTOCNode Id="6d8e5998-0e54-4cfb-8c3d-07ab5e2b9e2d" Title="Division Operator " Url="html/Overload_System_Numerics_Vector3_op_Division.htm">
+        <HelpTOCNode Id="e280ce6f-c6a2-427e-a3bf-dd8d6ab6f41d" Title="Division Operator " Url="html/Overload_System_Numerics_Vector3_op_Division.htm">
           <HelpTOCNode Title="Division Operator (Vector3, Vector3)" Url="html/M_System_Numerics_Vector3_op_Division.htm" />
           <HelpTOCNode Title="Division Operator (Vector3, Single)" Url="html/M_System_Numerics_Vector3_op_Division_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Equality Operator " Url="html/M_System_Numerics_Vector3_op_Equality.htm" />
-        <HelpTOCNode Id="7283a570-c66f-4705-9089-82ba96dbf536" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Vector3_op_Implicit.htm">
+        <HelpTOCNode Id="ca3782cb-58ad-486f-8ff2-6002f8842324" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Vector3_op_Implicit.htm">
           <HelpTOCNode Title="Implicit Conversion (Vector3 to Vector3)" Url="html/M_System_Numerics_Vector3_op_Implicit.htm" />
           <HelpTOCNode Title="Implicit Conversion (Vector3 to Vector3)" Url="html/M_System_Numerics_Vector3_op_Implicit_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Inequality Operator " Url="html/M_System_Numerics_Vector3_op_Inequality.htm" />
-        <HelpTOCNode Id="42fcd81a-3b9e-45a2-bf35-a33880abcc6c" Title="Multiply Operator " Url="html/Overload_System_Numerics_Vector3_op_Multiply.htm">
+        <HelpTOCNode Id="b4af7045-e742-4bd1-afa4-d524e97b97c8" Title="Multiply Operator " Url="html/Overload_System_Numerics_Vector3_op_Multiply.htm">
           <HelpTOCNode Title="Multiply Operator (Single, Vector3)" Url="html/M_System_Numerics_Vector3_op_Multiply_2.htm" />
           <HelpTOCNode Title="Multiply Operator (Vector3, Vector3)" Url="html/M_System_Numerics_Vector3_op_Multiply.htm" />
           <HelpTOCNode Title="Multiply Operator (Vector3, Single)" Url="html/M_System_Numerics_Vector3_op_Multiply_1.htm" />
@@ -734,7 +813,7 @@
         <HelpTOCNode Title="Subtraction Operator " Url="html/M_System_Numerics_Vector3_op_Subtraction.htm" />
         <HelpTOCNode Title="UnaryNegation Operator " Url="html/M_System_Numerics_Vector3_op_UnaryNegation.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="c8165843-ab1d-4c5f-9c3e-1e856c93c817" Title="Vector3 Properties" Url="html/Properties_T_System_Numerics_Vector3.htm">
+      <HelpTOCNode Id="49fe1d9c-4c50-42c3-803b-784b377acae6" Title="Vector3 Properties" Url="html/Properties_T_System_Numerics_Vector3.htm">
         <HelpTOCNode Title="One Property " Url="html/P_System_Numerics_Vector3_One.htm" />
         <HelpTOCNode Title="UnitX Property " Url="html/P_System_Numerics_Vector3_UnitX.htm" />
         <HelpTOCNode Title="UnitY Property " Url="html/P_System_Numerics_Vector3_UnitY.htm" />
@@ -742,30 +821,30 @@
         <HelpTOCNode Title="Zero Property " Url="html/P_System_Numerics_Vector3_Zero.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="7fd3b9d6-eeb3-4bb6-96e9-65c9385fa42f" Title="Vector4 Structure" Url="html/T_System_Numerics_Vector4.htm">
-      <HelpTOCNode Id="cbe54538-6e63-4fbf-8b08-c836921fdf80" Title="Vector4 Constructor " Url="html/Overload_System_Numerics_Vector4__ctor.htm">
+    <HelpTOCNode Id="b5882f3d-123a-4b43-adcd-ecfa2f2b246b" Title="Vector4 Structure" Url="html/T_System_Numerics_Vector4.htm">
+      <HelpTOCNode Id="84df8986-5f1d-447e-b457-82babd9e1219" Title="Vector4 Constructor " Url="html/Overload_System_Numerics_Vector4__ctor.htm">
         <HelpTOCNode Title="Vector4 Constructor (Single)" Url="html/M_System_Numerics_Vector4__ctor_2.htm" />
         <HelpTOCNode Title="Vector4 Constructor (Vector3, Single)" Url="html/M_System_Numerics_Vector4__ctor_1.htm" />
         <HelpTOCNode Title="Vector4 Constructor (Vector2, Single, Single)" Url="html/M_System_Numerics_Vector4__ctor.htm" />
         <HelpTOCNode Title="Vector4 Constructor (Single, Single, Single, Single)" Url="html/M_System_Numerics_Vector4__ctor_3.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="fae0d64f-3abd-4ddf-8bb2-66bcab5adc3e" Title="Vector4 Fields" Url="html/Fields_T_System_Numerics_Vector4.htm">
+      <HelpTOCNode Id="dd0bbf95-6690-4499-8855-af042493e30e" Title="Vector4 Fields" Url="html/Fields_T_System_Numerics_Vector4.htm">
         <HelpTOCNode Title="W Field" Url="html/F_System_Numerics_Vector4_W.htm" />
         <HelpTOCNode Title="X Field" Url="html/F_System_Numerics_Vector4_X.htm" />
         <HelpTOCNode Title="Y Field" Url="html/F_System_Numerics_Vector4_Y.htm" />
         <HelpTOCNode Title="Z Field" Url="html/F_System_Numerics_Vector4_Z.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="28d002bf-6902-4741-a829-03f7bbef5d0b" Title="Vector4 Methods" Url="html/Methods_T_System_Numerics_Vector4.htm">
+      <HelpTOCNode Id="5035c3c4-8a47-499a-ac01-50563d2917d9" Title="Vector4 Methods" Url="html/Methods_T_System_Numerics_Vector4.htm">
         <HelpTOCNode Title="Add Method " Url="html/M_System_Numerics_Vector4_Add.htm" />
         <HelpTOCNode Title="Clamp Method " Url="html/M_System_Numerics_Vector4_Clamp.htm" />
         <HelpTOCNode Title="Distance Method " Url="html/M_System_Numerics_Vector4_Distance.htm" />
         <HelpTOCNode Title="DistanceSquared Method " Url="html/M_System_Numerics_Vector4_DistanceSquared.htm" />
-        <HelpTOCNode Id="bf7c66e0-c855-4773-b6e5-1699cb72034f" Title="Divide Method " Url="html/Overload_System_Numerics_Vector4_Divide.htm">
+        <HelpTOCNode Id="3f718ba0-b8e8-46e1-9dc0-88c85a57d4b8" Title="Divide Method " Url="html/Overload_System_Numerics_Vector4_Divide.htm">
           <HelpTOCNode Title="Divide Method (Vector4, Vector4)" Url="html/M_System_Numerics_Vector4_Divide.htm" />
           <HelpTOCNode Title="Divide Method (Vector4, Single)" Url="html/M_System_Numerics_Vector4_Divide_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Dot Method " Url="html/M_System_Numerics_Vector4_Dot.htm" />
-        <HelpTOCNode Id="169ed60f-5547-4588-9c1d-0c952ef2dec4" Title="Equals Method " Url="html/Overload_System_Numerics_Vector4_Equals.htm">
+        <HelpTOCNode Id="c1b8ae49-f95c-454d-ab2e-811209422ae5" Title="Equals Method " Url="html/Overload_System_Numerics_Vector4_Equals.htm">
           <HelpTOCNode Title="Equals Method (Object)" Url="html/M_System_Numerics_Vector4_Equals_1.htm" />
           <HelpTOCNode Title="Equals Method (Vector4)" Url="html/M_System_Numerics_Vector4_Equals.htm" />
         </HelpTOCNode>
@@ -775,7 +854,7 @@
         <HelpTOCNode Title="Lerp Method " Url="html/M_System_Numerics_Vector4_Lerp.htm" />
         <HelpTOCNode Title="Max Method " Url="html/M_System_Numerics_Vector4_Max.htm" />
         <HelpTOCNode Title="Min Method " Url="html/M_System_Numerics_Vector4_Min.htm" />
-        <HelpTOCNode Id="7e00c152-8731-4ebd-8140-a5505f09ce59" Title="Multiply Method " Url="html/Overload_System_Numerics_Vector4_Multiply.htm">
+        <HelpTOCNode Id="7faddf13-3a0f-447e-8def-ab1fb8d87365" Title="Multiply Method " Url="html/Overload_System_Numerics_Vector4_Multiply.htm">
           <HelpTOCNode Title="Multiply Method (Vector4, Vector4)" Url="html/M_System_Numerics_Vector4_Multiply.htm" />
           <HelpTOCNode Title="Multiply Method (Vector4, Single)" Url="html/M_System_Numerics_Vector4_Multiply_1.htm" />
         </HelpTOCNode>
@@ -783,7 +862,7 @@
         <HelpTOCNode Title="Normalize Method " Url="html/M_System_Numerics_Vector4_Normalize.htm" />
         <HelpTOCNode Title="Subtract Method " Url="html/M_System_Numerics_Vector4_Subtract.htm" />
         <HelpTOCNode Title="ToString Method " Url="html/M_System_Numerics_Vector4_ToString.htm" />
-        <HelpTOCNode Id="3f0b0728-5712-4061-9e1a-13f1c9dfb6ae" Title="Transform Method " Url="html/Overload_System_Numerics_Vector4_Transform.htm">
+        <HelpTOCNode Id="1be669e0-305d-4cc1-bfdc-9ab0c2ae5e08" Title="Transform Method " Url="html/Overload_System_Numerics_Vector4_Transform.htm">
           <HelpTOCNode Title="Transform Method (Vector2, Matrix4x4)" Url="html/M_System_Numerics_Vector4_Transform.htm" />
           <HelpTOCNode Title="Transform Method (Vector2, Quaternion)" Url="html/M_System_Numerics_Vector4_Transform_1.htm" />
           <HelpTOCNode Title="Transform Method (Vector3, Matrix4x4)" Url="html/M_System_Numerics_Vector4_Transform_2.htm" />
@@ -792,19 +871,19 @@
           <HelpTOCNode Title="Transform Method (Vector4, Quaternion)" Url="html/M_System_Numerics_Vector4_Transform_5.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
-      <HelpTOCNode Id="566cb1a5-b3a1-4433-9585-e7b01e5abff3" Title="Vector4 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Vector4.htm">
+      <HelpTOCNode Id="02388e79-19d3-4a08-8617-d175a654b80b" Title="Vector4 Operators and Type Conversions" Url="html/Operators_T_System_Numerics_Vector4.htm">
         <HelpTOCNode Title="Addition Operator " Url="html/M_System_Numerics_Vector4_op_Addition.htm" />
-        <HelpTOCNode Id="2b7f3962-16de-486a-8300-e7a12885772f" Title="Division Operator " Url="html/Overload_System_Numerics_Vector4_op_Division.htm">
+        <HelpTOCNode Id="1244e224-c0ae-48dd-81d1-2d5ddd671418" Title="Division Operator " Url="html/Overload_System_Numerics_Vector4_op_Division.htm">
           <HelpTOCNode Title="Division Operator (Vector4, Vector4)" Url="html/M_System_Numerics_Vector4_op_Division.htm" />
           <HelpTOCNode Title="Division Operator (Vector4, Single)" Url="html/M_System_Numerics_Vector4_op_Division_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Equality Operator " Url="html/M_System_Numerics_Vector4_op_Equality.htm" />
-        <HelpTOCNode Id="0499c7f0-dcde-4371-b3c1-5eb08e7b5399" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Vector4_op_Implicit.htm">
+        <HelpTOCNode Id="1df74786-e47d-46d8-9823-4625df43eef8" Title="Implicit Conversion Operators" Url="html/Overload_System_Numerics_Vector4_op_Implicit.htm">
           <HelpTOCNode Title="Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit.htm" />
           <HelpTOCNode Title="Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit_1.htm" />
         </HelpTOCNode>
         <HelpTOCNode Title="Inequality Operator " Url="html/M_System_Numerics_Vector4_op_Inequality.htm" />
-        <HelpTOCNode Id="47c0c627-3c3d-43c0-8f1b-233a58d45223" Title="Multiply Operator " Url="html/Overload_System_Numerics_Vector4_op_Multiply.htm">
+        <HelpTOCNode Id="1b684bfd-cde8-46b2-8766-b67f467ee911" Title="Multiply Operator " Url="html/Overload_System_Numerics_Vector4_op_Multiply.htm">
           <HelpTOCNode Title="Multiply Operator (Single, Vector4)" Url="html/M_System_Numerics_Vector4_op_Multiply_2.htm" />
           <HelpTOCNode Title="Multiply Operator (Vector4, Vector4)" Url="html/M_System_Numerics_Vector4_op_Multiply.htm" />
           <HelpTOCNode Title="Multiply Operator (Vector4, Single)" Url="html/M_System_Numerics_Vector4_op_Multiply_1.htm" />
@@ -812,7 +891,7 @@
         <HelpTOCNode Title="Subtraction Operator " Url="html/M_System_Numerics_Vector4_op_Subtraction.htm" />
         <HelpTOCNode Title="UnaryNegation Operator " Url="html/M_System_Numerics_Vector4_op_UnaryNegation.htm" />
       </HelpTOCNode>
-      <HelpTOCNode Id="120dfabb-fe4b-478f-9ebf-2b53695c1205" Title="Vector4 Properties" Url="html/Properties_T_System_Numerics_Vector4.htm">
+      <HelpTOCNode Id="77a8f091-5a76-468e-bb5e-fc224661a178" Title="Vector4 Properties" Url="html/Properties_T_System_Numerics_Vector4.htm">
         <HelpTOCNode Title="One Property " Url="html/P_System_Numerics_Vector4_One.htm" />
         <HelpTOCNode Title="UnitW Property " Url="html/P_System_Numerics_Vector4_UnitW.htm" />
         <HelpTOCNode Title="UnitX Property " Url="html/P_System_Numerics_Vector4_UnitX.htm" />
@@ -821,18 +900,18 @@
         <HelpTOCNode Title="Zero Property " Url="html/P_System_Numerics_Vector4_Zero.htm" />
       </HelpTOCNode>
     </HelpTOCNode>
-    <HelpTOCNode Id="46fb1394-ed47-4fdd-8e0b-2530f50818c9" Title="VectorExtensions Class" Url="html/T_System_Numerics_VectorExtensions.htm">
-      <HelpTOCNode Id="8537b220-1062-43b4-b180-6e728df04b63" Title="VectorExtensions Methods" Url="html/Methods_T_System_Numerics_VectorExtensions.htm">
+    <HelpTOCNode Id="2d2d683c-f717-43e7-b7a6-9fa0b0ee4d71" Title="VectorExtensions Class" Url="html/T_System_Numerics_VectorExtensions.htm">
+      <HelpTOCNode Id="f19e1a5d-5443-460c-b476-9c048ecb7280" Title="VectorExtensions Methods" Url="html/Methods_T_System_Numerics_VectorExtensions.htm">
         <HelpTOCNode Title="ToPoint Method " Url="html/M_System_Numerics_VectorExtensions_ToPoint.htm" />
         <HelpTOCNode Title="ToSize Method " Url="html/M_System_Numerics_VectorExtensions_ToSize.htm" />
-        <HelpTOCNode Id="18ac83a2-7a24-473c-ac3d-b99e8521e8d3" Title="ToVector2 Method " Url="html/Overload_System_Numerics_VectorExtensions_ToVector2.htm">
+        <HelpTOCNode Id="f0dec868-0c6d-40ad-b4f7-3b45791c7387" Title="ToVector2 Method " Url="html/Overload_System_Numerics_VectorExtensions_ToVector2.htm">
           <HelpTOCNode Title="ToVector2 Method (Point)" Url="html/M_System_Numerics_VectorExtensions_ToVector2.htm" />
           <HelpTOCNode Title="ToVector2 Method (Size)" Url="html/M_System_Numerics_VectorExtensions_ToVector2_1.htm" />
         </HelpTOCNode>
       </HelpTOCNode>
     </HelpTOCNode>
   </HelpTOCNode>
-  <HelpTOCNode Id="fb621ba2-0c9a-4c63-8bbf-6bd30a11aa51" Title="Windows.Foundation.Numerics" Url="html/WindowsNumerics.htm">
+  <HelpTOCNode Id="44f631a6-5867-4678-af81-de55fb85f11b" Title="Windows.Foundation.Numerics" Url="html/WindowsNumerics.htm">
     <HelpTOCNode Title="float2 Structure" Url="html/WindowsNumerics_float2.htm" />
     <HelpTOCNode Title="float3 Structure" Url="html/WindowsNumerics_float3.htm" />
     <HelpTOCNode Title="float4 Structure" Url="html/WindowsNumerics_float4.htm" />
