@@ -49,6 +49,7 @@
     <ClInclude Include="MockCanvasImageSourceDrawingSessionFactory.h" />
     <ClInclude Include="MockCoreApplication.h" />
     <ClInclude Include="MockD2DBitmap.h" />
+    <ClInclude Include="MockD2DBitmapBrush.h" />
     <ClInclude Include="MockD2DDevice.h" />
     <ClInclude Include="MockD2DDeviceContext.h" />
     <ClInclude Include="MockD2DEffect.h" />
@@ -77,6 +78,7 @@
     <ClCompile Include="AsyncOperationTests.cpp" />
     <ClCompile Include="CanvasControlUnitTests.cpp" />
     <ClCompile Include="CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="CanvasEffectUnitTest.cpp" />
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />

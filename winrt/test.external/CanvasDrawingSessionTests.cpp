@@ -16,19 +16,6 @@ using namespace Microsoft::Graphics::Canvas;
 
 TEST_CLASS(CanvasDrawingSessionTests)
 {
-    ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext()
-    {
-        CanvasDevice^ canvasDevice = ref new CanvasDevice();
-        auto d2dDevice = GetWrappedResource<ID2D1Device1>(canvasDevice);
-
-        ComPtr<ID2D1DeviceContext1> context;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &context));
-
-        return context;
-    }
-
     //
     // CanvasDrawingSession interop is tested more directly in test.internal.
     // This exercises the published API.

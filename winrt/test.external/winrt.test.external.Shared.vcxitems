@@ -23,6 +23,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormatTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DWriteExperiments.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Helpers.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />

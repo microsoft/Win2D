@@ -32,6 +32,9 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Transform([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
     };
 
+    //
+    // ICanvasSolidColorBrush
+    //
     runtimeclass CanvasSolidColorBrush;
     runtimeclass CanvasDevice;
 
@@ -64,5 +67,67 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasSolidColorBrush
     {
         [default] interface ICanvasSolidColorBrush;
+    }    
+
+    //
+    // ICanvasImageBrush
+    //
+    runtimeclass CanvasImageBrush;
+    runtimeclass CanvasDevice;
+
+    [version(VERSION), uuid(C40CCB59-1B87-4394-A6A6-ECD278E877D6), exclusiveto(CanvasImageBrush)]
+    interface ICanvasImageBrushFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [out, retval] CanvasImageBrush** canvasImageBrush
+            );
+
+        HRESULT CreateWithImage(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] ICanvasImage* image,
+            [out, retval] CanvasImageBrush** canvasImageBrush
+            );
+    };
+
+    [version(VERSION), uuid(5A21C4E7-D450-4942-8BBD-F017097AB763), exclusiveto(CanvasImageBrush)]
+    interface ICanvasImageBrush : IInspectable
+        requires ICanvasBrush
+    {
+        [propget]
+        HRESULT Image([out, retval] ICanvasImage** value);
+
+        [propput]
+        HRESULT Image([in] ICanvasImage* value);
+
+        [propget]
+        HRESULT ExtendX([out, retval] CanvasEdgeBehavior* value);
+
+        [propput]
+        HRESULT ExtendX([in] CanvasEdgeBehavior value);
+
+        [propget]
+        HRESULT ExtendY([out, retval] CanvasEdgeBehavior* value);
+
+        [propput]
+        HRESULT ExtendY([in] CanvasEdgeBehavior value);
+
+        [propget]
+        HRESULT SourceRectangle([out, retval] Windows.Foundation.IReference<Windows.Foundation.Rect>** value);
+
+        [propput]
+        HRESULT SourceRectangle([in] Windows.Foundation.IReference<Windows.Foundation.Rect>* value);
+
+        [propget]
+        HRESULT Interpolation([out, retval] CanvasImageInterpolation* value);
+
+        [propput]
+        HRESULT Interpolation([in] CanvasImageInterpolation value);
+    };
+
+    [version(VERSION), activatable(ICanvasImageBrushFactory, VERSION)]
+    runtimeclass CanvasImageBrush
+    {
+        [default] interface ICanvasImageBrush;
     }
 }

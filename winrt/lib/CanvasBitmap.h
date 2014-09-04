@@ -27,6 +27,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName) = 0;
     };
+    
+    [uuid(4684FA78-C721-4531-8CCE-BEA927F95E5D)]
+    class ICanvasBitmapInternal : public IUnknown
+    {
+    public:
+        virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() = 0;
+    };
 
     class CanvasBitmapFactory :
         public ActivationFactory<
@@ -55,7 +62,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasImage,
         IEffectInput,
         ABI::Windows::Foundation::IClosable,
-        CloakedIid<ICanvasImageInternal>>
+        CloakedIid<ICanvasImageInternal>,
+        CloakedIid<ICanvasBitmapInternal>>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
 
@@ -81,5 +89,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ICanvasImageInternal
         virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override;
+
+        // ICanvasBitmapInternal
+        virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override;
     };
 }}}}

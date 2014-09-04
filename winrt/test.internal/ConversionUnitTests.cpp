@@ -167,4 +167,11 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(rx, result.radiusX);
         Assert::AreEqual(ry, result.radiusY);
     }
+
+    TEST_METHOD(RectFromD2DRect)
+    {
+        using ABI::Windows::Foundation::Rect;
+
+        Assert::AreEqual(Rect{ 5, 6, 2, 2 }, FromD2DRect(D2D1::RectF(5, 6, 7, 8)));
+    }
 };

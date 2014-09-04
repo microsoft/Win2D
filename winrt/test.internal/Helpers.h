@@ -234,6 +234,20 @@ namespace Microsoft
                 return buf;
             }
 
+            template<>
+            static inline std::wstring ToString<ABI::Windows::Foundation::Rect>(const ABI::Windows::Foundation::Rect& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Rect{X=%f,Y=%f,W=%f,H=%f}",
+                    value.X, value.Y,
+                    value.Width, value.Height));
+
+                return buf;
+            }
+
             ENUM_TO_STRING(CanvasCapStyle)
             {
                 ENUM_VALUE(CanvasCapStyle::Flat);
@@ -550,6 +564,44 @@ namespace Microsoft
                 ENUM_VALUE(AsyncStatus::Error);
                 END_ENUM(AsyncStatus);
             }
+            
+            ENUM_TO_STRING(CanvasEdgeBehavior)
+            {
+                ENUM_VALUE(CanvasEdgeBehavior::Clamp);
+                ENUM_VALUE(CanvasEdgeBehavior::Mirror);
+                ENUM_VALUE(CanvasEdgeBehavior::Wrap);
+                END_ENUM(CanvasEdgeBehavior);
+            }            
+            
+            ENUM_TO_STRING(D2D1_EXTEND_MODE)
+            {
+                ENUM_VALUE(D2D1_EXTEND_MODE_CLAMP);
+                ENUM_VALUE(D2D1_EXTEND_MODE_MIRROR);
+                ENUM_VALUE(D2D1_EXTEND_MODE_WRAP);
+                END_ENUM(D2D1_EXTEND_MODE);
+            }
+
+            ENUM_TO_STRING(CanvasImageInterpolation)
+            {
+                ENUM_VALUE(CanvasImageInterpolation::NearestNeighbor);
+                ENUM_VALUE(CanvasImageInterpolation::Linear);
+                ENUM_VALUE(CanvasImageInterpolation::Cubic);
+                ENUM_VALUE(CanvasImageInterpolation::MultiSampleLinear);
+                ENUM_VALUE(CanvasImageInterpolation::Anisotropic);
+                ENUM_VALUE(CanvasImageInterpolation::HighQualityCubic);
+                END_ENUM(CanvasImageInterpolation);
+            }
+
+            ENUM_TO_STRING(D2D1_INTERPOLATION_MODE)
+            {
+                ENUM_VALUE(D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
+                ENUM_VALUE(D2D1_INTERPOLATION_MODE_LINEAR);
+                ENUM_VALUE(D2D1_INTERPOLATION_MODE_CUBIC);
+                ENUM_VALUE(D2D1_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR);
+                ENUM_VALUE(D2D1_INTERPOLATION_MODE_ANISOTROPIC);
+                ENUM_VALUE(D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC);
+                END_ENUM(D2D1_INTERPOLATION_MODE);
+            }
 
             template<typename T>
             static inline std::wstring ToStringAsInt(T value)
@@ -636,6 +688,14 @@ namespace Microsoft
         inline bool operator==(const ABI::Windows::UI::Text::FontWeight& a, const ABI::Windows::UI::Text::FontWeight& b)
         {
             return a.Weight == b.Weight;
+        }
+
+        inline bool operator==(const ABI::Windows::Foundation::Rect& a, const ABI::Windows::Foundation::Rect& b)
+        {
+            return a.X == b.X &&
+            a.Y == b.Y &&
+            a.Width == b.Width &&
+            a.Height == b.Height;
         }
 
     }

@@ -286,3 +286,5 @@ T WaitExecution(IAsyncOperation<T>^ asyncOperation)
 
     return asyncTask.get();
 };
+
+ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext();

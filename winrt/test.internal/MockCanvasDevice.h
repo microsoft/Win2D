@@ -24,7 +24,10 @@ namespace canvas
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
         std::function<void(ICanvasDevice**)> Mockget_Device;
         std::function<ComPtr<ID2D1SolidColorBrush>(const D2D1_COLOR_F&)> MockCreateSolidColorBrush;
-
+        std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
+        std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
+        std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmap;
+        
         //
         // ICanvasDevice
         //
@@ -85,7 +88,39 @@ namespace canvas
 
         virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* converter) override
         {
-            Assert::Fail(L"Unexpected call to CreateBitmap");
+            if (!MockCreateBitmap)
+            {
+                Assert::Fail(L"Unexpected call to CreateBitmap");
+                return nullptr;
+            }
+            return MockCreateBitmap();
+        }
+
+        virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* Bitmap) override
+        {
+            if (!MockCreateBitmapBrush)
+            {
+                Assert::Fail(L"Unexpected call to CreateBitmapBrush");
+                return nullptr;
+            }
+
+            return MockCreateBitmapBrush(Bitmap);
+        }
+
+        virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) override
+        {
+            if (!MockCreateImageBrush)
+            {
+                Assert::Fail(L"Unexpected call to CreateImageBrush");
+                return nullptr;
+            }
+
+            return MockCreateImageBrush(image);
+        }
+
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) override
+        {
+            Assert::Fail(L"Unexpected call to GetD2DImage");
             return nullptr;
         }
     };

@@ -12,6 +12,7 @@
 
 #include "pch.h"
 #include "CanvasDevice.h"
+#include "CanvasImage.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -502,6 +503,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> device(this);
                 *value = device.Detach();
             });
+    }
+
+    ComPtr<ID2D1BitmapBrush1> CanvasDevice::CreateBitmapBrush(ID2D1Bitmap1* bitmap)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1BitmapBrush1> bitmapBrush;
+        ThrowIfFailed(deviceContext->CreateBitmapBrush(bitmap, &bitmapBrush));
+
+        return bitmapBrush;
+    }
+
+    ComPtr<ID2D1ImageBrush> CanvasDevice::CreateImageBrush(ID2D1Image* image)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1ImageBrush> imageBrush;
+        ThrowIfFailed(deviceContext->CreateImageBrush(image, D2D1::ImageBrushProperties(D2D1::RectF()), &imageBrush));
+
+        return imageBrush;
+    }
+
+    ComPtr<ID2D1Image> CanvasDevice::GetD2DImage(ICanvasImage* canvasImage)
+    {
+        ComPtr<ICanvasImageInternal> imageInternal;
+        ThrowIfFailed(canvasImage->QueryInterface(imageInternal.GetAddressOf()));
+
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        return imageInternal->GetD2DImage(deviceContext.Get());
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

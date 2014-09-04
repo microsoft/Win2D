@@ -41,6 +41,14 @@ namespace Microsoft.Graphics.Canvas
     } CanvasAntialiasing;
 
     [version(VERSION)]
+    typedef enum CanvasEdgeBehavior
+    {
+        Clamp = (int)0,
+        Wrap = (int)1,
+        Mirror = (int)2
+    } CanvasEdgeBehavior;
+
+    [version(VERSION)]
     typedef enum CanvasCapStyle
     {
         Flat = (int)0,
@@ -66,6 +74,17 @@ namespace Microsoft.Graphics.Canvas
         Grayscale = (int)2,
         Aliased = (int)3
     } CanvasTextAntialiasing;
+
+    [version(VERSION)]
+    typedef enum CanvasImageInterpolation
+    {
+        NearestNeighbor = (int)0,
+        Linear = (int)1,
+        Cubic = (int)2,
+        MultiSampleLinear = (int)3,
+        Anisotropic = (int)4,
+        HighQualityCubic = (int)5
+    } CanvasImageInterpolation;
 
     [version(VERSION)]
     typedef enum CanvasUnits

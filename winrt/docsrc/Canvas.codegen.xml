@@ -180,7 +180,42 @@ under the License.
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasUnits.Pixels">
       <summary>Units are interpreted as pixels. This matches the Direct3D graphics API.</summary>
-    </member>
+    </member>    
 
+    <member name="T:Microsoft.Graphics.Canvas.CanvasEdgeBehavior">
+      <summary>Specifies the way in which a brush paints areas outside its typical content region.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp">
+      <summary>Repeat the edge pixels of the brush's content.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Wrap">
+      <summary>Tile the brush's content.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Mirror">
+      <summary>Tile the the brush's content, and flip each alternate tile.</summary>
+    </member>    
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasImageInterpolation">
+      <summary>Specifies the quality used for image resizing and transforms.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.NearestNeighbor">
+      <summary>Samples the nearest single point and uses that exact color. This option is the fastest, but outputs the lowest quality image.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear">
+      <summary>Uses a four point sample and linear interpolation. Compared to NearestNeighbor, this option is slower but outputs a higher quality image.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Cubic">
+      <summary>Uses a 16 sample cubic kernel for interpolation. This mode uses the most processing time, but outputs a higher quality image.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.MultiSampleLinear">
+      <summary>Uses 4 linear samples within a single pixel for good edge anti-aliasing. This mode is good for scaling down by small amounts on images with few pixels.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Anisotropic">
+      <summary>Uses anisotropic filtering to sample a pattern according to the transformed shape of the image.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.HighQualityCubic">
+      <summary>Uses a variable size high quality cubic kernel to perform a pre-downscale the image if downscaling is involved in the transform matrix. Then uses the cubic interpolation mode for the final output.</summary>
+    </member>
+    
   </members>
 </doc>

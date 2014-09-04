@@ -60,13 +60,7 @@ TEST_CLASS(CanvasBrushTests)
 
     TEST_METHOD(CanvasSolidColorBrush_Interop)
     {
-        CanvasDevice^ canvasDevice = ref new CanvasDevice();
-        auto d2dDevice = GetWrappedResource<ID2D1Device1>(canvasDevice);
-
-        ComPtr<ID2D1DeviceContext> context;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &context));
+        ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
 
         D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
 
@@ -78,5 +72,44 @@ TEST_CLASS(CanvasBrushTests)
         auto actualBrush = GetWrappedResource<ID2D1SolidColorBrush>(canvasBrush);
 
         Assert::AreEqual(brush.Get(), actualBrush.Get());
+    }
+
+    TEST_METHOD(CanvasImageBrush_Construction_Interop)
+    {        
+        RunOnUIThread(
+            []()
+            {
+                auto device = ref new CanvasDevice();
+                auto imageSource = ref new CanvasImageSource(device, 1, 1);
+                auto drawingSession = imageSource->CreateDrawingSession();
+
+                ICanvasBitmap^ canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(device, L"Assets/imageTiger.jpg"));
+
+                // Test both constructors, and creation through drawing session.
+                CanvasImageBrush^ imageBrush;
+                
+                imageBrush = ref new CanvasImageBrush(drawingSession);
+
+                imageBrush = ref new CanvasImageBrush(device, canvasBitmap);
+
+                // Verify that the interop path fails.                
+                Assert::ExpectException<Platform::InvalidCastException^>(
+                    [&imageBrush]()
+                    {
+                        GetWrappedResource<ID2D1ImageBrush>(imageBrush);
+                    });
+
+                // Verify the other direction.
+                ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
+                ComPtr<ID2D1ImageBrush> d2dImageBrush;
+                ThrowIfFailed(context->CreateImageBrush(nullptr, D2D1::ImageBrushProperties(D2D1::RectF()), &d2dImageBrush));    
+                    
+                Assert::ExpectException<Platform::NotImplementedException^>(
+                    [&d2dImageBrush]()
+                    {
+                        GetOrCreate<CanvasImageBrush>(d2dImageBrush.Get());
+                    });
+            });
+
     }
 };

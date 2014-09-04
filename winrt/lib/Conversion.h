@@ -117,6 +117,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1_RECT_F{ left, top, right, bottom };
     }
 
+    inline ABI::Windows::Foundation::Rect FromD2DRect(const D2D1_RECT_F& d2dRect)
+    {
+        auto x = d2dRect.left;
+        auto width = d2dRect.right - x;
+        auto y = d2dRect.top;
+        auto height = d2dRect.bottom - y;
+
+        ABI::Windows::Foundation::Rect rect{ x, y, width, height };
+        return rect;
+    }
+
     inline D2D1_ROUNDED_RECT ToD2DRoundedRect(const ABI::Windows::Foundation::Rect& rect, float rx, float ry)
     {
         return D2D1_ROUNDED_RECT{ ToD2DRect(rect), rx, ry };

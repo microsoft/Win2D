@@ -60,6 +60,40 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Color">
       <summary>Gets or sets the color of the solid brush.</summary>
+    </member>    
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasImageBrush">
+      <summary>A brush which paints using image content, such as a bitmap. Useful for producing tiled backgrounds, or filling geometry with a pattern.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
+      <summary>Initializes a new instance of the CanvasImageBrush class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.ICanvasImage)">
+      <summary>Initializes a new instance of the CanvasImageBrush class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageBrush.Dispose">
+      <summary>Releases all resources used by the CanvasImageBrush.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.SourceRectangle">
+      <summary>Optional field which specifies the source rectangle of the brush. If no source rectangle is specified, the entire source image is used.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Interpolation">
+      <summary>Specifies the image quality used for resizing and transforms.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image">
+      <summary>Specifies an image used for the brush. Required, for the brush to be used for drawing.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY">
+      <summary>Specifies how content is tiled vertically when it extends beyond the Image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX">
+      <summary>Specifies how content is tiled horizontally when it extends beyond the Image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Transform">
+      <summary>Specifies a transform used for this brush. The default transform is identity.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Opacity">
+      <summary>Specifies an opacity level used for this brush. The default is fully opaque.</summary>
     </member>
     
   </members>

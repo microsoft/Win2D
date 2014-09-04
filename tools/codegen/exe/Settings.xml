@@ -49,5 +49,7 @@ under the License.
         <Field Name="CLEARTYPE" ProjectedNameOverride="ClearType"/>
     </Enum>
     <Enum Name="UNIT_MODE" ShouldProject="true" ProjectedNameOverride="Units"/>
+    <Enum Name="EXTEND_MODE" ShouldProject="true" ProjectedNameOverride="EdgeBehavior"/>
+    <Enum Name="INTERPOLATION_MODE" ShouldProject="true" ProjectedNameOverride="ImageInterpolation"/>
   </Namespace>
 </Settings>

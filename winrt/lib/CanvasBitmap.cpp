@@ -154,5 +154,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return resource;
     }
 
+    // ICanvasBitmapInternal
+    ComPtr<ID2D1Bitmap1> CanvasBitmap::GetD2DBitmap()
+    {
+        auto& resource = m_resource.EnsureNotClosed();
+
+        return resource;
+    }
+
     ActivatableClassWithFactory(CanvasBitmap, CanvasBitmapFactory);
 }}}}

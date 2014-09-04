@@ -27,6 +27,7 @@ namespace CsConsumer
     {
         Random m_random = new Random();
         CanvasBitmap m_bitmap_tiger;
+        CanvasImageBrush m_imageBrush;
 
         enum DrawnContentType
         {
@@ -46,6 +47,7 @@ namespace CsConsumer
             Circle_Fill,
             Dashed_Lines,
             Text,
+            ImageBrush,
             Test_Scene0_Default,
             Test_Scene0_Wireframe,
             Test_Scene1_Default,
@@ -82,6 +84,7 @@ namespace CsConsumer
         void m_canvasControl_CreateResources(CanvasControl sender, object args)
         {
             UpdateCanvasControlSize();
+            m_imageBrush = new CanvasImageBrush(sender);
         }
 
         private void OnRedrawClicked(object sender, RoutedEventArgs e)
@@ -290,6 +293,18 @@ namespace CsConsumer
                             ParagraphAlignment = ParagraphAlignment.Justify,
                             Options = CanvasDrawTextOptions.Clip
                         });
+                    break;
+
+                case DrawnContentType.ImageBrush:
+                    if (m_bitmap_tiger != null)
+                    {
+                        m_imageBrush.Image = m_bitmap_tiger;
+                        m_imageBrush.ExtendX = (CanvasEdgeBehavior)(m_random.Next(3));
+                        m_imageBrush.ExtendY = (CanvasEdgeBehavior)(m_random.Next(3));
+                        ds.FillRectangle(new Rect(0, 0, horizontalLimit, verticalLimit), m_imageBrush);
+                    }
+                    else
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
                     break;
 
                 case DrawnContentType.Test_Scene0_Default:

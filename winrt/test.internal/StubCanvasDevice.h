@@ -23,8 +23,6 @@ namespace canvas
         ComPtr<ID2D1Device1> m_d2DDevice;
 
     public:
-        std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmap;
-
         StubCanvasDevice(ComPtr<ID2D1Device1> device = Make<MockD2DDevice>())
             : m_d2DDevice(device)
         {
@@ -33,16 +31,6 @@ namespace canvas
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override
         {
             return m_d2DDevice;
-        }
-
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* converter) override
-        {
-            if (!MockCreateBitmap)
-            {
-                Assert::Fail(L"Unexpected call to CreateBitmap");
-                return nullptr;
-            }
-            return MockCreateBitmap();
         }
 
         IFACEMETHODIMP get_Device(ICanvasDevice** value) override
