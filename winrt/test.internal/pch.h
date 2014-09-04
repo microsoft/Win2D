@@ -75,6 +75,7 @@ using namespace Microsoft::WRL;
 namespace canvas {}
 using namespace canvas;
 using namespace ABI::Microsoft::Graphics::Canvas;
+using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
 #include "Helpers.h"
 #include "MockCanvasDevice.h"

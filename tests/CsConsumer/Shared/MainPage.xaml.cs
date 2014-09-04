@@ -11,6 +11,7 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
 using Windows.UI;
@@ -31,6 +32,7 @@ namespace CsConsumer
         {
             Clear_Only,
             Bitmap,
+            Effect_Blur,
             Line_Thin,
             Line_Thick,
             Rectangle_Thin,
@@ -153,9 +155,23 @@ namespace CsConsumer
                         ds.DrawImage(m_bitmap_tiger, NextRandomPoint(horizontalLimit, verticalLimit));
                     }
                     else
+                    {
                         DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    }
                     break;
-
+                case DrawnContentType.Effect_Blur:
+                    if (m_bitmap_tiger != null)
+                    {
+                        GaussianBlurEffect blurEffect = new GaussianBlurEffect();
+                        blurEffect.StandardDeviation = 2.0f;
+                        blurEffect.Source = m_bitmap_tiger;
+                        ds.DrawImage(blurEffect, NextRandomPoint(horizontalLimit, verticalLimit));
+                    }
+                    else
+                    {
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    }
+                    break;
                 case DrawnContentType.Line_Thin:
                     ds.DrawLine(
                         NextRandomPoint(horizontalLimit, verticalLimit),

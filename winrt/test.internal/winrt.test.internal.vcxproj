@@ -51,6 +51,7 @@
     <ClInclude Include="MockD2DBitmap.h" />
     <ClInclude Include="MockD2DDevice.h" />
     <ClInclude Include="MockD2DDeviceContext.h" />
+    <ClInclude Include="MockD2DEffect.h" />
     <ClInclude Include="MockD2DSolidColorBrush.h" />
     <ClInclude Include="MockD2DFactory.h" />
     <ClInclude Include="MockD2DStrokeStyle.h" />
@@ -75,6 +76,7 @@
   <ItemGroup>
     <ClCompile Include="CanvasControlUnitTests.cpp" />
     <ClCompile Include="CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="CanvasEffectUnitTest.cpp" />
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="CanvasTextFormatTests.cpp" />

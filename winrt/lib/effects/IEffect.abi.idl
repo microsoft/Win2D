@@ -10,25 +10,19 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.Effects
 {
-    //
-    // ICanvasImage
-    //
-    [version(VERSION), uuid(794966D3-6A64-47E9-8DA8-B46AAA24D53B)]
-    interface ICanvasImage : IInspectable
-        requires Microsoft.Graphics.Canvas.Effects.IEffectInput, Windows.Foundation.IClosable
+    [version(VERSION), uuid(3A339957-A95E-490E-A1BF-2CBF4806C378)]
+    interface IEffect : IInspectable
+		requires IEffectInput
     {
+        [propget]
+        HRESULT EffectId([out, retval] GUID* effectId);
+        
+        [propget]
+        HRESULT Inputs([out, retval] Windows.Foundation.Collections.IVector<IEffectInput*>** inputs);
+        
+        [propget]
+        HRESULT Properties([out, retval] Windows.Foundation.Collections.IVector<Windows.Foundation.IPropertyValue*>** effectProperties);
     }
-    
-    //
-    // ICanvasResourceCreator
-    //
-    runtimeclass CanvasDevice;
-
-    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
-    interface ICanvasResourceCreator : IInspectable
-    {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
-    };
 }

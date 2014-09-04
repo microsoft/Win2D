@@ -16,7 +16,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControl.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
+	<ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
+	<ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\GaussianBlurEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
@@ -35,6 +37,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\GaussianBlurEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -50,5 +54,9 @@
     <None Include="$(MSBuildThisFileDirectory)CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasControl.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\EffectsCommon.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\IEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\IEffectInput.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\GaussianBlurEffect.abi.idl" />
   </ItemGroup>
 </Project>

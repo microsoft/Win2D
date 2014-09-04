@@ -15,6 +15,7 @@
 #include "StubD2DResources.h"
 
 #include "CanvasBitmap.h"
+#include "effects\GaussianBlurEffect.h"
 #include "TestBitmapResourceCreationAdapter.h"
 #include "MockWICFormatConverter.h"
 
@@ -217,6 +218,75 @@ public:
 
         ThrowIfFailed(f.DS->DrawImage(canvasBitmap.Get()));
         Assert::IsTrue(drawImageCalled);
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawImage_GaussianBlurEffect)
+    {
+        CanvasDrawingSessionFixture f;
+
+        WinString testFileName(L"fakeFileName.jpg");
+
+        auto converter = Make<MockWICFormatConverter>();
+        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
+
+        ComPtr<MockD2DBitmap>  mockBitmap = Make<MockD2DBitmap>();
+        ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
+        
+        bool setInputCalled = false;
+        mockEffect->MockSetInput = 
+            [&]()
+            {
+                Assert::IsFalse(setInputCalled);
+                setInputCalled = true;
+            };
+
+        bool setValueCalled = false;
+        mockEffect->MockSetValue = 
+            [&]() -> HRESULT
+            {
+                setValueCalled = true;
+                return S_OK;
+            };
+
+        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
+        bool createBitmapCalled = false;
+        canvasDevice->MockCreateBitmap =
+            [&]() -> ComPtr<ID2D1Bitmap1>
+            {
+                Assert::IsFalse(createBitmapCalled);
+                createBitmapCalled = true;
+                return mockBitmap;
+            };
+
+
+        ComPtr<CanvasBitmap> canvasBitmap = Make<CanvasBitmap>(canvasDevice.Get(), testFileName, adapter);
+        ComPtr<Effects::GaussianBlurEffect> blurEffect = Make<Effects::GaussianBlurEffect>();
+        
+        ThrowIfFailed(blurEffect->put_Source(canvasBitmap.Get()));
+
+        bool drawImageCalled = false;
+        f.DeviceContext->MockDrawImage =
+            [&](ID2D1Image* image)
+            {
+                Assert::IsFalse(drawImageCalled);
+                Assert::IsNotNull(image);
+                drawImageCalled = true;
+            };
+
+        f.DeviceContext->MockCreateEffect = 
+            [&](ID2D1Effect** effect)
+            {
+                return mockEffect.CopyTo(effect);
+            };
+
+        ThrowIfFailed(blurEffect->put_StandardDeviation(5.0f));
+
+        ThrowIfFailed(f.DS->DrawImage(blurEffect.Get()));
+        Assert::IsTrue(drawImageCalled);
+        Assert::IsTrue(setInputCalled);
+        Assert::IsTrue(setValueCalled);
+        // Make sure mock bitmap created as input for blur effect
+        Assert::IsTrue(createBitmapCalled);
     }
 
     //

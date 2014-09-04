@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Effects.IEffect">
+      <summary>Abstract interface representing an effect used for image processing.</summary>
+	  <remarks>
+	    <p>IEffect is defined in such a way that it is possible to convert it to a D2D effect.</p>
+	  </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.EffectId">
+      <summary>Gets a unique identifier for the effect.</summary>
+	  <remarks>
+	    <p>Canvas built in effects return an EffectId that corresponds to the 
+		   equivalent <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh404566(v=vs.85).aspx">ID2D1Effect</a> GUID on the platform.</p>
+	  </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+	  <remarks>
+	    <p>Generic way to configure the inputs of an effect. In most cases, the 
+		   properties of strongly typed IEffect subclasses (eg. GaussianBlurEffect) should be used instead.</p>
+	    <p>It is possible to add, remove, or modify the Inputs.</p>
+	  </remarks>
+    </member>
+	<member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+	  <remarks>
+	    <p>Generic way to configure the properties of an effect. In most cases, the 
+		   properties of strongly typed IEffect subclasses (eg. GaussianBlurEffect) should be used instead.</p>
+	    <p>New effects have all default properties set in advance. Size of vector corresponds to number 
+		   of properties for current effect. The index values of the properties found on an effect 
+		   match the D2D equivalent effect index values.</p>
+	  </remarks>
+    </member>
+  </members>
+</doc>

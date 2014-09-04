@@ -21,6 +21,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
+    using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
     class ICanvasBitmapResourceCreationAdapter
     {
@@ -53,6 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasBitmap,
         ICanvasImage,
+        IEffectInput,
         ABI::Windows::Foundation::IClosable,
         CloakedIid<ICanvasImageInternal>>
     {

@@ -31,7 +31,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -59,7 +59,7 @@
     <Image Include="$(AssetDir)WideLogo.scale-240.png">
       <Link>Assets\WideLogo.scale-240.png</Link>
     </Image>
-	<Image Include="$(AssetDir)imageTiger.jpg">
+    <Image Include="$(AssetDir)imageTiger.jpg">
       <Link>Assets\imageTiger.jpg</Link>
     </Image>
   </ItemGroup>

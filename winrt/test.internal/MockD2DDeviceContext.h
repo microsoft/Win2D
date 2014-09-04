@@ -13,6 +13,7 @@
 #pragma once
 
 #include "MockD2DBitmap.h"
+#include "MockD2DEffect.h"
 
 namespace canvas
 {
@@ -45,6 +46,7 @@ namespace canvas
         std::function<void(const wchar_t*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE)> MockDrawText;
         std::function<void(ID2D1Image*)> MockDrawImage;
         std::function<void(ID2D1Device**)> MockGetDevice;
+        std::function<HRESULT(ID2D1Effect **)> MockCreateEffect;
 
         // ID2D1Resource
 
@@ -488,10 +490,15 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateEffect(const IID &,ID2D1Effect **) override
+        IFACEMETHODIMP CreateEffect(const IID &,ID2D1Effect** effect) override
         {
-            Assert::Fail(L"Unexpected call to CreateEffect");
-            return E_NOTIMPL;
+            if (!MockCreateEffect)
+            {
+                Assert::Fail(L"Unexpected call to CreateEffect");
+                return E_NOTIMPL;
+            }
+
+            return MockCreateEffect(effect);
         }
 
         IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *,UINT32,D2D1_COLOR_SPACE,D2D1_COLOR_SPACE,D2D1_BUFFER_PRECISION,D2D1_EXTEND_MODE,D2D1_COLOR_INTERPOLATION_MODE,ID2D1GradientStopCollection1 **) override

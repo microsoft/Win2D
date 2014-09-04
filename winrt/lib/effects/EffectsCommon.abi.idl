@@ -10,25 +10,20 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.Effects
 {
-    //
-    // ICanvasImage
-    //
-    [version(VERSION), uuid(794966D3-6A64-47E9-8DA8-B46AAA24D53B)]
-    interface ICanvasImage : IInspectable
-        requires Microsoft.Graphics.Canvas.Effects.IEffectInput, Windows.Foundation.IClosable
+    [version(VERSION)]
+    typedef enum EffectBorderMode
     {
-    }
-    
-    //
-    // ICanvasResourceCreator
-    //
-    runtimeclass CanvasDevice;
+        Soft,
+        Hard
+    } EffectBorderMode;
 
-    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
-    interface ICanvasResourceCreator : IInspectable
+    [version(VERSION)]
+    typedef enum EffectOptimization
     {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
-    };
+        Speed,
+        Balanced,
+        Quality
+    } EffectOptimization;
 }

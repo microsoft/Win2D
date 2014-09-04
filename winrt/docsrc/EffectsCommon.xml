@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectBorderMode">
+      <summary>Enumeration type that specifies how to process border pixels.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft">
+      <summary>Pixels outside the edge are marked as black which makes edge color softer after processing.</summary>
+	  <remarks>
+	    <p>The effect pads the input image with transparent black pixels for samples outside 
+	       of the input bounds when it applies the convolution kernel. This creates a soft edge 
+	  	 for the image, and in the process expands the output bitmap by the size of the kernel.</p>
+	  </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Hard">
+      <summary>Pixels outside the bounds are mirrored.</summary>
+	  <remarks>
+	    <p>The effect extends the input image with a mirror-type border transform for samples outside 
+		   of the input bounds. The size of the output bitmap is equal to the size of the input bitmap.</p>
+	  </remarks>
+    </member>
+	
+	<member name="T:Microsoft.Graphics.Canvas.Effects.EffectOptimization">
+      <summary>Enumeration type that specifies speed quality trade-off.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Speed">
+      <summary>Better speed and less quality.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Balanced">
+      <summary>Balance between speed and quality.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Quality">
+      <summary>Maximum quality for this effect is achieved by losing speed.</summary>
+    </member>
+  </members>
+</doc>
