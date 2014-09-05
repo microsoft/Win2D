@@ -1,6 +1,6 @@
 @ECHO OFF
 
-PUSHD %~dp0
+PUSHD "%~dp0"
 
 WHERE /Q nuget >NUL
 IF %ERRORLEVEL% NEQ 0 ( 
@@ -10,8 +10,8 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END
 )
 
-nuget pack %~dp0Win2D.nuspec -nopackageanalysis -outputdirectory %~dp0..\..\bin %*
-nuget pack %~dp0Win2D-debug.nuspec -nopackageanalysis -outputdirectory %~dp0..\..\bin %*
+nuget pack "%~dp0Win2D.nuspec" -nopackageanalysis -outputdirectory "%~dp0..\..\bin" %*
+nuget pack "%~dp0Win2D-debug.nuspec" -nopackageanalysis -outputdirectory "%~dp0..\..\bin" %*
 
 :END
 

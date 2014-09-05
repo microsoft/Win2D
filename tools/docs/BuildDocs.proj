@@ -56,7 +56,7 @@
       <ExtractAPISurfaceTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\ExtractAPISurface\ExtractAPISurface.exe</ExtractAPISurfaceTool>
     </PropertyGroup>
 
-    <Exec Command="$(ExtractAPISurfaceTool) /OutputPath:$(IntermediateOutputPath) @(InputAssembly, ' ') @(ReferenceAssembly->'/ReferenceAssembly:&quot;%(identity)&quot;', ' ')" />
+    <Exec Command="&quot;$(ExtractAPISurfaceTool)&quot; /OutputPath:&quot;$(IntermediateOutputPath)\&quot; @(InputAssembly->'&quot;%(identity)&quot;', ' ') @(ReferenceAssembly->'/ReferenceAssembly:&quot;%(identity)&quot;', ' ')" />
   </Target>
 
 
@@ -85,7 +85,7 @@
       <DocDiffTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocDiff\DocDiff.exe</DocDiffTool>
     </PropertyGroup>
 
-    <Exec Command="$(DocDiffTool) /LogMissingDocs:$(IntermediateOutputPath)MissingDocs.xml @(DocSrc->'/DocSrc:%(Identity)', ' ') @(InputAssembly->'/ApiRef:$(IntermediateOutputPath)%(Filename).xml', ' ')" />
+    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; @(DocSrc->'/DocSrc:&quot;%(Identity)&quot;', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ')" />
   </Target>
 
 
@@ -110,7 +110,7 @@
       <MergeIntellisenseTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\MergeIntellisense\MergeIntellisense.exe</MergeIntellisenseTool>
     </PropertyGroup>
 
-    <Exec Command="$(MergeIntellisenseTool) $(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml @(DocSrc, ' ')" />
+    <Exec Command="&quot;$(MergeIntellisenseTool)&quot; &quot;$(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml&quot; @(DocSrc, ' ')" />
   </Target>
 
 </Project>

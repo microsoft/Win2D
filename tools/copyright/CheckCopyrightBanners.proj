@@ -24,9 +24,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
 
     <!-- Paths -->
-    <Executable>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\Copyright\Copyright.exe</Executable>
-    <CopyrightFile>$(MSBuildThisFileDirectory)copyright.txt</CopyrightFile>
-    <RootDir>$(MSBuildThisFileDirectory)..\..</RootDir>
+    <Executable>&quot;$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\Copyright\Copyright.exe&quot;</Executable>
+    <CopyrightFile>&quot;$(MSBuildThisFileDirectory)copyright.txt&quot;</CopyrightFile>
+    <RootDir>&quot;$(MSBuildThisFileDirectory)..\..&quot;</RootDir>
 
     <!-- File extensions and directories to check vs. ignore -->
     <CppExt>cpp;h;inl;cs;idl</CppExt>
