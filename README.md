@@ -37,42 +37,7 @@ void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
 }
 ```
 
-## Setup
-#### Visual Studio
-- Download [here](http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx)
-- Requires Visual Studio 2013 Update 2 or greater
-- If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')
 
-#### Clone Repository
-- Go to 'View' -> 'Team Explorer' -> 'Local Git Repositories' -> 'Clone'
-- Add the Win2D repository URL (https://github.com/Microsoft/Win2D.git) and hit 'Clone'
-
-#### Build NuGet Packages
-- In Windows search, type 'Visual Studio Tools', and select that folder to open it
-- Launch 'Developer Command Prompt for VS2013'
-- Change directory to your cloned Win2D repository and run 'build'
-- Point Visual Studio at the resulting 'bin' directory:
-  - In Visual Studio, go to 'Tools' -> 'NuGet Package Manager' -> 'Package Manager Settings'
-  - Choose 'Package Sources'
-  - Click the '+' button to add a new source
-  - Set 'Name' to 'Win2D' (or a name of your choosing)
-  - Set 'Source' to the full path to the 'bin' directory (inside your cloned Win2D repository)
-  - Click the 'Update' button
-  - Click 'OK'
-
-#### Quickstart
-Follow the steps below to get started on writing your own apps.
- 
-- Go to 'File' -> 'New' -> 'Project...'
-- Select 'Visual C#' -> 'Store Apps' -> 'Universal Apps'
-- Create a 'Blank App (Universal Apps)'
-- Set a 'Name' of your choosing
-- Click 'OK'
-- Go to 'Tools' -> 'NuGet Package Manager' -> 'Manage NuGet Packages for Solution...'
-- Select 'Win2D' package and click 'Install'
-- Click 'Close'
-- Change Solution platform from 'Any CPU' to x86
-- You are now ready to hit F5 (Build)
 
 A working sample can be found in the Samples directory.
 
