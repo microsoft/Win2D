@@ -28,9 +28,7 @@ namespace NumericsTests
             float2 b(3.0f, 4.0f);
 
             float expected = sqrtf(8);
-            float actual;
-
-            actual = distance(a, b);
+            float actual = distance(a, b);
             Assert::IsTrue(Equal(expected, actual), L"distance did not return the expected value.");
         }
 
@@ -51,9 +49,7 @@ namespace NumericsTests
             float2 b(3.0f, 4.0f);
 
             float expected = 8.0f;
-            float actual;
-
-            actual = distance_squared(a, b);
+            float actual = distance_squared(a, b);
             Assert::IsTrue(Equal(expected, actual), L"distance_squared did not return the expected value.");
         }
 
@@ -64,9 +60,7 @@ namespace NumericsTests
             float2 b(3.0f, 4.0f);
 
             float expected = 11.0f;
-            float actual;
-
-            actual = dot(a, b);
+            float actual = dot(a, b);
             Assert::IsTrue(Equal(expected, actual), L"dot did not return the expected value.");
         }
 
@@ -99,9 +93,7 @@ namespace NumericsTests
             float2 target = a;
 
             float expected = sqrtf(20);
-            float actual;
-
-            actual = length(target);
+            float actual = length(target);
 
             Assert::IsTrue(Equal(expected, actual), L"length did not return the expected value.");
         }
@@ -114,9 +106,7 @@ namespace NumericsTests
             target.y = 0.0f;
 
             float expected = 0.0f;
-            float actual;
-
-            actual = length(target);
+            float actual = length(target);
 
             Assert::IsTrue(Equal(expected, actual), L"length did not return the expected value.");
         }
@@ -129,9 +119,7 @@ namespace NumericsTests
             float2 target = a;
 
             float expected = 20.0f;
-            float actual;
-
-            actual = length_squared(target);
+            float actual = length_squared(target);
 
             Assert::IsTrue(Equal(expected, actual), L"length_squared did not return the expected value.");
         }
@@ -187,8 +175,7 @@ namespace NumericsTests
             float2 b(2.0f, 1.0f);
 
             float2 expected(2.0f, 4.0f);
-            float2 actual;
-            actual = max(a, b);
+            float2 actual = max(a, b);
             Assert::IsTrue(Equal(expected, actual), L"max did not return the expected value.");
         }
 
@@ -257,8 +244,7 @@ namespace NumericsTests
             float t = 0.5f;
 
             float2 expected(2.0f, 3.0f);
-            float2 actual;
-            actual = lerp(a, b, t);
+            float2 actual = lerp(a, b, t);
             Assert::IsTrue(Equal(expected, actual), L"lerp did not return the expected value.");
         }
 
@@ -348,9 +334,7 @@ namespace NumericsTests
             m.m43 = 30.0f;
 
             float2 expected(10.316987f, 22.183012f);
-            float2 actual;
-
-            actual = transform(v, m);
+            float2 actual = transform(v, m);
             Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
         }
 
@@ -363,9 +347,7 @@ namespace NumericsTests
             m.m32 = 20.0f;
 
             float2 expected(9.866025f, 22.23205f);
-            float2 actual;
-
-            actual = transform(v, m);
+            float2 actual = transform(v, m);
             Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
         }
 
@@ -382,9 +364,7 @@ namespace NumericsTests
             m.m43 = 30.0f;
 
             float2 expected(0.3169873f, 2.18301272f);
-            float2 actual;
-
-            actual = transform_normal(v, m);
+            float2 actual = transform_normal(v, m);
             Assert::AreEqual(expected, actual, L"transform_normal did not return the expected value.");
         }
 
@@ -397,9 +377,7 @@ namespace NumericsTests
             m.m32 = 20.0f;
 
             float2 expected(-0.133974612f, 2.232051f);
-            float2 actual;
-
-            actual = transform_normal(v, m);
+            float2 actual = transform_normal(v, m);
             Assert::AreEqual(expected, actual, L"transform_normal did not return the expected value.");
         }
 
@@ -446,9 +424,7 @@ namespace NumericsTests
         {
             float2 a(2.0f, 3.0f);
             float2 expected(0.554700196225229122018341733457f, 0.8320502943378436830275126001855f);
-            float2 actual;
-
-            actual = normalize(a);
+            float2 actual = normalize(a);
             Assert::IsTrue(Equal(expected, actual), L"normalize did not return the expected value.");
         }
 
@@ -475,9 +451,7 @@ namespace NumericsTests
             float2 a(1.0f, 2.0f);
 
             float2 expected(-1.0f, -2.0f);
-            float2 actual;
-
-            actual = -a;
+            float2 actual = -a;
 
             Assert::IsTrue(Equal(expected, actual), L"float2::operator - did not return the expected value.");
         }
@@ -510,9 +484,7 @@ namespace NumericsTests
             float2 b(2.0f, 1.5f);
 
             float2 expected(-1.0f, 1.5f);
-            float2 actual;
-
-            actual = a - b;
+            float2 actual= a - b;
 
             Assert::IsTrue(Equal(expected, actual), L"float2::operator - did not return the expected value.");
         }
@@ -524,9 +496,7 @@ namespace NumericsTests
             float factor = 2.0f;
 
             float2 expected(4.0f, 6.0f);
-            float2 actual;
-
-            actual = a * factor;
+            float2 actual = a * factor;
             Assert::IsTrue(Equal(expected, actual), L"float2::operator * did not return the expected value.");
         }
 
@@ -537,9 +507,7 @@ namespace NumericsTests
             float factor = 2.0f;
 
             float2 expected(4.0f, 6.0f);
-            float2 actual;
-
-            actual = factor * a;
+            float2 actual = factor * a;
             Assert::IsTrue(Equal(expected, actual), L"float2::operator * did not return the expected value.");
         }
 
@@ -550,9 +518,7 @@ namespace NumericsTests
             float2 b(4.0f, 5.0f);
 
             float2 expected(8.0f, 15.0f);
-            float2 actual;
-
-            actual = a * b;
+            float2 actual = a * b;
 
             Assert::IsTrue(Equal(expected, actual), L"float2::operator * did not return the expected value.");
         }
@@ -565,9 +531,7 @@ namespace NumericsTests
             float div = 2.0f;
 
             float2 expected(1.0f, 1.5f);
-            float2 actual;
-
-            actual = a / div;
+            float2 actual = a / div;
 
             Assert::IsTrue(Equal(expected, actual), L"float2::operator / did not return the expected value.");
         }
@@ -579,9 +543,7 @@ namespace NumericsTests
             float2 b(4.0f, 5.0f);
 
             float2 expected(2.0f / 4.0f, 3.0f / 5.0f);
-            float2 actual;
-
-            actual = a / b;
+            float2 actual = a / b;
 
             Assert::IsTrue(Equal(expected, actual), L"float2::operator / did not return the expected value.");
         }
@@ -619,9 +581,7 @@ namespace NumericsTests
             float2 b(3.0f, 4.0f);
 
             float2 expected(4.0f, 6.0f);
-            float2 actual;
-
-            actual = a + b;
+            float2 actual = a + b;
 
             Assert::IsTrue(Equal(expected, actual), L"float2::operator + did not return the expected value.");
         }

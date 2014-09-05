@@ -213,8 +213,7 @@ namespace NumericsTests
             expected.m21 = -0.766044438f;
             expected.m22 = 0.642787635f;
 
-            float3x2 actual;
-            actual = make_float3x2_rotation(radians);
+            float3x2 actual = make_float3x2_rotation(radians);
             Assert::IsTrue(Equal(expected, actual), L"make_float3x2_rotation did not return the expected value.");
         }
 
@@ -440,9 +439,7 @@ namespace NumericsTests
             expected.m21 = a.m21 + b.m21; expected.m22 = a.m22 + b.m22;
             expected.m31 = a.m31 + b.m31; expected.m32 = a.m32 + b.m32;
 
-            float3x2 actual;
-
-            actual = a + b;
+            float3x2 actual = a + b;
 
             Assert::IsTrue(Equal(expected, actual), L"float3x2::operator + did not return the expected value.");
         }
