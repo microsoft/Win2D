@@ -1,6 +1,6 @@
 @echo off
 
-IF "%VisualStudioVersion" LSS "12.0" (
+IF "%VisualStudioVersion%" LSS "12.0" (
     ECHO Please run this script from a Visual Studio 2013 Command Prompt.
     PAUSE
     GOTO END
