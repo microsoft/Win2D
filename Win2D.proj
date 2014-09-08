@@ -66,7 +66,6 @@
     </WindowsProject>
     <WindowsProject Include="tests\CsConsumer\Windows\CsConsumer.Windows.csproj" />
     <WindowsProject Include="tests\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
-    <WindowsProject Include="tests\CppConsumer\CppConsumer.Windows.vcxproj" />
     <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
@@ -82,7 +81,6 @@
     <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
     <PhoneProject Include="tests\CsConsumer\WindowsPhone\CsConsumer.WindowsPhone.csproj" />
     <PhoneProject Include="tests\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj"/>
-    <PhoneProject Include="tests\CppConsumer\CppConsumer.WindowsPhone.vcxproj" />
     <PhoneProject Include="numerics\Cpp\tests\CppNumericsTests.WindowsPhone.vcxproj" />
     <PhoneProject Include="numerics\DotNet\tests\WindowsPhone\DotNetNumericsTests.WindowsPhone.csproj" />
   </ItemGroup>
