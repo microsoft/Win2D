@@ -134,6 +134,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasBitmap::get_Bounds(_Out_ ABI::Windows::Foundation::Rect* bounds)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(bounds);
+
+                auto& resource = m_resource.EnsureNotClosed();
+                D2D1_SIZE_F d2dSize = resource->GetSize();
+                bounds->X = 0;
+                bounds->Y = 0;
+                bounds->Width = d2dSize.width;
+                bounds->Height = d2dSize.height;
+            });
+    }
+
     IFACEMETHODIMP CanvasBitmap::Close()
     {
         return ExceptionBoundary(

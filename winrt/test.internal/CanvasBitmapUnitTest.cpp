@@ -68,6 +68,7 @@ public:
     TEST_METHOD(CanvasBitmap_Closed)
     {
         ABI::Windows::Foundation::Size size;
+        ABI::Windows::Foundation::Rect bounds;
         auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
 
         Assert::IsNotNull(canvasBitmap.Get());
@@ -76,6 +77,7 @@ public:
 
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_SizeInPixels(&size));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_SizeInDips(&size));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Bounds(&bounds));
     }
 
     TEST_METHOD(CanvasBitmap_Get_Size)
@@ -116,5 +118,35 @@ public:
         Assert::AreEqual(S_OK, result);
         Assert::AreEqual(m_testImageWidthDip, size.Width);
         Assert::AreEqual(m_testImageHeightDip, size.Height);
+    }
+
+    TEST_METHOD(CanvasBitmap_Get_Bounds)
+    {
+        ABI::Windows::Foundation::Rect bounds;
+
+        bool isConverterCreated = false;
+        m_adapter->MockCreateWICFormatConverter =
+            [&]
+            {
+                Assert::AreEqual(isConverterCreated, false);
+                isConverterCreated = true;
+            };
+
+        m_bitmap->MockGetSize =
+            [&](float* width, float* height)
+            {
+                *width = m_testImageWidthDip;
+                *height = m_testImageHeightDip;
+            };
+
+        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        Assert::AreEqual(true, isConverterCreated);
+
+        HRESULT result = canvasBitmap->get_Bounds(&bounds);
+        Assert::AreEqual(S_OK, result);
+        Assert::AreEqual(0.0f, bounds.X);
+        Assert::AreEqual(0.0f, bounds.Y);
+        Assert::AreEqual(m_testImageWidthDip, bounds.Width);
+        Assert::AreEqual(m_testImageHeightDip, bounds.Height);
     }
 };

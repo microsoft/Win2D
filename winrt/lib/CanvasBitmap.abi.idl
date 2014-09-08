@@ -27,6 +27,9 @@ namespace Microsoft.Graphics.Canvas
 
         [propget]
         HRESULT SizeInDips([out, retval] Windows.Foundation.Size* size);
+
+        [propget]
+        HRESULT Bounds([out, retval] Windows.Foundation.Rect* bounds);
     };
 
     [version(VERSION), uuid(620DFDBB-9D08-406C-BFE6-D9B81E6DF8E7), exclusiveto(CanvasBitmap)]

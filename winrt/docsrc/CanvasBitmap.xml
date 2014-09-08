@@ -68,6 +68,13 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.SizeInPixels">
       <summary>Gets the size of the bitmap, in pixels.</summary>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Bounds">
+      <summary>Gets the bounds of the bitmap, in device independent pixels (dips).</summary>
+      <remarks>
+        This property is a convenience shortcut for when you need the bitmap size in Rect format.
+        The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.SizeInDips).
+      </remarks>
+    </member>
   
   </members>
 </doc>
