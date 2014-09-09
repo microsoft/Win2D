@@ -41,10 +41,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         // Check if deviceContext is the same with previous device context
         // This approach will fail with interop
+        bool wasRecreated = false;
         if (deviceContext != m_previousDeviceContext.Get())
         {
             m_previousDeviceContext = deviceContext;
             m_resource.Reset();
+            wasRecreated = true;
         }
 
         // Create resource if not created yet
@@ -54,14 +56,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
         // Update ID2D1Image with the latest property values if a change is detected
-        if (m_properties->IsChanged())
+        if (wasRecreated || m_properties->IsChanged())
         {
             SetProperties();
             m_properties->SetChanged(false);
         }
 
         // Update ID2D1Image with the latest inputs configured, if a change is detected
-        if (m_inputs->IsChanged())
+        if (wasRecreated || m_inputs->IsChanged())
         {
             auto& inputs = m_inputs->InternalVector();
             auto inputsSize = (unsigned int) inputs.size();

@@ -402,12 +402,9 @@ public:
                 };
 
             ComPtr<ICanvasImage> canvasBitmap;
-            if (initializeWithBitmap)
+            if (initializeWithBitmap) 
             {
-                auto fileName = WinString(L"asdf");
-                auto wicConverter = Make<MockWICFormatConverter>();
-                auto bitmapAdapter = std::make_shared<TestBitmapResourceCreationAdapter>(wicConverter);
-                canvasBitmap = Make<CanvasBitmap>(canvasDevice.Get(), fileName, bitmapAdapter);
+                canvasBitmap = CreateTestCanvasBitmap(canvasDevice.Get());
             }
 
             m_canvasImageBrush = Make<CanvasImageBrush>(canvasDevice.Get(), canvasBitmap.Get(), adapter);

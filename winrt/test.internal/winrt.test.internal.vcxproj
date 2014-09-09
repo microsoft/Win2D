@@ -93,6 +93,7 @@
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DResources.cpp" />
+    <ClCompile Include="TestBitmapResourceCreationAdapter.cpp" />
     <ClCompile Include="VectorTests.cpp" />
     <ClCompile Include="WinStringTests.cpp" />
   </ItemGroup>

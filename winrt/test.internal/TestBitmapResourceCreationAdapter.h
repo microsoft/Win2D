@@ -31,3 +31,5 @@ public:
         return m_converter;
     }
 };
+
+ComPtr<ICanvasImage> CreateTestCanvasBitmap(ICanvasDevice* canvasDevice);

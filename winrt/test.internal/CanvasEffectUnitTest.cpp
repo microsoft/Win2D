@@ -12,6 +12,7 @@
 
 #include "pch.h"
 #include <effects\CanvasEffect.h>
+#include "TestBitmapResourceCreationAdapter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -194,6 +195,89 @@ public:
 
         Assert::IsTrue(isSetInputCalled);
         Assert::IsTrue(isGetInputCalled);
+    }
+
+    void VerifyEffectRealizationInputs(
+        const std::shared_ptr<CanvasDrawingSessionManager>& drawingSessionManager,
+        TestEffect* testEffect)
+    {
+        ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        deviceContext->MockDrawImage =
+            [&](ID2D1Image* image)
+        {
+        };
+
+        bool setInputCalled = false;
+        bool setValueCalled = false;
+        bool createEffectCalled = false;
+        deviceContext->MockCreateEffect =
+            [&](ID2D1Effect** effect)
+        {
+            Assert::IsFalse(createEffectCalled);
+            createEffectCalled = true;
+
+            ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
+            mockEffect.CopyTo(effect);
+
+            mockEffect->MockSetInput =
+                [&]
+            {
+                Assert::IsFalse(setInputCalled);
+                setInputCalled = true;
+            };
+
+            mockEffect->MockSetValue =
+                [&]
+            {
+                Assert::IsFalse(setValueCalled);
+                setValueCalled = true;
+                return S_OK;
+            };
+
+            return S_OK;
+        };
+
+        auto drawingSession = drawingSessionManager->Create(deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+
+        Vector2 position = { 0, 0 };
+        drawingSession->DrawImage(testEffect, position);
+
+        Assert::IsTrue(setInputCalled);
+        Assert::IsTrue(setValueCalled);
+        Assert::IsTrue(createEffectCalled);
+    }
+
+    TEST_METHOD(CanvasEffect_Rerealize)
+    {
+        // Use a test effect with one source and one property.
+        auto testEffect = Make<TestEffect>(m_blurGuid, 1, 1, false);
+
+        auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
+        
+        // This test realizes m_testEffect twice, each time with different 
+        // device contexts. Verifies that the D2D effect is re-created, and 
+        // its inputs and properties are set.
+        //
+        // TODO #2386: Update this test to react to a change in device instead
+        // of device context. 
+        //
+        
+        auto canvasDevice = Make<StubCanvasDevice>();
+            canvasDevice->MockCreateBitmap =
+                [&]()
+                {
+                    return Make<StubD2DBitmap>();
+                };
+
+        // Set a source and non-default value.
+        auto bitmap = CreateTestCanvasBitmap(canvasDevice.Get());
+        ComPtr<IEffectInput> effectInput;
+        ThrowIfFailed(bitmap.As(&effectInput));
+        ThrowIfFailed(testEffect->put_Source(effectInput.Get()));
+        ThrowIfFailed(testEffect->put_StandardDeviation(99));
+
+        VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
+        VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
     }
 
 };
