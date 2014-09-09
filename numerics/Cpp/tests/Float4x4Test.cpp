@@ -939,9 +939,7 @@ namespace NumericsTests
             expected.m34 = -1.0f;
             expected.m43 = -1.50225341f;
             expected.m44 = 0;
-            float4x4 actual;
-
-            actual = make_float4x4_perspective_field_of_view(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
+            float4x4 actual  = make_float4x4_perspective_field_of_view(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
             Assert::IsTrue(Equal(expected, actual), L"make_float4x4_perspective_field_of_view did not return the expected value.");
         }
 
@@ -1035,8 +1033,7 @@ namespace NumericsTests
             expected.m43 = -1.50225341f;
             expected.m44 = 0;
 
-            float4x4 actual;
-            actual = make_float4x4_perspective_off_center(left, right, bottom, top, zNearPlane, zFarPlane);
+            float4x4 actual = make_float4x4_perspective_off_center(left, right, bottom, top, zNearPlane, zFarPlane);
             Assert::IsTrue(Equal(expected, actual), L"make_float4x4_perspective_off_center did not return the expected value.");
         }
 
@@ -1143,8 +1140,7 @@ namespace NumericsTests
             expected.m43 = a.m43 + (b.m43 - a.m43) * t;
             expected.m44 = a.m44 + (b.m44 - a.m44) * t;
 
-            float4x4 actual;
-            actual = lerp(a, b, t);
+            float4x4 actual = lerp(a, b, t);
             Assert::IsTrue(Equal(expected, actual), L"lerp did not return the expected value.");
         }
 
@@ -1214,8 +1210,7 @@ namespace NumericsTests
             a.m31 = 9.0f; a.m32 = 10.0f; a.m33 = 11.0f; a.m34 = 12.0f;
             a.m41 = 13.0f; a.m42 = -14.0f; a.m43 = 15.0f; a.m44 = -16.0f;
 
-            float4x4 b;
-            b = float4x4::identity();
+            float4x4 b = float4x4::identity();
 
             float4x4 expected = a;
             float4x4 actual = a * b;
@@ -1235,9 +1230,7 @@ namespace NumericsTests
             expected.m31 = a.m31 + b.m31; expected.m32 = a.m32 + b.m32; expected.m33 = a.m33 + b.m33; expected.m34 = a.m34 + b.m34;
             expected.m41 = a.m41 + b.m41; expected.m42 = a.m42 + b.m42; expected.m43 = a.m43 + b.m43; expected.m44 = a.m44 + b.m44;
 
-            float4x4 actual;
-
-            actual = a + b;
+            float4x4 actual = a + b;
 
             Assert::IsTrue(Equal(expected, actual), L"float4x4::operator + did not return the expected value.");
         }

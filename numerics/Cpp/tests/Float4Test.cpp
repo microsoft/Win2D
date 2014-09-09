@@ -28,9 +28,7 @@ namespace NumericsTests
             float4 b(5.0f, 6.0f, 7.0f, 8.0f);
 
             float expected = 64.0f;
-            float actual;
-
-            actual = distance_squared(a, b);
+            float actual = distance_squared(a, b);
             Assert::IsTrue(Equal(expected, actual), L"distance_squared did not return the expected value.");
         }
 
@@ -41,9 +39,7 @@ namespace NumericsTests
             float4 b(5.0f, 6.0f, 7.0f, 8.0f);
 
             float expected = 8.0f;
-            float actual;
-
-            actual = distance(a, b);
+            float actual = distance(a, b);
             Assert::IsTrue(Equal(expected, actual), L"distance did not return the expected value.");
         }
 
@@ -65,9 +61,7 @@ namespace NumericsTests
             float4 b(5.0f, 6.0f, 7.0f, 8.0f);
 
             float expected = 70.0f;
-            float actual;
-
-            actual = dot(a, b);
+            float actual = dot(a, b);
             Assert::IsTrue(Equal(expected, actual), L"dot did not return the expected value.");
         }
 
@@ -94,9 +88,7 @@ namespace NumericsTests
             float4 target(a, w);
 
             float expected = sqrtf(30.0f);
-            float actual;
-
-            actual = length(target);
+            float actual = length(target);
 
             Assert::IsTrue(Equal(expected, actual), L"length did not return the expected value.");
         }
@@ -121,9 +113,7 @@ namespace NumericsTests
             float4 target(a, w);
 
             float expected = 30;
-            float actual;
-
-            actual = length_squared(target);
+            float actual = length_squared(target);
 
             Assert::IsTrue(Equal(expected, actual), L"length_squared did not return the expected value.");
         }
@@ -135,8 +125,7 @@ namespace NumericsTests
             float4 b(2.0f, 1.0f, -1.0f, 0.0f);
 
             float4 expected(-1.0f, 1.0f, -3.0f, 0.0f);
-            float4 actual;
-            actual = min(a, b);
+            float4 actual = min(a, b);
             Assert::IsTrue(Equal(expected, actual), L"min did not return the expected value.");
         }
 
@@ -147,8 +136,7 @@ namespace NumericsTests
             float4 b(2.0f, 1.0f, -1.0f, 0.0f);
 
             float4 expected(2.0f, 4.0f, -1.0f, 1000.0f);
-            float4 actual;
-            actual = max(a, b);
+            float4 actual = max(a, b);
             Assert::IsTrue(Equal(expected, actual), L"max did not return the expected value.");
         }
         
@@ -238,9 +226,7 @@ namespace NumericsTests
             float t = 0.5f;
 
             float4 expected(3.0f, 4.0f, 5.0f, 6.0f);
-            float4 actual;
-
-            actual = lerp(a, b, t);
+            float4 actual = lerp(a, b, t);
             Assert::IsTrue(Equal(expected, actual), L"lerp did not return the expected value.");
         }
 
@@ -318,9 +304,7 @@ namespace NumericsTests
             m.m43 = 30.0f;
 
             float4 expected(10.316987f, 22.183012f, 30.3660259f, 1.0f);
-            float4 actual;
-
-            actual = transform4(v, m);
+            float4 actual = transform4(v, m);
             Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
         }
 
@@ -358,9 +342,7 @@ namespace NumericsTests
             m.m43 = 30.0f;
 
             float4 expected(2.19198728f, 1.53349376f, 2.61602545f, 0.0f);
-            float4 actual;
-
-            actual = transform(v, m);
+            float4 actual = transform(v, m);
             Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
 
             // 
@@ -486,9 +468,7 @@ namespace NumericsTests
             quaternion q = make_quaternion_from_rotation_matrix(m);
 
             float4 expected = transform4(v, m);
-            float4 actual;
-
-            actual = transform4(v, q);
+            float4 actual = transform4(v, q);
             Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
         }
 
@@ -504,9 +484,7 @@ namespace NumericsTests
             quaternion q = make_quaternion_from_rotation_matrix(m);
 
             float4 expected = transform4(v, m);
-            float4 actual;
-
-            actual = transform4(v, q);
+            float4 actual = transform4(v, q);
             Assert::IsTrue(Equal(expected, actual), L"vector4.Transform did not return the expected value.");
         }
 
@@ -522,9 +500,7 @@ namespace NumericsTests
             quaternion q = make_quaternion_from_rotation_matrix(m);
 
             float4 expected = transform(v, m);
-            float4 actual;
-
-            actual = transform(v, q);
+            float4 actual = transform(v, q);
             Assert::IsTrue(Equal(expected, actual), L"transform did not return the expected value.");
 
             // 
@@ -642,9 +618,7 @@ namespace NumericsTests
                 0.3651483716701107423046465218672f,
                 0.5477225575051661134569697828008f,
                 0.7302967433402214846092930437344f);
-            float4 actual;
-
-            actual = normalize(a);
+            float4 actual = normalize(a);
             Assert::IsTrue(Equal(expected, actual), L"normalize did not return the expected value.");
         }
 
@@ -674,9 +648,7 @@ namespace NumericsTests
             float4 a(1.0f, 2.0f, 3.0f, 4.0f);
 
             float4 expected(-1.0f, -2.0f, -3.0f, -4.0f);
-            float4 actual;
-
-            actual = -a;
+            float4 actual = -a;
 
             Assert::IsTrue(Equal(expected, actual), L"float4::operator - did not return the expected value.");
         }
@@ -688,9 +660,7 @@ namespace NumericsTests
             float4 b(5.0f, 2.0f, 3.0f, 9.0f);
 
             float4 expected(-4.0f, 4.0f, 0.0f, -5.0f);
-            float4 actual;
-
-            actual = a - b;
+            float4 actual = a - b;
 
             Assert::IsTrue(Equal(expected, actual), L"float4::operator - did not return the expected value.");
         }
@@ -703,9 +673,7 @@ namespace NumericsTests
             float factor = 2.0f;
 
             float4 expected(2.0f, 4.0f, 6.0f, 8.0f);
-            float4 actual;
-
-            actual = a * factor;
+            float4 actual = a * factor;
             Assert::IsTrue(Equal(expected, actual), L"float4::operator * did not return the expected value.");
         }
 
@@ -716,9 +684,7 @@ namespace NumericsTests
 
             float factor = 2.0f;
             float4 expected(2.0f, 4.0f, 6.0f, 8.0f);
-            float4 actual;
-
-            actual = factor * a;
+            float4 actual = factor * a;
             Assert::IsTrue(Equal(expected, actual), L"float4::operator * did not return the expected value.");
         }
 
@@ -729,9 +695,7 @@ namespace NumericsTests
             float4 b(5.0f, 6.0f, 7.0f, 8.0f);
 
             float4 expected(5.0f, 12.0f, 21.0f, 32.0f);
-            float4 actual;
-
-            actual = a * b;
+            float4 actual = a * b;
 
             Assert::IsTrue(Equal(expected, actual), L"float4::operator * did not return the expected value.");
         }
@@ -744,9 +708,7 @@ namespace NumericsTests
             float div = 2.0f;
 
             float4 expected(0.5f, 1.0f, 1.5f, 2.0f);
-            float4 actual;
-
-            actual = a / div;
+            float4 actual = a / div;
 
             Assert::IsTrue(Equal(expected, actual), L"float4::operator / did not return the expected value.");
         }
@@ -758,9 +720,7 @@ namespace NumericsTests
             float4 b(5.0f, 2.0f, 3.0f, 8.0f);
 
             float4 expected(1.0f / 5.0f, 6.0f / 2.0f, 7.0f / 3.0f, 4.0f / 8.0f);
-            float4 actual;
-
-            actual = a / b;
+            float4 actual = a / b;
 
             Assert::IsTrue(Equal(expected, actual), L"float4::operator / did not return the expected value.");
         }
@@ -801,9 +761,7 @@ namespace NumericsTests
             float4 b(5.0f, 6.0f, 7.0f, 8.0f);
 
             float4 expected(6.0f, 8.0f, 10.0f, 12.0f);
-            float4 actual;
-
-            actual = a + b;
+            float4 actual = a + b;
 
             Assert::IsTrue(Equal(expected, actual), L"float4::operator + did not return the expected value.");
         }
