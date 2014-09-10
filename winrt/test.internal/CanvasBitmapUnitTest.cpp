@@ -76,7 +76,7 @@ public:
         Assert::AreEqual(S_OK, canvasBitmap->Close());
 
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_SizeInPixels(&size));
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_SizeInDips(&size));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Size(&size));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Bounds(&bounds));
     }
 
@@ -114,7 +114,7 @@ public:
         Assert::AreEqual(m_testImageWidth, (int)size.Width);
         Assert::AreEqual(m_testImageHeight, (int)size.Height);
 
-        result = canvasBitmap->get_SizeInDips(&size);
+        result = canvasBitmap->get_Size(&size);
         Assert::AreEqual(S_OK, result);
         Assert::AreEqual(m_testImageWidthDip, size.Width);
         Assert::AreEqual(m_testImageHeightDip, size.Height);

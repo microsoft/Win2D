@@ -46,8 +46,8 @@ TEST_CLASS(CanvasBitmapTests)
         ICanvasBitmap^ bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, realJpegImage.fileName));
         Assert::AreEqual(realJpegImage.widthInPixels, (int)bitmapJpeg->SizeInPixels.Width);
         Assert::AreEqual(realJpegImage.heightInPixels, (int)bitmapJpeg->SizeInPixels.Height);
-        Assert::AreEqual(realJpegImage.widthInDip, bitmapJpeg->SizeInDips.Width);
-        Assert::AreEqual(realJpegImage.heightInDip, bitmapJpeg->SizeInDips.Height);
+        Assert::AreEqual(realJpegImage.widthInDip, bitmapJpeg->Size.Width);
+        Assert::AreEqual(realJpegImage.heightInDip, bitmapJpeg->Size.Height);
 
         // Test invalid bitmap parameter.
         Assert::ExpectException<Platform::InvalidArgumentException^>(

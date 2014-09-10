@@ -62,7 +62,7 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.SizeInDips">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size">
       <summary>Gets the size of the bitmap, in device independent pixels (dips).</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.SizeInPixels">
@@ -72,7 +72,7 @@ under the License.
       <summary>Gets the bounds of the bitmap, in device independent pixels (dips).</summary>
       <remarks>
         This property is a convenience shortcut for when you need the bitmap size in Rect format.
-        The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.SizeInDips).
+        The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.Size).
       </remarks>
     </member>
   

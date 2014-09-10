@@ -26,7 +26,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT SizeInPixels([out, retval] Windows.Foundation.Size* size);
 
         [propget]
-        HRESULT SizeInDips([out, retval] Windows.Foundation.Size* size);
+        HRESULT Size([out, retval] Windows.Foundation.Size* size);
 
         [propget]
         HRESULT Bounds([out, retval] Windows.Foundation.Rect* bounds);

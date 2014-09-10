@@ -120,7 +120,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasBitmap::get_SizeInDips(_Out_ ABI::Windows::Foundation::Size* size)
+    IFACEMETHODIMP CanvasBitmap::get_Size(_Out_ ABI::Windows::Foundation::Size* size)
     {
         return ExceptionBoundary(
             [&]

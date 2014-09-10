@@ -82,7 +82,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_SizeInPixels)(_Out_ ABI::Windows::Foundation::Size* size) override;
 
-        IFACEMETHOD(get_SizeInDips)(_Out_ ABI::Windows::Foundation::Size* size) override;
+        IFACEMETHOD(get_Size)(_Out_ ABI::Windows::Foundation::Size* size) override;
 
         IFACEMETHOD(get_Bounds)(_Out_ ABI::Windows::Foundation::Rect* bounds) override;
 
