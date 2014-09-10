@@ -166,7 +166,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void ThrowIfClosed();
 
         template<typename T, typename ST, typename FN>
-        HRESULT __declspec(nothrow) PropertyGet(T* value, const ST& shadowValue, FN realizedGetter);
+        HRESULT __declspec(nothrow) PropertyGet(T* value, ST const& shadowValue, FN realizedGetter);
 
         template<typename T, typename TT, typename FNV>
         HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)() = nullptr);

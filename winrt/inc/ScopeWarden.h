@@ -52,8 +52,8 @@ public:
     }
 
     ScopeWarden(ScopeWarden&&) = delete;
-    ScopeWarden(const ScopeWarden&) = delete;
-    ScopeWarden& operator=(const ScopeWarden&) = delete;
+    ScopeWarden(ScopeWarden const&) = delete;
+    ScopeWarden& operator=(ScopeWarden const&) = delete;
 
 private:
     FN* m_p;

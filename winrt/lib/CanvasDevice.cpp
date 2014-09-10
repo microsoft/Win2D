@@ -472,7 +472,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return GetResource();
     }
 
-    ComPtr<ID2D1SolidColorBrush> CanvasDevice::CreateSolidColorBrush(const D2D1_COLOR_F& color)
+    ComPtr<ID2D1SolidColorBrush> CanvasDevice::CreateSolidColorBrush(D2D1_COLOR_F const& color)
     {
         // TODO #802: this isn't very threadsafe - we should really have a different
         // resource creation context per-thread.

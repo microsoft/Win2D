@@ -197,14 +197,14 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_HardwareAcceleration(&hardwareAccelerationActual));
     }
 
-    ComPtr<ID2D1Device1> GetD2DDevice(const ComPtr<ICanvasDevice>& canvasDevice)
+    ComPtr<ID2D1Device1> GetD2DDevice(ComPtr<ICanvasDevice> const& canvasDevice)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         Assert::AreEqual(S_OK, canvasDevice.As(&canvasDeviceInternal));
         return canvasDeviceInternal->GetD2DDevice();
     }
 
-    void VerifyCompatibleDevices(const ComPtr<ICanvasDevice>& canvasDevice, const ComPtr<ICanvasDevice>& compatibleDevice)
+    void VerifyCompatibleDevices(ComPtr<ICanvasDevice> const& canvasDevice, ComPtr<ICanvasDevice> const& compatibleDevice)
     {
         ComPtr<ID2D1Device1> canvasD2DDevice = GetD2DDevice(canvasDevice);
         ComPtr<ID2D1Device1> recoveredD2DDevice = GetD2DDevice(compatibleDevice);

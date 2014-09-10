@@ -62,13 +62,13 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Windows::UI::Color>(const Windows::UI::Color& value)
+            static inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color const& value)
             {
                 return L"Color";
             }
 
             template<>
-            static inline std::wstring ToString<Microsoft::Graphics::Canvas::Numerics::Matrix3x2>(const Microsoft::Graphics::Canvas::Numerics::Matrix3x2& value)
+            static inline std::wstring ToString<Microsoft::Graphics::Canvas::Numerics::Matrix3x2>(Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -84,7 +84,7 @@ namespace Microsoft
 
 #define CX_VALUE_TO_STRING(T)                                       \
             template<>                                              \
-            static inline std::wstring ToString<T>(const T& value)  \
+            static inline std::wstring ToString<T>(T const& value)  \
             {                                                       \
                 return value.ToString()->Data();                    \
             }
@@ -102,7 +102,7 @@ namespace Microsoft
 #undef CX_VALUE_TO_STRING
 
             template<>
-            static inline std::wstring ToString<D2D1_ANTIALIAS_MODE>(const D2D1_ANTIALIAS_MODE& value)
+            static inline std::wstring ToString<D2D1_ANTIALIAS_MODE>(D2D1_ANTIALIAS_MODE const& value)
             {
                 switch (value)
                 {
@@ -113,7 +113,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_PRIMITIVE_BLEND>(const D2D1_PRIMITIVE_BLEND& value)
+            static inline std::wstring ToString<D2D1_PRIMITIVE_BLEND>(D2D1_PRIMITIVE_BLEND const& value)
             {
                 switch (value)
                 {
@@ -126,7 +126,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_TEXT_ANTIALIAS_MODE>(const D2D1_TEXT_ANTIALIAS_MODE& value)
+            static inline std::wstring ToString<D2D1_TEXT_ANTIALIAS_MODE>(D2D1_TEXT_ANTIALIAS_MODE const& value)
             {
                 switch (value)
                 {
@@ -139,7 +139,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_UNIT_MODE>(const D2D1_UNIT_MODE& value)
+            static inline std::wstring ToString<D2D1_UNIT_MODE>(D2D1_UNIT_MODE const& value)
             {
                 switch (value)
                 {
@@ -149,7 +149,7 @@ namespace Microsoft
                 }
             }
 
-            inline bool operator==(const Windows::UI::Color& a, const Windows::UI::Color& b)
+            inline bool operator==(Windows::UI::Color const& a, Windows::UI::Color const& b)
             {
                 return a.A == b.A &&
                     a.R == b.R &&
@@ -157,7 +157,7 @@ namespace Microsoft
                     a.B == b.B;
             }
 
-            inline bool operator==(const Microsoft::Graphics::Canvas::Numerics::Matrix3x2& a, const Microsoft::Graphics::Canvas::Numerics::Matrix3x2& b)
+            inline bool operator==(Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& a, Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& b)
             {
                 return
                     a.M11 == b.M11 && a.M12 == b.M12 &&
@@ -165,7 +165,7 @@ namespace Microsoft
                     a.M31 == b.M31 && a.M32 == b.M32;
             }
 
-            inline bool operator==(const Windows::UI::Text::FontWeight& a, const Windows::UI::Text::FontWeight& b)
+            inline bool operator==(Windows::UI::Text::FontWeight const& a, Windows::UI::Text::FontWeight const& b)
             {
                 return a.Weight == b.Weight;
             }

@@ -17,12 +17,12 @@ namespace canvas
     class MockCanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
     {
     public:
-        std::function<ComPtr<ICanvasDrawingSession>(ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, const Rect&, float dpi)> MockCreate;
+        std::function<ComPtr<ICanvasDrawingSession>(ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Rect const&, float dpi)> MockCreate;
 
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
-            const Rect& updateRect,
+            Rect const& updateRect,
             float dpi) const override
         {
             if (!MockCreate)

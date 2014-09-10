@@ -263,7 +263,7 @@ public:
     {
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate =
-            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Rect const& updateRect, float dpi)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual<float>(0, updateRect.X);
@@ -290,7 +290,7 @@ public:
 
         bool createCalled = false;
         m_canvasImageSourceDrawingSessionFactory->MockCreate = 
-            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, const Rect& updateRect, float dpi)
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Rect const& updateRect, float dpi)
             {
                 Assert::IsFalse(createCalled);
                 Assert::AreEqual(expectedRect.X, updateRect.X);
@@ -321,7 +321,7 @@ public:
 
         bool beginDrawCalled = false;
         mockSurfaceImageSource->MockBeginDraw =
-            [&](const RECT& updateRect, const IID& iid, void** updateObject, POINT* offset)
+            [&](RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset)
             {
                 Assert::IsFalse(beginDrawCalled);
                 Assert::AreEqual(expectedUpdateRect, updateRect);
@@ -402,7 +402,7 @@ public:
         auto sis = Make<MockSurfaceImageSource>();
         bool beginDrawCalled = false;
         sis->MockBeginDraw = 
-            [&](const RECT&, const IID& iid, void** obj, POINT*)
+            [&](RECT const&, IID const& iid, void** obj, POINT*)
             {
                 Assert::IsFalse(beginDrawCalled);
                 beginDrawCalled = true;

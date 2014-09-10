@@ -131,7 +131,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasImageBrushAdapter
     {
     public:
-        virtual ComPtr<ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>> CreateRectReference(const D2D1_RECT_F& d2dRect) = 0;
+        virtual ComPtr<ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) = 0;
     };
 
     class ICanvasDeviceInternal;

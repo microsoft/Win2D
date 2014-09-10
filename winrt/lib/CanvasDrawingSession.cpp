@@ -424,8 +424,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::DrawLineImpl(
-        const Vector2& point0,
-        const Vector2& point1,
+        Vector2 const& point0,
+        Vector2 const& point1,
         ID2D1Brush* brush,
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
@@ -629,7 +629,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::DrawRectangleImpl(
-        const Rect& rect,
+        Rect const& rect,
         ID2D1Brush* brush,
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
@@ -704,7 +704,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::FillRectangleImpl(
-        const Rect& rect,
+        Rect const& rect,
         ID2D1Brush* brush)
     {
         auto& deviceContext = GetResource();
@@ -951,7 +951,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::DrawRoundedRectangleImpl(
-        const Rect& rect,
+        Rect const& rect,
         float radiusX,
         float radiusY,
         ID2D1Brush* brush,
@@ -1044,7 +1044,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::FillRoundedRectangleImpl(
-        const Rect& rect,
+        Rect const& rect,
         float radiusX,
         float radiusY,
         ID2D1Brush* brush)
@@ -1281,7 +1281,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::DrawEllipseImpl(
-        const Vector2& centerPoint,
+        Vector2 const& centerPoint,
         float radiusX,
         float radiusY,
         ID2D1Brush* brush,
@@ -1370,7 +1370,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void CanvasDrawingSession::FillEllipseImpl(
-        const Vector2& centerPoint,
+        Vector2 const& centerPoint,
         float radiusX,
         float radiusY,
         ID2D1Brush* brush)
@@ -1813,7 +1813,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasDrawingSession::DrawTextAtRectImpl(
         HSTRING text,
-        const Rect& rect,
+        Rect const& rect,
         ID2D1Brush* brush,
         ICanvasTextFormat* format)
     {
@@ -1844,7 +1844,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasDrawingSession::DrawTextAtPointImpl(
         HSTRING text,
-        const Vector2& point,
+        Vector2 const& point,
         ID2D1Brush* brush,
         ICanvasTextFormat* format)
     {
@@ -1888,7 +1888,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(const Color& color)
+    ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {
         if (m_solidColorBrush)
         {

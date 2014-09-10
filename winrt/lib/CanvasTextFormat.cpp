@@ -404,7 +404,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static uint32_t ToTrimmingDelimiter(const WinString& value)
+    static uint32_t ToTrimmingDelimiter(WinString const& value)
     {
         // TODO #1658: Do the unicode conversion properly.
         // http://www.unicode.org/faq/utf_bom.html#utf16-3.  This code needs its
@@ -657,57 +657,57 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     template<typename T>
-    static bool IsSame(T* outputValue, const T& value)
+    static bool IsSame(T* outputValue, T const& value)
     {
         return ((*outputValue) == value);
     }
 
     template<>
-    static bool IsSame(ABI::Windows::UI::Text::FontWeight* outputValue, const ABI::Windows::UI::Text::FontWeight& value)
+    static bool IsSame(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
     {
         return IsSame(&outputValue->Weight, value.Weight);
     }
 
     template<typename WinString>
-    static bool IsSame(HSTRING* outputValue, const WinString& value)
+    static bool IsSame(HSTRING* outputValue, WinString const& value)
     {
         return value.Equals(*outputValue);
     }
 
     template<typename HSTRING>
-    static bool IsSame(WinString* outputValue, const HSTRING& value)
+    static bool IsSame(WinString* outputValue, HSTRING const& value)
     {
         return outputValue->Equals(value);
     }
 
 
     template<typename T>
-    static void SetFrom(T* outputValue, const T& value)
+    static void SetFrom(T* outputValue, T const& value)
     {
         *outputValue = value;
     }
 
     template<>
-    static void SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, const ABI::Windows::UI::Text::FontWeight& value)
+    static void SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
     {
         SetFrom(&outputValue->Weight, value.Weight);
     }
 
     template<typename WinString>
-    static void SetFrom(HSTRING* outputValue, const WinString& value)
+    static void SetFrom(HSTRING* outputValue, WinString const& value)
     {
         value.CopyTo(outputValue);
     }
 
     template<typename HSTRING>
-    static void SetFrom(WinString* outputValue, const HSTRING& value)
+    static void SetFrom(WinString* outputValue, HSTRING const& value)
     {
         *outputValue = value;
     }
 
 
     template<typename T, typename ST, typename FN>
-    HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, const ST& shadowValue, FN realizedGetter)
+    HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, ST const& shadowValue, FN realizedGetter)
     {
         return ExceptionBoundary(
             [&]

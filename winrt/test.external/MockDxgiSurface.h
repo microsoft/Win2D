@@ -26,31 +26,31 @@ public:
     std::function<uint32_t()> MockGetEvictionPriority;
     std::function<void(uint32_t)> MockSetEvictionPriority;
 
-    STDMETHODIMP GetDevice(const IID &,void **)
+    STDMETHODIMP GetDevice(IID const&,void **)
     {
         Assert::Fail(L"Unexpected call to GetDevice");
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP GetParent(const IID &,void **)
+    STDMETHODIMP GetParent(IID const&,void **)
     {
         Assert::Fail(L"Unexpected call to GetParent");
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP GetPrivateData(const GUID &,UINT *,void *)
+    STDMETHODIMP GetPrivateData(GUID const&,UINT *,void *)
     {
         Assert::Fail(L"Unexpected call to GetPrivateData");
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP SetPrivateData(const GUID &,UINT,const void *)
+    STDMETHODIMP SetPrivateData(GUID const&,UINT,const void *)
     {
         Assert::Fail(L"Unexpected call to SetPrivateData");
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP SetPrivateDataInterface(const GUID &,const IUnknown *)
+    STDMETHODIMP SetPrivateDataInterface(GUID const&,const IUnknown *)
     {
         Assert::Fail(L"Unexpected call to SetPrivateDataInterface");
         return E_NOTIMPL;

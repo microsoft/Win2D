@@ -59,7 +59,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Close();
         }
 
-        const ComPtr<resource_t>& GetResource()
+        ComPtr<resource_t> const& GetResource()
         {
             return m_resource.EnsureNotClosed();
         }

@@ -36,7 +36,7 @@ public:
     {
     }
 
-    ClosablePtr(const ClosablePtr& other)
+    ClosablePtr(ClosablePtr const& other)
         : m_ptr(other.m_ptr)
     {
     }
@@ -46,13 +46,13 @@ public:
     {
     }
 
-    ClosablePtr& operator=(const ClosablePtr& other)
+    ClosablePtr& operator=(ClosablePtr const& other)
     {
         m_ptr = other.m_ptr;
         return *this;
     }
 
-    ClosablePtr& operator=(const Microsoft::WRL::ComPtr<T>& other)
+    ClosablePtr& operator=(Microsoft::WRL::ComPtr<T> const& other)
     {
         m_ptr = other;
         return *this;
@@ -76,7 +76,7 @@ public:
         return ptr;
     }
 
-    const Microsoft::WRL::ComPtr<T>& EnsureNotClosed() const
+    Microsoft::WRL::ComPtr<T> const& EnsureNotClosed() const
     {
         if (!m_ptr)
             ThrowHR(RO_E_CLOSED);

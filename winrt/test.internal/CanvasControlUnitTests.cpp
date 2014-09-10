@@ -194,7 +194,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
 
         ResizeAndRedrawFixture f;
 
-        for (const auto& testStep : testSteps)
+        for (auto const& testStep : testSteps)
         {
             if (testStep.ExpectRecreation) 
                 f.ExpectOneCreateCanvasImageSource(testStep.ResizeWidth, testStep.ResizeHeight);
@@ -510,7 +510,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
                     auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
                                         
                     mockSurfaceImageSource->MockBeginDraw =
-                        [&](const RECT& updateRect, const IID& iid, void** updateObject, POINT* offset)
+                        [&](RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset)
                         {
                             ThrowIfFailed(m_mockD2DDeviceContext.CopyTo(iid, updateObject));
                         };

@@ -26,7 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
         ICanvasDevice* owner,
         ISurfaceImageSourceNativeWithD2D* sisNative,
-        const Rect& updateRect,
+        Rect const& updateRect,
         float dpi) const
     {
         CheckInPointer(sisNative);

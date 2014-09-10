@@ -813,24 +813,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     private:
         void DrawLineImpl(
-            const Vector2& p0,
-            const Vector2& p1,
+            Vector2 const& p0,
+            Vector2 const& p1,
             ID2D1Brush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle);
 
         void DrawRectangleImpl(
-            const Rect& rect,
+            Rect const& rect,
             ID2D1Brush* brush,
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle);
 
         void FillRectangleImpl(
-            const Rect& rect,
+            Rect const& rect,
             ID2D1Brush* brush);
 
         void DrawRoundedRectangleImpl(
-            const Rect& rect,
+            Rect const& rect,
             float radiusX,
             float radiusY,
             ID2D1Brush* brush,
@@ -838,13 +838,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasStrokeStyle* strokeStyle);
 
         void FillRoundedRectangleImpl(
-            const Rect& rect,
+            Rect const& rect,
             float radiusX,
             float radiusY,
             ID2D1Brush* brush);
 
         void DrawEllipseImpl(
-            const Vector2& centerPoint,
+            Vector2 const& centerPoint,
             float radiusX,
             float radiusY,
             ID2D1Brush* brush,
@@ -852,26 +852,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasStrokeStyle* strokeStyle);
 
         void FillEllipseImpl(
-            const Vector2& centerPoint,
+            Vector2 const& centerPoint,
             float radiusX,
             float radiusY,
             ID2D1Brush* brush);
 
         void DrawTextAtRectImpl(
             HSTRING text,
-            const Rect& rect,
+            Rect const& rect,
             ID2D1Brush* brush,
             ICanvasTextFormat* format);
 
         void DrawTextAtPointImpl(
             HSTRING text,
-            const Vector2& point,
+            Vector2 const& point,
             ID2D1Brush* brush,
             ICanvasTextFormat* format);
 
         ICanvasTextFormat* GetDefaultTextFormat();
 
-        ID2D1SolidColorBrush* GetColorBrush(const ABI::Windows::UI::Color& color);
+        ID2D1SolidColorBrush* GetColorBrush(ABI::Windows::UI::Color const& color);
     };
 
 

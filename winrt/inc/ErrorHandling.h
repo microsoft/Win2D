@@ -177,11 +177,11 @@ HRESULT ExceptionBoundary(CALLABLE&& fn)
         fn();
         return S_OK;
     }
-    catch (const HResultException& e)
+    catch (HResultException const& e)
     {
         return e.GetHr();
     }
-    catch (const std::bad_alloc&)
+    catch (std::bad_alloc const&)
     {
         return E_OUTOFMEMORY;
     }

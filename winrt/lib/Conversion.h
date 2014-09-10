@@ -41,7 +41,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return NormalizedToUint8(Saturate(f));
     }
 
-    inline D2D1_COLOR_F ToD2DColor(const ABI::Windows::UI::Color& color)
+    inline D2D1_COLOR_F ToD2DColor(ABI::Windows::UI::Color const& color)
     {
         return D2D1::ColorF(
             ToNormalizedFloat(color.R),
@@ -60,7 +60,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return windowsColor;
     }
 
-    inline RECT ToRECT(const ABI::Windows::Foundation::Rect& rect)
+    inline RECT ToRECT(ABI::Windows::Foundation::Rect const& rect)
     {
         float floatRight = rect.X + rect.Width;
         float floatBottom = rect.Y + rect.Height;
@@ -102,12 +102,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return RECT{left,top,right,bottom}; 
     }
 
-    inline D2D1_POINT_2F ToD2DPoint(const Numerics::Vector2& point)
+    inline D2D1_POINT_2F ToD2DPoint(Numerics::Vector2 const& point)
     {
         return D2D1_POINT_2F{ point.X, point.Y };
     }
 
-    inline D2D1_RECT_F ToD2DRect(const ABI::Windows::Foundation::Rect& rect)
+    inline D2D1_RECT_F ToD2DRect(ABI::Windows::Foundation::Rect const& rect)
     {
         auto left = rect.X;
         auto right = rect.X + rect.Width;
@@ -117,7 +117,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1_RECT_F{ left, top, right, bottom };
     }
 
-    inline ABI::Windows::Foundation::Rect FromD2DRect(const D2D1_RECT_F& d2dRect)
+    inline ABI::Windows::Foundation::Rect FromD2DRect(D2D1_RECT_F const& d2dRect)
     {
         auto x = d2dRect.left;
         auto width = d2dRect.right - x;
@@ -128,12 +128,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return rect;
     }
 
-    inline D2D1_ROUNDED_RECT ToD2DRoundedRect(const ABI::Windows::Foundation::Rect& rect, float rx, float ry)
+    inline D2D1_ROUNDED_RECT ToD2DRoundedRect(ABI::Windows::Foundation::Rect const& rect, float rx, float ry)
     {
         return D2D1_ROUNDED_RECT{ ToD2DRect(rect), rx, ry };
     }
 
-    inline D2D1_ELLIPSE ToD2DEllipse(const Numerics::Vector2& point, float rx, float ry)
+    inline D2D1_ELLIPSE ToD2DEllipse(Numerics::Vector2 const& point, float rx, float ry)
     {
         return D2D1::Ellipse(ToD2DPoint(point), rx, ry);
     }

@@ -90,7 +90,7 @@ class StubD2DDevice : public MockD2DDevice
 class StubDxgiSurface : public MockDxgiSurface
 {
 public:
-    STDMETHODIMP GetDevice(const IID& iid, void ** out) override
+    STDMETHODIMP GetDevice(IID const& iid, void ** out) override
     {
         ComPtr<IDXGIDevice> device = Make<MockDxgiDevice>();
 

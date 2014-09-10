@@ -20,7 +20,7 @@ namespace Microsoft
         {
 
 #define ENUM_TO_STRING(TYPE)                                                        \
-            template<> static inline std::wstring ToString<TYPE>(const TYPE& value) \
+            template<> static inline std::wstring ToString<TYPE>(TYPE const& value) \
             {                                                                       \
                 switch (value)
 
@@ -41,7 +41,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<RECT>(const RECT& value)
+            static inline std::wstring ToString<RECT>(RECT const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -56,7 +56,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_POINT_2F>(const D2D1_POINT_2F& value)
+            static inline std::wstring ToString<D2D1_POINT_2F>(D2D1_POINT_2F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -69,7 +69,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_RECT_F>(const D2D1_RECT_F& value)
+            static inline std::wstring ToString<D2D1_RECT_F>(D2D1_RECT_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -84,7 +84,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_ROUNDED_RECT>(const D2D1_ROUNDED_RECT& roundedRect)
+            static inline std::wstring ToString<D2D1_ROUNDED_RECT>(D2D1_ROUNDED_RECT const& roundedRect)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -98,7 +98,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_ELLIPSE>(const D2D1_ELLIPSE& ellipse)
+            static inline std::wstring ToString<D2D1_ELLIPSE>(D2D1_ELLIPSE const& ellipse)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -112,7 +112,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<IID>(const IID& iid)
+            static inline std::wstring ToString<IID>(IID const& iid)
             {
                 wchar_t* iidString = nullptr;
                 ThrowIfFailed(StringFromIID(iid, &iidString));
@@ -173,7 +173,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::UI::Color>(const ABI::Windows::UI::Color& value)
+            static inline std::wstring ToString<ABI::Windows::UI::Color>(ABI::Windows::UI::Color const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -189,7 +189,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_COLOR_F>(const D2D1_COLOR_F& value)
+            static inline std::wstring ToString<D2D1_COLOR_F>(D2D1_COLOR_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -205,7 +205,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Numerics::Matrix3x2>(const Numerics::Matrix3x2& value)
+            static inline std::wstring ToString<Numerics::Matrix3x2>(Numerics::Matrix3x2 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -220,7 +220,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_MATRIX_3X2_F>(const D2D1_MATRIX_3X2_F& value)
+            static inline std::wstring ToString<D2D1_MATRIX_3X2_F>(D2D1_MATRIX_3X2_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -235,7 +235,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::Foundation::Rect>(const ABI::Windows::Foundation::Rect& value)
+            static inline std::wstring ToString<ABI::Windows::Foundation::Rect>(ABI::Windows::Foundation::Rect const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -331,7 +331,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<__int64>(const __int64& value)
+            static inline std::wstring ToString<__int64>(__int64 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -616,14 +616,14 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::UI::Text::FontWeight>(const ABI::Windows::UI::Text::FontWeight& value)
+            static inline std::wstring ToString<ABI::Windows::UI::Text::FontWeight>(ABI::Windows::UI::Text::FontWeight const& value)
             {
                 return ToStringAsInt(value.Weight);
             }
 
 #define TO_STRING_AS_INT(TYPE)                                          \
             template<>                                                  \
-            static inline std::wstring ToString<TYPE>(const TYPE& value) \
+            static inline std::wstring ToString<TYPE>(TYPE const& value) \
             {                                                           \
                 return ToStringAsInt(value);                            \
             }
@@ -633,13 +633,13 @@ namespace Microsoft
             TO_STRING_AS_INT(D2D1_DRAW_TEXT_OPTIONS);
         }
 
-        inline bool operator==(const D2D1_POINT_2F& a, const D2D1_POINT_2F& b)
+        inline bool operator==(D2D1_POINT_2F const& a, D2D1_POINT_2F const& b)
         {
             return a.x == b.x &&
                 a.y == b.y;
         }
 
-        inline bool operator==(const D2D1_RECT_F& a, const D2D1_RECT_F& b)
+        inline bool operator==(D2D1_RECT_F const& a, D2D1_RECT_F const& b)
         {
             return a.left == b.left &&
                 a.top == b.top &&
@@ -647,21 +647,21 @@ namespace Microsoft
                 a.bottom == b.bottom;
         }
 
-        inline bool operator==(const D2D1_ROUNDED_RECT& a, const D2D1_ROUNDED_RECT& b)
+        inline bool operator==(D2D1_ROUNDED_RECT const& a, D2D1_ROUNDED_RECT const& b)
         {
             return a.rect == b.rect &&
                 a.radiusX == b.radiusX &&
                 a.radiusY == b.radiusY;
         }
 
-        inline bool operator==(const D2D1_ELLIPSE& a, const D2D1_ELLIPSE& b)
+        inline bool operator==(D2D1_ELLIPSE const& a, D2D1_ELLIPSE const& b)
         {
             return a.point == b.point &&
                 a.radiusX == b.radiusX &&
                 a.radiusY == b.radiusY;
         }
 
-        inline bool operator==(const ABI::Windows::UI::Color& a, const ABI::Windows::UI::Color& b)
+        inline bool operator==(ABI::Windows::UI::Color const& a, ABI::Windows::UI::Color const& b)
         {
             return a.A == b.A &&
                 a.R == b.R &&
@@ -669,7 +669,7 @@ namespace Microsoft
                 a.B == b.B;
         }
 
-        inline bool operator==(const D2D1_COLOR_F& a, const D2D1_COLOR_F& b)
+        inline bool operator==(D2D1_COLOR_F const& a, D2D1_COLOR_F const& b)
         {
             return a.a == b.a &&
                 a.r == b.r &&
@@ -677,7 +677,7 @@ namespace Microsoft
                 a.b == b.b;
         }
 
-        inline bool operator==(const Numerics::Matrix3x2& a, const Numerics::Matrix3x2& b)
+        inline bool operator==(Numerics::Matrix3x2 const& a, Numerics::Matrix3x2 const& b)
         {
             return
                 a.M11 == b.M11 && a.M12 == b.M12 &&
@@ -685,12 +685,12 @@ namespace Microsoft
                 a.M31 == b.M31 && a.M32 == b.M32;
         }
 
-        inline bool operator==(const ABI::Windows::UI::Text::FontWeight& a, const ABI::Windows::UI::Text::FontWeight& b)
+        inline bool operator==(ABI::Windows::UI::Text::FontWeight const& a, ABI::Windows::UI::Text::FontWeight const& b)
         {
             return a.Weight == b.Weight;
         }
 
-        inline bool operator==(const ABI::Windows::Foundation::Rect& a, const ABI::Windows::Foundation::Rect& b)
+        inline bool operator==(ABI::Windows::Foundation::Rect const& a, ABI::Windows::Foundation::Rect const& b)
         {
             return a.X == b.X &&
             a.Y == b.Y &&
@@ -701,7 +701,7 @@ namespace Microsoft
     }
 }
 
-inline bool operator==(const D2D1_MATRIX_3X2_F& a, const D2D1_MATRIX_3X2_F& b)
+inline bool operator==(D2D1_MATRIX_3X2_F const& a, D2D1_MATRIX_3X2_F const& b)
 {
     return
         a._11 == b._11 && a._12 == b._12 &&

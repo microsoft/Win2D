@@ -73,8 +73,8 @@ public:
     }
 
 
-    WinStringBuilder(const WinStringBuilder&) = delete;
-    WinStringBuilder& operator=(const WinStringBuilder&) = delete;
+    WinStringBuilder(WinStringBuilder const&) = delete;
+    WinStringBuilder& operator=(WinStringBuilder const&) = delete;
     WinStringBuilder(WinStringBuilder&&) = delete;
     WinStringBuilder& operator=(WinStringBuilder&&) = delete;        
 };

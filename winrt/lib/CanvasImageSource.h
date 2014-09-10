@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
-            const Rect& updateRect,
+            Rect const& updateRect,
             float dpi) const = 0;
     };
 
@@ -120,7 +120,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
-            const Rect& updateRect,
+            Rect const& updateRect,
             float dpi) const override;
     };
 }}}}

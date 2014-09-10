@@ -25,7 +25,7 @@ namespace canvas
     {
     public:
         std::function<void(IUnknown*)> MockSetDevice;
-        std::function<void(const RECT&,const IID&,void**,POINT*)> MockBeginDraw;
+        std::function<void(RECT const&,IID const&,void**,POINT*)> MockBeginDraw;
         std::function<void()> MockEndDraw;
 
         // ISurfaceImageSourceNativeWithD2D
@@ -44,7 +44,7 @@ namespace canvas
                 });
         }
 
-        IFACEMETHODIMP BeginDraw(const RECT& updateRect, const IID& iid, void** updateObject, POINT* offset) override 
+        IFACEMETHODIMP BeginDraw(RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset) override 
         {
             if (!MockBeginDraw)
             {

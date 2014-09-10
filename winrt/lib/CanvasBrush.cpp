@@ -190,7 +190,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 &m_propertyValueStatics));
         }
 
-        ComPtr<IReference<Rect>> CreateRectReference(const D2D1_RECT_F& d2dRect) override
+        ComPtr<IReference<Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) override
         {
             const float width = d2dRect.right - d2dRect.left;
             const float height = d2dRect.bottom - d2dRect.top;

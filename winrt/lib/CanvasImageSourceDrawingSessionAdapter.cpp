@@ -19,7 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // static
     std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawingSessionAdapter::Create(
         ISurfaceImageSourceNativeWithD2D* sisNative,
-        const RECT& updateRect,
+        RECT const& updateRect,
         float dpi,
         ID2D1DeviceContext1** outDeviceContext)
     {
@@ -81,7 +81,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasImageSourceDrawingSessionAdapter::CanvasImageSourceDrawingSessionAdapter(
         ISurfaceImageSourceNativeWithD2D* sisNative,
-        const D2D1_POINT_2F& renderingSurfaceOffset)
+        D2D1_POINT_2F const& renderingSurfaceOffset)
         : m_sisNative(sisNative)
         , m_renderingSurfaceOffset(renderingSurfaceOffset)
     {

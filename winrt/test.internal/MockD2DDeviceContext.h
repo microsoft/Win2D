@@ -70,7 +70,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateSharedBitmap(const IID &,void *,const D2D1_BITMAP_PROPERTIES *,ID2D1Bitmap **) override
+        IFACEMETHODIMP CreateSharedBitmap(IID const&,void *,const D2D1_BITMAP_PROPERTIES *,ID2D1Bitmap **) override
         {
             Assert::Fail(L"Unexpected call to CreateSharedBitmap");
             return E_NOTIMPL;
@@ -498,7 +498,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateEffect(const IID &,ID2D1Effect** effect) override
+        IFACEMETHODIMP CreateEffect(IID const&,ID2D1Effect** effect) override
         {
             if (!MockCreateEffect)
             {

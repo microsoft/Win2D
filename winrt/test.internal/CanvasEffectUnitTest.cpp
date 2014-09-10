@@ -198,7 +198,7 @@ public:
     }
 
     void VerifyEffectRealizationInputs(
-        const std::shared_ptr<CanvasDrawingSessionManager>& drawingSessionManager,
+        std::shared_ptr<CanvasDrawingSessionManager> const& drawingSessionManager,
         TestEffect* testEffect)
     {
         ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = Make<StubD2DDeviceContextWithGetFactory>();

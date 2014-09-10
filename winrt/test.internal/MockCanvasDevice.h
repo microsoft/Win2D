@@ -23,7 +23,7 @@ namespace canvas
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
         std::function<void(ICanvasDevice**)> Mockget_Device;
-        std::function<ComPtr<ID2D1SolidColorBrush>(const D2D1_COLOR_F&)> MockCreateSolidColorBrush;
+        std::function<ComPtr<ID2D1SolidColorBrush>(D2D1_COLOR_F const&)> MockCreateSolidColorBrush;
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
         std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmap;
@@ -75,7 +75,7 @@ namespace canvas
             return MockGetD2DDevice();
         }
 
-        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override
+        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override
         {
             if (!MockCreateSolidColorBrush)
             {

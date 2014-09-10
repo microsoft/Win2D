@@ -42,7 +42,7 @@ public:
     class TestCanvasImageBrushAdapter : public ICanvasImageBrushAdapter
     {
     public:
-        virtual ComPtr<ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>> CreateRectReference(const D2D1_RECT_F& d2dRect) override
+        virtual ComPtr<ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) override
         {
             ComPtr<StubRectReference> ret = Make<StubRectReference>();
             ret->m_rect = FromD2DRect(d2dRect);
@@ -142,8 +142,8 @@ public:
 
     template<class BackingBrushType>
     void VerifyCommonBrushProperties(
-        const ComPtr<CanvasImageBrush>& brush,
-        const ComPtr<BackingBrushType>& backingBrush)
+        ComPtr<CanvasImageBrush> const& brush,
+        ComPtr<BackingBrushType> const& backingBrush)
     {
         {
             bool getExtendXCalled = false;
@@ -413,7 +413,7 @@ public:
     };
 
     void VerifyBackedByBitmapBrush(
-        const ComPtr<ICanvasBrushInternal>& brushInternal,
+        ComPtr<ICanvasBrushInternal> const& brushInternal,
         ComPtr<ID2D1Image>* outTarget = nullptr) // Optionally retrieve the target bitmap
     {
         auto d2dBrush = brushInternal->GetD2DBrush();
@@ -428,7 +428,7 @@ public:
     }
 
     void VerifyBackedByImageBrush(
-        const ComPtr<ICanvasBrushInternal>& brushInternal,
+        ComPtr<ICanvasBrushInternal> const& brushInternal,
         ComPtr<ID2D1Image>* outTarget = nullptr) // Optionally retrieve the target image
     {
         auto d2dBrush = brushInternal->GetD2DBrush();

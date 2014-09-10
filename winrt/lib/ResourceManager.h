@@ -141,7 +141,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
         }
 
-        const std::shared_ptr<MANAGER>& GetManager()
+        std::shared_ptr<MANAGER> const& GetManager()
         {
             return m_manager;
         }

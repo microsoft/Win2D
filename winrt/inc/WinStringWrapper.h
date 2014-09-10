@@ -47,11 +47,11 @@ public:
         ThrowIfFailed(WindowsCreateString(str, static_cast<uint32_t>(length), &m_value));
     }
 
-    explicit WinStringT(const std::wstring& str)
+    explicit WinStringT(std::wstring const& str)
         : WinStringT(str.c_str())
     {}
 
-    WinStringT(const WinStringT& other)
+    WinStringT(WinStringT const& other)
         : m_value(nullptr)
     {
         other.CopyTo(GetAddressOf());
@@ -80,7 +80,7 @@ public:
         return *this;
     }
 
-    WinStringT& operator=(const WinStringT& other)
+    WinStringT& operator=(WinStringT const& other)
     {
         return operator=(other.m_value);
     }

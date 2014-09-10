@@ -40,7 +40,7 @@ struct SolidColorBrushCounters
 class TestD2DSolidColorBrush : public MockD2DSolidColorBrush
 {
 public:
-    TestD2DSolidColorBrush(const D2D1_COLOR_F& color, SolidColorBrushCounters* counters)
+    TestD2DSolidColorBrush(D2D1_COLOR_F const& color, SolidColorBrushCounters* counters)
         : m_color(color)
         , m_opacity(1.0f)
         , m_counters(counters)
@@ -110,7 +110,7 @@ public:
         {
         }
 
-        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(const D2D1_COLOR_F& color) override
+        virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override
         {
             return Make<TestD2DSolidColorBrush>(color, &m_counters);
         }
@@ -262,7 +262,7 @@ public:
 
         bool createSolidColorBrushCalled = false;
         canvasDevice->MockCreateSolidColorBrush =
-            [&](const D2D1_COLOR_F& color)
+            [&](D2D1_COLOR_F const& color)
             {
                 createSolidColorBrushCalled = true;
                 return Make<MockD2DSolidColorBrush>();
@@ -290,7 +290,7 @@ public:
 
         bool createSolidColorBrushCalled = false;
         canvasDevice->MockCreateSolidColorBrush =
-            [&](const D2D1_COLOR_F& color)
+            [&](D2D1_COLOR_F const& color)
             {
                 createSolidColorBrushCalled = true;
                 return expectedBrush;
