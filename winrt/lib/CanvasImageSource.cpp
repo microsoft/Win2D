@@ -176,6 +176,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
         ThrowIfFailed(GetComposableBase().As(&sisNative));
 
+        //
+        // Set the device.  SiS does some validation here - for example, if the
+        // width/height are 0 then this will fail with E_INVALIDARG.  We don't
+        // add additional validation around this since CanvasImageSource derives
+        // from SurfaceImageSource and we want to be consistent with the
+        // existing XAML behavior.
+        //
         ThrowIfFailed(sisNative->SetDevice(d2dDevice.Get()));
 
         //

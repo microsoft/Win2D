@@ -146,77 +146,38 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     int m_drawCallbackCount;
 };
 
-TEST_CLASS(CanvasControlTests_AdapterWithResizing)
+class SizableTestControl : public StubUserControl
 {
-    class SizableTestControl : public StubUserControl
+public:
+    double m_width;
+    double m_height;
+
+    SizableTestControl()
+        : m_width(128)
+        , m_height(128) {}
+
+    IFACEMETHODIMP get_ActualWidth(double* value) override
     {
-    public:
-        double m_width;
-        double m_height;
+        *value = m_width;
+        return S_OK;
+    }
 
-        SizableTestControl()
-            : m_width(128)
-            , m_height(128) {}
-
-        IFACEMETHODIMP get_ActualWidth(double* value) override
-        {
-            *value = m_width;
-            return S_OK;
-        }
-
-        IFACEMETHODIMP get_ActualHeight(double* value) override
-        {
-            *value = m_height;
-            return S_OK;
-        }
-    };
-
-    class CanvasControlTestAdapter_VerifyCreateImageSource : public CanvasControlTestAdapter
+    IFACEMETHODIMP get_ActualHeight(double* value) override
     {
-    public:
+        *value = m_height;
+        return S_OK;
+    }
+};
 
-        int m_imageSourceCount;
-        int m_lastImageSourceWidth;
-        int m_lastImageSourceHeight;
-        ComPtr<SizableTestControl> m_userControl;
-
-        CanvasControlTestAdapter_VerifyCreateImageSource()
-            : m_imageSourceCount(0)
-            , m_lastImageSourceWidth(0)
-            , m_lastImageSourceHeight(0)
-            , m_userControl(Make<SizableTestControl>())
-        {}
-
-
-        virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
-        {
-            ComPtr<IInspectable> inspectableControl;
-            ThrowIfFailed(m_userControl.As(&inspectableControl));
-
-            return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, m_userControl);
-        }
-
-        virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
-        {
-            m_imageSourceCount++;
-            m_lastImageSourceWidth = width;
-            m_lastImageSourceHeight = height;
-
-            return __super::CreateCanvasImageSource(device, width, height);
-        }
-    };
+TEST_CLASS(CanvasControlTests_SizeTests)
+{
+    const int anyWidth = 128;
+    const int anyHeight = 256;
+    const int zeroWidth = 0;
+    const int zeroHeight = 0;
 
     TEST_METHOD(CanvasControl_Resizing)
     {
-        std::shared_ptr<CanvasControlTestAdapter_VerifyCreateImageSource> adapter =
-            std::make_shared<CanvasControlTestAdapter_VerifyCreateImageSource>();
-
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
-        canvasControl->OnLoaded(nullptr, nullptr);
-        Assert::AreEqual(0, adapter->m_imageSourceCount);
-        Assert::AreEqual(0, adapter->m_lastImageSourceWidth);
-        Assert::AreEqual(0, adapter->m_lastImageSourceHeight);
-
         struct TestCase
         {
             int ResizeWidth;
@@ -231,21 +192,264 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
             { 50, 51, false }, // Change nothing
         };
 
-        int expectedImageSourceCount = 0;
-        for (size_t i = 0; i < _countof(testSteps); ++i)
-        {
-            if (testSteps[i].ExpectRecreation) expectedImageSourceCount++;
+        ResizeAndRedrawFixture f;
 
-            adapter->m_userControl->m_width = testSteps[i].ResizeWidth;
-            adapter->m_userControl->m_height = testSteps[i].ResizeHeight;
-            canvasControl->Invalidate();
-            adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
-            Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
-            Assert::AreEqual(testSteps[i].ResizeWidth, adapter->m_lastImageSourceWidth);
-            Assert::AreEqual(testSteps[i].ResizeHeight, adapter->m_lastImageSourceHeight);
+        for (const auto& testStep : testSteps)
+        {
+            if (testStep.ExpectRecreation) 
+                f.ExpectOneCreateCanvasImageSource(testStep.ResizeWidth, testStep.ResizeHeight);
+
+            f.ExpectOneDrawEvent();
+
+            f.Execute(testStep.ResizeWidth, testStep.ResizeHeight);
         }
     }
 
+    TEST_METHOD(CanvasControl_ZeroSizedControl_DoesNotCreateImageSource_DoesNotCallDrawHandler)
+    {
+        ResizeAndRedrawFixture f;
+
+        f.ExpectImageSourceSetToNull();
+        f.ExpectNoDrawEvent();
+        f.Execute(zeroWidth, zeroHeight);
+    }
+
+    TEST_METHOD(CanvasControl_ResizeToZeroSize_ClearsImageSource_DoesNotCallDrawHandler)
+    {
+        ResizeAndRedrawFixture f;
+
+        f.ExpectOneDrawEvent();
+        f.ExpectOneCreateCanvasImageSource(anyWidth, anyHeight);
+        f.Execute(anyWidth, anyHeight);
+
+        f.ExpectImageSourceSetToNull();
+        f.ExpectNoDrawEvent();
+        f.Execute(zeroWidth, zeroHeight);
+    }
+
+    TEST_METHOD(CanvasControl_ZeroWidth_DoesNotCreateImageSource)
+    {
+        ResizeAndRedrawFixture f;
+
+        f.ExpectImageSourceSetToNull();
+        f.ExpectNoDrawEvent();
+        f.Execute(zeroWidth, anyHeight);
+    }
+
+    TEST_METHOD(CanvasControl_ZeroHeight_DoesNotCreateImageSource)
+    {
+        ResizeAndRedrawFixture f;
+
+        f.ExpectImageSourceSetToNull();
+        f.ExpectNoDrawEvent();
+        f.Execute(anyWidth, zeroHeight);
+    }
+
+
+    class MockImageControl : public StubImageControl
+    {
+    public:
+        enum ExpectedSource { None, NullSource, NonNullSource };
+
+    private:
+        ExpectedSource m_expectedSource;
+        bool m_sourceSeen;
+
+    public:
+        MockImageControl()
+            : m_expectedSource(None)
+            , m_sourceSeen(false)
+        {
+        }
+
+        void ExpectOnePutSource(ExpectedSource s)
+        {
+            m_expectedSource = s;
+        }
+
+        void Validate()
+        {
+            switch (m_expectedSource)
+            {
+            case None:
+                Assert::IsFalse(m_sourceSeen, L"put_Source wasn't called");
+                break;
+
+            default:
+                Assert::IsTrue(m_sourceSeen, L"put_Source was called");
+                break;
+            }
+
+            m_expectedSource = None;
+            m_sourceSeen = false;
+        }
+        
+    private:
+        IFACEMETHODIMP put_Source(ABI::Windows::UI::Xaml::Media::IImageSource* value) override 
+        {
+            Assert::IsFalse(m_sourceSeen);
+
+            if (value)
+                Assert::IsTrue(m_expectedSource == NonNullSource, L"non-NULL source expected");
+            else
+                Assert::IsTrue(m_expectedSource == NullSource, L"NULL source expected");
+
+            m_sourceSeen = true;
+
+            return S_OK;
+        }        
+    };
+
+    class CanvasControlTestAdapter_VerifyCreateImageSource : public CanvasControlTestAdapter
+    {
+        bool m_createCanvasImageSourceExpected;
+        bool m_createCanvasImageSourceSeen;
+        int m_expectedImageSourceWidth;
+        int m_expectedImageSourceHeight;
+        ComPtr<SizableTestControl> m_userControl;
+        ComPtr<MockImageControl> m_imageControl;
+
+    public:
+        CanvasControlTestAdapter_VerifyCreateImageSource()
+            : m_createCanvasImageSourceExpected(false)
+            , m_createCanvasImageSourceSeen(false)
+            , m_expectedImageSourceWidth(-1)
+            , m_expectedImageSourceHeight(-1)
+            , m_userControl(Make<SizableTestControl>())
+            , m_imageControl(Make<MockImageControl>())
+        {}
+
+        void ExpectOneCreateCanvasImageSource(int width, int height)
+        {
+            m_createCanvasImageSourceExpected = true;
+            m_expectedImageSourceWidth = width;
+            m_expectedImageSourceHeight = height;
+            m_imageControl->ExpectOnePutSource(MockImageControl::NonNullSource);
+        }
+
+        void ExpectImageSourceSetToNull()
+        {
+            m_imageControl->ExpectOnePutSource(MockImageControl::NullSource);
+        }
+
+        void Resize(int width, int height)
+        {
+            m_userControl->m_width = width;
+            m_userControl->m_height = height;
+        }
+
+        void Validate()
+        {
+            Assert::AreEqual(m_createCanvasImageSourceExpected, m_createCanvasImageSourceSeen, L"CreateCanvasImageSource");
+
+            m_imageControl->Validate();
+
+            m_createCanvasImageSourceExpected = false;
+            m_createCanvasImageSourceSeen = false;
+        }
+
+    private:
+        virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
+        {
+            ComPtr<IInspectable> inspectableControl;
+            ThrowIfFailed(m_userControl.As(&inspectableControl));
+
+            return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, m_userControl);
+        }
+
+        virtual ComPtr<IImage> CreateImageControl() override
+        {
+            return m_imageControl;
+        }
+
+        virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+        {
+            Assert::IsTrue(m_createCanvasImageSourceExpected, L"CreateCanvasImageSource expected");
+            m_createCanvasImageSourceExpected = false;
+
+            Assert::AreEqual(m_expectedImageSourceWidth, width, L"ExpectedImageSourceWidth");
+            Assert::AreEqual(m_expectedImageSourceHeight, height, L"ExpectedImageSourceHeight");
+
+            return __super::CreateCanvasImageSource(device, width, height);
+        }
+    };
+
+    class ResizeAndRedrawFixture
+    {
+        std::shared_ptr<CanvasControlTestAdapter_VerifyCreateImageSource> m_adapter;
+        ComPtr<CanvasControl> m_control;
+        bool m_drawEventExpected;
+        bool m_drawEventSeen;
+
+    public:
+        ResizeAndRedrawFixture()
+            : m_adapter(std::make_shared<CanvasControlTestAdapter_VerifyCreateImageSource>())
+            , m_control(Make<CanvasControl>(m_adapter))
+            , m_drawEventExpected(false)
+        {
+            EventRegistrationToken tok;
+            ThrowIfFailed(m_control->add_Draw(
+                Callback<DrawEventHandlerType>(this, &ResizeAndRedrawFixture::OnDraw).Get(), 
+                &tok));
+
+            m_control->OnLoaded(nullptr, nullptr);
+        }
+
+        void ExpectOneDrawEvent()
+        {
+            m_drawEventExpected = true;
+        }
+        
+        void ExpectNoDrawEvent()
+        {
+            m_drawEventExpected = false;
+        }
+
+        void ExpectOneCreateCanvasImageSource(int width, int height)
+        {
+            m_adapter->ExpectOneCreateCanvasImageSource(width, height);
+        }
+
+        void ExpectImageSourceSetToNull()
+        {
+            m_adapter->ExpectImageSourceSetToNull();
+        }
+
+        void Execute(int width, int height)
+        {
+            ResizeAndRedraw(width, height);
+            Validate();
+        }
+
+    private:
+        void ResizeAndRedraw(int width, int height)
+        {
+            m_adapter->Resize(width, height);
+            m_control->Invalidate();
+            m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(m_control.Get()));
+        }
+
+        void Validate()
+        {
+            Assert::AreEqual(m_drawEventExpected, m_drawEventSeen, L"DrawEvent");
+            m_adapter->Validate();
+            
+            m_drawEventExpected = false;
+            m_drawEventSeen = false;
+        }
+
+        HRESULT OnDraw(ICanvasControl*, ICanvasDrawEventArgs*)
+        {
+            Assert::IsFalse(m_drawEventSeen);
+            Assert::IsTrue(m_drawEventExpected);
+            m_drawEventSeen = true;
+            return S_OK;
+        }
+    };
+};
+
+TEST_CLASS(CanvasControlTests_Dpi)
+{
     class CanvasControlTestAdapter_VerifyDpi : public CanvasControlTestAdapter
     {
     public:
@@ -348,11 +552,6 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
         ComPtr<MockD2DDeviceContext> m_mockD2DDeviceContext; 
     };
 
-    HRESULT OnDraw(ICanvasControl* sender, ICanvasDrawEventArgs* args)
-    {
-        return S_OK;
-    }
-
     TEST_METHOD(CanvasControl_Dpi)
     {
         float dpiCases[] = {
@@ -375,9 +574,9 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
             ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
             canvasControl->OnLoaded(nullptr, nullptr);
 
-            // An event handler needs to be registered for a drawing session to be contructed.
+            // An event handler needs to be registered for a drawing session to be constructed.
             auto onDrawFn = 
-                Callback<DrawEventHandlerType>(this, &CanvasControlTests_AdapterWithResizing::OnDraw);
+                Callback<DrawEventHandlerType>([](ICanvasControl*, ICanvasDrawEventArgs*) { return S_OK; });
             EventRegistrationToken drawEventToken;
             ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
 
@@ -439,7 +638,5 @@ TEST_CLASS(CanvasControlTests_AdapterWithResizing)
             Assert::AreEqual(verifyWidth, 1000.0);
             Assert::AreEqual(verifyHeight, 1000.0);
         }
-
-
     }
 };

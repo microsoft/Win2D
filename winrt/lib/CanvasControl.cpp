@@ -339,7 +339,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         const double deviceDependentHeight = actualHeight * dpiScalingFactor;
 
         assert(deviceDependentWidth <= static_cast<double>(INT_MAX));
+        assert(deviceDependentWidth >= 0.0);
         assert(deviceDependentHeight <= static_cast<double>(INT_MAX));
+        assert(deviceDependentHeight >= 0.0);
 
         auto width = static_cast<int>(ceil(deviceDependentWidth));
         auto height = static_cast<int>(ceil(deviceDependentHeight));
@@ -352,25 +354,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 return;
         }
 
-        m_canvasImageSource = m_adapter->CreateCanvasImageSource(
-            m_canvasDevice.Get(),
-            width,
-            height);
-
-        m_currentWidth = width;
-        m_currentHeight = height;
-
-        //
-        // Set this new image source on the image control
-        //
-        ComPtr<IImageSource> baseImageSource;
-        ThrowIfFailed(m_canvasImageSource.As(&baseImageSource));
-        ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
+        if (width <= 0 || height <= 0)
+        {
+            // Zero-sized controls don't have image sources
+            m_canvasImageSource.Reset();
+            m_currentWidth = 0;
+            m_currentHeight = 0;
+            ThrowIfFailed(m_imageControl->put_Source(nullptr));
+        }
+        else
+        {
+            m_canvasImageSource = m_adapter->CreateCanvasImageSource(
+                m_canvasDevice.Get(),
+                width,
+                height);
+            
+            m_currentWidth = width;
+            m_currentHeight = height;
+            
+            //
+            // Set this new image source on the image control
+            //
+            ComPtr<IImageSource> baseImageSource;
+            ThrowIfFailed(m_canvasImageSource.As(&baseImageSource));
+            ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
+        }
     }
 
     void CanvasControl::CallDrawHandlers()
     {
         if (m_drawEventList.GetSize() == 0)
+        {
+            return;
+        }
+
+        if (!m_canvasImageSource)
         {
             return;
         }
