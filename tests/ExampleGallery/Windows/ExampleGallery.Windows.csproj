@@ -82,6 +82,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\..\..\numerics\DotNet\DotNetNumerics.Windows.csproj">
+      <Project>{3c1b37e8-10d1-4381-882a-9f0c0fd45871}</Project>
+      <Name>DotNetNumerics.Windows</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.Windows.vcxproj">
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
       <Name>winrt.dll.Windows</Name>
@@ -101,6 +105,11 @@
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(AssetDir)imageTiger.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Page Include="PlatformResources.xaml">

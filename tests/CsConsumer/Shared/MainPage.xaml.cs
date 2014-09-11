@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Text;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using System.Linq;
 
 namespace CsConsumer
 {
@@ -33,7 +34,11 @@ namespace CsConsumer
         {
             Clear_Only,
             Bitmap,
-            Effect_Blur,
+            Effect_GaussianBlur,
+            Effect_Saturation,
+            Effect_3DTransform,
+            Effect_Blend,
+            Effect_Composite,
             Line_Thin,
             Line_Thick,
             Rectangle_Thin,
@@ -150,6 +155,8 @@ namespace CsConsumer
             float radiusX;
             float radiusY;
 
+            Random random = new Random();
+
             switch (drawnContentType)
             {
                 case DrawnContentType.Clear_Only:
@@ -166,13 +173,13 @@ namespace CsConsumer
                     }
                     break;
 
-                case DrawnContentType.Effect_Blur:
+                case DrawnContentType.Effect_GaussianBlur:
                     if (m_bitmap_tiger != null)
                     {
                         GaussianBlurEffect blurEffect = new GaussianBlurEffect();
-                        blurEffect.StandardDeviation = 2.0f;
+                        blurEffect.StandardDeviation = (float)random.NextDouble()*5;
                         blurEffect.Source = m_bitmap_tiger;
-                        ds.DrawImage(blurEffect, NextRandomPoint(horizontalLimit, verticalLimit).ToVector2());
+                        ds.DrawImage(blurEffect, new Vector2(horizontalLimit / 2, verticalLimit / 2));
                     }
                     else
                     {
@@ -180,6 +187,74 @@ namespace CsConsumer
                     }
                     break;
 
+                case DrawnContentType.Effect_Saturation:
+                    if (m_bitmap_tiger != null)
+                    {
+                        SaturationEffect saturationEffect = new SaturationEffect();
+                        saturationEffect.Saturation = (float)random.NextDouble();
+                        saturationEffect.Source = m_bitmap_tiger;
+                        ds.DrawImage(saturationEffect, new Vector2(horizontalLimit / 2, verticalLimit / 2));
+                    }
+                    else
+                    {
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    }
+                    break;
+                case DrawnContentType.Effect_3DTransform:
+                    if (m_bitmap_tiger != null)
+                    {
+                        Transform3DEffect transformEffect = new Transform3DEffect();
+                        transformEffect.Source = m_bitmap_tiger;
+                        transformEffect.InterpolationMode = CanvasImageInterpolation.Cubic;
+                        transformEffect.TransformMatrix = Matrix4x4.CreateRotationZ((float)random.NextDouble(), new Vector3(0, 0, 0));
+                        ds.DrawImage(transformEffect, new Vector2(horizontalLimit / 2, verticalLimit / 2));
+                    }
+                    else
+                    {
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    }
+                    break;
+                case DrawnContentType.Effect_Blend:
+                    if (m_bitmap_tiger != null)
+                    {
+                        Transform3DEffect transformEffect = new Transform3DEffect();
+                        transformEffect.Source = m_bitmap_tiger;
+                        transformEffect.TransformMatrix = Matrix4x4.CreateRotationZ((float)random.NextDouble(), new Vector3(0, 0, 0));
+                        BlendEffect blendEffect = new BlendEffect();
+                        blendEffect.Background = m_bitmap_tiger;
+                        blendEffect.Foreground = transformEffect;
+                        blendEffect.Mode = BlendEffectMode.SoftLight;
+                        ds.DrawImage(blendEffect, new Vector2(horizontalLimit / 2, verticalLimit / 2));
+                    }
+                    else
+                    {
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    }
+                    break;
+                case DrawnContentType.Effect_Composite:
+                    if (m_bitmap_tiger != null)
+                    {
+                        CompositeEffect compositeEffect = new CompositeEffect();
+                        compositeEffect.Mode = CompositeEffectMode.SourceOver;
+
+                        float angle = 0.0f;
+                        float angleDelta = (float)random.NextDouble()+0.05f;
+                        int imageNumber = (int)(2 * Math.PI / angleDelta) + 1;
+                        foreach (var i in Enumerable.Range(0, imageNumber))
+                        {
+                            Transform3DEffect transformEffect = new Transform3DEffect();
+                            transformEffect.Source = m_bitmap_tiger;
+                            transformEffect.TransformMatrix = Matrix4x4.CreateRotationZ(angle, new Vector3(0, 0, 0));
+                            angle += angleDelta;
+                            compositeEffect.Inputs.Add(transformEffect);
+                        }
+                        ds.DrawImage(compositeEffect, new Vector2(horizontalLimit / 2, verticalLimit / 2));
+                    }
+                    else
+                    {
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    }
+                    break;
                 case DrawnContentType.Line_Thin:
                     ds.DrawLine(
                         NextRandomPoint(horizontalLimit, verticalLimit).ToVector2(),

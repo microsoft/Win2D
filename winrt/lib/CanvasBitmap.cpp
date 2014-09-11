@@ -81,9 +81,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 resourceCreator->get_Device(&canvasDevice);
 
-                // TODO #2052: use WinString constructor with HSTRING later
-                WinString fileName;
-                fileName = rawFileName;
+                WinString fileName(rawFileName);
 
                 auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>([=]
                 {

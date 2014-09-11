@@ -10,24 +10,23 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// This file was automatically generated. Please do not edit it manually.
+
 #include "pch.h"
-#include "CanvasEffect.h"
+#include "..\CanvasEffect.h"
 #include "GaussianBlurEffect.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     GaussianBlurEffect::GaussianBlurEffect()
         : CanvasEffect(CLSID_D2D1GaussianBlur, 3, 1, true)
     {
-        // set defaults 
+        // Set default values
         SetProperty(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, 3.0f, true);
-        SetProperty(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, static_cast<UINT32>(D2D1_GAUSSIANBLUR_OPTIMIZATION_BALANCED), true);
-        SetProperty(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, static_cast<UINT32>(D2D1_BORDER_MODE_SOFT), true);
+        SetProperty(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, static_cast<uint32_t>(D2D1_GAUSSIANBLUR_OPTIMIZATION_BALANCED), true);
+        SetProperty(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, static_cast<uint32_t>(D2D1_BORDER_MODE_SOFT), true);
     }
 
-    //
-    // StandardDeviation
-    //
     IMPLEMENT_PROPERTY_WITH_VALIDATION(GaussianBlurEffect,
         StandardDeviation,
         float,
@@ -35,28 +34,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         0.0,
         250.0)
 
-    //
-    // Optimization
-    //
-    IMPLEMENT_ENUM_PROPERTY(GaussianBlurEffect, 
-                            Optimization, 
-                            EffectOptimization,
-                            D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION)
-
-    //
-    // BorderMode
-    //
     IMPLEMENT_ENUM_PROPERTY(GaussianBlurEffect,
-                            BorderMode,
-                            EffectBorderMode,
-                            D2D1_GAUSSIANBLUR_PROP_BORDER_MODE)
+        Optimization,
+        EffectOptimization,
+        D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION)
 
-    //
-    // Source
-    //
+    IMPLEMENT_ENUM_PROPERTY(GaussianBlurEffect,
+        BorderMode,
+        EffectBorderMode,
+        D2D1_GAUSSIANBLUR_PROP_BORDER_MODE)
+
     IMPLEMENT_INPUT_PROPERTY(GaussianBlurEffect,
-                             Source,
-                             0)
+        Source,
+        0)
 
     ActivatableClass(GaussianBlurEffect);
 }}}}}

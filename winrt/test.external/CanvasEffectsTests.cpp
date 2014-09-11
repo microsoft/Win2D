@@ -95,12 +95,12 @@ TEST_CLASS(CanvasBitmapTests)
 
         // Try setting not valid data. 
         // For StandardDeviation in GaussianBlur valid range is (0.0f;250.0f)
-        Assert::ExpectException<InvalidArgException>(
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
                 blurEffect->StandardDeviation = -1.0f;
             });
-        Assert::ExpectException<InvalidArgException>(
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
                 blurEffect->StandardDeviation = 300.0f;
@@ -126,6 +126,49 @@ TEST_CLASS(CanvasBitmapTests)
         Assert::IsTrue(newValue == blurEffect->Optimization);
     }
 
+    TEST_METHOD(CanvasEffect_UnsupportedEnums)
+    {
+        // Use Transform3DEffect effect for testing unsupported enums
+        Transform3DEffect^ transformEffect = ref new Transform3DEffect();
+
+        transformEffect->InterpolationMode = CanvasImageInterpolation::Anisotropic;
+        Assert::IsTrue(CanvasImageInterpolation::Anisotropic == transformEffect->InterpolationMode);
+
+        Assert::ExpectException<Platform::NotImplementedException^>(
+            [&]
+            {
+                transformEffect->InterpolationMode = CanvasImageInterpolation::HighQualityCubic;
+            });
+
+        // Check that transformEffect did not change it's interpolation mode
+        Assert::IsTrue(CanvasImageInterpolation::Anisotropic == transformEffect->InterpolationMode);
+    }
+
+    TEST_METHOD(CanvasEffect_Matrix4x4Propery)
+    {
+        // Use Transform3D TransformMatrix property for testing
+        Transform3DEffect^ transformEffect = ref new Transform3DEffect();
+
+        // Check enum property access through strongly typed interface
+        Numerics::Matrix4x4 matrix;
+        float newValue = 5.0f;
+        matrix.M22 = newValue;
+        transformEffect->TransformMatrix = matrix;
+        Assert::AreEqual(newValue, transformEffect->TransformMatrix.M22);
+
+        // Check that IEffect Interface connect to the same data vector
+        Platform::Array<float, 1U>^ propertyArray;
+        // Transformation matrix is propery #2 in property array
+        transformEffect->Properties->GetAt(2)->GetSingleArray(&propertyArray);
+        // Cell (2,2) have index 5 in array representation of 4x4 matrix
+        Assert::AreEqual(newValue, propertyArray[5]);
+        // Set Cell (2, 3)
+        propertyArray[6] = newValue;
+        IPropertyValue^ newPropertyValue = safe_cast<IPropertyValue^>(PropertyValue::CreateSingleArray(propertyArray));
+        transformEffect->Properties->SetAt(2, newPropertyValue);
+        Assert::AreEqual(newValue, transformEffect->TransformMatrix.M23);
+    }
+
     TEST_METHOD(CanvasEffect_LimitedInputs)
     {
         // Use gaussian for testing limited inputs
@@ -143,6 +186,27 @@ TEST_CLASS(CanvasBitmapTests)
         GaussianBlurEffect^ secondBlurEffect = ref new GaussianBlurEffect();
         blurEffect->Inputs->SetAt(0, secondBlurEffect);
         Assert::IsTrue(secondBlurEffect == blurEffect->Source);
+    }
+
+    TEST_METHOD(CanvasEffect_UnlimitedInputs)
+    {
+        // Use Composite effect for testing unlimited inputs
+        CompositeEffect^ compositeEffect = ref new CompositeEffect();
+
+        // All unlimited inputs supposed to have 0 size inputs vector by default
+        Assert::AreEqual(0U, compositeEffect->Inputs->Size);
+
+        // Set same effect as input for reference testing
+        unsigned int inputNumber = 10;
+        for (unsigned int i = 0; i < inputNumber; i++)
+        {
+            compositeEffect->Inputs->Append(compositeEffect);
+        }
+        Assert::AreEqual(inputNumber, compositeEffect->Inputs->Size);
+        for (unsigned int i = 0; i < inputNumber; i++)
+        {
+            Assert::IsTrue(compositeEffect == compositeEffect->Inputs->GetAt(i));
+        }
     }
 };
 

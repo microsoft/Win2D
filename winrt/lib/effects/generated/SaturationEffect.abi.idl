@@ -10,19 +10,21 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// This file was automatically generated. Please do not edit it manually.
+
 namespace Microsoft.Graphics.Canvas.Effects
 {
-    runtimeclass GaussianBlurEffect;
+    runtimeclass SaturationEffect;
 
-    [version(VERSION), uuid(6202E54A-E229-489B-9098-C2A1B5AE5170), exclusiveto(GaussianBlurEffect)]
-    interface IGaussianBlurEffect : IInspectable
+    [version(VERSION), uuid(5D33D5C1-EA32-46D2-B32C-636261EB6B27), exclusiveto(SaturationEffect)]
+    interface ISaturationEffect : IInspectable
         requires  Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT StandardDeviation([out, retval] float* value);
+        HRESULT Saturation([out, retval] float* value);
 
         [propput]
-        HRESULT StandardDeviation([in] float value);
+        HRESULT Saturation([in] float value);
 
         [propget]
         HRESULT Source([out, retval] IEffectInput** input);
@@ -30,23 +32,12 @@ namespace Microsoft.Graphics.Canvas.Effects
         [propput]
         HRESULT Source([in] IEffectInput* input);
 
-        [propget]
-        HRESULT Optimization([out, retval] EffectOptimization* value);
-
-        [propput]
-        HRESULT Optimization([in] EffectOptimization value);
-
-        [propget]
-        HRESULT BorderMode([out, retval] EffectBorderMode* value);
-
-        [propput]
-        HRESULT BorderMode([in] EffectBorderMode value);
     };
 
     [version(VERSION), activatable(VERSION)]
-    runtimeclass GaussianBlurEffect
+    runtimeclass SaturationEffect
     {
-        [default] interface IGaussianBlurEffect;
+        [default] interface ISaturationEffect;
         interface IEffect;
     }
 }

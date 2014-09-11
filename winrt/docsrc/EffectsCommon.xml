@@ -23,18 +23,9 @@ under the License.
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft">
       <summary>Pixels outside the edge are marked as black which makes edge color softer after processing.</summary>
-	  <remarks>
-	    <p>The effect pads the input image with transparent black pixels for samples outside 
-	       of the input bounds when it applies the convolution kernel. This creates a soft edge 
-	  	 for the image, and in the process expands the output bitmap by the size of the kernel.</p>
-	  </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Hard">
       <summary>Pixels outside the bounds are mirrored.</summary>
-	  <remarks>
-	    <p>The effect extends the input image with a mirror-type border transform for samples outside 
-		   of the input bounds. The size of the output bitmap is equal to the size of the input bitmap.</p>
-	  </remarks>
     </member>
 	
 	<member name="T:Microsoft.Graphics.Canvas.Effects.EffectOptimization">

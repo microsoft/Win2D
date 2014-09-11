@@ -21,6 +21,7 @@ namespace canvas
     {
     public:
         std::function<void()> MockSetInput;
+        std::function<HRESULT()> MockSetInputCount;
         std::function<HRESULT()> MockSetValue;
 
         //
@@ -45,8 +46,12 @@ namespace canvas
             UINT32 inputCount
             )
         {
-            Assert::Fail(L"Unexpected call to SetInputCount");
-            return E_NOTIMPL;
+            if (!MockSetInputCount)
+            {
+                Assert::Fail(L"Unexpected call to SetInputCount");
+                return E_NOTIMPL;
+            }
+            return MockSetInputCount();
         }
 
         STDMETHOD_(void, GetInput)(

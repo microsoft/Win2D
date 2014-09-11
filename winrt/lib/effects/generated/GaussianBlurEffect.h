@@ -10,6 +10,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// This file was automatically generated. Please do not edit it manually.
+
 #pragma once
 
 #include <CanvasImage.h>
@@ -22,13 +24,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas;
-    using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
-    class GaussianBlurEffect;
-
-    class GaussianBlurEffect : public RuntimeClass <
+    class GaussianBlurEffect : public RuntimeClass<
         IGaussianBlurEffect,
-        MixIn<GaussianBlurEffect, CanvasEffect> >,
+        MixIn<GaussianBlurEffect, CanvasEffect>>,
         public CanvasEffect
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect, BaseTrust);
@@ -37,8 +36,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         GaussianBlurEffect();
 
         PROPERTY(StandardDeviation, float);
-        PROPERTY(Source, IEffectInput*);
         PROPERTY(Optimization, EffectOptimization);
         PROPERTY(BorderMode, EffectBorderMode);
+        PROPERTY(Source, IEffectInput*);
     };
 }}}}}

@@ -208,6 +208,7 @@ public:
         };
 
         bool setInputCalled = false;
+        bool setInputCountCalled = false;
         bool setValueCalled = false;
         bool createEffectCalled = false;
         deviceContext->MockCreateEffect =
@@ -224,6 +225,14 @@ public:
             {
                 Assert::IsFalse(setInputCalled);
                 setInputCalled = true;
+            };
+
+            mockEffect->MockSetInputCount =
+                [&]
+            {
+                Assert::IsFalse(setInputCountCalled);
+                setInputCountCalled = true;
+                return S_OK;
             };
 
             mockEffect->MockSetValue =
@@ -243,6 +252,7 @@ public:
         drawingSession->DrawImage(testEffect, position);
 
         Assert::IsTrue(setInputCalled);
+        Assert::IsTrue(setInputCountCalled);
         Assert::IsTrue(setValueCalled);
         Assert::IsTrue(createEffectCalled);
     }

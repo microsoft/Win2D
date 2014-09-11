@@ -10,20 +10,22 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// This file was automatically generated. Please do not edit it manually.
+
 namespace Microsoft.Graphics.Canvas.Effects
 {
     [version(VERSION)]
     typedef enum EffectBorderMode
     {
-        Soft,
-        Hard
+        Soft = 0,
+        Hard = 1
     } EffectBorderMode;
 
     [version(VERSION)]
     typedef enum EffectOptimization
     {
-        Speed,
-        Balanced,
-        Quality
+        Speed = 0,
+        Balanced = 1,
+        Quality = 2
     } EffectOptimization;
 }

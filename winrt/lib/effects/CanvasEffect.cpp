@@ -67,6 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             auto& inputs = m_inputs->InternalVector();
             auto inputsSize = (unsigned int) inputs.size();
+            m_resource->SetInputCount(inputsSize);
             for (unsigned int i = 0; i < inputsSize; ++i)
             {
                 if (!inputs[i])
@@ -171,6 +172,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 ThrowIfFailed(properties[i]->GetSingle(&value));
                 // TODO #2283: detailed exception error if failed
                 ThrowIfFailed(m_resource->SetValue(i, value));
+                break;
+            }
+            case PropertyType_SingleArray:
+            {
+                float* value = nullptr;
+                unsigned int size;
+                ThrowIfFailed(properties[i]->GetSingleArray(&size, &value));
+
+                auto freeArrayWarden = MakeScopeWarden([&] { CoTaskMemFree(value); });
+
+                // Since d2d effects have input array based types:
+                // D2D1_MATRIX_3X2_F, D2D1_MATRIX_4X4_F, D2D1_MATRIX_5X4_F, 
+                // D2D1_VECTOR_2F, D2D1_VECTOR_3F, D2D1_VECTOR_4F
+                // we can uniquely identify input type based on size
+                // size 20 => D2D1_MATRIX_5X4_F
+                // size 16 => D2D1_MATRIX_4X4_F
+                // size 6  => D2D1_MATRIX_3X2_F
+                // size 4  => D2D1_VECTOR_4F
+                // size 3  => D2D1_VECTOR_3F
+                // size 2  => D2D1_VECTOR_2F
+                switch (size)
+                {
+                case 16:
+                {
+                    ThrowIfFailed(m_resource->SetValue(i, *(D2D1_MATRIX_4X4_F*)value));
+                    break;
+                }
+                default:
+                    ThrowHR(E_NOTIMPL);
+                }
                 break;
             }
             default:

@@ -15,7 +15,7 @@
 #include "StubD2DResources.h"
 
 #include "CanvasBitmap.h"
-#include "effects\GaussianBlurEffect.h"
+#include "effects\generated\GaussianBlurEffect.h"
 #include "TestBitmapResourceCreationAdapter.h"
 #include "MockWICFormatConverter.h"
 
@@ -331,6 +331,14 @@ public:
                 return S_OK;
             };
 
+        bool setInputCountCalled = false;
+        mockEffect->MockSetInputCount =
+            [&]
+        {
+            setInputCountCalled = true;
+            return S_OK;
+        };
+
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
         bool createBitmapCalled = false;
         canvasDevice->MockCreateBitmap =
@@ -368,6 +376,7 @@ public:
         Assert::IsTrue(drawImageCalled);
         Assert::IsTrue(setInputCalled);
         Assert::IsTrue(setValueCalled);
+        Assert::IsTrue(setInputCountCalled);
         // Make sure mock bitmap created as input for blur effect
         Assert::IsTrue(createBitmapCalled);
     }

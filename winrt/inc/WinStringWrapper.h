@@ -41,6 +41,11 @@ public:
     {
     }
 
+    explicit WinStringT(HSTRING str)
+    {
+        ThrowIfFailed(WindowsDuplicateString(str, &m_value));
+    }
+
     explicit WinStringT(const wchar_t* str)
     {
         auto length = wcslen(str);

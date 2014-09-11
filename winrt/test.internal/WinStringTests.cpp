@@ -120,7 +120,16 @@ TEST_CLASS(WinStringTests)
         CountWinString s(std::wstring(L"hello"));
         Assert::AreEqual(1, s.RefCount());
         Assert::AreEqual<std::wstring>(L"hello", static_cast<const wchar_t*>(s));
+    }
 
+    TEST_METHOD(WinString_CreateFromHSTRING)
+    {
+        CountWinString s1(L"hello");
+        Assert::AreEqual(1, s1.RefCount());
+
+        CountWinString s2(static_cast<HSTRING>(s1));
+        Assert::AreEqual(2, s1.RefCount());
+        Assert::AreEqual(2, s2.RefCount());
     }
 
     TEST_METHOD(WinString_CopyConstructor)

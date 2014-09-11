@@ -1,0 +1,55 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+// This file was automatically generated. Please do not edit it manually.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    [version(VERSION)]
+    typedef enum CompositeEffectMode
+    {
+        SourceOver = 0,
+        DestinationOver = 1,
+        SourceIn = 2,
+        DestinationIn = 3,
+        SourceOut = 4,
+        DestinationOut = 5,
+        SourceAtop = 6,
+        DestinationAtop = 7,
+        Xor = 8,
+        Add = 9,
+        SourceCopy = 10,
+        BoundedSourceCopy = 11,
+        MaskInvert = 12
+    } CompositeEffectMode;
+
+    runtimeclass CompositeEffect;
+
+    [version(VERSION), uuid(094F52BC-E406-454D-AE53-240E26D4236C), exclusiveto(CompositeEffect)]
+    interface ICompositeEffect : IInspectable
+        requires  Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget]
+        HRESULT Mode([out, retval] CompositeEffectMode* value);
+
+        [propput]
+        HRESULT Mode([in] CompositeEffectMode value);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass CompositeEffect
+    {
+        [default] interface ICompositeEffect;
+        interface IEffect;
+    }
+}

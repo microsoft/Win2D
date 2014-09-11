@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+	<member name="T:Microsoft.Graphics.Canvas.Effects.CompositeEffect">
+      <summary>Combine 2 or more images.</summary>
+	  <remarks>
+	    <example>
+	      <p>Suppose, we have a cat and flower images loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, </p>
+	      <code>
+            CompositeEffect compositeEffect = new CompositeEffect();
+	  	    compositeEffect.Mode = CompositeEffectMode.Plus;
+	  	    compositeEffect.Inputs.Add(cat);
+	  	    compositeEffect.Inputs.Add(flower);
+	      </code>
+	      <p>Use the Draw event to display it:</p>
+	      <code>
+	        void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+	        {
+	            args.DrawingSession.Clear(Colors.CornflowerBlue);
+	            args.DrawingSession.DrawImage(compositeEffect, new Point(42, 42));
+	        }
+	      </code>
+	    </example>
+	    <p>This Windows Runtime type corresponds to the 
+	      <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706320(v=vs.85).aspx">D2D Composite effect</a>.</p>
+	  </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.CompositeEffect.#ctor">
+      <summary>Initializes a new instance of the CompositeEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Dispose">
+      <summary>Releases all resources used by the CompositeEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.EffectId">
+      <summary>Gets a unique identifier for the effect.</summary>
+	  <remarks>
+	    <p>Generic way to query the type of an effect. Id is equal to the 
+		   CLSID_D2D1Composite specified specified in the SDK header d2d1effects.h.</p>
+	  </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+	  <remarks>
+	    <p>Composite effect can accept multiply inputs. Use return vector to add, remove or change attached sources.</p>
+	  </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+	  <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Mode">
+      <summary>Gets and sets composite mode for effect processing.</summary>
+	  <remarks>
+	    <p>Default mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceOver"/>. </p>
+	  </remarks>
+    </member>
+	
+    <member name="T:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode">
+      <summary>The composite mode used for the effect.</summary>
+	  <remarks>
+	    <p>The equations listed in enum descriptions use these elements:
+		   O = Output
+		   S = Source
+		   SA = Source Alpha
+		   D = Destination
+		   DA = Destination Alpha</p>
+	  </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceOver">
+      <summary>Union of source and destination bitmaps. Equation: O = S + (1 – SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationOver">
+      <summary>Union of source and destination bitmaps. Equation: O = (1 – DA) * S + D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceIn">
+      <summary>Intersection of source and destination bitmaps. Equation: O = DA * S.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationIn">
+      <summary>Intersection of source and destination bitmaps. Equation: O = SA * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceOut">
+      <summary>Region of the source bitmap. Equation: O = (1 - DA) * S.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationOut">
+      <summary>Region of the destination bitmap. Equation: O = (1 - SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceAtop">
+      <summary>Region of the destination bitmap. Equation: O = DA * S + (1 - SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationAtop">
+      <summary>Region of the source bitmap. Equation: O = (1 - DA) * S + SA * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.Xor">
+      <summary>Union of source and destination bitmaps with xor function 
+			   for pixels that overlap. Equation: O = (1 - DA) * S + (1 - SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.Add">
+      <summary>Union of source and destination bitmaps. Equation: O = S + D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceCopy">
+      <summary>Region of the source bitmap. Equation: O = S.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.BoundedSourceCopy">
+      <summary>Union of source and destination bitmaps with no destination override. 
+		       Equation: O = S (only where source exists).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.MaskInvert">
+      <summary>Union of source and destination bitmaps with unchanged alpha. 
+			   Equation: O = (1 – D) * S + (1 – SA) * D.</summary>
+    </member>
+  </members>
+</doc>
