@@ -430,7 +430,7 @@ public:
                 CanvasImageSourceDrawingSessionAdapter::Create(
                     sis.Get(),
                     RECT{1,2,3,4},
-                    0.0f,
+                    DEFAULT_DPI,
                     &actualDeviceContext);
             });
 

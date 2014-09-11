@@ -23,6 +23,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpi,
         ID2D1DeviceContext1** outDeviceContext)
     {
+        if (dpi <= 0)
+            ThrowHR(E_INVALIDARG);
+
         //
         // ISurfaceImageSourceNativeWithD2D needs exactly the right IID passed
         // in, so we first ask for a ID2D1DeviceContext and we'll then take the
@@ -52,17 +55,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // so when we ask to render to (0,0) we actually render to the
         // appropriate location in the atlased surface.
         //
+        const float dpiScalingFactor = dpi / DEFAULT_DPI;
+
         const D2D1_POINT_2F renderingSurfaceOffset = D2D1::Point2F(
-            static_cast<float>(offset.x),
-            static_cast<float>(offset.y));       
+            static_cast<float>(offset.x / dpiScalingFactor),
+            static_cast<float>(offset.y / dpiScalingFactor));
 
         auto adapter = std::make_shared<CanvasImageSourceDrawingSessionAdapter>(
             sisNative,
             renderingSurfaceOffset);
 
         //
-        // TODO #2140 Use a separate code path, responsible for resetting  
-        // transforms for non-SiS drawing sessions.
+        // TODO #2140 Use a separate code path, responsible for resetting
+        // transforms for non-SiS drawing sessions.  As part of #2140, also add
+        // tests verifying that the offset is scaled by the DPI appropriately.
         //
         deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
             renderingSurfaceOffset.x,
