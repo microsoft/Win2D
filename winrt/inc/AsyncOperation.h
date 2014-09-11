@@ -46,7 +46,7 @@ public:
         
         ComPtr<AsyncOperation> keepThisAliveUntilTaskCompletion(this);
 
-        // Crazy typedef marks our threadpool callback as agile, by mixing in FtmBase.
+        // Typedef marks our threadpool callback as agile, by mixing in FtmBase.
         // Without this WinRT would marshal everything back to the UI thread.
         typedef Implements<RuntimeClassFlags<ClassicCom>, IWorkItemHandler, FtmBase> CallbackType;
 

@@ -400,7 +400,7 @@ namespace ExtractAPISurface
             // Sanity check.
             if (type.IsPointer)
             {
-                throw new NotImplementedException("Nooo! I liketh not this crazy type of type.");
+                throw new NotImplementedException("Nooo! I liketh not this pointy type of type.");
             }
 
             // Record that we have seen this type.

@@ -26,7 +26,7 @@ namespace Copyright
 
     static class FileTypeExtensions
     {
-        // Adds comment syntax to decorate a 'naked' copyright banner as appropriate for the specified type of file.
+        // Adds comment syntax to decorate a copyright banner as appropriate for the specified type of file.
         public static string[] FormatCopyrightBanner(this FileType fileType, string[] copyrightBanner)
         {
             switch (fileType)
@@ -43,7 +43,7 @@ namespace Copyright
         }
 
 
-        // Adds comment syntax to decorate a 'naked' copyright banner for a C style file (C++, C#, IDL, etc.)
+        // Adds comment syntax to decorate a copyright banner for a C style file (C++, C#, IDL, etc.)
         static string[] FormatCppCopyright(string[] copyrightBanner)
         {
             var commentedBanner = from line in copyrightBanner
@@ -55,7 +55,7 @@ namespace Copyright
         }
 
 
-        // Adds comment syntax to decorate a 'naked' copyright banner as appropriate for XML.
+        // Adds comment syntax to decorate a copyright banner as appropriate for XML.
         static string[] FormatXmlCopyright(string[] copyrightBanner)
         {
             string[] xmlHeader =

@@ -382,10 +382,10 @@ public:
         Assert::IsTrue(endDrawCalled);
     }
 
-    struct CrippledDeviceContext : public MockD2DDeviceContext
+    struct DeviceContextWithRestrictedQI : public MockD2DDeviceContext
     {
         //
-        // Cripple this device context implementation so that it can only be
+        // Restrict this device context implementation so that it can only be
         // QI'd for ID2D1DeviceContext.
         //
         STDMETHOD(QueryInterface)(REFIID riid, _Outptr_result_nullonfailure_ void **ppvObject)
@@ -406,8 +406,8 @@ public:
             {
                 Assert::IsFalse(beginDrawCalled);
                 beginDrawCalled = true;
-                auto crippledDeviceContext = Make<CrippledDeviceContext>();
-                ThrowIfFailed(crippledDeviceContext.CopyTo(iid, obj));
+                auto deviceContext = Make<DeviceContextWithRestrictedQI>();
+                ThrowIfFailed(deviceContext.CopyTo(iid, obj));
             };
 
         bool endDrawCalled = false;
