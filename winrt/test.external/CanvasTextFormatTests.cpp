@@ -56,8 +56,10 @@ TEST_CLASS(CanvasTextFormatTests)
         ThrowIfFailed(dwriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR));
         ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_TOP_TO_BOTTOM));
         ThrowIfFailed(dwriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING));
-        ThrowIfFailed(dwriteTextFormat->SetTrimming(&DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_WORD, L'/', 1 }, nullptr));
         ThrowIfFailed(dwriteTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK));
+
+        auto trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_WORD, L'/', 1 };
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
 
         //
         // Get a CanvasTextFormat based on the IDWriteTextFormat
@@ -71,11 +73,8 @@ TEST_CLASS(CanvasTextFormatTests)
         // Verify that it shows the right values
         //
 
-#define CHECK(PROPERTY, EXPECTED)                       \
-        do {                                            \
-            auto value = canvasTextFormat->PROPERTY;    \
-            Assert::IsTrue(value == EXPECTED);          \
-        } while(false)
+#define CHECK(PROPERTY, EXPECTED) \
+        Assert::IsTrue(canvasTextFormat->PROPERTY == EXPECTED)
 
         CHECK(FlowDirection,          CanvasTextDirection::RightToLeft);
         CHECK(FontFamily,             L"Arial");
@@ -113,8 +112,10 @@ TEST_CLASS(CanvasTextFormatTests)
         ThrowIfFailed(dwriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER));
         ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP));
         ThrowIfFailed(dwriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER));
-        ThrowIfFailed(dwriteTextFormat->SetTrimming(&DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 }, nullptr));
         ThrowIfFailed(dwriteTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP));
+
+        trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 };
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
 
         //
         // Set a property that would cause it to recreate.

@@ -72,7 +72,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(device.As(&canvasDeviceInternal));
 
-        auto& d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
+        auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
 
         auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
             shared_from_this(),

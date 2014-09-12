@@ -24,7 +24,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Foundation::Collections;
     using namespace ABI::Microsoft::Graphics::Canvas;
-    using namespace ABI::Microsoft::Graphics::Canvas::Effects;
     using namespace ::collections;
 
     class CanvasEffect 

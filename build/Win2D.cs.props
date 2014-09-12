@@ -13,6 +13,7 @@
     <OutputPath>$(__OutputPath)</OutputPath>
     <OutDir>$(__OutputPath)\</OutDir>
     <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>
+    <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 </Project>

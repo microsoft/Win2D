@@ -80,7 +80,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     if (m_resource)
                     {
-                        auto& resource = m_resource.Close();
+                        auto const& resource = m_resource.Close();
                         m_manager->Remove(resource.Get());
                     }
                 });

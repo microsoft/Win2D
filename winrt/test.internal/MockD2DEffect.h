@@ -66,7 +66,7 @@ namespace canvas
             ) CONST
         {
             Assert::Fail(L"Unexpected call to GetInputCount");
-            return -1;
+            return 0;
         }
 
             STDMETHOD_(void, GetOutput)(
@@ -84,7 +84,7 @@ namespace canvas
         ) CONST
         {
             Assert::Fail(L"Unexpected call to GetPropertyCount");
-            return -1;
+            return 0;
         }
 
         STDMETHOD(GetPropertyName)(
@@ -102,7 +102,7 @@ namespace canvas
             ) CONST
         {
             Assert::Fail(L"Unexpected call to GetPropertyNameLength");
-            return -1;
+            return 0;
         }
 
         STDMETHOD_(D2D1_PROPERTY_TYPE, GetType)(
@@ -118,7 +118,7 @@ namespace canvas
             ) CONST
         {
             Assert::Fail(L"Unexpected call to GetPropertyIndex");
-            return -1;
+            return 0;
         }
 
         STDMETHOD(SetValueByName)(
@@ -174,7 +174,7 @@ namespace canvas
             ) CONST
         {
             Assert::Fail(L"Unexpected call to GetValueSize");
-            return -1;
+            return 0;
         }
 
         STDMETHOD(GetSubProperties)(

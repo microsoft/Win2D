@@ -150,7 +150,7 @@ TEST_CLASS(VectorTests)
         Assert::AreEqual(E_BOUNDS, v->GetAt(3, &value));
         Assert::AreEqual(0, value);
         
-        Assert::AreEqual(E_BOUNDS, v->GetAt(-1, &value));
+        Assert::AreEqual(E_BOUNDS, v->GetAt((DWORD)-1, &value));
         Assert::AreEqual(0, value);
 
         // IndexOf.
@@ -158,19 +158,19 @@ TEST_CLASS(VectorTests)
         boolean found;
 
         ThrowIfFailed(v->IndexOf(1, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(0u, index);
 
         ThrowIfFailed(v->IndexOf(23, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(1u, index);
 
         ThrowIfFailed(v->IndexOf(42, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(2u, index);
 
         ThrowIfFailed(v->IndexOf(123, &index, &found));
-        Assert::IsFalse(found);
+        Assert::IsFalse(found != 0);
         Assert::AreEqual(0u, index);
 
         // SetAt.
@@ -184,7 +184,7 @@ TEST_CLASS(VectorTests)
         AssertVectorsEqual<int>(v, { 100, 123, 142 });
 
         Assert::AreEqual(E_BOUNDS, v->SetAt(3, 0));
-        Assert::AreEqual(E_BOUNDS, v->SetAt(-1, 0));
+        Assert::AreEqual(E_BOUNDS, v->SetAt((DWORD)-1, 0));
         
         // InsertAt.
         ThrowIfFailed(v->InsertAt(0, 1));
@@ -197,7 +197,7 @@ TEST_CLASS(VectorTests)
         AssertVectorsEqual<int>(v, { 1, 100, 2, 123, 142, 3 });
 
         Assert::AreEqual(E_BOUNDS, v->InsertAt(7, 0));
-        Assert::AreEqual(E_BOUNDS, v->InsertAt(-1, 0));
+        Assert::AreEqual(E_BOUNDS, v->InsertAt((DWORD)-1, 0));
 
         // RemoveAt.
         ThrowIfFailed(v->RemoveAt(0));
@@ -210,7 +210,7 @@ TEST_CLASS(VectorTests)
         AssertVectorsEqual<int>(v, { 100, 2, 142 });
 
         Assert::AreEqual(E_BOUNDS, v->RemoveAt(3));
-        Assert::AreEqual(E_BOUNDS, v->RemoveAt(-1));
+        Assert::AreEqual(E_BOUNDS, v->RemoveAt((DWORD)-1));
 
         // RemoveAtEnd.
         ThrowIfFailed(v->RemoveAtEnd());
@@ -253,17 +253,17 @@ TEST_CLASS(VectorTests)
         std::vector<int> output(3);
         unsigned actual;
 
-        ThrowIfFailed(v->GetMany(0, output.size(), &output.front(), &actual));
+        ThrowIfFailed(v->GetMany(0, (DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(2u, actual);
         AssertVectorsEqual<int>(output, { 23, 42, 0 });
 
         output = std::vector<int>(3);
-        ThrowIfFailed(v->GetMany(1, output.size(), &output.front(), &actual));
+        ThrowIfFailed(v->GetMany(1, (DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(1u, actual);
         AssertVectorsEqual<int>(output, { 42, 0, 0 });
 
         output = std::vector<int>(3);
-        ThrowIfFailed(v->GetMany(2, output.size(), &output.front(), &actual));
+        ThrowIfFailed(v->GetMany(2, (DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(0u, actual);
         AssertVectorsEqual<int>(output, { 0, 0, 0 });
 
@@ -272,7 +272,7 @@ TEST_CLASS(VectorTests)
         Assert::AreEqual(1u, actual);
         AssertVectorsEqual<int>(output, { 23, 0, 0 });
 
-        Assert::AreEqual(E_BOUNDS, v->GetMany(-1, 1, &output.front(), &actual));
+        Assert::AreEqual(E_BOUNDS, v->GetMany((DWORD)-1, 1, &output.front(), &actual));
         Assert::AreEqual(E_BOUNDS, v->GetMany(3, 1, &output.front(), &actual));
     }
 
@@ -309,7 +309,7 @@ TEST_CLASS(VectorTests)
         Assert::AreEqual(E_BOUNDS, view->GetAt(3, &value));
         Assert::AreEqual(0, value);
 
-        Assert::AreEqual(E_BOUNDS, view->GetAt(-1, &value));
+        Assert::AreEqual(E_BOUNDS, view->GetAt((DWORD)-1, &value));
         Assert::AreEqual(0, value);
 
         // IndexOf.
@@ -317,31 +317,31 @@ TEST_CLASS(VectorTests)
         boolean found;
 
         ThrowIfFailed(view->IndexOf(1, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(0u, index);
 
         ThrowIfFailed(view->IndexOf(23, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(1u, index);
 
         ThrowIfFailed(view->IndexOf(42, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(2u, index);
 
         ThrowIfFailed(view->IndexOf(123, &index, &found));
-        Assert::IsFalse(found);
+        Assert::IsFalse(found != 0);
         Assert::AreEqual(0u, index);
 
         // GetMany.
         std::vector<int> output(3);
         unsigned actual;
 
-        ThrowIfFailed(view->GetMany(0, output.size(), &output.front(), &actual));
+        ThrowIfFailed(view->GetMany(0, (DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(3u, actual);
         AssertVectorsEqual<int>(output, { 1, 23, 42 });
 
         output = std::vector<int>(3);
-        ThrowIfFailed(view->GetMany(1, output.size(), &output.front(), &actual));
+        ThrowIfFailed(view->GetMany(1, (DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(2u, actual);
         AssertVectorsEqual<int>(output, { 23, 42, 0 });
 
@@ -350,7 +350,7 @@ TEST_CLASS(VectorTests)
         Assert::AreEqual(1u, actual);
         AssertVectorsEqual<int>(output, { 1, 0, 0 });
 
-        Assert::AreEqual(E_BOUNDS, view->GetMany(-1, 1, &output.front(), &actual));
+        Assert::AreEqual(E_BOUNDS, view->GetMany((DWORD)-1, 1, &output.front(), &actual));
         Assert::AreEqual(E_BOUNDS, view->GetMany(4, 1, &output.front(), &actual));
 
         // IIterable::First.
@@ -379,27 +379,27 @@ TEST_CLASS(VectorTests)
         int value;
 
         ThrowIfFailed(iterator->get_HasCurrent(&hasCurrent));
-        Assert::IsTrue(hasCurrent);
+        Assert::IsTrue(hasCurrent != 0);
 
         ThrowIfFailed(iterator->get_Current(&value));
         Assert::AreEqual(23, value);
 
         ThrowIfFailed(iterator->MoveNext(&hasCurrent));
-        Assert::IsTrue(hasCurrent);
+        Assert::IsTrue(hasCurrent != 0);
 
         // Second element.
         ThrowIfFailed(iterator->get_HasCurrent(&hasCurrent));
-        Assert::IsTrue(hasCurrent);
+        Assert::IsTrue(hasCurrent != 0);
 
         ThrowIfFailed(iterator->get_Current(&value));
         Assert::AreEqual(42, value);
 
         ThrowIfFailed(iterator->MoveNext(&hasCurrent));
-        Assert::IsFalse(hasCurrent);
+        Assert::IsFalse(hasCurrent != 0);
 
         // At the end.
         ThrowIfFailed(iterator->get_HasCurrent(&hasCurrent));
-        Assert::IsFalse(hasCurrent);
+        Assert::IsFalse(hasCurrent != 0);
 
         Assert::AreEqual(E_BOUNDS, iterator->get_Current(&value));
         Assert::AreEqual(0, value);
@@ -411,20 +411,20 @@ TEST_CLASS(VectorTests)
         unsigned actual;
 
         ThrowIfFailed(v->First(&iterator));
-        ThrowIfFailed(iterator->GetMany(output.size(), &output.front(), &actual));
+        ThrowIfFailed(iterator->GetMany((DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(2u, actual);
         AssertVectorsEqual<int>(output, { 23, 42, 0 });
 
         ThrowIfFailed(v->First(&iterator));
         ThrowIfFailed(iterator->MoveNext(&hasCurrent));
-        ThrowIfFailed(iterator->GetMany(output.size(), &output.front(), &actual));
+        ThrowIfFailed(iterator->GetMany((DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(1u, actual);
         AssertVectorsEqual<int>(output, { 42, 0, 0 });
 
         ThrowIfFailed(v->First(&iterator));
         ThrowIfFailed(iterator->MoveNext(&hasCurrent));
         ThrowIfFailed(iterator->MoveNext(&hasCurrent));
-        ThrowIfFailed(iterator->GetMany(output.size(), &output.front(), &actual));
+        ThrowIfFailed(iterator->GetMany((DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(0u, actual);
         AssertVectorsEqual<int>(output, { 0, 0, 0 });
 
@@ -578,15 +578,15 @@ TEST_CLASS(VectorTests)
         boolean found;
 
         ThrowIfFailed(v->IndexOf(&a, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(0u, index);
 
         ThrowIfFailed(v->IndexOf(&b, &index, &found));
-        Assert::IsTrue(found);
+        Assert::IsTrue(found != 0);
         Assert::AreEqual(1u, index);
 
         ThrowIfFailed(v->IndexOf(&c, &index, &found));
-        Assert::IsFalse(found);
+        Assert::IsFalse(found != 0);
         Assert::AreEqual(0u, index);
 
         Assert::AreEqual(2, a.refCount);
@@ -606,7 +606,7 @@ TEST_CLASS(VectorTests)
         std::vector<MockInterface*> output(3);
         unsigned actual;
 
-        ThrowIfFailed(v->GetMany(0, output.size(), &output.front(), &actual));
+        ThrowIfFailed(v->GetMany(0, (DWORD)output.size(), &output.front(), &actual));
         Assert::AreEqual(2u, actual);
         AssertVectorsEqual<MockInterface*>(output, { &c, &b, nullptr });
 

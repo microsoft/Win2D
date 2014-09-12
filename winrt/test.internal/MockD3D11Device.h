@@ -304,7 +304,7 @@ namespace canvas
 
         UINT STDMETHODCALLTYPE GetCreationFlags(void)
         {
-            return E_NOTIMPL;
+            return 0;
         }
 
         HRESULT STDMETHODCALLTYPE GetDeviceRemovedReason(void)
@@ -325,7 +325,7 @@ namespace canvas
 
         UINT STDMETHODCALLTYPE GetExceptionMode(void)
         {
-            return E_NOTIMPL;
+            return 0;
         }
 
         // Below are DXGI functions.

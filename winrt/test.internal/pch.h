@@ -12,6 +12,9 @@
 
 #pragma once
 
+#pragma warning(disable: 4100)  // "unreferenced formal parameter"
+#pragma warning(disable: 4702)  // "unreachable code"
+
 #include "targetver.h"
 
 // Standard C++

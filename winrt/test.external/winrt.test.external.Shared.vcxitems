@@ -11,13 +11,18 @@
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControlTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmapTests.cpp" />
-	<ClCompile Include="$(MSBuildThisFileDirectory)CanvasEffectsTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasEffectsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyleTests.cpp" />

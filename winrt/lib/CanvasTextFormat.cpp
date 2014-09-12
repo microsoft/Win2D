@@ -287,7 +287,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     static ABI::Windows::UI::Text::FontWeight ToWindowsFontWeight(DWRITE_FONT_WEIGHT value)
     {
-        return ABI::Windows::UI::Text::FontWeight{ value };
+        return ABI::Windows::UI::Text::FontWeight{ static_cast<uint16_t>(value) };
     }
 
 
@@ -392,7 +392,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         else if (value <= 0x0000FFFF)
         {
             auto buffer = builder.Allocate(1);
-            buffer[0] = value;
+            buffer[0] = static_cast<wchar_t>(value);
         }
         else
         {

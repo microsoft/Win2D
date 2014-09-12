@@ -25,7 +25,7 @@
     <Image Include="$(AssetDir)WideLogo.scale-240.png">
       <Filter>Assets</Filter>
     </Image>
-	<Image Include="$(AssetDir)imageTiger.jpg">
+    <Image Include="$(AssetDir)imageTiger.jpg">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

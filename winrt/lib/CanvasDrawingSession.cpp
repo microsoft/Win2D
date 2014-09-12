@@ -637,8 +637,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto& deviceContext = GetResource();
         CheckInPointer(brush);
 
+        auto d2dRect = ToD2DRect(rect);
+
         deviceContext->DrawRectangle(
-            &ToD2DRect(rect),
+            &d2dRect,
             brush,
             strokeWidth,
             ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
@@ -710,8 +712,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto& deviceContext = GetResource();
         CheckInPointer(brush);
 
+        auto d2dRect = ToD2DRect(rect);
+
         deviceContext->FillRectangle(
-            &ToD2DRect(rect),
+            &d2dRect,
             brush);
     }
 
@@ -961,8 +965,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto& deviceContext = GetResource();
         CheckInPointer(brush);
 
+        auto d2dRoundedRect = ToD2DRoundedRect(rect, radiusX, radiusY);
+
         deviceContext->DrawRoundedRectangle(
-            &ToD2DRoundedRect(rect, radiusX, radiusY),
+            &d2dRoundedRect,
             brush,
             strokeWidth,
             ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
@@ -1052,8 +1058,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto& deviceContext = GetResource();
         CheckInPointer(brush);
 
+        auto d2dRoundedRect = ToD2DRoundedRect(rect, radiusX, radiusY);
+
         deviceContext->FillRoundedRectangle(
-            &ToD2DRoundedRect(rect, radiusX, radiusY),
+            &d2dRoundedRect,
             brush);
     }
 
@@ -1291,8 +1299,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto& deviceContext = GetResource();
         CheckInPointer(brush);
 
+        auto d2dEllipse = ToD2DEllipse(centerPoint, radiusX, radiusY);
+
         deviceContext->DrawEllipse(
-            &ToD2DEllipse(centerPoint, radiusX, radiusY),
+            &d2dEllipse,
             brush,
             strokeWidth,
             ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
@@ -1378,8 +1388,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto& deviceContext = GetResource();
         CheckInPointer(brush);
 
+        auto d2dEllipse = ToD2DEllipse(centerPoint, radiusX, radiusY);
+
         deviceContext->FillEllipse(
-            &ToD2DEllipse(centerPoint, radiusX, radiusY),
+            &d2dEllipse,
             brush);
     }
 
@@ -1832,11 +1844,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto textBuffer = WindowsGetStringRawBuffer(text, &textLength);
         ThrowIfNullPointer(textBuffer, E_INVALIDARG);
 
+        auto d2dRect = ToD2DRect(rect);
+
         deviceContext->DrawText(
             textBuffer,
             textLength,
             formatInternal->GetRealizedTextFormat().Get(),
-            &ToD2DRect(rect),
+            &d2dRect,
             brush,
             static_cast<D2D1_DRAW_TEXT_OPTIONS>(formatInternal->GetDrawTextOptions()));
     }

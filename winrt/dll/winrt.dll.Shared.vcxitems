@@ -35,6 +35,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

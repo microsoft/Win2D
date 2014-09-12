@@ -14,6 +14,8 @@
 
 #include "../WindowsNumerics.h"
 
+#pragma warning(disable: 4505)  // "unreferenced local function"
+
 #include <SDKDDKVer.h>
 #include <CppUnitTest.h>
 

@@ -247,10 +247,9 @@ TEST_CLASS(AsyncOperationTests)
     {
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
-        auto async = Make<AsyncOperation<MockAsyncResult>>([&]
+        auto async = Make<AsyncOperation<MockAsyncResult>>([&]() -> ComPtr<MockAsyncResult>
         {
             ThrowHR(E_INVALIDARG);
-            return nullptr;
         });
 
         // Subscribe to the completion callback.

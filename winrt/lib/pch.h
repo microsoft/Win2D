@@ -12,14 +12,16 @@
 
 #pragma once
 
+#pragma warning(disable: 4100)  // "unreferenced formal parameter"
+
 #include <sdkddkver.h>
 
 #ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN     // Exclude rarely-used stuff from Windows headers
 #endif
 
 #ifndef NOMINMAX
-#define NOMINMAX                        // Stop Windows from defining min() and max() macros that break STL
+#define NOMINMAX                // Stop Windows from defining min() and max() macros that break STL
 #endif
 
 #include <windows.h>

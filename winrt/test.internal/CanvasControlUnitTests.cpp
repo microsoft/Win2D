@@ -171,10 +171,10 @@ public:
 
 TEST_CLASS(CanvasControlTests_SizeTests)
 {
-    const int anyWidth = 128;
-    const int anyHeight = 256;
-    const int zeroWidth = 0;
-    const int zeroHeight = 0;
+    static const int anyWidth = 128;
+    static const int anyHeight = 256;
+    static const int zeroWidth = 0;
+    static const int zeroHeight = 0;
 
     TEST_METHOD(CanvasControl_Resizing)
     {

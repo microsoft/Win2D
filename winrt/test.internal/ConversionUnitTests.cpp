@@ -28,7 +28,7 @@ TEST_CLASS(ConversionUnitTests)
         // Check roundtrip
         for (int i = 0; i < 256; ++i)
         {
-            Assert::AreEqual<uint8_t>(i, NormalizedToUint8(ToNormalizedFloat(i)));
+            Assert::AreEqual<int>(i, NormalizedToUint8(ToNormalizedFloat(static_cast<uint8_t>(i))));
         }
     }
 

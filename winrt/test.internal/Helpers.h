@@ -710,10 +710,9 @@ inline bool operator==(D2D1_MATRIX_3X2_F const& a, D2D1_MATRIX_3X2_F const& b)
 }
 
 #define ASSERT_IMPLEMENTS_INTERFACE(obj, INTERFACE)                     \
-    do                                                                  \
     {                                                                   \
         ComPtr<INTERFACE> iface;                                        \
         Assert::AreEqual(S_OK, obj.As(&iface), L"Implements " L#INTERFACE); \
-    } while(false)
+    }
 
 

@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- We'd like to just set WarningLevel once in Win2D.cpp.props, but
+       Microsoft.Cpp.AppContainerApplication.props unconditionally overwrites it.
+       So instead, we make sure each C++ project has individually set the right thing. -->
+  <Target Name="CheckWarningLevel">
+    <Error Condition="'%(ClCompile.WarningLevel)' != 'Level4'" Text="C++ projects should set WarningLevel to Level4" />
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>CheckWarningLevel;$(BuildDependsOn)</BuildDependsOn>
+  </PropertyGroup>
+
   <Import Project="Win2D.common.targets"/>
 </Project>

@@ -158,7 +158,6 @@ public:
         Color cyan = { 255, 0, 255, 255 };
         D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
         D2D1_COLOR_F d2dCyan = D2D1::ColorF(0, 1, 1);
-        D2D1_MATRIX_3X2_F d2dIdentityMatrix = D2D1::Matrix3x2F::Identity();
 
         SolidColorBrushCounters counters;
         auto testD2DSolidColorBrush = Make<TestD2DSolidColorBrush>(d2dRed, &counters);

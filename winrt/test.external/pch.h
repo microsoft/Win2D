@@ -33,6 +33,8 @@
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <Canvas.abi.h>
 
+#pragma warning(disable: 4100)  // "unreferenced formal parameter"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
 

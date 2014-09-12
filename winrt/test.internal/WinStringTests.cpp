@@ -92,7 +92,7 @@ typedef WinStringT<CountWinStringBase> CountWinString;
 // owned by the test class.  Then we just have a global pointer that we point to
 // the map.  This avoids issues with memory deallocation during shutdown.
 //
-std::map<HSTRING, int>* CountWinString::s_strings = nullptr;
+std::map<HSTRING, int>* CountWinStringBase::s_strings = nullptr;
 
 TEST_CLASS(WinStringTests)
 {

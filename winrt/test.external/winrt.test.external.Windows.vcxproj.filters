@@ -19,7 +19,7 @@
     <Image Include="$(AssetDir)UnitTestStoreLogo.scale-100.png">
       <Filter>Assets</Filter>
     </Image>
-	<Image Include="$(AssetDir)imageTiger.jpg">
+    <Image Include="$(AssetDir)imageTiger.jpg">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

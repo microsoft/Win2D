@@ -24,6 +24,7 @@
       <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <!-- PROXY_CLSID {77089F19-0251-4FF4-9100-D10DFD76E958} -->
       <PreprocessorDefinitions>WRT_EXPORT;ENTRY_PREFIX=Proxy;REGISTER_PROXY_DLL;PROXY_CLSID_IS={0x77089F19, 0x0251, 0x4FF4, {0x91, 0x00, 0xD1, 0x0D, 0xFD, 0x76, 0xE9, 0x58}};%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -51,12 +52,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
-	<ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h" />
-	<ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.h" />
-	<ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.h" />
-	<ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h" />
-	<ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.h" />
-	<ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
@@ -76,10 +77,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.cpp" />
-	<ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.cpp" />
-	<ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp" />
-	<ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.cpp" />
-	<ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
@@ -100,10 +101,10 @@
     <None Include="$(MSBuildThisFileDirectory)effects\IEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IEffectInput.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.abi.idl" />
-	<None Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.abi.idl" />
-	<None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
-	<None Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.abi.idl" />
-	<None Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

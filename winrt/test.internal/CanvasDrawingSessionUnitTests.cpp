@@ -267,9 +267,6 @@ public:
     {
         CanvasDrawingSessionFixture f;
 
-        int testWidth = 16;
-        int testHeight = 32;
-
         WinString testFileName(L"fakeFileName.jpg");
 
         auto converter = Make<MockWICFormatConverter>();
@@ -1823,7 +1820,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
                     m_drawTextCount++;
 
                     Assert::AreEqual(expectedText.c_str(), actualText);
-                    Assert::AreEqual<uint32_t>(expectedText.size(), actualTextLength);
+                    Assert::AreEqual<size_t>(expectedText.size(), actualTextLength);
                     Assert::IsNotNull(format);
                     Assert::AreEqual(expectedRect, actualRect);
                     Assert::AreEqual(expectedOptions, actualOptions);
@@ -1851,7 +1848,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
             CanvasWordWrapping expectedWordWrapping = hasTextFormat ? CanvasWordWrapping::WholeWord : CanvasWordWrapping::Wrap;
             auto expectedFontFamilyName = hasTextFormat ? L"Ariel" : L"Segoe UI";
-            float expectedFontSize = hasTextFormat ? 123 : 32;
+            float expectedFontSize = hasTextFormat ? 123.0f : 32.0f;
 
             if (hasTextFormat)
             {
