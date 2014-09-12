@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Win2D-debug</id>
-        <version>0.0.2</version>
+        <version>0.0.0-SpecifyVersionOnCommandline</version>
         <title>Win2D (debug)</title>
         <authors>Microsoft Corportation</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
