@@ -3,18 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{154A70F8-A0A3-4A30-9E04-57450F442DCB}"
-	ProjectSection(SolutionItems) = preProject
-		build\Win2D.common.props = build\Win2D.common.props
-		build\Win2D.cpp.props = build\Win2D.cpp.props
-		build\Win2D.cpp.targets = build\Win2D.cpp.targets
-		build\Win2D.cs.props = build\Win2D.cs.props
-		build\Win2D.cs.targets = build\Win2D.cs.targets
-		build\midlrt.props = build\midlrt.props
-		build\midlrt.targets = build\midlrt.targets
-		build\midlrt.xml = build\midlrt.xml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.Windows", "winrt\test.external\winrt.test.external.Windows.vcxproj", "{D6CB5CB7-499B-4980-84C6-F0099CF309DA}"
