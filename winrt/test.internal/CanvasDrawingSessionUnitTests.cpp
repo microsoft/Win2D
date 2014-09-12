@@ -233,7 +233,7 @@ public:
     {
         CanvasDrawingSessionFixture f;
 
-        ABI::Windows::UI::Color expectedColor{1,2,3,4};
+        ABI::Windows::UI::Color expectedColor{ 1, 2, 3, 4 };
 
         bool clearCalled = false;
         f.DeviceContext->MockClear =
@@ -2284,7 +2284,7 @@ TEST_CLASS(CanvasDrawingSession_Interop)
                 clearCalled = true;
             };
 
-        ThrowIfFailed(drawingSession->Clear(ABI::Windows::UI::Color{1,2,3,4}));
+        ThrowIfFailed(drawingSession->Clear(ABI::Windows::UI::Color{ 1, 2, 3, 4 }));
         Assert::IsTrue(clearCalled);
 
         // Closing the drawing session should not result in any methods on the

@@ -316,8 +316,8 @@ public:
     {
         auto mockDeviceContext = Make<MockD2DDeviceContext>();
         auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();        
-        RECT expectedUpdateRect{1, 2, 3, 4};
-        POINT expectedOffset{5, 6};
+        RECT expectedUpdateRect{ 1, 2, 3, 4 };
+        POINT expectedOffset{ 5, 6 };
 
         bool beginDrawCalled = false;
         mockSurfaceImageSource->MockBeginDraw =
@@ -429,7 +429,7 @@ public:
             {
                 CanvasImageSourceDrawingSessionAdapter::Create(
                     sis.Get(),
-                    RECT{1,2,3,4},
+                    RECT{ 1, 2, 3, 4 },
                     DEFAULT_DPI,
                     &actualDeviceContext);
             });

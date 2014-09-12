@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Set default values
         SetProperty(D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE, static_cast<uint32_t>(D2D1_3DTRANSFORM_INTERPOLATION_MODE_LINEAR), true);
         SetProperty(D2D1_3DTRANSFORM_PROP_BORDER_MODE, static_cast<uint32_t>(D2D1_BORDER_MODE_SOFT), true);
-        Numerics::Matrix4x4 defaultTransformMatrix = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+        Numerics::Matrix4x4 defaultTransformMatrix = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
         SetProperty(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX,  defaultTransformMatrix, true);
     }
 

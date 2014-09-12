@@ -84,7 +84,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ID2D1Bitmap1> bitmap;
         ThrowIfFailed(deviceContext->CreateBitmap(
-            D2D1_SIZE_U{1,1},
+            D2D1_SIZE_U{ 1, 1 },
             nullptr,
             0,
             D2D1::BitmapProperties1(

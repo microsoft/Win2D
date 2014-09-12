@@ -106,7 +106,7 @@ TEST_CLASS(CanvasStrokeStyleTests)
         strokeStyleProperties.dashStyle = D2D1_DASH_STYLE_CUSTOM;
         strokeStyleProperties.dashOffset = 6;
         strokeStyleProperties.transformType = D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE;
-        float customDashArray[] = {2, 4, 6, 8};
+        float customDashArray[] = { 2, 4, 6, 8 };
         ThrowIfFailed(d2dFactory->CreateStrokeStyle(&strokeStyleProperties, customDashArray, 4, &d2dStrokeStyle));
 
         // Create a wrapper and ensure it has the correct properties.

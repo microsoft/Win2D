@@ -188,7 +188,7 @@ namespace canvas
     {
         TestInvalidProperties(
             std::move(canvasSetter), 
-            std::vector<CANVAS_TYPE>{value1});
+            std::vector<CANVAS_TYPE>{ value1 });
     }
 
     template<typename CANVAS_TYPE>
@@ -199,7 +199,7 @@ namespace canvas
     {
         TestInvalidProperties(
             std::move(canvasSetter), 
-            std::vector<CANVAS_TYPE>{value1, value2});
+            std::vector<CANVAS_TYPE>{ value1, value2 });
     }
 
 #define TEST_INVALID_PROPERTIES(PROPERTY, INVALID1, ...)    \
@@ -306,13 +306,13 @@ namespace canvas
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontWeight,
-                ABI::Windows::UI::Text::FontWeight{123},
+                ABI::Windows::UI::Text::FontWeight{ 123 },
                 static_cast<DWRITE_FONT_WEIGHT>(123));
 
             TEST_INVALID_PROPERTIES(
                 FontWeight,
-                ABI::Windows::UI::Text::FontWeight{0},
-                ABI::Windows::UI::Text::FontWeight{1000});
+                ABI::Windows::UI::Text::FontWeight{ 0 },
+                ABI::Windows::UI::Text::FontWeight{ 1000 });
         }
 
         TEST_METHOD(CanvasTextFormat_IncrementalTabStop)

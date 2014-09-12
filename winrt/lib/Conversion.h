@@ -99,7 +99,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto right  = static_cast<long>(floatRight);
         auto bottom = static_cast<long>(floatBottom);
 
-        return RECT{left,top,right,bottom}; 
+        return RECT{ left, top, right, bottom };
     }
 
     inline D2D1_POINT_2F ToD2DPoint(Numerics::Vector2 const& point)

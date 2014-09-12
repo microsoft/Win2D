@@ -39,10 +39,10 @@ TEST_CLASS(ConversionUnitTests)
         // convince us that the per-component conversion is correct.
         //
 
-        ABI::Windows::UI::Color alpha{255,  0,  0,  0};
-        ABI::Windows::UI::Color red  {  0,255,  0,  0};
-        ABI::Windows::UI::Color green{  0,  0,255,  0};
-        ABI::Windows::UI::Color blue {  0,  0,  0,255};
+        ABI::Windows::UI::Color alpha{ 255,   0,   0,   0 };
+        ABI::Windows::UI::Color red  {   0, 255,   0,   0 };
+        ABI::Windows::UI::Color green{   0,   0, 255,   0 };
+        ABI::Windows::UI::Color blue {   0,   0,   0, 255 };
 
         auto d2dAlpha = ToD2DColor(alpha);
         auto d2dRed   = ToD2DColor(red);
@@ -101,7 +101,7 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD(RectToRECT)
     {
-        Assert::AreEqual(RECT{1,2,4,6}, ToRECT(Rect{1,2,3,4}));
+        Assert::AreEqual(RECT{ 1, 2, 4, 6 }, ToRECT(Rect{ 1, 2, 3, 4 }));
         
         //
         // floats can losslessly store integers up to magnitude 2^24 (16777216).
@@ -115,19 +115,19 @@ TEST_CLASS(ConversionUnitTests)
         const uint32_t mv = 16777216;
         const float mvf = static_cast<float>(mv);
         Assert::AreEqual(static_cast<uint32_t>(mvf), mv);
-        Assert::AreEqual(RECT{0,0,mv,mv}, ToRECT(Rect{0,0,mvf,mvf}));
+        Assert::AreEqual(RECT{ 0, 0, mv, mv }, ToRECT(Rect{ 0, 0, mvf, mvf }));
 
         Assert::ExpectException<InvalidArgException>(
-            [&] { ToRECT(Rect{0,0,mvf+2,mvf}); });
+            [&] { ToRECT(Rect{ 0, 0, mvf + 2, mvf }); });
 
         Assert::ExpectException<InvalidArgException>(
-            [&] { ToRECT(Rect{0,0,mvf,mvf+2}); });
+            [&] { ToRECT(Rect{ 0, 0, mvf, mvf + 2 }); });
 
         Assert::ExpectException<InvalidArgException>(
-            [&] { ToRECT(Rect{2,0,mvf,mvf}); });
+            [&] { ToRECT(Rect{ 2, 0, mvf, mvf }); });
 
         Assert::ExpectException<InvalidArgException>(
-            [&] { ToRECT(Rect{0,2,mvf,mvf}); });
+            [&] { ToRECT(Rect{ 0, 2, mvf, mvf }); });
     }
 
     TEST_METHOD(PointToD2DPoint)

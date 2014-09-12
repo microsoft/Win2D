@@ -32,7 +32,7 @@ namespace Microsoft.Graphics.Canvas
     // To use custom dash patterns, simply set the CustomDashStyle array.
     //
     // For example:
-    // style.CustomDashStyle = new float[] {1, 1, 2, 1};
+    // style.CustomDashStyle = new float[] { 1, 1, 2, 1 };
     //
     // Note that the DashStyle remains whatever it was set to, despite a non-null
     // CustomDashStyle being set. In this case, the CustomDashStyle is used. 

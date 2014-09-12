@@ -223,7 +223,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 [&]                                                                     \
                 {                                                                       \
                     uint32_t uintValue = static_cast<uint32_t>(value);                  \
-                    std::initializer_list<uint32_t> list = {__VA_ARGS__};               \
+                    std::initializer_list<uint32_t> list = { __VA_ARGS__ };             \
                     if (std::find(list.begin(), list.end(), uintValue) != list.end())   \
                         ThrowHR(E_NOTIMPL);                                             \
                     SetProperty(PROPERTY_INDEX, uintValue);                             \

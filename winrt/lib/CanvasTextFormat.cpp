@@ -287,7 +287,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     static ABI::Windows::UI::Text::FontWeight ToWindowsFontWeight(DWRITE_FONT_WEIGHT value)
     {
-        return ABI::Windows::UI::Text::FontWeight{value};
+        return ABI::Windows::UI::Text::FontWeight{ value };
     }
 
 

@@ -439,13 +439,13 @@ namespace canvas
         IFACEMETHODIMP_(D2D1_SIZE_F) GetSize() const override
         {
             Assert::Fail(L"Unexpected call to GetSize");
-            return D2D1_SIZE_F{0.0f,0.0f};
+            return D2D1_SIZE_F{ 0.0f, 0.0f };
         }
 
         IFACEMETHODIMP_(D2D1_SIZE_U) GetPixelSize() const override
         {
             Assert::Fail(L"Unexpected call to GetPixelSize");
-            return D2D1_SIZE_U{0U,0U};
+            return D2D1_SIZE_U{ 0U, 0U };
         }
 
         IFACEMETHODIMP_(UINT32) GetMaximumBitmapSize() const override

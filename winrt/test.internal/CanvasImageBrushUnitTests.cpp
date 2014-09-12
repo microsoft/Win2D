@@ -24,7 +24,7 @@ public:
 
         StubRectReference()
         {
-            m_rect = Rect{0, 0, 10, 10};
+            m_rect = Rect{ 0, 0, 10, 10 };
         }
 
         StubRectReference(float x, float y, float w, float h)
@@ -361,7 +361,7 @@ public:
                     m_bitmapBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
                     m_bitmapBrush->MockGetInterpolationMode1 = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
                     m_bitmapBrush->MockGetOpacity = [&]() { return 0.1f; };
-                    m_bitmapBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) {*transform = m_transform; };
+                    m_bitmapBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = m_transform; };
 
                     m_bitmapBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) { Assert::AreEqual(D2D1_EXTEND_MODE_MIRROR, extend); };
                     m_bitmapBrush->MockSetExtendModeY = [&](D2D1_EXTEND_MODE extend) { Assert::AreEqual(D2D1_EXTEND_MODE_WRAP, extend); };
@@ -389,7 +389,7 @@ public:
                     m_imageBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
                     m_imageBrush->MockGetInterpolationMode = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
                     m_imageBrush->MockGetOpacity = [&]() { return 0.1f; };
-                    m_imageBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) {*transform = m_transform; };
+                    m_imageBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = m_transform; };
 
                     m_imageBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) { Assert::AreEqual(D2D1_EXTEND_MODE_MIRROR, extend); };
                     m_imageBrush->MockSetExtendModeY = [&](D2D1_EXTEND_MODE extend) { Assert::AreEqual(D2D1_EXTEND_MODE_WRAP, extend); };
@@ -541,7 +541,7 @@ public:
             Assert::IsTrue(getSourceRectangleCalled);
             Rect rectValue;
             ThrowIfFailed(sourceRectangle->get_Value(&rectValue));
-            Rect expected = {1, 2, 8, 8};
+            Rect expected = { 1, 2, 8, 8 };
             Assert::AreEqual(expected, rectValue);
         }
 
