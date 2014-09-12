@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Win2D.0.0.2\build\win\Win2D.props" Condition="Exists('..\packages\Win2D.0.0.2\build\win\Win2D.props')" />
+  <Import Project="..\packages\Win2D.0.0.3\build\win\Win2D.props" Condition="Exists('..\packages\Win2D.0.0.3\build\win\Win2D.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -16,7 +16,7 @@
     <FileAlignment>512</FileAlignment>
     <SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <NuGetPackageImportStamp>5ccc084f</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>22c43800</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -108,8 +108,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Graphics.Canvas">
-      <HintPath>..\packages\Win2D.0.0.2\lib\win\Microsoft.Graphics.Canvas.winmd</HintPath>
+    <Reference Include="Microsoft.Graphics.Canvas, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Win2D.0.0.3\lib\win\Microsoft.Graphics.Canvas.winmd</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -124,10 +125,10 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Win2D.0.0.2\build\win\Win2D.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.0.0.2\build\win\Win2D.props'))" />
-    <Error Condition="!Exists('..\packages\Win2D.0.0.2\build\win\Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.0.0.2\build\win\Win2D.targets'))" />
+    <Error Condition="!Exists('..\packages\Win2D.0.0.3\build\win\Win2D.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.0.0.3\build\win\Win2D.props'))" />
+    <Error Condition="!Exists('..\packages\Win2D.0.0.3\build\win\Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.0.0.3\build\win\Win2D.targets'))" />
   </Target>
-  <Import Project="..\packages\Win2D.0.0.2\build\win\Win2D.targets" Condition="Exists('..\packages\Win2D.0.0.2\build\win\Win2D.targets')" />
+  <Import Project="..\packages\Win2D.0.0.3\build\win\Win2D.targets" Condition="Exists('..\packages\Win2D.0.0.3\build\win\Win2D.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
