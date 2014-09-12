@@ -69,6 +69,7 @@ Follow the steps below to get started on writing your own apps.
 - Set a 'Name' of your choosing
 - Click 'OK'
 - Go to 'Tools' -> 'NuGet Package Manager' -> 'Manage NuGet Packages for Solution...'
+- If installing the locally built version, change 'Stable Only' to 'Include Prerelease'
 - Select 'Win2D' package and click 'Install'
 - Click 'Close'
 - Change Solution platform from 'Any CPU' to x86

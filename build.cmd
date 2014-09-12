@@ -29,6 +29,6 @@ IF %ERRORLEVEL% NEQ 0 (
 
 ECHO.
 
-CALL "%~dp0build\nuget\build-nupkg.cmd"
+CALL "%~dp0build\nuget\build-nupkg.cmd" local
 
 :END
