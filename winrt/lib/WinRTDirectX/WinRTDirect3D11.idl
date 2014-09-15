@@ -81,8 +81,7 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
     //
     // This represents an IDXGIDevice and can be used to interop between
     // components that need to exchange IDXGIDevice references.  The COM
-    // interface, IDirect3DDeviceInternal, can be used to obtain the
-    // IDXGIDevice.
+    // interface, IDXGIInterfaceAccess, can be used to obtain the IDXGIDevice.
     //
 
     [version(VERSION), 
@@ -97,12 +96,11 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
     }
 
     //
-    // interface: Direct3DSurface
+    // interface: IDirect3DSurface
     //
     // This represents an IDXGISurface and can be used to interop between
     // components that need to exchange IDXGISurface references.  The COM
-    // interface, IDirect3DSurfaceInternal, can be used to obtain the
-    // IDXGISurface.
+    // interface, IDXGIInterfaceAccess, can be used to obtain the IDXGISurface.
     //
 
     [version(VERSION),

@@ -35,17 +35,17 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.Dispose">
       <summary>Releases all resources used by the CanvasDevice.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.CreateFromDirect3D11Device(Microsoft.Graphics.Canvas.CanvasDebugLevel,Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice)">
-      <summary>Creates a CanvasDevice that will use the specified Direct3DDevice.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.Direct3DDevice">
-      <summary>Gets the Direct3DDevice used by this CanvasDevice.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.CreateFromDirect3D11Device(Microsoft.Graphics.Canvas.CanvasDebugLevel,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice)">
+      <summary>Creates a CanvasDevice that will use the specified IDirect3DDevice.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.HardwareAcceleration">
       <summary>Gets whether this device is using GPU hardware acceleration.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.Device">
       <summary>Implements the ICanvasResourceCreator interface by returning 'this'.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.Trim">
+      <summary>Trims any graphics memory allocated by the graphics device on the app's behalf.</summary>
     </member>
 
 
