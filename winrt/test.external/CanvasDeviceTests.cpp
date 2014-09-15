@@ -34,17 +34,17 @@ TEST_CLASS(CanvasDeviceTests)
 
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
         Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
-        Assert::IsNotNull(canvasDevice->Direct3DDevice);
+        Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
         canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
         Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
-        Assert::IsNotNull(canvasDevice->Direct3DDevice);
+        Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
         canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Warning, CanvasHardwareAcceleration::Off);
         Assert::AreEqual(CanvasHardwareAcceleration::Off, canvasDevice->HardwareAcceleration);
-        Assert::IsNotNull(canvasDevice->Direct3DDevice);
+        Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
-        auto direct3DDevice = canvasDevice->Direct3DDevice;
+        IDirect3DDevice^ direct3DDevice = canvasDevice;
         canvasDevice = CanvasDevice::CreateFromDirect3D11Device(
             CanvasDebugLevel::None,
             direct3DDevice);
@@ -53,8 +53,16 @@ TEST_CLASS(CanvasDeviceTests)
         delete canvasDevice;
             
         ExpectObjectClosed([&]{ canvasDevice->HardwareAcceleration; });
-        ExpectObjectClosed([&]{ canvasDevice->Direct3DDevice; });
+        Assert::IsNull(GetDXGIDevice(canvasDevice).Get());
     }
+
+    static ComPtr<IDXGIDevice> GetDXGIDevice(CanvasDevice^ device)
+    {
+        ComPtr<IDXGIDevice> dxgiDevice;
+        __abi_ThrowIfFailed(GetDXGIInterface<IDXGIDevice>(device, &dxgiDevice));
+        return dxgiDevice;
+    }
+
 
     TEST_METHOD(CanvasDevice_NativeInterop)
     {

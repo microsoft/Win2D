@@ -22,8 +22,8 @@ namespace NativeComponent
     public ref class SurfaceCreator sealed
     {
     public:
-        static Direct3DSurface^ CreateSurface(
-            Direct3DDevice^ device,
+        static IDirect3DSurface^ CreateSurface(
+            IDirect3DDevice^ device,
             int32_t width,
             int32_t height,
             DirectXPixelFormat format)

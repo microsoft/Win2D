@@ -21,7 +21,7 @@ namespace canvas
     class ID2DDeviceWithDxgiDevice : public IUnknown
     {
     public:
-        virtual ComPtr<IDXGIDevice> GetDxgiDevice() = 0;
+        virtual ComPtr<IDXGIDevice3> GetDxgiDevice() = 0;
     };
     
     class MockD2DDevice : public RuntimeClass<
@@ -30,7 +30,7 @@ namespace canvas
         ID2DDeviceWithDxgiDevice>
     {
         ComPtr<ID2D1Factory2> m_parentD2DFactory;
-        ComPtr<IDXGIDevice> m_dxgiDevice;
+        ComPtr<IDXGIDevice3> m_dxgiDevice;
 
     public:
         MockD2DDevice(ID2D1Factory2* parentD2DFactory = nullptr)
@@ -107,7 +107,7 @@ namespace canvas
         // ID2DDeviceWithDxgiDevice
         //
 
-        virtual ComPtr<IDXGIDevice> GetDxgiDevice() override
+        virtual ComPtr<IDXGIDevice3> GetDxgiDevice() override
         {
             return m_dxgiDevice;
         }

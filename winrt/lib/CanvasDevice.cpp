@@ -75,7 +75,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     // #1428 tracks getting direct support for this added to D2D.
     //
-    ComPtr<IDXGIDevice> DefaultDeviceResourceCreationAdapter::GetDxgiDevice(ID2D1Device1* d2dDevice)
+    ComPtr<IDXGIDevice3> DefaultDeviceResourceCreationAdapter::GetDxgiDevice(ID2D1Device1* d2dDevice)
     {
         ComPtr<ID2D1DeviceContext> deviceContext;
         ThrowIfFailed(d2dDevice->CreateDeviceContext(
@@ -95,7 +95,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IDXGISurface> surface;
         ThrowIfFailed(bitmap->GetSurface(&surface));
 
-        ComPtr<IDXGIDevice> device;
+        ComPtr<IDXGIDevice3> device;
         ThrowIfFailed(surface->GetDevice(IID_PPV_ARGS(&device)));
 
         return device;
@@ -148,19 +148,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         CanvasHardwareAcceleration hardwareAcceleration;
 
-        auto direct3DDevice = MakeDirect3DDevice(
+        auto dxgiDevice = MakeDXGIDevice(
             requestedHardwareAcceleration,
             &hardwareAcceleration);
 
-        auto d2dDevice = MakeD2DDevice(
-            direct3DDevice.Get(), 
-            d2dFactory);
+        ComPtr<ID2D1Device1> d2dDevice;
+        ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
         
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
             debugLevel,
             hardwareAcceleration,
-            direct3DDevice.Get(),
+            dxgiDevice.Get(),
             d2dDevice.Get());
         CheckMakeResult(device);
 
@@ -189,15 +188,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CheckInPointer(direct3DDevice);
         CheckInPointer(d2dFactory);
 
-        auto d2dDevice = MakeD2DDevice(
-            direct3DDevice, 
-            d2dFactory);
+        ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
+        ThrowIfFailed(direct3DDevice->QueryInterface(IID_PPV_ARGS(&dxgiInterfaceAccess)));
+
+        ComPtr<IDXGIDevice3> dxgiDevice;
+        ThrowIfFailed(dxgiInterfaceAccess->GetDXGIInterface(IID_PPV_ARGS(&dxgiDevice)));
+
+        ComPtr<ID2D1Device1> d2dDevice;
+        ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
         
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
             debugLevel, 
             CanvasHardwareAcceleration::Unknown,
-            direct3DDevice, 
+            dxgiDevice.Get(), 
             d2dDevice.Get());
         CheckMakeResult(device);
 
@@ -210,14 +214,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto dxgiDevice = m_adapter->GetDxgiDevice(d2dDevice);
 
-        ComPtr<IDirect3DDevice> direct3DDevice;
-        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(dxgiDevice.Get(), &direct3DDevice));
-
         auto canvasDevice = Make<CanvasDevice>(
             shared_from_this(),
             CanvasDebugLevel::None,
             CanvasHardwareAcceleration::Unknown,
-            direct3DDevice.Get(),
+            dxgiDevice.Get(),
             d2dDevice);
         CheckMakeResult(canvasDevice);
         
@@ -225,7 +226,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    ComPtr<IDirect3DDevice> CanvasDeviceManager::MakeDirect3DDevice(
+    ComPtr<IDXGIDevice3> CanvasDeviceManager::MakeDXGIDevice(
         CanvasHardwareAcceleration requestedHardwareAcceleration,
         CanvasHardwareAcceleration* actualHardwareAccelerationOut) const
     {
@@ -238,16 +239,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             requestedHardwareAcceleration,
             &actualHardwareAcceleration);
 
-        // Wrap the native D3D device in a projected Direct3DDevice object.
-        ComPtr<IDXGIDevice> dxgiDevice;
+        ComPtr<IDXGIDevice3> dxgiDevice;
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
-
-        ComPtr<IDirect3DDevice> direct3DDevice;
-        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(dxgiDevice.Get(), &direct3DDevice));
 
         *actualHardwareAccelerationOut = actualHardwareAcceleration;
 
-        return direct3DDevice;
+        return dxgiDevice;
     }
 
 
@@ -292,21 +289,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // If we end up here then we failed to create a d3d device
         ThrowHR(E_FAIL);
-    }
-
-
-    /*static*/
-    ComPtr<ID2D1Device1> CanvasDeviceManager::MakeD2DDevice(
-        IDirect3DDevice* direct3DDevice,
-        ID2D1Factory2* d2dFactory)
-    {
-        ComPtr<IDXGIDevice> dxgiDevice;
-        ThrowIfFailed(GetDXGIInterfaceFromDirect3D11Device(direct3DDevice, __uuidof(IDXGIDevice), &dxgiDevice));
-
-        ComPtr<ID2D1Device1> d2dDevice;
-        ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
-
-        return d2dDevice;
     }
 
 
@@ -406,14 +388,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<CanvasDeviceManager> deviceManager,
         CanvasDebugLevel debugLevel,
         CanvasHardwareAcceleration hardwareAcceleration,
-        IDirect3DDevice* direct3DDevice,
+        IDXGIDevice3* dxgiDevice,
         ID2D1Device1* d2dDevice)
         : ResourceWrapper(deviceManager, d2dDevice)
         , m_hardwareAcceleration(hardwareAcceleration)
         , m_debugLevel(debugLevel)
-        , m_direct3DDevice(direct3DDevice)
+        , m_dxgiDevice(dxgiDevice)
     {
-        CheckInPointer(direct3DDevice);
+        CheckInPointer(dxgiDevice);
 
         ThrowIfFailed(d2dDevice->CreateDeviceContext(
             D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
@@ -445,24 +427,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDevice::get_Direct3DDevice(_Out_ IDirect3DDevice **value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckAndClearOutPointer(value);
-                ComPtr<IDirect3DDevice> direct3DDevice = m_direct3DDevice.EnsureNotClosed();
-                ThrowIfFailed(direct3DDevice.CopyTo(value));
-            });
-    }
-
     IFACEMETHODIMP CanvasDevice::Close()
     {
         HRESULT hr = ResourceWrapper::Close();
         if (FAILED(hr))
             return hr;
         
-        m_direct3DDevice.Close();
+        m_dxgiDevice.Close();
         m_d2dResourceCreationDeviceContext.Close();
         return S_OK;
     }
@@ -532,6 +503,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
         return imageInternal->GetD2DImage(deviceContext.Get());
+    }
+
+    IFACEMETHODIMP CanvasDevice::Trim()
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+                dxgiDevice->Trim();
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::GetDXGIInterface(REFIID iid, void** p)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+                ThrowIfFailed(dxgiDevice.CopyTo(iid, p));
+            });
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

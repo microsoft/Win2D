@@ -41,21 +41,19 @@ namespace Microsoft.Graphics.Canvas
     {
         HRESULT CreateFromDirect3D11Device(
             [in] CanvasDebugLevel debugLevel,
-            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice* direct3DDevice,
+            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice* direct3DDevice,
             [out, retval] CanvasDevice** canvasDevice);
     };
 
     [version(VERSION), uuid(A27F0B5D-EC2C-4D4F-948F-0AA1E95E33E6), exclusiveto(CanvasDevice)]
     interface ICanvasDevice : IInspectable
-        requires Windows.Foundation.IClosable, ICanvasResourceCreator
+        requires Windows.Foundation.IClosable, 
+                 ICanvasResourceCreator, 
+                 Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice
     {
         [propget] 
         HRESULT HardwareAcceleration(
             [out, retval] CanvasHardwareAcceleration* value);
-
-        [propget]
-        HRESULT Direct3DDevice(
-            [out, retval] Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DDevice** value);
     };
 
     [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]

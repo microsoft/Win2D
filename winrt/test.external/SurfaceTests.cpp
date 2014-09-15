@@ -27,7 +27,7 @@ TEST_CLASS(SurfaceTests)
         //
         // Create a Direct3DSurface based on this
         //
-        Direct3DSurface^ graphicsSurface = CreateDirect3DSurface(dxgiSurface.Get());
+        IDirect3DSurface^ graphicsSurface = CreateDirect3DSurface(dxgiSurface.Get());
 
         //
         // Convert it back to a DXGI surface
@@ -89,7 +89,7 @@ TEST_CLASS(SurfaceTests)
         // Wrap a Direct3DSurface around mockDxgiSurface.  This takes ownership
         // of the mockDxgiSurface, so we release our reference to it.
         //
-        Direct3DSurface^ graphicsSurface = CreateDirect3DSurface(mockDxgiSurface.Get());
+        IDirect3DSurface^ graphicsSurface = CreateDirect3DSurface(mockDxgiSurface.Get());
         mockDxgiSurface.Reset();
         Assert::IsFalse(weakToken.expired());
 
@@ -144,7 +144,7 @@ TEST_CLASS(SurfaceTests)
         //
         // Wrap a Direct3DSurface around it
         //
-        Direct3DSurface^ graphicsSurface = CreateDirect3DSurface(mockDxgiSurface.Get());
+        IDirect3DSurface^ graphicsSurface = CreateDirect3DSurface(mockDxgiSurface.Get());
 
         //
         // Get the Description property and compare that with what we expected.
@@ -162,7 +162,7 @@ TEST_CLASS(SurfaceTests)
     TEST_METHOD(Direct3DSurfaceGetDescriptionFailsIfPassedNull)
     {
         ComPtr<IDXGISurface> mockDxgiSurface = Make<MockDxgiSurface>();
-        Direct3DSurface^ graphicsSurface = CreateDirect3DSurface(mockDxgiSurface.Get());
+        IDirect3DSurface^ graphicsSurface = CreateDirect3DSurface(mockDxgiSurface.Get());
 
         ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DSurface* rawDirect3DSurface =
             reinterpret_cast<ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DSurface*>(graphicsSurface);

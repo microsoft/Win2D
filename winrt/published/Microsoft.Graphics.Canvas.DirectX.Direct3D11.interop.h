@@ -40,6 +40,16 @@ STDAPI GetDXGIInterfaceFromDirect3D11Surface(
     _In_         REFIID iid,
     _COM_Outptr_ void** p);
 
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11 {
+
+    [uuid(0A55F0AC-0BDD-4CFA-A9E7-8B2743AD33B7)]
+    class IDXGIInterfaceAccess : public IUnknown
+    {
+    public:
+        IFACEMETHOD(GetDXGIInterface)(REFIID iid, void** p) = 0;
+    };
+                        
+}}}}}}
 
 #if defined(__cplusplus_winrt)
 
@@ -47,7 +57,7 @@ STDAPI GetDXGIInterfaceFromDirect3D11Surface(
 
 namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11 {
 
-    inline Direct3DDevice^ CreateDirect3DDevice(
+    inline IDirect3DDevice^ CreateDirect3DDevice(
         _In_ IDXGIDevice* dxgiDevice)
     {
         using Microsoft::WRL::ComPtr;
@@ -60,10 +70,10 @@ namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX 
 
         Object^ objectDevice = reinterpret_cast<Object^>(inspectableDevice.Get());
 
-        return safe_cast<Direct3DDevice^>(objectDevice);
+        return safe_cast<IDirect3DDevice^>(objectDevice);
     }
 
-    inline Direct3DSurface^ CreateDirect3DSurface(
+    inline IDirect3DSurface^ CreateDirect3DSurface(
         _In_ IDXGISurface* dxgiSurface)
     {
         using Microsoft::WRL::ComPtr;
@@ -76,12 +86,12 @@ namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX 
 
         Object^ objectSurface = reinterpret_cast<Object^>(inspectableSurface.Get());
 
-        return safe_cast<Direct3DSurface^>(objectSurface);
+        return safe_cast<IDirect3DSurface^>(objectSurface);
     }
 
     template<typename DXGI_TYPE>
     HRESULT GetDXGIInterface(
-        _In_         Direct3DDevice^ device,
+        _In_         IDirect3DDevice^ device,
         _COM_Outptr_ DXGI_TYPE** dxgi)
     {
         return GetDXGIInterfaceFromDirect3D11Device(
@@ -91,7 +101,7 @@ namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX 
 
     template<typename DXGI_TYPE>
     HRESULT GetDXGIInterface(
-        _In_ Direct3DSurface^ surface,
+        _In_ IDirect3DSurface^ surface,
         _Out_ DXGI_TYPE** dxgi)
     {
         return GetDXGIInterfaceFromDirect3D11Surface(

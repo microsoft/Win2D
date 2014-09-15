@@ -20,7 +20,7 @@ namespace NativeComponent
     public ref class DeviceCreator sealed
     {
     public:
-        static Direct3DDevice^ CreateDevice()
+        static IDirect3DDevice^ CreateDevice()
         {
             using namespace Microsoft::WRL;
 

@@ -16,20 +16,14 @@ using namespace Microsoft::WRL;
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11
 {
-    [uuid(4D1CE3D8-3EED-4D43-8CDA-1C4A1190844F)]
-    class IDirect3DSurfaceInternal : public IUnknown
-    {
-    public:
-        virtual void GetDXGIInterface(REFIID iid, void** p) = 0;
-    };
 
     class Direct3DSurface : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DSurface,
         ABI::Windows::Foundation::IClosable,
-        IDirect3DSurfaceInternal>
+        CloakedIid<IDXGIInterfaceAccess>>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DSurface, BaseTrust);
+        InspectableClass(L"Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface", BaseTrust);
 
         ClosablePtr<IDXGISurface> m_DxgiSurface;
 
@@ -86,11 +80,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        // IDirect3DSurfaceInternal
-        virtual void GetDXGIInterface(REFIID iid, void** p) override
+        // IDXGIInterfaceAccess
+        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p) override
         {
-            auto& surface = m_DxgiSurface.EnsureNotClosed();
-            ThrowIfFailed(surface.CopyTo(iid, p));
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& surface = m_DxgiSurface.EnsureNotClosed();
+                    ThrowIfFailed(surface.CopyTo(iid, p));
+                });
         }        
     };
 }}}}}}
@@ -125,8 +123,8 @@ STDAPI GetDXGIInterfaceFromDirect3D11Surface(
     return ExceptionBoundary(
         [&]
         {
-            ComPtr<IDirect3DSurfaceInternal> surfaceInternal;
-            ThrowIfFailed(direct3DSurface->QueryInterface(surfaceInternal.GetAddressOf()));
-            surfaceInternal->GetDXGIInterface(iid, p);
+            ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
+            ThrowIfFailed(direct3DSurface->QueryInterface(dxgiInterfaceAccess.GetAddressOf()));
+            dxgiInterfaceAccess->GetDXGIInterface(iid, p);
         });
 }

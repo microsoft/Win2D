@@ -189,9 +189,8 @@ public:
 
         Assert::AreEqual(S_OK, canvasDevice->Close());
 
-        IDirect3DDevice* deviceActual = reinterpret_cast<IDirect3DDevice*>(0x1234);
-        Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_Direct3DDevice(&deviceActual));
-        Assert::IsNull(deviceActual);
+        ComPtr<IDXGIDevice> dxgiDevice;
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->GetDXGIInterface(IID_PPV_ARGS(&dxgiDevice)));
 
         CanvasHardwareAcceleration hardwareAccelerationActual = static_cast<CanvasHardwareAcceleration>(1);
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_HardwareAcceleration(&hardwareAccelerationActual));
@@ -202,29 +201,6 @@ public:
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         Assert::AreEqual(S_OK, canvasDevice.As(&canvasDeviceInternal));
         return canvasDeviceInternal->GetD2DDevice();
-    }
-
-    void VerifyCompatibleDevices(ComPtr<ICanvasDevice> const& canvasDevice, ComPtr<ICanvasDevice> const& compatibleDevice)
-    {
-        ComPtr<ID2D1Device1> canvasD2DDevice = GetD2DDevice(canvasDevice);
-        ComPtr<ID2D1Device1> recoveredD2DDevice = GetD2DDevice(compatibleDevice);
-
-        // Ensure that the original device and the recovered device have different D2D devices.
-        Assert::AreNotEqual(canvasD2DDevice.Get(), recoveredD2DDevice.Get());
-
-        // Verify the higher-level Direct3DDevices are different, as well.
-        ComPtr<IDirect3DDevice> canvasDirect3DDevice;
-        ComPtr<IDirect3DDevice> compatibleDirect3DDevice;
-        canvasDevice->get_Direct3DDevice(&canvasDirect3DDevice);
-        compatibleDevice->get_Direct3DDevice(&compatibleDirect3DDevice);
-        Assert::AreNotEqual(canvasDirect3DDevice.Get(), compatibleDirect3DDevice.Get());
-
-        // Ensure the original device and recovered device have the same D2D factory.   
-        ComPtr<ID2D1Factory> canvasD2DFactory;
-        ComPtr<ID2D1Factory> recoveredD2DFactory;
-        canvasD2DDevice->GetFactory(&canvasD2DFactory);
-        recoveredD2DDevice->GetFactory(&recoveredD2DFactory);
-        Assert::AreEqual(canvasD2DFactory.Get(), recoveredD2DFactory.Get());
     }
 
     TEST_METHOD(CanvasDevice_HwSwFallback)
@@ -344,7 +320,7 @@ TEST_CLASS(DefaultDeviceResourceCreationAdapterTests)
             Assert::Fail(L"Failed to create d3d device");
         }
 
-        ComPtr<IDXGIDevice> dxgiDevice;
+        ComPtr<IDXGIDevice3> dxgiDevice;
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
 
         auto factory = adapter.CreateD2DFactory(CanvasDebugLevel::None);

@@ -38,12 +38,6 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP get_Direct3DDevice(IDirect3DDevice **) override
-        {
-            Assert::Fail(L"Unexpected call to get_Direct3DDevice");
-            return E_NOTIMPL;
-        }
-
         //
         // ICanvasResourceCreator
         //

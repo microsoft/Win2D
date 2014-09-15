@@ -31,7 +31,7 @@ public:
         //
         // Create a Direct3DDevice based on this
         //
-        Direct3DDevice^ graphicsDevice = CreateDirect3DDevice(dxgiDevice.Get());
+        IDirect3DDevice^ graphicsDevice = CreateDirect3DDevice(dxgiDevice.Get());
 
         //
         // Convert it back to a DXGI device
@@ -94,7 +94,7 @@ public:
         // Wrap a Direct3DDevice around mockDxgiDevice.  This takes ownership of
         // the mockDxgiDevice, so we release our reference to it.
         //
-        Direct3DDevice^ graphicsDevice = CreateDirect3DDevice(mockDxgiDevice.Get());
+        IDirect3DDevice^ graphicsDevice = CreateDirect3DDevice(mockDxgiDevice.Get());
         mockDxgiDevice.Reset();
         Assert::IsFalse(weakToken.expired());
         
@@ -140,7 +140,7 @@ public:
         //
         // Wrap a Direct3DDevice around it
         //
-        Direct3DDevice^ graphicsDevice = CreateDirect3DDevice(mockDxgiDevice.Get());
+        IDirect3DDevice^ graphicsDevice = CreateDirect3DDevice(mockDxgiDevice.Get());
 
         //
         // Now call Direct3DDevice::Trim() and verify that Trim() was called on

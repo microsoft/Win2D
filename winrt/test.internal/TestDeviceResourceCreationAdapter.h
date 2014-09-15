@@ -64,7 +64,7 @@ public:
         }
     }
 
-    virtual ComPtr<IDXGIDevice> GetDxgiDevice(ID2D1Device1* d2dDevice) override
+    virtual ComPtr<IDXGIDevice3> GetDxgiDevice(ID2D1Device1* d2dDevice) override
     {
         ComPtr<ID2DDeviceWithDxgiDevice> d2dDeviceWithDxgiDevice;
         ThrowIfFailed(d2dDevice->QueryInterface(d2dDeviceWithDxgiDevice.GetAddressOf()));

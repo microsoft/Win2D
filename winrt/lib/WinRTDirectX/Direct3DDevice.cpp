@@ -16,20 +16,13 @@ using namespace Microsoft::WRL;
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11
 {
-    [uuid(0A55F0AC-0BDD-4CFA-A9E7-8B2743AD33B7)]
-    class IDirect3DDeviceInternal : public IUnknown
-    {
-    public:
-        virtual void GetDXGIInterface(REFIID iid, void** p) = 0;
-    };
-
     class Direct3DDevice : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDevice,
         ABI::Windows::Foundation::IClosable,
-        IDirect3DDeviceInternal>
+        CloakedIid<IDXGIInterfaceAccess>>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DDevice, BaseTrust);
+        InspectableClass(L"Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice", BaseTrust);
 
         ClosablePtr<IDXGIDevice3> m_DxgiDevice;
 
@@ -63,11 +56,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        // IDirect3DDeviceInternal
-        virtual void GetDXGIInterface(REFIID iid, void** p) override
+        // IDXGIInterfaceAccess
+        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p) override
         {
-            auto& device = m_DxgiDevice.EnsureNotClosed();
-            ThrowIfFailed(device.CopyTo(iid, p));
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& device = m_DxgiDevice.EnsureNotClosed();
+                    ThrowIfFailed(device.CopyTo(iid, p));
+                });
         }
     };
 }}}}}}
@@ -102,8 +99,8 @@ STDAPI GetDXGIInterfaceFromDirect3D11Device(
     return ExceptionBoundary(
         [&]
         {
-            ComPtr<IDirect3DDeviceInternal> deviceInternal;
-            ThrowIfFailed(direct3DDevice->QueryInterface(deviceInternal.GetAddressOf()));
-            deviceInternal->GetDXGIInterface(iid, p);
+            ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
+            ThrowIfFailed(direct3DDevice->QueryInterface(dxgiInterfaceAccess.GetAddressOf()));
+            dxgiInterfaceAccess->GetDXGIInterface(iid, p);
         });
 }
