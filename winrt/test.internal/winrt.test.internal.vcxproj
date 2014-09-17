@@ -28,7 +28,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d2d1.lib;d3d11.lib;windowscodecs.lib;dwrite.lib;kernel32.lib;runtimeobject.lib;rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;windowscodecs.lib;dwrite.lib;kernel32.lib;runtimeobject.lib;rpcrt4.lib;oleaut32.lib</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
@@ -98,6 +98,7 @@
     <ClCompile Include="StubD2DResources.cpp" />
     <ClCompile Include="TestBitmapResourceCreationAdapter.cpp" />
     <ClCompile Include="VectorTests.cpp" />
+    <ClCompile Include="WinStringBuilderTests.cpp" />
     <ClCompile Include="WinStringTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

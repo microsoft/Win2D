@@ -23,17 +23,12 @@
 
 //
 // Generally all errors are reported with an associated HRESULT.  These are
-// represented as an HResultException, or a subclass of it.  Use
-// ExceptionBoundary() to catch exceptions and translate them to HRESULTs.
+// represented as an HResultException.  Use ExceptionBoundary() to catch
+// exceptions and translate them to HRESULTs.
 //
 // As the constructor is protected, only ThrowHR() can be used to throw an
-// HResultException.  This allows ThrowHR() to pick the right exception for an
-// HRESULT.
-//
-// This is useful because sometimes (eg test code) it is useful to be able to
-// catch a specific HRESULT.  For example, ThrowHR(E_INVALIDARG) will throw
-// InvalidArgException rather than HResultException.  This allows test code to
-// use Assert::ExpectException<InvalidArgException>.
+// HResultException.  This provides future flexibility in case we some day
+// want to throw more varied types of exception.
 //
 class HResultException
 {
@@ -55,55 +50,26 @@ public:
 };
 
 //
-// Specialized exception type for E_INVALIDARG.  Allows tests to write
-// Assert::ExpectException<InvalidArgException>.
+// Throws an exception for the given HRESULT.
 //
-class InvalidArgException : public HResultException
-{
-protected:
-    InvalidArgException()
-        : HResultException(E_INVALIDARG)
-    {}
-
-    __declspec(noreturn)
-    friend void ThrowHR(HRESULT);
-};
-
-class NoSuchInterfaceException : public HResultException
-{
-public:
-    NoSuchInterfaceException()
-        : HResultException(E_NOINTERFACE)
-    {}
-
-    __declspec(noreturn)
-    friend void ThrowHR(HRESULT);
-};
-
-class ObjectDisposedException : public HResultException
-{
-public:
-    ObjectDisposedException()
-        : HResultException(RO_E_CLOSED)
-    {}
-
-    __declspec(noreturn)
-    friend void ThrowHR(HRESULT);
-};
-
-//
-// Throws the appropriate exception for the given HRESULT.
-//
-__declspec(noreturn)
+__declspec(noreturn) __declspec(noinline)
 inline void ThrowHR(HRESULT hr)
 {
-    switch (hr)
-    {
-    case E_INVALIDARG:  throw InvalidArgException();
-    case E_NOINTERFACE: throw NoSuchInterfaceException();
-    case RO_E_CLOSED:   throw ObjectDisposedException();
-    default:            throw HResultException(hr);
-    }
+    throw HResultException(hr);
+}
+
+//
+// Throws the appropriate exception for the given HRESULT, attaching a custom error message
+// string. To avoid leaks, the message string should be owned by an RAII  wrapper such as
+// WinString. We don't take this parameter directly as a WinString  to break what would
+// otherwise be a circular dependency (WinString uses ErrorHandling.h in its implementation).
+//
+__declspec(noreturn) __declspec(noinline)
+inline void ThrowHR(HRESULT hr, HSTRING message)
+{
+    RoOriginateError(hr, message);
+    
+    ThrowHR(hr);
 }
 
 //

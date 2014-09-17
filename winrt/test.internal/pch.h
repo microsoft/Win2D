@@ -52,6 +52,8 @@
 #include <ErrorHandling.h>
 #include <Vector.h>
 #include <WinStringWrapper.h>
+#include <WinStringBuilder.h>
+#include <ScopeWarden.h>
 
 // Public
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>

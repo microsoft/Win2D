@@ -424,7 +424,7 @@ public:
         // ID2D1DeviceContext.  We require ID2D1DeviceContext1.
         //
         ComPtr<ID2D1DeviceContext1> actualDeviceContext;
-        Assert::ExpectException<NoSuchInterfaceException>(
+        ExpectHResultException(E_NOINTERFACE,
             [&]
             {
                 CanvasImageSourceDrawingSessionAdapter::Create(

@@ -109,8 +109,8 @@ namespace canvas
         // Closing should cause any attempt to get/set to fail
         //
         ThrowIfFailed(ctf->Close());
-        Assert::ExpectException<ObjectDisposedException>([&] { canvasSetter(ctf.Get(), expectedValue); });
-        Assert::ExpectException<ObjectDisposedException>([&] { canvasGetter(ctf.Get()); });
+        ExpectHResultException(RO_E_CLOSED, [&] { canvasSetter(ctf.Get(), expectedValue); });
+        ExpectHResultException(RO_E_CLOSED, [&] { canvasGetter(ctf.Get()); });
     }
 
 #define SIMPLE_CANVAS_GETTER(PROPERTY, TYPE)            \
@@ -173,7 +173,7 @@ namespace canvas
 
         for (auto& value : values)
         {
-            Assert::ExpectException<InvalidArgException>(
+            ExpectHResultException(E_INVALIDARG,
                 [&] 
                 {
                     canvasSetter(ctf.Get(), value); 

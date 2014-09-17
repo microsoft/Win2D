@@ -9,8 +9,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
@@ -36,6 +34,13 @@
       <Filter>effects</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp">
+      <Filter>WinRTDirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp">
+      <Filter>WinRTDirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Strings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
@@ -73,11 +78,10 @@
       <Filter>effects</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Strings.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
-    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />
-    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasBitmap.abi.idl" />
@@ -112,10 +116,20 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.abi.idl">
       <Filter>effects</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl">
+      <Filter>WinRTDirectX</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl">
+      <Filter>WinRTDirectX</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Strings.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="effects">
       <UniqueIdentifier>{98e06252-bf32-4b17-bbba-c9442518080b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WinRTDirectX">
+      <UniqueIdentifier>{84bf4ba6-1a52-4554-ab76-97ff22b8cf91}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

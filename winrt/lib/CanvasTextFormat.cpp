@@ -13,7 +13,6 @@
 #include "pch.h"
 
 #include "CanvasTextFormat.h"
-#include "WinStringBuilder.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

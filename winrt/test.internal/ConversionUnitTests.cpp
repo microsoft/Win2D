@@ -117,16 +117,16 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(static_cast<uint32_t>(mvf), mv);
         Assert::AreEqual(RECT{ 0, 0, mv, mv }, ToRECT(Rect{ 0, 0, mvf, mvf }));
 
-        Assert::ExpectException<InvalidArgException>(
+        ExpectHResultException(E_INVALIDARG, 
             [&] { ToRECT(Rect{ 0, 0, mvf + 2, mvf }); });
 
-        Assert::ExpectException<InvalidArgException>(
+        ExpectHResultException(E_INVALIDARG, 
             [&] { ToRECT(Rect{ 0, 0, mvf, mvf + 2 }); });
 
-        Assert::ExpectException<InvalidArgException>(
+        ExpectHResultException(E_INVALIDARG, 
             [&] { ToRECT(Rect{ 2, 0, mvf, mvf }); });
 
-        Assert::ExpectException<InvalidArgException>(
+        ExpectHResultException(E_INVALIDARG, 
             [&] { ToRECT(Rect{ 0, 2, mvf, mvf }); });
     }
 

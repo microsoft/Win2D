@@ -717,3 +717,41 @@ inline bool operator==(D2D1_MATRIX_3X2_F const& a, D2D1_MATRIX_3X2_F const& b)
     }
 
 
+template<typename T>
+inline void ExpectHResultException(HRESULT expectedHR, T&& lambda)
+{
+    try
+    {
+        lambda();
+        Assert::Fail(L"Expected this to throw.");
+    }
+    catch (HResultException const& e)
+    {
+        Assert::AreEqual(expectedHR, e.GetHr());
+    }
+}
+
+
+inline void ValidateStoredErrorState(HRESULT expectedHR, wchar_t const* expectedMessage)
+{
+    ComPtr<IRestrictedErrorInfo> errorInfo;
+    ThrowIfFailed(GetRestrictedErrorInfo(&errorInfo));
+
+    BSTR description = nullptr;
+    BSTR restrictedDescription = nullptr;
+    BSTR capabilitySid = nullptr;
+
+    auto cleanup = MakeScopeWarden([&]
+    {
+        if (description)           SysFreeString(description);
+        if (restrictedDescription) SysFreeString(restrictedDescription);
+        if (capabilitySid)         SysFreeString(capabilitySid);
+    });
+
+    HRESULT actualHR;
+    
+    ThrowIfFailed(errorInfo->GetErrorDetails(&description, &actualHR, &restrictedDescription, &capabilitySid));
+
+    Assert::AreEqual(expectedHR, actualHR);
+    Assert::AreEqual(expectedMessage, restrictedDescription);
+}

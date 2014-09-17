@@ -29,6 +29,7 @@
 class WinStringBuilder
 {
     HSTRING_BUFFER m_hstringBuffer;
+
 public:
     WinStringBuilder()
         : m_hstringBuffer(nullptr)
@@ -43,9 +44,36 @@ public:
 
     wchar_t* Allocate(uint32_t length)
     {
+        if (m_hstringBuffer)
+            ThrowHR(E_UNEXPECTED);
+
         wchar_t* buffer = nullptr;
         ThrowIfFailed(WindowsPreallocateStringBuffer(length, &buffer, &m_hstringBuffer));
         return buffer;
+    }
+
+    void Format(wchar_t const* format, ...)
+    {
+        // Disable _CRT_SECURE_NO_WARNINGS. We need to use _vsnwprintf,
+        // because _vsnwprintf_s does not return the number of characters needed.
+        #pragma warning(push)
+        #pragma warning(disable: 4996)
+        
+        // Measure how much room we need.
+        va_list args;
+        va_start(args, format);
+        auto length = _vsnwprintf(nullptr, 0, format, args);
+        va_end(args);
+
+        // Allocate the buffer.
+        auto buffer = Allocate(length);
+
+        // Format the string.
+        va_start(args, format);
+        _vsnwprintf(buffer, length, format, args);
+        va_end(args);
+
+        #pragma warning(pop)
     }
 
     WinString Get()

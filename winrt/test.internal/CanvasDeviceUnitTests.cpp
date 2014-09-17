@@ -78,7 +78,7 @@ public:
 
         // Try an invalid debug level
         Reset();
-        Assert::ExpectException<InvalidArgException>(
+        ExpectHResultException(E_INVALIDARG,
             [&]
             {
                 m_deviceManager->Create(
@@ -124,7 +124,7 @@ public:
 
         for (auto invalidCase : invalidCases)
         {
-            Assert::ExpectException<InvalidArgException>(
+            ExpectHResultException(E_INVALIDARG,
                 [&] 
                 { 
                     m_deviceManager->Create(
@@ -160,7 +160,7 @@ public:
         Assert::AreEqual(CanvasHardwareAcceleration::Unknown, hardwareAcceleration);
 
         // Try a NULL Direct3DDevice. 
-        Assert::ExpectException<InvalidArgException>(
+        ExpectHResultException(E_INVALIDARG,
             [&] { m_deviceManager->Create(CanvasDebugLevel::None, nullptr); });
     }
 

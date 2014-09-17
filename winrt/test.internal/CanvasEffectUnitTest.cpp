@@ -290,4 +290,40 @@ public:
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
     }
 
+    class InvalidEffectInputType : public RuntimeClass<IEffectInput>
+    {
+        InspectableClass(L"InvalidEffectInputType", BaseTrust);
+    };
+
+    TEST_METHOD(CanvasEffect_WrongInputType)
+    {
+        auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto drawingSession = drawingSessionManager->Create(deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto mockEffect = Make<MockD2DEffect>();
+
+        deviceContext->MockCreateEffect = [&](ID2D1Effect** effect)
+        { 
+            return mockEffect.CopyTo(effect);
+        };
+
+        mockEffect->MockSetInputCount = [&]
+        {
+            return S_OK;
+        };
+
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1, false);
+
+        // Validate drawing with a null input.
+        Assert::AreEqual(E_POINTER, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+        
+        // Validate drawing with an input that is not the right type.
+        auto invalidInput = Make<InvalidEffectInputType>();
+
+        testEffect->SetInput(0, invalidInput.Get());
+
+        Assert::AreEqual(E_NOINTERFACE, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+
+        ValidateStoredErrorState(E_NOINTERFACE, L"Effect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.");
+    }
 };

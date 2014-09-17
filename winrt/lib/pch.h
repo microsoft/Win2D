@@ -68,9 +68,11 @@
 #include <ScopeWarden.h>
 #include <Vector.h>
 #include <WinStringWrapper.h>
+#include <WinStringBuilder.h>
 
 // Generated from local IDLs
 #include <Canvas.abi.h>
 
 // local
 #include "Conversion.h"
+#include "Strings.h"

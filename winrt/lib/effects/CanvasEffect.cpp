@@ -72,9 +72,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 if (!inputs[i])
                     ThrowHR(E_POINTER);
+
                 ComPtr<ICanvasImageInternal> internalInput;
-                // TODO #2280: hook up a better error message if effctInput is not  ICanvasImageInternal
-                ThrowIfFailed(inputs[i].As(&internalInput));
+                HRESULT hr = inputs[i].As(&internalInput);
+
+                if (hr == E_NOINTERFACE)
+                {
+                    WinStringBuilder message;
+                    message.Format(Strings::EffectWrongInputType, i);
+                    ThrowHR(hr, message.Get());
+                }
+                else
+                {
+                    ThrowIfFailed(hr);
+                }
 
                 m_resource->SetInput(i, internalInput->GetD2DImage(deviceContext).Get());
             }

@@ -52,6 +52,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Strings.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Strings.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
@@ -96,6 +98,7 @@
     <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasTextFormat.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)Strings.inl" />
     <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />
     <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl" />
     <None Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl" />
