@@ -4,5 +4,3 @@ DllGetActivationFactory PRIVATE
 DllGetClassObject       PRIVATE
 CreateDirect3D11DeviceFromDXGIDevice
 CreateDirect3D11SurfaceFromDXGISurface
-GetDXGIInterfaceFromDirect3D11Device
-GetDXGIInterfaceFromDirect3D11Surface

@@ -53,7 +53,7 @@ TEST_CLASS(CanvasDeviceTests)
         delete canvasDevice;
             
         ExpectObjectClosed([&]{ canvasDevice->HardwareAcceleration; });
-        Assert::IsNull(GetDXGIDevice(canvasDevice).Get());
+        ExpectObjectClosed([&]{ GetDXGIDevice(canvasDevice); });
     }
 
     static ComPtr<IDXGIDevice> GetDXGIDevice(CanvasDevice^ device)

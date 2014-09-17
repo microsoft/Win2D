@@ -88,19 +88,3 @@ STDAPI CreateDirect3D11DeviceFromDXGIDevice(
             ThrowIfFailed(direct3DDevice.CopyTo(inspectableDirect3DDevice));
         });
 }
-
-
-_Use_decl_annotations_
-STDAPI GetDXGIInterfaceFromDirect3D11Device(
-    IInspectable* direct3DDevice,
-    REFIID iid,
-    void** p)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
-            ThrowIfFailed(direct3DDevice->QueryInterface(dxgiInterfaceAccess.GetAddressOf()));
-            dxgiInterfaceAccess->GetDXGIInterface(iid, p);
-        });
-}

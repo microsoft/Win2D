@@ -30,16 +30,6 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
     _In_         IDXGISurface* dgxiSurface,
     _COM_Outptr_ IInspectable** graphicsSurface);
 
-STDAPI GetDXGIInterfaceFromDirect3D11Device(
-    _In_         IInspectable* graphicsDevice,
-    _In_         REFIID iid,
-    _COM_Outptr_ void** p);
-
-STDAPI GetDXGIInterfaceFromDirect3D11Surface(
-    _In_         IInspectable* graphicsSurface,
-    _In_         REFIID iid,
-    _COM_Outptr_ void** p);
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11 {
 
     [uuid(0A55F0AC-0BDD-4CFA-A9E7-8B2743AD33B7)]
@@ -89,14 +79,33 @@ namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX 
         return safe_cast<IDirect3DSurface^>(objectSurface);
     }
 
+    inline HRESULT GetDXGIInterfaceFromObject(
+        _In_         Platform::Object^ object,
+        _In_         REFIID iid,
+        _COM_Outptr_ void** p)
+    {
+        using Microsoft::WRL::ComPtr;
+        using ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDXGIInterfaceAccess;
+
+        IInspectable* deviceInspectable = reinterpret_cast<IInspectable*>(object);
+        ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
+        
+        HRESULT hr = deviceInspectable->QueryInterface(IID_PPV_ARGS(&dxgiInterfaceAccess));
+
+        if (SUCCEEDED(hr))
+        {
+            hr = dxgiInterfaceAccess->GetDXGIInterface(iid, p);
+        }
+
+        return hr;
+    }
+
     template<typename DXGI_TYPE>
     HRESULT GetDXGIInterface(
         _In_         IDirect3DDevice^ device,
         _COM_Outptr_ DXGI_TYPE** dxgi)
     {
-        return GetDXGIInterfaceFromDirect3D11Device(
-            reinterpret_cast<IInspectable*>(device),
-            IID_PPV_ARGS(dxgi));
+        return GetDXGIInterfaceFromObject(device, IID_PPV_ARGS(dxgi));
     }
 
     template<typename DXGI_TYPE>
@@ -104,9 +113,7 @@ namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX 
         _In_ IDirect3DSurface^ surface,
         _Out_ DXGI_TYPE** dxgi)
     {
-        return GetDXGIInterfaceFromDirect3D11Surface(
-            reinterpret_cast<IInspectable*>(surface),
-            IID_PPV_ARGS(dxgi));
+        return GetDXGIInterfaceFromObject(surface, IID_PPV_ARGS(dxgi));
     }
 
 } /* Direct3D11 */ } /* DirectX */ } /* Canvas */ } /* Graphics */ } /* Windows */

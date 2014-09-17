@@ -112,19 +112,3 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
             ThrowIfFailed(direct3DSurface.CopyTo(inspectableDirect3DSurface));
         });
 }
-
-
-_Use_decl_annotations_
-STDAPI GetDXGIInterfaceFromDirect3D11Surface(
-    IInspectable* direct3DSurface,
-    REFIID iid,
-    void** p)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
-            ThrowIfFailed(direct3DSurface->QueryInterface(dxgiInterfaceAccess.GetAddressOf()));
-            dxgiInterfaceAccess->GetDXGIInterface(iid, p);
-        });
-}
