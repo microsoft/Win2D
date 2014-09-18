@@ -11,6 +11,7 @@
 // under the License.
 
 #include "CanvasBitmap.h"
+#include "CanvasRenderTarget.h"
 
 class TestBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
 {
@@ -31,5 +32,25 @@ public:
         return m_converter;
     }
 };
+
+class MockCanvasRenderTargetDrawingSessionFactory : public ICanvasRenderTargetDrawingSessionFactory
+{
+public:
+    std::function<ComPtr<ICanvasDrawingSession>(ICanvasDevice*, ID2D1Bitmap1*)> MockCreate;
+
+    virtual ComPtr<ICanvasDrawingSession> Create(
+        ICanvasDevice* owner,
+        ID2D1Bitmap1* targetBitmap) const override
+    {
+        if (!MockCreate)
+        {
+            Assert::Fail(L"Unexpected call to Create");
+            ThrowHR(E_NOTIMPL);
+        }
+
+        return MockCreate(owner, targetBitmap);
+    }
+};
+
 
 ComPtr<ICanvasImage> CreateTestCanvasBitmap(ICanvasDevice* canvasDevice);

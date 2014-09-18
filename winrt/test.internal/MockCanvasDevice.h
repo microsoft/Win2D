@@ -26,7 +26,8 @@ namespace canvas
         std::function<ComPtr<ID2D1SolidColorBrush>(D2D1_COLOR_F const&)> MockCreateSolidColorBrush;
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
-        std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmap;
+        std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmapFromWicResource;
+        std::function<ComPtr<ID2D1Bitmap1>(ABI::Windows::Foundation::Size size)> MockCreateBitmap;
         
         //
         // ICanvasDevice
@@ -80,14 +81,24 @@ namespace canvas
             return MockCreateSolidColorBrush(color);
         }
 
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* converter) override
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(IWICFormatConverter* converter) override
+        {
+            if (!MockCreateBitmapFromWicResource)
+            {
+                Assert::Fail(L"Unexpected call to CreateBitmapFromWicResource");
+                return nullptr;
+            }
+            return MockCreateBitmapFromWicResource();
+        }
+
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(ABI::Windows::Foundation::Size size) override
         {
             if (!MockCreateBitmap)
             {
                 Assert::Fail(L"Unexpected call to CreateBitmap");
                 return nullptr;
             }
-            return MockCreateBitmap();
+            return MockCreateBitmap(size);
         }
 
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* Bitmap) override

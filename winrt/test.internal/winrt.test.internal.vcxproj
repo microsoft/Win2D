@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -24,6 +24,7 @@
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level4</WarningLevel>
+      <AdditionalOptions>-Zm110 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -81,6 +82,7 @@
     <ClCompile Include="CanvasBitmapUnitTest.cpp" />
     <ClCompile Include="CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="CanvasEffectUnitTest.cpp" />
+    <ClCompile Include="CanvasRenderTargetUnitTests.cpp" />
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="CanvasTextFormatTests.cpp" />

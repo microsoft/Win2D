@@ -338,7 +338,7 @@ public:
             m_bitmapBrush = Make<MockD2DBitmapBrush>();
             m_imageBrush = Make<MockD2DImageBrush>();
             
-            canvasDevice->MockCreateBitmap =
+            canvasDevice->MockCreateBitmapFromWicResource =
                 [&]()
                 {
                     return Make<StubD2DBitmap>();

@@ -29,6 +29,7 @@ namespace CsConsumer
         Random m_random = new Random();
         CanvasBitmap m_bitmap_tiger;
         CanvasImageBrush m_imageBrush;
+        CanvasRenderTarget m_offscreenTarget;
 
         enum DrawnContentType
         {
@@ -53,6 +54,7 @@ namespace CsConsumer
             Dashed_Lines,
             Text,
             ImageBrush,
+            OffscreenTarget,
             Test_Scene0_Default,
             Test_Scene0_Wireframe,
             Test_Scene1_Default,
@@ -90,6 +92,18 @@ namespace CsConsumer
         {
             UpdateCanvasControlSize();
             m_imageBrush = new CanvasImageBrush(sender);
+
+            m_offscreenTarget = new CanvasRenderTarget(sender, new Size(100, 100));
+
+            using (CanvasDrawingSession ds = m_offscreenTarget.CreateDrawingSession())
+            {
+                ds.Clear(Colors.DarkBlue);
+                ds.FillRoundedRectangle(new Rect(0, 0, 100, 100), 30, 30, Colors.DarkRed);
+                ds.DrawRoundedRectangle(new Rect(0, 0, 100, 100), 30, 30, Colors.LightGreen);
+                ds.DrawText("Abc", 0, 0, Colors.LightGray);
+                ds.DrawText("Def", 25, 25, Colors.LightGray);
+                ds.DrawText("Efg", 50, 50, Colors.LightGray);
+            }
         }
 
         private void OnRedrawClicked(object sender, RoutedEventArgs e)
@@ -380,6 +394,14 @@ namespace CsConsumer
                     }
                     else
                         DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    break;
+
+
+                case DrawnContentType.OffscreenTarget:
+                    m_imageBrush.Image = m_offscreenTarget;
+                    m_imageBrush.ExtendX = (CanvasEdgeBehavior)(m_random.Next(3));
+                    m_imageBrush.ExtendY = (CanvasEdgeBehavior)(m_random.Next(3));
+                    ds.FillRectangle(new Rect(0, 0, horizontalLimit, verticalLimit), m_imageBrush);
                     break;
 
                 case DrawnContentType.Test_Scene0_Default:

@@ -21,6 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Effects;
+    using namespace ABI::Windows::Foundation;
 
     class ICanvasBitmapResourceCreationAdapter
     {
@@ -71,14 +72,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<IWICBitmap> m_wicBitmap;
 
-        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> m_resourceAdapter;
-
     public:
 
         CanvasBitmap(
             ICanvasDevice* canvasDevice, 
             HSTRING fileName, 
             std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
+
+        CanvasBitmap(
+            ID2D1Bitmap1* resource);
 
         IFACEMETHOD(get_SizeInPixels)(_Out_ ABI::Windows::Foundation::Size* size) override;
 
@@ -94,5 +96,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ICanvasBitmapInternal
         virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override;
+
     };
+
 }}}}

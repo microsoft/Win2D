@@ -44,6 +44,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
@@ -64,6 +65,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

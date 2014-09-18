@@ -42,9 +42,28 @@ public:
         m_testImageHeightDip = 8.0f;
 
         m_bitmap = Make<MockD2DBitmap>();
+        m_bitmap->MockGetPixelSize =
+            [&](unsigned int* width, unsigned int* height)
+            {
+                *width = m_testImageWidth;
+                *height = m_testImageHeight;
+            };
+
+        m_bitmap->MockGetSize =
+            [&](float* width, float* height)
+            {
+                *width = m_testImageWidthDip;
+                *height = m_testImageHeightDip;
+            };
+
         m_canvasDevice = Make<StubCanvasDevice>();
-        m_canvasDevice->MockCreateBitmap =
+        m_canvasDevice->MockCreateBitmapFromWicResource =
             [&]() -> ComPtr<ID2D1Bitmap1>
+            {
+                return m_bitmap;
+            };
+        m_canvasDevice->MockCreateBitmap =
+            [&](Size size) -> ComPtr<ID2D1Bitmap1>
             {
                 return m_bitmap;
             };
@@ -63,7 +82,7 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImage);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInternal);
-	}
+    }
 
     TEST_METHOD(CanvasBitmap_Closed)
     {
@@ -92,20 +111,6 @@ public:
                 isConverterCreated = true;
             };
 
-        m_bitmap->MockGetPixelSize = 
-            [&](unsigned int* width, unsigned int* height)
-            {
-                *width = m_testImageWidth;
-                *height = m_testImageHeight;
-            };
-
-        m_bitmap->MockGetSize =
-            [&](float* width, float* height)
-            {
-                *width = m_testImageWidthDip;
-                *height = m_testImageHeightDip;
-            };
-
         auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
         Assert::AreEqual(true, isConverterCreated);
 
@@ -130,13 +135,6 @@ public:
             {
                 Assert::AreEqual(isConverterCreated, false);
                 isConverterCreated = true;
-            };
-
-        m_bitmap->MockGetSize =
-            [&](float* width, float* height)
-            {
-                *width = m_testImageWidthDip;
-                *height = m_testImageHeightDip;
             };
 
         auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);

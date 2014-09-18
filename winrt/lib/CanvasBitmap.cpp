@@ -13,6 +13,7 @@
 #include "pch.h"
 #include "CanvasBitmap.h"
 #include "CanvasDevice.h"
+#include "CanvasDrawingSession.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -62,26 +63,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
     CanvasBitmapFactory::CanvasBitmapFactory()
+        : m_adapter(std::make_shared<DefaultBitmapResourceCreationAdapter>())
     {
-        m_adapter = std::make_shared<DefaultBitmapResourceCreationAdapter>();
     }
 
+    //
+    // ICanvasBitmapStatics
+    //
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsync(
         ICanvasResourceCreator* resourceCreator,
-        HSTRING rawFileName,
+        HSTRING fileUri,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(resourceCreator);
-                CheckInPointer(rawFileName);
+                CheckInPointer(fileUri);
                 CheckAndClearOutPointer(canvasBitmap);
 
                 ComPtr<ICanvasDevice> canvasDevice;
-                resourceCreator->get_Device(&canvasDevice);
+                ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                WinString fileName(rawFileName);
+                WinString fileName(fileUri);
 
                 auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>([=]
                 {
@@ -96,12 +100,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     CanvasBitmap::CanvasBitmap(ICanvasDevice* canvasDevice, HSTRING fileName, std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
-        : m_resourceAdapter(adapter)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        m_resource = canvasDeviceInternal->CreateBitmap(adapter->CreateWICFormatConverter(fileName).Get());
+        m_resource = canvasDeviceInternal->CreateBitmapFromWicResource(adapter->CreateWICFormatConverter(fileName).Get());
+    }
+
+    //
+    // This constructor is only used for composition of CanvasRenderTarget. CanvasRenderTarget does not ever use
+    // the WIC resource creation path through ICanvasBitmapResourceCreationAdapter.
+    //
+    CanvasBitmap::CanvasBitmap(
+        ID2D1Bitmap1* resource)
+    {
+        m_resource = resource;
     }
 
     IFACEMETHODIMP CanvasBitmap::get_SizeInPixels(_Out_ ABI::Windows::Foundation::Size* size)
@@ -131,7 +144,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 size->Width = d2dSize.width;
             });
     }
-
+            
     IFACEMETHODIMP CanvasBitmap::get_Bounds(_Out_ ABI::Windows::Foundation::Rect* bounds)
     {
         return ExceptionBoundary(

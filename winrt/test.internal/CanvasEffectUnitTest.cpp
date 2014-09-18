@@ -273,7 +273,7 @@ public:
         //
         
         auto canvasDevice = Make<StubCanvasDevice>();
-            canvasDevice->MockCreateBitmap =
+            canvasDevice->MockCreateBitmapFromWicResource =
                 [&]()
                 {
                     return Make<StubD2DBitmap>();

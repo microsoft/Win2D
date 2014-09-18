@@ -275,7 +275,7 @@ public:
         ComPtr<MockD2DBitmap>  bitmap = Make<MockD2DBitmap>();
 
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
-        canvasDevice->MockCreateBitmap = 
+        canvasDevice->MockCreateBitmapFromWicResource =
             [&]() -> ComPtr<ID2D1Bitmap1>
             {
                 return bitmap;
@@ -338,7 +338,7 @@ public:
 
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
         bool createBitmapCalled = false;
-        canvasDevice->MockCreateBitmap =
+        canvasDevice->MockCreateBitmapFromWicResource =
             [&]() -> ComPtr<ID2D1Bitmap1>
             {
                 Assert::IsFalse(createBitmapCalled);

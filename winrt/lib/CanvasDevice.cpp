@@ -455,12 +455,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return brush;
     }
 
-    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmap(IWICFormatConverter* wicConverter)
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicResource(IWICFormatConverter* wicConverter)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 
         ComPtr<ID2D1Bitmap1> bitmap;
         ThrowIfFailed(deviceContext->CreateBitmapFromWicBitmap(wicConverter, &bitmap));
+
+        return bitmap;
+    }
+
+
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmap(ABI::Windows::Foundation::Size sizeInPixels)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1Bitmap1> bitmap;
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
+        bitmapProperties.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
+        bitmapProperties.dpiX = DEFAULT_DPI;
+        bitmapProperties.dpiY = DEFAULT_DPI;
+        bitmapProperties.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        bitmapProperties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+
+        ThrowIfFailed(deviceContext->CreateBitmap(
+            ToD2DSizeU(sizeInPixels), 
+            nullptr, // data 
+            0,  // data pitch
+            &bitmapProperties, 
+            &bitmap));
 
         return bitmap;
     }

@@ -17,6 +17,10 @@ namespace Microsoft.Graphics.Canvas
     //
     runtimeclass CanvasBitmap;
     runtimeclass CanvasDevice;
+    [version(VERSION), uuid(F2D0EB0E-16F3-4BCF-B1D1-04834AB97DE4), exclusiveto(CanvasBitmap)]
+    interface ICanvasBitmapFactory : IInspectable
+    {
+    }
 
     [version(VERSION), uuid(C57532ED-709E-4AC2-86BE-A1EC3A7FA8FE), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmap : IInspectable
@@ -32,24 +36,61 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Bounds([out, retval] Windows.Foundation.Rect* bounds);
     };
 
-    [version(VERSION), uuid(620DFDBB-9D08-406C-BFE6-D9B81E6DF8E7), exclusiveto(CanvasBitmap)]
-    interface ICanvasBitmapFactory : IInspectable
-    {
-    };
-
     [version(VERSION), uuid(C8948DEA-A41D-4CC2-AF9A-FDDE01B606DC), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmapStatics : IInspectable
     {
+        //
         // TODO #2053: add load from URL functionality
+        //
+        // The resulting bitmap has its format and alpha information
+        // determined from the file decode operation. The bitmap is
+        // usable as a source but not a target.
+        //
         HRESULT LoadAsync(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] HSTRING fileName,
             [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
     };
 
-    [version(VERSION), activatable(ICanvasBitmapFactory, VERSION), static(ICanvasBitmapStatics, VERSION)]
-    runtimeclass CanvasBitmap
+    [version(VERSION), composable(ICanvasBitmapFactory, public, VERSION), threading(both), marshaling_behavior(agile), static(ICanvasBitmapStatics, VERSION)]
+    runtimeclass CanvasBitmap : Windows.UI.Xaml.DependencyObject
     {
         [default] interface ICanvasBitmap;
+    }
+
+    //
+    // ICanvasRenderTarget
+    //
+    runtimeclass CanvasRenderTarget;
+    runtimeclass CanvasDrawingSession;
+    [version(VERSION), uuid(620DFDBB-9D08-406C-BFE6-D9B81E6DF8E7), exclusiveto(CanvasRenderTarget)]
+    interface ICanvasRenderTargetFactory : IInspectable
+    {
+        //
+        // Creates a renderable bitmap with some defaults- a format of B8G8R8A8
+        // UNORM, premultiplied alpha, 96x96 DPI, and the render target view 
+        // bind flag as well as shader resource view. The D2D resource is
+        // flagged as TARGET, meaning this bitmap can be used both as a source
+        // and as a target.
+        //
+        // TODO #2448: Consider adding overload to take separate float
+        // width+height sizes.
+        //
+        HRESULT Create(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Size size,
+            [out, retval] CanvasRenderTarget** renderTarget);
+    };
+
+    [version(VERSION), uuid(2D4C7349-9A32-41B9-B3CC-CAF1B7E1099B), exclusiveto(CanvasRenderTarget)]
+    interface ICanvasRenderTarget : IInspectable
+    {
+        HRESULT CreateDrawingSession([out, retval] CanvasDrawingSession** drawingSession);
+    };
+
+    [version(VERSION), threading(both), marshaling_behavior(agile), activatable(ICanvasRenderTargetFactory, VERSION)]
+    runtimeclass CanvasRenderTarget : CanvasBitmap
+    {
+        [default] interface ICanvasRenderTarget;
     }
 }

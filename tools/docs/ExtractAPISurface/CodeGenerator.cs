@@ -147,15 +147,27 @@ namespace ExtractAPISurface
 
         void WriteClass(TypeInfo type)
         {
-            if (!type.IsSealed)
+            // .NET lacks a dedicated flag for static classes, so it represents them by combining IsSealed and IsAbstract.
+            bool isStatic = type.IsAbstract && type.IsSealed;
+
+            string modifier = "";
+            if (isStatic)
             {
-                throw new NotImplementedException("Huh, shouldn't all WinRT runtime classes be sealed?");
+                modifier = "static";
+            }
+            else if (type.IsSealed)
+            {
+                modifier = "sealed";
+            }
+            else if (type.IsAbstract)
+            {
+                throw new NotImplementedException("Abstract, unsealed classes are not supported.");
             }
 
-            // .NET lacks a dedicated flag for static classes, so it represents them by combining IsSealed and IsAbstract.
-            bool isStatic = type.IsAbstract;
-
-            string modifier = isStatic ? "static" : "sealed";
+            //
+            // A type which is abstract and not sealed, can happen when 
+            // runtimeclasses use inheritence through extending DependencyObject.
+            //
 
             output.WriteLine("public {0} class {1}{2}", modifier, type.Name, FormatBaseTypes(type));
 

@@ -153,6 +153,7 @@ namespace Microsoft
             TO_STRING(IInspectable);
             TO_STRING(IUnknown);
             TO_STRING(ID2D1StrokeStyle1);
+            TO_STRING(ID2D1Bitmap1);
 
 #undef TO_STRING
 

@@ -121,7 +121,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) = 0;
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* wicConverter) = 0;
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(IWICFormatConverter* wicConverter) = 0;
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(ABI::Windows::Foundation::Size sizeInPixels) = 0;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) = 0;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) = 0;
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) = 0;
@@ -189,7 +190,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override;
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(IWICFormatConverter* wicConverter) override;
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(IWICFormatConverter* wicConverter) override;
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(ABI::Windows::Foundation::Size size) override;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) override;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) override;
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) override;
