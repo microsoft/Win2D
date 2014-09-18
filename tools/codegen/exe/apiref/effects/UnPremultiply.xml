@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name="DisplayName" type="string" value="UnPremultiply" />
+    <Property name="Author" type="string" value="Microsoft Corporation" />
+    <Property name="Category" type="string" value="Color" />
+    <Property name="Description" type="string" value="Divides each RGB color channel by the alpha value." />
+    <Inputs>
+        <Input name='Source'/>
+    </Inputs>
+</Effect>

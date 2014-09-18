@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name="DisplayName" type="string" value="Blend" />
+    <Property name="Author" type="string" value="Microsoft Corporation" />
+    <Property name="Category" type="string" value="Composite" />
+    <Property name="Description" type="string" value="Blends a foreground and background using a pre-defined blend mode." />
+    <Inputs>
+        <Input name="Background" />
+        <Input name="Foreground" />
+    </Inputs>
+    <!-- Custom Properties -->
+    <Property name="Mode" type="enum">
+        <Property name="DisplayName" type="string" value="Mode" />
+        <Property name="Default" type="enum" value="0" />
+        <Fields>
+            <Field name='Multiply' displayname='Multiply' index="0" />
+            <Field name='Screen' displayname='Screen' index="1" />
+            <Field name='Darken' displayname='Darken' index="2" />
+            <Field name='Lighten' displayname='Lighten' index="3" />
+            <Field name='Dissolve' displayname='Dissolve' index="4" />
+            <Field name='ColorBurn' displayname='Color Burn' index="5" />
+            <Field name='LinearBurn' displayname='Linear Burn' index="6" />
+            <Field name='DarkerColor' displayname='Darker Color' index="7" />
+            <Field name='LighterColor' displayname='Lighter Color' index="8" />
+            <Field name='ColorDodge' displayname='Color Dodge' index="9" />
+            <Field name='LinearDodge' displayname='Linear Dodge' index="10" />
+            <Field name='Overlay' displayname='Overlay' index="11" />
+            <Field name='SoftLight' displayname='Soft Light' index="12" />
+            <Field name='HardLight' displayname='Hard Light' index="13" />
+            <Field name='VividLight' displayname='Vivid Light' index="14" />
+            <Field name='LinearLight' displayname='Linear Light' index="15" />
+            <Field name='PinLight' displayname='Pin Light' index="16" />
+            <Field name='HardMix' displayname='Hard Mix' index="17" />
+            <Field name='Difference' displayname='Difference' index="18" />
+            <Field name='Exclusion' displayname='Exclusion' index="19" />
+            <Field name='Hue' displayname='Hue' index="20" />
+            <Field name='Saturation' displayname='Saturation' index="21" />
+            <Field name='Color' displayname='Color' index="22" />
+            <Field name='Luminosity' displayname='Luminosity' index="23" />
+            <Field name='Subtract' displayname='Subtract' index="24" />
+            <Field name='Division' displayname='Division' index="25" />
+        </Fields>
+    </Property>
+</Effect>

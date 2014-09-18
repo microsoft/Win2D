@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<Effect>
+  <!-- Localization -->
+  <_locDefinition>
+    <_locDefault _loc="locNone" />
+    <_locTag _locAttrData="displayname">Field</_locTag>
+    <_locTag _locAttrData="name">Input</_locTag>
+    <_locTag _locAttrData="value">Property</_locTag>
+  </_locDefinition>
+  <!-- System Properties -->
+  <Property name="DisplayName" type="string" value="Directional Blur" />
+  <Property name="Author" type="string" value="Microsoft Corporation" />
+  <Property name="Category" type="string" value="Filter" />
+  <Property name="Description" type="string" value="Applies a directional blur to a bitmap with the specified blur radius and angle." />
+  <Inputs>
+    <Input name="Source" />
+  </Inputs>
+  <!-- Custom Properties -->
+  <Property name="StandardDeviation" type="float">
+    <Property name="DisplayName" type="string" value="Standard Deviation" />
+    <Property name="Min" type="float" value="0.0" />
+    <Property name="Max" type="float" value="250.0" />
+    <Property name="Default" type="float" value="3.0" />
+  </Property>
+  <Property name="Angle" type="float">
+    <Property name="DisplayName" type="string" value="Angle" />
+    <Property name="Min" type="float" value="0.0" />
+    <Property name="Max" type="float" value="360.0" />
+    <Property name="Default" type="float" value="0.0" />
+  </Property>
+  <Property name="Optimization" type="enum">
+    <Property name="DisplayName" type="string" value="Optimization" />
+    <Property name="Default" type="enum" value="1" />
+    <Fields>
+      <Field name='Speed' displayname='Speed' index="0" />
+      <Field name='Balanced' displayname='Balanced' index="1" />
+      <Field name='Quality' displayname='Quality' index="2" />
+    </Fields>
+  </Property>
+  <Property name="BorderMode" type="enum">
+      <Property name="DisplayName" type="string" value="Border Mode" />
+      <Property name="Default" type="enum" value="0" />
+      <Fields>
+          <Field name='Soft' displayname='Soft' index="0" />
+          <Field name='Hard' displayname='Hard' index="1" />
+      </Fields>
+  </Property>
+</Effect>

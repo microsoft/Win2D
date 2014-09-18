@@ -18,6 +18,8 @@ using System.Globalization;
 
 namespace CodeGen
 {
+    // Please create Formatter object within using scope
+    // Example: using (Formatter someFormatter = new Formatter("FilePath")){...}
     public class Formatter : System.IDisposable
     {
         // Provides indenting, where one indent equals four spaces.

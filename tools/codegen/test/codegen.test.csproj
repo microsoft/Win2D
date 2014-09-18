@@ -62,19 +62,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\Settings.xml</Link>
     </None>
-    <None Include="..\exe\D2DTypes3.xml">
+    <None Include="..\exe\apiref\D2DTypes3.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes3.xml</Link>
     </None>
-    <None Include="..\exe\D2DTypes2.xml">
+    <None Include="..\exe\apiref\D2DTypes2.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes2.xml</Link>
     </None>
-    <None Include="..\exe\D2DTypes.xml">
+    <None Include="..\exe\apiref\D2DTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes.xml</Link>
     </None>
-    <None Include="..\exe\D2DEffectAuthor.xml">
+    <None Include="..\exe\apiref\D2DEffectAuthor.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DEffectAuthor.xml</Link>
     </None>

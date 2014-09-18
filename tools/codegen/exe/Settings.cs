@@ -57,6 +57,9 @@ namespace CodeGen
                 public string Name;
 
                 [XmlAttributeAttribute]
+                public string Index;
+
+                [XmlAttributeAttribute]
                 public bool ShouldProject;
 
                 [XmlAttributeAttribute]
@@ -79,6 +82,9 @@ namespace CodeGen
                 [XmlAttributeAttribute]
                 public string ProjectedNameOverride;
 
+                [XmlAttributeAttribute]
+                public string Namespace;
+                
                 [XmlElement("Field")]
                 public List<EnumValue> Values { get; set; }
             }

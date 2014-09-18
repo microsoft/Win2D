@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name="DisplayName" type="string" value="Spot-Diffuse" />
+    <Property name="Author" type="string" value="Microsoft Corporation" />
+    <Property name="Category" type="string" value="Stylize" />
+    <Property name="Description" type="string" value="Creates a diffuse lighting effect with a spot light source." />
+    <Inputs>
+        <Input name="Source" />
+    </Inputs>
+    <!-- Custom Properties -->
+    <Property name="LightPosition" type="vector3">
+        <Property name="DisplayName" type="string" value="Light Position" />
+        <Property name="Default" type="vector3" value="(0.0, 0.0, 0.0)" />
+    </Property>
+    <Property name="PointsAt" type="vector3">
+        <Property name="DisplayName" type="string" value="Points At" />
+        <Property name="Default" type="vector3" value="(0.0, 0.0, 0.0)" />
+    </Property>
+    <Property name="Focus" type="float">
+        <Property name="DisplayName" type="string" value="Focus" />
+        <Property name="Min" type="float" value="-10000.0" />
+        <Property name="Max" type="float" value="10000.0" />
+        <Property name="Default" type="float" value="1.0" />
+    </Property>
+    <Property name="LimitingConeAngle" type="float">
+        <Property name="DisplayName" type="string" value="Limiting Cone Angle" />
+        <Property name="Min" type="float" value="-90.0" />
+        <Property name="Max" type="float" value="90.0" />
+        <Property name="Default" type="float" value="90.0" />
+    </Property>
+    <Property name="DiffuseConstant" type="float">
+        <Property name="DisplayName" type="string" value="Diffuse Constant" />
+        <Property name="Min" type="float" value="0.0" />
+        <Property name="Max" type="float" value="10000.0" />
+        <Property name="Default" type="float" value="1.0" />
+    </Property>
+    <Property name="SurfaceScale" type="float">
+        <Property name="DisplayName" type="string" value="Surface Scale" />
+        <Property name="Min" type="float" value="-10000.0" />
+        <Property name="Max" type="float" value="10000.0" />
+        <Property name="Default" type="float" value="1.0" />
+    </Property>
+    <Property name="Color" type="vector3">
+        <Property name="DisplayName" type="string" value="Color" />
+        <Property name="Default" type="vector3" value="(1.0, 1.0, 1.0)" />
+    </Property>
+    <Property name="KernelUnitLength" type="vector2">
+        <Property name="DisplayName" type="string" value="Kernel Unit Length" />
+        <Property name="Min" type="vector2" value="(0.01, 0.01)" />
+        <Property name="Max" type="vector2" value="(100.0, 100.0)" />
+        <Property name="Default" type="vector2" value="(1.0, 1.0)" />
+    </Property>
+    <Property name="ScaleMode" type="enum">
+        <Property name="DisplayName" type="string" value="Scale Mode" />
+        <Property name="Default" type="enum" value="1" />
+        <Fields>
+            <Field name='NearestNeighbor' displayname='Nearest Neighbor' index="0" />
+            <Field name='Linear' displayname='Linear' index="1" />
+            <Field name='Cubic' displayname='Cubic' index="2" />
+            <Field name='MultiSampleLinear' displayname='Multi-Sample Linear' index="3" />
+            <Field name='Anisotropic' displayname='Anisotropic' index="4" />
+            <Field name='HighQualityCubic' displayname='High Quality Cubic' index="5" />
+        </Fields>
+    </Property>
+</Effect>

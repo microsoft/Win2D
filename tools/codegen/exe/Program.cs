@@ -48,7 +48,7 @@ namespace CodeGen
 
         public void OutputCode(Dictionary<string, QualifiableType> typeDictionary, OutputFiles outputFiles)
         {
-            OutputLeadingCode(outputFiles);
+            OutputLeadingCppCode(outputFiles);
 
             foreach(Enum e in m_enums)
             {
@@ -60,10 +60,10 @@ namespace CodeGen
                 s.OutputCode(typeDictionary, outputFiles);
             }
 
-            OutputEndingCode(outputFiles);
+            OutputEndingCppCode(outputFiles);
         }
 
-        private void OutputLeadingCode(OutputFiles outputFiles)
+        public static void OutputLeadingCppCode(OutputFiles outputFiles)
         {
             OutputLeadingComment(outputFiles.CppFile);
 
@@ -85,7 +85,7 @@ namespace CodeGen
             outputFiles.IdlFile.Indent();
         }
 
-        private void OutputLeadingComment(Formatter output)
+        public static void OutputLeadingComment(Formatter output)
         {
             output.WriteLine("// Copyright (c) Microsoft Corporation. All rights reserved.");
             output.WriteLine("//");
@@ -104,7 +104,7 @@ namespace CodeGen
             output.WriteLine();
         }
 
-        private void OutputEndingCode(OutputFiles outputFiles)
+        public static void OutputEndingCppCode(OutputFiles outputFiles)
         {
             outputFiles.CppFile.Unindent();
             outputFiles.CppFile.WriteLine("}}}}");
@@ -124,20 +124,35 @@ namespace CodeGen
             var inputDir = FindInputDirectory();
 
             GenerateCode(inputDir, GetDefaultOutputLocation(inputDir));
+            GenerateEffectsCode(inputDir, GetDefaultEffectsOutputLocation(inputDir));
         }
         
         public static string GetDefaultOutputLocation(string inputDir)
         {
             return Path.GetFullPath(Path.Combine(inputDir, "..", "..", "..", "winrt", "lib"));
         }
+
+        public static string GetDefaultEffectsOutputLocation(string inputDir)
+        {
+            return Path.GetFullPath(Path.Combine(inputDir, "..", "..", "..", "winrt", "lib", "effects", "generated"));
+        }
+
         public static List<string> GetInputFileList()
         {
             List<string> files = new List<string>();
-            files.Add("D2DTypes.xml");
-            files.Add("D2DTypes2.xml");
-            files.Add("D2DEffectAuthor.xml");
-            files.Add("D2DTypes3.xml");
+            files.Add("apiref/D2DTypes.xml");
+            files.Add("apiref/D2DTypes2.xml");
+            files.Add("apiref/D2DEffectAuthor.xml");
+            files.Add("apiref/D2DTypes3.xml");
             return files;
+        }
+
+        public static void GenerateEffectsCode(string inputDir, string outputDir)
+        {
+            EffectGenerator effectGen = new EffectGenerator();
+
+            String inputEffectsDir = Path.Combine(inputDir, "apiref/effects");
+            effectGen.OuptutEffects(inputEffectsDir, outputDir);
         }
 
         public static void GenerateCode(string inputDir, string outputDir)
@@ -174,7 +189,7 @@ namespace CodeGen
         //
         // The input directory, which contains the various XML spec files, can be found by checking some known locations.
         //
-        static string FindInputDirectory()
+        public static string FindInputDirectory()
         {
             string[] candidates = new string[] {
                 ".",

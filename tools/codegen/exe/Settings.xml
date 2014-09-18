@@ -52,4 +52,15 @@ under the License.
     <Enum Name="EXTEND_MODE" ShouldProject="true" ProjectedNameOverride="EdgeBehavior"/>
     <Enum Name="INTERPOLATION_MODE" ShouldProject="true" ProjectedNameOverride="ImageInterpolation"/>
   </Namespace>
+  
+  <Namespace Name="Effects">
+    <Enum Name="EffectInterpolationMode3D" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas">
+        <Field Name="HighQualityCubic" Index="5" ShouldProject="false"/>
+    </Enum>
+    <Enum Name="EffectInterpolationMode2D" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
+    <Enum Name="CompositeEffectMode" ShouldProject="true">
+        <Field Name="Plus" ShouldProject="true" ProjectedNameOverride="Add"/>
+    </Enum>
+  </Namespace>
+  
 </Settings>
