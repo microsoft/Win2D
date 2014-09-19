@@ -60,7 +60,8 @@ under the License.
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Flat">
-      <summary>A cap that does not extend past the last point of the line.</summary>
+      <summary>A cap that does not extend past the last point of the line.
+               If CanvasStrokeStyle.DashCap is set to Flat, dots will have zero size so only dashes are visible.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Square">
       <summary>Half of a square that has a length equal to the line thickness.</summary>

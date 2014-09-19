@@ -64,7 +64,7 @@ public:
         Assert::AreEqual(CanvasCapStyle::Flat, capStyle);
 
         canvasStrokeStyle->get_DashCap(&capStyle);
-        Assert::AreEqual(CanvasCapStyle::Flat, capStyle);
+        Assert::AreEqual(CanvasCapStyle::Square, capStyle);
 
         CanvasLineJoin lineJoin;
         canvasStrokeStyle->get_LineJoin(&lineJoin);
@@ -328,7 +328,7 @@ public:
             [&]{ canvasStrokeStyle->put_EndCap(CanvasCapStyle::Flat); });
 
         verifier.VerifyRedundantSetter(
-            [&]{ canvasStrokeStyle->put_DashCap(CanvasCapStyle::Flat); });
+            [&]{ canvasStrokeStyle->put_DashCap(CanvasCapStyle::Square); });
 
         verifier.VerifyRedundantSetter(
             [&]{ canvasStrokeStyle->put_LineJoin(CanvasLineJoin::Miter); });

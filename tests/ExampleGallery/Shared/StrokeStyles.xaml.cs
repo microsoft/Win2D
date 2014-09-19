@@ -26,6 +26,12 @@ namespace ExampleGallery
         public StrokeStyles()
         {
             this.InitializeComponent();
+
+            StartCap = strokeStyle.StartCap;
+            EndCap = strokeStyle.EndCap;
+            DashStyle = strokeStyle.DashStyle;
+            DashCap = strokeStyle.DashCap;
+            LineJoin = strokeStyle.LineJoin;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -143,6 +149,18 @@ namespace ExampleGallery
                 this.brush,
                 strokeWidth,
                 this.strokeStyle);
+
+            //
+            // Explain what is going on if this combination of properties leaves dots invisible
+            //
+            bool hasDots = DashStyle == CanvasDashStyle.Dot ||
+                           DashStyle == CanvasDashStyle.DashDot ||
+                           DashStyle == CanvasDashStyle.DashDotDot;
+
+            if (hasDots && DashCap == CanvasCapStyle.Flat)
+            {
+                ds.DrawText("Dots have zero size when DashCap = CanvasCapStyle.Flat", col1Left, 0, Colors.White);
+            }
         }
 
         private void Canvas_CreateResources(CanvasControl sender, object args)

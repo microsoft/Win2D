@@ -32,7 +32,7 @@ under the License.
       <summary>Gets or sets how the world transform, dots per inch (DPI), and stroke width affect the shape of the pen.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.StartCap">
-      <summary>Gets or sets the type of shape used at the beginning of a stroke.</summary>
+      <summary>Gets or sets the type of shape used at the beginning of a stroke. Defaults to Flat.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.MiterLimit">
       <summary>Gets or sets the limit on the ratio of the miter length to half the stroke's thickness.</summary>
@@ -41,7 +41,7 @@ under the License.
       <summary>Gets or sets the type of joint used at the vertices of a shape's outline.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.EndCap">
-      <summary>Gets or sets the type of shape used at the end of a stroke.</summary>
+      <summary>Gets or sets the type of shape used at the end of a stroke. Defaults to Flat.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashStyle">
       <summary>Gets or sets the stroke's dash pattern.
@@ -51,7 +51,8 @@ under the License.
       <summary>Gets or sets how far into the dash sequence the stroke will start.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashCap">
-      <summary>Gets or sets how the ends of each dash are drawn.</summary>
+      <summary>Gets or sets how the ends of each dash are drawn. Defaults to Square.
+               If this is set to Flat, dots will have zero size so only dashes are visible.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.CustomDashStyle">
       <summary>Gets or sets an array describing a custom dash pattern.

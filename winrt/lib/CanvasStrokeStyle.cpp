@@ -19,7 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasStrokeStyle::CanvasStrokeStyle()
         : m_startCap(CanvasCapStyle::Flat)
         , m_endCap(CanvasCapStyle::Flat)
-        , m_dashCap(CanvasCapStyle::Flat)
+        , m_dashCap(CanvasCapStyle::Square)
         , m_lineJoin(CanvasLineJoin::Miter)
         , m_miterLimit(10.0f)
         , m_dashStyle(CanvasDashStyle::Solid)

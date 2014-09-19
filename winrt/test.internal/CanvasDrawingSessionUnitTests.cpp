@@ -1848,7 +1848,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
             CanvasWordWrapping expectedWordWrapping = hasTextFormat ? CanvasWordWrapping::WholeWord : CanvasWordWrapping::Wrap;
             auto expectedFontFamilyName = hasTextFormat ? L"Ariel" : L"Segoe UI";
-            float expectedFontSize = hasTextFormat ? 123.0f : 32.0f;
+            float expectedFontSize = hasTextFormat ? 123.0f : 20.0f;
 
             if (hasTextFormat)
             {
