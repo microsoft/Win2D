@@ -57,7 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap) override;
     };
 
-    class CanvasBitmap : public RuntimeClass<
+    class CanvasBitmapImpl : public Implements<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasBitmap,
         ICanvasImage,
@@ -66,22 +66,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CloakedIid<ICanvasImageInternal>,
         CloakedIid<ICanvasBitmapInternal>>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
-
         ClosablePtr<ID2D1Bitmap1> m_resource;
 
-        ComPtr<IWICBitmap> m_wicBitmap;
-
-    public:
-
-        CanvasBitmap(
+    protected:
+        CanvasBitmapImpl(
             ICanvasDevice* canvasDevice, 
             HSTRING fileName, 
             std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
 
-        CanvasBitmap(
+        CanvasBitmapImpl(
             ID2D1Bitmap1* resource);
 
+    public:
         IFACEMETHOD(get_SizeInPixels)(_Out_ ABI::Windows::Foundation::Size* size) override;
 
         IFACEMETHOD(get_Size)(_Out_ ABI::Windows::Foundation::Size* size) override;
@@ -96,7 +92,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ICanvasBitmapInternal
         virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override;
+    };
 
+    class CanvasBitmap 
+        : public RuntimeClass<
+            RuntimeClassFlags<WinRtClassicComMix>,
+            MixIn<CanvasBitmap, CanvasBitmapImpl>>
+        , public CanvasBitmapImpl
+    {
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
+
+    public:
+        CanvasBitmap(
+            ICanvasDevice* canvasDevice, 
+            HSTRING fileName, 
+            std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
+            : CanvasBitmapImpl(canvasDevice, fileName, adapter)
+        {}
+
+        CanvasBitmap(
+            ID2D1Bitmap1* resource)
+            : CanvasBitmapImpl(resource)
+        {}
     };
 
 }}}}

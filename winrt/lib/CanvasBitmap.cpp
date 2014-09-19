@@ -99,7 +99,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    CanvasBitmap::CanvasBitmap(ICanvasDevice* canvasDevice, HSTRING fileName, std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
+    CanvasBitmapImpl::CanvasBitmapImpl(ICanvasDevice* canvasDevice, HSTRING fileName, std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
@@ -111,13 +111,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // This constructor is only used for composition of CanvasRenderTarget. CanvasRenderTarget does not ever use
     // the WIC resource creation path through ICanvasBitmapResourceCreationAdapter.
     //
-    CanvasBitmap::CanvasBitmap(
+    CanvasBitmapImpl::CanvasBitmapImpl(
         ID2D1Bitmap1* resource)
     {
         m_resource = resource;
     }
 
-    IFACEMETHODIMP CanvasBitmap::get_SizeInPixels(_Out_ ABI::Windows::Foundation::Size* size)
+    IFACEMETHODIMP CanvasBitmapImpl::get_SizeInPixels(_Out_ ABI::Windows::Foundation::Size* size)
     {
         return ExceptionBoundary(
             [&]
@@ -131,7 +131,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasBitmap::get_Size(_Out_ ABI::Windows::Foundation::Size* size)
+    IFACEMETHODIMP CanvasBitmapImpl::get_Size(_Out_ ABI::Windows::Foundation::Size* size)
     {
         return ExceptionBoundary(
             [&]
@@ -145,7 +145,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
             
-    IFACEMETHODIMP CanvasBitmap::get_Bounds(_Out_ ABI::Windows::Foundation::Rect* bounds)
+    IFACEMETHODIMP CanvasBitmapImpl::get_Bounds(_Out_ ABI::Windows::Foundation::Rect* bounds)
     {
         return ExceptionBoundary(
             [&]
@@ -161,7 +161,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasBitmap::Close()
+    IFACEMETHODIMP CanvasBitmapImpl::Close()
     {
         return ExceptionBoundary(
             [&]
@@ -172,7 +172,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     // ICanvasImageInternal
 
-    ComPtr<ID2D1Image> CanvasBitmap::GetD2DImage(ID2D1DeviceContext* deviceContext)
+    ComPtr<ID2D1Image> CanvasBitmapImpl::GetD2DImage(ID2D1DeviceContext* deviceContext)
     {
         CheckInPointer(deviceContext);
 
@@ -182,7 +182,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     // ICanvasBitmapInternal
-    ComPtr<ID2D1Bitmap1> CanvasBitmap::GetD2DBitmap()
+    ComPtr<ID2D1Bitmap1> CanvasBitmapImpl::GetD2DBitmap()
     {
         auto& resource = m_resource.EnsureNotClosed();
 

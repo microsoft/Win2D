@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "CanvasBitmap.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
@@ -39,9 +41,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasRenderTarget** renderTarget);
     };
 
-    class CanvasRenderTarget : public RuntimeClass<
-        ICanvasRenderTarget,
-        ComposableBase<ICanvasBitmapFactory>>
+    class CanvasRenderTarget 
+        : public RuntimeClass<
+            MixIn<CanvasRenderTarget, CanvasBitmapImpl>,
+            ICanvasRenderTarget>
+        , public CanvasBitmapImpl
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget, BaseTrust);
 
@@ -50,7 +54,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<ICanvasRenderTargetDrawingSessionFactory> m_drawingSessionFactory;
 
     public:
-        
         CanvasRenderTarget(
             ICanvasDevice* canvasDevice,
             ABI::Windows::Foundation::Size size,

@@ -92,25 +92,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_drawingSessionManager->Create(deviceContext.Get(), adapter);
     }
 
-    CanvasRenderTarget::CanvasRenderTarget(
-        ICanvasDevice* canvasDevice,
-        Size size,
-        std::shared_ptr<ICanvasRenderTargetDrawingSessionFactory> drawingSessionFactory)
-        : m_drawingSessionFactory(drawingSessionFactory)
-        , m_device(canvasDevice)
+    //
+    // TODO #2449 - the CanvasRenderTarget constructor will get tidied up when
+    // we move to the resource wrapper pattern
+    //
+    ComPtr<ID2D1Bitmap1> CreateBitmap(ICanvasDevice* canvasDevice, Size size)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        ComPtr<ID2D1Bitmap1> resource = canvasDeviceInternal->CreateBitmap(size);
+        return canvasDeviceInternal->CreateBitmap(size);
+    }
 
-        auto base = Make<CanvasBitmap>(resource.Get());
-        CheckMakeResult(base);
-        ComPtr<IInspectable> baseInspectable;
-        ThrowIfFailed(base.As(&baseInspectable));
-
-        ThrowIfFailed(SetComposableBasePointers(baseInspectable.Get(), nullptr));
-
+    CanvasRenderTarget::CanvasRenderTarget(
+        ICanvasDevice* canvasDevice,
+        Size size,
+        std::shared_ptr<ICanvasRenderTargetDrawingSessionFactory> drawingSessionFactory)
+        : CanvasBitmapImpl(CreateBitmap(canvasDevice, size).Get())
+        , m_drawingSessionFactory(drawingSessionFactory)
+        , m_device(canvasDevice)
+    {
     }
 
     IFACEMETHODIMP CanvasRenderTarget::CreateDrawingSession(
@@ -121,10 +122,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(drawingSession);
                 
-                ComPtr<ICanvasBitmapInternal> thisAsBitmapInternal;
-                ThrowIfFailed(GetComposableBase().As(&thisAsBitmapInternal));
-                
-                auto resource = thisAsBitmapInternal->GetD2DBitmap();
+                auto resource = GetD2DBitmap();
 
                 auto newDrawingSession = m_drawingSessionFactory->Create(
                     m_device.Get(),
