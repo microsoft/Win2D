@@ -20,7 +20,7 @@ under the License.
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasRenderTarget">
-      <summary></summary>
+      <summary>A rendertarget is a bitmap that can be drawn onto.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Size)">
       <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>

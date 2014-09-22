@@ -58,7 +58,7 @@ namespace DocDiff
 
             // Diff them.
             var docsWithSummaries = from doc in docSrc
-                                    where doc.MemberElement.Element("summary") != null
+                                    where !string.IsNullOrEmpty((string)doc.MemberElement.Element("summary"))
                                     select doc;
 
             var docsThatArentNamespaces = from doc in docSrc
