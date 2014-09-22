@@ -12,36 +12,41 @@
 
 #pragma once
 
-#include "StubD2DResources.h"
-
 namespace canvas
 {
-    //
-    // The stub CanvasDevice provides basic functionality to allow it to be used
-    // in tests that don't care about interactions with CanvasDevice.
-    //
-    class StubCanvasDevice : public MockCanvasDevice
+    class StubD2DDeviceContext : public MockD2DDeviceContext
     {
-        ComPtr<ID2D1Device1> m_d2DDevice;
+        ComPtr<ID2D1Device> m_owner;
+        ComPtr<ID2D1Image> m_target;
 
     public:
-        StubCanvasDevice(ComPtr<ID2D1Device1> device = Make<StubD2DDevice>())
-            : m_d2DDevice(device)
+        StubD2DDeviceContext(ID2D1Device* owner)
+            : m_owner(owner)
         {
         }
 
-        virtual ComPtr<ID2D1Device1> GetD2DDevice() override
+        IFACEMETHODIMP_(void) GetDevice(ID2D1Device** device) const override
         {
-            return m_d2DDevice;
+            m_owner.CopyTo(device);
         }
 
-        IFACEMETHODIMP get_Device(ICanvasDevice** value) override
+        IFACEMETHODIMP_(void) BeginDraw() override
         {
-            ComPtr<ICanvasDevice> device(this);
+        }
 
-            *value = device.Detach();
-
+        IFACEMETHODIMP EndDraw(D2D1_TAG *,D2D1_TAG *) override
+        {
             return S_OK;
+        }
+
+        IFACEMETHODIMP_(void) SetTarget(ID2D1Image* value) override
+        {
+            m_target = value;
+        }
+
+        IFACEMETHODIMP_(void) GetTarget(ID2D1Image** value) const override
+        {
+            m_target.CopyTo(value);
         }
     };
 }

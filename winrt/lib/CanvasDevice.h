@@ -156,7 +156,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasDebugLevel m_debugLevel;
         
         ClosablePtr<IDXGIDevice3> m_dxgiDevice;
-        ClosablePtr<ID2D1DeviceContext> m_d2dResourceCreationDeviceContext;
+        ClosablePtr<ID2D1DeviceContext1> m_d2dResourceCreationDeviceContext;
 
     public:
         CanvasDevice(

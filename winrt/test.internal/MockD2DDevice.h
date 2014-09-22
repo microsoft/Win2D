@@ -33,6 +33,8 @@ namespace canvas
         ComPtr<IDXGIDevice3> m_dxgiDevice;
 
     public:
+        std::function<void(D2D1_DEVICE_CONTEXT_OPTIONS,ID2D1DeviceContext1**)> MockCreateDeviceContext;
+
         MockD2DDevice(ID2D1Factory2* parentD2DFactory = nullptr)
             : m_parentD2DFactory(parentD2DFactory)
             , m_dxgiDevice(Make<MockDxgiDevice>())
@@ -56,8 +58,8 @@ namespace canvas
 
         IFACEMETHODIMP CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS deviceContextOptions, ID2D1DeviceContext** deviceContext) override
         {
-            auto mockDeviceContext = Make<MockD2DDeviceContext>();
-            return mockDeviceContext.CopyTo(deviceContext);
+            Assert::Fail(L"Unexpected call to CreateDeviceContext");
+            return E_NOTIMPL;
         }
 
         IFACEMETHODIMP CreatePrintControl(IWICImagingFactory *,IPrintDocumentPackageTarget *,const D2D1_PRINT_CONTROL_PROPERTIES *,ID2D1PrintControl **) override
@@ -97,10 +99,16 @@ namespace canvas
             Assert::Fail(L"Unexpected call to SetRenderingPriority");
         }
 
-        IFACEMETHODIMP CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS,ID2D1DeviceContext1 **) override
+        IFACEMETHODIMP CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS options, ID2D1DeviceContext1** deviceContext) override
         {
-            Assert::Fail(L"Unexpected call to D2D1DeviceContext1");
-            return E_NOTIMPL;
+            if (MockCreateDeviceContext)
+            {
+                return ExceptionBoundary(
+                    [&] { MockCreateDeviceContext(options, deviceContext); });
+            }
+
+            auto mockDeviceContext = Make<MockD2DDeviceContext>();
+            return mockDeviceContext.CopyTo(deviceContext);
         }
 
         //

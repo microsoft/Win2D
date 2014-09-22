@@ -21,7 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Effects;
-    using namespace ABI::Windows::Foundation;
+
+    class CanvasBitmapManager;
 
     class ICanvasBitmapResourceCreationAdapter
     {
@@ -38,12 +39,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasBitmapFactory :
         public ActivationFactory<
-        ICanvasBitmapFactory, 
-        ICanvasBitmapStatics>
+            ICanvasBitmapFactory, 
+            ICanvasBitmapStatics,
+            CloakedIid<ICanvasFactoryNative>>,
+        public FactoryWithResourceManager<CanvasBitmapFactory, CanvasBitmapManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
-
-        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> m_adapter;
 
     public:
         CanvasBitmapFactory();
@@ -51,69 +52,146 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         // ICanvasBitmapStatics
         //
+
         IFACEMETHOD(LoadAsync)(
             ICanvasResourceCreator* resourceCreator,
             HSTRING fileName,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap) override;
+
+        //
+        // ICanvasFactoryNative
+        //
+        
+        IFACEMETHOD(GetOrCreate)(
+            IUnknown* resource,
+            IInspectable** wrapper) override;
+
+        //
+        // Used by FactoryWithResourceManager
+        //
+
+        static std::shared_ptr<CanvasBitmapManager> CreateManager();
     };
 
-    class CanvasBitmapImpl : public Implements<
+
+    struct CanvasBitmapTraits
+    {
+        typedef ID2D1Bitmap1 resource_t;
+        typedef CanvasBitmap wrapper_t;
+        typedef ICanvasBitmap wrapper_interface_t;
+        typedef CanvasBitmapManager manager_t;
+    };
+
+
+    template<typename TRAITS>
+    class CanvasBitmapImpl 
+        : public Implements<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasBitmap,
         ICanvasImage,
         IEffectInput,
-        ABI::Windows::Foundation::IClosable,
         CloakedIid<ICanvasImageInternal>,
-        CloakedIid<ICanvasBitmapInternal>>
+        CloakedIid<ICanvasBitmapInternal>,
+        ChainInterfaces<MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>>
+        , public ResourceWrapper<TRAITS>
     {
-        ClosablePtr<ID2D1Bitmap1> m_resource;
-
     protected:
-        CanvasBitmapImpl(
-            ICanvasDevice* canvasDevice, 
-            HSTRING fileName, 
-            std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
-
-        CanvasBitmapImpl(
-            ID2D1Bitmap1* resource);
+        CanvasBitmapImpl(std::shared_ptr<typename TRAITS::manager_t> manager, ID2D1Bitmap1* resource)
+            : ResourceWrapper(manager, resource)
+        {}
 
     public:
-        IFACEMETHOD(get_SizeInPixels)(_Out_ ABI::Windows::Foundation::Size* size) override;
+        IFACEMETHODIMP get_SizeInPixels(_Out_ ABI::Windows::Foundation::Size* size) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(size);
+                    
+                    auto& resource = GetResource();
+                    D2D1_SIZE_U d2dSize = resource->GetPixelSize();
+                    size->Height = static_cast<float>(d2dSize.height);
+                    size->Width = static_cast<float>(d2dSize.width);
+                });
+        }
+        
+        IFACEMETHODIMP get_Size(_Out_ ABI::Windows::Foundation::Size* size) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(size);
 
-        IFACEMETHOD(get_Size)(_Out_ ABI::Windows::Foundation::Size* size) override;
+                    auto& resource = GetResource();
+                    D2D1_SIZE_F d2dSize = resource->GetSize();
+                    size->Height = d2dSize.height;
+                    size->Width = d2dSize.width;
+                });
+        }
 
-        IFACEMETHOD(get_Bounds)(_Out_ ABI::Windows::Foundation::Rect* bounds) override;
+        IFACEMETHODIMP get_Bounds(_Out_ ABI::Windows::Foundation::Rect* bounds) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(bounds);
 
-        // IClosable
-        IFACEMETHOD(Close)() override;
+                    auto& resource = GetResource();
+                    D2D1_SIZE_F d2dSize = resource->GetSize();
+                    bounds->X = 0;
+                    bounds->Y = 0;
+                    bounds->Width = d2dSize.width;
+                    bounds->Height = d2dSize.height;
+                });
+        }
 
         // ICanvasImageInternal
-        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override;
+        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override
+        {
+            CheckInPointer(deviceContext);
+
+            auto& resource = GetResource();
+
+            return resource;
+        }
 
         // ICanvasBitmapInternal
-        virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override;
+        virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override
+        {
+            auto& resource = GetResource();
+
+            return resource;
+        }
     };
 
-    class CanvasBitmap 
-        : public RuntimeClass<
-            RuntimeClassFlags<WinRtClassicComMix>,
-            MixIn<CanvasBitmap, CanvasBitmapImpl>>
-        , public CanvasBitmapImpl
+
+    class CanvasBitmap :
+        public RuntimeClass<                                    
+            RuntimeClassFlags<WinRtClassicComMix>,              
+            MixIn<CanvasBitmap, CanvasBitmapImpl<CanvasBitmapTraits>>>
+        , public CanvasBitmapImpl<CanvasBitmapTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
 
     public:
         CanvasBitmap(
-            ICanvasDevice* canvasDevice, 
-            HSTRING fileName, 
-            std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
-            : CanvasBitmapImpl(canvasDevice, fileName, adapter)
-        {}
-
-        CanvasBitmap(
-            ID2D1Bitmap1* resource)
-            : CanvasBitmapImpl(resource)
-        {}
+            std::shared_ptr<CanvasBitmapManager> manager,
+            ID2D1Bitmap1* bitmap);
     };
 
+
+    class CanvasBitmapManager : public ResourceManager<CanvasBitmapTraits>
+    {
+        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> m_adapter;
+
+    public:
+        CanvasBitmapManager(std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
+
+        ComPtr<CanvasBitmap> CreateNew(
+            ICanvasDevice* canvasDevice, 
+            HSTRING fileName);
+
+        ComPtr<CanvasBitmap> CreateWrapper(
+            ID2D1Bitmap1* bitmap);
+    };
 }}}}

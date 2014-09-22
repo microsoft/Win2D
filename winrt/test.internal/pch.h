@@ -103,6 +103,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 #include "StubCanvasDevice.h"
 #include "StubCanvasDrawingSessionAdapter.h"
 #include "StubD2DBrush.h"
+#include "StubD2DDeviceContext.h"
 #include "StubD2DResources.h"
 #include "StubD2DStrokeStyle.h"
 #include "StubImageControl.h"

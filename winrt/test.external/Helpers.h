@@ -43,6 +43,7 @@ namespace Microsoft
                 return PointerToString(L#T, value);             \
             }
 
+            TO_STRING(ID2D1Bitmap1);
             TO_STRING(ID2D1Device1);
             TO_STRING(ID2D1DeviceContext1);
             TO_STRING(ID2D1SolidColorBrush);

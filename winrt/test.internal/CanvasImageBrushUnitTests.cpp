@@ -338,12 +338,6 @@ public:
             m_bitmapBrush = Make<MockD2DBitmapBrush>();
             m_imageBrush = Make<MockD2DImageBrush>();
             
-            canvasDevice->MockCreateBitmapFromWicResource =
-                [&]()
-                {
-                    return Make<StubD2DBitmap>();
-                };
-            
             canvasDevice->MockCreateBitmapBrush =
                 [&](ID2D1Bitmap1* bitmap)
                 {
@@ -404,7 +398,7 @@ public:
             ComPtr<ICanvasImage> canvasBitmap;
             if (initializeWithBitmap) 
             {
-                canvasBitmap = CreateTestCanvasBitmap(canvasDevice.Get());
+                canvasBitmap = CreateStubCanvasBitmap();
             }
 
             m_canvasImageBrush = Make<CanvasImageBrush>(canvasDevice.Get(), canvasBitmap.Get(), adapter);

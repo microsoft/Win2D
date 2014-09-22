@@ -38,6 +38,20 @@ TEST_CLASS(CanvasRenderTargetTests)
         delete drawingSession;
     }
 
+
+    TEST_METHOD(CanvasRenderTarget_NativeInterop)
+    {
+        auto canvasDevice = ref new CanvasDevice();
+
+        auto originalRenderTarget = ref new CanvasRenderTarget(canvasDevice, Size(1, 1));
+        auto originalD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(originalRenderTarget);
+        auto newRenderTarget = GetOrCreate<CanvasRenderTarget>(originalD2DBitmap.Get());
+        auto newD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(newRenderTarget);
+
+        Assert::AreEqual(originalRenderTarget, newRenderTarget);
+        Assert::AreEqual(originalD2DBitmap.Get(), newD2DBitmap.Get());
+    }
+
     ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap()
     {
         ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
@@ -56,33 +70,5 @@ TEST_CLASS(CanvasRenderTargetTests)
             &d2dBitmap));
 
         return d2dBitmap;
-    }
-    
-    TEST_METHOD(CanvasRenderTarget_Interop_Disabled)
-    {
-        //
-        // Interop with bitmaps is currently not supported, and so interop
-        // with render targets is not supported either. This test verifies
-        // that.
-        //   
-        RunOnUIThread(
-            [&]()
-            {
-                auto device = ref new CanvasDevice();
-                CanvasRenderTarget^ renderTarget = ref new CanvasRenderTarget(device, Size(0, 0));
-
-                Assert::ExpectException<Platform::InvalidCastException^>(
-                    [&]()
-                    {
-                        GetWrappedResource<ID2D1Bitmap1>(renderTarget);
-                    });
-
-                auto d2dBitmap = CreateTestD2DBitmap();
-                Assert::ExpectException<Platform::InvalidCastException^>(
-                    [&]()
-                    {
-                        GetOrCreate<CanvasRenderTarget>(d2dBitmap.Get());
-                    });
-            });
     }
 };

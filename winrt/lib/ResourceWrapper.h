@@ -25,17 +25,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 #define RESOURCE_WRAPPER_RUNTIME_CLASS(TRAITS, ...)         \
     public RuntimeClass<                                    \
         RuntimeClassFlags<WinRtClassicComMix>,              \
-        MixIn<TRAITS::wrapper_t, ResourceWrapper<TRAITS>>,  \
         TRAITS::wrapper_interface_t,                        \
+        ChainInterfaces<MixIn<TRAITS::wrapper_t, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>, \
         __VA_ARGS__>,                                       \
     public ResourceWrapper<TRAITS>
 
 
     template<typename TRAITS>
-    class ResourceWrapper : public Implements<
-        RuntimeClassFlags<WinRtClassicComMix>,
-        ABI::Windows::Foundation::IClosable, 
-        CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>
+    class ResourceWrapper : public ABI::Windows::Foundation::IClosable, 
+                            public ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative
     {
         std::shared_ptr<typename TRAITS::manager_t> m_manager;
         ClosablePtr<typename TRAITS::resource_t> m_resource;

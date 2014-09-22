@@ -24,6 +24,7 @@ public:
 
     ComPtr<MockWICFormatConverter> m_converter;
     std::shared_ptr<TestBitmapResourceCreationAdapter> m_adapter;
+    std::shared_ptr<CanvasBitmapManager> m_bitmapManager;
 
     WinString m_testFileName;
     int m_testImageWidth;
@@ -35,6 +36,10 @@ public:
 
     TEST_METHOD_INITIALIZE(Reset)
     {
+        m_converter = Make<MockWICFormatConverter>();
+        m_adapter = std::make_shared<TestBitmapResourceCreationAdapter>(m_converter);
+        m_bitmapManager = std::make_shared<CanvasBitmapManager>(m_adapter);
+
         m_testImageWidth = 16;
         m_testImageHeight = 32;
 
@@ -70,13 +75,11 @@ public:
 
         m_testFileName = WinString(L"fakeImage.jpg");
 
-        m_converter = Make<MockWICFormatConverter>();
-        m_adapter = std::make_shared<TestBitmapResourceCreationAdapter>(m_converter);
     }
 
     TEST_METHOD(CanvasBitmap_Implements_Expected_Interfaces)
 	{
-        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
         
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmap);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImage);
@@ -88,7 +91,7 @@ public:
     {
         ABI::Windows::Foundation::Size size;
         ABI::Windows::Foundation::Rect bounds;
-        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
 
         Assert::IsNotNull(canvasBitmap.Get());
 
@@ -111,7 +114,8 @@ public:
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
+
         Assert::AreEqual(true, isConverterCreated);
 
         HRESULT result = canvasBitmap->get_SizeInPixels(&size);
@@ -137,7 +141,8 @@ public:
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = Make<CanvasBitmap>(m_canvasDevice.Get(), m_testFileName, m_adapter);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
+
         Assert::AreEqual(true, isConverterCreated);
 
         HRESULT result = canvasBitmap->get_Bounds(&bounds);

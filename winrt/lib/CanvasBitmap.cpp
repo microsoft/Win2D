@@ -62,14 +62,68 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     };
 
-    CanvasBitmapFactory::CanvasBitmapFactory()
-        : m_adapter(std::make_shared<DefaultBitmapResourceCreationAdapter>())
+
+    //
+    // CanvasBitmapManager
+    //
+
+    CanvasBitmapManager::CanvasBitmapManager(std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
+        : m_adapter(adapter)
     {
+    }
+
+
+    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+        ICanvasDevice* canvasDevice,
+        HSTRING fileName)
+    {
+        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
+        ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
+
+        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(m_adapter->CreateWICFormatConverter(fileName).Get());
+
+        auto bitmap = Make<CanvasBitmap>(
+            shared_from_this(),
+            d2dBitmap.Get());
+        CheckMakeResult(bitmap);
+        
+        return bitmap;
+    }
+
+    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateWrapper(
+        ID2D1Bitmap1* d2dBitmap)
+    {
+        // TODO #2473: Need to create CanvasBitmap or CanvasRenderTarget as
+        // appropriate, based on the d2dBitmap
+
+        auto bitmap = Make<CanvasBitmap>(
+            shared_from_this(),
+            d2dBitmap);
+        CheckMakeResult(bitmap);
+
+        return bitmap;
+    }
+
+    
+    //
+    // CanvasBitmapFactory
+    //
+
+
+    CanvasBitmapFactory::CanvasBitmapFactory()
+    {
+    }
+
+    std::shared_ptr<CanvasBitmapManager> CanvasBitmapFactory::CreateManager()
+    {
+        auto adapter = std::make_shared<DefaultBitmapResourceCreationAdapter>();
+        return std::make_shared<CanvasBitmapManager>(adapter);
     }
 
     //
     // ICanvasBitmapStatics
     //
+
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsync(
         ICanvasResourceCreator* resourceCreator,
         HSTRING fileUri,
@@ -87,107 +141,55 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 WinString fileName(fileUri);
 
-                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>([=]
-                {
-                    auto bitmap = Make<CanvasBitmap>(canvasDevice.Get(), fileName, m_adapter);
-                    CheckMakeResult(bitmap);
-                    return bitmap;
-                });
+                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
+                    [=]
+                    {
+                        auto bitmap = GetManager()->Create(canvasDevice.Get(), fileName);
+                        CheckMakeResult(bitmap);
+                        return bitmap;
+                    });
 
                 CheckMakeResult(asyncOperation);
                 ThrowIfFailed(asyncOperation.CopyTo(canvasBitmap));
             });
     }
 
-    CanvasBitmapImpl::CanvasBitmapImpl(ICanvasDevice* canvasDevice, HSTRING fileName, std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
-    {
-        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
-        ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
+    //
+    // ICanvasFactoryNative
+    //
 
-        m_resource = canvasDeviceInternal->CreateBitmapFromWicResource(adapter->CreateWICFormatConverter(fileName).Get());
+    IFACEMETHODIMP CanvasBitmapFactory::GetOrCreate(
+        IUnknown* resource,
+        IInspectable** wrapper)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resource);
+                CheckAndClearOutPointer(wrapper);
+
+                ComPtr<ID2D1Bitmap1> d2dBitmap;
+                ThrowIfFailed(resource->QueryInterface(d2dBitmap.GetAddressOf()));
+
+                auto newCanvasBitmap = GetManager()->GetOrCreate(d2dBitmap.Get());
+
+                ThrowIfFailed(newCanvasBitmap.CopyTo(wrapper));
+            });
     }
+
 
     //
-    // This constructor is only used for composition of CanvasRenderTarget. CanvasRenderTarget does not ever use
-    // the WIC resource creation path through ICanvasBitmapResourceCreationAdapter.
+    // CanvasBitmap
     //
-    CanvasBitmapImpl::CanvasBitmapImpl(
-        ID2D1Bitmap1* resource)
+
+
+    CanvasBitmap::CanvasBitmap(
+        std::shared_ptr<CanvasBitmapManager> manager,
+        ID2D1Bitmap1* bitmap)
+        : CanvasBitmapImpl(manager, bitmap)
     {
-        m_resource = resource;
     }
 
-    IFACEMETHODIMP CanvasBitmapImpl::get_SizeInPixels(_Out_ ABI::Windows::Foundation::Size* size)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(size);
-
-                auto& resource = m_resource.EnsureNotClosed();
-                D2D1_SIZE_U d2dSize = resource->GetPixelSize();
-                size->Height = static_cast<float>(d2dSize.height);
-                size->Width = static_cast<float>(d2dSize.width);
-            });
-    }
-
-    IFACEMETHODIMP CanvasBitmapImpl::get_Size(_Out_ ABI::Windows::Foundation::Size* size)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(size);
-
-                auto& resource = m_resource.EnsureNotClosed();
-                D2D1_SIZE_F d2dSize = resource->GetSize();
-                size->Height = d2dSize.height;
-                size->Width = d2dSize.width;
-            });
-    }
-            
-    IFACEMETHODIMP CanvasBitmapImpl::get_Bounds(_Out_ ABI::Windows::Foundation::Rect* bounds)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(bounds);
-
-                auto& resource = m_resource.EnsureNotClosed();
-                D2D1_SIZE_F d2dSize = resource->GetSize();
-                bounds->X = 0;
-                bounds->Y = 0;
-                bounds->Width = d2dSize.width;
-                bounds->Height = d2dSize.height;
-            });
-    }
-
-    IFACEMETHODIMP CanvasBitmapImpl::Close()
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                m_resource.Close();
-            });
-    }
-
-    // ICanvasImageInternal
-
-    ComPtr<ID2D1Image> CanvasBitmapImpl::GetD2DImage(ID2D1DeviceContext* deviceContext)
-    {
-        CheckInPointer(deviceContext);
-
-        auto& resource = m_resource.EnsureNotClosed();
-
-        return resource;
-    }
-
-    // ICanvasBitmapInternal
-    ComPtr<ID2D1Bitmap1> CanvasBitmapImpl::GetD2DBitmap()
-    {
-        auto& resource = m_resource.EnsureNotClosed();
-
-        return resource;
-    }
 
     ActivatableClassWithFactory(CanvasBitmap, CanvasBitmapFactory);
 }}}}

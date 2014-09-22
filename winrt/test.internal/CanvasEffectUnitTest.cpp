@@ -272,18 +272,8 @@ public:
         // of device context. 
         //
         
-        auto canvasDevice = Make<StubCanvasDevice>();
-            canvasDevice->MockCreateBitmapFromWicResource =
-                [&]()
-                {
-                    return Make<StubD2DBitmap>();
-                };
-
         // Set a source and non-default value.
-        auto bitmap = CreateTestCanvasBitmap(canvasDevice.Get());
-        ComPtr<IEffectInput> effectInput;
-        ThrowIfFailed(bitmap.As(&effectInput));
-        ThrowIfFailed(testEffect->put_Source(effectInput.Get()));
+        ThrowIfFailed(testEffect->put_Source(CreateStubCanvasBitmap().Get()));
         ThrowIfFailed(testEffect->put_StandardDeviation(99));
 
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());

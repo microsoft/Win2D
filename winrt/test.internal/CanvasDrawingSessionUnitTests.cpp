@@ -110,20 +110,33 @@ public:
 class CanvasDrawingSessionFixture
 {
 public:
+    std::shared_ptr<CanvasBitmapManager> BitmapManager;
     ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
     ComPtr<CanvasDrawingSession> DS;
     ComPtr<StubCanvasBrush> Brush;
 
     CanvasDrawingSessionFixture()
+        : BitmapManager(MakeBitmapManager())
+        , DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
+        , DS(MakeDrawingSession(DeviceContext.Get()))
+        , Brush(Make<StubCanvasBrush>())
     {
-        DeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+    }
 
+private:
+    static std::shared_ptr<CanvasBitmapManager> MakeBitmapManager()
+    {
+        auto converter = Make<MockWICFormatConverter>();
+        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
+        return std::make_shared<CanvasBitmapManager>(adapter);
+    }
+
+    static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext)
+    {
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        DS = manager->Create(
-            DeviceContext.Get(),
+        return manager->Create(
+            deviceContext,
             std::make_shared<StubCanvasDrawingSessionAdapter>());
-
-        Brush = Make<StubCanvasBrush>();
     }
 };
 
@@ -269,10 +282,7 @@ public:
 
         WinString testFileName(L"fakeFileName.jpg");
 
-        auto converter = Make<MockWICFormatConverter>();
-        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-
-        ComPtr<MockD2DBitmap>  bitmap = Make<MockD2DBitmap>();
+        ComPtr<MockD2DBitmap> bitmap = Make<MockD2DBitmap>();
 
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
         canvasDevice->MockCreateBitmapFromWicResource =
@@ -281,7 +291,7 @@ public:
                 return bitmap;
             };
 
-        ComPtr<CanvasBitmap> canvasBitmap = Make<CanvasBitmap>(canvasDevice.Get(), testFileName, adapter);
+        auto canvasBitmap = f.BitmapManager->Create(canvasDevice.Get(), testFileName);
 
         ComPtr<ICanvasImageInternal> internalImage;
         ThrowIfFailed(canvasBitmap.As(&internalImage));
@@ -347,7 +357,7 @@ public:
             };
 
 
-        ComPtr<CanvasBitmap> canvasBitmap = Make<CanvasBitmap>(canvasDevice.Get(), testFileName, adapter);
+        auto canvasBitmap = f.BitmapManager->Create(canvasDevice.Get(), testFileName);
         ComPtr<Effects::GaussianBlurEffect> blurEffect = Make<Effects::GaussianBlurEffect>();
         
         ThrowIfFailed(blurEffect->put_Source(canvasBitmap.Get()));

@@ -19,62 +19,66 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace ABI::Windows::Foundation;
 
-    class ICanvasRenderTargetDrawingSessionFactory
+    class CanvasRenderTargetManager;
+
+    class CanvasRenderTargetFactory 
+        : public ActivationFactory<ICanvasRenderTargetFactory, CloakedIid<ICanvasFactoryNative>>
+        , public FactoryWithResourceManager<CanvasRenderTargetFactory, CanvasRenderTargetManager>
     {
     public:
-        virtual ComPtr<ICanvasDrawingSession> Create(
-            ICanvasDevice* owner,
-            ID2D1Bitmap1* targetBitmap) const = 0;
-    };    
-
-    class CanvasRenderTargetFactory : public ActivationFactory<
-        ICanvasRenderTargetFactory>
-    {
-        std::shared_ptr<ICanvasRenderTargetDrawingSessionFactory> m_drawingSessionFactory;
-    public:
-
         CanvasRenderTargetFactory();
     
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::Foundation::Size size,
             ICanvasRenderTarget** renderTarget);
+
+        IFACEMETHOD(GetOrCreate)(
+            IUnknown* resource,
+            IInspectable** wrapper) override;
+
+        static std::shared_ptr<CanvasRenderTargetManager> CreateManager();
+    };
+
+
+    struct CanvasRenderTargetTraits
+    {
+        typedef ID2D1Bitmap1 resource_t;
+        typedef CanvasRenderTarget wrapper_t;
+        typedef ICanvasRenderTarget wrapper_interface_t;
+        typedef CanvasRenderTargetManager manager_t;
     };
 
     class CanvasRenderTarget 
         : public RuntimeClass<
-            MixIn<CanvasRenderTarget, CanvasBitmapImpl>,
-            ICanvasRenderTarget>
-        , public CanvasBitmapImpl
+            RuntimeClassFlags<WinRtClassicComMix>,
+            ICanvasRenderTarget,
+            MixIn<CanvasRenderTarget, CanvasBitmapImpl<CanvasRenderTargetTraits>>>
+        , public CanvasBitmapImpl<CanvasRenderTargetTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget, BaseTrust);
 
         ComPtr<ICanvasDevice> m_device;
 
-        std::shared_ptr<ICanvasRenderTargetDrawingSessionFactory> m_drawingSessionFactory;
-
     public:
         CanvasRenderTarget(
-            ICanvasDevice* canvasDevice,
-            ABI::Windows::Foundation::Size size,
-            std::shared_ptr<ICanvasRenderTargetDrawingSessionFactory> drawingSessionFactory);
+            std::shared_ptr<CanvasRenderTargetManager> manager,
+            ID2D1Bitmap1* bitmap,
+            ICanvasDevice* device);
 
         IFACEMETHOD(CreateDrawingSession)(
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
     };
 
-    class CanvasDrawingSessionManager;
 
-    class CanvasRenderTargetDrawingSessionFactory : public ICanvasRenderTargetDrawingSessionFactory
+    class CanvasRenderTargetManager : public ResourceManager<CanvasRenderTargetTraits>
     {
-        std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
-
     public:
-        CanvasRenderTargetDrawingSessionFactory();
+        ComPtr<CanvasRenderTarget> CreateNew(
+            ICanvasDevice* canvasDevice,
+            ABI::Windows::Foundation::Size size);
 
-        virtual ComPtr<ICanvasDrawingSession> Create(
-            ICanvasDevice* owner,
-            ID2D1Bitmap1* targetBitmap) const override;
+        ComPtr<CanvasRenderTarget> CreateWrapper(
+            ID2D1Bitmap1* bitmap);
     };
-
 }}}}

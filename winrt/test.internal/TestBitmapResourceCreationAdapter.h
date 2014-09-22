@@ -20,6 +20,10 @@ class TestBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAd
 public:
     std::function<void()> MockCreateWICFormatConverter;
 
+    TestBitmapResourceCreationAdapter()
+    {
+    }
+
     TestBitmapResourceCreationAdapter(ComPtr<IWICFormatConverter> converter)
         : m_converter(converter)
     {
@@ -33,24 +37,11 @@ public:
     }
 };
 
-class MockCanvasRenderTargetDrawingSessionFactory : public ICanvasRenderTargetDrawingSessionFactory
+
+inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap()
 {
-public:
-    std::function<ComPtr<ICanvasDrawingSession>(ICanvasDevice*, ID2D1Bitmap1*)> MockCreate;
+    auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>();
+    auto manager = std::make_shared<CanvasBitmapManager>(adapter);
 
-    virtual ComPtr<ICanvasDrawingSession> Create(
-        ICanvasDevice* owner,
-        ID2D1Bitmap1* targetBitmap) const override
-    {
-        if (!MockCreate)
-        {
-            Assert::Fail(L"Unexpected call to Create");
-            ThrowHR(E_NOTIMPL);
-        }
-
-        return MockCreate(owner, targetBitmap);
-    }
-};
-
-
-ComPtr<ICanvasImage> CreateTestCanvasBitmap(ICanvasDevice* canvasDevice);
+    return manager->GetOrCreate(Make<StubD2DBitmap>().Get());
+}

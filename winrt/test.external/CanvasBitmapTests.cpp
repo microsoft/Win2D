@@ -29,25 +29,31 @@ TEST_CLASS(CanvasBitmapTests)
         float heightInDip;
     };
 
+    TestImage m_testImage;
+
+public:
+    CanvasBitmapTests()
+    {
+        m_testImage.fileName = L"Assets/imageTiger.jpg";
+        m_testImage.widthInPixels = 196;
+        m_testImage.heightInPixels = 147;
+        m_testImage.widthInDip = 196.0f;
+        m_testImage.heightInDip = 147.0f;
+    }
+
     TEST_METHOD(CanvasBitmap_PropertiesAndClose)
     {
-        TestImage realJpegImage;
-        realJpegImage.fileName = L"Assets/imageTiger.jpg";
-        realJpegImage.widthInPixels = 196;
-        realJpegImage.heightInPixels = 147;
-        realJpegImage.widthInDip = 196.0f;
-        realJpegImage.heightInDip = 147.0f;
 
         WIN32_FILE_ATTRIBUTE_DATA fileInfo;
-        Assert::AreNotEqual(GetFileAttributesEx(realJpegImage.fileName->Data(), GetFileExInfoStandard, &fileInfo), 0);
+        Assert::AreNotEqual(GetFileAttributesEx(m_testImage.fileName->Data(), GetFileExInfoStandard, &fileInfo), 0);
         
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
 
-        ICanvasBitmap^ bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, realJpegImage.fileName));
-        Assert::AreEqual(realJpegImage.widthInPixels, (int)bitmapJpeg->SizeInPixels.Width);
-        Assert::AreEqual(realJpegImage.heightInPixels, (int)bitmapJpeg->SizeInPixels.Height);
-        Assert::AreEqual(realJpegImage.widthInDip, bitmapJpeg->Size.Width);
-        Assert::AreEqual(realJpegImage.heightInDip, bitmapJpeg->Size.Height);
+        ICanvasBitmap^ bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, m_testImage.fileName));
+        Assert::AreEqual(m_testImage.widthInPixels, (int)bitmapJpeg->SizeInPixels.Width);
+        Assert::AreEqual(m_testImage.heightInPixels, (int)bitmapJpeg->SizeInPixels.Height);
+        Assert::AreEqual(m_testImage.widthInDip, bitmapJpeg->Size.Width);
+        Assert::AreEqual(m_testImage.heightInDip, bitmapJpeg->Size.Height);
 
         // Test invalid bitmap parameter.
         Assert::ExpectException<Platform::InvalidArgumentException^>(
@@ -60,7 +66,7 @@ TEST_CLASS(CanvasBitmapTests)
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                ICanvasBitmap^ bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(nullptr, realJpegImage.fileName));
+                ICanvasBitmap^ bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(nullptr, m_testImage.fileName));
             });
     }
 
@@ -137,5 +143,19 @@ TEST_CLASS(CanvasBitmapTests)
             Assert::AreEqual(196.0f, bitmaps[i]->SizeInPixels.Width);
             Assert::AreEqual(147.0f, bitmaps[i]->SizeInPixels.Height);
         }
+    }
+
+
+    TEST_METHOD(CanvasBitmap_NativeInterop)
+    {
+        auto canvasDevice = ref new CanvasDevice();
+
+        auto originalBitmap = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, m_testImage.fileName));
+        auto originalD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(originalBitmap);
+        auto newBitmap = GetOrCreate<CanvasBitmap>(originalD2DBitmap.Get());
+        auto newD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(newBitmap);
+
+        Assert::AreEqual(originalBitmap, newBitmap);
+        Assert::AreEqual(originalD2DBitmap.Get(), newD2DBitmap.Get());
     }
 };

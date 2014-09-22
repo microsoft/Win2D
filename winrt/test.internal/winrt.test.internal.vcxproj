@@ -68,6 +68,7 @@
     <ClInclude Include="StubCanvasDevice.h" />
     <ClInclude Include="StubCanvasDrawingSessionAdapter.h" />
     <ClInclude Include="StubD2DBrush.h" />
+    <ClInclude Include="StubD2DDeviceContext.h" />
     <ClInclude Include="StubD2DStrokeStyle.h" />
     <ClInclude Include="StubSurfaceImageSource.h" />
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
@@ -96,7 +97,6 @@
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DResources.cpp" />
-    <ClCompile Include="TestBitmapResourceCreationAdapter.cpp" />
     <ClCompile Include="VectorTests.cpp" />
     <ClCompile Include="WinStringBuilderTests.cpp" />
     <ClCompile Include="WinStringTests.cpp" />
