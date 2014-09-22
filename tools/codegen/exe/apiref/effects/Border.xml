@@ -14,40 +14,40 @@ under the License.
 -->
 
 <Effect>
-	<!-- Localization -->
-	<_locDefinition>
-		<_locDefault _loc="locNone" />
-		<_locTag _locAttrData="displayname">Field</_locTag>
-		<_locTag _locAttrData="name">Input</_locTag>
-		<_locTag _locAttrData="value">Property</_locTag>
-	</_locDefinition>
+        <!-- Localization -->
+        <_locDefinition>
+                <_locDefault _loc="locNone" />
+                <_locTag _locAttrData="displayname">Field</_locTag>
+                <_locTag _locAttrData="name">Input</_locTag>
+                <_locTag _locAttrData="value">Property</_locTag>
+        </_locDefinition>
 
-	<!-- System Properties -->
-	<Property name='DisplayName' type='string' value='Border'/>
-	<Property name='Author' type='string' value='Microsoft Corporation'/>
-	<Property name='Category' type='string' value='Transform'/>
-	<Property name='Description' type='string' value='Extends the region of the bitmap based on the selected border mode.'/>
-	<Inputs>
-		<Input name='Source'/>
-	</Inputs>
+        <!-- System Properties -->
+        <Property name='DisplayName' type='string' value='Border'/>
+        <Property name='Author' type='string' value='Microsoft Corporation'/>
+        <Property name='Category' type='string' value='Transform'/>
+        <Property name='Description' type='string' value='Extends the region of the bitmap based on the selected border mode.'/>
+        <Inputs>
+                <Input name='Source'/>
+        </Inputs>
 
-	<!-- Custom Properties -->
-	<Property name='EdgeModeX' type='enum'>
-		<Property name='DisplayName' type='string' value='Horizontal Edge Mode'/>
-		<Property name='Default' type='enum' value='0'/>
-		<Fields>
-			<Field name='Clamp' displayname='Clamp' index='0'/>
-			<Field name='Wrap' displayname='Wrap' index='1'/>
-			<Field name='Mirror' displayname='Mirror' index='2'/>
-		</Fields>
-	</Property>
-	<Property name='EdgeModeY' type='enum'>
-		<Property name='DisplayName' type='string' value='Vertical Edge Mode'/>
-		<Property name='Default' type='enum' value='0'/>
-		<Fields>
-			<Field name='Clamp' displayname='Clamp' index='0'/>
-			<Field name='Wrap' displayname='Wrap' index='1'/>
-			<Field name='Mirror' displayname='Mirror' index='2'/>
-		</Fields>
-	</Property>
+        <!-- Custom Properties -->
+        <Property name='EdgeModeX' type='enum'>
+                <Property name='DisplayName' type='string' value='Horizontal Edge Mode'/>
+                <Property name='Default' type='enum' value='0'/>
+                <Fields>
+                        <Field name='Clamp' displayname='Clamp' index='0'/>
+                        <Field name='Wrap' displayname='Wrap' index='1'/>
+                        <Field name='Mirror' displayname='Mirror' index='2'/>
+                </Fields>
+        </Property>
+        <Property name='EdgeModeY' type='enum'>
+                <Property name='DisplayName' type='string' value='Vertical Edge Mode'/>
+                <Property name='Default' type='enum' value='0'/>
+                <Fields>
+                        <Field name='Clamp' displayname='Clamp' index='0'/>
+                        <Field name='Wrap' displayname='Wrap' index='1'/>
+                        <Field name='Mirror' displayname='Mirror' index='2'/>
+                </Fields>
+        </Property>
 </Effect>

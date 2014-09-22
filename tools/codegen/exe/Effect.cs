@@ -452,7 +452,7 @@ namespace CodeGen
                         string[] words = line.Split(' ');
                         effectEnum.Name = words[words.Length - 1];
 
-                        //Skip brace
+                        // Skip brace
                         reader.ReadLine();
 
                         while ((line = reader.ReadLine()) != "")
