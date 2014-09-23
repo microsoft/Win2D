@@ -51,6 +51,25 @@ under the License.
     <Enum Name="UNIT_MODE" ShouldProject="true" ProjectedNameOverride="Units"/>
     <Enum Name="EXTEND_MODE" ShouldProject="true" ProjectedNameOverride="EdgeBehavior"/>
     <Enum Name="INTERPOLATION_MODE" ShouldProject="true" ProjectedNameOverride="ImageInterpolation"/>
+    <Enum Name="COLOR_SPACE" ShouldProject="true">
+        <Field Name="CUSTOM" ShouldProject="true"/><!--Custom color spaces are accessible, currently, through interop.-->
+        <Field Name="SRGB" ShouldProject="true" ProjectedNameOverride="Srgb"/>
+        <Field Name="SCRGB" ShouldProject="true" ProjectedNameOverride="ScRgb"/>
+    </Enum>
+    <Enum Name="BUFFER_PRECISION" ShouldProject="true">
+        <Field Name="UNKNOWN" ShouldProject="false"/>
+        <Field Name="8BPC_UNORM" ShouldProject="true" ProjectedNameOverride="Precision8UIntNormalized" ProjectedValueOverride="0"/>
+        <Field Name="8BPC_UNORM_SRGB" ShouldProject="true" ProjectedNameOverride="Precision8UIntNormalizedSrgb" ProjectedValueOverride="1"/>
+        <Field Name="16BPC_UNORM" ShouldProject="true" ProjectedNameOverride="Precision16UIntNormalized" ProjectedValueOverride="2"/>
+        <Field Name="16BPC_FLOAT" ShouldProject="true" ProjectedNameOverride="Precision16Float" ProjectedValueOverride="3"/>
+        <Field Name="32BPC_FLOAT" ShouldProject="true" ProjectedNameOverride="Precision32Float" ProjectedValueOverride="4"/>
+    </Enum>
+    <Enum Name="ALPHA_MODE" ShouldProject="true" ProjectedNameOverride="AlphaBehavior">
+        <Field Name="UNKNOWN" ShouldProject="false"/>
+        <Field Name="PREMULTIPLIED" ShouldProject="true" ProjectedValueOverride="0"/>
+        <Field Name="STRAIGHT" ShouldProject="true" ProjectedValueOverride="1"/>
+        <Field Name="IGNORE" ShouldProject="true" ProjectedValueOverride="2"/>
+    </Enum>
   </Namespace>
   
   <Namespace Name="Effects">

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "CanvasBrush.h"
+#include "CanvasSolidColorBrush.h"
 #include "ErrorHandling.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -107,6 +107,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1_POINT_2F{ point.X, point.Y };
     }
 
+    inline Numerics::Vector2 FromD2DPoint(D2D1_POINT_2F const& point)
+    {
+        return Numerics::Vector2{ point.x, point.y };
+    }
+
     inline D2D1_RECT_F ToD2DRect(ABI::Windows::Foundation::Rect const& rect)
     {
         auto left = rect.X;
@@ -169,9 +174,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return reinterpret_cast<TOutput>(value);
     }
 
+    template<typename TOutput, typename TInput> TOutput StaticCastAs(TInput value)
+    {
+        ValidateStaticCastAs<TOutput, TInput>();
+
+        return static_cast<TOutput>(value);
+    }
+
     template<typename TOutput, typename TInput> void ValidateReinterpretAs()
     {
         static_assert(false, "Invalid ReinterpretAs type parameters");
+    }
+
+    template<typename TOutput, typename TInput> void ValidateStaticCastAs()
+    {
+        static_assert(false, "Invalid StaticCastAs type parameters");
     }
 
     template<> inline void ValidateReinterpretAs<D2D1_MATRIX_3X2_F*, Numerics::Matrix3x2*>()
@@ -182,5 +199,67 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(D2D1_MATRIX_3X2_F, _22) == offsetof(Numerics::Matrix3x2, M22), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
         static_assert(offsetof(D2D1_MATRIX_3X2_F, _31) == offsetof(Numerics::Matrix3x2, M31), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
         static_assert(offsetof(D2D1_MATRIX_3X2_F, _32) == offsetof(Numerics::Matrix3x2, M32), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
+    }
+
+    template<> inline void ValidateStaticCastAs<CanvasEdgeBehavior, D2D1_EXTEND_MODE>()
+    {
+        static_assert(static_cast<uint32_t>(D2D1_EXTEND_MODE_CLAMP) == static_cast<uint32_t>(CanvasEdgeBehavior::Clamp), "CanvasEdgeBehavior must match D2D1_EXTEND_MODE");
+        static_assert(static_cast<uint32_t>(D2D1_EXTEND_MODE_WRAP) == static_cast<uint32_t>(CanvasEdgeBehavior::Wrap), "CanvasEdgeBehavior must match D2D1_EXTEND_MODE");
+        static_assert(static_cast<uint32_t>(D2D1_EXTEND_MODE_MIRROR) == static_cast<uint32_t>(CanvasEdgeBehavior::Mirror), "CanvasEdgeBehavior must match D2D1_EXTEND_MODE");
+    }
+
+    template<> inline void ValidateStaticCastAs<CanvasColorSpace, D2D1_COLOR_SPACE>()
+    {
+        static_assert(static_cast<uint32_t>(D2D1_COLOR_SPACE_CUSTOM) == static_cast<uint32_t>(CanvasColorSpace::Custom), "CanvasColorSpace must match D2D1_COLOR_SPACE");
+        static_assert(static_cast<uint32_t>(D2D1_COLOR_SPACE_SRGB) == static_cast<uint32_t>(CanvasColorSpace::Srgb), "CanvasColorSpace must match D2D1_COLOR_SPACE");
+        static_assert(static_cast<uint32_t>(D2D1_COLOR_SPACE_SCRGB) == static_cast<uint32_t>(CanvasColorSpace::ScRgb), "CanvasColorSpace must match D2D1_COLOR_SPACE");
+    }
+
+    inline D2D1_COLOR_INTERPOLATION_MODE ToD2DColorInterpolation(CanvasAlphaBehavior alphaBehavior)
+    {
+        switch (alphaBehavior)
+        {
+            case CanvasAlphaBehavior::Premultiplied: return D2D1_COLOR_INTERPOLATION_MODE_PREMULTIPLIED;
+            case CanvasAlphaBehavior::Straight: return D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT;
+            case CanvasAlphaBehavior::Ignore:
+            default: return D2D1_COLOR_INTERPOLATION_MODE_FORCE_DWORD;
+        }
+    }
+
+    inline CanvasAlphaBehavior FromD2DColorInterpolation(D2D1_COLOR_INTERPOLATION_MODE colorInterpolation)
+    {
+        switch (colorInterpolation)
+        {
+            case D2D1_COLOR_INTERPOLATION_MODE_PREMULTIPLIED: return CanvasAlphaBehavior::Premultiplied;
+            case D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT: return CanvasAlphaBehavior::Straight;
+            default: assert(false); break;
+        }
+        return CanvasAlphaBehavior::Premultiplied;
+    }
+
+    inline D2D1_BUFFER_PRECISION ToD2DBufferPrecision(CanvasBufferPrecision bufferPrecision)
+    {
+        switch (bufferPrecision)
+        {
+            case CanvasBufferPrecision::Precision8UIntNormalized: return D2D1_BUFFER_PRECISION_8BPC_UNORM;
+            case CanvasBufferPrecision::Precision8UIntNormalizedSrgb: return D2D1_BUFFER_PRECISION_8BPC_UNORM_SRGB;
+            case CanvasBufferPrecision::Precision16UIntNormalized: return D2D1_BUFFER_PRECISION_16BPC_UNORM;
+            case CanvasBufferPrecision::Precision16Float: return D2D1_BUFFER_PRECISION_16BPC_FLOAT;
+            case CanvasBufferPrecision::Precision32Float: return D2D1_BUFFER_PRECISION_32BPC_FLOAT;
+            default: return D2D1_BUFFER_PRECISION_FORCE_DWORD;
+        }
+    }
+
+    inline CanvasBufferPrecision FromD2DBufferPrecision(D2D1_BUFFER_PRECISION bufferPrecision)
+    {
+        switch (bufferPrecision)
+        {
+            case D2D1_BUFFER_PRECISION_8BPC_UNORM: return CanvasBufferPrecision::Precision8UIntNormalized;
+            case D2D1_BUFFER_PRECISION_8BPC_UNORM_SRGB: return CanvasBufferPrecision::Precision8UIntNormalizedSrgb;
+            case D2D1_BUFFER_PRECISION_16BPC_UNORM: return CanvasBufferPrecision::Precision16UIntNormalized;
+            case D2D1_BUFFER_PRECISION_16BPC_FLOAT: return CanvasBufferPrecision::Precision16Float;
+            case D2D1_BUFFER_PRECISION_32BPC_FLOAT: return CanvasBufferPrecision::Precision32Float;
+            default: assert(false); return CanvasBufferPrecision::Precision8UIntNormalized;
+        }
     }
 }}}}

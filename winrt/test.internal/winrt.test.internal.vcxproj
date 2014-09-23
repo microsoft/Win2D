@@ -23,6 +23,7 @@
       <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\Inc;..\lib;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Zm110 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalOptions>-Zm110 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -55,6 +56,9 @@
     <ClInclude Include="MockD2DDevice.h" />
     <ClInclude Include="MockD2DDeviceContext.h" />
     <ClInclude Include="MockD2DEffect.h" />
+    <ClInclude Include="MockD2DGradientStopCollection.h" />
+    <ClInclude Include="MockD2DLinearGradientBrush.h" />
+    <ClInclude Include="MockD2DRadialGradientBrush.h" />
     <ClInclude Include="MockD2DSolidColorBrush.h" />
     <ClInclude Include="MockD2DFactory.h" />
     <ClInclude Include="MockD2DStrokeStyle.h" />
@@ -81,6 +85,7 @@
     <ClCompile Include="AsyncOperationTests.cpp" />
     <ClCompile Include="CanvasControlUnitTests.cpp" />
     <ClCompile Include="CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="CanvasGradientBrushUnitTests.cpp" />
     <ClCompile Include="CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="CanvasEffectUnitTest.cpp" />
     <ClCompile Include="CanvasRenderTargetUnitTests.cpp" />

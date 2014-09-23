@@ -73,7 +73,6 @@ namespace Microsoft.Graphics.Canvas
     // ICanvasImageBrush
     //
     runtimeclass CanvasImageBrush;
-    runtimeclass CanvasDevice;
 
     [version(VERSION), uuid(C40CCB59-1B87-4394-A6A6-ECD278E877D6), exclusiveto(CanvasImageBrush)]
     interface ICanvasImageBrushFactory : IInspectable
@@ -129,5 +128,206 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasImageBrush
     {
         [default] interface ICanvasImageBrush;
+    }    
+
+    //
+    // Common gradient data
+    //
+    [version(VERSION)]
+    typedef struct CanvasGradientStop
+    {
+        float Position;
+        Windows.UI.Color Color;
+    } CanvasGradientStop;
+
+    //
+    // ICanvasLinearGradientBrush
+    //
+    runtimeclass CanvasLinearGradientBrush;
+
+    [version(VERSION), uuid(A2E8E34A-8592-4B9D-BA1C-00D3F3C34F54), exclusiveto(CanvasLinearGradientBrush)]
+    interface ICanvasLinearGradientBrushFactory : IInspectable
+    {
+        // Defaults to color interpolation sRGB-premultiplied, and CLAMP extend mode.
+        HRESULT CreateSimple(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.UI.Color startColor,
+            [in] Windows.UI.Color endColor,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+
+        // Defaults to color interpolation sRGB-premultiplied.
+        HRESULT CreateWithEdgeBehaviorAndAlphaBehavior(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
+            [in] CanvasEdgeBehavior edgeBehavior,
+            [in] CanvasAlphaBehavior alphaBehavior,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+
+        // Exposes all creation options.
+        HRESULT CreateWithEdgeBehaviorAndInterpolationOptions(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
+            [in] CanvasEdgeBehavior edgeBehavior,
+            [in] CanvasAlphaBehavior alphaBehavior,
+            [in] CanvasColorSpace preInterpolationSpace,
+            [in] CanvasColorSpace postInterpolationSpace,
+            [in] CanvasBufferPrecision bufferPrecision,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+     }
+
+    [version(VERSION), uuid(A4FFBCB1-EC22-48C8-B1AF-09BCFD34EEBD), exclusiveto(CanvasLinearGradientBrush)]
+    interface ICanvasLinearGradientBrush : IInspectable
+        requires ICanvasBrush
+    {
+        [propget]
+        HRESULT StartPoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT StartPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT EndPoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT EndPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT Stops(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGradientStop** valueElements);
+
+        [propget]
+        HRESULT EdgeBehavior([out, retval] CanvasEdgeBehavior* value);
+
+        [propget]
+        HRESULT PreInterpolationSpace([out, retval] CanvasColorSpace* value);
+
+        [propget]
+        HRESULT PostInterpolationSpace([out, retval] CanvasColorSpace* value);
+
+        [propget]
+        HRESULT BufferPrecision([out, retval] CanvasBufferPrecision* value);
+
+        [propget]
+        HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+    };
+
+    [version(VERSION), uuid(E9DE3392-8FBF-478C-8E6A-D0A0EA753B37), exclusiveto(CanvasLinearGradientBrush)]
+    interface ICanvasLinearGradientBrushStatics : IInspectable
+    {
+        HRESULT CreateRainbow(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] float eldritchness,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+    };
+
+    [version(VERSION), activatable(ICanvasLinearGradientBrushFactory, VERSION), static(ICanvasLinearGradientBrushStatics, VERSION)]
+    runtimeclass CanvasLinearGradientBrush
+    {
+        [default] interface ICanvasLinearGradientBrush;
     }
+
+    //
+    // RadialGradientBrush
+    //
+    runtimeclass CanvasRadialGradientBrush;
+
+    [version(VERSION), uuid(7933A51F-A910-4548-849F-42DDEC466F41), exclusiveto(CanvasRadialGradientBrush)]
+    interface ICanvasRadialGradientBrushFactory : IInspectable
+    {
+        // Defaults to color interpolation sRGB-premultiplied, and CLAMP extend mode.
+        HRESULT CreateSimple(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.UI.Color startColor,
+            [in] Windows.UI.Color endColor,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+
+        // Defaults to color interpolation sRGB-premultiplied.
+        HRESULT CreateWithEdgeBehaviorAndAlphaBehavior(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
+            [in] CanvasEdgeBehavior edgeBehavior,
+            [in] CanvasAlphaBehavior alphaBehavior,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+
+        // Exposes all creation options.
+        HRESULT CreateWithEdgeBehaviorAndInterpolationOptions(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
+            [in] CanvasEdgeBehavior edgeBehavior,
+            [in] CanvasAlphaBehavior alphaBehavior,
+            [in] CanvasColorSpace preInterpolationSpace,
+            [in] CanvasColorSpace postInterpolationSpace,
+            [in] CanvasBufferPrecision bufferPrecision,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+    }
+
+    [version(VERSION), uuid(4D27D756-14A9-4EB7-973F-E6614D4F89E7), exclusiveto(CanvasRadialGradientBrush)]
+    interface ICanvasRadialGradientBrush : IInspectable
+        requires ICanvasBrush
+    {
+        [propget]
+        HRESULT Center([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT Center([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT OriginOffset([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT OriginOffset([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT RadiusX([out, retval] float* value);
+
+        [propput]
+        HRESULT RadiusX([in] float value);
+
+        [propget]
+        HRESULT RadiusY([out, retval] float* value);
+
+        [propput]
+        HRESULT RadiusY([in] float value);
+
+        [propget]
+        HRESULT Stops(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGradientStop** valueElements);
+
+        [propget]
+        HRESULT EdgeBehavior([out, retval] CanvasEdgeBehavior* value);
+
+        [propget]
+        HRESULT PreInterpolationSpace([out, retval] CanvasColorSpace* value);
+
+        [propget]
+        HRESULT PostInterpolationSpace([out, retval] CanvasColorSpace* value);
+
+        [propget]
+        HRESULT BufferPrecision([out, retval] CanvasBufferPrecision* value);
+
+        [propget]
+        HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+    };
+
+    [version(VERSION), uuid(3B0D4DAE-3E21-4818-99B4-779ACAAF18BE), exclusiveto(CanvasRadialGradientBrush)]
+    interface ICanvasRadialGradientBrushStatics : IInspectable
+    {
+        HRESULT CreateRainbow(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] float eldritchness,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+    };
+
+    [version(VERSION), activatable(ICanvasRadialGradientBrushFactory, VERSION), static(ICanvasRadialGradientBrushStatics, VERSION)]
+    runtimeclass CanvasRadialGradientBrush
+    {
+        [default] interface ICanvasRadialGradientBrush;
+    }
+
 }

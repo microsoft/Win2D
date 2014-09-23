@@ -64,9 +64,11 @@
 #include <CanvasDrawingSession.h>
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>
-#include <CanvasBrush.h>
+#include <CanvasSolidColorBrush.h>
+#include <CanvasImageBrush.h>
 #include <CanvasStrokeStyle.h>
 #include <CanvasControl.h>
+#include <CanvasGradientBrush.h>
 #include <Conversion.h>
 #include <CanvasTextFormat.h>
 #include <ResourceManager.h>
@@ -97,6 +99,9 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 #include "MockD2DImageBrush.h"
 #include "MockD3D11Device.h"
 #include "MockWICFormatConverter.h"
+#include "MockD2DGradientStopCollection.h"
+#include "MockD2DLinearGradientBrush.h"
+#include "MockD2DRadialGradientBrush.h"
 #include "MockSurfaceImageSource.h"
 #include "MockSurfaceImageSourceFactory.h"
 #include "StubCanvasBrush.h"

@@ -605,6 +605,32 @@ namespace Microsoft
                 END_ENUM(D2D1_INTERPOLATION_MODE);
             }
 
+            ENUM_TO_STRING(CanvasAlphaBehavior)
+            {
+                ENUM_VALUE(CanvasAlphaBehavior::Ignore);
+                ENUM_VALUE(CanvasAlphaBehavior::Premultiplied);
+                ENUM_VALUE(CanvasAlphaBehavior::Straight);
+                END_ENUM(CanvasAlphaBehavior);
+            }
+
+            ENUM_TO_STRING(CanvasColorSpace)
+            {
+                ENUM_VALUE(CanvasColorSpace::Custom);
+                ENUM_VALUE(CanvasColorSpace::Srgb);
+                ENUM_VALUE(CanvasColorSpace::ScRgb);
+                END_ENUM(CanvasColorSpace);
+            }
+
+            ENUM_TO_STRING(CanvasBufferPrecision)
+            {
+                ENUM_VALUE(CanvasBufferPrecision::Precision8UIntNormalized);
+                ENUM_VALUE(CanvasBufferPrecision::Precision8UIntNormalizedSrgb);
+                ENUM_VALUE(CanvasBufferPrecision::Precision16UIntNormalized);
+                ENUM_VALUE(CanvasBufferPrecision::Precision16Float);
+                ENUM_VALUE(CanvasBufferPrecision::Precision32Float);
+                END_ENUM(CanvasBufferPrecision);
+            }
+
             template<typename T>
             static inline std::wstring ToStringAsInt(T value)
             {

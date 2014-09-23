@@ -174,4 +174,20 @@ TEST_CLASS(ConversionUnitTests)
 
         Assert::AreEqual(Rect{ 5, 6, 2, 2 }, FromD2DRect(D2D1::RectF(5, 6, 7, 8)));
     }
+
+    TEST_METHOD(Desaturate)
+    {
+        Assert::AreEqual((BYTE)0, DesaturateChannel(0, 0.0f));
+        Assert::AreEqual((BYTE)200, DesaturateChannel(200, 0.0f));
+        Assert::AreEqual((BYTE)255, DesaturateChannel(255, 0.0f));
+
+        Assert::AreEqual((BYTE)127, DesaturateChannel(0, 1.0f));
+        Assert::AreEqual((BYTE)127, DesaturateChannel(200, 1.0f));
+        Assert::AreEqual((BYTE)127, DesaturateChannel(255, 1.0f));
+
+        Assert::AreEqual((BYTE)(127 + (255 - 127) / 2), DesaturateChannel(255, 0.5f));
+
+        Assert::AreEqual((BYTE)23, DesaturateChannel(23, -50));
+        Assert::AreEqual((BYTE)127, DesaturateChannel(23, 999));
+    }
 };

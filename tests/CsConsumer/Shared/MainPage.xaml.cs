@@ -30,6 +30,8 @@ namespace CsConsumer
         CanvasBitmap m_bitmap_tiger;
         CanvasImageBrush m_imageBrush;
         CanvasRenderTarget m_offscreenTarget;
+        CanvasLinearGradientBrush m_linearGradientBrush;
+        CanvasRadialGradientBrush m_radialGradientBrush;
 
         enum DrawnContentType
         {
@@ -55,6 +57,7 @@ namespace CsConsumer
             Text,
             ImageBrush,
             OffscreenTarget,
+            Gradients,
             Test_Scene0_Default,
             Test_Scene0_Wireframe,
             Test_Scene1_Default,
@@ -104,6 +107,22 @@ namespace CsConsumer
                 ds.DrawText("Def", 25, 25, Colors.LightGray);
                 ds.DrawText("Efg", 50, 50, Colors.LightGray);
             }
+            
+            CanvasGradientStop[] stops = new CanvasGradientStop[4];
+            stops[0].Position = 0;
+            stops[0].Color = Colors.Black;
+            stops[1].Position = 1;
+            stops[1].Color = Colors.White;
+            stops[2].Position = 0.2f;
+            stops[2].Color = Colors.Purple;
+            stops[3].Position = 0.7f;
+            stops[3].Color = Colors.Green;
+            m_linearGradientBrush = CanvasLinearGradientBrush.CreateRainbow(sender, 0.0f);
+            m_radialGradientBrush = new CanvasRadialGradientBrush(
+                sender, 
+                stops, 
+                CanvasEdgeBehavior.Wrap, 
+                CanvasAlphaBehavior.Premultiplied);
         }
 
         private void OnRedrawClicked(object sender, RoutedEventArgs e)
@@ -285,6 +304,7 @@ namespace CsConsumer
                     break;
 
                 case DrawnContentType.Rectangle_Thin:
+                    
                     ds.DrawRectangle(
                         NextRandomRect(horizontalLimit, verticalLimit),
                         NextRandomColor());
@@ -298,9 +318,16 @@ namespace CsConsumer
                     break;
 
                 case DrawnContentType.Rectangle_Filled:
+                    Point bound0 = NextRandomPoint(horizontalLimit, verticalLimit);
+                    Point bound1 = NextRandomPoint(horizontalLimit, verticalLimit);
+
+                    m_linearGradientBrush.StartPoint = bound0.ToVector2();
+                    m_linearGradientBrush.EndPoint = bound1.ToVector2();
+
                     ds.FillRectangle(
-                        NextRandomRect(horizontalLimit, verticalLimit),
-                        NextRandomColor());
+                        new Rect(bound0, bound1),
+                        m_linearGradientBrush);
+
                     break;
 
                 case DrawnContentType.RoundedRectangle_Thin:
@@ -402,6 +429,23 @@ namespace CsConsumer
                     m_imageBrush.ExtendX = (CanvasEdgeBehavior)(m_random.Next(3));
                     m_imageBrush.ExtendY = (CanvasEdgeBehavior)(m_random.Next(3));
                     ds.FillRectangle(new Rect(0, 0, horizontalLimit, verticalLimit), m_imageBrush);
+                    break;
+
+                case DrawnContentType.Gradients:
+                    Vector2 center = NextRandomPoint(horizontalLimit, verticalLimit).ToVector2();
+                    m_radialGradientBrush.Center = center;
+                    float radius = m_random.Next(horizontalLimit / 2);
+                    m_radialGradientBrush.OriginOffset = new Vector2(radius, radius);
+                    m_radialGradientBrush.RadiusX = radius;
+                    m_radialGradientBrush.RadiusY = radius;
+                    ds.FillCircle(center, radius, m_radialGradientBrush);
+
+                    Vector2 line0 = NextRandomPoint(horizontalLimit, verticalLimit).ToVector2();
+                    Vector2 line1 = NextRandomPoint(horizontalLimit, verticalLimit).ToVector2();
+                    m_linearGradientBrush.StartPoint = line0;
+                    m_linearGradientBrush.EndPoint = line1;
+                    float thickness = m_random.Next(horizontalLimit / 2);
+                    ds.DrawLine(line0, line1, m_linearGradientBrush, thickness);
                     break;
 
                 case DrawnContentType.Test_Scene0_Default:

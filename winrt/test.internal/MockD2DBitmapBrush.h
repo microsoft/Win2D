@@ -28,7 +28,7 @@ namespace canvas
         std::function<void(ID2D1Bitmap **bitmap)> MockGetBitmap;
         std::function<void(ID2D1Bitmap *bitmap)> MockSetBitmap;
         std::function<float()> MockGetOpacity;
-        std::function<void(float extendModeX)> MockSetOpacity;
+        std::function<void(float opacity)> MockSetOpacity;
         std::function<void(D2D1_MATRIX_3X2_F *transform)> MockGetTransform;
         std::function<void(const D2D1_MATRIX_3X2_F *transform)> MockSetTransform;
 

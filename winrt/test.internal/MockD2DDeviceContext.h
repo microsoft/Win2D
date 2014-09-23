@@ -99,8 +99,10 @@ namespace canvas
             }
         }
 
-        IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *,UINT32,D2D1_GAMMA,D2D1_EXTEND_MODE,ID2D1GradientStopCollection **) override
+        IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *, uint32_t, D2D1_GAMMA, D2D1_EXTEND_MODE, ID2D1GradientStopCollection **) override
         {
+            // This method is a deprecated version and should not be called. 
+            // The version which returns ID2D1GradientStopCollection1 should be called instead.
             Assert::Fail(L"Unexpected call to CreateGradientStopCollection");
             return E_NOTIMPL;
         }
@@ -509,7 +511,7 @@ namespace canvas
             return MockCreateEffect(effect);
         }
 
-        IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *,UINT32,D2D1_COLOR_SPACE,D2D1_COLOR_SPACE,D2D1_BUFFER_PRECISION,D2D1_EXTEND_MODE,D2D1_COLOR_INTERPOLATION_MODE,ID2D1GradientStopCollection1 **) override
+        IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *, uint32_t, D2D1_COLOR_SPACE, D2D1_COLOR_SPACE, D2D1_BUFFER_PRECISION, D2D1_EXTEND_MODE, D2D1_COLOR_INTERPOLATION_MODE, ID2D1GradientStopCollection1 **) override
         {
             Assert::Fail(L"Unexpected call to CreateGradientStopCollection");
             return E_NOTIMPL;

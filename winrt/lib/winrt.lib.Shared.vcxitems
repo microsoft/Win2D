@@ -36,12 +36,14 @@
     <Exec Command="mdmerge -metadata_dir &quot;$(WindowsSDK_MetadataPath)&quot; -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -v -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.h" />
@@ -62,10 +64,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />    
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasGradientBrush.cpp" />    
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

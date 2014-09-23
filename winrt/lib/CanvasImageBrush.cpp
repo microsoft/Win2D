@@ -11,7 +11,7 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasBrush.h"
+#include "CanvasImageBrush.h"
 #include "CanvasDevice.h"
 #include "CanvasImage.h"
 #include "CanvasBitmap.h"
@@ -22,162 +22,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ::Microsoft::WRL::Wrappers;
 
-    IFACEMETHODIMP CanvasBrush::get_Opacity(_Out_ float *value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckInPointer(value);
-                *value = GetD2DBrush()->GetOpacity();
-            });
-    }
-
-    IFACEMETHODIMP CanvasBrush::put_Opacity(_In_ float value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                GetD2DBrush()->SetOpacity(value);
-            });
-    }
-
-
-    IFACEMETHODIMP CanvasBrush::get_Transform(_Out_ Numerics::Matrix3x2 *value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckInPointer(value);
-
-                GetD2DBrush()->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
-            });
-    }
-
-    IFACEMETHODIMP CanvasBrush::put_Transform(_In_ Numerics::Matrix3x2 value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                GetD2DBrush()->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
-            });
-    }
-
-    ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
-        ICanvasResourceCreator* resourceCreator,
-        Color color)
-    {
-        ComPtr<ICanvasDevice> device;
-        resourceCreator->get_Device(&device);
-
-        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
-        ThrowIfFailed(device.As(&canvasDeviceInternal));
-
-        auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
-
-        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-            shared_from_this(),
-            d2dBrush.Get());
-        CheckMakeResult(canvasSolidColorBrush);
-        
-        return canvasSolidColorBrush;
-    };
-
-
-    ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateWrapper(
-        ID2D1SolidColorBrush* brush)
-    {
-        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-            shared_from_this(),
-            brush);
-        CheckMakeResult(canvasSolidColorBrush);
-
-        return canvasSolidColorBrush;
-    }
-
-    IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
-        ICanvasResourceCreator* resourceCreator,
-        ABI::Windows::UI::Color color,
-        ICanvasSolidColorBrush** canvasSolidColorBrush)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resourceCreator);
-                CheckAndClearOutPointer(canvasSolidColorBrush);
-
-                auto newSolidColorBrush = GetManager()->Create(
-                    resourceCreator,
-                    color);
-
-                ThrowIfFailed(newSolidColorBrush.CopyTo(canvasSolidColorBrush));
-            });
-    }
-
-
-    IFACEMETHODIMP CanvasSolidColorBrushFactory::GetOrCreate(
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<ID2D1SolidColorBrush> d2dBrush;
-                ThrowIfFailed(resource->QueryInterface(d2dBrush.GetAddressOf()));
-
-                auto newBrush = GetManager()->GetOrCreate(d2dBrush.Get());
-
-                ThrowIfFailed(newBrush.CopyTo(wrapper));
-            });
-    }
-
-
-    CanvasSolidColorBrush::CanvasSolidColorBrush(
-        std::shared_ptr<CanvasSolidColorBrushManager> manager,
-        ID2D1SolidColorBrush* brush)
-        : ResourceWrapper(manager, brush)
-    {
-    }
-
-    IFACEMETHODIMP CanvasSolidColorBrush::get_Color(_Out_ Color *value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
-                *value = ToWindowsColor(GetResource()->GetColor());
-            });
-    }
-
-    IFACEMETHODIMP CanvasSolidColorBrush::put_Color(_In_ Color value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {                
-                GetResource()->SetColor(ToD2DColor(value));
-            });
-    }
-
-    IFACEMETHODIMP CanvasSolidColorBrush::Close()
-    {
-        return ResourceWrapper::Close();
-    }
-
-    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush()
-    {
-        return GetResource();
-    }
-
-    ComPtr<ID2D1SolidColorBrush> CanvasSolidColorBrush::GetD2DSolidColorBrush()
-    {
-        return GetResource();
-    }
-
-    //
-    // CanvasImageBrush
-    //
 
     class CanvasImageBrushAdapter : public ICanvasImageBrushAdapter
     {
@@ -578,6 +422,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_d2dBitmapBrush->SetBitmap(targetBitmap.Get());
     }
 
-    ActivatableClassWithFactory(CanvasSolidColorBrush, CanvasSolidColorBrushFactory);
     ActivatableClassWithFactory(CanvasImageBrush, CanvasImageBrushFactory);
 } } } }

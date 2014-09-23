@@ -13,6 +13,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Windows::UI;
 
 TEST_CLASS(CanvasBrushTests)
 {
@@ -110,6 +111,118 @@ TEST_CLASS(CanvasBrushTests)
                         GetOrCreate<CanvasImageBrush>(d2dImageBrush.Get());
                     });
             });
+    }
 
+    ComPtr<ID2D1GradientStopCollection1> CreateTestStopCollection(
+        ID2D1DeviceContext1* context)
+    {
+        ComPtr<ID2D1GradientStopCollection1> stopCollection;
+        D2D1_GRADIENT_STOP stops[3];
+        stops[0] = { 0.1f, D2D1::ColorF(1, 0, 0) };
+        stops[1] = { 0.4f, D2D1::ColorF(0, 1, 0) };
+        stops[2] = { 0.7f, D2D1::ColorF(0, 0, 1) };
+
+        ThrowIfFailed(context->CreateGradientStopCollection(
+            stops,
+            _countof(stops),
+            D2D1_COLOR_SPACE_SRGB,
+            D2D1_COLOR_SPACE_SRGB,
+            D2D1_BUFFER_PRECISION_8BPC_UNORM,
+            D2D1_EXTEND_MODE_MIRROR,
+            D2D1_COLOR_INTERPOLATION_MODE_PREMULTIPLIED,
+            &stopCollection));
+        return stopCollection;
+    }
+
+    void VerifyCanvasStopsMatchTestStops(Platform::Array<CanvasGradientStop>^ stops)
+    {
+        Assert::AreEqual(3u, stops->Length);
+
+        Assert::AreEqual(0.1f, stops[0].Position);
+        Assert::AreEqual(0.4f, stops[1].Position);
+        Assert::AreEqual(0.7f, stops[2].Position);
+
+        Assert::AreEqual(ColorHelper::FromArgb(255, 255, 0, 0), stops[0].Color);
+        Assert::AreEqual(ColorHelper::FromArgb(255, 0, 255, 0), stops[1].Color);
+        Assert::AreEqual(ColorHelper::FromArgb(255, 0, 0, 255), stops[2].Color);
+    }
+
+    TEST_METHOD(CanvasLinearGradientBrush_ConstructionAndInterop)
+    {
+        ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
+
+        auto stopCollection = CreateTestStopCollection(context.Get());
+
+        ComPtr<ID2D1LinearGradientBrush> d2dLinearGradientBrush;
+        ThrowIfFailed(context->CreateLinearGradientBrush(
+            D2D1::LinearGradientBrushProperties(
+                D2D1::Point2F(),
+                D2D1::Point2F()),
+            stopCollection.Get(),
+            &d2dLinearGradientBrush));
+
+        auto canvasLinearGradientBrushBrush =
+            GetOrCreate<CanvasLinearGradientBrush>(d2dLinearGradientBrush.Get());
+
+        auto actualBrush = GetWrappedResource<ID2D1LinearGradientBrush>(canvasLinearGradientBrushBrush);
+
+        Assert::AreEqual(d2dLinearGradientBrush.Get(), actualBrush.Get());
+
+        VerifyCanvasStopsMatchTestStops(canvasLinearGradientBrushBrush->Stops);
+    }
+
+    TEST_METHOD(CanvasRadialGradientBrush_ConstructionAndInterop)
+    {
+        ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
+
+        auto stopCollection = CreateTestStopCollection(context.Get());
+
+        ComPtr<ID2D1RadialGradientBrush> d2dRadialGradientBrush;
+        ThrowIfFailed(context->CreateRadialGradientBrush(
+            D2D1::RadialGradientBrushProperties(
+                D2D1::Point2F(),
+                D2D1::Point2F(),
+                0,
+                0),
+            stopCollection.Get(),
+            &d2dRadialGradientBrush));
+
+        auto canvasRadialGradientBrushBrush =
+            GetOrCreate<CanvasRadialGradientBrush>(d2dRadialGradientBrush.Get());
+
+        auto actualBrush = GetWrappedResource<ID2D1RadialGradientBrush>(canvasRadialGradientBrushBrush);
+
+        Assert::AreEqual(d2dRadialGradientBrush.Get(), actualBrush.Get());
+
+        VerifyCanvasStopsMatchTestStops(canvasRadialGradientBrushBrush->Stops);
+    }
+
+    TEST_METHOD(CanvasGradientBrush_ThrowOnChannelIgnore)
+    {
+        auto device = ref new CanvasDevice();
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                Platform::Array<CanvasGradientStop>^ gradientStopArray = ref new Platform::Array<CanvasGradientStop>(1);
+                CanvasLinearGradientBrush^ linearGradientBrush = ref new CanvasLinearGradientBrush(
+                    device,
+                    gradientStopArray,
+                    CanvasEdgeBehavior::Clamp,
+                    CanvasAlphaBehavior::Ignore,
+                    CanvasColorSpace::Srgb,
+                    CanvasColorSpace::Srgb,
+                    CanvasBufferPrecision::Precision8UIntNormalizedSrgb);
+            });
+    }
+
+    TEST_METHOD(CanvasGradientBrush_Rainbow)
+    {
+        CanvasDevice^ device = ref new CanvasDevice();
+
+        CanvasLinearGradientBrush^ linearGradientBrush = CanvasLinearGradientBrush::CreateRainbow(device, 0.0f);
+        Assert::AreEqual(7u, linearGradientBrush->Stops->Length);
+
+        CanvasRadialGradientBrush^ radialGradientBrush = CanvasRadialGradientBrush::CreateRainbow(device, 100.0f);
+        Assert::AreEqual(7u, radialGradientBrush->Stops->Length);
     }
 };

@@ -28,6 +28,21 @@ namespace canvas
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
         std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmapFromWicResource;
         std::function<ComPtr<ID2D1Bitmap1>(ABI::Windows::Foundation::Size size)> MockCreateBitmap;
+
+        std::function<ComPtr<ID2D1GradientStopCollection1>(
+            UINT gradientStopCount,
+            CanvasGradientStop const* gradientStops,
+            CanvasEdgeBehavior edgeBehavior,
+            CanvasColorSpace preInterpolationSpace,
+            CanvasColorSpace postInterpolationSpace,
+            CanvasBufferPrecision bufferPrecision,
+            CanvasAlphaBehavior alphaBehavior)> MockCreateGradientStopCollection;
+
+        std::function<ComPtr<ID2D1LinearGradientBrush>(
+            ID2D1GradientStopCollection1* stopCollection)> MockCreateLinearGradientBrush;
+
+        std::function<ComPtr<ID2D1RadialGradientBrush>(
+            ID2D1GradientStopCollection1* stopCollection)> MockCreateRadialGradientBrush;
         
         //
         // ICanvasDevice
@@ -127,6 +142,55 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to GetD2DImage");
             return nullptr;
+        }
+
+        virtual ComPtr<ID2D1GradientStopCollection1> CreateGradientStopCollection(
+            uint32_t gradientStopCount,
+            CanvasGradientStop const* gradientStops,
+            CanvasEdgeBehavior edgeBehavior,
+            CanvasColorSpace preInterpolationSpace,
+            CanvasColorSpace postInterpolationSpace,
+            CanvasBufferPrecision bufferPrecision,
+            CanvasAlphaBehavior alphaBehavior)
+        {
+            if (!MockCreateGradientStopCollection)
+            {
+                Assert::Fail(L"Unexpected call to CreateGradientStopCollection");
+                return nullptr;
+            }
+
+            return MockCreateGradientStopCollection(
+                gradientStopCount,
+                gradientStops,
+                edgeBehavior,
+                preInterpolationSpace,
+                postInterpolationSpace,
+                bufferPrecision,
+                alphaBehavior);
+        }
+
+        virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(
+            ID2D1GradientStopCollection1* stopCollection)
+        {
+            if (!MockCreateLinearGradientBrush)
+            {
+                Assert::Fail(L"Unexpected call to CreateLinearGradientBrush");
+                return nullptr;
+            }
+
+            return MockCreateLinearGradientBrush(stopCollection);
+        }
+
+        virtual ComPtr<ID2D1RadialGradientBrush> CreateRadialGradientBrush(
+            ID2D1GradientStopCollection1* stopCollection)
+        {
+            if (!MockCreateRadialGradientBrush)
+            {
+                Assert::Fail(L"Unexpected call to CreateRadialGradientBrush");
+                return nullptr;
+            }
+
+            return MockCreateRadialGradientBrush(stopCollection);
         }
     };
 }

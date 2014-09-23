@@ -550,5 +550,77 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    ComPtr<ID2D1GradientStopCollection1> CanvasDevice::CreateGradientStopCollection(
+        uint32_t gradientStopCount,
+        CanvasGradientStop const* gradientStops,
+        CanvasEdgeBehavior edgeBehavior,
+        CanvasColorSpace preInterpolationSpace,
+        CanvasColorSpace postInterpolationSpace,
+        CanvasBufferPrecision bufferPrecision,
+        CanvasAlphaBehavior alphaBehavior)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        std::vector<D2D1_GRADIENT_STOP> d2dGradientStops;
+        d2dGradientStops.resize(gradientStopCount);
+        for (uint32_t i = 0; i < gradientStopCount; ++i)
+        {
+            d2dGradientStops[i].color = ToD2DColor(gradientStops[i].Color);
+            d2dGradientStops[i].position = gradientStops[i].Position;
+        }
+
+        ComPtr<ID2D1GradientStopCollection1> gradientStopCollection;
+        ThrowIfFailed(deviceContext->CreateGradientStopCollection(
+            &d2dGradientStops[0],
+            gradientStopCount,
+            static_cast<D2D1_COLOR_SPACE>(preInterpolationSpace),
+            static_cast<D2D1_COLOR_SPACE>(postInterpolationSpace),
+            ToD2DBufferPrecision(bufferPrecision),
+            static_cast<D2D1_EXTEND_MODE>(edgeBehavior),
+            ToD2DColorInterpolation(alphaBehavior),
+            gradientStopCollection.GetAddressOf()));
+
+        return gradientStopCollection;
+    }
+
+    ComPtr<ID2D1LinearGradientBrush> CanvasDevice::CreateLinearGradientBrush(
+        ID2D1GradientStopCollection1* stopCollection)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES linearGradientBrushProperties = D2D1::LinearGradientBrushProperties(
+            D2D1::Point2F(),
+            D2D1::Point2F());
+
+        ComPtr<ID2D1LinearGradientBrush> linearGradientBrush;
+        ThrowIfFailed(deviceContext->CreateLinearGradientBrush(
+            linearGradientBrushProperties, 
+            stopCollection,
+            linearGradientBrush.GetAddressOf()));
+
+        return linearGradientBrush;
+
+    }
+
+    ComPtr<ID2D1RadialGradientBrush> CanvasDevice::CreateRadialGradientBrush(
+        ID2D1GradientStopCollection1* stopCollection)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES radialGradientBrushProperties = D2D1::RadialGradientBrushProperties(
+            D2D1::Point2F(),
+            D2D1::Point2F(), 
+            0, 
+            0);
+
+        ComPtr<ID2D1RadialGradientBrush> radialGradientBrush;
+        ThrowIfFailed(deviceContext->CreateRadialGradientBrush(
+            radialGradientBrushProperties,
+            stopCollection,
+            radialGradientBrush.GetAddressOf()));
+
+        return radialGradientBrush;
+    }
+
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
 }}}}

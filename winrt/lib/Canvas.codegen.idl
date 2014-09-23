@@ -41,6 +41,14 @@ namespace Microsoft.Graphics.Canvas
     } CanvasAntialiasing;
 
     [version(VERSION)]
+    typedef enum CanvasAlphaBehavior
+    {
+        Premultiplied = (int)0,
+        Straight = (int)1,
+        Ignore = (int)2
+    } CanvasAlphaBehavior;
+
+    [version(VERSION)]
     typedef enum CanvasEdgeBehavior
     {
         Clamp = (int)0,
@@ -76,6 +84,16 @@ namespace Microsoft.Graphics.Canvas
     } CanvasTextAntialiasing;
 
     [version(VERSION)]
+    typedef enum CanvasBufferPrecision
+    {
+        Precision8UIntNormalized = (int)0,
+        Precision8UIntNormalizedSrgb = (int)1,
+        Precision16UIntNormalized = (int)2,
+        Precision16Float = (int)3,
+        Precision32Float = (int)4
+    } CanvasBufferPrecision;
+
+    [version(VERSION)]
     typedef enum CanvasImageInterpolation
     {
         NearestNeighbor = (int)0,
@@ -92,6 +110,14 @@ namespace Microsoft.Graphics.Canvas
         Dips = (int)0,
         Pixels = (int)1
     } CanvasUnits;
+
+    [version(VERSION)]
+    typedef enum CanvasColorSpace
+    {
+        Custom = (int)0,
+        Srgb = (int)1,
+        ScRgb = (int)2
+    } CanvasColorSpace;
 
     [version(VERSION)]
     typedef enum CanvasStrokeTransformBehavior

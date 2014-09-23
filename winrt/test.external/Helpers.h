@@ -53,6 +53,8 @@ namespace Microsoft
             TO_STRING(IDXGISurface);
             TO_STRING(ID2D1StrokeStyle1);
             TO_STRING(IDWriteFactory2);
+            TO_STRING(ID2D1LinearGradientBrush);
+            TO_STRING(ID2D1RadialGradientBrush);
 
 #undef TO_STRING
 

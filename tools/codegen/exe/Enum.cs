@@ -44,6 +44,7 @@ namespace CodeGen
             m_nativeName = xmlData.Name;
             m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
             m_shouldProject = true;
+            m_valueExpression = GetValueExpression(xmlData);
 
             if (overrides != null)
             {
@@ -52,10 +53,14 @@ namespace CodeGen
                     m_stylizedName = overrides.ProjectedNameOverride;
                 }
 
+                if (overrides.ProjectedValueOverride != null)
+                {
+                    m_valueExpression = overrides.ProjectedValueOverride;
+                }
+
                 m_shouldProject = overrides.ShouldProject;
             }
 
-            m_valueExpression = GetValueExpression(xmlData);
 
         }
 

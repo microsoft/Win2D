@@ -4,7 +4,6 @@
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
@@ -33,6 +32,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.cpp">
       <Filter>effects</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasGradientBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp">
       <Filter>WinRTDirectX</Filter>
@@ -43,7 +45,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Strings.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBitmap.h" />

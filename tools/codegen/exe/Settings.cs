@@ -64,6 +64,9 @@ namespace CodeGen
 
                 [XmlAttributeAttribute]
                 public string ProjectedNameOverride;
+
+                [XmlAttributeAttribute]
+                public string ProjectedValueOverride;
             }
 
             public class Enum
