@@ -58,7 +58,7 @@ namespace CodeGen
                     // Check if property represent enum that is common to some group of effects
                     if (property.Type == "enum" && property.EnumFields.IsRepresentative && property.ShouldProject)
                     {
-                        var registeredEffects = effects.Where(effectElement => effectElement.Uuid != null);
+                        var registeredEffects = effects.Where(EffectGenerator.IsEffectEnabled);
                         // Check if any registred property need this enum
                         if (registeredEffects.Any(e => e.Properties.Any(p => p.TypeNameIdl == property.TypeNameIdl)))
                         {

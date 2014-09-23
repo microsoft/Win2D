@@ -47,7 +47,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     runtimeclass BlendEffect;
 
-    [version(VERSION), uuid(342F0890-FE85-4257-8012-7B2F9D7B6A95), exclusiveto(BlendEffect)]
+    [version(VERSION), uuid(5673248E-7266-5E49-B2AB-2589D5D875C3), exclusiveto(BlendEffect)]
     interface IBlendEffect : IInspectable
         requires  Microsoft.Graphics.Canvas.ICanvasImage
     {

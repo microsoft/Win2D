@@ -34,7 +34,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     runtimeclass CompositeEffect;
 
-    [version(VERSION), uuid(094F52BC-E406-454D-AE53-240E26D4236C), exclusiveto(CompositeEffect)]
+    [version(VERSION), uuid(F8808C48-CDC7-5DB4-807C-B9344FF71984), exclusiveto(CompositeEffect)]
     interface ICompositeEffect : IInspectable
         requires  Microsoft.Graphics.Canvas.ICanvasImage
     {

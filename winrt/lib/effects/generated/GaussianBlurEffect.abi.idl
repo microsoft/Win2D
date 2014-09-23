@@ -16,7 +16,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 {
     runtimeclass GaussianBlurEffect;
 
-    [version(VERSION), uuid(6202E54A-E229-489B-9098-C2A1B5AE5170), exclusiveto(GaussianBlurEffect)]
+    [version(VERSION), uuid(A82EC394-6734-5830-9123-2C82B27DD3C0), exclusiveto(GaussianBlurEffect)]
     interface IGaussianBlurEffect : IInspectable
         requires  Microsoft.Graphics.Canvas.ICanvasImage
     {

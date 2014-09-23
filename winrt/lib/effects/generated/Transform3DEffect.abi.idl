@@ -16,7 +16,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 {
     runtimeclass Transform3DEffect;
 
-    [version(VERSION), uuid(B31D51C6-5521-4718-906A-A46B3177740F), exclusiveto(Transform3DEffect)]
+    [version(VERSION), uuid(3025ED7F-8F25-5E0B-80C9-56BBDD3E8A10), exclusiveto(Transform3DEffect)]
     interface ITransform3DEffect : IInspectable
         requires  Microsoft.Graphics.Canvas.ICanvasImage
     {

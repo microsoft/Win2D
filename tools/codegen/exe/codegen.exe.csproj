@@ -42,6 +42,7 @@
     <Compile Include="Formatter.cs" />
     <Compile Include="D2DTypes.cs" />
     <Compile Include="Enum.cs" />
+    <Compile Include="UuidHelper.cs" />
     <Compile Include="Interface.cs" />
     <Compile Include="Namespace.cs" />
     <Compile Include="OutputEffectType.cs" />

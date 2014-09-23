@@ -149,10 +149,8 @@ namespace CodeGen
 
         public static void GenerateEffectsCode(string inputDir, string outputDir)
         {
-            EffectGenerator effectGen = new EffectGenerator();
-
             String inputEffectsDir = Path.Combine(inputDir, "apiref/effects");
-            effectGen.OuptutEffects(inputEffectsDir, outputDir);
+            EffectGenerator.OutputEffects(inputEffectsDir, outputDir);
         }
 
         public static void GenerateCode(string inputDir, string outputDir)
