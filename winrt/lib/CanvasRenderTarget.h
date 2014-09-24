@@ -22,7 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasRenderTargetManager;
 
     class CanvasRenderTargetFactory 
-        : public ActivationFactory<ICanvasRenderTargetFactory, CloakedIid<ICanvasFactoryNative>>
+        : public ActivationFactory<ICanvasRenderTargetFactory, CloakedIid<ICanvasDeviceResourceFactoryNative>>
         , public FactoryWithResourceManager<CanvasRenderTargetFactory, CanvasRenderTargetManager>
     {
     public:
@@ -34,6 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasRenderTarget** renderTarget);
 
         IFACEMETHOD(GetOrCreate)(
+            ICanvasDevice* device,
             IUnknown* resource,
             IInspectable** wrapper) override;
 
@@ -53,6 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : public RuntimeClass<
             RuntimeClassFlags<WinRtClassicComMix>,
             ICanvasRenderTarget,
+            ICanvasResourceCreator,
             MixIn<CanvasRenderTarget, CanvasBitmapImpl<CanvasRenderTargetTraits>>>
         , public CanvasBitmapImpl<CanvasRenderTargetTraits>
     {
@@ -68,6 +70,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(CreateDrawingSession)(
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
+
+        IFACEMETHOD(get_Device)(ICanvasDevice** device) override;
     };
 
 
@@ -79,6 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::Foundation::Size size);
 
         ComPtr<CanvasRenderTarget> CreateWrapper(
+            ICanvasDevice* device,
             ID2D1Bitmap1* bitmap);
     };
 }}}}

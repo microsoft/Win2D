@@ -53,7 +53,66 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         template<typename CONSTRUCT_FN>
         ComPtr<VALUE> GetOrCreate(KEY* key, CONSTRUCT_FN&& constructFn)
-        {            
+        {
+            return GetOrCreateWorker(key, constructFn).second;
+        }
+
+
+        template<typename CONSTRUCT_FN>
+        ComPtr<VALUE> GetOrCreate(ICanvasDevice* device, KEY* key, CONSTRUCT_FN&& constructFn)
+        {
+            auto result = GetOrCreateWorker(key, constructFn);
+
+            auto wasNewlyConstructed = result.first;
+            auto const& value = result.second;
+
+            //
+            // Validate that the object we got back reports that it is
+            // associated with the requested device.
+            //
+            ComPtr<ICanvasDevice> existingDevice;
+            ThrowIfFailed(value->get_Device(&existingDevice));
+
+            if (existingDevice.Get() != device)
+            {
+                if (wasNewlyConstructed)
+                {
+                    // A device mismatch on a newly created device indicates an
+                    // internal error
+                    assert(false && L"constructFn didn't create a wrapper associated with the expected device");
+                    ThrowHR(E_UNEXPECTED);
+                }
+                else
+                {
+                    // A device mismatch on a fetched device indicates a caller
+                    // error
+                    ThrowHR(E_INVALIDARG, WinString(L"Existing wrapper reports that it associated with a different device."));
+                }
+            }
+
+            return value;
+        }
+
+
+        void Remove(KEY* key)
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            auto it = m_resources.find(key);
+
+            if (it == m_resources.end())
+            {
+                assert(false);
+                ThrowHR(E_UNEXPECTED);
+            }
+
+            m_resources.erase(it);
+        }
+
+    private:
+        template<typename CONSTRUCT_FN>
+        std::pair<bool, ComPtr<VALUE>> GetOrCreateWorker(KEY* key, CONSTRUCT_FN&& constructFn)
+        {
             std::lock_guard<std::mutex> lock(m_mutex);
 
             auto it = m_resources.lower_bound(key);
@@ -79,8 +138,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     // We know that we've only put VALUEs into m_resources, so
                     // we can safely cast from IVALUE to VALUE.
                     //
-                    ComPtr<VALUE> value(static_cast<VALUE*>(ivalue.Get()));
-                    return value;
+                    return std::make_pair(false, ComPtr<VALUE>(static_cast<VALUE*>(ivalue.Get())));
                 }
             }
 
@@ -94,22 +152,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 it,
                 std::make_pair(key, weakValue));
 
-            return value;
-        }
-
-        void Remove(KEY* key)
-        {
-            std::lock_guard<std::mutex> lock(m_mutex);
-
-            auto it = m_resources.find(key);
-
-            if (it == m_resources.end())
-            {
-                assert(false);
-                ThrowHR(E_UNEXPECTED);
-            }
-
-            m_resources.erase(it);
+            return std::make_pair(true, value);
         }
     };
 }}}}

@@ -42,11 +42,24 @@ TEST_CLASS(CanvasRenderTargetTests)
     TEST_METHOD(CanvasRenderTarget_NativeInterop)
     {
         auto canvasDevice = ref new CanvasDevice();
-
         auto originalRenderTarget = ref new CanvasRenderTarget(canvasDevice, Size(1, 1));
         auto originalD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(originalRenderTarget);
-        auto newRenderTarget = GetOrCreate<CanvasRenderTarget>(originalD2DBitmap.Get());
+
+        //
+        // GetOrCreate via CanvasDevice
+        //
+        auto newRenderTarget = GetOrCreate<CanvasRenderTarget>(canvasDevice, originalD2DBitmap.Get());
         auto newD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(newRenderTarget);
+
+        Assert::AreEqual(originalRenderTarget, newRenderTarget);
+        Assert::AreEqual(originalD2DBitmap.Get(), newD2DBitmap.Get());
+
+        //
+        // GetOrCreate via ID2D1Device
+        //
+        auto d2dDevice = GetWrappedResource<ID2D1Device1>(canvasDevice);
+        newRenderTarget = GetOrCreate<CanvasRenderTarget>(d2dDevice.Get(), originalD2DBitmap.Get());
+        newD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(newRenderTarget);
 
         Assert::AreEqual(originalRenderTarget, newRenderTarget);
         Assert::AreEqual(originalD2DBitmap.Get(), newD2DBitmap.Get());

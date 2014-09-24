@@ -23,6 +23,8 @@ namespace ABI
         {
             namespace Canvas
             {
+                interface ICanvasDevice;
+
                 //
                 // Interface provided by the various Canvas factories that is
                 // able to get or create objects that wrap resources.
@@ -32,6 +34,18 @@ namespace ABI
                 {
                 public:
                     IFACEMETHOD(GetOrCreate)(IUnknown* resource, IInspectable** wrapper) = 0;
+                };
+
+                //
+                // Interface provided by the various Canvas factories that is
+                // able to get or create objects that wrap resources that are
+                // associated with a specific CanvasDevice.
+                //
+                [uuid(67FE1FBC-9773-4F58-9313-E74C8CADE01D)]
+                class ICanvasDeviceResourceFactoryNative : public IInspectable
+                {
+                public:
+                    IFACEMETHOD(GetOrCreate)(ICanvasDevice* device, IUnknown* resource, IInspectable** wrapper) = 0;
                 };
 
                 //
@@ -60,6 +74,8 @@ namespace Microsoft
     {
         namespace Canvas
         {
+            // TODO 2523: better error reporting when the wrong GetOrCreate is used
+
             template<class WRAPPER>
             WRAPPER^ GetOrCreate(IUnknown* resource)
             {
@@ -77,6 +93,33 @@ namespace Microsoft
                 Platform::Object^ objectWrapper = reinterpret_cast<Platform::Object^>(inspectableWrapper.Get());
                 
                 return safe_cast<WRAPPER^>(objectWrapper);
+            }
+
+            template<class WRAPPER>
+            WRAPPER^ GetOrCreate(CanvasDevice^ device, IUnknown* resource)
+            {
+                using namespace Microsoft::WRL;
+                namespace abi = ABI::Microsoft::Graphics::Canvas;
+                
+                ComPtr<abi::ICanvasDeviceResourceFactoryNative> factory;
+                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                    reinterpret_cast<HSTRING>(WRAPPER::typeid->FullName),
+                    &factory));
+
+                ComPtr<IInspectable> inspectableWrapper;
+                __abi_ThrowIfFailed(factory->GetOrCreate(reinterpret_cast<abi::ICanvasDevice*>(device), resource, &inspectableWrapper));
+
+                Platform::Object^ objectWrapper = reinterpret_cast<Platform::Object^>(inspectableWrapper.Get());
+                
+                return safe_cast<WRAPPER^>(objectWrapper);
+            }
+
+
+            template<class WRAPPER>
+            WRAPPER^ GetOrCreate(ID2D1Device1* device, IUnknown* resource)
+            {
+                CanvasDevice^ canvasDevice = GetOrCreate<CanvasDevice>(device);
+                return GetOrCreate<WRAPPER>(canvasDevice, resource);
             }
 
 

@@ -92,5 +92,6 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasRenderTarget : CanvasBitmap
     {
         [default] interface ICanvasRenderTarget;
+        interface ICanvasResourceCreator;
     }
 }

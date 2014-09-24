@@ -78,6 +78,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        ComPtr<wrapper_t> GetOrCreate(ICanvasDevice* device, resource_t* resource)
+        {
+            return m_tracker.GetOrCreate(
+                device,
+                resource,
+                [&]
+                {
+                    return GetManager()->CreateWrapper(device, resource);
+                });
+        }
+
     protected:
         //
         // This class is intended to only be used when derived from.  Making the

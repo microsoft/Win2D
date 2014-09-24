@@ -41,10 +41,12 @@ namespace
         InspectableClass(L"DummyWrapper", BaseTrust);
 
         int m_id;
+        ComPtr<ICanvasDevice> m_device;
 
     public:
-        DummyWrapper(std::shared_ptr<DummyManager> manager, DummyResource* resource)
+        DummyWrapper(std::shared_ptr<DummyManager> manager, ICanvasDevice* device, DummyResource* resource)
             : ResourceWrapper(manager, resource)
+            , m_device(device)
         {
             static int nextId = 1;
             m_id = nextId++;
@@ -60,6 +62,11 @@ namespace
             GetResource();      // throws if closed
             return m_id;
         }
+
+        HRESULT get_Device(ICanvasDevice** device)
+        {
+            return m_device.CopyTo(device);
+        }
     };
 
 
@@ -68,12 +75,22 @@ namespace
     public:
         ComPtr<DummyWrapper> CreateNew(DummyResource* resource)
         {
-            return Make<DummyWrapper>(shared_from_this(), resource);
+            return Make<DummyWrapper>(shared_from_this(), nullptr, resource);
+        }
+
+        ComPtr<DummyWrapper> CreateNew(ICanvasDevice* device, DummyResource* resource)
+        {
+            return Make<DummyWrapper>(shared_from_this(), device, resource);
         }
 
         ComPtr<DummyWrapper> CreateWrapper(DummyResource* resource)
         {
-            return Make<DummyWrapper>(shared_from_this(), resource);
+            return Make<DummyWrapper>(shared_from_this(), nullptr, resource);
+        }
+
+        ComPtr<DummyWrapper> CreateWrapper(ICanvasDevice* device, DummyResource* resource)
+        {
+            return Make<DummyWrapper>(shared_from_this(), device, resource);
         }
     };
 }
@@ -144,6 +161,29 @@ TEST_CLASS(ResourceTrackerUnitTests)
         otherWrapper.As(&otherWrapperInspectable);
 
         Assert::AreNotEqual(wrapperInspectable.Get(), otherWrapperInspectable.Get());
+    }
+
+    TEST_METHOD(ResourceTracker_GetOrCreate_WithMatchingDevice_Succeeds)
+    {
+        auto manager = std::make_shared<DummyManager>();
+        auto resource = Make<DummyResource>();
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto expectedWrapper = manager->Create(canvasDevice.Get(), resource.Get());
+
+        auto actualWrapper = manager->GetOrCreate(canvasDevice.Get(), resource.Get());
+
+        Assert::AreEqual(expectedWrapper.Get(), actualWrapper.Get());
+    }
+
+    TEST_METHOD(ResourceTracker_GetOrCreate_WithWrongDevice_Fails)
+    {
+        auto manager = std::make_shared<DummyManager>();
+        auto resource = Make<DummyResource>();
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto expectedWrapper = manager->Create(canvasDevice.Get(), resource.Get());
+
+        auto otherCanvasDevice = Make<StubCanvasDevice>();
+        ExpectHResultException(E_INVALIDARG, [&]{ manager->GetOrCreate(otherCanvasDevice.Get(), resource.Get()); });
     }
 };
 

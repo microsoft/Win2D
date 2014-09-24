@@ -38,23 +38,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     ComPtr<CanvasRenderTarget> CanvasRenderTargetManager::CreateWrapper(
+        ICanvasDevice* device,
         ID2D1Bitmap1* d2dBitmap)
     {
         // TODO #2473: Need to create CanvasBitmap or CanvasRenderTarget as
         // appropriate, based on the d2dBitmap
 
-        // !! How do we get a device from a bitmap? !!
-        ThrowHR(E_NOTIMPL);
-
-#if WE_KNOW_HOW_TO_GET_DEVICE_FROM_BITMAP
         auto renderTarget = Make<CanvasRenderTarget>(
             shared_from_this(),
             d2dBitmap,
-            nullptr /*HOW DO WE GET A DEVICE FROM A BITMAP??*/ );
+            device);
         CheckMakeResult(renderTarget);
         
         return renderTarget;
-#endif
     }
 
 
@@ -97,6 +93,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasRenderTargetFactory::GetOrCreate(
+        ICanvasDevice* device,
         IUnknown* resource,
         IInspectable** wrapper)
     {
@@ -109,7 +106,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ID2D1Bitmap1> d2dBitmap;
                 ThrowIfFailed(resource->QueryInterface(d2dBitmap.GetAddressOf()));
 
-                auto newCanvasRenderTarget = GetManager()->GetOrCreate(d2dBitmap.Get());
+                auto newCanvasRenderTarget = GetManager()->GetOrCreate(device, d2dBitmap.Get());
 
                 ThrowIfFailed(newCanvasRenderTarget.CopyTo(wrapper));
             });
@@ -201,6 +198,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     resource.Get());
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasRenderTarget::get_Device(
+        ICanvasDevice** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                ThrowIfFailed(m_device.CopyTo(value));
             });
     }
 

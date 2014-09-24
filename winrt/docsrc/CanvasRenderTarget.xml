@@ -42,6 +42,8 @@ under the License.
               </code>
       </example>
     </member>
-  
+    <member name="P:Microsoft.Graphics.Canvas.CanvasRenderTarget.Device">
+      <summary>The device associated with this CanvasRenderTarget.</summary>
+    </member>
   </members>
 </doc>

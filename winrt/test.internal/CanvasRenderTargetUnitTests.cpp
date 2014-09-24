@@ -63,9 +63,9 @@ public:
         return renderTarget;
     }
 
-    ComPtr<CanvasRenderTarget> CreateRenderTargetAsWrapper(ComPtr<ID2D1Bitmap1> bitmap)
+    ComPtr<CanvasRenderTarget> CreateRenderTargetAsWrapper(ICanvasDevice* device, ComPtr<ID2D1Bitmap1> bitmap)
     {
-        return m_manager->GetOrCreate(bitmap.Get());
+        return m_manager->GetOrCreate(device, bitmap.Get());
     }
 
     TEST_METHOD(CanvasRenderTarget_Implements_Expected_Interfaces)
@@ -115,18 +115,26 @@ public:
         ValidateDrawingSession(drawingSession.Get(), m_d2dDevice.Get(), d2dBitmap.Get());
     }
 
-#if WRAPPED_RENDER_TARGETS_NOT_CURRENTLY_SUPPORTED
     TEST_METHOD(CanvasRenderTarget_Wrapped_CreatesDrawingSession)
     {
         auto d2dBitmap = Make<StubD2DBitmap>();
-        auto renderTarget = CreateRenderTargetAsWrapper(d2dBitmap);
+        auto renderTarget = CreateRenderTargetAsWrapper(m_canvasDevice.Get(), d2dBitmap);
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
 
         ValidateDrawingSession(drawingSession.Get(), m_d2dDevice.Get(), d2dBitmap.Get());
     }
-#endif
+
+    TEST_METHOD(CanvasRenderTarget_Wrapped_WrongDevice_Fails)
+    {
+        auto d2dBitmap = Make<StubD2DBitmap>();
+        auto renderTarget = CreateRenderTarget(d2dBitmap);
+
+        auto otherCanvasDevice = Make<StubCanvasDevice>();
+
+        ExpectHResultException(E_INVALIDARG, [&]{ CreateRenderTargetAsWrapper(otherCanvasDevice.Get(), d2dBitmap.Get()); });
+    }
 
     //
     // Validates the drawing session.  We do this using the underlying D2D
