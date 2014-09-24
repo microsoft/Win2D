@@ -24,19 +24,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef typename RESOURCE::wrapper_interface_t IVALUE;
 
         std::mutex m_mutex;
-        std::map<KEY*, WeakRef> m_resources;
+        std::map<IUnknown*, WeakRef> m_resources;
 
     public:
         void Add(KEY* key, VALUE* value)
         {
+            ComPtr<IUnknown> keyIdentity;
+            ThrowIfFailed(key->QueryInterface(IID_PPV_ARGS(keyIdentity.GetAddressOf())));
+
             std::lock_guard<std::mutex> lock(m_mutex);
 
             WeakRef weakValue;
             ThrowIfFailed(AsWeak(value, &weakValue));
 
-            auto it = m_resources.lower_bound(key);
+            auto it = m_resources.lower_bound(keyIdentity.Get());
 
-            if (it != m_resources.end() && it->first == key)
+            if (it != m_resources.end() && it->first == keyIdentity.Get())
             {
                 //
                 // We found an existing entry.  This should be impossible since
@@ -48,7 +51,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             m_resources.insert(
                 it, 
-                std::make_pair(key, weakValue));
+                std::make_pair(keyIdentity.Get(), weakValue));
         }
 
         template<typename CONSTRUCT_FN>
@@ -96,9 +99,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void Remove(KEY* key)
         {
+            ComPtr<IUnknown> keyIdentity;
+            ThrowIfFailed(key->QueryInterface(IID_PPV_ARGS(keyIdentity.GetAddressOf())));
+
             std::lock_guard<std::mutex> lock(m_mutex);
 
-            auto it = m_resources.find(key);
+            auto it = m_resources.find(keyIdentity.Get());
 
             if (it == m_resources.end())
             {
@@ -113,11 +119,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         template<typename CONSTRUCT_FN>
         std::pair<bool, ComPtr<VALUE>> GetOrCreateWorker(KEY* key, CONSTRUCT_FN&& constructFn)
         {
+            ComPtr<IUnknown> keyIdentity;
+            ThrowIfFailed(key->QueryInterface(IID_PPV_ARGS(keyIdentity.GetAddressOf())));
+
             std::lock_guard<std::mutex> lock(m_mutex);
 
-            auto it = m_resources.lower_bound(key);
+            auto it = m_resources.lower_bound(keyIdentity.Get());
 
-            if (it != m_resources.end() && it->first == key)
+            if (it != m_resources.end() && it->first == keyIdentity.Get())
             {
                 //
                 // We found an existing entry.  It's a weak reference so check that
@@ -150,7 +159,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
             m_resources.insert(
                 it,
-                std::make_pair(key, weakValue));
+                std::make_pair(keyIdentity.Get(), weakValue));
 
             return std::make_pair(true, value);
         }

@@ -187,3 +187,108 @@ TEST_CLASS(ResourceTrackerUnitTests)
     }
 };
 
+
+//
+// Verify that ResourceTracker copes with COM objects that require QI to
+// IUnknown for equality comparisons.
+//
+
+namespace
+{
+    [uuid(52FB7C6A-20A5-4F6E-888F-F23FECF966D8)]
+    struct IBaseInterface : public IUnknown
+    {
+    };
+
+    [uuid(B0507E89-42F7-4087-BCE9-326F259FDA2C)]
+    struct IInterface1 : public IBaseInterface
+    {
+    };
+
+    [uuid(3B4BDC33-059A-4353-B870-69D42711AE24)]
+    struct IInterface2 : public IBaseInterface
+    {
+    };
+
+    class MultipleInterfaceResource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IInterface1, IInterface2>
+    {
+    };
+
+    [uuid(5647EAB4-2EA9-4374-9D02-9C1D35E4BC43)]
+    class IMultipleInterface : public IInspectable
+    {
+    };
+
+    class MultipleInterfaceWrapper;
+    class MultipleInterfaceManager;
+
+    struct MultipleInterfaceTraits
+    {
+        typedef IBaseInterface resource_t;
+        typedef MultipleInterfaceWrapper wrapper_t;
+        typedef IMultipleInterface wrapper_interface_t;
+        typedef MultipleInterfaceManager manager_t;
+    };
+
+    class MultipleInterfaceWrapper : RESOURCE_WRAPPER_RUNTIME_CLASS(MultipleInterfaceTraits)
+    {
+        InspectableClass(L"MultipleInterfaceWrapper", BaseTrust);
+
+        int m_id;
+
+    public:
+        MultipleInterfaceWrapper(std::shared_ptr<MultipleInterfaceManager> manager, IBaseInterface* resource)
+            : ResourceWrapper(manager, resource)
+        {
+            static int nextId = 1;
+            m_id = nextId++;
+        }
+
+        int GetId()
+        {
+            return m_id;
+        }
+    };
+
+
+    class MultipleInterfaceManager : public ResourceManager<MultipleInterfaceTraits>
+    {
+    public:
+        ComPtr<MultipleInterfaceWrapper> CreateWrapper(IBaseInterface* resource)
+        {
+            return Make<MultipleInterfaceWrapper>(shared_from_this(), resource);
+        }
+    };
+
+}
+
+template<>
+static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<MultipleInterfaceWrapper>(MultipleInterfaceWrapper* value)
+{
+    return PointerToString(L"MultipleInterfaceWrapper", value);
+}
+
+
+TEST_CLASS(ResourceTrackerRequiresCOMIdentity)
+{
+    TEST_METHOD(ResourceTracker_UsesCOMIdentityRules)
+    {
+        auto manager = std::make_shared<MultipleInterfaceManager>();
+        auto resource = Make<MultipleInterfaceResource>();
+
+        ComPtr<IInterface1> resourceAsInterface1;
+        ThrowIfFailed(resource.As(&resourceAsInterface1));
+
+        ComPtr<IInterface2> resourceAsInterface2;
+        ThrowIfFailed(resource.As(&resourceAsInterface2));
+
+        Assert::IsTrue(static_cast<IUnknown*>(resourceAsInterface1.Get()) != static_cast<IUnknown*>(resourceAsInterface2.Get()));
+
+        auto wrapper1 = manager->GetOrCreate(resourceAsInterface1.Get()); // implicit IInterface1->IBaseInterface cast
+        auto wrapper2 = manager->GetOrCreate(resourceAsInterface2.Get()); // implicit IInterface2->IBaseInterface cast
+
+        Assert::AreEqual(wrapper1.Get(), wrapper2.Get());
+    }
+};
+
+
