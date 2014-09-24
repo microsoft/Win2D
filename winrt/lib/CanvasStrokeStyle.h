@@ -25,7 +25,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         // This realizes the stroke style if necessary.
-        virtual ComPtr<ID2D1StrokeStyle1> GetRealizedD2DStrokeStyle(ID2D1Factory2* d2dFactory) = 0;
+        virtual ComPtr<ID2D1StrokeStyle1> GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory) = 0;
     };
 
     class CanvasStrokeStyleFactory : public ActivationFactory<
@@ -125,7 +125,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Close)() override;
 
         // ICanvasStrokeStyleInternal
-        virtual ComPtr<ID2D1StrokeStyle1>  GetRealizedD2DStrokeStyle(ID2D1Factory2* d2dFactory) override;
+        virtual ComPtr<ID2D1StrokeStyle1>  GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory) override;
 
     private:
         void ThrowIfClosed();

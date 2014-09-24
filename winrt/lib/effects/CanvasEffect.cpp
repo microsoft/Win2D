@@ -17,7 +17,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     CanvasEffect::CanvasEffect(IID effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed)
         : m_effectId(effectId)
-        , m_previousDeviceContext(nullptr)
     {
         m_properties = Make<Vector<IPropertyValue*>>(propertiesSize, true);
         CheckMakeResult(m_properties);
@@ -35,16 +34,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInternal
     //
 
-    ComPtr<ID2D1Image>  CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext)
+    ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext)
     {
         CheckInPointer(deviceContext);
 
-        // Check if deviceContext is the same with previous device context
-        // This approach will fail with interop
+        // Check if device is the same as previous device
         bool wasRecreated = false;
-        if (deviceContext != m_previousDeviceContext.Get())
+
+        ComPtr<ID2D1Device> device;
+        deviceContext->GetDevice(&device);
+
+        ComPtr<IUnknown> deviceIdentity;
+        ThrowIfFailed(device.As(&deviceIdentity));
+
+        if (deviceIdentity != m_previousDeviceIdentity)
         {
-            m_previousDeviceContext = deviceContext;
+            m_previousDeviceIdentity = deviceIdentity;
             m_resource.Reset();
             wasRecreated = true;
         }
@@ -53,7 +58,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // TODO #802: make sure this lazy create is made properly threadsafe
         if (!m_resource)
             ThrowIfFailed(deviceContext->CreateEffect(m_effectId, &m_resource));
-
 
         // Update ID2D1Image with the latest property values if a change is detected
         if (wasRecreated || m_properties->IsChanged())

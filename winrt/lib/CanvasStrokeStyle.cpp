@@ -326,7 +326,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // ICanvasStrokeStyleInternal
     //
 
-    ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Factory2* d2dFactory)
+    ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory)
     {
         //
         // If there is already a realization, ensure its factory matches the target factory.
@@ -336,13 +336,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         if (m_d2dStrokeStyle)
         {
-            ComPtr<ID2D1Factory> realizationFactoryBase;
-            m_d2dStrokeStyle->GetFactory(&realizationFactoryBase);
+            ComPtr<ID2D1Factory> realizationFactory;
+            m_d2dStrokeStyle->GetFactory(&realizationFactory);
 
-            ComPtr<ID2D1Factory2> realizationFactory;
-            ThrowIfFailed(realizationFactoryBase.As(&realizationFactory));
-
-            if (realizationFactory.Get() != d2dFactory)
+            if (!IsSameInstance(realizationFactory.Get(), d2dFactory))
             {
                 m_d2dStrokeStyle.Reset();
             }
@@ -373,7 +370,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             assert(m_customDashElements.size() <= UINT_MAX);
 
-            ThrowIfFailed(d2dFactory->CreateStrokeStyle(
+            ComPtr<ID2D1Factory2> d2dFactory2;
+            ThrowIfFailed(d2dFactory->QueryInterface(IID_PPV_ARGS(d2dFactory2.GetAddressOf())));
+
+            ThrowIfFailed(d2dFactory2->CreateStrokeStyle(
                 strokeStyleProperties,
                 dashArray,
                 static_cast<UINT32>(m_customDashElements.size()),

@@ -14,22 +14,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.cpp">
-      <Filter>effects</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.cpp">
-      <Filter>effects</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp">
-      <Filter>effects</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.cpp">
-      <Filter>effects</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp">
-      <Filter>effects</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.cpp">
       <Filter>effects</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.cpp" />
@@ -43,6 +28,21 @@
       <Filter>WinRTDirectX</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Strings.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
@@ -63,26 +63,26 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.h">
-      <Filter>effects</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.h">
-      <Filter>effects</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h">
-      <Filter>effects</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.h">
-      <Filter>effects</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h">
-      <Filter>effects</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.h">
       <Filter>effects</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Strings.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -96,28 +96,10 @@
     <None Include="$(MSBuildThisFileDirectory)CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasControl.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.abi.idl">
-      <Filter>effects</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.abi.idl">
-      <Filter>effects</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)effects\IEffect.abi.idl">
       <Filter>effects</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\IEffectInput.abi.idl">
-      <Filter>effects</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl">
-      <Filter>effects</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.abi.idl">
-      <Filter>effects</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\EffectsCommon.abi.idl">
-      <Filter>effects</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.abi.idl">
       <Filter>effects</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl">
@@ -127,6 +109,24 @@
       <Filter>WinRTDirectX</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)Strings.inl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\EffectsCommon.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SaturationEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="effects">
@@ -134,6 +134,9 @@
     </Filter>
     <Filter Include="WinRTDirectX">
       <UniqueIdentifier>{84bf4ba6-1a52-4554-ab76-97ff22b8cf91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="effects\generated">
+      <UniqueIdentifier>{7de3552a-4205-433e-856d-d94d0fc07b6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

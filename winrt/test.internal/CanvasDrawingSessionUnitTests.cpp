@@ -319,7 +319,7 @@ public:
         auto converter = Make<MockWICFormatConverter>();
         auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
 
-        ComPtr<MockD2DBitmap>  mockBitmap = Make<MockD2DBitmap>();
+        ComPtr<MockD2DBitmap> mockBitmap = Make<MockD2DBitmap>();
         ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
         
         bool setInputCalled = false;
@@ -361,6 +361,11 @@ public:
         ComPtr<Effects::GaussianBlurEffect> blurEffect = Make<Effects::GaussianBlurEffect>();
         
         ThrowIfFailed(blurEffect->put_Source(canvasBitmap.Get()));
+
+        f.DeviceContext->MockGetDevice = [&](ID2D1Device** device)
+        {
+            ThrowIfFailed(canvasDevice->GetD2DDevice().CopyTo(device));
+        };
 
         bool drawImageCalled = false;
         f.DeviceContext->MockDrawImage =

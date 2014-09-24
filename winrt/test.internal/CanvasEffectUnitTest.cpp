@@ -201,7 +201,15 @@ public:
         std::shared_ptr<CanvasDrawingSessionManager> const& drawingSessionManager,
         TestEffect* testEffect)
     {
+        ComPtr<StubD2DDevice> stubDevice = Make<StubD2DDevice>();
         ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+
+        deviceContext->MockGetDevice =
+            [&](ID2D1Device** device)
+        {
+            ThrowIfFailed(stubDevice.CopyTo(device));
+        };
+
         deviceContext->MockDrawImage =
             [&](ID2D1Image* image)
         {
@@ -255,6 +263,22 @@ public:
         Assert::IsTrue(setInputCountCalled);
         Assert::IsTrue(setValueCalled);
         Assert::IsTrue(createEffectCalled);
+
+        // Drawing on a second device context that shares the same device should NOT rerealize the effect.
+        ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext2 = Make<StubD2DDeviceContextWithGetFactory>();
+
+        deviceContext2->MockGetDevice = deviceContext->MockGetDevice;
+        deviceContext2->MockDrawImage = deviceContext->MockDrawImage;
+
+        deviceContext2->MockCreateEffect = [](ID2D1Effect**)
+        {
+            Assert::Fail(L"Effect is already realized - this should not get called.");
+            return E_UNEXPECTED;
+        };
+
+        auto drawingSession2 = drawingSessionManager->Create(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+
+        drawingSession2->DrawImage(testEffect, position);
     }
 
     TEST_METHOD(CanvasEffect_Rerealize)
@@ -265,12 +289,8 @@ public:
         auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
         
         // This test realizes m_testEffect twice, each time with different 
-        // device contexts. Verifies that the D2D effect is re-created, and 
+        // devices. Verifies that the D2D effect is re-created, and 
         // its inputs and properties are set.
-        //
-        // TODO #2386: Update this test to react to a change in device instead
-        // of device context. 
-        //
         
         // Set a source and non-default value.
         ThrowIfFailed(testEffect->put_Source(CreateStubCanvasBitmap().Get()));
@@ -291,6 +311,12 @@ public:
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
         auto drawingSession = drawingSessionManager->Create(deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
         auto mockEffect = Make<MockD2DEffect>();
+        auto stubDevice = Make<StubD2DDevice>();
+
+        deviceContext->MockGetDevice = [&](ID2D1Device** device)
+        {
+            ThrowIfFailed(stubDevice.CopyTo(device));
+        };
 
         deviceContext->MockCreateEffect = [&](ID2D1Effect** effect)
         { 

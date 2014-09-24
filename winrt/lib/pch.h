@@ -66,6 +66,7 @@
 #include <Constants.h>
 #include <ErrorHandling.h>
 #include <ScopeWarden.h>
+#include <Utilities.h>
 #include <Vector.h>
 #include <WinStringWrapper.h>
 #include <WinStringBuilder.h>

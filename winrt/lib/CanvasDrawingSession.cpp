@@ -27,11 +27,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         if (!strokeStyle) return nullptr;
 
-        ComPtr<ID2D1Factory> d2dBaseFactory;
-        deviceContext->GetFactory(&d2dBaseFactory);
-
-        ComPtr<ID2D1Factory2> d2dFactory;
-        ThrowIfFailed(d2dBaseFactory.As(&d2dFactory));
+        ComPtr<ID2D1Factory> d2dFactory;
+        deviceContext->GetFactory(&d2dFactory);
 
         ComPtr<ICanvasStrokeStyleInternal> internal;
         ThrowIfFailed(strokeStyle->QueryInterface(internal.GetAddressOf()));

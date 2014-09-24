@@ -46,7 +46,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<IPropertyValueStatics> m_propertyValueFactory;
 
-        ComPtr<ID2D1DeviceContext> m_previousDeviceContext;
+        ComPtr<IUnknown> m_previousDeviceIdentity;
 
     public:
         //
