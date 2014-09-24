@@ -20,13 +20,13 @@ under the License.
   <members>
     <member name="T:Microsoft.Graphics.Canvas.Effects.IEffectInput">
       <summary> Represents a type that can be accepted as input for IEffect object. </summary>
-	  <remarks>
-		<p>Although IEffect object require inputs to implement just IEffectInput, 
-		   <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/> can draw only objects
-		   which implement <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> such as 
-		   <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, command list, 
-		   or image processing effect. </p>
-	  </remarks>
+      <remarks>
+        <p>Although IEffect object require inputs to implement just IEffectInput, 
+           <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/> can draw only objects
+           which implement <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> such as 
+           <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, command list, 
+           or image processing effect. </p>
+      </remarks>
     </member>
   </members>
 </doc>

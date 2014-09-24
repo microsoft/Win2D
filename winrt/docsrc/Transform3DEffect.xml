@@ -18,30 +18,30 @@ under the License.
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-	<member name="T:Microsoft.Graphics.Canvas.Effects.Transform3DEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.Transform3DEffect">
       <summary>Apply an arbitrary 4x4 transform matrix to an image.</summary>
-	  <remarks>
-	    <example>
-		  <p>Suppose, we have a cat image loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>. </p>
-	      <code>
+      <remarks>
+        <example>
+          <p>Suppose, we have a cat image loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>. </p>
+          <code>
             Transform3DEffect transformEffect = new Transform3DEffect()
             {
                 Source = cat,
                 TransformMatrix = Matrix4x4.CreateRotationZ(0.5f, new Vector3(0, 0, 0))
             };
-	      </code>
-	      <p>Use the Draw event to display it:</p>
-	      <code>
-	        void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-	        {
-	            args.DrawingSession.Clear(Colors.CornflowerBlue);
-	            args.DrawingSession.DrawImage(transformEffect, new Point(42, 42));
-	        }
-	      </code>
-	    </example>
-	    <p>This Windows Runtime type corresponds to the 
-	      <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706320(v=vs.85).aspx">D2D Composite effect</a>.</p>
-	  </remarks>
+          </code>
+          <p>Use the Draw event to display it:</p>
+          <code>
+            void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+            {
+                args.DrawingSession.Clear(Colors.CornflowerBlue);
+                args.DrawingSession.DrawImage(transformEffect, new Point(42, 42));
+            }
+          </code>
+        </example>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706320(v=vs.85).aspx">D2D Composite effect</a>.</p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.#ctor">
       <summary>Initializes a new instance of the Transform3DEffect class.</summary>
@@ -51,40 +51,40 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.TransformMatrix">
       <summary>Gets or sets 4x4 transform matrix applied to the projection plane.</summary>
-	  <remarks>
-	    <p>Default value is 4x4 identity matrix.</p>
-	  </remarks>
+      <remarks>
+        <p>Default value is 4x4 identity matrix.</p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.Source">
       <summary>Gets or sets the input source for Transform3DEffect effect. </summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.InterpolationMode">
-	  <summary>Gets or sets the interpolation mode for Transform3DEffect effect.</summary>
-	  <remarks>
-	    <p>Default interpolation mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.CanvasImageInterpolation.Linear"/>.</p>
-		<p>Please note that <see cref="F:Microsoft.Graphics.Canvas.Effects.CanvasImageInterpolation.HighQualityCubic"/> mode is not supported.</p>
-	  </remarks>
+      <summary>Gets or sets the interpolation mode for Transform3DEffect effect.</summary>
+      <remarks>
+        <p>Default interpolation mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.CanvasImageInterpolation.Linear"/>.</p>
+        <p>Please note that <see cref="F:Microsoft.Graphics.Canvas.Effects.CanvasImageInterpolation.HighQualityCubic"/> mode is not supported.</p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.BorderMode">
       <summary>Gets and sets border mode for edge pixels. </summary>
-	  <remarks>
-	    <p>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>. </p>
-	  </remarks>
+      <remarks>
+        <p>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>. </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.EffectId">
       <summary>Gets a unique identifier for the effect.</summary>
-	  <remarks>
-	    <p>Generic way to query the type of an effect. Id is equal to the 
-		   CLSID_D2D13DTransform specified specified in the SDK header d2d1effects.h.</p>
-	  </remarks>
+      <remarks>
+        <p>Generic way to query the type of an effect. Id is equal to the 
+           CLSID_D2D13DTransform specified specified in the SDK header d2d1effects.h.</p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.Inputs">
       <summary>Gets a collection of inputs attached to the effect.</summary>
-	  <inheritdoc/>
+      <inheritdoc/>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.Transform3DEffect.Properties">
       <summary>Gets the collection of properties specific to the current effect.</summary>
-	  <inheritdoc/>
+      <inheritdoc/>
     </member>
   </members>
 </doc>

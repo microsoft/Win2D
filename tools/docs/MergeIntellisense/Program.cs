@@ -83,29 +83,7 @@ namespace MergeIntellisense
                                 select member;
 
             // Remove documentation tags that Intellisense does not use, to minimize the size of the shipping XML files.
-            string[] tagsSupportedByIntellisense =
-            {
-                "summary",
-                "param",
-                "returns",
-                "exception",
-            };
-
-            var unsupportedTags = from member in mergedMembers
-                                  from tag in member.Elements()
-                                  where !tagsSupportedByIntellisense.Contains(tag.Name.LocalName, StringComparer.OrdinalIgnoreCase)
-                                  select tag;
-
-            var markedToSkip = from element in mergedMembers.Descendants()
-                               where MarkedToSkip(element)
-                               select element;
-
-            var unwantedElements = unsupportedTags.Concat(markedToSkip);
-
-            foreach (var unwanted in unwantedElements.ToList())
-            {
-                unwanted.Remove();
-            }
+            RemoveUnwantedElements(mergedMembers);
 
             // Generate new Intellisense XML.
             return new XDocument(
@@ -121,6 +99,55 @@ namespace MergeIntellisense
         }
 
 
+        static void RemoveUnwantedElements(IEnumerable<XElement> members)
+        {
+            string[] tagsSupportedByIntellisense =
+            {
+                "summary",
+                "param",
+                "returns",
+                "exception",
+            };
+
+            string[] tagsToStrip =
+            {
+                "a",
+                "img",
+            };
+
+            RemoveElements(from member in members
+                           from element in member.Elements()
+                           where !tagsSupportedByIntellisense.Contains(element.Name.LocalName, StringComparer.OrdinalIgnoreCase)
+                           select element);
+
+            RemoveElements(from element in members.Descendants()
+                           where IsMarkedToSkip(element)
+                           select element);
+
+            StripElements(from element in members.Descendants()
+                          where tagsToStrip.Contains(element.Name.LocalName, StringComparer.OrdinalIgnoreCase)
+                          select element);
+        }
+
+
+        static void RemoveElements(IEnumerable<XElement> elementsToRemove)
+        {
+            foreach (var element in elementsToRemove.ToList())
+            {
+                element.Remove();
+            }
+        }
+
+
+        static void StripElements(IEnumerable<XElement> elementsToStrip)
+        {
+            foreach (var element in elementsToStrip.ToList())
+            {
+                element.ReplaceWith(element.Value);
+            }
+        }
+
+
         static string GetAssemblyName(XDocument xml)
         {
             return xml.Element("doc").Element("assembly").Element("name").Value;
@@ -133,7 +160,7 @@ namespace MergeIntellisense
         }
         
         
-        static bool MarkedToSkip(XElement element)
+        static bool IsMarkedToSkip(XElement element)
         {
             var attribute = element.Attribute("intellisense");
             

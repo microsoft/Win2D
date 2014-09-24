@@ -27,8 +27,8 @@ under the License.
     <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Hard">
       <summary>Pixels outside the bounds are mirrored.</summary>
     </member>
-	
-	<member name="T:Microsoft.Graphics.Canvas.Effects.EffectOptimization">
+    
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectOptimization">
       <summary>Enumeration type that specifies speed quality trade-off.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Speed">

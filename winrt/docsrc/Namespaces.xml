@@ -23,6 +23,10 @@ under the License.
       <summary>This namespace defines the main Win2D API for drawing 2D graphics.</summary>
     </member>
 
+    <member name="N:Microsoft.Graphics.Canvas.Effects">
+      <summary>This namespace provides image manipulation effects such as blur and saturation.</summary>
+    </member>
+
     <member name="N:Microsoft.Graphics.Canvas.DirectX">
       <summary>This namespace defines DirectX types used for interop with other components.</summary>
     </member>
