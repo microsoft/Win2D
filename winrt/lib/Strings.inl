@@ -20,3 +20,4 @@
 
 
 STRING(EffectWrongInputType, L"Effect input #%d is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.")
+STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than CanvasBitmap, the CanvasImageBrush.SourceRectangle property must be set to a non-null value.")

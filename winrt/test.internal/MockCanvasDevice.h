@@ -28,6 +28,7 @@ namespace canvas
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
         std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmapFromWicResource;
         std::function<ComPtr<ID2D1Bitmap1>(ABI::Windows::Foundation::Size size)> MockCreateBitmap;
+        std::function<ComPtr<ID2D1Image>(ICanvasImage* canvasImage)> MockGetD2DImage;
 
         std::function<ComPtr<ID2D1GradientStopCollection1>(
             UINT gradientStopCount,
@@ -140,8 +141,13 @@ namespace canvas
 
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) override
         {
-            Assert::Fail(L"Unexpected call to GetD2DImage");
-            return nullptr;
+            if (!MockGetD2DImage)
+            {
+                Assert::Fail(L"Unexpected call to GetD2DImage");
+                return nullptr;
+            }
+
+            return MockGetD2DImage(canvasImage);
         }
 
         virtual ComPtr<ID2D1GradientStopCollection1> CreateGradientStopCollection(

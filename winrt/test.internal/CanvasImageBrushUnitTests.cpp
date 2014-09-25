@@ -12,12 +12,13 @@
 
 #include "pch.h"
 #include "TestBitmapResourceCreationAdapter.h"
+#include "TestEffect.h"
 
 TEST_CLASS(CanvasImageBrushTests)
 {
 public:
     class StubRectReference : public RuntimeClass<
-        ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect> >
+        IReference<Rect> >
     {
     public:
         Rect m_rect;
@@ -39,10 +40,27 @@ public:
         }
     };
 
+    bool AreReferencedRectsEqual(IReference<Rect>* ref0, IReference<Rect>* ref1)
+    {
+        // Precondition: Both args non-null.
+        assert(ref0 && ref1);
+
+        Rect rect0;
+        ThrowIfFailed(ref0->get_Value(&rect0));
+
+        Rect rect1;
+        ThrowIfFailed(ref1->get_Value(&rect1));
+
+        return  rect0.X == rect1.X &&
+                rect0.Y == rect1.Y &&
+                rect0.Width == rect1.Width &&
+                rect0.Height == rect1.Height;
+    }
+
     class TestCanvasImageBrushAdapter : public ICanvasImageBrushAdapter
     {
     public:
-        virtual ComPtr<ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) override
+        virtual ComPtr<IReference<Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) override
         {
             ComPtr<StubRectReference> ret = Make<StubRectReference>();
             ret->m_rect = FromD2DRect(d2dRect);
@@ -327,18 +345,40 @@ public:
         ComPtr<MockD2DImageBrush> m_imageBrush;
         ComPtr<ID2D1Image> m_targetImage;
         ComPtr<CanvasImageBrush> m_canvasImageBrush;
+        ComPtr<ICanvasImageBrushInternal> m_canvasBrushInternal;
+        ComPtr<MockCanvasDevice> m_canvasDevice;
 
         D2D1_MATRIX_3X2_F m_transform;
 
         SwitchableTestBrushFixture(bool initializeWithBitmap = false)
             : m_transform(D2D1::Matrix3x2F(1, 2, 3, 4, 5, 6))
         {
-            auto canvasDevice = Make<MockCanvasDevice>();
+            m_canvasDevice = Make<MockCanvasDevice>();
             auto adapter = std::make_shared<TestCanvasImageBrushAdapter>();
             m_bitmapBrush = Make<MockD2DBitmapBrush>();
             m_imageBrush = Make<MockD2DImageBrush>();
+
+            m_canvasDevice->MockGetD2DImage =
+                [&](ICanvasImage* canvasImage) -> ComPtr<ID2D1Image>
+                {
+                    ComPtr<IEffect> effect;
+                    ComPtr<ICanvasBitmap> bitmap;
+                    if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&effect))))
+                    {
+                        return Make<MockD2DEffect>();
+                    }
+                    else if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&bitmap))))
+                    {
+                        return Make<MockD2DBitmap>();
+                    }
+                    else
+                    {
+                        Assert::Fail(); // notimpl
+                        return nullptr;
+                    }
+                };
             
-            canvasDevice->MockCreateBitmapBrush =
+            m_canvasDevice->MockCreateBitmapBrush =
                 [&](ID2D1Bitmap1* bitmap)
                 {
                     m_bitmapBrush->MockGetBitmap = [&](ID2D1Bitmap** bitmap) 
@@ -366,7 +406,7 @@ public:
                     return m_bitmapBrush;
                 };
             
-            canvasDevice->MockCreateImageBrush =
+            m_canvasDevice->MockCreateImageBrush =
                 [&](ID2D1Image* image)
                 {
                     m_imageBrush->MockGetImage = [&](ID2D1Image** image) 
@@ -384,6 +424,7 @@ public:
                     m_imageBrush->MockGetInterpolationMode = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
                     m_imageBrush->MockGetOpacity = [&]() { return 0.1f; };
                     m_imageBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = m_transform; };
+                    m_imageBrush->MockGetSourceRectangle = [&](D2D1_RECT_F* rect) { *rect = D2D1::RectF(0, 0, 10, 10); };
 
                     m_imageBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) { Assert::AreEqual(D2D1_EXTEND_MODE_MIRROR, extend); };
                     m_imageBrush->MockSetExtendModeY = [&](D2D1_EXTEND_MODE extend) { Assert::AreEqual(D2D1_EXTEND_MODE_WRAP, extend); };
@@ -401,7 +442,8 @@ public:
                 canvasBitmap = CreateStubCanvasBitmap();
             }
 
-            m_canvasImageBrush = Make<CanvasImageBrush>(canvasDevice.Get(), canvasBitmap.Get(), adapter);
+            m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get(), canvasBitmap.Get(), adapter);
+            ThrowIfFailed(m_canvasImageBrush.As(&m_canvasBrushInternal));
         }
 
     };
@@ -422,10 +464,10 @@ public:
     }
 
     void VerifyBackedByImageBrush(
-        ComPtr<ICanvasBrushInternal> const& brushInternal,
+        ComPtr<ICanvasImageBrushInternal> const& brushInternal,
         ComPtr<ID2D1Image>* outTarget = nullptr) // Optionally retrieve the target image
     {
-        auto d2dBrush = brushInternal->GetD2DBrush();
+        auto d2dBrush = brushInternal->GetD2DBrushNoValidation();
         ComPtr<ID2D1ImageBrush> imageBrush;
         ThrowIfFailed(d2dBrush.As(&imageBrush));
         if (outTarget)
@@ -446,7 +488,7 @@ public:
             SwitchableTestBrushFixture f(i == 0);
             ComPtr<ID2D1Image> target0, target1, target2;
 
-            ComPtr<ICanvasBrushInternal> brushInternal;
+            ComPtr<ICanvasImageBrushInternal> brushInternal;
             ThrowIfFailed(f.m_canvasImageBrush.As(&brushInternal));
 
             // Initially assigned to bitmap brush.
@@ -539,6 +581,81 @@ public:
             Assert::AreEqual(expected, rectValue);
         }
 
+    }
+
+    TEST_METHOD(CanvasImageBrush_BackedByEffect_SourceRectangle)
+    {
+        // Create an image brush backed by an effect.
+        SwitchableTestBrushFixture f;
+        auto effect0 = Make<TestEffect>();
+        ThrowIfFailed(f.m_canvasImageBrush->put_Image(effect0.Get()));
+
+        // Ensure it's backed by an image brush.
+        VerifyBackedByImageBrush(f.m_canvasBrushInternal);
+
+        // Ensure it has a null source rect.
+        ComPtr<IReference<Rect>> retrievedSourceRect;
+        ThrowIfFailed(f.m_canvasImageBrush->get_SourceRectangle(&retrievedSourceRect));
+        Assert::IsNull(retrievedSourceRect.Get());
+
+        // Switch it to a different effect.
+        auto effect1 = Make<TestEffect>();
+        ThrowIfFailed(f.m_canvasImageBrush->put_Image(effect1.Get()));
+        
+        // Ensure the source rect is still null.
+        ThrowIfFailed(f.m_canvasImageBrush->get_SourceRectangle(&retrievedSourceRect));
+        Assert::IsNull(retrievedSourceRect.Get());
+
+        // Set the source rect to something.
+        ComPtr<StubRectReference> testSourceRect = Make<StubRectReference>();
+        ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(testSourceRect.Get()));
+        
+        // Ensure source rect is the correct value.
+        ThrowIfFailed(f.m_canvasImageBrush->get_SourceRectangle(&retrievedSourceRect));
+        Assert::IsTrue(AreReferencedRectsEqual(testSourceRect.Get(), retrievedSourceRect.Get()));
+
+        // Set the backing storage to a bitmap.
+        auto bitmap = CreateStubCanvasBitmap();
+        ThrowIfFailed(f.m_canvasImageBrush->put_Image(bitmap.Get()));
+
+        // Source rect should still be set.
+        ThrowIfFailed(f.m_canvasImageBrush->get_SourceRectangle(&retrievedSourceRect));
+        Assert::IsTrue(AreReferencedRectsEqual(testSourceRect.Get(), retrievedSourceRect.Get()));
+
+        // Should be backed by image brush still.
+        VerifyBackedByImageBrush(f.m_canvasBrushInternal);
+
+        // Set the backing storage to effect again.
+        ThrowIfFailed(f.m_canvasImageBrush->put_Image(effect1.Get()));
+
+        // Ensure source rect has the correct value.
+        ThrowIfFailed(f.m_canvasImageBrush->get_SourceRectangle(&retrievedSourceRect));
+        Assert::IsTrue(AreReferencedRectsEqual(testSourceRect.Get(), retrievedSourceRect.Get()));
+
+        // Make a drawing session.
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
+            Make<StubD2DDeviceContextWithGetFactory>();
+        d2dDeviceContext->MockFillRectangle = [&](const D2D1_RECT_F* rect, ID2D1Brush* brush) {};
+
+        ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
+            f.m_canvasDevice.Get(),
+            d2dDeviceContext.Get(),
+            std::make_shared<StubCanvasDrawingSessionAdapter>());
+
+        ThrowIfFailed(drawingSession->FillRectangleAtCoordsWithBrush(0, 0, 0, 0, f.m_canvasImageBrush.Get())); // Should not throw
+
+        // Set the source rect to null.
+        ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(nullptr));
+
+        // Try to draw the effect with the drawing session. Should throw because
+        // a null source rect is set.
+        HRESULT hrFillRect = drawingSession->FillRectangleAtCoordsWithBrush(0, 0, 0, 0, f.m_canvasImageBrush.Get());
+        Assert::AreEqual(E_INVALIDARG, hrFillRect);
+
+        // Set the source rect to a valid one, and issue the call again. Should succeed.
+        ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(testSourceRect.Get()));
+        ThrowIfFailed(drawingSession->FillRectangleAtCoordsWithBrush(0, 0, 0, 0, f.m_canvasImageBrush.Get()));
     }
 
 };

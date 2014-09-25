@@ -87,9 +87,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IUnknown* resource,
         IInspectable** wrapper)
     {
+        //
         // TODO #2237: Implement image brush interop.
         // Waiting on implementation of bitmap interop,
         // plus effects/command list.
+        //
+        // Note: If resources's bounds match the canonical empty bounds,
+        // make sure that the wrapped resource has !m_isSourceRectSet.
+        //
+        // When image brush interop is supported: ensure GetWrappedResource
+        // returns a native image brush whose source rect is the canonical
+        // empty bounds, if !m_isSourceRectSet.
+        //
         return E_NOTIMPL;
     }
 
@@ -99,6 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<ICanvasImageBrushAdapter> adapter)
         : m_isClosed(false)
         , m_useBitmapBrush(true)
+        , m_isSourceRectSet(false)
         , m_adapter(adapter)
     {
         ThrowIfFailed(device->QueryInterface(m_deviceInternal.GetAddressOf()));
@@ -237,7 +247,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ComPtr<IReference<Rect>> rectReference;
 
-                if (!m_useBitmapBrush)
+                if (!m_useBitmapBrush && m_isSourceRectSet)
                 {
                     D2D1_RECT_F sourceRectangle;
                     m_d2dImageBrush->GetSourceRectangle(&sourceRectangle);
@@ -266,6 +276,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 if (m_useBitmapBrush)
                 {
+                    assert(!m_isSourceRectSet);
                     if (value)
                     {
                         SwitchFromBitmapBrushToImageBrush();
@@ -273,6 +284,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         D2D1_RECT_F d2dRect = GetD2DRectFromRectReference(value);
 
                         m_d2dImageBrush->SetSourceRectangle(&d2dRect);
+                        m_isSourceRectSet = true;
                     }
                     // If value is null, do nothing.
                 }
@@ -283,6 +295,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         D2D1_RECT_F d2dRect = GetD2DRectFromRectReference(value);
 
                         m_d2dImageBrush->SetSourceRectangle(&d2dRect);
+                        m_isSourceRectSet = true;
                     }
                     else
                     {
@@ -299,12 +312,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                             // Switch to bitmap brush.
                             SwitchFromImageBrushToBitmapBrush();
                         }
-                        else
-                        {
-                            // Error to set a NULL source rect if the backing image
-                            // isn't CanvasBitmap.
-                            ThrowHR(E_INVALIDARG);
-                        }
+
+                        // If we're backed with an image brush, leave it as is.
+                        // It's simply a draw-time error.
+
+                        m_isSourceRectSet = false;
                     }
                 }
             });
@@ -355,21 +367,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfClosed();
 
         if (m_useBitmapBrush) return m_d2dBitmapBrush;
-        else return m_d2dImageBrush;
+        else 
+        {
+            if (!m_isSourceRectSet) 
+            {
+                ThrowHR(E_INVALIDARG, HStringReference(Strings::ImageBrushRequiresSourceRectangle).Get());
+            }
+            return m_d2dImageBrush;
+        }
     }
 
-    ComPtr<ID2D1BitmapBrush> CanvasImageBrush::GetD2DBitmapBrush()
+    ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrushNoValidation()
     {
         ThrowIfClosed();
 
-        return m_d2dBitmapBrush;
-    }
-
-    ComPtr<ID2D1ImageBrush> CanvasImageBrush::GetD2DImageBrush()
-    {
-        ThrowIfClosed();
-
-        return m_d2dImageBrush;
+        if (m_useBitmapBrush) return m_d2dBitmapBrush;
+        else
+        {
+            return m_d2dImageBrush;
+        }
     }
 
     void CanvasImageBrush::ThrowIfClosed()

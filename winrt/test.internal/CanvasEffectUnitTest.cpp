@@ -13,90 +13,13 @@
 #include "pch.h"
 #include <effects\CanvasEffect.h>
 #include "TestBitmapResourceCreationAdapter.h"
+#include "TestEffect.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-#define IMPLEMENT_MOCK_PROPERTY(PROPERTY_NAME, TYPE)                                \
-        IFACEMETHODIMP TestEffect::get_##PROPERTY_NAME(_Out_ TYPE* value)           \
-        {                                                                           \
-            Assert::Fail(L"Unexpected call to getter in TestEffect");               \
-            return E_NOTIMPL;                                                       \
-        }                                                                           \
-                                                                                    \
-        IFACEMETHODIMP TestEffect::put_##PROPERTY_NAME(_In_ TYPE value)             \
-        {                                                                           \
-            Assert::Fail(L"Unexpected call to setter in TestEffect");               \
-            return E_NOTIMPL;                                                       \
-        }
 
 TEST_CLASS(CanvasEffectUnitTest)
 {
 public:
-	
-    class TestEffect : public RuntimeClass <
-        IGaussianBlurEffect,
-        MixIn<TestEffect, CanvasEffect> >,
-        public CanvasEffect
-    {
-        float m_deviation;
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect, BaseTrust);
-
-    public:
-        TestEffect(GUID effectId, int propertiesSize, int inputsSize, bool isInputSizeChange)
-            : CanvasEffect(effectId, propertiesSize, inputsSize, isInputSizeChange)
-        {
-        }
-
-        IMPLEMENT_PROPERTY(TestEffect,
-                           StandardDeviation,
-                           float,
-                           0)
-
-        IMPLEMENT_MOCK_PROPERTY(Optimization, EffectOptimization)
-        IMPLEMENT_MOCK_PROPERTY(BorderMode, EffectBorderMode)
-        
-        IMPLEMENT_INPUT_PROPERTY(TestEffect, Source, 0)
-
-        std::function<void()> MockGetInput;
-        std::function<void()> MockSetInput;
-
-        std::function<void()> MockGetProperty;
-        std::function<void()> MockSetProperty;
-
-        //
-        // Forwarding base protected methods in order to inspect calls
-        //
-
-        void GetInput(unsigned int index, IEffectInput** input)
-        {
-            if (MockGetInput)
-                MockGetInput();
-            CanvasEffect::GetInput(index, input);
-        }
-
-        void SetInput(unsigned int index, IEffectInput* input)
-        {
-            if (MockSetInput)
-                MockSetInput();
-            CanvasEffect::SetInput(index, input);
-        }
-
-        template<typename T>
-        void GetProperty(unsigned int index, T value)
-        {
-            if (MockGetProperty)
-                MockGetProperty();
-            CanvasEffect::GetProperty<T>(index, value);
-        }
-
-        template<typename T>
-        void SetProperty(unsigned int index, T value, bool isDefault = false)
-        {
-            if (MockSetProperty)
-                MockSetProperty();
-            CanvasEffect::SetProperty<T>(index, value, isDefault);
-        }
-    };
 
     ComPtr<TestEffect> m_testEffect;
     unsigned int m_realPropertiesSize = 4;

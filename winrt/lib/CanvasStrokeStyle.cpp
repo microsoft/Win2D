@@ -417,17 +417,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Call Create here
         return ExceptionBoundary(
             [&]
-        {
-            ComPtr<ID2D1StrokeStyle1> d2dStrokeStyle;
+            {
+                ComPtr<ID2D1StrokeStyle1> d2dStrokeStyle;
 
-            ThrowIfFailed(resource->QueryInterface(d2dStrokeStyle.GetAddressOf()));
+                ThrowIfFailed(resource->QueryInterface(d2dStrokeStyle.GetAddressOf()));
 
-            auto newCanvasStrokeStyle = Make<CanvasStrokeStyle>(d2dStrokeStyle.Get());
+                auto newCanvasStrokeStyle = Make<CanvasStrokeStyle>(d2dStrokeStyle.Get());
 
-            CheckMakeResult(newCanvasStrokeStyle);
+                CheckMakeResult(newCanvasStrokeStyle);
 
-            ThrowIfFailed(newCanvasStrokeStyle.CopyTo(wrapper));
-        });
+                ThrowIfFailed(newCanvasStrokeStyle.CopyTo(wrapper));
+            });
     }
 
     ActivatableClassWithFactory(CanvasStrokeStyle, CanvasStrokeStyleFactory);

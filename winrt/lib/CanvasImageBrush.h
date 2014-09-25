@@ -33,8 +33,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasImageBrushInternal : public ICanvasBrushInternal
     {
     public:
-        virtual ComPtr<ID2D1ImageBrush> GetD2DImageBrush() = 0;
-        virtual ComPtr<ID2D1BitmapBrush> GetD2DBitmapBrush() = 0;
+        virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() = 0;
     };
 
     class CanvasImageBrushFactory
@@ -92,6 +91,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         bool m_isClosed;
 
+        bool m_isSourceRectSet;
+
     public:
         CanvasImageBrush(
             ICanvasDevice* device, 
@@ -125,8 +126,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1Brush> GetD2DBrush() override;
 
         // ICanvasImageBrushInternal
-        virtual ComPtr<ID2D1ImageBrush> GetD2DImageBrush() override;
-        virtual ComPtr<ID2D1BitmapBrush> GetD2DBitmapBrush() override;
+        virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() override;
 
     private:
         void ThrowIfClosed();
