@@ -17,7 +17,7 @@ using Microsoft.Graphics.Canvas;
 namespace SimpleSample
 {
     /// <summary>
-    /// Clears the screen with BlanchedAlmond color
+    /// Draws some graphics using Win2D
     /// </summary>
     public sealed partial class MainPage : Page
     {
@@ -32,7 +32,7 @@ namespace SimpleSample
         void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             args.DrawingSession.Clear(Colors.CornflowerBlue);
-            args.DrawingSession.DrawEllipse(190, 125, 140, 40, Colors.Black, 6);
+            args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
             args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
         }
     }
