@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "pch.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     [uuid(2F434224-053C-4978-87C4-CFAAFA2F4FAC)]
