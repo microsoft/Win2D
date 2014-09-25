@@ -47,6 +47,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IPropertyValueStatics> m_propertyValueFactory;
 
         ComPtr<IUnknown> m_previousDeviceIdentity;
+        std::vector<uint64_t> m_previousInputRealizationIds;
+        int64_t m_realizationId;
+        
+        bool m_insideGetImage;
 
     public:
         //
@@ -60,23 +64,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
 
         IFACEMETHOD(get_EffectId)(GUID* effectId) override;
-
         IFACEMETHOD(get_Inputs)(_Out_ IVector<IEffectInput*>** inputs) override;
-
         IFACEMETHOD(get_Properties)(_Out_ IVector<IPropertyValue*>** properties) override;
 
         //
         // ICanvasImageInternal
         //
 
-        ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext);
+        ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId);
 
     protected:
         // for effects with unknown number of inputs, inputs Size have to be set as zero
         CanvasEffect(IID m_effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed);
 
         void GetInput(unsigned int index, IEffectInput** input);
-
         void SetInput(unsigned int index, IEffectInput* input);
 
         template<typename T>

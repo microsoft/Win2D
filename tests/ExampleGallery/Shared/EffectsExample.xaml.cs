@@ -14,6 +14,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Windows.Foundation;
@@ -28,12 +29,11 @@ namespace ExampleGallery
     {
         public enum EffectType
         {
-            None,
+            Blend,
+            Composite,
             GaussianBlur,
             Saturation,
             Transform3D,
-            Blend,
-            Composite
         }
 
         public EffectsExample()
@@ -41,28 +41,26 @@ namespace ExampleGallery
             this.InitializeComponent();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            this.canvas.Invalidate();
-        }
-
-
-        public List<EffectType> EffectsList { get { return GetEnumAsList<EffectType>(); } }
-
-        private List<T> GetEnumAsList<T>()
-        {
-            return new List<T>(Enum.GetValues(typeof(T)).Cast<T>());
-        }
+        public List<EffectType> EffectsList { get { return Utils.GetEnumAsList<EffectType>(); } }
 
         public EffectType CurrentEffect { get; set; }
 
-        private CanvasBitmap bitmapTiger;
-        private bool isLoaded;
+        CanvasBitmap bitmapTiger;
+        ICanvasImage effect;
+        string textLabel;
+        Action<float> animationFunction;
+        Stopwatch timer;
+        bool isLoaded;
 
-        CanvasStrokeStyle hairlineStrokeStyle = new CanvasStrokeStyle()
+        async void Canvas_CreateResources(CanvasControl sender, object args)
         {
-            TransformBehavior = CanvasStrokeTransformBehavior.Hairline
-        };
+            bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
+            
+            effect = CreateEffect();
+
+            isLoaded = true;
+            this.canvas.Invalidate();
+        }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
@@ -72,102 +70,148 @@ namespace ExampleGallery
             if (!isLoaded)
                 return;
 
-            Vector2 center = new Vector2();
-            center.X = (float)(sender.ActualWidth - bitmapTiger.Size.Width) / 2;
-            center.Y = (float)(sender.ActualHeight - bitmapTiger.Size.Height) / 2;
+            var position = new Vector2((float)sender.ActualWidth, (float)sender.ActualHeight) / 2;
+            position -= bitmapTiger.Size.ToVector2() / 2;
 
-            ICanvasImage effect = null;
+            animationFunction((float)timer.Elapsed.TotalSeconds);
 
-            switch(CurrentEffect)
+            ds.DrawImage(effect, position);
+
+            if (textLabel != null)
             {
-                case EffectType.None:
-                    {
-                        effect = bitmapTiger;
-                        break;
-                    }
-                case EffectType.GaussianBlur:
-                    {
-                        effect = new GaussianBlurEffect()
-                        {
-                            Source = bitmapTiger,
-                            StandardDeviation = 2.0f
-                        };
-                        break;
-                    }
-                case EffectType.Saturation:
-                    effect = new SaturationEffect()
-                    {
-                        Saturation = 0.2f,
-                        Source = bitmapTiger
-                    };
-                    break;
-                case EffectType.Transform3D:
-                    {
-                        effect = new Transform3DEffect()
-                        {
-                            Source = bitmapTiger,
-                            TransformMatrix = Matrix4x4.CreateRotationZ(0.5f, new Vector3(0, 0, 0))
-                        };
-                        break;
-                    }
-                case EffectType.Blend:
-                    {
-                        Transform3DEffect transformEffect = new Transform3DEffect()
-                        {
-                            Source = bitmapTiger,
-                            TransformMatrix = Matrix4x4.CreateRotationZ(0.5f, new Vector3(0, 0, 0))
-                        };
-                        effect = new BlendEffect()
-                        {
-                            Background = bitmapTiger,
-                            Foreground = transformEffect,
-                            Mode = BlendEffectMode.SoftLight
-                        };
-                        break;
-                    }
-                case EffectType.Composite:
-                    {
-                        CompositeEffect compositeEffect = new CompositeEffect();
-                        compositeEffect.Mode = CompositeEffectMode.SourceOver;
-
-                        float angle = 0.0f;
-                        float angleDelta = 0.5f;
-                        int imageNumber = (int)(2 * Math.PI / angleDelta) + 1;
-                        foreach (var i in Enumerable.Range(0, imageNumber))
-                        {
-                            Transform3DEffect nextTransformEffect = new Transform3DEffect();
-                            nextTransformEffect.Source = bitmapTiger;
-                            nextTransformEffect.TransformMatrix = Matrix4x4.CreateRotationZ(angle, new Vector3(0, 0, 0));
-                            angle += angleDelta;
-                            compositeEffect.Inputs.Add(nextTransformEffect);
-                        }
-                        Matrix4x4 translationMatrix = Matrix4x4.CreateTranslation((float)bitmapTiger.Size.Width / 2,
-                                                                                  (float)bitmapTiger.Size.Height / 2,
-                                                                                  0.0f);
-                        // Move composite effect so it appear on the screen center
-                        effect = new Transform3DEffect()
-                        {
-                            Source = compositeEffect,
-                            TransformMatrix = translationMatrix
-                        };
-                        break;
-                    }
+                ds.DrawText(textLabel, position - new Vector2(100, 50), Colors.White);
             }
 
-            ds.DrawImage(effect, center);
-        }
-
-        async void Canvas_CreateResources(CanvasControl sender, object args)
-        {
-            bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
-
-            isLoaded = true;
-            this.canvas.Invalidate();
+            sender.Invalidate();
         }
 
         private void SettingsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.canvas.Invalidate();
+            var reallyChanged = e.AddedItems.Count != 1 ||
+                                e.RemovedItems.Count != 1 ||
+                                (EffectType)e.AddedItems[0] != (EffectType)e.RemovedItems[0];
+
+            if (reallyChanged && isLoaded)
+            {
+                effect = CreateEffect();
+            }
+        }
+
+        private ICanvasImage CreateEffect()
+        {
+            timer = Stopwatch.StartNew();
+            textLabel = null;
+
+            switch (CurrentEffect)
+            {
+                case EffectType.Blend:
+                    {
+                        var rotatedTiger = new Transform3DEffect()
+                        {
+                            Source = bitmapTiger
+                        };
+
+                        var blendEffect = new BlendEffect()
+                        {
+                            Background = bitmapTiger,
+                            Foreground = rotatedTiger
+                        };
+
+                        int enumValueCount = Utils.GetEnumAsList<BlendEffectMode>().Count;
+
+                        animationFunction = elapsedTime =>
+                        {
+                            blendEffect.Mode = (BlendEffectMode)(elapsedTime / Math.PI % enumValueCount);
+                            textLabel = blendEffect.Mode.ToString();
+                            rotatedTiger.TransformMatrix = Matrix4x4.CreateRotationZ((float)Math.Sin(elapsedTime));
+                        };
+
+                        return blendEffect;
+                    }
+
+                case EffectType.Composite:
+                    {
+                        var compositeEffect = new CompositeEffect()
+                        {
+                            Mode = CompositeEffectMode.SourceOver
+                        };
+
+                        var transformEffects = new List<Transform3DEffect>();
+
+                        const int petalCount = 12;
+
+                        for (int i = 0; i < petalCount; i++)
+                        {
+                            var transformEffect = new Transform3DEffect()
+                            {
+                                Source = bitmapTiger
+                            };
+
+                            compositeEffect.Inputs.Add(transformEffect);
+                            transformEffects.Add(transformEffect);
+                        }
+
+                        animationFunction = elapsedTime =>
+                        {
+                            for (int i = 0; i < petalCount; i++)
+                            {
+                                transformEffects[i].TransformMatrix = Matrix4x4.CreateRotationZ(elapsedTime * i / 3);
+                            }
+                        };
+
+                        return compositeEffect;
+                    }
+
+                case EffectType.GaussianBlur:
+                    {
+                        var blurEffect = new GaussianBlurEffect()
+                        {
+                            Source = bitmapTiger
+                        };
+
+                        animationFunction = elapsedTime =>
+                        {
+                            blurEffect.StandardDeviation = ((float)Math.Sin(elapsedTime * 3) + 1) * 6;
+                        };
+
+                        return blurEffect;
+                    }
+
+                case EffectType.Saturation:
+                    {
+                        var saturationEffect = new SaturationEffect()
+                        {
+                            Source = bitmapTiger
+                        };
+
+                        animationFunction = elapsedTime =>
+                        {
+                            saturationEffect.Saturation = ((float)Math.Sin(elapsedTime * 6) + 1) / 2;
+                        };
+
+                        return saturationEffect;
+                    }
+
+                case EffectType.Transform3D:
+                    {
+                        var transformEffect = new Transform3DEffect()
+                        {
+                            Source = bitmapTiger
+                        };
+
+                        animationFunction = elapsedTime =>
+                        {
+                            transformEffect.TransformMatrix = Matrix4x4.CreateFromYawPitchRoll(elapsedTime / 3,
+                                                                                               elapsedTime / 7,
+                                                                                               elapsedTime * 5);
+                        };
+
+                        return transformEffect;
+                    }
+
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }

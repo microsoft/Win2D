@@ -34,19 +34,9 @@ namespace ExampleGallery
             LineJoin = strokeStyle.LineJoin;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            this.canvas.Invalidate();
-        }
-
-        public List<CanvasDashStyle> DashStyles { get { return GetEnumAsList<CanvasDashStyle>(); } }
-        public List<CanvasCapStyle> CapStyles { get { return GetEnumAsList<CanvasCapStyle>(); } }
-        public List<CanvasLineJoin> LineJoins { get { return GetEnumAsList<CanvasLineJoin>(); } }
-
-        private List<T> GetEnumAsList<T>()
-        {
-            return new List<T>(Enum.GetValues(typeof(T)).Cast<T>());
-        }
+        public List<CanvasDashStyle> DashStyles { get { return Utils.GetEnumAsList<CanvasDashStyle>(); } }
+        public List<CanvasCapStyle> CapStyles { get { return Utils.GetEnumAsList<CanvasCapStyle>(); } }
+        public List<CanvasLineJoin> LineJoins { get { return Utils.GetEnumAsList<CanvasLineJoin>(); } }
 
         public CanvasCapStyle StartCap { get; set; }
         public CanvasCapStyle EndCap { get; set; }

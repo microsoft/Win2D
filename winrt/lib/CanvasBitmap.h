@@ -141,9 +141,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         // ICanvasImageInternal
-        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override
+        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId) override
         {
             CheckInPointer(deviceContext);
+
+            if (realizationId)
+                *realizationId = 0;
 
             return GetResource();
         }

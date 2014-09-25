@@ -116,9 +116,11 @@ TEST_CLASS(VectorTests)
     {
         auto v = Make<Vector<int>>();
 
+        Assert::IsFalse(v->IsFixedSize());
+
         // Constructor starts the vector empty.
         AssertVectorsEqual<int>(v, {});
-
+        
         // Append.
         ThrowIfFailed(v->Append(1));
         AssertVectorsEqual<int>(v, { 1 });
@@ -445,6 +447,8 @@ TEST_CLASS(VectorTests)
     {
         auto v = Make<Vector<int>>(3, true);
 
+        Assert::IsTrue(v->IsFixedSize());
+        
         // Constructor sets all elements to zeros.
         AssertVectorsEqual<int>(v, { 0, 0, 0 });
 

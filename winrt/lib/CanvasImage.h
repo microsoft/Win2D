@@ -20,6 +20,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasImageInternal : public IUnknown
     {
     public:
-        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) = 0;
+        // Some image types (effects) are virtualized and may need to re-realize 
+        // their underlying D2D object for various reasons. To avoid having to hang 
+        // on to COM interface pointers (which introduces lifespan complexities) we 
+        // use a simple integer ID to detect these cases. The contract is that 
+        // whenever an ICanvasImage implementation changes its GetD2DImage return 
+        // value, it must also report a new realizationId (eg. by incrementing it).
+
+        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId = nullptr) = 0;
     };
 }}}}

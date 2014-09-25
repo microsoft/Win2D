@@ -43,6 +43,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

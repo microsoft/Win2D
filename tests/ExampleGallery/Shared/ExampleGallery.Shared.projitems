@@ -37,6 +37,7 @@
       <DependentUpon>StrokeStyles.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)SuspensionManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)CanvasControlExample.xaml">

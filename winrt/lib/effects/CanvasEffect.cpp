@@ -17,6 +17,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     CanvasEffect::CanvasEffect(IID effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed)
         : m_effectId(effectId)
+        , m_realizationId(0)
+        , m_insideGetImage(false)
     {
         m_properties = Make<Vector<IPropertyValue*>>(propertiesSize, true);
         CheckMakeResult(m_properties);
@@ -34,30 +36,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInternal
     //
 
-    ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext)
+    ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId)
     {
         CheckInPointer(deviceContext);
 
         // Check if device is the same as previous device
-        bool wasRecreated = false;
-
         ComPtr<ID2D1Device> device;
         deviceContext->GetDevice(&device);
-
-        ComPtr<IUnknown> deviceIdentity;
-        ThrowIfFailed(device.As(&deviceIdentity));
+        auto deviceIdentity = As<IUnknown>(device);
 
         if (deviceIdentity != m_previousDeviceIdentity)
         {
             m_previousDeviceIdentity = deviceIdentity;
             m_resource.Reset();
-            wasRecreated = true;
         }
 
         // Create resource if not created yet
-        // TODO #802: make sure this lazy create is made properly threadsafe
+        // TODO #802: make sure this lazy create (and the following cycle detection) is made properly threadsafe
+        bool wasRecreated = false;
+
         if (!m_resource)
+        {
             ThrowIfFailed(deviceContext->CreateEffect(m_effectId, &m_resource));
+            wasRecreated = true;
+            m_realizationId++;
+        }
+
+        // Check for graph cycles
+        if (m_insideGetImage)
+            ThrowHR(D2DERR_CYCLIC_GRAPH);
+
+        m_insideGetImage = true;
+        auto clearFlagWarden = MakeScopeWarden([&] { m_insideGetImage = false; });
 
         // Update ID2D1Image with the latest property values if a change is detected
         if (wasRecreated || m_properties->IsChanged())
@@ -66,39 +76,58 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             m_properties->SetChanged(false);
         }
 
-        // Update ID2D1Image with the latest inputs configured, if a change is detected
-        if (wasRecreated || m_inputs->IsChanged())
+        // Update ID2D1Image with the latest inputs, and recurse through 
+        // the effect graph to make sure child nodes are properly realized
+        bool inputsChanged = wasRecreated || m_inputs->IsChanged();
+            
+        auto& inputs = m_inputs->InternalVector();
+        auto inputsSize = (unsigned int) inputs.size();
+
+        // Resize input array?
+        if (inputsChanged)
         {
-            auto& inputs = m_inputs->InternalVector();
-            auto inputsSize = (unsigned int) inputs.size();
             m_resource->SetInputCount(inputsSize);
-            for (unsigned int i = 0; i < inputsSize; ++i)
-            {
-                if (!inputs[i])
-                    ThrowHR(E_POINTER);
-
-                ComPtr<ICanvasImageInternal> internalInput;
-                HRESULT hr = inputs[i].As(&internalInput);
-
-                if (hr == E_NOINTERFACE)
-                {
-                    WinStringBuilder message;
-                    message.Format(Strings::EffectWrongInputType, i);
-                    ThrowHR(hr, message.Get());
-                }
-                else
-                {
-                    ThrowIfFailed(hr);
-                }
-
-                m_resource->SetInput(i, internalInput->GetD2DImage(deviceContext).Get());
-            }
-            m_inputs->SetChanged(false);
+            m_previousInputRealizationIds.resize(inputsSize);
         }
 
-        ComPtr<ID2D1Image> image;
-        ThrowIfFailed(m_resource.As(&image));
-        return image;
+        for (unsigned int i = 0; i < inputsSize; ++i)
+        {
+            // Look up the WinRT interface representing this input
+            if (!inputs[i])
+                ThrowHR(E_POINTER);
+
+            ComPtr<ICanvasImageInternal> internalInput;
+            HRESULT hr = inputs[i].As(&internalInput);
+
+            if (hr == E_NOINTERFACE)
+            {
+                WinStringBuilder message;
+                message.Format(Strings::EffectWrongInputType, i);
+                ThrowHR(hr, message.Get());
+            }
+            else
+            {
+                ThrowIfFailed(hr);
+            }
+
+            // Get the underlying D2D interface (this call recurses through the effect graph)
+            uint64_t inputRealizationId;
+            auto realizedInput = internalInput->GetD2DImage(deviceContext, &inputRealizationId);
+
+            // If the input value has changed, update the D2D effect
+            if (inputsChanged || inputRealizationId != m_previousInputRealizationIds[i])
+            {
+                m_resource->SetInput(i, realizedInput.Get());
+                m_previousInputRealizationIds[i] = inputRealizationId;
+            }
+        }
+        
+        m_inputs->SetChanged(false);
+
+        if (realizationId)
+            *realizationId = m_realizationId;
+
+        return As<ID2D1Image>(m_resource);
     }
 
     //
@@ -108,6 +137,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IFACEMETHODIMP CanvasEffect::Close()
     {
         m_resource.Reset();
+        m_previousDeviceIdentity.Reset();
+        
+        auto& inputs = m_inputs->InternalVector();
+
+        if (m_inputs->IsFixedSize())
+        {
+            inputs.assign(inputs.size(), nullptr);
+        }
+        else
+        {
+            inputs.clear();
+        }
+
         return S_OK;
     }
 

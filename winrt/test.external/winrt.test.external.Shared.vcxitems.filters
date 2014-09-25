@@ -18,6 +18,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormatTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Helpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTargetTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

@@ -265,4 +265,197 @@ public:
 
         ValidateStoredErrorState(E_NOINTERFACE, L"Effect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.");
     }
+
+    TEST_METHOD(CanvasEffect_CyclicGraph)
+    {
+        auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto drawingSession = drawingSessionManager->Create(deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto mockEffect = Make<MockD2DEffect>();
+        auto stubDevice = Make<StubD2DDevice>();
+
+        deviceContext->MockGetDevice = [&](ID2D1Device** device)
+        {
+            ThrowIfFailed(stubDevice.CopyTo(device));
+        };
+
+        deviceContext->MockCreateEffect = [&](ID2D1Effect** effect)
+        {
+            return mockEffect.CopyTo(effect);
+        };
+
+        bool setInputCountCalled = false;
+
+        mockEffect->MockSetInputCount = [&]
+        {
+            Assert::IsFalse(setInputCountCalled);
+            setInputCountCalled = true;
+            return S_OK;
+        };
+
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1, false);
+
+        testEffect->put_Source(testEffect.Get());
+
+        Assert::AreEqual(D2DERR_CYCLIC_GRAPH, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+    }
+
+    class MockEffectThatCountsCalls : public MockD2DEffect
+    {
+    public:
+        int m_setInputCalls;
+        int m_setValueCalls;
+
+        MockEffectThatCountsCalls()
+          : m_setInputCalls(0),
+            m_setValueCalls(0)
+        {
+            MockSetInputCount = []
+            {
+                return S_OK;
+            };
+
+            MockSetInput = [&]
+            {
+                m_setInputCalls++;
+            };
+
+            MockSetValue = [&]
+            {
+                m_setValueCalls++;
+                return S_OK;
+            };
+        }
+    };
+
+    TEST_METHOD(CanvasEffect_RealizationRecursion)
+    {
+        auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto drawingSession = drawingSessionManager->Create(deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto stubDevice = Make<StubD2DDevice>();
+        auto stubBitmap = CreateStubCanvasBitmap();
+
+        std::vector<ComPtr<MockEffectThatCountsCalls>> mockEffects;
+        std::vector<ComPtr<TestEffect>> testEffects;
+
+        deviceContext->MockGetDevice = [&](ID2D1Device** device)
+        {
+            ThrowIfFailed(stubDevice.CopyTo(device));
+        };
+
+        deviceContext->MockCreateEffect = [&](ID2D1Effect** effect)
+        {
+            mockEffects.push_back(Make<MockEffectThatCountsCalls>());
+            return mockEffects.back().CopyTo(effect);
+        };
+
+        deviceContext->MockDrawImage = [&](ID2D1Image* image)
+        {
+        };
+
+        // Create three effects, connected as each other's inputs.
+        for (int i = 0; i < 3; i++)
+        {
+            testEffects.push_back(Make<TestEffect>(m_blurGuid, 1, 1, false));
+        }
+
+        testEffects[0]->put_Source(testEffects[1].Get());
+        testEffects[1]->put_Source(testEffects[2].Get());
+        testEffects[2]->put_Source(stubBitmap.Get());
+
+        testEffects[0]->put_StandardDeviation(0);
+        testEffects[1]->put_StandardDeviation(0);
+        testEffects[2]->put_StandardDeviation(0);
+
+        // Drawing the first time should set properties and inputs on all three effects.
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 1, 1, 1 }, { 1, 1, 1 });
+
+        // Drawing again with no configuration changes should not re-set any state through to D2D.
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 1, 1, 1 }, { 1, 1, 1 });
+
+        // Draw after changing an input of the root effect.
+        testEffects[0]->put_Source(testEffects[1].Get());
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 1, 1 }, { 1, 1, 1 });
+
+        // Draw after changing an input of the second level effect.
+        testEffects[1]->put_Source(testEffects[2].Get());
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 2, 1 }, { 1, 1, 1 });
+
+        // Draw after changing an input of the third level effect.
+        testEffects[2]->put_Source(stubBitmap.Get());
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 1, 1, 1 });
+
+        // Draw after changing a property of the root effect.
+        testEffects[0]->put_StandardDeviation(1);
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 1, 1 });
+
+        // Draw after changing a property of the second level effect.
+        testEffects[1]->put_StandardDeviation(1);
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 1 });
+
+        // Draw after changing a property of the third level effect.
+        testEffects[2]->put_StandardDeviation(1);
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 2 });
+
+        // Draw starting at the second level of the graph should not re-set anything.
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[1].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 2 });
+
+        // Draw starting at the third level of the graph should not re-set anything.
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[2].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 2 });
+
+        // Drawing the third level effect on a second device should re-realize just that effect.
+        auto deviceContext2 = Make<StubD2DDeviceContextWithGetFactory>();
+        auto drawingSession2 = drawingSessionManager->Create(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto stubDevice2 = Make<StubD2DDevice>();
+
+        deviceContext2->MockGetDevice = [&](ID2D1Device** device)
+        {
+            ThrowIfFailed(stubDevice2.CopyTo(device));
+        };
+
+        deviceContext2->MockCreateEffect = deviceContext->MockCreateEffect;
+        deviceContext2->MockDrawImage = deviceContext->MockDrawImage;
+
+        ThrowIfFailed(drawingSession2->DrawImage(testEffects[2].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 4, { 2, 2, 2, 1 }, { 2, 2, 2, 1 });
+
+        // Drawing the root effect back on the original device should notice that the third level effect needs to be re-realized.
+        ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        CheckCallCount(mockEffects, 5, { 2, 3, 2, 1, 1 }, { 2, 2, 2, 1, 1 });
+    }
+
+    void CheckCallCount(std::vector<ComPtr<MockEffectThatCountsCalls>> const& mockEffects,
+                        size_t expectedEffectCount,
+                        std::initializer_list<int> const& expectedSetInputCalls,
+                        std::initializer_list<int> const& expectedSetValueCalls)
+    {
+        Assert::AreEqual(expectedEffectCount, mockEffects.size());
+        Assert::AreEqual(expectedEffectCount, expectedSetInputCalls.size());
+        Assert::AreEqual(expectedEffectCount, expectedSetValueCalls.size());
+
+        auto effect = mockEffects.begin();
+        auto expectedSetInputs = expectedSetInputCalls.begin();
+        auto expectedSetValues = expectedSetValueCalls.begin();
+
+        for (size_t i = 0; i < expectedEffectCount; i++)
+        {
+            Assert::AreEqual(*expectedSetInputs, (*effect)->m_setInputCalls);
+            Assert::AreEqual(*expectedSetValues, (*effect)->m_setValueCalls);
+
+            ++effect;
+            ++expectedSetInputs;
+            ++expectedSetValues;
+        }
+    }
 };

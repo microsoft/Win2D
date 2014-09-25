@@ -114,6 +114,13 @@ namespace collections
         }
 
 
+        // Checks whether this vector is fixed or resizable.
+        bool IsFixedSize() const
+        {
+            return isFixedSize;
+        }
+
+
         // Checks whether the contents of the vector have changed since the last call to SetChanged(false).
         bool IsChanged() const
         {
