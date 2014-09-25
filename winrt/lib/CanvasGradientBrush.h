@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "CanvasSolidColorBrush.h" // For ICanvasBrushInternal; TODO #2556 move ICanvasBrushInternal somewhere less surprising
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
@@ -31,7 +33,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasLinearGradientBrushFactory,
         CloakedIid<ICanvasFactoryNative>,
         ICanvasLinearGradientBrushStatics>,
-        public FactoryWithResourceManager<CanvasLinearGradientBrushFactory, CanvasLinearGradientBrushManager>
+        public PerApplicationManager<CanvasLinearGradientBrushFactory, CanvasLinearGradientBrushManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasLinearGradientBrush, BaseTrust);
 
@@ -166,7 +168,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasRadialGradientBrushFactory,
         CloakedIid<ICanvasFactoryNative>,
         ICanvasRadialGradientBrushStatics>,
-        public FactoryWithResourceManager<CanvasRadialGradientBrushFactory, CanvasRadialGradientBrushManager>
+        public PerApplicationManager<CanvasRadialGradientBrushFactory, CanvasRadialGradientBrushManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRadialGradientBrush, BaseTrust);
 

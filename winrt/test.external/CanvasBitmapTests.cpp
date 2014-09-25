@@ -152,7 +152,7 @@ public:
 
         auto originalBitmap = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, m_testImage.fileName));
         auto originalD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(originalBitmap);
-        auto newBitmap = GetOrCreate<CanvasBitmap>(originalD2DBitmap.Get());
+        auto newBitmap = GetOrCreate<CanvasBitmap>(canvasDevice, originalD2DBitmap.Get());
         auto newD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(newBitmap);
 
         Assert::AreEqual(originalBitmap, newBitmap);

@@ -64,24 +64,4 @@ TEST_CLASS(CanvasRenderTargetTests)
         Assert::AreEqual(originalRenderTarget, newRenderTarget);
         Assert::AreEqual(originalD2DBitmap.Get(), newD2DBitmap.Get());
     }
-
-    ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap()
-    {
-        ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
-        ComPtr<ID2D1Bitmap1> d2dBitmap;
-
-        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
-        bitmapProperties.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
-        bitmapProperties.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-        bitmapProperties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-
-        ThrowIfFailed(context->CreateBitmap(
-            D2D1::SizeU(1, 1),
-            nullptr, // data 
-            0,  // data pitch
-            &bitmapProperties,
-            &d2dBitmap));
-
-        return d2dBitmap;
-    }
 };

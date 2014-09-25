@@ -45,9 +45,10 @@ public:
         Size size = Size{ 1, 1 })
     {
         if (!bitmap)
-            bitmap = Make<StubD2DBitmap>();
+            bitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
 
-        m_canvasDevice->MockCreateBitmap =
+
+        m_canvasDevice->MockCreateRenderTargetBitmap =
             [&](Size)
             {
                 Assert::IsNotNull(bitmap.Get());
@@ -58,7 +59,7 @@ public:
 
         auto renderTarget = m_manager->Create(m_canvasDevice.Get(), size);
 
-        m_canvasDevice->MockCreateBitmap = nullptr;
+        m_canvasDevice->MockCreateRenderTargetBitmap = nullptr;
 
         return renderTarget;
     }
@@ -106,7 +107,7 @@ public:
 
     TEST_METHOD(CanvasRenderTarget_DrawingSession)
     {        
-        auto d2dBitmap = Make<StubD2DBitmap>();    
+        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);    
         auto renderTarget = CreateRenderTarget(d2dBitmap);
 
         ComPtr<ICanvasDrawingSession> drawingSession;
@@ -117,7 +118,7 @@ public:
 
     TEST_METHOD(CanvasRenderTarget_Wrapped_CreatesDrawingSession)
     {
-        auto d2dBitmap = Make<StubD2DBitmap>();
+        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
         auto renderTarget = CreateRenderTargetAsWrapper(m_canvasDevice.Get(), d2dBitmap);
 
         ComPtr<ICanvasDrawingSession> drawingSession;
@@ -128,7 +129,7 @@ public:
 
     TEST_METHOD(CanvasRenderTarget_Wrapped_WrongDevice_Fails)
     {
-        auto d2dBitmap = Make<StubD2DBitmap>();
+        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
         auto renderTarget = CreateRenderTarget(d2dBitmap);
 
         auto otherCanvasDevice = Make<StubCanvasDevice>();
@@ -181,7 +182,7 @@ public:
 
         Size expectedSize = { 33, 44 };
 
-        auto d2dBitmap = Make<StubD2DBitmap>();
+        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
         d2dBitmap->MockGetSize =
             [&](float* width, float* height)
             {

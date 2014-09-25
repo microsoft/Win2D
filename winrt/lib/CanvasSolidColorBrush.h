@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-
-#include "ClosablePtr.h"
 #include "ResourceManager.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -42,7 +39,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : public ActivationFactory<
             ICanvasSolidColorBrushFactory,
             CloakedIid<ICanvasFactoryNative>>,
-          public FactoryWithResourceManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
+          public PerApplicationManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
 

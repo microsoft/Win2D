@@ -216,7 +216,7 @@ public:
         // its inputs and properties are set.
         
         // Set a source and non-default value.
-        ThrowIfFailed(testEffect->put_Source(CreateStubCanvasBitmap().Get()));
+        ThrowIfFailed(testEffect->put_Source(As<IEffectInput>(CreateStubCanvasBitmap()).Get()));
         ThrowIfFailed(testEffect->put_StandardDeviation(99));
 
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());

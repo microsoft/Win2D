@@ -18,11 +18,11 @@ namespace
     {
     };
 
-    class DummyFactory : public FactoryWithResourceManager<DummyFactory, DummyResourceManager>
+    class DummyFactory : public PerApplicationManager<DummyFactory, DummyResourceManager>
     {
     public:
         DummyFactory(ABI::Windows::ApplicationModel::Core::ICoreApplication* app)
-            : FactoryWithResourceManager(app)
+            : PerApplicationManager(app)
         {
         }
     };

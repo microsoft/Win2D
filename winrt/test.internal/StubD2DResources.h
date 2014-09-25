@@ -100,7 +100,20 @@ public:
 
 class StubD2DBitmap : public MockD2DBitmap
 {
+    D2D1_BITMAP_OPTIONS m_options;
 public:
+    StubD2DBitmap(D2D1_BITMAP_OPTIONS options = D2D1_BITMAP_OPTIONS_NONE)
+        : m_options(options)
+    {
+    }
+
+
+    STDMETHOD_(D2D1_BITMAP_OPTIONS, GetOptions)(
+        ) CONST
+    {
+        return m_options;
+    }
+    
     STDMETHOD(GetSurface)(
         IDXGISurface **out
         ) CONST override

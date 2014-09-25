@@ -25,3 +25,20 @@ inline bool IsSameInstance(T* value1, T* value2)
 
     return identity1 == identity2;
 }
+
+// Shortcut QueryInterface
+template<typename T, typename U>
+inline Microsoft::WRL::ComPtr<T> As(Microsoft::WRL::ComPtr<U> const& u)
+{
+    ComPtr<T> t;
+    ThrowIfFailed(u.As(&t));
+    return t;
+}
+
+template<typename T, typename U>
+inline Microsoft::WRL::ComPtr<T> As(U* u)
+{
+    ComPtr<T> t;
+    ThrowIfFailed(u->QueryInterface(IID_PPV_ARGS(t.ReleaseAndGetAddressOf())));
+    return t;
+}

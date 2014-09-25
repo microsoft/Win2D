@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasDrawingSessionFactory
         : public ActivationFactory<ICanvasDrawingSessionStatics, CloakedIid<ICanvasFactoryNative>>,
-          public FactoryWithResourceManager<CanvasDrawingSessionFactory, CanvasDrawingSessionManager>
+          public PerApplicationManager<CanvasDrawingSessionFactory, CanvasDrawingSessionManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
 

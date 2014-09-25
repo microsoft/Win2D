@@ -98,6 +98,7 @@
     <ClCompile Include="CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="ConversionUnitTests.cpp" />
+    <ClCompile Include="D2DBitmapInteropUnitTests.cpp" />
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DResources.cpp" />

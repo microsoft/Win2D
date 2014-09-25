@@ -11,56 +11,14 @@
 // under the License.
 
 #include "pch.h"
+
 #include "CanvasBitmap.h"
 #include "CanvasDevice.h"
 #include "CanvasDrawingSession.h"
+#include "CanvasRenderTarget.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
-    {
-        ComPtr<IWICImagingFactory2> m_wicFactory;
-
-    public:
-        DefaultBitmapResourceCreationAdapter()
-        {
-            ThrowIfFailed(
-                CoCreateInstance(
-                CLSID_WICImagingFactory,
-                nullptr,
-                CLSCTX_INPROC_SERVER,
-                IID_PPV_ARGS(&m_wicFactory)));
-        }
-
-        ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName)
-        {
-            ComPtr<IWICFormatConverter> wicFormatConverter;
-
-            const wchar_t* fileNameBuffer = WindowsGetStringRawBuffer(fileName, nullptr);
-
-            if ( wcslen(fileNameBuffer)==0 || fileNameBuffer == NULL)
-            {
-                // fileName string is invalid
-                ThrowHR(E_INVALIDARG);
-            }
-
-            ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
-            ThrowIfFailed(m_wicFactory->CreateDecoderFromFilename(fileNameBuffer, NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &wicBitmapDecoder));
-            ComPtr<IWICBitmapFrameDecode> wicBimapFrameSource;
-            ThrowIfFailed(wicBitmapDecoder->GetFrame(0, &wicBimapFrameSource));
-            ThrowIfFailed(m_wicFactory->CreateFormatConverter(&wicFormatConverter));
-
-            ThrowIfFailed(wicFormatConverter->Initialize(
-                wicBimapFrameSource.Get(), 
-                GUID_WICPixelFormat32bppPBGRA, 
-                WICBitmapDitherTypeNone, 
-                NULL, 
-                0, 
-                WICBitmapPaletteTypeMedianCut));
-
-            return wicFormatConverter;
-        }
-    };
 
 
     //
@@ -93,9 +51,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateWrapper(
         ID2D1Bitmap1* d2dBitmap)
     {
-        // TODO #2473: Need to create CanvasBitmap or CanvasRenderTarget as
-        // appropriate, based on the d2dBitmap
-
         auto bitmap = Make<CanvasBitmap>(
             shared_from_this(),
             d2dBitmap);
@@ -114,11 +69,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-    std::shared_ptr<CanvasBitmapManager> CanvasBitmapFactory::CreateManager()
-    {
-        auto adapter = std::make_shared<DefaultBitmapResourceCreationAdapter>();
-        return std::make_shared<CanvasBitmapManager>(adapter);
-    }
+
+
 
     //
     // ICanvasBitmapStatics
@@ -144,8 +96,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
                     [=]
                     {
-                        auto bitmap = GetManager()->Create(canvasDevice.Get(), fileName);
-                        CheckMakeResult(bitmap);
+                        auto bitmap = GetManager()->CreateBitmap(canvasDevice.Get(), fileName);
                         return bitmap;
                     });
 
@@ -159,6 +110,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     IFACEMETHODIMP CanvasBitmapFactory::GetOrCreate(
+        ICanvasDevice* device,
         IUnknown* resource,
         IInspectable** wrapper)
     {
@@ -171,7 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ID2D1Bitmap1> d2dBitmap;
                 ThrowIfFailed(resource->QueryInterface(d2dBitmap.GetAddressOf()));
 
-                auto newCanvasBitmap = GetManager()->GetOrCreate(d2dBitmap.Get());
+                auto newCanvasBitmap = GetManager()->GetOrCreateBitmap(device, d2dBitmap.Get());
 
                 ThrowIfFailed(newCanvasBitmap.CopyTo(wrapper));
             });
@@ -185,9 +137,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasBitmap::CanvasBitmap(
         std::shared_ptr<CanvasBitmapManager> manager,
-        ID2D1Bitmap1* bitmap)
-        : CanvasBitmapImpl(manager, bitmap)
+        ID2D1Bitmap1* d2dBitmap)
+        : CanvasBitmapImpl(manager, d2dBitmap)
     {
+        assert(!IsRenderTargetBitmap(d2dBitmap) 
+            && "CanvasBitmap should never be constructed with a render-target bitmap.  This should have been validated before construction.");
     }
 
 

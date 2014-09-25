@@ -14,7 +14,6 @@
 
 #include "StubD2DResources.h"
 
-#include "CanvasBitmap.h"
 #include "effects\generated\GaussianBlurEffect.h"
 #include "TestBitmapResourceCreationAdapter.h"
 #include "MockWICFormatConverter.h"
@@ -110,27 +109,18 @@ public:
 class CanvasDrawingSessionFixture
 {
 public:
-    std::shared_ptr<CanvasBitmapManager> BitmapManager;
     ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
     ComPtr<CanvasDrawingSession> DS;
     ComPtr<StubCanvasBrush> Brush;
 
     CanvasDrawingSessionFixture()
-        : BitmapManager(MakeBitmapManager())
-        , DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
+        : DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
         , DS(MakeDrawingSession(DeviceContext.Get()))
         , Brush(Make<StubCanvasBrush>())
     {
     }
 
 private:
-    static std::shared_ptr<CanvasBitmapManager> MakeBitmapManager()
-    {
-        auto converter = Make<MockWICFormatConverter>();
-        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-        return std::make_shared<CanvasBitmapManager>(adapter);
-    }
-
     static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext)
     {
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
@@ -269,32 +259,39 @@ public:
     // DrawImage
     //
 
+    class BitmapFixture : public CanvasDrawingSessionFixture
+    {
+    public:
+        ComPtr<ID2D1Image> Image;
+        ComPtr<CanvasBitmap> Bitmap;
+
+        BitmapFixture()
+        {
+            auto d2dBitmap = Make<StubD2DBitmap>();
+            Image = As<ID2D1Image>(d2dBitmap);
+            Bitmap = MakeBitmapManager()->GetOrCreate(d2dBitmap.Get());
+        }
+
+    private:
+        static std::shared_ptr<CanvasBitmapManager> MakeBitmapManager()
+        {
+            auto converter = Make<MockWICFormatConverter>();
+            auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
+            return std::make_shared<CanvasBitmapManager>(adapter);
+        }
+    };
+
+
     TEST_METHOD(CanvasDrawingSession_DrawImage_NullImage)
     {
-        CanvasDrawingSessionFixture f;
+        BitmapFixture f;
 
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtOrigin(nullptr));
     }
 
     TEST_METHOD(CanvasDrawingSession_DrawImage_Bitmap)
     {
-        CanvasDrawingSessionFixture f;
-
-        WinString testFileName(L"fakeFileName.jpg");
-
-        ComPtr<MockD2DBitmap> bitmap = Make<MockD2DBitmap>();
-
-        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
-        canvasDevice->MockCreateBitmapFromWicResource =
-            [&]() -> ComPtr<ID2D1Bitmap1>
-            {
-                return bitmap;
-            };
-
-        auto canvasBitmap = f.BitmapManager->Create(canvasDevice.Get(), testFileName);
-
-        ComPtr<ICanvasImageInternal> internalImage;
-        ThrowIfFailed(canvasBitmap.As(&internalImage));
+        BitmapFixture f;
 
         bool drawImageCalled = false;
         f.DeviceContext->MockDrawImage = 
@@ -302,24 +299,18 @@ public:
             {
                 Assert::IsFalse(drawImageCalled);
                 Assert::IsNotNull(image);
-                Assert::AreEqual(internalImage->GetD2DImage(f.DeviceContext.Get()).Get(), image);
+                Assert::AreEqual(f.Image.Get(), image);
                 drawImageCalled = true;
             };
 
-        ThrowIfFailed(f.DS->DrawImageAtOrigin(canvasBitmap.Get()));
+        ThrowIfFailed(f.DS->DrawImageAtOrigin(f.Bitmap.Get()));
         Assert::IsTrue(drawImageCalled);
     }
 
     TEST_METHOD(CanvasDrawingSession_DrawImage_GaussianBlurEffect)
     {
-        CanvasDrawingSessionFixture f;
+        BitmapFixture f;
 
-        WinString testFileName(L"fakeFileName.jpg");
-
-        auto converter = Make<MockWICFormatConverter>();
-        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-
-        ComPtr<MockD2DBitmap> mockBitmap = Make<MockD2DBitmap>();
         ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
         
         bool setInputCalled = false;
@@ -346,21 +337,16 @@ public:
             return S_OK;
         };
 
-        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
-        bool createBitmapCalled = false;
-        canvasDevice->MockCreateBitmapFromWicResource =
-            [&]() -> ComPtr<ID2D1Bitmap1>
-            {
-                Assert::IsFalse(createBitmapCalled);
-                createBitmapCalled = true;
-                return mockBitmap;
-            };
 
-
-        auto canvasBitmap = f.BitmapManager->Create(canvasDevice.Get(), testFileName);
         ComPtr<Effects::GaussianBlurEffect> blurEffect = Make<Effects::GaussianBlurEffect>();
         
-        ThrowIfFailed(blurEffect->put_Source(canvasBitmap.Get()));
+        ThrowIfFailed(blurEffect->put_Source(f.Bitmap.Get()));
+
+        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
+        f.DeviceContext->MockGetDevice = [&](ID2D1Device** device)
+        {
+            ThrowIfFailed(canvasDevice->GetD2DDevice().CopyTo(device));
+        };
 
         f.DeviceContext->MockGetDevice = [&](ID2D1Device** device)
         {
@@ -389,8 +375,6 @@ public:
         Assert::IsTrue(setInputCalled);
         Assert::IsTrue(setValueCalled);
         Assert::IsTrue(setInputCountCalled);
-        // Make sure mock bitmap created as input for blur effect
-        Assert::IsTrue(createBitmapCalled);
     }
 
 
@@ -2303,5 +2287,4 @@ TEST_CLASS(CanvasDrawingSession_Interop)
         // deviceContext getting called.
         ThrowIfFailed(drawingSession->Close());
     }
-
 };

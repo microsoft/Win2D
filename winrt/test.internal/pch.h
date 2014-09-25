@@ -48,29 +48,33 @@
 
 // Inc
 #include <AsyncOperation.h>
+#include <ClosablePtr.h>
 #include <Constants.h>
 #include <ErrorHandling.h>
-#include <Vector.h>
-#include <WinStringWrapper.h>
-#include <WinStringBuilder.h>
+#include <Utilities.h>
 #include <ScopeWarden.h>
+#include <Vector.h>
+#include <WinStringBuilder.h>
+#include <WinStringWrapper.h>
 
 // Public
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // winrt.lib
+#include <CanvasBitmap.h>
+#include <CanvasControl.h>
 #include <CanvasDevice.h>
 #include <CanvasDrawingSession.h>
+#include <CanvasGradientBrush.h>
+#include <CanvasImageBrush.h>
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>
+#include <CanvasRenderTarget.h>
 #include <CanvasSolidColorBrush.h>
-#include <CanvasImageBrush.h>
 #include <CanvasStrokeStyle.h>
-#include <CanvasControl.h>
-#include <CanvasGradientBrush.h>
-#include <Conversion.h>
 #include <CanvasTextFormat.h>
+#include <Conversion.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>

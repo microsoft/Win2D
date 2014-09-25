@@ -13,7 +13,6 @@
 #include "pch.h"
 
 #include "MockWICFormatConverter.h"
-#include "CanvasBitmap.h"
 #include "TestBitmapResourceCreationAdapter.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -32,7 +31,7 @@ public:
     float m_testImageWidthDip;
     float m_testImageHeightDip;
     ComPtr<StubCanvasDevice> m_canvasDevice;
-    ComPtr<MockD2DBitmap> m_bitmap;
+    ComPtr<StubD2DBitmap> m_bitmap;
 
     TEST_METHOD_INITIALIZE(Reset)
     {
@@ -46,7 +45,7 @@ public:
         m_testImageWidthDip = 4.0f;
         m_testImageHeightDip = 8.0f;
 
-        m_bitmap = Make<MockD2DBitmap>();
+        m_bitmap = Make<StubD2DBitmap>();
         m_bitmap->MockGetPixelSize =
             [&](unsigned int* width, unsigned int* height)
             {
@@ -64,11 +63,6 @@ public:
         m_canvasDevice = Make<StubCanvasDevice>();
         m_canvasDevice->MockCreateBitmapFromWicResource =
             [&]() -> ComPtr<ID2D1Bitmap1>
-            {
-                return m_bitmap;
-            };
-        m_canvasDevice->MockCreateBitmap =
-            [&](Size size) -> ComPtr<ID2D1Bitmap1>
             {
                 return m_bitmap;
             };

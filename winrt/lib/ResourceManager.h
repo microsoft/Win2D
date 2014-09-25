@@ -128,17 +128,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // a reference to a ResourceManager somewhere we want the factory to
     // continue to use that one.
     //
-    // FACTORY is expected to derive from FactoryWithResourceManager.
+    // FACTORY is expected to derive from PerApplicationManager.
     //
     template<typename FACTORY, typename MANAGER>
-    class FactoryWithResourceManager
+    class PerApplicationManager
     {
         std::shared_ptr<MANAGER> m_manager;
     public:
         //
         // Default constructor uses the real CoreApplication statics.
         //
-        FactoryWithResourceManager()
+        PerApplicationManager()
             : m_manager(GetOrCreateManager())
         {
         }
@@ -147,7 +147,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Constructor that uses a specific ICoreApplication; allows tests to
         // provide their own instance.
         //
-        FactoryWithResourceManager(ABI::Windows::ApplicationModel::Core::ICoreApplication* coreApplication)
+        PerApplicationManager(ABI::Windows::ApplicationModel::Core::ICoreApplication* coreApplication)
             : m_manager(GetOrCreateManager(coreApplication))
         {
         }

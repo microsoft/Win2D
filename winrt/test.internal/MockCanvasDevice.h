@@ -27,7 +27,7 @@ namespace canvas
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
         std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmapFromWicResource;
-        std::function<ComPtr<ID2D1Bitmap1>(ABI::Windows::Foundation::Size size)> MockCreateBitmap;
+        std::function<ComPtr<ID2D1Bitmap1>(ABI::Windows::Foundation::Size size)> MockCreateRenderTargetBitmap;
         std::function<ComPtr<ID2D1Image>(ICanvasImage* canvasImage)> MockGetD2DImage;
 
         std::function<ComPtr<ID2D1GradientStopCollection1>(
@@ -107,14 +107,14 @@ namespace canvas
             return MockCreateBitmapFromWicResource();
         }
 
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmap(ABI::Windows::Foundation::Size size) override
+        virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(ABI::Windows::Foundation::Size size) override
         {
-            if (!MockCreateBitmap)
+            if (!MockCreateRenderTargetBitmap)
             {
-                Assert::Fail(L"Unexpected call to CreateBitmap");
+                Assert::Fail(L"Unexpected call to CreateRenderTargetBitmap");
                 return nullptr;
             }
-            return MockCreateBitmap(size);
+            return MockCreateRenderTargetBitmap(size);
         }
 
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* Bitmap) override

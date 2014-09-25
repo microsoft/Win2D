@@ -13,9 +13,7 @@
 #pragma once
 
 #include "CanvasImage.h"
-
-#include "ClosablePtr.h"
-#include "ResourceManager.h"
+#include "PolymorphicBitmapmanager.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -30,6 +28,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName) = 0;
     };
     
+
     [uuid(4684FA78-C721-4531-8CCE-BEA927F95E5D)]
     class ICanvasBitmapInternal : public IUnknown
     {
@@ -37,12 +36,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() = 0;
     };
 
+
     class CanvasBitmapFactory :
         public ActivationFactory<
             ICanvasBitmapFactory, 
             ICanvasBitmapStatics,
-            CloakedIid<ICanvasFactoryNative>>,
-        public FactoryWithResourceManager<CanvasBitmapFactory, CanvasBitmapManager>
+            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
+        public PerApplicationPolymorphicBitmapManager
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
 
@@ -59,18 +59,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap) override;
 
         //
-        // ICanvasFactoryNative
+        // ICanvasDeviceResourceFactoryNative
         //
         
         IFACEMETHOD(GetOrCreate)(
+            ICanvasDevice* device,
             IUnknown* resource,
             IInspectable** wrapper) override;
-
-        //
-        // Used by FactoryWithResourceManager
-        //
-
-        static std::shared_ptr<CanvasBitmapManager> CreateManager();
     };
 
 
@@ -92,7 +87,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IEffectInput,
         CloakedIid<ICanvasImageInternal>,
         CloakedIid<ICanvasBitmapInternal>,
-        ChainInterfaces<MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>>
+        ChainInterfaces<MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ICanvasResourceWrapperNative>>>
         , public ResourceWrapper<TRAITS>
     {
     protected:
@@ -150,17 +145,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             CheckInPointer(deviceContext);
 
-            auto& resource = GetResource();
-
-            return resource;
+            return GetResource();
         }
 
         // ICanvasBitmapInternal
         virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override
         {
-            auto& resource = GetResource();
-
-            return resource;
+            return GetResource();
         }
     };
 

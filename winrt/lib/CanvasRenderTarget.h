@@ -23,7 +23,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasRenderTargetFactory 
         : public ActivationFactory<ICanvasRenderTargetFactory, CloakedIid<ICanvasDeviceResourceFactoryNative>>
-        , public FactoryWithResourceManager<CanvasRenderTargetFactory, CanvasRenderTargetManager>
+        , public PerApplicationPolymorphicBitmapManager
     {
     public:
         CanvasRenderTargetFactory();
@@ -37,8 +37,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* device,
             IUnknown* resource,
             IInspectable** wrapper) override;
-
-        static std::shared_ptr<CanvasRenderTargetManager> CreateManager();
     };
 
 

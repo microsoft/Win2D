@@ -28,6 +28,7 @@
 #include <DirectXMath.h>
 
 #include <ErrorHandling.h>
+#include <Utilities.h>
 
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>

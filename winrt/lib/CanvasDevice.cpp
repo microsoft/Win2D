@@ -466,7 +466,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmap(ABI::Windows::Foundation::Size sizeInPixels)
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateRenderTargetBitmap(ABI::Windows::Foundation::Size sizeInPixels)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 
