@@ -41,7 +41,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IID m_effectId;
 
-        ComPtr<Vector<IPropertyValue*>> m_properties;
+        ComPtr<Vector<IInspectable*>> m_properties;
         ComPtr<Vector<IEffectInput*>> m_inputs;
 
         ComPtr<IPropertyValueStatics> m_propertyValueFactory;
@@ -65,7 +65,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(get_EffectId)(GUID* effectId) override;
         IFACEMETHOD(get_Inputs)(_Out_ IVector<IEffectInput*>** inputs) override;
-        IFACEMETHOD(get_Properties)(_Out_ IVector<IPropertyValue*>** properties) override;
+        IFACEMETHOD(get_Properties)(_Out_ IVector<IInspectable*>** properties) override;
 
         //
         // ICanvasImageInternal

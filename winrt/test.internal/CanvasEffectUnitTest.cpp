@@ -43,7 +43,7 @@ public:
 
     TEST_METHOD(CanvasEffect_Properties)
     {
-        ComPtr<IVector<IPropertyValue*>> properties;
+        ComPtr<IVector<IInspectable*>> properties;
         ThrowIfFailed(m_testEffect->get_Properties(&properties));
 
         unsigned int propertiesSize;

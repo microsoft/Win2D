@@ -52,7 +52,7 @@ TEST_CLASS(CanvasBitmapTests)
             });
 
         // Check initial properties vector
-        IVector<IPropertyValue^>^ properties = blurEffect->Properties;
+        IVector<Object^>^ properties = blurEffect->Properties;
         Assert::AreEqual(properties->Size, 3U);
         for (unsigned int i = 0; i < properties->Size; ++i)
         {
@@ -87,7 +87,7 @@ TEST_CLASS(CanvasBitmapTests)
         Assert::AreEqual(newValue, blurEffect->StandardDeviation);
 
         // Check that IEffect Interface connect to the same data vector
-        Assert::AreEqual(newValue, blurEffect->Properties->GetAt(0)->GetSingle());
+        Assert::AreEqual(newValue, safe_cast<IPropertyValue^>(blurEffect->Properties->GetAt(0))->GetSingle());
         newValue = 4.0f;
         IPropertyValue^ newPropertyValue = safe_cast<IPropertyValue^>(PropertyValue::CreateSingle(newValue));
         blurEffect->Properties->SetAt(0, newPropertyValue);
@@ -119,7 +119,7 @@ TEST_CLASS(CanvasBitmapTests)
         Assert::IsTrue(newValue == blurEffect->Optimization);
 
         // Check that IEffect Interface connect to the same data vector
-        Assert::IsTrue(newValue == safe_cast<EffectOptimization>(blurEffect->Properties->GetAt(1)->GetUInt32()));
+        Assert::IsTrue(newValue == safe_cast<EffectOptimization>(safe_cast<IPropertyValue^>(blurEffect->Properties->GetAt(1))->GetUInt32()));
         newValue = EffectOptimization::Speed;
         IPropertyValue^ newPropertyValue = safe_cast<IPropertyValue^>(PropertyValue::CreateUInt32(safe_cast<UINT32>(newValue)));
         blurEffect->Properties->SetAt(1, newPropertyValue);
@@ -159,7 +159,7 @@ TEST_CLASS(CanvasBitmapTests)
         // Check that IEffect Interface connect to the same data vector
         Platform::Array<float, 1U>^ propertyArray;
         // Transformation matrix is propery #2 in property array
-        transformEffect->Properties->GetAt(2)->GetSingleArray(&propertyArray);
+        safe_cast<IPropertyValue^>(transformEffect->Properties->GetAt(2))->GetSingleArray(&propertyArray);
         // Cell (2,2) have index 5 in array representation of 4x4 matrix
         Assert::AreEqual(newValue, propertyArray[5]);
         // Set Cell (2, 3)

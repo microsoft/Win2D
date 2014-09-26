@@ -20,7 +20,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         , m_realizationId(0)
         , m_insideGetImage(false)
     {
-        m_properties = Make<Vector<IPropertyValue*>>(propertiesSize, true);
+        m_properties = Make<Vector<IInspectable*>>(propertiesSize, true);
         CheckMakeResult(m_properties);
 
         m_inputs = Make<Vector<IEffectInput*>>(inputSize, isInputSizeFixed);
@@ -175,7 +175,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             });
     }
 
-    IFACEMETHODIMP CanvasEffect::get_Properties(_Out_ IVector<IPropertyValue*>** properties)
+    IFACEMETHODIMP CanvasEffect::get_Properties(_Out_ IVector<IInspectable*>** properties)
     {
         return ExceptionBoundary(
             [&]
@@ -210,15 +210,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             if (!properties[i])
                 ThrowHR(E_POINTER);
+
+            auto propertyValue = As<IPropertyValue>(properties[i]);
+
             PropertyType propertyType;
-            ThrowIfFailed(properties[i]->get_Type(&propertyType));
+            ThrowIfFailed(propertyValue->get_Type(&propertyType));
 
             switch (propertyType)
             {
             case PropertyType_UInt32:
             {
                 UINT32 value;
-                ThrowIfFailed(properties[i]->GetUInt32(&value));
+                ThrowIfFailed(propertyValue->GetUInt32(&value));
                 // TODO #2283: detailed exception error if failed
                 ThrowIfFailed(m_resource->SetValue(i, value));
                 break;
@@ -226,7 +229,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             case PropertyType_Single:
             {
                 float value;
-                ThrowIfFailed(properties[i]->GetSingle(&value));
+                ThrowIfFailed(propertyValue->GetSingle(&value));
                 // TODO #2283: detailed exception error if failed
                 ThrowIfFailed(m_resource->SetValue(i, value));
                 break;
@@ -235,7 +238,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 float* value = nullptr;
                 unsigned int size;
-                ThrowIfFailed(properties[i]->GetSingleArray(&size, &value));
+                ThrowIfFailed(propertyValue->GetSingleArray(&size, &value));
 
                 auto freeArrayWarden = MakeScopeWarden([&] { CoTaskMemFree(value); });
 

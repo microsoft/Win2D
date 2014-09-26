@@ -23,6 +23,6 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Inputs([out, retval] Windows.Foundation.Collections.IVector<IEffectInput*>** inputs);
         
         [propget]
-        HRESULT Properties([out, retval] Windows.Foundation.Collections.IVector<Windows.Foundation.IPropertyValue*>** effectProperties);
+        HRESULT Properties([out, retval] Windows.Foundation.Collections.IVector<IInspectable*>** effectProperties);
     }
 }
