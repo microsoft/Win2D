@@ -68,7 +68,7 @@
          DocumentationFile="$(IntermediateOutputPath)%(InputAssembly.Filename).xml"
          References="%(InputAssembly.References)"
          TargetType="library"
-         DisabledWarnings="67;1591" />
+         DisabledWarnings="67;1591;108" />
   </Target>
 
 
