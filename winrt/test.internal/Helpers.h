@@ -782,3 +782,16 @@ inline void ValidateStoredErrorState(HRESULT expectedHR, wchar_t const* expected
     Assert::AreEqual(expectedHR, actualHR);
     Assert::AreEqual(expectedMessage, restrictedDescription);
 }
+
+
+template<typename T>
+void AssertClassName(ComPtr<T> obj, wchar_t const* expectedClassName)
+{
+    ComPtr<IInspectable> inspectable;
+    ThrowIfFailed(obj.As(&inspectable));
+    
+    WinString className;
+    ThrowIfFailed(inspectable->GetRuntimeClassName(className.GetAddressOf()));
+    
+    Assert::AreEqual(expectedClassName, static_cast<wchar_t const*>(className));
+}

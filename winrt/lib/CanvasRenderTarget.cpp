@@ -103,6 +103,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11Surface(
+        ICanvasResourceCreator* resourceCreator,
+        IDirect3DSurface* surface,
+        ICanvasRenderTarget** canvasRenderTarget)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckInPointer(surface);
+                CheckAndClearOutPointer(canvasRenderTarget);
+
+                ComPtr<ICanvasDevice> canvasDevice;
+                ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
+
+                auto newRenderTarget = GetManager()->CreateRenderTargetFromSurface(canvasDevice.Get(), surface);
+                ThrowIfFailed(newRenderTarget.CopyTo(canvasRenderTarget));
+            });
+    }
+
+
     //
     // CanvasBitmapDrawingSessionAdapter
     //

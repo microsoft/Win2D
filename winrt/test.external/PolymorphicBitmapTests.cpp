@@ -31,7 +31,7 @@ TEST_CLASS(PolymorphicBitmapTests)
     TEST_METHOD(GetWrappedNonTarget_AsCanvasBitmap_CanvasBitmapReturned)
     {
         CanvasBitmap^ bitmap = GetOrCreate<CanvasBitmap>(m_canvasDevice, m_nonTargetBitmap.Get());
-        AssertTypeName(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, bitmap);
+        AssertTypeName<CanvasBitmap>(bitmap);
     }
 
     TEST_METHOD(GetWrappedNonTarget_AsCanvasRenderTarget_Fails)
@@ -46,13 +46,13 @@ TEST_CLASS(PolymorphicBitmapTests)
     TEST_METHOD(GetWrappedTarget_AsCanvasBitmap_CanvasRenderTargetReturned)
     {
         CanvasBitmap^ bitmap = GetOrCreate<CanvasBitmap>(m_canvasDevice, m_targetBitmap.Get());
-        AssertTypeName(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget, bitmap);
+        AssertTypeName<CanvasRenderTarget>(bitmap);
     }
 
     TEST_METHOD(GetWrappedTarget_AsCanvasRenderTarget_CanvasRenderTargetReturned)
     {
         CanvasRenderTarget^ renderTarget = GetOrCreate<CanvasRenderTarget>(m_canvasDevice, m_targetBitmap.Get());
-        AssertTypeName(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget, renderTarget);
+        AssertTypeName<CanvasRenderTarget>(renderTarget);
     }
 
     TEST_METHOD(WrappedAsBitmapAndRenderTarget_ReturnsSameObject)
@@ -64,12 +64,6 @@ TEST_CLASS(PolymorphicBitmapTests)
         CanvasRenderTarget^ renderTarget = GetOrCreate<CanvasRenderTarget>(m_canvasDevice, m_targetBitmap.Get());
 
         Assert::IsTrue(IsSameInstance(reinterpret_cast<IInspectable*>(bitmap), reinterpret_cast<IInspectable*>(renderTarget)));
-    }
-
-    template<typename T>
-    void AssertTypeName(wchar_t const* expected, T^ obj)
-    {
-        Assert::AreEqual(ref new Platform::String(expected), obj->GetType()->FullName);
     }
 
     ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap(D2D1_BITMAP_OPTIONS options)

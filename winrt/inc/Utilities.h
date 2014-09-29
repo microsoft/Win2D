@@ -14,8 +14,8 @@
 
 
 // Compares two interface pointers, querying to IUnknown to follow COM identity rules.
-template<typename T>
-inline bool IsSameInstance(T* value1, T* value2)
+template<typename T, typename U>
+inline bool IsSameInstance(T* value1, U* value2)
 {
     ComPtr<IUnknown> identity1;
     ComPtr<IUnknown> identity2;

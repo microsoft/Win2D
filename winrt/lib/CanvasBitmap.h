@@ -18,6 +18,8 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
+    using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
+    using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
     using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
     class CanvasBitmapManager;
@@ -58,6 +60,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             HSTRING fileName,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap) override;
 
+        IFACEMETHOD(CreateFromDirect3D11Surface)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            ICanvasBitmap** canvasBitmap) override;
+
         //
         // ICanvasDeviceResourceFactoryNative
         //
@@ -85,8 +92,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasBitmap,
         ICanvasImage,
         IEffectInput,
+        IDirect3DSurface,
         CloakedIid<ICanvasImageInternal>,
         CloakedIid<ICanvasBitmapInternal>,
+        CloakedIid<IDXGIInterfaceAccess>,
         ChainInterfaces<MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ICanvasResourceWrapperNative>>>
         , public ResourceWrapper<TRAITS>
     {
@@ -140,6 +149,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        // IDirect3DSurface
+        IFACEMETHODIMP get_Description(Direct3DSurfaceDescription* value) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(value);
+
+                    GetResource();
+
+                    ThrowHR(E_NOTIMPL); // TODO #2419
+                });
+        }
+
         // ICanvasImageInternal
         virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId) override
         {
@@ -155,6 +178,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override
         {
             return GetResource();
+        }
+
+        // IDXGIInterfaceAccess
+        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+                    ComPtr<IDXGISurface> dxgiSurface;
+                    ThrowIfFailed(d2dBitmap->GetSurface(&dxgiSurface));
+                    ThrowIfFailed(dxgiSurface.CopyTo(iid, p));
+                });
         }
     };
 
@@ -188,4 +224,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasBitmap> CreateWrapper(
             ID2D1Bitmap1* bitmap);
     };
+
+
+    template<typename T, typename U>
+    ComPtr<T> GetDXGIInterface(U* obj)
+    {
+        ComPtr<T> dxgiInterface;
+        ThrowIfFailed(As<IDXGIInterfaceAccess>(obj)->GetDXGIInterface(IID_PPV_ARGS(&dxgiInterface)));
+        return dxgiInterface;
+    }
+
+    template<typename T, typename U>
+    ComPtr<T> GetDXGIInterface(ComPtr<U> obj)
+    {
+        return GetDXGIInterface<T, U>(obj.Get());
+    }
 }}}}

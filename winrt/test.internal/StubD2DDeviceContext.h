@@ -18,11 +18,23 @@ namespace canvas
     {
         ComPtr<ID2D1Device> m_owner;
         ComPtr<ID2D1Image> m_target;
+        D2D1_BITMAP_PROPERTIES1* m_overrideProperties;
 
     public:
         StubD2DDeviceContext(ID2D1Device* owner)
             : m_owner(owner)
+            , m_overrideProperties(nullptr)
         {
+        }
+
+        //
+        // Allows callers to pick which bitmap properties are set when a
+        // D2DBitmap is created.  It's up to the caller to ensure that the
+        // D2D1_BITMAP_PROPERTIES1 pointed to remains valid for the duration.
+        //
+        void SetOverridePropertiesForCreateBitmap(D2D1_BITMAP_PROPERTIES1* properties)
+        {
+            m_overrideProperties = properties;
         }
 
         IFACEMETHODIMP_(void) GetDevice(ID2D1Device** device) const override
@@ -47,6 +59,16 @@ namespace canvas
         IFACEMETHODIMP_(void) GetTarget(ID2D1Image** value) const override
         {
             m_target.CopyTo(value);
+        }
+
+        IFACEMETHODIMP CreateBitmapFromDxgiSurface(
+            IDXGISurface* surface,
+            D2D1_BITMAP_PROPERTIES1 const* properties,
+            ID2D1Bitmap1** bitmap) override
+        {
+            auto overiddenProperties = m_overrideProperties ? m_overrideProperties : properties;
+
+            return Make<StubD2DBitmap>(surface, overiddenProperties).CopyTo(bitmap);
         }
     };
 }

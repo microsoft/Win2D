@@ -77,14 +77,21 @@ public:
         
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmap);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImage);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IEffectInput);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DSurface);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ABI::Windows::Foundation::IClosable);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDXGIInterfaceAccess);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInternal);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmapInternal);
     }
 
     TEST_METHOD(CanvasBitmap_Closed)
     {
         ABI::Windows::Foundation::Size size;
         ABI::Windows::Foundation::Rect bounds;
+        Direct3DSurfaceDescription surfaceDescription;
+        ComPtr<IDXGISurface> dxgiSurface;
+
         auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
 
         Assert::IsNotNull(canvasBitmap.Get());
@@ -94,6 +101,8 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_SizeInPixels(&size));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Size(&size));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Bounds(&bounds));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Description(&surfaceDescription));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetDXGIInterface(IID_PPV_ARGS(&dxgiSurface)));
     }
 
     TEST_METHOD(CanvasBitmap_Get_Size)

@@ -14,7 +14,7 @@
 
 #include "TestBitmapResourceCreationAdapter.h"
 
-TEST_CLASS(D2DBitmapInteropUnitTests)
+TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
 {
     std::shared_ptr<PolymorphicBitmapManager> m_manager;
     ComPtr<StubCanvasDevice> m_canvasDevice;
@@ -59,18 +59,5 @@ public:
         auto wrapped = m_manager->GetOrCreateBitmap(m_canvasDevice.Get(), m_targetBitmap.Get());
 
         AssertClassName(wrapped, RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget);
-    }
-
-
-    template<typename T>
-    void AssertClassName(ComPtr<T> obj, wchar_t const* expectedClassName)
-    {
-        ComPtr<IInspectable> inspectable;
-        ThrowIfFailed(obj.As(&inspectable));
-
-        WinString className;
-        ThrowIfFailed(inspectable->GetRuntimeClassName(className.GetAddressOf()));
-
-        Assert::AreEqual(expectedClassName, static_cast<wchar_t const*>(className));
     }
 };

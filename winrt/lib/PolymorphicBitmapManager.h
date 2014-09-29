@@ -16,6 +16,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace DirectX::Direct3D11;
     using namespace ::Microsoft::WRL;
 
     class CanvasBitmapManager;
@@ -59,6 +60,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             return m_renderTargetManager->Create(args...);
         }
+
+        ComPtr<ICanvasBitmap> CreateBitmapFromSurface(ICanvasDevice* device, IDirect3DSurface* surface);
+        ComPtr<CanvasRenderTarget> CreateRenderTargetFromSurface(ICanvasDevice* device, IDirect3DSurface* surface);
+
 
         //
         // Returns a wrapper around the given d2dBitmap.  Depending on the

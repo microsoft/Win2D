@@ -290,4 +290,21 @@ T WaitExecution(IAsyncOperation<T>^ asyncOperation)
     return asyncTask.get();
 };
 
+
+template<typename T, typename U>
+void AssertTypeName(U^ obj)
+{
+    Assert::AreEqual(T::typeid->FullName, obj->GetType()->FullName);
+}
+
+
+template<typename T, typename U>
+ComPtr<T> GetDXGIInterface(U^ obj)
+{
+    ComPtr<T> dxgi;
+    ThrowIfFailed(GetDXGIInterface<T>(obj, &dxgi));
+    return dxgi;
+}
+
+
 ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext();

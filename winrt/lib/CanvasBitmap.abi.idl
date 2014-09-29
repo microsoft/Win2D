@@ -13,10 +13,12 @@
 namespace Microsoft.Graphics.Canvas
 {
     //
-    // ICanvasBitmap
+    // CanvasBitmap
     //
+
     runtimeclass CanvasBitmap;
     runtimeclass CanvasDevice;
+
     [version(VERSION), uuid(F2D0EB0E-16F3-4BCF-B1D1-04834AB97DE4), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmapFactory : IInspectable
     {
@@ -24,7 +26,8 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(C57532ED-709E-4AC2-86BE-A1EC3A7FA8FE), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmap : IInspectable
-        requires ICanvasImage
+        requires ICanvasImage,
+                 Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface
     {
         [propget]
         HRESULT SizeInPixels([out, retval] Windows.Foundation.Size* size);
@@ -50,6 +53,12 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] HSTRING fileName,
             [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
+
+        [overload("CreateFromDirect3D11Surface")]
+        HRESULT CreateFromDirect3D11Surface(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
+            [out, retval] CanvasBitmap** bitmap);
     };
 
     [version(VERSION), composable(ICanvasBitmapFactory, public, VERSION), threading(both), marshaling_behavior(agile), static(ICanvasBitmapStatics, VERSION)]
@@ -59,10 +68,11 @@ namespace Microsoft.Graphics.Canvas
     }
 
     //
-    // ICanvasRenderTarget
+    // CanvasRenderTarget
     //
     runtimeclass CanvasRenderTarget;
     runtimeclass CanvasDrawingSession;
+
     [version(VERSION), uuid(620DFDBB-9D08-406C-BFE6-D9B81E6DF8E7), exclusiveto(CanvasRenderTarget)]
     interface ICanvasRenderTargetFactory : IInspectable
     {
@@ -82,13 +92,23 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasRenderTarget** renderTarget);
     };
 
+    [version(VERSION), uuid(C7D1FE37-DD57-45D7-BCC1-15625A21E8D5), exclusiveto(CanvasRenderTarget)]
+    interface ICanvasRenderTargetStatics : IInspectable
+    {        
+        [overload("CreateFromDirect3D11Surface")]
+        HRESULT CreateFromDirect3D11Surface(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
+            [out, retval] CanvasRenderTarget** bitmap);
+    }
+
     [version(VERSION), uuid(2D4C7349-9A32-41B9-B3CC-CAF1B7E1099B), exclusiveto(CanvasRenderTarget)]
     interface ICanvasRenderTarget : IInspectable
     {
         HRESULT CreateDrawingSession([out, retval] CanvasDrawingSession** drawingSession);
     };
 
-    [version(VERSION), threading(both), marshaling_behavior(agile), activatable(ICanvasRenderTargetFactory, VERSION)]
+    [version(VERSION), threading(both), marshaling_behavior(agile), activatable(ICanvasRenderTargetFactory, VERSION), static(ICanvasRenderTargetStatics, VERSION)]
     runtimeclass CanvasRenderTarget : CanvasBitmap
     {
         [default] interface ICanvasRenderTarget;

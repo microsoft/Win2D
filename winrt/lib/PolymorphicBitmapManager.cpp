@@ -12,9 +12,10 @@
 
 #include "pch.h"
 
-#include "PolymorphicBitmapManager.h"
 #include "CanvasBitmap.h"
+#include "CanvasDevice.h"
 #include "CanvasRenderTarget.h"
+#include "PolymorphicBitmapManager.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -72,6 +73,48 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : m_bitmapManager(std::make_shared<CanvasBitmapManager>(adapter))
         , m_renderTargetManager(std::make_shared<CanvasRenderTargetManager>())
     {
+    }
+
+
+    static ComPtr<ID2D1Bitmap1> CreateD2DBitmap(
+        ICanvasDevice* canvasDevice, 
+        IDirect3DSurface* surface)
+    {
+        auto dxgiSurface = GetDXGIInterface<IDXGISurface>(surface);
+        auto d2dDevice = As<ICanvasDeviceInternal>(canvasDevice)->GetD2DDevice();
+
+        ComPtr<ID2D1DeviceContext1> deviceContext;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &deviceContext));
+
+        ComPtr<ID2D1Bitmap1> d2dBitmap;
+        ThrowIfFailed(deviceContext->CreateBitmapFromDxgiSurface(
+            dxgiSurface.Get(),
+            nullptr,
+            &d2dBitmap));
+
+        return d2dBitmap;
+    }
+
+
+    ComPtr<ICanvasBitmap> PolymorphicBitmapManager::CreateBitmapFromSurface(
+        ICanvasDevice* canvasDevice,
+        IDirect3DSurface* surface)
+    {
+        return GetOrCreateBitmap(
+            canvasDevice, 
+            CreateD2DBitmap(canvasDevice, surface).Get());
+    }
+
+
+    ComPtr<CanvasRenderTarget> PolymorphicBitmapManager::CreateRenderTargetFromSurface(
+        ICanvasDevice* canvasDevice,
+        IDirect3DSurface* surface)
+    {
+        return GetOrCreateRenderTarget(
+            canvasDevice, 
+            CreateD2DBitmap(canvasDevice, surface).Get());
     }
 
 

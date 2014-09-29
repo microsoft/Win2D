@@ -100,10 +100,19 @@ public:
 
 class StubD2DBitmap : public MockD2DBitmap
 {
-    D2D1_BITMAP_OPTIONS m_options;
+    ComPtr<IDXGISurface> m_surface;
+    D2D1_BITMAP_PROPERTIES1 m_properties;
+
 public:
     StubD2DBitmap(D2D1_BITMAP_OPTIONS options = D2D1_BITMAP_OPTIONS_NONE)
-        : m_options(options)
+        : m_properties(D2D1::BitmapProperties1(options))
+        , m_surface(Make<StubDxgiSurface>())
+    {
+    }
+
+    StubD2DBitmap(IDXGISurface* surface, D2D1_BITMAP_PROPERTIES1 const* properties)
+        : m_surface(surface)
+        , m_properties(properties ? *properties : D2D1_BITMAP_PROPERTIES1{})
     {
     }
 
@@ -111,15 +120,13 @@ public:
     STDMETHOD_(D2D1_BITMAP_OPTIONS, GetOptions)(
         ) CONST
     {
-        return m_options;
+        return m_properties.bitmapOptions;
     }
     
     STDMETHOD(GetSurface)(
         IDXGISurface **out
         ) CONST override
     {
-        ComPtr<IDXGISurface> surface = Make<StubDxgiSurface>();
-
-        return surface.CopyTo(out);
+        return m_surface.CopyTo(out);
     }
 };

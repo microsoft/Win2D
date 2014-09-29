@@ -62,6 +62,15 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
+      <summary>Creates a CanvasBitmap from an existing graphics surface.</summary>
+      <remarks>
+        <p>The bitmap's properties are determined by the properties of surface.</p>
+        <p>If the surface is able to be used as a render target then a
+        CanvasRenderTarget instance is actually returned.  However, to avoid needing to cast, use <see
+        cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.</p>
+      </remarks>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size">
       <summary>Gets the size of the bitmap, in device independent pixels (dips).</summary>
     </member>
@@ -75,6 +84,8 @@ under the License.
         The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.Size).
       </remarks>
     </member>
-  
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Description">
+      <summary>The description of this bitmap's underlying surface.</summary>
+    </member>  
   </members>
 </doc>

@@ -22,7 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasRenderTargetManager;
 
     class CanvasRenderTargetFactory 
-        : public ActivationFactory<ICanvasRenderTargetFactory, CloakedIid<ICanvasDeviceResourceFactoryNative>>
+        : public ActivationFactory<ICanvasRenderTargetFactory, ICanvasRenderTargetStatics, CloakedIid<ICanvasDeviceResourceFactoryNative>>
         , public PerApplicationPolymorphicBitmapManager
     {
     public:
@@ -37,6 +37,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* device,
             IUnknown* resource,
             IInspectable** wrapper) override;
+
+        IFACEMETHOD(CreateFromDirect3D11Surface)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            ICanvasRenderTarget** canvasRenderTarget) override;
     };
 
 

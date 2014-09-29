@@ -48,6 +48,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return bitmap;
     }
 
+
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateWrapper(
         ID2D1Bitmap1* d2dBitmap)
     {
@@ -105,9 +106,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+
+    IFACEMETHODIMP CanvasBitmapFactory::CreateFromDirect3D11Surface(
+        ICanvasResourceCreator* resourceCreator,
+        IDirect3DSurface* surface,
+        ICanvasBitmap** bitmap)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckInPointer(surface);
+                CheckAndClearOutPointer(bitmap);
+
+                ComPtr<ICanvasDevice> canvasDevice;
+                ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
+
+                auto newBitmap = GetManager()->CreateBitmapFromSurface(canvasDevice.Get(), surface);
+                ThrowIfFailed(newBitmap.CopyTo(bitmap));
+            });
+    }
+
+
     //
     // ICanvasFactoryNative
     //
+
 
     IFACEMETHODIMP CanvasBitmapFactory::GetOrCreate(
         ICanvasDevice* device,
