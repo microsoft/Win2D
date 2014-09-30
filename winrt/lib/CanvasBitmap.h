@@ -157,9 +157,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     CheckInPointer(value);
 
-                    GetResource();
-
-                    ThrowHR(E_NOTIMPL); // TODO #2419
+                    auto& d2dBitmap = GetResource();
+                    ComPtr<IDXGISurface> dxgiSurface;
+                    ThrowIfFailed(d2dBitmap->GetSurface(&dxgiSurface));                    
+                    ThrowIfFailed(dxgiSurface->GetDesc(ReinterpretAs<DXGI_SURFACE_DESC*>(value)));
                 });
         }
 

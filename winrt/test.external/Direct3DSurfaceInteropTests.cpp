@@ -80,6 +80,28 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
         AssertTypeName<CanvasRenderTarget>(renderTarget);
     }
 
+    TEST_METHOD(CanvasBitmapDescriptionMatchesDxgiSurfaceDescription)
+    {
+        using ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDXGIInterfaceAccess;
+
+        auto surface = CreateSurface(static_cast<D3D11_BIND_FLAG>(D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET));
+        auto bitmap = CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, surface);
+
+        auto canvasDescription = bitmap->Description;
+
+        auto dxgiAccess = As<IDXGIInterfaceAccess>(reinterpret_cast<IInspectable*>(bitmap));
+        ComPtr<IDXGISurface> dxgiSurface;
+        ThrowIfFailed(dxgiAccess->GetDXGIInterface(IID_PPV_ARGS(&dxgiSurface)));
+        DXGI_SURFACE_DESC dxgiDesc{};
+        ThrowIfFailed(dxgiSurface->GetDesc(&dxgiDesc));
+
+        Assert::AreEqual<uint32_t>(dxgiDesc.Width, canvasDescription.Width);
+        Assert::AreEqual<uint32_t>(dxgiDesc.Height, canvasDescription.Height);
+        Assert::AreEqual<uint32_t>(dxgiDesc.Format, static_cast<uint32_t>(canvasDescription.Format));
+        Assert::AreEqual<uint32_t>(dxgiDesc.SampleDesc.Count, canvasDescription.MultisampleDescription.Count);
+        Assert::AreEqual<uint32_t>(dxgiDesc.SampleDesc.Quality, canvasDescription.MultisampleDescription.Quality);
+    }
+
     IDirect3DSurface^ CreateSurface(D3D11_BIND_FLAG bindFlags)
     {
         //
