@@ -38,9 +38,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             ComPtr<IWICFormatConverter> wicFormatConverter;
 
-            wchar_t const* fileNameBuffer = WindowsGetStringRawBuffer(fileName, nullptr);
+            uint32_t fileNameLength = 0;
+            wchar_t const* fileNameBuffer = WindowsGetStringRawBuffer(fileName, &fileNameLength);
 
-            if (!fileNameBuffer || wcslen(fileNameBuffer)==0)
+            if (!fileNameBuffer || fileNameLength==0)
                 ThrowHR(E_INVALIDARG);
 
             ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
