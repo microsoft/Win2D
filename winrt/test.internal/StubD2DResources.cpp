@@ -30,7 +30,7 @@ STDMETHODIMP StubD2DFactoryWithCreateStrokeStyle::CreateStrokeStyle(
     m_customDashElements.resize(dashesCount);
     if (dashesCount > 0)
     {
-        memcpy(&(m_customDashElements[0]), dashes, sizeof(float)*dashesCount);
+        memcpy_s(&m_customDashElements[0], sizeof(float)*dashesCount, dashes, sizeof(float)*dashesCount);
     }
     m_transformBehavior = strokeStyleProperties->transformType;
 

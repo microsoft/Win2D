@@ -120,13 +120,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         assert(stops.size() <= UINT_MAX);
 
         // TODO #2508: Use RAII wrapper for these types of allocations.
+        auto sizeInBytes = stops.size() * sizeof(CanvasGradientStop);
         (*valueCount) = static_cast<UINT32>(stops.size());
-        (*valueElements) = static_cast<CanvasGradientStop*>(CoTaskMemAlloc(stops.size() * sizeof(CanvasGradientStop)));
+        (*valueElements) = static_cast<CanvasGradientStop*>(CoTaskMemAlloc(sizeInBytes));
         ThrowIfNullPointer(*valueElements, E_OUTOFMEMORY);
 
         if (stops.size() > 0)
         {
-            memcpy(*valueElements, &(stops[0]), stops.size() * sizeof(CanvasGradientStop));
+            memcpy_s(*valueElements, sizeInBytes, &stops[0], sizeInBytes);
         }
     }
 
