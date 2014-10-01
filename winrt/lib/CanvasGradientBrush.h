@@ -28,57 +28,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1LinearGradientBrush> GetD2DLinearGradientBrush() = 0;
     };
 
-    class CanvasLinearGradientBrushFactory
-        : public ActivationFactory<
-        ICanvasLinearGradientBrushFactory,
-        CloakedIid<ICanvasFactoryNative>,
-        ICanvasLinearGradientBrushStatics>,
-        public PerApplicationManager<CanvasLinearGradientBrushFactory, CanvasLinearGradientBrushManager>
-    {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasLinearGradientBrush, BaseTrust);
-
-    public:
-
-        CanvasLinearGradientBrushFactory();
-        
-        IFACEMETHOD(CreateSimple)(
-            ICanvasResourceCreator* resourceCreator,
-            ABI::Windows::UI::Color startColor,
-            ABI::Windows::UI::Color endColor,
-            ICanvasLinearGradientBrush** canvasLinearGradientBrush) override;
-
-        IFACEMETHOD(CreateWithEdgeBehaviorAndAlphaBehavior)(
-            ICanvasResourceCreator* resourceAllocator,
-            UINT32 gradientStopCount,
-            CanvasGradientStop* gradientStops,
-            CanvasEdgeBehavior extend,
-            CanvasAlphaBehavior alphaBehavior,
-            ICanvasLinearGradientBrush** linearGradientBrush) override;
-
-        IFACEMETHOD(CreateWithEdgeBehaviorAndInterpolationOptions)(
-            ICanvasResourceCreator* resourceAllocator,
-            UINT32 gradientStopCount,
-            CanvasGradientStop* gradientStops,
-            CanvasEdgeBehavior edgeBehavior,
-            CanvasAlphaBehavior alphaBehavior,
-            CanvasColorSpace preInterpolationSpace,
-            CanvasColorSpace postInterpolationSpace,
-            CanvasBufferPrecision bufferPrecision,
-            ICanvasLinearGradientBrush** linearGradientBrush) override;
-
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;
-
-        //
-        // ICanvasLinearGradientBrushStatics
-        //
-        IFACEMETHOD(CreateRainbow)(
-            ICanvasResourceCreator* resourceCreator,
-            float eldritchness,
-            ICanvasLinearGradientBrush** canvasLinearGradientBrush);
-    };
-
     struct CanvasLinearGradientBrushTraits
     {
         typedef ID2D1LinearGradientBrush resource_t;
@@ -154,33 +103,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1LinearGradientBrush* resource);
     };
 
-    class CanvasRadialGradientBrushManager;
-
-    [uuid(4B62DFF9-6188-46EC-A4A1-C52099278E34)]
-    class ICanvasRadialGradientBrushInternal : public ICanvasBrushInternal
-    {
-    public:
-        virtual ComPtr<ID2D1RadialGradientBrush> GetD2DRadialGradientBrush() = 0;
-    };
-
-    class CanvasRadialGradientBrushFactory
+    class CanvasLinearGradientBrushFactory
         : public ActivationFactory<
-        ICanvasRadialGradientBrushFactory,
+        ICanvasLinearGradientBrushFactory,
         CloakedIid<ICanvasFactoryNative>,
-        ICanvasRadialGradientBrushStatics>,
-        public PerApplicationManager<CanvasRadialGradientBrushFactory, CanvasRadialGradientBrushManager>
+        ICanvasLinearGradientBrushStatics>,
+        public PerApplicationManager<CanvasLinearGradientBrushFactory, CanvasLinearGradientBrushManager>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRadialGradientBrush, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasLinearGradientBrush, BaseTrust);
 
     public:
-
-        CanvasRadialGradientBrushFactory();
-
+        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+        
         IFACEMETHOD(CreateSimple)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::UI::Color startColor,
             ABI::Windows::UI::Color endColor,
-            ICanvasRadialGradientBrush** canvasRadialGradientBrush) override;
+            ICanvasLinearGradientBrush** canvasLinearGradientBrush) override;
 
         IFACEMETHOD(CreateWithEdgeBehaviorAndAlphaBehavior)(
             ICanvasResourceCreator* resourceAllocator,
@@ -188,7 +127,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasGradientStop* gradientStops,
             CanvasEdgeBehavior extend,
             CanvasAlphaBehavior alphaBehavior,
-            ICanvasRadialGradientBrush** RadialGradientBrush) override;
+            ICanvasLinearGradientBrush** linearGradientBrush) override;
 
         IFACEMETHOD(CreateWithEdgeBehaviorAndInterpolationOptions)(
             ICanvasResourceCreator* resourceAllocator,
@@ -199,20 +138,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,
-            ICanvasRadialGradientBrush** radialGradientBrush) override;
-
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;
+            ICanvasLinearGradientBrush** linearGradientBrush) override;
 
         //
-        // ICanvasRadialGradientBrushStatics
+        // ICanvasLinearGradientBrushStatics
         //
-
         IFACEMETHOD(CreateRainbow)(
             ICanvasResourceCreator* resourceCreator,
             float eldritchness,
-            ICanvasRadialGradientBrush** canvasRadialGradientBrush);
+            ICanvasLinearGradientBrush** canvasLinearGradientBrush);
+    };
+
+
+
+
+    class CanvasRadialGradientBrushManager;
+
+    [uuid(4B62DFF9-6188-46EC-A4A1-C52099278E34)]
+    class ICanvasRadialGradientBrushInternal : public ICanvasBrushInternal
+    {
+    public:
+        virtual ComPtr<ID2D1RadialGradientBrush> GetD2DRadialGradientBrush() = 0;
     };
 
     struct CanvasRadialGradientBrushTraits
@@ -296,6 +242,53 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<CanvasRadialGradientBrush> CreateWrapper(
             ID2D1RadialGradientBrush* resource);
+    };
+
+    class CanvasRadialGradientBrushFactory
+        : public ActivationFactory<
+        ICanvasRadialGradientBrushFactory,
+        CloakedIid<ICanvasFactoryNative>,
+        ICanvasRadialGradientBrushStatics>,
+        public PerApplicationManager<CanvasRadialGradientBrushFactory, CanvasRadialGradientBrushManager>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRadialGradientBrush, BaseTrust);
+
+    public:
+        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+
+        IFACEMETHOD(CreateSimple)(
+            ICanvasResourceCreator* resourceCreator,
+            ABI::Windows::UI::Color startColor,
+            ABI::Windows::UI::Color endColor,
+            ICanvasRadialGradientBrush** canvasRadialGradientBrush) override;
+
+        IFACEMETHOD(CreateWithEdgeBehaviorAndAlphaBehavior)(
+            ICanvasResourceCreator* resourceAllocator,
+            UINT32 gradientStopCount,
+            CanvasGradientStop* gradientStops,
+            CanvasEdgeBehavior extend,
+            CanvasAlphaBehavior alphaBehavior,
+            ICanvasRadialGradientBrush** RadialGradientBrush) override;
+
+        IFACEMETHOD(CreateWithEdgeBehaviorAndInterpolationOptions)(
+            ICanvasResourceCreator* resourceAllocator,
+            UINT32 gradientStopCount,
+            CanvasGradientStop* gradientStops,
+            CanvasEdgeBehavior edgeBehavior,
+            CanvasAlphaBehavior alphaBehavior,
+            CanvasColorSpace preInterpolationSpace,
+            CanvasColorSpace postInterpolationSpace,
+            CanvasBufferPrecision bufferPrecision,
+            ICanvasRadialGradientBrush** radialGradientBrush) override;
+
+        //
+        // ICanvasRadialGradientBrushStatics
+        //
+
+        IFACEMETHOD(CreateRainbow)(
+            ICanvasResourceCreator* resourceCreator,
+            float eldritchness,
+            ICanvasRadialGradientBrush** canvasRadialGradientBrush);
     };
 
     uint8_t DesaturateChannel(uint8_t channel, float amount);

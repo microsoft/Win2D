@@ -36,26 +36,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return internal->GetRealizedD2DStrokeStyle(d2dFactory.Get());
     }
     
-    IFACEMETHODIMP CanvasDrawingSessionFactory::GetOrCreate(
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<ID2D1DeviceContext1> deviceContext;
-
-                ThrowIfFailed(resource->QueryInterface(deviceContext.GetAddressOf()));
-
-                auto newDrawingSession = GetManager()->GetOrCreate(deviceContext.Get());
-
-                ThrowIfFailed(newDrawingSession.CopyTo(wrapper));
-            });
-    }
-
 
     //
     // This drawing session adapter is used when wrapping an existing

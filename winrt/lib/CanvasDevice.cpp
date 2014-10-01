@@ -345,24 +345,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::GetOrCreate(
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<ID2D1Device1> d2dDevice;
-                ThrowIfFailed(resource->QueryInterface(d2dDevice.GetAddressOf()));
-
-                auto newCanvasDevice = GetManager()->GetOrCreate(d2dDevice.Get());
-
-                ThrowIfFailed(newCanvasDevice.CopyTo(wrapper));
-            });
-    }
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasDeviceFactory::ActivateInstance(IInspectable **object)

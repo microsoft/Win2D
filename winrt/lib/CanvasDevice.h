@@ -55,59 +55,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     //
-    // WinRT activation factory for the CanvasDevice runtimeclass.
-    //
-    class CanvasDeviceFactory 
-        : public ActivationFactory<
-            ICanvasDeviceFactory, 
-            ICanvasDeviceStatics, 
-            CloakedIid<ICanvasFactoryNative>>,
-          public PerApplicationManager<CanvasDeviceFactory, CanvasDeviceManager>
-                                
-    {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
-
-    public:
-        //
-        // ActivationFactory
-        //
-
-        IFACEMETHOD(ActivateInstance)(_COM_Outptr_ IInspectable** ppvObject) override;
-
-        //
-        // ICanvasDeviceFactory
-        //
-
-        IFACEMETHOD(CreateWithDebugLevel)(
-            CanvasDebugLevel debugLevel,
-            ICanvasDevice** canvasDevice) override;
-
-        IFACEMETHOD(CreateWithDebugLevelAndHardwareAcceleration)(
-            CanvasDebugLevel debugLevel,
-            CanvasHardwareAcceleration hardwareAcceleration,
-            ICanvasDevice** canvasDevice) override;
-
-        IFACEMETHOD(CreateFromDirect3D11Device)(
-            CanvasDebugLevel debugLevel,
-            IDirect3DDevice* direct3DDevice,
-            ICanvasDevice** canvasDevice) override;
-
-        //
-        // ICanvasFactoryNative
-        //
-        
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;
-
-        //
-        // Used by PerApplicationManager
-        //
-        static std::shared_ptr<CanvasDeviceManager> CreateManager();
-    };
-
-
-    //
     // This internal interface is exposed by the CanvasDevice runtime class and
     // allows for internal access to non-WinRT methods.
     //
@@ -265,5 +212,52 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID3D11Device> MakeD3D11Device(
             CanvasHardwareAcceleration requestedHardwareAcceleration,
             CanvasHardwareAcceleration* actualHardwareAcceleration) const;
+    };
+
+
+    //
+    // WinRT activation factory for the CanvasDevice runtimeclass.
+    //
+    class CanvasDeviceFactory 
+        : public ActivationFactory<
+            ICanvasDeviceFactory, 
+            ICanvasDeviceStatics, 
+            CloakedIid<ICanvasFactoryNative>>,
+          public PerApplicationManager<CanvasDeviceFactory, CanvasDeviceManager>
+                                
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
+
+    public:
+        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+
+        //
+        // ActivationFactory
+        //
+
+        IFACEMETHOD(ActivateInstance)(_COM_Outptr_ IInspectable** ppvObject) override;
+
+        //
+        // ICanvasDeviceFactory
+        //
+
+        IFACEMETHOD(CreateWithDebugLevel)(
+            CanvasDebugLevel debugLevel,
+            ICanvasDevice** canvasDevice) override;
+
+        IFACEMETHOD(CreateWithDebugLevelAndHardwareAcceleration)(
+            CanvasDebugLevel debugLevel,
+            CanvasHardwareAcceleration hardwareAcceleration,
+            ICanvasDevice** canvasDevice) override;
+
+        IFACEMETHOD(CreateFromDirect3D11Device)(
+            CanvasDebugLevel debugLevel,
+            IDirect3DDevice* direct3DDevice,
+            ICanvasDevice** canvasDevice) override;
+
+        //
+        // Used by PerApplicationManager
+        //
+        static std::shared_ptr<CanvasDeviceManager> CreateManager();
     };
 }}}}

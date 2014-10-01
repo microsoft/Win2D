@@ -208,9 +208,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return canvasLinearGradientBrush;
     }
 
-    CanvasLinearGradientBrushFactory::CanvasLinearGradientBrushFactory()
-    {}
-
     IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateSimple(
         ICanvasResourceCreator* resourceCreator,
         ABI::Windows::UI::Color startColor,
@@ -283,25 +280,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     bufferPrecision);
 
                 ThrowIfFailed(newLinearBrush.CopyTo(linearGradientBrush));
-            });
-    }
-
-    IFACEMETHODIMP CanvasLinearGradientBrushFactory::GetOrCreate(
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<ID2D1LinearGradientBrush> d2dBrush;
-                ThrowIfFailed(resource->QueryInterface(d2dBrush.GetAddressOf()));
-
-                auto newBrush = GetManager()->GetOrCreate(d2dBrush.Get());
-
-                ThrowIfFailed(newBrush.CopyTo(wrapper));
             });
     }
 
@@ -531,8 +509,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return canvasRadialGradientBrush;
     }
 
-    CanvasRadialGradientBrushFactory::CanvasRadialGradientBrushFactory()
-    {}
 
     IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateSimple(
         ICanvasResourceCreator* resourceCreator,
@@ -607,25 +583,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     bufferPrecision);
 
                 ThrowIfFailed(newRadialBrush.CopyTo(radialGradientBrush));
-            });
-    }
-
-    IFACEMETHODIMP CanvasRadialGradientBrushFactory::GetOrCreate(
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<ID2D1RadialGradientBrush> d2dBrush;
-                ThrowIfFailed(resource->QueryInterface(d2dBrush.GetAddressOf()));
-
-                auto newBrush = GetManager()->GetOrCreate(d2dBrush.Get());
-
-                ThrowIfFailed(newBrush.CopyTo(wrapper));
             });
     }
 

@@ -114,26 +114,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    IFACEMETHODIMP CanvasSolidColorBrushFactory::GetOrCreate(
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<ID2D1SolidColorBrush> d2dBrush;
-                ThrowIfFailed(resource->QueryInterface(d2dBrush.GetAddressOf()));
-
-                auto newBrush = GetManager()->GetOrCreate(d2dBrush.Get());
-
-                ThrowIfFailed(newBrush.CopyTo(wrapper));
-            });
-    }
-
-
     CanvasSolidColorBrush::CanvasSolidColorBrush(
         std::shared_ptr<CanvasSolidColorBrushManager> manager,
         ID2D1SolidColorBrush* brush)

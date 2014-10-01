@@ -32,22 +32,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasDrawingSessionManager;
     class CanvasDrawingSession;
 
-    class CanvasDrawingSessionFactory
-        : public ActivationFactory<ICanvasDrawingSessionStatics, CloakedIid<ICanvasFactoryNative>>,
-          public PerApplicationManager<CanvasDrawingSessionFactory, CanvasDrawingSessionManager>
-    {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
-
-    public:
-        //
-        // ICanvasFactoryNative
-        //
-
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;        
-    };
-
     struct CanvasDrawingSessionTraits
     {
         typedef ID2D1DeviceContext1 resource_t;
@@ -893,5 +877,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<CanvasDrawingSession> CreateWrapper(
             ID2D1DeviceContext1* resource);
+    };
+
+
+    class CanvasDrawingSessionFactory
+        : public ActivationFactory<ICanvasDrawingSessionStatics, CloakedIid<ICanvasFactoryNative>>,
+          public PerApplicationManager<CanvasDrawingSessionFactory, CanvasDrawingSessionManager>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
+
+    public:
+        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
     };
 }}}}

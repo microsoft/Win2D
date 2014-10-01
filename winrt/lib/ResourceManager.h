@@ -135,6 +135,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         std::shared_ptr<MANAGER> m_manager;
     public:
+        typedef MANAGER manager_t;
+
         //
         // Default constructor uses the real CoreApplication statics.
         //
@@ -256,4 +258,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return std::make_shared<MANAGER>();
         }
     };
+
+//
+// This macro can be placed inside an activation factory class definition to
+// provide a default implementation of ICanvasFactoryNative
+//
+#define IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE()                        \
+    IFACEMETHODIMP GetOrCreate(IUnknown* resource, IInspectable** wrapper) override \
+    {                                                                   \
+        return ExceptionBoundary(                                       \
+            [&]                                                         \
+            {                                                           \
+                CheckInPointer(resource);                               \
+                CheckAndClearOutPointer(wrapper);                       \
+                                                                        \
+                ComPtr<typename manager_t::resource_t> typedResource; \
+                ThrowIfFailed(resource->QueryInterface(typedResource.GetAddressOf())); \
+                                                                        \
+                auto newWrapper = GetManager()->GetOrCreate(typedResource.Get()); \
+                                                                        \
+                ThrowIfFailed(newWrapper.CopyTo(wrapper));              \
+            });                                                         \
+    }
+
 }}}}

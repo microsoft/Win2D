@@ -35,33 +35,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1SolidColorBrush> GetD2DSolidColorBrush() = 0;
     };
 
-    class CanvasSolidColorBrushFactory 
-        : public ActivationFactory<
-            ICanvasSolidColorBrushFactory,
-            CloakedIid<ICanvasFactoryNative>>,
-          public PerApplicationManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
-    {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
-
-    public:
-        //
-        // ICanvasSolidColorBrushFactory
-        //
-
-        IFACEMETHOD(Create)(
-            ICanvasResourceCreator* resourceCreator,
-            ABI::Windows::UI::Color color,
-            ICanvasSolidColorBrush** canvasSolidColorBrush) override;
-
-        //
-        // ICanvasFactoryNative
-        //
-
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;
-    };
-
     struct CanvasSolidColorBrushTraits
     {
         typedef ID2D1SolidColorBrush resource_t;
@@ -124,4 +97,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1SolidColorBrush* resource);
     };
 
+    class CanvasSolidColorBrushFactory 
+        : public ActivationFactory<
+            ICanvasSolidColorBrushFactory,
+            CloakedIid<ICanvasFactoryNative>>,
+          public PerApplicationManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
+
+    public:
+        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+
+        //
+        // ICanvasSolidColorBrushFactory
+        //
+
+        IFACEMETHOD(Create)(
+            ICanvasResourceCreator* resourceCreator,
+            ABI::Windows::UI::Color color,
+            ICanvasSolidColorBrush** canvasSolidColorBrush) override;
+
+    };
 }}}}
