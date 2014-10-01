@@ -82,16 +82,12 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
 
     TEST_METHOD(CanvasBitmapDescriptionMatchesDxgiSurfaceDescription)
     {
-        using ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDXGIInterfaceAccess;
-
         auto surface = CreateSurface(static_cast<D3D11_BIND_FLAG>(D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET));
         auto bitmap = CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, surface);
 
         auto canvasDescription = bitmap->Description;
 
-        auto dxgiAccess = As<IDXGIInterfaceAccess>(reinterpret_cast<IInspectable*>(bitmap));
-        ComPtr<IDXGISurface> dxgiSurface;
-        ThrowIfFailed(dxgiAccess->GetDXGIInterface(IID_PPV_ARGS(&dxgiSurface)));
+        auto dxgiSurface = GetDXGIInterface<IDXGISurface>(bitmap);
         DXGI_SURFACE_DESC dxgiDesc{};
         ThrowIfFailed(dxgiSurface->GetDesc(&dxgiDesc));
 

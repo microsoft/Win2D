@@ -50,6 +50,12 @@ under the License.
         template&lt;typename WRAPPER&gt;
         WRAPPER^ GetOrCreate(IUnknown* resource);
 
+        template&lt;typename WRAPPER&gt;
+        WRAPPER^ GetOrCreate(CanvasDevice^ device, IUnknown* resource);
+
+        template&lt;typename WRAPPER&gt;
+        WRAPPER^ GetOrCreate(ID2D1Device1* device, IUnknown* resource);
+
         template&lt;typename T, typename U&gt;
         Microsoft::WRL::ComPtr&lt;T&gt; GetWrappedResource(U^ wrapper);
         </code>
@@ -60,6 +66,11 @@ under the License.
           same wrapper each time, as long as that wrapper instance continues to exist. If all references
           to the wrapper are released such that its reference count goes to zero and it is destroyed,
           any later call to GetOrCreate will have to create a new wrapper.
+        </para>
+
+        <para>
+          Depending on the wrapper type, a CanvasDevice or ID2D1Device may need
+          to be passed in to GetOrCreate().
         </para>
       </content>
     </section>
@@ -91,6 +102,14 @@ under the License.
           ComPtr&lt;ID2D1Device&gt; nativeDevice = ...;
 
           CanvasDevice^ canvasDevice = GetOrCreate&lt;CanvasDevice&gt;(nativeDevice.Get());
+        </code>
+
+        <para>Types such as CanvasBitmap require that the device is passed to GetOrCreate:</para>
+
+        <code>
+          ComPtr&lt;ID2D1Bitmap1&gt; nativeBitmap = ...;
+
+          CanvasBitmap^ bitmap = GetOrCreate&lt;CanvasBitmap&gt;(canvasDevice, nativeBitmap.Get());
         </code>
       </content>
     </section>

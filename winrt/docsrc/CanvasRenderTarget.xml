@@ -21,6 +21,9 @@ under the License.
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasRenderTarget">
       <summary>A rendertarget is a bitmap that can be drawn onto.</summary>
+      <remarks>
+        <p>When using native interop with CanvasRenderTarget, the version of GetOrCreate that takes a device must be used.</p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Size)">
       <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>

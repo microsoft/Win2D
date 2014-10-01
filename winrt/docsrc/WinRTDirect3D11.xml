@@ -149,17 +149,16 @@ under the License.
           using namespace Microsoft::WRL;
         </code>
 
-        <p>To get the native DirectX surface that is wrapped by a Windows Runtime surface:</p>
+        <p>To get the native DirectX surface that is wrapped by an object that implements IDirect3DSurface:</p>
 
-        <!-- TODO #2420: update this example once CanvasBitmap wraps DXGI surfaces -->
         <code>
-          IDirect3DSurface^ winRTSurface = ...;
-          ComPtr&lt;IDXGISurface&gt; nativeSurface;
+          CanvasRenderTarget^ renderTarget = ref new CanvasRenderTarget();
+          ComPtr&lt;IDXGISurface&gt; dxgiSurface;
 
-          HRESULT hr = GetDXGIInterface(winRTSurface, nativeSurface.GetAddressOf());
+          HRESULT hr = GetDXGIInterface(renderTarget, dxgiSurface.GetAddressOf());
         </code>
 
-        <p>To create a new Windows Runtime surface wrapping a native DirectX surface:</p>
+        <p>To create a new Windows Runtime surface wrapping a native DXGI surface:</p>
 
         <code>
           ComPtr&lt;IDXGISurface&gt; nativeSurface = ...;

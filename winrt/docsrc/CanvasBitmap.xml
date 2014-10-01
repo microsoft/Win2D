@@ -55,6 +55,9 @@ under the License.
           }
         </code>
       </example>
+      <remarks>
+        <p>When using native interop with CanvasBitmap, the version of GetOrCreate that takes a device must be used.</p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.Dispose">
       <summary>Releases all resources used by the CanvasBitmap.</summary>
