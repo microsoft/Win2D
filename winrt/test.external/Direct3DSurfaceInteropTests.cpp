@@ -35,6 +35,15 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
         Assert::AreEqual(expectedDxgiSurface.Get(), actualDxgiSurface.Get());
     }
 
+    TEST_METHOD(CreateBitmapFromDirect3DSurface_AlphaAndDpiAreSet)
+    {
+        auto surface = CreateSurface(D3D11_BIND_SHADER_RESOURCE);
+        auto bitmap = CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, surface, CanvasAlphaBehavior::Ignore, 35.0f);
+        auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+
+        VerifyDpiAndAlpha(d2dBitmap, 35.0f, D2D1_ALPHA_MODE_IGNORE);
+    }
+
     TEST_METHOD(CreateBitmapFromNonRenderTargetDirect3DSurface_CreatesBitmap)
     {
         auto surface = CreateSurface(D3D11_BIND_SHADER_RESOURCE);
@@ -78,6 +87,63 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
         auto renderTarget = CanvasRenderTarget::CreateFromDirect3D11Surface(m_canvasDevice, surface);
 
         AssertTypeName<CanvasRenderTarget>(renderTarget);
+    }
+
+    TEST_METHOD(CreateBitmapFromDirect3DSurface_Subresource)
+    {
+        //
+        // Verify bitmaps and render targets are createable off of subresourced surfaces.
+        //
+        // Mip slices are used for this test rather than an arrayed texture
+        // because they are supported on a wider range of hardware.
+        //
+        ComPtr<ID3D11Device> d3dDevice;
+        ThrowIfFailed(GetDXGIInterface<ID3D11Device>(m_canvasDevice, &d3dDevice));
+
+        D3D11_TEXTURE2D_DESC textureDesc{};
+        textureDesc.Width = 8;
+        textureDesc.Height = 8;
+        textureDesc.MipLevels = 3;
+        textureDesc.ArraySize = 1;
+        textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        textureDesc.SampleDesc.Count = 1;
+        textureDesc.SampleDesc.Quality = 0;
+        textureDesc.Usage = D3D11_USAGE_DEFAULT;
+        textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+        textureDesc.CPUAccessFlags = 0;
+
+        ComPtr<ID3D11Texture2D> texture2D;
+        ThrowIfFailed(d3dDevice->CreateTexture2D(
+            &textureDesc,
+            nullptr,
+            &texture2D));
+
+        ComPtr<IDXGIResource1> resource;
+        ThrowIfFailed(texture2D.As(&resource));
+
+        ComPtr<IDXGISurface2> surface;
+        ThrowIfFailed(resource->CreateSubresourceSurface(2, &surface));
+
+        auto wrappedSurface = CreateDirect3DSurface(surface.Get());
+
+        auto renderTarget = CanvasRenderTarget::CreateFromDirect3D11Surface(m_canvasDevice, wrappedSurface);
+
+        auto bitmap = CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, wrappedSurface);
+
+        // Verify each resource size reflects the slice size, not the whole texture.
+        Assert::AreEqual(2.0f, renderTarget->SizeInPixels.Width);
+        Assert::AreEqual(2.0f, renderTarget->SizeInPixels.Height);
+        Assert::AreEqual(2.0f, bitmap->SizeInPixels.Width);
+        Assert::AreEqual(2.0f, bitmap->SizeInPixels.Height);
+    }
+
+    TEST_METHOD(CreateRenderTargetFromDirect3DSurface_AlphaAndDpiAreSet)
+    {
+        auto surface = CreateSurface(D3D11_BIND_RENDER_TARGET);
+        auto renderTarget = CanvasRenderTarget::CreateFromDirect3D11Surface(m_canvasDevice, surface, CanvasAlphaBehavior::Ignore, 75.0f);
+        auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(renderTarget);
+
+        VerifyDpiAndAlpha(d2dBitmap, 75.0f, D2D1_ALPHA_MODE_IGNORE);
     }
 
     TEST_METHOD(CanvasBitmapDescriptionMatchesDxgiSurfaceDescription)

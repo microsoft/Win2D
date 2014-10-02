@@ -26,12 +26,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<CanvasRenderTarget> CanvasRenderTargetManager::CreateNew(
         ICanvasDevice* canvasDevice,
-        ABI::Windows::Foundation::Size size)
+        float width,
+        float height,
+        DirectXPixelFormat format,
+        CanvasAlphaBehavior alpha,
+        float dpi)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto d2dBitmap = canvasDeviceInternal->CreateRenderTargetBitmap(size);
+        auto d2dBitmap = canvasDeviceInternal->CreateRenderTargetBitmap(width, height, format, alpha, dpi);
 
         return Make<CanvasRenderTarget>(shared_from_this(), d2dBitmap.Get(), canvasDevice);
     }
@@ -60,11 +64,80 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-
     IFACEMETHODIMP CanvasRenderTargetFactory::Create(
-        ICanvasResourceCreator *resourceCreator,
-        ABI::Windows::Foundation::Size sizeInPixels,
-        ICanvasRenderTarget **renderTarget)
+        ICanvasResourceCreator* resourceCreator,
+        ABI::Windows::Foundation::Size size,
+        ICanvasRenderTarget** renderTarget)
+    {
+        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
+            resourceCreator,
+            size.Width,
+            size.Height,
+            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI,
+            renderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeight(
+        ICanvasResourceCreator* resourceCreator,
+        float width,
+        float height,
+        ICanvasRenderTarget** renderTarget)
+    {
+        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
+            resourceCreator,
+            width,
+            height,
+            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI,
+            renderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormat(
+        ICanvasResourceCreator* resourceCreator,
+        float width,
+        float height,
+        DirectXPixelFormat format,
+        ICanvasRenderTarget** renderTarget)
+    {
+        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
+            resourceCreator,
+            width,
+            height,
+            format,
+            CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI,
+            renderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormatAndAlpha(
+        ICanvasResourceCreator* resourceCreator,
+        float width,
+        float height,
+        DirectXPixelFormat format,
+        CanvasAlphaBehavior alpha,
+        ICanvasRenderTarget** renderTarget)
+    {
+        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
+            resourceCreator,
+            width,
+            height,
+            format,
+            alpha,
+            DEFAULT_DPI,
+            renderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
+        ICanvasResourceCreator* resourceCreator,
+        float width,
+        float height,
+        DirectXPixelFormat format,
+        CanvasAlphaBehavior alpha,
+        float dpi,
+        ICanvasRenderTarget** renderTarget)
     {
         return ExceptionBoundary(
             [&]
@@ -75,13 +148,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto bitmap = GetManager()->CreateRenderTarget(canvasDevice.Get(), sizeInPixels);
+                auto bitmap = GetManager()->CreateRenderTarget(
+                    canvasDevice.Get(), 
+                    width, 
+                    height, 
+                    format, 
+                    alpha, 
+                    dpi);
 
                 ThrowIfFailed(bitmap.CopyTo(renderTarget));
             });
     }
-
-
+    
     IFACEMETHODIMP CanvasRenderTargetFactory::GetOrCreate(
         ICanvasDevice* device,
         IUnknown* resource,
@@ -102,10 +180,52 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11Surface(
         ICanvasResourceCreator* resourceCreator,
         IDirect3DSurface* surface,
+        ICanvasRenderTarget** canvasRenderTarget)
+    {
+        return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
+            resourceCreator,
+            surface,
+            CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI,
+            canvasRenderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithAlpha(
+        ICanvasResourceCreator* resourceCreator,
+        IDirect3DSurface* surface,
+        CanvasAlphaBehavior alpha,
+        ICanvasRenderTarget** canvasRenderTarget)
+    {
+        return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
+            resourceCreator,
+            surface,
+            alpha,
+            DEFAULT_DPI,
+            canvasRenderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithDpi(
+        ICanvasResourceCreator* resourceCreator,
+        IDirect3DSurface* surface,
+        float dpi,
+        ICanvasRenderTarget** canvasRenderTarget)
+    {
+        return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
+            resourceCreator,
+            surface,
+            CanvasAlphaBehavior::Premultiplied,
+            dpi,
+            canvasRenderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithAlphaAndDpi(
+        ICanvasResourceCreator* resourceCreator,
+        IDirect3DSurface* surface,
+        CanvasAlphaBehavior alpha,
+        float dpi,
         ICanvasRenderTarget** canvasRenderTarget)
     {
         return ExceptionBoundary(
@@ -118,7 +238,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto newRenderTarget = GetManager()->CreateRenderTargetFromSurface(canvasDevice.Get(), surface);
+                auto newRenderTarget = GetManager()->CreateRenderTargetFromSurface(
+                    canvasDevice.Get(), 
+                    surface, 
+                    alpha, 
+                    dpi);
+
                 ThrowIfFailed(newRenderTarget.CopyTo(canvasRenderTarget));
             });
     }

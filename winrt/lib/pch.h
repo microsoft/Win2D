@@ -47,6 +47,7 @@
 #include <dwrite_2.h>
 #include <dxgi1_3.h>
 #include <wincodec.h>
+#include <shcore.h>
 
 // WinRT
 #include <windows.foundation.h>

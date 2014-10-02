@@ -28,6 +28,7 @@ namespace CsConsumer
     {
         Random m_random = new Random();
         CanvasBitmap m_bitmap_tiger;
+        CanvasBitmap[] m_bitmap_colorGrids;
         CanvasImageBrush m_imageBrush;
         CanvasRenderTarget m_offscreenTarget;
         CanvasLinearGradientBrush m_linearGradientBrush;
@@ -58,6 +59,7 @@ namespace CsConsumer
             ImageBrush,
             OffscreenTarget,
             Gradients,
+            AlternateBitmapLoading,
             Test_Scene0_Default,
             Test_Scene0_Wireframe,
             Test_Scene1_Default,
@@ -448,6 +450,24 @@ namespace CsConsumer
                     ds.DrawLine(line0, line1, m_linearGradientBrush, thickness);
                     break;
 
+                case DrawnContentType.AlternateBitmapLoading:
+                    if (m_bitmap_colorGrids != null)
+                    {
+                        Matrix3x2 scale = Matrix3x2.CreateScale(20);
+
+                        ds.Transform = scale;
+                        ds.DrawImage(m_bitmap_colorGrids[0]);
+
+                        ds.Transform = scale * Matrix3x2.CreateTranslation(200, 0);
+                        ds.DrawImage(m_bitmap_colorGrids[1]);
+
+                        ds.Transform = scale * Matrix3x2.CreateTranslation(0, 200);
+                        ds.DrawImage(m_bitmap_colorGrids[2]);
+                    }
+                    else
+                        DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
+                    break;
+
                 case DrawnContentType.Test_Scene0_Default:
                     GeometryTestScene0.DrawGeometryTestScene(ds, TestSceneRenderingType.Default);
                     break;
@@ -533,6 +553,35 @@ namespace CsConsumer
         {
             string fileNameTiger = "imageTiger.jpg";
             m_bitmap_tiger = await CanvasBitmap.LoadAsync(m_canvasControl, fileNameTiger);
+
+            m_bitmap_colorGrids = new CanvasBitmap[3];
+            Uri uri = new Uri("ms-appx:///HighDpiGrid.png");
+            m_bitmap_colorGrids[0] = await CanvasBitmap.LoadAsync(m_canvasControl, uri);
+
+            byte[] imageBytes = new byte[]
+                {
+                    0xFF, 0x0, 0x0, 0xFF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 
+                    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
+                };
+            m_bitmap_colorGrids[1] = CanvasBitmap.CreateFromBytes( // Doesn't necessarily need to be async, but grouped here for organization.
+                m_canvasControl,
+                imageBytes, 
+                4, 
+                2, 
+                Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized, 
+                CanvasAlphaBehavior.Premultiplied);
+
+            Color[] imageColors = new Color[]
+                {
+                    Colors.Blue, Colors.Black, Colors.Black, Colors.Red,
+                    Colors.White, Colors.White, Colors.White, Colors.White
+                };
+            m_bitmap_colorGrids[2] = CanvasBitmap.CreateFromColors( 
+                m_canvasControl,
+                imageColors,
+                4,
+                2,
+                CanvasAlphaBehavior.Premultiplied);
 
             m_canvasControl.Invalidate();
         }

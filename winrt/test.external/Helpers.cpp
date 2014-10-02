@@ -26,3 +26,14 @@ ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext()
 
     return context;
 }
+
+void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode, float dpiTolerance)
+{
+    float dpiX, dpiY;
+    d2dBitmap->GetDpi(&dpiX, &dpiY);
+
+    Assert::AreEqual(expectedDpi, dpiX, dpiTolerance);
+    Assert::AreEqual(expectedDpi, dpiY, dpiTolerance);
+
+    Assert::AreEqual(expectedAlphaMode, d2dBitmap->GetPixelFormat().alphaMode);
+}

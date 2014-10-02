@@ -18,6 +18,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
+    using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
     class CanvasDevice;
@@ -68,8 +69,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) = 0;
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(IWICFormatConverter* wicConverter) = 0;
-        virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(ABI::Windows::Foundation::Size sizeInPixels) = 0;
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
+            IWICFormatConverter* wicConverter,
+            CanvasAlphaBehavior alpha) = 0;
+        virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi) = 0;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) = 0;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) = 0;
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) = 0;
@@ -150,8 +158,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override;
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(IWICFormatConverter* wicConverter) override;
-        virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(ABI::Windows::Foundation::Size size) override;
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
+            IWICFormatConverter* wicConverter,
+            CanvasAlphaBehavior alpha) override;
+        virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi) override;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) override;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) override;
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) override;

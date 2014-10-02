@@ -416,7 +416,18 @@ namespace ExtractAPISurface
             }
 
             // Record that we have seen this type.
-            seenTypes.Add(type.IsGenericType ? type.GetGenericTypeDefinition() : type);
+            if (type.IsGenericType)
+            {
+                seenTypes.Add(type.GetGenericTypeDefinition());
+            }
+            else if (type.IsArray)
+            {
+                seenTypes.Add(type.GetElementType());
+            }
+            else
+            {
+                seenTypes.Add(type);
+            }
 
             // C# requires System.Void to be spelled as just "void".
             if (type == typeof(void))

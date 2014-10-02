@@ -49,7 +49,7 @@ public:
 
 
         m_canvasDevice->MockCreateRenderTargetBitmap =
-            [&](Size)
+            [&](float, float, DirectXPixelFormat, CanvasAlphaBehavior, float)
             {
                 Assert::IsNotNull(bitmap.Get());
                 auto result = bitmap;
@@ -57,7 +57,13 @@ public:
                 return result;
             };
 
-        auto renderTarget = m_manager->Create(m_canvasDevice.Get(), size);
+        auto renderTarget = m_manager->Create(
+            m_canvasDevice.Get(), 
+            size.Width, 
+            size.Height, 
+            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI);
 
         m_canvasDevice->MockCreateRenderTargetBitmap = nullptr;
 

@@ -33,14 +33,67 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::Foundation::Size size,
             ICanvasRenderTarget** renderTarget);
 
+        IFACEMETHOD(CreateWithWidthAndHeight)(
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            ICanvasRenderTarget** renderTarget);
+
+        IFACEMETHOD(CreateWithWidthAndHeightAndFormat)(
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            ICanvasRenderTarget** renderTarget);
+
+        IFACEMETHOD(CreateWithWidthAndHeightAndFormatAndAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            ICanvasRenderTarget** renderTarget);
+
+        IFACEMETHOD(CreateWithWidthAndHeightAndFormatAndAlphaAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi,
+            ICanvasRenderTarget** renderTarget);
+
         IFACEMETHOD(GetOrCreate)(
             ICanvasDevice* device,
             IUnknown* resource,
             IInspectable** wrapper) override;
 
+        //
+        // ICanvasRenderTargetStatics
+        //
+
         IFACEMETHOD(CreateFromDirect3D11Surface)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
+            ICanvasRenderTarget** canvasRenderTarget) override;
+
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            CanvasAlphaBehavior alpha,
+            ICanvasRenderTarget** canvasRenderTarget) override;
+
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            float dpi,
+            ICanvasRenderTarget** canvasRenderTarget) override;
+
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlphaAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            CanvasAlphaBehavior alpha,
+            float dpi,
             ICanvasRenderTarget** canvasRenderTarget) override;
     };
 
@@ -83,7 +136,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         ComPtr<CanvasRenderTarget> CreateNew(
             ICanvasDevice* canvasDevice,
-            ABI::Windows::Foundation::Size size);
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi);
 
         ComPtr<CanvasRenderTarget> CreateWrapper(
             ICanvasDevice* device,

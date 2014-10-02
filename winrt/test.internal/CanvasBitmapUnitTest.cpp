@@ -73,7 +73,7 @@ public:
 
     TEST_METHOD(CanvasBitmap_Implements_Expected_Interfaces)
 	{
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
         
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmap);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImage);
@@ -92,7 +92,7 @@ public:
         Direct3DSurfaceDescription surfaceDescription;
         ComPtr<IDXGISurface> dxgiSurface;
 
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         Assert::IsNotNull(canvasBitmap.Get());
 
@@ -117,7 +117,7 @@ public:
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         Assert::AreEqual(true, isConverterCreated);
 
@@ -144,7 +144,7 @@ public:
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName);
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         Assert::AreEqual(true, isConverterCreated);
 

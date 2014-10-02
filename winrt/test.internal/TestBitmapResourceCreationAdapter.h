@@ -32,6 +32,12 @@ public:
             MockCreateWICFormatConverter();
         return m_converter;
     }
+
+    ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream)
+    {
+        Assert::Fail(); // Unexpected
+        return nullptr;
+    }
 };
 
 

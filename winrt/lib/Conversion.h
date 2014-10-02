@@ -133,18 +133,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return rect;
     }
 
-    inline D2D1_SIZE_U ToD2DSizeU(const ABI::Windows::Foundation::Size& size)
+    inline D2D1_SIZE_U ToD2DSizeU(float width, float height)
     {
-        if (size.Width < 0) ThrowHR(E_INVALIDARG);
-        if (size.Height < 0) ThrowHR(E_INVALIDARG);
+        if (width < 0) ThrowHR(E_INVALIDARG);
+        if (height < 0) ThrowHR(E_INVALIDARG);
 
-        if (size.Width > static_cast<float>(UINT_MAX)) ThrowHR(E_INVALIDARG);
-        if (size.Height > static_cast<float>(UINT_MAX)) ThrowHR(E_INVALIDARG);
+        if (width > static_cast<float>(UINT_MAX)) ThrowHR(E_INVALIDARG);
+        if (height > static_cast<float>(UINT_MAX)) ThrowHR(E_INVALIDARG);
 
-        if (floorf(size.Width) != size.Width) ThrowHR(E_INVALIDARG);
-        if (floorf(size.Height) != size.Height) ThrowHR(E_INVALIDARG);
+        if (floorf(width) != width) ThrowHR(E_INVALIDARG);
+        if (floorf(height) != height) ThrowHR(E_INVALIDARG);
 
-        return D2D1_SIZE_U{ static_cast<UINT>(size.Width), static_cast<UINT>(size.Height) };
+        return D2D1_SIZE_U{ static_cast<UINT>(width), static_cast<UINT>(height) };
     }
 
     inline D2D1_ROUNDED_RECT ToD2DRoundedRect(ABI::Windows::Foundation::Rect const& rect, float rx, float ry)
@@ -235,6 +235,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             case CanvasAlphaBehavior::Straight: return D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT;
             case CanvasAlphaBehavior::Ignore:
             default: return D2D1_COLOR_INTERPOLATION_MODE_FORCE_DWORD;
+        }
+    }
+
+    inline D2D1_ALPHA_MODE ToD2DAlphaMode(CanvasAlphaBehavior alphaBehavior)
+    {
+        switch (alphaBehavior)
+        {
+        case CanvasAlphaBehavior::Premultiplied: return D2D1_ALPHA_MODE_PREMULTIPLIED;
+        case CanvasAlphaBehavior::Straight: return D2D1_ALPHA_MODE_STRAIGHT;
+        case CanvasAlphaBehavior::Ignore: return D2D1_ALPHA_MODE_IGNORE;
+        default: return D2D1_ALPHA_MODE_FORCE_DWORD;
         }
     }
 

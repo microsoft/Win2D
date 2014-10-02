@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{d6cb5cb7-499b-4980-84c6-f0099cf309da}</ProjectGuid>
@@ -58,6 +58,9 @@
     </Image>
     <Image Include="$(AssetDir)imageTiger.jpg">
       <Link>Assets\imageTiger.jpg</Link>
+    </Image>
+    <Image Include="$(AssetDir)HighDpiGrid.png">
+      <Link>Assets\HighDpiGrid.png</Link>
     </Image>
   </ItemGroup>
   <ItemGroup>

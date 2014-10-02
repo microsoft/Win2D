@@ -152,6 +152,19 @@ namespace Microsoft
                 }
             }
 
+            template<>
+            static inline std::wstring ToString<D2D1_ALPHA_MODE>(D2D1_ALPHA_MODE const& value)
+            {
+                switch (value)
+                {
+                    case D2D1_ALPHA_MODE_UNKNOWN: return L"D2D1_ALPHA_MODE_UNKNOWN";
+                    case D2D1_ALPHA_MODE_PREMULTIPLIED: return L"D2D1_ALPHA_MODE_PREMULTIPLIED";
+                    case D2D1_ALPHA_MODE_STRAIGHT: return L"D2D1_ALPHA_MODE_STRAIGHT";
+                    case D2D1_ALPHA_MODE_IGNORE: return L"D2D1_ALPHA_MODE_IGNORE";
+                    default: assert(false); return L"<unknown D2D1_ALPHA_MODE_UNKNOWN>";
+                }
+            }
+
             inline bool operator==(Windows::UI::Color const& a, Windows::UI::Color const& b)
             {
                 return a.A == b.A &&
@@ -308,3 +321,5 @@ ComPtr<T> GetDXGIInterface(U^ obj)
 
 
 ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext();
+
+void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode, float dpiTolerance = 0.0f);

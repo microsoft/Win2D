@@ -27,7 +27,12 @@ namespace canvas
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
         std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmapFromWicResource;
-        std::function<ComPtr<ID2D1Bitmap1>(ABI::Windows::Foundation::Size size)> MockCreateRenderTargetBitmap;
+        std::function<ComPtr<ID2D1Bitmap1>(
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi)> MockCreateRenderTargetBitmap;
         std::function<ComPtr<ID2D1Image>(ICanvasImage* canvasImage)> MockGetD2DImage;
 
         std::function<ComPtr<ID2D1GradientStopCollection1>(
@@ -97,7 +102,9 @@ namespace canvas
             return MockCreateSolidColorBrush(color);
         }
 
-        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(IWICFormatConverter* converter) override
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
+            IWICFormatConverter* converter,
+            CanvasAlphaBehavior alpha) override
         {
             if (!MockCreateBitmapFromWicResource)
             {
@@ -107,14 +114,19 @@ namespace canvas
             return MockCreateBitmapFromWicResource();
         }
 
-        virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(ABI::Windows::Foundation::Size size) override
+        virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi) override
         {
             if (!MockCreateRenderTargetBitmap)
             {
                 Assert::Fail(L"Unexpected call to CreateRenderTargetBitmap");
                 return nullptr;
             }
-            return MockCreateRenderTargetBitmap(size);
+            return MockCreateRenderTargetBitmap(width, height, format, alpha, dpi);
         }
 
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* Bitmap) override

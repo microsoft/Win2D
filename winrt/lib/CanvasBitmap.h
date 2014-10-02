@@ -21,6 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
     using namespace ABI::Microsoft::Graphics::Canvas::Effects;
+    using namespace ABI::Windows::Storage::Streams;
+    using namespace ABI::Windows::Foundation;
 
     class CanvasBitmapManager;
 
@@ -28,6 +30,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName) = 0;
+        virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream) = 0;
     };
     
 
@@ -38,6 +41,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() = 0;
     };
 
+    class ICanvasBitmapAdapter
+    {
+    public:
+        virtual ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(ComPtr<IUriRuntimeClass> const& uri) = 0;
+    };
 
     class CanvasBitmapFactory :
         public ActivationFactory<
@@ -48,6 +56,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
 
+        std::shared_ptr<ICanvasBitmapAdapter> m_adapter;
+
     public:
         CanvasBitmapFactory();
 
@@ -55,15 +65,91 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasBitmapStatics
         //
 
-        IFACEMETHOD(LoadAsync)(
-            ICanvasResourceCreator* resourceCreator,
-            HSTRING fileName,
-            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmap) override;
-
         IFACEMETHOD(CreateFromDirect3D11Surface)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
             ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            CanvasAlphaBehavior alpha,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            float dpi,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlphaAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            CanvasAlphaBehavior alpha,
+            float dpi,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromBytes)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t byteCount,
+            BYTE* bytes,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromBytesWithDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t byteCount,
+            BYTE* bytes,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromColors)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t colorCount,
+            ABI::Windows::UI::Color* colors,
+            float width,
+            float height,
+            CanvasAlphaBehavior alpha,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromColorsWithDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t colorCount,
+            ABI::Windows::UI::Color* colors,
+            float width,
+            float height,
+            CanvasAlphaBehavior alpha,
+            float dpi,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(LoadAsyncFromHstring)(
+            ICanvasResourceCreator* resourceCreator,
+            HSTRING fileName,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
+        IFACEMETHOD(LoadAsyncFromHstringWithAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            HSTRING fileName,
+            CanvasAlphaBehavior alpha,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
+        IFACEMETHOD(LoadAsyncFromUri)(
+            ICanvasResourceCreator* resourceCreator,
+            ABI::Windows::Foundation::IUriRuntimeClass* uri,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
+        IFACEMETHOD(LoadAsyncFromUriWithAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            ABI::Windows::Foundation::IUriRuntimeClass* uri,
+            CanvasAlphaBehavior alpha,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
         //
         // ICanvasDeviceResourceFactoryNative
@@ -220,7 +306,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* canvasDevice, 
-            HSTRING fileName);
+            HSTRING fileName,
+            CanvasAlphaBehavior alpha);
+
+        ComPtr<CanvasBitmap> CreateNew(
+            ICanvasDevice* canvasDevice,
+            IStream* fileStream,
+            CanvasAlphaBehavior alpha);
 
         ComPtr<CanvasBitmap> CreateWrapper(
             ID2D1Bitmap1* bitmap);
