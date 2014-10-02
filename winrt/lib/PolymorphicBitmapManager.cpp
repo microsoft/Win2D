@@ -290,11 +290,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             convertedBytes[i * 4 + 3] = colors[i].A;
         }
 
+        assert(convertedBytes.size() <= UINT_MAX);
+
         return CreateBitmapFromBytesImpl(
             device,
             width,
             height,
-            convertedBytes.size(),
+            static_cast<uint32_t>(convertedBytes.size()),
             &convertedBytes[0],
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
             alpha,
