@@ -93,8 +93,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasResourceCreator* resourceCreator,
             uint32_t byteCount,
             BYTE* bytes,
-            float width,
-            float height,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
             DirectXPixelFormat format,
             CanvasAlphaBehavior alpha,
             ICanvasBitmap** canvasBitmap) override;
@@ -103,8 +103,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasResourceCreator* resourceCreator,
             uint32_t byteCount,
             BYTE* bytes,
-            float width,
-            float height,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
             DirectXPixelFormat format,
             CanvasAlphaBehavior alpha,
             float dpi,
@@ -114,8 +114,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasResourceCreator* resourceCreator,
             uint32_t colorCount,
             ABI::Windows::UI::Color* colors,
-            float width,
-            float height,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
             CanvasAlphaBehavior alpha,
             ICanvasBitmap** canvasBitmap) override;
 
@@ -123,8 +123,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasResourceCreator* resourceCreator,
             uint32_t colorCount,
             ABI::Windows::UI::Color* colors,
-            float width,
-            float height,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
             CanvasAlphaBehavior alpha,
             float dpi,
             ICanvasBitmap** canvasBitmap) override;
@@ -313,6 +313,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* canvasDevice,
             IStream* fileStream,
             CanvasAlphaBehavior alpha);
+
+        ComPtr<CanvasBitmap> CreateNew(
+            ICanvasDevice* device,
+            uint32_t byteCount,
+            BYTE* bytes,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            CanvasAlphaBehavior alpha,
+            float dpi);
+
+        ComPtr<CanvasBitmap> CreateNew(
+            ICanvasDevice* device,
+            uint32_t colorCount,
+            Color* colors,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            CanvasAlphaBehavior alpha,
+            float dpi);
 
         ComPtr<CanvasBitmap> CreateWrapper(
             ID2D1Bitmap1* bitmap);

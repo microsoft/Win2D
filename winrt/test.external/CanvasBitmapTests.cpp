@@ -127,8 +127,8 @@ public:
                 auto bitmap = CanvasBitmap::CreateFromBytes(
                     canvasDevice,
                     byteArrayZeroSized,
-                    1.0f,
-                    1.0f,
+                    1,
+                    1,
                     DirectXPixelFormat::B8G8R8A8UIntNormalized,
                     CanvasAlphaBehavior::Premultiplied,
                     DEFAULT_DPI);
@@ -140,8 +140,8 @@ public:
                 auto bitmap = CanvasBitmap::CreateFromColors(
                     canvasDevice,
                     colorArrayZeroSized,
-                    1.0f,
-                    1.0f,
+                    1,
+                    1,
                     CanvasAlphaBehavior::Premultiplied,
                     DEFAULT_DPI);
             });
@@ -243,8 +243,8 @@ public:
 
         struct SizeTestCase
         {
-            float width;
-            float height;
+            int32_t width;
+            int32_t height;
         } legalSizeTestCases[] =
         {
             { 0, 0 },
@@ -282,11 +282,9 @@ public:
 
         SizeTestCase illegalSizeTestCases[] =
         {
-            { -FLT_EPSILON, 1 },
-            { 3, -FLT_EPSILON },
+            { -1, 1 },
+            { 1, -1 },
             { -234, -50 },
-            { FLT_EPSILON, 2.0f },
-            { 2.0f, 1.4f }
         };
 
         for (auto& testCase : illegalSizeTestCases)

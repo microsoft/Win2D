@@ -66,25 +66,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasBitmap> CreateBitmapFromSurface(ICanvasDevice* device, IDirect3DSurface* surface, CanvasAlphaBehavior alpha, float dpi);
         ComPtr<CanvasRenderTarget> CreateRenderTargetFromSurface(ICanvasDevice* device, IDirect3DSurface* surface, CanvasAlphaBehavior alpha, float dpi);
 
-        ComPtr<ICanvasBitmap> CreateBitmapFromBytes(
-            ICanvasDevice* device,
-            uint32_t byteCount,
-            BYTE* bytes,
-            float width,
-            float height,
-            DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
-            float dpi);
-
-        ComPtr<ICanvasBitmap> CreateBitmapFromColors(
-            ICanvasDevice* device,
-            uint32_t colorCount,
-            Color* colors,
-            float width,
-            float height,
-            CanvasAlphaBehavior alpha,
-            float dpi);
-
         //
         // Returns a wrapper around the given d2dBitmap.  Depending on the
         // bitmap properties a CanvasBitmap or CanvasRenderTarget instance will
@@ -98,18 +79,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // incompatible with CanvasRenderTarget.
         //
         ComPtr<CanvasRenderTarget> GetOrCreateRenderTarget(ICanvasDevice* device, ID2D1Bitmap1* d2dBitmap);
-
-    private:
-
-        ComPtr<ICanvasBitmap> CreateBitmapFromBytesImpl(
-            ICanvasDevice* device,
-            float rawWidth,
-            float rawHeight,
-            uint32_t byteCount,
-            BYTE* bytes,
-            DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
-            float dpi);
     };
 
 

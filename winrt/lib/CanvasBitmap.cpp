@@ -70,6 +70,93 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+        ICanvasDevice* device,
+        uint32_t byteCount,
+        BYTE* bytes,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        CanvasAlphaBehavior alpha,
+        float dpi)
+    {
+        if (byteCount == 0)
+            ThrowHR(E_INVALIDARG);
+
+        auto d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
+
+        ComPtr<ID2D1DeviceContext1> deviceContext;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &deviceContext));
+
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
+        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
+        bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(format);
+        bitmapProperties.dpiX = dpi;
+        bitmapProperties.dpiY = dpi;
+
+        // D2D does not fail attempts to create zero-sized bitmaps. Neither does this.
+        uint32_t pitch = 0;
+        if (heightInPixels > 0)
+        {
+            pitch = byteCount / static_cast<uint32_t>(heightInPixels);
+        }
+        else
+        {
+            pitch = byteCount;
+        }
+
+        ComPtr<ID2D1Bitmap1> d2dBitmap;
+        ThrowIfFailed(deviceContext->CreateBitmap(D2D1::SizeU(widthInPixels, heightInPixels), bytes, pitch, &bitmapProperties, &d2dBitmap));
+
+        auto bitmap = Make<CanvasBitmap>(
+            shared_from_this(),
+            d2dBitmap.Get());
+        CheckMakeResult(bitmap);
+
+        return bitmap;
+    }
+
+
+    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+        ICanvasDevice* device,
+        uint32_t colorCount,
+        Color* colors,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        CanvasAlphaBehavior alpha,
+        float dpi)
+    {
+        if (colorCount == 0)
+            ThrowHR(E_INVALIDARG);
+
+        // Convert color array to bytes according to the default format, B8G8R8A8_UNORM.
+        std::vector<uint8_t> convertedBytes;
+        convertedBytes.resize(colorCount * 4);
+
+        for (uint32_t i = 0; i < colorCount; i++)
+        {
+            convertedBytes[i * 4 + 0] = colors[i].B;
+            convertedBytes[i * 4 + 1] = colors[i].G;
+            convertedBytes[i * 4 + 2] = colors[i].R;
+            convertedBytes[i * 4 + 3] = colors[i].A;
+        }
+
+        assert(convertedBytes.size() <= UINT_MAX);
+
+        return CreateNew(
+            device,
+            static_cast<uint32_t>(convertedBytes.size()),
+            &convertedBytes[0],
+            widthInPixels,
+            heightInPixels,
+            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            alpha,
+            dpi);
+    }
+
+
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateWrapper(
         ID2D1Bitmap1* d2dBitmap)
     {
@@ -181,8 +268,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasResourceCreator* resourceCreator,
         uint32_t byteCount,
         BYTE* bytes,
-        float width,
-        float height,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
         DirectXPixelFormat format,
         CanvasAlphaBehavior alpha,
         ICanvasBitmap** canvasBitmap)
@@ -191,8 +278,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator,
             byteCount,
             bytes,
-            width,
-            height,
+            widthInPixels,
+            heightInPixels,
             format,
             alpha,
             DEFAULT_DPI,
@@ -203,8 +290,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasResourceCreator* resourceCreator,
         uint32_t byteCount,
         BYTE* bytes,
-        float width,
-        float height,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
         DirectXPixelFormat format,
         CanvasAlphaBehavior alpha,
         float dpi,
@@ -220,12 +307,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto newBitmap = GetManager()->CreateBitmapFromBytes(
+                auto newBitmap = GetManager()->CreateBitmap(
                     canvasDevice.Get(), 
                     byteCount, 
                     bytes, 
-                    width, 
-                    height, 
+                    widthInPixels,
+                    heightInPixels,
                     format, 
                     alpha,
                     dpi);
@@ -238,8 +325,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasResourceCreator* resourceCreator,
         uint32_t colorCount,
         ABI::Windows::UI::Color* colors,
-        float width,
-        float height,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
         CanvasAlphaBehavior alpha,
         ICanvasBitmap** canvasBitmap)
     {
@@ -247,8 +334,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator,
             colorCount,
             colors,
-            width,
-            height,
+            widthInPixels,
+            heightInPixels,
             alpha,
             DEFAULT_DPI,
             canvasBitmap);
@@ -258,8 +345,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasResourceCreator* resourceCreator,
         uint32_t colorCount,
         ABI::Windows::UI::Color* colors,
-        float width,
-        float height,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
         CanvasAlphaBehavior alpha,
         float dpi,
         ICanvasBitmap** canvasBitmap)
@@ -274,12 +361,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto newBitmap = GetManager()->CreateBitmapFromColors(
+                auto newBitmap = GetManager()->CreateBitmap(
                     canvasDevice.Get(), 
                     colorCount,
                     colors,
-                    width, 
-                    height, 
+                    widthInPixels,
+                    heightInPixels,
                     alpha,
                     dpi);
 

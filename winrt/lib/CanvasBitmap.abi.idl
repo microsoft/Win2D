@@ -75,8 +75,8 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 byteCount,
             [in, size_is(byteCount)] BYTE* bytes,
-            [in] float width,
-            [in] float height,
+            [in] INT32 widthInPixels,
+            [in] INT32 heightInPixels,
             [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
             [in] CanvasAlphaBehavior alpha,
             [out, retval] CanvasBitmap** bitmap);
@@ -86,8 +86,8 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 byteCount,
             [in, size_is(byteCount)] BYTE* bytes,
-            [in] float width,
-            [in] float height,
+            [in] INT32 widthInPixels,
+            [in] INT32 heightInPixels,
             [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
             [in] CanvasAlphaBehavior alpha,
             [in] float dpi,
@@ -98,8 +98,8 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 colorCount,
             [in, size_is(colorCount)] Windows.UI.Color* colors,
-            [in] float width,
-            [in] float height,
+            [in] INT32 widthInPixels,
+            [in] INT32 heightInPixels,
             [in] CanvasAlphaBehavior alpha,
             [out, retval] CanvasBitmap** bitmap);
 
@@ -108,8 +108,8 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 colorCount,
             [in, size_is(colorCount)] Windows.UI.Color* colors,
-            [in] float width,
-            [in] float height,
+            [in] INT32 widthInPixels,
+            [in] INT32 heightInPixels,
             [in] CanvasAlphaBehavior alpha,
             [in] float dpi,
             [out, retval] CanvasBitmap** bitmap);
