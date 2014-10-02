@@ -75,44 +75,6 @@ TEST_CLASS(CanvasBrushTests)
         Assert::AreEqual(brush.Get(), actualBrush.Get());
     }
 
-    TEST_METHOD(CanvasImageBrush_Construction_Interop)
-    {        
-        RunOnUIThread(
-            []()
-            {
-                auto device = ref new CanvasDevice();
-                auto imageSource = ref new CanvasImageSource(device, 1, 1);
-                auto drawingSession = imageSource->CreateDrawingSession();
-
-                ICanvasBitmap^ canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(device, L"Assets/imageTiger.jpg"));
-
-                // Test both constructors, and creation through drawing session.
-                CanvasImageBrush^ imageBrush;
-                
-                imageBrush = ref new CanvasImageBrush(drawingSession);
-
-                imageBrush = ref new CanvasImageBrush(device, canvasBitmap);
-
-                // Verify that the interop path fails.                
-                Assert::ExpectException<Platform::InvalidCastException^>(
-                    [&imageBrush]()
-                    {
-                        GetWrappedResource<ID2D1ImageBrush>(imageBrush);
-                    });
-
-                // Verify the other direction.
-                ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
-                ComPtr<ID2D1ImageBrush> d2dImageBrush;
-                ThrowIfFailed(context->CreateImageBrush(nullptr, D2D1::ImageBrushProperties(D2D1::RectF()), &d2dImageBrush));    
-                    
-                Assert::ExpectException<Platform::NotImplementedException^>(
-                    [&d2dImageBrush]()
-                    {
-                        GetOrCreate<CanvasImageBrush>(d2dImageBrush.Get());
-                    });
-            });
-    }
-
     ComPtr<ID2D1GradientStopCollection1> CreateTestStopCollection(
         ID2D1DeviceContext1* context)
     {

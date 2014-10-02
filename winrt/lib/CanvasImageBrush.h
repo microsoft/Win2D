@@ -83,7 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ID2D1ImageBrush> m_d2dImageBrush;
 
-        ComPtr<ICanvasDeviceInternal> m_deviceInternal;
+        ComPtr<ICanvasDevice> m_device;
 
         std::shared_ptr<ICanvasImageBrushAdapter> m_adapter;
 
@@ -133,6 +133,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SwitchFromBitmapBrushToImageBrush();
         void SwitchFromImageBrushToBitmapBrush();
         void SetImage(ICanvasImage* image);
+        ComPtr<ID2D1Bitmap1> GetD2DBitmap() const;
         static D2D1_RECT_F GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value);
     };
 

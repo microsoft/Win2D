@@ -106,15 +106,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice* device,
         ICanvasImage* image,
         std::shared_ptr<ICanvasImageBrushAdapter> adapter)
-        : m_isClosed(false)
+        : m_device(device)
+        , m_isClosed(false)
         , m_useBitmapBrush(true)
         , m_isSourceRectSet(false)
         , m_adapter(adapter)
     {
-        ThrowIfFailed(device->QueryInterface(m_deviceInternal.GetAddressOf()));
+        auto deviceInternal = As<ICanvasDeviceInternal>(m_device);
 
-        m_d2dBitmapBrush = m_deviceInternal->CreateBitmapBrush(NULL);
-        m_d2dImageBrush = m_deviceInternal->CreateImageBrush(NULL);
+        m_d2dBitmapBrush = deviceInternal->CreateBitmapBrush(NULL);
+        m_d2dImageBrush = deviceInternal->CreateImageBrush(NULL);
 
         SetImage(image);
     }
@@ -144,9 +145,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // And in all other cases, we stick with image brush.
         else
         {
-            if (m_useBitmapBrush) SwitchFromBitmapBrushToImageBrush();
+            if (m_useBitmapBrush) 
+                SwitchFromBitmapBrushToImageBrush();
 
-            m_d2dImageBrush->SetImage(m_deviceInternal->GetD2DImage(image).Get());
+            auto deviceInternal = As<ICanvasDeviceInternal>(m_device);
+            m_d2dImageBrush->SetImage(deviceInternal->GetD2DImage(image).Get());
         }
     }
 
@@ -155,14 +158,52 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
+                CheckAndClearOutPointer(value);
                 ThrowIfClosed();
 
-                // TODO #2237: Requires implementation of interop path for CanvasBitmap,
-                // CanvasEffect and command list.
-                ThrowHR(E_NOTIMPL);
+                auto d2dBitmap = GetD2DBitmap();
+
+                if (!d2dBitmap)
+                    return;
+
+                auto bitmapManager = PerApplicationPolymorphicBitmapManager::GetOrCreateManager();
+                auto bitmap = bitmapManager->GetOrCreateBitmap(m_device.Get(), d2dBitmap.Get());
+                ThrowIfFailed(bitmap.CopyTo(value));
             });
 	}
+
+
+    ComPtr<ID2D1Bitmap1> CanvasImageBrush::GetD2DBitmap() const
+    {
+        if (m_useBitmapBrush)
+        {
+            ComPtr<ID2D1Bitmap> bm;
+            m_d2dBitmapBrush->GetBitmap(&bm);
+
+            if (!bm)
+                return nullptr;
+
+            return As<ID2D1Bitmap1>(bm);
+        }
+        else
+        {
+            ComPtr<ID2D1Image> image;
+            m_d2dImageBrush->GetImage(&image);
+
+            ComPtr<ID2D1Bitmap1> d2dBitmap; 
+            HRESULT hr = image.As(&d2dBitmap);
+            if (hr == E_NOINTERFACE)
+            {
+                // TODO #2630: polymorphic interop for all ICanvasImage
+                // types.  For now, this only works for CanvasBitmap.
+                ThrowHR(E_NOTIMPL);
+            }
+            ThrowIfFailed(hr);
+
+            return d2dBitmap;
+        }
+    }
+
 
     IFACEMETHODIMP CanvasImageBrush::put_Image(ICanvasImage* value)
 	{
@@ -356,6 +397,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasImageBrush::Close()
     {
+        m_device.Reset();
         m_d2dBitmapBrush.Reset();
         m_d2dImageBrush.Reset();
         m_isClosed = true;

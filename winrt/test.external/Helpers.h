@@ -17,6 +17,7 @@
 
 using namespace concurrency;
 using namespace Windows::Foundation;
+using namespace Microsoft::Graphics::Canvas;
 
 namespace Microsoft
 {
@@ -43,6 +44,13 @@ namespace Microsoft
                 return PointerToString(L#T, value);             \
             }
 
+#define TO_STRING_CX(T)                                                 \
+            template<>                                                  \
+            static inline std::wstring ToString<T^>(T^ const& value)    \
+            {                                                           \
+                return PointerToString(L#T, reinterpret_cast<IInspectable*>(value)); \
+            }
+
             TO_STRING(ID2D1Bitmap1);
             TO_STRING(ID2D1Device1);
             TO_STRING(ID2D1DeviceContext1);
@@ -53,10 +61,13 @@ namespace Microsoft
             TO_STRING(IDXGISurface);
             TO_STRING(ID2D1StrokeStyle1);
             TO_STRING(IDWriteFactory2);
+            TO_STRING(ID2D1Image);
             TO_STRING(ID2D1LinearGradientBrush);
             TO_STRING(ID2D1RadialGradientBrush);
+            TO_STRING_CX(ICanvasImage);
 
 #undef TO_STRING
+#undef TO_STRING_CX
 
             template<>
             static inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color* value)

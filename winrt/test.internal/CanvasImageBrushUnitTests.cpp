@@ -274,15 +274,6 @@ public:
 
     }
 
-    TEST_METHOD(CanvasImageBrush_DisallowInteropBehaviors)
-    {
-        auto brush = CreateMinimalTestBrush();
-
-        ComPtr<ICanvasImage> image;
-        Assert::AreEqual(E_NOTIMPL, brush->get_Image(&image));
-
-    }
-
     TEST_METHOD(CanvasImageBrush_BitmapBrushProperties)
     {
         auto canvasDevice = Make<MockCanvasDevice>();
