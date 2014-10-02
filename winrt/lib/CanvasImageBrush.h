@@ -131,7 +131,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     private:
         void ThrowIfClosed();
         void SwitchFromBitmapBrushToImageBrush();
-        void SwitchFromImageBrushToBitmapBrush();
+        void TrySwitchFromImageBrushToBitmapBrush();
         void SetImage(ICanvasImage* image);
         ComPtr<ID2D1Bitmap1> GetD2DBitmap() const;
         static D2D1_RECT_F GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value);

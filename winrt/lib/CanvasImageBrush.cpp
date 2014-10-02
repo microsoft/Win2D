@@ -311,7 +311,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasImageBrush::put_SourceRectangle(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value)
 	{
         return ExceptionBoundary(
-            [&]()
+            [&]
             {
                 ThrowIfClosed();
 
@@ -340,23 +340,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     }
                     else
                     {
-                        // Source rect is null. Check the backing image.
-                        // If it's a bitmap, we can switch to bitmap brush.
-
-                        ComPtr<ID2D1Image> backingD2DImage;
-                        m_d2dImageBrush->GetImage(&backingD2DImage);
-
-                        ComPtr<ID2D1Bitmap1> backingD2DBitmap;
-
-                        if (!backingD2DImage || SUCCEEDED(backingD2DImage.As(&backingD2DBitmap)))
-                        {
-                            // Switch to bitmap brush.
-                            SwitchFromImageBrushToBitmapBrush();
-                        }
-
-                        // If we're backed with an image brush, leave it as is.
-                        // It's simply a draw-time error.
-
+                        // Source rect is null. We might be able to switch to
+                        // bitmap brush.
+                        TrySwitchFromImageBrushToBitmapBrush();
                         m_isSourceRectSet = false;
                     }
                 }
@@ -458,9 +444,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_d2dImageBrush->SetImage(targetImage.Get());
     }
 
-    void CanvasImageBrush::SwitchFromImageBrushToBitmapBrush()
+    void CanvasImageBrush::TrySwitchFromImageBrushToBitmapBrush()
     {
         assert(!m_useBitmapBrush);
+
+        ComPtr<ID2D1Image> targetImage;
+        m_d2dImageBrush->GetImage(&targetImage);
+
+        ComPtr<ID2D1Bitmap> targetBitmap;
+        if (targetImage)
+        {
+            HRESULT hr = targetImage.As(&targetBitmap);
+
+            if (FAILED(hr))
+            {
+                // The image brush's image isn't a bitmap, so we can't switch to
+                // bitmap brush.
+                return;
+            }
+        }
 
         m_useBitmapBrush = true;
 
@@ -472,10 +474,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_d2dImageBrush->GetTransform(&transform);
         m_d2dBitmapBrush->SetTransform(transform);
 
-        ComPtr<ID2D1Image> targetImage;
-        m_d2dImageBrush->GetImage(&targetImage);
-        ComPtr<ID2D1Bitmap> targetBitmap;
-        if (targetImage) ThrowIfFailed(targetImage.As(&targetBitmap));
         m_d2dImageBrush->SetImage(nullptr);
         m_d2dBitmapBrush->SetBitmap(targetBitmap.Get());
     }
