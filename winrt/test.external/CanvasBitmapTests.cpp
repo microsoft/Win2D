@@ -117,34 +117,6 @@ public:
         {
             Assert::AreEqual<unsigned>(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND), e->HResult);
         }        
-
-        Platform::Array<BYTE>^ byteArrayZeroSized = ref new Platform::Array<BYTE>(0);
-        Platform::Array<Color>^ colorArrayZeroSized = ref new Platform::Array<Color>(0);
-            
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [&]
-            {
-                auto bitmap = CanvasBitmap::CreateFromBytes(
-                    canvasDevice,
-                    byteArrayZeroSized,
-                    1,
-                    1,
-                    DirectXPixelFormat::B8G8R8A8UIntNormalized,
-                    CanvasAlphaBehavior::Premultiplied,
-                    DEFAULT_DPI);
-            });
-            
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [&]
-            {
-                auto bitmap = CanvasBitmap::CreateFromColors(
-                    canvasDevice,
-                    colorArrayZeroSized,
-                    1,
-                    1,
-                    CanvasAlphaBehavior::Premultiplied,
-                    DEFAULT_DPI);
-            });
     }
 
     TEST_METHOD(CanvasBitmap_LoadUri)
@@ -267,6 +239,9 @@ public:
                 CanvasAlphaBehavior::Straight,
                 99.0f);
             auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+            auto size = bitmap->SizeInPixels;
+            Assert::AreEqual(static_cast<float>(testCase.width), size.Width);
+            Assert::AreEqual(static_cast<float>(testCase.height), size.Height);
             VerifyDpiAndAlpha(d2dBitmap, 99.0f, D2D1_ALPHA_MODE_STRAIGHT);
 
             bitmap = CanvasBitmap::CreateFromColors(
@@ -277,6 +252,9 @@ public:
                 CanvasAlphaBehavior::Ignore,
                 25.0f);
             d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+            size = bitmap->SizeInPixels;
+            Assert::AreEqual(static_cast<float>(testCase.width), size.Width);
+            Assert::AreEqual(static_cast<float>(testCase.height), size.Height);
             VerifyDpiAndAlpha(d2dBitmap, 25.0f, D2D1_ALPHA_MODE_IGNORE);
         }
 
@@ -310,6 +288,62 @@ public:
                         DEFAULT_DPI);
                 });
         }
+    }
+
+    TEST_METHOD(CanvasBitmap_CreateFromBytes_AcceptsZeroSizedArray)
+    {
+        auto device = ref new CanvasDevice();
+        auto anyFormat = DirectXPixelFormat::B8G8R8A8UIntNormalized;
+        auto anyAlphaBehavior = CanvasAlphaBehavior::Premultiplied;
+
+        auto zeroSizedArray = ref new Platform::Array<BYTE>(0);
+        auto bitmap = CanvasBitmap::CreateFromBytes(device, zeroSizedArray, 0, 0, anyFormat, anyAlphaBehavior);
+        
+        auto size = bitmap->SizeInPixels;
+        Assert::AreEqual(0.0f, size.Width);
+        Assert::AreEqual(0.0f, size.Height);
+    }
+
+    TEST_METHOD(CanvasBitmap_CreateFromColors_AcceptsZeroSizedArray)
+    {
+        auto device = ref new CanvasDevice();
+        auto anyAlphaBehavior = CanvasAlphaBehavior::Premultiplied;
+
+        auto zeroSizedArray = ref new Platform::Array<Color>(0);
+        auto bitmap = CanvasBitmap::CreateFromColors(device, zeroSizedArray, 0, 0, anyAlphaBehavior);
+        
+        auto size = bitmap->SizeInPixels;
+        Assert::AreEqual(0.0f, size.Width);
+        Assert::AreEqual(0.0f, size.Height);
+    }
+
+    TEST_METHOD(CanvasBitmap_CreateFromBytes_FailsIfArrayTooSmall)
+    {
+        auto device = ref new CanvasDevice();
+        auto anyFormat = DirectXPixelFormat::B8G8R8A8UIntNormalized;
+        auto anyAlphaBehavior = CanvasAlphaBehavior::Premultiplied;
+
+        auto oneElementArray = ref new Platform::Array<BYTE>(1);
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                CanvasBitmap::CreateFromBytes(device, oneElementArray, 256, 256, anyFormat, anyAlphaBehavior);
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_CreateFromColors_FailsIfArrayTooSmall)
+    {
+        auto device = ref new CanvasDevice();
+        auto anyAlphaBehavior = CanvasAlphaBehavior::Premultiplied;
+
+        auto oneElementArray = ref new Platform::Array<Color>(1);
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                CanvasBitmap::CreateFromColors(device, oneElementArray, 256, 256, anyAlphaBehavior);
+            });
     }
 
     TEST_METHOD(CanvasBitmap_LoadAyncFromFile_NonDefaultDpi)

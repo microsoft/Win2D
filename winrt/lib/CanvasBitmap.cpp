@@ -80,9 +80,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasAlphaBehavior alpha,
         float dpi)
     {
-        if (byteCount == 0)
-            ThrowHR(E_INVALIDARG);
-
         auto d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
 
         ComPtr<ID2D1DeviceContext1> deviceContext;
@@ -128,9 +125,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasAlphaBehavior alpha,
         float dpi)
     {
-        if (colorCount == 0)
-            ThrowHR(E_INVALIDARG);
-
         // Convert color array to bytes according to the default format, B8G8R8A8_UNORM.
         std::vector<uint8_t> convertedBytes;
         convertedBytes.resize(colorCount * 4);
@@ -148,7 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return CreateNew(
             device,
             static_cast<uint32_t>(convertedBytes.size()),
-            &convertedBytes[0],
+            convertedBytes.empty() ? nullptr : &convertedBytes[0],
             widthInPixels,
             heightInPixels,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
@@ -301,7 +295,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckInPointer(resourceCreator);
-                CheckInPointer(bytes);
+                if (byteCount)
+                    CheckInPointer(bytes);
                 CheckAndClearOutPointer(canvasBitmap);
 
                 ComPtr<ICanvasDevice> canvasDevice;
@@ -355,7 +350,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckInPointer(resourceCreator);
-                CheckInPointer(colors);
+                if (colorCount)
+                    CheckInPointer(colors);
                 CheckAndClearOutPointer(canvasBitmap);
 
                 ComPtr<ICanvasDevice> canvasDevice;
