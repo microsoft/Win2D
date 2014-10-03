@@ -67,12 +67,12 @@ namespace Microsoft.Graphics.Canvas
         // TODO #2104: consider overloads for different interpolation and composite modes 
         // as well as overload with rectangle for cutting image 
 
-        [overload("DrawImage")]
+        [overload("DrawImage"), default_overload]
         HRESULT DrawImage(
             [in] ICanvasImage* image,
             [in] Microsoft.Graphics.Canvas.Numerics.Vector2 offset);
 
-        [overload("DrawImage")]
+        [overload("DrawImage"), default_overload]
         HRESULT DrawImageAtCoords(
             [in] ICanvasImage* image,
             [in] float x,
@@ -81,6 +81,17 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawImage")]
         HRESULT DrawImageAtOrigin(
             [in] ICanvasImage* image);
+
+        [overload("DrawImage")]
+        HRESULT DrawBitmapWithDestRect(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destinationRect);
+
+        [overload("DrawImage")]
+        HRESULT DrawBitmapWithDestRectAndSourceRect(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destinationRect,
+            [in] Windows.Foundation.Rect sourceRect);
 
         //
         // DrawLine

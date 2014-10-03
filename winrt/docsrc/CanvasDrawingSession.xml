@@ -46,6 +46,13 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2)">
       <summary>Draws an image at the specified position.</summary>
     </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect)">
+      <summary>Draw a bitmap, scaled to fill the specified destination rectangle.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect)">
+      <summary>Draw the specified source region of a bitmap, scaled to fill the specified destination rectangle.</summary>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
       <summary>Draws a line of single unit width, using a brush to define the color.</summary>

@@ -45,6 +45,7 @@ namespace canvas
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*)> MockFillEllipse;
         std::function<void(const wchar_t*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE)> MockDrawText;
         std::function<void(ID2D1Image*)> MockDrawImage;
+        std::function<void(ID2D1Bitmap*, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)> MockDrawBitmap;
         std::function<void(ID2D1Device**)> MockGetDevice;
         std::function<HRESULT(ID2D1Effect **)> MockCreateEffect;
         std::function<HRESULT(const D2D1_COLOR_F* color, const D2D1_BRUSH_PROPERTIES* brushProperties, ID2D1SolidColorBrush** solidColorBrush)> MockCreateSolidColorBrush;
@@ -236,6 +237,7 @@ namespace canvas
 
         IFACEMETHODIMP_(void) DrawBitmap(ID2D1Bitmap *,const D2D1_RECT_F *,FLOAT,D2D1_BITMAP_INTERPOLATION_MODE,const D2D1_RECT_F *) override
         {
+            // This is the v1 overload. Prefer the other DrawBitmap overload because it supports richer interpolation mode options.
             Assert::Fail(L"Unexpected call to DrawBitmap");
         }
 
@@ -650,9 +652,14 @@ namespace canvas
             Assert::Fail(L"Unexpected call to DrawGdiMetafile");
         }
 
-        IFACEMETHODIMP_(void) DrawBitmap(ID2D1Bitmap *,const D2D1_RECT_F *,FLOAT,D2D1_INTERPOLATION_MODE,const D2D1_RECT_F *,const D2D1_MATRIX_4X4_F *) override
+        IFACEMETHODIMP_(void) DrawBitmap(ID2D1Bitmap* bitmap, const D2D1_RECT_F* destRect, FLOAT opacity, D2D1_INTERPOLATION_MODE interpolationMode, const D2D1_RECT_F* sourceRect, const D2D1_MATRIX_4X4_F* perspective) override
         {
-            Assert::Fail(L"Unexpected call to DrawBitmap");
+            if (!MockDrawBitmap)
+            {
+                Assert::Fail(L"Unexpected call to DrawBitmap");
+            }
+
+            return MockDrawBitmap(bitmap, destRect, opacity, interpolationMode, sourceRect, perspective);
         }
 
         IFACEMETHODIMP_(void) PushLayer(const D2D1_LAYER_PARAMETERS1 *,ID2D1Layer *) override

@@ -36,9 +36,11 @@ namespace canvas
 
         DONT_EXPECT(Clear , Color);
 
-        DONT_EXPECT(DrawImage         , ICanvasImage*, Vector2);
-        DONT_EXPECT(DrawImageAtCoords , ICanvasImage*, float, float);
-        DONT_EXPECT(DrawImageAtOrigin , ICanvasImage*);
+        DONT_EXPECT(DrawImage                           , ICanvasImage*, Vector2);
+        DONT_EXPECT(DrawImageAtCoords                   , ICanvasImage*, float, float);
+        DONT_EXPECT(DrawImageAtOrigin                   , ICanvasImage*);
+        DONT_EXPECT(DrawBitmapWithDestRect              , ICanvasBitmap*, Rect);
+        DONT_EXPECT(DrawBitmapWithDestRectAndSourceRect , ICanvasBitmap*, Rect, Rect);
 
         DONT_EXPECT(DrawLineWithBrush                                     , Vector2, Vector2, ICanvasBrush*);
         DONT_EXPECT(DrawLineAtCoordsWithBrush                             , float, float, float, float, ICanvasBrush*);

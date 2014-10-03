@@ -97,6 +97,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(DrawImageAtOrigin)(
             ICanvasImage* image) override;
 
+        IFACEMETHOD(DrawBitmapWithDestRect)(
+            ICanvasBitmap* bitmap,
+            Rect destinationRect) override;
+
+        IFACEMETHOD(DrawBitmapWithDestRectAndSourceRect)(
+            ICanvasBitmap* bitmap,
+            Rect destinationRect,
+            Rect sourceRect) override;
+
         //
         // DrawLine
         //
@@ -856,6 +865,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasTextFormat* GetDefaultTextFormat();
 
         ID2D1SolidColorBrush* GetColorBrush(ABI::Windows::UI::Color const& color);
+
+        HRESULT DrawBitmapWithDestRectAndSourceRectImpl(
+            ICanvasBitmap* bitmap,
+            Rect destinationRect,
+            D2D1_RECT_F* d2dSourceRect);
     };
 
 

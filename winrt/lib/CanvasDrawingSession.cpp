@@ -17,6 +17,7 @@
 #include "CanvasTextFormat.h"
 #include "CanvasImage.h"
 #include "CanvasDevice.h"
+#include "CanvasBitmap.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -191,8 +192,51 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasImage* image)
     {
         return DrawImage(
-            image, 
+            image,
             Vector2{ 0, 0 });
+    }
+
+
+    HRESULT CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectImpl(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect,
+        D2D1_RECT_F* d2dSourceRect)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(bitmap);
+
+                ComPtr<ICanvasBitmapInternal> internal;
+                ThrowIfFailed(bitmap->QueryInterface(IID_PPV_ARGS(&internal)));
+
+                deviceContext->DrawBitmap(
+                    internal->GetD2DBitmap().Get(),
+                    ToD2DRect(destinationRect),
+                    1.0f,
+                    D2D1_INTERPOLATION_MODE_LINEAR,
+                    d2dSourceRect);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRect(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect)
+    {   
+        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRect(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect,
+        Rect sourceRect)
+    {
+        D2D1_RECT_F d2dSourceRect = ToD2DRect(sourceRect);
+
+        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &d2dSourceRect);
     }
 
 
