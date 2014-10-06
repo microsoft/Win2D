@@ -14,32 +14,11 @@
 #include "TestBitmapResourceCreationAdapter.h"
 #include "TestEffect.h"
 
+using namespace ::Microsoft::WRL::Wrappers;
+
 TEST_CLASS(CanvasImageBrushTests)
 {
 public:
-    class StubRectReference : public RuntimeClass<
-        IReference<Rect> >
-    {
-    public:
-        Rect m_rect;
-
-        StubRectReference()
-        {
-            m_rect = Rect{ 0, 0, 10, 10 };
-        }
-
-        StubRectReference(float x, float y, float w, float h)
-        {
-            m_rect = Rect{ x, y, w, h };
-        }
-
-        STDMETHOD(get_Value)(ABI::Windows::Foundation::Rect* value) override
-        {
-            *value = m_rect;
-            return S_OK;
-        }
-    };
-
     bool AreReferencedRectsEqual(IReference<Rect>* ref0, IReference<Rect>* ref1)
     {
         // Precondition: Both args non-null.
@@ -57,16 +36,7 @@ public:
                 rect0.Height == rect1.Height;
     }
 
-    class TestCanvasImageBrushAdapter : public ICanvasImageBrushAdapter
-    {
-    public:
-        virtual ComPtr<IReference<Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) override
-        {
-            ComPtr<StubRectReference> ret = Make<StubRectReference>();
-            ret->m_rect = FromD2DRect(d2dRect);
-            return ret;
-        }
-    };
+
 
     ComPtr<ICanvasDevice> CreateTestDevice()
     {
@@ -97,8 +67,7 @@ public:
     ComPtr<CanvasImageBrush> CreateMinimalTestBrush()
     {
         auto canvasDevice = CreateTestDevice();
-        auto adapter = std::make_shared<TestCanvasImageBrushAdapter>();
-        return Make<CanvasImageBrush>(canvasDevice.Get(), nullptr, adapter);
+        return Make<CanvasImageBrush>(canvasDevice.Get(), nullptr);
     }
 
     TEST_METHOD(CanvasImageBrush_Implements_Expected_Interfaces)
@@ -129,7 +98,7 @@ public:
 
         ComPtr<IReference<Rect>> sourceRect;
         Assert::AreEqual(RO_E_CLOSED, brush->get_SourceRectangle(&sourceRect));
-        sourceRect = Make<StubRectReference>();
+        sourceRect = Make<Nullable<Rect>>(Rect{});
         Assert::AreEqual(RO_E_CLOSED, brush->put_SourceRectangle(sourceRect.Get()));
 
         CanvasImageInterpolation interpolation;
@@ -278,7 +247,6 @@ public:
     {
         auto canvasDevice = Make<MockCanvasDevice>();
         auto bitmapBrush = Make<MockD2DBitmapBrush>();
-        auto adapter = std::make_shared<TestCanvasImageBrushAdapter>();
 
         canvasDevice->MockCreateBitmapBrush = [&](ID2D1Bitmap1* bitmap) { return bitmapBrush; };
 
@@ -287,7 +255,7 @@ public:
         
         bitmapBrush->MockSetBitmap = [&](ID2D1Bitmap* bitmap) {};
 
-        auto brush = Make<CanvasImageBrush>(canvasDevice.Get(), nullptr, adapter);
+        auto brush = Make<CanvasImageBrush>(canvasDevice.Get(), nullptr);
 
         VerifyCommonBrushProperties(brush, bitmapBrush);
 
@@ -345,7 +313,6 @@ public:
             : m_transform(D2D1::Matrix3x2F(1, 2, 3, 4, 5, 6))
         {
             m_canvasDevice = Make<MockCanvasDevice>();
-            auto adapter = std::make_shared<TestCanvasImageBrushAdapter>();
             m_bitmapBrush = Make<MockD2DBitmapBrush>();
             m_imageBrush = Make<MockD2DImageBrush>();
 
@@ -433,7 +400,7 @@ public:
                 canvasBitmap = CreateStubCanvasBitmap();
             }
 
-            m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get(), canvasBitmap.Get(), adapter);
+            m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get(), canvasBitmap.Get());
             ThrowIfFailed(m_canvasImageBrush.As(&m_canvasBrushInternal));
         }
 
@@ -470,6 +437,8 @@ public:
     }
     TEST_METHOD(CanvasImageBrush_Switching)
     {
+        auto anyRectangle = Make<Nullable<Rect>>(Rect{0,0,10,10});
+
         //
         // This test iterates once with an image brush initialized to a null
         // bitmap, and once initialized to an actual bitmap.
@@ -490,11 +459,11 @@ public:
             VerifyBackedByBitmapBrush(brushInternal);
 
             // Assigning a non-null source rect switches it to image brush.
-            ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(Make<StubRectReference>().Get()));
+            ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(anyRectangle.Get()));
             VerifyBackedByImageBrush(brushInternal, &target1);
 
             // Assigning a different source rect doesn't change this.
-            ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(Make<StubRectReference>().Get()));
+            ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(anyRectangle.Get()));
             VerifyBackedByImageBrush(brushInternal);
 
             // Removing the source rect switches back to bitmap brush.
@@ -511,9 +480,11 @@ public:
     {
         SwitchableTestBrushFixture f;
 
+        auto rectangle = Make<Nullable<Rect>>(Rect{0,0,10,10});
+
         // Force the canvas brush into using an D2D image backing brush by setting
         // a non-NULL source rectangle.
-        ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(Make<StubRectReference>().Get()));
+        ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(rectangle.Get()));
 
         VerifyCommonBrushProperties(f.m_canvasImageBrush.Get(), f.m_imageBrush);
 
@@ -598,7 +569,7 @@ public:
         Assert::IsNull(retrievedSourceRect.Get());
 
         // Set the source rect to something.
-        ComPtr<StubRectReference> testSourceRect = Make<StubRectReference>();
+        auto testSourceRect = Make<Nullable<Rect>>(Rect{0,0,10,10});
         ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(testSourceRect.Get()));
         
         // Ensure source rect is the correct value.

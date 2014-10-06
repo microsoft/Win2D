@@ -66,6 +66,7 @@
 #include <ClosablePtr.h>
 #include <Constants.h>
 #include <ErrorHandling.h>
+#include <Nullable.h>
 #include <ScopeWarden.h>
 #include <Utilities.h>
 #include <Vector.h>

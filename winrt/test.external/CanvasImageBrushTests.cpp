@@ -78,5 +78,18 @@ public:
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&] { Assert::AreEqual<ICanvasImage^>(anyEffect, brush->Image); });
     }
+
+    TEST_METHOD(CanvasImageBrush_SourceRectangle)
+    {
+        auto brush = ref new CanvasImageBrush(m_device);
+
+        Rect anyRect{1,2,3,4};
+
+        brush->SourceRectangle = anyRect;
+
+        Rect actualRect = brush->SourceRectangle->Value;
+
+        Assert::AreEqual(anyRect, actualRect);
+    }
 };
 

@@ -21,12 +21,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
 
-    class ICanvasImageBrushAdapter
-    {
-    public:
-        virtual ComPtr<ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) = 0;
-    };
-
     class ICanvasDeviceInternal;
 
     [uuid(DAA42776-D012-4A3D-A7A3-2A061B00CE4D)]
@@ -43,12 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageBrush, BaseTrust);
 
-        std::shared_ptr<ICanvasImageBrushAdapter> m_adapter;
-
     public:
-
-        CanvasImageBrushFactory();
-
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceAllocator,
             ICanvasImageBrush** canvasImageBrush) override;
@@ -85,8 +74,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ICanvasDevice> m_device;
 
-        std::shared_ptr<ICanvasImageBrushAdapter> m_adapter;
-
         bool m_useBitmapBrush;
 
         bool m_isClosed;
@@ -96,8 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasImageBrush(
             ICanvasDevice* device, 
-            ICanvasImage* image,
-            std::shared_ptr<ICanvasImageBrushAdapter> adapter);
+            ICanvasImage* image);
 
         IFACEMETHOD(get_Image)(ICanvasImage** value) override;
 

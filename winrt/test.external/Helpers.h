@@ -82,6 +82,17 @@ namespace Microsoft
             }
 
             template<>
+            static inline std::wstring ToString<Windows::Foundation::Rect>(Windows::Foundation::Rect const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Rect{%f,%f,%f,%f}", value.X, value.Y, value.Width, value.Height));
+                return buf;
+            }
+
+            template<>
             static inline std::wstring ToString<Microsoft::Graphics::Canvas::Numerics::Matrix3x2>(Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& value)
             {
                 wchar_t buf[256];

@@ -23,33 +23,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL::Wrappers;
 
 
-    class CanvasImageBrushAdapter : public ICanvasImageBrushAdapter
-    {
-        ComPtr<IPropertyValueStatics> m_propertyValueStatics;
-    public:
-        CanvasImageBrushAdapter()
-        {
-            ThrowIfFailed(GetActivationFactory(
-                HStringReference(RuntimeClass_Windows_Foundation_PropertyValue).Get(),
-                &m_propertyValueStatics));
-        }
-
-        ComPtr<IReference<Rect>> CreateRectReference(D2D1_RECT_F const& d2dRect) override
-        {
-            const float width = d2dRect.right - d2dRect.left;
-            const float height = d2dRect.bottom - d2dRect.top;
-            Rect rect = { d2dRect.left, d2dRect.top, width, height };
-
-            ComPtr<IReference<Rect>> rectReference;
-            ThrowIfFailed(m_propertyValueStatics->CreateRect(rect, &rectReference));
-
-            return rectReference;
-        }
-    };
-
-    CanvasImageBrushFactory::CanvasImageBrushFactory()
-        : m_adapter(std::make_shared<CanvasImageBrushAdapter>()) {}
-
     IFACEMETHODIMP CanvasImageBrushFactory::Create(
         ICanvasResourceCreator* resourceAllocator,
         ICanvasImageBrush** canvasImageBrush)
@@ -76,8 +49,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto newImageBrush = Make<CanvasImageBrush>(
                     device.Get(), 
-                    image,
-                    m_adapter);
+                    image);
 
                 ThrowIfFailed(newImageBrush.CopyTo(canvasImageBrush));
             });
@@ -104,13 +76,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasImageBrush::CanvasImageBrush(
         ICanvasDevice* device,
-        ICanvasImage* image,
-        std::shared_ptr<ICanvasImageBrushAdapter> adapter)
+        ICanvasImage* image)
         : m_device(device)
         , m_isClosed(false)
         , m_useBitmapBrush(true)
         , m_isSourceRectSet(false)
-        , m_adapter(adapter)
     {
         auto deviceInternal = As<ICanvasDeviceInternal>(m_device);
 
@@ -293,9 +263,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     D2D1_RECT_F sourceRectangle;
                     m_d2dImageBrush->GetSourceRectangle(&sourceRectangle);
 
-                    rectReference = m_adapter->CreateRectReference(sourceRectangle);
+                    rectReference = Make<Nullable<Rect>>(FromD2DRect(sourceRectangle));
+                    CheckMakeResult(rectReference);
                 }
-
+                
                 *value = rectReference.Detach(); // returns a NULL rect for m_useBitmapBrush.
             });
 	}
@@ -303,7 +274,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //static
     D2D1_RECT_F CanvasImageBrush::GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value)
     {
-        Rect rect;
+        Rect rect{};
         ThrowIfFailed(value->get_Value(&rect));
         return ToD2DRect(rect);
     }

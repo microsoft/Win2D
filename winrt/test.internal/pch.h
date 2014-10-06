@@ -51,8 +51,9 @@
 #include <ClosablePtr.h>
 #include <Constants.h>
 #include <ErrorHandling.h>
-#include <Utilities.h>
+#include <Nullable.h>
 #include <ScopeWarden.h>
+#include <Utilities.h>
 #include <Vector.h>
 #include <WinStringBuilder.h>
 #include <WinStringWrapper.h>
