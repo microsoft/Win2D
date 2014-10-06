@@ -33,7 +33,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasImageBrushFactory
         : public ActivationFactory<
             ICanvasImageBrushFactory,
-            CloakedIid<ICanvasFactoryNative>>
+            CloakedIid<ICanvasDeviceResourceFactoryNative>>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageBrush, BaseTrust);
 
@@ -48,6 +48,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasImageBrush** canvasImageBrush) override;
             
         IFACEMETHOD(GetOrCreate)(
+            ICanvasDevice* device,
             IUnknown* resource,
             IInspectable** wrapper) override;
     };
@@ -57,6 +58,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasImageBrush,
         ABI::Windows::Foundation::IClosable,
         ChainInterfaces<CloakedIid<ICanvasImageBrushInternal>, CloakedIid<ICanvasBrushInternal>>,
+        CloakedIid<ICanvasResourceWrapperNative>,
         MixIn<CanvasImageBrush, CanvasBrush>>,
         public CanvasBrush
     {
@@ -68,22 +70,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Bitmap brush is eligible when the source image is a bitmap and the source rect
         // is NULL.
 
+        ClosablePtr<ICanvasDevice> m_device;
+
         ComPtr<ID2D1BitmapBrush1> m_d2dBitmapBrush;
 
         ComPtr<ID2D1ImageBrush> m_d2dImageBrush;
 
-        ComPtr<ICanvasDevice> m_device;
-
         bool m_useBitmapBrush;
-
-        bool m_isClosed;
 
         bool m_isSourceRectSet;
 
     public:
         CanvasImageBrush(
-            ICanvasDevice* device, 
-            ICanvasImage* image);
+            ICanvasDevice* device,
+            ID2D1BitmapBrush1* bitmapBrush = nullptr,
+            ID2D1ImageBrush* imageBrush = nullptr);
 
         IFACEMETHOD(get_Image)(ICanvasImage** value) override;
 
@@ -114,11 +115,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasImageBrushInternal
         virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() override;
 
+        // ICanvasResourceWrapperNative
+        IFACEMETHOD(GetResource)(IUnknown** resource) override;
+
+        // non-interface methods
+        void SetImage(ICanvasImage* image);
+
     private:
         void ThrowIfClosed();
         void SwitchFromBitmapBrushToImageBrush();
         void TrySwitchFromImageBrushToBitmapBrush();
-        void SetImage(ICanvasImage* image);
         ComPtr<ID2D1Bitmap1> GetD2DBitmap() const;
         static D2D1_RECT_F GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value);
     };

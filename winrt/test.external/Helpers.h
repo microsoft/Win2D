@@ -51,9 +51,12 @@ namespace Microsoft
                 return PointerToString(L#T, reinterpret_cast<IInspectable*>(value)); \
             }
 
+            TO_STRING(ID2D1Bitmap);
             TO_STRING(ID2D1Bitmap1);
+            TO_STRING(ID2D1BitmapBrush);
             TO_STRING(ID2D1Device1);
             TO_STRING(ID2D1DeviceContext1);
+            TO_STRING(ID2D1ImageBrush);
             TO_STRING(ID2D1SolidColorBrush);
             TO_STRING(ID3D11Device);
             TO_STRING(ID3D11Texture2D);
@@ -89,6 +92,25 @@ namespace Microsoft
                     buf,
                     _countof(buf),
                     L"Rect{%f,%f,%f,%f}", value.X, value.Y, value.Width, value.Height));
+                return buf;
+            }
+
+            // TODO #2642: Various helpers are now duplicated between
+            // test.external and test.internal.  We should find a way to share
+            // them.
+
+            template<>
+            static inline std::wstring ToString<D2D1_RECT_F>(D2D1_RECT_F const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D_RECT_F{%f,%f,%f,%f}",
+                    value.left,
+                    value.top,
+                    value.right,
+                    value.bottom));
                 return buf;
             }
 
@@ -206,6 +228,14 @@ namespace Microsoft
             inline bool operator==(Windows::UI::Text::FontWeight const& a, Windows::UI::Text::FontWeight const& b)
             {
                 return a.Weight == b.Weight;
+            }
+
+            inline bool operator==(D2D1_RECT_F const& a, D2D1_RECT_F const& b)
+            {
+                return a.left == b.left &&
+                    a.top == b.top &&
+                    a.right == b.right &&
+                    a.bottom == b.bottom;
             }
         }
     }
@@ -342,6 +372,7 @@ ComPtr<T> GetDXGIInterface(U^ obj)
 }
 
 
-ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext();
+ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext(CanvasDevice^ device = nullptr);
+ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap(D2D1_BITMAP_OPTIONS options, ComPtr<ID2D1DeviceContext1> deviceContext = nullptr);
 
 void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode, float dpiTolerance = 0.0f);

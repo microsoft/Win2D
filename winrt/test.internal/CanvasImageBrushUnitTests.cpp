@@ -67,7 +67,7 @@ public:
     ComPtr<CanvasImageBrush> CreateMinimalTestBrush()
     {
         auto canvasDevice = CreateTestDevice();
-        return Make<CanvasImageBrush>(canvasDevice.Get(), nullptr);
+        return Make<CanvasImageBrush>(canvasDevice.Get());
     }
 
     TEST_METHOD(CanvasImageBrush_Implements_Expected_Interfaces)
@@ -255,7 +255,7 @@ public:
         
         bitmapBrush->MockSetBitmap = [&](ID2D1Bitmap* bitmap) {};
 
-        auto brush = Make<CanvasImageBrush>(canvasDevice.Get(), nullptr);
+        auto brush = Make<CanvasImageBrush>(canvasDevice.Get());
 
         VerifyCommonBrushProperties(brush, bitmapBrush);
 
@@ -389,7 +389,11 @@ public:
                     m_imageBrush->MockSetInterpolationMode = [&](D2D1_INTERPOLATION_MODE mode) { Assert::AreEqual(D2D1_INTERPOLATION_MODE_ANISOTROPIC, mode); };
                     m_imageBrush->MockSetOpacity = [&](float opacity) { Assert::AreEqual(0.1f, opacity); };
                     m_imageBrush->MockSetTransform = [&](const D2D1_MATRIX_3X2_F* transform) { m_transform = *transform; };
-                    m_imageBrush->MockSetSourceRectangle = [&](const D2D1_RECT_F* rect) { Assert::AreEqual(D2D1::RectF(0, 0, 10, 10), *rect); };
+
+                    m_imageBrush->MockSetSourceRectangle = [&](const D2D1_RECT_F* rect) { 
+                        // this was brittle; SourceRectangle has good coverage
+                        // in CanvasImageBrushTests.cpp
+                    };
 
                     return m_imageBrush;
                 };
@@ -400,10 +404,10 @@ public:
                 canvasBitmap = CreateStubCanvasBitmap();
             }
 
-            m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get(), canvasBitmap.Get());
+            m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get());
+            m_canvasImageBrush->SetImage(canvasBitmap.Get());
             ThrowIfFailed(m_canvasImageBrush.As(&m_canvasBrushInternal));
         }
-
     };
 
     void VerifyBackedByBitmapBrush(

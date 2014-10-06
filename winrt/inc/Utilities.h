@@ -42,3 +42,23 @@ inline Microsoft::WRL::ComPtr<T> As(U* u)
     ThrowIfFailed(u->QueryInterface(IID_PPV_ARGS(t.ReleaseAndGetAddressOf())));
     return t;
 }
+
+template<typename T, typename U>
+inline Microsoft::WRL::ComPtr<T> MaybeAs(Microsoft::WRL::ComPtr<U> const& u)
+{
+    ComPtr<T> t;
+    if (SUCCEEDED(u.As(&t)))
+        return t;
+    else
+        return nullptr;
+}
+
+template<typename T, typename U>
+inline Microsoft::WRL::ComPtr<T> MaybeAs(U* u)
+{
+    ComPtr<T> t;
+    if (SUCCEEDED(u->QueryInterface(IID_PPV_ARGS(t.ReleaseAndGetAddressOf()))))
+        return t;
+    else
+        return nullptr;
+}

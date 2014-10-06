@@ -12,12 +12,11 @@
 
 #include "pch.h"
 
-ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext()
+ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext(CanvasDevice^ device)
 {
-    using namespace Microsoft::Graphics::Canvas;
-
-    CanvasDevice^ canvasDevice = ref new CanvasDevice();
-    auto d2dDevice = GetWrappedResource<ID2D1Device1>(canvasDevice);
+    if (!device)
+        device = ref new CanvasDevice();
+    auto d2dDevice = GetWrappedResource<ID2D1Device1>(device);
 
     ComPtr<ID2D1DeviceContext1> context;
     ThrowIfFailed(d2dDevice->CreateDeviceContext(
@@ -25,6 +24,28 @@ ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext()
         &context));
 
     return context;
+}
+
+ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap(D2D1_BITMAP_OPTIONS options, ComPtr<ID2D1DeviceContext1> context)
+{
+    if (!context)
+        context = CreateTestD2DDeviceContext();
+
+    ComPtr<ID2D1Bitmap1> d2dBitmap;
+
+    D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
+    bitmapProperties.bitmapOptions = options;
+    bitmapProperties.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    bitmapProperties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+
+    ThrowIfFailed(context->CreateBitmap(
+        D2D1::SizeU(1, 1),
+        nullptr, // data 
+        0,  // data pitch
+        &bitmapProperties,
+        &d2dBitmap));
+
+    return d2dBitmap;
 }
 
 void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode, float dpiTolerance)

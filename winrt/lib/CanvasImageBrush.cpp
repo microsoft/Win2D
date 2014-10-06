@@ -48,46 +48,71 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 resourceAllocator->get_Device(&device);
 
                 auto newImageBrush = Make<CanvasImageBrush>(
-                    device.Get(), 
-                    image);
+                    device.Get());
+                CheckMakeResult(newImageBrush);
+
+                newImageBrush->SetImage(image);
 
                 ThrowIfFailed(newImageBrush.CopyTo(canvasImageBrush));
             });
     }
 
     IFACEMETHODIMP CanvasImageBrushFactory::GetOrCreate(
+        ICanvasDevice* device,
         IUnknown* resource,
         IInspectable** wrapper)
     {
-        //
-        // TODO #2237: Implement image brush interop.
-        // Waiting on implementation of bitmap interop,
-        // plus effects/command list.
-        //
-        // Note: If resources's bounds match the canonical empty bounds,
-        // make sure that the wrapped resource has !m_isSourceRectSet.
-        //
-        // When image brush interop is supported: ensure GetWrappedResource
-        // returns a native image brush whose source rect is the canonical
-        // empty bounds, if !m_isSourceRectSet.
-        //
-        return E_NOTIMPL;
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(device);
+                CheckInPointer(resource);
+                CheckAndClearOutPointer(wrapper);
+                
+                auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+                auto d2dBitmapBrush = MaybeAs<ID2D1BitmapBrush1>(resource);
+                auto d2dImageBrush = MaybeAs<ID2D1ImageBrush>(resource);
+
+                if (!d2dBitmapBrush && !d2dImageBrush)
+                    ThrowHR(E_NOINTERFACE);
+
+                auto newImageBrush = Make<CanvasImageBrush>(
+                    device,
+                    d2dBitmapBrush.Get(),
+                    d2dImageBrush.Get());
+                CheckMakeResult(newImageBrush);
+                ThrowIfFailed(newImageBrush.CopyTo(wrapper));
+            });
     }
+
 
     CanvasImageBrush::CanvasImageBrush(
         ICanvasDevice* device,
-        ICanvasImage* image)
+        ID2D1BitmapBrush1* bitmapBrush,
+        ID2D1ImageBrush* imageBrush)
         : m_device(device)
-        , m_isClosed(false)
+        , m_d2dBitmapBrush(bitmapBrush)
+        , m_d2dImageBrush(imageBrush)
         , m_useBitmapBrush(true)
         , m_isSourceRectSet(false)
     {
-        auto deviceInternal = As<ICanvasDeviceInternal>(m_device);
+        auto deviceInternal = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed());
 
-        m_d2dBitmapBrush = deviceInternal->CreateBitmapBrush(NULL);
-        m_d2dImageBrush = deviceInternal->CreateImageBrush(NULL);
+        // We always use the bitmap brush, unless an image brush was explicitly
+        // specified
+        if (m_d2dImageBrush)
+        {
+            m_useBitmapBrush = false;
+            m_isSourceRectSet = true;
+        }
 
-        SetImage(image);
+        // Create missing brushes
+        if (!m_d2dBitmapBrush)
+            m_d2dBitmapBrush = deviceInternal->CreateBitmapBrush(nullptr);
+
+        if (!m_d2dImageBrush)
+            m_d2dImageBrush = deviceInternal->CreateImageBrush(nullptr);
     }
 
     void CanvasImageBrush::SetImage(ICanvasImage* image)
@@ -118,7 +143,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             if (m_useBitmapBrush) 
                 SwitchFromBitmapBrushToImageBrush();
 
-            auto deviceInternal = As<ICanvasDeviceInternal>(m_device);
+            auto deviceInternal = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed());
             m_d2dImageBrush->SetImage(deviceInternal->GetD2DImage(image).Get());
         }
     }
@@ -129,7 +154,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckAndClearOutPointer(value);
-                ThrowIfClosed();
+                auto& device = m_device.EnsureNotClosed();
 
                 auto d2dBitmap = GetD2DBitmap();
 
@@ -137,7 +162,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     return;
 
                 auto bitmapManager = PerApplicationPolymorphicBitmapManager::GetOrCreateManager();
-                auto bitmap = bitmapManager->GetOrCreateBitmap(m_device.Get(), d2dBitmap.Get());
+                auto bitmap = bitmapManager->GetOrCreateBitmap(device.Get(), d2dBitmap.Get());
                 ThrowIfFailed(bitmap.CopyTo(value));
             });
 	}
@@ -311,6 +336,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     }
                     else
                     {
+                        D2D1_RECT_F defaultRect{};
+                        m_d2dImageBrush->SetSourceRectangle(&defaultRect);
+
                         // Source rect is null. We might be able to switch to
                         // bitmap brush.
                         TrySwitchFromImageBrushToBitmapBrush();
@@ -354,10 +382,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasImageBrush::Close()
     {
-        m_device.Reset();
+        m_device.Close();
         m_d2dBitmapBrush.Reset();
         m_d2dImageBrush.Reset();
-        m_isClosed = true;
         return S_OK;
     }
 
@@ -365,7 +392,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         ThrowIfClosed();
 
-        if (m_useBitmapBrush) return m_d2dBitmapBrush;
+        if (m_useBitmapBrush) 
+        {
+            return m_d2dBitmapBrush;
+        }
         else 
         {
             if (!m_isSourceRectSet) 
@@ -380,19 +410,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         ThrowIfClosed();
 
-        if (m_useBitmapBrush) return m_d2dBitmapBrush;
+        if (m_useBitmapBrush) 
+            return m_d2dBitmapBrush;
         else
-        {
             return m_d2dImageBrush;
-        }
+    }
+
+    IFACEMETHODIMP CanvasImageBrush::GetResource(IUnknown** resource)
+    {
+        return ExceptionBoundary(
+            [=]
+            {
+                ThrowIfClosed();
+
+                if (m_useBitmapBrush)
+                    ThrowIfFailed(m_d2dBitmapBrush.CopyTo(resource));
+                else
+                    ThrowIfFailed(m_d2dImageBrush.CopyTo(resource));
+            });
     }
 
     void CanvasImageBrush::ThrowIfClosed()
     {
-        if (m_isClosed)
-        {
-            ThrowHR(RO_E_CLOSED);
-        }
+        m_device.EnsureNotClosed();
     }
 
     void CanvasImageBrush::SwitchFromBitmapBrushToImageBrush()
