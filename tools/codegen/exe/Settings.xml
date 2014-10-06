@@ -73,13 +73,123 @@ under the License.
   </Namespace>
   
   <Namespace Name="Effects">
-    <Enum Name="EffectInterpolationMode3D" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas">
-        <Field Name="HighQualityCubic" Index="5" ShouldProject="false"/>
+    <Enum Name="3DTransformEffectInterpolationMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas">
+      <Field Name="HighQualityCubic" Index="5" ShouldProject="false"/>
     </Enum>
-    <Enum Name="EffectInterpolationMode2D" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
+    <Enum Name="EffectInterpolationMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
+    <Enum Name="EffectScaleMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
     <Enum Name="CompositeEffectMode" ShouldProject="true">
-        <Field Name="Plus" ShouldProject="true" ProjectedNameOverride="Add"/>
+        <Field Name="Plus" ProjectedNameOverride="Add"/>
+        <Field Name="SourceCopy" ProjectedNameOverride="Copy"/>
+        <Field Name="BoundedSourceCopy" ProjectedNameOverride="BoundedCopy"/>
     </Enum>
+    <Enum Name="EffectXChannelSelect" ShouldProject="true" ProjectedNameOverride="EffectChannelSelect">
+      <Field Name="RedChannel" ProjectedNameOverride="Red"/>
+      <Field Name="GreenChannel" ProjectedNameOverride="Green"/>
+      <Field Name="BlueChannel" ProjectedNameOverride="Blue"/>
+      <Field Name="AlphaChannel" ProjectedNameOverride="Alpha"/>
+    </Enum>
+    <Enum Name="EffectYChannelSelect" ShouldProject="false" ProjectedNameOverride="EffectChannelSelect"/>
+    <Enum Name="EffectEdgeModeX" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
+    <Enum Name="EffectEdgeModeY" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
+    <Effect Name="AffineTransform2DEffect" ProjectedNameOverride="Transform2DEffect"/>
+    <Effect Name="FloodEffect" ProjectedNameOverride="ColorSourceEffect"/>
+    <Effect Name="AtlasEffect">
+      <Property Name="InputRect" ProjectedNameOverride="SourceRectangle"/>
+      <Property Name="InputPaddingRect" ProjectedNameOverride="PaddingRectangle"/>
+    </Effect>
+    <Effect Name="BorderEffect">
+      <Property Name="EdgeModeX" ProjectedNameOverride="ExtendX"/>
+      <Property Name="EdgeModeY" ProjectedNameOverride="ExtendY"/>
+    </Effect>
+    <Effect Name="CropEffect">
+      <Property Name="Rect" ProjectedNameOverride="SourceRectangle"/>
+    </Effect>
+    <Effect Name="DirectionalBlurEffect">
+      <Property Name="StandardDeviation" ProjectedNameOverride="BlurAmount"/>
+    </Effect>
+    <Effect Name="DisplacementMapEffect">
+      <Property Name="Scale" ProjectedNameOverride="Amount"/>
+    </Effect>
+    <Effect Name="DistantDiffuseEffect">
+      <Property Name="DiffuseConstant" ProjectedNameOverride="DiffuseAmount"/>
+      <Property Name="SurfaceScale" ProjectedNameOverride="HeightMapScale"/>
+      <Property Name="Color" ProjectedNameOverride="LightColor"/>
+      <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+    </Effect>
+    <Effect Name="DistantSpecularEffect">
+      <Property Name="SpecularConstant" ProjectedNameOverride="SpecularAmount"/>
+      <Property Name="SurfaceScale" ProjectedNameOverride="HeightMapScale"/>
+      <Property Name="Color" ProjectedNameOverride="LightColor"/>
+      <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+    </Effect>
+    <Effect Name="DpiCompensationEffect">
+      <Property Name="InputDpi" ProjectedNameOverride="SourceDpi"/>
+    </Effect>
+    <Effect Name="GaussianBlurEffect">
+      <Property Name="StandardDeviation" ProjectedNameOverride="BlurAmount"/>
+    </Effect>
+    <Effect Name="LinearTransferEffect">
+      <Property Name="RedYIntercept" ProjectedNameOverride="RedOffset"/>
+      <Property Name="GreenYIntercept" ProjectedNameOverride="GreenOffset"/>
+      <Property Name="BlueYIntercept" ProjectedNameOverride="BlueOffset"/>
+      <Property Name="AlphaYIntercept" ProjectedNameOverride="AlphaOffset"/>
+    </Effect>
+    <Effect Name="OpacityMetadataEffect">
+      <Property Name="InputOpaqueRect" ProjectedNameOverride="OpaqueRectangle"/>
+    </Effect>
+    <Effect Name="PointDiffuseEffect">
+      <Property Name="DiffuseConstant" ProjectedNameOverride="DiffuseAmount"/>
+      <Property Name="SurfaceScale" ProjectedNameOverride="HeightMapScale"/>
+      <Property Name="Color" ProjectedNameOverride="LightColor"/>
+      <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+    </Effect>
+    <Effect Name="PointSpecularEffect">
+      <Property Name="SpecularConstant" ProjectedNameOverride="SpecularAmount"/>
+      <Property Name="SurfaceScale" ProjectedNameOverride="HeightMapScale"/>
+      <Property Name="Color" ProjectedNameOverride="LightColor"/>
+      <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+    </Effect>
+    <Effect Name="ShadowEffect">
+      <Property Name="BlurStandardDeviation" ProjectedNameOverride="BlurAmount"/>
+      <Property Name="Color" ProjectedNameOverride="ShadowColor"/>
+    </Effect>
+    <Effect Name="SpotDiffuseEffect">
+      <Property Name="PointsAt" ProjectedNameOverride="LightTarget"/>
+      <Property Name="DiffuseConstant" ProjectedNameOverride="DiffuseAmount"/>
+      <Property Name="SurfaceScale" ProjectedNameOverride="HeightMapScale"/>
+      <Property Name="Color" ProjectedNameOverride="LightColor"/>
+      <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+    </Effect>
+    <Effect Name="SpotSpecularEffect">
+      <Property Name="PointsAt" ProjectedNameOverride="LightTarget"/>
+      <Property Name="SpecularConstant" ProjectedNameOverride="SpecularAmount"/>
+      <Property Name="SurfaceScale" ProjectedNameOverride="HeightMapScale"/>
+      <Property Name="Color" ProjectedNameOverride="LightColor"/>
+      <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+    </Effect>
+    <Effect Name="TileEffect">
+      <Property Name="Rect" ProjectedNameOverride="SourceRectangle"/>
+    </Effect>
+    <Effect Name="TurbulenceEffect">
+      <Property Name="BaseFrequency" ProjectedNameOverride="Frequency"/>
+      <Property Name="NumOctaves" ProjectedNameOverride="Octaves"/>
+      <Property Name="Stitchable" ProjectedNameOverride="Tileable"/>
+    </Effect>
+    <Effect Name="ArithmeticCompositeEffect">
+      <Input Name="Destination" ProjectedNameOverride="Source1"/>
+      <Input Name="Source" ProjectedNameOverride="Source2"/>
+      <Property Name="Coefficients" IsInternal="true"/>
+      <Property Name="MultiplyAmount" Type="float"/>
+      <Property Name="Source1Amount" Type="float"/>
+      <Property Name="Source2Amount" Type="float"/>
+      <Property Name="Offset" Type="float"/>
+    </Effect>
   </Namespace>
-  
 </Settings>

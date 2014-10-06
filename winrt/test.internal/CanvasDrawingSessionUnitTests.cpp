@@ -440,7 +440,7 @@ public:
                 return mockEffect.CopyTo(effect);
             };
 
-        ThrowIfFailed(blurEffect->put_StandardDeviation(5.0f));
+        ThrowIfFailed(blurEffect->put_BlurAmount(5.0f));
 
         ThrowIfFailed(f.DS->DrawImageAtOrigin(blurEffect.Get()));
         Assert::IsTrue(drawImageCalled);

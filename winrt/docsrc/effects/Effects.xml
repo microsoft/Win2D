@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.IEffect">
+      <summary>Abstract interface representing an effect used for image processing.</summary>
+      <remarks>
+        <p>IEffect is defined in such a way that it is possible to convert it to a D2D effect.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.EffectId">
+      <summary>Gets a unique identifier for the effect.</summary>
+      <remarks>
+        <p>Canvas built in effects return an EffectId that corresponds to the 
+           equivalent <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh404566(v=vs.85).aspx">ID2D1Effect</a> GUID on the platform.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <remarks>
+        <p>Generic way to configure the inputs of an effect. In most cases, the 
+           properties of strongly typed IEffect subclasses (eg. GaussianBlurEffect) should be used instead.</p>
+        <p>It is possible to add, remove, or modify the Inputs.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <remarks>
+        <p>Generic way to configure the properties of an effect. In most cases, the 
+           properties of strongly typed IEffect subclasses (eg. GaussianBlurEffect) should be used instead.</p>
+        <p>New effects have all default properties set in advance. Size of vector corresponds to number 
+           of properties for current effect. The index values of the properties found on an effect 
+           match the D2D equivalent effect index values.</p>
+      </remarks>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.IEffectInput">
+      <summary>Represents a type that can be accepted as input for IEffect object.</summary>
+      <remarks>
+        <p>Although IEffect object require inputs to implement just IEffectInput, 
+           <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/> can draw only objects
+           which implement <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> such as 
+           <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, command list, 
+           or image processing effect.</p>
+      </remarks>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectBorderMode">
+      <summary>Enumeration type that specifies how to process border pixels.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft">
+      <summary>Pixels outside the edge are marked as black which makes edge color softer after processing.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Hard">
+      <summary>Pixels outside the bounds are mirrored.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectOptimization">
+      <summary>Enumeration type that specifies speed vs. quality trade-off.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Speed">
+      <summary>Better speed and less quality.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Balanced">
+      <summary>Balance between speed and quality.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Quality">
+      <summary>Maximum quality for this effect is achieved by losing speed.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectChannelSelect">
+      <summary>Specifies which color channel of an image to use as source data for effect processing.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectChannelSelect.Red">
+      <summary>Use the red channel of the image.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectChannelSelect.Green">
+      <summary>Use the green channel of the image.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectChannelSelect.Blue">
+      <summary>Use the blue channel of the image.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.EffectChannelSelect.Alpha">
+      <summary>Use the alpha channel of the image.</summary>
+    </member>
+
+  </members>
+</doc>

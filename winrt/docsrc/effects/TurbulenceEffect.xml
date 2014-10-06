@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect">
+      <summary>Generates an image using the Perlin noise function.</summary>
+      <remarks>
+        <p>
+          The Turbulence effect computes the sum of one or more octaves of the Perlin 
+          noise function. Perlin noise is a pseudo-random function whose value depends on 
+          the frequency, position, and seed value. This effect outputs pixel values in 
+          premultiplied alpha.
+        </p>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706378.aspx">D2D Turbulence effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.#ctor">
+      <summary>Initializes a new instance of the TurbulenceEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Dispose">
+      <summary>Releases all resources used by the TurbulenceEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Tileable">
+      <summary>Turns stitching on or off. If set, the base frequency is adjusted so the 
+               output bitmap can be tiled. Default value false.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Size">
+      <summary>Specifies the size of image to generate. Default value (512, 512).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Seed">
+      <summary>The seed for the pseudo random generator. Default value 0.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Offset">
+      <summary>Offsets the coordinates where the turbulence output is generated. Default value (0,0).</summary>
+      <remarks>
+        <p>The algorithm used to generate the Perlin noise is position dependent, so a 
+           different offset results in a different output.</p>
+        <p>Note: changing the offset does not have the same effect as a translation 
+           because the noise function output is infinite and the function will wrap 
+           around the tile.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Octaves">
+      <summary>Number of octaves for the noise function. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Noise">
+      <summary>The turbulence noise mode.
+               Default value <see cref="F:Microsoft.Graphics.Canvas.Effects.TurbulenceEffectNoise.FractalSum"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Frequency">
+      <summary>Base frequencies in the X and Y direction. Units are specified in 1/DIPs.
+               Default value (0.01, 0.01).</summary>
+      <remarks>
+        <p>A value of 1 for the base frequency results in the Perlin noise 
+           completing an entire cycle between two pixels. The ease interpolation for 
+           these pixels results in completely random pixels, since there is no 
+           correlation between the pixels.</p>
+        <p>With a value of 0.1 for the base frequency, the Perlin noise function 
+           repeats every 10 DIPs. This results in correlation between pixels and the 
+           typical turbulence effect is visible.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1Turbulence GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TurbulenceEffectNoise">
+      <summary>Specifies how turbulence noise should be generated.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.TurbulenceEffectNoise.FractalSum">
+      <summary>Computes a sum of the noise octaves, shifting their output range from [-1, 1], to [0, 1].</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.TurbulenceEffectNoise.Turbulence">
+      <summary>Computes a sum of the absolute value of each noise octave.</summary>
+    </member>
+
+  </members>
+</doc>

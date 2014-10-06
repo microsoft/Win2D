@@ -100,6 +100,36 @@ namespace CodeGen
                 [XmlAttributeAttribute]
                 public bool IsProjectedAsAbstract;
             }
+            
+            public class EffectProperty
+            {
+                [XmlAttributeAttribute]
+                public string Name;
+
+                [XmlAttributeAttribute]
+                public string ProjectedNameOverride;
+
+                [XmlAttributeAttribute]
+                public bool IsInternal;
+
+                [XmlAttributeAttribute]
+                public string Type;
+            }
+
+            public class Effect
+            {
+                [XmlAttributeAttribute]
+                public string Name;
+
+                [XmlAttributeAttribute]
+                public string ProjectedNameOverride;
+
+                [XmlElement("Input")]
+                public List<EffectProperty> Inputs { get; set; }
+
+                [XmlElement("Property")]
+                public List<EffectProperty> Properties { get; set; }
+            }
 
             public class Namespace
             {
@@ -117,6 +147,9 @@ namespace CodeGen
 
                 [XmlElement("Interface")]
                 public List<Interface> Interfaces { get; set; }
+
+                [XmlElement("Effect")]
+                public List<Effect> Effects { get; set; }
             }
 
             public class Primitive

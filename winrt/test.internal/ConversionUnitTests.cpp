@@ -138,6 +138,13 @@ TEST_CLASS(ConversionUnitTests)
     TEST_METHOD(RectToD2DRect)
     {
         Assert::AreEqual(D2D_RECT_F{ 1, 2, 3, 4 }, ToD2DRect(Rect{ 1, 2, 2, 2 }));
+
+        // Some DImage effects default to infinite size rects, so we need to make sure those convert correctly.
+        // If the conversion is not done carefully, arithmetic on Inf can yield unwanted NaN values.
+        auto inf = std::numeric_limits<float>::infinity();
+
+        Assert::AreEqual(D2D_RECT_F{ 0, 0, inf, inf }, ToD2DRect(Rect{ 0, 0, inf, inf }));
+        Assert::AreEqual(D2D_RECT_F{ -inf, -inf, inf, inf }, ToD2DRect(Rect{ -inf, -inf, inf, inf }));
     }
 
     TEST_METHOD(RectAndRadiusToD2DRoundedRect)
@@ -173,6 +180,13 @@ TEST_CLASS(ConversionUnitTests)
         using ABI::Windows::Foundation::Rect;
 
         Assert::AreEqual(Rect{ 5, 6, 2, 2 }, FromD2DRect(D2D1::RectF(5, 6, 7, 8)));
+
+        // Some DImage effects default to infinite size rects, so we need to make sure those convert correctly.
+        // If the conversion is not done carefully, arithmetic on Inf can yield unwanted NaN values.
+        auto inf = std::numeric_limits<float>::infinity();
+
+        Assert::AreEqual(Rect{ 0, 0, inf, inf }, FromD2DRect(D2D1::RectF(0, 0, inf, inf)));
+        Assert::AreEqual(Rect{ -inf, -inf, inf, inf }, FromD2DRect(D2D1::RectF(-inf, -inf, inf, inf)));
     }
 
     TEST_METHOD(Desaturate)

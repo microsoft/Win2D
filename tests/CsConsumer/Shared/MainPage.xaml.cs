@@ -212,7 +212,7 @@ namespace CsConsumer
                     if (m_bitmap_tiger != null)
                     {
                         GaussianBlurEffect blurEffect = new GaussianBlurEffect();
-                        blurEffect.StandardDeviation = (float)random.NextDouble()*5;
+                        blurEffect.BlurAmount = (float)random.NextDouble()*5;
                         blurEffect.Source = m_bitmap_tiger;
                         ds.DrawImage(blurEffect, new Vector2(horizontalLimit / 2, verticalLimit / 2));
                     }

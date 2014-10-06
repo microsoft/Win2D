@@ -28,4 +28,13 @@ namespace Microsoft.Graphics.Canvas.Effects
         Balanced = 1,
         Quality = 2
     } EffectOptimization;
+
+    [version(VERSION)]
+    typedef enum EffectChannelSelect
+    {
+        Red = 0,
+        Green = 1,
+        Blue = 2,
+        Alpha = 3
+    } EffectChannelSelect;
 }

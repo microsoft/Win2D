@@ -79,6 +79,7 @@
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>
+#include <effects\CanvasEffect.h>
 
 
 // local headers

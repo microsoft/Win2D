@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect">
+      <summary>Displaces the pixels of an input image by the intensity values of a second image.</summary>
+      <remarks>
+        <p>The locations of the pixels in the output are determined using this formula:</p>
+        <p>
+          result[x,y] = Source[x + Amount * (XChannelSelect(Displacement[x,y]) - 0.5),
+                               y + Amount * (YChannelSelect(Displacement[x,y]) - 0.5)]
+        </p>
+        <p>
+          The effect resamples the input image according to the scale property and the 
+          intensity of the displacement image. It uses bilinear interpolation if sampling 
+          from between pixels in the input image.
+        </p>
+        <p>
+          This effect works on straight and premultiplied alpha images. The output alpha 
+          format is the same as the input format.
+        </p>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706330.aspx">D2D Displacement map effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.#ctor">
+      <summary>Initializes a new instance of the DisplacementMapEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.Dispose">
+      <summary>Releases all resources used by the DisplacementMapEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.XChannelSelect">
+      <summary>The effect extracts the intensity from this color channel and uses it to 
+               spatially displace the image in the X direction. Default value
+               <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectChannelSelect.Alpha"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.YChannelSelect">
+      <summary>The effect extracts the intensity from this color channel and uses it to 
+               spatially displace the image in the Y direction. Default value
+               <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectChannelSelect.Alpha"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.Source">
+      <summary>Gets or sets the main input source for DisplacementMap effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.Displacement">
+      <summary>Gets or sets the displacement image which is used to distort the main Source image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.Amount">
+      <summary>Scales the intensity of the displacement. The higher you set this 
+               property, the more the effect displaces the pixels. Default value 0.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1DisplacementMap GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

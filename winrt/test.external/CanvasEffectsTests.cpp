@@ -81,29 +81,29 @@ TEST_CLASS(CanvasBitmapTests)
         GaussianBlurEffect^ blurEffect = ref new GaussianBlurEffect();
 
         // Check float property access through strongly typed interface
-        Assert::AreEqual(3.0f, blurEffect->StandardDeviation);
+        Assert::AreEqual(3.0f, blurEffect->BlurAmount);
         float newValue = 5.0f;
-        blurEffect->StandardDeviation = newValue;
-        Assert::AreEqual(newValue, blurEffect->StandardDeviation);
+        blurEffect->BlurAmount = newValue;
+        Assert::AreEqual(newValue, blurEffect->BlurAmount);
 
         // Check that IEffect Interface connect to the same data vector
         Assert::AreEqual(newValue, safe_cast<IPropertyValue^>(blurEffect->Properties->GetAt(0))->GetSingle());
         newValue = 4.0f;
         IPropertyValue^ newPropertyValue = safe_cast<IPropertyValue^>(PropertyValue::CreateSingle(newValue));
         blurEffect->Properties->SetAt(0, newPropertyValue);
-        Assert::AreEqual(newValue, blurEffect->StandardDeviation);
+        Assert::AreEqual(newValue, blurEffect->BlurAmount);
 
         // Try setting not valid data. 
         // For StandardDeviation in GaussianBlur valid range is (0.0f;250.0f)
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                blurEffect->StandardDeviation = -1.0f;
+                blurEffect->BlurAmount = -1.0f;
             });
             Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                blurEffect->StandardDeviation = 300.0f;
+                blurEffect->BlurAmount = 300.0f;
             });
     }
 
@@ -134,7 +134,7 @@ TEST_CLASS(CanvasBitmapTests)
         transformEffect->InterpolationMode = CanvasImageInterpolation::Anisotropic;
         Assert::IsTrue(CanvasImageInterpolation::Anisotropic == transformEffect->InterpolationMode);
 
-        Assert::ExpectException<Platform::NotImplementedException^>(
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
                 transformEffect->InterpolationMode = CanvasImageInterpolation::HighQualityCubic;

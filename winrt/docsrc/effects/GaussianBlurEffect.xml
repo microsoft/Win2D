@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect">
+      <summary>Creates a blur effect based on the Gaussian function over the entire input image.</summary>
+      <remarks>
+        <example>
+          <p>Suppose, we have a cat image loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, </p>
+          <code>
+            GaussianBlurEffect blurEffect = new GaussianBlurEffect()
+            {
+                Source = cat,
+                BlurAmount = 2.0f
+            };
+          </code>
+          <p>Use the Draw event to display it:</p>
+          <code>
+            void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+            {
+                args.DrawingSession.Clear(Colors.CornflowerBlue);
+                args.DrawingSession.DrawImage(blurEffect, new Point(42, 42));
+            }
+          </code>
+        </example>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706338.aspx">D2D Gaussian blur effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.#ctor">
+      <summary>Initializes a new instance of the GaussianBlurEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Dispose">
+      <summary>Releases all resources used by the GaussianBlurEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.BlurAmount">
+      <summary>Gets or sets the amount of blur to be applied to the image.</summary>
+      <remarks>
+        <p>Default value is 3.0f</p>
+        <p>You can compute the blur radius of the kernel by multiplying the standard deviation by 3. 
+           The units of both the standard deviation and blur radius are DIPs. A value of zero DIPs 
+           disables this effect entirely.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Source">
+      <summary>Gets or sets the input source for Gaussian blur effect.</summary>
+      <remarks>
+        <p>Source can be any IEffectInput object. But source have to be <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> 
+           type if output will be drawn using <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/>. 
+             Any valid effect can be used as source to create effects chain.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Optimization">
+      <summary>Level of performance optimization.</summary>
+      <remarks>
+        <p>Default optimization is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Balanced"/>.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.BorderMode">
+      <summary>Gets and sets border mode for edge pixels.</summary>
+      <remarks>
+        <p>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1GaussianBlur GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

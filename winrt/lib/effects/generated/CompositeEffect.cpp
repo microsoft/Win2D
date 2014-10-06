@@ -13,7 +13,6 @@
 // This file was automatically generated. Please do not edit it manually.
 
 #include "pch.h"
-#include "..\CanvasEffect.h"
 #include "CompositeEffect.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
@@ -22,11 +21,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Composite, 1, 0, false)
     {
         // Set default values
-        SetProperty(D2D1_COMPOSITE_PROP_MODE, static_cast<uint32_t>(D2D1_COMPOSITE_MODE_SOURCE_OVER), true);
+        SetProperty<uint32_t>(D2D1_COMPOSITE_PROP_MODE, D2D1_COMPOSITE_MODE_SOURCE_OVER);
     }
 
-    IMPLEMENT_ENUM_PROPERTY(CompositeEffect,
+    IMPLEMENT_PROPERTY(CompositeEffect,
         Mode,
+        uint32_t,
         CompositeEffectMode,
         D2D1_COMPOSITE_PROP_MODE)
 

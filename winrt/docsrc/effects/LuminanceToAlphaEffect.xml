@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect">
+      <summary>
+        Generates an image with alpha channel set to the luminance of the source image, and 
+        color channels set to 0. Use it to make a semitransparent overlay based on the 
+        brightness of the source image.
+      </summary>
+      <remarks>
+        <p>
+          This effect sets the alpha channel of the output to the luminance of the input 
+          image using the color matrix:
+        </p>
+        <img src="../images/LuminanceToAlpha.png" alt="LuminanceToAlpha diagram" />
+        <p>
+          This effect consumes and outputs premultiplied alpha images. It won't work on 
+          straight alpha images unless they are fully opaque.
+        </p>
+        <p>
+          Note: because images are stored in a gamma-compensated format, before you calculate 
+          the luminance for an image you may wish to first perform inverse gamma correction to 
+          get the true color values for the image. Since images are normally stored at 2.2 
+          gamma, you can use <see cref="T:Microsoft.Graphics.Canvas.Effects.GammaTransferEffect"/> 
+          with an exponent of (1/2.2).
+        </p>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706363.aspx">D2D Luminance to alpha effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect.#ctor">
+      <summary>Initializes a new instance of the LuminanceToAlphaEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect.Dispose">
+      <summary>Releases all resources used by the LuminanceToAlphaEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect.Source">
+      <summary>Gets or sets the input source for LuminanceToAlpha effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1LuminanceToAlpha GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

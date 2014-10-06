@@ -1,0 +1,67 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+// This file was automatically generated. Please do not edit it manually.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass ScaleEffect;
+
+    [version(VERSION), uuid(7522AE90-BEC2-512C-BCC0-4D6A97E3ED34), exclusiveto(ScaleEffect)]
+    interface IScaleEffect : IInspectable
+        requires  Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget]
+        HRESULT Scale([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT Scale([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT CenterPoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT CenterPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+
+        [propput]
+        HRESULT InterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+
+        [propget]
+        HRESULT BorderMode([out, retval] EffectBorderMode* value);
+
+        [propput]
+        HRESULT BorderMode([in] EffectBorderMode value);
+
+        [propget]
+        HRESULT Sharpness([out, retval] float* value);
+
+        [propput]
+        HRESULT Sharpness([in] float value);
+
+        [propget]
+        HRESULT Source([out, retval] IEffectInput** input);
+
+        [propput]
+        HRESULT Source([in] IEffectInput* input);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass ScaleEffect
+    {
+        [default] interface IScaleEffect;
+        interface IEffect;
+    }
+}

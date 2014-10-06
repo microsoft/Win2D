@@ -15,11 +15,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace CodeGen
 {
     public static class OutputEffectType
     {
+        const string stdInfinity = "std::numeric_limits<float>::infinity()";
+
         public static void OutputEnum(Property enumProperty, Formatter output)
         {
             output.WriteLine("[version(VERSION)]");
@@ -90,7 +93,7 @@ namespace CodeGen
             // Output all enums specific to this effect
             foreach (var property in effect.Properties)
             {
-                if (property.Type == "enum" && property.EnumFields.IsUnique)
+                if (property.Type == "enum" && property.EnumFields.IsUnique && property.ShouldProject)
                 {
                     OutputEnum(property, output);
                     output.WriteLine();
@@ -110,7 +113,7 @@ namespace CodeGen
             {
                 // Property with type string describes 
                 // name/author/category/description of effect but not input type
-                if (property.Type == "string")
+                if (property.Type == "string" || property.IsHidden)
                     continue;
 
                 output.WriteLine("[propget]");
@@ -161,12 +164,6 @@ namespace CodeGen
 
             output.WriteLine("#pragma once");
             output.WriteLine();
-            output.WriteLine("#include <CanvasImage.h>");
-            output.WriteLine();
-            output.WriteLine("#include \"ClosablePtr.h\"");
-            output.WriteLine("#include \"ResourceManager.h\"");
-            output.WriteLine("#include \"effects\\CanvasEffect.h\"");
-            output.WriteLine();
             output.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects ");
             output.WriteLine("{");
             output.Indent();
@@ -193,7 +190,7 @@ namespace CodeGen
             {
                 // Property with type string describes 
                 // name/author/category/description of effect but not input type
-                if (property.Type == "string")
+                if (property.Type == "string" || property.IsHidden)
                     continue;
 
                 output.WriteLine("PROPERTY(" + property.Name + ", " + property.TypeNameCpp + ");");
@@ -222,7 +219,6 @@ namespace CodeGen
                 isInputSizeFixed = false;
 
             output.WriteLine("#include \"pch.h\"");
-            output.WriteLine("#include \"..\\CanvasEffect.h\"");
             output.WriteLine("#include \"" + effect.ClassName + ".h\"");
             output.WriteLine();
             output.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects");
@@ -230,13 +226,13 @@ namespace CodeGen
             output.Indent();
             output.WriteLine(effect.ClassName + "::" + effect.ClassName + "()");
             output.WriteIndent();
-            int inputsCoutn = effect.Inputs.InputsList.Count;
+            int inputsCount = effect.Inputs.InputsList.Count;
             if (effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF")
-                inputsCoutn = 0;
+                inputsCount = 0;
             output.WriteLine(": CanvasEffect(CLSID_D2D1"
-                             + effect.Properties[0].Value.Replace(" ", "") + ", "
-                             + (effect.Properties.Count - 4) + ", "
-                             + inputsCoutn + ", "
+                             + EffectGenerator.FormatClassName(effect.Properties[0].Value) + ", "
+                             + (effect.Properties.Count(p => !p.IsHandCoded) - 4) + ", "
+                             + inputsCount + ", "
                              + isInputSizeFixed.ToString().ToLower() + ")");
             output.WriteLine("{");
             output.Indent();
@@ -244,99 +240,14 @@ namespace CodeGen
 
             foreach (var property in effect.Properties)
             {
-                // Property with type string describes 
-                // name/author/category/description of effect but not input type
-                if (property.Type == "string")
-                    continue;
-
-                string defaultValue = property.Properties.Find(internalProperty => internalProperty.Name == "Default").Value;
-
-                if (property.Type == "enum")
-                {
-                    string d2dDefaultEnum = property.EnumFields.NativeEnum.Enums[Int32.Parse(defaultValue)];
-                    output.WriteLine("SetProperty(" + property.NativePropertyName + ", static_cast<uint32_t>(" + d2dDefaultEnum + "), true);");
-                }
-                else if (property.Type.StartsWith("matrix"))
-                {
-                    output.WriteLine(property.TypeNameCpp + " default" + property.Name + " = { " + FixSpacing(defaultValue.Substring(1, defaultValue.Length - 2)) + " };");
-                    output.WriteLine("SetProperty(" + property.NativePropertyName + ", " + " default" + property.Name + ", true);");
-                }
-                else
-                {
-                    string typeExtension = "";
-                    if (property.Type == "float")
-                        typeExtension = "f";
-                    output.WriteLine("SetProperty(" + property.NativePropertyName + ", " + defaultValue + typeExtension + ", true);");
-                }
+                WritePropertyInitialization(output, property);
             }
             output.Unindent();
             output.WriteLine("}");
             output.WriteLine();
             foreach (var property in effect.Properties)
             {
-                // Property with type string describes 
-                // name/author/category/description of effect but not input type
-                if (property.Type == "string")
-                    continue;
-
-                bool isValidation = false;
-                if (property.Properties.Find(internalProperty => internalProperty.Name == "Min") != null)
-                    isValidation = true;
-
-                bool isWithUnsupported = false;
-                if (property.ExcludedEnumIndexes != null && property.ExcludedEnumIndexes.Count != 0)
-                    isWithUnsupported = true;
-
-                if (property.Type == "enum" && !isWithUnsupported)
-                {
-                    output.WriteLine("IMPLEMENT_ENUM_PROPERTY(" + effect.ClassName + ",");
-                }
-                else if (isValidation)
-                {
-                    output.WriteLine("IMPLEMENT_PROPERTY_WITH_VALIDATION(" + effect.ClassName + ",");
-                }
-                else if (isWithUnsupported)
-                {
-                    output.WriteLine("IMPLEMENT_ENUM_PROPERTY_WITH_UNSUPPORTED(" + effect.ClassName + ",");
-                }
-                else
-                {
-                    output.WriteLine("IMPLEMENT_PROPERTY(" + effect.ClassName + ",");
-                }
-
-                output.Indent();
-                output.WriteLine(property.Name + ",");
-                output.WriteLine(property.TypeNameCpp + ",");
-
-                if (isValidation)
-                {
-                    output.WriteLine(property.NativePropertyName + ",");
-                    output.WriteLine(property.Properties.Find(internalProperty => internalProperty.Name == "Min").Value + ",");
-                    output.WriteLine(property.Properties.Find(internalProperty => internalProperty.Name == "Max").Value + ")");
-                }
-                else if (isWithUnsupported)
-                {
-                    output.WriteLine(property.NativePropertyName + ",");
-                    var last = property.ExcludedEnumIndexes.Last();
-                    foreach (var index in property.ExcludedEnumIndexes)
-                    {
-                        if (index == last)
-                        {
-                            output.WriteLine(index + "U)");
-                        }
-                        else
-                        {
-                            output.WriteLine(index + "U,");
-                        }
-                    }
-                }
-                else
-                {
-                    output.WriteLine(property.NativePropertyName + ")");
-                }
-
-                output.Unindent();
-                output.WriteLine();
+                WritePropertyImplementation(effect, output, property);
             }
 
             if (!(effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF"))
@@ -359,21 +270,209 @@ namespace CodeGen
             output.WriteLine("}}}}}");
         }
 
-        public static string FixSpacing(string input)
+        private static void WritePropertyInitialization(Formatter output, Property property)
         {
-            string result = "";
+            // Property with type string describes 
+            // name/author/category/description of effect but not input type
+            if (property.Type == "string" || property.IsHandCoded)
+                return;
 
-            for (int i = 0; i < input.Length; ++i)
-            {
-                if (Char.IsDigit(input[i]) && result.Length != 0 && Char.IsPunctuation(result.Last()))
-                {
-                    result += ' ';
-                }
-                result += input[i];
-            }
+            string defaultValue = property.Properties.Find(internalProperty => internalProperty.Name == "Default").Value;
 
-            return result;
+            output.WriteLine("SetProperty<" + property.TypeNameBoxed + ">(" + property.NativePropertyName + ", " + FormatPropertyValue(property, defaultValue) + ");");
         }
 
+        private static void WritePropertyImplementation(Effect effect, Formatter output, Property property)
+        {
+            // Property with type string describes 
+            // name/author/category/description of effect but not input type
+            if (property.Type == "string" || property.IsHandCoded || property.IsHidden)
+                return;
+
+            var min = property.Properties.Find(internalProperty => internalProperty.Name == "Min");
+            var max = property.Properties.Find(internalProperty => internalProperty.Name == "Max");
+
+            bool isWithUnsupported = (property.ExcludedEnumIndexes != null) && (property.ExcludedEnumIndexes.Count != 0);
+
+            bool isValidation = (min != null) || (max != null) || isWithUnsupported;
+
+            if (isValidation)
+            {
+                output.WriteLine("IMPLEMENT_PROPERTY_WITH_VALIDATION(" + effect.ClassName + ",");
+            }
+            else
+            {
+                output.WriteLine("IMPLEMENT_PROPERTY(" + effect.ClassName + ",");
+            }
+
+            output.Indent();
+            output.WriteLine(property.Name + ",");
+            output.WriteLine(property.TypeNameBoxed + ",");
+            output.WriteLine(property.TypeNameCpp + ",");
+
+            if (isValidation)
+            {
+                output.WriteLine(property.NativePropertyName + ",");
+
+                var validationChecks = new List<string>();
+
+                if (min != null)
+                {
+                    AddValidationChecks(validationChecks, property, min.Value, ">=");
+                }
+
+                if (max != null)
+                {
+                    AddValidationChecks(validationChecks, property, max.Value, "<=");
+                }
+
+                if (isWithUnsupported)
+                {
+                    foreach (var index in property.ExcludedEnumIndexes)
+                    {
+                        validationChecks.Add("value != static_cast<" + property.TypeNameCpp + ">(" + index + ")");
+                    }
+                }
+
+                output.WriteLine("(" + string.Join(") && (", validationChecks) + "))");
+            }
+            else
+            {
+                output.WriteLine(property.NativePropertyName + ")");
+            }
+
+            output.Unindent();
+            output.WriteLine();
+        }
+
+        static void AddValidationChecks(List<string> validationChecks, Property property, string minOrMax, string comparisonOperator)
+        {
+            if (property.Type.StartsWith("vector"))
+            {
+                // Expand out a separate "value.X >= limit" check for each component of the vector.
+                int componentIndex = 0;
+
+                foreach (var componentMinOrMax in SplitVectorValue(minOrMax))
+                {
+                    var componentName = "XYZW"[componentIndex++];
+
+                    validationChecks.Add("value." + componentName + " " + comparisonOperator + " " + componentMinOrMax);
+                }
+            }
+            else
+            {
+                // Simple "value >= limit" check.
+                validationChecks.Add("value " + comparisonOperator + " " + FormatPropertyValue(property, minOrMax));
+            }
+        }
+
+        static string FormatPropertyValue(Property property, string value)
+        {
+            if (property.Type == "enum")
+            {
+                if (property.EnumFields.NativeEnum != null)
+                {
+                    value = property.EnumFields.NativeEnum.Enums[Int32.Parse(value)];
+                }
+                else
+                {
+                    value = property.TypeNameCpp + "::" + property.EnumFields.FieldsList[Int32.Parse(value)].Name;
+                }
+            }
+            else if (property.Type.StartsWith("matrix") || property.Type.StartsWith("vector"))
+            {
+                var values = SplitVectorValue(value);
+
+                if (property.TypeNameCpp == "Color")
+                {
+                    values = ConvertVectorToColor(values);
+                }
+                else if (property.TypeNameCpp == "Rect")
+                {
+                    values = ConvertVectorToRect(values);
+                }
+
+                value = property.TypeNameCpp + "{ " + string.Join(", ", values) + " }";
+            }
+            else if (property.Type == "float")
+            {
+                if (!value.Contains('.'))
+                {
+                    value += ".0";
+                }
+
+                value += "f";
+            }
+            else if (property.Type == "uint32")
+            {
+                value += "u";
+            }
+            else if (property.Type == "bool")
+            {
+                value = "static_cast<boolean>(" + value + ")";
+            }
+
+            return value;
+        }
+
+        static IEnumerable<string> SplitVectorValue(string value)
+        {
+            // Convert "( 1.0, 2.0, 3 )" to "1.0f", "2.0f", "3"
+            return value.TrimStart('(')
+                        .TrimEnd(')')
+                        .Replace(" ", "")
+                        .Replace("inf", stdInfinity)
+                        .Split(',')
+                        .Select(v => v.Contains('.') ? v + 'f' : v);
+        }
+
+        static IEnumerable<string> ConvertVectorToColor(IEnumerable<string> values)
+        {
+            // Convert 0-1 range to 0-255.
+            var colorValues = from value in values
+                              select StringToFloat(value) * 255;
+
+            // Add an alpha component if the input was a 3-component vector.
+            if (colorValues.Count() < 4)
+            {
+                colorValues = colorValues.Concat(new float[] { 255 });
+            }
+
+            // Rearrange RGBA to ARGB.
+            var rgb = colorValues.Take(3);
+            var a = colorValues.Skip(3);
+
+            return from value in a.Concat(rgb)
+                   select value.ToString();
+        }
+
+        static IEnumerable<string> ConvertVectorToRect(IEnumerable<string> values)
+        {
+            // This is in left/top/right/bottom format.
+            var rectValues = values.Select(StringToFloat).ToArray();
+
+            // Convert to x/y/w/h.
+            rectValues[2] -= rectValues[0];
+            rectValues[3] -= rectValues[1];
+
+            return from value in rectValues
+                   select value.ToString().Replace("Infinity", stdInfinity);
+        }
+
+        static float StringToFloat(string value)
+        {
+            if (value == stdInfinity)
+            {
+                return float.PositiveInfinity;
+            }
+            else if (value == "-" + stdInfinity)
+            {
+                return float.NegativeInfinity;
+            }
+            else
+            {
+                return float.Parse(value.Replace("f", ""));
+            }
+        }
     }
 }

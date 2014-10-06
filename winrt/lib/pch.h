@@ -30,12 +30,12 @@
 #include <algorithm>
 #include <assert.h>
 #include <cstdint>
+#include <iterator>
 #include <map>
 #include <memory>
 #include <mutex>
+#include <type_traits>
 #include <vector>
-#include <iterator>
-#include <future>
 
 // Win32
 #include <initguid.h>
@@ -78,4 +78,6 @@
 
 // local
 #include "Conversion.h"
+#include "ResourceManager.h"
 #include "Strings.h"
+#include "effects\CanvasEffect.h"

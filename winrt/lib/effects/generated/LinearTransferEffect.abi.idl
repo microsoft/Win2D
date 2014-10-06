@@ -1,0 +1,115 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+// This file was automatically generated. Please do not edit it manually.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass LinearTransferEffect;
+
+    [version(VERSION), uuid(43D27AD0-8937-5FDB-876A-4E91CB47540C), exclusiveto(LinearTransferEffect)]
+    interface ILinearTransferEffect : IInspectable
+        requires  Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget]
+        HRESULT RedOffset([out, retval] float* value);
+
+        [propput]
+        HRESULT RedOffset([in] float value);
+
+        [propget]
+        HRESULT RedSlope([out, retval] float* value);
+
+        [propput]
+        HRESULT RedSlope([in] float value);
+
+        [propget]
+        HRESULT RedDisable([out, retval] boolean* value);
+
+        [propput]
+        HRESULT RedDisable([in] boolean value);
+
+        [propget]
+        HRESULT GreenOffset([out, retval] float* value);
+
+        [propput]
+        HRESULT GreenOffset([in] float value);
+
+        [propget]
+        HRESULT GreenSlope([out, retval] float* value);
+
+        [propput]
+        HRESULT GreenSlope([in] float value);
+
+        [propget]
+        HRESULT GreenDisable([out, retval] boolean* value);
+
+        [propput]
+        HRESULT GreenDisable([in] boolean value);
+
+        [propget]
+        HRESULT BlueOffset([out, retval] float* value);
+
+        [propput]
+        HRESULT BlueOffset([in] float value);
+
+        [propget]
+        HRESULT BlueSlope([out, retval] float* value);
+
+        [propput]
+        HRESULT BlueSlope([in] float value);
+
+        [propget]
+        HRESULT BlueDisable([out, retval] boolean* value);
+
+        [propput]
+        HRESULT BlueDisable([in] boolean value);
+
+        [propget]
+        HRESULT AlphaOffset([out, retval] float* value);
+
+        [propput]
+        HRESULT AlphaOffset([in] float value);
+
+        [propget]
+        HRESULT AlphaSlope([out, retval] float* value);
+
+        [propput]
+        HRESULT AlphaSlope([in] float value);
+
+        [propget]
+        HRESULT AlphaDisable([out, retval] boolean* value);
+
+        [propput]
+        HRESULT AlphaDisable([in] boolean value);
+
+        [propget]
+        HRESULT ClampOutput([out, retval] boolean* value);
+
+        [propput]
+        HRESULT ClampOutput([in] boolean value);
+
+        [propget]
+        HRESULT Source([out, retval] IEffectInput** input);
+
+        [propput]
+        HRESULT Source([in] IEffectInput* input);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass LinearTransferEffect
+    {
+        [default] interface ILinearTransferEffect;
+        interface IEffect;
+    }
+}

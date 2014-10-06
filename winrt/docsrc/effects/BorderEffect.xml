@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.BorderEffect">
+      <summary>
+        Extends an image to infinite size, specifying whether areas beyond its original 
+        extents are filled by repeating pixels from the edges of the image, 
+        wrapping pixels from the opposite edge of the image, or mirroring the image.
+      </summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706314.aspx">D2D Border effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.BorderEffect.#ctor">
+      <summary>Initializes a new instance of the BorderEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.BorderEffect.Dispose">
+      <summary>Releases all resources used by the BorderEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.Source">
+      <summary>Gets or sets the input source for Border effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.ExtendX">
+      <summary>Specifies how content is tiled horizontally when it extends beyond the image.
+               Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.ExtendY">
+      <summary>Specifies how content is tiled vertically when it extends beyond the image.
+               Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1Border GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

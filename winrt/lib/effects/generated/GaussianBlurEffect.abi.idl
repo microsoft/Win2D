@@ -21,10 +21,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         requires  Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT StandardDeviation([out, retval] float* value);
+        HRESULT BlurAmount([out, retval] float* value);
 
         [propput]
-        HRESULT StandardDeviation([in] float value);
+        HRESULT BlurAmount([in] float value);
 
         [propget]
         HRESULT Optimization([out, retval] EffectOptimization* value);

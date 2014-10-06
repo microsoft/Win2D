@@ -1,0 +1,61 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+// This file was automatically generated. Please do not edit it manually.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass Transform2DEffect;
+
+    [version(VERSION), uuid(4467D118-33E7-5B1A-87C2-0F1F0497353D), exclusiveto(Transform2DEffect)]
+    interface ITransform2DEffect : IInspectable
+        requires  Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget]
+        HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+
+        [propput]
+        HRESULT InterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+
+        [propget]
+        HRESULT BorderMode([out, retval] EffectBorderMode* value);
+
+        [propput]
+        HRESULT BorderMode([in] EffectBorderMode value);
+
+        [propget]
+        HRESULT TransformMatrix([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix3x2* value);
+
+        [propput]
+        HRESULT TransformMatrix([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
+
+        [propget]
+        HRESULT Sharpness([out, retval] float* value);
+
+        [propput]
+        HRESULT Sharpness([in] float value);
+
+        [propget]
+        HRESULT Source([out, retval] IEffectInput** input);
+
+        [propput]
+        HRESULT Source([in] IEffectInput* input);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass Transform2DEffect
+    {
+        [default] interface ITransform2DEffect;
+        interface IEffect;
+    }
+}

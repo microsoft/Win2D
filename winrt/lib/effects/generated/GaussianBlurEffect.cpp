@@ -13,7 +13,6 @@
 // This file was automatically generated. Please do not edit it manually.
 
 #include "pch.h"
-#include "..\CanvasEffect.h"
 #include "GaussianBlurEffect.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
@@ -22,25 +21,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1GaussianBlur, 3, 1, true)
     {
         // Set default values
-        SetProperty(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, 3.0f, true);
-        SetProperty(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, static_cast<uint32_t>(D2D1_GAUSSIANBLUR_OPTIMIZATION_BALANCED), true);
-        SetProperty(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, static_cast<uint32_t>(D2D1_BORDER_MODE_SOFT), true);
+        SetProperty<float>(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, 3.0f);
+        SetProperty<uint32_t>(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, D2D1_GAUSSIANBLUR_OPTIMIZATION_BALANCED);
+        SetProperty<uint32_t>(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
     }
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(GaussianBlurEffect,
-        StandardDeviation,
+        BlurAmount,
+        float,
         float,
         D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION,
-        0.0,
-        250.0)
+        (value >= 0.0f) && (value <= 250.0f))
 
-    IMPLEMENT_ENUM_PROPERTY(GaussianBlurEffect,
+    IMPLEMENT_PROPERTY(GaussianBlurEffect,
         Optimization,
+        uint32_t,
         EffectOptimization,
         D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION)
 
-    IMPLEMENT_ENUM_PROPERTY(GaussianBlurEffect,
+    IMPLEMENT_PROPERTY(GaussianBlurEffect,
         BorderMode,
+        uint32_t,
         EffectBorderMode,
         D2D1_GAUSSIANBLUR_PROP_BORDER_MODE)
 

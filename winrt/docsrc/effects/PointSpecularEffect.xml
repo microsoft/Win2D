@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect">
+      <summary>
+        Lighting effect creates an image that appears to be a reflective surface. This 
+        effect uses the alpha channel as a height map, and lights it with a point light 
+        source applying the specular portion of the Phong lighting model.
+      </summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706368.aspx">D2D Point-specular lighting effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.#ctor">
+      <summary>Initializes a new instance of the PointSpecularEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.Dispose">
+      <summary>Releases all resources used by the PointSpecularEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.SpecularExponent">
+      <summary>Specular power for the Phong lighting model. Larger values produce 
+               more sharply defined highlights. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.SpecularAmount">
+      <summary>Intensity of the specular light. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.Source">
+      <summary>Gets or sets the input source for PointSpecular effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.LightPosition">
+      <summary>Position of the light source. Default value (0,0,0).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.LightColor">
+      <summary>Color of the incoming light. Default value white.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.HeightMapScale">
+      <summary>Height map scale factor in the Z direction. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.HeightMapKernelSize">
+      <summary>Size of the Sobel filter kernel used to convert the input heightmap to 
+               surface normal vectors. Default value (1,1).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.HeightMapInterpolationMode">
+      <summary>Interpolation mode used to filter the height map.
+               Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1PointSpecular GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

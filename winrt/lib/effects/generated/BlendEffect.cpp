@@ -13,7 +13,6 @@
 // This file was automatically generated. Please do not edit it manually.
 
 #include "pch.h"
-#include "..\CanvasEffect.h"
 #include "BlendEffect.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
@@ -22,11 +21,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Blend, 1, 2, true)
     {
         // Set default values
-        SetProperty(D2D1_BLEND_PROP_MODE, static_cast<uint32_t>(D2D1_BLEND_MODE_MULTIPLY), true);
+        SetProperty<uint32_t>(D2D1_BLEND_PROP_MODE, D2D1_BLEND_MODE_MULTIPLY);
     }
 
-    IMPLEMENT_ENUM_PROPERTY(BlendEffect,
+    IMPLEMENT_PROPERTY(BlendEffect,
         Mode,
+        uint32_t,
         BlendEffectMode,
         D2D1_BLEND_PROP_MODE)
 

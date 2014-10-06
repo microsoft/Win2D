@@ -44,6 +44,93 @@
       <Filter>effects\generated</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BorderEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BrightnessEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DirectionalBlurEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DisplacementMapEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DistantDiffuseEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DistantSpecularEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DpiCompensationEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GammaTransferEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HueRotationEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\LinearTransferEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\LuminanceToAlphaEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\MorphologyEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\OpacityMetadataEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\PointDiffuseEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\PointSpecularEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\PremultiplyEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ScaleEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ShadowEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\CustomizedEffectProperties.cpp">
+      <Filter>effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
@@ -85,6 +172,90 @@
       <Filter>effects\generated</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BorderEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BrightnessEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DirectionalBlurEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DisplacementMapEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DistantDiffuseEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DistantSpecularEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DpiCompensationEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GammaTransferEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HueRotationEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\LinearTransferEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\LuminanceToAlphaEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\MorphologyEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\OpacityMetadataEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\PointDiffuseEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\PointSpecularEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\PremultiplyEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ScaleEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ShadowEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -127,6 +298,90 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\BorderEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\BrightnessEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\DirectionalBlurEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\DisplacementMapEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\DistantDiffuseEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\DistantSpecularEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\DpiCompensationEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\GammaTransferEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HueRotationEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\LinearTransferEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\LuminanceToAlphaEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\MorphologyEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\OpacityMetadataEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\PointDiffuseEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\PointSpecularEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\PremultiplyEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ScaleEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ShadowEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
   </ItemGroup>

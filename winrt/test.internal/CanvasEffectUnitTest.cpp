@@ -73,8 +73,8 @@ public:
             };
 
         float value = 5.0f;
-        ThrowIfFailed(m_testEffect->put_StandardDeviation(value));
-        ThrowIfFailed(m_testEffect->get_StandardDeviation(&value));
+        ThrowIfFailed(m_testEffect->put_BlurAmount(value));
+        ThrowIfFailed(m_testEffect->get_BlurAmount(&value));
 
         Assert::IsTrue(isSetPropertyCalled);
         Assert::IsTrue(isGetPropertyCalled);
@@ -118,6 +118,19 @@ public:
 
         Assert::IsTrue(isSetInputCalled);
         Assert::IsTrue(isGetInputCalled);
+
+        Assert::AreEqual(As<IUnknown>(sourceInput).Get(), As<IUnknown>(m_testEffect).Get());
+
+        // set null input
+        isSetInputCalled = isGetInputCalled = false;
+
+        ThrowIfFailed(m_testEffect->put_Source(nullptr));
+        ThrowIfFailed(m_testEffect->get_Source(&sourceInput));
+
+        Assert::IsTrue(isSetInputCalled);
+        Assert::IsTrue(isGetInputCalled);
+
+        Assert::IsNull(sourceInput.Get());
     }
 
     void VerifyEffectRealizationInputs(
@@ -217,7 +230,7 @@ public:
         
         // Set a source and non-default value.
         ThrowIfFailed(testEffect->put_Source(As<IEffectInput>(CreateStubCanvasBitmap()).Get()));
-        ThrowIfFailed(testEffect->put_StandardDeviation(99));
+        ThrowIfFailed(testEffect->put_BlurAmount(99));
 
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
@@ -364,9 +377,9 @@ public:
         testEffects[1]->put_Source(testEffects[2].Get());
         testEffects[2]->put_Source(stubBitmap.Get());
 
-        testEffects[0]->put_StandardDeviation(0);
-        testEffects[1]->put_StandardDeviation(0);
-        testEffects[2]->put_StandardDeviation(0);
+        testEffects[0]->put_BlurAmount(0);
+        testEffects[1]->put_BlurAmount(0);
+        testEffects[2]->put_BlurAmount(0);
 
         // Drawing the first time should set properties and inputs on all three effects.
         ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
@@ -392,17 +405,17 @@ public:
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 1, 1, 1 });
 
         // Draw after changing a property of the root effect.
-        testEffects[0]->put_StandardDeviation(1);
+        testEffects[0]->put_BlurAmount(1);
         ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 1, 1 });
 
         // Draw after changing a property of the second level effect.
-        testEffects[1]->put_StandardDeviation(1);
+        testEffects[1]->put_BlurAmount(1);
         ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 1 });
 
         // Draw after changing a property of the third level effect.
-        testEffects[2]->put_StandardDeviation(1);
+        testEffects[2]->put_BlurAmount(1);
         ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 2 });
 
@@ -458,4 +471,32 @@ public:
             ++expectedSetValues;
         }
     }
+
+    // DImage defines separate (but identical) enum types for different effects.
+    // Effects codegen tool collapses this duplication in the WinRT projection.
+    // Let's validate that the native enums really are the same!
+
+    static_assert(D2D1_3DTRANSFORM_INTERPOLATION_MODE_NEAREST_NEIGHBOR == (int)CanvasImageInterpolation::NearestNeighbor, "enums should match");
+    static_assert(D2D1_3DTRANSFORM_INTERPOLATION_MODE_LINEAR == (int)CanvasImageInterpolation::Linear, "enums should match");
+    static_assert(D2D1_3DTRANSFORM_INTERPOLATION_MODE_CUBIC == (int)CanvasImageInterpolation::Cubic, "enums should match");
+    static_assert(D2D1_3DTRANSFORM_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR == (int)CanvasImageInterpolation::MultiSampleLinear, "enums should match");
+    static_assert(D2D1_3DTRANSFORM_INTERPOLATION_MODE_ANISOTROPIC == (int)CanvasImageInterpolation::Anisotropic, "enums should match");
+
+    static_assert(D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_NEAREST_NEIGHBOR == (int)CanvasImageInterpolation::NearestNeighbor, "enums should match");
+    static_assert(D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR == (int)CanvasImageInterpolation::Linear, "enums should match");
+    static_assert(D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_CUBIC == (int)CanvasImageInterpolation::Cubic, "enums should match");
+    static_assert(D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_MULTI_SAMPLE_LINEAR == (int)CanvasImageInterpolation::MultiSampleLinear, "enums should match");
+    static_assert(D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_ANISOTROPIC == (int)CanvasImageInterpolation::Anisotropic, "enums should match");
+    static_assert(D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC == (int)CanvasImageInterpolation::HighQualityCubic, "enums should match");
+
+    static_assert(D2D1_CONVOLVEMATRIX_SCALE_MODE_NEAREST_NEIGHBOR == (int)CanvasImageInterpolation::NearestNeighbor, "enums should match");
+    static_assert(D2D1_CONVOLVEMATRIX_SCALE_MODE_LINEAR == (int)CanvasImageInterpolation::Linear, "enums should match");
+    static_assert(D2D1_CONVOLVEMATRIX_SCALE_MODE_CUBIC == (int)CanvasImageInterpolation::Cubic, "enums should match");
+    static_assert(D2D1_CONVOLVEMATRIX_SCALE_MODE_MULTI_SAMPLE_LINEAR == (int)CanvasImageInterpolation::MultiSampleLinear, "enums should match");
+    static_assert(D2D1_CONVOLVEMATRIX_SCALE_MODE_ANISOTROPIC == (int)CanvasImageInterpolation::Anisotropic, "enums should match");
+    static_assert(D2D1_CONVOLVEMATRIX_SCALE_MODE_HIGH_QUALITY_CUBIC == (int)CanvasImageInterpolation::HighQualityCubic, "enums should match");
+
+    static_assert(D2D1_BORDER_EDGE_MODE_CLAMP == (int)CanvasEdgeBehavior::Clamp, "enums should match");
+    static_assert(D2D1_BORDER_EDGE_MODE_WRAP == (int)CanvasEdgeBehavior::Wrap, "enums should match");
+    static_assert(D2D1_BORDER_EDGE_MODE_MIRROR == (int)CanvasEdgeBehavior::Mirror, "enums should match");
 };

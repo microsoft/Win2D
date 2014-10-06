@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect">
+      <summary>Alters the colors of an image by applying a per-channel linear transfer function.</summary>
+      <remarks>
+        <p>The linear transfer function is evaluated separately for each color channel:</p>
+        <p>result = (input * slope) + offset</p>
+        <p>This effect works on straight and premultiplied alpha images. It outputs premultiplied alpha.</p>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706362.aspx">D2D Linear transfer effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.#ctor">
+      <summary>Initializes a new instance of the LinearTransferEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.Dispose">
+      <summary>Releases all resources used by the LinearTransferEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.Source">
+      <summary>Gets or sets the input source for LinearTransfer effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.RedSlope">
+      <summary>Controls the slope of the red channel. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.RedOffset">
+      <summary>Offsets the red channel. Default value 0.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.RedDisable">
+      <summary>Disables the red channel transfer function. Default value false.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.GreenSlope">
+      <summary>Controls the slope of the green channel. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.GreenOffset">
+      <summary>Offsets the green channel. Default value 0.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.GreenDisable">
+      <summary>Disables the green channel transfer function. Default value false.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.BlueSlope">
+      <summary>Controls the slope of the blue channel. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.BlueOffset">
+      <summary>Offsets the blue channel. Default value 0.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.BlueDisable">
+      <summary>Disables the blue channel transfer function. Default value false.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.AlphaSlope">
+      <summary>Controls the slope of the alpha channel. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.AlphaOffset">
+      <summary>Offsets the alpha channel. Default value 0.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.AlphaDisable">
+      <summary>Disables the alpha channel transfer function. Default value false.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.ClampOutput">
+      <summary>If set, the effect clamps color values to between 0 and 1 before passing 
+               them on to the next effect in the graph. If false, the effect will not clamp 
+               values, although subsequent effects or the output surface may later clamp if 
+               they are not of high enough precision. Default value false.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1LinearTransfer GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

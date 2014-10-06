@@ -68,7 +68,6 @@ SET DEST_DIR=%GIT_TREE_LOCATION%\tools\codegen\exe\apiref\effects\
 
 SET FILE_LIST=^
 	2DAffineTransform.xml ^
-	3DPerspectiveTransform.xml ^
 	3DTransform.xml ^
 	Arithmetic.xml ^
 	Atlas.xml ^

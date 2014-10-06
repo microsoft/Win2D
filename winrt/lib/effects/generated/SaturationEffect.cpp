@@ -13,7 +13,6 @@
 // This file was automatically generated. Please do not edit it manually.
 
 #include "pch.h"
-#include "..\CanvasEffect.h"
 #include "SaturationEffect.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
@@ -22,15 +21,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Saturation, 1, 1, true)
     {
         // Set default values
-        SetProperty(D2D1_SATURATION_PROP_SATURATION, 0.5f, true);
+        SetProperty<float>(D2D1_SATURATION_PROP_SATURATION, 0.5f);
     }
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(SaturationEffect,
         Saturation,
         float,
+        float,
         D2D1_SATURATION_PROP_SATURATION,
-        0.0,
-        2.0)
+        (value >= 0.0f) && (value <= 2.0f))
 
     IMPLEMENT_INPUT_PROPERTY(SaturationEffect,
         Source,

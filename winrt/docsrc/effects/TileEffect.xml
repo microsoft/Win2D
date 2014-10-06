@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TileEffect">
+      <summary>Repeats the specified region of an image.</summary>
+      <remarks>
+        <p>
+          This effect generates a logically infinite sized image. To create a smaller 
+          tiled region, feed its output through the <see cref="T:Microsoft.Graphics.Canvas.Effects.CropEffect"/>.
+        </p>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706374.aspx">D2D Tile effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.TileEffect.#ctor">
+      <summary>Initializes a new instance of the TileEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.TileEffect.Dispose">
+      <summary>Releases all resources used by the TileEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TileEffect.SourceRectangle">
+      <summary>The region of the image to be tiled.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TileEffect.Source">
+      <summary>Gets or sets the input source for Tile effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TileEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1Tile GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TileEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TileEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

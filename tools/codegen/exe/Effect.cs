@@ -127,11 +127,14 @@ namespace CodeGen
         public Fields EnumFields { get; set; }
 
         public string EffectName { get; set; }
-        public string TypeNameIdl { get; set; }
 
+        public string TypeNameIdl { get; set; }
         public string TypeNameCpp { get; set; }
+        public string TypeNameBoxed { get; set; }
 
         public bool ShouldProject { get; set; }
+        public bool IsHidden { get; set; }
+        public bool IsHandCoded { get; set; }
 
         public string NativePropertyName { get; set; }
 
@@ -149,6 +152,7 @@ namespace CodeGen
         [XmlAttribute("maximum")]
         public string Maximum { get; set; }
     }
+
     public class Inputs
     {
         [XmlElement("Input")]
@@ -197,9 +201,9 @@ namespace CodeGen
             var overridesXmlData = XmlBindings.Utilities.LoadXmlData<Overrides.XmlBindings.Settings>(inputEffectsDir, "../../Settings.xml");
 
             List<Effect> effects = new List<Effect>();
-            foreach (var xmlFilePaht in filePaths)
+            foreach (var xmlFilePath in filePaths)
             {
-                effects.Add(ParseEffectXML(xmlFilePaht));
+                effects.Add(ParseEffectXML(xmlFilePath));
             }
 
             string windowsKitPath = Environment.ExpandEnvironmentVariables(@"%WindowsSdkDir%");
@@ -224,17 +228,16 @@ namespace CodeGen
             AssignEffectsNamesToProperties(effects);
             DetectCommonEnums(effects);
             AssignPropertyNames(effects);
-            ResolveSimilarEnums(effects);
+
+            var overrides = overridesXmlData.Namespaces.Find(namespaceElement => namespaceElement.Name == "Effects");
 
             List<D2DEnum> d2dEnums = ParseD2DEffectsEnums(d2dHeaders);
 
             AssignD2DEnums(effects, d2dEnums);
-            AssignEffectsClassNames(effects);
+            AssignEffectsClassNames(effects, overrides.Effects);
             ResolveTypeNames(effects);
             RegisterUuids(effects);
-
-            OverrideEnums(overridesXmlData.Namespaces.Find(namespaceElement => namespaceElement.Name == "Effects").Enums, effects);
-
+            OverrideEnums(overrides.Enums, effects);
             GenerateOutput(effects, outputPath);
         }
 
@@ -251,21 +254,24 @@ namespace CodeGen
             }
         }
 
-        // TODO #2341: remove this filter once we project all effect types.
-        // It's not worth building a more flexible XML driven config mechanism for this
-        // as we plan to project them all and no longer need this filter very soon.
         public static bool IsEffectEnabled(Effect effect)
         {
-            string[] wantedEffects =
+            switch (effect.Properties[0].Value)
             {
-                "Gaussian Blur",
-                "Saturation",
-                "3D Transform",
-                "Blend",
-                "Composite"
-            };
+                // TODO #831: this effect requires Matrix5x4 support.
+                case "Color Matrix":
+                    return false;
 
-            return wantedEffects.Contains(effect.Properties[0].Value);
+                // TODO #2577: these effects require Blob support.
+                case "Convolve Matrix":
+                case "Discrete Transfer":
+                case "Histogram":
+                case "Table Transfer":
+                    return false;
+
+                default:
+                    return true;
+            }
         }
 
         private static List<Property> GetAllEffectsProperties(List<Effect> effects)
@@ -331,16 +337,66 @@ namespace CodeGen
 
         private static void ResolveTypeNames(List<Effect> effects)
         {
+            var typeRenames = new Dictionary<string, string[]>
+            {
+                // D2D name                 IDL name   C++ name
+                { "bool",   new string[] { "boolean", "boolean"  } },
+                { "int32",  new string[] { "INT32",   "int32_t"  } },
+                { "uint32", new string[] { "UINT32",  "uint32_t" } },
+            };
+
             foreach (var property in GetAllEffectsProperties(effects))
             {
                 if (property.TypeNameIdl != null)
                 {
                     string xmlName = property.TypeNameIdl;
-                    property.TypeNameCpp = xmlName;
-                    if (property.TypeNameIdl.StartsWith("matrix"))
+
+                    if (typeRenames.ContainsKey(xmlName))
                     {
-                        property.TypeNameIdl = "Microsoft.Graphics.Canvas.Numerics." + char.ToUpper(xmlName[0]) + xmlName.Substring(1);
-                        property.TypeNameCpp = "Numerics::" + char.ToUpper(xmlName[0]) + xmlName.Substring(1);
+                        // Specially remapped type, where D2D format XML files don't match WinRT type naming.
+                        property.TypeNameIdl = typeRenames[xmlName][0];
+                        property.TypeNameCpp = typeRenames[xmlName][1];
+                        property.TypeNameBoxed = typeRenames[xmlName][1];
+                    }
+                    else if (xmlName.StartsWith("matrix") || xmlName.StartsWith("vector"))
+                    {
+                        if (property.Name.Contains("Rect"))
+                        {
+                            // D2D passes rectangle properties as float4, but we remap them to use strongly typed Rect.
+                            property.TypeNameIdl = "Windows.Foundation.Rect";
+                            property.TypeNameCpp = "Rect";
+                        }
+                        else if (property.Name.Contains("Color"))
+                        {
+                            // D2D passes color properties as float3 or float4, but we remap them to use strongly typed Color.
+                            property.TypeNameIdl = "Windows.UI.Color";
+                            property.TypeNameCpp = "Color";
+                        }
+                        else
+                        {
+                            // Vector or matrix type.
+                            property.TypeNameIdl = "Microsoft.Graphics.Canvas.Numerics." + char.ToUpper(xmlName[0]) + xmlName.Substring(1);
+                            property.TypeNameCpp = "Numerics::" + char.ToUpper(xmlName[0]) + xmlName.Substring(1);
+                        }
+
+                        // Convert eg. "matrix3x2" to 6, or "vector3" to 3.
+                        var sizeSuffix = xmlName.SkipWhile(char.IsLetter).ToArray();
+                        var sizeElements = new string(sizeSuffix).Split('x').Select(int.Parse);
+                        var size = sizeElements.Aggregate((a, b) => a * b);
+
+                        property.TypeNameBoxed = "float[" + size + "]";
+                    }
+                    else
+                    {
+                        // Any other type.
+                        property.TypeNameCpp = xmlName;
+                        property.TypeNameBoxed = xmlName;
+
+                        // Enums are internally stored as uints.
+                        if (property.Type == "enum")
+                        {
+                            property.TypeNameBoxed = "uint32_t";
+                        }
                     }
                 }
             }
@@ -366,6 +422,7 @@ namespace CodeGen
                         fields.IsUnique = false;
                         fields.IsRepresentative = true;
                         fields2.IsUnique = false;
+                        fields2.FieldsList = fields.FieldsList;
                     }
                 }
             }
@@ -385,7 +442,7 @@ namespace CodeGen
                         property.TypeNameIdl = className + property.Name;
                 }
 
-                property.NativePropertyName = "D2D1_" + property.EffectName.Replace(" ", "").ToUpper() + "_PROP";
+                property.NativePropertyName = "D2D1_" + property.EffectName.Replace(" ", "").Replace("-", "").ToUpper() + "_PROP";
                 foreach (Char c in property.Name)
                 {
                     if (Char.IsUpper(c))
@@ -397,49 +454,15 @@ namespace CodeGen
             }
         }
 
-        // Detect similar enums names with different enums list
-        // It can happen if one Enum Works for 2d and other for 3d cases
-        private static void ResolveSimilarEnums(List<Effect> effects)
-        {
-            List<string> duplicateNames = new List<string>();
-            HashSet<string> namesSet = new HashSet<string>();
-            foreach (var property in GetAllEffectsProperties(effects))
-            {
-                if (property.Type == "enum" && property.EnumFields.IsRepresentative)
-                {
-                    if (namesSet.Contains(property.TypeNameIdl))
-                    {
-                        duplicateNames.Add(property.TypeNameIdl);
-                    }
-                    else
-                    {
-                        namesSet.Add(property.TypeNameIdl);
-                    }
-                }
-            }
-            foreach (var enumName in duplicateNames)
-            {
-                foreach (var property in GetAllEffectsProperties(effects))
-                {
-                    if (property.TypeNameIdl == enumName)
-                    {
-                        if (property.EffectName.Contains("3D"))
-                            property.TypeNameIdl += "3D";
-                        else
-                            property.TypeNameIdl += "2D";
-                    }
-                }
-            }
-        }
-
         // Some effects have names that starts with 3D or 2D prefix.
         // C++ forbidds class name that starts with digits
         // Replace 3D/2D prefix at the end
-        private static void AssignEffectsClassNames(List<Effect> effects)
+        private static void AssignEffectsClassNames(List<Effect> effects, List<Overrides.XmlBindings.Effect> overrides)
         {
             foreach (var effect in effects)
             {
-                string className = effect.Properties[0].Value.Replace(" ", "");
+                string className = FormatClassName(effect.Properties[0].Value);
+
                 string prefix = className.Substring(0, 2);
                 if (prefix == "2D" || prefix == "3D")
                 {
@@ -449,7 +472,57 @@ namespace CodeGen
                 {
                     effect.ClassName = className + "Effect";
                 }
+
+                // Apply effect and property name overrides based on XML settings
+                var effectOverride = overrides.Find(o => o.Name == effect.ClassName);
+                if (effectOverride != null)
+                {
+                    ApplyEffectOverrides(effect, effectOverride);
+                }
+
                 effect.InterfaceName = "I" + effect.ClassName;
+            }
+        }
+
+        private static void ApplyEffectOverrides(Effect effect, Overrides.XmlBindings.Effect effectOverride)
+        {
+            // Override the effect name?
+            if (effectOverride.ProjectedNameOverride != null)
+            {
+                effect.ClassName = effectOverride.ProjectedNameOverride;
+            }
+
+            // Override input names?
+            foreach (var inputOverride in effectOverride.Inputs)
+            {
+                var input = effect.Inputs.InputsList.Find(p => p.Name == inputOverride.Name);
+                input.Name = inputOverride.ProjectedNameOverride;
+            }
+
+            foreach (var propertyOverride in effectOverride.Properties)
+            {
+                var property = effect.Properties.Find(p => p.Name == propertyOverride.Name);
+
+                if (property != null)
+                {
+                    // Override settings of an existing property.
+                    if (propertyOverride.ProjectedNameOverride != null)
+                    {
+                        property.Name = propertyOverride.ProjectedNameOverride;
+                    }
+
+                    property.IsHidden = propertyOverride.IsInternal;
+                }
+                else
+                {
+                    // Add a custom property that is part of our API surface but not defined by D2D.
+                    effect.Properties.Add(new Property
+                    {
+                        Name = propertyOverride.Name,
+                        TypeNameIdl = propertyOverride.Type,
+                        IsHandCoded = true
+                    });
+                }
             }
         }
 
@@ -572,6 +645,14 @@ namespace CodeGen
             result = result.ToLower();
 
             return result;
+        }
+
+        public static string FormatClassName(string name)
+        {
+            return name.Replace(" ", "")
+                       .Replace("-", "")
+                       .Replace("DPI", "Dpi")
+                       .Replace("toAlpha", "ToAlpha");
         }
 
         private static Effect ParseEffectXML(string path)

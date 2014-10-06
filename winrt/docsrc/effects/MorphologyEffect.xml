@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.MorphologyEffect">
+      <summary>
+        Thins or thickens edge boundaries in an image. This effect uses a filter kernel 
+        that is 2 times the size you specify. The kernel is centered on the pixel being 
+        calculated, and returns the maximum value in the kernel (if dilating) or minimum 
+        value (if eroding).
+      </summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706364.aspx">D2D Morphology effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.#ctor">
+      <summary>Initializes a new instance of the MorphologyEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Dispose">
+      <summary>Releases all resources used by the MorphologyEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Width">
+      <summary>Width of the morphology filter kernel. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Source">
+      <summary>Gets or sets the input source for Morphology effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Mode">
+      <summary>Gets or sets the morphology mode. Default value 
+               <see cref="F:Microsoft.Graphics.Canvas.Effects.MorphologyEffectMode.Erode"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Height">
+      <summary>Height of the morphology filter kernel. Default value 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1Morphology GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.MorphologyEffectMode">
+      <summary>Configures behavior of the morphology filter kernel.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.MorphologyEffectMode.Erode">
+      <summary>Flattens the input image, selecting the minimum value found by the filter kernel.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.MorphologyEffectMode.Dilate">
+      <summary>Thickens the input image, selecting the maximum value found by the filter kernel.</summary>
+    </member>
+
+  </members>
+</doc>

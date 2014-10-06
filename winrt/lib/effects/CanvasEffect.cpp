@@ -194,11 +194,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::SetInput(unsigned int index, IEffectInput* input)
     {
-        CheckInPointer(input);
-
-        ComPtr<IEffectInput> effectInput;
-        ThrowIfFailed(input->QueryInterface(effectInput.GetAddressOf()));
-        ThrowIfFailed(m_inputs->SetAt(index, effectInput.Get()));
+        if (input)
+        {
+            ComPtr<IEffectInput> effectInput;
+            ThrowIfFailed(input->QueryInterface(effectInput.GetAddressOf()));
+            ThrowIfFailed(m_inputs->SetAt(index, effectInput.Get()));
+        }
+        else
+        {
+            ThrowIfFailed(m_inputs->SetAt(index, nullptr));
+        }
     }
 
     void CanvasEffect::SetProperties()
@@ -216,13 +221,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             PropertyType propertyType;
             ThrowIfFailed(propertyValue->get_Type(&propertyType));
 
+            // TODO #2283: detailed exception error if failed due to type mismatch
             switch (propertyType)
             {
+            case PropertyType_Boolean:
+            {
+                boolean value;
+                ThrowIfFailed(propertyValue->GetBoolean(&value));
+                ThrowIfFailed(m_resource->SetValue(i, static_cast<BOOL>(value)));
+                break;
+            }
+            case PropertyType_Int32:
+            {
+                INT32 value;
+                ThrowIfFailed(propertyValue->GetInt32(&value));
+                ThrowIfFailed(m_resource->SetValue(i, value));
+                break;
+            }
             case PropertyType_UInt32:
             {
                 UINT32 value;
                 ThrowIfFailed(propertyValue->GetUInt32(&value));
-                // TODO #2283: detailed exception error if failed
                 ThrowIfFailed(m_resource->SetValue(i, value));
                 break;
             }
@@ -230,7 +249,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 float value;
                 ThrowIfFailed(propertyValue->GetSingle(&value));
-                // TODO #2283: detailed exception error if failed
                 ThrowIfFailed(m_resource->SetValue(i, value));
                 break;
             }
@@ -254,9 +272,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 // size 2  => D2D1_VECTOR_2F
                 switch (size)
                 {
+                case 2:
+                {
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_2F*>(value)));
+                    break;
+                }
+                case 3:
+                {
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_3F*>(value)));
+                    break;
+                }
+                case 4:
+                {
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_4F*>(value)));
+                    break;
+                }
+                case 6:
+                {
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_3X2_F*>(value)));
+                    break;
+                }
                 case 16:
                 {
-                    ThrowIfFailed(m_resource->SetValue(i, *(D2D1_MATRIX_4X4_F*)value));
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_4X4_F*>(value)));
                     break;
                 }
                 default:

@@ -45,16 +45,17 @@ public:
     }
 
     IMPLEMENT_PROPERTY(TestEffect,
-        StandardDeviation,
+        BlurAmount,
+        float,
         float,
         0)
 
-        IMPLEMENT_MOCK_PROPERTY(Optimization, EffectOptimization)
-        IMPLEMENT_MOCK_PROPERTY(BorderMode, EffectBorderMode)
+    IMPLEMENT_MOCK_PROPERTY(Optimization, EffectOptimization)
+    IMPLEMENT_MOCK_PROPERTY(BorderMode, EffectBorderMode)
 
-        IMPLEMENT_INPUT_PROPERTY(TestEffect, Source, 0)
+    IMPLEMENT_INPUT_PROPERTY(TestEffect, Source, 0)
 
-        std::function<void()> MockGetInput;
+    std::function<void()> MockGetInput;
     std::function<void()> MockSetInput;
 
     std::function<void()> MockGetProperty;
@@ -78,19 +79,19 @@ public:
         CanvasEffect::SetInput(index, input);
     }
 
-    template<typename T>
-    void GetProperty(unsigned int index, T value)
+    template<typename TBoxed, typename TPublic>
+    void GetProperty(unsigned int index, TPublic* value)
     {
         if (MockGetProperty)
             MockGetProperty();
-        CanvasEffect::GetProperty<T>(index, value);
+        CanvasEffect::GetProperty<TBoxed>(index, value);
     }
 
-    template<typename T>
-    void SetProperty(unsigned int index, T value, bool isDefault = false)
+    template<typename TBoxed, typename TPublic>
+    void SetProperty(unsigned int index, TPublic const& value)
     {
         if (MockSetProperty)
             MockSetProperty();
-        CanvasEffect::SetProperty<T>(index, value, isDefault);
+        CanvasEffect::SetProperty<TBoxed>(index, value);
     }
 };

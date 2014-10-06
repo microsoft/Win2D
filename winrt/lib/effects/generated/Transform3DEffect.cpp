@@ -13,7 +13,6 @@
 // This file was automatically generated. Please do not edit it manually.
 
 #include "pch.h"
-#include "..\CanvasEffect.h"
 #include "Transform3DEffect.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
@@ -22,25 +21,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D13DTransform, 3, 1, true)
     {
         // Set default values
-        SetProperty(D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE, static_cast<uint32_t>(D2D1_3DTRANSFORM_INTERPOLATION_MODE_LINEAR), true);
-        SetProperty(D2D1_3DTRANSFORM_PROP_BORDER_MODE, static_cast<uint32_t>(D2D1_BORDER_MODE_SOFT), true);
-        Numerics::Matrix4x4 defaultTransformMatrix = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-        SetProperty(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX,  defaultTransformMatrix, true);
+        SetProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE, D2D1_3DTRANSFORM_INTERPOLATION_MODE_LINEAR);
+        SetProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        SetProperty<float[16]>(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix4x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
     }
 
-    IMPLEMENT_ENUM_PROPERTY_WITH_UNSUPPORTED(Transform3DEffect,
+    IMPLEMENT_PROPERTY_WITH_VALIDATION(Transform3DEffect,
         InterpolationMode,
+        uint32_t,
         CanvasImageInterpolation,
         D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE,
-        5U)
+        (value != static_cast<CanvasImageInterpolation>(5)))
 
-    IMPLEMENT_ENUM_PROPERTY(Transform3DEffect,
+    IMPLEMENT_PROPERTY(Transform3DEffect,
         BorderMode,
+        uint32_t,
         EffectBorderMode,
         D2D1_3DTRANSFORM_PROP_BORDER_MODE)
 
     IMPLEMENT_PROPERTY(Transform3DEffect,
         TransformMatrix,
+        float[16],
         Numerics::Matrix4x4,
         D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX)
 

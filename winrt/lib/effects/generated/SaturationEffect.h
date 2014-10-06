@@ -14,12 +14,6 @@
 
 #pragma once
 
-#include <CanvasImage.h>
-
-#include "ClosablePtr.h"
-#include "ResourceManager.h"
-#include "effects\CanvasEffect.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
     using namespace ::Microsoft::WRL;

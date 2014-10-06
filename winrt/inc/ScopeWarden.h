@@ -27,22 +27,24 @@ template<typename FN>
 class ScopeWarden
 {
 public:
-    explicit __declspec(nothrow)  ScopeWarden(FN* p) : m_p(p)
+    explicit __declspec(nothrow) ScopeWarden(FN&& fn)
+        : m_fn(fn)
+        , m_dismissed(false)
     {
     }
 
     void __declspec(nothrow) Dismiss()
     {
-        m_p = nullptr;
+        m_dismissed = true;
     }
 
     __declspec(nothrow) ~ScopeWarden()
     {
-        if (m_p)
+        if (!m_dismissed)
         {
             try
             {
-                (*m_p)();
+                m_fn();
             }
             catch (...)
             {
@@ -56,12 +58,12 @@ public:
     ScopeWarden& operator=(ScopeWarden const&) = delete;
 
 private:
-    FN* m_p;
+    FN m_fn;
+    bool m_dismissed;
 };
 
 template<typename FN>
 ScopeWarden<FN> MakeScopeWarden(FN&& fn)
 {
-    return ScopeWarden<FN>(std::addressof(fn));
+    return ScopeWarden<FN>(std::move(fn));
 }
-

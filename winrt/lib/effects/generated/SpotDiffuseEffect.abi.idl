@@ -1,0 +1,91 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+// This file was automatically generated. Please do not edit it manually.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass SpotDiffuseEffect;
+
+    [version(VERSION), uuid(B3DCBE44-1DD7-5CB3-95E5-A48974CD12E8), exclusiveto(SpotDiffuseEffect)]
+    interface ISpotDiffuseEffect : IInspectable
+        requires  Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget]
+        HRESULT LightPosition([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector3* value);
+
+        [propput]
+        HRESULT LightPosition([in] Microsoft.Graphics.Canvas.Numerics.Vector3 value);
+
+        [propget]
+        HRESULT LightTarget([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector3* value);
+
+        [propput]
+        HRESULT LightTarget([in] Microsoft.Graphics.Canvas.Numerics.Vector3 value);
+
+        [propget]
+        HRESULT Focus([out, retval] float* value);
+
+        [propput]
+        HRESULT Focus([in] float value);
+
+        [propget]
+        HRESULT LimitingConeAngle([out, retval] float* value);
+
+        [propput]
+        HRESULT LimitingConeAngle([in] float value);
+
+        [propget]
+        HRESULT DiffuseAmount([out, retval] float* value);
+
+        [propput]
+        HRESULT DiffuseAmount([in] float value);
+
+        [propget]
+        HRESULT HeightMapScale([out, retval] float* value);
+
+        [propput]
+        HRESULT HeightMapScale([in] float value);
+
+        [propget]
+        HRESULT LightColor([out, retval] Windows.UI.Color* value);
+
+        [propput]
+        HRESULT LightColor([in] Windows.UI.Color value);
+
+        [propget]
+        HRESULT HeightMapKernelSize([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT HeightMapKernelSize([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT HeightMapInterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+
+        [propput]
+        HRESULT HeightMapInterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+
+        [propget]
+        HRESULT Source([out, retval] IEffectInput** input);
+
+        [propput]
+        HRESULT Source([in] IEffectInput* input);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass SpotDiffuseEffect
+    {
+        [default] interface ISpotDiffuseEffect;
+        interface IEffect;
+    }
+}

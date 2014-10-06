@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.AtlasEffect">
+      <summary>Outputs a specified region from an atlas bitmap.</summary>
+      <remarks>
+        <p>
+          The atlas effect is useful if you want to load a large image made up of many 
+          smaller images, such as various frames of a sprite. The effect crops the input 
+          to the given SourceRectangle, and then translates the origin of the result to (0,0).
+        </p>
+        <p>
+          To crop without translating, use <see cref="T:Microsoft.Graphics.Canvas.Effects.CropEffect"/>.
+        </p>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh780337.aspx">D2D Atlas effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.AtlasEffect.#ctor">
+      <summary>Initializes a new instance of the AtlasEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.AtlasEffect.Dispose">
+      <summary>Releases all resources used by the AtlasEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.SourceRectangle">
+      <summary>Selected region of the source image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.Source">
+      <summary>Gets or sets the input source for Atlas effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.PaddingRectangle">
+      <summary>The padding rectangle specifies how much padding was included when 
+               creating the atlas bitmap. This should only be larger than SourceRectangle 
+               if the pixels between the two rectangles are transparent black. This may 
+               result in Direct2D executing the graph more efficiently.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1Atlas GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>

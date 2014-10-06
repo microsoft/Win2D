@@ -27,8 +27,8 @@ namespace Microsoft.Graphics.Canvas.Effects
         DestinationAtop = 7,
         Xor = 8,
         Add = 9,
-        SourceCopy = 10,
-        BoundedSourceCopy = 11,
+        Copy = 10,
+        BoundedCopy = 11,
         MaskInvert = 12
     } CompositeEffectMode;
 

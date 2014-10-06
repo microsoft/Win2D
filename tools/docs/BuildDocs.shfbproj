@@ -46,6 +46,7 @@
 
       <!-- Reference documentation source XML -->
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\effects\*.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\numerics\DotNet\docsrc\*.xml" />
 
       <!-- Generated placeholder documentation linking to types on MSDN -->

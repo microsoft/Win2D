@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.Transform2DEffect">
+      <summary>Applies a 2D affine transform matrix to an image.</summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706309.aspx">D2D 2D Affine transform effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.#ctor">
+      <summary>Initializes a new instance of the Transform2DEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.Dispose">
+      <summary>Releases all resources used by the Transform2DEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.TransformMatrix">
+      <summary>Gets or sets the 3x2 affine transform matrix. Default value is the identity matrix.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.Source">
+      <summary>Gets or sets the input source for Transform2D effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.Sharpness">
+      <summary>When using high quality cubic interpolation mode, specifies the sharpness 
+               level of the scaling filter as a float between 0 and 1.</summary>
+      <remarks>You can use sharpness to adjust the quality of image scaling. 
+               The sharpness factor affects the shape of the filter kernel. The higher 
+               the sharpness factor, the smaller the kernel.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.InterpolationMode">
+      <summary>Interpolation mode. Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.BorderMode">
+      <summary>Border mode for edge pixels. Default value <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D12DAffineTransform GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.Transform2DEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+  </members>
+</doc>
