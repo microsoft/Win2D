@@ -64,6 +64,7 @@
 // Inc
 #include <AsyncOperation.h>
 #include <ClosablePtr.h>
+#include <ComArray.h>
 #include <Constants.h>
 #include <ErrorHandling.h>
 #include <Nullable.h>

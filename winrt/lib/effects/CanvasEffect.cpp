@@ -254,11 +254,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
             case PropertyType_SingleArray:
             {
-                float* value = nullptr;
-                unsigned int size;
-                ThrowIfFailed(propertyValue->GetSingleArray(&size, &value));
-
-                auto freeArrayWarden = MakeScopeWarden([&] { CoTaskMemFree(value); });
+                ComArray<float> value;
+                ThrowIfFailed(propertyValue->GetSingleArray(value.GetAddressOfSize(), value.GetAddressOfData()));
 
                 // Since d2d effects have input array based types:
                 // D2D1_MATRIX_3X2_F, D2D1_MATRIX_4X4_F, D2D1_MATRIX_5X4_F, 
@@ -270,31 +267,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 // size 4  => D2D1_VECTOR_4F
                 // size 3  => D2D1_VECTOR_3F
                 // size 2  => D2D1_VECTOR_2F
-                switch (size)
+                switch (value.GetSize())
                 {
                 case 2:
                 {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_2F*>(value)));
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_2F*>(value.GetData())));
                     break;
                 }
                 case 3:
                 {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_3F*>(value)));
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_3F*>(value.GetData())));
                     break;
                 }
                 case 4:
                 {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_4F*>(value)));
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_4F*>(value.GetData())));
                     break;
                 }
                 case 6:
                 {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_3X2_F*>(value)));
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_3X2_F*>(value.GetData())));
                     break;
                 }
                 case 16:
                 {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_4X4_F*>(value)));
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_4X4_F*>(value.GetData())));
                     break;
                 }
                 default:

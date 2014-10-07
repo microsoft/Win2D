@@ -93,7 +93,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     void CopyStops(
-        ComPtr<ID2D1GradientStopCollection> const stopCollection, 
+        ComPtr<ID2D1GradientStopCollection> const& stopCollection, 
         UINT32* valueCount, 
         CanvasGradientStop** valueElements)
     {
@@ -108,27 +108,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         d2dStops.resize(stopCount);
         stopCollection1->GetGradientStops1(&(d2dStops[0]), stopCount);
 
-        std::vector<CanvasGradientStop> stops;
-        stops.resize(stopCount);
-        for (UINT i = 0; i < stopCount; ++i)
-        {
-            stops[i].Position = d2dStops[i].position;
-            stops[i].Color = ToWindowsColor(d2dStops[i].color);
-            // TODO #837: Decide what to do about high-color gradient stops.
-        }
+        auto stops = TransformToComArray<CanvasGradientStop>(d2dStops.begin(), d2dStops.end(), 
+            [](D2D1_GRADIENT_STOP const& d2dStop)
+            {
+                // TODO #837: Decide what to do about high-color gradient stops.
+                return CanvasGradientStop{ d2dStop.position, ToWindowsColor(d2dStop.color) };
+            });
 
-        assert(stops.size() <= UINT_MAX);
-
-        // TODO #2508: Use RAII wrapper for these types of allocations.
-        auto sizeInBytes = stops.size() * sizeof(CanvasGradientStop);
-        (*valueCount) = static_cast<UINT32>(stops.size());
-        (*valueElements) = static_cast<CanvasGradientStop*>(CoTaskMemAlloc(sizeInBytes));
-        ThrowIfNullPointer(*valueElements, E_OUTOFMEMORY);
-
-        if (stops.size() > 0)
-        {
-            memcpy_s(*valueElements, sizeInBytes, &stops[0], sizeInBytes);
-        }
+        stops.Detach(valueCount, valueElements);
     }
 
     uint8_t DesaturateChannel(uint8_t channel, float amount)

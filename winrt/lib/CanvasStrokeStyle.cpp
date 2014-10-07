@@ -252,15 +252,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 assert(m_customDashElements.size() <= UINT_MAX);
 
-                auto sizeInBytes = m_customDashElements.size() * sizeof(float);
-                (*valueCount) = static_cast<UINT32>(m_customDashElements.size());
-                (*valueElements) = static_cast<float*>(CoTaskMemAlloc(sizeInBytes));
-                ThrowIfNullPointer(*valueElements, E_OUTOFMEMORY);
-
-                if (m_customDashElements.size() > 0)
-                {
-                    memcpy_s(*valueElements, sizeInBytes, &m_customDashElements[0], sizeInBytes);
-                }
+                ComArray<float> array(m_customDashElements.begin(), m_customDashElements.end());
+                array.Detach(valueCount, valueElements);
             });
     }
 

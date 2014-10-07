@@ -172,17 +172,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             static void Unbox(IPropertyValue* propertyValue, TPublic* result)
             {
-                float* arrayValue = nullptr;
-                unsigned int size;
+                ComArray<float> value;
 
-                ThrowIfFailed(propertyValue->GetSingleArray(&size, &arrayValue));
+                ThrowIfFailed(propertyValue->GetSingleArray(value.GetAddressOfSize(), value.GetAddressOfData()));
 
-                auto freeArrayWarden = MakeScopeWarden([&] { CoTaskMemFree(arrayValue); });
-
-                if (size != N)
+                if (value.GetSize() != N)
                     ThrowHR(E_BOUNDS);
 
-                *result = *reinterpret_cast<TPublic*>(arrayValue);
+                *result = *reinterpret_cast<TPublic*>(value.GetData());
             }
         };
 

@@ -14,7 +14,7 @@
 
 #include <winstring.h>
 
-#include <ErrorHandling.h>
+#include "ErrorHandling.h"
 
 //
 // Wrapper around HSTRING that uses exceptions for error handling so that it
@@ -28,9 +28,9 @@
 // For testing purposes, WinStringT is templated on a base class.  This
 // allows tests to replace the various Windows APIs (eg WindowsCreateString)
 // with test doubles.
-struct Empty {};
+struct EmptyWinStringBase {};
 
-template<typename Base=Empty>
+template<typename Base=EmptyWinStringBase>
 class WinStringT : public Base
 {
     HSTRING m_value;
