@@ -28,7 +28,7 @@ TEST_CLASS(ComArrayTests)
         {
             if (p)
             {
-                Assert::AreEqual(1U, GetAllocations()->count(p));
+                Assert::AreEqual<size_t>(1U, GetAllocations()->count(p));
                 GetAllocations()->erase(p);
             }
             ::CoTaskMemFree(p);
