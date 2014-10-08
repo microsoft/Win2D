@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -36,9 +36,11 @@
     <Exec Command="mdmerge -metadata_dir &quot;$(WindowsSDK_MetadataPath)&quot; -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -v -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasControl.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasLinearGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
@@ -50,6 +52,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Gradients.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
@@ -98,7 +101,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageBrush.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasGradientBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasLinearGradientBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CustomizedEffectProperties.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
@@ -148,6 +152,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Gradients.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />

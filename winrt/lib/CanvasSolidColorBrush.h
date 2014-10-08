@@ -13,6 +13,7 @@
 #pragma once
 
 #include "ResourceManager.h"
+#include "CanvasBrush.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -20,13 +21,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasSolidColorBrush;
     class CanvasSolidColorBrushManager;
-
-    [uuid(3A6BF1D2-731A-4EBB-AA40-1419A89302F6)]
-    class ICanvasBrushInternal : public IUnknown
-    {
-    public:
-        virtual ComPtr<ID2D1Brush> GetD2DBrush() = 0;
-    };
 
     [uuid(8FE46BCD-8594-44F4-AAB2-16E192BDC05F)]
     class ICanvasSolidColorBrushInternal : public ICanvasBrushInternal
@@ -41,22 +35,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef CanvasSolidColorBrush wrapper_t;
         typedef ICanvasSolidColorBrush wrapper_interface_t;
         typedef CanvasSolidColorBrushManager manager_t;
-    };
-
-    class CanvasBrush
-        : public Implements<
-            RuntimeClassFlags<WinRtClassicComMix>,
-            ICanvasBrush, 
-            CloakedIid<ICanvasBrushInternal>>
-    {
-    public:
-        IFACEMETHOD(get_Opacity)(_Out_ float *value) override;
-
-        IFACEMETHOD(put_Opacity)(_In_ float value) override;
-
-        IFACEMETHOD(get_Transform)(_Out_ Numerics::Matrix3x2 *value) override;
-
-        IFACEMETHOD(put_Transform)(_In_ Numerics::Matrix3x2 value) override;
     };
 
     class CanvasSolidColorBrush : RESOURCE_WRAPPER_RUNTIME_CLASS(

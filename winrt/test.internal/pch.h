@@ -66,13 +66,15 @@
 
 // winrt.lib
 #include <CanvasBitmap.h>
+#include <CanvasBrush.h>
 #include <CanvasControl.h>
 #include <CanvasDevice.h>
 #include <CanvasDrawingSession.h>
-#include <CanvasGradientBrush.h>
 #include <CanvasImageBrush.h>
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>
+#include <CanvasLinearGradientBrush.h>
+#include <CanvasRadialGradientBrush.h>
 #include <CanvasRenderTarget.h>
 #include <CanvasSolidColorBrush.h>
 #include <CanvasStrokeStyle.h>

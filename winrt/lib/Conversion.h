@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "CanvasSolidColorBrush.h"
+#include "CanvasBrush.h"
 #include "ErrorHandling.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
