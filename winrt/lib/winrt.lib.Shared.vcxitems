@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -59,6 +59,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Strings.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TextureUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.h" />
@@ -153,6 +154,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Gradients.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TextureUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />

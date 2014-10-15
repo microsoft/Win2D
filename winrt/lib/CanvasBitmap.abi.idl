@@ -19,6 +19,22 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasBitmap;
     runtimeclass CanvasDevice;
 
+    //
+    // Projection of the encoders described here: 
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ee690311(v=vs.85).aspx
+    //
+    [version(VERSION)]
+    typedef enum CanvasBitmapFileFormat
+    {
+        Auto,
+        Bmp,
+        Png,
+        Jpeg,
+        Tiff,
+        Gif,
+        JpegXR
+    } CanvasBitmapFileFormat;
+
     [version(VERSION), uuid(F2D0EB0E-16F3-4BCF-B1D1-04834AB97DE4), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmapFactory : IInspectable
     {
@@ -37,6 +53,59 @@ namespace Microsoft.Graphics.Canvas
 
         [propget]
         HRESULT Bounds([out, retval] Windows.Foundation.Rect* bounds);
+
+        //
+        // Example usage (in C#):
+        //
+        // await myBitmap.SaveToFileAsync("Myfile.png", CanvasBitmapFileFormat.Png);
+        //
+        // Use myBitmap.Description.Format to make sense of GetBytes() .
+        // byte[] byteArr = m_bitmap_tiger.GetBytes(); 
+        //
+        // Note that this fails if the bitmap's format is not B8G8R8A8 UNORM.     
+        // Color[] colorArr = m_bitmap_tiger.GetColors(); 
+        //
+            
+        // This overload infers the encoder from the file extension.
+        [overload("SaveToFileAsync")]
+        HRESULT SaveToFileAsync(
+            [in] HSTRING fileName,
+            [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
+
+        [overload("SaveToFileAsync"), default_overload]
+        HRESULT SaveToFileWithBitmapFileFormatAsync(
+            [in] HSTRING fileName,
+            [in] CanvasBitmapFileFormat fileFormat,
+            [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
+
+        [overload("SaveToFileAsync"), default_overload]
+        HRESULT SaveToFileWithBitmapFileFormatAndQualityAsync(
+            [in] HSTRING fileName,
+            [in] CanvasBitmapFileFormat fileFormat,
+            [in] float quality,
+            [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
+
+        [overload("GetBytes")]
+        HRESULT GetBytes(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] BYTE** valueElements);
+
+        [overload("GetBytes")]
+        HRESULT GetBytesWithSubrectangle(
+            [in] Windows.Foundation.Rect subrectangle,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] BYTE** valueElements);
+
+        [overload("GetColors")]
+        HRESULT GetColors(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] Windows.UI.Color** valueElements);
+
+        [overload("GetColors")]
+        HRESULT GetColorsWithSubrectangle(
+            [in] Windows.Foundation.Rect subrectangle,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] Windows.UI.Color** valueElements);
     };
 
     [version(VERSION), uuid(C8948DEA-A41D-4CC2-AF9A-FDDE01B606DC), exclusiveto(CanvasBitmap)]

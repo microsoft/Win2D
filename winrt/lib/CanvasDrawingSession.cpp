@@ -1903,9 +1903,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto restoreWordWrapping = MakeScopeWarden(
             [&]
-        {
-            format->put_WordWrapping(oldWordWrapping);
-        });
+            {
+                format->put_WordWrapping(oldWordWrapping);
+            });
 
         DrawTextAtRectImpl(text, rect, brush, format);
     }

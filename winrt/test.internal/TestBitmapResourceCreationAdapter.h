@@ -38,6 +38,19 @@ public:
         Assert::Fail(); // Unexpected
         return nullptr;
     }
+
+    virtual void SaveLockedMemoryToFile(
+        HSTRING fileName,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        unsigned int width,
+        unsigned int height,
+        float dpiX,
+        float dpiY,
+        ScopedBitmapLock* bitmapLock)
+    {
+        Assert::Fail(); // Unexpected
+    }
 };
 
 

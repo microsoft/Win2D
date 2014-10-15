@@ -120,6 +120,80 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified alpha behavior.</summary>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String)">
+      <summary>Saves the entire bitmap to a file with the specified file name, using a default quality level of 0.9 and CanvasBitmapFileFormat.Auto. CanvasBitmapFileFormat.Auto will determine which encoding format to use based on the file extension.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
+      <summary>Saves the entire bitmap to a file with the specified file name and file format, and a default quality level of 0.9.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
+      <summary>Saves the entire bitmap to a file with the specified file name and file format, and quality level.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBytes">
+      <summary>Returns an array of raw byte data for the entire bitmap. Works on bitmaps of any format. The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).</summary>
+      <remarks>
+      The number of bytes per pixel is determined from CanvasBitmap's pixel format. For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBytes(Windows.Foundation.Rect)">
+      <summary>Returns an array of raw byte data for a subregion of the bitmap. Works on bitmaps of any format. The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).</summary>
+      <remarks>
+      The number of bytes per pixel is determined from CanvasBitmap's pixel format. For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+      </remarks>    
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetColors">
+      <summary>Returns an array of color data for the entire bitmap. The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels).</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetColors(Windows.Foundation.Rect)">
+      <summary>Returns an array of color data for a subregion of the bitmap The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels).</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat">
+      <summary>This denotes the format used when saving a bitmap to a file.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Auto">
+      <summary>The actual encoding used is determined from the file extension. If the file extension is not recognized, an error is reported.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Bmp">
+      <summary>Indicates Windows Imaging Component's bitmap encoder.</summary>
+      <remarks>
+      This format stores DPI as a measurement of pixels per meter, while Direct2D and many image-editing utilities store DPI as pixels per inch. While it's typically harmless, it's worth noting that use of this format can sometimes produce unexpectedly non-round-numbers for DPI.
+      This file format doesn't support different quality levels. Different values for 'quality', if specified, will produce the same result.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Png">
+      <summary>Indicates Windows Imaging Component's PNG encoder.</summary>
+      <remarks>
+      This format stores DPI as a measurement of pixels per meter, while Direct2D and many image-editing utilities store DPI as pixels per inch. While it's typically harmless, it's worth noting that use of this format can sometimes produce unexpectedly non-round-numbers for DPI.
+      This file format doesn't support different quality levels. Different values for 'quality', if specified, will produce the same result.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Jpeg">
+      <summary>Indicates Windows Imaging Component's bitmap JPEG encoder.</summary>
+      <remarks>
+      This format supports the selection of a quality level, between 0.0 and 1.0. Quality 0.0 will produce a low quality image with a small file size. Quality 1.0 will produce a high quality image with a large file size.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Tiff">
+      <summary>Indicates Windows Imaging Component's TIFF encoder.</summary>
+      <remarks>
+       This file format doesn't support different quality levels. Different values for 'quality', if specified, will produce the same result.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Gif">
+      <summary>Indicates Windows Imaging Component's GIF encoder.</summary>
+      <remarks>
+      This file format doesn't support different quality levels. Different values for 'quality', if specified, will produce the same result.
+      This format doesn't support storing DPI. No matter what DPI a CanvasBitmap has, a GIF file saved from it will have a default DPI of 96.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.JpegXR">
+      <summary>Indicates Windows Imaging Component's JPEGXR encoder.</summary>
+      <remarks>
+      This format supports the selection of a quality level, between 0.0 and 1.0. Quality 0.0 will produce a low quality image with a small file size. Quality 1.0 will produce a high quality image with a large file size.
+      This format is called Windows Media Photo (WMP) in some documentation.
+      </remarks>
+    </member>
     
   </members>
 </doc>

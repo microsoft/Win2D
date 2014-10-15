@@ -263,6 +263,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1_SIZE_U{ static_cast<UINT>(width), static_cast<UINT>(height) };
     }
 
+    inline D2D1_RECT_U ToD2DRectU(ABI::Windows::Foundation::Rect const& rect)
+    {
+        RECT longRect = ToRECT(rect);
+
+        if (longRect.left < 0) ThrowHR(E_INVALIDARG);
+        if (longRect.top < 0) ThrowHR(E_INVALIDARG);
+        if (longRect.right < 0) ThrowHR(E_INVALIDARG);
+        if (longRect.bottom < 0) ThrowHR(E_INVALIDARG);
+
+        D2D1_RECT_U d2dRect;
+        d2dRect.left = static_cast<UINT32>(longRect.left);
+        d2dRect.top = static_cast<UINT32>(longRect.top);
+        d2dRect.right = static_cast<UINT32>(longRect.right);
+        d2dRect.bottom = static_cast<UINT32>(longRect.bottom);
+
+        return d2dRect;
+    }
+
     inline D2D1_ROUNDED_RECT ToD2DRoundedRect(ABI::Windows::Foundation::Rect const& rect, float rx, float ry)
     {
         return D2D1_ROUNDED_RECT{ ToD2DRect(rect), rx, ry };

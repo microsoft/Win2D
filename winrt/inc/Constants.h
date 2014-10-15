@@ -11,3 +11,5 @@
 // under the License.
 
 #define DEFAULT_DPI 96.0f
+
+#define DEFAULT_CANVASBITMAP_QUALITY 0.9f

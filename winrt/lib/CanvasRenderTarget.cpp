@@ -23,6 +23,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     // CanvasRenderTargetManager
     //
+    CanvasRenderTargetManager::CanvasRenderTargetManager(
+        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
+        : m_adapter(adapter)
+    {
+
+    }
 
     ComPtr<CanvasRenderTarget> CanvasRenderTargetManager::CreateNew(
         ICanvasDevice* canvasDevice,
@@ -52,6 +58,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CheckMakeResult(renderTarget);
         
         return renderTarget;
+    }
+
+    ICanvasBitmapResourceCreationAdapter* CanvasRenderTargetManager::GetAdapter()
+    {
+        return m_adapter.get();
     }
 
 

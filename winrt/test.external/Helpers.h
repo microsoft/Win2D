@@ -18,6 +18,9 @@
 using namespace concurrency;
 using namespace Windows::Foundation;
 using namespace Microsoft::Graphics::Canvas;
+using namespace Windows::UI::Core;
+using namespace Windows::ApplicationModel::Core;
+using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
 namespace Microsoft
 {
@@ -209,6 +212,13 @@ namespace Microsoft
                 }
             }
 
+            template<>
+            static inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)
+            {
+                Platform::Guid copy = value;
+                return copy.ToString()->Data();
+            }
+
             inline bool operator==(Windows::UI::Color const& a, Windows::UI::Color const& b)
             {
                 return a.A == b.A &&
@@ -350,11 +360,36 @@ T WaitExecution(IAsyncOperation<T>^ asyncOperation)
     // waiting before event executed
     auto timeout = 1000 * 5;
     auto waitResult = WaitForSingleObjectEx(emptyEvent.Get(), timeout, true);
-    Assert::AreEqual(WAIT_OBJECT_0, waitResult);
+    Assert::AreEqual(WAIT_OBJECT_0, waitResult, L"WaitExecution: WaitForSingleObject timed out.");
 
     return asyncTask.get();
 };
 
+inline void WaitExecution(IAsyncAction^ ayncAction)
+{
+    using namespace Microsoft::WRL::Wrappers;
+
+    Event emptyEvent(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+    if (!emptyEvent.IsValid())
+        throw std::bad_alloc();
+
+    task_options options;
+    options.set_continuation_context(task_continuation_context::use_arbitrary());
+
+    task<void> asyncTask(ayncAction);
+
+    asyncTask.then([&](task<void>)
+    {
+        SetEvent(emptyEvent.Get());
+    }, options);
+
+    // waiting before event executed
+    auto timeout = 1000 * 5;
+    auto waitResult = WaitForSingleObjectEx(emptyEvent.Get(), timeout, true);
+    Assert::AreEqual(WAIT_OBJECT_0, waitResult);
+
+    asyncTask.get();
+};
 
 template<typename T, typename U>
 void AssertTypeName(U^ obj)
@@ -373,6 +408,7 @@ ComPtr<T> GetDXGIInterface(U^ obj)
 
 
 ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext(CanvasDevice^ device = nullptr);
+
 ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap(D2D1_BITMAP_OPTIONS options, ComPtr<ID2D1DeviceContext1> deviceContext = nullptr);
 
 void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode, float dpiTolerance = 0.0f);

@@ -133,6 +133,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasLinearGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Gradients.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TextureUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
@@ -261,6 +262,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gradients.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TextureUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

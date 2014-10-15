@@ -14,6 +14,7 @@
 
 #include "CanvasImage.h"
 #include "PolymorphicBitmapmanager.h"
+#include "TextureUtilities.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -21,6 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
     using namespace ABI::Microsoft::Graphics::Canvas::Effects;
+    using namespace ABI::Windows::Storage;
     using namespace ABI::Windows::Storage::Streams;
     using namespace ABI::Windows::Foundation;
 
@@ -31,6 +33,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName) = 0;
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream) = 0;
+        virtual void SaveLockedMemoryToFile(
+            HSTRING fileName,
+            CanvasBitmapFileFormat fileFormat,
+            float quality,
+            unsigned int width,
+            unsigned int height,
+            float dpiX,
+            float dpiY,
+            ScopedBitmapLock* bitmapLock) = 0;
     };
     
 
@@ -45,6 +56,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         virtual ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(ComPtr<IUriRuntimeClass> const& uri) = 0;
+        virtual ComPtr<IAsyncOperation<StorageFile*>> GetFileFromPathAsync(HSTRING path) = 0;
     };
 
     class CanvasBitmapFactory :
@@ -161,6 +173,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IInspectable** wrapper) override;
     };
 
+    void GetBytesImpl(
+        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t* valueCount,
+        uint8_t** valueElements);
+
+    void GetColorsImpl(
+        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t* valueCount,
+        Color **valueElements);
+
+    void SaveBitmapToFileImpl(
+        ID2D1Bitmap1* d2dBitmap,
+        ICanvasBitmapResourceCreationAdapter* adapter,
+        HSTRING rawfileName,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        IAsyncAction **resultAsyncAction);
 
     struct CanvasBitmapTraits
     {
@@ -186,7 +217,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , public ResourceWrapper<TRAITS>
     {
     protected:
-        CanvasBitmapImpl(std::shared_ptr<typename TRAITS::manager_t> manager, ID2D1Bitmap1* resource)
+        CanvasBitmapImpl(
+            std::shared_ptr<typename TRAITS::manager_t> manager, 
+            ID2D1Bitmap1* resource)
             : ResourceWrapper(manager, resource)
         {}
 
@@ -279,6 +312,131 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ThrowIfFailed(dxgiSurface.CopyTo(iid, p));
                 });
         }
+
+        HRESULT STDMETHODCALLTYPE SaveToFileAsync(
+            HSTRING fileName,
+            IAsyncAction **resultAsyncAction) override
+        {
+            return SaveToFileWithBitmapFileFormatAndQualityAsync(
+                fileName,
+                CanvasBitmapFileFormat::Auto,
+                DEFAULT_CANVASBITMAP_QUALITY,
+                resultAsyncAction);
+        }        
+
+        HRESULT STDMETHODCALLTYPE SaveToFileWithBitmapFileFormatAsync(
+            HSTRING fileName,
+            CanvasBitmapFileFormat fileFormat,
+            IAsyncAction **resultAsyncAction) override
+        {
+            return SaveToFileWithBitmapFileFormatAndQualityAsync(
+                fileName,
+                fileFormat,
+                DEFAULT_CANVASBITMAP_QUALITY,
+                resultAsyncAction);
+        }
+
+        HRESULT STDMETHODCALLTYPE SaveToFileWithBitmapFileFormatAndQualityAsync(
+            HSTRING rawfileName,
+            CanvasBitmapFileFormat fileFormat,
+            float quality,
+            IAsyncAction **resultAsyncAction) override
+        {
+            return ExceptionBoundary(
+                [=]
+                {
+                    CheckInPointer(rawfileName);
+                    CheckAndClearOutPointer(resultAsyncAction);
+
+                    auto& d2dBitmap = GetResource();
+
+                    SaveBitmapToFileImpl(
+                        d2dBitmap.Get(), 
+                        Manager()->GetAdapter(),
+                        rawfileName, 
+                        fileFormat,
+                        quality,
+                        resultAsyncAction);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE GetBytes(
+            uint32_t* valueCount,
+            uint8_t** valueElements) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    GetBytesImpl(
+                        d2dBitmap,
+                        GetResourceBitmapExtents(d2dBitmap),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE GetBytesWithSubrectangle(
+            Rect subRectangle,
+            uint32_t* valueCount,
+            uint8_t** valueElements) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    GetBytesImpl(
+                        d2dBitmap,
+                        ToD2DRectU(subRectangle),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE GetColors(
+            uint32_t* valueCount,
+            ABI::Windows::UI::Color **valueElements) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    GetColorsImpl(
+                        d2dBitmap,
+                        GetResourceBitmapExtents(d2dBitmap),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE GetColorsWithSubrectangle(
+            Rect subRectangle,
+            uint32_t* valueCount,
+            ABI::Windows::UI::Color **valueElements) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    GetColorsImpl(
+                        d2dBitmap,
+                        ToD2DRectU(subRectangle),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+    private:
+
+        D2D1_RECT_U GetResourceBitmapExtents(ComPtr<ID2D1Bitmap1> const d2dBitmap)
+        {
+            const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
+            return D2D1::RectU(0, 0, size.width, size.height);
+        }
     };
 
 
@@ -335,6 +493,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<CanvasBitmap> CreateWrapper(
             ID2D1Bitmap1* bitmap);
+
+        ICanvasBitmapResourceCreationAdapter* GetAdapter();
     };
 
 

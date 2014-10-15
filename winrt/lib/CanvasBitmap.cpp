@@ -20,6 +20,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Storage::Streams;
+    using namespace ABI::Windows::Storage;
     using namespace ::Microsoft::WRL::Wrappers;
 
     //
@@ -162,13 +163,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return bitmap;
     }
 
+
+    ICanvasBitmapResourceCreationAdapter* CanvasBitmapManager::GetAdapter()
+    {
+        return m_adapter.get();
+    }
+
     class DefaultCanvasBitmapAdapter : public ICanvasBitmapAdapter
     {
         ComPtr<IRandomAccessStreamReferenceStatics> m_randomAccessStreamReferenceStatics;
+        ComPtr<IStorageFileStatics> m_storageFileStatics;
     public:
         DefaultCanvasBitmapAdapter()
         {
             ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_Streams_RandomAccessStreamReference).Get(), &m_randomAccessStreamReferenceStatics));
+            ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(), &m_storageFileStatics));
         }
 
         ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(ComPtr<IUriRuntimeClass> const& uri) override
@@ -177,6 +186,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(m_randomAccessStreamReferenceStatics->CreateFromUri(uri.Get(), &randomAccessStreamReference));
 
             return randomAccessStreamReference;
+        }
+
+        ComPtr<IAsyncOperation<StorageFile*>> GetFileFromPathAsync(HSTRING path) override
+        {
+            ComPtr<IAsyncOperation<StorageFile*>> task;
+            ThrowIfFailed(m_storageFileStatics->GetFileFromPathAsync(path, &task));
+            return task;
         }
     };
 
@@ -428,21 +444,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     HRESULT WaitForOperation(IAsyncOperation<T*>* asyncOperation, T** ret)
     {
         // TODO #2617:Investigate making PPL work with async tasks.
-
+        
         Event emptyEvent(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
         if (!emptyEvent.IsValid())
             return E_OUTOFMEMORY;
 
         ComPtr<T> taskResult;
         HRESULT taskHr = S_OK;
-           
         auto callback = Callback<IAsyncOperationCompletedHandler<T*>>(
             [&emptyEvent, &taskResult, &taskHr](IAsyncOperation<T*>* asyncInfo, AsyncStatus status) -> HRESULT
             {
                 taskHr = asyncInfo->GetResults(taskResult.GetAddressOf());
                 SetEvent(emptyEvent.Get());
                 return S_OK;
-            });
+        });
+        
         asyncOperation->put_Completed(callback.Get());
 
         auto timeout = 1000 * 5;
@@ -543,6 +559,137 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             && "CanvasBitmap should never be constructed with a render-target bitmap.  This should have been validated before construction.");
     }
 
+    void VerifyWellFormedSubrectangle(D2D1_RECT_U subRectangle, D2D1_SIZE_U targetSize)
+    {
+        if (subRectangle.right <= subRectangle.left ||
+            subRectangle.bottom <= subRectangle.top)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+
+        if (subRectangle.right > targetSize.width || subRectangle.bottom > targetSize.height)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    void GetBytesImpl(
+        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t* valueCount,
+        uint8_t** valueElements)
+    {
+        CheckInPointer(valueCount);
+        CheckAndClearOutPointer(valueElements);
+
+        VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
+
+        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), &subRectangle);
+
+        const unsigned int bytesPerPixel = GetBytesPerPixel(d2dBitmap->GetPixelFormat().format);
+        const unsigned int bytesPerRow = (subRectangle.right - subRectangle.left) * bytesPerPixel;
+        const unsigned int destSizeInBytes =
+            bytesPerRow * (subRectangle.bottom - subRectangle.top);
+
+        ComArray<BYTE> array(destSizeInBytes);
+
+        byte* destRowStart = array.GetData();
+        byte* sourceRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+        for (unsigned int y = subRectangle.top; y < subRectangle.bottom; y++)
+        {
+            byte* sourceLocation = sourceRowStart;
+            byte* destLocation = destRowStart;
+
+            const unsigned int byteCount = (subRectangle.right - subRectangle.left) * bytesPerPixel;
+
+            assert(destLocation - array.GetData() < UINT_MAX);
+            const unsigned int positionInBuffer = static_cast<unsigned int>(destLocation - array.GetData());
+            const unsigned int bytesLeftInBuffer = destSizeInBytes - positionInBuffer;
+
+            memcpy_s(destLocation, bytesLeftInBuffer, sourceLocation, byteCount);
+
+            destRowStart += bytesPerRow;
+            sourceRowStart += bitmapLock.GetStride();
+        }
+
+        array.Detach(valueCount, valueElements);
+    }
+
+    void GetColorsImpl(
+        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t* valueCount,
+        Color **valueElements)
+    {
+        CheckInPointer(valueCount);
+        CheckAndClearOutPointer(valueElements);
+
+        VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
+
+        if (d2dBitmap->GetPixelFormat().format != DXGI_FORMAT_B8G8R8A8_UNORM)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+
+        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), &subRectangle);
+
+        const unsigned int subRectangleWidth = subRectangle.right - subRectangle.left;
+        const unsigned int subRectangleHeight = subRectangle.bottom - subRectangle.top;
+        const unsigned int destSizeInPixels = subRectangleWidth * subRectangleHeight;
+        ComArray<Color> array(destSizeInPixels);
+
+        byte* sourceRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+
+        for (unsigned int y = 0; y < subRectangleHeight; y++)
+        {
+            for (unsigned int x = 0; x < subRectangleWidth; x++)
+            {
+                UINT32 sourcePixel = *(reinterpret_cast<UINT32*>(&sourceRowStart[x * 4]));
+                Color& destColor = array.GetData()[y * subRectangleWidth + x];
+                destColor.B = (sourcePixel >> 0) & 0xFF;
+                destColor.G = (sourcePixel >> 8) & 0xFF;
+                destColor.R = (sourcePixel >> 16) & 0xFF;
+                destColor.A = (sourcePixel >> 24) & 0xFF;
+            }
+            sourceRowStart += bitmapLock.GetStride();
+        }
+
+        array.Detach(valueCount, valueElements);
+    }
+
+    void SaveBitmapToFileImpl(
+        ID2D1Bitmap1* d2dBitmap,
+        ICanvasBitmapResourceCreationAdapter* adapter,
+        HSTRING rawfileName,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        IAsyncAction **resultAsyncAction)
+    {
+        WinString fileName(rawfileName);
+        const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
+        float dpiX, dpiY;
+        d2dBitmap->GetDpi(&dpiX, &dpiY);
+
+        std::shared_ptr<ScopedBitmapLock> bitmapLock =
+            std::make_shared<ScopedBitmapLock>(d2dBitmap);
+
+        auto asyncAction = Make<AsyncAction>(
+            [=]
+        {
+            adapter->SaveLockedMemoryToFile(
+                fileName,
+                fileFormat,
+                quality,
+                size.width,
+                size.height,
+                dpiX,
+                dpiY,
+                bitmapLock.get());
+        });
+
+        CheckMakeResult(asyncAction);
+        ThrowIfFailed(asyncAction.CopyTo(resultAsyncAction));
+    }
 
     ActivatableClassWithFactory(CanvasBitmap, CanvasBitmapFactory);
 }}}}

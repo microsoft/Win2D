@@ -133,7 +133,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasRenderTargetManager : public ResourceManager<CanvasRenderTargetTraits>
     {
+        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> m_adapter;
+
     public:
+        CanvasRenderTargetManager(std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
+
         ComPtr<CanvasRenderTarget> CreateNew(
             ICanvasDevice* canvasDevice,
             float width,
@@ -145,5 +149,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasRenderTarget> CreateWrapper(
             ICanvasDevice* device,
             ID2D1Bitmap1* bitmap);
+
+        ICanvasBitmapResourceCreationAdapter* GetAdapter();
     };
 }}}}

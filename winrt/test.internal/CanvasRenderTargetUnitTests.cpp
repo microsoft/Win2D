@@ -20,6 +20,7 @@ using namespace ABI::Windows::Foundation;
 
 TEST_CLASS(CanvasRenderTargetTests)
 {
+    std::shared_ptr<TestBitmapResourceCreationAdapter> m_adapter;
     std::shared_ptr<CanvasRenderTargetManager> m_manager;
     ComPtr<MockD2DDevice> m_d2dDevice;
     ComPtr<StubCanvasDevice> m_canvasDevice;
@@ -27,7 +28,9 @@ TEST_CLASS(CanvasRenderTargetTests)
 public:
     TEST_METHOD_INITIALIZE(Reset)
     {
-        m_manager = std::make_shared<CanvasRenderTargetManager>();
+        auto converter = Make<MockWICFormatConverter>();
+        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
+        m_manager = std::make_shared<CanvasRenderTargetManager>(adapter);
         m_d2dDevice = Make<MockD2DDevice>();
         m_canvasDevice = Make<StubCanvasDevice>(m_d2dDevice);
 
