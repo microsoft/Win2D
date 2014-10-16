@@ -111,9 +111,15 @@ public:
         return m_size;
     }
 
-    T* GetData() const
+    T* GetData()
     {
         return m_data;
+    }
+
+    T& operator[](uint32_t index)
+    {
+        assert(index < m_size);
+        return m_data[index];
     }
 
     stdext::checked_array_iterator<T*> GetBeginIterator()

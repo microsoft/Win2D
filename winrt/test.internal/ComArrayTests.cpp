@@ -77,6 +77,14 @@ TEST_CLASS(ComArrayTests)
         Assert::IsNotNull(array.GetData());
     }
 
+    TEST_METHOD(ComArray_ArraySubscriptOperator)
+    {
+        ComArray<float, Tracker> array(100);
+
+        Assert::AreEqual(array.GetData(), &array[0]);
+        Assert::AreEqual(array.GetData() + 1, &array[1]);
+    }
+
     TEST_METHOD(ComArray_MoveConstructor)
     {
         ComArray<float, Tracker> sourceArray(100);

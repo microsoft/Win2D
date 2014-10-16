@@ -644,8 +644,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             for (unsigned int x = 0; x < subRectangleWidth; x++)
             {
-                UINT32 sourcePixel = *(reinterpret_cast<UINT32*>(&sourceRowStart[x * 4]));
-                Color& destColor = array.GetData()[y * subRectangleWidth + x];
+                uint32_t sourcePixel = *(reinterpret_cast<uint32_t*>(&sourceRowStart[x * 4]));
+                Color& destColor = array[y * subRectangleWidth + x];
                 destColor.B = (sourcePixel >> 0) & 0xFF;
                 destColor.G = (sourcePixel >> 8) & 0xFF;
                 destColor.R = (sourcePixel >> 16) & 0xFF;
