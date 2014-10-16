@@ -176,7 +176,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                           std::is_same<TPublic, Numerics::Vector3>::value   ||
                           std::is_same<TPublic, Numerics::Vector4>::value   ||
                           std::is_same<TPublic, Numerics::Matrix3x2>::value ||
-                          std::is_same<TPublic, Numerics::Matrix4x4>::value,
+                          std::is_same<TPublic, Numerics::Matrix4x4>::value ||
+                          std::is_same<TPublic, Matrix5x4>::value,
                           "This type cannot be boxed as a float array");
 
             static_assert(sizeof(TPublic) == sizeof(float[N]), "Wrong array size");

@@ -12,6 +12,7 @@
 
 #include "pch.h"
 #include "generated\ArithmeticCompositeEffect.h"
+#include "generated\ColorMatrixEffect.h"
 
 
 // Macro defines effect property get and set methods that pack a floating point 
@@ -71,4 +72,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Offset, 
         D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, 
         W)
+
+
+    // ColorMatrixEffect.AlphaMode property needs special enum value conversion, because our
+    // CanvasAlphaBehavior enum doesn't match the numeric values of D2D1_COLORMATRIX_ALPHA_MODE.
+
+    IFACEMETHODIMP ColorMatrixEffect::get_AlphaMode(_Out_ CanvasAlphaBehavior* value)
+    {
+        return ExceptionBoundary([&]
+        {
+            D2D1_COLORMATRIX_ALPHA_MODE d2dValue;
+            GetProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, &d2dValue);
+            *value = FromD2DColorMatrixAlphaMode(d2dValue);
+        });
+    }
+
+    IFACEMETHODIMP ColorMatrixEffect::put_AlphaMode(_In_ CanvasAlphaBehavior value)
+    {
+        if (value == CanvasAlphaBehavior::Ignore)
+        {
+            return E_INVALIDARG;
+        }
+
+        return ExceptionBoundary([&]
+        {
+            SetProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, ToD2DColorMatrixAlphaMode(value));
+        });
+    }
+
 }}}}}

@@ -332,6 +332,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_4X4_F*>(value.GetData())));
                     break;
                 }
+                case 20:
+                {
+                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_5X4_F*>(value.GetData())));
+                    break;
+                }
                 default:
                     ThrowHR(E_NOTIMPL);
                 }

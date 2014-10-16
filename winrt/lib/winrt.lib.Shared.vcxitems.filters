@@ -73,6 +73,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DpiCompensationEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
@@ -208,6 +211,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DpiCompensationEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
@@ -283,6 +289,9 @@
     <None Include="$(MSBuildThisFileDirectory)effects\IEffectInput.abi.idl">
       <Filter>effects</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\Matrix5x4.abi.idl">
+      <Filter>effects</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl">
       <Filter>WinRTDirectX</Filter>
     </None>
@@ -336,6 +345,9 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DpiCompensationEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.abi.idl">

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -33,6 +33,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Direct3DSurfaceInteropTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DWriteExperiments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Helpers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Matrix5x4Test.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />

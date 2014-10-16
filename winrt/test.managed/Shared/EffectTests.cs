@@ -17,6 +17,7 @@ using System.Reflection;
 using Windows.Foundation;
 using Windows.UI;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Numerics;
 
@@ -237,6 +238,19 @@ namespace test.managed
                     m.M41, m.M42, m.M43, m.M44, 
                 };
             }
+            else if (value is Matrix5x4)
+            {
+                var m = (Matrix5x4)value;
+
+                return new float[]
+                { 
+                    m.M11, m.M12, m.M13, m.M14, 
+                    m.M21, m.M22, m.M23, m.M24, 
+                    m.M31, m.M32, m.M33, m.M34, 
+                    m.M41, m.M42, m.M43, m.M44, 
+                    m.M51, m.M52, m.M53, m.M54, 
+                };
+            }
             else if (value is Rect)
             {
                 var r = (Rect)value;
@@ -340,6 +354,20 @@ namespace test.managed
                     M21 = a[4],  M22 = a[5],  M23 = a[6],  M24 = a[7],
                     M31 = a[8],  M32 = a[9],  M33 = a[10], M34 = a[11],
                     M41 = a[12], M42 = a[13], M43 = a[14], M44 = a[15],
+                };
+            }
+            else if (type == typeof(Matrix5x4))
+            {
+                var a = (float[])value;
+                Assert.AreEqual(20, a.Length);
+
+                return new Matrix5x4
+                { 
+                    M11 = a[0],  M12 = a[1],  M13 = a[2],  M14 = a[3],
+                    M21 = a[4],  M22 = a[5],  M23 = a[6],  M24 = a[7],
+                    M31 = a[8],  M32 = a[9],  M33 = a[10], M34 = a[11],
+                    M41 = a[12], M42 = a[13], M43 = a[14], M44 = a[15],
+                    M51 = a[16], M52 = a[17], M53 = a[18], M54 = a[19],
                 };
             }
             else if (type == typeof(Rect))
@@ -488,6 +516,25 @@ namespace test.managed
                                       M41 = 23, M42 = 24, M43 = 25, M44 = 26
                                   };
             }
+            else if (type == typeof(Matrix5x4))
+            {
+                return whichOne ? new Matrix5x4 
+                                  { 
+                                      M11 = 1,  M12 = 2,  M13 = 3,  M14 = 4,
+                                      M21 = 5,  M22 = 6,  M23 = 7,  M24 = 8,
+                                      M31 = 9,  M32 = 10, M33 = 11, M34 = 12,
+                                      M41 = 13, M42 = 14, M43 = 15, M44 = 16,
+                                      M51 = 17, M52 = 18, M53 = 19, M54 = 20
+                                  } :
+                                  new Matrix5x4 
+                                  { 
+                                      M11 = 11, M12 = 12, M13 = 13, M14 = 14,
+                                      M21 = 15, M22 = 16, M23 = 17, M24 = 18,
+                                      M31 = 19, M32 = 20, M33 = 21, M34 = 22,
+                                      M41 = 23, M42 = 24, M43 = 25, M44 = 26,
+                                      M51 = 27, M52 = 28, M53 = 29, M54 = 30
+                                  };
+            }
             else if (type == typeof(Rect))
             {
                 return whichOne ? new Rect(1, 2, 3, 4) :
@@ -506,12 +553,15 @@ namespace test.managed
 
         static void FilterOutCustomizedEffectProperties(Type effectType, ref List<PropertyInfo> properties, ref IList<object> effectProperties)
         {
-            // ArithmeticCompositeEffect has strange customized properties. We expose what D2D treats 
-            // as a single Vector4 as 4 separate float properties. Our general purpose reflection based
-            // property test won't understand that, so we must hide these customized properties from it.
+            // Customized properties that our general purpose reflection based property test won't understand.
+            string[] propertiesToRemove;
+            int[] indexMapping;
+
             if (effectType == typeof(ArithmeticCompositeEffect))
             {
-                string[] propertiesToRemove =
+                // ArithmeticCompositeEffect has strange customized properties.
+                // Win2D exposes what D2D treats as a single Vector4 as 4 separate float properties. 
+                propertiesToRemove = new string[]
                 {
                     "MultiplyAmount",
                     "Source1Amount",
@@ -519,15 +569,24 @@ namespace test.managed
                     "Offset"
                 };
 
-                properties = properties.Where(p => !propertiesToRemove.Contains(p.Name)).ToList();
-
-                int[] indexMapping = 
-                { 
-                    1 
-                };
-
-                effectProperties = new FilteredViewOfList<object>(effectProperties, indexMapping);
+                indexMapping = new int[] { 1 };
             }
+            else if (effectType == typeof(ColorMatrixEffect))
+            {
+                // ColorMatrixEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
+                propertiesToRemove = new string[] { "AlphaMode", };
+                indexMapping = new int[] { 0, 2 };
+            }
+            else
+            {
+                // Other effects do not need special filtering.
+                return;
+            }
+
+            // Hide the customized properties, so ReflectOverAllEffects test won't see them.
+            properties = properties.Where(p => !propertiesToRemove.Contains(p.Name)).ToList();
+
+            effectProperties = new FilteredViewOfList<object>(effectProperties, indexMapping);
         }
 
 
@@ -607,6 +666,38 @@ namespace test.managed
 
             effect.Offset = 100;
             Assert.IsTrue(((float[])effect.Properties[0]).SequenceEqual(new float[] { 23, 42, -1, 100 }));
+        }
+
+
+        [TestMethod]
+        public void ColorMatrixEffectCustomizations()
+        {
+            const uint D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED = 1;
+            const uint D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT = 2;
+
+            var effect = new ColorMatrixEffect();
+
+            // Verify defaults.
+            Assert.AreEqual(CanvasAlphaBehavior.Premultiplied, effect.AlphaMode);
+            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, effect.Properties[1]);
+
+            // Changing the boxed value should change the associated property.
+            effect.Properties[1] = D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT;
+            Assert.AreEqual(CanvasAlphaBehavior.Straight, effect.AlphaMode);
+
+            effect.Properties[1] = D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED;
+            Assert.AreEqual(CanvasAlphaBehavior.Premultiplied, effect.AlphaMode);
+
+            // Change the property, and verify that the boxed value changes to match.
+            effect.AlphaMode = CanvasAlphaBehavior.Straight;
+            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT, effect.Properties[1]);
+
+            effect.AlphaMode = CanvasAlphaBehavior.Premultiplied;
+            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, effect.Properties[1]);
+
+            // Verify unsupported value throws.
+            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaBehavior.Ignore; });
+            Assert.AreEqual(CanvasAlphaBehavior.Premultiplied, effect.AlphaMode);
         }
     }
 }

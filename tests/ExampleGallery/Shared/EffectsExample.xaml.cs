@@ -33,6 +33,7 @@ namespace ExampleGallery
             Blend,
             Border,
             Brightness,
+            ColorMatrix,
             Composite,
             Crop,
             DirectionalBlur,
@@ -133,6 +134,9 @@ namespace ExampleGallery
 
                 case EffectType.Brightness:
                     return CreateBrightness();
+
+                case EffectType.ColorMatrix:
+                    return CreateColorMatrix();
 
                 case EffectType.Composite:
                     return CreateComposite();
@@ -270,6 +274,41 @@ namespace ExampleGallery
             };
 
             return brightnessEffect;
+        }
+
+        private ICanvasImage CreateColorMatrix()
+        {
+            var colorMatrixEffect = new ColorMatrixEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation cycles through different color settings.
+            animationFunction = elapsedTime =>
+            {
+                var matrix = new Matrix5x4();
+
+                matrix.M11 = (float)Math.Sin(elapsedTime * 1.5);
+                matrix.M21 = (float)Math.Sin(elapsedTime * 1.4);
+                matrix.M31 = (float)Math.Sin(elapsedTime * 1.3);
+                matrix.M51 = (1 - matrix.M11 - matrix.M21 - matrix.M31) / 2;
+
+                matrix.M12 = (float)Math.Sin(elapsedTime * 1.2);
+                matrix.M22 = (float)Math.Sin(elapsedTime * 1.1);
+                matrix.M32 = (float)Math.Sin(elapsedTime * 1.0);
+                matrix.M52 = (1 - matrix.M12 - matrix.M22 - matrix.M32) / 2;
+
+                matrix.M13 = (float)Math.Sin(elapsedTime * 0.9);
+                matrix.M23 = (float)Math.Sin(elapsedTime * 0.8);
+                matrix.M33 = (float)Math.Sin(elapsedTime * 0.7);
+                matrix.M53 = (1 - matrix.M13 - matrix.M23 - matrix.M33) / 2;
+
+                matrix.M44 = 1;
+
+                colorMatrixEffect.ColorMatrix = matrix;
+            };
+
+            return colorMatrixEffect;
         }
 
         private ICanvasImage CreateComposite()
@@ -529,9 +568,26 @@ namespace ExampleGallery
                 Source = contrastAdjustedTiger
             };
 
+            var tigerAlphaWithWhiteRgb = new LinearTransferEffect
+            {
+                Source = tigerAlpha,
+                RedOffset = 1,
+                GreenOffset = 1,
+                BlueOffset = 1,
+                RedSlope = 0,
+                GreenSlope = 0,
+                BlueSlope = 0,
+            };
+
+            var recombinedRgbAndAlpha = new ArithmeticCompositeEffect
+            {
+                Source1 = tigerAlphaWithWhiteRgb,
+                Source2 = bitmapTiger,
+            };
+
             var movedTiger = new Transform2DEffect
             {
-                Source = tigerAlpha
+                Source = recombinedRgbAndAlpha
             };
 
             var turbulenceSize = new Vector2(512, 512);

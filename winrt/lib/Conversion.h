@@ -316,10 +316,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         switch (alphaBehavior)
         {
-        case CanvasAlphaBehavior::Premultiplied: return D2D1_ALPHA_MODE_PREMULTIPLIED;
-        case CanvasAlphaBehavior::Straight: return D2D1_ALPHA_MODE_STRAIGHT;
-        case CanvasAlphaBehavior::Ignore: return D2D1_ALPHA_MODE_IGNORE;
-        default: return D2D1_ALPHA_MODE_FORCE_DWORD;
+            case CanvasAlphaBehavior::Premultiplied: return D2D1_ALPHA_MODE_PREMULTIPLIED;
+            case CanvasAlphaBehavior::Straight: return D2D1_ALPHA_MODE_STRAIGHT;
+            case CanvasAlphaBehavior::Ignore: return D2D1_ALPHA_MODE_IGNORE;
+            default: return D2D1_ALPHA_MODE_FORCE_DWORD;
         }
     }
 
@@ -332,6 +332,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             default: assert(false); break;
         }
         return CanvasAlphaBehavior::Premultiplied;
+    }
+
+    inline D2D1_COLORMATRIX_ALPHA_MODE ToD2DColorMatrixAlphaMode(CanvasAlphaBehavior alphaBehavior)
+    {
+        switch (alphaBehavior)
+        {
+            case CanvasAlphaBehavior::Premultiplied: return D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED;
+            case CanvasAlphaBehavior::Straight: return D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT;
+            case CanvasAlphaBehavior::Ignore:
+            default: return D2D1_COLORMATRIX_ALPHA_MODE_FORCE_DWORD;
+        }
+    }
+
+    inline CanvasAlphaBehavior FromD2DColorMatrixAlphaMode(D2D1_COLORMATRIX_ALPHA_MODE alphaMode)
+    {
+        switch (alphaMode)
+        {
+            case D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaBehavior::Premultiplied;
+            case D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT: return CanvasAlphaBehavior::Straight;
+            default: assert(false); return CanvasAlphaBehavior::Premultiplied;
+        }
     }
 
     inline D2D1_BUFFER_PRECISION ToD2DBufferPrecision(CanvasBufferPrecision bufferPrecision)

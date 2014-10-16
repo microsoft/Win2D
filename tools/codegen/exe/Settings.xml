@@ -92,6 +92,12 @@ under the License.
     <Enum Name="EffectYChannelSelect" ShouldProject="false" ProjectedNameOverride="EffectChannelSelect"/>
     <Enum Name="EffectEdgeModeX" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
     <Enum Name="EffectEdgeModeY" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
+    <Enum Name="ColorMatrixEffectAlphaMode" ShouldProject="false" ProjectedNameOverride="CanvasAlphaBehavior" Namespace="Microsoft.Graphics.Canvas">
+      <Field Name="Ignore" Index="2" ShouldProject="false"/>
+    </Enum>
+    <Effect Name="ColorMatrixEffect">
+      <Property Name="AlphaMode" IsHandCoded="true"/>
+    </Effect>
     <Effect Name="AffineTransform2DEffect" ProjectedNameOverride="Transform2DEffect"/>
     <Effect Name="FloodEffect" ProjectedNameOverride="ColorSourceEffect"/>
     <Effect Name="AtlasEffect">
@@ -185,7 +191,7 @@ under the License.
     <Effect Name="ArithmeticCompositeEffect">
       <Input Name="Destination" ProjectedNameOverride="Source1"/>
       <Input Name="Source" ProjectedNameOverride="Source2"/>
-      <Property Name="Coefficients" IsInternal="true"/>
+      <Property Name="Coefficients" IsHidden="true"/>
       <Property Name="MultiplyAmount" Type="float"/>
       <Property Name="Source1Amount" Type="float"/>
       <Property Name="Source2Amount" Type="float"/>

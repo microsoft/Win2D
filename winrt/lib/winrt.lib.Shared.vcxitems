@@ -68,6 +68,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BorderEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BrightnessEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.h" />
@@ -126,6 +127,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BorderEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BrightnessEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.cpp" />
@@ -176,12 +178,14 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\EffectsCommon.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IEffectInput.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\Matrix5x4.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\BorderEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\BrightnessEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.abi.idl" />

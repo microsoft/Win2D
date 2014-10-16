@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Globalization;
 using System.Xml.Serialization;
 using System.IO;
 
@@ -48,6 +49,7 @@ namespace CodeGen
             IsRepresentative = false;
         }
 
+        [XmlIgnore]
         public D2DEnum NativeEnum { get; set; }
 
         public bool IsUnique { get; set; }
@@ -185,11 +187,11 @@ namespace CodeGen
     {
         public D2DEnum()
         {
-            Enums = new List<string>();
+            Enums = new SortedDictionary<int, string>();
         }
 
         public string Name { get; set; }
-        public List<string> Enums { get; set; }
+        public SortedDictionary<int, string> Enums { get; set; }
     }
 
     public static class EffectGenerator
@@ -258,10 +260,6 @@ namespace CodeGen
         {
             switch (effect.Properties[0].Value)
             {
-                // TODO #831: this effect requires Matrix5x4 support.
-                case "Color Matrix":
-                    return false;
-
                 // TODO #2577: these effects require Blob support.
                 case "Convolve Matrix":
                 case "Discrete Transfer":
@@ -318,7 +316,7 @@ namespace CodeGen
                     property.ShouldProject = enumOverride.ShouldProject;
                     foreach (var enumValue in enumOverride.Values)
                     {
-                        if (!enumValue.ShouldProject)
+                        if (!enumValue.ShouldProject && property.ExcludedEnumIndexes != null)
                         {
                             property.ExcludedEnumIndexes.Add(enumValue.Index);
                         }
@@ -366,7 +364,7 @@ namespace CodeGen
                             property.TypeNameIdl = "Windows.Foundation.Rect";
                             property.TypeNameCpp = "Rect";
                         }
-                        else if (property.Name.Contains("Color"))
+                        else if (property.Name.Contains("Color") && xmlName.StartsWith("vector"))
                         {
                             // D2D passes color properties as float3 or float4, but we remap them to use strongly typed Color.
                             property.TypeNameIdl = "Windows.UI.Color";
@@ -375,8 +373,15 @@ namespace CodeGen
                         else
                         {
                             // Vector or matrix type.
-                            property.TypeNameIdl = "Microsoft.Graphics.Canvas.Numerics." + char.ToUpper(xmlName[0]) + xmlName.Substring(1);
-                            property.TypeNameCpp = "Numerics::" + char.ToUpper(xmlName[0]) + xmlName.Substring(1);
+                            property.TypeNameIdl = char.ToUpper(xmlName[0]) + xmlName.Substring(1);
+                            property.TypeNameCpp = property.TypeNameIdl;
+
+                            // Matrix5x4 is defined locally as part of Effects, but other math types live in the Numerics namespace.
+                            if (!xmlName.Contains("5x4"))
+                            {
+                                property.TypeNameIdl = "Microsoft.Graphics.Canvas.Numerics." + property.TypeNameIdl;
+                                property.TypeNameCpp = "Numerics::" + property.TypeNameCpp;
+                            }
                         }
 
                         // Convert eg. "matrix3x2" to 6, or "vector3" to 3.
@@ -511,17 +516,25 @@ namespace CodeGen
                         property.Name = propertyOverride.ProjectedNameOverride;
                     }
 
-                    property.IsHidden = propertyOverride.IsInternal;
+                    property.IsHidden = propertyOverride.IsHidden;
                 }
-                else
+
+                if (property == null || propertyOverride.IsHandCoded)
                 {
                     // Add a custom property that is part of our API surface but not defined by D2D.
                     effect.Properties.Add(new Property
                     {
                         Name = propertyOverride.Name,
-                        TypeNameIdl = propertyOverride.Type,
+                        TypeNameIdl = string.IsNullOrEmpty(propertyOverride.Type) ? property.TypeNameIdl : propertyOverride.Type,
                         IsHandCoded = true
                     });
+
+                    // If we are masking a real D2D property with an alternative
+                    // hand-coded version, mark the real D2D property as hidden.
+                    if (property != null)
+                    {
+                        property.IsHidden = true;
+                    }
                 }
             }
         }
@@ -539,7 +552,8 @@ namespace CodeGen
                     if (line.Contains("typedef enum") && line.Substring(line.Length - 4) != "PROP")
                     {
                         D2DEnum effectEnum = new D2DEnum();
-                        string[] words = line.Split(' ');
+                        char[] separator = { ' ' };
+                        string[] words = line.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                         effectEnum.Name = words[words.Length - 1];
 
                         // Skip brace
@@ -547,14 +561,32 @@ namespace CodeGen
 
                         while ((line = reader.ReadLine()) != "")
                         {
-                            words = line.Split(' ');
-                            // Indent size in headers is 8
-                            if (words[8] != "" && words[8] != "//")
-                                effectEnum.Enums.Add(words[8]);
+                            words = line.TrimEnd(',').Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+                            // Looking for definitions of the form "EnumEntry = value"
+                            if (words.Length == 3 &&
+                                words[1] == "=" &&
+                                !words[0].StartsWith("//") &&
+                                !words[0].Contains("FORCE_DWORD"))
+                            {
+                                NumberStyles numberStyle = 0;
+
+                                if (words[2].StartsWith("0x"))
+                                {
+                                    words[2] = words[2].Substring(2);
+                                    numberStyle = NumberStyles.HexNumber;
+                                }
+
+                                int value;
+                                if (!int.TryParse(words[2], numberStyle, null, out value))
+                                {
+                                    value = effectEnum.Enums.Count;
+                                }
+
+                                effectEnum.Enums.Add(value, words[0]);
+                            }
                         }
 
-                        // Remove last force_dword enum
-                        effectEnum.Enums.RemoveAt(effectEnum.Enums.Count - 1);
                         d2dEnums.Add(effectEnum);
                     }
                 }
@@ -571,9 +603,11 @@ namespace CodeGen
                 // Check if number of enums values are the same
                 if (d2dEnum.Enums.Count == enumProperty.EnumFields.FieldsList.Count)
                 {
+                    var d2dEnumValues = d2dEnum.Enums.Values.ToList();
+
                     for (int i = 0; i < enumProperty.EnumFields.FieldsList.Count; ++i)
                     {
-                        if (!FormatEnumValueString(d2dEnum.Enums[i]).Contains(FormatEnumValueString(enumProperty.EnumFields.FieldsList[i].Displayname)))
+                        if (!FormatEnumValueString(d2dEnumValues[i]).Contains(FormatEnumValueString(enumProperty.EnumFields.FieldsList[i].Displayname)))
                         {
                             return false;
                         }
