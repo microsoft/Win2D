@@ -329,7 +329,7 @@ under the License.
       <summary>Sets what units are used to specifiy coordinates for this drawing session.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Transform">
-      <summary>Sets the transform matrix that will be applied to subsequent calls on this drawing session.</summary>
+      <summary>Sets the transform matrix that will be applied to subsequent drawing calls on this drawing session.</summary>
       <remarks>
         <p>
           Transform may be changed multiple times in a single drawing session.
@@ -339,13 +339,14 @@ under the License.
           different values within a single drawing session.
         </p>
         <code>
-          var ds = renderTarget.CreateDrawingSession();
+          using (var ds = renderTarget.CreateDrawingSession())
+          {
+              ds.Transform = Matrix3x2.CreateTranslation(new Vector2(10, 10));
+              ds.DrawText("A", 0, 0, Colors.White); // "A" drawn at (10, 10)
 
-          ds.Transform = Matrix3x2.CreateTranslation(new Vector2(10, 10));
-          ds.DrawText("A", 0, 0, Colors.White); // "A" drawn at (10, 10)
-
-          ds.Transform = Matrix3x2.CreateTranslation(new Vector2(100, 100));
-          ds.DrawText("B", 0, 0, Colors.White); // "B" drawn at (100, 100)
+              ds.Transform = Matrix3x2.CreateTranslation(new Vector2(100, 100));
+              ds.DrawText("B", 0, 0, Colors.White); // "B" drawn at (100, 100)
+          }
         </code>
       </remarks>
     </member>
