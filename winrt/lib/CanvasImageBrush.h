@@ -116,7 +116,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() override;
 
         // ICanvasResourceWrapperNative
-        IFACEMETHOD(GetResource)(IUnknown** resource) override;
+        IFACEMETHOD(GetResource)(REFIID iid, void** resource) override;
 
         // non-interface methods
         void SetImage(ICanvasImage* image);

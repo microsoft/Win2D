@@ -56,7 +56,7 @@ namespace ABI
                 class ICanvasResourceWrapperNative : public IUnknown
                 {
                 public:
-                    IFACEMETHOD(GetResource)(IUnknown** resource) = 0;
+                    IFACEMETHOD(GetResource)(REFIID iid, void** resource) = 0;
                 };
             }
         }
@@ -135,12 +135,9 @@ namespace Microsoft
                 ComPtr<abi::ICanvasResourceWrapperNative> nativeWrapper;
                 __abi_ThrowIfFailed(inspectableWrapper->QueryInterface(nativeWrapper.GetAddressOf()));
 
-                ComPtr<IUnknown> unknownResource;
-                __abi_ThrowIfFailed(nativeWrapper->GetResource(&unknownResource));
-
                 ComPtr<T> resource;
-                __abi_ThrowIfFailed(unknownResource.As(&resource));
-                
+                __abi_ThrowIfFailed(nativeWrapper->GetResource(IID_PPV_ARGS(&resource)));
+
                 return resource;
             }
         }

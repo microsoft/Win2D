@@ -161,11 +161,8 @@ public:
         ComPtr<ICanvasResourceWrapperNative> drawingSessionResourceWrapper;
         ThrowIfFailed(drawingSession->QueryInterface(drawingSessionResourceWrapper.GetAddressOf()));
 
-        ComPtr<IUnknown> deviceContextAsUnknown;
-        ThrowIfFailed(drawingSessionResourceWrapper->GetResource(&deviceContextAsUnknown));
-
         ComPtr<ID2D1DeviceContext1> deviceContext;
-        ThrowIfFailed(deviceContextAsUnknown.As(&deviceContext));
+        ThrowIfFailed(drawingSessionResourceWrapper->GetResource(IID_PPV_ARGS(&deviceContext)));
 
         //
         // Check the device

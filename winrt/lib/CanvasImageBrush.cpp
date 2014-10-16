@@ -416,7 +416,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_d2dImageBrush;
     }
 
-    IFACEMETHODIMP CanvasImageBrush::GetResource(IUnknown** resource)
+    IFACEMETHODIMP CanvasImageBrush::GetResource(REFIID iid, void** resource)
     {
         return ExceptionBoundary(
             [=]
@@ -424,9 +424,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfClosed();
 
                 if (m_useBitmapBrush)
-                    ThrowIfFailed(m_d2dBitmapBrush.CopyTo(resource));
+                    ThrowIfFailed(m_d2dBitmapBrush.CopyTo(iid, resource));
                 else
-                    ThrowIfFailed(m_d2dImageBrush.CopyTo(resource));
+                    ThrowIfFailed(m_d2dImageBrush.CopyTo(iid, resource));
             });
     }
 

@@ -159,7 +159,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasResourceWrapperNative
         //
         
-        IFACEMETHOD(GetResource)(IUnknown** resource) override;
+        IFACEMETHOD(GetResource)(REFIID iid, void** resource) override;
 
 
     private:

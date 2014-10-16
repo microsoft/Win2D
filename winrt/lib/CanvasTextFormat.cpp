@@ -549,13 +549,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    IFACEMETHODIMP CanvasTextFormat::GetResource(IUnknown** value)
+    IFACEMETHODIMP CanvasTextFormat::GetResource(REFIID iid, void** value)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckAndClearOutPointer(value);
-                ThrowIfFailed(GetRealizedTextFormat().CopyTo(value));
+                ThrowIfFailed(GetRealizedTextFormat().CopyTo(iid, value));
             });
     }
 
