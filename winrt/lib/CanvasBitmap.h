@@ -430,6 +430,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        HRESULT STDMETHODCALLTYPE GetBounds(
+            ICanvasDrawingSession *drawingSession,
+            Rect *bounds) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(drawingSession);
+                    CheckInPointer(bounds);
+
+                    Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
+                    *bounds = GetImageBoundsImpl(this, drawingSession, identity);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE GetBoundsWithTransform(
+            ICanvasDrawingSession *drawingSession,
+            Numerics::Matrix3x2 transform,
+            Rect *bounds) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(drawingSession);
+                    CheckInPointer(bounds);
+
+                    *bounds = GetImageBoundsImpl(this, drawingSession, transform);
+                });
+        }
+
     private:
 
         D2D1_RECT_U GetResourceBitmapExtents(ComPtr<ID2D1Bitmap1> const d2dBitmap)

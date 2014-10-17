@@ -18,8 +18,10 @@ namespace canvas
     using namespace ABI::Windows::UI;
 
     class MockCanvasDrawingSession : public RuntimeClass<
+        RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasDrawingSession,
-        IClosable>
+        IClosable,
+        CloakedIid<ICanvasResourceWrapperNative>>
     {
     public:
         IFACEMETHODIMP Close() override
@@ -149,6 +151,10 @@ namespace canvas
         DONT_EXPECT(get_Units            , CanvasUnits*);
         DONT_EXPECT(put_Units            , CanvasUnits);
 
+        // ICanvasResourceWrapperNative
+        DONT_EXPECT(GetResource, REFIID iid, void**);
+
 #undef DONT_EXPECT
+
     };
 }

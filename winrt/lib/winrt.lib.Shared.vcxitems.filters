@@ -134,6 +134,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Gradients.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TextureUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />

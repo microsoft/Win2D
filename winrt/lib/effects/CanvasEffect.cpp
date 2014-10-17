@@ -19,6 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : m_effectId(effectId)
         , m_realizationId(0)
         , m_insideGetImage(false)
+        , m_closed(false)
     {
         m_properties = Make<Vector<IInspectable*>>(propertiesSize, true);
         CheckMakeResult(m_properties);
@@ -36,9 +37,44 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInternal
     //
 
+    STDMETHODIMP CanvasEffect::GetBounds(
+        ICanvasDrawingSession *drawingSession,
+        Rect *bounds)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(drawingSession);
+                CheckInPointer(bounds);
+
+                Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
+                *bounds = GetImageBoundsImpl(this, drawingSession, identity);
+            });
+    }
+
+    STDMETHODIMP CanvasEffect::GetBoundsWithTransform(
+        ICanvasDrawingSession *drawingSession,
+        Numerics::Matrix3x2 transform,
+        Rect *bounds)
+    {
+        return ExceptionBoundary(
+            [&]
+        {
+            CheckInPointer(drawingSession);
+            CheckInPointer(bounds);
+
+            *bounds = GetImageBoundsImpl(this, drawingSession, transform);
+        });
+    }
+
+    //
+    // ICanvasImageInternal
+    //
+
     ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId)
     {
         CheckInPointer(deviceContext);
+        ThrowIfClosed();
 
         // Check if device is the same as previous device
         ComPtr<ID2D1Device> device;
@@ -149,6 +185,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             inputs.clear();
         }
+
+        m_closed = true;
 
         return S_OK;
     }
@@ -304,4 +342,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
         }
     }
+
+    void CanvasEffect::ThrowIfClosed()
+    {
+        if (m_closed)
+        {
+            ThrowHR(RO_E_CLOSED);
+        }
+    }
+
 }}}}}

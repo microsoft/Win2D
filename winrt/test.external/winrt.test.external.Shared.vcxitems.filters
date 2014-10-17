@@ -21,6 +21,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Direct3DSurfaceInteropTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageBrushTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

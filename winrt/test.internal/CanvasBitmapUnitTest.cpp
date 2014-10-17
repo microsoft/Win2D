@@ -89,6 +89,7 @@ public:
     {
         ABI::Windows::Foundation::Size size;
         ABI::Windows::Foundation::Rect bounds;
+        Numerics::Matrix3x2 matrix = {0};
         Direct3DSurfaceDescription surfaceDescription;
         ComPtr<IDXGISurface> dxgiSurface;
 
@@ -103,6 +104,10 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Bounds(&bounds));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Description(&surfaceDescription));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetDXGIInterface(IID_PPV_ARGS(&dxgiSurface)));
+
+        auto drawingSession = CreateStubDrawingSession();
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBounds(drawingSession.Get(), &bounds));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
     }
 
     TEST_METHOD(CanvasBitmap_Get_Size)
@@ -154,5 +159,19 @@ public:
         Assert::AreEqual(0.0f, bounds.Y);
         Assert::AreEqual(m_testImageWidthDip, bounds.Width);
         Assert::AreEqual(m_testImageHeightDip, bounds.Height);
+    }
+
+    TEST_METHOD(CanvasBitmap_GetBounds_NullArg)
+    {
+        ABI::Windows::Foundation::Rect bounds;
+        Numerics::Matrix3x2 matrix = { 0 };
+
+        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+
+        auto drawingSession = CreateStubDrawingSession();
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBounds(nullptr, &bounds));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBounds(drawingSession.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(nullptr, matrix, &bounds));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
     }
 };

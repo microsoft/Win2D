@@ -49,6 +49,7 @@ namespace canvas
         std::function<void(ID2D1Device**)> MockGetDevice;
         std::function<HRESULT(ID2D1Effect **)> MockCreateEffect;
         std::function<HRESULT(const D2D1_COLOR_F* color, const D2D1_BRUSH_PROPERTIES* brushProperties, ID2D1SolidColorBrush** solidColorBrush)> MockCreateSolidColorBrush;
+        std::function<HRESULT(ID2D1Image*, D2D1_RECT_F*)> MockGetImageWorldBounds;
 
         // ID2D1Resource
 
@@ -555,10 +556,15 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP GetImageWorldBounds(ID2D1Image *,D2D1_RECT_F *) const override
+        IFACEMETHODIMP GetImageWorldBounds(ID2D1Image* image,D2D1_RECT_F* bounds) const override
         {
-            Assert::Fail(L"Unexpected call to GetImageWorldBounds");
-            return E_NOTIMPL;
+            if (!MockGetImageWorldBounds)
+            {
+                Assert::Fail(L"Unexpected call to GetImageWorldBounds");
+                return E_NOTIMPL;
+            }
+
+            return MockGetImageWorldBounds(image, bounds);
         }
 
         IFACEMETHODIMP GetGlyphRunWorldBounds(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,DWRITE_MEASURING_MODE,D2D1_RECT_F *) const override

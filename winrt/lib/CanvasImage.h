@@ -15,6 +15,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
+    using namespace ABI::Windows::Foundation;
 
     [uuid(2F434224-053C-4978-87C4-CFAAFA2F4FAC)]
     class ICanvasImageInternal : public IUnknown
@@ -29,4 +30,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId = nullptr) = 0;
     };
+
+    Rect GetImageBoundsImpl(
+        ICanvasImageInternal* imageInternal,
+        ICanvasDrawingSession *drawingSession,
+        Numerics::Matrix3x2 transform);
 }}}}

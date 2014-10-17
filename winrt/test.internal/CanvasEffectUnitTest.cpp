@@ -80,6 +80,20 @@ public:
         Assert::IsTrue(isGetPropertyCalled);
     }
 
+    TEST_METHOD(CanvasEffect_Closed)
+    {
+        ABI::Windows::Foundation::Rect bounds;
+        Numerics::Matrix3x2 matrix = { 0 };
+
+        auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realInputSize, false);
+        auto drawingSession = CreateStubDrawingSession();
+
+        Assert::AreEqual(S_OK, canvasEffect->Close());
+
+        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBounds(drawingSession.Get(), &bounds));
+        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
+    }
+
     TEST_METHOD(CanvasEffect_Inputs)
     {
         ComPtr<IVector<IEffectInput*>> inputs;
@@ -311,6 +325,20 @@ public:
         testEffect->put_Source(testEffect.Get());
 
         Assert::AreEqual(D2DERR_CYCLIC_GRAPH, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+    }
+
+    TEST_METHOD(CanvasEffect_GetBounds_NullArg)
+    {
+        ABI::Windows::Foundation::Rect bounds;
+        Numerics::Matrix3x2 matrix = { 0 };
+
+        auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realInputSize, false);
+        auto drawingSession = CreateStubDrawingSession();
+
+        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(nullptr, &bounds));
+        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(drawingSession.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(nullptr, matrix, &bounds));
+        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
     }
 
     class MockEffectThatCountsCalls : public MockD2DEffect

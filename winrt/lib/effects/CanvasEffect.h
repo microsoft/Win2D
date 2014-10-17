@@ -35,6 +35,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     private:
         ComPtr<ID2D1Effect> m_resource;
+        // Unlike other objects, !m_resource does not necessarily indicate
+        // that the object was closed.
+        bool m_closed; 
 
         IID m_effectId;
 
@@ -63,6 +66,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(get_EffectId)(GUID* effectId) override;
         IFACEMETHOD(get_Inputs)(_Out_ IVector<IEffectInput*>** inputs) override;
         IFACEMETHOD(get_Properties)(_Out_ IVector<IInspectable*>** properties) override;
+
+        //
+        // ICanvasImage
+        //
+
+        HRESULT STDMETHODCALLTYPE GetBounds(
+            ICanvasDrawingSession *drawingSession,
+            Rect *bounds) override;
+
+        HRESULT STDMETHODCALLTYPE GetBoundsWithTransform(
+            ICanvasDrawingSession *drawingSession,
+            Numerics::Matrix3x2 transform,
+            Rect *bounds) override;
 
         //
         // ICanvasImageInternal
@@ -107,6 +123,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     private:
         void SetProperties();
+
+        void ThrowIfClosed();
 
 
         //
