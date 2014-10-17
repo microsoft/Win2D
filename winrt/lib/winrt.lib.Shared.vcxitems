@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -71,8 +71,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ConvolveMatrixEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DirectionalBlurEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DiscreteTransferEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DisplacementMapEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DistantDiffuseEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DistantSpecularEffect.h" />
@@ -92,6 +94,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ShadowEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.h" />
@@ -130,8 +133,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ConvolveMatrixEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DirectionalBlurEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DiscreteTransferEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DisplacementMapEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DistantDiffuseEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DistantSpecularEffect.cpp" />
@@ -151,6 +156,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ShadowEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.cpp" />
@@ -188,8 +194,10 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorMatrixEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\CompositeEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ConvolveMatrixEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\CropEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DirectionalBlurEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\DiscreteTransferEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DisplacementMapEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DistantDiffuseEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DistantSpecularEffect.abi.idl" />
@@ -209,6 +217,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ShadowEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.abi.idl" />

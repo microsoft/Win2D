@@ -197,5 +197,12 @@ under the License.
       <Property Name="Source2Amount" Type="float"/>
       <Property Name="Offset" Type="float"/>
     </Effect>
+    <Effect Name="ConvolveMatrixEffect">
+      <Property Name="KernelSizeX" ProjectedNameOverride="KernelWidth"/>
+      <Property Name="KernelSizeY" ProjectedNameOverride="KernelHeight"/>
+      <Property Name="KernelUnitLength" ProjectedNameOverride="KernelScale"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="InterpolationMode"/>
+      <Property Name="Bias" ProjectedNameOverride="Offset"/>
+    </Effect>
   </Namespace>
 </Settings>

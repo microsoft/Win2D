@@ -134,6 +134,8 @@ namespace CodeGen
         public string TypeNameCpp { get; set; }
         public string TypeNameBoxed { get; set; }
 
+        public bool IsArray { get; set; }
+
         public bool ShouldProject { get; set; }
         public bool IsHidden { get; set; }
         public bool IsHandCoded { get; set; }
@@ -260,11 +262,8 @@ namespace CodeGen
         {
             switch (effect.Properties[0].Value)
             {
-                // TODO #2577: these effects require Blob support.
-                case "Convolve Matrix":
-                case "Discrete Transfer":
+                // TODO #2648: figure out how to project effects that output computation results rather than images.
                 case "Histogram":
-                case "Table Transfer":
                     return false;
 
                 default:
@@ -390,6 +389,14 @@ namespace CodeGen
                         var size = sizeElements.Aggregate((a, b) => a * b);
 
                         property.TypeNameBoxed = "float[" + size + "]";
+                    }
+                    else if (xmlName == "blob")
+                    {
+                        // The D2D "blob" type projects as an array of floats.
+                        property.TypeNameIdl = "float";
+                        property.TypeNameCpp = "float";
+                        property.TypeNameBoxed = "float";
+                        property.IsArray = true;
                     }
                     else
                     {

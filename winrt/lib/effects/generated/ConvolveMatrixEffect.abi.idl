@@ -1,0 +1,103 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+// This file was automatically generated. Please do not edit it manually.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass ConvolveMatrixEffect;
+
+    [version(VERSION), uuid(82961257-A78D-5440-8026-AF57D4A76A9E), exclusiveto(ConvolveMatrixEffect)]
+    interface IConvolveMatrixEffect : IInspectable
+        requires  Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget]
+        HRESULT KernelScale([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT KernelScale([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+
+        [propput]
+        HRESULT InterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+
+        [propget]
+        HRESULT KernelWidth([out, retval] UINT32* value);
+
+        [propput]
+        HRESULT KernelWidth([in] UINT32 value);
+
+        [propget]
+        HRESULT KernelHeight([out, retval] UINT32* value);
+
+        [propput]
+        HRESULT KernelHeight([in] UINT32 value);
+
+        [propget]
+        HRESULT KernelMatrix([out] UINT32* valueCount, [out, size_is(, *valueCount), retval] float** valueElements);
+
+        [propput]
+        HRESULT KernelMatrix([in] UINT32 valueCount, [in, size_is(valueCount)] float* valueElements);
+
+        [propget]
+        HRESULT Divisor([out, retval] float* value);
+
+        [propput]
+        HRESULT Divisor([in] float value);
+
+        [propget]
+        HRESULT Offset([out, retval] float* value);
+
+        [propput]
+        HRESULT Offset([in] float value);
+
+        [propget]
+        HRESULT KernelOffset([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+
+        [propput]
+        HRESULT KernelOffset([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+
+        [propget]
+        HRESULT PreserveAlpha([out, retval] boolean* value);
+
+        [propput]
+        HRESULT PreserveAlpha([in] boolean value);
+
+        [propget]
+        HRESULT BorderMode([out, retval] EffectBorderMode* value);
+
+        [propput]
+        HRESULT BorderMode([in] EffectBorderMode value);
+
+        [propget]
+        HRESULT ClampOutput([out, retval] boolean* value);
+
+        [propput]
+        HRESULT ClampOutput([in] boolean value);
+
+        [propget]
+        HRESULT Source([out, retval] IEffectInput** input);
+
+        [propput]
+        HRESULT Source([in] IEffectInput* input);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass ConvolveMatrixEffect
+    {
+        [default] interface IConvolveMatrixEffect;
+        interface IEffect;
+    }
+}

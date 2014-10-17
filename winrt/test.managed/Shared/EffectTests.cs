@@ -176,10 +176,10 @@ namespace test.managed
                 }
 
                 effectProperties[whichIndexIsProperty[i]] = boxed1;
-                Assert.AreEqual(testValue1, properties[i].GetValue(effect));
+                Assert.IsTrue(PropertyValuesAreEqual(testValue1, properties[i].GetValue(effect)));
 
                 effectProperties[whichIndexIsProperty[i]] = boxed2;
-                Assert.AreEqual(testValue2, properties[i].GetValue(effect));
+                Assert.IsTrue(PropertyValuesAreEqual(testValue2, properties[i].GetValue(effect)));
             }
         }
 
@@ -189,7 +189,8 @@ namespace test.managed
             if (value is int ||
                 value is uint ||
                 value is float ||
-                value is bool)
+                value is bool ||
+                value is float[])
             {
                 return value;
             }
@@ -287,7 +288,8 @@ namespace test.managed
             if (type == typeof(int) ||
                 type == typeof(uint) ||
                 type == typeof(float) ||
-                type == typeof(bool))
+                type == typeof(bool) ||
+                type == typeof(float[]))
             {
                 return value;
             }
@@ -428,6 +430,17 @@ namespace test.managed
         }
 
 
+        static bool PropertyValuesAreEqual(object value1, object value2)
+        {
+            if (value1 is float[] && value2 is float[])
+            {
+                return (value1 as float[]).SequenceEqual(value2 as float[]);
+            }
+
+            return value1.Equals(value2);
+        }
+
+
         static float[] ConvertRgbToRgba(float[] value)
         {
             if (value.Length == 3)
@@ -543,6 +556,11 @@ namespace test.managed
             else if (type == typeof(Color))
             {
                 return whichOne ? Colors.CornflowerBlue : Colors.Crimson;
+            }
+            else if (type == typeof(float[]))
+            {
+                return whichOne ? new float[] { 1, 2, 3 } :
+                                  new float[] { 4, 5, 6, 7, 8, 9 };
             }
             else
             {

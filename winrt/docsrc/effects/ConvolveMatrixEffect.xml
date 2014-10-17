@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect">
+      <summary>
+        Applies an arbitrary 2D filter kernel to an image.
+        This can perform operations such as edge detect, emboss, sharpen, or blur.
+      </summary>
+      <remarks>
+        <p>
+          A convolve filter works by sampling a number of source pixels from around the location whose
+          output value is being computed, weighting each sample by the corresponding value from the filter
+          kernel matrix, and summing the results. Different filter kernels can produce a wide range of
+          image processing effects. Although the following examples all use the default 3x3 KernelWidth
+          and KernelHeight, this can be set to any size (note that large kernels are more expensive).
+        </p>
+        
+        <p>Edge detect filter:</p>
+        <code>
+          effect.KernelMatrix = new float[]
+          {
+              0,  1,  0,
+              1, -4,  1,
+              0,  1,  0,
+          };
+        </code>
+
+        <p>Emboss filter:</p>
+        <code>
+          effect.KernelMatrix = new float[]
+          {
+              -2, -1,  0,
+              -1,  1,  1,
+               0,  1,  2,
+          };
+        </code>
+
+        <p>Sharpen the image:</p>
+        <code>
+          effect.KernelMatrix = new float[]
+          {
+              -1, -2,  -1,
+              -2,  13, -2,
+              -1, -2,  -1,
+          };
+        </code>
+
+        <p>Box blur (note that <see cref="T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect"/> is usually a better way to blur an image):</p>
+        <code>
+          effect.KernelMatrix = new float[]
+          {
+              1, 1, 1,
+              1, 1, 1,
+              1, 1, 1,
+          };
+          
+          effect.Divisor = 9;
+        </code>
+
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706323.aspx">D2D Convolve matrix effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.#ctor">
+      <summary>Initializes a new instance of the ConvolveMatrixEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.Dispose">
+      <summary>Releases all resources used by the ConvolveMatrixEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.Source">
+      <summary>Gets or sets the input source for ConvolveMatrix effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.KernelWidth">
+      <summary>Width of the filter kernel matrix. Default value 3.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.KernelHeight">
+      <summary>Height of the filter kernel matrix. Default value 3.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.KernelMatrix">
+      <summary>
+        The filter kernel matrix.
+        This array must be sized KernelWidth * KernelHeight.
+        Default value {0,0,0,0,1,0,0,0,0}.
+      </summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.KernelScale">
+      <summary>Scales how the filter kernel is mapped onto the 2D source image. Default value (1,1).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.KernelOffset">
+      <summary>
+        Shifts the filter kernel from its default position centered on the output pixel. Default value (0,0).
+      </summary>
+      <remarks>
+        With some offsets and kernel sizes, convolution samples won't land directly on a pixel center.
+        In that case, sample values are computed by bilinear interpolation.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.Divisor">
+      <summary>After the filter kernel is applied to a pixel, the result is divided by this value. Default 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.Offset">
+      <summary>After applying the filter kernel and divisor, this offset is added to the result. Default value 0.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.InterpolationMode">
+      <summary>
+        Interpolation mode used to scale the source image to the specified KernelScale.
+        Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.
+      </summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.PreserveAlpha">
+      <summary>
+        Specifies whether the convolution filter is applied to alpha as well as the color channels.
+        When set to true, only the color channels are filtered, while alpha values are kept unchanged.
+        Default value false.
+      </summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.ClampOutput">
+      <summary>If set, the effect clamps color values to between 0 and 1 before passing 
+               them on to the next effect in the graph. If false, the effect will not clamp 
+               values, although subsequent effects or the output surface may later clamp if 
+               they are not of high enough precision. Default value false.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.BorderMode">
+      <summary>Gets and sets the border mode for edge pixels.</summary>
+      <remarks>
+        <p>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.EffectId">
+      <summary>Gets the unique identifier for the effect.</summary>
+      <remarks>
+        <p>Generic way to query the type of an effect. EffectId is equal to the 
+           CLSID_D2D1ConvolveMatrix GUID specified in the SDK header d2d1effects.h.</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.Inputs">
+      <summary>Gets a collection of inputs attached to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.Properties">
+      <summary>Gets the collection of properties specific to the current effect.</summary>
+      <inheritdoc/>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0), and identity transform on the specified drawing session.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
+    </member>
+
+  </members>
+</doc>

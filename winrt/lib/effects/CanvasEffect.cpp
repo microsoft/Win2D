@@ -294,52 +294,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 ComArray<float> value;
                 ThrowIfFailed(propertyValue->GetSingleArray(value.GetAddressOfSize(), value.GetAddressOfData()));
-
-                // Since d2d effects have input array based types:
-                // D2D1_MATRIX_3X2_F, D2D1_MATRIX_4X4_F, D2D1_MATRIX_5X4_F, 
-                // D2D1_VECTOR_2F, D2D1_VECTOR_3F, D2D1_VECTOR_4F
-                // we can uniquely identify input type based on size
-                // size 20 => D2D1_MATRIX_5X4_F
-                // size 16 => D2D1_MATRIX_4X4_F
-                // size 6  => D2D1_MATRIX_3X2_F
-                // size 4  => D2D1_VECTOR_4F
-                // size 3  => D2D1_VECTOR_3F
-                // size 2  => D2D1_VECTOR_2F
-                switch (value.GetSize())
-                {
-                case 2:
-                {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_2F*>(value.GetData())));
-                    break;
-                }
-                case 3:
-                {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_3F*>(value.GetData())));
-                    break;
-                }
-                case 4:
-                {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_VECTOR_4F*>(value.GetData())));
-                    break;
-                }
-                case 6:
-                {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_3X2_F*>(value.GetData())));
-                    break;
-                }
-                case 16:
-                {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_4X4_F*>(value.GetData())));
-                    break;
-                }
-                case 20:
-                {
-                    ThrowIfFailed(m_resource->SetValue(i, *reinterpret_cast<D2D1_MATRIX_5X4_F*>(value.GetData())));
-                    break;
-                }
-                default:
-                    ThrowHR(E_NOTIMPL);
-                }
+                ThrowIfFailed(m_resource->SetValue(i, reinterpret_cast<BYTE*>(value.GetData()), value.GetSize() * sizeof(float)));
                 break;
             }
             default:

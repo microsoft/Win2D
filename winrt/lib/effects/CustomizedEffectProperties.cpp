@@ -24,26 +24,24 @@
                                                                                         \
     IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ float* value)                  \
     {                                                                                   \
-        return ExceptionBoundary(                                                       \
-            [&]                                                                         \
-            {                                                                           \
-                CheckInPointer(value);                                                  \
-                Numerics::Vector4 packedValue;                                          \
-                GetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue); \
-                *value = packedValue.VECTOR_COMPONENT;                                  \
-            });                                                                         \
+        return ExceptionBoundary([&]                                                    \
+        {                                                                               \
+            CheckInPointer(value);                                                      \
+            Numerics::Vector4 packedValue;                                              \
+            GetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue);     \
+            *value = packedValue.VECTOR_COMPONENT;                                      \
+        });                                                                             \
     }                                                                                   \
                                                                                         \
     IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(_In_ float value)                    \
     {                                                                                   \
-        return ExceptionBoundary(                                                       \
-            [&]                                                                         \
-            {                                                                           \
-                Numerics::Vector4 packedValue;                                          \
-                GetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue); \
-                packedValue.VECTOR_COMPONENT = value;                                   \
-                SetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, packedValue);  \
-            });                                                                         \
+        return ExceptionBoundary([&]                                                    \
+        {                                                                               \
+            Numerics::Vector4 packedValue;                                              \
+            GetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue);     \
+            packedValue.VECTOR_COMPONENT = value;                                       \
+            SetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, packedValue);      \
+        });                                                                             \
     }
 
 

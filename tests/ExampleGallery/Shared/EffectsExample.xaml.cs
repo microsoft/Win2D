@@ -35,8 +35,10 @@ namespace ExampleGallery
             Brightness,
             ColorMatrix,
             Composite,
+            ConvolveMatrix,
             Crop,
             DirectionalBlur,
+            DiscreteTransfer,
             DisplacementMap,
             GaussianBlur,
             HueRotation,
@@ -141,11 +143,17 @@ namespace ExampleGallery
                 case EffectType.Composite:
                     return CreateComposite();
 
+                case EffectType.ConvolveMatrix:
+                    return CreateConvolveMatrix();
+
                 case EffectType.Crop:
                     return CreateCrop();
 
                 case EffectType.DirectionalBlur:
                     return CreateDirectionalBlur();
+
+                case EffectType.DiscreteTransfer:
+                    return CreateDiscreteTransfer();
 
                 case EffectType.DisplacementMap:
                     return CreateDisplacementMap();
@@ -342,6 +350,59 @@ namespace ExampleGallery
             return compositeEffect;
         }
 
+        private ICanvasImage CreateConvolveMatrix()
+        {
+            var convolveEffect = new ConvolveMatrixEffect
+            {
+                Source = bitmapTiger,
+                KernelWidth = 3,
+                KernelHeight = 3,
+            };
+
+            float[][] filters =
+            {
+                new float[] { 0, 1, 0, 1, -4, 1, 0, 1, 0 },
+                new float[] { -2, -1, 0, -1, 1, 1, 0, 1, 2 },
+                new float[] { -1, -2, -1, -2, 13, -2, -1, -2, -1 },
+                new float[] { 1f / 9, 1f / 9, 1f / 9, 1f / 9, 1f / 9, 1f / 9, 1f / 9, 1f / 9, 1f / 9 },
+            };
+
+            string[] filterNames =
+            {
+                "Edge detect",
+                "Emboss",
+                "Sharpen",
+                "Box blur",
+            };
+
+            // Animation interpolates between different convolve filter matrices.
+            animationFunction = elapsedTime =>
+            {
+                int prevFilter = (int)(elapsedTime % filters.Length);
+                int nextFilter = (prevFilter + 1) % filters.Length;
+
+                float mu = elapsedTime % 1;
+
+                var convolve = new float[9];
+
+                for (int i = 0; i < 9; i++)
+                {
+                    convolve[i] = filters[prevFilter][i] * (1 - mu) +
+                                  filters[nextFilter][i] * mu;
+                }
+
+                convolveEffect.KernelMatrix = convolve;
+
+                textLabel = string.Format("{0}\n{{\n    {1:0.0}, {2:0.0}, {3:0.0},\n    {4:0.0}, {5:0.0}, {6:0.0},\n    {7:0.0}, {8:0.0}, {9:0.0}\n}}",
+                                          filterNames[mu < 0.5 ? prevFilter : nextFilter],
+                                          convolve[0], convolve[1], convolve[2],
+                                          convolve[3], convolve[4], convolve[5],
+                                          convolve[6], convolve[7], convolve[8]);
+            };
+
+            return convolveEffect;
+        }
+
         private ICanvasImage CreateCrop()
         {
             var cropEffect = new CropEffect
@@ -381,6 +442,33 @@ namespace ExampleGallery
             };
 
             return blurEffect;
+        }
+
+        private ICanvasImage CreateDiscreteTransfer()
+        {
+            var discreteTransferEffect = new DiscreteTransferEffect
+            {
+                Source = bitmapTiger
+            };
+
+            float[][] tables =
+            {
+                new float[] { 0, 1 },
+                new float[] { 1, 0 },
+                new float[] { 0, 0.5f, 1 },
+            };
+
+            // Animation switches between different quantisation color transfer tables.
+            animationFunction = elapsedTime =>
+            {
+                int t = (int)(elapsedTime * 2);
+
+                discreteTransferEffect.RedTable = tables[t % tables.Length];
+                discreteTransferEffect.GreenTable = tables[(t / tables.Length) % tables.Length];
+                discreteTransferEffect.BlueTable = tables[(t / tables.Length / tables.Length) % tables.Length];
+            };
+
+            return discreteTransferEffect;
         }
 
         private ICanvasImage CreateDisplacementMap()

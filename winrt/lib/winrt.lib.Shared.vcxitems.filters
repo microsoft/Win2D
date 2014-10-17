@@ -79,6 +79,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ConvolveMatrixEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\DiscreteTransferEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GammaTransferEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
@@ -119,6 +125,9 @@
       <Filter>effects\generated</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.cpp">
@@ -217,6 +226,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ConvolveMatrixEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\DiscreteTransferEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GammaTransferEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
@@ -254,6 +269,9 @@
       <Filter>effects\generated</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.h">
@@ -353,6 +371,12 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorSourceEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ConvolveMatrixEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\DiscreteTransferEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GammaTransferEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
@@ -393,6 +417,9 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\SpotDiffuseEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.abi.idl">

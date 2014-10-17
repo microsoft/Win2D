@@ -117,11 +117,25 @@ namespace CodeGen
                     continue;
 
                 output.WriteLine("[propget]");
-                output.WriteLine("HRESULT " + property.Name + "([out, retval] " + property.TypeNameIdl + "* value);");
+                if (property.IsArray)
+                {
+                    output.WriteLine("HRESULT " + property.Name + "([out] UINT32* valueCount, [out, size_is(, *valueCount), retval] " + property.TypeNameIdl + "** valueElements);");
+                }
+                else
+                {
+                    output.WriteLine("HRESULT " + property.Name + "([out, retval] " + property.TypeNameIdl + "* value);");
+                }
                 output.WriteLine();
 
                 output.WriteLine("[propput]");
-                output.WriteLine("HRESULT " + property.Name + "([in] " + property.TypeNameIdl + " value);");
+                if (property.IsArray)
+                {
+                    output.WriteLine("HRESULT " + property.Name + "([in] UINT32 valueCount, [in, size_is(valueCount)] " + property.TypeNameIdl + "* valueElements);");
+                }
+                else
+                {
+                    output.WriteLine("HRESULT " + property.Name + "([in] " + property.TypeNameIdl + " value);");
+                }
                 output.WriteLine();
             }
 
@@ -193,7 +207,9 @@ namespace CodeGen
                 if (property.Type == "string" || property.IsHidden)
                     continue;
 
-                output.WriteLine("PROPERTY(" + property.Name + ", " + property.TypeNameCpp + ");");
+                var propertyMacro = property.IsArray ? "ARRAY_PROPERTY" : "PROPERTY";
+
+                output.WriteLine(propertyMacro + "(" + property.Name + ", " + property.TypeNameCpp + ");");
             }
 
             if (!(effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF"))
@@ -279,7 +295,9 @@ namespace CodeGen
 
             string defaultValue = property.Properties.Find(internalProperty => internalProperty.Name == "Default").Value;
 
-            output.WriteLine("SetProperty<" + property.TypeNameBoxed + ">(" + property.NativePropertyName + ", " + FormatPropertyValue(property, defaultValue) + ");");
+            string setFunction = property.IsArray ? "SetArrayProperty" : "SetProperty";
+
+            output.WriteLine(setFunction + "<" + property.TypeNameBoxed + ">(" + property.NativePropertyName + ", " + FormatPropertyValue(property, defaultValue) + ");");
         }
 
         private static void WritePropertyImplementation(Effect effect, Formatter output, Property property)
@@ -296,19 +314,22 @@ namespace CodeGen
 
             bool isValidation = (min != null) || (max != null) || isWithUnsupported;
 
+            string implementMacro = property.IsArray ? "IMPLEMENT_ARRAY_PROPERTY" : "IMPLEMENT_PROPERTY";
+
             if (isValidation)
             {
-                output.WriteLine("IMPLEMENT_PROPERTY_WITH_VALIDATION(" + effect.ClassName + ",");
-            }
-            else
-            {
-                output.WriteLine("IMPLEMENT_PROPERTY(" + effect.ClassName + ",");
+                implementMacro += "_WITH_VALIDATION";
             }
 
+            output.WriteLine(implementMacro + "(" + effect.ClassName + ",");
             output.Indent();
             output.WriteLine(property.Name + ",");
             output.WriteLine(property.TypeNameBoxed + ",");
-            output.WriteLine(property.TypeNameCpp + ",");
+
+            if (!property.IsArray)
+            {
+                output.WriteLine(property.TypeNameCpp + ",");
+            }
 
             if (isValidation)
             {
@@ -410,6 +431,10 @@ namespace CodeGen
             else if (property.Type == "bool")
             {
                 value = "static_cast<boolean>(" + value + ")";
+            }
+            else if (property.IsArray)
+            {
+                value = "{ " + value + " }";
             }
 
             return value;
