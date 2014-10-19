@@ -819,4 +819,24 @@ public:
                 });
         }
     }
+
+    TEST_METHOD(CanvasBitmap_WicBitmapCannotRetrieveD3DProperties)
+    {
+        // 
+        // This test verifies the expected points of failure while interopping native WIC bitmaps
+        // through Win2D objects, and attempting to access Direct3D properties of them.
+        //
+        auto canvasDevice = ref new CanvasDevice();
+
+        WicBitmapTestFixture f = CreateWicBitmapTestFixture();
+
+        auto wicBitmapBasedDrawingSession = GetOrCreate<CanvasDrawingSession>(f.RenderTarget.Get());
+
+        Assert::ExpectException<Platform::COMException^>([&] { wicBitmapBasedDrawingSession->Device; });
+
+        auto wicBitmapBasedCanvasBitmap = GetOrCreate<CanvasBitmap>(canvasDevice, f.Bitmap.Get());
+
+        Assert::ExpectException<Platform::COMException^>([&] { wicBitmapBasedCanvasBitmap->Description; });
+
+    }
 };

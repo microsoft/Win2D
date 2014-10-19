@@ -65,4 +65,34 @@ TEST_CLASS(PolymorphicBitmapTests)
 
         Assert::IsTrue(IsSameInstance(reinterpret_cast<IInspectable*>(bitmap), reinterpret_cast<IInspectable*>(renderTarget)));
     }
+
+    TEST_METHOD(GetWrappedTarget_DoesNotRelyOnD3DProperties)
+    {
+        //
+        // WIC bitmaps are special in that there is no explicit TARGET flag on
+        // them during creation. 
+        //
+        // This validates that interop evaluates target eligibility the 'right'
+        // way- i.e. through D2D's TARGET flag, not through some attribute of 
+        // a D3D resource.
+        //
+        WicBitmapTestFixture f = CreateWicBitmapTestFixture();
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                GetOrCreate<CanvasRenderTarget>(m_canvasDevice, f.Bitmap.Get());
+            });
+
+        //
+        // Likewise, a WIC-based D2D render target's backing bitmap *will* have
+        // the TARGET flag. 
+        //
+        ComPtr<ID2D1Image> targetD2DImage;
+        f.RenderTarget->GetTarget(&targetD2DImage);
+        auto targetD2DBitmap = As<ID2D1Bitmap1>(targetD2DImage);
+
+        CanvasRenderTarget^ bitmap = GetOrCreate<CanvasRenderTarget>(m_canvasDevice, targetD2DBitmap.Get());
+        AssertTypeName<CanvasRenderTarget>(bitmap);
+    }
 };

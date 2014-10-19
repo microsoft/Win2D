@@ -27,6 +27,7 @@
 #include <dwrite_2.h>
 #include <DirectXMath.h>
 #include <Combaseapi.h>
+#include <wincodec.h>
 
 #include <ErrorHandling.h>
 #include <Utilities.h>

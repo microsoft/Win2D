@@ -412,3 +412,10 @@ ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext(CanvasDevice^ device = nu
 ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap(D2D1_BITMAP_OPTIONS options, ComPtr<ID2D1DeviceContext1> deviceContext = nullptr);
 
 void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode, float dpiTolerance = 0.0f);
+
+struct WicBitmapTestFixture
+{
+    ComPtr<ID2D1DeviceContext1> RenderTarget;
+    ComPtr<ID2D1Bitmap1> Bitmap;
+};
+WicBitmapTestFixture CreateWicBitmapTestFixture();
