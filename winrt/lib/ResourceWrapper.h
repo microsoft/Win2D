@@ -95,7 +95,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     CheckAndClearOutPointer(outResource);
 
-                    auto resource = GetResource();
+                    auto& resource = GetResource();
                     ThrowIfFailed(resource.CopyTo(iid, outResource));
                 });
         }

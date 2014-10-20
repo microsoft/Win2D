@@ -239,7 +239,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(valueCount);
                 CheckAndClearOutPointer(valueElements);
 
-                auto resource = GetResource();
+                auto& resource = GetResource();
 
                 ComPtr<ID2D1GradientStopCollection> stopCollection;
                 resource->GetGradientStopCollection(&stopCollection);
@@ -314,7 +314,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1GradientStopCollection1> CanvasLinearGradientBrush::GetGradientStopCollection()
     {
-        auto resource = GetResource();
+        auto& resource = GetResource();
         ComPtr<ID2D1GradientStopCollection> stopCollection;
         resource->GetGradientStopCollection(stopCollection.GetAddressOf());
         ComPtr<ID2D1GradientStopCollection1> stopCollection1;
