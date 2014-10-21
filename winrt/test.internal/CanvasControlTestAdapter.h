@@ -93,20 +93,14 @@ public:
         return DEFAULT_DPI;
     }
 
-    virtual EventRegistrationToken AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
+    virtual void AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
     {
         EventRegistrationToken token;
         ThrowIfFailed(m_dpiChangedEventList.Add(handler, &token));
-        return token;
     }
 
-    virtual void FireDpiChangedEvent()
+    void FireDpiChangedEvent()
     {
         ThrowIfFailed(m_dpiChangedEventList.InvokeAll(nullptr, nullptr));
-    }
-
-    virtual bool IsDesignModeEnabled()
-    {
-        return false;
     }
 };

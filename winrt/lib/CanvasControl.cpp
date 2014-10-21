@@ -175,17 +175,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return logicalDpi;
         }
 
-        virtual EventRegistrationToken AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
+        virtual void AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
         {
+            // Don't register for the DPI changed event if we're in design mode
+            if (IsDesignModeEnabled())
+                return;
+
             ComPtr<IDisplayInformation> displayInformation;
             ThrowIfFailed(m_displayInformationStatics->GetForCurrentView(&displayInformation));
 
             EventRegistrationToken token;
             ThrowIfFailed(displayInformation->add_DpiChanged(handler, &token));
-            return token;
         }
 
-        bool IsDesignModeEnabled() override
+    private:
+        bool IsDesignModeEnabled()
         {
             boolean enabled;
             ThrowIfFailed(m_designModeStatics->get_DesignModeEnabled(&enabled));
@@ -292,12 +296,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             &sizeChangedToken));
 
         // Register for DpiChanged event.
-        if (!m_adapter->IsDesignModeEnabled())
-        {
-            auto dpiChangedEventHandler = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChangedCallback);
-            EventRegistrationToken dpiChangedToken{};
-            dpiChangedToken = m_adapter->AddDpiChangedCallback(dpiChangedEventHandler.Get());
-        }
+        auto dpiChangedEventHandler = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChangedCallback);
+        m_adapter->AddDpiChangedCallback(dpiChangedEventHandler.Get());
     }
 
     void CanvasControl::ClearDrawNeeded()

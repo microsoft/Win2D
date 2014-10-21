@@ -58,8 +58,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
-        virtual EventRegistrationToken AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) = 0;
-        virtual bool IsDesignModeEnabled() = 0;
+        virtual void AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) = 0;
     };
 
     class CanvasControl : public RuntimeClass<
