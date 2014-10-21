@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(3947C621-78DA-5489-9927-BE655F4576E2), exclusiveto(ShadowEffect)]
     interface IShadowEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT BlurAmount([out, retval] float* value);

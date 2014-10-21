@@ -25,7 +25,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(1CB1B33D-20E9-564B-856E-37E9FA1D0016), exclusiveto(TurbulenceEffect)]
     interface ITurbulenceEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT Offset([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);

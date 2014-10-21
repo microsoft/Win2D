@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(4467D118-33E7-5B1A-87C2-0F1F0497353D), exclusiveto(Transform2DEffect)]
     interface ITransform2DEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);

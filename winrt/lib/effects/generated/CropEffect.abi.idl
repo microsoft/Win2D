@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(D8A1C2A5-E031-566D-8F7C-BA07CFB58AAE), exclusiveto(CropEffect)]
     interface ICropEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT SourceRectangle([out, retval] Windows.Foundation.Rect* value);

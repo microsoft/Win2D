@@ -36,7 +36,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(F8808C48-CDC7-5DB4-807C-B9344FF71984), exclusiveto(CompositeEffect)]
     interface ICompositeEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT Mode([out, retval] CompositeEffectMode* value);

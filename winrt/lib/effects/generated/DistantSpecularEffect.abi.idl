@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(A7A828DF-3072-545F-8D75-86C100F03231), exclusiveto(DistantSpecularEffect)]
     interface IDistantSpecularEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT Azimuth([out, retval] float* value);

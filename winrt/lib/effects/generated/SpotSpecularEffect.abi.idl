@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(83AE4CD0-80AA-5783-8572-F15E5F85329E), exclusiveto(SpotSpecularEffect)]
     interface ISpotSpecularEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT LightPosition([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector3* value);

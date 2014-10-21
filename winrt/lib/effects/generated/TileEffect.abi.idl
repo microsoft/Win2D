@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(78A809CB-1154-5AD6-A880-E3A175772815), exclusiveto(TileEffect)]
     interface ITileEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT SourceRectangle([out, retval] Windows.Foundation.Rect* value);

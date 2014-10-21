@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(43D27AD0-8937-5FDB-876A-4E91CB47540C), exclusiveto(LinearTransferEffect)]
     interface ILinearTransferEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT RedOffset([out, retval] float* value);

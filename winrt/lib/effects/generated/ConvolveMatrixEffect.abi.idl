@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(82961257-A78D-5440-8026-AF57D4A76A9E), exclusiveto(ConvolveMatrixEffect)]
     interface IConvolveMatrixEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT KernelScale([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);

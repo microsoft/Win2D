@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(73098BB4-DCF1-5403-AF44-3344D2982D40), exclusiveto(UnPremultiplyEffect)]
     interface IUnPremultiplyEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT Source([out, retval] IEffectInput** input);

@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(F7F26EBA-F015-5EFF-9AF3-7BD2D44904BD), exclusiveto(AtlasEffect)]
     interface IAtlasEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT SourceRectangle([out, retval] Windows.Foundation.Rect* value);

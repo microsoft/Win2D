@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(A82EC394-6734-5830-9123-2C82B27DD3C0), exclusiveto(GaussianBlurEffect)]
     interface IGaussianBlurEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT BlurAmount([out, retval] float* value);

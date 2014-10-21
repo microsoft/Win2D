@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(099F3299-9B0A-5ED3-B044-4A6FC96F8362), exclusiveto(OpacityMetadataEffect)]
     interface IOpacityMetadataEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT OpaqueRectangle([out, retval] Windows.Foundation.Rect* value);

@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(BECED347-025F-5727-8F7D-498D67DF557E), exclusiveto(BrightnessEffect)]
     interface IBrightnessEffect : IInspectable
-        requires  Microsoft.Graphics.Canvas.ICanvasImage
+        requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
         HRESULT WhitePoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);

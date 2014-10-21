@@ -105,7 +105,7 @@ namespace CodeGen
             output.WriteLine("[version(VERSION), uuid(" + effect.Uuid + "), exclusiveto(" + effect.ClassName + ")]");
             output.WriteLine("interface " + effect.InterfaceName + " : IInspectable");
             output.WriteIndent();
-            output.WriteLine("requires  Microsoft.Graphics.Canvas.ICanvasImage");
+            output.WriteLine("requires Microsoft.Graphics.Canvas.ICanvasImage");
             output.WriteLine("{");
             output.Indent();
 
