@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float[2]>(D2D1_TURBULENCE_PROP_OFFSET, Numerics::Vector2{ 0, 0 });
         SetProperty<float[2]>(D2D1_TURBULENCE_PROP_SIZE, Numerics::Vector2{ 512, 512 });
         SetProperty<float[2]>(D2D1_TURBULENCE_PROP_BASE_FREQUENCY, Numerics::Vector2{ 0.01f, 0.01f });
-        SetProperty<uint32_t>(D2D1_TURBULENCE_PROP_NUM_OCTAVES, 1u);
+        SetProperty<int32_t>(D2D1_TURBULENCE_PROP_NUM_OCTAVES, 1);
         SetProperty<int32_t>(D2D1_TURBULENCE_PROP_SEED, 0);
         SetProperty<uint32_t>(D2D1_TURBULENCE_PROP_NOISE, D2D1_TURBULENCE_NOISE_FRACTAL_SUM);
         SetProperty<boolean>(D2D1_TURBULENCE_PROP_STITCHABLE, static_cast<boolean>(false));
@@ -52,10 +52,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
         Octaves,
-        uint32_t,
-        uint32_t,
+        int32_t,
+        int32_t,
         D2D1_TURBULENCE_PROP_NUM_OCTAVES,
-        (value >= 1u) && (value <= 15u))
+        (value >= 1) && (value <= 15))
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
         Seed,

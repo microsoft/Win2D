@@ -722,7 +722,7 @@ namespace ExampleGallery
             // Animation changes the morphology filter kernel size, and switches back and forth between the two modes.
             animationFunction = elapsedTime =>
             {
-                var t = (uint)((elapsedTime * 10) % 50);
+                var t = (int)((elapsedTime * 10) % 50);
 
                 morphologyEffect.Mode = (t < 25) ? MorphologyEffectMode.Erode :
                                                    MorphologyEffectMode.Dilate;

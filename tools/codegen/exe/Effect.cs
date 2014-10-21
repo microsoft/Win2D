@@ -337,9 +337,9 @@ namespace CodeGen
             var typeRenames = new Dictionary<string, string[]>
             {
                 // D2D name                 IDL name   C++ name
-                { "bool",   new string[] { "boolean", "boolean"  } },
-                { "int32",  new string[] { "INT32",   "int32_t"  } },
-                { "uint32", new string[] { "UINT32",  "uint32_t" } },
+                { "bool",   new string[] { "boolean", "boolean" } },
+                { "int32",  new string[] { "INT32",   "int32_t" } },
+                { "uint32", new string[] { "INT32",   "int32_t" } },
             };
 
             foreach (var property in GetAllEffectsProperties(effects))

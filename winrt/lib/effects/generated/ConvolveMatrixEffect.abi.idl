@@ -33,16 +33,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT InterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
 
         [propget]
-        HRESULT KernelWidth([out, retval] UINT32* value);
+        HRESULT KernelWidth([out, retval] INT32* value);
 
         [propput]
-        HRESULT KernelWidth([in] UINT32 value);
+        HRESULT KernelWidth([in] INT32 value);
 
         [propget]
-        HRESULT KernelHeight([out, retval] UINT32* value);
+        HRESULT KernelHeight([out, retval] INT32* value);
 
         [propput]
-        HRESULT KernelHeight([in] UINT32 value);
+        HRESULT KernelHeight([in] INT32 value);
 
         [propget]
         HRESULT KernelMatrix([out] UINT32* valueCount, [out, size_is(, *valueCount), retval] float** valueElements);

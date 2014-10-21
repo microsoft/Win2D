@@ -34,16 +34,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Mode([in] MorphologyEffectMode value);
 
         [propget]
-        HRESULT Width([out, retval] UINT32* value);
+        HRESULT Width([out, retval] INT32* value);
 
         [propput]
-        HRESULT Width([in] UINT32 value);
+        HRESULT Width([in] INT32 value);
 
         [propget]
-        HRESULT Height([out, retval] UINT32* value);
+        HRESULT Height([out, retval] INT32* value);
 
         [propput]
-        HRESULT Height([in] UINT32 value);
+        HRESULT Height([in] INT32 value);
 
         [propget]
         HRESULT Source([out, retval] IEffectInput** input);

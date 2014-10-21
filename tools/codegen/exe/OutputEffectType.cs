@@ -424,10 +424,6 @@ namespace CodeGen
 
                 value += "f";
             }
-            else if (property.Type == "uint32")
-            {
-                value += "u";
-            }
             else if (property.Type == "bool")
             {
                 value = "static_cast<boolean>(" + value + ")";

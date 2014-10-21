@@ -46,10 +46,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Frequency([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
 
         [propget]
-        HRESULT Octaves([out, retval] UINT32* value);
+        HRESULT Octaves([out, retval] INT32* value);
 
         [propput]
-        HRESULT Octaves([in] UINT32 value);
+        HRESULT Octaves([in] INT32 value);
 
         [propget]
         HRESULT Seed([out, retval] INT32* value);

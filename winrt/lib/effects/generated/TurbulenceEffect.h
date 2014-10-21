@@ -32,7 +32,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         PROPERTY(Offset, Numerics::Vector2);
         PROPERTY(Size, Numerics::Vector2);
         PROPERTY(Frequency, Numerics::Vector2);
-        PROPERTY(Octaves, uint32_t);
+        PROPERTY(Octaves, int32_t);
         PROPERTY(Seed, int32_t);
         PROPERTY(Noise, TurbulenceEffectNoise);
         PROPERTY(Tileable, boolean);

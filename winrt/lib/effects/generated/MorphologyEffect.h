@@ -30,8 +30,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         MorphologyEffect();
 
         PROPERTY(Mode, MorphologyEffectMode);
-        PROPERTY(Width, uint32_t);
-        PROPERTY(Height, uint32_t);
+        PROPERTY(Width, int32_t);
+        PROPERTY(Height, int32_t);
         PROPERTY(Source, IEffectInput*);
     };
 }}}}}

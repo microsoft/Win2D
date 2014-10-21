@@ -23,8 +23,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Set default values
         SetProperty<float[2]>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
         SetProperty<uint32_t>(D2D1_CONVOLVEMATRIX_PROP_SCALE_MODE, D2D1_CONVOLVEMATRIX_SCALE_MODE_LINEAR);
-        SetProperty<uint32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_X, 3u);
-        SetProperty<uint32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_Y, 3u);
+        SetProperty<int32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_X, 3);
+        SetProperty<int32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_Y, 3);
         SetArrayProperty<float>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_MATRIX, { 0, 0, 0, 0, 1, 0, 0, 0, 0 });
         SetProperty<float>(D2D1_CONVOLVEMATRIX_PROP_DIVISOR, 1.0f);
         SetProperty<float>(D2D1_CONVOLVEMATRIX_PROP_BIAS, 0.0f);
@@ -49,17 +49,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
         KernelWidth,
-        uint32_t,
-        uint32_t,
+        int32_t,
+        int32_t,
         D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_X,
-        (value >= 1u) && (value <= 100u))
+        (value >= 1) && (value <= 100))
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
         KernelHeight,
-        uint32_t,
-        uint32_t,
+        int32_t,
+        int32_t,
         D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_Y,
-        (value >= 1u) && (value <= 100u))
+        (value >= 1) && (value <= 100))
 
     IMPLEMENT_ARRAY_PROPERTY(ConvolveMatrixEffect,
         KernelMatrix,

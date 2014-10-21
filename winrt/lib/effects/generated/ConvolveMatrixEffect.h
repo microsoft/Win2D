@@ -31,8 +31,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         PROPERTY(KernelScale, Numerics::Vector2);
         PROPERTY(InterpolationMode, CanvasImageInterpolation);
-        PROPERTY(KernelWidth, uint32_t);
-        PROPERTY(KernelHeight, uint32_t);
+        PROPERTY(KernelWidth, int32_t);
+        PROPERTY(KernelHeight, int32_t);
         ARRAY_PROPERTY(KernelMatrix, float);
         PROPERTY(Divisor, float);
         PROPERTY(Offset, float);

@@ -187,7 +187,6 @@ namespace test.managed
         static object Box(object value)
         {
             if (value is int ||
-                value is uint ||
                 value is float ||
                 value is bool ||
                 value is float[])
@@ -286,7 +285,6 @@ namespace test.managed
         static object Unbox(object value, Type type)
         {
             if (type == typeof(int) ||
-                type == typeof(uint) ||
                 type == typeof(float) ||
                 type == typeof(bool) ||
                 type == typeof(float[]))
@@ -464,11 +462,7 @@ namespace test.managed
         {
             if (type == typeof(int))
             {
-                return whichOne ? 23 : 42;
-            }
-            else if (type == typeof(uint))
-            {
-                return whichOne ? 2u : 7u;
+                return whichOne ? 2 : 7;
             }
             else if (type == typeof(float))
             {

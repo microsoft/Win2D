@@ -22,8 +22,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         // Set default values
         SetProperty<uint32_t>(D2D1_MORPHOLOGY_PROP_MODE, D2D1_MORPHOLOGY_MODE_ERODE);
-        SetProperty<uint32_t>(D2D1_MORPHOLOGY_PROP_WIDTH, 1u);
-        SetProperty<uint32_t>(D2D1_MORPHOLOGY_PROP_HEIGHT, 1u);
+        SetProperty<int32_t>(D2D1_MORPHOLOGY_PROP_WIDTH, 1);
+        SetProperty<int32_t>(D2D1_MORPHOLOGY_PROP_HEIGHT, 1);
     }
 
     IMPLEMENT_PROPERTY(MorphologyEffect,
@@ -34,17 +34,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(MorphologyEffect,
         Width,
-        uint32_t,
-        uint32_t,
+        int32_t,
+        int32_t,
         D2D1_MORPHOLOGY_PROP_WIDTH,
-        (value >= 1u) && (value <= 100u))
+        (value >= 1) && (value <= 100))
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(MorphologyEffect,
         Height,
-        uint32_t,
-        uint32_t,
+        int32_t,
+        int32_t,
         D2D1_MORPHOLOGY_PROP_HEIGHT,
-        (value >= 1u) && (value <= 100u))
+        (value >= 1) && (value <= 100))
 
     IMPLEMENT_INPUT_PROPERTY(MorphologyEffect,
         Source,
