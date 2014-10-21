@@ -115,13 +115,13 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
         // Invalidate and ensure the Draw callback is called.
         canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
+        m_adapter->FireCompositionRenderingEvent();
 
         Assert::AreEqual(1, m_drawCallbackCount);
 
         // Ensure a subsequent invalidation doesn't recreate resources.
         canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
+        m_adapter->FireCompositionRenderingEvent();
 
         Assert::AreEqual(2, m_createResourcesCallbackCount);
         Assert::AreEqual(2, m_drawCallbackCount);
@@ -131,7 +131,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken1));
         ThrowIfFailed(canvasControl->remove_Draw(drawEventToken));
         canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
+        m_adapter->FireCompositionRenderingEvent();
 
         Assert::AreEqual(2, m_createResourcesCallbackCount);
         Assert::AreEqual(2, m_drawCallbackCount);
@@ -426,7 +426,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         {
             m_adapter->Resize(width, height);
             m_control->Invalidate();
-            m_adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(m_control.Get()));
+            m_adapter->FireCompositionRenderingEvent();
         }
 
         void Validate()
@@ -581,7 +581,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
 
             canvasControl->Invalidate();
-            adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
+            adapter->FireCompositionRenderingEvent();
 
             expectedImageSourceCount++;
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
@@ -619,7 +619,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             // should occur at the next rendering event.
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
 
-            adapter->FireCompositionRenderingEvent(static_cast<ICanvasControl*>(canvasControl.Get()));
+            adapter->FireCompositionRenderingEvent();
 
             // Verify the backing store got resized as appropriate.
             if (expectResize) expectedImageSourceCount++;

@@ -48,8 +48,9 @@ public:
         ThrowIfFailed(m_compositionRenderingEventList.Remove(token));
     }
 
-    void FireCompositionRenderingEvent(IInspectable* sender)
+    void FireCompositionRenderingEvent()
     {
+        IInspectable* sender = nullptr;
         IInspectable* arg = nullptr;
         ThrowIfFailed(m_compositionRenderingEventList.InvokeAll(sender, arg));
     }
