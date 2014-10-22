@@ -92,7 +92,10 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("GetBytes")]
         HRESULT GetBytesWithSubrectangle(
-            [in] Windows.Foundation.Rect subrectangle,
+            [in] INT32 left,
+            [in] INT32 top,
+            [in] INT32 width,
+            [in] INT32 height,
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] BYTE** valueElements);
 
@@ -103,9 +106,40 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("GetColors")]
         HRESULT GetColorsWithSubrectangle(
-            [in] Windows.Foundation.Rect subrectangle,
+            [in] INT32 left,
+            [in] INT32 top,
+            [in] INT32 width,
+            [in] INT32 height,
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] Windows.UI.Color** valueElements);
+
+        [overload("SetBytes")]
+        HRESULT SetBytes(
+            [in] UINT32 valueCount,
+            [in, size_is(valueCount)] BYTE* valueElements);
+
+        [overload("SetBytes")]
+        HRESULT SetBytesWithSubrectangle(
+            [in] UINT32 valueCount,
+            [in, size_is(valueCount)] BYTE* valueElements,
+            [in] INT32 left,
+            [in] INT32 top,
+            [in] INT32 width,
+            [in] INT32 height);
+
+        [overload("SetColors")]
+        HRESULT SetColors(
+            [in] UINT32 valueCount,
+            [in, size_is(valueCount)] Windows.UI.Color* valueElements);
+
+        [overload("SetColors")]
+        HRESULT SetColorsWithSubrectangle(
+            [in] UINT32 valueCount,
+            [in, size_is(valueCount)] Windows.UI.Color* valueElements,
+            [in] INT32 left,
+            [in] INT32 top,
+            [in] INT32 width,
+            [in] INT32 height);
     };
 
     [version(VERSION), uuid(C8948DEA-A41D-4CC2-AF9A-FDDE01B606DC), exclusiveto(CanvasBitmap)]

@@ -19,11 +19,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         D3D11_MAPPED_SUBRESOURCE m_mappedSubresource;
         unsigned int m_subresourceIndex;
         unsigned int m_lockedBufferSize;
+        ComPtr<ID3D11Resource> m_sourceResource;
         ComPtr<ID3D11Resource> m_stagingResource;
         ComPtr<ID3D11DeviceContext> m_immediateContext;
+        D3D11_MAP m_mapType;
+        D2D1_RECT_U m_subRectangle;
+        bool m_useSubrectangle;
 
     public:
-        ScopedBitmapLock(ID2D1Bitmap1* d2dBitmap, D2D1_RECT_U const* optionalSubRectangle = nullptr);
+        ScopedBitmapLock(ID2D1Bitmap1* d2dBitmap, D3D11_MAP mapType, D2D1_RECT_U const* optionalSubRectangle = nullptr);
 
         ~ScopedBitmapLock();
 

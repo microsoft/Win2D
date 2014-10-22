@@ -38,6 +38,7 @@
 #include <Canvas.abi.h>
 
 #pragma warning(disable: 4100)  // "unreferenced formal parameter"
+#pragma warning(disable: 4351)  // "elements of {array} will be default initialized"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;

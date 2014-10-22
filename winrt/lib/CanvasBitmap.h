@@ -174,24 +174,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
     void GetBytesImpl(
-        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
         uint8_t** valueElements);
 
     void GetColorsImpl(
-        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
         Color **valueElements);
 
     void SaveBitmapToFileImpl(
-        ID2D1Bitmap1* d2dBitmap,
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         ICanvasBitmapResourceCreationAdapter* adapter,
         HSTRING rawfileName,
         CanvasBitmapFileFormat fileFormat,
         float quality,
         IAsyncAction **resultAsyncAction);
+
+    void SetBytesImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t valueCount,
+        uint8_t* valueElements);
+
+    void SetColorsImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t valueCount,
+        Color *valueElements);
 
     struct CanvasBitmapTraits
     {
@@ -378,7 +390,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         HRESULT STDMETHODCALLTYPE GetBytesWithSubrectangle(
-            Rect subRectangle,
+            int32_t left,
+            int32_t top,
+            int32_t width,
+            int32_t height,
             uint32_t* valueCount,
             uint8_t** valueElements) override
         {
@@ -389,7 +404,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                     GetBytesImpl(
                         d2dBitmap,
-                        ToD2DRectU(subRectangle),
+                        ToD2DRectU(left, top, width, height),
                         valueCount, 
                         valueElements);
                 });
@@ -413,7 +428,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         HRESULT STDMETHODCALLTYPE GetColorsWithSubrectangle(
-            Rect subRectangle,
+            int32_t left,
+            int32_t top,
+            int32_t width,
+            int32_t height,
             uint32_t* valueCount,
             ABI::Windows::UI::Color **valueElements) override
         {
@@ -424,7 +442,83 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                     GetColorsImpl(
                         d2dBitmap,
-                        ToD2DRectU(subRectangle),
+                        ToD2DRectU(left, top, width, height),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE SetBytes(
+            uint32_t valueCount,
+            uint8_t* valueElements) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    SetBytesImpl(
+                        d2dBitmap,
+                        GetResourceBitmapExtents(d2dBitmap),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE SetBytesWithSubrectangle(
+            uint32_t valueCount,
+            uint8_t* valueElements,
+            int32_t left,
+            int32_t top,
+            int32_t width,
+            int32_t height) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    SetBytesImpl(
+                        d2dBitmap,
+                        ToD2DRectU(left, top, width, height),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE SetColors(
+            uint32_t valueCount,
+            ABI::Windows::UI::Color* valueElements) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    SetColorsImpl(
+                        d2dBitmap,
+                        GetResourceBitmapExtents(d2dBitmap),
+                        valueCount, 
+                        valueElements);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE SetColorsWithSubrectangle(
+            uint32_t valueCount,
+            ABI::Windows::UI::Color* valueElements,
+            int32_t left,
+            int32_t top,
+            int32_t width,
+            int32_t height) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    SetColorsImpl(
+                        d2dBitmap,
+                        ToD2DRectU(left, top, width, height),
                         valueCount, 
                         valueElements);
                 });

@@ -263,20 +263,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1_SIZE_U{ static_cast<UINT>(width), static_cast<UINT>(height) };
     }
 
-    inline D2D1_RECT_U ToD2DRectU(ABI::Windows::Foundation::Rect const& rect)
+    inline D2D1_RECT_U ToD2DRectU(int32_t left, int32_t top, int32_t width, int32_t height)
     {
-        RECT longRect = ToRECT(rect);
-
-        if (longRect.left < 0) ThrowHR(E_INVALIDARG);
-        if (longRect.top < 0) ThrowHR(E_INVALIDARG);
-        if (longRect.right < 0) ThrowHR(E_INVALIDARG);
-        if (longRect.bottom < 0) ThrowHR(E_INVALIDARG);
+        if (left < 0) ThrowHR(E_INVALIDARG);
+        if (top < 0) ThrowHR(E_INVALIDARG);
+        if (width < 0) ThrowHR(E_INVALIDARG);
+        if (height < 0) ThrowHR(E_INVALIDARG);
 
         D2D1_RECT_U d2dRect;
-        d2dRect.left = static_cast<UINT32>(longRect.left);
-        d2dRect.top = static_cast<UINT32>(longRect.top);
-        d2dRect.right = static_cast<UINT32>(longRect.right);
-        d2dRect.bottom = static_cast<UINT32>(longRect.bottom);
+        d2dRect.left = static_cast<UINT32>(left);
+        d2dRect.top = static_cast<UINT32>(top);
+        d2dRect.right = d2dRect.left + static_cast<UINT32>(width);
+        d2dRect.bottom = d2dRect.top + static_cast<UINT32>(height);
 
         return d2dRect;
     }

@@ -16,7 +16,9 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    ScopedBitmapLock::ScopedBitmapLock(ID2D1Bitmap1* d2dBitmap, D2D1_RECT_U const* optionalSubRectangle)
+    ScopedBitmapLock::ScopedBitmapLock(ID2D1Bitmap1* d2dBitmap, D3D11_MAP mapType, D2D1_RECT_U const* optionalSubRectangle)
+        : m_mapType(mapType)
+        , m_useSubrectangle(false)
     {
         ComPtr<IDXGISurface> dxgiSurface;
         ThrowIfFailed(d2dBitmap->GetSurface(&dxgiSurface));
@@ -34,8 +36,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID3D11Device> d3dDevice;
         bitmapTexture->GetDevice(&d3dDevice);
 
+        assert(m_mapType == D3D11_MAP_READ || m_mapType == D3D11_MAP_WRITE);
+        UINT cpuAccessFlags = 
+            m_mapType == D3D11_MAP_READ ? D3D11_CPU_ACCESS_READ : D3D11_CPU_ACCESS_WRITE;
+
         D3D11_TEXTURE2D_DESC stagingDescription = textureDescription;
-        stagingDescription.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+        stagingDescription.CPUAccessFlags = cpuAccessFlags;
         stagingDescription.BindFlags = 0;
         stagingDescription.Usage = D3D11_USAGE_STAGING;
         stagingDescription.ArraySize = 1;
@@ -48,6 +54,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             assert(optionalSubRectangle->bottom > optionalSubRectangle->top);
             stagingDescription.Width = optionalSubRectangle->right - optionalSubRectangle->left;
             stagingDescription.Height = optionalSubRectangle->bottom - optionalSubRectangle->top;
+
+            m_useSubrectangle = true;
+            m_subRectangle = *optionalSubRectangle;
         }
 
         ComPtr<ID3D11Texture2D> stagingTexture;
@@ -56,38 +65,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         d3dDevice->GetImmediateContext(&m_immediateContext);
 
         m_stagingResource = As<ID3D11Resource>(stagingTexture);
-        auto sourceResource = As<ID3D11Resource>(bitmapTexture);
-
-        D3D11_BOX sourceBox;
-        if (optionalSubRectangle)
-        {
-            sourceBox.left = optionalSubRectangle->left;
-            sourceBox.top = optionalSubRectangle->top;
-            sourceBox.right = optionalSubRectangle->right;
-            sourceBox.bottom = optionalSubRectangle->bottom;
-            sourceBox.front = 0;
-            sourceBox.back = 1;
-        }
+        m_sourceResource = As<ID3D11Resource>(bitmapTexture);
 
         // 
-        // This copies only the requested subrectangle, not the
+        // This class copies only the requested subrectangle, not the
         // whole texture, for interest of a small perf gain.
         // The copied area is located at (0,0).
         //
-        m_immediateContext->CopySubresourceRegion(
-            m_stagingResource.Get(),
-            0, // Dest subresource
-            0, // Dest X
-            0, // Dest Y
-            0, // Dest Z
-            sourceResource.Get(),
-            m_subresourceIndex,
-            optionalSubRectangle? &sourceBox : nullptr);
+        if (m_mapType == D3D11_MAP_READ)
+        {
+            D3D11_BOX sourceBox;
+            if (optionalSubRectangle)
+            {
+                sourceBox.left = optionalSubRectangle->left;
+                sourceBox.top = optionalSubRectangle->top;
+                sourceBox.right = optionalSubRectangle->right;
+                sourceBox.bottom = optionalSubRectangle->bottom;
+                sourceBox.front = 0;
+                sourceBox.back = 1;
+            }
+
+            m_immediateContext->CopySubresourceRegion(
+                m_stagingResource.Get(),
+                0, // Dest subresource
+                0, // Dest X
+                0, // Dest Y
+                0, // Dest Z
+                m_sourceResource.Get(),
+                m_subresourceIndex,
+                optionalSubRectangle ? &sourceBox : nullptr);
+        }
 
         ThrowIfFailed(m_immediateContext->Map(
             m_stagingResource.Get(),
             0, // staging texture doesn't have any subresources
-            D3D11_MAP_READ,
+            m_mapType,
             0, // Flags
             &m_mappedSubresource));
 
@@ -97,6 +109,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ScopedBitmapLock::~ScopedBitmapLock()
     {
         m_immediateContext->Unmap(m_stagingResource.Get(), m_subresourceIndex);
+
+        if (m_mapType == D3D11_MAP_WRITE)
+        {
+            UINT destX = 0;
+            UINT destY = 0;
+            if (m_useSubrectangle)
+            {
+                destX = m_subRectangle.left;
+                destY = m_subRectangle.top;
+            }
+
+            m_immediateContext->CopySubresourceRegion(
+                m_sourceResource.Get(),
+                m_subresourceIndex, // Dest subresource
+                destX, // Dest X
+                destY, // Dest Y
+                0, // Dest Z
+                m_stagingResource.Get(),
+                0, // Source subresource
+                nullptr // Source box
+                );
+        }
     }
 
     void* ScopedBitmapLock::GetLockedData()

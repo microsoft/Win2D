@@ -136,7 +136,7 @@ under the License.
       The number of bytes per pixel is determined from CanvasBitmap's pixel format. For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBytes(Windows.Foundation.Rect)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBytes(System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Returns an array of raw byte data for a subregion of the bitmap. Works on bitmaps of any format. The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).</summary>
       <remarks>
       The number of bytes per pixel is determined from CanvasBitmap's pixel format. For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
@@ -145,7 +145,7 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetColors">
       <summary>Returns an array of color data for the entire bitmap. The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels).</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetColors(Windows.Foundation.Rect)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetColors(System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Returns an array of color data for a subregion of the bitmap The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels).</summary>
     </member>
     <member name="T:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat">
@@ -199,6 +199,19 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetBytes(System.Byte[])">
+      <summary>Sets the byte data of the bitmap from the specified array. Works on bitmaps of any format. The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetBytes(System.Byte[],System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Sets the byte data of a subregion of the bitmap. Works on bitmaps of any format. The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetColors(Windows.UI.Color[])">
+      <summary>Sets the color data of the bitmap from the specified array. The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels).</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetColors(Windows.UI.Color[],System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Sets the color data for a subregion of the bitmap from the specified array. The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels).</summary>
     </member>
     
   </members>

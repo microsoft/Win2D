@@ -21,7 +21,18 @@ using namespace Windows::Graphics::Imaging;
 using namespace Windows::UI;
 using Platform::String;
 
-#define DPI_TOLERANCE 0.1f
+const float c_dpiTolerance = 0.1f;
+const int c_subresourceSliceCount = 3;
+
+struct SignedRect
+{
+    SignedRect(int l, int t, int w, int h)
+        :Left(l), Top(t), Width(w), Height(h) {}
+    int Left;
+    int Top;
+    int Width;
+    int Height;
+};
 
 TEST_CLASS(CanvasBitmapTests)
 {
@@ -120,7 +131,7 @@ public:
 
         auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
 
-        VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_IGNORE, DPI_TOLERANCE);
+        VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_IGNORE, c_dpiTolerance);
     }
 
 
@@ -338,7 +349,7 @@ public:
         auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, L"Assets/HighDpiGrid.png"));
 
         auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(canvasBitmap);
-        VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_PREMULTIPLIED, DPI_TOLERANCE);
+        VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_PREMULTIPLIED, c_dpiTolerance);
     }
 
     enum DpiVerifyType
@@ -360,8 +371,8 @@ public:
         }
         else if (dpiVerifyType == Fuzzy)
         {
-            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiX), DPI_TOLERANCE);
-            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiY), DPI_TOLERANCE);
+            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiX), c_dpiTolerance);
+            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiY), c_dpiTolerance);
         }
         else
         {
@@ -586,51 +597,82 @@ public:
             });
     }
 
-    TEST_METHOD(CanvasBitmap_SaveAndGetData_Subresource)
+    struct SubresourceTestFixture
     {
-        ComPtr<ID3D11Device> d3dDevice;
-        ThrowIfFailed(GetDXGIInterface<ID3D11Device>(m_sharedDevice, &d3dDevice));
+        CanvasRenderTarget^ m_renderTargets[c_subresourceSliceCount];
 
-        const unsigned int sliceCount = 3;
-        const unsigned int bindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
-        CD3D11_TEXTURE2D_DESC textureDescription(DXGI_FORMAT_B8G8R8A8_UNORM, 8, 8, 1, sliceCount, bindFlags);
+    public:
+        SubresourceTestFixture(CanvasDevice^ device) 
+            : m_renderTargets{}
+        {
+            ComPtr<ID3D11Device> d3dDevice;
+            ThrowIfFailed(GetDXGIInterface<ID3D11Device>(device, &d3dDevice));
 
-        ComPtr<ID3D11Texture2D> texture2D;
-        ThrowIfFailed(d3dDevice->CreateTexture2D(&textureDescription, nullptr, &texture2D));
+            const unsigned int bindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+            CD3D11_TEXTURE2D_DESC textureDescription(DXGI_FORMAT_B8G8R8A8_UNORM, 8, 8, 1, c_subresourceSliceCount, bindFlags);
 
-        ComPtr<IDXGIResource1> resource;
-        ThrowIfFailed(texture2D.As(&resource));
+            ComPtr<ID3D11Texture2D> texture2D;
+            ThrowIfFailed(d3dDevice->CreateTexture2D(&textureDescription, nullptr, &texture2D));
 
-        ComPtr<IDXGISurface2> slices[sliceCount];
+            ComPtr<IDXGIResource1> resource;
+            ThrowIfFailed(texture2D.As(&resource));
 
-        //
-        // This clears each slice to a different color, and verifies the
-        // dimensions of the saved file reflect the correct slice.
-        // For CPU read, it verifies the output array dimensions and
-        // reads back the correct color.
-        //
-        Color testColors[] = { Colors::Red, Colors::Green, Colors::Blue };
-        byte testColorsRawData[3][4] {
-                { 0, 0, 0xFF, 0xFF },
-                { 0, 0x80, 0, 0xFF },
-                { 0xFF, 0, 0, 0xFF },
-        };
+            //
+            // This clears each slice to a different color. If Win2D
+            // wrapped the wrong slice, tests will read the wrong color
+            // and size.
+            //
+            for (unsigned int i = 0; i < c_subresourceSliceCount; i++)
+            {
+                ComPtr<IDXGISurface2> slice;
+
+                ThrowIfFailed(resource->CreateSubresourceSurface(i, &slice));
+
+                auto wrappedSurface = CreateDirect3DSurface(slice.Get());
+
+                m_renderTargets[i] = CanvasRenderTarget::CreateFromDirect3D11Surface(device, wrappedSurface);
+
+                CanvasDrawingSession^ drawingSession = m_renderTargets[i]->CreateDrawingSession();
+                drawingSession->Clear(GetExpectedColor(i));
+                delete drawingSession;
+            }
+        }
+
+        Color GetExpectedColor(int sliceIndex)
+        {
+            assert(sliceIndex >= 0 && sliceIndex < c_subresourceSliceCount);
+            static const Color colors[c_subresourceSliceCount] = { Colors::Red, Colors::Green, Colors::Blue };
+            return colors[sliceIndex];
+        }
+
+        byte GetExpectedByte(int sliceIndex, int byteNumber)
+        {
+            assert(sliceIndex >= 0 && sliceIndex < c_subresourceSliceCount);
+            assert(byteNumber >= 0 && byteNumber < 4);
+            static const byte bytes[c_subresourceSliceCount][4] {
+                    { 0, 0, 0xFF, 0xFF },
+                    { 0, 0x80, 0, 0xFF },
+                    { 0xFF, 0, 0, 0xFF },
+            };
+            return bytes[sliceIndex][byteNumber];
+        }
+
+        CanvasRenderTarget^ GetRenderTarget(int sliceIndex)
+        {
+            assert(sliceIndex >= 0 && sliceIndex < c_subresourceSliceCount);
+            return m_renderTargets[sliceIndex];
+        }
+    };
+
+    TEST_METHOD(CanvasBitmap_SaveToFile_Subresource)
+    {
+        SubresourceTestFixture f(m_sharedDevice);
 
         String^ savePath = String::Concat(Windows::Storage::ApplicationData::Current->TemporaryFolder->Path, L"\\test.bin");
 
-        for (unsigned int i = 0; i < sliceCount; i++)
+        for (unsigned int i = 0; i < c_subresourceSliceCount; i++)
         {
-            ThrowIfFailed(resource->CreateSubresourceSurface(i, &slices[i]));
-
-            auto wrappedSurface = CreateDirect3DSurface(slices[i].Get());
-
-            auto renderTarget = CanvasRenderTarget::CreateFromDirect3D11Surface(m_sharedDevice, wrappedSurface);
-
-            CanvasDrawingSession^ drawingSession = renderTarget->CreateDrawingSession();
-            drawingSession->Clear(testColors[i]);
-            delete drawingSession;
-
-            WaitExecution(renderTarget->SaveToFileAsync(savePath, CanvasBitmapFileFormat::Jpeg));
+            WaitExecution(f.GetRenderTarget(i)->SaveToFileAsync(savePath, CanvasBitmapFileFormat::Jpeg));
 
             unsigned int sliceDimension = 8 >> i;
 
@@ -638,29 +680,292 @@ public:
 
             Assert::AreEqual(sliceDimension, (unsigned int)decoder->PixelWidth);
             Assert::AreEqual(sliceDimension, (unsigned int)decoder->PixelHeight);
-
-            Platform::Array<byte>^ byteData = renderTarget->GetBytes();
-            Assert::AreEqual(sliceDimension * sliceDimension * 4, byteData->Length);
-            for (unsigned int j = 0; j < byteData->Length; j += 4)
-            {
-                Assert::AreEqual(testColorsRawData[i][0], byteData[j + 0]);
-                Assert::AreEqual(testColorsRawData[i][1], byteData[j + 1]);
-                Assert::AreEqual(testColorsRawData[i][2], byteData[j + 2]);
-                Assert::AreEqual(testColorsRawData[i][3], byteData[j + 3]);
-            }
-
-            Platform::Array<Color>^ colorData = renderTarget->GetColors();
-            Assert::AreEqual(sliceDimension * sliceDimension, colorData->Length);
-            for (Color c : colorData)
-            {
-                Assert::AreEqual(testColors[i], c);
-            }
         }
-
 
     }
 
-    TEST_METHOD(CanvasBitmap_GetBytes)
+    TEST_METHOD(CanvasBitmap_GetData_Subresource)
+    {
+        SubresourceTestFixture f(m_sharedDevice);
+
+        for (unsigned int i = 0; i < c_subresourceSliceCount; i++)
+        {
+            unsigned int sliceDimension = 8 >> i;
+
+            Platform::Array<byte>^ byteData = f.GetRenderTarget(i)->GetBytes();
+            Assert::AreEqual(sliceDimension * sliceDimension * 4, byteData->Length);
+            for (unsigned int j = 0; j < byteData->Length; j += 4)
+            {
+                Assert::AreEqual(f.GetExpectedByte(i, 0), byteData[j + 0]);
+                Assert::AreEqual(f.GetExpectedByte(i, 1), byteData[j + 1]);
+                Assert::AreEqual(f.GetExpectedByte(i, 2), byteData[j + 2]);
+                Assert::AreEqual(f.GetExpectedByte(i, 3), byteData[j + 3]);
+            }
+
+            Platform::Array<Color>^ colorData = f.GetRenderTarget(i)->GetColors();
+            Assert::AreEqual(sliceDimension * sliceDimension, colorData->Length);
+            for (Color c : colorData)
+            {
+                Assert::AreEqual(f.GetExpectedColor(i), c);
+            }
+        }
+    }
+
+    template<typename TYPE>
+    TYPE ReferenceColorFromIndex(int i)
+    {
+        Assert::Fail();
+        TYPE t;
+        return t;
+    }
+
+    template<>
+    byte ReferenceColorFromIndex(int i)
+    {
+        return i % UCHAR_MAX;
+    }
+
+    template<typename TYPE>
+    void WriteReferenceDataToArray(Platform::Array<TYPE>^ t)
+    {
+        for (unsigned int i = 0; i < t->Length; i++)
+        {
+            t[i] = ReferenceColorFromIndex<TYPE>(i);
+        }
+    }
+
+    template<typename TYPE>
+    void VerifyArraysEqual(Platform::Array<TYPE>^ arr1, Platform::Array<TYPE>^ arr2)
+    {
+        Assert::AreEqual(arr1->Length, arr2->Length);
+
+        for (unsigned int i = 0; i < arr1->Length; i++)
+        {
+            Assert::AreEqual(arr1[i], arr2[i]);
+        }
+    }
+
+    template<>
+    Color ReferenceColorFromIndex(int i)
+    {
+        Color c;
+        c.R = (i * 4 + 0) % UCHAR_MAX;
+        c.G = (i * 4 + 1) % UCHAR_MAX;
+        c.B = (i * 4 + 2) % UCHAR_MAX;
+        c.A = (i * 4 + 3) % UCHAR_MAX;
+        return c;
+    }
+
+    template<typename TYPE>
+    Platform::Array<TYPE>^ GetDataFunction(CanvasBitmap^ canvasBitmap)
+    {
+        Assert::Fail();
+        return nullptr; // Unexpected
+    }
+
+    template<>
+    Platform::Array<byte>^ GetDataFunction(CanvasBitmap^ canvasBitmap)
+    {
+        return canvasBitmap->GetBytes();
+    }
+
+    template<>
+    Platform::Array<Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap)
+    {
+        return canvasBitmap->GetColors();
+    }
+
+    template<typename TYPE>
+    Platform::Array<TYPE>^ GetDataFunction(CanvasBitmap^ canvasBitmap, int left, int top, int width, int height)
+    {
+        Assert::Fail();
+        return nullptr; // Unexpected
+    }
+
+    template<>
+    Platform::Array<byte>^ GetDataFunction(CanvasBitmap^ canvasBitmap, int left, int top, int width, int height)
+    {
+        return canvasBitmap->GetBytes(left, top, width, height);
+    }
+
+    template<>
+    Platform::Array<Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap, int left, int top, int width, int height)
+    {
+        return canvasBitmap->GetColors(left, top, width, height);
+    }
+
+    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<byte>^ dataArray)
+    {
+        return canvasBitmap->SetBytes(dataArray);
+    }
+
+    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Color>^ dataArray)
+    {
+        return canvasBitmap->SetColors(dataArray);
+    }
+
+    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<byte>^ dataArray, int left, int top, int width, int height)
+    {
+        return canvasBitmap->SetBytes(dataArray, left, top, width, height);
+    }
+
+    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Color>^ dataArray, int left, int top, int width, int height)
+    {
+        return canvasBitmap->SetColors(dataArray, left, top, width, height);
+    }
+
+    void IncrementColor(byte& b)
+    {
+        b++;
+    }
+
+    void IncrementColor(Color& c)
+    {
+        c.R++;
+        c.B++;
+        c.G++;
+        c.A++;
+    }
+
+    template<typename TYPE>
+    void VerifyGetWholeBitmapData(
+        CanvasBitmap^ canvasBitmap,
+        Platform::Array<TYPE>^ imageData)
+    {
+        Platform::Array<TYPE>^ retrievedData = GetDataFunction<TYPE>(canvasBitmap);
+
+        Assert::AreEqual(imageData->Length, retrievedData->Length);
+        for (unsigned int i = 0; i < imageData->Length; i++)
+        {
+            Assert::AreEqual(imageData[i], retrievedData[i]);
+        }
+    }
+
+    template<typename TYPE>
+    void VerifyGetSubrectangleData(
+        CanvasBitmap^ canvasBitmap,
+        int bitmapWidth,
+        Platform::Array<TYPE>^ imageData,
+        unsigned int elementsPerPixel,
+        SignedRect subrectangle)
+    {
+        Platform::Array<TYPE>^ retrievedData = GetDataFunction<TYPE>(
+            canvasBitmap, 
+            subrectangle.Left, 
+            subrectangle.Top, 
+            subrectangle.Width, 
+            subrectangle.Height);
+
+        Assert::AreEqual(subrectangle.Width * subrectangle.Height * elementsPerPixel, retrievedData->Length);
+        
+        for (int y = 0; y < subrectangle.Height; y++)
+        {
+            for (int x = 0; x < subrectangle.Width; x++)
+            {
+                const unsigned int sourcePixelIndex = ((y + subrectangle.Top) * bitmapWidth) + (x + subrectangle.Left);
+                const unsigned int sourceElementIndex = sourcePixelIndex * elementsPerPixel;
+
+                const unsigned int destPixelIndex = (y * subrectangle.Width) + x;
+                const unsigned int destElementIndex = destPixelIndex * elementsPerPixel;
+
+                for (unsigned int i = 0; i < elementsPerPixel; i++)
+                {
+                    Assert::AreEqual(imageData[sourceElementIndex + i], retrievedData[destElementIndex + i]);
+                }
+            }
+        }
+    }
+
+    template<typename TYPE>
+    void VerifySetWholeBitmapData(
+        CanvasBitmap^ canvasBitmap,
+        Platform::Array<TYPE>^ imageData)
+    {
+        for (unsigned int i = 0; i < imageData->Length; i++)
+        {
+            IncrementColor(imageData[i]);
+        }
+
+        SetBitmapData(canvasBitmap, imageData);
+
+        VerifyGetWholeBitmapData(canvasBitmap, imageData);
+    }
+
+    template<typename TYPE>
+    void VerifySetSubrectangleData(
+        CanvasBitmap^ canvasBitmap,
+        int bitmapWidth,
+        Platform::Array<TYPE>^ imageData,
+        unsigned int elementsPerPixel,
+        SignedRect subrectangle)
+    {
+        const unsigned int arraySize = subrectangle.Width * subrectangle.Height * elementsPerPixel;
+        Platform::Array<TYPE>^ dataArray = ref new Platform::Array<TYPE>(arraySize);
+
+        for (unsigned int i = 0; i < arraySize; i++)
+        {
+            dataArray[i] = ReferenceColorFromIndex<TYPE>(i);
+
+            // Locate this element in imageData and update it accordingly.
+            const unsigned int pixelIndex = i / elementsPerPixel;
+            const unsigned int xWithinSubrect = pixelIndex % subrectangle.Width;
+            const unsigned int yWithinSubrect = pixelIndex / subrectangle.Width;
+            const unsigned int bitmapX = subrectangle.Left + xWithinSubrect;
+            const unsigned int bitmapY = subrectangle.Top + yWithinSubrect;
+            const unsigned int bitmapIndex = (bitmapY * bitmapWidth) + bitmapX;
+            const unsigned int subElement = (i % elementsPerPixel);
+            const unsigned int elementIndex = bitmapIndex * elementsPerPixel + subElement;
+            imageData[elementIndex] = dataArray[i];
+        }
+
+        SetBitmapData(canvasBitmap, dataArray, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
+
+        VerifyGetWholeBitmapData(canvasBitmap, imageData);
+    }
+
+    template<typename TYPE>
+    void VerifyBitmapGetData(
+        CanvasBitmap^ canvasBitmap,
+        int bitmapWidth,
+        Platform::Array<TYPE>^ imageData,
+        unsigned int elementsPerPixel)
+    {
+        // Whole bitmap
+        VerifyGetWholeBitmapData<TYPE>(canvasBitmap, imageData);
+
+        // 1x1 subrectangle
+        VerifyGetSubrectangleData<TYPE>(canvasBitmap, bitmapWidth, imageData, elementsPerPixel, SignedRect(1, 0, 1, 1));
+
+        // Typical subrectangle
+        VerifyGetSubrectangleData<TYPE>(canvasBitmap, bitmapWidth, imageData, elementsPerPixel, SignedRect(2, 2, 3, 4));
+
+        // Subrectangle which happens to be the whole bitmap
+        SignedRect wholeBounds(0, 0, static_cast<int>(canvasBitmap->Bounds.Width), static_cast<int>(canvasBitmap->Bounds.Height));
+        VerifyGetSubrectangleData<TYPE>(canvasBitmap, bitmapWidth, imageData, elementsPerPixel, wholeBounds);
+    }
+
+    template<typename TYPE>
+    void VerifyBitmapSetData(
+        CanvasBitmap^ canvasBitmap,
+        int bitmapWidth,
+        Platform::Array<TYPE>^ imageData,
+        unsigned int elementsPerPixel)
+    {
+        // Whole bitmap
+        VerifySetWholeBitmapData<TYPE>(canvasBitmap, imageData);
+
+        // 1x1 subrectangle
+        VerifySetSubrectangleData<TYPE>(canvasBitmap, bitmapWidth, imageData, elementsPerPixel, SignedRect(1, 0, 1, 1));
+
+        // Typical subrectangle
+        VerifySetSubrectangleData<TYPE>(canvasBitmap, bitmapWidth, imageData, elementsPerPixel, SignedRect(2, 2, 3, 4));
+
+        // Subrectangle which happens to be the whole bitmap
+        SignedRect wholeBounds(0, 0, static_cast<int>(canvasBitmap->Bounds.Width), static_cast<int>(canvasBitmap->Bounds.Height));
+        VerifySetSubrectangleData<TYPE>(canvasBitmap, bitmapWidth, imageData, elementsPerPixel, wholeBounds);
+    }
+
+    TEST_METHOD(CanvasBitmap_GetBytesAndSetBytes)
     {
         // Test that a byte pattern roundtrips.
         const int width = 8;
@@ -669,7 +974,7 @@ public:
         Platform::Array<byte>^ imageData = ref new Platform::Array<byte>(totalSize * 4);
         for (int i = 0; i < totalSize * 4; i++)
         {
-            imageData[i] = i % UCHAR_MAX;
+            imageData[i] = ReferenceColorFromIndex<byte>(i);
         }
 
         auto canvasBitmap = CanvasBitmap::CreateFromBytes(
@@ -679,61 +984,13 @@ public:
             height,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
             CanvasAlphaBehavior::Premultiplied);
+            
+        VerifyBitmapGetData<byte>(canvasBitmap, width, imageData, 4);
 
-        // Retrieval of whole bitmap
-        Platform::Array<byte>^ retrievedBytes = canvasBitmap->GetBytes();
-
-        Assert::AreEqual(imageData->Length, retrievedBytes->Length);
-        for (unsigned int i = 0; i < imageData->Length; i++)
-        {
-            Assert::AreEqual(imageData[i], retrievedBytes[i]);
-        }
-
-        // Retrieval of a small subregion
-        retrievedBytes = canvasBitmap->GetBytes(Rect(1, 0, 1, 1));
-        Assert::AreEqual(4u, retrievedBytes->Length);
-        for (unsigned int i = 4; i < 8; i++)
-        {
-            Assert::AreEqual(imageData[i], retrievedBytes[i-4]);
-        }
-
-        // Retrieval of a typical subregion
-        const unsigned int regionWidth = 3;
-        const unsigned int regionHeight = 4;
-        Rect sourceRect(2, 2, static_cast<float>(regionWidth), static_cast<float>(regionHeight));
-
-        const unsigned int bytesPerPixel = 4;
-
-        retrievedBytes = canvasBitmap->GetBytes(sourceRect);
-        Assert::AreEqual(regionWidth * regionHeight * bytesPerPixel, retrievedBytes->Length);
-
-
-        for (unsigned int y = 0; y < regionHeight; y++)
-        {
-            for (unsigned int x = 0; x < regionWidth; x++)
-            {
-                const unsigned int sourcePixelIndex = ((y + static_cast<int>(sourceRect.Top)) * width) + (x + static_cast<int>(sourceRect.Left));
-                const unsigned int sourceByteIndex = sourcePixelIndex * bytesPerPixel;
-                const unsigned int destPixelIndex = (y * regionWidth) + x;
-                const unsigned int destByteIndex = destPixelIndex * bytesPerPixel;
-                for (unsigned int k = 0; k < bytesPerPixel; k++)
-                {
-                    Assert::AreEqual(imageData[sourceByteIndex + k], retrievedBytes[destByteIndex + k]);
-                }
-            }
-        }
-
-        // Retrieval of a subregion the size of the whole bitmap
-        retrievedBytes = canvasBitmap->GetBytes(canvasBitmap->Bounds);
-
-        Assert::AreEqual(imageData->Length, retrievedBytes->Length);
-        for (unsigned int i = 0; i < imageData->Length; i++)
-        {
-            Assert::AreEqual(imageData[i], retrievedBytes[i]);
-        }
+        VerifyBitmapSetData<byte>(canvasBitmap, width, imageData, 4);
     }
 
-    TEST_METHOD(CanvasBitmap_GetColors)
+    TEST_METHOD(CanvasBitmap_GetColorsAndSetColors)
     {
         // Test that a color pattern roundtrips.
         const int width = 8;
@@ -742,10 +999,7 @@ public:
         Platform::Array<Color>^ imageData = ref new Platform::Array<Color>(totalSize);
         for (int i = 0; i < totalSize; i++)
         {
-            imageData[i].R = (i * 4 + 0) % UCHAR_MAX;
-            imageData[i].G = (i * 4 + 1) % UCHAR_MAX;
-            imageData[i].B = (i * 4 + 2) % UCHAR_MAX;
-            imageData[i].A = (i * 4 + 3) % UCHAR_MAX;
+            imageData[i] = ReferenceColorFromIndex<Color>(i);
         }
 
         auto canvasBitmap = CanvasBitmap::CreateFromColors(
@@ -755,67 +1009,131 @@ public:
             height,
             CanvasAlphaBehavior::Premultiplied);
 
-        // Retrieval of whole bitmap
-        Platform::Array<Color>^ retrievedColors = canvasBitmap->GetColors();
+        VerifyBitmapGetData<Color>(canvasBitmap, width, imageData, 1);
 
-        Assert::AreEqual(imageData->Length, retrievedColors->Length);
-        for (unsigned int i = 0; i < imageData->Length; i++)
-        {
-            Assert::AreEqual(imageData[i], retrievedColors[i]);
-        }
-
-        // Retrieval of a small subregion
-        retrievedColors = canvasBitmap->GetColors(Rect(1, 0, 1, 1));
-        Assert::AreEqual(1u, retrievedColors->Length);
-        Assert::AreEqual(imageData[1], retrievedColors[0]);
-
-        // Retrieval of a typical subregion
-        const unsigned int regionWidth = 3;
-        const unsigned int regionHeight = 4;
-        Rect sourceRect(2, 2, static_cast<float>(regionWidth), static_cast<float>(regionHeight));
-        retrievedColors = canvasBitmap->GetColors(sourceRect);
-        Assert::AreEqual(regionWidth * regionHeight, retrievedColors->Length);
-        for (unsigned int y = 0; y < regionHeight; y++)
-        {
-            for (unsigned int x = 0; x < regionWidth; x++)
-            {
-                const unsigned int sourcePixelIndex = ((y + static_cast<int>(sourceRect.Top)) * width) + (x + static_cast<int>(sourceRect.Left));
-                const unsigned int destPixelIndex = (y * regionWidth) + x;
-                Assert::AreEqual(imageData[sourcePixelIndex], retrievedColors[destPixelIndex]);
-            }
-        }
-
-        // Retrieval of a subregion the size of the whole bitmap
-        retrievedColors = canvasBitmap->GetColors(canvasBitmap->Bounds);
-
-        Assert::AreEqual(imageData->Length, retrievedColors->Length);
-        for (unsigned int i = 0; i < imageData->Length; i++)
-        {
-            Assert::AreEqual(imageData[i], retrievedColors[i]);
-        }
+        VerifyBitmapSetData<Color>(canvasBitmap, width, imageData, 1);
     }
 
-    TEST_METHOD(CanvasBitmap_GetBytesAndGetColors_InvalidArguments)
+    TEST_METHOD(CanvasBitmap_GetAndSetBytesAndColors_InvalidArguments)
     {
         auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
 
-        Rect testCases[] = {
-            Rect(0, 0, 0, 0), // Retrieval of a zero-sized subregion should fail.
-            Rect(0, 0, 2, 2), // Subregion which exceeds bitmap size should fail.
+        SignedRect testCases[] = {
+            SignedRect(0, 0, 0, 0), // Retrieval of a zero-sized subregion should fail.
+            SignedRect(0, 0, 2, 2), // Subregion which exceeds bitmap size should fail.
+            SignedRect(-2, 3, 5, 4), // Negative extents should fail.
+            SignedRect(2, -3, 5, 4), 
+            SignedRect(0, 0, -1, 3),
+            SignedRect(0, 0, 1, -3),
         };
 
-        for (Rect testCase : testCases)
+        Platform::Array<byte>^ byteArray = ref new Platform::Array<byte>(1);
+        Platform::Array<Color>^ colorArray = ref new Platform::Array<Color>(1);
+
+        for (SignedRect testCase : testCases)
         {
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
-                    canvasBitmap->GetBytes(testCase);
+                    canvasBitmap->GetBytes(testCase.Left, testCase.Top, testCase.Width, testCase.Height);
                 });
 
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
-                    canvasBitmap->GetColors(testCase);
+                    canvasBitmap->GetColors(testCase.Left, testCase.Top, testCase.Width, testCase.Height);
+                });
+
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
+                [&]
+                {
+                    canvasBitmap->SetBytes(byteArray, testCase.Left, testCase.Top, testCase.Width, testCase.Height);
+                });
+
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
+                [&]
+                {
+                    canvasBitmap->SetColors(colorArray, testCase.Left, testCase.Top, testCase.Width, testCase.Height);
+                });
+
+        }
+    }
+
+    TEST_METHOD(CanvasBitmap_SetBytesAndSetColors_ZeroArrayOnZeroSizedBitmap)
+    {
+        //
+        // Because we have the convention that you cannot get a zero-sized array
+        // as data, we also have the convention that you cannot set a zero array. 
+        // Verify this corner case on a zero-sized bitmap.
+        //
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 0, 0);
+
+        Platform::Array<byte>^ zeroSizedByteArray = ref new Platform::Array<byte>(0);
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                canvasBitmap->SetBytes(zeroSizedByteArray);
+            });
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                canvasBitmap->SetBytes(zeroSizedByteArray, 0, 0, 0, 0);
+            });
+
+        Platform::Array<Color>^ zeroSizedColorArray = ref new Platform::Array<Color>(0);
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                canvasBitmap->SetColors(zeroSizedColorArray);
+            });
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                canvasBitmap->SetColors(zeroSizedColorArray, 0, 0, 0, 0);
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_SetBytesAndSetColors_InvalidArguments)
+    {
+        const int bitmapWidth = 2;
+        const int bitmapHeight = 3;
+        const int expectedByteSizeOfBitmap = bitmapWidth * bitmapHeight * 4;
+        const int expectedColorCountOfBitmap = bitmapWidth * bitmapHeight;
+
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, static_cast<float>(bitmapWidth), static_cast<float>(bitmapHeight));
+        
+        SignedRect subrectangle(0, 0, 1, 2);
+        const int expectedByteSizeOfSubrectangle = subrectangle.Width * subrectangle.Height * 4;
+        const int expectedColorCountOfSubrectangle = subrectangle.Width * subrectangle.Height;
+
+        int testCases[] = {-1, +1 }; // Tests array being too small and too large.
+
+        for (int testCase : testCases)
+        {
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
+                [&]
+                {
+                    Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfBitmap + testCase);
+                    canvasBitmap->SetBytes(array);
+                });
+
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
+                [&]
+                {
+                    Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfBitmap + testCase);
+                    canvasBitmap->SetColors(array);
+                });
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
+                [&]
+                {
+                    Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfSubrectangle + testCase);
+                    canvasBitmap->SetBytes(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
+                });
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
+                [&]
+                {
+                    Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfSubrectangle + testCase);
+                    canvasBitmap->SetColors(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
                 });
         }
     }
@@ -837,6 +1155,31 @@ public:
         auto wicBitmapBasedCanvasBitmap = GetOrCreate<CanvasBitmap>(canvasDevice, f.Bitmap.Get());
 
         Assert::ExpectException<Platform::COMException^>([&] { wicBitmapBasedCanvasBitmap->Description; });
+    }
 
+
+    template<typename TYPE>
+    void VerifySubresourceSlice(CanvasBitmap^ bitmap, int sliceDimension, int elementsPerPixel)
+    {
+        Platform::Array<TYPE>^ sourceData = ref new Platform::Array<TYPE>(sliceDimension * sliceDimension * elementsPerPixel);
+        WriteReferenceDataToArray<TYPE>(sourceData);
+        SetBitmapData(bitmap, sourceData);
+           
+        Platform::Array<TYPE>^ retrievedBytes = GetDataFunction<TYPE>(bitmap);
+        VerifyArraysEqual<TYPE>(sourceData, retrievedBytes);
+    }
+
+    TEST_METHOD(CanvasBitmap_SetData_Subresource)
+    {
+        SubresourceTestFixture f(m_sharedDevice);
+
+        for (unsigned int i = 0; i < c_subresourceSliceCount; i++)
+        {
+            unsigned int sliceDimension = 8 >> i;
+
+            VerifySubresourceSlice<byte>(f.GetRenderTarget(i), sliceDimension, 4);
+
+            VerifySubresourceSlice<Color>(f.GetRenderTarget(i), sliceDimension, 1);
+        }
     }
 };

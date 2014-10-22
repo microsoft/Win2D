@@ -577,7 +577,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     void GetBytesImpl(
-        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
         uint8_t** valueElements)
@@ -587,7 +587,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
 
-        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), &subRectangle);
+        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
 
         const unsigned int bytesPerPixel = GetBytesPerPixel(d2dBitmap->GetPixelFormat().format);
         const unsigned int bytesPerRow = (subRectangle.right - subRectangle.left) * bytesPerPixel;
@@ -600,16 +600,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         byte* sourceRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
         for (unsigned int y = subRectangle.top; y < subRectangle.bottom; y++)
         {
-            byte* sourceLocation = sourceRowStart;
-            byte* destLocation = destRowStart;
-
             const unsigned int byteCount = (subRectangle.right - subRectangle.left) * bytesPerPixel;
 
-            assert(destLocation - array.GetData() < UINT_MAX);
-            const unsigned int positionInBuffer = static_cast<unsigned int>(destLocation - array.GetData());
+            assert(destRowStart - array.GetData() < UINT_MAX);
+            const unsigned int positionInBuffer = static_cast<unsigned int>(destRowStart - array.GetData());
             const unsigned int bytesLeftInBuffer = destSizeInBytes - positionInBuffer;
 
-            memcpy_s(destLocation, bytesLeftInBuffer, sourceLocation, byteCount);
+            memcpy_s(destRowStart, bytesLeftInBuffer, sourceRowStart, byteCount);
 
             destRowStart += bytesPerRow;
             sourceRowStart += bitmapLock.GetStride();
@@ -619,7 +616,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     void GetColorsImpl(
-        ComPtr<ID2D1Bitmap1> const d2dBitmap,
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
         Color **valueElements)
@@ -634,7 +631,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowHR(E_INVALIDARG);
         }
 
-        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), &subRectangle);
+        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
 
         const unsigned int subRectangleWidth = subRectangle.right - subRectangle.left;
         const unsigned int subRectangleHeight = subRectangle.bottom - subRectangle.top;
@@ -661,7 +658,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     void SaveBitmapToFileImpl(
-        ID2D1Bitmap1* d2dBitmap,
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         ICanvasBitmapResourceCreationAdapter* adapter,
         HSTRING rawfileName,
         CanvasBitmapFileFormat fileFormat,
@@ -674,24 +671,114 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         d2dBitmap->GetDpi(&dpiX, &dpiY);
 
         std::shared_ptr<ScopedBitmapLock> bitmapLock =
-            std::make_shared<ScopedBitmapLock>(d2dBitmap);
+            std::make_shared<ScopedBitmapLock>(d2dBitmap.Get(), D3D11_MAP_READ);
 
         auto asyncAction = Make<AsyncAction>(
             [=]
-        {
-            adapter->SaveLockedMemoryToFile(
-                fileName,
-                fileFormat,
-                quality,
-                size.width,
-                size.height,
-                dpiX,
-                dpiY,
-                bitmapLock.get());
-        });
+            {
+                adapter->SaveLockedMemoryToFile(
+                    fileName,
+                    fileFormat,
+                    quality,
+                    size.width,
+                    size.height,
+                    dpiX,
+                    dpiY,
+                    bitmapLock.get());
+            });
 
         CheckMakeResult(asyncAction);
         ThrowIfFailed(asyncAction.CopyTo(resultAsyncAction));
+    }
+
+    void SetBytesImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t valueCount,
+        uint8_t* valueElements)
+    {
+        CheckInPointer(valueElements);
+
+        VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
+
+        const unsigned int subRectangleWidth = subRectangle.right - subRectangle.left;
+        const unsigned int subRectangleHeight = subRectangle.bottom - subRectangle.top;
+
+        const unsigned int bytesPerPixel = GetBytesPerPixel(d2dBitmap->GetPixelFormat().format);
+        const unsigned int bytesPerRow = bytesPerPixel * subRectangleWidth;
+        uint32_t expectedArraySize = subRectangleWidth * subRectangleHeight * bytesPerPixel;
+        if (valueCount != expectedArraySize)
+        {
+            WinStringBuilder message;
+            message.Format(Strings::WrongArrayLength, expectedArraySize, valueCount);
+            ThrowHR(E_INVALIDARG);
+        }
+
+        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
+
+        byte* destRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+        byte* sourceRowStart = valueElements;
+
+        for (unsigned int y = subRectangle.top; y < subRectangle.bottom; y++)
+        {
+            const unsigned int byteCount = (subRectangle.right - subRectangle.left) * bytesPerPixel;
+            const unsigned int positionInBuffer = static_cast<unsigned int>(sourceRowStart - valueElements);
+            const unsigned int bytesLeftInBuffer = valueCount - positionInBuffer;
+
+            memcpy_s(destRowStart, bytesLeftInBuffer, sourceRowStart, byteCount);
+
+            destRowStart += bitmapLock.GetStride();
+            sourceRowStart += bytesPerRow;
+        }
+    }
+
+    void SetColorsImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        uint32_t valueCount,
+        Color *valueElements)
+    {
+        CheckInPointer(valueElements);
+
+        VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
+
+        const unsigned int subRectangleWidth = subRectangle.right - subRectangle.left;
+        const unsigned int subRectangleHeight = subRectangle.bottom - subRectangle.top;
+
+        const uint32_t expectedArraySize = subRectangleWidth * subRectangleHeight;
+        if (valueCount != expectedArraySize)
+        {
+            WinStringBuilder message;
+            message.Format(Strings::WrongArrayLength, expectedArraySize, valueCount);
+            ThrowHR(E_INVALIDARG);
+        }
+
+        if (d2dBitmap->GetPixelFormat().format != DXGI_FORMAT_B8G8R8A8_UNORM)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+
+        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
+
+        const unsigned int destSizeInPixels = subRectangleWidth * subRectangleHeight;
+        ComArray<Color> array(destSizeInPixels);
+
+        byte* destRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+
+        for (unsigned int y = 0; y < subRectangleHeight; y++)
+        {
+            for (unsigned int x = 0; x < subRectangleWidth; x++)
+            {
+                uint32_t* destPixel = reinterpret_cast<uint32_t*>(&destRowStart[x * 4]);
+                Color& sourceColor = valueElements[y * subRectangleWidth + x];
+                *destPixel = 
+                    (static_cast<uint32_t>(sourceColor.B) << 0) | 
+                    (static_cast<uint32_t>(sourceColor.G) << 8) |
+                    (static_cast<uint32_t>(sourceColor.R) << 16) |
+                    (static_cast<uint32_t>(sourceColor.A) << 24);
+            }
+            destRowStart += bitmapLock.GetStride();
+        }
     }
 
     ActivatableClassWithFactory(CanvasBitmap, CanvasBitmapFactory);
