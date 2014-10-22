@@ -17,6 +17,7 @@ using ABI::Windows::Graphics::Display::DisplayInformation;
 class CanvasControlTestAdapter : public ICanvasControlAdapter
 {
     EventSource<IEventHandler<IInspectable*>> m_compositionRenderingEventList;
+    EventSource<IEventHandler<IInspectable*>> m_surfaceContentsLostEventList;
 
     EventSource<ITypedEventHandler<DisplayInformation*, IInspectable*>> m_dpiChangedEventList;
 
@@ -53,6 +54,25 @@ public:
         IInspectable* sender = nullptr;
         IInspectable* arg = nullptr;
         ThrowIfFailed(m_compositionRenderingEventList.InvokeAll(sender, arg));
+    }
+
+    virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
+    {
+        EventRegistrationToken token;
+        ThrowIfFailed(m_surfaceContentsLostEventList.Add(value, &token));
+        return token;
+    }
+    
+    virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) override
+    {
+        ThrowIfFailed(m_surfaceContentsLostEventList.Remove(token));
+    }
+
+    void FireSurfaceContentsLostEvent()
+    {
+        IInspectable* sender = nullptr;
+        IInspectable* arg = nullptr;
+        ThrowIfFailed(m_surfaceContentsLostEventList.InvokeAll(sender, arg));
     }
 
     virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override

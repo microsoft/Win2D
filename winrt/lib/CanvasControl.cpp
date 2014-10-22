@@ -139,6 +139,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(m_compositionTargetStatics->remove_Rendering(token));
         }
 
+        virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* handler) override
+        {
+            EventRegistrationToken token;
+            ThrowIfFailed(m_compositionTargetStatics->add_SurfaceContentsLost(handler, &token));
+            return token;
+        }
+
+        virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) override
+        {
+            ThrowIfFailed(m_compositionTargetStatics->remove_SurfaceContentsLost(token));
+        }
+
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override 
         {
             ComPtr<ICanvasResourceCreator> resourceCreator;
@@ -229,8 +241,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasControl::CanvasControl(std::shared_ptr<ICanvasControlAdapter> adapter)
         : m_adapter(adapter)
+        , m_surfaceContentsLostEventToken{}
+        , m_renderingEventToken{}
         , m_canvasDevice(m_adapter->CreateCanvasDevice())
         , m_drawNeeded(false)
+        , m_imageSourceNeedsReset(false)
         , m_isLoaded(false)
         , m_currentWidth(0)
         , m_currentHeight(0)
@@ -305,6 +320,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CheckMakeResult(dpiChangedEventHandler);
 
         m_adapter->AddDpiChangedCallback(dpiChangedEventHandler.Get());
+
+        // Register for CompositionTarget.SurfaceContentsLost event
+        auto onSurfaceContentsLostFn = Callback<IEventHandler<IInspectable*>>(this, &CanvasControl::OnSurfaceContentsLostCallback);
+        m_surfaceContentsLostEventToken = m_adapter->AddSurfaceContentsLostCallback(onSurfaceContentsLostFn.Get());
+    }
+
+    CanvasControl::~CanvasControl()
+    {
+        m_adapter->RemoveSurfaceContentsLostCallback(m_surfaceContentsLostEventToken);
     }
 
     void CanvasControl::ClearDrawNeeded()
@@ -315,6 +339,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         std::unique_lock<std::mutex> lock(m_drawLock);
         m_drawNeeded = false;
+
+        if (m_imageSourceNeedsReset)
+        {
+            m_canvasImageSource.Reset();
+            m_imageSourceNeedsReset = false;
+        }
 
         // TODO #1953 Consider clearing m_renderingEventToken, or coalescing m_renderingEventToken
         // and m_drawNeeded into one variable.
@@ -535,9 +565,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    void CanvasControl::InvalidateImpl()
+    void CanvasControl::InvalidateImpl(InvalidateReason reason)
     {
         std::lock_guard<std::mutex> lock(m_drawLock);
+
+        if (reason == InvalidateReason::SurfaceContentsLost)
+            m_imageSourceNeedsReset = true;
 
         if (m_drawNeeded)
             return;
@@ -613,12 +646,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
     
-    HRESULT CanvasControl::OnDpiChangedCallback(IDisplayInformation* sender, IInspectable* args)
+    HRESULT CanvasControl::OnDpiChangedCallback(IDisplayInformation*, IInspectable*)
     {
         return ExceptionBoundary(
             [&]
             {
                 InvalidateImpl();
+            });
+    }
+
+    HRESULT CanvasControl::OnSurfaceContentsLostCallback(IInspectable*, IInspectable*)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                InvalidateImpl(InvalidateReason::SurfaceContentsLost);
             });
     }
 

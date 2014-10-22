@@ -55,6 +55,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDevice> CreateCanvasDevice() = 0;
         virtual EventRegistrationToken AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual void RemoveCompositionRenderingCallback(EventRegistrationToken token) = 0;
+        virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
+        virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) = 0;
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
@@ -77,12 +79,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventSource<CreateResourcesEventHandlerType> m_createResourcesEventList;
         EventSource<DrawEventHandlerType> m_drawEventList;
 
+        EventRegistrationToken m_surfaceContentsLostEventToken;
         EventRegistrationToken m_renderingEventToken;
 
         ComPtr<ICanvasDevice> m_canvasDevice;
         ComPtr<IImage> m_imageControl;
         ComPtr<ICanvasImageSource> m_canvasImageSource;
         bool m_drawNeeded;
+        bool m_imageSourceNeedsReset;
         bool m_isLoaded;
 
         int m_currentWidth;
@@ -91,6 +95,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasControl(
             std::shared_ptr<ICanvasControlAdapter> adapter);
+
+        ~CanvasControl();
 
         //
         // ICanvasControl
@@ -143,10 +149,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void ClearDrawNeeded();
         void EnsureSizeDependentResources();
         void CallDrawHandlers();
-        void InvalidateImpl();
 
-        HRESULT OnRenderCallback(IInspectable *sender, IInspectable *args);   
+        enum class InvalidateReason
+        {
+            Default,
+            SurfaceContentsLost
+        };
+
+        void InvalidateImpl(InvalidateReason reason = InvalidateReason::Default);
+
+        HRESULT OnRenderCallback(IInspectable* sender, IInspectable* args);
         
         HRESULT OnDpiChangedCallback(IDisplayInformation* sender, IInspectable* args);
+        HRESULT OnSurfaceContentsLostCallback(IInspectable* sender, IInspectable* args);
     };
+
 }}}}

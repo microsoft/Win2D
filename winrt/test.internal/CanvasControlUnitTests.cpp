@@ -640,3 +640,105 @@ TEST_CLASS(CanvasControlTests_Dpi)
         }
     }
 };
+
+
+TEST_CLASS(CanvasControl_SurfaceContentsLost)
+{
+public:
+    TEST_METHOD(CanvasControl_AfterSurfaceContentsLostEvent_RecreatesSurfaceImageSource)
+    {
+        // Setup
+        struct Adapter : public CanvasControlTestAdapter
+        {
+            bool CreateCanvasImageSourceWasCalled;
+
+            Adapter()
+                : CreateCanvasImageSourceWasCalled(false)
+            {
+            }
+        
+            virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+            {
+                Assert::IsFalse(CreateCanvasImageSourceWasCalled);
+                auto result = CanvasControlTestAdapter::CreateCanvasImageSource(device, width, height);
+                CreateCanvasImageSourceWasCalled = true;
+                return result;
+            }
+        };
+
+        auto adapter = std::make_shared<Adapter>();
+
+        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
+
+        bool drawEventWasInvoked = false;
+        auto onDrawFn = Callback<DrawEventHandlerType>(
+            [&](ICanvasControl*, ICanvasDrawEventArgs*)
+            {
+                Assert::IsFalse(drawEventWasInvoked);
+                drawEventWasInvoked = true;
+                return S_OK;
+            });
+
+        EventRegistrationToken drawEventToken;
+        ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
+
+        ThrowIfFailed(canvasControl->OnLoaded(nullptr, nullptr));
+
+        adapter->CreateCanvasImageSourceWasCalled = false;
+        drawEventWasInvoked = false;
+
+
+        // Execution
+        int anyNumberOfTimes = 5;
+        for (auto i = 0; i < anyNumberOfTimes; ++i)
+            adapter->FireSurfaceContentsLostEvent();
+        adapter->FireCompositionRenderingEvent();
+
+        
+        // Validation
+        Assert::IsTrue(adapter->CreateCanvasImageSourceWasCalled);
+        Assert::IsTrue(drawEventWasInvoked);
+    }
+
+    TEST_METHOD(CanvasControl_UnregistersSurfaceContentsLostEvent_WhenDestroyed)
+    {
+        // Setup
+        struct Adapter : public CanvasControlTestAdapter
+        {
+            int CallbacksAdded;
+            int CallbacksRemoved;
+
+            Adapter()
+                : CallbacksAdded(0)
+                , CallbacksRemoved(0)
+            {
+            }
+        
+            virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
+            {
+                ++CallbacksAdded;
+                return CanvasControlTestAdapter::AddSurfaceContentsLostCallback(value);
+            }
+
+            virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) override
+            {
+                ++CallbacksRemoved;
+                CanvasControlTestAdapter::RemoveSurfaceContentsLostCallback(token);
+            }
+        };
+
+        auto adapter = std::make_shared<Adapter>();
+
+        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
+        Assert::IsTrue(adapter->CallbacksAdded > 0);
+
+
+        // Execution
+        canvasControl.Reset();
+
+
+        // Validation
+        Assert::AreEqual(adapter->CallbacksAdded, adapter->CallbacksRemoved);
+    }
+};
+
