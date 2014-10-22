@@ -711,5 +711,71 @@ namespace test.managed
             Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaBehavior.Ignore; });
             Assert.AreEqual(CanvasAlphaBehavior.Premultiplied, effect.AlphaMode);
         }
+
+
+        class NotACanvasImage : IEffectInput { }
+
+
+        [TestMethod]
+        public void EffectExceptionMessages()
+        {
+            var effect = new GaussianBlurEffect();
+
+            using (var device = new CanvasDevice())
+            using (var renderTarget = new CanvasRenderTarget(device, 1, 1))
+            using (var drawingSession = renderTarget.CreateDrawingSession())
+            {
+                // Null source.
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (NullReferenceException e)
+                {
+                    Assert.AreEqual("Invalid pointer\r\n\r\nEffect input #0 is null.", e.Message);
+                }
+
+                // Invalid source type.
+                effect.Source = new NotACanvasImage();
+
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (InvalidCastException e)
+                {
+                    Assert.AreEqual("No such interface supported\r\n\r\nEffect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.", e.Message);
+                }
+
+                // Null property.
+                effect.Source = new ColorSourceEffect();
+                effect.Properties[0] = null;
+
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (NullReferenceException e)
+                {
+                    Assert.AreEqual("Invalid pointer\r\n\r\nEffect property #0 is null.", e.Message);
+                }
+
+                // Invalid property type.
+                effect.Properties[0] = "string is not the right type";
+
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("The parameter is incorrect.\r\n\r\nEffect property #0 is the wrong type for this effect.", e.Message);
+                }
+            }
+        }
     }
 }

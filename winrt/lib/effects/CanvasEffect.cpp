@@ -130,20 +130,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             // Look up the WinRT interface representing this input
             if (!inputs[i])
-                ThrowHR(E_POINTER);
+            {
+                WinStringBuilder message;
+                message.Format(Strings::EffectNullInput, i);
+                ThrowHR(E_POINTER, message.Get());
+            }
 
             ComPtr<ICanvasImageInternal> internalInput;
             HRESULT hr = inputs[i].As(&internalInput);
 
-            if (hr == E_NOINTERFACE)
+            if (FAILED(hr))
             {
-                WinStringBuilder message;
-                message.Format(Strings::EffectWrongInputType, i);
-                ThrowHR(hr, message.Get());
-            }
-            else
-            {
-                ThrowIfFailed(hr);
+                if (hr == E_NOINTERFACE)
+                {
+                    WinStringBuilder message;
+                    message.Format(Strings::EffectWrongInputType, i);
+                    ThrowHR(hr, message.Get());
+                }
+                else
+                {
+                    ThrowHR(hr);
+                }
             }
 
             // Get the underlying D2D interface (this call recurses through the effect graph)
@@ -252,53 +259,73 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         for (unsigned int i = 0; i < propertiesSize; ++i)
         {
             if (!properties[i])
-                ThrowHR(E_POINTER);
+            {
+                WinStringBuilder message;
+                message.Format(Strings::EffectNullProperty, i);
+                ThrowHR(E_POINTER, message.Get());
+            }
 
             auto propertyValue = As<IPropertyValue>(properties[i]);
 
             PropertyType propertyType;
             ThrowIfFailed(propertyValue->get_Type(&propertyType));
 
-            // TODO #2283: detailed exception error if failed due to type mismatch
+            HRESULT hr;
+
             switch (propertyType)
             {
             case PropertyType_Boolean:
             {
                 boolean value;
                 ThrowIfFailed(propertyValue->GetBoolean(&value));
-                ThrowIfFailed(m_resource->SetValue(i, static_cast<BOOL>(value)));
+                hr = m_resource->SetValue(i, static_cast<BOOL>(value));
                 break;
             }
             case PropertyType_Int32:
             {
                 INT32 value;
                 ThrowIfFailed(propertyValue->GetInt32(&value));
-                ThrowIfFailed(m_resource->SetValue(i, value));
+                hr = m_resource->SetValue(i, value);
                 break;
             }
             case PropertyType_UInt32:
             {
                 UINT32 value;
                 ThrowIfFailed(propertyValue->GetUInt32(&value));
-                ThrowIfFailed(m_resource->SetValue(i, value));
+                hr = m_resource->SetValue(i, value);
                 break;
             }
             case PropertyType_Single:
             {
                 float value;
                 ThrowIfFailed(propertyValue->GetSingle(&value));
-                ThrowIfFailed(m_resource->SetValue(i, value));
+                hr = m_resource->SetValue(i, value);
                 break;
             }
             case PropertyType_SingleArray:
             {
                 ComArray<float> value;
                 ThrowIfFailed(propertyValue->GetSingleArray(value.GetAddressOfSize(), value.GetAddressOfData()));
-                ThrowIfFailed(m_resource->SetValue(i, reinterpret_cast<BYTE*>(value.GetData()), value.GetSize() * sizeof(float)));
+                hr = m_resource->SetValue(i, reinterpret_cast<BYTE*>(value.GetData()), value.GetSize() * sizeof(float));
                 break;
             }
             default:
-                ThrowHR(E_NOTIMPL);
+                hr = E_INVALIDARG;
+                break;
+            }
+
+            if (FAILED(hr))
+            {
+                if (hr == E_INVALIDARG)
+                {
+                    WinStringBuilder message;
+                    message.Format(Strings::EffectWrongPropertyType, i);
+                    ThrowHR(hr, message.Get());
+                }
+                else
+                {
+                    ThrowHR(hr);
+                }
             }
         }
     }
