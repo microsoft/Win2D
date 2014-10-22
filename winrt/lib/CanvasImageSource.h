@@ -80,9 +80,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             _In_         Rect updateRectangle,
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
 
-        IFACEMETHOD(CreateDrawingSessionWithDpi)(
-            float dpi,
-            _COM_Outptr_ ICanvasDrawingSession** drawingSession);
+        ComPtr<ICanvasDrawingSession> CreateDrawingSessionWithDpi(
+            float dpi);
 
         IFACEMETHOD(get_Device)(
             _COM_Outptr_ ICanvasDevice** value) override;
@@ -97,10 +96,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void SetResourceCreator(ICanvasResourceCreator* resourceCreator);
 
-        IFACEMETHOD(CreateDrawingSessionWithUpdateRectangleAndDpi)(
+        ComPtr<ICanvasDrawingSession> CreateDrawingSessionWithUpdateRectangleAndDpi(
             Rect updateRectangle,
-            float dpi,
-            _COM_Outptr_ ICanvasDrawingSession** drawingSession);
+            float dpi);
     };
 
 

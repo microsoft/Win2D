@@ -139,7 +139,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(m_compositionTargetStatics->remove_Rendering(token));
         }
 
-        virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override 
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override 
         {
             ComPtr<ICanvasResourceCreator> resourceCreator;
             ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
@@ -151,7 +151,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 height, 
                 &imageSource));
 
-            return imageSource;
+            // Since we know that CanvasImageSourceFactory will only ever return
+            // CanvasImageSource instances, we can be certain that the
+            // ICanvasImageSource we get back is actually a CanvasImageSource.
+            return static_cast<CanvasImageSource*>(imageSource.Get());
         }
 
         virtual ComPtr<IImage> CreateImageControl() override 
@@ -393,11 +396,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        ComPtr<ICanvasDrawingSession> drawingSession;
         ComPtr<CanvasImageSource> imageSourceImplementation = 
             static_cast<CanvasImageSource*>(m_canvasImageSource.Get());
 
-        ThrowIfFailed(imageSourceImplementation->CreateDrawingSessionWithDpi(m_adapter->GetLogicalDpi(), &drawingSession));
+        auto drawingSession = imageSourceImplementation->CreateDrawingSessionWithDpi(m_adapter->GetLogicalDpi());
         ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 

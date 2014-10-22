@@ -198,7 +198,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasImageSource::CreateDrawingSession(
         ICanvasDrawingSession** drawingSession)
     {
-        return CreateDrawingSessionWithDpi(DEFAULT_DPI, drawingSession);
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto ds = CreateDrawingSessionWithDpi(DEFAULT_DPI);
+                ThrowIfFailed(ds.CopyTo(drawingSession));
+            });
     }
 
     
@@ -207,17 +212,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Rect updateRectangle,
         ICanvasDrawingSession** drawingSession)
     {
-        return CreateDrawingSessionWithUpdateRectangleAndDpi(
-            updateRectangle, 
-            DEFAULT_DPI,
-            drawingSession);
+        return ExceptionBoundary(
+            [&]()
+            {
+                auto ds = CreateDrawingSessionWithUpdateRectangleAndDpi(updateRectangle, DEFAULT_DPI);
+                ThrowIfFailed(ds.CopyTo(drawingSession));
+            });
     }
 
 
     _Use_decl_annotations_
-        IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithDpi(
-        float dpi,
-        ICanvasDrawingSession** drawingSession)
+    ComPtr<ICanvasDrawingSession> CanvasImageSource::CreateDrawingSessionWithDpi(float dpi)
     {
         Rect updateRectangle = {};
         updateRectangle.Width = static_cast<float>(m_widthInPixels);
@@ -225,32 +230,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         return CreateDrawingSessionWithUpdateRectangleAndDpi(
             updateRectangle,
-            dpi,
-            drawingSession);
+            dpi);
     }
 
 
-    IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangleAndDpi(
+    ComPtr<ICanvasDrawingSession> CanvasImageSource::CreateDrawingSessionWithUpdateRectangleAndDpi(
         Rect updateRectangle,
-        float dpi,
-        _COM_Outptr_ ICanvasDrawingSession** drawingSession)
+        float dpi)
     {
-        return ExceptionBoundary(
-            [&]
-        {
-            CheckAndClearOutPointer(drawingSession);
-
-            ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
-            ThrowIfFailed(GetComposableBase().As(&sisNative));
-
-            auto newDrawingSession = m_drawingSessionFactory->Create(
-                m_device.Get(),
-                sisNative.Get(),
-                updateRectangle,
-                dpi);
-
-            ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
-        });
+        ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
+        ThrowIfFailed(GetComposableBase().As(&sisNative));
+        
+        return m_drawingSessionFactory->Create(
+            m_device.Get(),
+            sisNative.Get(),
+            updateRectangle,
+            dpi);
     }
 
     _Use_decl_annotations_

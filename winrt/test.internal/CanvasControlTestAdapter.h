@@ -55,7 +55,7 @@ public:
         ThrowIfFailed(m_compositionRenderingEventList.InvokeAll(sender, arg));
     }
 
-    virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+    virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
     {
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =

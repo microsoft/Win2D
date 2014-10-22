@@ -362,7 +362,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             return m_imageControl;
         }
 
-        virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
         {
             Assert::IsTrue(m_createCanvasImageSourceExpected, L"CreateCanvasImageSource expected");
             m_createCanvasImageSourceExpected = false;
@@ -484,7 +484,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, sizedControl);
         }
 
-        virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
         {
             m_lastImageSourceWidth = width;
             m_lastImageSourceHeight = height;

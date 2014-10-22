@@ -55,7 +55,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDevice> CreateCanvasDevice() = 0;
         virtual EventRegistrationToken AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual void RemoveCompositionRenderingCallback(EventRegistrationToken token) = 0;
-        virtual ComPtr<ICanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
         virtual void AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) = 0;
