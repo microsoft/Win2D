@@ -55,7 +55,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasBitmapAdapter
     {
     public:
-        virtual ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(ComPtr<IUriRuntimeClass> const& uri) = 0;
+        virtual ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(IUriRuntimeClass* uri) = 0;
         virtual ComPtr<IAsyncOperation<StorageFile*>> GetFileFromPathAsync(HSTRING path) = 0;
     };
 

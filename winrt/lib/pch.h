@@ -62,7 +62,6 @@
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // Inc
-#include <AsyncAction.h>
 #include <AsyncOperation.h>
 #include <ClosablePtr.h>
 #include <ComArray.h>

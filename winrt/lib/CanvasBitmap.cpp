@@ -180,10 +180,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(), &m_storageFileStatics));
         }
 
-        ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(ComPtr<IUriRuntimeClass> const& uri) override
+        ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(IUriRuntimeClass* uri) override
         {
             ComPtr<IRandomAccessStreamReference> randomAccessStreamReference;
-            ThrowIfFailed(m_randomAccessStreamReferenceStatics->CreateFromUri(uri.Get(), &randomAccessStreamReference));
+            ThrowIfFailed(m_randomAccessStreamReferenceStatics->CreateFromUri(uri, &randomAccessStreamReference));
 
             return randomAccessStreamReference;
         }
@@ -419,8 +419,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
                     [=]
                     {
-                        auto bitmap = GetManager()->CreateBitmap(canvasDevice.Get(), fileName, alpha);
-                        return bitmap;
+                        return GetManager()->CreateBitmap(canvasDevice.Get(), fileName, alpha);
                     });
 
                 CheckMakeResult(asyncOperation);
@@ -440,46 +439,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             canvasBitmapAsyncOperation);
     }
 
-    template<typename T>
-    HRESULT WaitForOperation(IAsyncOperation<T*>* asyncOperation, T** ret)
-    {
-        // TODO #2617:Investigate making PPL work with async tasks.
-        
-        Event emptyEvent(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
-        if (!emptyEvent.IsValid())
-            return E_OUTOFMEMORY;
-
-        ComPtr<T> taskResult;
-        HRESULT taskHr = S_OK;
-        auto callback = Callback<IAsyncOperationCompletedHandler<T*>>(
-            [&emptyEvent, &taskResult, &taskHr](IAsyncOperation<T*>* asyncInfo, AsyncStatus status) -> HRESULT
-            {
-                taskHr = asyncInfo->GetResults(taskResult.GetAddressOf());
-                SetEvent(emptyEvent.Get());
-                return S_OK;
-        });
-
-        if (!callback)
-            return E_OUTOFMEMORY;
-        
-        asyncOperation->put_Completed(callback.Get());
-
-        auto timeout = 1000 * 5;
-        auto waitResult = WaitForSingleObjectEx(emptyEvent.Get(), timeout, true);
-
-        if (waitResult != WAIT_OBJECT_0)
-        {
-            return E_INVALIDARG;
-        }
-
-        taskResult.CopyTo(ret);
-
-        return taskHr;
-    };
-
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromUriWithAlpha(
         ICanvasResourceCreator* resourceCreator,
-        ABI::Windows::Foundation::IUriRuntimeClass* rawUri,
+        ABI::Windows::Foundation::IUriRuntimeClass* uri,
         CanvasAlphaBehavior alpha,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
     {
@@ -488,34 +450,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckInPointer(resourceCreator);
-                CheckInPointer(rawUri);
+                CheckInPointer(uri);
                 CheckAndClearOutPointer(canvasBitmapAsyncOperation);
 
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                ComPtr<IRandomAccessStreamReferenceStatics> streamRefStatics;
-                ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_Streams_RandomAccessStreamReference).Get(), &streamRefStatics));
+                ComPtr<IRandomAccessStreamReference> streamReference = m_adapter->CreateRandomAccessStreamFromUri(uri);
 
-                ComPtr<IUriRuntimeClass> uri = rawUri;
-                
-                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
-                    [=]
-                    {
-                        ComPtr<IRandomAccessStreamReference> randomAccessStreamReference = m_adapter->CreateRandomAccessStreamFromUri(uri);
+                // Start opening the file.
+                ComPtr<IAsyncOperation<IRandomAccessStreamWithContentType*>> openOperation;
+                ThrowIfFailed(streamReference->OpenReadAsync(&openOperation));
 
-                        ComPtr<IAsyncOperation<IRandomAccessStreamWithContentType*>> randomAccessStreamWithContentTypeOperation;
-                        ThrowIfFailed(randomAccessStreamReference->OpenReadAsync(&randomAccessStreamWithContentTypeOperation));
+                // Our main async operation is constructed as a continuation of the file open,
+                // so the lambda will only start executing once the file is ready.
+                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(openOperation, [=]
+                {
+                    ComPtr<IRandomAccessStreamWithContentType> randomAccessStream;
+                    ThrowIfFailed(openOperation->GetResults(&randomAccessStream));
 
-                        ComPtr<IRandomAccessStreamWithContentType> randomAccessStream;                         
-                        ThrowIfFailed(WaitForOperation<IRandomAccessStreamWithContentType>(randomAccessStreamWithContentTypeOperation.Get(), &randomAccessStream));
+                    ComPtr<IStream> stream;
+                    ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
 
-                        ComPtr<IStream> stream;
-                        ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
-
-                        auto bitmap = GetManager()->CreateBitmap(canvasDevice.Get(), stream.Get(), alpha);
-                        return bitmap;
-                    });
+                    return GetManager()->CreateBitmap(canvasDevice.Get(), stream.Get(), alpha);
+                });
 
                 CheckMakeResult(asyncOperation);
                 ThrowIfFailed(asyncOperation.CopyTo(canvasBitmapAsyncOperation));
@@ -670,8 +628,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpiX, dpiY;
         d2dBitmap->GetDpi(&dpiX, &dpiY);
 
-        std::shared_ptr<ScopedBitmapLock> bitmapLock =
-            std::make_shared<ScopedBitmapLock>(d2dBitmap.Get(), D3D11_MAP_READ);
+        auto bitmapLock = std::make_shared<ScopedBitmapLock>(d2dBitmap.Get(), D3D11_MAP_READ);
 
         auto asyncAction = Make<AsyncAction>(
             [=]

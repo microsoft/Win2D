@@ -35,11 +35,8 @@ public:
 namespace ABI {
     namespace Windows {
         namespace Foundation {
-            template<> struct __declspec(uuid("853707c5-fd26-499d-aefe-a7d986137939")) IAsyncOperation<MockAsyncResult*> : IAsyncOperation_impl<MockAsyncResult*> { };
-            template<> struct __declspec(uuid("40bd86ee-66d9-4623-b144-0df7c81aa9f4")) IAsyncOperationCompletedHandler<MockAsyncResult*> : IAsyncOperationCompletedHandler_impl<MockAsyncResult*>
-            {
-                static const wchar_t* z_get_rc_name_impl() { return L"IAsyncOperationCompletedHandler<MockAsyncResult*>"; } 
-            };
+            template<> struct __declspec(uuid("853707c5-fd26-499d-aefe-a7d986137939")) IAsyncOperation                <MockAsyncResult*> : IAsyncOperation_impl                <MockAsyncResult*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+            template<> struct __declspec(uuid("40bd86ee-66d9-4623-b144-0df7c81aa9f4")) IAsyncOperationCompletedHandler<MockAsyncResult*> : IAsyncOperationCompletedHandler_impl<MockAsyncResult*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
         }
     }
 }
@@ -91,12 +88,7 @@ TEST_CLASS(AsyncOperationTests)
             hasCallbackFired = true;
 
             Assert::AreEqual(AsyncStatus::Completed, status);
-
-            // asyncInfo should be the same as our source async, but we must QI to IUnknown before comparing object identities.
-            ComPtr<IUnknown> asyncIdentity, asyncInfoIdentity;
-            ThrowIfFailed(async.As(&asyncIdentity));
-            ThrowIfFailed(ComPtr<IAsyncOperation<MockAsyncResult*>>(asyncInfo).As(&asyncInfoIdentity));
-            Assert::AreEqual<void*>(asyncIdentity.Get(), asyncInfoIdentity.Get());
+            Assert::IsTrue(IsSameInstance(async.Get(), asyncInfo));
 
             SetEvent(asyncFinished.Get());
             return S_OK;
@@ -171,12 +163,7 @@ TEST_CLASS(AsyncOperationTests)
             hasCallbackFired = true;
 
             Assert::AreEqual(AsyncStatus::Completed, status);
-
-            // asyncInfo should be the same as our source async, but we must QI to IUnknown before comparing object identities.
-            ComPtr<IUnknown> asyncIdentity, asyncInfoIdentity;
-            ThrowIfFailed(async.As(&asyncIdentity));
-            ThrowIfFailed(ComPtr<IAsyncOperation<MockAsyncResult*>>(asyncInfo).As(&asyncInfoIdentity));
-            Assert::AreEqual<void*>(asyncIdentity.Get(), asyncInfoIdentity.Get());
+            Assert::IsTrue(IsSameInstance(async.Get(), asyncInfo));
 
             return S_OK;
         });
@@ -256,12 +243,7 @@ TEST_CLASS(AsyncOperationTests)
         auto completedCallback = Callback<IAsyncOperationCompletedHandler<MockAsyncResult*>>([&](IAsyncOperation<MockAsyncResult*> *asyncInfo, AsyncStatus status)
         {
             Assert::AreEqual(AsyncStatus::Error, status);
-
-            // asyncInfo should be the same as our source async, but we must QI to IUnknown before comparing object identities.
-            ComPtr<IUnknown> asyncIdentity, asyncInfoIdentity;
-            ThrowIfFailed(async.As(&asyncIdentity));
-            ThrowIfFailed(ComPtr<IAsyncOperation<MockAsyncResult*>>(asyncInfo).As(&asyncInfoIdentity));
-            Assert::AreEqual<void*>(asyncIdentity.Get(), asyncInfoIdentity.Get());
+            Assert::IsTrue(IsSameInstance(async.Get(), asyncInfo));
 
             SetEvent(asyncFinished.Get());
             return S_OK;
@@ -348,6 +330,236 @@ TEST_CLASS(AsyncOperationTests)
 
         // Expect just one reference now the IAsyncOperation has completed.
         AssertExpectedRefCount(async, 1);
+    }
+
+
+    TEST_METHOD(AsyncContinuationTest)
+    {
+        MockAsyncResult result1, result2;
+        
+        Event asyncCanFinishNow(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+        Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+
+        // First async operation.
+        auto async1 = Make<AsyncOperation<MockAsyncResult>>([&]
+        {
+            Assert::AreEqual(WAIT_OBJECT_0, WaitForSingleObjectEx(asyncCanFinishNow.Get(), waitTimeout, false));
+
+            return &result1;
+        });
+
+        // Validate refcounts.
+        AssertExpectedRefCount(async1, 2);      // One from us, plus one from the active async operation.
+        Assert::AreEqual(1, result1.refCount);
+
+        // Second async operation is registered as a continuation of the first.
+        auto async2 = Make<AsyncOperation<MockAsyncResult>>(As<IAsyncOperation<MockAsyncResult*>>(async1), [&, async1]
+        {
+            // Validate the result of the first async operation. This is important to make sure the continuation
+            // lambda has captured that previous async, which mimics how this will be used by real code.
+            ComPtr<MockAsyncResult> result;
+            ThrowIfFailed(async1->GetResults(&result));
+            Assert::AreEqual<void*>(&result1, result.Get());
+
+            return &result2;
+        });
+
+        // Validate refcounts.
+        AssertExpectedRefCount(async1, 4);      // One from us, one from the active async operation, and two continuation backlinks.
+        AssertExpectedRefCount(async2, 2);      // One from us, plus one from the active async operation.
+        Assert::AreEqual(1, result1.refCount);
+        Assert::AreEqual(1, result2.refCount);
+
+        // Subscribe to the completion callback of the second async operation.
+        bool hasCallbackFired = false;
+
+        auto completedCallback = Callback<IAsyncOperationCompletedHandler<MockAsyncResult*>>([&](IAsyncOperation<MockAsyncResult*> *asyncInfo, AsyncStatus status)
+        {
+            Assert::IsFalse(hasCallbackFired);
+            hasCallbackFired = true;
+
+            Assert::AreEqual(AsyncStatus::Completed, status);
+            Assert::IsTrue(IsSameInstance(async2.Get(), asyncInfo));
+
+            SetEvent(asyncFinished.Get());
+            return S_OK;
+        });
+
+        ThrowIfFailed(async2->put_Completed(completedCallback.Get()));
+
+        // Callback should not have fired yet!
+        Assert::IsFalse(hasCallbackFired);
+
+        // Telling the first async operation to complete should trigger the second one to run as its continuation.
+        SetEvent(asyncCanFinishNow.Get());
+
+        Assert::AreEqual(WAIT_OBJECT_0, WaitForSingleObjectEx(asyncFinished.Get(), waitTimeout, false));
+
+        // Validate the completed state.
+        Assert::IsTrue(hasCallbackFired);
+
+        AsyncStatus status = (AsyncStatus)-1;
+        ThrowIfFailed(async1->get_Status(&status));
+        Assert::AreEqual(AsyncStatus::Completed, status);
+
+        HRESULT errorCode = E_UNEXPECTED;
+        ThrowIfFailed(async1->get_ErrorCode(&errorCode));
+        Assert::AreEqual(S_OK, errorCode);
+
+        ComPtr<MockAsyncResult> result;
+        ThrowIfFailed(async1->GetResults(&result));
+        Assert::AreEqual<void*>(&result1, result.Get());
+
+        ThrowIfFailed(async2->get_Status(&status));
+        Assert::AreEqual(AsyncStatus::Completed, status);
+
+        ThrowIfFailed(async2->get_ErrorCode(&errorCode));
+        Assert::AreEqual(S_OK, errorCode);
+
+        ThrowIfFailed(async2->GetResults(&result));
+        Assert::AreEqual<void*>(&result2, result.Get());
+
+        // Validate refcounts.
+        result = nullptr;
+
+        Assert::AreEqual(2, result1.refCount);
+        Assert::AreEqual(2, result2.refCount);
+
+        async1->Close();
+        async2->Close();
+
+        Assert::AreEqual(1, result1.refCount);
+        Assert::AreEqual(1, result2.refCount);
+
+        AssertExpectedRefCount(async1, 1);
+        AssertExpectedRefCount(async2, 1);
+    }
+
+
+    TEST_METHOD(AsyncContinuationThrowsExceptionTest)
+    {
+        Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+
+        // First async operation.
+        auto async1 = Make<AsyncOperation<MockAsyncResult>>([&]() -> ComPtr<MockAsyncResult>
+        {
+            ThrowHR(E_BOUNDS);
+        });
+
+        // Second async operation is registered as a continuation of the first.
+        auto async2 = Make<AsyncOperation<MockAsyncResult>>(As<IAsyncOperation<MockAsyncResult*>>(async1), [&]
+        {
+            Assert::Fail(L"Should never execute since the first operation failed.");
+            return nullptr;
+        });
+
+        // Subscribe to the completion callback of the second async operation.
+        auto completedCallback = Callback<IAsyncOperationCompletedHandler<MockAsyncResult*>>([&](IAsyncOperation<MockAsyncResult*> *asyncInfo, AsyncStatus status)
+        {
+            Assert::AreEqual(AsyncStatus::Error, status);
+            Assert::IsTrue(IsSameInstance(async2.Get(), asyncInfo));
+
+            SetEvent(asyncFinished.Get());
+            return S_OK;
+        });
+
+        ThrowIfFailed(async2->put_Completed(completedCallback.Get()));
+
+        // Wait until the operation completes.
+        Assert::AreEqual(WAIT_OBJECT_0, WaitForSingleObjectEx(asyncFinished.Get(), waitTimeout, false));
+
+        // Validate the completed state.
+        AsyncStatus status = (AsyncStatus)-1;
+        ThrowIfFailed(async1->get_Status(&status));
+        Assert::AreEqual(AsyncStatus::Error, status);
+
+        HRESULT errorCode = E_UNEXPECTED;
+        ThrowIfFailed(async1->get_ErrorCode(&errorCode));
+        Assert::AreEqual(E_BOUNDS, errorCode);
+
+        ComPtr<MockAsyncResult> result;
+        Assert::AreEqual(E_BOUNDS, async1->GetResults(&result));
+
+        // The continuation async should inherit the error state, even though its lambda never actually ran.
+        ThrowIfFailed(async2->get_Status(&status));
+        Assert::AreEqual(AsyncStatus::Error, status);
+
+        ThrowIfFailed(async2->get_ErrorCode(&errorCode));
+        Assert::AreEqual(E_BOUNDS, errorCode);
+
+        Assert::AreEqual(E_BOUNDS, async2->GetResults(&result));
+
+        // Validate refcounts.
+        AssertExpectedRefCount(async1, 1);
+        AssertExpectedRefCount(async2, 1);
+    }
+
+
+    TEST_METHOD(AsyncContinuationCancelledTest)
+    {
+        Event asyncCanFinishNow(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+        Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+
+        // First async operation.
+        auto async1 = Make<AsyncOperation<MockAsyncResult>>([&]
+        {
+            Assert::AreEqual(WAIT_OBJECT_0, WaitForSingleObjectEx(asyncCanFinishNow.Get(), waitTimeout, false));
+
+            return nullptr;
+        });
+
+        // Second async operation is registered as a continuation of the first.
+        auto async2 = Make<AsyncOperation<MockAsyncResult>>(As<IAsyncOperation<MockAsyncResult*>>(async1), [&]() -> ComPtr<MockAsyncResult>
+        {
+            Assert::Fail(L"Should never execute since we were cancelled.");
+            return nullptr;
+        });
+
+        // Subscribe to the completion callback of the second async operation.
+        auto completedCallback = Callback<IAsyncOperationCompletedHandler<MockAsyncResult*>>([&](IAsyncOperation<MockAsyncResult*> *asyncInfo, AsyncStatus status)
+        {
+            Assert::AreEqual(AsyncStatus::Canceled, status);
+            Assert::IsTrue(IsSameInstance(async2.Get(), asyncInfo));
+
+            SetEvent(asyncFinished.Get());
+            return S_OK;
+        });
+
+        ThrowIfFailed(async2->put_Completed(completedCallback.Get()));
+
+        // Cancel the second async operation.
+        async2->Cancel();
+
+        // Tell the first async operation to complete.
+        SetEvent(asyncCanFinishNow.Get());
+
+        Assert::AreEqual(WAIT_OBJECT_0, WaitForSingleObjectEx(asyncFinished.Get(), waitTimeout, false));
+
+        // First async should have completed ok.
+        AsyncStatus status = (AsyncStatus)-1;
+        ThrowIfFailed(async1->get_Status(&status));
+        Assert::AreEqual(AsyncStatus::Completed, status);
+
+        HRESULT errorCode = E_UNEXPECTED;
+        ThrowIfFailed(async1->get_ErrorCode(&errorCode));
+        Assert::AreEqual(S_OK, errorCode);
+
+        ComPtr<MockAsyncResult> result;
+        ThrowIfFailed(async1->GetResults(&result));
+        Assert::IsNull(result.Get());
+
+        // The continuation async should be in canceled state.
+        ThrowIfFailed(async2->get_Status(&status));
+        Assert::AreEqual(AsyncStatus::Canceled, status);
+
+        ThrowIfFailed(async2->get_ErrorCode(&errorCode));
+        Assert::AreEqual(S_OK, errorCode);
+
+        Assert::AreEqual(E_ILLEGAL_METHOD_CALL, async2->GetResults(&result));
+
+        // Validate refcounts.
+        AssertExpectedRefCount(async1, 1);
+        AssertExpectedRefCount(async2, 1);
     }
 
 

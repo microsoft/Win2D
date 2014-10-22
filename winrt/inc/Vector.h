@@ -80,7 +80,7 @@ namespace collections
     class Vector : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::Collections::IVector<T>,
                                                        ABI::Windows::Foundation::Collections::IIterable<T>>
     {
-        InspectableClass(L"Windows.Foundation.Collections.IVector`1", BaseTrust)
+        InspectableClass(IVector<T>::z_get_rc_name_impl(), BaseTrust);
 
     public:
         // T_abi is often the same as T, but if T is a runtime class, T_abi will be the corresponding interface.
@@ -334,7 +334,7 @@ namespace collections
     class VectorView : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::Collections::IVectorView<T>,
                                                            ABI::Windows::Foundation::Collections::IIterable<T>>
     {
-        InspectableClass(L"Windows.Foundation.Collections.IVectorView`1", BaseTrust)
+        InspectableClass(IVectorView<T>::z_get_rc_name_impl(), BaseTrust);
 
         // Fields.
         Microsoft::WRL::ComPtr<TVector> mVector;
@@ -376,7 +376,7 @@ namespace collections
     template<typename T, typename TVector>
     class VectorIterator : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::Collections::IIterator<T>>
     {
-        InspectableClass(L"Windows.Foundation.Collections.IIterator`1", BaseTrust)
+        InspectableClass(IIterator<T>::z_get_rc_name_impl(), BaseTrust);
 
         // Fields.
         Microsoft::WRL::ComPtr<TVector> mVector;

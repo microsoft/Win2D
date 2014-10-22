@@ -48,7 +48,6 @@
 #include <Canvas.abi.h>
 
 // Inc
-#include <AsyncAction.h>
 #include <AsyncOperation.h>
 #include <ClosablePtr.h>
 #include <ComArray.h>

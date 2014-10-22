@@ -59,20 +59,20 @@ namespace ABI {
         namespace Foundation {
             namespace Collections
             {
-                template<> struct __declspec(uuid("b939af5b-b45d-5489-9149-61442c1905fe")) IVector<int>     : IVector_impl    <int> { };
-                template<> struct __declspec(uuid("8d720cdf-3934-5d3f-9a55-40e8063b086a")) IVectorView<int> : IVectorView_impl<int> { };
-                template<> struct __declspec(uuid("81a643fb-f51c-5565-83c4-f96425777b66")) IIterable<int>   : IIterable_impl  <int> { };
-                template<> struct __declspec(uuid("bfea7f78-50c2-5f1d-a6ea-9e978d2699ff")) IIterator<int>   : IIterator_impl  <int> { };
+                template<> struct __declspec(uuid("b939af5b-b45d-5489-9149-61442c1905fe")) IVector    <int> : IVector_impl    <int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("8d720cdf-3934-5d3f-9a55-40e8063b086a")) IVectorView<int> : IVectorView_impl<int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("81a643fb-f51c-5565-83c4-f96425777b66")) IIterable  <int> : IIterable_impl  <int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("bfea7f78-50c2-5f1d-a6ea-9e978d2699ff")) IIterator  <int> : IIterator_impl  <int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
 
-                template<> struct __declspec(uuid("b6a5841a-795a-4579-bd7c-94f160faf3fd")) IVector<MockInterface*>     : IVector_impl    <MockInterface*> { };
-                template<> struct __declspec(uuid("85f9e708-40a5-452e-949a-0caab9bf2e7c")) IVectorView<MockInterface*> : IVectorView_impl<MockInterface*> { };
-                template<> struct __declspec(uuid("e84e0e0c-a8f7-4fbe-ad49-d7dbd4e5cf49")) IIterable<MockInterface*>   : IIterable_impl  <MockInterface*> { };
-                template<> struct __declspec(uuid("a4af48ab-a5c0-49e4-9d92-704471459f93")) IIterator<MockInterface*>   : IIterator_impl  <MockInterface*> { };
+                template<> struct __declspec(uuid("b6a5841a-795a-4579-bd7c-94f160faf3fd")) IVector    <MockInterface*> : IVector_impl    <MockInterface*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("85f9e708-40a5-452e-949a-0caab9bf2e7c")) IVectorView<MockInterface*> : IVectorView_impl<MockInterface*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("e84e0e0c-a8f7-4fbe-ad49-d7dbd4e5cf49")) IIterable  <MockInterface*> : IIterable_impl  <MockInterface*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("a4af48ab-a5c0-49e4-9d92-704471459f93")) IIterator  <MockInterface*> : IIterator_impl  <MockInterface*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
 
-                template<> struct __declspec(uuid("662ce162-4e9b-489f-9920-21cdacf81244")) IVector<MockRuntimeClass*>     : IVector_impl    <ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { };
-                template<> struct __declspec(uuid("5164aa0c-ade9-42af-a620-5628369e26d1")) IVectorView<MockRuntimeClass*> : IVectorView_impl<ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { };
-                template<> struct __declspec(uuid("b59125a3-9520-444d-9982-8d26cb01ef12")) IIterable<MockRuntimeClass*>   : IIterable_impl  <ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { };
-                template<> struct __declspec(uuid("96f9fd14-f634-419e-bf26-5771b1848de7")) IIterator<MockRuntimeClass*>   : IIterator_impl  <ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { };
+                template<> struct __declspec(uuid("662ce162-4e9b-489f-9920-21cdacf81244")) IVector    <MockRuntimeClass*> : IVector_impl    <ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("5164aa0c-ade9-42af-a620-5628369e26d1")) IVectorView<MockRuntimeClass*> : IVectorView_impl<ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("b59125a3-9520-444d-9982-8d26cb01ef12")) IIterable  <MockRuntimeClass*> : IIterable_impl  <ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+                template<> struct __declspec(uuid("96f9fd14-f634-419e-bf26-5771b1848de7")) IIterator  <MockRuntimeClass*> : IIterator_impl  <ABI::Windows::Foundation::Internal::AggregateType<MockRuntimeClass*, MockInterface*>> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
             }
         }
     }
