@@ -282,8 +282,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // Register for Loaded event
         auto onLoadedFn = Callback<IRoutedEventHandler>(this, &CanvasControl::OnLoaded);
-        EventRegistrationToken loadedToken{};
+        CheckMakeResult(onLoadedFn);
 
+        EventRegistrationToken loadedToken{};
         ThrowIfFailed(thisAsFrameworkElement->add_Loaded(
             onLoadedFn.Get(),
             &loadedToken));
@@ -292,14 +293,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         //  Register for SizeChanged event
         auto onSizeChangedFn = Callback<ISizeChangedEventHandler>(this, &CanvasControl::OnSizeChanged);
-        EventRegistrationToken sizeChangedToken{};
+        CheckMakeResult(onSizeChangedFn);
 
+        EventRegistrationToken sizeChangedToken{};
         ThrowIfFailed(thisAsFrameworkElement->add_SizeChanged(
             onSizeChangedFn.Get(),
             &sizeChangedToken));
 
         // Register for DpiChanged event.
         auto dpiChangedEventHandler = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChangedCallback);
+        CheckMakeResult(dpiChangedEventHandler);
+
         m_adapter->AddDpiChangedCallback(dpiChangedEventHandler.Get());
     }
 
@@ -539,7 +543,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
 
         m_drawNeeded = true;
-        ComPtr<IEventHandler<IInspectable*>> renderingEventHandler = Callback<IEventHandler<IInspectable*>, CanvasControl>(this, &CanvasControl::OnRenderCallback);
+
+        auto renderingEventHandler = Callback<IEventHandler<IInspectable*>>(this, &CanvasControl::OnRenderCallback);
+        CheckMakeResult(renderingEventHandler);
+
         m_renderingEventToken = m_adapter->AddCompositionRenderingCallback(renderingEventHandler.Get());
     }
 

@@ -458,6 +458,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 SetEvent(emptyEvent.Get());
                 return S_OK;
         });
+
+        if (!callback)
+            return E_OUTOFMEMORY;
         
         asyncOperation->put_Completed(callback.Get());
 
