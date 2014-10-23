@@ -12,6 +12,9 @@
 
 #pragma once
 
+#include "MockHelpers.h"
+#include "MockWindow.h"
+
 using ABI::Windows::Graphics::Display::DisplayInformation;
 
 class CanvasControlTestAdapter : public ICanvasControlAdapter
@@ -21,7 +24,32 @@ class CanvasControlTestAdapter : public ICanvasControlAdapter
 
     EventSource<ITypedEventHandler<DisplayInformation*, IInspectable*>> m_dpiChangedEventList;
 
+    ComPtr<MockWindow> m_mockWindow;
+
+
+
 public:
+    CallCounter CreateCanvasImageSourceMethod;
+    CallCounter AddCompositionRenderingCallbackMethod;
+    CallCounter RemoveCompositionRenderingCallbackMethod;
+    CallCounter AddSurfaceContentsLostCallbackMethod;
+    CallCounter RemoveSurfaceContentsLostCallbackMethod;
+
+    CanvasControlTestAdapter()
+        : m_mockWindow(Make<MockWindow>())
+        , CreateCanvasImageSourceMethod(L"CreateCanvasImageSource")
+        , AddCompositionRenderingCallbackMethod(L"AddCompositionRenderingCallbackMethod")
+        , RemoveCompositionRenderingCallbackMethod(L"RemoveCompositionRenderingCallbackMethod")
+        , AddSurfaceContentsLostCallbackMethod(L"AddSurfaceContentsLostCallback")
+        , RemoveSurfaceContentsLostCallbackMethod(L"RemoveSurfaceContentsLostCallback")
+    {
+        AddCompositionRenderingCallbackMethod.AllowAnyCall();
+        RemoveCompositionRenderingCallbackMethod.AllowAnyCall();
+
+        AddSurfaceContentsLostCallbackMethod.AllowAnyCall();
+        RemoveSurfaceContentsLostCallbackMethod.AllowAnyCall();
+    }
+
     virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
     {
         auto control = Make<StubUserControl>();
@@ -39,6 +67,7 @@ public:
 
     virtual EventRegistrationToken AddCompositionRenderingCallback(IEventHandler<IInspectable*>* value) override
     {
+        AddCompositionRenderingCallbackMethod.WasCalled();
         EventRegistrationToken token;
         ThrowIfFailed(m_compositionRenderingEventList.Add(value, &token));
         return token;
@@ -46,10 +75,11 @@ public:
 
     virtual void RemoveCompositionRenderingCallback(EventRegistrationToken token) override
     {
+        RemoveCompositionRenderingCallbackMethod.WasCalled();
         ThrowIfFailed(m_compositionRenderingEventList.Remove(token));
     }
 
-    void FireCompositionRenderingEvent()
+    void RaiseCompositionRenderingEvent()
     {
         IInspectable* sender = nullptr;
         IInspectable* arg = nullptr;
@@ -58,6 +88,7 @@ public:
 
     virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
     {
+        AddSurfaceContentsLostCallbackMethod.WasCalled();
         EventRegistrationToken token;
         ThrowIfFailed(m_surfaceContentsLostEventList.Add(value, &token));
         return token;
@@ -65,10 +96,11 @@ public:
     
     virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) override
     {
+        RemoveSurfaceContentsLostCallbackMethod.WasCalled();
         ThrowIfFailed(m_surfaceContentsLostEventList.Remove(token));
     }
 
-    void FireSurfaceContentsLostEvent()
+    void RaiseSurfaceContentsLostEvent()
     {
         IInspectable* sender = nullptr;
         IInspectable* arg = nullptr;
@@ -77,6 +109,8 @@ public:
 
     virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
     {
+        CreateCanvasImageSourceMethod.WasCalled();
+
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
             [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
@@ -119,8 +153,18 @@ public:
         ThrowIfFailed(m_dpiChangedEventList.Add(handler, &token));
     }
 
-    void FireDpiChangedEvent()
+    void RaiseDpiChangedEvent()
     {
         ThrowIfFailed(m_dpiChangedEventList.InvokeAll(nullptr, nullptr));
+    }
+
+    virtual ComPtr<IWindow> GetCurrentWindow() override
+    {
+        return m_mockWindow;
+    }
+
+    ComPtr<MockWindow> GetCurrentMockWindow()
+    {
+        return m_mockWindow;
     }
 };

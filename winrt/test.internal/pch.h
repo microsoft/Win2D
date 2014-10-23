@@ -126,4 +126,4 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 #include "StubSurfaceImageSource.h"
 #include "StubSurfaceImageSourceFactory.h"
 #include "StubUserControl.h"
-#include "CanvasControlTestAdapter.h"
+

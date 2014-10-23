@@ -12,31 +12,29 @@
 
 #include "pch.h"
 
+#include "CanvasControlTestAdapter.h"
+
 TEST_CLASS(CanvasControlTests_CommonAdapter)
 {
     std::shared_ptr<CanvasControlTestAdapter> m_adapter;
+    ComPtr<CanvasControl> m_control;
 
     TEST_METHOD_INITIALIZE(Init)
     {
         m_adapter = std::make_shared<CanvasControlTestAdapter>();
-        m_createResourcesCallbackCount = 0;
-        m_drawCallbackCount = 0;
+        m_control = Make<CanvasControl>(m_adapter);
     }
 
     TEST_METHOD(CanvasControl_Implements_Expected_Interfaces)
     {
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
-
-        ASSERT_IMPLEMENTS_INTERFACE(canvasControl, ICanvasControl);
-        ASSERT_IMPLEMENTS_INTERFACE(canvasControl, ABI::Windows::UI::Xaml::Controls::IUserControl);
-        ASSERT_IMPLEMENTS_INTERFACE(canvasControl, ICanvasResourceCreator);
+        ASSERT_IMPLEMENTS_INTERFACE(m_control, ICanvasControl);
+        ASSERT_IMPLEMENTS_INTERFACE(m_control, ABI::Windows::UI::Xaml::Controls::IUserControl);
+        ASSERT_IMPLEMENTS_INTERFACE(m_control, ICanvasResourceCreator);
     }
 
     TEST_METHOD(CanvasControl_DeviceProperty_Null)
     {
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
-
-        Assert::AreEqual(E_INVALIDARG, canvasControl->get_Device(nullptr));
+        Assert::AreEqual(E_INVALIDARG, m_control->get_Device(nullptr));
     }
 
     TEST_METHOD(CanvasControl_DrawEventArgs_Getter)
@@ -55,95 +53,65 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(drawingSession.Get(), drawingSessionRetrieved.Get());
     }
 
-    HRESULT OnCreateResources(ICanvasControl* sender, IInspectable* args)
-    {
-        Assert::IsNotNull(sender);
-        Assert::IsNull(args); // Args are never used.
-
-        m_createResourcesCallbackCount++;
-
-        return S_OK;
-    }
-
-    HRESULT OnDraw(ICanvasControl* sender, ICanvasDrawEventArgs* args)
-    {
-        Assert::IsNotNull(sender);
-        Assert::IsNotNull(args);
-
-        m_drawCallbackCount++;
-
-        return S_OK;
-    }
-
-    HRESULT OnDraw_NoNullCheck(ICanvasControl* sender, ICanvasDrawEventArgs* args)
-    {
-        m_drawCallbackCount++;
-
-        return S_OK;
-    }
-
     TEST_METHOD(CanvasControl_Callbacks)
     {
         using namespace ABI::Windows::Foundation;
 
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(m_adapter);
-        Assert::AreEqual(0, m_createResourcesCallbackCount);
-        Assert::AreEqual(0, m_drawCallbackCount);
+        m_adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
         // Register one CreateResources handler.
         // Note that Loaded hasn't occured yet, so it shouldn't actually be fired.
-        auto onCreateResourcesFn = Callback<CreateResourcesEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnCreateResources);
+        auto onCreateResources = MockEventHandler<CreateResourcesEventHandlerType>(L"CreateResources", ExpectedEventParams::OnlySender);
         EventRegistrationToken createResourcesEventToken0;
-        ThrowIfFailed(canvasControl->add_CreateResources(onCreateResourcesFn.Get(), &createResourcesEventToken0));
-        Assert::AreEqual(0, m_createResourcesCallbackCount);
+        ThrowIfFailed(m_control->add_CreateResources(onCreateResources.Get(), &createResourcesEventToken0));
 
         // Issue a Loaded.
         // Should fire CreateResources.
-        canvasControl->OnLoaded(nullptr, nullptr);
-        Assert::AreEqual(1, m_createResourcesCallbackCount);
+        onCreateResources.SetExpectedCalls(1);
+        m_control->OnLoaded(nullptr, nullptr);
 
+        onCreateResources.Validate();
+ 
         // Register the CreateResources handler again.
         // Because the Loaded event has already occurred, add_CreateResources should immediately fire the event too.
+        onCreateResources.SetExpectedCalls(1);
+
         EventRegistrationToken createResourcesEventToken1;
-        ThrowIfFailed(canvasControl->add_CreateResources(onCreateResourcesFn.Get(), &createResourcesEventToken1));
-        Assert::AreEqual(2, m_createResourcesCallbackCount);
+        ThrowIfFailed(m_control->add_CreateResources(onCreateResources.Get(), &createResourcesEventToken1));
+
+        onCreateResources.Validate();
 
         // Register the Draw handler.
-        auto onDrawFn = Callback<DrawEventHandlerType>(this, &CanvasControlTests_CommonAdapter::OnDraw);
+        auto onDraw = MockEventHandler<DrawEventHandlerType>(L"Draw", ExpectedEventParams::Both);
+
         EventRegistrationToken drawEventToken;
-        ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
+        ThrowIfFailed(m_control->add_Draw(onDraw.Get(), &drawEventToken));
 
         // Invalidate and ensure the Draw callback is called.
-        canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent();
-
-        Assert::AreEqual(1, m_drawCallbackCount);
+        onDraw.SetExpectedCalls(1);
+        m_control->Invalidate();
+        m_adapter->RaiseCompositionRenderingEvent();
+        onDraw.Validate();
 
         // Ensure a subsequent invalidation doesn't recreate resources.
-        canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent();
-
-        Assert::AreEqual(2, m_createResourcesCallbackCount);
-        Assert::AreEqual(2, m_drawCallbackCount);
+        onDraw.SetExpectedCalls(1);
+        m_control->Invalidate();
+        m_adapter->RaiseCompositionRenderingEvent();
 
         // Unregister the events. Call invalidate. Ensure the handler doesn't get called again (the event was correctly unregistered).
-        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken0));
-        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken1));
-        ThrowIfFailed(canvasControl->remove_Draw(drawEventToken));
-        canvasControl->Invalidate();
-        m_adapter->FireCompositionRenderingEvent();
-
-        Assert::AreEqual(2, m_createResourcesCallbackCount);
-        Assert::AreEqual(2, m_drawCallbackCount);
+        ThrowIfFailed(m_control->remove_CreateResources(createResourcesEventToken0));
+        ThrowIfFailed(m_control->remove_CreateResources(createResourcesEventToken1));
+        ThrowIfFailed(m_control->remove_Draw(drawEventToken));
+        m_control->Invalidate();
+        m_adapter->RaiseCompositionRenderingEvent();
 
         // Unregistering the same event twice should do nothing.
-        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken0));
-        ThrowIfFailed(canvasControl->remove_CreateResources(createResourcesEventToken1));
-        ThrowIfFailed(canvasControl->remove_Draw(drawEventToken));
-    }
+        ThrowIfFailed(m_control->remove_CreateResources(createResourcesEventToken0));
+        ThrowIfFailed(m_control->remove_CreateResources(createResourcesEventToken1));
+        ThrowIfFailed(m_control->remove_Draw(drawEventToken));
 
-    int m_createResourcesCallbackCount;
-    int m_drawCallbackCount;
+        Expectations::Instance()->Validate();
+    }
 };
 
 class SizableTestControl : public StubUserControl
@@ -203,6 +171,8 @@ TEST_CLASS(CanvasControlTests_SizeTests)
 
             f.Execute(testStep.ResizeWidth, testStep.ResizeHeight);
         }
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasControl_ZeroSizedControl_DoesNotCreateImageSource_DoesNotCallDrawHandler)
@@ -212,6 +182,8 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(zeroWidth, zeroHeight);
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasControl_ResizeToZeroSize_ClearsImageSource_DoesNotCallDrawHandler)
@@ -225,6 +197,8 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(zeroWidth, zeroHeight);
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasControl_ZeroWidth_DoesNotCreateImageSource)
@@ -234,6 +208,8 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(zeroWidth, anyHeight);
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasControl_ZeroHeight_DoesNotCreateImageSource)
@@ -243,6 +219,8 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(anyWidth, zeroHeight);
+
+        Expectations::Instance()->Validate();
     }
 
 
@@ -321,7 +299,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
 
         void ExpectOneCreateCanvasImageSource(int width, int height)
         {
-            m_createCanvasImageSourceExpected = true;
+            CreateCanvasImageSourceMethod.SetExpectedCalls(1);
             m_expectedImageSourceWidth = width;
             m_expectedImageSourceHeight = height;
             m_imageControl->ExpectOnePutSource(MockImageControl::NonNullSource);
@@ -364,9 +342,6 @@ TEST_CLASS(CanvasControlTests_SizeTests)
 
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
         {
-            Assert::IsTrue(m_createCanvasImageSourceExpected, L"CreateCanvasImageSource expected");
-            m_createCanvasImageSourceExpected = false;
-
             Assert::AreEqual(m_expectedImageSourceWidth, width, L"ExpectedImageSourceWidth");
             Assert::AreEqual(m_expectedImageSourceHeight, height, L"ExpectedImageSourceHeight");
 
@@ -378,31 +353,28 @@ TEST_CLASS(CanvasControlTests_SizeTests)
     {
         std::shared_ptr<CanvasControlTestAdapter_VerifyCreateImageSource> m_adapter;
         ComPtr<CanvasControl> m_control;
-        bool m_drawEventExpected;
-        bool m_drawEventSeen;
+        MockEventHandler<DrawEventHandlerType> m_onDraw;
 
     public:
         ResizeAndRedrawFixture()
             : m_adapter(std::make_shared<CanvasControlTestAdapter_VerifyCreateImageSource>())
             , m_control(Make<CanvasControl>(m_adapter))
-            , m_drawEventExpected(false)
+            , m_onDraw(L"Draw")
         {
             EventRegistrationToken tok;
-            ThrowIfFailed(m_control->add_Draw(
-                Callback<DrawEventHandlerType>(this, &ResizeAndRedrawFixture::OnDraw).Get(), 
-                &tok));
+            ThrowIfFailed(m_control->add_Draw(m_onDraw.Get(), &tok));
 
             m_control->OnLoaded(nullptr, nullptr);
         }
 
         void ExpectOneDrawEvent()
         {
-            m_drawEventExpected = true;
+            m_onDraw.SetExpectedCalls(1);
         }
         
         void ExpectNoDrawEvent()
         {
-            m_drawEventExpected = false;
+            m_onDraw.SetExpectedCalls(0);
         }
 
         void ExpectOneCreateCanvasImageSource(int width, int height)
@@ -426,24 +398,13 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         {
             m_adapter->Resize(width, height);
             m_control->Invalidate();
-            m_adapter->FireCompositionRenderingEvent();
+            m_adapter->RaiseCompositionRenderingEvent();
         }
 
         void Validate()
         {
-            Assert::AreEqual(m_drawEventExpected, m_drawEventSeen, L"DrawEvent");
             m_adapter->Validate();
-            
-            m_drawEventExpected = false;
-            m_drawEventSeen = false;
-        }
-
-        HRESULT OnDraw(ICanvasControl*, ICanvasDrawEventArgs*)
-        {
-            Assert::IsFalse(m_drawEventSeen);
-            Assert::IsTrue(m_drawEventExpected);
-            m_drawEventSeen = true;
-            return S_OK;
+            m_onDraw.Validate();
         }
     };
 };
@@ -581,7 +542,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
 
             canvasControl->Invalidate();
-            adapter->FireCompositionRenderingEvent();
+            adapter->RaiseCompositionRenderingEvent();
 
             expectedImageSourceCount++;
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
@@ -610,16 +571,16 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual(verifyWidth, 1000.0);
             Assert::AreEqual(verifyHeight, 1000.0);
 
-            // Fire a DpiChanged.
+            // Raise a DpiChanged.
             adapter->m_dpi = DEFAULT_DPI;
             bool expectResize = 1000 != ceil(1000 * dpiCases[i] / DEFAULT_DPI);
-            adapter->FireDpiChangedEvent();
+            adapter->RaiseDpiChangedEvent();
 
             // Here, verify that no recreation occurred yet. The backing store recreation
             // should occur at the next rendering event.
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
 
-            adapter->FireCompositionRenderingEvent();
+            adapter->RaiseCompositionRenderingEvent();
 
             // Verify the backing store got resized as appropriate.
             if (expectResize) expectedImageSourceCount++;
@@ -637,108 +598,165 @@ TEST_CLASS(CanvasControlTests_Dpi)
             ThrowIfFailed(controlAsFrameworkElement->get_ActualHeight(&verifyHeight));
             Assert::AreEqual(verifyWidth, 1000.0);
             Assert::AreEqual(verifyHeight, 1000.0);
+
+            Expectations::Instance()->Validate();
         }
     }
 };
 
 
-TEST_CLASS(CanvasControl_SurfaceContentsLost)
+TEST_CLASS(CanvasControl_ExternalEvents)
 {
+    std::shared_ptr<CanvasControlTestAdapter> m_adapter;
+    ComPtr<MockWindow> m_window;
+    ComPtr<CanvasControl> m_control;
+    EventRegistrationToken m_ignoredToken;
+    MockEventHandler<DrawEventHandlerType> m_onDraw;
+
 public:
-    TEST_METHOD(CanvasControl_AfterSurfaceContentsLostEvent_RecreatesSurfaceImageSource)
+    TEST_METHOD_INITIALIZE(Init)
     {
-        // Setup
-        struct Adapter : public CanvasControlTestAdapter
-        {
-            bool CreateCanvasImageSourceWasCalled;
-
-            Adapter()
-                : CreateCanvasImageSourceWasCalled(false)
-            {
-            }
-        
-            virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
-            {
-                Assert::IsFalse(CreateCanvasImageSourceWasCalled);
-                auto result = CanvasControlTestAdapter::CreateCanvasImageSource(device, width, height);
-                CreateCanvasImageSourceWasCalled = true;
-                return result;
-            }
-        };
-
-        auto adapter = std::make_shared<Adapter>();
-
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
-
-        bool drawEventWasInvoked = false;
-        auto onDrawFn = Callback<DrawEventHandlerType>(
-            [&](ICanvasControl*, ICanvasDrawEventArgs*)
-            {
-                Assert::IsFalse(drawEventWasInvoked);
-                drawEventWasInvoked = true;
-                return S_OK;
-            });
-
-        EventRegistrationToken drawEventToken;
-        ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
-
-        ThrowIfFailed(canvasControl->OnLoaded(nullptr, nullptr));
-
-        adapter->CreateCanvasImageSourceWasCalled = false;
-        drawEventWasInvoked = false;
-
-
-        // Execution
-        int anyNumberOfTimes = 5;
-        for (auto i = 0; i < anyNumberOfTimes; ++i)
-            adapter->FireSurfaceContentsLostEvent();
-        adapter->FireCompositionRenderingEvent();
-
-        
-        // Validation
-        Assert::IsTrue(adapter->CreateCanvasImageSourceWasCalled);
-        Assert::IsTrue(drawEventWasInvoked);
+        m_adapter = std::make_shared<CanvasControlTestAdapter>();
+        m_window = m_adapter->GetCurrentMockWindow();
+        m_onDraw = MockEventHandler<DrawEventHandlerType>(L"Draw");
     }
 
-    TEST_METHOD(CanvasControl_UnregistersSurfaceContentsLostEvent_WhenDestroyed)
+    void CreateControl()
     {
-        // Setup
-        struct Adapter : public CanvasControlTestAdapter
-        {
-            int CallbacksAdded;
-            int CallbacksRemoved;
+        m_control = Make<CanvasControl>(m_adapter);
+        ThrowIfFailed(m_control->add_Draw(m_onDraw.Get(), &m_ignoredToken));        
+        ThrowIfFailed(m_control->OnLoaded(nullptr, nullptr));
+    }
 
-            Adapter()
-                : CallbacksAdded(0)
-                , CallbacksRemoved(0)
-            {
-            }
-        
-            virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
-            {
-                ++CallbacksAdded;
-                return CanvasControlTestAdapter::AddSurfaceContentsLostCallback(value);
-            }
+    TEST_METHOD(CanvasControl_AfterSurfaceContentsLostEvent_RecreatesSurfaceImageSource)
+    {
+        m_adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
+        m_onDraw.SetExpectedCalls(1);
 
-            virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) override
-            {
-                ++CallbacksRemoved;
-                CanvasControlTestAdapter::RemoveSurfaceContentsLostCallback(token);
-            }
-        };
+        CreateControl();
 
-        auto adapter = std::make_shared<Adapter>();
+        RaiseAnyNumberOfSurfaceContentsLostEvents();
+        m_adapter->RaiseCompositionRenderingEvent();
 
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
-        Assert::IsTrue(adapter->CallbacksAdded > 0);
+        Expectations::Instance()->Validate();
+    }
 
+    TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersSurfaceContentsLostEvent)
+    {
+        m_adapter->AddSurfaceContentsLostCallbackMethod.SetExpectedCalls(1);
+        CreateControl();
 
-        // Execution
-        canvasControl.Reset();
+        m_adapter->RemoveSurfaceContentsLostCallbackMethod.SetExpectedCalls(1);
 
+        m_control.Reset();
 
-        // Validation
-        Assert::AreEqual(adapter->CallbacksAdded, adapter->CallbacksRemoved);
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenWindowIsNotVisible_DrawEventIsNotInvoked)
+    {
+        m_window->SetVisible(false);
+        m_adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(0);
+        m_onDraw.SetExpectedCalls(0);
+
+        CreateControl();
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenWindowBecomesVisible_DrawEventIsInvoked)
+    {
+        m_adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+        m_window->SetVisible(false);
+
+        CreateControl();
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        m_window->SetVisible(true);
+        m_onDraw.SetExpectedCalls(1);
+
+        RaiseAnyNumberOfCompositionRenderingEvents();        
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenWindowBecomesVisibleWithValidContents_DrawEventIsNotInvoked)
+    {
+        m_adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+        m_onDraw.SetExpectedCalls(1);
+
+        CreateControl();
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        m_onDraw.SetExpectedCalls(0);
+
+        RaiseAnyNumberOfCompositionRenderingEvents();
+        m_window->SetVisible(false);
+        RaiseAnyNumberOfCompositionRenderingEvents();
+        m_window->SetVisible(true);
+        RaiseAnyNumberOfCompositionRenderingEvents();
+    }
+
+    TEST_METHOD(CanvasControl_WhenWindowIsNotVisible_NoRenderingEventHandlerIsAdded)
+    {
+        m_window->SetVisible(false);
+        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(0);
+
+        CreateControl();
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WindowWindowBecomesNotVisible_ExistingRenderingEventHandlerIsRemoved)
+    {
+        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(1);
+        CreateControl();
+
+        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(0);
+        m_adapter->RemoveCompositionRenderingCallbackMethod.SetExpectedCalls(1);
+
+        m_window->SetVisible(false);
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersRenderingEvent)
+    {
+        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(1);
+        m_adapter->RemoveCompositionRenderingCallbackMethod.SetExpectedCalls(1);
+
+        CreateControl();
+        m_control.Reset();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersVisibilityChangedEvent)
+    {
+        m_window->add_VisibilityChangedMethod.SetExpectedCalls(1);
+        m_window->remove_VisibilityChangedMethod.SetExpectedCalls(1);
+
+        CreateControl();
+        m_control.Reset();
+
+        Expectations::Instance()->Validate();
+    }
+
+private:
+    void RaiseAnyNumberOfSurfaceContentsLostEvents()
+    {
+        int anyNumberOfTimes = 5;
+        for (auto i = 0; i < anyNumberOfTimes; ++i)
+            m_adapter->RaiseSurfaceContentsLostEvent();
+    }
+
+    void RaiseAnyNumberOfCompositionRenderingEvents()
+    {
+        int anyNumberOfTimes = 5;
+        for (auto i = 0; i < anyNumberOfTimes; ++i)
+            m_adapter->RaiseCompositionRenderingEvent();
     }
 };
 

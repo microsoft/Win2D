@@ -12,6 +12,7 @@
 
 #include "pch.h"
 #include "TestDeviceResourceCreationAdapter.h"
+#include "CanvasControlTestAdapter.h"
 
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;

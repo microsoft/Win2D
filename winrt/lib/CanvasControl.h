@@ -17,6 +17,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Foundation;
+    using namespace ABI::Windows::UI::Core;
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace ABI::Windows::UI::Xaml::Media;
@@ -61,6 +62,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
         virtual void AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) = 0;
+        virtual ComPtr<IWindow> GetCurrentWindow() = 0;
     };
 
     class CanvasControl : public RuntimeClass<
@@ -76,16 +78,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         std::shared_ptr<ICanvasControlAdapter> m_adapter;
 
+        // The current window is thread local.  We grab this on construction
+        // since this will happen on the correct thread.  From then on we use
+        // this stored value since we can't always be sure that we'll always be
+        // called from that window's thread.
+        ComPtr<IWindow> m_window;
+
         EventSource<CreateResourcesEventHandlerType> m_createResourcesEventList;
         EventSource<DrawEventHandlerType> m_drawEventList;
 
         EventRegistrationToken m_surfaceContentsLostEventToken;
+        EventRegistrationToken m_windowVisibilityChangedEventToken;
         EventRegistrationToken m_renderingEventToken;
 
         ComPtr<ICanvasDevice> m_canvasDevice;
         ComPtr<IImage> m_imageControl;
         ComPtr<ICanvasImageSource> m_canvasImageSource;
-        bool m_drawNeeded;
+        bool m_needToHookCompositionRendering;
         bool m_imageSourceNeedsReset;
         bool m_isLoaded;
 
@@ -146,7 +155,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void CreateImageControl();
         void RegisterEventHandlers();
 
-        void ClearDrawNeeded();
+        bool IsWindowVisible();
+
+        void PreDraw();
         void EnsureSizeDependentResources();
         void CallDrawHandlers();
 
@@ -158,10 +169,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void InvalidateImpl(InvalidateReason reason = InvalidateReason::Default);
 
-        HRESULT OnRenderCallback(IInspectable* sender, IInspectable* args);
-        
-        HRESULT OnDpiChangedCallback(IDisplayInformation* sender, IInspectable* args);
-        HRESULT OnSurfaceContentsLostCallback(IInspectable* sender, IInspectable* args);
+        bool IsCompositionRenderingHooked() const
+        { return m_renderingEventToken.value != 0; }
+
+        void HookCompositionRenderingIfNecessary();
+        void UnhookCompositionRendering();
+
+        HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        
+        HRESULT OnDpiChanged(IDisplayInformation* sender, IInspectable* args);
+        HRESULT OnSurfaceContentsLost(IInspectable* sender, IInspectable* args);
+        HRESULT OnWindowVisibilityChanged(IInspectable* sender, IVisibilityChangedEventArgs* args);
     };
 
 }}}}
