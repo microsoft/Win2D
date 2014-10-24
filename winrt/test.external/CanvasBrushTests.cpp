@@ -183,8 +183,10 @@ TEST_CLASS(CanvasBrushTests)
 
         CanvasLinearGradientBrush^ linearGradientBrush = CanvasLinearGradientBrush::CreateRainbow(device, 0.0f);
         Assert::AreEqual(7u, linearGradientBrush->Stops->Length);
+        Assert::IsTrue(linearGradientBrush->EdgeBehavior == CanvasEdgeBehavior::Clamp);
 
         CanvasRadialGradientBrush^ radialGradientBrush = CanvasRadialGradientBrush::CreateRainbow(device, 100.0f);
         Assert::AreEqual(7u, radialGradientBrush->Stops->Length);
+        Assert::IsTrue(radialGradientBrush->EdgeBehavior == CanvasEdgeBehavior::Clamp);
     }
 };
