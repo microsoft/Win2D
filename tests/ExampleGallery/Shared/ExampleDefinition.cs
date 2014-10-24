@@ -42,6 +42,7 @@ namespace ExampleGallery
             this.definitions.Add(new ExampleDefinition() { Name = "Canvas Control", Control = typeof(CanvasControlExample) });
             this.definitions.Add(new ExampleDefinition() { Name = "Effects", Control = typeof(EffectsExample) });
             this.definitions.Add(new ExampleDefinition() { Name = "Burning Text", Control = typeof(BurningTextExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Game of Life", Control = typeof(GameOfLife) });
         }
     }
 
