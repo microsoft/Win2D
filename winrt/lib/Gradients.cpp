@@ -79,7 +79,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1GradientStopCollection1> stopCollection = deviceInternal->CreateGradientStopCollection(
             _countof(stops),
             stops,
-            CanvasEdgeBehavior::Wrap,
+            CanvasEdgeBehavior::Clamp,
             CanvasColorSpace::Srgb,
             CanvasColorSpace::Srgb,
             CanvasBufferPrecision::Precision8UIntNormalized,
