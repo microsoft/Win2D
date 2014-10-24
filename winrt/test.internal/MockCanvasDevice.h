@@ -12,13 +12,16 @@
 
 #pragma once
 
+#include "MockHelpers.h"
+
 namespace canvas
 {
     class MockCanvasDevice : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasDevice,
         CloakedIid<ICanvasDeviceInternal>,
-        ICanvasResourceCreator>
+        ICanvasResourceCreator,
+        IDirect3DDevice>
     {
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
@@ -49,6 +52,13 @@ namespace canvas
 
         std::function<ComPtr<ID2D1RadialGradientBrush>(
             ID2D1GradientStopCollection1* stopCollection)> MockCreateRadialGradientBrush;
+
+        CallCounter TrimMethod;
+
+        MockCanvasDevice()
+            : TrimMethod(L"Trim")
+        {
+        }
         
         //
         // ICanvasDevice
@@ -73,6 +83,16 @@ namespace canvas
             }
 
             Mockget_Device(value);
+            return S_OK;
+        }
+
+        //
+        // IDirect3DDevice
+        //
+
+        IFACEMETHODIMP Trim()
+        {
+            TrimMethod.WasCalled();
             return S_OK;
         }
 

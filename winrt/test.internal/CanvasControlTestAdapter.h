@@ -16,6 +16,8 @@
 #include "MockWindow.h"
 
 using ABI::Windows::Graphics::Display::DisplayInformation;
+using namespace ABI::Windows::ApplicationModel;
+using namespace ABI::Windows::ApplicationModel::Core;
 
 class CanvasControlTestAdapter : public ICanvasControlAdapter
 {
@@ -25,6 +27,7 @@ public:
     ComPtr<MockEventSource<DpiChangedHandler>> DpiChangedEventSource;
     ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
+    ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
     CallCounter CreateCanvasImageSourceMethod;
 
     CanvasControlTestAdapter()
@@ -32,6 +35,7 @@ public:
         , DpiChangedEventSource(Make<MockEventSource<DpiChangedHandler>>(L"DpiChanged"))
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
         , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
+        , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
         , CreateCanvasImageSourceMethod(L"CreateCanvasImageSource")
     {
     }
@@ -49,6 +53,11 @@ public:
     virtual ComPtr<ICanvasDevice> CreateCanvasDevice() override
     {
         return Make<StubCanvasDevice>();
+    }
+
+    virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* value) override
+    {
+        return SuspendingEventSource->Add(value);
     }
 
     virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>* value) override

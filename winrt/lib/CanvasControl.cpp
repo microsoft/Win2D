@@ -19,10 +19,11 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL::Wrappers;
-    using namespace ABI::Windows::UI::Xaml;
-    using namespace ABI::Windows::UI::Xaml::Media;
-    using namespace ABI::Windows::Graphics::Display;
+    using namespace ABI::Windows::ApplicationModel::Core;
     using namespace ABI::Windows::ApplicationModel;
+    using namespace ABI::Windows::Graphics::Display;
+    using namespace ABI::Windows::UI::Xaml::Media;
+    using namespace ABI::Windows::UI::Xaml;
 
     IFACEMETHODIMP CanvasDrawEventArgsFactory::Create(
         ICanvasDrawingSession* drawingSession,
@@ -66,6 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IDisplayInformationStatics> m_displayInformationStatics;
         ComPtr<IDesignModeStatics> m_designModeStatics;
         ComPtr<IWindowStatics> m_windowStatics;
+        ComPtr<ICoreApplication> m_coreApplication;
 
     public:
         CanvasControlAdapter()
@@ -106,6 +108,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(GetActivationFactory(
                 HStringReference(RuntimeClass_Windows_UI_Xaml_Window).Get(),
                 &m_windowStatics));
+
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
+                &m_coreApplication));
         }
 
         virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override 
@@ -130,6 +136,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(inspectableDevice.As(&device));
 
             return device;
+        }
+
+        virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* handler) override
+        {
+            return RegisteredEvent(
+                m_coreApplication.Get(),
+                &ICoreApplication::add_Suspending,
+                &ICoreApplication::remove_Suspending,
+                handler);
         }
 
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>* handler) override 
@@ -305,6 +320,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RegisterEventHandlerOnSelf(thisAsFrameworkElement, &IFrameworkElement::add_Loaded, &CanvasControl::OnLoaded);
         RegisterEventHandlerOnSelf(thisAsFrameworkElement, &IFrameworkElement::add_SizeChanged, &CanvasControl::OnSizeChanged);
 
+        m_applicationSuspendingEventRegistration = m_adapter->AddApplicationSuspendingCallback(this, &CanvasControl::OnApplicationSuspending);
         m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &CanvasControl::OnDpiChanged);
         m_surfaceContentsLostEventRegistration = m_adapter->AddSurfaceContentsLostCallback(this, &CanvasControl::OnSurfaceContentsLost);
 
@@ -444,6 +460,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IClosable> drawingSessionClosable;
         ThrowIfFailed(drawingSession.As(&drawingSessionClosable));
         ThrowIfFailed(drawingSessionClosable->Close()); // Device removal should be handled here.
+    }
+    
+    HRESULT CanvasControl::OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto direct3DDevice = As<IDirect3DDevice>(m_canvasDevice);
+                ThrowIfFailed(direct3DDevice->Trim());
+            });
     }
 
     HRESULT CanvasControl::OnLoaded(IInspectable* sender, IRoutedEventArgs* args)

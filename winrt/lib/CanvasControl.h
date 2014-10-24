@@ -18,12 +18,13 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::Foundation;
+    using namespace ABI::Windows::Graphics::Display;
     using namespace ABI::Windows::UI::Core;
-    using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace ABI::Windows::UI::Xaml::Media;
-    using namespace ABI::Windows::Graphics::Display;
+    using namespace ABI::Windows::UI::Xaml;
 
     class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>
     {
@@ -56,6 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) = 0;
         virtual ComPtr<ICanvasDevice> CreateCanvasDevice() = 0;
+        virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
@@ -66,6 +68,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual RegisteredEvent AddDpiChangedCallback(DpiChangedHandler* handler) = 0;
 
         virtual ComPtr<IWindow> GetCurrentWindow() = 0;
+
+        template<typename T, typename METHOD>
+        RegisteredEvent AddApplicationSuspendingCallback(T* obj, METHOD method)
+        {
+            auto callback = Callback<IEventHandler<SuspendingEventArgs*>>(obj, method);
+            CheckMakeResult(callback);
+            return AddApplicationSuspendingCallback(callback.Get());
+        }
 
         template<typename T, typename METHOD>
         RegisteredEvent AddCompositionRenderingCallback(T* obj, METHOD method)
@@ -114,6 +124,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventSource<CreateResourcesEventHandlerType> m_createResourcesEventList;
         EventSource<DrawEventHandlerType> m_drawEventList;
 
+        RegisteredEvent m_applicationSuspendingEventRegistration;
         RegisteredEvent m_surfaceContentsLostEventRegistration;
         RegisteredEvent m_windowVisibilityChangedEventRegistration;
         RegisteredEvent m_renderingEventRegistration;
@@ -202,6 +213,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void HookCompositionRenderingIfNecessary();
 
+        HRESULT OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args);
         HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
         HRESULT OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args);
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        

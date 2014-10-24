@@ -24,7 +24,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     {
         m_adapter = std::make_shared<CanvasControlTestAdapter>();
         m_control = Make<CanvasControl>(m_adapter);
-        m_userControl = static_cast<StubUserControl*>(As<IUserControl>(m_control).Get());
+        m_userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(m_control).Get());
     }
 
     TEST_METHOD(CanvasControl_Implements_Expected_Interfaces)
@@ -325,7 +325,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         ResizeFixture()
             : m_adapter(std::make_shared<CanvasControlTestAdapter_VerifyCreateImageSource>())
             , m_control(Make<CanvasControl>(m_adapter))
-            , m_userControl(static_cast<StubUserControl*>(As<IUserControl>(m_control).Get()))
+            , m_userControl(dynamic_cast<StubUserControl*>(As<IUserControl>(m_control).Get()))
             , m_onDraw(L"Draw")
         {
             EventRegistrationToken tok;
@@ -486,7 +486,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             adapter->m_dpi = dpiCases[i];
 
             ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
-            ComPtr<StubUserControl> userControl = static_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
+            ComPtr<StubUserControl> userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
 
             float const controlSize = 1000;
             userControl->Resize(Size{controlSize, controlSize});
@@ -584,7 +584,7 @@ public:
     void CreateControl()
     {
         m_control = Make<CanvasControl>(m_adapter);
-        m_userControl = static_cast<StubUserControl*>(As<IUserControl>(m_control).Get());
+        m_userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(m_control).Get());
 
         ThrowIfFailed(m_control->add_Draw(m_onDraw.Get(), &m_ignoredToken));
 
@@ -714,6 +714,21 @@ public:
 
         CreateControl();
         m_control.Reset();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenAppSuspended_TrimCalledOnDevice)
+    {
+        CreateControl();
+        
+        ComPtr<ICanvasDevice> icanvasDevice;
+        ThrowIfFailed(m_control->get_Device(&icanvasDevice));
+        StubCanvasDevice* canvasDevice = dynamic_cast<StubCanvasDevice*>(icanvasDevice.Get());
+
+        canvasDevice->TrimMethod.SetExpectedCalls(1);
+
+        m_adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr);
 
         Expectations::Instance()->Validate();
     }

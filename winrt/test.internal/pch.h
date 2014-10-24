@@ -38,8 +38,10 @@
 #include <winstringwrapper.h>
 
 // WinRT
-#include <windows.ui.xaml.media.dxinterop.h>
+#include <windows.applicationmodel.core.h>
+#include <windows.applicationmodel.h>
 #include <windows.graphics.display.h>
+#include <windows.ui.xaml.media.dxinterop.h>
 
 // UnitTest
 #include <CppUnitTest.h>
