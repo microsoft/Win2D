@@ -298,3 +298,51 @@ private:
         return S_OK;
     }
 };
+
+
+template<typename DELEGATE>
+class MockEventSource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
+{
+    EventSource<DELEGATE> m_eventList;
+
+public:
+    CallCounter AddMethod;
+    CallCounter RemoveMethod;
+
+    MockEventSource(std::wstring name)
+        : AddMethod(name + L"Add")
+        , RemoveMethod(name + L"Remove")
+    {
+        AddMethod.AllowAnyCall();
+        RemoveMethod.AllowAnyCall();
+    }
+
+    IFACEMETHODIMP add_Event(DELEGATE* delegate, EventRegistrationToken* token)
+    {
+        AddMethod.WasCalled();
+        return m_eventList.Add(delegate, token);
+    }
+
+    IFACEMETHODIMP remove_Event(EventRegistrationToken token)
+    {
+        RemoveMethod.WasCalled();
+        return m_eventList.Remove(token);
+    }
+
+    template<typename TSender, typename TArgs>
+    HRESULT InvokeAll(TSender sender, TArgs arg)
+    {
+        return m_eventList.InvokeAll(sender, arg);
+    }
+
+    RegisteredEvent Add(DELEGATE* delegate)
+    {
+        return RegisteredEvent(
+            this,
+            &MockEventSource::add_Event,
+            &MockEventSource::remove_Event,
+            delegate);
+    }
+};
+
+typedef MockEventSource<IEventHandler<IInspectable*>> MockEventSourceUntyped;

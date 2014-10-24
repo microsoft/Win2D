@@ -17,19 +17,14 @@
 class MockWindow : public RuntimeClass<IWindow>
 {
     bool m_visible;
-    EventSource<IWindowVisibilityChangedEventHandler> m_visibilityChanged;
 
 public:
-    CallCounter add_VisibilityChangedMethod;
-    CallCounter remove_VisibilityChangedMethod;
+    ComPtr<MockEventSource<IWindowVisibilityChangedEventHandler>> VisibilityChangedEventSource;
 
     MockWindow()
         : m_visible(true)
-        , add_VisibilityChangedMethod(L"add_VisibilityChanged")
-        , remove_VisibilityChangedMethod(L"remove_VisibilityChanged")
+        , VisibilityChangedEventSource(Make<MockEventSource<IWindowVisibilityChangedEventHandler>>(L"VisibilityChanged"))
     {
-        add_VisibilityChangedMethod.AllowAnyCall();
-        remove_VisibilityChangedMethod.AllowAnyCall();
     }
 
     void SetVisible(bool visible)
@@ -52,8 +47,8 @@ public:
         };
 
         auto eventArgs = Make<VisibilityChangedEventArgs>(m_visible);
-
-        ThrowIfFailed(m_visibilityChanged.InvokeAll(nullptr, eventArgs.Get()));
+        IInspectable* sender = nullptr;
+        ThrowIfFailed(VisibilityChangedEventSource->InvokeAll(sender, eventArgs.Get()));
     }
 
     IFACEMETHODIMP get_Bounds( 
@@ -147,15 +142,13 @@ public:
         ABI::Windows::UI::Xaml::IWindowVisibilityChangedEventHandler *value,
         EventRegistrationToken *token)
     {
-        add_VisibilityChangedMethod.WasCalled();
-        return m_visibilityChanged.Add(value, token);
+        return VisibilityChangedEventSource->add_Event(value, token);
     }
                         
     IFACEMETHODIMP remove_VisibilityChanged( 
         EventRegistrationToken token)
     {
-        remove_VisibilityChangedMethod.WasCalled();
-        return m_visibilityChanged.Remove(token);
+        return VisibilityChangedEventSource->remove_Event(token);
     }
                         
     IFACEMETHODIMP Activate()

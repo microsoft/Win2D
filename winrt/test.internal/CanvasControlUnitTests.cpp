@@ -643,10 +643,10 @@ public:
 
     TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersSurfaceContentsLostEvent)
     {
-        m_adapter->AddSurfaceContentsLostCallbackMethod.SetExpectedCalls(1);
+        m_adapter->SurfaceContentsLostEventSource->AddMethod.SetExpectedCalls(1);
         CreateControl();
 
-        m_adapter->RemoveSurfaceContentsLostCallbackMethod.SetExpectedCalls(1);
+        m_adapter->SurfaceContentsLostEventSource->RemoveMethod.SetExpectedCalls(1);
 
         m_control.Reset();
 
@@ -701,7 +701,7 @@ public:
     TEST_METHOD(CanvasControl_WhenWindowIsNotVisible_NoRenderingEventHandlerIsAdded)
     {
         m_window->SetVisible(false);
-        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(0);
+        m_adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(0);
 
         CreateControl();
         RaiseAnyNumberOfCompositionRenderingEvents();
@@ -711,11 +711,11 @@ public:
 
     TEST_METHOD(CanvasControl_WindowWindowBecomesNotVisible_ExistingRenderingEventHandlerIsRemoved)
     {
-        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(1);
+        m_adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(1);
         CreateControl();
 
-        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(0);
-        m_adapter->RemoveCompositionRenderingCallbackMethod.SetExpectedCalls(1);
+        m_adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(0);
+        m_adapter->CompositionRenderingEventSource->RemoveMethod.SetExpectedCalls(1);
 
         m_window->SetVisible(false);
 
@@ -724,8 +724,8 @@ public:
 
     TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersRenderingEvent)
     {
-        m_adapter->AddCompositionRenderingCallbackMethod.SetExpectedCalls(1);
-        m_adapter->RemoveCompositionRenderingCallbackMethod.SetExpectedCalls(1);
+        m_adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(1);
+        m_adapter->CompositionRenderingEventSource->RemoveMethod.SetExpectedCalls(1);
 
         CreateControl();
         m_control.Reset();
@@ -735,8 +735,19 @@ public:
 
     TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersVisibilityChangedEvent)
     {
-        m_window->add_VisibilityChangedMethod.SetExpectedCalls(1);
-        m_window->remove_VisibilityChangedMethod.SetExpectedCalls(1);
+        m_window->VisibilityChangedEventSource->AddMethod.SetExpectedCalls(1);
+        m_window->VisibilityChangedEventSource->RemoveMethod.SetExpectedCalls(1);
+
+        CreateControl();
+        m_control.Reset();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenDestroyed_UnregisterDpiChangedEvent)
+    {
+        m_adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(1);
+        m_adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(1);
 
         CreateControl();
         m_control.Reset();

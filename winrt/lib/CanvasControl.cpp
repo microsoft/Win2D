@@ -132,28 +132,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return device;
         }
 
-        virtual EventRegistrationToken AddCompositionRenderingCallback(IEventHandler<IInspectable*>* handler) override 
+        virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>* handler) override 
         {
-            EventRegistrationToken token;
-            ThrowIfFailed(m_compositionTargetStatics->add_Rendering(handler, &token));
-            return token;
+            return RegisteredEvent(
+                m_compositionTargetStatics.Get(),
+                &ICompositionTargetStatics::add_Rendering,
+                &ICompositionTargetStatics::remove_Rendering,
+                handler);
         }
 
-        virtual void RemoveCompositionRenderingCallback(EventRegistrationToken token) override 
+        virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* handler) override
         {
-            ThrowIfFailed(m_compositionTargetStatics->remove_Rendering(token));
-        }
-
-        virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* handler) override
-        {
-            EventRegistrationToken token;
-            ThrowIfFailed(m_compositionTargetStatics->add_SurfaceContentsLost(handler, &token));
-            return token;
-        }
-
-        virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) override
-        {
-            ThrowIfFailed(m_compositionTargetStatics->remove_SurfaceContentsLost(token));
+            return RegisteredEvent(
+                m_compositionTargetStatics.Get(),
+                &ICompositionTargetStatics::add_SurfaceContentsLost,
+                &ICompositionTargetStatics::remove_SurfaceContentsLost,
+                handler);
         }
 
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override 
@@ -195,17 +189,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return logicalDpi;
         }
 
-        virtual void AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
+        virtual RegisteredEvent AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
         {
             // Don't register for the DPI changed event if we're in design mode
             if (IsDesignModeEnabled())
-                return;
+                return RegisteredEvent();
 
             ComPtr<IDisplayInformation> displayInformation;
             ThrowIfFailed(m_displayInformationStatics->GetForCurrentView(&displayInformation));
 
-            EventRegistrationToken token;
-            ThrowIfFailed(displayInformation->add_DpiChanged(handler, &token));
+            return RegisteredEvent(
+                displayInformation.Get(), 
+                &IDisplayInformation::add_DpiChanged, 
+                &IDisplayInformation::remove_DpiChanged,
+                handler);
         }
 
         virtual ComPtr<IWindow> GetCurrentWindow() override
@@ -254,8 +251,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasControl::CanvasControl(std::shared_ptr<ICanvasControlAdapter> adapter)
         : m_adapter(adapter)
         , m_window(m_adapter->GetCurrentWindow())
-        , m_surfaceContentsLostEventToken{}
-        , m_renderingEventToken{}
         , m_canvasDevice(m_adapter->CreateCanvasDevice())
         , m_needToHookCompositionRendering(false)
         , m_imageSourceNeedsReset(false)
@@ -305,53 +300,44 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         using namespace ABI::Windows::UI::Xaml::Controls;
         using namespace Windows::Foundation;
 
-        ComPtr<IFrameworkElement> thisAsFrameworkElement;
-        ThrowIfFailed(GetComposableBase().As(&thisAsFrameworkElement));
+        auto thisAsFrameworkElement = As<IFrameworkElement>(GetComposableBase());
 
-        // Register for Loaded event
-        auto onLoadedFn = Callback<IRoutedEventHandler>(this, &CanvasControl::OnLoaded);
-        CheckMakeResult(onLoadedFn);
+        RegisterEventHandlerOnSelf(thisAsFrameworkElement, &IFrameworkElement::add_Loaded, &CanvasControl::OnLoaded);
+        RegisterEventHandlerOnSelf(thisAsFrameworkElement, &IFrameworkElement::add_SizeChanged, &CanvasControl::OnSizeChanged);
 
-        EventRegistrationToken loadedToken{};
-        ThrowIfFailed(thisAsFrameworkElement->add_Loaded(
-            onLoadedFn.Get(),
-            &loadedToken));
-
-        // TODO #2189 Investigate a potential leak, with events that are registered but not unregistered.
-
-        //  Register for SizeChanged event
-        auto onSizeChangedFn = Callback<ISizeChangedEventHandler>(this, &CanvasControl::OnSizeChanged);
-        CheckMakeResult(onSizeChangedFn);
-
-        EventRegistrationToken sizeChangedToken{};
-        ThrowIfFailed(thisAsFrameworkElement->add_SizeChanged(
-            onSizeChangedFn.Get(),
-            &sizeChangedToken));
-
-        // Register for DpiChanged event.
-        auto onDpiChanged = Callback<ITypedEventHandler<DisplayInformation*, IInspectable*>, CanvasControl>(this, &CanvasControl::OnDpiChanged);
-        CheckMakeResult(onDpiChanged);
-        m_adapter->AddDpiChangedCallback(onDpiChanged.Get());
-
-        // Register for CompositionTarget.SurfaceContentsLost event
-        auto onSurfaceContentsLost = Callback<IEventHandler<IInspectable*>>(this, &CanvasControl::OnSurfaceContentsLost);
-        CheckMakeResult(onSurfaceContentsLost);
-        m_surfaceContentsLostEventToken = m_adapter->AddSurfaceContentsLostCallback(onSurfaceContentsLost.Get());
+        m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &CanvasControl::OnDpiChanged);
+        m_surfaceContentsLostEventRegistration = m_adapter->AddSurfaceContentsLostCallback(this, &CanvasControl::OnSurfaceContentsLost);
 
         // Register for Window.Current.VisibilityChanged
         auto onWindowVisibilityChanged = Callback<IWindowVisibilityChangedEventHandler>(this, &CanvasControl::OnWindowVisibilityChanged);
         CheckMakeResult(onWindowVisibilityChanged);
-        ThrowIfFailed(m_window->add_VisibilityChanged(onWindowVisibilityChanged.Get(), &m_windowVisibilityChangedEventToken));
+        m_windowVisibilityChangedEventRegistration = RegisteredEvent(
+            m_window.Get(),
+            &IWindow::add_VisibilityChanged,
+            &IWindow::remove_VisibilityChanged,
+            onWindowVisibilityChanged.Get());
+    }
+
+    template<typename T, typename DELEGATE, typename HANDLER>
+    void CanvasControl::RegisterEventHandlerOnSelf(
+        ComPtr<T> const& self,
+        HRESULT (STDMETHODCALLTYPE T::* addMethod)(DELEGATE*, EventRegistrationToken*), 
+        HANDLER handler)
+    {
+        // 'self' here is assumed to be something that was obtained by QI'ing
+        // ourselves (or our component base).  In this case we don't need to
+        // unregister the event on destruction since once we're destroyed these
+        // events won't get fired.
+        EventRegistrationToken tokenThatIsThrownAway{};
+
+        auto callback = Callback<DELEGATE>(this, handler);
+        CheckMakeResult(callback);
+
+        ThrowIfFailed((self.Get()->*addMethod)(callback.Get(), &tokenThatIsThrownAway));
     }
 
     CanvasControl::~CanvasControl()
     {
-        m_adapter->RemoveSurfaceContentsLostCallback(m_surfaceContentsLostEventToken);
-
-        ThrowIfFailed(m_window->remove_VisibilityChanged(m_windowVisibilityChangedEventToken));
-
-        if (IsCompositionRenderingHooked())
-            m_adapter->RemoveCompositionRenderingCallback(m_renderingEventToken);
     }
 
     void CanvasControl::PreDraw()
@@ -368,7 +354,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_imageSourceNeedsReset = false;
         }
 
-        UnhookCompositionRendering();
+        m_renderingEventRegistration.Release();
     }
 
     void CanvasControl::EnsureSizeDependentResources()
@@ -605,7 +591,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         if (reason == InvalidateReason::SurfaceContentsLost)
             m_imageSourceNeedsReset = true;
 
-        if (IsCompositionRenderingHooked())
+        if (m_renderingEventRegistration)
             return;
 
         m_needToHookCompositionRendering = true;
@@ -618,25 +604,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasControl::HookCompositionRenderingIfNecessary()
     {
-        if (IsCompositionRenderingHooked())
+        if (m_renderingEventRegistration)
             return;
 
         if (!m_needToHookCompositionRendering)
             return;
 
-        auto onCompositionRendering = Callback<IEventHandler<IInspectable*>>(this, &CanvasControl::OnCompositionRendering);
-        CheckMakeResult(onCompositionRendering);
-        m_renderingEventToken = m_adapter->AddCompositionRenderingCallback(onCompositionRendering.Get());
-
-        assert(IsCompositionRenderingHooked());
+        m_renderingEventRegistration = m_adapter->AddCompositionRenderingCallback(this, &CanvasControl::OnCompositionRendering);
 
         m_needToHookCompositionRendering = false;
-    }
-
-    void CanvasControl::UnhookCompositionRendering()
-    {
-        m_adapter->RemoveCompositionRenderingCallback(m_renderingEventToken);
-        m_renderingEventToken = EventRegistrationToken{};
     }
 
     IFACEMETHODIMP CanvasControl::MeasureOverride(
@@ -736,7 +712,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 }
                 else
                 {                    
-                    if (IsCompositionRenderingHooked())
+                    if (m_renderingEventRegistration)
                     {
                         //
                         // The window is invisible.  This means that
@@ -747,7 +723,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         // steps to unhook the event when we're not making good
                         // use of it.
                         //
-                        UnhookCompositionRendering();
+                        m_renderingEventRegistration.Release();
                         m_needToHookCompositionRendering = true;
                     }
                 }

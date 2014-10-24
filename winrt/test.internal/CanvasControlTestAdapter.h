@@ -19,35 +19,22 @@ using ABI::Windows::Graphics::Display::DisplayInformation;
 
 class CanvasControlTestAdapter : public ICanvasControlAdapter
 {
-    EventSource<IEventHandler<IInspectable*>> m_compositionRenderingEventList;
-    EventSource<IEventHandler<IInspectable*>> m_surfaceContentsLostEventList;
-
-    EventSource<ITypedEventHandler<DisplayInformation*, IInspectable*>> m_dpiChangedEventList;
 
     ComPtr<MockWindow> m_mockWindow;
 
-
-
 public:
+    ComPtr<MockEventSource<DpiChangedHandler>> DpiChangedEventSource;
+    ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
+    ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
     CallCounter CreateCanvasImageSourceMethod;
-    CallCounter AddCompositionRenderingCallbackMethod;
-    CallCounter RemoveCompositionRenderingCallbackMethod;
-    CallCounter AddSurfaceContentsLostCallbackMethod;
-    CallCounter RemoveSurfaceContentsLostCallbackMethod;
 
     CanvasControlTestAdapter()
         : m_mockWindow(Make<MockWindow>())
+        , DpiChangedEventSource(Make<MockEventSource<DpiChangedHandler>>(L"DpiChanged"))
+        , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
+        , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , CreateCanvasImageSourceMethod(L"CreateCanvasImageSource")
-        , AddCompositionRenderingCallbackMethod(L"AddCompositionRenderingCallbackMethod")
-        , RemoveCompositionRenderingCallbackMethod(L"RemoveCompositionRenderingCallbackMethod")
-        , AddSurfaceContentsLostCallbackMethod(L"AddSurfaceContentsLostCallback")
-        , RemoveSurfaceContentsLostCallbackMethod(L"RemoveSurfaceContentsLostCallback")
     {
-        AddCompositionRenderingCallbackMethod.AllowAnyCall();
-        RemoveCompositionRenderingCallbackMethod.AllowAnyCall();
-
-        AddSurfaceContentsLostCallbackMethod.AllowAnyCall();
-        RemoveSurfaceContentsLostCallbackMethod.AllowAnyCall();
     }
 
     virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
@@ -65,46 +52,28 @@ public:
         return Make<StubCanvasDevice>();
     }
 
-    virtual EventRegistrationToken AddCompositionRenderingCallback(IEventHandler<IInspectable*>* value) override
+    virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>* value) override
     {
-        AddCompositionRenderingCallbackMethod.WasCalled();
-        EventRegistrationToken token;
-        ThrowIfFailed(m_compositionRenderingEventList.Add(value, &token));
-        return token;
-    }
-
-    virtual void RemoveCompositionRenderingCallback(EventRegistrationToken token) override
-    {
-        RemoveCompositionRenderingCallbackMethod.WasCalled();
-        ThrowIfFailed(m_compositionRenderingEventList.Remove(token));
+        return CompositionRenderingEventSource->Add(value);
     }
 
     void RaiseCompositionRenderingEvent()
     {
         IInspectable* sender = nullptr;
         IInspectable* arg = nullptr;
-        ThrowIfFailed(m_compositionRenderingEventList.InvokeAll(sender, arg));
+        ThrowIfFailed(CompositionRenderingEventSource->InvokeAll(sender, arg));
     }
 
-    virtual EventRegistrationToken AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
+    virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
     {
-        AddSurfaceContentsLostCallbackMethod.WasCalled();
-        EventRegistrationToken token;
-        ThrowIfFailed(m_surfaceContentsLostEventList.Add(value, &token));
-        return token;
+        return SurfaceContentsLostEventSource->Add(value);
     }
     
-    virtual void RemoveSurfaceContentsLostCallback(EventRegistrationToken token) override
-    {
-        RemoveSurfaceContentsLostCallbackMethod.WasCalled();
-        ThrowIfFailed(m_surfaceContentsLostEventList.Remove(token));
-    }
-
     void RaiseSurfaceContentsLostEvent()
     {
         IInspectable* sender = nullptr;
         IInspectable* arg = nullptr;
-        ThrowIfFailed(m_surfaceContentsLostEventList.InvokeAll(sender, arg));
+        ThrowIfFailed(SurfaceContentsLostEventSource->InvokeAll(sender, arg));
     }
 
     virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
@@ -147,15 +116,14 @@ public:
         return DEFAULT_DPI;
     }
 
-    virtual void AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
+    virtual RegisteredEvent AddDpiChangedCallback(DpiChangedHandler* value) override
     {
-        EventRegistrationToken token;
-        ThrowIfFailed(m_dpiChangedEventList.Add(handler, &token));
+        return DpiChangedEventSource->Add(value);
     }
 
     void RaiseDpiChangedEvent()
     {
-        ThrowIfFailed(m_dpiChangedEventList.InvokeAll(nullptr, nullptr));
+        ThrowIfFailed(DpiChangedEventSource->InvokeAll(nullptr, nullptr));
     }
 
     virtual ComPtr<IWindow> GetCurrentWindow() override
