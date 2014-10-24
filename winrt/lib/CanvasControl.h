@@ -175,9 +175,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHODIMP OnApplyTemplate();
 
-        HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
-        HRESULT OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args);
-
     private:
         void CreateBaseClass();
         void CreateImageControl();
@@ -205,6 +202,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void HookCompositionRenderingIfNecessary();
 
+        HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
+        HRESULT OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args);
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        
         HRESULT OnDpiChanged(IDisplayInformation* sender, IInspectable* args);
         HRESULT OnSurfaceContentsLost(IInspectable* sender, IInspectable* args);

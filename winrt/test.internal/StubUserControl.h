@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "MockHelpers.h"
+
 namespace canvas
 {
     using namespace ABI::Windows::UI::Xaml::Controls;
@@ -19,7 +21,52 @@ namespace canvas
 
     class StubUserControl : public RuntimeClass<IUserControl, IFrameworkElement>
     {
+        Size m_actualSize;
+
     public:
+        ComPtr<MockEventSource<IRoutedEventHandler>> LoadedEventSource;
+        ComPtr<MockEventSource<ISizeChangedEventHandler>> SizeChangedEventSource;
+
+        StubUserControl()
+            : m_actualSize(Size{128.0f, 128.0f})
+            , LoadedEventSource(Make<MockEventSource<IRoutedEventHandler>>(L"Loaded"))
+            , SizeChangedEventSource(Make<MockEventSource<ISizeChangedEventHandler>>(L"SizeChanged"))
+        {
+        }
+
+        void Resize(Size newSize)
+        {
+            auto previousSize = m_actualSize;
+            m_actualSize = newSize;
+
+            class SizeChangedEventArgs : public RuntimeClass<ISizeChangedEventArgs>
+            {
+                Size m_previousSize;
+                Size m_newSize;
+
+            public:
+                SizeChangedEventArgs(Size previousSize, Size newSize)
+                    : m_previousSize(previousSize)
+                    , m_newSize(newSize)
+                {}
+
+                IFACEMETHODIMP get_PreviousSize(Size* value)
+                {
+                    *value = m_previousSize;
+                    return S_OK;
+                }
+
+                IFACEMETHODIMP get_NewSize(Size* value)
+                {
+                    *value = m_newSize;
+                    return S_OK;
+                }
+            };
+
+            auto args = Make<SizeChangedEventArgs>(previousSize, m_actualSize);
+            SizeChangedEventSource->InvokeAll(nullptr, args.Get());
+        }
+
         IFACEMETHODIMP get_Content(IUIElement **) override
         {
             Assert::Fail(L"Unexpected call to get_Content");
@@ -75,13 +122,13 @@ namespace canvas
 
         IFACEMETHODIMP get_ActualWidth(double* value) override
         {
-            *value = 128.0;
+            *value = m_actualSize.Width;
             return S_OK;
         }
 
         IFACEMETHODIMP get_ActualHeight(double* value) override 
         {
-            *value = 128.0;
+            *value = m_actualSize.Height;
             return S_OK;
         }
 
@@ -253,15 +300,14 @@ namespace canvas
             return E_NOTIMPL; 
         }
 
-        IFACEMETHODIMP add_Loaded(IRoutedEventHandler *,EventRegistrationToken *) override 
+        IFACEMETHODIMP add_Loaded(IRoutedEventHandler* handler, EventRegistrationToken* token) override 
         {
-            return S_OK;
+            return LoadedEventSource->add_Event(handler, token);
         }
 
-        IFACEMETHODIMP remove_Loaded(EventRegistrationToken) override 
+        IFACEMETHODIMP remove_Loaded(EventRegistrationToken token) override 
         {
-            Assert::Fail(L"Unexpected call to remove_Loaded");
-            return E_NOTIMPL; 
+            return LoadedEventSource->remove_Event(token);
         }
 
         IFACEMETHODIMP add_Unloaded(IRoutedEventHandler *,EventRegistrationToken *) override 
@@ -276,15 +322,14 @@ namespace canvas
             return E_NOTIMPL; 
         }
 
-        IFACEMETHODIMP add_SizeChanged(ISizeChangedEventHandler *,EventRegistrationToken *) override 
+        IFACEMETHODIMP add_SizeChanged(ISizeChangedEventHandler* handler, EventRegistrationToken* token) override 
         {
-            return S_OK;
+            return SizeChangedEventSource->add_Event(handler, token);
         }
 
-        IFACEMETHODIMP remove_SizeChanged(EventRegistrationToken) override 
+        IFACEMETHODIMP remove_SizeChanged(EventRegistrationToken token) override 
         {
-            Assert::Fail(L"Unexpected call to remove_SizeChanged");
-            return E_NOTIMPL; 
+            return SizeChangedEventSource->remove_Event(token);
         }
 
         IFACEMETHODIMP add_LayoutUpdated(ABI::Windows::Foundation::__FIEventHandler_1_IInspectable_t *,EventRegistrationToken *) override 

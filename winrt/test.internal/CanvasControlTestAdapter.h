@@ -19,7 +19,6 @@ using ABI::Windows::Graphics::Display::DisplayInformation;
 
 class CanvasControlTestAdapter : public ICanvasControlAdapter
 {
-
     ComPtr<MockWindow> m_mockWindow;
 
 public:
