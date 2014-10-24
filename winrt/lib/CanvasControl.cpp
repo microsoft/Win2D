@@ -418,8 +418,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             //
             // Set this new image source on the image control
             //
-            ComPtr<IImageSource> baseImageSource;
-            ThrowIfFailed(m_canvasImageSource.As(&baseImageSource));
+            auto baseImageSource = As<IImageSource>(m_canvasImageSource);
             ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
         }
     }
@@ -436,10 +435,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        ComPtr<CanvasImageSource> imageSourceImplementation = 
-            static_cast<CanvasImageSource*>(m_canvasImageSource.Get());
-
-        auto drawingSession = imageSourceImplementation->CreateDrawingSessionWithDpi(m_adapter->GetLogicalDpi());
+        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(m_adapter->GetLogicalDpi());
         ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 

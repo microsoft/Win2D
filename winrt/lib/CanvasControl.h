@@ -121,7 +121,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ICanvasDevice> m_canvasDevice;
         ComPtr<IImage> m_imageControl;
-        ComPtr<ICanvasImageSource> m_canvasImageSource;
+        ComPtr<CanvasImageSource> m_canvasImageSource;
         bool m_needToHookCompositionRendering;
         bool m_imageSourceNeedsReset;
         bool m_isLoaded;
