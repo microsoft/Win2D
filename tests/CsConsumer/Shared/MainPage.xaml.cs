@@ -123,7 +123,7 @@ namespace CsConsumer
             m_radialGradientBrush = new CanvasRadialGradientBrush(
                 sender, 
                 stops, 
-                CanvasEdgeBehavior.Wrap, 
+                CanvasEdgeBehavior.Clamp,
                 CanvasAlphaBehavior.Premultiplied);
         }
 
