@@ -49,7 +49,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasBitmapInternal : public IUnknown
     {
     public:
-        virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() = 0;
+        virtual ComPtr<ID2D1Bitmap1> const& GetD2DBitmap() = 0;
     };
 
     class ICanvasBitmapAdapter
@@ -307,7 +307,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         // ICanvasBitmapInternal
-        virtual ComPtr<ID2D1Bitmap1> GetD2DBitmap() override
+        virtual ComPtr<ID2D1Bitmap1> const& GetD2DBitmap() override
         {
             return GetResource();
         }

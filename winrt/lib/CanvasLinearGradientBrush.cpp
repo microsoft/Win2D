@@ -199,7 +199,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]()
             {
                 CheckInPointer(value);
-                *value = FromD2DPoint(GetD2DLinearGradientBrush()->GetStartPoint());
+                *value = FromD2DPoint(GetResource()->GetStartPoint());
             });
     }
 
@@ -208,7 +208,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DLinearGradientBrush()->SetStartPoint(ToD2DPoint(value));
+                GetResource()->SetStartPoint(ToD2DPoint(value));
             });
     }
 
@@ -218,7 +218,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]()
             {
                 CheckInPointer(value);
-                *value = FromD2DPoint(GetD2DLinearGradientBrush()->GetEndPoint());
+                *value = FromD2DPoint(GetResource()->GetEndPoint());
             });
     }
 
@@ -227,7 +227,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DLinearGradientBrush()->SetEndPoint(ToD2DPoint(value));
+                GetResource()->SetEndPoint(ToD2DPoint(value));
             });
     }
     
@@ -303,11 +303,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     ComPtr<ID2D1Brush> CanvasLinearGradientBrush::GetD2DBrush()
-    {
-        return GetResource();
-    }
-
-    ComPtr<ID2D1LinearGradientBrush> CanvasLinearGradientBrush::GetD2DLinearGradientBrush()
     {
         return GetResource();
     }

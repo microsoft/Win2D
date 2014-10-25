@@ -150,11 +150,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return GetResource();
     }
 
-    ComPtr<ID2D1SolidColorBrush> CanvasSolidColorBrush::GetD2DSolidColorBrush()
-    {
-        return GetResource();
-    }
-
     ActivatableClassWithFactory(CanvasSolidColorBrush, CanvasSolidColorBrushFactory);
 
 } } } }

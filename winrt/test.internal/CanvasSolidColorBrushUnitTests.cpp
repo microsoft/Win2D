@@ -130,7 +130,7 @@ public:
         D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
 
         auto canvasSolidColorBrush = m_colorBrushManager->Create(canvasDevice.Get(), red);
-        auto d2dSolidColorBrush = canvasSolidColorBrush->GetD2DSolidColorBrush();
+        auto d2dSolidColorBrush = canvasSolidColorBrush->GetResource();
 
         Assert::AreEqual(d2dRed, d2dSolidColorBrush->GetColor());
         Assert::AreEqual(1.0f, d2dSolidColorBrush->GetOpacity());

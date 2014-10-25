@@ -200,7 +200,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]()
             {
                 CheckInPointer(value);
-                *value = FromD2DPoint(GetD2DRadialGradientBrush()->GetCenter());
+                *value = FromD2DPoint(GetResource()->GetCenter());
             });
     }
 
@@ -209,7 +209,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DRadialGradientBrush()->SetCenter(ToD2DPoint(value));
+                GetResource()->SetCenter(ToD2DPoint(value));
             });
     }
 
@@ -219,7 +219,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]()
             {
                 CheckInPointer(value);
-                *value = FromD2DPoint(GetD2DRadialGradientBrush()->GetGradientOriginOffset());
+                *value = FromD2DPoint(GetResource()->GetGradientOriginOffset());
             });
     }
 
@@ -228,7 +228,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DRadialGradientBrush()->SetGradientOriginOffset(ToD2DPoint(value));
+                GetResource()->SetGradientOriginOffset(ToD2DPoint(value));
             });
     }
 
@@ -238,7 +238,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]()
             {
                 CheckInPointer(value);
-                *value = GetD2DRadialGradientBrush()->GetRadiusX();
+                *value = GetResource()->GetRadiusX();
             });
     }
 
@@ -247,7 +247,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DRadialGradientBrush()->SetRadiusX(value);
+                GetResource()->SetRadiusX(value);
             });
     }
 
@@ -257,7 +257,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]()
             {
                 CheckInPointer(value);
-                *value = GetD2DRadialGradientBrush()->GetRadiusY();
+                *value = GetResource()->GetRadiusY();
             });
     }
 
@@ -266,7 +266,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DRadialGradientBrush()->SetRadiusY(value);
+                GetResource()->SetRadiusY(value);
             });
     }
     IFACEMETHODIMP CanvasRadialGradientBrush::get_Stops(UINT32* valueCount, CanvasGradientStop** valueElements)
@@ -341,11 +341,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     ComPtr<ID2D1Brush> CanvasRadialGradientBrush::GetD2DBrush()
-    {
-        return GetResource();
-    }
-
-    ComPtr<ID2D1RadialGradientBrush> CanvasRadialGradientBrush::GetD2DRadialGradientBrush()
     {
         return GetResource();
     }

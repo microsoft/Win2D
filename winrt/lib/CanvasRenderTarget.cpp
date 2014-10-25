@@ -340,7 +340,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(drawingSession);
                 
-                auto resource = GetD2DBitmap();
+                auto& resource = GetD2DBitmap();
 
                 auto newDrawingSession = CreateDrawingSessionOverD2DBitmap(
                     m_device.Get(),

@@ -22,13 +22,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasSolidColorBrush;
     class CanvasSolidColorBrushManager;
 
-    [uuid(8FE46BCD-8594-44F4-AAB2-16E192BDC05F)]
-    class ICanvasSolidColorBrushInternal : public ICanvasBrushInternal
-    {
-    public:
-        virtual ComPtr<ID2D1SolidColorBrush> GetD2DSolidColorBrush() = 0;
-    };
-
     struct CanvasSolidColorBrushTraits
     {
         typedef ID2D1SolidColorBrush resource_t;
@@ -39,7 +32,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasSolidColorBrush : RESOURCE_WRAPPER_RUNTIME_CLASS(
         CanvasSolidColorBrushTraits, 
-        ChainInterfaces<CloakedIid<ICanvasSolidColorBrushInternal>, CloakedIid<ICanvasBrushInternal>>,
         MixIn<CanvasSolidColorBrush, CanvasBrush>),
         public CanvasBrush
     {
@@ -59,9 +51,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ICanvasBrushInternal
         virtual ComPtr<ID2D1Brush> GetD2DBrush() override;
-
-        // ICanvasSolidColorBrushInternal
-        virtual ComPtr<ID2D1SolidColorBrush> GetD2DSolidColorBrush() override;
     };
 
     class CanvasSolidColorBrushManager : public ResourceManager<CanvasSolidColorBrushTraits>

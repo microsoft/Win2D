@@ -21,13 +21,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasRadialGradientBrushManager;
 
-    [uuid(4B62DFF9-6188-46EC-A4A1-C52099278E34)]
-    class ICanvasRadialGradientBrushInternal : public ICanvasBrushInternal
-    {
-    public:
-        virtual ComPtr<ID2D1RadialGradientBrush> GetD2DRadialGradientBrush() = 0;
-    };
-
     struct CanvasRadialGradientBrushTraits
     {
         typedef ID2D1RadialGradientBrush resource_t;
@@ -38,7 +31,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasRadialGradientBrush : RESOURCE_WRAPPER_RUNTIME_CLASS(
         CanvasRadialGradientBrushTraits,
-        ChainInterfaces<CloakedIid<ICanvasRadialGradientBrushInternal>, CloakedIid<ICanvasBrushInternal>>,
         MixIn<CanvasRadialGradientBrush, CanvasBrush>),
         public CanvasBrush
     {
@@ -82,9 +74,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ICanvasBrushInternal
         virtual ComPtr<ID2D1Brush> GetD2DBrush() override;
-
-        // ICanvasRadialGradientBrushInternal
-        virtual ComPtr<ID2D1RadialGradientBrush> GetD2DRadialGradientBrush() override;
 
     private:
         ComPtr<ID2D1GradientStopCollection1> GetGradientStopCollection();

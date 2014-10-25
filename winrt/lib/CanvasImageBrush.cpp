@@ -131,7 +131,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ComPtr<ICanvasBitmapInternal> bitmapInternal;
             ThrowIfFailed(bitmap.As(&bitmapInternal));
 
-            ComPtr<ID2D1Bitmap1> d2dBitmap = bitmapInternal->GetD2DBitmap();
+            auto& d2dBitmap = bitmapInternal->GetD2DBitmap();
 
             m_d2dBitmapBrush->SetBitmap(d2dBitmap.Get());
         }
