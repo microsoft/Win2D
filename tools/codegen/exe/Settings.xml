@@ -70,6 +70,12 @@ under the License.
         <Field Name="STRAIGHT" ShouldProject="true" ProjectedValueOverride="1"/>
         <Field Name="IGNORE" ShouldProject="true" ProjectedValueOverride="2"/>
     </Enum>
+    <Enum Name="COMPOSITE_MODE" ShouldProject="true" ProjectedNameOverride="Composite">
+        <Field Name="PLUS" ProjectedNameOverride="Add"/>
+        <Field Name="SOURCE_COPY" ProjectedNameOverride="Copy"/>
+        <Field Name="BOUNDED_SOURCE_COPY" ProjectedNameOverride="BoundedCopy"/>
+    </Enum>
+
   </Namespace>
   
   <Namespace Name="Effects">
@@ -78,11 +84,7 @@ under the License.
     </Enum>
     <Enum Name="EffectInterpolationMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
     <Enum Name="EffectScaleMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
-    <Enum Name="CompositeEffectMode" ShouldProject="true">
-        <Field Name="Plus" ProjectedNameOverride="Add"/>
-        <Field Name="SourceCopy" ProjectedNameOverride="Copy"/>
-        <Field Name="BoundedSourceCopy" ProjectedNameOverride="BoundedCopy"/>
-    </Enum>
+
     <Enum Name="EffectXChannelSelect" ShouldProject="true" ProjectedNameOverride="EffectChannelSelect">
       <Field Name="RedChannel" ProjectedNameOverride="Red"/>
       <Field Name="GreenChannel" ProjectedNameOverride="Green"/>
@@ -95,6 +97,7 @@ under the License.
     <Enum Name="ColorMatrixEffectAlphaMode" ShouldProject="false" ProjectedNameOverride="CanvasAlphaBehavior" Namespace="Microsoft.Graphics.Canvas">
       <Field Name="Ignore" Index="2" ShouldProject="false"/>
     </Enum>
+    <Enum Name="CompositeEffectMode" ShouldProject="false" ProjectedNameOverride="CanvasComposite" Namespace="Microsoft.Graphics.Canvas"/>
     <Effect Name="ColorMatrixEffect">
       <Property Name="AlphaMode" IsHandCoded="true"/>
     </Effect>

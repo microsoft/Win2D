@@ -161,7 +161,7 @@ public:
         };
 
         deviceContext->MockDrawImage =
-            [&](ID2D1Image* image)
+            [&](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
         {
         };
 
@@ -391,7 +391,7 @@ public:
             return mockEffects.back().CopyTo(effect);
         };
 
-        deviceContext->MockDrawImage = [&](ID2D1Image* image)
+        deviceContext->MockDrawImage = [&](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
         {
         };
 

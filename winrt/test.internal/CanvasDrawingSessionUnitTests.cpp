@@ -287,6 +287,14 @@ public:
         BitmapFixture f;
 
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtOrigin(nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageWithSourceRect(nullptr, Vector2{}, Rect{}));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageWithSourceRectAndInterpolation(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageWithSourceRectAndInterpolationAndComposite(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtCoordsWithSourceRect(nullptr, 0, 0, Rect{}));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
     }
 
 
@@ -295,6 +303,10 @@ public:
         BitmapFixture f;
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRect(nullptr, Rect{}));
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRect(nullptr, Rect{}, Rect{}));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacity(nullptr, Rect{}, Rect{}, 0));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor, Matrix4x4{}));
     }
 
     TEST_METHOD(CanvasDrawingSession_DrawImage_Bitmap)
@@ -303,7 +315,7 @@ public:
 
         bool drawImageCalled = false;
         f.DeviceContext->MockDrawImage = 
-            [&](ID2D1Image* image)
+            [&](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
             {
                 Assert::IsFalse(drawImageCalled);
                 Assert::IsNotNull(image);
@@ -315,68 +327,159 @@ public:
         Assert::IsTrue(drawImageCalled);
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawImage_BitmapWithSourceAndDestRect)
+    class BitmapFixtureWithDrawImageVerification : public BitmapFixture
     {
-        BitmapFixture f;
+    public:
+        bool DrawImageCalled;
 
-        bool drawBitmapCalled = false;
-        f.DeviceContext->MockDrawBitmap =
-            [&](ID2D1Bitmap* bitmap, 
-                const D2D1_RECT_F* destRect, 
-                FLOAT opacity, 
-                D2D1_INTERPOLATION_MODE interpolationMode, 
-                const D2D1_RECT_F* sourceRect, 
-                const D2D1_MATRIX_4X4_F* perspective)
+        BitmapFixtureWithDrawImageVerification(
+            Rect const& sourceRect,
+            CanvasImageInterpolation interpolation = CanvasImageInterpolation::Linear,
+            CanvasComposite composite = CanvasComposite::SourceOver)
+            {
+                D2D1_RECT_F expectedSourceRect = ToD2DRect(sourceRect);
+                D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
+                D2D1_COMPOSITE_MODE expectedComposite = static_cast<D2D1_COMPOSITE_MODE>(composite);
+                DrawImageCalled = false;
+
+                DeviceContext->MockDrawImage =
+                    [expectedSourceRect, expectedInterpolation, expectedComposite, this](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
+                    {
+                        Assert::IsFalse(DrawImageCalled);
+                        Assert::IsNotNull(image);
+                        Assert::AreEqual(Image.Get(), image);
+                        Assert::AreEqual(expectedSourceRect, *imageRectangle);
+                        Assert::AreEqual(expectedInterpolation, interpolationMode);
+                        Assert::AreEqual(expectedComposite, compositeMode);
+                        DrawImageCalled = true;
+                    };
+            }
+
+        ~BitmapFixtureWithDrawImageVerification()
         {
-            Assert::IsFalse(drawBitmapCalled);
-            Assert::IsNotNull(bitmap);
-            auto image = As<ID2D1Image>(bitmap);
-            Assert::AreEqual(f.Image.Get(), image.Get());
-            Assert::AreEqual(D2D1::RectF(5, 6, 5 + 7, 6 + 8), *sourceRect);
-            Assert::AreEqual(1.0f, opacity);
-            Assert::AreEqual(D2D1_INTERPOLATION_MODE_LINEAR, interpolationMode);
-            Assert::AreEqual(D2D1::RectF(1, 2, 1 + 3, 2 + 4), *destRect);
-            Assert::IsNull(perspective); 
-            drawBitmapCalled = true;
-        };
+            Assert::IsTrue(DrawImageCalled);
+        }
+    };
 
-        Rect dest = {1, 2, 3, 4};
-        Rect source = {5, 6, 7, 8};
-        ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRect(
-            f.Bitmap.Get(),
-            dest,
-            source));
-        Assert::IsTrue(drawBitmapCalled);
-    }
-
-    TEST_METHOD(CanvasDrawingSession_DrawImage_BitmapWithDestRect)
+    class BitmapFixtureWithDrawBitmapVerification : public BitmapFixture
     {
-        BitmapFixture f;
+    public:
+        bool DrawBitmapCalled;
 
-        bool drawBitmapCalled = false;
-        f.DeviceContext->MockDrawBitmap =
-            [&](ID2D1Bitmap* bitmap,
-            const D2D1_RECT_F* destRect,
-            FLOAT opacity,
-            D2D1_INTERPOLATION_MODE interpolationMode,
-            const D2D1_RECT_F* sourceRect,
-            const D2D1_MATRIX_4X4_F* perspective)
+        BitmapFixtureWithDrawBitmapVerification(
+            Rect const& destRect,
+            Rect* sourceRect = nullptr,
+            float opacity = 1.0f,
+            CanvasImageInterpolation interpolation = CanvasImageInterpolation::Linear,
+            Matrix4x4* perspective = nullptr)
         {
-            Assert::IsFalse(drawBitmapCalled);
-            Assert::IsNotNull(bitmap);
-            auto image = As<ID2D1Image>(bitmap);
-            Assert::AreEqual(f.Image.Get(), image.Get());
-            Assert::IsNull(sourceRect);
-            Assert::AreEqual(1.0f, opacity);
-            Assert::AreEqual(D2D1_INTERPOLATION_MODE_LINEAR, interpolationMode);
-            Assert::AreEqual(D2D1::RectF(1, 2, 1 + 3, 2 + 4), *destRect);
-            Assert::IsNull(perspective);
-            drawBitmapCalled = true;
-        };
+            D2D1_RECT_F expectedDestRect = ToD2DRect(destRect);
 
-        Rect dest = { 1, 2, 3, 4 };
-        ThrowIfFailed(f.DS->DrawBitmapWithDestRect(f.Bitmap.Get(), dest));
-        Assert::IsTrue(drawBitmapCalled);
+            D2D1_RECT_F expectedSourceRect;
+            if (sourceRect) expectedSourceRect = ToD2DRect(*sourceRect);
+            bool expectSourceRect = sourceRect != nullptr;
+
+            D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
+            DrawBitmapCalled = false;
+
+            D2D1_MATRIX_4X4_F expectedPerspective;
+            if (perspective) expectedPerspective = *(ReinterpretAs<D2D1_MATRIX_4X4_F*>(perspective));
+            bool expectPerspective = perspective != nullptr;
+
+            DeviceContext->MockDrawBitmap =
+                [expectedDestRect, expectSourceRect, expectedSourceRect, expectedInterpolation, expectPerspective, expectedPerspective, this](ID2D1Bitmap* bitmap, const D2D1_RECT_F* destRect, FLOAT opacity, D2D1_INTERPOLATION_MODE interpolation, const D2D1_RECT_F* sourceRect, const D2D1_MATRIX_4X4_F* perspective)
+                {
+                    Assert::IsFalse(DrawBitmapCalled);
+                    Assert::IsNotNull(bitmap);
+                    auto image = As<ID2D1Image>(bitmap);
+                    Assert::AreEqual(Image.Get(), image.Get());
+                    Assert::AreEqual(expectedDestRect, *destRect);
+
+                    if (expectSourceRect)
+                    {
+                        Assert::IsNotNull(sourceRect);
+                        Assert::AreEqual(expectedSourceRect, *sourceRect);
+                    }
+                    else
+                    {
+                        Assert::IsNull(sourceRect);
+                    }
+
+                    Assert::AreEqual(expectedInterpolation, interpolation);
+
+                    if (expectPerspective)
+                    {
+                        Assert::IsNotNull(perspective);
+                        Assert::AreEqual(expectedPerspective, *perspective);
+                    }
+                    else
+                    {
+                        Assert::IsNull(perspective);
+                    }
+
+                    DrawBitmapCalled = true;
+                };
+        }
+
+        ~BitmapFixtureWithDrawBitmapVerification()
+        {
+            Assert::IsTrue(DrawBitmapCalled);
+        }
+    };
+
+    TEST_METHOD(CanvasDrawingSession_DrawImage_Overloads)
+    {
+        Rect destRect{ 33, 12, 4, 2 };
+        Rect sourceRect{ 3, 4, 7, 9 };
+        CanvasImageInterpolation interpolation = CanvasImageInterpolation::MultiSampleLinear;
+        CanvasComposite composite = CanvasComposite::Add;
+        const float opacity = 0.45f;
+        Matrix4x4 perspective = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+
+        {
+            BitmapFixtureWithDrawImageVerification f(sourceRect);
+            ThrowIfFailed(f.DS->DrawImageWithSourceRect(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect));
+        }
+        {
+            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
+            ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolation(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation));
+        }
+        {
+            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
+            ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation, composite));
+        }
+        {
+            BitmapFixtureWithDrawImageVerification f(sourceRect);
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(),  123, 456, sourceRect));
+        }
+        {
+            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(),  123, 456, sourceRect, interpolation));
+        }
+        {
+            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(),  123, 456, sourceRect, interpolation, composite));
+        }
+        {
+            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity);
+            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacity(f.Bitmap.Get(), destRect, sourceRect, opacity));
+        }
+        {
+            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation);
+            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation));
+        }
+        {
+            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation, &perspective);
+            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation, perspective));
+        }
+        {
+            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect);
+            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRect(f.Bitmap.Get(), destRect, sourceRect));
+        }
+        {
+            BitmapFixtureWithDrawBitmapVerification f(destRect);
+            ThrowIfFailed(f.DS->DrawBitmapWithDestRect(f.Bitmap.Get(), destRect));
+        }
     }
 
     TEST_METHOD(CanvasDrawingSession_DrawImage_GaussianBlurEffect)
@@ -427,7 +530,7 @@ public:
 
         bool drawImageCalled = false;
         f.DeviceContext->MockDrawImage =
-            [&](ID2D1Image* image)
+            [&](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
             {
                 Assert::IsFalse(drawImageCalled);
                 Assert::IsNotNull(image);
@@ -2201,8 +2304,18 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImage(nullptr, Vector2{}));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoords(nullptr, 0, 0));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtOrigin(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageWithSourceRect(nullptr, Vector2{}, Rect{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageWithSourceRectAndInterpolation(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageWithSourceRectAndInterpolationAndComposite(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoordsWithSourceRect(nullptr, 0, 0, Rect{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoordsWithSourceRectAndInterpolation(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
+
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRect(nullptr, Rect{}));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRect(nullptr, Rect{}, Rect{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRectAndOpacity(nullptr, Rect{}, Rect{}, 0));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor, Numerics::Matrix4x4{}));
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawLineWithBrush(Vector2{}, Vector2{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawLineAtCoordsWithBrush(0, 0, 0, 0, nullptr));

@@ -64,9 +64,6 @@ namespace Microsoft.Graphics.Canvas
         // DrawImage
         // 
 
-        // TODO #2104: consider overloads for different interpolation and composite modes 
-        // as well as overload with rectangle for cutting image 
-
         [overload("DrawImage"), default_overload]
         HRESULT DrawImage(
             [in] ICanvasImage* image,
@@ -83,6 +80,51 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasImage* image);
 
         [overload("DrawImage")]
+        HRESULT DrawImageWithSourceRect(
+            [in] ICanvasImage* image,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Rect sourceRect);
+
+        [overload("DrawImage")]
+        HRESULT DrawImageWithSourceRectAndInterpolation(
+            [in] ICanvasImage* image,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] CanvasImageInterpolation interpolation);
+
+        [overload("DrawImage")]
+        HRESULT DrawImageWithSourceRectAndInterpolationAndComposite(
+            [in] ICanvasImage* image,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] CanvasImageInterpolation interpolation,
+            [in] CanvasComposite composite);
+
+        [overload("DrawImage"), default_overload]
+        HRESULT DrawImageAtCoordsWithSourceRect(
+            [in] ICanvasImage* image,
+            [in] float x,
+            [in] float y,
+            [in] Windows.Foundation.Rect sourceRect);
+
+        [overload("DrawImage"), default_overload]
+        HRESULT DrawImageAtCoordsWithSourceRectAndInterpolation(
+            [in] ICanvasImage* image,
+            [in] float x,
+            [in] float y,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] CanvasImageInterpolation interpolation);
+
+        [overload("DrawImage"), default_overload]
+        HRESULT DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
+            [in] ICanvasImage* image,
+            [in] float x,
+            [in] float y,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] CanvasImageInterpolation interpolation,
+            [in] CanvasComposite composite);
+
+        [overload("DrawImage")]
         HRESULT DrawBitmapWithDestRect(
             [in] CanvasBitmap* bitmap,
             [in] Windows.Foundation.Rect destinationRect);
@@ -92,6 +134,30 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasBitmap* bitmap,
             [in] Windows.Foundation.Rect destinationRect,
             [in] Windows.Foundation.Rect sourceRect);
+
+        [overload("DrawImage")]
+        HRESULT DrawBitmapWithDestRectAndSourceRectAndOpacity(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destinationRect,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] float opacity);
+
+        [overload("DrawImage")]
+        HRESULT DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destinationRect,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] float opacity,
+            [in] CanvasImageInterpolation interpolation);
+
+        [overload("DrawImage")]
+        HRESULT DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destinationRect,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] float opacity,
+            [in] CanvasImageInterpolation interpolation,
+            [in] Microsoft.Graphics.Canvas.Numerics.Matrix4x4 perspective);
 
         //
         // DrawLine

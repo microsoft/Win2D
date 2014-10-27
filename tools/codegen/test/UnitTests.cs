@@ -76,7 +76,8 @@ namespace CodeGen.Test
             Directory.CreateDirectory(actualDir);
 
             // Run codegen
-            CodeGen.Program.GenerateEffectsCode(inputDir, actualDir);
+            CodeGen.Program.ProcessedInputFiles input = CodeGen.Program.ProcessInputFiles(inputDir);
+            CodeGen.Program.GenerateEffectsCode(inputDir, input.TypeDictionary, actualDir);
 
             // Verify the output from the codegen matches what was expected
             var expectedDirectoryInfo = new DirectoryInfo(expectedDir);
@@ -123,7 +124,8 @@ namespace CodeGen.Test
             string actualDir = "codegen/actual";
 
             // Run the codegen            
-            CodeGen.Program.GenerateCode(inputDir, actualDir);
+            CodeGen.Program.ProcessedInputFiles input = CodeGen.Program.ProcessInputFiles(inputDir);
+            CodeGen.Program.GenerateCode(input, actualDir);
 
             // Verify the output from the codegen matches what was expected
             var expectedDirectoryInfo = new DirectoryInfo(expectedDir);
@@ -206,7 +208,7 @@ namespace CodeGen.Test
                     CodeGen.Enum e = (CodeGen.Enum)(typeDictionary[nameKey]);
                     foreach (Overrides.XmlBindings.EnumValue overrideEnumValue in overrideEnum.Values)
                     {
-                        CodeGen.EnumValue match = e.Values.Find(x => x.NativeName == overrideEnumValue.Name);
+                        CodeGen.EnumValue match = e.Values.Find(x => x.RawNameComponent == overrideEnumValue.Name);
                         Assert.IsNotNull(match, "Unexpected override enum value: " + overrideEnum + "::" + overrideEnumValue.Name);
                     }
                 }

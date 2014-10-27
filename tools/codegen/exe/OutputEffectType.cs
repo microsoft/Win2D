@@ -23,7 +23,7 @@ namespace CodeGen
     {
         const string stdInfinity = "std::numeric_limits<float>::infinity()";
 
-        public static void OutputEnum(Property enumProperty, Formatter output)
+        public static void OutputEnum(Effects.Property enumProperty, Formatter output)
         {
             output.WriteLine("[version(VERSION)]");
             output.WriteLine("typedef enum " + enumProperty.TypeNameIdl);
@@ -46,7 +46,7 @@ namespace CodeGen
             output.WriteLine("} " + enumProperty.TypeNameIdl + ";");
         }
 
-        public static void OutputCommonEnums(List<Effect> effects, Formatter output)
+        public static void OutputCommonEnums(List<Effects.Effect> effects, Formatter output)
         {
             OutputDataTypes.OutputLeadingComment(output);
 
@@ -82,7 +82,7 @@ namespace CodeGen
             output.WriteLine("}");
         }
 
-        public static void OutputEffectIdl(Effect effect, Formatter output)
+        public static void OutputEffectIdl(Effects.Effect effect, Formatter output)
         {
             OutputDataTypes.OutputLeadingComment(output);
 
@@ -93,7 +93,9 @@ namespace CodeGen
             // Output all enums specific to this effect
             foreach (var property in effect.Properties)
             {
-                if (property.Type == "enum" && property.EnumFields.IsUnique && property.ShouldProject)
+                if (property.Type == "enum" && 
+                    property.EnumFields.Usage == Effects.EnumValues.UsageType.UsedByOneEffect && 
+                    property.ShouldProject)
                 {
                     OutputEnum(property, output);
                     output.WriteLine();
@@ -172,7 +174,7 @@ namespace CodeGen
             output.WriteLine("}");
         }
 
-        public static void OutputEffectHeader(Effect effect, Formatter output)
+        public static void OutputEffectHeader(Effects.Effect effect, Formatter output)
         {
             OutputDataTypes.OutputLeadingComment(output);
 
@@ -226,7 +228,7 @@ namespace CodeGen
             output.WriteLine("}}}}}");
         }
 
-        public static void OutputEffectCpp(Effect effect, Formatter output)
+        public static void OutputEffectCpp(Effects.Effect effect, Formatter output)
         {
             OutputDataTypes.OutputLeadingComment(output);
 
@@ -286,7 +288,7 @@ namespace CodeGen
             output.WriteLine("}}}}}");
         }
 
-        private static void WritePropertyInitialization(Formatter output, Property property)
+        private static void WritePropertyInitialization(Formatter output, Effects.Property property)
         {
             // Property with type string describes 
             // name/author/category/description of effect but not input type
@@ -300,7 +302,7 @@ namespace CodeGen
             output.WriteLine(setFunction + "<" + property.TypeNameBoxed + ">(" + property.NativePropertyName + ", " + FormatPropertyValue(property, defaultValue) + ");");
         }
 
-        private static void WritePropertyImplementation(Effect effect, Formatter output, Property property)
+        private static void WritePropertyImplementation(Effects.Effect effect, Formatter output, Effects.Property property)
         {
             // Property with type string describes 
             // name/author/category/description of effect but not input type
@@ -366,7 +368,7 @@ namespace CodeGen
             output.WriteLine();
         }
 
-        static void AddValidationChecks(List<string> validationChecks, Property property, string minOrMax, string comparisonOperator)
+        static void AddValidationChecks(List<string> validationChecks, Effects.Property property, string minOrMax, string comparisonOperator)
         {
             if (property.Type.StartsWith("vector"))
             {
@@ -387,13 +389,23 @@ namespace CodeGen
             }
         }
 
-        static string FormatPropertyValue(Property property, string value)
+        static string FormatPropertyValue(Effects.Property property, string value)
         {
             if (property.Type == "enum")
             {
-                if (property.EnumFields.NativeEnum != null)
+                if (property.EnumFields.D2DEnum != null)
                 {
-                    value = property.EnumFields.NativeEnum.Enums[Int32.Parse(value)];
+                    bool valueFound = false;
+                    foreach (EnumValue v in property.EnumFields.D2DEnum.Values)
+                    {
+                        if(v.ValueExpression == value)
+                        {
+                            value = v.NativeName;
+                            valueFound = true;
+                            break;
+                        }
+                    }
+                    System.Diagnostics.Debug.Assert(valueFound);
                 }
                 else
                 {

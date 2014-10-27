@@ -14,24 +14,6 @@
 
 namespace Microsoft.Graphics.Canvas.Effects
 {
-    [version(VERSION)]
-    typedef enum CompositeEffectMode
-    {
-        SourceOver = 0,
-        DestinationOver = 1,
-        SourceIn = 2,
-        DestinationIn = 3,
-        SourceOut = 4,
-        DestinationOut = 5,
-        SourceAtop = 6,
-        DestinationAtop = 7,
-        Xor = 8,
-        Add = 9,
-        Copy = 10,
-        BoundedCopy = 11,
-        MaskInvert = 12
-    } CompositeEffectMode;
-
     runtimeclass CompositeEffect;
 
     [version(VERSION), uuid(F8808C48-CDC7-5DB4-807C-B9344FF71984), exclusiveto(CompositeEffect)]
@@ -39,10 +21,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT Mode([out, retval] CompositeEffectMode* value);
+        HRESULT Mode([out, retval] Microsoft.Graphics.Canvas.CanvasComposite* value);
 
         [propput]
-        HRESULT Mode([in] CompositeEffectMode value);
+        HRESULT Mode([in] Microsoft.Graphics.Canvas.CanvasComposite value);
 
     };
 

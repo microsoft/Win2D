@@ -69,63 +69,8 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Mode">
       <summary>Gets and sets composite mode for effect processing.</summary>
       <remarks>
-        <p>Default mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceOver"/>.</p>
+        <p>Default mode is <see cref="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOver"/>.</p>
       </remarks>
-    </member>
-  
-  
-    <member name="T:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode">
-      <summary>The composite mode used for the effect.</summary>
-      <remarks>
-        <p>The equations listed in enum descriptions use these elements:
-           O = Output
-           S = Source
-           SA = Source Alpha
-           D = Destination
-           DA = Destination Alpha</p>
-      </remarks>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceOver">
-      <summary>Union of source and destination bitmaps. Equation: O = S + (1 - SA) * D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationOver">
-      <summary>Union of source and destination bitmaps. Equation: O = (1 - DA) * S + D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceIn">
-      <summary>Intersection of source and destination bitmaps. Equation: O = DA * S.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationIn">
-      <summary>Intersection of source and destination bitmaps. Equation: O = SA * D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceOut">
-      <summary>Region of the source bitmap. Equation: O = (1 - DA) * S.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationOut">
-      <summary>Region of the destination bitmap. Equation: O = (1 - SA) * D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.SourceAtop">
-      <summary>Region of the destination bitmap. Equation: O = DA * S + (1 - SA) * D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.DestinationAtop">
-      <summary>Region of the source bitmap. Equation: O = (1 - DA) * S + SA * D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.Xor">
-      <summary>Union of source and destination bitmaps with xor function 
-               for pixels that overlap. Equation: O = (1 - DA) * S + (1 - SA) * D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.Add">
-      <summary>Union of source and destination bitmaps. Equation: O = S + D.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.Copy">
-      <summary>Region of the source bitmap. Equation: O = S.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.BoundedCopy">
-      <summary>Union of source and destination bitmaps with no destination override. 
-               Equation: O = S (only where source exists).</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.CompositeEffectMode.MaskInvert">
-      <summary>Union of source and destination bitmaps with unchanged alpha. 
-               Equation: O = (1 - D) * S + (1 - SA) * D.</summary>
     </member>
     
     <member name="M:Microsoft.Graphics.Canvas.Effects.CompositeEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">

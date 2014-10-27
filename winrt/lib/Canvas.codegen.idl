@@ -84,6 +84,24 @@ namespace Microsoft.Graphics.Canvas
     } CanvasTextAntialiasing;
 
     [version(VERSION)]
+    typedef enum CanvasComposite
+    {
+        SourceOver = (int)0,
+        DestinationOver = (int)1,
+        SourceIn = (int)2,
+        DestinationIn = (int)3,
+        SourceOut = (int)4,
+        DestinationOut = (int)5,
+        SourceAtop = (int)6,
+        DestinationAtop = (int)7,
+        Xor = (int)8,
+        Add = (int)9,
+        Copy = (int)10,
+        BoundedCopy = (int)11,
+        MaskInvert = (int)12
+    } CanvasComposite;
+
+    [version(VERSION)]
     typedef enum CanvasBufferPrecision
     {
         Precision8UIntNormalized = (int)0,

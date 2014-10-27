@@ -27,7 +27,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_PROPERTY(CompositeEffect,
         Mode,
         uint32_t,
-        CompositeEffectMode,
+        CanvasComposite,
         D2D1_COMPOSITE_PROP_MODE)
 
     ActivatableClass(CompositeEffect);

@@ -44,7 +44,7 @@ namespace canvas
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*,float,ID2D1StrokeStyle*)> MockDrawEllipse;
         std::function<void(const D2D1_ELLIPSE*,ID2D1Brush*)> MockFillEllipse;
         std::function<void(const wchar_t*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE)> MockDrawText;
-        std::function<void(ID2D1Image*)> MockDrawImage;
+        std::function<void(ID2D1Image*, CONST D2D1_POINT_2F *, CONST D2D1_RECT_F*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)> MockDrawImage;
         std::function<void(ID2D1Bitmap*, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)> MockDrawBitmap;
         std::function<void(ID2D1Device**)> MockGetDevice;
         std::function<HRESULT(ID2D1Effect **)> MockCreateEffect;
@@ -272,7 +272,7 @@ namespace canvas
                 return;
             }
 
-            MockDrawImage(image);
+            MockDrawImage(image, targetOffset, imageRectangle, interpolationMode, compositeMode);
         }
 
         IFACEMETHODIMP_(void) SetTransform(const D2D1_MATRIX_3X2_F* m) override

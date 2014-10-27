@@ -38,11 +38,20 @@ namespace canvas
 
         DONT_EXPECT(Clear , Color);
 
-        DONT_EXPECT(DrawImage                           , ICanvasImage*, Vector2);
-        DONT_EXPECT(DrawImageAtCoords                   , ICanvasImage*, float, float);
-        DONT_EXPECT(DrawImageAtOrigin                   , ICanvasImage*);
-        DONT_EXPECT(DrawBitmapWithDestRect              , ICanvasBitmap*, Rect);
-        DONT_EXPECT(DrawBitmapWithDestRectAndSourceRect , ICanvasBitmap*, Rect, Rect);
+        DONT_EXPECT(DrawImage                                                                   , ICanvasImage*, Vector2);
+        DONT_EXPECT(DrawImageAtCoords                                                           , ICanvasImage*, float, float);
+        DONT_EXPECT(DrawImageAtOrigin                                                           , ICanvasImage*);
+        DONT_EXPECT(DrawImageWithSourceRect                                                     , ICanvasImage*, Vector2, Rect);
+        DONT_EXPECT(DrawImageWithSourceRectAndInterpolation                                     , ICanvasImage*, Vector2, Rect, CanvasImageInterpolation);
+        DONT_EXPECT(DrawImageWithSourceRectAndInterpolationAndComposite                         , ICanvasImage*, Vector2, Rect, CanvasImageInterpolation, CanvasComposite);
+        DONT_EXPECT(DrawImageAtCoordsWithSourceRect                                             , ICanvasImage*, float, float, Rect);
+        DONT_EXPECT(DrawImageAtCoordsWithSourceRectAndInterpolation                             , ICanvasImage*, float, float, Rect, CanvasImageInterpolation);
+        DONT_EXPECT(DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite                 , ICanvasImage*, float, float, Rect, CanvasImageInterpolation, CanvasComposite);
+        DONT_EXPECT(DrawBitmapWithDestRect                                                      , ICanvasBitmap*, Rect);
+        DONT_EXPECT(DrawBitmapWithDestRectAndSourceRect                                         , ICanvasBitmap*, Rect, Rect);
+        DONT_EXPECT(DrawBitmapWithDestRectAndSourceRectAndOpacity                               , ICanvasBitmap*, Rect, Rect, float);
+        DONT_EXPECT(DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation               , ICanvasBitmap*, Rect, Rect, float, CanvasImageInterpolation);
+        DONT_EXPECT(DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective , ICanvasBitmap*, Rect, Rect, float, CanvasImageInterpolation, Matrix4x4);
 
         DONT_EXPECT(DrawLineWithBrush                                     , Vector2, Vector2, ICanvasBrush*);
         DONT_EXPECT(DrawLineAtCoordsWithBrush                             , float, float, float, float, ICanvasBrush*);

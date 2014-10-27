@@ -123,8 +123,10 @@ namespace CodeGen
         {
             var inputDir = FindInputDirectory();
 
-            GenerateCode(inputDir, GetDefaultOutputLocation(inputDir));
-            GenerateEffectsCode(inputDir, GetDefaultEffectsOutputLocation(inputDir));
+            ProcessedInputFiles processedInputFiles = ProcessInputFiles(inputDir);
+
+            GenerateCode(processedInputFiles, GetDefaultOutputLocation(inputDir));
+            GenerateEffectsCode(inputDir, processedInputFiles.TypeDictionary, GetDefaultEffectsOutputLocation(inputDir));
         }
         
         public static string GetDefaultOutputLocation(string inputDir)
@@ -147,40 +149,55 @@ namespace CodeGen
             return files;
         }
 
-        public static void GenerateEffectsCode(string inputDir, string outputDir)
+        public static void GenerateEffectsCode(string inputDir, Dictionary<string, QualifiableType> typeDictionary, string outputDir)
         {
             String inputEffectsDir = Path.Combine(inputDir, "apiref/effects");
-            EffectGenerator.OutputEffects(inputEffectsDir, outputDir);
+            EffectGenerator.OutputEffects(inputEffectsDir, typeDictionary, outputDir);
         }
 
-        public static void GenerateCode(string inputDir, string outputDir)
+        public struct ProcessedInputFiles
         {
+            public string FilenameBase;
+            public Dictionary<string, QualifiableType> TypeDictionary;
+            public OutputDataTypes OutputDataTypes;
+        }
+
+        public static ProcessedInputFiles ProcessInputFiles(string inputDir)
+        {
+            ProcessedInputFiles result = new ProcessedInputFiles();
+
             List<string> files = GetInputFileList();
 
             Overrides.XmlBindings.Settings overridesXmlData = XmlBindings.Utilities.LoadXmlData<Overrides.XmlBindings.Settings>(inputDir, "Settings.xml");
             Formatter.Prefix = overridesXmlData.Prefix.Value;
             Formatter.Subnamespace = overridesXmlData.Subnamespace.Value;
 
-            var filenameBase = overridesXmlData.FilenameBase.Value;
+            result.FilenameBase = overridesXmlData.FilenameBase.Value;
 
             List<D2DTypes> typeDocuments = new List<D2DTypes>();
-            Dictionary<string, QualifiableType> typeDictionary = new Dictionary<string, QualifiableType>();
-            OutputDataTypes outputDataTypes = new OutputDataTypes();
+            result.TypeDictionary = new Dictionary<string, QualifiableType>();
+            result.OutputDataTypes = new OutputDataTypes();
             foreach (string fileName in files)
             {
                 XmlBindings.D2DTypes xmlDocument = XmlBindings.Utilities.LoadXmlData<XmlBindings.D2DTypes>(inputDir, fileName);
-                typeDocuments.Add(new D2DTypes(xmlDocument, overridesXmlData, typeDictionary, outputDataTypes));
+                typeDocuments.Add(new D2DTypes(xmlDocument, overridesXmlData, result.TypeDictionary, result.OutputDataTypes));
             }
+
+            return result;
+        }
+
+        public static void GenerateCode(ProcessedInputFiles inputFiles, string outputDir)
+        {
 
             Directory.CreateDirectory(outputDir);
             OutputFiles outputFiles = new OutputFiles();
-            using (Formatter cppStreamWriter = new Formatter(Path.Combine(outputDir, filenameBase + ".codegen.cpp")),
-                             idlStreamWriter = new Formatter(Path.Combine(outputDir, filenameBase + ".codegen.idl")))
+            using (Formatter cppStreamWriter = new Formatter(Path.Combine(outputDir, inputFiles.FilenameBase + ".codegen.cpp")),
+                             idlStreamWriter = new Formatter(Path.Combine(outputDir, inputFiles.FilenameBase + ".codegen.idl")))
             {
                 outputFiles.CppFile = cppStreamWriter;
                 outputFiles.IdlFile = idlStreamWriter;
 
-                outputDataTypes.OutputCode(typeDictionary, outputFiles);
+                inputFiles.OutputDataTypes.OutputCode(inputFiles.TypeDictionary, outputFiles);
             }
         }
 

@@ -61,6 +61,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(D2D1_MATRIX_3X2_F, _32) == offsetof(Numerics::Matrix3x2, M32), "Matrix3x2 layout must match D2D1_MATRIX_3X2_F");
     }
 
+    template<> inline void ValidateReinterpretAs<D2D1_MATRIX_4X4_F*, Numerics::Matrix4x4*>()
+    {
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _11) == offsetof(Numerics::Matrix4x4, M11), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _12) == offsetof(Numerics::Matrix4x4, M12), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _13) == offsetof(Numerics::Matrix4x4, M13), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _14) == offsetof(Numerics::Matrix4x4, M14), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _21) == offsetof(Numerics::Matrix4x4, M21), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _22) == offsetof(Numerics::Matrix4x4, M22), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _23) == offsetof(Numerics::Matrix4x4, M23), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _24) == offsetof(Numerics::Matrix4x4, M24), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _31) == offsetof(Numerics::Matrix4x4, M31), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _32) == offsetof(Numerics::Matrix4x4, M32), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _33) == offsetof(Numerics::Matrix4x4, M33), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _34) == offsetof(Numerics::Matrix4x4, M34), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _41) == offsetof(Numerics::Matrix4x4, M41), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _42) == offsetof(Numerics::Matrix4x4, M42), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _43) == offsetof(Numerics::Matrix4x4, M43), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+        static_assert(offsetof(D2D1_MATRIX_4X4_F, _44) == offsetof(Numerics::Matrix4x4, M44), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
+    }
+
     template<> inline void ValidateReinterpretAs<Numerics::Vector4*, D2D1_COLOR_F*>()
     {
         static_assert(offsetof(D2D1_COLOR_F, r) == offsetof(Numerics::Vector4, X), "Vector4 layout must match D2D1_COLOR_F");

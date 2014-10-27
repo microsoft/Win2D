@@ -45,6 +45,34 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2)">
       <summary>Draws an image at the specified position.</summary>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect)">
+      <summary>Draw an image at the specified position, with the specified source rect, linear image interpolation and source-over composite mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
+      <summary>Draw an image at the specified position, with the specified source rect, the specified image interpolation and source-over composite mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasComposite)">
+      <summary>Draw an image at the specified position, with the specified source rect, the specified image interpolation and composite mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect)">
+      <summary>Draw an image at the specified position, with the specified source rect, linear image interpolation and source-over composite mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
+      <summary>Draw an image at the specified position, with the specified source rect, the specified image interpolation and source-over composite mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasComposite)">
+      <summary>Draw an image at the specified position, with the specified source rect, the specified image interpolation and composite mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single)">
+      <summary>Draw a the specified source rectangle of a bitmap, scaled to fit the specified destination rectangle, with the specified opacity, linear image interpolation and no perspective transform.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
+      <summary>Draw a the specified source rectangle of a bitmap, scaled to fit the specified destination rectangle, with the specified opacity, the specified image interpolation and no perspective transform.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.Numerics.Matrix4x4)">
+      <summary>Draw a the specified source rectangle of a bitmap, scaled to fit the specified destination rectangle, with the specified opacity, the specified image interpolation and perspective transform.</summary>
     </member>
     
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect)">
@@ -362,5 +390,60 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Device">
       <summary>Gets the underlying device used by this drawing session.</summary>
    </member>
+   
+    <member name="T:Microsoft.Graphics.Canvas.CanvasComposite">
+      <summary>The composite mode used for the effect.</summary>
+      <remarks>
+        <p>The equations listed in enum descriptions use these elements:
+           O = Output
+           S = Source
+           SA = Source Alpha
+           D = Destination
+           DA = Destination Alpha</p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOver">
+      <summary>Union of source and destination bitmaps. Equation: O = S + (1 - SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.DestinationOver">
+      <summary>Union of source and destination bitmaps. Equation: O = (1 - DA) * S + D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceIn">
+      <summary>Intersection of source and destination bitmaps. Equation: O = DA * S.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.DestinationIn">
+      <summary>Intersection of source and destination bitmaps. Equation: O = SA * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOut">
+      <summary>Region of the source bitmap. Equation: O = (1 - DA) * S.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.DestinationOut">
+      <summary>Region of the destination bitmap. Equation: O = (1 - SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceAtop">
+      <summary>Region of the destination bitmap. Equation: O = DA * S + (1 - SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.DestinationAtop">
+      <summary>Region of the source bitmap. Equation: O = (1 - DA) * S + SA * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.Xor">
+      <summary>Union of source and destination bitmaps with xor function 
+               for pixels that overlap. Equation: O = (1 - DA) * S + (1 - SA) * D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.Add">
+      <summary>Union of source and destination bitmaps. Equation: O = S + D.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.Copy">
+      <summary>Region of the source bitmap. Equation: O = S.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.BoundedCopy">
+      <summary>Union of source and destination bitmaps with no destination override. 
+               Equation: O = S (only where source exists).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.MaskInvert">
+      <summary>Union of source and destination bitmaps with unchanged alpha. 
+               Equation: O = (1 - D) * S + (1 - SA) * D.</summary>
+    </member>
+   
   </members>
 </doc>

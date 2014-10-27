@@ -157,23 +157,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     // 
     // DrawImage
-    // 
+    //  
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImage(
         ICanvasImage* image,
         Vector2 offset)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(image);
-
-                ComPtr<ICanvasImageInternal> internal;
-                ThrowIfFailed(image->QueryInterface(IID_PPV_ARGS(&internal)));
-
-                deviceContext->DrawImage(internal->GetD2DImage(deviceContext.Get()).Get(), ToD2DPoint(offset));
-            });
+        return DrawImageImpl(image, offset, nullptr, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
     }
 
 
@@ -182,50 +172,90 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float x,
         float y)
     {
-        return DrawImage(
-            image, 
-            Vector2{ x, y });
+        return DrawImageImpl(image, Vector2{ x, y }, nullptr, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
     }
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOrigin(
         ICanvasImage* image)
     {
-        return DrawImage(
-            image,
-            Vector2{ 0, 0 });
+        return DrawImageImpl(image, Vector2{ 0, 0 }, nullptr, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
     }
 
-
-    HRESULT CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectImpl(
-        ICanvasBitmap* bitmap,
-        Rect destinationRect,
-        D2D1_RECT_F* d2dSourceRect)
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRect(
+        ICanvasImage* image,
+        Vector2 offset,
+        Rect sourceRect)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& deviceContext = GetResource();
-                CheckInPointer(bitmap);
-
-                ComPtr<ICanvasBitmapInternal> internal;
-                ThrowIfFailed(bitmap->QueryInterface(IID_PPV_ARGS(&internal)));
-
-                deviceContext->DrawBitmap(
-                    internal->GetD2DBitmap().Get(),
-                    ToD2DRect(destinationRect),
-                    1.0f,
-                    D2D1_INTERPOLATION_MODE_LINEAR,
-                    d2dSourceRect);
-            });
+        return DrawImageImpl(image, offset, &sourceRect, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
     }
 
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRectAndInterpolation(
+        ICanvasImage* image,
+        Vector2 offset,
+        Rect sourceRect,
+        CanvasImageInterpolation interpolation)
+    {
+        return DrawImageImpl(image, offset, &sourceRect, interpolation, CanvasComposite::SourceOver);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRectAndInterpolationAndComposite(
+        ICanvasImage* image,
+        Vector2 offset,
+        Rect sourceRect,
+        CanvasImageInterpolation interpolation,
+        CanvasComposite composite)
+    {
+        return DrawImageImpl(image, offset, &sourceRect, interpolation, composite);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRect(
+        ICanvasImage* image,
+        float x,
+        float y,
+        Rect sourceRect)
+    {
+        return DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
+            image,
+            x,
+            y,
+            sourceRect,
+            CanvasImageInterpolation::Linear,
+            CanvasComposite::SourceOver);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndInterpolation(
+        ICanvasImage* image,
+        float x,
+        float y,
+        Rect sourceRect,
+        CanvasImageInterpolation interpolation)
+    {
+        return DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
+            image,
+            x,
+            y,
+            sourceRect,
+            interpolation,
+            CanvasComposite::SourceOver);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
+        ICanvasImage* image,
+        float x,
+        float y,
+        Rect sourceRect,
+        CanvasImageInterpolation interpolation,
+        CanvasComposite composite)
+    {
+        return DrawImageWithSourceRectAndInterpolationAndComposite(image, Vector2{x, y}, sourceRect, interpolation, composite);
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRect(
         ICanvasBitmap* bitmap,
         Rect destinationRect)
     {   
-        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, nullptr);
+        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, nullptr, 1.0f, CanvasImageInterpolation::Linear, nullptr);
     }
 
 
@@ -234,11 +264,99 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Rect destinationRect,
         Rect sourceRect)
     {
-        D2D1_RECT_F d2dSourceRect = ToD2DRect(sourceRect);
-
-        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &d2dSourceRect);
+        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, 1.0f, CanvasImageInterpolation::Linear, nullptr);
     }
 
+    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectAndOpacity(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect,
+        Rect sourceRect,
+        float opacity)
+    {
+        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, opacity, CanvasImageInterpolation::Linear, nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect,
+        Rect sourceRect,
+        float opacity,
+        CanvasImageInterpolation interpolation)
+    {
+        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, opacity, interpolation, nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect,
+        Rect sourceRect,
+        float opacity,
+        CanvasImageInterpolation interpolation,
+        ABI::Microsoft::Graphics::Canvas::Numerics::Matrix4x4 perspective)
+    {
+        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, opacity, interpolation, &perspective);
+    }
+
+    HRESULT CanvasDrawingSession::DrawImageImpl(
+        ICanvasImage* image,
+        Vector2 offset,
+        Rect* sourceRect,
+        CanvasImageInterpolation interpolation,
+        CanvasComposite composite)
+    {
+        return ExceptionBoundary(
+            [&]
+        {
+            auto& deviceContext = GetResource();
+            CheckInPointer(image);
+
+            ComPtr<ICanvasImageInternal> internal;
+            ThrowIfFailed(image->QueryInterface(IID_PPV_ARGS(&internal)));
+
+            D2D1_POINT_2F d2dOffset = ToD2DPoint(offset);
+            D2D1_RECT_F d2dSourceRect;
+            if (sourceRect) d2dSourceRect = ToD2DRect(*sourceRect);
+
+            deviceContext->DrawImage(
+                internal->GetD2DImage(deviceContext.Get()).Get(),
+                &d2dOffset,
+                sourceRect ? &d2dSourceRect : nullptr,
+                static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
+                static_cast<D2D1_COMPOSITE_MODE>(composite));
+        });
+
+    }
+
+    HRESULT CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectImpl(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect,
+        Rect* sourceRect,
+        float opacity,
+        CanvasImageInterpolation interpolation,
+        Numerics::Matrix4x4* perspective)
+    {
+        return ExceptionBoundary(
+            [&]
+        {
+            auto& deviceContext = GetResource();
+            CheckInPointer(bitmap);
+
+            ComPtr<ICanvasBitmapInternal> internal;
+            ThrowIfFailed(bitmap->QueryInterface(IID_PPV_ARGS(&internal)));
+
+            D2D1_RECT_F d2dDestRect = ToD2DRect(destinationRect);
+            D2D1_RECT_F d2dSourceRect;
+            if (sourceRect) d2dSourceRect = ToD2DRect(*sourceRect);
+
+            deviceContext->DrawBitmap(
+                internal->GetD2DBitmap().Get(),
+                &d2dDestRect,
+                opacity,
+                static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
+                sourceRect ? &d2dSourceRect : nullptr,
+                ReinterpretAs<D2D1_MATRIX_4X4_F*>(perspective));
+        });
+    }
 
     //
     // DrawLine

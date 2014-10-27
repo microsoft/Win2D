@@ -39,9 +39,10 @@ namespace CodeGen
 
     public class EnumValue
     {
-        public EnumValue(XmlBindings.EnumValue xmlData, Overrides.XmlBindings.EnumValue overrides)
+        public EnumValue(XmlBindings.EnumValue xmlData, string containingEnumName, Overrides.XmlBindings.EnumValue overrides)
         {
-            m_nativeName = xmlData.Name;
+            m_rawNameComponent = xmlData.Name;
+            m_nativeName = containingEnumName + "_" + m_rawNameComponent;
             m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
             m_shouldProject = true;
             m_valueExpression = GetValueExpression(xmlData);
@@ -60,8 +61,15 @@ namespace CodeGen
 
                 m_shouldProject = overrides.ShouldProject;
             }
+        }
 
-
+        public EnumValue(string nativeName, string rawNameComponent, int valueExpression)
+        {
+            m_nativeName = nativeName;
+            m_rawNameComponent = rawNameComponent;
+            m_stylizedName = Formatter.StylizeNameFromUnderscoreSeparators(nativeName);
+            m_shouldProject = true;
+            m_valueExpression = valueExpression.ToString();
         }
 
         static string GetValueExpression(XmlBindings.EnumValue xmlData)
@@ -118,8 +126,13 @@ namespace CodeGen
             outputFiles.IdlFile.WriteLine();
         }
 
+        public string RawNameComponent { get { return m_rawNameComponent; } }
+
         public string NativeName { get { return m_nativeName; } }
 
+        public string ValueExpression { get { return m_valueExpression; } }
+
+        string m_rawNameComponent;
         string m_nativeName;
         string m_stylizedName;
         string m_valueExpression;
@@ -148,6 +161,7 @@ namespace CodeGen
 
     public class Enum : QualifiableType
     {
+
         public Enum(Namespace parentNamespace, XmlBindings.Enum xmlData, Overrides.XmlBindings.Enum overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {
             m_stylizedName = Formatter.Prefix + Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
@@ -176,7 +190,7 @@ namespace CodeGen
                 Overrides.XmlBindings.EnumValue overridesEnumValue = null;
                 if (overrides != null) overridesEnumValue = overrides.Values.Find(x => x.Name == valueXml.Name);
 
-                m_enumValues.Add(new EnumValue(valueXml, overridesEnumValue));
+                m_enumValues.Add(new EnumValue(valueXml, m_rawName, overridesEnumValue));
             }
             
             bool shouldProject = false;
@@ -197,6 +211,16 @@ namespace CodeGen
                 outputDataTypes.AddEnum(this);
             }
 
+        }
+        public Enum(string rawName, List<EnumValue> values, Dictionary<string, QualifiableType> typeDictionary)
+        {
+            m_rawName = rawName;
+            typeDictionary[rawName] = this;
+            m_stylizedName = Formatter.Prefix + Formatter.StylizeNameFromUnderscoreSeparators(rawName);
+
+            m_isFlags = false;
+
+            m_enumValues = values;
         }
 
         public override string ProjectedName

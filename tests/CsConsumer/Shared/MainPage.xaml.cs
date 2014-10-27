@@ -270,7 +270,7 @@ namespace CsConsumer
                     if (m_bitmap_tiger != null)
                     {
                         CompositeEffect compositeEffect = new CompositeEffect();
-                        compositeEffect.Mode = CompositeEffectMode.SourceOver;
+                        compositeEffect.Mode = CanvasComposite.SourceOver;
 
                         float angle = 0.0f;
                         float angleDelta = (float)random.NextDouble()+0.05f;

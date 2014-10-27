@@ -154,6 +154,7 @@ namespace Microsoft
             TO_STRING(IInspectable);
             TO_STRING(IUnknown);
             TO_STRING(ID2D1StrokeStyle1);
+            TO_STRING(ID2D1Bitmap);
             TO_STRING(ID2D1Bitmap1);
 
 #undef TO_STRING
@@ -232,6 +233,22 @@ namespace Microsoft
                     value._11, value._12,
                     value._21, value._22,
                     value._31, value._32));
+
+                return buf;
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_MATRIX_4X4_F>(D2D1_MATRIX_4X4_F const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_MATRIX_4X4_F{_11=%f,_12=%f,_13=%f,_14=%f,_21=%f,_22=%f,_23=%f,_24=%f,_31=%f,_32=%f,_33=%f,_34=%f,_41=%f,_42=%f,_43=%f,_44=%f}",
+                    value._11, value._12, value._13, value._14,
+                    value._21, value._22, value._23, value._24,
+                    value._31, value._32, value._33, value._34,
+                    value._41, value._42, value._43, value._44));
 
                 return buf;
             }
@@ -631,6 +648,24 @@ namespace Microsoft
                 END_ENUM(CanvasBufferPrecision);
             }
 
+            ENUM_TO_STRING(D2D1_COMPOSITE_MODE)
+            {
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_SOURCE_OVER);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_DESTINATION_OVER);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_SOURCE_IN);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_DESTINATION_IN);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_SOURCE_OUT);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_DESTINATION_OUT);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_SOURCE_ATOP);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_DESTINATION_ATOP);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_XOR);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_PLUS);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_SOURCE_COPY);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_BOUNDED_SOURCE_COPY);
+                ENUM_VALUE(D2D1_COMPOSITE_MODE_MASK_INVERT);
+                END_ENUM(D2D1_COMPOSITE_MODE);
+            }
+
             template<typename T>
             static inline std::wstring ToStringAsInt(T value)
             {
@@ -735,6 +770,15 @@ inline bool operator==(D2D1_MATRIX_3X2_F const& a, D2D1_MATRIX_3X2_F const& b)
         a._11 == b._11 && a._12 == b._12 &&
         a._21 == b._21 && a._22 == b._22 &&
         a._31 == b._31 && a._32 == b._32;
+}
+
+inline bool operator==(D2D1_MATRIX_4X4_F const& a, D2D1_MATRIX_4X4_F const& b)
+{
+    return
+        a._11 == b._11 && a._12 == b._12 && a._13 == b._13 && a._14 == b._14 &&
+        a._21 == b._21 && a._22 == b._22 && a._23 == b._23 && a._24 == b._24 &&
+        a._31 == b._31 && a._32 == b._32 && a._33 == b._33 && a._34 == b._34 &&
+        a._41 == b._41 && a._42 == b._42 && a._43 == b._43 && a._44 == b._44;
 }
 
 #define ASSERT_IMPLEMENTS_INTERFACE(obj, INTERFACE)                     \

@@ -321,7 +321,7 @@ namespace ExampleGallery
 
         private ICanvasImage CreateComposite()
         {
-            var compositeEffect = new CompositeEffect { Mode = CompositeEffectMode.SourceOver };
+            var compositeEffect = new CompositeEffect { Mode = CanvasComposite.SourceOver };
 
             var transformEffects = new List<Transform3DEffect>();
 
@@ -840,7 +840,7 @@ namespace ExampleGallery
             return new CompositeEffect
             {
                 Inputs = { softEdge, effect },
-                Mode = CompositeEffectMode.SourceIn 
+                Mode = CanvasComposite.SourceIn 
             };
         }
 
