@@ -53,6 +53,10 @@ namespace CodeGen.Test
         [DeploymentItem("../../../../winrt/lib/effects/generated", "codegen/effects/expected")]
         [DeploymentItem("../../../../tools/codegen/exe/apiref/effects", "codegen/effects/in/apiref/effects")]
         [DeploymentItem("Deployed Files/Settings.xml", "codegen/effects/in")]
+        [DeploymentItem("Deployed Files/D2DEffectAuthor.xml", "codegen/effects/in/apiref")]
+        [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/effects/in/apiref")]
+        [DeploymentItem("Deployed Files/D2DTypes2.xml", "codegen/effects/in/apiref")]
+        [DeploymentItem("Deployed Files/D2DTypes3.xml", "codegen/effects/in/apiref")]
         public void OutputEffectsIsSync()
         {
             //
