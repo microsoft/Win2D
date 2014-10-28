@@ -60,6 +60,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
+        virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler*, IWindow*) = 0;
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
@@ -74,25 +75,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
 #define CB_HELPER(NAME)                                                 \
-        template<typename T, typename METHOD>                           \
-        RegisteredEvent NAME(T* obj, METHOD method)                     \
+        template<typename T, typename METHOD, typename... EXTRA_ARGS>   \
+        RegisteredEvent NAME(T* obj, METHOD method, EXTRA_ARGS... extraArgs) \
         {                                                               \
-            return AddCallback(&ICanvasControlAdapter::NAME, obj, method); \
+            return AddCallback(&ICanvasControlAdapter::NAME, obj, method, extraArgs...); \
         }
 
         CB_HELPER(AddApplicationSuspendingCallback);
         CB_HELPER(AddCompositionRenderingCallback);
         CB_HELPER(AddSurfaceContentsLostCallback);
         CB_HELPER(AddDpiChangedCallback);
+        CB_HELPER(AddVisibilityChangedCallback);
 
 #undef CB_HELPER
 
-        template<typename DELEGATE, typename T, typename METHOD> 
-        RegisteredEvent AddCallback(RegisteredEvent (ICanvasControlAdapter::* addMethod)(DELEGATE*), T* obj, METHOD method)
+        template<typename DELEGATE, typename T, typename METHOD, typename... EXTRA_ARGS> 
+        RegisteredEvent AddCallback(RegisteredEvent (ICanvasControlAdapter::* addMethod)(DELEGATE*, EXTRA_ARGS...), T* obj, METHOD method, EXTRA_ARGS... extraArgs)
         {
             auto callback = Callback<DELEGATE>(obj, method);
             CheckMakeResult(callback);
-            return (this->*addMethod)(callback.Get());
+            return (this->*addMethod)(callback.Get(), extraArgs...);
         }
     };
 

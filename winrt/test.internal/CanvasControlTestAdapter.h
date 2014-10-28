@@ -133,6 +133,12 @@ public:
         ThrowIfFailed(DpiChangedEventSource->InvokeAll(nullptr, nullptr));
     }
 
+    virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* value, IWindow* window)
+    {
+        MockWindow* mockWindow = dynamic_cast<MockWindow*>(window);
+        return mockWindow->VisibilityChangedEventSource->Add(value);
+    }
+
     virtual ComPtr<IWindow> GetCurrentWindow() override
     {
         return m_mockWindow;

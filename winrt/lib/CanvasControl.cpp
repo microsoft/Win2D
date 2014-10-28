@@ -65,13 +65,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasImageSourceFactory> m_canvasImageSourceFactory;
         ComPtr<IActivationFactory> m_imageControlFactory;
         ComPtr<IDisplayInformationStatics> m_displayInformationStatics;
-        ComPtr<IDesignModeStatics> m_designModeStatics;
         ComPtr<IWindowStatics> m_windowStatics;
         ComPtr<ICoreApplication> m_coreApplication;
 
+        bool m_isDesignModeEnabled;
+
     public:
         CanvasControlAdapter()
+            : m_isDesignModeEnabled(QueryIsDesignModeEnabled())
         {
+            ComPtr<IDesignModeStatics> designModeStatics;
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_ApplicationModel_DesignMode).Get(),
+                &designModeStatics));
+
             auto& module = Module<InProc>::GetModule();
 
             ThrowIfFailed(GetActivationFactory(
@@ -100,10 +107,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(GetActivationFactory(
                 HStringReference(RuntimeClass_Windows_Graphics_Display_DisplayInformation).Get(), 
                 &m_displayInformationStatics));
-
-            ThrowIfFailed(GetActivationFactory(
-                HStringReference(RuntimeClass_Windows_ApplicationModel_DesignMode).Get(),
-                &m_designModeStatics));
 
             ThrowIfFailed(GetActivationFactory(
                 HStringReference(RuntimeClass_Windows_UI_Xaml_Window).Get(),
@@ -162,6 +165,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_compositionTargetStatics.Get(),
                 &ICompositionTargetStatics::add_SurfaceContentsLost,
                 &ICompositionTargetStatics::remove_SurfaceContentsLost,
+                handler);
+        }
+
+        virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* handler, IWindow* window) override
+        {
+            // Don't register for the visiblity changed event if we're in design
+            // mode.  Although we have been given a value IWindow, we'll crash
+            // if we attempt to call add_VisibilityChanged on it!
+            if (IsDesignModeEnabled())
+                return RegisteredEvent();
+
+            return RegisteredEvent(
+                window,
+                &IWindow::add_VisibilityChanged,
+                &IWindow::remove_VisibilityChanged,
                 handler);
         }
 
@@ -228,10 +246,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
     private:
-        bool IsDesignModeEnabled()
+        bool IsDesignModeEnabled() const
         {
+            return m_isDesignModeEnabled;
+        }
+
+        static bool QueryIsDesignModeEnabled()
+        {
+            ComPtr<IDesignModeStatics> designModeStatics;
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_ApplicationModel_DesignMode).Get(),
+                &designModeStatics));
+
             boolean enabled;
-            ThrowIfFailed(m_designModeStatics->get_DesignModeEnabled(&enabled));
+            ThrowIfFailed(designModeStatics->get_DesignModeEnabled(&enabled));
             return !!enabled;
         }
     };
@@ -323,15 +351,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_applicationSuspendingEventRegistration = m_adapter->AddApplicationSuspendingCallback(this, &CanvasControl::OnApplicationSuspending);
         m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &CanvasControl::OnDpiChanged);
         m_surfaceContentsLostEventRegistration = m_adapter->AddSurfaceContentsLostCallback(this, &CanvasControl::OnSurfaceContentsLost);
-
-        // Register for Window.Current.VisibilityChanged
-        auto onWindowVisibilityChanged = Callback<IWindowVisibilityChangedEventHandler>(this, &CanvasControl::OnWindowVisibilityChanged);
-        CheckMakeResult(onWindowVisibilityChanged);
-        m_windowVisibilityChangedEventRegistration = RegisteredEvent(
-            m_window.Get(),
-            &IWindow::add_VisibilityChanged,
-            &IWindow::remove_VisibilityChanged,
-            onWindowVisibilityChanged.Get());
+        m_windowVisibilityChangedEventRegistration = m_adapter->AddVisibilityChangedCallback(this, &CanvasControl::OnWindowVisibilityChanged, m_window.Get());
     }
 
     template<typename T, typename DELEGATE, typename HANDLER>
