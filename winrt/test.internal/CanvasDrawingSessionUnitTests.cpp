@@ -329,42 +329,40 @@ public:
 
     class BitmapFixtureWithDrawImageVerification : public BitmapFixture
     {
+        CallCounter m_drawImageCallCounter;
+
     public:
-        bool DrawImageCalled;
 
         BitmapFixtureWithDrawImageVerification(
             Rect const& sourceRect,
             CanvasImageInterpolation interpolation = CanvasImageInterpolation::Linear,
             CanvasComposite composite = CanvasComposite::SourceOver)
+                : m_drawImageCallCounter(L"DrawImage")
             {
+                m_drawImageCallCounter.SetExpectedCalls(1);
+
                 D2D1_RECT_F expectedSourceRect = ToD2DRect(sourceRect);
                 D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
                 D2D1_COMPOSITE_MODE expectedComposite = static_cast<D2D1_COMPOSITE_MODE>(composite);
-                DrawImageCalled = false;
 
                 DeviceContext->MockDrawImage =
                     [expectedSourceRect, expectedInterpolation, expectedComposite, this](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
                     {
-                        Assert::IsFalse(DrawImageCalled);
                         Assert::IsNotNull(image);
                         Assert::AreEqual(Image.Get(), image);
                         Assert::AreEqual(expectedSourceRect, *imageRectangle);
                         Assert::AreEqual(expectedInterpolation, interpolationMode);
                         Assert::AreEqual(expectedComposite, compositeMode);
-                        DrawImageCalled = true;
+                        m_drawImageCallCounter.WasCalled();
                     };
             }
-
-        ~BitmapFixtureWithDrawImageVerification()
-        {
-            Assert::IsTrue(DrawImageCalled);
-        }
     };
 
     class BitmapFixtureWithDrawBitmapVerification : public BitmapFixture
     {
+        CallCounter m_drawBitmapCallCounter;
+
     public:
-        bool DrawBitmapCalled;
 
         BitmapFixtureWithDrawBitmapVerification(
             Rect const& destRect,
@@ -372,7 +370,10 @@ public:
             float opacity = 1.0f,
             CanvasImageInterpolation interpolation = CanvasImageInterpolation::Linear,
             Matrix4x4* perspective = nullptr)
+                : m_drawBitmapCallCounter(L"DrawBitmap")
         {
+            m_drawBitmapCallCounter.SetExpectedCalls(1);
+
             D2D1_RECT_F expectedDestRect = ToD2DRect(destRect);
 
             D2D1_RECT_F expectedSourceRect;
@@ -380,7 +381,6 @@ public:
             bool expectSourceRect = sourceRect != nullptr;
 
             D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
-            DrawBitmapCalled = false;
 
             D2D1_MATRIX_4X4_F expectedPerspective;
             if (perspective) expectedPerspective = *(ReinterpretAs<D2D1_MATRIX_4X4_F*>(perspective));
@@ -389,7 +389,8 @@ public:
             DeviceContext->MockDrawBitmap =
                 [expectedDestRect, expectSourceRect, expectedSourceRect, expectedInterpolation, expectPerspective, expectedPerspective, this](ID2D1Bitmap* bitmap, const D2D1_RECT_F* destRect, FLOAT opacity, D2D1_INTERPOLATION_MODE interpolation, const D2D1_RECT_F* sourceRect, const D2D1_MATRIX_4X4_F* perspective)
                 {
-                    Assert::IsFalse(DrawBitmapCalled);
+                    m_drawBitmapCallCounter.WasCalled();
+
                     Assert::IsNotNull(bitmap);
                     auto image = As<ID2D1Image>(bitmap);
                     Assert::AreEqual(Image.Get(), image.Get());
@@ -416,14 +417,7 @@ public:
                     {
                         Assert::IsNull(perspective);
                     }
-
-                    DrawBitmapCalled = true;
                 };
-        }
-
-        ~BitmapFixtureWithDrawBitmapVerification()
-        {
-            Assert::IsTrue(DrawBitmapCalled);
         }
     };
 
@@ -439,46 +433,57 @@ public:
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect);
             ThrowIfFailed(f.DS->DrawImageWithSourceRect(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
             ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolation(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
             ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation, composite));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect);
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(),  123, 456, sourceRect));
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(), 123, 456, sourceRect));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(),  123, 456, sourceRect, interpolation));
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 123, 456, sourceRect, interpolation));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(),  123, 456, sourceRect, interpolation, composite));
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), 123, 456, sourceRect, interpolation, composite));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacity(f.Bitmap.Get(), destRect, sourceRect, opacity));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation, &perspective);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation, perspective));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRect(f.Bitmap.Get(), destRect, sourceRect));
+            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRect(f.Bitmap.Get(), destRect));
+            Expectations::Instance()->Validate();
         }
     }
 

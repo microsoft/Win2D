@@ -1182,4 +1182,31 @@ public:
             VerifySubresourceSlice<Color>(f.GetRenderTarget(i), sliceDimension, 1);
         }
     }
+
+    TEST_METHOD(CanavasBitmap_CopyFromBitmap_MistmachingDevices)
+    {
+        //
+        // This verifies that bitmaps used with CopyFromBitmap must belong to
+        // the same device. This is validated by D2D. Still, Win2D should
+        // not do anything to interfere with this behavior or cause
+        // ungraceful errors.
+        //
+        auto canvasDevice0 = ref new CanvasDevice();
+        auto bitmap0 = ref new CanvasRenderTarget(canvasDevice0, 1, 1);
+
+        auto canvasDevice1 = ref new CanvasDevice();
+        auto bitmap1 = ref new CanvasRenderTarget(canvasDevice1, 1, 1);
+
+        Assert::ExpectException<Platform::COMException^>([&] { bitmap0->CopyFromBitmap(bitmap1); });        
+    }
+
+    TEST_METHOD(CanavasBitmap_CopyFromBitmap_SameBitmap)
+    {
+        //
+        // This is validated by D2D. Ensure the expected error occurs.
+        //
+        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+
+        Assert::ExpectException<Platform::COMException^>([&] { bitmap->CopyFromBitmap(bitmap); });
+    }
 };

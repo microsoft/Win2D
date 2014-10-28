@@ -299,6 +299,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return d2dRect;
     }
 
+    inline D2D1_POINT_2U ToD2DPointU(int32_t x, int32_t y)
+    {
+        if (x < 0) ThrowHR(E_INVALIDARG);
+        if (y < 0) ThrowHR(E_INVALIDARG);
+
+        return D2D1::Point2U(x, y);
+    }
+
     inline D2D1_ROUNDED_RECT ToD2DRoundedRect(ABI::Windows::Foundation::Rect const& rect, float rx, float ry)
     {
         return D2D1_ROUNDED_RECT{ ToD2DRect(rect), rx, ry };

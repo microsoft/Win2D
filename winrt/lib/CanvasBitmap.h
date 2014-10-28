@@ -205,6 +205,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         uint32_t valueCount,
         Color *valueElements);
 
+    HRESULT CopyFromBitmapImpl(
+        ICanvasBitmap* to,
+        ICanvasBitmap* from,
+        int32_t* destX = nullptr,
+        int32_t* destY = nullptr,
+        int32_t* sourceRectLeft = nullptr,
+        int32_t* sourceRectTop = nullptr,
+        int32_t* sourceRectWidth = nullptr,
+        int32_t* sourceRectHeight = nullptr);
+
     struct CanvasBitmapTraits
     {
         typedef ID2D1Bitmap1 resource_t;
@@ -552,6 +562,46 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                     *bounds = GetImageBoundsImpl(this, drawingSession, transform);
                 });
+        }
+
+        HRESULT STDMETHODCALLTYPE CopyFromBitmap(
+            ICanvasBitmap* otherBitmap)
+        {
+            return CopyFromBitmapImpl(
+                this,
+                otherBitmap);
+        }
+
+        HRESULT STDMETHODCALLTYPE CopyFromBitmapWithDestPoint(
+            ICanvasBitmap* otherBitmap,
+            int32_t destX,
+            int32_t destY)
+        {
+            return CopyFromBitmapImpl(
+                this,
+                otherBitmap,
+                &destX,
+                &destY);
+        }
+
+        HRESULT STDMETHODCALLTYPE CopyFromBitmapWithDestPointAndSourceRect(
+            ICanvasBitmap* otherBitmap,
+            int32_t destX,
+            int32_t destY,
+            int32_t sourceRectLeft,
+            int32_t sourceRectTop,
+            int32_t sourceRectWidth,
+            int32_t sourceRectHeight)
+        {      
+            return CopyFromBitmapImpl(
+                this, 
+                otherBitmap, 
+                &destX, 
+                &destY, 
+                &sourceRectLeft, 
+                &sourceRectTop, 
+                &sourceRectWidth, 
+                &sourceRectHeight);
         }
 
     private:

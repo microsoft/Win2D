@@ -21,6 +21,7 @@ namespace canvas
     public:
         std::function<void(unsigned int* width, unsigned int* height)> MockGetPixelSize;
         std::function<void(float* width, float* height)> MockGetSize;
+        std::function<HRESULT(CONST D2D1_POINT_2U*, ID2D1Bitmap *bitmap, CONST D2D1_RECT_U*)> MockCopyFromBitmap;
 
         //
         // ID2D1Bitmap1
@@ -117,8 +118,13 @@ namespace canvas
             ID2D1Bitmap *bitmap,
             CONST D2D1_RECT_U *sourceRect)
         {
-            Assert::Fail(L"Unexpected call to CopyFromBitmap");
-            return E_NOTIMPL;
+            if (!MockCopyFromBitmap)
+            {
+                Assert::Fail(L"Unexpected call to CopyFromBitmap");
+                return E_NOTIMPL;
+            }
+
+            return MockCopyFromBitmap(destinationPoint, bitmap, sourceRect);
         }
 
         STDMETHOD(CopyFromRenderTarget)(

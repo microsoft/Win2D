@@ -267,6 +267,32 @@ namespace Microsoft
                 return buf;
             }
 
+            template<>
+            static inline std::wstring ToString<D2D1_POINT_2U>(D2D1_POINT_2U const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_POINT_2U{X=%f,Y=%f}",
+                    value.x, value.y));
+
+                return buf;
+            }
+
+            template<>
+            static inline std::wstring ToString<D2D1_RECT_U>(D2D1_RECT_U const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_RECT_U{l=%f,t=%f,r=%f,b=%f}",
+                    value.left, value.top, value.right, value.bottom));
+
+                return buf;
+            }
+
             ENUM_TO_STRING(CanvasCapStyle)
             {
                 ENUM_VALUE(CanvasCapStyle::Flat);
@@ -779,6 +805,11 @@ inline bool operator==(D2D1_MATRIX_4X4_F const& a, D2D1_MATRIX_4X4_F const& b)
         a._21 == b._21 && a._22 == b._22 && a._23 == b._23 && a._24 == b._24 &&
         a._31 == b._31 && a._32 == b._32 && a._33 == b._33 && a._34 == b._34 &&
         a._41 == b._41 && a._42 == b._42 && a._43 == b._43 && a._44 == b._44;
+}
+
+inline bool operator==(D2D1_POINT_2U const& a, D2D1_POINT_2U const& b)
+{
+    return a.x == b.x && a.y == b.y;
 }
 
 #define ASSERT_IMPLEMENTS_INTERFACE(obj, INTERFACE)                     \

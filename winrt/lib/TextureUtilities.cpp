@@ -69,7 +69,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // 
         // This class copies only the requested subrectangle, not the
-        // whole texture, for interest of a small perf gain.
+        // whole texture, in the interest of a small perf gain.
         // The copied area is located at (0,0).
         //
         if (m_mapType == D3D11_MAP_READ)

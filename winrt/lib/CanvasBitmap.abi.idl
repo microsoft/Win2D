@@ -140,6 +140,26 @@ namespace Microsoft.Graphics.Canvas
             [in] INT32 top,
             [in] INT32 width,
             [in] INT32 height);
+
+        [overload("CopyFromBitmap")]
+        HRESULT CopyFromBitmap(
+            [in] CanvasBitmap* otherBitmap);
+
+        [overload("CopyFromBitmap")]
+        HRESULT CopyFromBitmapWithDestPoint(
+            [in] CanvasBitmap* otherBitmap,
+            [in] INT32 destX,
+            [in] INT32 destY);
+
+        [overload("CopyFromBitmap")]
+        HRESULT CopyFromBitmapWithDestPointAndSourceRect(
+            [in] CanvasBitmap* otherBitmap,
+            [in] INT32 destX,
+            [in] INT32 destY,
+            [in] INT32 sourceRectLeft,
+            [in] INT32 sourceRectTop,
+            [in] INT32 sourceRectWidth,
+            [in] INT32 sourceRectHeight);
     };
 
     [version(VERSION), uuid(C8948DEA-A41D-4CC2-AF9A-FDDE01B606DC), exclusiveto(CanvasBitmap)]

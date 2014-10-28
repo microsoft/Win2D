@@ -738,5 +738,54 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+
+    HRESULT CopyFromBitmapImpl(
+        ICanvasBitmap* to,
+        ICanvasBitmap* from,
+        int32_t* destX,
+        int32_t* destY,
+        int32_t* sourceRectLeft,
+        int32_t* sourceRectTop,
+        int32_t* sourceRectWidth,
+        int32_t* sourceRectHeight)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                assert(to);
+                CheckInPointer(from);
+
+                auto toBitmapInternal = As<ICanvasBitmapInternal>(to);
+                auto toD2dBitmap = toBitmapInternal->GetD2DBitmap();
+
+                auto fromBitmapInternal = As<ICanvasBitmapInternal>(from);
+                auto fromD2dBitmap = fromBitmapInternal->GetD2DBitmap();
+
+                bool useDestPt = false;
+                D2D1_POINT_2U destPoint;                
+                if (destX)
+                {
+                    assert(destY);
+                    useDestPt = true;
+                    destPoint = ToD2DPointU(*destX, *destY);
+                }
+
+                bool useSourceRect = false;
+                D2D1_RECT_U sourceRect;
+                if (sourceRectLeft)
+                {
+                    assert(sourceRectTop && sourceRectWidth && sourceRectHeight && useDestPt);
+                    useSourceRect = true;
+                    sourceRect = ToD2DRectU(*sourceRectLeft, *sourceRectTop, *sourceRectWidth, *sourceRectHeight);
+                }                
+
+                ThrowIfFailed(toD2dBitmap->CopyFromBitmap(
+                    useDestPt? &destPoint : nullptr,
+                    fromD2dBitmap.Get(),
+                    useSourceRect? &sourceRect : nullptr));
+            });
+
+    }
+
     ActivatableClassWithFactory(CanvasBitmap, CanvasBitmapFactory);
 }}}}
