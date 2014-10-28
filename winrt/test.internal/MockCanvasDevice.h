@@ -53,13 +53,8 @@ namespace canvas
         std::function<ComPtr<ID2D1RadialGradientBrush>(
             ID2D1GradientStopCollection1* stopCollection)> MockCreateRadialGradientBrush;
 
-        CallCounter TrimMethod;
+        CALL_COUNTER(TrimMethod);
 
-        MockCanvasDevice()
-            : TrimMethod(L"Trim")
-        {
-        }
-        
         //
         // ICanvasDevice
         //

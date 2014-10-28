@@ -22,14 +22,75 @@
 // surprising errors to be reported.  Instead, an explicit call has to be added
 // to the end of a test method.
 //
+//    CALL_COUNTER(TestCounter);
+//
 //    TEST_METHOD(MyTest)
 //    {
-//        CallCounter counter(L"TestCounter");
-//        counter.SetExpectedCalls(1);
+//        TestCounter.SetExpectedCalls(1);
 //        Expectations::Instance()->Validate();
 //    }
 //
 //
+
+//
+// CALL_COUNTER defines a member variable that can be used to count how many
+// times a method is called. eg:
+//
+// class SomeClass
+// {
+// public:
+//     CALL_COUNTER(FooMethod);
+//
+//     void Foo() { FooMethod.WasCalled(); }
+// }
+//
+// TEST_METHOD(MyTest)
+// {
+//     SomeClass c;
+//     c.FooMethod.SetExpectedCalls(1);
+//     Expectations::Instance()->Validate();
+// }
+//
+// MyTest will fail because "FooMethod" was not called.
+//
+#define CALL_COUNTER(NAME)                                  \
+    struct CALL_COUNTER_TRAITS(NAME)                        \
+    {                                                       \
+        static const wchar_t* GetName() { return L#NAME; }  \
+    };                                                      \
+                                                            \
+    mutable CallCounter<CALL_COUNTER_TRAITS(NAME)> NAME;
+
+//
+// CALL_COUNTER_WITH_MOCK defines a member variable that can be used to count
+// calls to a method and mock it as well.  eg.
+//
+// class SomeClass
+// {
+// public:
+//     CALL_COUNTER_WITH_MOCK(BarMethod, HRESULT(int));
+//
+//     IFACEMETHODIMP Bar(int value) { return BarMethod.WasCalled(value); }
+// }
+//
+// TEST_METHOD(MyTest)
+// {
+//     SomeClass c;
+//     c.BarMethod.SetExpectedCalls(1, [](int v) { Assert::AreEqual(1, v); return S_OK; });
+//     c.Bar(2);
+//     Expectations::Instance()->Validate();
+// }
+//
+// MyTest will fail because Bar was called with 2 rather than 1.
+//
+#define CALL_COUNTER_WITH_MOCK(NAME, FN)                        \
+    struct CALL_COUNTER_TRAITS(NAME)                            \
+    {                                                           \
+        static const wchar_t* GetName() { return L#NAME; }      \
+    };                                                          \
+                                                                \
+    mutable CallCounterWithMock<CALL_COUNTER_TRAITS(NAME), FN> NAME;
+
 
 
 //
@@ -45,8 +106,8 @@ public:
     // Expectation is expected to be stored in a shared_ptr, therefore we don't
     // want to allow copying or reassignment.
     Expectation(const Expectation&) = delete;
-    Expectation& operator=(const Expectation&) = delete;
     Expectation(Expectation&&) = delete;
+    Expectation& operator=(const Expectation&) = delete;
     Expectation& operator=(Expectation&&) = delete;
 };
 
@@ -106,7 +167,7 @@ private:
 
 //
 // This counts how many times a method is called.  This is not intended to be
-// used directly -- use CallCounter instead.
+// used directly -- use CALL_COUNTER instead.
 //
 class CallCounterExpectation : public Expectation
 {
@@ -162,14 +223,44 @@ public:
     }
 };
 
+
+//
+// Helper used to generate the name of the traits class that's used to provide a
+// name without needing to explicitly pass it to the constructor.
+//
+#define CALL_COUNTER_TRAITS(NAME) CallCounter_##NAME##_Traits
+
+
+//
+// Helper object that catches when CallCounter is used without an explicit
+// traits class to produce a friendlyish error message.
+//
+struct DefaultCallCounterTraits
+{
+    template<typename T = int>  // template parameter so assert only fires if this method actually called
+    static const wchar_t* GetName()
+    {
+        static_assert(false, "Use CALL_COUNTER or CALL_COUNTER_WITH_MOCK to get a default-constructable CallCounter.  Otherwise pass the name to the constructor");
+        return nullptr;
+    }
+};
+
 //
 // CallCounter can be used to track how many times something is called.
 //
+// Use the CALL_COUNTER macro to create one.
+//
+template<typename TRAITS = DefaultCallCounterTraits>
 class CallCounter
 {
     std::shared_ptr<CallCounterExpectation> m_expectation;
 
 public:
+    CallCounter()
+        : CallCounter(TRAITS::GetName())
+    {
+    }
+
     CallCounter(std::wstring name)
         : m_expectation(std::make_shared<CallCounterExpectation>(name))
     {
@@ -202,9 +293,79 @@ public:
     {
         return m_expectation->Message(msg);
     }
-
 };
 
+
+//
+// 
+//
+
+template<typename TRAITS, typename FN>
+class CallCounterWithMock : public CallCounter<TRAITS>
+{
+    std::function<FN> m_mock;
+
+public:
+    void AllowAnyCall(std::function<FN> mock = nullptr)
+    {
+        CallCounter::AllowAnyCall();
+        m_mock = mock;
+    }
+
+    template<typename T>
+    void AllowAnyCallAlwaysCopyValueToParam(ComPtr<T> value)
+    {
+        CallCounter::AllowAnyCall();
+        m_mock = [value](std::function<FN>::argument_type arg)
+            {
+                // value.CopyTo returns an HRESULT.  However, the method we're
+                // mocking may have a result_type of void.  This little dance
+                // through Return() allows us to 'return' a void 'value'.
+                return Return<std::function<FN>::result_type>(value.CopyTo(arg));
+            };
+    }
+
+    void SetExpectedCalls(int value, std::function<FN> mock = nullptr)
+    {
+        CallCounter::SetExpectedCalls(value);
+        m_mock = mock;
+    }
+
+    template<typename... ARGS>
+    auto WasCalled(ARGS... args) -> decltype(m_mock(args...))
+    {
+        CallCounter::WasCalled();
+        if (m_mock)
+            return m_mock(args...);
+        else
+            return MakeDefaultReturnValue<std::function<FN>::result_type>();
+    }
+
+private:
+    template<typename RET>
+    static RET MakeDefaultReturnValue()
+    {
+        return RET{};
+    }
+    
+    template<>
+    static void MakeDefaultReturnValue()
+    {
+    }
+
+    template<typename RET, typename T>
+    static typename std::enable_if<!std::is_void<RET>::value, RET>::type Return(T value)
+    {
+        return value;
+    }
+
+    template<typename RET, typename T>
+    static typename std::enable_if<std::is_void<RET>::value, RET>::type Return(T value)
+    {
+    }
+    
+
+};
 
 
 //
@@ -231,7 +392,7 @@ enum class ExpectedEventParams
 template<typename EventHandlerType>
 class MockEventHandler
 {
-    CallCounter m_callCounter;
+    CallCounter<> m_callCounter;
     ComPtr<EventHandlerType> m_callback;
     ExpectedEventParams m_expectedParams;
 
@@ -306,9 +467,11 @@ class MockEventSource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnkn
     EventSource<DELEGATE> m_eventList;
 
 public:
-    CallCounter AddMethod;
-    CallCounter RemoveMethod;
+    struct Empty{};
 
+    CallCounter<Empty> AddMethod;
+    CallCounter<Empty> RemoveMethod;
+    
     MockEventSource(std::wstring name)
         : AddMethod(name + L"Add")
         , RemoveMethod(name + L"Remove")

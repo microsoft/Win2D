@@ -191,7 +191,7 @@ public:
 
     class CopyFromBitmapFixture
     {
-        CallCounter m_copyFromBitmapCallCounter;
+        CALL_COUNTER(CopyFromBitmapMethod);
 
     public:
         ComPtr<CanvasBitmap> DestBitmap;
@@ -206,11 +206,10 @@ public:
             int32_t* sourceRectTop = nullptr,
             int32_t* sourceRectWidth = nullptr,
             int32_t* sourceRectHeight = nullptr)
-            : m_copyFromBitmapCallCounter(L"CopyFromBitmap")
         {
             auto canvasDevice = Make<StubCanvasDevice>();
 
-            m_copyFromBitmapCallCounter.SetExpectedCalls(1);
+            CopyFromBitmapMethod.SetExpectedCalls(1);
 
             auto sourceD2DBitmap = Make<StubD2DBitmap>();
             canvasDevice->MockCreateBitmapFromWicResource =
@@ -246,7 +245,7 @@ public:
             destD2DBitmap->MockCopyFromBitmap =
                 [this, expectDestPoint, expectedDestPoint, sourceD2DBitmap, expectSourceRect, expectedSourceRect](CONST D2D1_POINT_2U* destinationPoint, ID2D1Bitmap *bitmap, CONST D2D1_RECT_U* sourceRectangle)
                 {
-                    m_copyFromBitmapCallCounter.WasCalled();
+                    CopyFromBitmapMethod.WasCalled();
 
                     if (expectDestPoint)
                     {

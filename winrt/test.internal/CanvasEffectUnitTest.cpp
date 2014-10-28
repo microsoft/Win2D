@@ -154,55 +154,44 @@ public:
         ComPtr<StubD2DDevice> stubDevice = Make<StubD2DDevice>();
         ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
 
-        deviceContext->MockGetDevice =
-            [&](ID2D1Device** device)
-        {
-            ThrowIfFailed(stubDevice.CopyTo(device));
-        };
-
-        deviceContext->MockDrawImage =
-            [&](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
-        {
-        };
+        deviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(stubDevice);
+        deviceContext->DrawImageMethod.AllowAnyCall();
 
         bool setInputCalled = false;
         bool setInputCountCalled = false;
         bool setValueCalled = false;
-        bool createEffectCalled = false;
-        deviceContext->MockCreateEffect =
-            [&](ID2D1Effect** effect)
-        {
-            Assert::IsFalse(createEffectCalled);
-            createEffectCalled = true;
 
-            ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
-            mockEffect.CopyTo(effect);
-
-            mockEffect->MockSetInput =
-                [&]
+        deviceContext->CreateEffectMethod.SetExpectedCalls(1,
+            [&](IID const&, ID2D1Effect** effect)
             {
-                Assert::IsFalse(setInputCalled);
-                setInputCalled = true;
-            };
+                ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
+                mockEffect.CopyTo(effect);
 
-            mockEffect->MockSetInputCount =
-                [&]
-            {
-                Assert::IsFalse(setInputCountCalled);
-                setInputCountCalled = true;
+                mockEffect->MockSetInput =
+                    [&]
+                    {
+                        Assert::IsFalse(setInputCalled);
+                        setInputCalled = true;
+                    };
+
+                mockEffect->MockSetInputCount =
+                    [&]
+                    {
+                        Assert::IsFalse(setInputCountCalled);
+                        setInputCountCalled = true;
+                        return S_OK;
+                    };
+
+                mockEffect->MockSetValue =
+                    [&]
+                    {
+                        Assert::IsFalse(setValueCalled);
+                        setValueCalled = true;
+                        return S_OK;
+                    };
+
                 return S_OK;
-            };
-
-            mockEffect->MockSetValue =
-                [&]
-            {
-                Assert::IsFalse(setValueCalled);
-                setValueCalled = true;
-                return S_OK;
-            };
-
-            return S_OK;
-        };
+            });
 
         auto drawingSession = drawingSessionManager->Create(deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
 
@@ -212,19 +201,13 @@ public:
         Assert::IsTrue(setInputCalled);
         Assert::IsTrue(setInputCountCalled);
         Assert::IsTrue(setValueCalled);
-        Assert::IsTrue(createEffectCalled);
 
         // Drawing on a second device context that shares the same device should NOT rerealize the effect.
         ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext2 = Make<StubD2DDeviceContextWithGetFactory>();
 
-        deviceContext2->MockGetDevice = deviceContext->MockGetDevice;
-        deviceContext2->MockDrawImage = deviceContext->MockDrawImage;
-
-        deviceContext2->MockCreateEffect = [](ID2D1Effect**)
-        {
-            Assert::Fail(L"Effect is already realized - this should not get called.");
-            return E_UNEXPECTED;
-        };
+        deviceContext2->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(stubDevice);
+        deviceContext2->DrawImageMethod.AllowAnyCall();
+        deviceContext2->CreateEffectMethod.SetExpectedCalls(0);
 
         auto drawingSession2 = drawingSessionManager->Create(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
 
@@ -248,6 +231,8 @@ public:
 
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
+
+        Expectations::Instance()->Validate();
     }
 
     class InvalidEffectInputType : public RuntimeClass<IEffectInput>
@@ -263,15 +248,12 @@ public:
         auto mockEffect = Make<MockD2DEffect>();
         auto stubDevice = Make<StubD2DDevice>();
 
-        deviceContext->MockGetDevice = [&](ID2D1Device** device)
-        {
-            ThrowIfFailed(stubDevice.CopyTo(device));
-        };
-
-        deviceContext->MockCreateEffect = [&](ID2D1Effect** effect)
-        { 
-            return mockEffect.CopyTo(effect);
-        };
+        deviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(stubDevice);
+        deviceContext->CreateEffectMethod.AllowAnyCall(
+            [&](IID const&, ID2D1Effect** effect)
+            {
+                return mockEffect.CopyTo(effect);
+            });
 
         mockEffect->MockSetInputCount = [&]
         {
@@ -291,6 +273,8 @@ public:
         Assert::AreEqual(E_NOINTERFACE, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
 
         ValidateStoredErrorState(E_NOINTERFACE, L"Effect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.");
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasEffect_CyclicGraph)
@@ -301,15 +285,13 @@ public:
         auto mockEffect = Make<MockD2DEffect>();
         auto stubDevice = Make<StubD2DDevice>();
 
-        deviceContext->MockGetDevice = [&](ID2D1Device** device)
-        {
-            ThrowIfFailed(stubDevice.CopyTo(device));
-        };
+        deviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(stubDevice);
 
-        deviceContext->MockCreateEffect = [&](ID2D1Effect** effect)
-        {
-            return mockEffect.CopyTo(effect);
-        };
+        deviceContext->CreateEffectMethod.AllowAnyCall(
+            [&](IID const&, ID2D1Effect** effect)
+            {
+                return mockEffect.CopyTo(effect);
+            });
 
         bool setInputCountCalled = false;
 
@@ -325,6 +307,8 @@ public:
         testEffect->put_Source(testEffect.Get());
 
         Assert::AreEqual(D2DERR_CYCLIC_GRAPH, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasEffect_GetBounds_NullArg)
@@ -339,6 +323,8 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(drawingSession.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(nullptr, matrix, &bounds));
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
+
+        Expectations::Instance()->Validate();
     }
 
     class MockEffectThatCountsCalls : public MockD2DEffect
@@ -378,22 +364,18 @@ public:
         auto stubBitmap = CreateStubCanvasBitmap();
 
         std::vector<ComPtr<MockEffectThatCountsCalls>> mockEffects;
+        auto createCountingEffect =
+            [&](IID const&, ID2D1Effect** effect)
+            {
+                mockEffects.push_back(Make<MockEffectThatCountsCalls>());
+                return mockEffects.back().CopyTo(effect);
+            };
+
         std::vector<ComPtr<TestEffect>> testEffects;
 
-        deviceContext->MockGetDevice = [&](ID2D1Device** device)
-        {
-            ThrowIfFailed(stubDevice.CopyTo(device));
-        };
-
-        deviceContext->MockCreateEffect = [&](ID2D1Effect** effect)
-        {
-            mockEffects.push_back(Make<MockEffectThatCountsCalls>());
-            return mockEffects.back().CopyTo(effect);
-        };
-
-        deviceContext->MockDrawImage = [&](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
-        {
-        };
+        deviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(stubDevice);
+        deviceContext->CreateEffectMethod.AllowAnyCall(createCountingEffect);        
+        deviceContext->DrawImageMethod.AllowAnyCall();
 
         // Create three effects, connected as each other's inputs.
         for (int i = 0; i < 3; i++)
@@ -460,13 +442,9 @@ public:
         auto drawingSession2 = drawingSessionManager->Create(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
         auto stubDevice2 = Make<StubD2DDevice>();
 
-        deviceContext2->MockGetDevice = [&](ID2D1Device** device)
-        {
-            ThrowIfFailed(stubDevice2.CopyTo(device));
-        };
-
-        deviceContext2->MockCreateEffect = deviceContext->MockCreateEffect;
-        deviceContext2->MockDrawImage = deviceContext->MockDrawImage;
+        deviceContext2->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(stubDevice2);
+        deviceContext2->CreateEffectMethod.AllowAnyCall(createCountingEffect);
+        deviceContext2->DrawImageMethod.AllowAnyCall();
 
         ThrowIfFailed(drawingSession2->DrawImage(testEffects[2].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 4, { 2, 2, 2, 1 }, { 2, 2, 2, 1 });
@@ -474,6 +452,8 @@ public:
         // Drawing the root effect back on the original device should notice that the third level effect needs to be re-realized.
         ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 5, { 2, 3, 2, 1, 1 }, { 2, 2, 2, 1, 1 });
+
+        Expectations::Instance()->Validate();
     }
 
     void CheckCallCount(std::vector<ComPtr<MockEffectThatCountsCalls>> const& mockEffects,

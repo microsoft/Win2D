@@ -384,19 +384,15 @@ TEST_CLASS(CanvasControlTests_Dpi)
         int m_lastImageSourceWidth;
         int m_lastImageSourceHeight;
         int m_imageSourceCount;
-        float m_lastDpiX;
-        float m_lastDpiY;
-        int m_numSetDpiCalls;
+        ComPtr<ID2D1DeviceContext> m_d2dDeviceContext; 
 
-        CanvasControlTestAdapter_VerifyDpi()
+        CanvasControlTestAdapter_VerifyDpi(ID2D1DeviceContext* d2dDeviceContext)
             : m_dpi(DEFAULT_DPI)
             , m_lastImageSourceWidth(0)
             , m_lastImageSourceHeight(0)
-            , m_lastDpiX(0)
-            , m_lastDpiY(0)
-            , m_numSetDpiCalls(0)
-            , m_mockD2DDeviceContext(Make<MockD2DDeviceContext>())
-            , m_imageSourceCount(0) {}
+            , m_d2dDeviceContext(d2dDeviceContext)
+            , m_imageSourceCount(0) 
+        {}
 
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
         {
@@ -404,40 +400,20 @@ TEST_CLASS(CanvasControlTests_Dpi)
             m_lastImageSourceHeight = height;
             m_imageSourceCount++;
             
-            m_mockD2DDeviceContext->MockSetDpi =
-                [&](float dpiX, float dpiY)
-                {
-                    m_lastDpiX = dpiX;
-                    m_lastDpiY = dpiY;
-                    m_numSetDpiCalls++;
-                };     
-
-            m_mockD2DDeviceContext->MockSetTransform =
-                [&](const D2D1_MATRIX_3X2_F* m)
-                {
-                };
-
             auto sisFactory = Make<MockSurfaceImageSourceFactory>();
             sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
                 [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
                 {
                     auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
                                         
-                    mockSurfaceImageSource->MockBeginDraw =
+                    mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
                         [&](RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset)
                         {
-                            ThrowIfFailed(m_mockD2DDeviceContext.CopyTo(iid, updateObject));
-                        };
+                            return m_d2dDeviceContext.CopyTo(iid, updateObject);
+                        });
 
-                    mockSurfaceImageSource->MockSetDevice =
-                        [&](IUnknown*)
-                        {
-                        };
-                                        
-                    mockSurfaceImageSource->MockEndDraw =
-                        [&]
-                        {
-                        };
+                    mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
+                    mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
 
                     return mockSurfaceImageSource;
                 };
@@ -460,14 +436,13 @@ TEST_CLASS(CanvasControlTests_Dpi)
         {
             return m_dpi;
         }
-
-    private:
-
-        ComPtr<MockD2DDeviceContext> m_mockD2DDeviceContext; 
     };
 
     TEST_METHOD(CanvasControl_Dpi)
     {
+        auto deviceContext = Make<MockD2DDeviceContext>();
+        deviceContext->SetTransformMethod.AllowAnyCall();
+
         float dpiCases[] = {
             50, 
             DEFAULT_DPI - (DEFAULT_DPI * FLT_EPSILON),
@@ -475,15 +450,13 @@ TEST_CLASS(CanvasControlTests_Dpi)
             DEFAULT_DPI + (DEFAULT_DPI * FLT_EPSILON),
             200};
 
-        for (size_t i = 0; i < _countof(dpiCases); ++i)
+        for (auto dpiCase : dpiCases)
         {
-            std::shared_ptr<CanvasControlTestAdapter_VerifyDpi> adapter =
-                std::make_shared<CanvasControlTestAdapter_VerifyDpi>();
+            auto adapter = std::make_shared<CanvasControlTestAdapter_VerifyDpi>(deviceContext.Get());
 
-            int expectedNumSetDpiCalls = 0;
             int expectedImageSourceCount = 0;
 
-            adapter->m_dpi = dpiCases[i];
+            adapter->m_dpi = dpiCase;
 
             ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
             ComPtr<StubUserControl> userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
@@ -500,6 +473,13 @@ TEST_CLASS(CanvasControlTests_Dpi)
             EventRegistrationToken drawEventToken;
             ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
 
+            deviceContext->SetDpiMethod.SetExpectedCalls(1,
+                [&](float dpiX, float dpiY)
+                {
+                    Assert::AreEqual(dpiCase, dpiX);
+                    Assert::AreEqual(dpiCase, dpiY);
+                });
+
             canvasControl->Invalidate();
             adapter->RaiseCompositionRenderingEvent();
 
@@ -507,7 +487,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
 
             // Verify the backing store size is correct
-            const float dpiScale = dpiCases[i] / DEFAULT_DPI;
+            const float dpiScale = dpiCase / DEFAULT_DPI;
             float expectedBackingStoreDim = controlSize * dpiScale;
             float truncatedDimF = ceil(expectedBackingStoreDim);
             assert(truncatedDimF <= INT_MAX);
@@ -515,11 +495,6 @@ TEST_CLASS(CanvasControlTests_Dpi)
 
             Assert::AreEqual(truncatedDimI, adapter->m_lastImageSourceWidth);
             Assert::AreEqual(truncatedDimI, adapter->m_lastImageSourceHeight);
-
-            expectedNumSetDpiCalls++;
-            Assert::AreEqual(expectedNumSetDpiCalls, adapter->m_numSetDpiCalls);
-            Assert::AreEqual(dpiCases[i], adapter->m_lastDpiX);
-            Assert::AreEqual(dpiCases[i], adapter->m_lastDpiY);
 
             // Verify the public, device-independent size of the control.
             ComPtr<IFrameworkElement> controlAsFrameworkElement;
@@ -531,8 +506,15 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual<double>(verifyHeight, controlSize);
 
             // Raise a DpiChanged.
+            deviceContext->SetDpiMethod.SetExpectedCalls(1,
+                [](float dpiX, float dpiY)
+                {
+                    Assert::AreEqual(DEFAULT_DPI, dpiX);
+                    Assert::AreEqual(DEFAULT_DPI, dpiY);
+                });            
+
             adapter->m_dpi = DEFAULT_DPI;
-            bool expectResize = controlSize != ceil(controlSize * dpiCases[i] / DEFAULT_DPI);
+            bool expectResize = controlSize != ceil(controlSize * dpiCase / DEFAULT_DPI);
             adapter->RaiseDpiChangedEvent();
 
             // Here, verify that no recreation occurred yet. The backing store recreation
@@ -546,11 +528,6 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
             Assert::AreEqual(static_cast<int>(controlSize), adapter->m_lastImageSourceWidth);
             Assert::AreEqual(static_cast<int>(controlSize), adapter->m_lastImageSourceHeight);
-
-            expectedNumSetDpiCalls++;
-            Assert::AreEqual(expectedNumSetDpiCalls, adapter->m_numSetDpiCalls);
-            Assert::AreEqual(DEFAULT_DPI, adapter->m_lastDpiX);
-            Assert::AreEqual(DEFAULT_DPI, adapter->m_lastDpiY);
 
             // Verify the size of the control again.
             ThrowIfFailed(controlAsFrameworkElement->get_ActualWidth(&verifyWidth));

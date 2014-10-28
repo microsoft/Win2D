@@ -57,13 +57,14 @@ TEST_CLASS(RegisteredEventTests)
         r.Release();
     }
 
+    CALL_COUNTER(fn);
+
     TEST_METHOD(RegisteredEvent_WhenDestructed_CallsFunction)
     {
-        CallCounter fn(L"fn");
         fn.SetExpectedCalls(1);
 
         {
-            RegisteredEvent r([&fn]() { fn.WasCalled(); });
+            RegisteredEvent r([=]() { fn.WasCalled(); });
         }
 
         Expectations::Instance()->Validate();
@@ -71,11 +72,10 @@ TEST_CLASS(RegisteredEventTests)
 
     TEST_METHOD(RegisteredEvent_WhenReleased_CallsFunction)
     {
-        CallCounter fn(L"fn");
         fn.SetExpectedCalls(1);
 
         {
-            RegisteredEvent r([&fn]() { fn.WasCalled(); });
+            RegisteredEvent r([=]() { fn.WasCalled(); });
             r.Release();
             fn.SetExpectedCalls(0);
         }
@@ -85,11 +85,10 @@ TEST_CLASS(RegisteredEventTests)
 
     TEST_METHOD(RegisteredEvent_WhenDetached_DoesNotCallFunction)
     {
-        CallCounter fn(L"fn");
         fn.SetExpectedCalls(0);
 
         {
-            RegisteredEvent r([&fn]() { fn.WasCalled(); });
+            RegisteredEvent r([=]() { fn.WasCalled(); });
             r.Detach();
             r.Release();
         }
@@ -99,13 +98,12 @@ TEST_CLASS(RegisteredEventTests)
 
     TEST_METHOD(RegisteredEvent_AddAndsRemovesHandler)
     {
-        CallCounter calls(L"event");
-        calls.SetExpectedCalls(1);
+        fn.SetExpectedCalls(1);
 
         auto s = Make<TestEventSource>();
 
         auto callback = Callback<IEventHandler<IInspectable*>>(
-            [&](IInspectable*, IInspectable*) { calls.WasCalled(); return S_OK; });
+            [&](IInspectable*, IInspectable*) { fn.WasCalled(); return S_OK; });
 
         auto r = RegisteredEvent(
             s.Get(),
@@ -117,7 +115,7 @@ TEST_CLASS(RegisteredEventTests)
 
         s->Raise();
 
-        calls.SetExpectedCalls(0);
+        fn.SetExpectedCalls(0);
 
         r.Release();        
         s->Raise();

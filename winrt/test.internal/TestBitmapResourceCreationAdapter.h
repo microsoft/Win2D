@@ -67,19 +67,14 @@ inline ComPtr<ICanvasDrawingSession> CreateStubDrawingSession()
 {
     auto d2dDeviceContext = Make<MockD2DDeviceContext>();
 
-    d2dDeviceContext->MockGetDevice =
-        [&](ID2D1Device** device)
-    {
-        ComPtr<StubD2DDevice> stubDevice = Make<StubD2DDevice>();
-        ThrowIfFailed(stubDevice.CopyTo(device));
-    };
+    d2dDeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(Make<StubD2DDevice>());
 
-    d2dDeviceContext->MockCreateEffect =
-        [&](ID2D1Effect** effect)
-    {
-        auto mockEffect = Make<MockD2DEffect>();
-        return mockEffect.CopyTo(effect);
-    };
+    d2dDeviceContext->CreateEffectMethod.AllowAnyCall(
+        [&](IID const&, ID2D1Effect** effect)
+        {
+            auto mockEffect = Make<MockD2DEffect>();
+            return mockEffect.CopyTo(effect);
+        });
 
     auto manager = std::make_shared<CanvasDrawingSessionManager>();
 

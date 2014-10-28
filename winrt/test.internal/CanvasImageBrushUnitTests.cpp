@@ -602,7 +602,7 @@ public:
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
             Make<StubD2DDeviceContextWithGetFactory>();
-        d2dDeviceContext->MockFillRectangle = [&](const D2D1_RECT_F* rect, ID2D1Brush* brush) {};
+        d2dDeviceContext->FillRectangleMethod.AllowAnyCall();
 
         ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
             f.m_canvasDevice.Get(),

@@ -43,40 +43,25 @@ public:
 
         auto d2dDeviceContext = Make<MockD2DDeviceContext>();
 
-        d2dDeviceContext->MockGetDevice =
-            [&](ID2D1Device** device)
-            {
-                ComPtr<StubD2DDevice> stubDevice = Make<StubD2DDevice>();
-                ThrowIfFailed(stubDevice.CopyTo(device));
-            };
+        d2dDeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(Make<StubD2DDevice>());
 
-        d2dDeviceContext->MockCreateEffect =
-            [&](ID2D1Effect** effect)
-            { 
-                auto mockEffect = Make<MockD2DEffect>();
-                return mockEffect.CopyTo(effect);
-            };
-
-        d2dDeviceContext->MockGetTransform =
+        d2dDeviceContext->GetTransformMethod.AllowAnyCall(
             [&](D2D1_MATRIX_3X2_F* matrix)
             {
                 *matrix = currentTransform;
-            };
+            });        
 
-        d2dDeviceContext->MockSetTransform =
+        d2dDeviceContext->SetTransformMethod.AllowAnyCall(
             [&](const D2D1_MATRIX_3X2_F* matrix)
             {
                 currentTransform = *matrix;
-            };
+            });
 
-        bool getImageWorldBoundsCalled = false;
-        d2dDeviceContext->MockGetImageWorldBounds =
+        d2dDeviceContext->GetImageWorldBoundsMethod.SetExpectedCalls(1,
             [&](ID2D1Image* image, D2D1_RECT_F* bounds)
-        {
-            Assert::IsFalse(getImageWorldBoundsCalled);
-            getImageWorldBoundsCalled = true;
-            return S_OK;
-        };
+            {
+                return S_OK;
+            });
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
 
@@ -91,7 +76,8 @@ public:
             DEFAULT_DPI);
         canvasBitmap->GetBounds(drawingSession.Get(), &bounds);
 
-        Assert::IsTrue(getImageWorldBoundsCalled);
         Assert::AreEqual(someTransform, currentTransform); 
+
+        Expectations::Instance()->Validate();
     }
 };

@@ -28,7 +28,7 @@ public:
     ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
-    CallCounter CreateCanvasImageSourceMethod;
+    CALL_COUNTER(CreateCanvasImageSourceMethod);
 
     CanvasControlTestAdapter()
         : m_mockWindow(Make<MockWindow>())
@@ -36,7 +36,6 @@ public:
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
         , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
-        , CreateCanvasImageSourceMethod(L"CreateCanvasImageSource")
     {
     }
 
@@ -96,11 +95,11 @@ public:
         };
 
         auto dsFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
-        dsFactory->MockCreate =
+        dsFactory->CreateMethod.AllowAnyCall(
             [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Rect const& updateRect, float dpi)
-        {
-            return Make<MockCanvasDrawingSession>();
-        };
+            {
+                return Make<MockCanvasDrawingSession>();
+            });
 
         ComPtr<ICanvasResourceCreator> resourceCreator;
         ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));

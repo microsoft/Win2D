@@ -24,54 +24,25 @@ namespace canvas
         ISurfaceImageSourceNativeWithD2D>
     {
     public:
-        std::function<void(IUnknown*)> MockSetDevice;
-        std::function<void(RECT const&,IID const&,void**,POINT*)> MockBeginDraw;
-        std::function<void()> MockEndDraw;
+        CALL_COUNTER_WITH_MOCK(SetDeviceMethod, HRESULT(IUnknown*));
+        CALL_COUNTER_WITH_MOCK(BeginDrawMethod, HRESULT(RECT const&, IID const&, void**, POINT*));
+        CALL_COUNTER(EndDrawMethod);
 
         // ISurfaceImageSourceNativeWithD2D
         IFACEMETHODIMP SetDevice(IUnknown* device) override 
         {
-            if (!MockSetDevice)
-            {
-                Assert::Fail(L"Unexpected call to SetDevice");
-                return E_NOTIMPL;
-            }
-
-            return ExceptionBoundary(
-                [&]
-                {
-                    MockSetDevice(device);
-                });
+            return SetDeviceMethod.WasCalled(device);
         }
 
         IFACEMETHODIMP BeginDraw(RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset) override 
         {
-            if (!MockBeginDraw)
-            {
-                Assert::Fail(L"Unexpected call to BeginDraw");
-                return E_NOTIMPL;
-            }
-
-            return ExceptionBoundary(
-                [&]
-                {
-                    MockBeginDraw(updateRect, iid, updateObject, offset);
-                });
+            return BeginDrawMethod.WasCalled(updateRect, iid, updateObject, offset);
         }
 
         IFACEMETHODIMP EndDraw() override 
         {
-            if (!MockEndDraw)
-            {
-                Assert::Fail(L"Unexpected call to EndDraw");
-                return E_NOTIMPL;
-            }
-
-            return ExceptionBoundary(
-                [&]
-                {
-                    MockEndDraw();
-                });
+            EndDrawMethod.WasCalled();
+            return S_OK;
         }
 
         IFACEMETHODIMP SuspendDraw() override 
