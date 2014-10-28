@@ -451,7 +451,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(m_adapter->GetLogicalDpi());
+        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(Color{}, m_adapter->GetLogicalDpi());
         ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 

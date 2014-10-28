@@ -26,6 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
         ICanvasDevice* owner,
         ISurfaceImageSourceNativeWithD2D* sisNative,
+        Color const& clearColor,
         Rect const& updateRect,
         float dpi) const
     {
@@ -34,6 +35,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1DeviceContext1> deviceContext;
         auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
             sisNative,
+            ToD2DColor(clearColor),
             ToRECT(updateRect),
             dpi,
             &deviceContext);
@@ -196,12 +198,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSource::CreateDrawingSession(
+        Color clearColor,
         ICanvasDrawingSession** drawingSession)
     {
         return ExceptionBoundary(
             [&]()
             {
-                auto ds = CreateDrawingSessionWithDpi(DEFAULT_DPI);
+                auto ds = CreateDrawingSessionWithDpi(clearColor, DEFAULT_DPI);
                 ThrowIfFailed(ds.CopyTo(drawingSession));
             });
     }
@@ -209,41 +212,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
+        Color clearColor,
         Rect updateRectangle,
         ICanvasDrawingSession** drawingSession)
     {
         return ExceptionBoundary(
             [&]()
             {
-                auto ds = CreateDrawingSessionWithUpdateRectangleAndDpi(updateRectangle, DEFAULT_DPI);
+                auto ds = CreateDrawingSessionWithUpdateRectangleAndDpi(clearColor, updateRectangle, DEFAULT_DPI);
                 ThrowIfFailed(ds.CopyTo(drawingSession));
             });
     }
 
 
     _Use_decl_annotations_
-    ComPtr<ICanvasDrawingSession> CanvasImageSource::CreateDrawingSessionWithDpi(float dpi)
+    ComPtr<ICanvasDrawingSession> CanvasImageSource::CreateDrawingSessionWithDpi(Color const& clearColor, float dpi)
     {
         Rect updateRectangle = {};
         updateRectangle.Width = static_cast<float>(m_widthInPixels);
         updateRectangle.Height = static_cast<float>(m_heightInPixels);
 
         return CreateDrawingSessionWithUpdateRectangleAndDpi(
+            clearColor,
             updateRectangle,
             dpi);
     }
 
 
     ComPtr<ICanvasDrawingSession> CanvasImageSource::CreateDrawingSessionWithUpdateRectangleAndDpi(
-        Rect updateRectangle,
+        Color const& clearColor,
+        Rect const& updateRectangle,
         float dpi)
     {
         ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
         ThrowIfFailed(GetComposableBase().As(&sisNative));
-        
+
         return m_drawingSessionFactory->Create(
             m_device.Get(),
             sisNative.Get(),
+            clearColor,
             updateRectangle,
             dpi);
     }

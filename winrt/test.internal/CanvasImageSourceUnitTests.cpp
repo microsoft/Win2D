@@ -215,196 +215,6 @@ public:
 
         Expectations::Instance()->Validate();
     }
-};
-
-TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
-{
-    ComPtr<StubCanvasDevice> m_canvasDevice;
-    ComPtr<MockSurfaceImageSource> m_surfaceImageSource;
-    ComPtr<StubSurfaceImageSourceFactory> m_surfaceImageSourceFactory;
-    std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> m_canvasImageSourceDrawingSessionFactory;
-    ComPtr<CanvasImageSource> m_canvasImageSource;
-    int m_imageWidth;
-    int m_imageHeight;
-
-public:
-    TEST_METHOD_INITIALIZE(Init)
-    {
-        m_canvasDevice = Make<StubCanvasDevice>();
-        m_surfaceImageSource = Make<MockSurfaceImageSource>();
-        m_surfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(m_surfaceImageSource.Get());
-        m_canvasImageSourceDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
-
-        m_surfaceImageSource->SetDeviceMethod.AllowAnyCall();
-
-        m_imageWidth = 123;
-        m_imageHeight = 456;
-
-        m_canvasImageSource = Make<CanvasImageSource>(
-            m_canvasDevice.Get(),
-            m_imageWidth,
-            m_imageHeight,
-            CanvasBackground::Transparent,
-            m_surfaceImageSourceFactory.Get(),
-            m_canvasImageSourceDrawingSessionFactory);
-
-        m_surfaceImageSource->SetDeviceMethod.SetExpectedCalls(0);
-    }
-
-    TEST_METHOD(CanvasImageSource_CreateDrawingSession_PassesEntireImage)
-    {
-        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
-            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Rect const& updateRect, float dpi)
-            {
-                Assert::AreEqual<float>(0, updateRect.X);
-                Assert::AreEqual<float>(0, updateRect.Y);
-                Assert::AreEqual<float>(static_cast<float>(m_imageWidth), updateRect.Width);
-                Assert::AreEqual<float>(static_cast<float>(m_imageHeight), updateRect.Height);
-                return Make<MockCanvasDrawingSession>();
-            });
-
-        ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(&drawingSession));
-        Assert::IsTrue(drawingSession);
-
-        Expectations::Instance()->Validate();
-    }
-
-    TEST_METHOD(CanvasImageSource_CreateDrawingSessionWithUpdateRegion_PassesSpecifiedUpdateRegion)
-    {
-        Rect expectedRect = {};
-        expectedRect.X = 1;
-        expectedRect.Y = 2;
-        expectedRect.Width = 3;
-        expectedRect.Height = 4;
-
-        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, 
-            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Rect const& updateRect, float dpi)
-            {
-                Assert::AreEqual(expectedRect.X, updateRect.X);
-                Assert::AreEqual(expectedRect.Y, updateRect.Y);
-                Assert::AreEqual(expectedRect.Width, updateRect.Width);
-                Assert::AreEqual(expectedRect.Height, updateRect.Height);
-                return Make<MockCanvasDrawingSession>();
-            });
-
-
-        ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedRect, &drawingSession));
-        Assert::IsTrue(drawingSession);
-
-        Expectations::Instance()->Validate();
-    }
-};
-
-TEST_CLASS(CanvasImageSourceDrawingSessionAdapterTests)
-{
-public:
-    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_BeginEndDraw)
-    {
-        auto mockDeviceContext = Make<MockD2DDeviceContext>();
-        auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();        
-        RECT expectedUpdateRect{ 1, 2, 3, 4 };
-        POINT expectedOffset{ 5, 6 };
-
-        mockSurfaceImageSource->BeginDrawMethod.SetExpectedCalls(1,
-            [&](RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset)
-            {
-                Assert::AreEqual(expectedUpdateRect, updateRect);
-                Assert::AreEqual(_uuidof(ID2D1DeviceContext), iid);
-
-                HRESULT hr = mockDeviceContext.CopyTo(iid, updateObject);
-                *offset = expectedOffset;
-                return hr;
-            });
-
-        mockDeviceContext->SetTransformMethod.SetExpectedCalls(1,
-            [&](const D2D1_MATRIX_3X2_F* m)
-            {
-                // We expect the transform to be set to just the offset
-                Assert::AreEqual(1.0f, m->_11);
-                Assert::AreEqual(0.0f, m->_12);
-                Assert::AreEqual(0.0f, m->_21);
-                Assert::AreEqual(1.0f, m->_22);
-                Assert::AreEqual(static_cast<float>(expectedOffset.x), m->_31);
-                Assert::AreEqual(static_cast<float>(expectedOffset.y), m->_32);
-            });
-
-        mockDeviceContext->SetDpiMethod.SetExpectedCalls(1,
-            [&](float dpiX, float dpiY)
-            {
-                Assert::AreEqual(DEFAULT_DPI, dpiX);
-                Assert::AreEqual(DEFAULT_DPI, dpiY);
-            });
-
-        ComPtr<ID2D1DeviceContext1> actualDeviceContext;
-        auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
-            mockSurfaceImageSource.Get(),
-            expectedUpdateRect,
-            DEFAULT_DPI,
-            &actualDeviceContext);
-
-        Assert::AreEqual<ID2D1DeviceContext1*>(mockDeviceContext.Get(), actualDeviceContext.Get());
-
-        Expectations::Instance()->Validate();
-        
-
-        mockSurfaceImageSource->EndDrawMethod.SetExpectedCalls(1);
-
-        adapter->EndDraw();
-
-        Expectations::Instance()->Validate();
-    }
-
-    struct DeviceContextWithRestrictedQI : public MockD2DDeviceContext
-    {
-        //
-        // Restrict this device context implementation so that it can only be
-        // QI'd for ID2D1DeviceContext.
-        //
-        STDMETHOD(QueryInterface)(REFIID riid, _Outptr_result_nullonfailure_ void **ppvObject)
-        {
-            if (riid == __uuidof(ID2D1DeviceContext))
-                return RuntimeClass::QueryInterface(riid, ppvObject);
-
-            return E_NOINTERFACE;
-        }
-    };
-
-    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_When_SisNative_Gives_Unusuable_DeviceContext_Then_EndDraw_Called)
-    {
-        auto sis = Make<MockSurfaceImageSource>();
-        sis->BeginDrawMethod.SetExpectedCalls(1,
-            [&](RECT const&, IID const& iid, void** obj, POINT*)
-            {
-                auto deviceContext = Make<DeviceContextWithRestrictedQI>();
-                return deviceContext.CopyTo(iid, obj);
-            });
-
-        sis->EndDrawMethod.SetExpectedCalls(1);
-
-        //
-        // We expect creating the adapter to fail since our SurfaceImageSource
-        // implementation returns a device context that only implements
-        // ID2D1DeviceContext.  
-        //
-        // If this happens we expect BeginDraw to have been called.  Then, after
-        // the failure, we expect EndDraw to have been called in order to clean
-        // up properly.
-        //
-        ComPtr<ID2D1DeviceContext1> actualDeviceContext;
-        ExpectHResultException(E_NOINTERFACE,
-            [&]
-            {
-                CanvasImageSourceDrawingSessionAdapter::Create(
-                    sis.Get(),
-                    RECT{ 1, 2, 3, 4 },
-                    DEFAULT_DPI,
-                    &actualDeviceContext);
-            });
-
-        Expectations::Instance()->Validate();
-    }
 
     TEST_METHOD(CanvasImageSource_CreateFromCanvasControl)
     {
@@ -466,6 +276,223 @@ public:
         ThrowIfFailed(canvasImageSource->get_Device(&sisDevice));
 
         Assert::AreEqual(static_cast<ICanvasDevice*>(canvasDevice.Get()), sisDevice.Get());
+
+        Expectations::Instance()->Validate();
+    }
+};
+
+TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
+{
+    ComPtr<StubCanvasDevice> m_canvasDevice;
+    ComPtr<MockSurfaceImageSource> m_surfaceImageSource;
+    ComPtr<StubSurfaceImageSourceFactory> m_surfaceImageSourceFactory;
+    std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> m_canvasImageSourceDrawingSessionFactory;
+    ComPtr<CanvasImageSource> m_canvasImageSource;
+    int m_imageWidth;
+    int m_imageHeight;
+    Color m_anyColor;
+
+public:
+    TEST_METHOD_INITIALIZE(Init)
+    {
+        m_canvasDevice = Make<StubCanvasDevice>();
+        m_surfaceImageSource = Make<MockSurfaceImageSource>();
+        m_surfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(m_surfaceImageSource.Get());
+        m_canvasImageSourceDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
+
+        m_surfaceImageSource->SetDeviceMethod.AllowAnyCall();
+
+        m_imageWidth = 123;
+        m_imageHeight = 456;
+
+        m_canvasImageSource = Make<CanvasImageSource>(
+            m_canvasDevice.Get(),
+            m_imageWidth,
+            m_imageHeight,
+            CanvasBackground::Transparent,
+            m_surfaceImageSourceFactory.Get(),
+            m_canvasImageSourceDrawingSessionFactory);
+
+        m_surfaceImageSource->SetDeviceMethod.SetExpectedCalls(0);
+
+        m_anyColor = Color{1,2,3,4};
+    }
+
+    TEST_METHOD(CanvasImageSource_CreateDrawingSession_PassesEntireImage)
+    {
+        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const& updateRect, float)
+            {
+                Assert::AreEqual<float>(0, updateRect.X);
+                Assert::AreEqual<float>(0, updateRect.Y);
+                Assert::AreEqual<float>(static_cast<float>(m_imageWidth), updateRect.Width);
+                Assert::AreEqual<float>(static_cast<float>(m_imageHeight), updateRect.Height);
+                return Make<MockCanvasDrawingSession>();
+            });
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(m_anyColor, &drawingSession));
+        Assert::IsTrue(drawingSession);
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasImageSource_CreateDrawingSessionWithUpdateRegion_PassesSpecifiedUpdateRegion)
+    {
+        Rect expectedRect{ 1, 2, 3, 4 };
+
+        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, 
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const& updateRect, float)
+            {
+                Assert::AreEqual(expectedRect.X, updateRect.X);
+                Assert::AreEqual(expectedRect.Y, updateRect.Y);
+                Assert::AreEqual(expectedRect.Width, updateRect.Width);
+                Assert::AreEqual(expectedRect.Height, updateRect.Height);
+                return Make<MockCanvasDrawingSession>();
+            });
+
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(m_anyColor, expectedRect, &drawingSession));
+        Assert::IsTrue(drawingSession);
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasImageSource_CreateDrawingSession_PassesClearColor)
+    {
+        Rect anyRect{ 1, 2, 3, 4 };
+        Color expectedColor{ 1, 2, 3, 4 };
+
+        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(2,
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const& clearColor, Rect const&, float)
+            {
+                Assert::AreEqual(expectedColor, clearColor);
+                return Make<MockCanvasDrawingSession>();
+            });
+
+        ComPtr<ICanvasDrawingSession> ignoredDrawingSession;
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(expectedColor, &ignoredDrawingSession));
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedColor, anyRect, &ignoredDrawingSession));
+
+        Expectations::Instance()->Validate();
+    }
+};
+
+TEST_CLASS(CanvasImageSourceDrawingSessionAdapterTests)
+{
+public:
+    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_BeginEndDraw)
+    {
+        auto mockDeviceContext = Make<MockD2DDeviceContext>();
+        auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();        
+        RECT expectedUpdateRect{ 1, 2, 3, 4 };
+        POINT expectedOffset{ 5, 6 };
+        D2D1_COLOR_F expectedClearColor{ 7, 8, 9, 10 };
+
+        mockSurfaceImageSource->BeginDrawMethod.SetExpectedCalls(1,
+            [&](RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset)
+            {
+                Assert::AreEqual(expectedUpdateRect, updateRect);
+                Assert::AreEqual(_uuidof(ID2D1DeviceContext), iid);
+
+                HRESULT hr = mockDeviceContext.CopyTo(iid, updateObject);
+                *offset = expectedOffset;
+                return hr;
+            });
+
+        mockDeviceContext->ClearMethod.SetExpectedCalls(1,
+            [&](D2D1_COLOR_F const* color)
+            {
+                Assert::AreEqual(expectedClearColor, *color);
+            });
+
+        mockDeviceContext->SetTransformMethod.SetExpectedCalls(1,
+            [&](const D2D1_MATRIX_3X2_F* m)
+            {
+                // We expect the transform to be set to just the offset
+                Assert::AreEqual(1.0f, m->_11);
+                Assert::AreEqual(0.0f, m->_12);
+                Assert::AreEqual(0.0f, m->_21);
+                Assert::AreEqual(1.0f, m->_22);
+                Assert::AreEqual(static_cast<float>(expectedOffset.x), m->_31);
+                Assert::AreEqual(static_cast<float>(expectedOffset.y), m->_32);
+            });
+
+        mockDeviceContext->SetDpiMethod.SetExpectedCalls(1,
+            [&](float dpiX, float dpiY)
+            {
+                Assert::AreEqual(DEFAULT_DPI, dpiX);
+                Assert::AreEqual(DEFAULT_DPI, dpiY);
+            });
+
+        ComPtr<ID2D1DeviceContext1> actualDeviceContext;
+        auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
+            mockSurfaceImageSource.Get(),
+            expectedClearColor,
+            expectedUpdateRect,
+            DEFAULT_DPI,
+            &actualDeviceContext);
+
+        Assert::AreEqual<ID2D1DeviceContext1*>(mockDeviceContext.Get(), actualDeviceContext.Get());
+
+        Expectations::Instance()->Validate();
+        
+
+        mockSurfaceImageSource->EndDrawMethod.SetExpectedCalls(1);
+
+        adapter->EndDraw();
+
+        Expectations::Instance()->Validate();
+    }
+
+    struct DeviceContextWithRestrictedQI : public MockD2DDeviceContext
+    {
+        //
+        // Restrict this device context implementation so that it can only be
+        // QI'd for ID2D1DeviceContext.
+        //
+        STDMETHOD(QueryInterface)(REFIID riid, _Outptr_result_nullonfailure_ void **ppvObject)
+        {
+            if (riid == __uuidof(ID2D1DeviceContext))
+                return RuntimeClass::QueryInterface(riid, ppvObject);
+
+            return E_NOINTERFACE;
+        }
+    };
+
+    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_When_SisNative_Gives_Unusuable_DeviceContext_Then_EndDraw_Called)
+    {
+        auto sis = Make<MockSurfaceImageSource>();
+        sis->BeginDrawMethod.SetExpectedCalls(1,
+            [&](RECT const&, IID const& iid, void** obj, POINT*)
+            {
+                auto deviceContext = Make<DeviceContextWithRestrictedQI>();
+                return deviceContext.CopyTo(iid, obj);
+            });
+
+        sis->EndDrawMethod.SetExpectedCalls(1);
+
+        //
+        // We expect creating the adapter to fail since our SurfaceImageSource
+        // implementation returns a device context that only implements
+        // ID2D1DeviceContext.  
+        //
+        // If this happens we expect BeginDraw to have been called.  Then, after
+        // the failure, we expect EndDraw to have been called in order to clean
+        // up properly.
+        //
+        ComPtr<ID2D1DeviceContext1> actualDeviceContext;
+        ExpectHResultException(E_NOINTERFACE,
+            [&]
+            {
+                CanvasImageSourceDrawingSessionAdapter::Create(
+                    sis.Get(),
+                    D2D1_COLOR_F{ 1, 2, 3, 4 },
+                    RECT{ 1, 2, 3, 4 },
+                    DEFAULT_DPI,
+                    &actualDeviceContext);
+            });
 
         Expectations::Instance()->Validate();
     }

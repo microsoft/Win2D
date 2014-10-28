@@ -13,6 +13,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Windows::UI;
 
 TEST_CLASS(CanvasImageSourceTests)
 {
@@ -26,6 +27,8 @@ TEST_CLASS(CanvasImageSourceTests)
         RunOnUIThread(
             []
             {
+                Color anyColor{1,2,3,4};
+
                 // Verify creation off of a device.
                 auto canvasDevice = ref new CanvasDevice();
                     
@@ -34,7 +37,7 @@ TEST_CLASS(CanvasImageSourceTests)
                     1,
                     1);
                     
-                auto drawingSession = canvasImageSource->CreateDrawingSession();
+                auto drawingSession = canvasImageSource->CreateDrawingSession(anyColor);
                 Assert::AreEqual(drawingSession->Device, canvasImageSource->Device);
                 delete drawingSession;
 

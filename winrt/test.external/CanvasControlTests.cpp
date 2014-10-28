@@ -86,8 +86,8 @@ TEST_CLASS(CanvasControlTests)
             []
             {
                 auto device = ref new CanvasDevice();
-                auto imageSource = ref new CanvasImageSource(device, 1, 1);
-                auto drawingSession = imageSource->CreateDrawingSession();
+                auto renderTarget = ref new CanvasRenderTarget(device, 1, 1);
+                auto drawingSession = renderTarget->CreateDrawingSession();
 
                 CanvasDrawEventArgs^ drawEventArgs = ref new CanvasDrawEventArgs(drawingSession);
             });
@@ -102,8 +102,7 @@ TEST_CLASS(CanvasControlTests)
 
                 CanvasSolidColorBrush^ brush = ref new CanvasSolidColorBrush(
                     canvasControl,
-                    Windows::UI::Colors::Magenta
-                    );
+                    Windows::UI::Colors::Magenta);
             });
     }
 };

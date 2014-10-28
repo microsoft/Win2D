@@ -14,9 +14,17 @@
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Numerics;
+using namespace Windows::UI;
 
 TEST_CLASS(CanvasStrokeStyleTests)
 {
+    Color m_anyColor;
+
+public:
+    CanvasStrokeStyleTests()
+        : m_anyColor(Color{1,2,3,4})
+    {}
+
     TEST_METHOD(CanvasStrokeStyleTests_Construction)
     {
         CanvasStrokeStyle^ canvasStrokeStyle = ref new CanvasStrokeStyle();
@@ -27,7 +35,7 @@ TEST_CLASS(CanvasStrokeStyleTests)
         // This should yield an exception on deletion of the drawing session,
         // but right now it does not, seemingly due to a pre-existing issue.
         RunOnUIThread(
-            []
+            [=]
             {
                 // Create a drawing session on one factory.
                 CanvasDrawingSession^ drawingSession;
@@ -39,7 +47,7 @@ TEST_CLASS(CanvasStrokeStyleTests)
                         1,
                         1);
                     brush = ref new CanvasSolidColorBrush(canvasDevice, Windows::UI::Colors::Red);
-                    drawingSession = canvasImageSource->CreateDrawingSession();
+                    drawingSession = canvasImageSource->CreateDrawingSession(m_anyColor);
                 }
 
                 // ...Create a stroke style on another.
@@ -63,7 +71,7 @@ TEST_CLASS(CanvasStrokeStyleTests)
     TEST_METHOD(CanvasStrokeStyleTests_DrawForcesRealization)
     {
         RunOnUIThread(
-            []
+            [=]
             {
                 // Create a drawing session on one factory.
                 CanvasDrawingSession^ drawingSession;
@@ -74,7 +82,7 @@ TEST_CLASS(CanvasStrokeStyleTests)
                     1,
                     1);
                 brush = ref new CanvasSolidColorBrush(canvasDevice, Windows::UI::Colors::Red);
-                drawingSession = canvasImageSource->CreateDrawingSession();
+                drawingSession = canvasImageSource->CreateDrawingSession(m_anyColor);
 
                 CanvasStrokeStyle^ strokeStyle = ref new CanvasStrokeStyle();
 

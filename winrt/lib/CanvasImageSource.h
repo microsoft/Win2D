@@ -24,6 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
+            Color const& clearColor,
             Rect const& updateRect,
             float dpi) const = 0;
     };
@@ -74,13 +75,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             _In_ std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory);
 
         IFACEMETHOD(CreateDrawingSession)(
+            _In_         Color clearColor,
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
 
         IFACEMETHOD(CreateDrawingSessionWithUpdateRectangle)(
+            _In_         Color clearColor,
             _In_         Rect updateRectangle,
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
 
         ComPtr<ICanvasDrawingSession> CreateDrawingSessionWithDpi(
+            Color const& clearColor,
             float dpi);
 
         IFACEMETHOD(get_Device)(
@@ -97,7 +101,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SetResourceCreator(ICanvasResourceCreator* resourceCreator);
 
         ComPtr<ICanvasDrawingSession> CreateDrawingSessionWithUpdateRectangleAndDpi(
-            Rect updateRectangle,
+            Color const& clearColor,
+            Rect const& updateRectangle,
             float dpi);
     };
 
@@ -118,6 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
+            Color const& clearColor,
             Rect const& updateRect,
             float dpi) const override;
     };

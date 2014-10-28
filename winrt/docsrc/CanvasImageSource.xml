@@ -32,14 +32,14 @@ under the License.
     
     <member name="T:Microsoft.Graphics.Canvas.CanvasImageSource">
       <summary>Derives from Windows.UI.Xaml.Media.Imaging.SurfaceImageSource and extends it to know about Canvas types.
-               Most apps should use the CanvasControl wrapper instead of directly managing their own CanvasImageSource.</summary>
+               Most apps should use CanvasControl instead of directly managing their own CanvasImageSource.</summary>
 
       <example><code>
         var imageSource = new CanvasImageSource(canvasDevice, widthInPixels, heightInPixels);
                                                 
         imageControl.Source = imageSource;
         
-        using (var ds = imageSource.CreateDrawingSession())
+        using (var ds = imageSource.CreateDrawingSession(Colors.Black))
         {
             // drawing code
         }
@@ -51,16 +51,20 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasBackground)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color)">
       <summary>Returns a new drawing session for redrawing the entire image source.</summary>
+      <remarks>The entire image is automatically cleared to the specified color before this method returns.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.Foundation.Rect)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color,Windows.Foundation.Rect)">
       <summary>Returns a new drawing session for updating a region of the image source.</summary>
+      <remarks>The specified region of the image is cleared to the specified color before this method returns.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Device">
-      <summary>Gets or sets the device used by this image source.
-               Changing this property binds the image source to a different device.
-               This is used after a new device is recovered after a device lost.</summary>
+      <summary>Gets or sets the device used by this image source.</summary>
+      <remarks>
+        Changing this property binds the image source to a different device.
+        This is used after a new device is recovered after a device lost.
+      </remarks>
     </member>
     
   </members>

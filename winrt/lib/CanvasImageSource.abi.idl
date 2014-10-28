@@ -26,10 +26,16 @@ namespace Microsoft.Graphics.Canvas
     //   imageControl.Source = imageSource;
     //
     //
-    //   using (var ds = imageSource.CreateDrawingSession())
+    //   using (var ds = imageSource.CreateDrawingSession(Colors.Black))
     //   {
     //        // drawing code
     //   }
+    //
+    // Each time CreateDrawingSession is called you won't necessary get the same
+    // surface back (due to how XAML manages surfaces), so the caller must
+    // render over the entire update region for that drawing session.  This is
+    // enforced by CreateDrawingSession taking a color.  Clear() will be called
+    // with this color before CreateDrawingSession returns.
     //
     
     runtimeclass CanvasImageSource;
@@ -76,17 +82,20 @@ namespace Microsoft.Graphics.Canvas
     {
         //
         // Returns a new drawing session for redrawing the entire image source.
+        // The entire image source is cleared to the specified color.
         //
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSession(
+            [in]          Windows.UI.Color clearColor,
             [out, retval] CanvasDrawingSession** drawingSession);
 
         //
         // Returns a new drawing session for updating a region of the image
-        // source.
+        // source.  The entire region is cleared to the speicfied color.
         //
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSessionWithUpdateRectangle(
+            [in]          Windows.UI.Color clearColor,
             [in]          Windows.Foundation.Rect updateRectangle,
             [out, retval] CanvasDrawingSession** drawingSession);
 
