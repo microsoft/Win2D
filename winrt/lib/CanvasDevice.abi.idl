@@ -54,6 +54,10 @@ namespace Microsoft.Graphics.Canvas
         [propget] 
         HRESULT HardwareAcceleration(
             [out, retval] CanvasHardwareAcceleration* value);
+
+        [propget]
+        HRESULT MaximumBitmapSize(
+            [out, retval] INT32* value);
     };
 
     [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]

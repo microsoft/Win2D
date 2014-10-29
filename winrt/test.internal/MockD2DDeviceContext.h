@@ -50,6 +50,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateEffectMethod          , HRESULT(IID const&, ID2D1Effect **));
         CALL_COUNTER_WITH_MOCK(CreateSolidColorBrushMethod , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
         CALL_COUNTER_WITH_MOCK(GetImageWorldBoundsMethod   , HRESULT(ID2D1Image*, D2D1_RECT_F*));
+        CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod  , UINT32());
 
         MockD2DDeviceContext()
         {
@@ -355,8 +356,7 @@ namespace canvas
 
         IFACEMETHODIMP_(UINT32) GetMaximumBitmapSize() const override
         {
-            Assert::Fail(L"Unexpected call to GetMaximumBitmapSize");
-            return 0;
+            return GetMaximumBitmapSizeMethod.WasCalled();
         }
 
         IFACEMETHODIMP_(BOOL) IsSupported(const D2D1_RENDER_TARGET_PROPERTIES *) const override

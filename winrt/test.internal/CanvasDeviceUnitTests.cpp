@@ -291,13 +291,46 @@ public:
 
     TEST_METHOD(CanvasDevice_DeviceProperty)
     {
-        auto device = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);;
+        auto device = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
 
         Assert::AreEqual(E_INVALIDARG, device->get_Device(nullptr));
 
         ComPtr<ICanvasDevice> deviceVerify;
         ThrowIfFailed(device->get_Device(&deviceVerify));
         Assert::AreEqual(static_cast<ICanvasDevice*>(device.Get()), deviceVerify.Get());
+    }
+    
+    TEST_METHOD(CanvasDevice_MaximumBitmapSize_NullArg)
+    {
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->get_MaximumBitmapSize(nullptr));
+    }
+
+    TEST_METHOD(CanvasDevice_MaximumBitmapSize_Property)
+    {
+        auto d2dDevice = Make<MockD2DDevice>();
+
+        const int32_t someSize = 1234567;
+
+        d2dDevice->MockCreateDeviceContext =
+            [&](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
+            {
+                auto deviceContext = Make<StubD2DDeviceContext>(d2dDevice.Get());
+
+                deviceContext->GetMaximumBitmapSizeMethod.SetExpectedCalls(1, [&]() { return someSize; });
+
+                ThrowIfFailed(deviceContext.CopyTo(value));
+            };
+
+        auto canvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
+
+        INT32 maximumBitmapSize;
+        canvasDevice->get_MaximumBitmapSize(&maximumBitmapSize);
+
+        Assert::AreEqual(someSize, maximumBitmapSize);
+
+        Expectations::Instance()->Validate();
     }
 };
 

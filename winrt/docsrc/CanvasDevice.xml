@@ -64,6 +64,11 @@ under the License.
     <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown">
       <summary>Indicates that it is not known whether this device uses hardware or software rendering.</summary>
     </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumBitmapSize">
+      <summary>Reports the maximum size of bitmaps supported on this device.</summary>
+      <remarks>This size limit is reported in pixels. The limit applies to both the width and height of bitmaps. This limit will vary depending on the Direct3D feature level of the device, and whether the device has hardware acceleration enabled.</remarks>
+    </member>
 
   </members>
 </doc>

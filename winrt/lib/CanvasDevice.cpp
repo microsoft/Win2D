@@ -409,6 +409,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+
+    IFACEMETHODIMP CanvasDevice::get_MaximumBitmapSize(int32_t* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                auto& deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+                UINT32 maximumBitmapSize = deviceContext->GetMaximumBitmapSize();
+
+                assert(maximumBitmapSize <= INT_MAX);
+
+                *value = static_cast<int32_t>(maximumBitmapSize);
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::Close()
     {
         HRESULT hr = ResourceWrapper::Close();
