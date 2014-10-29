@@ -480,6 +480,50 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromStream(
+        ICanvasResourceCreator* resourceCreator,
+        IRandomAccessStream* stream,
+        ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
+    {
+        return LoadAsyncFromStreamWithAlpha(
+            resourceCreator,
+            stream,
+            CanvasAlphaBehavior::Premultiplied,
+            canvasBitmapAsyncOperation);
+    }
+
+    IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromStreamWithAlpha(
+        ICanvasResourceCreator* resourceCreator,
+        IRandomAccessStream* rawStream,
+        CanvasAlphaBehavior alpha,
+        ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckInPointer(rawStream);
+                CheckAndClearOutPointer(canvasBitmapAsyncOperation);
+
+                ComPtr<ICanvasDevice> canvasDevice;
+                ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
+
+                ComPtr<IRandomAccessStream> stream = rawStream;
+
+                auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
+                [=]
+                {
+                    ComPtr<IStream> nativeStream;
+                    ThrowIfFailed(CreateStreamOverRandomAccessStream(stream.Get(), IID_PPV_ARGS(&nativeStream)));
+
+                    return GetManager()->CreateBitmap(canvasDevice.Get(), nativeStream.Get(), alpha);
+                });
+
+                CheckMakeResult(asyncOperation);
+                ThrowIfFailed(asyncOperation.CopyTo(canvasBitmapAsyncOperation));
+            });
+    }
+
     //
     // ICanvasFactoryNative
     //
@@ -635,6 +679,43 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 adapter->SaveLockedMemoryToFile(
                     fileName,
+                    fileFormat,
+                    quality,
+                    size.width,
+                    size.height,
+                    dpiX,
+                    dpiY,
+                    bitmapLock.get());
+            });
+
+        CheckMakeResult(asyncAction);
+        ThrowIfFailed(asyncAction.CopyTo(resultAsyncAction));
+    }
+
+    void SaveBitmapToStreamImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        ICanvasBitmapResourceCreationAdapter* adapter,
+        IRandomAccessStream* stream,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        IAsyncAction **resultAsyncAction)
+    {
+        if (fileFormat == CanvasBitmapFileFormat::Auto)
+        {
+            ThrowHR(E_INVALIDARG, HStringReference(Strings::AutoFileFormatNotAllowed).Get());
+        }
+
+        const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
+        float dpiX, dpiY;
+        d2dBitmap->GetDpi(&dpiX, &dpiY);
+
+        auto bitmapLock = std::make_shared<ScopedBitmapLock>(d2dBitmap.Get(), D3D11_MAP_READ);
+
+        auto asyncAction = Make<AsyncAction>(
+            [=]
+            {
+                adapter->SaveLockedMemoryToStream(
+                    stream,
                     fileFormat,
                     quality,
                     size.width,

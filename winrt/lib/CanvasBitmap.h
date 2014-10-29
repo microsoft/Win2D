@@ -33,8 +33,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName) = 0;
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream) = 0;
+
         virtual void SaveLockedMemoryToFile(
             HSTRING fileName,
+            CanvasBitmapFileFormat fileFormat,
+            float quality,
+            unsigned int width,
+            unsigned int height,
+            float dpiX,
+            float dpiY,
+            ScopedBitmapLock* bitmapLock) = 0;
+
+        virtual void SaveLockedMemoryToStream(
+            IRandomAccessStream* stream,
             CanvasBitmapFileFormat fileFormat,
             float quality,
             unsigned int width,
@@ -163,6 +174,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaBehavior alpha,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
+        IFACEMETHOD(LoadAsyncFromStream)(
+            ICanvasResourceCreator* resourceCreator,
+            IRandomAccessStream* stream,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
+        IFACEMETHOD(LoadAsyncFromStreamWithAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            IRandomAccessStream* stream,
+            CanvasAlphaBehavior alpha,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
         //
         // ICanvasDeviceResourceFactoryNative
         //
@@ -189,6 +211,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         ICanvasBitmapResourceCreationAdapter* adapter,
         HSTRING rawfileName,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        IAsyncAction **resultAsyncAction);
+
+    void SaveBitmapToStreamImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        ICanvasBitmapResourceCreationAdapter* adapter,
+        IRandomAccessStream* stream,
         CanvasBitmapFileFormat fileFormat,
         float quality,
         IAsyncAction **resultAsyncAction);
@@ -379,6 +409,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         fileFormat,
                         quality,
                         resultAsyncAction);
+                });
+        }
+
+        HRESULT STDMETHODCALLTYPE SaveToStreamAsync(
+            IRandomAccessStream* stream,
+            CanvasBitmapFileFormat fileFormat,
+            IAsyncAction** asyncAction) override
+        {
+            return SaveToStreamWithQualityAsync(
+                stream,
+                fileFormat,
+                DEFAULT_CANVASBITMAP_QUALITY,
+                asyncAction);
+        }
+
+        HRESULT STDMETHODCALLTYPE SaveToStreamWithQualityAsync(
+            IRandomAccessStream* stream,
+            CanvasBitmapFileFormat fileFormat,
+            float quality,
+            IAsyncAction** asyncAction) override
+        {
+            return ExceptionBoundary(
+                [=]
+                {
+                    CheckInPointer(stream);
+                    CheckAndClearOutPointer(asyncAction);
+
+                    auto& d2dBitmap = GetResource();
+
+                    SaveBitmapToStreamImpl(
+                        d2dBitmap.Get(), 
+                        Manager()->GetAdapter(),
+                        stream,
+                        fileFormat,
+                        quality,
+                        asyncAction);
                 });
         }
 

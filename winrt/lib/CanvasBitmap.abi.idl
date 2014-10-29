@@ -85,6 +85,19 @@ namespace Microsoft.Graphics.Canvas
             [in] float quality,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
+        [overload("SaveToStreamAsync")]
+        HRESULT SaveToStreamAsync(
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in] CanvasBitmapFileFormat fileFormat,
+            [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
+
+        [overload("SaveToStreamAsync")]
+        HRESULT SaveToStreamWithQualityAsync(
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in] CanvasBitmapFileFormat fileFormat,
+            [in] float quality,
+            [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
+
         [overload("GetBytes")]
         HRESULT GetBytes(
             [out] UINT32* valueCount,
@@ -260,6 +273,19 @@ namespace Microsoft.Graphics.Canvas
         HRESULT LoadAsyncFromUriWithAlpha(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Windows.Foundation.Uri* uri,
+            [in] CanvasAlphaBehavior alpha,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
+
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromStream(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
+
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromStreamWithAlpha(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
             [in] CanvasAlphaBehavior alpha,
             [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
     };

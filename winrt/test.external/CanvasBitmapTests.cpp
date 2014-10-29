@@ -19,6 +19,7 @@ using namespace Windows::Devices::Enumeration;
 using namespace Microsoft::Graphics::Canvas::DirectX;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::UI;
+using namespace Windows::Storage::Streams;
 using Platform::String;
 
 const float c_dpiTolerance = 0.1f;
@@ -114,26 +115,39 @@ public:
         }        
     }
 
-    TEST_METHOD(CanvasBitmap_LoadUri)
+    TEST_METHOD(CanvasBitmap_LoadStreamAndUri)
     {
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
 
-        Uri^ uri = ref new Uri("ms-appx:///Assets/HighDpiGrid.png");
+        for (int i = 0; i < 2; ++i)
+        {
+            IAsyncOperation<CanvasBitmap^>^ bitmapAsync;
 
-        auto async = CanvasBitmap::LoadAsync(canvasDevice, uri, CanvasAlphaBehavior::Ignore);
+            Uri^ uri = ref new Uri("ms-appx:///Assets/HighDpiGrid.png");
+            if (i == 0)
+            {
+                bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, uri, CanvasAlphaBehavior::Ignore);
+            }
+            else
+            {
+                auto storageFile = WaitExecution(Windows::Storage::StorageFile::GetFileFromApplicationUriAsync(uri));
+                auto stream = WaitExecution(storageFile->OpenReadAsync());
 
-        auto bitmap = WaitExecution(async);
+                bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, stream, CanvasAlphaBehavior::Ignore);
+            }
 
-        Assert::AreEqual(2.00001454f, bitmap->Size.Width);
-        Assert::AreEqual(2.00001454f, bitmap->Size.Height);
-        Assert::AreEqual(4.0f, bitmap->SizeInPixels.Width);
-        Assert::AreEqual(4.0f, bitmap->SizeInPixels.Height);
+            auto bitmap = WaitExecution(bitmapAsync);
 
-        auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+            Assert::AreEqual(2.00001454f, bitmap->Size.Width);
+            Assert::AreEqual(2.00001454f, bitmap->Size.Height);
+            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Width);
+            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Height);
 
-        VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_IGNORE, c_dpiTolerance);
+            auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+
+            VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_IGNORE, c_dpiTolerance);
+        }
     }
-
 
     TEST_METHOD(CanvasBitmap_LoadMany)
     {
@@ -481,7 +495,7 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasBitmap_SaveToFileAsync_UseSpecifiedEncoder)
+    TEST_METHOD(CanvasBitmap_SaveToFileAndStreamAsync_UseSpecifiedEncoder)
     {
         auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, m_testImage.fileName));
 
@@ -512,6 +526,19 @@ public:
             WaitExecution(canvasBitmap->SaveToFileAsync(targetPath, testCase.CanvasFormat));
 
             auto bitmapDecoder = LoadBitmapDecoderFromPath(targetPath);
+
+            Assert::AreEqual(testCase.ImagingFormat, bitmapDecoder->DecoderInformation->CodecId);
+
+            VerifyBitmapDecoderDimensionsMatchTestImage(bitmapDecoder, testCase.DpiVerify);
+        }
+
+        for (auto testCase : testCases)
+        {
+            InMemoryRandomAccessStream^ memoryStream = ref new InMemoryRandomAccessStream();
+
+            WaitExecution(canvasBitmap->SaveToStreamAsync(memoryStream, testCase.CanvasFormat));
+
+            auto bitmapDecoder = WaitExecution_RequiresWorkerThread(BitmapDecoder::CreateAsync(memoryStream));
 
             Assert::AreEqual(testCase.ImagingFormat, bitmapDecoder->DecoderInformation->CodecId);
 
@@ -560,7 +587,7 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasBitmap_SaveToBitmapAsync_InvalidArguments)
+    TEST_METHOD(CanvasBitmap_SaveToFileAsync_InvalidArguments)
     {
         auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
 
@@ -1208,5 +1235,139 @@ public:
         auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
 
         Assert::ExpectException<Platform::COMException^>([&] { bitmap->CopyFromBitmap(bitmap); });
+    }
+
+    TEST_METHOD(CanvasBitmap_SaveToStreamAsync_InvalidArguments)
+    {
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+
+        auto validStream = ref new InMemoryRandomAccessStream();
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                canvasBitmap->SaveToStreamAsync(nullptr, CanvasBitmapFileFormat::Bmp);
+            });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                WaitExecution(canvasBitmap->SaveToStreamAsync(validStream, CanvasBitmapFileFormat::Auto));
+            });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                WaitExecution(canvasBitmap->SaveToStreamAsync(validStream, static_cast<CanvasBitmapFileFormat>(999)));
+            });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                WaitExecution(canvasBitmap->SaveToStreamAsync(validStream, CanvasBitmapFileFormat::Jpeg, -FLT_EPSILON));
+            });
+    }
+
+    ref class StreamWithRestrictions sealed : public IRandomAccessStream
+    {
+        InMemoryRandomAccessStream^ m_wrappedStream;
+        bool m_canRead;
+        bool m_canWrite;
+
+    public:
+        StreamWithRestrictions(bool canRead, bool canWrite)
+            : m_canRead(canRead)
+            , m_canWrite(canWrite)
+        {
+            m_wrappedStream = ref new InMemoryRandomAccessStream();
+        }
+
+        virtual ~StreamWithRestrictions() // Implements Dispose which is required
+        {
+        }
+
+        virtual IAsyncOperationWithProgress<IBuffer ^, unsigned int>^ ReadAsync(IBuffer^ buffer, unsigned int offset, InputStreamOptions options)
+        {
+            if (m_canRead)
+            {
+                return m_wrappedStream->ReadAsync(buffer, offset, options);
+            }
+            else
+            {
+                throw ref new Platform::NotImplementedException();
+            }
+        }
+
+        virtual IAsyncOperationWithProgress<unsigned int, unsigned int>^ WriteAsync(IBuffer^ buffer)
+        {
+            if (m_canWrite)
+            {
+                return m_wrappedStream->WriteAsync(buffer);
+            }
+            else
+            {
+                throw ref new Platform::NotImplementedException();
+            }
+        }
+
+        virtual IAsyncOperation<bool>^ FlushAsync()
+        {
+            return m_wrappedStream->FlushAsync();
+        }
+
+        virtual property bool CanRead { bool get() { return m_canRead; } }
+
+        virtual property bool CanWrite { bool get() { return m_canWrite; } }
+
+        virtual property unsigned __int64 Position { unsigned __int64 get() { return m_wrappedStream->Position; } }
+
+        virtual property unsigned __int64 Size 
+        { 
+            unsigned __int64 get() { return m_wrappedStream->Size; }
+            void set(unsigned __int64 value) { m_wrappedStream->Size = value; }
+        } 
+
+        virtual IInputStream^ GetInputStreamAt(unsigned __int64 position)
+        {
+            return m_wrappedStream->GetInputStreamAt(position);
+        }
+
+        virtual IOutputStream^ GetOutputStreamAt(unsigned __int64 position)
+        {
+            return m_wrappedStream->GetOutputStreamAt(position);
+        }
+
+        virtual void Seek(unsigned __int64 position)
+        {
+            m_wrappedStream->Seek(position);
+        }
+
+        virtual IRandomAccessStream^ CloneStream()
+        {
+            Assert::Fail(); // Not impl
+            return nullptr;
+        }
+    };
+
+    TEST_METHOD(CanvasBitmap_InvalidStreams)
+    {
+        // Ensure an unreadable stream causes LoadAsync to fail.
+        StreamWithRestrictions^ streamWithNoRead = ref new StreamWithRestrictions(false, true);        
+        auto asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead, CanvasAlphaBehavior::Ignore);
+        Assert::ExpectException<Platform::NotImplementedException^>(
+            [&]
+            {
+                WaitExecution(asyncLoad);
+            });
+
+        // Ensure an unwritable stream causes SaveToStreamAsync to fail.
+        StreamWithRestrictions^ streamWithNoWrite = ref new StreamWithRestrictions(true, false);
+        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+        auto asyncSave = bitmap->SaveToStreamAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp);        
+        Assert::ExpectException<Platform::NotImplementedException^>(
+            [&]
+            {
+                WaitExecution(asyncSave);
+            });
     }
 };

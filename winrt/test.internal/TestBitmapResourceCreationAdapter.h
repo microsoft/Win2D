@@ -51,6 +51,20 @@ public:
     {
         Assert::Fail(); // Unexpected
     }
+
+
+    virtual void SaveLockedMemoryToStream(
+        IRandomAccessStream* stream,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        unsigned int width,
+        unsigned int height,
+        float dpiX,
+        float dpiY,
+        ScopedBitmapLock* bitmapLock)
+    {
+        Assert::Fail(); // Unexpected
+    }
 };
 
 

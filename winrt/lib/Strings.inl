@@ -26,3 +26,4 @@ STRING(EffectWrongPropertyType, L"Effect property #%d is the wrong type for this
 STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than CanvasBitmap, CanvasImageBrush.SourceRectangle must not be null.")
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");
 STRING(WrongArrayLength, L"The array was expected to be of size #%d; actual array was of size #%d.")
+STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")

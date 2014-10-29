@@ -77,6 +77,71 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowHR(E_INVALIDARG, message.Get());
     }
 
+    void SaveLockedMemoryToNativeStream(
+        IWICImagingFactory2* wicFactory,
+        IWICStream* nativeStream,
+        GUID encoderGuid,
+        float quality,
+        unsigned int width,
+        unsigned int height,
+        float dpiX,
+        float dpiY,
+        ScopedBitmapLock* bitmapLock)
+    {
+        ComPtr<IWICBitmapEncoder> encoder;
+        ThrowIfFailed(wicFactory->CreateEncoder(encoderGuid, NULL, &encoder));
+
+        ThrowIfFailed(encoder->Initialize(nativeStream, WICBitmapEncoderNoCache));
+
+        ComPtr<IWICBitmapFrameEncode> frameEncode;
+        ComPtr<IPropertyBag2> frameProperties;
+        encoder->CreateNewFrame(&frameEncode, &frameProperties);
+
+        if (quality < 0.0f || quality > 1.0f)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+
+        bool supportsQualityOption =
+            encoderGuid == GUID_ContainerFormatJpeg ||
+            encoderGuid == GUID_ContainerFormatWmp;
+
+        if (supportsQualityOption)
+        {
+            PROPBAG2 option = { 0 };
+            option.pstrName = L"ImageQuality";
+            VARIANT value;
+            value.vt = VT_R4;
+            value.fltVal = quality;
+            ThrowIfFailed(frameProperties->Write(1, &option, &value));
+        }
+
+        ThrowIfFailed(frameEncode->Initialize(frameProperties.Get()));
+
+        ThrowIfFailed(frameEncode->SetSize(width, height));
+
+        // TODO: #2767 Support saving formats other than 32bppBGRA.
+        ComPtr<IWICBitmap> memoryBitmap;
+        ThrowIfFailed(wicFactory->CreateBitmapFromMemory(
+            width,
+            height,
+            GUID_WICPixelFormat32bppBGRA,
+            bitmapLock->GetStride(),
+            bitmapLock->GetLockedBufferSize(),
+            static_cast<BYTE*>(bitmapLock->GetLockedData()),
+            &memoryBitmap));
+
+        WICPixelFormatGUID pixelFormat;
+        ThrowIfFailed(memoryBitmap->GetPixelFormat(&pixelFormat));
+        ThrowIfFailed(frameEncode->SetPixelFormat(&pixelFormat));
+
+        ThrowIfFailed(frameEncode->SetResolution(dpiX, dpiY));
+
+        ThrowIfFailed(frameEncode->WriteSource(memoryBitmap.Get(), NULL));
+        ThrowIfFailed(frameEncode->Commit());
+        ThrowIfFailed(encoder->Commit());
+    }
+
     class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
     {
         ComPtr<IWICImagingFactory2> m_wicFactory;
@@ -92,6 +157,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 IID_PPV_ARGS(&m_wicFactory)));
         }
 
+        void SaveLockedMemoryToStream(
+            IRandomAccessStream* randomAccessStream,
+            CanvasBitmapFileFormat fileFormat,
+            float quality,
+            unsigned int width,
+            unsigned int height,
+            float dpiX,
+            float dpiY,
+            ScopedBitmapLock* bitmapLock)
+        {
+            ComPtr<IWICStream> wicStream;
+            ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
+
+            ComPtr<IStream> iStream;
+            ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&iStream)));
+
+            ThrowIfFailed(wicStream->InitializeFromIStream(iStream.Get()));
+
+            SaveLockedMemoryToNativeStream(
+                m_wicFactory.Get(), 
+                wicStream.Get(), 
+                GetGUIDForFileFormat(fileFormat),
+                quality, 
+                width, 
+                height, 
+                dpiX,
+                dpiY, 
+                bitmapLock);
+        }
+
         void SaveLockedMemoryToFile(
             HSTRING fileName,
             CanvasBitmapFileFormat fileFormat,
@@ -103,7 +198,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ScopedBitmapLock* bitmapLock)
         {
             WinString fileNameString(fileName);
-            
+
             GUID encoderGuid;
             if (fileFormat == CanvasBitmapFileFormat::Auto)
             {
@@ -114,63 +209,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 encoderGuid = GetGUIDForFileFormat(fileFormat);
             }
 
-            ComPtr<IWICBitmapEncoder> encoder;
-            ThrowIfFailed(m_wicFactory->CreateEncoder(encoderGuid, NULL, &encoder));
+            ComPtr<IWICStream> wicStream;
+            ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
 
-            ComPtr<IWICStream> stream;
-            ThrowIfFailed(m_wicFactory->CreateStream(&stream));
+            ThrowIfFailed(wicStream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_WRITE));
 
-            ThrowIfFailed(stream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_WRITE));
-
-            ThrowIfFailed(encoder->Initialize(stream.Get(), WICBitmapEncoderNoCache));
-
-            ComPtr<IWICBitmapFrameEncode> frameEncode;
-            ComPtr<IPropertyBag2> frameProperties;
-            encoder->CreateNewFrame(&frameEncode, &frameProperties);
-
-            if (quality < 0.0f || quality > 1.0f)
-            {
-                ThrowHR(E_INVALIDARG);
-            }
-
-            bool supportsQualityOption = 
-                encoderGuid == GUID_ContainerFormatJpeg || 
-                encoderGuid == GUID_ContainerFormatWmp;
-            
-            if (supportsQualityOption)
-            {
-                PROPBAG2 option = { 0 };
-                option.pstrName = L"ImageQuality";
-                VARIANT value;
-                value.vt = VT_R4;
-                value.fltVal = quality;
-                ThrowIfFailed(frameProperties->Write(1, &option, &value));
-            }
-
-            ThrowIfFailed(frameEncode->Initialize(frameProperties.Get()));
-
-            ThrowIfFailed(frameEncode->SetSize(width, height));
-
-            // TODO: #2767 Support saving formats other than 32bppBGRA.
-            ComPtr<IWICBitmap> memoryBitmap;
-            m_wicFactory->CreateBitmapFromMemory(
+            SaveLockedMemoryToNativeStream(
+                m_wicFactory.Get(),
+                wicStream.Get(), 
+                encoderGuid, 
+                quality, 
                 width, 
                 height, 
-                GUID_WICPixelFormat32bppBGRA, 
-                bitmapLock->GetStride(), 
-                bitmapLock->GetLockedBufferSize(),
-                static_cast<BYTE*>(bitmapLock->GetLockedData()),
-                &memoryBitmap);
-
-            WICPixelFormatGUID pixelFormat;
-            ThrowIfFailed(memoryBitmap->GetPixelFormat(&pixelFormat));
-            ThrowIfFailed(frameEncode->SetPixelFormat(&pixelFormat));
-
-            ThrowIfFailed(frameEncode->SetResolution(dpiX, dpiY));
-
-            ThrowIfFailed(frameEncode->WriteSource(memoryBitmap.Get(), NULL));
-            ThrowIfFailed(frameEncode->Commit());
-            ThrowIfFailed(encoder->Commit());
+                dpiX, 
+                dpiY, 
+                bitmapLock);
         }
 
         ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName)

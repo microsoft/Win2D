@@ -64,7 +64,16 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
+    </member>    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
+      <summary>Loads a bitmap from a stream, with a default alpha behavior of CanvasAlphaBehavior.Premultiplied.</summary>
+      <remarks>This method requires that the stream be readable.</remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+      <summary>Loads a bitmap from a stream, with the specified alpha behavior.</summary>
+      <remarks>This method requires that the stream be readable.</remarks>
+    </member>
+    
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface.</summary>
       <remarks>
@@ -130,6 +139,16 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
       <summary>Saves the entire bitmap to a file with the specified file name and file format, and quality level.</summary>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToStreamAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
+      <summary>Saves the entire bitmap to the specified stream with the specified file format, using a default quality level of 0.9.</summary>
+      <remarks>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToStreamAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
+      <summary>Saves the entire bitmap to the specified stream with the specified file format and quality level.</summary>
+      <remarks>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</remarks>
+    </member>
+    
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBytes">
       <summary>Returns an array of raw byte data for the entire bitmap. Works on bitmaps of any format. The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).</summary>
       <remarks>
