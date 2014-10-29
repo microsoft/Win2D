@@ -37,7 +37,6 @@ under the License.
           <code>
             void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
             {
-                args.DrawingSession.Clear(Colors.CornflowerBlue);
                 args.DrawingSession.DrawImage(blendEffect, new Point(42, 42));
             }
           </code>

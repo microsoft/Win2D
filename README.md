@@ -21,17 +21,13 @@ To give you a flavor of what the code looks like, here is a snippet of XAML:
 xmlns:canvas="using:Microsoft.Graphics.Canvas"
 
 <Grid>
-    <canvas:CanvasControl x:Name="canvasControl" />
+    <canvas:CanvasControl x:Name="canvasControl" Draw="canvasControl_Draw" ClearColor="CornflowerBlue" />
 </Grid>
 ```
 and C#:
 ```cs
-canvasControl.Draw += canvasControl_Draw; 
-```
-```cs
 void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
 {
-    args.DrawingSession.Clear(Colors.CornflowerBlue);
     args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
     args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
 }

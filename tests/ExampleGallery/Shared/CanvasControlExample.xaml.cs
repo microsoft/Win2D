@@ -55,8 +55,6 @@ namespace ExampleGallery
 
         private void DrawCanvasState(CanvasControl canvas, CanvasDrawingSession ds, int drawCount)
         {
-            ds.Clear(Color.FromArgb(0, 0, 0, 0));
-
             ds.DrawLine(0, 0, (float)canvas.ActualWidth, (float)canvas.ActualHeight, Colors.Aqua);
             ds.DrawLine(0, (float)canvas.ActualHeight, (float)canvas.ActualWidth, 0, Colors.Aqua);
 

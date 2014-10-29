@@ -61,7 +61,6 @@ namespace ExampleGallery
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var ds = args.DrawingSession;
-            ds.Clear(Color.FromArgb(0,0,0,0));
 
             var shape = this.Shapes.SelectedItem as Shape;
             if (shape == null)

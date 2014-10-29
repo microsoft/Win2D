@@ -82,7 +82,6 @@ namespace ExampleGallery
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var ds = args.DrawingSession;
-            ds.Clear(Color.FromArgb(0, 0, 0, 0));
 
             if (!isLoaded)
                 return;
@@ -758,7 +757,7 @@ namespace ExampleGallery
 
             using (var ds = renderTarget.CreateDrawingSession())
             {
-                ds.Clear(Colors.Transparent);
+                ds.Clear(Color.FromArgb(0, 0, 0, 0));
 
                 ds.DrawText("This text is drawn onto a rendertarget", 10, 10, Colors.White);
                 ds.DrawText("with a different color per line,", 10, 40, Colors.Red);
@@ -850,7 +849,7 @@ namespace ExampleGallery
 
             using (var ds = textOverlay.CreateDrawingSession())
             {
-                ds.Clear(Colors.Transparent);
+                ds.Clear(Color.FromArgb(0, 0, 0, 0));
                 ds.DrawText(effect.GetType().Name.Replace("Effect", ""), 0, 0, Colors.White);
             }
 

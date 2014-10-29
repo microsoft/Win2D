@@ -34,7 +34,7 @@ under the License.
         <p>Add a CanvasControl to the page:</p>
         <code>
           &lt;Grid&gt;
-            &lt;canvas:CanvasControl x:Name="myWidget"/&gt;
+            &lt;canvas:CanvasControl x:Name="myWidget" CreateResources="myWidget_CreateResources" Draw="myWidget_Draw" ClearColor="CornFlowerBlue"/&gt;
           &lt;/Grid&gt;
         </code>
         <p>Edit MainPage.xaml.cs, and add some drawing code:</p>
@@ -46,9 +46,6 @@ under the License.
               public MainPage()
               {
                   this.InitializeComponent();
-
-                  myWidget.CreateResources += myWidget_CreateResources;
-                  myWidget.Draw += myWidget_Draw;
               }
 
               void myWidget_CreateResources(CanvasControl sender, object args)
@@ -59,7 +56,6 @@ under the License.
 
               void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
               {
-                  args.DrawingSession.Clear(Colors.CornflowerBlue);
                   args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
                   args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
               }
@@ -106,6 +102,18 @@ under the License.
            so you can draw different things each time.</p>
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasControl.ClearColor">
+      <summary>The color that the control is cleared to before the Draw event is raised.</summary>
+      <remarks>
+        <p>
+          ClearColor defaults to transparent black, that is Color.FromArgb(0,0,0,0).
+        </p>
+        <p>
+          Modifying ClearColor will cause the control to redraw, as if
+          Invalidate() was called.
+        </p>
+      </remarks>
+    </member>
 
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasDrawEventArgs">
@@ -118,6 +126,5 @@ under the License.
       <summary>Gets the drawing session for use by the current event handler.
                This provides methods to draw lines, rectangles, text etc.</summary>
     </member>
-
   </members>
 </doc>

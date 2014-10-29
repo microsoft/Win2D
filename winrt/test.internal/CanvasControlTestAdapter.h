@@ -28,7 +28,7 @@ public:
     ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
-    CALL_COUNTER(CreateCanvasImageSourceMethod);
+    CALL_COUNTER_WITH_MOCK(CreateCanvasImageSourceMethod, ComPtr<CanvasImageSource>(ICanvasDevice*, int, int, CanvasBackground));
 
     CanvasControlTestAdapter()
         : m_mockWindow(Make<MockWindow>())
@@ -83,9 +83,15 @@ public:
         ThrowIfFailed(SurfaceContentsLostEventSource->InvokeAll(sender, arg));
     }
 
-    virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+    virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(
+        ICanvasDevice* device, 
+        int width, 
+        int height, 
+        CanvasBackground backgroundMode) override
     {
-        CreateCanvasImageSourceMethod.WasCalled();
+        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, backgroundMode);
+        if (result)
+            return result;
 
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
@@ -108,7 +114,7 @@ public:
             resourceCreator.Get(),
             width,
             height,
-            CanvasBackground::Transparent,
+            backgroundMode,
             sisFactory.Get(),
             dsFactory);
     }

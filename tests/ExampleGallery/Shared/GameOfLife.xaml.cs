@@ -81,8 +81,6 @@ namespace ExampleGallery
                 }
             }
 
-            args.DrawingSession.Clear(Color.FromArgb(0, 0, 0, 0));
-
             // Display the current surface.
             invertEffect.Source = currentSurface;
             transformEffect.TransformMatrix = GetDisplayTransform();

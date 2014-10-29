@@ -61,7 +61,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler*, IWindow*) = 0;
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) = 0;
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
 
@@ -133,6 +133,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool m_imageSourceNeedsReset;
         bool m_isLoaded;
 
+        Color m_clearColor;
+
         int m_currentWidth;
         int m_currentHeight;
         
@@ -159,6 +161,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHODIMP remove_Draw(
             EventRegistrationToken token);
+
+        IFACEMETHODIMP put_ClearColor(Color value);
+
+        IFACEMETHODIMP get_ClearColor(Color* value);
 
         //
         // ICanvasResourceCreator
@@ -202,7 +208,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         enum class InvalidateReason
         {
             Default,
-            SurfaceContentsLost
+            ImageSourceNeedsReset
         };
 
         void InvalidateImpl(InvalidateReason reason = InvalidateReason::Default);

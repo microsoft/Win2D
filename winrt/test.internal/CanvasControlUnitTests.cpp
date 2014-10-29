@@ -305,12 +305,12 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             return m_imageControl;
         }
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) override
         {
             Assert::AreEqual(m_expectedImageSourceWidth, width, L"ExpectedImageSourceWidth");
             Assert::AreEqual(m_expectedImageSourceHeight, height, L"ExpectedImageSourceHeight");
 
-            return __super::CreateCanvasImageSource(device, width, height);
+            return __super::CreateCanvasImageSource(device, width, height, backgroundMode);
         }
     };
 
@@ -375,61 +375,84 @@ TEST_CLASS(CanvasControlTests_SizeTests)
     };
 };
 
+class CanvasControlTestAdapter_InjectDeviceContext : public CanvasControlTestAdapter
+{
+    ComPtr<ID2D1DeviceContext> m_deviceContext;
+
+public:
+    CanvasControlTestAdapter_InjectDeviceContext(ID2D1DeviceContext* deviceContext)
+        : m_deviceContext(deviceContext)
+    {
+    }
+
+    virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(
+        ICanvasDevice* device, 
+        int width, 
+        int height, 
+        CanvasBackground backgroundMode) override
+    {
+        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, backgroundMode);
+        if (result)
+            return result;
+
+        auto sisFactory = Make<MockSurfaceImageSourceFactory>();
+        sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
+            [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
+            {
+                auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
+                                        
+                mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
+                    [&](RECT const&, IID const& iid, void** updateObject, POINT*)
+                    {
+                        return m_deviceContext.CopyTo(iid, updateObject);
+                    });
+
+                mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
+                mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
+
+                return mockSurfaceImageSource;
+            };
+
+        auto dsFactory = std::make_shared<CanvasImageSourceDrawingSessionFactory>();
+
+        ComPtr<ICanvasResourceCreator> resourceCreator;
+        ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
+
+        return Make<CanvasImageSource>(
+            resourceCreator.Get(),
+            width,
+            height,
+            backgroundMode,
+            sisFactory.Get(),
+            dsFactory);
+    }
+};
+
 TEST_CLASS(CanvasControlTests_Dpi)
 {
-    class CanvasControlTestAdapter_VerifyDpi : public CanvasControlTestAdapter
+    class CanvasControlTestAdapter_VerifyDpi : public CanvasControlTestAdapter_InjectDeviceContext
     {
     public:
         float m_dpi;
         int m_lastImageSourceWidth;
         int m_lastImageSourceHeight;
         int m_imageSourceCount;
-        ComPtr<ID2D1DeviceContext> m_d2dDeviceContext; 
 
-        CanvasControlTestAdapter_VerifyDpi(ID2D1DeviceContext* d2dDeviceContext)
-            : m_dpi(DEFAULT_DPI)
+        CanvasControlTestAdapter_VerifyDpi(ID2D1DeviceContext* deviceContext)
+            : CanvasControlTestAdapter_InjectDeviceContext(deviceContext)
+            , m_dpi(DEFAULT_DPI)
             , m_lastImageSourceWidth(0)
             , m_lastImageSourceHeight(0)
-            , m_d2dDeviceContext(d2dDeviceContext)
             , m_imageSourceCount(0) 
         {}
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) override
         {
             m_lastImageSourceWidth = width;
             m_lastImageSourceHeight = height;
             m_imageSourceCount++;
             
-            auto sisFactory = Make<MockSurfaceImageSourceFactory>();
-            sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
-                [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
-                {
-                    auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
-                                        
-                    mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
-                        [&](RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset)
-                        {
-                            return m_d2dDeviceContext.CopyTo(iid, updateObject);
-                        });
-
-                    mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
-                    mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
-
-                    return mockSurfaceImageSource;
-                };
-
-            auto dsFactory = std::make_shared<CanvasImageSourceDrawingSessionFactory>();
-
-            ComPtr<ICanvasResourceCreator> resourceCreator;
-            ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
-
-            return Make<CanvasImageSource>(
-                resourceCreator.Get(),
-                width,
-                height,
-                CanvasBackground::Transparent,
-                sisFactory.Get(),
-                dsFactory);
+            return __super::CreateCanvasImageSource(device, width, height, backgroundMode);
         }
 
         virtual float GetLogicalDpi() override
@@ -454,6 +477,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
         for (auto dpiCase : dpiCases)
         {
             auto adapter = std::make_shared<CanvasControlTestAdapter_VerifyDpi>(deviceContext.Get());
+            adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
             int expectedImageSourceCount = 0;
 
@@ -727,3 +751,163 @@ private:
     }
 };
 
+
+TEST_CLASS(CanvasControl_ClearColor)
+{
+    ComPtr<MockD2DDeviceContext> m_deviceContext;
+    std::shared_ptr<CanvasControlTestAdapter> m_adapter;
+    ComPtr<CanvasControl> m_control;
+    ComPtr<StubUserControl> m_userControl;
+    MockEventHandler<DrawEventHandlerType> m_onDraw;
+
+public:
+    TEST_METHOD_INITIALIZE(Init)
+    {
+        m_deviceContext = Make<MockD2DDeviceContext>();
+        m_deviceContext->ClearMethod.AllowAnyCall();
+        m_deviceContext->SetTransformMethod.AllowAnyCall();
+        m_deviceContext->SetDpiMethod.AllowAnyCall();
+
+        m_adapter = std::make_shared<CanvasControlTestAdapter_InjectDeviceContext>(m_deviceContext.Get());
+        m_control = Make<CanvasControl>(m_adapter);
+        m_userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(m_control).Get());
+
+        m_onDraw = MockEventHandler<DrawEventHandlerType>(L"Draw");
+
+        EventRegistrationToken ignoredToken;
+        ThrowIfFailed(m_control->add_Draw(m_onDraw.Get(), &ignoredToken));
+
+        m_adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+        m_userControl->LoadedEventSource->InvokeAll(nullptr, nullptr);
+
+        m_onDraw.SetExpectedCalls(1);
+        RaiseAnyNumberOfCompositionRenderingEvents();
+    }
+
+    TEST_METHOD(CanvasControl_DefaultClearColorIsTransparentBlack)
+    {
+        Color expectedColor{ 0, 0, 0, 0 };
+
+        Color actualColor{ 0xFF, 0xFF, 0xFF, 0xFF };
+        ThrowIfFailed(m_control->get_ClearColor(&actualColor));
+
+        Assert::AreEqual(expectedColor, actualColor);
+    }
+
+    TEST_METHOD(CanvasControl_ClearColorValueIsPersisted)
+    {
+        Color anyColor{ 1, 2, 3, 4 };
+
+        ThrowIfFailed(m_control->put_ClearColor(anyColor));
+
+        Color actualColor{ 0xFF, 0xFF, 0xFF, 0xFF };
+        ThrowIfFailed(m_control->get_ClearColor(&actualColor));
+
+        Assert::AreEqual(anyColor, actualColor);
+    }
+
+    TEST_METHOD(CanvasControl_SettingDifferentClearColorTriggersRedraw)
+    {
+        Color currentColor;
+        ThrowIfFailed(m_control->get_ClearColor(&currentColor));
+
+        Color differentColor = currentColor;
+        differentColor.R = 255 - differentColor.R;
+
+        ThrowIfFailed(m_control->put_ClearColor(differentColor));
+
+        m_onDraw.SetExpectedCalls(1);
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_SettingClearColorToCurrentValueDoesNotTriggerRedraw)
+    {
+        Color currentColor;
+        ThrowIfFailed(m_control->get_ClearColor(&currentColor));
+
+        ThrowIfFailed(m_control->put_ClearColor(currentColor));
+
+        m_onDraw.SetExpectedCalls(0);
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_DeviceContextIsClearedToCorrectColorBeforeDrawHandlerIsCalled)
+    {
+        Color anyColor{ 1, 2, 3, 4 };
+
+        m_onDraw.SetExpectedCalls(0);
+
+        m_deviceContext->ClearMethod.SetExpectedCalls(1,
+            [&](D2D1_COLOR_F const* color)
+            {
+                Assert::AreEqual(ToD2DColor(anyColor), *color);
+                m_onDraw.SetExpectedCalls(1);
+            });
+
+        ThrowIfFailed(m_control->put_ClearColor(anyColor));
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenClearColorBecomesOpaque_SurfaceImageSourceIsCreatedWithOpaqueBackgroundMode)
+    {
+        m_onDraw.AllowAnyCall();
+
+        // The default clear color is transparent
+        Color defaultClearColor;
+        ThrowIfFailed(m_control->get_ClearColor(&defaultClearColor));
+        Assert::AreNotEqual<uint8_t>(255, defaultClearColor.A);
+
+        Color anyOpaqueColor{ 255, 1, 2, 3 };
+        ThrowIfFailed(m_control->put_ClearColor(anyOpaqueColor));
+
+        m_adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
+            [&](ICanvasDevice*, int, int, CanvasBackground backgroundMode)
+            {
+                Assert::AreEqual(CanvasBackground::Opaque, backgroundMode);
+                return nullptr;
+            });
+
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD(CanvasControl_WhenClearColorBecomesTransparent_SurfaceImageSourceIsCreatedWithTransparentBackgroundMode)
+    {
+        m_onDraw.AllowAnyCall();
+
+        // First ensure we have an opaque color set
+        Color anyOpaqueColor{ 255, 1, 2, 3};
+        ThrowIfFailed(m_control->put_ClearColor(anyOpaqueColor));
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        // Now set it to transparent
+        Color anyTransparentColor{ 254, 1, 2, 3 };
+        ThrowIfFailed(m_control->put_ClearColor(anyTransparentColor));
+
+        m_adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
+            [&](ICanvasDevice*, int, int, CanvasBackground backgroundMode)
+            {
+                Assert::AreEqual(CanvasBackground::Transparent, backgroundMode);
+                return nullptr;
+            });
+
+        RaiseAnyNumberOfCompositionRenderingEvents();
+
+        Expectations::Instance()->Validate();
+    }
+
+private:
+    void RaiseAnyNumberOfCompositionRenderingEvents()
+    {
+        int anyNumberOfTimes = 5;
+        for (auto i = 0; i < anyNumberOfTimes; ++i)
+            m_adapter->RaiseCompositionRenderingEvent();
+    }
+};

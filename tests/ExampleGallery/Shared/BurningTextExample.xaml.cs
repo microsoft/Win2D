@@ -54,8 +54,6 @@ namespace ExampleGallery
         {
             var ds = args.DrawingSession;
 
-            ds.Clear(Color.FromArgb(0, 0, 0, 0));
-
             // If the window size has changed, (re)create the text bitmap.
             var newCanvasSize = new Size(sender.ActualWidth, sender.ActualHeight);
             if (oldCanvasSize != newCanvasSize)

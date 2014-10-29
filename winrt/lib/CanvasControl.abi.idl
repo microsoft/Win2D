@@ -53,6 +53,14 @@ namespace Microsoft.Graphics.Canvas
 
         [eventremove] HRESULT Draw([in] EventRegistrationToken token);
 
+        //
+        // Before the Draw event is raised, the control is cleared to
+        // ClearColor.  ClearColor defaults to transparent black (0,0,0,0).
+        // Setting ClearColor to a different value triggers a Draw.
+        //
+        [propput] HRESULT ClearColor([in] Windows.UI.Color value);
+        [propget] HRESULT ClearColor([out, retval] Windows.UI.Color* value);
+
         HRESULT Invalidate();
     }
 

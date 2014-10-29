@@ -62,8 +62,6 @@ namespace ExampleGallery
 
             var ds = args.DrawingSession;
 
-            ds.Clear(Color.FromArgb(0, 0, 0, 0));
-
             var width = (float)sender.ActualWidth;
             var height = (float)sender.ActualHeight;
 

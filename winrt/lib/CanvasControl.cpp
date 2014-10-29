@@ -183,16 +183,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 handler);
         }
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height) override 
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) override 
         {
             ComPtr<ICanvasResourceCreator> resourceCreator;
             ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
 
             ComPtr<ICanvasImageSource> imageSource;
-            ThrowIfFailed(m_canvasImageSourceFactory->Create(
+            ThrowIfFailed(m_canvasImageSourceFactory->CreateWithBackground(
                 resourceCreator.Get(),
                 width, 
-                height, 
+                height,
+                backgroundMode,
                 &imageSource));
 
             // Since we know that CanvasImageSourceFactory will only ever return
@@ -298,6 +299,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_needToHookCompositionRendering(false)
         , m_imageSourceNeedsReset(false)
         , m_isLoaded(false)
+        , m_clearColor{}
         , m_currentWidth(0)
         , m_currentHeight(0)
     {
@@ -446,7 +448,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_canvasImageSource = m_adapter->CreateCanvasImageSource(
                 m_canvasDevice.Get(),
                 width,
-                height);
+                height,
+                m_clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent);
             
             m_currentWidth = width;
             m_currentHeight = height;
@@ -471,7 +474,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(Color{}, m_adapter->GetLogicalDpi());
+        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(m_clearColor, m_adapter->GetLogicalDpi());
         ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 
@@ -591,6 +594,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasControl::put_ClearColor(Color value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                if (m_clearColor.A == value.A &&
+                    m_clearColor.R == value.R && 
+                    m_clearColor.G == value.G &&
+                    m_clearColor.B == value.B)
+                {
+                    return;
+                }
+
+                bool wasOpaque = (m_clearColor.A == 255);
+                bool isOpaque = (value.A == 255);
+
+                auto invalidateReason = InvalidateReason::Default;
+                if (wasOpaque != isOpaque)
+                    invalidateReason = InvalidateReason::ImageSourceNeedsReset;
+
+                m_clearColor = value;
+                InvalidateImpl(invalidateReason);
+            });
+    }
+
+    IFACEMETHODIMP CanvasControl::get_ClearColor(Color* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                *value = m_clearColor;
+            });
+    }
+
     HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
     {
         return ExceptionBoundary(
@@ -611,8 +649,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     bool CanvasControl::IsWindowVisible()
     {
         boolean visible;
-        ThrowIfFailed(m_window->get_Visible(&visible));
-        return !!visible;
+
+        HRESULT hr = m_window->get_Visible(&visible);
+
+        if (hr == E_FAIL)
+        {
+            // In design mode get_Visible will return E_FAIL.  In this case we
+            // just treat the window as visible.
+            return true;
+        }
+        else
+        {
+            ThrowIfFailed(hr);
+            return !!visible;
+        }
     }
 
 
@@ -630,7 +680,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         std::lock_guard<std::mutex> lock(m_drawLock);
 
-        if (reason == InvalidateReason::SurfaceContentsLost)
+        if (reason == InvalidateReason::ImageSourceNeedsReset)
             m_imageSourceNeedsReset = true;
 
         if (m_renderingEventRegistration)
@@ -734,7 +784,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                InvalidateImpl(InvalidateReason::SurfaceContentsLost);
+                InvalidateImpl(InvalidateReason::ImageSourceNeedsReset);
             });
     }
 

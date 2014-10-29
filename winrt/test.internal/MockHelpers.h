@@ -374,7 +374,7 @@ private:
 // eg:
 //
 //    auto onDraw = MockEventHandler<DrawEventHandlerType>(L"Draw");
-//    onDraw.SetExpectedInvokes(1);
+//    onDraw.SetExpectedCalls(1);
 //    ThrowIfFailed(m_control->add_Draw(onDraw.Get(), &m_ignoredToken));
 //
 // The expectations are validated on destruction.
@@ -411,6 +411,11 @@ public:
             CheckMakeResult(m_callback);
         }
         return m_callback.Get();
+    }
+
+    void AllowAnyCall()
+    {
+        m_callCounter.AllowAnyCall();
     }
 
     void SetExpectedCalls(int value)
