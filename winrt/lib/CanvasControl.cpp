@@ -291,17 +291,120 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     };
 
+    CanvasControl::GuardedState::GuardedState()
+        : m_clearColor{}
+        , m_imageSourceNeedsReset{}
+        , m_needToHookCompositionRendering{}
+    {
+    }
+
+
+    void CanvasControl::GuardedState::TriggerRender(CanvasControl* control, InvalidateReason reason)
+    {
+        std::unique_lock<std::mutex> lock(m_lock);
+        TriggerRenderImpl(control, reason);
+    }
+
+
+    void CanvasControl::GuardedState::SetClearColor(CanvasControl* control, Color const& value)
+    {
+        std::unique_lock<std::mutex> lock(m_lock);
+
+        if (m_clearColor.A == value.A &&
+            m_clearColor.R == value.R && 
+            m_clearColor.G == value.G &&
+            m_clearColor.B == value.B)
+        {
+            return;
+        }
+        
+        bool wasOpaque = (m_clearColor.A == 255);
+        bool isOpaque = (value.A == 255);
+        
+        auto invalidateReason = InvalidateReason::Default;
+        if (wasOpaque != isOpaque)
+            invalidateReason = InvalidateReason::ImageSourceNeedsReset;
+        
+        m_clearColor = value;
+        TriggerRenderImpl(control, invalidateReason);
+    }
+
+
+    void CanvasControl::GuardedState::OnWindowVisibilityChanged(CanvasControl* control, bool isVisible)
+    {
+        std::unique_lock<std::mutex> lock(m_lock);
+
+        if (isVisible)
+        {
+            HookCompositionRenderingIfNecessary(control);
+        }
+        else
+        {                    
+            if (m_renderingEventRegistration)
+            {
+                //
+                // The window is invisible.  This means that
+                // OnCompositionRendering() will not do anything.  However, XAML
+                // will run composition if any handlers are registered on the
+                // rendering event.  Since we want to avoid the system doing
+                // unnecessary work we take steps to unhook the event when we're
+                // not making good use of it.
+                //
+                m_renderingEventRegistration.Release();
+                m_needToHookCompositionRendering = true;
+            }
+        }
+    }
+
+
+    Color CanvasControl::GuardedState::GetClearColor()
+    {
+        std::unique_lock<std::mutex> lock(m_lock);
+        return m_clearColor;
+    }
+
+
+    void CanvasControl::GuardedState::TriggerRenderImpl(CanvasControl* control, InvalidateReason reason)
+    {
+        if (reason == InvalidateReason::ImageSourceNeedsReset)
+            m_imageSourceNeedsReset = true;
+
+        if (m_renderingEventRegistration)
+            return;
+
+        m_needToHookCompositionRendering = true;
+
+        if (!control->IsWindowVisible())
+            return;
+
+        HookCompositionRenderingIfNecessary(control);
+    }
+
+
+    void CanvasControl::GuardedState::HookCompositionRenderingIfNecessary(CanvasControl* control)
+    {
+        if (m_renderingEventRegistration)
+            return;
+        
+        if (!m_needToHookCompositionRendering)
+            return;
+        
+        m_renderingEventRegistration = control->m_adapter->AddCompositionRenderingCallback(
+            control, 
+            &CanvasControl::OnCompositionRendering);
+        
+        m_needToHookCompositionRendering = false; 
+    }
+    
 
     CanvasControl::CanvasControl(std::shared_ptr<ICanvasControlAdapter> adapter)
         : m_adapter(adapter)
         , m_window(m_adapter->GetCurrentWindow())
         , m_canvasDevice(m_adapter->CreateCanvasDevice())
-        , m_needToHookCompositionRendering(false)
-        , m_imageSourceNeedsReset(false)
         , m_isLoaded(false)
-        , m_clearColor{}
         , m_currentWidth(0)
         , m_currentHeight(0)
+        , m_guardedState(std::make_unique<GuardedState>())
     {
         CreateBaseClass();
         CreateImageControl();
@@ -378,24 +481,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-    void CanvasControl::PreDraw()
+    Color CanvasControl::GuardedState::PreDrawAndGetClearColor(CanvasControl* control)
     {
-        //
-        // Note that this lock is scoped to release before the m_drawEventList.InvokeAll().
-        // This is necessary, since handlers themselves may call Invalidate().
-        //
-        std::unique_lock<std::mutex> lock(m_drawLock);
+        std::unique_lock<std::mutex> lock(m_lock);
 
         if (m_imageSourceNeedsReset)
         {
-            m_canvasImageSource.Reset();
+            control->m_canvasImageSource.Reset();
             m_imageSourceNeedsReset = false;
         }
 
         m_renderingEventRegistration.Release();
+
+        return m_clearColor;
     }
 
-    void CanvasControl::EnsureSizeDependentResources()
+    void CanvasControl::EnsureSizeDependentResources(CanvasBackground backgroundMode)
     {
         // CanvasControl should always have a device
         assert(m_canvasDevice);
@@ -449,7 +550,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_canvasDevice.Get(),
                 width,
                 height,
-                m_clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent);
+                backgroundMode);
             
             m_currentWidth = width;
             m_currentHeight = height;
@@ -462,7 +563,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void CanvasControl::CallDrawHandlers()
+    void CanvasControl::CallDrawHandlers(Color clearColor)
     {
         if (m_drawEventList.GetSize() == 0)
         {
@@ -474,7 +575,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(m_clearColor, m_adapter->GetLogicalDpi());
+        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(clearColor, m_adapter->GetLogicalDpi());
         ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 
@@ -512,7 +613,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ThrowIfFailed(m_createResourcesEventList.InvokeAll(this, static_cast<IInspectable*>(nullptr)));
 
-                InvalidateImpl();
+                m_guardedState->TriggerRender(this);
             });
     }
 
@@ -542,7 +643,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (newWidth == m_currentWidth && newHeight == m_currentHeight)
                     return;
 
-                InvalidateImpl();
+                m_guardedState->TriggerRender(this);
             });
     }
 
@@ -599,23 +700,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                if (m_clearColor.A == value.A &&
-                    m_clearColor.R == value.R && 
-                    m_clearColor.G == value.G &&
-                    m_clearColor.B == value.B)
-                {
-                    return;
-                }
-
-                bool wasOpaque = (m_clearColor.A == 255);
-                bool isOpaque = (value.A == 255);
-
-                auto invalidateReason = InvalidateReason::Default;
-                if (wasOpaque != isOpaque)
-                    invalidateReason = InvalidateReason::ImageSourceNeedsReset;
-
-                m_clearColor = value;
-                InvalidateImpl(invalidateReason);
+                m_guardedState->SetClearColor(this, value);
             });
     }
 
@@ -625,7 +710,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckInPointer(value);
-                *value = m_clearColor;
+                *value = m_guardedState->GetClearColor();
             });
     }
 
@@ -637,11 +722,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!IsWindowVisible())
                     return;
 
-                PreDraw();
+                auto clearColor = m_guardedState->PreDrawAndGetClearColor(this);
 
-                EnsureSizeDependentResources();
+                auto backgroundMode = clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
+                EnsureSizeDependentResources(backgroundMode);
 
-                CallDrawHandlers();
+                CallDrawHandlers(clearColor);
             });
     }
 
@@ -671,41 +757,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                InvalidateImpl();
+                m_guardedState->TriggerRender(this);
             });
     }
 
-
-    void CanvasControl::InvalidateImpl(InvalidateReason reason)
-    {
-        std::lock_guard<std::mutex> lock(m_drawLock);
-
-        if (reason == InvalidateReason::ImageSourceNeedsReset)
-            m_imageSourceNeedsReset = true;
-
-        if (m_renderingEventRegistration)
-            return;
-
-        m_needToHookCompositionRendering = true;
-
-        if (!IsWindowVisible())
-            return;
-
-        HookCompositionRenderingIfNecessary();
-    }
-
-    void CanvasControl::HookCompositionRenderingIfNecessary()
-    {
-        if (m_renderingEventRegistration)
-            return;
-
-        if (!m_needToHookCompositionRendering)
-            return;
-
-        m_renderingEventRegistration = m_adapter->AddCompositionRenderingCallback(this, &CanvasControl::OnCompositionRendering);
-
-        m_needToHookCompositionRendering = false;
-    }
 
     IFACEMETHODIMP CanvasControl::MeasureOverride(
         ABI::Windows::Foundation::Size availableSize, 
@@ -775,7 +830,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                InvalidateImpl();
+                m_guardedState->TriggerRender(this);
             });
     }
 
@@ -784,7 +839,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                InvalidateImpl(InvalidateReason::ImageSourceNeedsReset);
+                m_guardedState->TriggerRender(this, InvalidateReason::ImageSourceNeedsReset);
             });
     }
 
@@ -793,32 +848,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                std::lock_guard<std::mutex> lock(m_drawLock);
-
                 boolean isVisible;
                 ThrowIfFailed(args->get_Visible(&isVisible));
 
-                if (isVisible)
-                {
-                    HookCompositionRenderingIfNecessary();
-                }
-                else
-                {                    
-                    if (m_renderingEventRegistration)
-                    {
-                        //
-                        // The window is invisible.  This means that
-                        // OnCompositionRendering() will not do anything.
-                        // However, XAML will run composition if any handlers
-                        // are registered on the rendering event.  Since we want
-                        // to avoid the system doing unnecessary work we take
-                        // steps to unhook the event when we're not making good
-                        // use of it.
-                        //
-                        m_renderingEventRegistration.Release();
-                        m_needToHookCompositionRendering = true;
-                    }
-                }
+                m_guardedState->OnWindowVisibilityChanged(this, !!isVisible);
             });
     }
 

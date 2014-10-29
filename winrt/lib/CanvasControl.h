@@ -107,8 +107,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasControl, BaseTrust);
 
-        std::mutex m_drawLock;
-
         std::shared_ptr<ICanvasControlAdapter> m_adapter;
 
         // The current window is thread local.  We grab this on construction
@@ -123,20 +121,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RegisteredEvent m_applicationSuspendingEventRegistration;
         RegisteredEvent m_surfaceContentsLostEventRegistration;
         RegisteredEvent m_windowVisibilityChangedEventRegistration;
-        RegisteredEvent m_renderingEventRegistration;
         RegisteredEvent m_dpiChangedEventRegistration;
 
         ComPtr<ICanvasDevice> m_canvasDevice;
         ComPtr<IImage> m_imageControl;
         ComPtr<CanvasImageSource> m_canvasImageSource;
-        bool m_needToHookCompositionRendering;
-        bool m_imageSourceNeedsReset;
         bool m_isLoaded;
-
-        Color m_clearColor;
-
         int m_currentWidth;
         int m_currentHeight;
+
+        class GuardedState;
+        std::unique_ptr<GuardedState> m_guardedState;
         
     public:
         CanvasControl(
@@ -201,9 +196,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         bool IsWindowVisible();
 
-        void PreDraw();
-        void EnsureSizeDependentResources();
-        void CallDrawHandlers();
+        void EnsureSizeDependentResources(CanvasBackground backgroundMode);
+        void CallDrawHandlers(Color clearColor);
 
         enum class InvalidateReason
         {
@@ -211,9 +205,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ImageSourceNeedsReset
         };
 
-        void InvalidateImpl(InvalidateReason reason = InvalidateReason::Default);
+        // These variables may be accessed by arbitrary threads.  We guard them
+        // with a mutex.
+        class GuardedState
+        {
+            std::mutex m_lock;
 
-        void HookCompositionRenderingIfNecessary();
+            Color m_clearColor;
+
+            bool m_imageSourceNeedsReset;
+
+            RegisteredEvent m_renderingEventRegistration;
+            bool m_needToHookCompositionRendering;
+
+        public:
+            GuardedState();
+
+            void TriggerRender(CanvasControl* control, InvalidateReason reason = InvalidateReason::Default);
+
+            Color PreDrawAndGetClearColor(CanvasControl* control);
+
+            void OnWindowVisibilityChanged(CanvasControl* control, bool isVisible);
+            void SetClearColor(CanvasControl* control, Color const& value);
+            Color GetClearColor();
+
+        private:
+            void TriggerRenderImpl(CanvasControl* control, InvalidateReason reason = InvalidateReason::Default);
+            void HookCompositionRenderingIfNecessary(CanvasControl* control);
+        };
 
         HRESULT OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args);
         HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
