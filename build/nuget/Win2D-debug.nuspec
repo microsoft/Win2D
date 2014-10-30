@@ -4,9 +4,13 @@
         <id>Win2D-debug</id>
         <version>0.0.0-SpecifyVersionOnCommandline</version>
         <title>Win2D (debug)</title>
-        <authors>Microsoft Corportation</authors>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Win2D debug build.  Suitable for debugging Win2D itself.</description>
+        <authors>Microsoft Corporation</authors>
+        <description>Win2D debug build. Suitable for debugging Win2D itself.</description>
+        <projectUrl>http://github.com/Microsoft/Win2D</projectUrl>
+        <licenseUrl>$LicenseUrl$</licenseUrl>
+        <requireLicenseAcceptance>$RequireLicenseAcceptance$</requireLicenseAcceptance>
+        <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing</tags>
 
         <dependencies>
           <dependency id="Win2D"/>
@@ -21,41 +25,41 @@
 
            Running with -NoPackageAnalysis suppresses the warnings.
       -->
-      <file src="..\..\bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
-      <file src="..\..\bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x86" />
-      <file src="..\..\bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
-      <file src="..\..\bin\windowsx86\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x86" />
 
-      <file src="..\..\bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
-      <file src="..\..\bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\arm" />
-      <file src="..\..\bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
-      <file src="..\..\bin\windowsarm\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\arm" />
 
-      <file src="..\..\bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
-      <file src="..\..\bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x64" />
-      <file src="..\..\bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
-      <file src="..\..\bin\windowsx64\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x64" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x64" />
 
-      <file src="..\..\bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
-      <file src="..\..\bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\x86" />
-      <file src="..\..\bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
-      <file src="..\..\bin\phonex86\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\x86" />
 
-      <file src="..\..\bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
-      <file src="..\..\bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\arm" />
-      <file src="..\..\bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
-      <file src="..\..\bin\phonearm\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
 
-      <file src="Win2D-debug.props" target="build" />
+      <file src="build\nuget\Win2D-debug.props" target="build" />
     </files>
 </package>

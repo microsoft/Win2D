@@ -4,9 +4,13 @@
         <id>Win2D</id>
         <version>0.0.0-SpecifyVersionOnCommandline</version>
         <title>Win2D</title>
-        <authors>Microsoft Corportation</authors>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Win2D</description>
+        <authors>Microsoft Corporation</authors>
+        <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.</description>
+        <projectUrl>http://github.com/Microsoft/Win2D</projectUrl>
+        <licenseUrl>$LicenseUrl$</licenseUrl>
+        <requireLicenseAcceptance>$RequireLicenseAcceptance$</requireLicenseAcceptance>
+        <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing</tags>
 
         <!-- 
              The reference listed here is to enable the Visual Studio designer
@@ -26,10 +30,10 @@
           and Windows Phone Apps (wpa).
       -->
 
-      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="lib\win" />
-      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="lib\win" />
-      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="lib\wpa" />
-      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="lib\wpa" />
+      <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="lib\win" />
+      <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="lib\win" />
+      <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="lib\wpa" />
+      <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="lib\wpa" />
 
       <!-- 
            These are the actual files that will be referenced by the project.
@@ -40,55 +44,55 @@
 
            Running with -NoPackageAnalysis suppresses the warnings.
       -->
-      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
-      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x86" />
-      <file src="..\..\bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
-      <file src="..\..\bin\windowsx86\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x86" />
 
-      <file src="..\..\bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
-      <file src="..\..\bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\arm" />
-      <file src="..\..\bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
-      <file src="..\..\bin\windowsarm\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\arm" />
 
-      <file src="..\..\bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
-      <file src="..\..\bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x64" />
-      <file src="..\..\bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
-      <file src="..\..\bin\windowsx64\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x64" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x64" />
 
-      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
-      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\x86" />
-      <file src="..\..\bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
-      <file src="..\..\bin\phonex86\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\x86" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\x86" />
 
-      <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
-      <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\arm" />
-      <file src="..\..\bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
-      <file src="..\..\bin\phonearm\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
-      <file src="..\..\bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
 
       <!-- Build scripts used by managed Windows Store Apps -->
-      <file src="Win2D.props" target="build\win\Win2D.props" />
-      <file src="Win2D-managed.targets" target="build\win\Win2D.targets" />
+      <file src="build\nuget\Win2D.props" target="build\win\Win2D.props" />
+      <file src="build\nuget\Win2D-managed.targets" target="build\win\Win2D.targets" />
 
       <!-- Build scripts used by managed Windows Phone Apps -->
-      <file src="Win2D.props" target="build\wpa\Win2D.props" />
-      <file src="Win2D-managed.targets" target="build\wpa\Win2D.targets" />
+      <file src="build\nuget\Win2D.props" target="build\wpa\Win2D.props" />
+      <file src="build\nuget\Win2D-managed.targets" target="build\wpa\Win2D.targets" />
 
       <!-- Build scripts used by native apps (Windows Store and Windows Phone) -->
-      <file src="Win2D-native.targets" target="build\native\Win2D.targets" />
-      <file src="Win2D.props" target="build\native\Win2D.props" />
+      <file src="build\nuget\Win2D-native.targets" target="build\native\Win2D.targets" />
+      <file src="build\nuget\Win2D.props" target="build\native\Win2D.props" />
 
       <!-- Header files used by native apps -->
-      <file src="..\..\winrt\published\*" target="Include"/>
-      <file src="..\..\numerics\cpp\WindowsNumerics.*" target="Include"/>
+      <file src="winrt\published\*" target="Include"/>
+      <file src="numerics\cpp\WindowsNumerics.*" target="Include"/>
     </files>
 </package>

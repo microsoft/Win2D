@@ -3,12 +3,19 @@
 REM
 REM Version is read from the VERSION file.
 REM
-REM Command-line parameter specfies a prerelease string to append to the version
+REM Command-line parameter specifies either "signed" or a prerelease string to append to the version
 REM
 REM Say VERSION contains "0.0.3" then:
 REM
 REM build-nupkg                     <-- generates package with version 0.0.3
 REM build-nupkg build-140912-1100   <-- generates package with version 0.0.3-build-140912-1100
+REM
+REM The "signed" flag is intended for internal Microsoft use. This generates a
+REM package without a prerelease version number, using a license agreement
+REM associated with Microsoft releasing pre-built binaries, and pulling the
+REM binaries from a different location to usual. This script does not actually
+REM perform signing: the expectation is that previous tooling has already
+REM signed the files and copied them to the right place for it to pick up.
 REM
 
 PUSHD "%~dp0"
@@ -23,12 +30,33 @@ IF %ERRORLEVEL% NEQ 0 (
 
 SET /p VERSION=<VERSION
 
-IF NOT "%1" == "" (
-    SET VERSION=%VERSION%-%1
+IF "%1" == "signed" (
+    SET BIN=bin\signed
+    SET OUTDIR=..\..\bin\signed
+    SET LICENSE_URL=http://www.microsoft.com/web/webpi/eula/eula_win2d_10012014.htm
+    SET REQUIRE_LICENSE_ACCEPTANCE=true
+) else (
+    IF NOT "%1" == "" (
+        SET VERSION=%VERSION%-%1
+    )
+    SET BIN=bin
+    SET OUTDIR=..\..\bin
+    SET LICENSE_URL=http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt
+    SET REQUIRE_LICENSE_ACCEPTANCE=false
 )
 
-nuget pack Win2D.nuspec -nopackageanalysis -outputdirectory ..\..\bin -version %VERSION%
-nuget pack Win2D-debug.nuspec -nopackageanalysis -outputdirectory ..\..\bin -version %VERSION%
+SET NUGET_ARGS=^
+    -nopackageanalysis ^
+    -basepath ..\.. ^
+    -outputdirectory %OUTDIR% ^
+    -version %VERSION% ^
+    -properties bin=%BIN%;LicenseUrl=%LICENSE_URL%;RequireLicenseAcceptance=%REQUIRE_LICENSE_ACCEPTANCE%
+
+nuget pack Win2D.nuspec %NUGET_ARGS%
+
+IF NOT "%1" == "signed" (
+    nuget pack Win2D-debug.nuspec %NUGET_ARGS%
+)
 
 :END
 
