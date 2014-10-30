@@ -94,5 +94,8 @@
       <!-- Header files used by native apps -->
       <file src="winrt\published\*" target="Include"/>
       <file src="numerics\cpp\WindowsNumerics.*" target="Include"/>
+
+      <!-- SHA-1 hash of the git HEAD this package was built from -->
+      <file src="obj\Win2d.githash.txt" />
     </files>
 </package>

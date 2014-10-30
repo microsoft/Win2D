@@ -105,7 +105,7 @@
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects"
-          DependsOnTargets="ChooseProjectsToBuild"
+          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -113,7 +113,7 @@
     <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
 
     <!-- All the variants (platform and configuration) of a project can be built in parallel -->
-    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="true" />
+    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="true" Properties="IncludeVersionInfo=true" />
   </Target>
 
 
@@ -143,6 +143,53 @@
         <PlatformIndependentName>$([System.String]::new('%(ProjectsPerConfig.Filename)').Replace('Windows', '').Replace('Phone', '').TrimEnd('.'))</PlatformIndependentName>
       </ProjectsToBuild>
     </ItemGroup>
+  </Target>
+
+
+  <Target Name="PrepareVersionInfo">
+    <MakeDir Directories="obj" />
+
+    <!-- Read the current Win2D version number -->
+    <ReadLinesFromFile File="build\nuget\VERSION">
+      <Output TaskParameter="Lines" PropertyName="Win2DVersion" />
+    </ReadLinesFromFile>
+
+    <!-- Read the SHA-1 hash for git HEAD, so we can later identify exactly what code went into this build -->
+    <Exec Command="git rev-parse --verify HEAD &gt; obj\Win2D.githash.txt" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="GitExitCode" />
+    </Exec>
+
+    <WriteLinesToFile Condition="$(GitExitCode) != 0" File ="obj\Win2D.githash.txt" Lines="unknown git hash" />
+
+    <ReadLinesFromFile File="obj\Win2D.githash.txt">
+      <Output TaskParameter="Lines" PropertyName="GitHash" />
+    </ReadLinesFromFile>
+
+    <!-- Generate AssemblyVersion.cs, which adds the latest version info to managed assembly outputs -->
+    <ItemGroup>
+      <AssemblyVersionCode Include="[assembly: System.Reflection.AssemblyVersion(&quot;$(Win2DVersion)&quot;)]" />
+      <AssemblyVersionCode Include="[assembly: System.Reflection.AssemblyFileVersion(&quot;$(Win2DVersion)&quot;)]" />
+      <AssemblyVersionCode Include="[assembly: System.Reflection.AssemblyInformationalVersionAttribute(&quot;$(Win2DVersion) ($(GitHash))&quot;)]" />
+    </ItemGroup>
+
+    <ReadLinesFromFile File="obj\AssemblyVersion.cs">
+      <Output TaskParameter="Lines" ItemName="ExistingAssemblyVersion" />
+    </ReadLinesFromFile>
+
+    <WriteLinesToFile Condition="@(AssemblyVersionCode) != @(ExistingAssemblyVersion)" File="obj\AssemblyVersion.cs" Lines="@(AssemblyVersionCode)" Overwrite="true" />
+
+    <!-- Also generate DllVersion.h, which adds version info to native DLLs -->
+    <ItemGroup>
+      <DllVersionCode Include="#define DLL_VERSION $(Win2DVersion.Replace('.', ','))" />
+      <DllVersionCode Include="#define DLL_VERSION_STRING &quot;$(Win2DVersion)&quot;" />
+      <DllVersionCode Include="#define DLL_VERSION_STRING_LONG &quot;$(Win2DVersion) ($(GitHash))&quot;" />
+    </ItemGroup>
+
+    <ReadLinesFromFile File="obj\DllVersion.h">
+      <Output TaskParameter="Lines" ItemName="ExistingDllVersion" />
+    </ReadLinesFromFile>
+
+    <WriteLinesToFile Condition="@(DllVersionCode) != @(ExistingDllVersion)" File="obj\DllVersion.h" Lines="@(DllVersionCode)" Overwrite="true" />
   </Target>
 
 

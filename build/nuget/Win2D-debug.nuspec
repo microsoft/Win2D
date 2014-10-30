@@ -61,5 +61,8 @@
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
 
       <file src="build\nuget\Win2D-debug.props" target="build" />
+
+      <!-- SHA-1 hash of the git HEAD this package was built from -->
+      <file src="obj\Win2d.githash.txt" target="Win2d-debug.githash.txt" />
     </files>
 </package>

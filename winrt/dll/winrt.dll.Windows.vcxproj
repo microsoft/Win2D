@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</ProjectGuid>
@@ -21,5 +21,11 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="version.rc">
+      <PreprocessorDefinitions Condition="'$(IncludeVersionInfo)' != ''">INCLUDE_VERSION_INFO;$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDir)..\..\obj</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
