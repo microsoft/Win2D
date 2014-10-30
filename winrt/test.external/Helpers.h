@@ -419,3 +419,22 @@ struct WicBitmapTestFixture
     ComPtr<ID2D1Bitmap1> Bitmap;
 };
 WicBitmapTestFixture CreateWicBitmapTestFixture();
+
+template<typename ACTION> static void ExpectCOMExceptionWithHresult(HRESULT hresult, ACTION functor)
+{
+    try
+    {
+        functor();
+    }
+    catch (Platform::COMException^ e)
+    {
+        Assert::AreEqual(e->HResult, static_cast<int>(hresult));
+        return;
+    }
+    catch (...)
+    {
+        Assert::Fail(); // Some other, unexpected exception was thrown.
+    }
+
+    Assert::Fail(); // Expected an exception, but none was thrown.
+}

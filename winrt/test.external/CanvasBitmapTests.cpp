@@ -86,33 +86,23 @@ public:
     {
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
 
-        try
-        {
-            auto async = CanvasBitmap::LoadAsync(canvasDevice, "ThisImageFileDoesNotExist.jpg");
+        auto async = CanvasBitmap::LoadAsync(canvasDevice, "ThisImageFileDoesNotExist.jpg");
 
-            WaitExecution(async);
+        ExpectCOMExceptionWithHresult(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND),
+            [&]
+            {
+                WaitExecution(async);
+            });            
+            
+        Uri^ uri = ref new Uri("ms-appx:///nope");
 
-            Assert::Fail(L"Trying to load a missing file should throw!");
-        }
-        catch (Platform::COMException^ e)
-        {
-            Assert::AreEqual<unsigned>(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND), e->HResult);
-        }
+        async = CanvasBitmap::LoadAsync(canvasDevice, uri);
 
-        try
-        {
-            Uri^ uri = ref new Uri("ms-appx:///nope");
-
-            auto async = CanvasBitmap::LoadAsync(canvasDevice, uri);
-
-            WaitExecution(async);
-
-            Assert::Fail(L"Trying to load an invalid URI should throw!");
-        }
-        catch (Platform::COMException^ e)
-        {
-            Assert::AreEqual<unsigned>(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND), e->HResult);
-        }        
+        ExpectCOMExceptionWithHresult(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND),
+            [&]
+            {
+                WaitExecution(async);
+            });
     }
 
     TEST_METHOD(CanvasBitmap_LoadStreamAndUri)
@@ -1352,8 +1342,16 @@ public:
     TEST_METHOD(CanvasBitmap_InvalidStreams)
     {
         // Ensure an unreadable stream causes LoadAsync to fail.
-        StreamWithRestrictions^ streamWithNoRead = ref new StreamWithRestrictions(false, true);        
-        auto asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead, CanvasAlphaBehavior::Ignore);
+        StreamWithRestrictions^ streamWithNoRead = ref new StreamWithRestrictions(false, true); 
+               
+        auto asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead);
+        Assert::ExpectException<Platform::NotImplementedException^>(
+            [&]
+            {
+                WaitExecution(asyncLoad);
+            });
+
+        asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead, CanvasAlphaBehavior::Ignore);
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
             {
@@ -1369,5 +1367,120 @@ public:
             {
                 WaitExecution(asyncSave);
             });
+
+        asyncSave = bitmap->SaveToStreamAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp, 0.6f);        
+        Assert::ExpectException<Platform::NotImplementedException^>(
+            [&]
+            {
+                WaitExecution(asyncSave);
+            });
+    }
+
+    ref class StreamWithNetworkProblems sealed : public IRandomAccessStream
+    {
+        InMemoryRandomAccessStream^ m_wrappedStream;
+
+    public:
+        StreamWithNetworkProblems()
+        {
+            m_wrappedStream = ref new InMemoryRandomAccessStream();
+        }
+
+        virtual ~StreamWithNetworkProblems() // Implements Dispose which is required
+        {
+        }
+
+        virtual IAsyncOperationWithProgress<IBuffer ^, unsigned int>^ ReadAsync(IBuffer^ buffer, unsigned int offset, InputStreamOptions options)
+        {
+            return create_async([=](progress_reporter<unsigned int> reporter) -> IBuffer^
+            {
+                throw ref new Platform::COMException(INET_E_DOWNLOAD_FAILURE);
+            });
+
+        }
+
+        virtual IAsyncOperationWithProgress<unsigned int, unsigned int>^ WriteAsync(IBuffer^ buffer)
+        {
+            return create_async([=](progress_reporter<unsigned int> reporter) -> unsigned int
+            {
+                throw ref new Platform::COMException(INET_E_CONNECTION_TIMEOUT);
+            });
+        }
+
+        virtual IAsyncOperation<bool>^ FlushAsync()
+        {
+            return m_wrappedStream->FlushAsync();
+        }
+
+        virtual property bool CanRead { bool get() { return true; } }
+
+        virtual property bool CanWrite { bool get() { return true; } }
+
+        virtual property unsigned __int64 Position { unsigned __int64 get() { return m_wrappedStream->Position; } }
+
+        virtual property unsigned __int64 Size
+        {
+            unsigned __int64 get() { return m_wrappedStream->Size; }
+            void set(unsigned __int64 value) { m_wrappedStream->Size = value; }
+        }
+
+        virtual IInputStream^ GetInputStreamAt(unsigned __int64 position)
+        {
+            return m_wrappedStream->GetInputStreamAt(position);
+        }
+
+        virtual IOutputStream^ GetOutputStreamAt(unsigned __int64 position)
+        {
+            return m_wrappedStream->GetOutputStreamAt(position);
+        }
+
+        virtual void Seek(unsigned __int64 position)
+        {
+            m_wrappedStream->Seek(position);
+        }
+
+        virtual IRandomAccessStream^ CloneStream()
+        {
+            Assert::Fail(); // Not impl
+            return nullptr;
+        }
+    };
+
+    TEST_METHOD(CanvasBitmap_UnreliableStreams)
+    {
+        // Ensure an unreliable stream causes LoadAsync and SaveToStreamAsync to fail,
+        // and doesn't cause AVs or ungraceful failures.
+        StreamWithNetworkProblems^ unreliableStream = ref new StreamWithNetworkProblems();
+
+        auto asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, unreliableStream);
+        ExpectCOMExceptionWithHresult(INET_E_DOWNLOAD_FAILURE,
+            [&]
+            {
+                WaitExecution(asyncLoad);
+            });
+
+        asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, unreliableStream, CanvasAlphaBehavior::Ignore);
+        ExpectCOMExceptionWithHresult(INET_E_DOWNLOAD_FAILURE, 
+            [&]
+            {
+                WaitExecution(asyncLoad);
+            });
+
+        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+
+        auto asyncSave = bitmap->SaveToStreamAsync(unreliableStream, CanvasBitmapFileFormat::Bmp);
+        ExpectCOMExceptionWithHresult(INET_E_CONNECTION_TIMEOUT,
+            [&]
+            {
+                WaitExecution(asyncSave);
+            });
+        
+        asyncSave = bitmap->SaveToStreamAsync(unreliableStream, CanvasBitmapFileFormat::Bmp, 0.5f);
+        ExpectCOMExceptionWithHresult(INET_E_CONNECTION_TIMEOUT, 
+            [&]
+            {
+                WaitExecution(asyncSave);
+            });
+
     }
 };
