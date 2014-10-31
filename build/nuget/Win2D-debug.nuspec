@@ -26,37 +26,37 @@
            Running with -NoPackageAnalysis suppresses the warnings.
       -->
       <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
-      <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x86" />
       <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
       <file src="$bin$\windowsx86\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
+      <file src="bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x86" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x86" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x86" />
 
       <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
-      <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\arm" />
       <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
       <file src="$bin$\windowsarm\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
+      <file src="bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\arm" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\arm" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\arm" />
 
       <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
-      <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x64" />
       <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
       <file src="$bin$\windowsx64\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
+      <file src="bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x64" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x64" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x64" />
 
       <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
-      <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\x86" />
       <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
       <file src="$bin$\phonex86\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
+      <file src="bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\x86" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\x86" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\x86" />
 
       <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
-      <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\arm" />
       <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
       <file src="$bin$\phonearm\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
+      <file src="bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\arm" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
 
