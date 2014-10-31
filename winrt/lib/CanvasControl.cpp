@@ -481,106 +481,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-    Color CanvasControl::GuardedState::PreDrawAndGetClearColor(CanvasControl* control)
-    {
-        std::unique_lock<std::mutex> lock(m_lock);
-
-        if (m_imageSourceNeedsReset)
-        {
-            control->m_canvasImageSource.Reset();
-            m_imageSourceNeedsReset = false;
-        }
-
-        m_renderingEventRegistration.Release();
-
-        return m_clearColor;
-    }
-
-    void CanvasControl::EnsureSizeDependentResources(CanvasBackground backgroundMode)
-    {
-        // CanvasControl should always have a device
-        assert(m_canvasDevice);
-
-        // It is illegal to call get_actualWidth/Height before Loaded.
-        assert(m_isLoaded);
-
-        ComPtr<IFrameworkElement> thisAsFrameworkElement;
-        ThrowIfFailed(GetComposableBase().As(&thisAsFrameworkElement));
-
-        double actualWidth, actualHeight;
-        ThrowIfFailed(thisAsFrameworkElement->get_ActualWidth(&actualWidth));
-        ThrowIfFailed(thisAsFrameworkElement->get_ActualHeight(&actualHeight));
-
-        assert(actualWidth <= static_cast<double>(INT_MAX));
-        assert(actualHeight <= static_cast<double>(INT_MAX));
-        
-        const float logicalDpi = m_adapter->GetLogicalDpi();
-        const double dpiScalingFactor = logicalDpi / DEFAULT_DPI;
-
-        const double deviceDependentWidth = actualWidth * dpiScalingFactor;
-        const double deviceDependentHeight = actualHeight * dpiScalingFactor;
-
-        assert(deviceDependentWidth <= static_cast<double>(INT_MAX));
-        assert(deviceDependentWidth >= 0.0);
-        assert(deviceDependentHeight <= static_cast<double>(INT_MAX));
-        assert(deviceDependentHeight >= 0.0);
-
-        auto width = static_cast<int>(ceil(deviceDependentWidth));
-        auto height = static_cast<int>(ceil(deviceDependentHeight));
-
-        if (m_canvasImageSource)
-        {
-            // If we already have an image source that's the right size we don't
-            // need to do anything.
-            if (width == m_currentWidth && height == m_currentHeight)
-                return;
-        }
-
-        if (width <= 0 || height <= 0)
-        {
-            // Zero-sized controls don't have image sources
-            m_canvasImageSource.Reset();
-            m_currentWidth = 0;
-            m_currentHeight = 0;
-            ThrowIfFailed(m_imageControl->put_Source(nullptr));
-        }
-        else
-        {
-            m_canvasImageSource = m_adapter->CreateCanvasImageSource(
-                m_canvasDevice.Get(),
-                width,
-                height,
-                backgroundMode);
-            
-            m_currentWidth = width;
-            m_currentHeight = height;
-            
-            //
-            // Set this new image source on the image control
-            //
-            auto baseImageSource = As<IImageSource>(m_canvasImageSource);
-            ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
-        }
-    }
-
-    void CanvasControl::CallDrawHandlers(Color const& clearColor)
-    {
-        if (!m_canvasImageSource)
-        {
-            return;
-        }
-
-        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(clearColor, m_adapter->GetLogicalDpi());
-        ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
-        CheckMakeResult(drawEventArgs);
-
-        ThrowIfFailed(m_drawEventList.InvokeAll(this, drawEventArgs.Get()));
-
-        ComPtr<IClosable> drawingSessionClosable;
-        ThrowIfFailed(drawingSession.As(&drawingSessionClosable));
-        ThrowIfFailed(drawingSessionClosable->Close());
-    }
-    
     HRESULT CanvasControl::OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args)
     {
         return ExceptionBoundary(
@@ -785,7 +685,105 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    Color CanvasControl::GuardedState::PreDrawAndGetClearColor(CanvasControl* control)
+    {
+        std::unique_lock<std::mutex> lock(m_lock);
 
+        if (m_imageSourceNeedsReset)
+        {
+            control->m_canvasImageSource.Reset();
+            m_imageSourceNeedsReset = false;
+        }
+
+        m_renderingEventRegistration.Release();
+
+        return m_clearColor;
+    }
+
+    void CanvasControl::EnsureSizeDependentResources(CanvasBackground backgroundMode)
+    {
+        // CanvasControl should always have a device
+        assert(m_canvasDevice);
+
+        // It is illegal to call get_actualWidth/Height before Loaded.
+        assert(m_isLoaded);
+
+        ComPtr<IFrameworkElement> thisAsFrameworkElement;
+        ThrowIfFailed(GetComposableBase().As(&thisAsFrameworkElement));
+
+        double actualWidth, actualHeight;
+        ThrowIfFailed(thisAsFrameworkElement->get_ActualWidth(&actualWidth));
+        ThrowIfFailed(thisAsFrameworkElement->get_ActualHeight(&actualHeight));
+
+        assert(actualWidth <= static_cast<double>(INT_MAX));
+        assert(actualHeight <= static_cast<double>(INT_MAX));
+        
+        const float logicalDpi = m_adapter->GetLogicalDpi();
+        const double dpiScalingFactor = logicalDpi / DEFAULT_DPI;
+
+        const double deviceDependentWidth = actualWidth * dpiScalingFactor;
+        const double deviceDependentHeight = actualHeight * dpiScalingFactor;
+
+        assert(deviceDependentWidth <= static_cast<double>(INT_MAX));
+        assert(deviceDependentWidth >= 0.0);
+        assert(deviceDependentHeight <= static_cast<double>(INT_MAX));
+        assert(deviceDependentHeight >= 0.0);
+
+        auto width = static_cast<int>(ceil(deviceDependentWidth));
+        auto height = static_cast<int>(ceil(deviceDependentHeight));
+
+        if (m_canvasImageSource)
+        {
+            // If we already have an image source that's the right size we don't
+            // need to do anything.
+            if (width == m_currentWidth && height == m_currentHeight)
+                return;
+        }
+
+        if (width <= 0 || height <= 0)
+        {
+            // Zero-sized controls don't have image sources
+            m_canvasImageSource.Reset();
+            m_currentWidth = 0;
+            m_currentHeight = 0;
+            ThrowIfFailed(m_imageControl->put_Source(nullptr));
+        }
+        else
+        {
+            m_canvasImageSource = m_adapter->CreateCanvasImageSource(
+                m_canvasDevice.Get(),
+                width,
+                height,
+                backgroundMode);
+            
+            m_currentWidth = width;
+            m_currentHeight = height;
+            
+            //
+            // Set this new image source on the image control
+            //
+            auto baseImageSource = As<IImageSource>(m_canvasImageSource);
+            ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
+        }
+    }
+
+    void CanvasControl::CallDrawHandlers(Color const& clearColor)
+    {
+        if (!m_canvasImageSource)
+        {
+            return;
+        }
+
+        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(clearColor, m_adapter->GetLogicalDpi());
+        ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
+        CheckMakeResult(drawEventArgs);
+
+        ThrowIfFailed(m_drawEventList.InvokeAll(this, drawEventArgs.Get()));
+
+        ComPtr<IClosable> drawingSessionClosable;
+        ThrowIfFailed(drawingSession.As(&drawingSessionClosable));
+        ThrowIfFailed(drawingSessionClosable->Close());
+    }
 
     bool CanvasControl::IsWindowVisible()
     {

@@ -184,21 +184,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP OnApplyTemplate();
 
     private:
-        void CreateBaseClass();
-        void CreateImageControl();
-        void RegisterEventHandlers();
-
-        template<typename T, typename DELEGATE, typename HANDLER>
-        void RegisterEventHandlerOnSelf(
-            ComPtr<T> const& self, 
-            HRESULT (STDMETHODCALLTYPE T::* addMethod)(DELEGATE*, EventRegistrationToken*), 
-            HANDLER handler);
-
-        bool IsWindowVisible();
-
-        void EnsureSizeDependentResources(CanvasBackground backgroundMode);
-        void CallDrawHandlers(Color const& clearColor);
-
         enum class InvalidateReason
         {
             Default,
@@ -234,15 +219,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             void HookCompositionRenderingIfNecessary(CanvasControl* control);
         };
 
+        void CreateBaseClass();
+        void CreateImageControl();
+        void RegisterEventHandlers();
+
+        template<typename T, typename DELEGATE, typename HANDLER>
+        void RegisterEventHandlerOnSelf(
+            ComPtr<T> const& self, 
+            HRESULT (STDMETHODCALLTYPE T::* addMethod)(DELEGATE*, EventRegistrationToken*), 
+            HANDLER handler);
+
+        bool IsWindowVisible();
+
         HRESULT OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args);
-
         HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
-
         HRESULT OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args);
-        HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        
         HRESULT OnDpiChanged(IDisplayInformation* sender, IInspectable* args);
         HRESULT OnSurfaceContentsLost(IInspectable* sender, IInspectable* args);
         HRESULT OnWindowVisibilityChanged(IInspectable* sender, IVisibilityChangedEventArgs* args);
+
+        HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        
+        void EnsureSizeDependentResources(CanvasBackground backgroundMode);
+        void CallDrawHandlers(Color const& clearColor);
 
         void InvokeCreateResources();
         void HandleDeviceLost();
