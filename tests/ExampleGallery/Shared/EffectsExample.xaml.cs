@@ -71,6 +71,8 @@ namespace ExampleGallery
 
         async void Canvas_CreateResources(CanvasControl sender, object args)
         {
+            isLoaded = false;
+
             bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
             
             effect = CreateEffect();

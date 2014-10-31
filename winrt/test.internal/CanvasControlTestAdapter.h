@@ -24,6 +24,7 @@ class CanvasControlTestAdapter : public ICanvasControlAdapter
     ComPtr<MockWindow> m_mockWindow;
 
 public:
+    CALL_COUNTER_WITH_MOCK(CreateCanvasDeviceMethod, ComPtr<ICanvasDevice>());
     ComPtr<MockEventSource<DpiChangedHandler>> DpiChangedEventSource;
     ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
@@ -37,6 +38,7 @@ public:
         , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
     {
+        CreateCanvasDeviceMethod.AllowAnyCall();
     }
 
     virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
@@ -51,6 +53,9 @@ public:
 
     virtual ComPtr<ICanvasDevice> CreateCanvasDevice() override
     {
+        auto device = CreateCanvasDeviceMethod.WasCalled();
+        if (device)
+            return device;
         return Make<StubCanvasDevice>();
     }
 
@@ -83,6 +88,12 @@ public:
         ThrowIfFailed(SurfaceContentsLostEventSource->InvokeAll(sender, arg));
     }
 
+    // This function is called by the CanvasImageSourceDrawingSessionFactory
+    // created by CreateCanvasImageSource before it returns the
+    // MockCanvasDrawingSesion.  (It's quite tricky to inject this by other
+    // means).
+    std::function<ComPtr<MockCanvasDrawingSession>()> OnCanvasImageSourceDrawingSessionFactory_Create;
+
     virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(
         ICanvasDevice* device, 
         int width, 
@@ -104,6 +115,9 @@ public:
         dsFactory->CreateMethod.AllowAnyCall(
             [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const&, float)
             {
+                if (OnCanvasImageSourceDrawingSessionFactory_Create)
+                    return OnCanvasImageSourceDrawingSessionFactory_Create();
+
                 return Make<MockCanvasDrawingSession>();
             });
 

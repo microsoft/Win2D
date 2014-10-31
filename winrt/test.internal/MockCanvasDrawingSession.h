@@ -24,9 +24,16 @@ namespace canvas
         CloakedIid<ICanvasResourceWrapperNative>>
     {
     public:
+        CALL_COUNTER_WITH_MOCK(CloseMethod, HRESULT());
+
+        MockCanvasDrawingSession()
+        {
+            CloseMethod.AllowAnyCall();
+        }
+
         IFACEMETHODIMP Close() override
         {
-            return S_OK;
+            return CloseMethod.WasCalled();
         }
 
 #define DONT_EXPECT(name, ...)                                  \

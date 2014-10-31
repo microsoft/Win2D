@@ -50,12 +50,48 @@ public:
 };
 
 //
+// Specialized HResultException for the various device lost errors.
+//
+class DeviceLostException : public HResultException
+{
+protected:
+    explicit DeviceLostException(HRESULT hr)
+        : HResultException(hr)
+    {
+        assert(IsDeviceLostHResult(hr));
+    }
+
+public:
+    static bool IsDeviceLostHResult(HRESULT hr)
+    {
+        switch (hr)
+        {
+        case DXGI_ERROR_DEVICE_HUNG:
+        case DXGI_ERROR_DEVICE_REMOVED:
+        case DXGI_ERROR_DEVICE_RESET:
+        case DXGI_ERROR_DRIVER_INTERNAL_ERROR:
+        case DXGI_ERROR_INVALID_CALL:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    __declspec(noreturn)
+    friend void ThrowHR(HRESULT);
+};
+
+//
 // Throws an exception for the given HRESULT.
 //
 __declspec(noreturn) __declspec(noinline)
 inline void ThrowHR(HRESULT hr)
 {
-    throw HResultException(hr);
+    if (DeviceLostException::IsDeviceLostHResult(hr))
+        throw DeviceLostException(hr);
+    else
+        throw HResultException(hr);
 }
 
 //

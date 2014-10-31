@@ -102,6 +102,7 @@ public:
     Expectation() {}
 
     virtual void Validate() = 0;
+    virtual bool TryValidate() = 0;
 
     // Expectation is expected to be stored in a shared_ptr, therefore we don't
     // want to allow copying or reassignment.
@@ -149,6 +150,18 @@ public:
         // this is better than having an explicit Init() function, or scanning
         // the list on each Add().
         RemoveStaleExpectations();
+    }
+
+    void ValidateNotSatisfied()
+    {
+        bool allSatisfied = true;
+        for (auto& weake : m_expectations)
+        {
+            if (auto e = weake.lock())
+                allSatisfied = allSatisfied && e->TryValidate();
+        }
+
+        Assert::IsFalse(allSatisfied, L"All expectations were satisfied when at least one expected not to be");
     }
 
 private:
@@ -208,6 +221,10 @@ public:
         Assert::IsTrue(m_actualCallCount <= m_expectedCallCount, Message(L"unexpected call").c_str());
     }
 
+    int GetCurrentCallCount() const
+    {
+        return m_actualCallCount;
+    }
 
     virtual void Validate() override
     {
@@ -215,6 +232,14 @@ public:
             return;
 
         Assert::AreEqual(m_expectedCallCount, m_actualCallCount, Message(L"call count mismatch").c_str());
+    }
+
+    virtual bool TryValidate() override
+    {
+        if (m_allowAnyCall)
+            return true;
+
+        return (m_expectedCallCount == m_actualCallCount);
     }
 
     std::wstring Message(const wchar_t* msg)
@@ -282,6 +307,11 @@ public:
     void WasCalled()
     {
         m_expectation->WasCalled();
+    }
+
+    int GetCurrentCallCount() const
+    {
+        return m_expectation->GetCurrentCallCount();
     }
 
     void Validate()
@@ -395,11 +425,14 @@ class MockEventHandler
     CallCounter<> m_callCounter;
     ComPtr<EventHandlerType> m_callback;
     ExpectedEventParams m_expectedParams;
+    HRESULT m_nextReturnValue;
+    std::function<HRESULT()> m_function;
 
 public:
     MockEventHandler(std::wstring name = L"", ExpectedEventParams expectedParams = ExpectedEventParams::DontCare)
         : m_callCounter(name)
         , m_expectedParams(expectedParams)
+        , m_nextReturnValue(S_OK)
     {
     }
 
@@ -418,9 +451,23 @@ public:
         m_callCounter.AllowAnyCall();
     }
 
-    void SetExpectedCalls(int value)
+    void SetExpectedCalls(int value, HRESULT nextReturnValue = S_OK)
     {
         m_callCounter.SetExpectedCalls(value);
+        m_nextReturnValue = nextReturnValue;
+        m_function = nullptr;
+    }
+
+    void SetExpectedCalls(int value, std::function<HRESULT()> fn)
+    {
+        SetExpectedCalls(value);
+        m_function = fn;
+        m_nextReturnValue = S_OK;
+    }
+
+    int GetCurrentCallCount() const
+    {
+        return m_callCounter.GetCurrentCallCount();
     }
 
     void Validate()
@@ -461,7 +508,10 @@ private:
             break;
         }
 
-        return S_OK;
+        if (m_function)
+            return m_function();
+        else
+            return m_nextReturnValue;
     }
 };
 
@@ -469,7 +519,7 @@ private:
 template<typename DELEGATE>
 class MockEventSource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
 {
-    EventSource<DELEGATE> m_eventList;
+    EventSource<DELEGATE, InvokeModeOptions<StopOnFirstError>> m_eventList;
 
 public:
     struct Empty{};

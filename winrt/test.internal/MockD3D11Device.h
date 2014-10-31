@@ -19,6 +19,13 @@ namespace canvas
         ID3D11Device, 
         ChainInterfaces<IDXGIDevice3, IDXGIDevice2, IDXGIDevice1, IDXGIDevice> >
     {
+    public:
+        CALL_COUNTER_WITH_MOCK(GetDeviceRemovedReasonMethod, HRESULT());
+
+        MockD3D11Device()
+        {
+            GetDeviceRemovedReasonMethod.AllowAnyCall();
+        }
 
         HRESULT STDMETHODCALLTYPE CreateBuffer(
             _In_  const D3D11_BUFFER_DESC *pDesc,
@@ -307,9 +314,9 @@ namespace canvas
             return 0;
         }
 
-        HRESULT STDMETHODCALLTYPE GetDeviceRemovedReason(void)
+        HRESULT STDMETHODCALLTYPE GetDeviceRemovedReason()
         {
-            return E_NOTIMPL;
+            return GetDeviceRemovedReasonMethod.WasCalled();
         }
 
         void STDMETHODCALLTYPE GetImmediateContext(

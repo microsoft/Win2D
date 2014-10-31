@@ -82,6 +82,7 @@
 #include <CanvasStrokeStyle.h>
 #include <CanvasTextFormat.h>
 #include <Conversion.h>
+#include <DxgiUtilities.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>

@@ -21,7 +21,8 @@ namespace canvas
         ICanvasDevice,
         CloakedIid<ICanvasDeviceInternal>,
         ICanvasResourceCreator,
-        IDirect3DDevice>
+        IDirect3DDevice,
+        IDXGIInterfaceAccess>
     {
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
@@ -53,7 +54,8 @@ namespace canvas
         std::function<ComPtr<ID2D1RadialGradientBrush>(
             ID2D1GradientStopCollection1* stopCollection)> MockCreateRadialGradientBrush;
 
-        CALL_COUNTER(TrimMethod);
+        CALL_COUNTER_WITH_MOCK(TrimMethod, HRESULT());
+        CALL_COUNTER_WITH_MOCK(GetDXGIInterfaceMethod, HRESULT(REFIID,void**));
 
         //
         // ICanvasDevice
@@ -75,7 +77,7 @@ namespace canvas
         // ICanvasResourceCreator
         //
 
-        IFACEMETHODIMP get_Device(ICanvasDevice** value)
+        IFACEMETHODIMP get_Device(ICanvasDevice** value) override
         {
             if (!Mockget_Device)
             {
@@ -91,10 +93,17 @@ namespace canvas
         // IDirect3DDevice
         //
 
-        IFACEMETHODIMP Trim()
+        IFACEMETHODIMP Trim() override
         {
-            TrimMethod.WasCalled();
-            return S_OK;
+            return TrimMethod.WasCalled();
+        }
+
+        //
+        // IDXGIInterfaceAccess
+        //
+        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p) override
+        {
+            return GetDXGIInterfaceMethod.WasCalled(iid, p);
         }
 
         //

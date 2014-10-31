@@ -95,6 +95,9 @@ namespace CsConsumer
 
         void m_canvasControl_CreateResources(CanvasControl sender, object args)
         {
+            m_bitmap_tiger = null;
+            m_bitmap_colorGrids = null;
+            
             UpdateCanvasControlSize();
             m_imageBrush = new CanvasImageBrush(sender);
 

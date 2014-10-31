@@ -736,19 +736,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ICanvasBitmapResourceCreationAdapter* GetAdapter();
     };
-
-
-    template<typename T, typename U>
-    ComPtr<T> GetDXGIInterface(U* obj)
-    {
-        ComPtr<T> dxgiInterface;
-        ThrowIfFailed(As<IDXGIInterfaceAccess>(obj)->GetDXGIInterface(IID_PPV_ARGS(&dxgiInterface)));
-        return dxgiInterface;
-    }
-
-    template<typename T, typename U>
-    ComPtr<T> GetDXGIInterface(ComPtr<U> obj)
-    {
-        return GetDXGIInterface<T, U>(obj.Get());
-    }
 }}}}

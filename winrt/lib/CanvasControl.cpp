@@ -563,13 +563,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void CanvasControl::CallDrawHandlers(Color clearColor)
+    void CanvasControl::CallDrawHandlers(Color const& clearColor)
     {
-        if (m_drawEventList.GetSize() == 0)
-        {
-            return;
-        }
-
         if (!m_canvasImageSource)
         {
             return;
@@ -583,7 +578,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<IClosable> drawingSessionClosable;
         ThrowIfFailed(drawingSession.As(&drawingSessionClosable));
-        ThrowIfFailed(drawingSessionClosable->Close()); // Device removal should be handled here.
+        ThrowIfFailed(drawingSessionClosable->Close());
     }
     
     HRESULT CanvasControl::OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args)
@@ -611,10 +606,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // have been invoked and which have not.
                 //
 
-                ThrowIfFailed(m_createResourcesEventList.InvokeAll(this, static_cast<IInspectable*>(nullptr)));
-
-                m_guardedState->TriggerRender(this);
+                try
+                {
+                    InvokeCreateResources();
+                    m_guardedState->TriggerRender(this);
+                }
+                catch (DeviceLostException const&)
+                {
+                    HandleDeviceLost();
+                }
             });
+    }
+
+    void CanvasControl::InvokeCreateResources()
+    {
+        ThrowIfFailed(m_createResourcesEventList.InvokeAll(this, static_cast<IInspectable*>(nullptr)));
+    }
+
+    void CanvasControl::HandleDeviceLost()
+    {
+        // This function must be called from inside a catch block.
+        assert(std::current_exception());
+
+        // Was our device really lost?
+        auto d3dDevice = GetDXGIInterface<ID3D11Device>(m_canvasDevice.Get());
+        
+        if (d3dDevice->GetDeviceRemovedReason() == S_OK)
+        {
+            // The device lost exception wasn't caused by the device managed
+            // by this CanvasControl.  Recreating m_canvasDevice therefore
+            // won't resolve this.  So instead we propogate the error.
+            throw;
+        }
+        
+        m_canvasDevice.Reset();
+        m_guardedState->TriggerRender(this, InvalidateReason::ImageSourceNeedsReset);
     }
 
     HRESULT CanvasControl::OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args)
@@ -648,22 +674,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasControl::add_CreateResources(
-        ABI::Windows::Foundation::ITypedEventHandler<ABI::Microsoft::Graphics::Canvas::CanvasControl*, IInspectable*>* value,
+        ITypedEventHandler<CanvasControl*, IInspectable*>* value,
         EventRegistrationToken *token)
     {
         return ExceptionBoundary(
             [&]
             {
+                // TODO #1922 Ensure that this operation is threadsafe.  (Check
+                // m_window's CoreDispatcher::HasThreadAccess)
+
                 ThrowIfFailed(m_createResourcesEventList.Add(value, token));
 
-                if (m_isLoaded)
+                // CreateResources will never be invoked until the control is
+                // Loaded.
+                if (!m_isLoaded)
+                    return;
+
+                try
                 {
-                    // TODO #1922 Ensure that this operation is threadsafe.
                     ThrowIfFailed(value->Invoke(this, nullptr));
+                }
+                catch (DeviceLostException const&)
+                {
+                    HandleDeviceLost();
                 }
             });
     }
-
+    
     IFACEMETHODIMP CanvasControl::remove_CreateResources(
         EventRegistrationToken token)
     {
@@ -722,14 +759,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!IsWindowVisible())
                     return;
 
-                auto clearColor = m_guardedState->PreDrawAndGetClearColor(this);
+                try
+                {
+                    if (!m_canvasDevice)
+                    {
+                        m_canvasDevice = m_adapter->CreateCanvasDevice();
+                        InvokeCreateResources();
+                    }
+                    
+                    auto clearColor = m_guardedState->PreDrawAndGetClearColor(this);
 
-                auto backgroundMode = clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
-                EnsureSizeDependentResources(backgroundMode);
-
-                CallDrawHandlers(clearColor);
+                    if (m_drawEventList.GetSize() == 0)
+                    {
+                        return;
+                    }
+                    
+                    auto backgroundMode = clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
+                    EnsureSizeDependentResources(backgroundMode);
+                    CallDrawHandlers(clearColor);
+                }
+                catch (DeviceLostException const&)
+                {
+                    HandleDeviceLost();
+                }
             });
     }
+
 
 
     bool CanvasControl::IsWindowVisible()

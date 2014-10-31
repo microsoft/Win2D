@@ -115,8 +115,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // called from that window's thread.
         ComPtr<IWindow> m_window;
 
-        EventSource<CreateResourcesEventHandlerType> m_createResourcesEventList;
-        EventSource<DrawEventHandlerType> m_drawEventList;
+        EventSource<CreateResourcesEventHandlerType, InvokeModeOptions<StopOnFirstError>> m_createResourcesEventList;
+        EventSource<DrawEventHandlerType, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
         RegisteredEvent m_applicationSuspendingEventRegistration;
         RegisteredEvent m_surfaceContentsLostEventRegistration;
@@ -197,7 +197,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool IsWindowVisible();
 
         void EnsureSizeDependentResources(CanvasBackground backgroundMode);
-        void CallDrawHandlers(Color clearColor);
+        void CallDrawHandlers(Color const& clearColor);
 
         enum class InvalidateReason
         {
@@ -235,12 +235,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         };
 
         HRESULT OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args);
+
         HRESULT OnLoaded(IInspectable* sender, IRoutedEventArgs* args);
+
         HRESULT OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args);
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        
         HRESULT OnDpiChanged(IDisplayInformation* sender, IInspectable* args);
         HRESULT OnSurfaceContentsLost(IInspectable* sender, IInspectable* args);
         HRESULT OnWindowVisibilityChanged(IInspectable* sender, IVisibilityChangedEventArgs* args);
+
+        void InvokeCreateResources();
+        void HandleDeviceLost();
     };
 
 }}}}

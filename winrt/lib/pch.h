@@ -79,6 +79,7 @@
 
 // local
 #include "Conversion.h"
+#include "DxgiUtilities.h"
 #include "ResourceManager.h"
 #include "Strings.h"
 #include "effects\CanvasEffect.h"
