@@ -1394,7 +1394,16 @@ public:
         {
             return create_async([=](progress_reporter<unsigned int> reporter) -> IBuffer^
             {
-                throw ref new Platform::COMException(INET_E_DOWNLOAD_FAILURE);
+                //
+                // This conditional is necessary because of the behavior of the ARM compiler.
+                // It checks control flow more aggressively; a lambda which simply throws
+                // will cause an 'unreachable code' warning with its caller.
+                //
+                if (buffer != nullptr) 
+                {
+                    throw ref new Platform::COMException(INET_E_DOWNLOAD_FAILURE);
+                }
+                return nullptr;
             });
 
         }
