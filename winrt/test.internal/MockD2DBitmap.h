@@ -19,9 +19,9 @@ namespace canvas
         ChainInterfaces<ID2D1Bitmap1, ID2D1Image, ID2D1Resource >>
     {
     public:
-        std::function<void(unsigned int* width, unsigned int* height)> MockGetPixelSize;
-        std::function<void(float* width, float* height)> MockGetSize;
-        std::function<HRESULT(CONST D2D1_POINT_2U*, ID2D1Bitmap *bitmap, CONST D2D1_RECT_U*)> MockCopyFromBitmap;
+        CALL_COUNTER_WITH_MOCK(GetPixelSizeMethod, D2D1_SIZE_U());
+        CALL_COUNTER_WITH_MOCK(GetSizeMethod, D2D1_SIZE_F());
+        CALL_COUNTER_WITH_MOCK(CopyFromBitmapMethod, HRESULT(D2D1_POINT_2U const*, ID2D1Bitmap*, D2D1_RECT_U const*));
 
         //
         // ID2D1Bitmap1
@@ -72,29 +72,13 @@ namespace canvas
 
         STDMETHOD_(D2D1_SIZE_F, GetSize)() CONST
         {
-            D2D1_SIZE_F size{};
-
-            if (!MockGetSize)
-            {
-                Assert::Fail(L"Unexpected call to GetSize");
-                return size;
-            }
-            MockGetSize(&size.width, &size.height);
-            return size;
+            return GetSizeMethod.WasCalled();
         }
 
 
         STDMETHOD_(D2D1_SIZE_U, GetPixelSize)() CONST
         {
-            D2D1_SIZE_U size{};
-
-            if (!MockGetPixelSize)
-            {
-                Assert::Fail(L"Unexpected call to GetSize");
-                return size;
-            }
-            MockGetPixelSize(&size.width, &size.height);
-            return size;
+            return GetPixelSizeMethod.WasCalled();
         }
 
         STDMETHOD_(D2D1_PIXEL_FORMAT, GetPixelFormat)() CONST 
@@ -118,13 +102,7 @@ namespace canvas
             ID2D1Bitmap *bitmap,
             CONST D2D1_RECT_U *sourceRect)
         {
-            if (!MockCopyFromBitmap)
-            {
-                Assert::Fail(L"Unexpected call to CopyFromBitmap");
-                return E_NOTIMPL;
-            }
-
-            return MockCopyFromBitmap(destinationPoint, bitmap, sourceRect);
+            return CopyFromBitmapMethod.WasCalled(destinationPoint, bitmap, sourceRect);
         }
 
         STDMETHOD(CopyFromRenderTarget)(

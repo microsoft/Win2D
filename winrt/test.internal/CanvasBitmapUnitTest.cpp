@@ -46,19 +46,11 @@ public:
         m_testImageHeightDip = 8.0f;
 
         m_bitmap = Make<StubD2DBitmap>();
-        m_bitmap->MockGetPixelSize =
-            [&](unsigned int* width, unsigned int* height)
-            {
-                *width = m_testImageWidth;
-                *height = m_testImageHeight;
-            };
+        m_bitmap->GetPixelSizeMethod.AllowAnyCall(
+            [&] { return D2D1_SIZE_U{m_testImageWidth, m_testImageHeight}; });
 
-        m_bitmap->MockGetSize =
-            [&](float* width, float* height)
-            {
-                *width = m_testImageWidthDip;
-                *height = m_testImageHeightDip;
-            };
+        m_bitmap->GetSizeMethod.AllowAnyCall(
+            [&] { return D2D1_SIZE_F{m_testImageWidthDip, m_testImageHeightDip}; });
 
         m_canvasDevice = Make<StubCanvasDevice>();
         m_canvasDevice->MockCreateBitmapFromWicResource =
@@ -191,8 +183,6 @@ public:
 
     class CopyFromBitmapFixture
     {
-        CALL_COUNTER(CopyFromBitmapMethod);
-
     public:
         ComPtr<CanvasBitmap> DestBitmap;
         ComPtr<CanvasBitmap> SourceBitmap;
@@ -208,8 +198,6 @@ public:
             int32_t* sourceRectHeight = nullptr)
         {
             auto canvasDevice = Make<StubCanvasDevice>();
-
-            CopyFromBitmapMethod.SetExpectedCalls(1);
 
             auto sourceD2DBitmap = Make<StubD2DBitmap>();
             canvasDevice->MockCreateBitmapFromWicResource =
@@ -242,11 +230,9 @@ public:
             }
 
             auto destD2DBitmap = Make<StubD2DBitmap>();
-            destD2DBitmap->MockCopyFromBitmap =
-                [this, expectDestPoint, expectedDestPoint, sourceD2DBitmap, expectSourceRect, expectedSourceRect](CONST D2D1_POINT_2U* destinationPoint, ID2D1Bitmap *bitmap, CONST D2D1_RECT_U* sourceRectangle)
+            destD2DBitmap->CopyFromBitmapMethod.SetExpectedCalls(1,
+                [=](D2D1_POINT_2U const* destinationPoint, ID2D1Bitmap *bitmap, D2D1_RECT_U const* sourceRectangle)
                 {
-                    CopyFromBitmapMethod.WasCalled();
-
                     if (expectDestPoint)
                     {
                         Assert::IsNotNull(destinationPoint);
@@ -273,7 +259,7 @@ public:
                     }
 
                     return S_OK;
-                };
+                });
 
             canvasDevice->MockCreateBitmapFromWicResource =
                 [&]() -> ComPtr<ID2D1Bitmap1>

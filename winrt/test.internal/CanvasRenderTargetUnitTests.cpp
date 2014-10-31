@@ -189,18 +189,11 @@ public:
         Size expectedSize = { 33, 44 };
 
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
-        d2dBitmap->MockGetSize =
-            [&](float* width, float* height)
-            {
-                *width = expectedSize.Width;
-                *height = expectedSize.Height;
-            };                    
-        d2dBitmap->MockGetPixelSize =
-            [&](unsigned int* width, unsigned int* height)
-            {
-                *width = static_cast<UINT>(expectedSize.Width);
-                *height = static_cast<UINT>(expectedSize.Height);
-            };
+        d2dBitmap->GetSizeMethod.AllowAnyCall(
+            [&] { return D2D1_SIZE_F{expectedSize.Width, expectedSize.Height}; });
+
+        d2dBitmap->GetPixelSizeMethod.AllowAnyCall(
+            [&] { return ToD2DSizeU(expectedSize.Width, expectedSize.Height); });
 
         auto renderTarget = CreateRenderTarget(d2dBitmap, expectedSize);
 
