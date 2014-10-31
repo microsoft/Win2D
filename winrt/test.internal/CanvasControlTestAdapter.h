@@ -116,7 +116,14 @@ public:
             [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const&, float)
             {
                 if (OnCanvasImageSourceDrawingSessionFactory_Create)
-                    return OnCanvasImageSourceDrawingSessionFactory_Create();
+                {
+                    // We call the function through a copy - this is so the
+                    // function itself can modify the value of
+                    // OnCanvasImageSourceDrawingSessionFactory_Create without
+                    // self-destructing.
+                    auto createFunction = OnCanvasImageSourceDrawingSessionFactory_Create;
+                    return createFunction();
+                }
 
                 return Make<MockCanvasDrawingSession>();
             });
