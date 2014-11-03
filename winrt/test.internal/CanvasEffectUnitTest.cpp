@@ -80,7 +80,7 @@ public:
         Assert::IsTrue(isGetPropertyCalled);
     }
 
-    TEST_METHOD(CanvasEffect_Closed)
+    TEST_METHOD_EX(CanvasEffect_Closed)
     {
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = { 0 };

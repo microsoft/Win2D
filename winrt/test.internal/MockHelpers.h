@@ -29,9 +29,9 @@
 #define TEST_METHOD_EX(METHOD_NAME)             \
     TEST_METHOD(METHOD_NAME)                    \
     {                                           \
-        ExpectationsResetter resetter;          \
+        Expectations e;                         \
         METHOD_NAME##_();                       \
-        Expectations::Instance()->Validate();   \
+        e.Validate();                           \
     }                                           \
     void METHOD_NAME##_()
 
@@ -113,31 +113,34 @@ public:
     Expectation& operator=(Expectation&&) = delete;
 };
 
-
 //
 // Tracks expectations and can call Validate() on all of them.
 //
 class Expectations
 {
-    std::vector<std::shared_ptr<Expectation>> m_expectations;
+    static Expectations* s_instance;
 
-private:
-    Expectations()
-    {
-    }
+    std::vector<std::shared_ptr<Expectation>> m_expectations;
 
 public:
     static Expectations* Instance()
     {
-        static Expectations instance;
-        return &instance;
-    }
-    
-    void Reset()
-    {
-        m_expectations.clear();
+        Assert::IsNotNull(s_instance, L"Expectations not initialized: make sure TEST_METHOD_EX is used and no expectations are set in TEST_METHOD_INITIALIZE");
+        return s_instance;
     }
 
+    Expectations()
+    {
+        Assert::IsNull(s_instance, L"Multiple Expectations instances found.  Only a single instance may be active at any one time.");
+        s_instance = this;
+    }
+
+    ~Expectations()
+    {
+        assert(s_instance == this);
+        s_instance = nullptr;
+    }
+    
     void Add(std::shared_ptr<Expectation> e)
     {
         m_expectations.push_back(e);
@@ -163,18 +166,8 @@ public:
     }
 };
 
+__declspec(selectany) Expectations* Expectations::s_instance;
 
-//
-// Ensures that Expectations gets reset at the end of a test
-//
-class ExpectationsResetter
-{
-public:
-    ~ExpectationsResetter()
-    {
-        Expectations::Instance()->Reset();
-    }
-};
 
 //
 // This counts how many times a method is called.  This is not intended to be

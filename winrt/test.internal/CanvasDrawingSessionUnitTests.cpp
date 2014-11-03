@@ -63,46 +63,56 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
         }
     };
 
-    ComPtr<ID2D1DeviceContext1> m_expectedDeviceContext;
-    std::shared_ptr<MockCanvasDrawingSessionAdapter> m_mockAdapter;
-    ComPtr<CanvasDrawingSession> m_canvasDrawingSession;
-
-public:
-    TEST_METHOD_INITIALIZE(Init)
+    struct Fixture
     {
-        m_expectedDeviceContext = Make<MockD2DDeviceContext>();
-        m_mockAdapter = std::make_shared<MockCanvasDrawingSessionAdapter>();
+        ComPtr<ID2D1DeviceContext1> m_expectedDeviceContext;
+        std::shared_ptr<MockCanvasDrawingSessionAdapter> m_mockAdapter;
+        ComPtr<CanvasDrawingSession> m_canvasDrawingSession;
 
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        m_canvasDrawingSession = manager->Create(m_expectedDeviceContext.Get(), m_mockAdapter);
-    }
+        Fixture()
+        {
+            m_expectedDeviceContext = Make<MockD2DDeviceContext>();
+            m_mockAdapter = std::make_shared<MockCanvasDrawingSessionAdapter>();
+            
+            auto manager = std::make_shared<CanvasDrawingSessionManager>();
+            m_canvasDrawingSession = manager->Create(m_expectedDeviceContext.Get(), m_mockAdapter);
+        }
+    };
 
-    TEST_METHOD(CanvasDrawingSession_Calls_Adapter_BeginDraw_EndDraw_When_Closed)
+    TEST_METHOD_EX(CanvasDrawingSession_Calls_Adapter_BeginDraw_EndDraw_When_Closed)
     {
-        ThrowIfFailed(m_canvasDrawingSession->Close());
-        m_mockAdapter->AssertEndDrawCalled();
+        Fixture f;
+
+        ThrowIfFailed(f.m_canvasDrawingSession->Close());
+        f.m_mockAdapter->AssertEndDrawCalled();
         
         // EndDraw should only be called once even if we call Close again
-        ThrowIfFailed(m_canvasDrawingSession->Close());
+        ThrowIfFailed(f.m_canvasDrawingSession->Close());
     }
 
-    TEST_METHOD(CanvasDrawingSession_Calls_Adapter_BeginDraw_EndDraw_When_Destroyed)
+    TEST_METHOD_EX(CanvasDrawingSession_Calls_Adapter_BeginDraw_EndDraw_When_Destroyed)
     {
-        m_canvasDrawingSession.Reset();
-        m_mockAdapter->AssertEndDrawCalled();
+        Fixture f;
+
+        f.m_canvasDrawingSession.Reset();
+        f.m_mockAdapter->AssertEndDrawCalled();
     }
 
-    TEST_METHOD(CanvasDrawingSession_Close_EndDrawErrorsReturned)
+    TEST_METHOD_EX(CanvasDrawingSession_Close_EndDrawErrorsReturned)
     {
-        m_mockAdapter->SetEndDrawToThrow();
-        Assert::AreEqual(DXGI_ERROR_DEVICE_REMOVED, m_canvasDrawingSession->Close());
+        Fixture f;
+
+        f.m_mockAdapter->SetEndDrawToThrow();
+        Assert::AreEqual(DXGI_ERROR_DEVICE_REMOVED, f.m_canvasDrawingSession->Close());
     }
 
-    TEST_METHOD(CanvasDrawingSession_Destroy_EndDrawErrorsSwallowed)
+    TEST_METHOD_EX(CanvasDrawingSession_Destroy_EndDrawErrorsSwallowed)
     {
-        m_mockAdapter->SetEndDrawToThrow();
-        m_canvasDrawingSession.Reset();
-        m_mockAdapter->AssertEndDrawCalled();
+        Fixture f;
+
+        f.m_mockAdapter->SetEndDrawToThrow();
+        f.m_canvasDrawingSession.Reset();
+        f.m_mockAdapter->AssertEndDrawCalled();
     }    
 };
 
@@ -278,7 +288,7 @@ public:
     };
 
 
-    TEST_METHOD(CanvasDrawingSession_DrawImage_NullImage)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_NullImage)
     {
         BitmapFixture f;
 
@@ -294,7 +304,7 @@ public:
     }
 
 
-    TEST_METHOD(CanvasDrawingSession_DrawImage_NullBitmapImage)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_NullBitmapImage)
     {
         BitmapFixture f;
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRect(nullptr, Rect{}));
@@ -2127,7 +2137,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
 TEST_CLASS(CanvasDrawingSession_CloseTests)
 {
-    TEST_METHOD(CanvasDrawingSession_Close_ReleasesDeviceContextAndOtherMethodsFail)
+    TEST_METHOD_EX(CanvasDrawingSession_Close_ReleasesDeviceContextAndOtherMethodsFail)
     {
         //
         // Set up a device context that tracks when it was deleted (via the
@@ -2314,14 +2324,14 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 #undef EXPECT_OBJECT_CLOSED
     }
 
-    TEST_METHOD(CanvasDrawingSession_Implements_ExpectedInterfaces)
+    TEST_METHOD_EX(CanvasDrawingSession_Implements_ExpectedInterfaces)
     {
         CanvasDrawingSessionFixture f;
 
         ASSERT_IMPLEMENTS_INTERFACE(f.DS, ICanvasResourceCreator);
     }
 
-    TEST_METHOD(CanvasDrawingSession_get_Device_NullArg)
+    TEST_METHOD_EX(CanvasDrawingSession_get_Device_NullArg)
     {
         CanvasDrawingSessionFixture f;
 

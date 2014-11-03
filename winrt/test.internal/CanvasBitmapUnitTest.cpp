@@ -19,53 +19,55 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 TEST_CLASS(CanvasBitmapUnitTest)
 {
-public:
-
-    ComPtr<MockWICFormatConverter> m_converter;
-    std::shared_ptr<TestBitmapResourceCreationAdapter> m_adapter;
-    std::shared_ptr<CanvasBitmapManager> m_bitmapManager;
-
-    WinString m_testFileName;
-    int m_testImageWidth;
-    int m_testImageHeight;
-    float m_testImageWidthDip;
-    float m_testImageHeightDip;
-    ComPtr<StubCanvasDevice> m_canvasDevice;
-    ComPtr<StubD2DBitmap> m_bitmap;
-
-    TEST_METHOD_INITIALIZE(Reset)
+    struct Fixture
     {
-        m_converter = Make<MockWICFormatConverter>();
-        m_adapter = std::make_shared<TestBitmapResourceCreationAdapter>(m_converter);
-        m_bitmapManager = std::make_shared<CanvasBitmapManager>(m_adapter);
+        ComPtr<MockWICFormatConverter> m_converter;
+        std::shared_ptr<TestBitmapResourceCreationAdapter> m_adapter;
+        std::shared_ptr<CanvasBitmapManager> m_bitmapManager;
+        
+        WinString m_testFileName;
+        int m_testImageWidth;
+        int m_testImageHeight;
+        float m_testImageWidthDip;
+        float m_testImageHeightDip;
+        ComPtr<StubCanvasDevice> m_canvasDevice;
+        ComPtr<StubD2DBitmap> m_bitmap;
 
-        m_testImageWidth = 16;
-        m_testImageHeight = 32;
+        Fixture()
+        {
+            m_converter = Make<MockWICFormatConverter>();
+            m_adapter = std::make_shared<TestBitmapResourceCreationAdapter>(m_converter);
+            m_bitmapManager = std::make_shared<CanvasBitmapManager>(m_adapter);
 
-        m_testImageWidthDip = 4.0f;
-        m_testImageHeightDip = 8.0f;
+            m_testImageWidth = 16;
+            m_testImageHeight = 32;
 
-        m_bitmap = Make<StubD2DBitmap>();
-        m_bitmap->GetPixelSizeMethod.AllowAnyCall(
-            [&] { return D2D1_SIZE_U{m_testImageWidth, m_testImageHeight}; });
+            m_testImageWidthDip = 4.0f;
+            m_testImageHeightDip = 8.0f;
 
-        m_bitmap->GetSizeMethod.AllowAnyCall(
-            [&] { return D2D1_SIZE_F{m_testImageWidthDip, m_testImageHeightDip}; });
+            m_bitmap = Make<StubD2DBitmap>();
+            m_bitmap->GetPixelSizeMethod.AllowAnyCall(
+                [&] { return D2D1_SIZE_U{m_testImageWidth, m_testImageHeight}; });
 
-        m_canvasDevice = Make<StubCanvasDevice>();
-        m_canvasDevice->MockCreateBitmapFromWicResource =
-            [&]() -> ComPtr<ID2D1Bitmap1>
-            {
-                return m_bitmap;
-            };
+            m_bitmap->GetSizeMethod.AllowAnyCall(
+                [&] { return D2D1_SIZE_F{m_testImageWidthDip, m_testImageHeightDip}; });
 
-        m_testFileName = WinString(L"fakeImage.jpg");
+            m_canvasDevice = Make<StubCanvasDevice>();
+            m_canvasDevice->MockCreateBitmapFromWicResource =
+                [&]() -> ComPtr<ID2D1Bitmap1>
+                {
+                    return m_bitmap;
+                };
 
-    }
+            m_testFileName = WinString(L"fakeImage.jpg");
+        }
+    };
 
-    TEST_METHOD(CanvasBitmap_Implements_Expected_Interfaces)
+    TEST_METHOD_EX(CanvasBitmap_Implements_Expected_Interfaces)
 	{
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        Fixture f;
+
+        auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
         
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmap);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImage);
@@ -77,15 +79,17 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmapInternal);
     }
 
-    TEST_METHOD(CanvasBitmap_Closed)
+    TEST_METHOD_EX(CanvasBitmap_Closed)
     {
+        Fixture f;
+
         ABI::Windows::Foundation::Size size;
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = {0};
         Direct3DSurfaceDescription surfaceDescription;
         ComPtr<IDXGISurface> dxgiSurface;
 
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         Assert::IsNotNull(canvasBitmap.Get());
 
@@ -101,52 +105,56 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBounds(drawingSession.Get(), &bounds));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
 
-        auto otherBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        auto otherBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyFromBitmap(otherBitmap.Get()));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyFromBitmapWithDestPoint(otherBitmap.Get(), 0, 0));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyFromBitmapWithDestPointAndSourceRect(otherBitmap.Get(), 0, 0, 0, 0, 0, 0));
     }
 
-    TEST_METHOD(CanvasBitmap_Get_Size)
+    TEST_METHOD_EX(CanvasBitmap_Get_Size)
     {
+        Fixture f;
+
         ABI::Windows::Foundation::Size size;
 
         bool isConverterCreated = false;
-        m_adapter->MockCreateWICFormatConverter =
+        f.m_adapter->MockCreateWICFormatConverter =
             [&]
             {
                 Assert::AreEqual(isConverterCreated, false);
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         Assert::AreEqual(true, isConverterCreated);
 
         HRESULT result = canvasBitmap->get_SizeInPixels(&size);
         Assert::AreEqual(S_OK, result);
-        Assert::AreEqual(m_testImageWidth, (int)size.Width);
-        Assert::AreEqual(m_testImageHeight, (int)size.Height);
+        Assert::AreEqual(f.m_testImageWidth, (int)size.Width);
+        Assert::AreEqual(f.m_testImageHeight, (int)size.Height);
 
         result = canvasBitmap->get_Size(&size);
         Assert::AreEqual(S_OK, result);
-        Assert::AreEqual(m_testImageWidthDip, size.Width);
-        Assert::AreEqual(m_testImageHeightDip, size.Height);
+        Assert::AreEqual(f.m_testImageWidthDip, size.Width);
+        Assert::AreEqual(f.m_testImageHeightDip, size.Height);
     }
 
-    TEST_METHOD(CanvasBitmap_Get_Bounds)
+    TEST_METHOD_EX(CanvasBitmap_Get_Bounds)
     {
+        Fixture f;
+
         ABI::Windows::Foundation::Rect bounds;
 
         bool isConverterCreated = false;
-        m_adapter->MockCreateWICFormatConverter =
+        f.m_adapter->MockCreateWICFormatConverter =
             [&]
             {
                 Assert::AreEqual(isConverterCreated, false);
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         Assert::AreEqual(true, isConverterCreated);
 
@@ -154,16 +162,18 @@ public:
         Assert::AreEqual(S_OK, result);
         Assert::AreEqual(0.0f, bounds.X);
         Assert::AreEqual(0.0f, bounds.Y);
-        Assert::AreEqual(m_testImageWidthDip, bounds.Width);
-        Assert::AreEqual(m_testImageHeightDip, bounds.Height);
+        Assert::AreEqual(f.m_testImageWidthDip, bounds.Width);
+        Assert::AreEqual(f.m_testImageHeightDip, bounds.Height);
     }
 
-    TEST_METHOD(CanvasBitmap_GetBounds_NullArg)
+    TEST_METHOD_EX(CanvasBitmap_GetBounds_NullArg)
     {
+        Fixture f;
+
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = { 0 };
 
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         auto drawingSession = CreateStubDrawingSession();
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBounds(nullptr, &bounds));
@@ -172,24 +182,23 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
     }
 
-    TEST_METHOD(CanvasBitmap_CopyFromBitmap_NullArg)
+    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmap_NullArg)
     {
-        auto canvasBitmap = m_bitmapManager->Create(m_canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        Fixture f;
+
+        auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyFromBitmap(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyFromBitmapWithDestPoint(nullptr, 0, 0));
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyFromBitmapWithDestPointAndSourceRect(nullptr, 0, 0, 0, 0, 0, 0));
     }
 
-    class CopyFromBitmapFixture
+    struct CopyFromBitmapFixture : public Fixture
     {
-    public:
         ComPtr<CanvasBitmap> DestBitmap;
         ComPtr<CanvasBitmap> SourceBitmap;
 
         CopyFromBitmapFixture(
-            std::shared_ptr<CanvasBitmapManager> const& bitmapManager,
-            WinString const& testFileName,
             int32_t* destX = nullptr,
             int32_t* destY = nullptr,
             int32_t* sourceRectLeft = nullptr,
@@ -205,7 +214,7 @@ public:
                 {
                     return sourceD2DBitmap;
                 };
-            SourceBitmap = bitmapManager->Create(canvasDevice.Get(), testFileName, CanvasAlphaBehavior::Premultiplied);
+            SourceBitmap = m_bitmapManager->Create(canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
             bool expectDestPoint = false;
             D2D1_POINT_2U expectedDestPoint;
@@ -266,7 +275,7 @@ public:
                 {
                     return destD2DBitmap;
                 };
-            DestBitmap = bitmapManager->Create(canvasDevice.Get(), testFileName, CanvasAlphaBehavior::Premultiplied);
+            DestBitmap = m_bitmapManager->Create(canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         }
 
@@ -275,16 +284,16 @@ public:
 
     TEST_METHOD_EX(CanvasBitmap_CopyFromBitmap)
     {
-        CopyFromBitmapFixture fixture(m_bitmapManager, m_testFileName);
-        ThrowIfFailed(fixture.DestBitmap->CopyFromBitmap(fixture.SourceBitmap.Get()));
+        CopyFromBitmapFixture f;
+        ThrowIfFailed(f.DestBitmap->CopyFromBitmap(f.SourceBitmap.Get()));
     }
 
     TEST_METHOD_EX(CanvasBitmap_CopyFromBitmapWithDestPoint)
     {
         int32_t destPoint[] = { 234, 2 };
 
-        CopyFromBitmapFixture fixture(m_bitmapManager, m_testFileName, &destPoint[0], &destPoint[1]);
-        ThrowIfFailed(fixture.DestBitmap->CopyFromBitmapWithDestPoint(fixture.SourceBitmap.Get(), destPoint[0], destPoint[1]));
+        CopyFromBitmapFixture f(&destPoint[0], &destPoint[1]);
+        ThrowIfFailed(f.DestBitmap->CopyFromBitmapWithDestPoint(f.SourceBitmap.Get(), destPoint[0], destPoint[1]));
     }
 
     TEST_METHOD_EX(CanvasBitmap_CopyFromBitmapWithDestPointAndSourceRect)
@@ -292,9 +301,7 @@ public:
         int32_t destPoint[] = { 234, 2 };
         int32_t sourceRect[] = { 444, 555, 666, 772 };
 
-        CopyFromBitmapFixture fixture(
-            m_bitmapManager, 
-            m_testFileName, 
+        CopyFromBitmapFixture f(
             &destPoint[0], 
             &destPoint[1],
             &sourceRect[0],
@@ -302,8 +309,8 @@ public:
             &sourceRect[2],
             &sourceRect[3]);
 
-        ThrowIfFailed(fixture.DestBitmap->CopyFromBitmapWithDestPointAndSourceRect(
-            fixture.SourceBitmap.Get(), 
+        ThrowIfFailed(f.DestBitmap->CopyFromBitmapWithDestPointAndSourceRect(
+            f.SourceBitmap.Get(), 
             destPoint[0], 
             destPoint[1],
             sourceRect[0],
@@ -312,17 +319,19 @@ public:
             sourceRect[3]));
     }
 
-    TEST_METHOD(CanvasBitmap_CopyFromBitmap_InvalidCoordinates)
+    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmap_InvalidCoordinates)
     {
+        Fixture f;
+
         auto canvasDevice = Make<StubCanvasDevice>();
 
         auto sourceD2DBitmap = Make<StubD2DBitmap>();
         canvasDevice->MockCreateBitmapFromWicResource = [&]() -> ComPtr<ID2D1Bitmap1> { return sourceD2DBitmap; };
-        auto sourceBitmap = m_bitmapManager->Create(canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        auto sourceBitmap = f.m_bitmapManager->Create(canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         auto destD2DBitmap = Make<StubD2DBitmap>();
         canvasDevice->MockCreateBitmapFromWicResource = [&]() -> ComPtr<ID2D1Bitmap1> { return destD2DBitmap; };
-        auto destBitmap = m_bitmapManager->Create(canvasDevice.Get(), m_testFileName, CanvasAlphaBehavior::Premultiplied);
+        auto destBitmap = f.m_bitmapManager->Create(canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         // Negative coordinates
         Assert::AreEqual(E_INVALIDARG, destBitmap->CopyFromBitmapWithDestPoint(sourceBitmap.Get(), -1, 100));

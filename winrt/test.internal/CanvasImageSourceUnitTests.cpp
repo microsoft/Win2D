@@ -121,7 +121,7 @@ public:
         Assert::AreEqual(canvasImageSource->GetComposableBase().Get(), expectedComposableBase.Get());
     }
 
-    TEST_METHOD(CanvasImageSourceGetDevice)
+    TEST_METHOD_EX(CanvasImageSourceGetDevice)
     {
         ComPtr<ICanvasDevice> expectedCanvasDevice = Make<StubCanvasDevice>();
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
@@ -275,63 +275,69 @@ public:
 
 TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
 {
-    ComPtr<StubCanvasDevice> m_canvasDevice;
-    ComPtr<MockSurfaceImageSource> m_surfaceImageSource;
-    ComPtr<StubSurfaceImageSourceFactory> m_surfaceImageSourceFactory;
-    std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> m_canvasImageSourceDrawingSessionFactory;
-    ComPtr<CanvasImageSource> m_canvasImageSource;
-    int m_imageWidth;
-    int m_imageHeight;
-    Color m_anyColor;
-
-public:
-    TEST_METHOD_INITIALIZE(Init)
+    struct Fixture
     {
-        m_canvasDevice = Make<StubCanvasDevice>();
-        m_surfaceImageSource = Make<MockSurfaceImageSource>();
-        m_surfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(m_surfaceImageSource.Get());
-        m_canvasImageSourceDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
+        ComPtr<StubCanvasDevice> m_canvasDevice;
+        ComPtr<MockSurfaceImageSource> m_surfaceImageSource;
+        ComPtr<StubSurfaceImageSourceFactory> m_surfaceImageSourceFactory;
+        std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> m_canvasImageSourceDrawingSessionFactory;
+        ComPtr<CanvasImageSource> m_canvasImageSource;
+        int m_imageWidth;
+        int m_imageHeight;
+        Color m_anyColor;
 
-        m_surfaceImageSource->SetDeviceMethod.AllowAnyCall();
-
-        m_imageWidth = 123;
-        m_imageHeight = 456;
-
-        m_canvasImageSource = Make<CanvasImageSource>(
-            m_canvasDevice.Get(),
-            m_imageWidth,
-            m_imageHeight,
-            CanvasBackground::Transparent,
-            m_surfaceImageSourceFactory.Get(),
-            m_canvasImageSourceDrawingSessionFactory);
-
-        m_surfaceImageSource->SetDeviceMethod.SetExpectedCalls(0);
-
-        m_anyColor = Color{1,2,3,4};
-    }
+        Fixture()
+        {
+            m_canvasDevice = Make<StubCanvasDevice>();
+            m_surfaceImageSource = Make<MockSurfaceImageSource>();
+            m_surfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(m_surfaceImageSource.Get());
+            m_canvasImageSourceDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
+            
+            m_surfaceImageSource->SetDeviceMethod.AllowAnyCall();
+            
+            m_imageWidth = 123;
+            m_imageHeight = 456;
+            
+            m_canvasImageSource = Make<CanvasImageSource>(
+                m_canvasDevice.Get(),
+                m_imageWidth,
+                m_imageHeight,
+                CanvasBackground::Transparent,
+                m_surfaceImageSourceFactory.Get(),
+                m_canvasImageSourceDrawingSessionFactory);
+            
+            m_surfaceImageSource->SetDeviceMethod.SetExpectedCalls(0);
+            
+            m_anyColor = Color{ 1, 2, 3, 4 };
+        }
+    };
 
     TEST_METHOD_EX(CanvasImageSource_CreateDrawingSession_PassesEntireImage)
     {
-        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
+        Fixture f;
+
+        f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
             [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const& updateRect, float)
             {
                 Assert::AreEqual<float>(0, updateRect.X);
                 Assert::AreEqual<float>(0, updateRect.Y);
-                Assert::AreEqual<float>(static_cast<float>(m_imageWidth), updateRect.Width);
-                Assert::AreEqual<float>(static_cast<float>(m_imageHeight), updateRect.Height);
+                Assert::AreEqual<float>(static_cast<float>(f.m_imageWidth), updateRect.Width);
+                Assert::AreEqual<float>(static_cast<float>(f.m_imageHeight), updateRect.Height);
                 return Make<MockCanvasDrawingSession>();
             });
 
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(m_anyColor, &drawingSession));
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSession(f.m_anyColor, &drawingSession));
         Assert::IsTrue(drawingSession);
     }
 
     TEST_METHOD_EX(CanvasImageSource_CreateDrawingSessionWithUpdateRegion_PassesSpecifiedUpdateRegion)
     {
+        Fixture f;
+
         Rect expectedRect{ 1, 2, 3, 4 };
 
-        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, 
+        f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, 
             [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const& updateRect, float)
             {
                 Assert::AreEqual(expectedRect.X, updateRect.X);
@@ -343,16 +349,18 @@ public:
 
 
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(m_anyColor, expectedRect, &drawingSession));
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(f.m_anyColor, expectedRect, &drawingSession));
         Assert::IsTrue(drawingSession);
     }
 
     TEST_METHOD_EX(CanvasImageSource_CreateDrawingSession_PassesClearColor)
     {
+        Fixture f;
+
         Rect anyRect{ 1, 2, 3, 4 };
         Color expectedColor{ 1, 2, 3, 4 };
 
-        m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(2,
+        f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(2,
             [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const& clearColor, Rect const&, float)
             {
                 Assert::AreEqual(expectedColor, clearColor);
@@ -360,8 +368,8 @@ public:
             });
 
         ComPtr<ICanvasDrawingSession> ignoredDrawingSession;
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(expectedColor, &ignoredDrawingSession));
-        ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedColor, anyRect, &ignoredDrawingSession));
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSession(expectedColor, &ignoredDrawingSession));
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedColor, anyRect, &ignoredDrawingSession));
     }
 };
 

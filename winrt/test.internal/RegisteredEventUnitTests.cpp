@@ -40,40 +40,49 @@ public:
 
 TEST_CLASS(RegisteredEventTests)
 {
-    TEST_METHOD(RegisteredEvent_WhenDefaultConstructed_CanBeDestructed)
+    TEST_METHOD_EX(RegisteredEvent_WhenDefaultConstructed_CanBeDestructed)
     {
         RegisteredEvent r;
     }
 
-    TEST_METHOD(RegisteredEvent_WhenDefaultConstructed_CanBeDetached)
+    TEST_METHOD_EX(RegisteredEvent_WhenDefaultConstructed_CanBeDetached)
     {
         RegisteredEvent r;
         r.Detach();
     }
 
-    TEST_METHOD(RegisteredEvent_WhenDefaultConstructed_CanBeReleased)
+    TEST_METHOD_EX(RegisteredEvent_WhenDefaultConstructed_CanBeReleased)
     {
         RegisteredEvent r;
         r.Release();
     }
 
-    CALL_COUNTER(fn);
+    class Counter
+    {
+        CALL_COUNTER(m_counter);
+
+    public:
+        void SetExpectedCalls(int n) { m_counter.SetExpectedCalls(n); }
+        void WasCalled() { m_counter.WasCalled(); }
+    };
 
     TEST_METHOD_EX(RegisteredEvent_WhenDestructed_CallsFunction)
     {
+        Counter fn;
         fn.SetExpectedCalls(1);
 
         {
-            RegisteredEvent r([=]() { fn.WasCalled(); });
+            RegisteredEvent r([&]() { fn.WasCalled(); });
         }
     }
 
     TEST_METHOD_EX(RegisteredEvent_WhenReleased_CallsFunction)
     {
+        Counter fn;
         fn.SetExpectedCalls(1);
 
         {
-            RegisteredEvent r([=]() { fn.WasCalled(); });
+            RegisteredEvent r([&]() { fn.WasCalled(); });
             r.Release();
             fn.SetExpectedCalls(0);
         }
@@ -81,17 +90,19 @@ TEST_CLASS(RegisteredEventTests)
 
     TEST_METHOD_EX(RegisteredEvent_WhenDetached_DoesNotCallFunction)
     {
+        Counter fn;
         fn.SetExpectedCalls(0);
 
         {
-            RegisteredEvent r([=]() { fn.WasCalled(); });
+            RegisteredEvent r([&]() { fn.WasCalled(); });
             r.Detach();
             r.Release();
         }
     }
 
-    TEST_METHOD_EX(RegisteredEvent_AddAndsRemovesHandler)
+    TEST_METHOD_EX(RegisteredEvent_AddsAndRemovesHandler)
     {
+        Counter fn;
         fn.SetExpectedCalls(1);
 
         auto s = Make<TestEventSource>();

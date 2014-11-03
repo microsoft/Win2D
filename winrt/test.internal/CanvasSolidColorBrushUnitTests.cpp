@@ -122,7 +122,7 @@ public:
         m_colorBrushManager = std::make_shared<CanvasSolidColorBrushManager>();
     } 
 
-    TEST_METHOD(CanvasSolidColorBrush_Construction)
+    TEST_METHOD_EX(CanvasSolidColorBrush_Construction)
     {
         auto canvasDevice = Make<TestCanvasDevice>();
 
@@ -141,7 +141,7 @@ public:
         Assert::AreEqual<D2D1_MATRIX_3X2_F>(D2D1::Matrix3x2F::Identity(), actualTransform);
     }
 
-    TEST_METHOD(CanvasSolidColorBrush_Implements_Expected_Interfaces)
+    TEST_METHOD_EX(CanvasSolidColorBrush_Implements_Expected_Interfaces)
     {
         auto canvasDevice = Make<TestCanvasDevice>();
         auto brush = m_colorBrushManager->Create(canvasDevice.Get(), Color{ 255, 0, 0, 0 });
@@ -153,7 +153,7 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasResourceWrapperNative);
     }
 
-    TEST_METHOD(CanvasSolidColorBrush_Properties)
+    TEST_METHOD_EX(CanvasSolidColorBrush_Properties)
     {
         Color red = { 255, 255, 0, 0 };
         Color cyan = { 255, 0, 255, 255 };
@@ -215,7 +215,7 @@ public:
         Assert::AreEqual(1, counters.NumGetTransformCalls);
     }
 
-    TEST_METHOD(CanvasSolidColorBrush_Closed)
+    TEST_METHOD_EX(CanvasSolidColorBrush_Closed)
     {
         Color color = { 255, 127, 127, 127 };
 
@@ -256,7 +256,7 @@ public:
         }
     };
 
-    TEST_METHOD(CanvasSolidColorBrush_CreateThroughCanvasControl)
+    TEST_METHOD_EX(CanvasSolidColorBrush_CreateThroughCanvasControl)
     {
         ComPtr<MockCanvasDevice> canvasDevice = Make<MockCanvasDevice>();
 
@@ -283,7 +283,7 @@ public:
         Assert::AreEqual(static_cast<ICanvasDevice*>(canvasDevice.Get()), verifyDevice.Get());
     }
 
-    TEST_METHOD(CanvasSolidColorBrush_CreateThroughDrawingSession)
+    TEST_METHOD_EX(CanvasSolidColorBrush_CreateThroughDrawingSession)
     {
         ComPtr<MockCanvasDevice> canvasDevice = Make<MockCanvasDevice>();
         ComPtr<MockD2DSolidColorBrush> expectedBrush = Make<MockD2DSolidColorBrush>();

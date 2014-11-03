@@ -16,26 +16,30 @@
 
 TEST_CLASS(CanvasImageUnitTests)
 {
-public:
-    std::shared_ptr<CanvasRenderTargetManager> m_manager;
-    ComPtr<StubCanvasDevice> m_canvasDevice;
-
-    TEST_METHOD_INITIALIZE(Reset)
+    struct Fixture
     {
-        auto converter = Make<MockWICFormatConverter>();
-        auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-        m_manager = std::make_shared<CanvasRenderTargetManager>(adapter);
-        m_canvasDevice = Make<StubCanvasDevice>();
+        std::shared_ptr<CanvasRenderTargetManager> m_manager;
+        ComPtr<StubCanvasDevice> m_canvasDevice;
 
-        m_canvasDevice->MockCreateRenderTargetBitmap =
-            [&](float, float, DirectXPixelFormat, CanvasAlphaBehavior, float)
-            {
-                return Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
-            };
-    }
+        Fixture()
+        {
+            auto converter = Make<MockWICFormatConverter>();
+            auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
+            m_manager = std::make_shared<CanvasRenderTargetManager>(adapter);
+            m_canvasDevice = Make<StubCanvasDevice>();
+            
+            m_canvasDevice->MockCreateRenderTargetBitmap =
+                [&](float, float, DirectXPixelFormat, CanvasAlphaBehavior, float)
+                {
+                    return Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
+                };
+        }
+    };
 
     TEST_METHOD_EX(CanvasImage_GetBounds_CorrectContext)
     {
+        Fixture f;
+
         ABI::Windows::Foundation::Rect bounds;
 
         D2D1_MATRIX_3X2_F someTransform = D2D1::Matrix3x2F(1, 2, 3, 4, 5, 6);
@@ -67,8 +71,8 @@ public:
 
         auto drawingSession = manager->GetOrCreate(d2dDeviceContext.Get());
 
-        auto canvasBitmap = m_manager->Create(
-            m_canvasDevice.Get(),
+        auto canvasBitmap = f.m_manager->Create(
+            f.m_canvasDevice.Get(),
             1.0f,
             1.0f,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,

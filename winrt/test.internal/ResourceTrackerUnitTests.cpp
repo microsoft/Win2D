@@ -163,7 +163,7 @@ TEST_CLASS(ResourceTrackerUnitTests)
         Assert::AreNotEqual(wrapperInspectable.Get(), otherWrapperInspectable.Get());
     }
 
-    TEST_METHOD(ResourceTracker_GetOrCreate_WithMatchingDevice_Succeeds)
+    TEST_METHOD_EX(ResourceTracker_GetOrCreate_WithMatchingDevice_Succeeds)
     {
         auto manager = std::make_shared<DummyManager>();
         auto resource = Make<DummyResource>();
@@ -175,7 +175,7 @@ TEST_CLASS(ResourceTrackerUnitTests)
         Assert::AreEqual(expectedWrapper.Get(), actualWrapper.Get());
     }
 
-    TEST_METHOD(ResourceTracker_GetOrCreate_WithWrongDevice_Fails)
+    TEST_METHOD_EX(ResourceTracker_GetOrCreate_WithWrongDevice_Fails)
     {
         auto manager = std::make_shared<DummyManager>();
         auto resource = Make<DummyResource>();

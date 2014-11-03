@@ -70,7 +70,7 @@ public:
         return Make<CanvasImageBrush>(canvasDevice.Get());
     }
 
-    TEST_METHOD(CanvasImageBrush_Implements_Expected_Interfaces)
+    TEST_METHOD_EX(CanvasImageBrush_Implements_Expected_Interfaces)
     {
         auto brush = CreateMinimalTestBrush();
 
@@ -80,7 +80,7 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(brush, ABI::Windows::Foundation::IClosable);
     }
 
-    TEST_METHOD(CanvasImageBrush_Closure)
+    TEST_METHOD_EX(CanvasImageBrush_Closure)
     {
         auto brush = CreateMinimalTestBrush();
         
@@ -114,7 +114,7 @@ public:
         Assert::AreEqual(RO_E_CLOSED, brush->put_Transform(transform));
     }
 
-    TEST_METHOD(CanvasImageBrush_Properties_NullArgs)
+    TEST_METHOD_EX(CanvasImageBrush_Properties_NullArgs)
     {
         auto brush = CreateMinimalTestBrush();
 
@@ -243,7 +243,7 @@ public:
 
     }
 
-    TEST_METHOD(CanvasImageBrush_BitmapBrushProperties)
+    TEST_METHOD_EX(CanvasImageBrush_BitmapBrushProperties)
     {
         auto canvasDevice = Make<MockCanvasDevice>();
         auto bitmapBrush = Make<MockD2DBitmapBrush>();
@@ -439,7 +439,7 @@ public:
             *outTarget = target;
         }
     }
-    TEST_METHOD(CanvasImageBrush_Switching)
+    TEST_METHOD_EX(CanvasImageBrush_Switching)
     {
         auto anyRectangle = Make<Nullable<Rect>>(Rect{0,0,10,10});
 
@@ -480,7 +480,7 @@ public:
         }
     }
     
-    TEST_METHOD(CanvasImageBrush_ImageBrushProperties)
+    TEST_METHOD_EX(CanvasImageBrush_ImageBrushProperties)
     {
         SwitchableTestBrushFixture f;
 
@@ -549,7 +549,7 @@ public:
 
     }
 
-    TEST_METHOD(CanvasImageBrush_BackedByEffect_SourceRectangle)
+    TEST_METHOD_EX(CanvasImageBrush_BackedByEffect_SourceRectangle)
     {
         // Create an image brush backed by an effect.
         SwitchableTestBrushFixture f;
