@@ -273,41 +273,43 @@ public:
     };
 
 
-    TEST_METHOD(CanvasBitmap_CopyFromBitmap)
+    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmap)
+    {
+        CopyFromBitmapFixture fixture(m_bitmapManager, m_testFileName);
+        ThrowIfFailed(fixture.DestBitmap->CopyFromBitmap(fixture.SourceBitmap.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmapWithDestPoint)
+    {
+        int32_t destPoint[] = { 234, 2 };
+
+        CopyFromBitmapFixture fixture(m_bitmapManager, m_testFileName, &destPoint[0], &destPoint[1]);
+        ThrowIfFailed(fixture.DestBitmap->CopyFromBitmapWithDestPoint(fixture.SourceBitmap.Get(), destPoint[0], destPoint[1]));
+    }
+
+    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmapWithDestPointAndSourceRect)
     {
         int32_t destPoint[] = { 234, 2 };
         int32_t sourceRect[] = { 444, 555, 666, 772 };
-        {
-            CopyFromBitmapFixture fixture(m_bitmapManager, m_testFileName);
-            ThrowIfFailed(fixture.DestBitmap->CopyFromBitmap(fixture.SourceBitmap.Get()));
-            Expectations::Instance()->Validate();
-        }
-        {
-            CopyFromBitmapFixture fixture(m_bitmapManager, m_testFileName, &destPoint[0], &destPoint[1]);
-            ThrowIfFailed(fixture.DestBitmap->CopyFromBitmapWithDestPoint(fixture.SourceBitmap.Get(), destPoint[0], destPoint[1]));
-            Expectations::Instance()->Validate();
-        }
-        {
-            CopyFromBitmapFixture fixture(
-                m_bitmapManager, 
-                m_testFileName, 
-                &destPoint[0], 
-                &destPoint[1],
-                &sourceRect[0],
-                &sourceRect[1],
-                &sourceRect[2],
-                &sourceRect[3]);
 
-            ThrowIfFailed(fixture.DestBitmap->CopyFromBitmapWithDestPointAndSourceRect(
-                fixture.SourceBitmap.Get(), 
-                destPoint[0], 
-                destPoint[1],
-                sourceRect[0],
-                sourceRect[1],
-                sourceRect[2],
-                sourceRect[3]));
-            Expectations::Instance()->Validate();
-        }
+        CopyFromBitmapFixture fixture(
+            m_bitmapManager, 
+            m_testFileName, 
+            &destPoint[0], 
+            &destPoint[1],
+            &sourceRect[0],
+            &sourceRect[1],
+            &sourceRect[2],
+            &sourceRect[3]);
+
+        ThrowIfFailed(fixture.DestBitmap->CopyFromBitmapWithDestPointAndSourceRect(
+            fixture.SourceBitmap.Get(), 
+            destPoint[0], 
+            destPoint[1],
+            sourceRect[0],
+            sourceRect[1],
+            sourceRect[2],
+            sourceRect[3]));
     }
 
     TEST_METHOD(CanvasBitmap_CopyFromBitmap_InvalidCoordinates)

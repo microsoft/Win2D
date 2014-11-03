@@ -214,7 +214,7 @@ public:
         drawingSession2->DrawImage(testEffect, position);
     }
 
-    TEST_METHOD(CanvasEffect_Rerealize)
+    TEST_METHOD_EX(CanvasEffect_Rerealize)
     {
         // Use a test effect with one source and one property.
         auto testEffect = Make<TestEffect>(m_blurGuid, 1, 1, false);
@@ -231,8 +231,6 @@ public:
 
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
         VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
-
-        Expectations::Instance()->Validate();
     }
 
     class InvalidEffectInputType : public RuntimeClass<IEffectInput>
@@ -240,7 +238,7 @@ public:
         InspectableClass(L"InvalidEffectInputType", BaseTrust);
     };
 
-    TEST_METHOD(CanvasEffect_WrongInputType)
+    TEST_METHOD_EX(CanvasEffect_WrongInputType)
     {
         auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
@@ -273,11 +271,9 @@ public:
         Assert::AreEqual(E_NOINTERFACE, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
 
         ValidateStoredErrorState(E_NOINTERFACE, L"Effect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.");
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasEffect_CyclicGraph)
+    TEST_METHOD_EX(CanvasEffect_CyclicGraph)
     {
         auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
@@ -307,11 +303,9 @@ public:
         testEffect->put_Source(testEffect.Get());
 
         Assert::AreEqual(D2DERR_CYCLIC_GRAPH, drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasEffect_GetBounds_NullArg)
+    TEST_METHOD_EX(CanvasEffect_GetBounds_NullArg)
     {
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = { 0 };
@@ -323,8 +317,6 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(drawingSession.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(nullptr, matrix, &bounds));
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
-
-        Expectations::Instance()->Validate();
     }
 
     class MockEffectThatCountsCalls : public MockD2DEffect
@@ -355,7 +347,7 @@ public:
         }
     };
 
-    TEST_METHOD(CanvasEffect_RealizationRecursion)
+    TEST_METHOD_EX(CanvasEffect_RealizationRecursion)
     {
         auto drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
@@ -452,8 +444,6 @@ public:
         // Drawing the root effect back on the original device should notice that the third level effect needs to be re-realized.
         ThrowIfFailed(drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 5, { 2, 3, 2, 1, 1 }, { 2, 2, 2, 1, 1 });
-
-        Expectations::Instance()->Validate();
     }
 
     void CheckCallCount(std::vector<ComPtr<MockEffectThatCountsCalls>> const& mockEffects,

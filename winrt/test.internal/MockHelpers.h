@@ -16,21 +16,24 @@
 // Helpers for common mocking operations (eg counting how many times a method
 // was called, or an event was invoked).
 //
-// If any of these expectations are used then
-// Expectations::Instance()->Validate() must be called at the end of the test.
-// Although it is tempting to do this in TEST_METHOD_CLEANUP, this can cause
-// surprising errors to be reported.  Instead, an explicit call has to be added
-// to the end of a test method.
+// If any of these expectations are used then TEST_METHOD_EX must be used.
 //
 //    CALL_COUNTER(TestCounter);
 //
-//    TEST_METHOD(MyTest)
+//    TEST_METHOD_EX(MyTest)
 //    {
 //        TestCounter.SetExpectedCalls(1);
-//        Expectations::Instance()->Validate();
 //    }
 //
-//
+
+#define TEST_METHOD_EX(METHOD_NAME)             \
+    TEST_METHOD(METHOD_NAME)                    \
+    {                                           \
+        ExpectationsResetter resetter;          \
+        METHOD_NAME##_();                       \
+        Expectations::Instance()->Validate();   \
+    }                                           \
+    void METHOD_NAME##_()
 
 //
 // CALL_COUNTER defines a member variable that can be used to count how many
@@ -44,11 +47,10 @@
 //     void Foo() { FooMethod.WasCalled(); }
 // }
 //
-// TEST_METHOD(MyTest)
+// TEST_METHOD_EX(MyTest)
 // {
 //     SomeClass c;
 //     c.FooMethod.SetExpectedCalls(1);
-//     Expectations::Instance()->Validate();
 // }
 //
 // MyTest will fail because "FooMethod" was not called.
@@ -73,12 +75,11 @@
 //     IFACEMETHODIMP Bar(int value) { return BarMethod.WasCalled(value); }
 // }
 //
-// TEST_METHOD(MyTest)
+// TEST_METHOD_EX(MyTest)
 // {
 //     SomeClass c;
 //     c.BarMethod.SetExpectedCalls(1, [](int v) { Assert::AreEqual(1, v); return S_OK; });
 //     c.Bar(2);
-//     Expectations::Instance()->Validate();
 // }
 //
 // MyTest will fail because Bar was called with 2 rather than 1.
@@ -112,12 +113,13 @@ public:
     Expectation& operator=(Expectation&&) = delete;
 };
 
+
 //
 // Tracks expectations and can call Validate() on all of them.
 //
 class Expectations
 {
-    std::vector<std::weak_ptr<Expectation>> m_expectations;
+    std::vector<std::shared_ptr<Expectation>> m_expectations;
 
 private:
     Expectations()
@@ -130,6 +132,11 @@ public:
         static Expectations instance;
         return &instance;
     }
+    
+    void Reset()
+    {
+        m_expectations.clear();
+    }
 
     void Add(std::shared_ptr<Expectation> e)
     {
@@ -138,45 +145,36 @@ public:
 
     void Validate()
     {
-        for (auto& weake : m_expectations)
+        for (auto& e : m_expectations)
         {
-            if (auto e = weake.lock())
-                e->Validate();
+            e->Validate();
         }
-
-        // Since we expect Validate() to be called at least once for each test,
-        // this is a good point to remove stale references.  It does mean that
-        // we'll have a build up of stale references from the previous test, but
-        // this is better than having an explicit Init() function, or scanning
-        // the list on each Add().
-        RemoveStaleExpectations();
     }
 
     void ValidateNotSatisfied()
     {
         bool allSatisfied = true;
-        for (auto& weake : m_expectations)
+        for (auto& e : m_expectations)
         {
-            if (auto e = weake.lock())
                 allSatisfied = allSatisfied && e->TryValidate();
         }
 
         Assert::IsFalse(allSatisfied, L"All expectations were satisfied when at least one expected not to be");
     }
-
-private:
-    void RemoveStaleExpectations()
-    {
-        auto newEnd = std::remove_if(m_expectations.begin(), m_expectations.end(),
-            [](std::weak_ptr<Expectation> const& value)
-            {
-                return value.expired();
-            });
-
-        m_expectations.erase(newEnd, m_expectations.end());
-    }
 };
 
+
+//
+// Ensures that Expectations gets reset at the end of a test
+//
+class ExpectationsResetter
+{
+public:
+    ~ExpectationsResetter()
+    {
+        Expectations::Instance()->Reset();
+    }
+};
 
 //
 // This counts how many times a method is called.  This is not intended to be

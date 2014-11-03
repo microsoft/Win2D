@@ -17,7 +17,7 @@
 TEST_CLASS(CanvasImageSourceUnitTests)
 {
 public:
-    TEST_METHOD(CanvasImageSourceConstruction)
+    TEST_METHOD_EX(CanvasImageSourceConstruction)
     {
         //
         // On construction the CanvasImageSource is expected to:
@@ -119,8 +119,6 @@ public:
         ComPtr<IInspectable> expectedComposableBase;
         ThrowIfFailed(mockSurfaceImageSource.As(&expectedComposableBase));
         Assert::AreEqual(canvasImageSource->GetComposableBase().Get(), expectedComposableBase.Get());
-
-        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasImageSourceGetDevice)
@@ -145,7 +143,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasImageSource->get_Device(nullptr));
     }
 
-    TEST_METHOD(CanvasImageSourcePutDevice)
+    TEST_METHOD_EX(CanvasImageSourcePutDevice)
     {
         auto firstCanvasDevice = Make<StubCanvasDevice>();
 
@@ -212,11 +210,9 @@ public:
 
         // Calling put_Device with nullptr should fail appropriately
         Assert::AreEqual(E_INVALIDARG, canvasImageSource->put_Device(nullptr));
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasImageSource_CreateFromCanvasControl)
+    TEST_METHOD_EX(CanvasImageSource_CreateFromCanvasControl)
     {
         std::shared_ptr<CanvasControlTestAdapter> canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
         
@@ -242,11 +238,9 @@ public:
         ThrowIfFailed(canvasImageSource->get_Device(&sisDevice));
 
         Assert::AreEqual(controlDevice.Get(), sisDevice.Get());
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasImageSource_CreateFromDrawingSession)
+    TEST_METHOD_EX(CanvasImageSource_CreateFromDrawingSession)
     {
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
 
@@ -276,8 +270,6 @@ public:
         ThrowIfFailed(canvasImageSource->get_Device(&sisDevice));
 
         Assert::AreEqual(static_cast<ICanvasDevice*>(canvasDevice.Get()), sisDevice.Get());
-
-        Expectations::Instance()->Validate();
     }
 };
 
@@ -318,7 +310,7 @@ public:
         m_anyColor = Color{1,2,3,4};
     }
 
-    TEST_METHOD(CanvasImageSource_CreateDrawingSession_PassesEntireImage)
+    TEST_METHOD_EX(CanvasImageSource_CreateDrawingSession_PassesEntireImage)
     {
         m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
             [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const& updateRect, float)
@@ -333,11 +325,9 @@ public:
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(m_anyColor, &drawingSession));
         Assert::IsTrue(drawingSession);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasImageSource_CreateDrawingSessionWithUpdateRegion_PassesSpecifiedUpdateRegion)
+    TEST_METHOD_EX(CanvasImageSource_CreateDrawingSessionWithUpdateRegion_PassesSpecifiedUpdateRegion)
     {
         Rect expectedRect{ 1, 2, 3, 4 };
 
@@ -355,11 +345,9 @@ public:
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(m_anyColor, expectedRect, &drawingSession));
         Assert::IsTrue(drawingSession);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasImageSource_CreateDrawingSession_PassesClearColor)
+    TEST_METHOD_EX(CanvasImageSource_CreateDrawingSession_PassesClearColor)
     {
         Rect anyRect{ 1, 2, 3, 4 };
         Color expectedColor{ 1, 2, 3, 4 };
@@ -374,15 +362,13 @@ public:
         ComPtr<ICanvasDrawingSession> ignoredDrawingSession;
         ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(expectedColor, &ignoredDrawingSession));
         ThrowIfFailed(m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedColor, anyRect, &ignoredDrawingSession));
-
-        Expectations::Instance()->Validate();
     }
 };
 
 TEST_CLASS(CanvasImageSourceDrawingSessionAdapterTests)
 {
 public:
-    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_BeginEndDraw)
+    TEST_METHOD_EX(CanvasImageSourceDrawingSessionAdapter_BeginEndDraw)
     {
         auto mockDeviceContext = Make<MockD2DDeviceContext>();
         auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();        
@@ -436,14 +422,9 @@ public:
 
         Assert::AreEqual<ID2D1DeviceContext1*>(mockDeviceContext.Get(), actualDeviceContext.Get());
 
-        Expectations::Instance()->Validate();
-        
-
         mockSurfaceImageSource->EndDrawMethod.SetExpectedCalls(1);
 
         adapter->EndDraw();
-
-        Expectations::Instance()->Validate();
     }
 
     struct DeviceContextWithRestrictedQI : public MockD2DDeviceContext
@@ -461,7 +442,7 @@ public:
         }
     };
 
-    TEST_METHOD(CanvasImageSourceDrawingSessionAdapter_When_SisNative_Gives_Unusuable_DeviceContext_Then_EndDraw_Called)
+    TEST_METHOD_EX(CanvasImageSourceDrawingSessionAdapter_When_SisNative_Gives_Unusuable_DeviceContext_Then_EndDraw_Called)
     {
         auto sis = Make<MockSurfaceImageSource>();
         sis->BeginDrawMethod.SetExpectedCalls(1,
@@ -493,7 +474,5 @@ public:
                     DEFAULT_DPI,
                     &actualDeviceContext);
             });
-
-        Expectations::Instance()->Validate();
     }
 };

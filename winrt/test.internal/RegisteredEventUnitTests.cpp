@@ -59,18 +59,16 @@ TEST_CLASS(RegisteredEventTests)
 
     CALL_COUNTER(fn);
 
-    TEST_METHOD(RegisteredEvent_WhenDestructed_CallsFunction)
+    TEST_METHOD_EX(RegisteredEvent_WhenDestructed_CallsFunction)
     {
         fn.SetExpectedCalls(1);
 
         {
             RegisteredEvent r([=]() { fn.WasCalled(); });
         }
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(RegisteredEvent_WhenReleased_CallsFunction)
+    TEST_METHOD_EX(RegisteredEvent_WhenReleased_CallsFunction)
     {
         fn.SetExpectedCalls(1);
 
@@ -79,11 +77,9 @@ TEST_CLASS(RegisteredEventTests)
             r.Release();
             fn.SetExpectedCalls(0);
         }
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(RegisteredEvent_WhenDetached_DoesNotCallFunction)
+    TEST_METHOD_EX(RegisteredEvent_WhenDetached_DoesNotCallFunction)
     {
         fn.SetExpectedCalls(0);
 
@@ -92,11 +88,9 @@ TEST_CLASS(RegisteredEventTests)
             r.Detach();
             r.Release();
         }
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(RegisteredEvent_AddAndsRemovesHandler)
+    TEST_METHOD_EX(RegisteredEvent_AddAndsRemovesHandler)
     {
         fn.SetExpectedCalls(1);
 
@@ -119,8 +113,6 @@ TEST_CLASS(RegisteredEventTests)
 
         r.Release();        
         s->Raise();
-
-        Expectations::Instance()->Validate();
     }
 };
 

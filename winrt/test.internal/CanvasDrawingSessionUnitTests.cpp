@@ -232,7 +232,7 @@ public:
     // Clear
     //
 
-    TEST_METHOD(CanvasDrawingSession_Clear)
+    TEST_METHOD_EX(CanvasDrawingSession_Clear)
     {
         CanvasDrawingSessionFixture f;
 
@@ -248,8 +248,6 @@ public:
             });
 
         ThrowIfFailed(f.DS->Clear(expectedColor));
-
-        Expectations::Instance()->Validate();
     }
 
 
@@ -307,7 +305,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor, Matrix4x4{}));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawImage_Bitmap)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_Bitmap)
     {
         BitmapFixture f;
 
@@ -319,8 +317,6 @@ public:
             });
 
         ThrowIfFailed(f.DS->DrawImageAtOrigin(f.Bitmap.Get()));
-
-        Expectations::Instance()->Validate();
     }
 
     class BitmapFixtureWithDrawImageVerification : public BitmapFixture
@@ -402,7 +398,7 @@ public:
         }
     };
 
-    TEST_METHOD(CanvasDrawingSession_DrawImage_Overloads)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_Overloads)
     {
         Rect destRect{ 33, 12, 4, 2 };
         Rect sourceRect{ 3, 4, 7, 9 };
@@ -414,61 +410,50 @@ public:
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect);
             ThrowIfFailed(f.DS->DrawImageWithSourceRect(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
             ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolation(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
             ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation, composite));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect);
             ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(), 123, 456, sourceRect));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
             ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 123, 456, sourceRect, interpolation));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
             ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), 123, 456, sourceRect, interpolation, composite));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacity(f.Bitmap.Get(), destRect, sourceRect, opacity));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation, &perspective);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation, perspective));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRect(f.Bitmap.Get(), destRect, sourceRect));
-            Expectations::Instance()->Validate();
         }
         {
             BitmapFixtureWithDrawBitmapVerification f(destRect);
             ThrowIfFailed(f.DS->DrawBitmapWithDestRect(f.Bitmap.Get(), destRect));
-            Expectations::Instance()->Validate();
         }
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawImage_GaussianBlurEffect)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_GaussianBlurEffect)
     {
         BitmapFixture f;
 
@@ -524,8 +509,6 @@ public:
         Assert::IsTrue(setInputCalled);
         Assert::IsTrue(setValueCalled);
         Assert::IsTrue(setInputCountCalled);
-
-        Expectations::Instance()->Validate();
     }
 
 
@@ -568,11 +551,9 @@ public:
             });
 
         callDrawFunction(f, expectedP0, expectedP1, canvasStrokeStyle.Get());
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithBrush)
     {
         TestDrawLine(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -584,7 +565,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineWithBrush(Vector2{}, Vector2{}, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithBrush)
     {
         TestDrawLine(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -596,7 +577,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineAtCoordsWithBrush(0, 0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithColor)
     {
         TestDrawLine(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -606,7 +587,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithColor)
     {
         TestDrawLine(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -616,7 +597,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithBrushAndStrokeWidth)
     {
         TestDrawLine(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -628,7 +609,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineWithBrushAndStrokeWidth(Vector2{}, Vector2{}, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineAtCoordsWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithBrushAndStrokeWidth)
     {
         TestDrawLine(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -640,7 +621,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithColorAndStrokeWidth)
     {
         TestDrawLine(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -650,7 +631,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineAtCoordsWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawLine(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -660,7 +641,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawLine(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -672,7 +653,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineWithBrushAndStrokeWidthAndStrokeStyle(Vector2{}, Vector2{}, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawLine(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -684,7 +665,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawLine(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -694,7 +675,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawLine(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
@@ -743,11 +724,9 @@ public:
             });
 
         callDrawFunction(f, expectedRect, canvasStrokeStyle.Get());
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithBrush)
     {
         TestDrawRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -759,7 +738,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleWithBrush(Rect{}, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithBrush)
     {
         TestDrawRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -771,7 +750,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleAtCoordsWithBrush(0, 0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithColor)
     {
         TestDrawRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -781,7 +760,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithColor)
     {
         TestDrawRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -791,7 +770,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithBrushAndStrokeWidth)
     {
         TestDrawRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -803,7 +782,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleWithBrushAndStrokeWidth(Rect{}, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleAtCoordsWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithBrushAndStrokeWidth)
     {
         TestDrawRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -815,7 +794,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithColorAndStrokeWidth)
     {
         TestDrawRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -825,7 +804,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleAtCoordsWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -835,7 +814,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -847,7 +826,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(Rect{}, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -859,7 +838,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -869,7 +848,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
@@ -905,11 +884,9 @@ public:
             });
 
         callDrawFunction(f, expectedRect);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRectangleWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrush)
     {
         TestFillRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
@@ -921,7 +898,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRectangleWithBrush(Rect{}, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRectangleAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleAtCoordsWithBrush)
     {
         TestFillRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
@@ -933,7 +910,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRectangleAtCoordsWithBrush(0, 0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRectangleWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithColor)
     {
         TestFillRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
@@ -943,7 +920,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRectangleAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleAtCoordsWithColor)
     {
         TestFillRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
@@ -996,11 +973,9 @@ public:
             });
 
         callDrawFunction(f, expectedRect, expectedRadiusX, expectedRadiusY, canvasStrokeStyle.Get());
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithBrush)
     {
         TestDrawRoundedRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1012,7 +987,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleWithBrush(Rect{}, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithBrush)
     {
         TestDrawRoundedRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1024,7 +999,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleAtCoordsWithBrush(0, 0, 0, 0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithColor)
     {
         TestDrawRoundedRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1034,7 +1009,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColor)
     {
         TestDrawRoundedRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1044,7 +1019,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithBrushAndStrokeWidth)
     {
         TestDrawRoundedRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1056,7 +1031,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleWithBrushAndStrokeWidth(Rect{}, 0, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth)
     {
         TestDrawRoundedRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1068,7 +1043,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, 0, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithColorAndStrokeWidth)
     {
         TestDrawRoundedRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1078,7 +1053,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawRoundedRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1088,7 +1063,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRoundedRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1100,7 +1075,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(Rect{}, 0, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRoundedRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1112,7 +1087,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, 0, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRoundedRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1122,7 +1097,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRoundedRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
@@ -1162,11 +1137,9 @@ public:
             });
 
         callDrawFunction(f, expectedRect, expectedRadiusX, expectedRadiusY);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRoundedRectangleWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRoundedRectangleWithBrush)
     {
         TestFillRoundedRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
@@ -1178,7 +1151,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRoundedRectangleWithBrush(Rect{}, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRoundedRectangleAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRoundedRectangleAtCoordsWithBrush)
     {
         TestFillRoundedRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
@@ -1190,7 +1163,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRoundedRectangleAtCoordsWithBrush(0, 0, 0, 0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRoundedRectangleWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRoundedRectangleWithColor)
     {
         TestFillRoundedRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
@@ -1200,7 +1173,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillRoundedRectangleAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillRoundedRectangleAtCoordsWithColor)
     {
         TestFillRoundedRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
@@ -1249,11 +1222,9 @@ public:
             });
 
         callDrawFunction(f, expectedPoint, canvasStrokeStyle.Get());
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithBrush)
     {
         TestDrawEllipse(false, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1265,7 +1236,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseWithBrush(Vector2{}, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithBrush)
     {
         TestDrawEllipse(false, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1277,7 +1248,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseAtCoordsWithBrush(0, 0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithColor)
     {
         TestDrawEllipse(true, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1287,7 +1258,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithColor)
     {
         TestDrawEllipse(true, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1297,7 +1268,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithBrushAndStrokeWidth)
     {
         TestDrawEllipse(false, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1309,7 +1280,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseWithBrushAndStrokeWidth(Vector2{}, 0, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseAtCoordsWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithBrushAndStrokeWidth)
     {
         TestDrawEllipse(false, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1321,7 +1292,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithColorAndStrokeWidth)
     {
         TestDrawEllipse(true, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1331,7 +1302,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseAtCoordsWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawEllipse(true, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1341,7 +1312,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(false, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1353,7 +1324,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(Vector2{}, 0, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(false, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1365,7 +1336,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(true, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1375,7 +1346,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(true, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1411,11 +1382,9 @@ public:
             });
 
         callDrawFunction(f, expectedPoint);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillEllipseWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillEllipseWithBrush)
     {
         TestFillEllipse(false, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1427,7 +1396,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillEllipseWithBrush(Vector2{}, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillEllipseAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillEllipseAtCoordsWithBrush)
     {
         TestFillEllipse(false, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1439,7 +1408,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillEllipseAtCoordsWithBrush(0, 0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillEllipseWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillEllipseWithColor)
     {
         TestFillEllipse(true, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1449,7 +1418,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillEllipseAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillEllipseAtCoordsWithColor)
     {
         TestFillEllipse(true, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1464,7 +1433,7 @@ public:
     // DrawCircle
     //
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithBrush)
     {
         TestDrawEllipse(false, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1476,7 +1445,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleWithBrush(Vector2{}, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithBrush)
     {
         TestDrawEllipse(false, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1488,7 +1457,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleAtCoordsWithBrush(0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithColor)
     {
         TestDrawEllipse(true, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1498,7 +1467,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithColor)
     {
         TestDrawEllipse(true, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1508,7 +1477,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithBrushAndStrokeWidth)
     {
         TestDrawEllipse(false, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1520,7 +1489,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleWithBrushAndStrokeWidth(Vector2{}, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleAtCoordsWithBrushAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithBrushAndStrokeWidth)
     {
         TestDrawEllipse(false, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1532,7 +1501,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleAtCoordsWithBrushAndStrokeWidth(0, 0, 0, nullptr, 0));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithColorAndStrokeWidth)
     {
         TestDrawEllipse(true, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1542,7 +1511,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleAtCoordsWithColorAndStrokeWidth)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawEllipse(true, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1552,7 +1521,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(false, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1564,7 +1533,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(Vector2{}, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(false, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1576,7 +1545,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, nullptr, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(true, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1586,7 +1555,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(true, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
@@ -1601,7 +1570,7 @@ public:
     // FillCircle
     //
 
-    TEST_METHOD(CanvasDrawingSession_FillCircleWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillCircleWithBrush)
     {
         TestFillEllipse(false, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1613,7 +1582,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillCircleWithBrush(Vector2{}, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillCircleAtCoordsWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillCircleAtCoordsWithBrush)
     {
         TestFillEllipse(false, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1625,7 +1594,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillCircleAtCoordsWithBrush(0, 0, 0, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillCircleWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillCircleWithColor)
     {
         TestFillEllipse(true, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1635,7 +1604,7 @@ public:
         });
     }
 
-    TEST_METHOD(CanvasDrawingSession_FillCircleAtCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_FillCircleAtCoordsWithColor)
     {
         TestFillEllipse(true, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
@@ -1646,7 +1615,7 @@ public:
     }
 
 
-    TEST_METHOD(CanvasDrawingSession_StateGettersWithNull)
+    TEST_METHOD_EX(CanvasDrawingSession_StateGettersWithNull)
     {
         CanvasDrawingSessionFixture f;
 
@@ -1657,7 +1626,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, f.DS->get_Units(nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_StateProperties)
+    TEST_METHOD_EX(CanvasDrawingSession_StateProperties)
     {
         CanvasDrawingSessionFixture f;
 
@@ -1761,11 +1730,9 @@ public:
             ThrowIfFailed(f.DS->get_Units(&units));
             Assert::AreEqual(CanvasUnits_Pixels, units);
         }
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasDrawingSession_SiSOffsetIsHiddenFromTransformProperty)
+    TEST_METHOD_EX(CanvasDrawingSession_SiSOffsetIsHiddenFromTransformProperty)
     {
         ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = 
             Make<StubD2DDeviceContextWithGetFactory>();
@@ -1815,7 +1782,7 @@ public:
         Assert::AreEqual(expectedTransform, wrappedResourceTransform);
     }
 
-    TEST_METHOD(CanvasDrawingSession_get_Device)
+    TEST_METHOD_EX(CanvasDrawingSession_get_Device)
     {
         //
         // In the interop case, where NULL is passed to the drawing session
@@ -1888,8 +1855,6 @@ public:
 
             Assert::AreEqual(deviceVerify.Get(), deviceReverify.Get());
         }
-
-        Expectations::Instance()->Validate();
     }
 };
 
@@ -1979,12 +1944,10 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
             CanvasWordWrapping actualWordWrapping{};
             ThrowIfFailed(f.Format->get_WordWrapping(&actualWordWrapping));
             Assert::AreEqual(expectedWordWrapping, actualWordWrapping);
-
-            Expectations::Instance()->Validate();
         }
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtPointWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointWithColor)
     {
         TestDrawText(false, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
@@ -1994,7 +1957,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         });
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtPointCoordsWithColor)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointCoordsWithColor)
     {
         TestDrawText(false, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
@@ -2004,7 +1967,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         });
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtPointWithBrushAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointWithBrushAndFormat)
     {
         // Full version.
         TestDrawText(true, false, false, D2D1_RECT_F{ 23, 42, 23, 42 },
@@ -2024,7 +1987,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtPointWithBrushAndFormat(WinString(), Vector2{}, nullptr, nullptr));
     }
 
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtRectWithBrushAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtRectWithBrushAndFormat)
     {
         // Full version.
         TestDrawText(true, true, false, D2D1_RECT_F{ 1, 2, 4, 6 },
@@ -2044,7 +2007,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtRectWithBrushAndFormat(WinString(), Rect{}, nullptr, nullptr));
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtPointCoordsWithBrushAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointCoordsWithBrushAndFormat)
     {
         // Full version.
         TestDrawText(true, false, false, D2D1_RECT_F{ 23, 42, 23, 42 },
@@ -2064,7 +2027,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtPointCoordsWithBrushAndFormat(WinString(), 0, 0, nullptr, nullptr));
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtRectCoordsWithBrushAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtRectCoordsWithBrushAndFormat)
     {
         // Full version.
         TestDrawText(true, true, false, D2D1_RECT_F{ 1, 2, 4, 6 },
@@ -2084,7 +2047,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtRectCoordsWithBrushAndFormat(WinString(), 0, 0, 0, 0, nullptr, nullptr));
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtPointWithColorAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointWithColorAndFormat)
     {
         // Full version.
         TestDrawText(true, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
@@ -2103,7 +2066,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         });
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtRectWithColorAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtRectWithColorAndFormat)
     {
         // Full version.
         TestDrawText(true, true, true, D2D1_RECT_F{ 1, 2, 4, 6 },
@@ -2122,7 +2085,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         });
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtPointCoordsWithColorAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointCoordsWithColorAndFormat)
     {
         // Full version.
         TestDrawText(true, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
@@ -2141,7 +2104,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         });
     }
     
-    TEST_METHOD(CanvasDrawingSession_DrawTextAtRectCoordsWithColorAndFormat)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtRectCoordsWithColorAndFormat)
     {
         // Full version.
         TestDrawText(true, true, true, D2D1_RECT_F{ 1, 2, 4, 6 },
@@ -2368,7 +2331,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 
 TEST_CLASS(CanvasDrawingSession_Interop)
 {
-    TEST_METHOD(CanvasDrawingSession_Wrapper_DoesNotAutomaticallyCallAnyMethods)
+    TEST_METHOD_EX(CanvasDrawingSession_Wrapper_DoesNotAutomaticallyCallAnyMethods)
     {
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         
@@ -2389,7 +2352,5 @@ TEST_CLASS(CanvasDrawingSession_Interop)
         // Closing the drawing session should not result in any methods on the
         // deviceContext getting called.
         ThrowIfFailed(drawingSession->Close());
-
-        Expectations::Instance()->Validate();
     }
 };

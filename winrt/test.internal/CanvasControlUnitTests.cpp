@@ -64,7 +64,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(drawingSession.Get(), drawingSessionRetrieved.Get());
     }
 
-    TEST_METHOD(CanvasControl_Callbacks)
+    TEST_METHOD_EX(CanvasControl_Callbacks)
     {
         using namespace ABI::Windows::Foundation;
 
@@ -117,8 +117,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         ThrowIfFailed(m_control->remove_CreateResources(createResourcesEventToken0));
         ThrowIfFailed(m_control->remove_CreateResources(createResourcesEventToken1));
         ThrowIfFailed(m_control->remove_Draw(drawEventToken));
-
-        Expectations::Instance()->Validate();
     }
 
     //
@@ -155,7 +153,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         }
     };
 
-    TEST_METHOD(CanvasControl_WhenCreateResourcesHandlerCalledOnLoadAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourcesHandlerCalledOnLoadAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain)
     {
         auto f = std::make_shared<CreateResourcesFixture>(m_control);
 
@@ -185,8 +183,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Expectations::Instance()->ValidateNotSatisfied();
         
         m_adapter->RaiseCompositionRenderingEvent();
-
-        Expectations::Instance()->Validate();
     }
 
     void MarkControlDeviceAsLost()
@@ -200,7 +196,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
     }
 
-    TEST_METHOD(CanvasControl_WhenCreateResourcesHandlerCalledOnLoadAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain_EvenIfDeviceIsLostImmediatelyAfterRecreation)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourcesHandlerCalledOnLoadAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain_EvenIfDeviceIsLostImmediatelyAfterRecreation)
     {
         auto f = std::make_shared<CreateResourcesFixture>(m_control);
 
@@ -229,11 +225,9 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             Expectations::Instance()->ValidateNotSatisfied();
             m_adapter->RaiseCompositionRenderingEvent();
         }
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenCreateResourceHandlerCalledOnLoadAndItAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourceHandlerCalledOnLoadAndItAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
     {
         auto f = std::make_shared<CreateResourcesFixture>(m_control);
 
@@ -248,12 +242,10 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             { 
                 f->RaiseLoadedEvent(); 
             });
-
-        Expectations::Instance()->Validate();
     }
 
 
-    TEST_METHOD(CanvasControl_WhenCreateResourceHandlerCalledAsItIsAddedAndTheDeviceIsLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourceHandlerCalledAsItIsAddedAndTheDeviceIsLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain)
     {
         auto f = std::make_shared<CreateResourcesFixture>(m_control);
         f->OnCreateResources.SetExpectedCalls(1);
@@ -280,11 +272,10 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
         Expectations::Instance()->ValidateNotSatisfied();
         m_adapter->RaiseCompositionRenderingEvent();
-        Expectations::Instance()->Validate();
     }
 
 
-    TEST_METHOD(CanvasControl_WhenCreateResourceHandlerCalledAsItIsAddedAndTheDeviceIsLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain_EvenIfDeviceIsLostImmediatelyAfterRecreation)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourceHandlerCalledAsItIsAddedAndTheDeviceIsLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain_EvenIfDeviceIsLostImmediatelyAfterRecreation)
     {
         auto f = std::make_shared<CreateResourcesFixture>(m_control);
         f->OnCreateResources.SetExpectedCalls(1);
@@ -317,12 +308,10 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             Expectations::Instance()->ValidateNotSatisfied();
             m_adapter->RaiseCompositionRenderingEvent();
         }
-
-        Expectations::Instance()->Validate();
     }
 
 
-    TEST_METHOD(CanvasControl_WhenCreateResourceHandlerCallsAsItIsAddedAndItAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourceHandlerCallsAsItIsAddedAndItAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
     {
         auto f = std::make_shared<CreateResourcesFixture>(m_control);
         f->OnCreateResources.SetExpectedCalls(1);
@@ -341,8 +330,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             {
                 Add(m_control.Get(), &CanvasControl::add_CreateResources, newlyAddedCreateResources.Get());
             });
-
-        Expectations::Instance()->Validate();
     }
 
     struct CreateResourcesAndDrawFixture : public CreateResourcesFixture
@@ -370,7 +357,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
     }
     
-    TEST_METHOD(CanvasControl_WhenDrawingAndCreateImageSourceReportsDeviceLost_CreateResourcesIsCalledAndDrawSucceeds)
+    TEST_METHOD_EX(CanvasControl_WhenDrawingAndCreateImageSourceReportsDeviceLost_CreateResourcesIsCalledAndDrawSucceeds)
     {
         auto f = std::make_shared<CreateResourcesAndDrawFixture>(m_control);
         SetCreateCanvasImageSourceToEchoDeviceLost();
@@ -400,11 +387,9 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
 
         m_adapter->RaiseCompositionRenderingEvent();        
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenCanvasImageSourceDrawingSessionFactoryCreateReportsDeviceLost_CreateResourcesIsCalledAndDrawSucceeds)
+    TEST_METHOD_EX(CanvasControl_WhenCanvasImageSourceDrawingSessionFactoryCreateReportsDeviceLost_CreateResourcesIsCalledAndDrawSucceeds)
     {
         auto f = std::make_shared<CreateResourcesAndDrawFixture>(m_control);
         SetCreateCanvasImageSourceToEchoDeviceLost();
@@ -450,11 +435,9 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
 
         m_adapter->RaiseCompositionRenderingEvent();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenDrawHandlerReportsDeviceLost_CreateResourcesIsCalledAndDrawIsCalledAgain)
+    TEST_METHOD_EX(CanvasControl_WhenDrawHandlerReportsDeviceLost_CreateResourcesIsCalledAndDrawIsCalledAgain)
     {
         auto f = std::make_shared<CreateResourcesAndDrawFixture>(m_control);
         SetCreateCanvasImageSourceToEchoDeviceLost();
@@ -486,11 +469,9 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
 
         m_adapter->RaiseCompositionRenderingEvent();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenDrawHandlerAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
+    TEST_METHOD_EX(CanvasControl_WhenDrawHandlerAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
     {
         auto f = std::make_shared<CreateResourcesAndDrawFixture>(m_control);
         SetCreateCanvasImageSourceToEchoDeviceLost();
@@ -502,11 +483,9 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             { 
                 m_adapter->RaiseCompositionRenderingEvent();
             });
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenDrawingSessionCloseThrowsDeviceLost_CreateResourcesIsCalledAndDrawIsCalledAgain)
+    TEST_METHOD_EX(CanvasControl_WhenDrawingSessionCloseThrowsDeviceLost_CreateResourcesIsCalledAndDrawIsCalledAgain)
     {
         auto f = std::make_shared<CreateResourcesAndDrawFixture>(m_control);
         SetCreateCanvasImageSourceToEchoDeviceLost();
@@ -549,8 +528,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
 
         m_adapter->RaiseCompositionRenderingEvent();
-
-        Expectations::Instance()->Validate();
     }
 
 };
@@ -562,7 +539,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
     static const int zeroWidth = 0;
     static const int zeroHeight = 0;
 
-    TEST_METHOD(CanvasControl_Resizing)
+    TEST_METHOD_EX(CanvasControl_Resizing)
     {
         struct TestCase
         {
@@ -591,22 +568,18 @@ TEST_CLASS(CanvasControlTests_SizeTests)
 
             f.Execute(testStep.ResizeWidth, testStep.ResizeHeight);
         }
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_ZeroSizedControl_DoesNotCreateImageSource_DoesNotCallDrawHandler)
+    TEST_METHOD_EX(CanvasControl_ZeroSizedControl_DoesNotCreateImageSource_DoesNotCallDrawHandler)
     {
         ResizeFixture f;
 
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(zeroWidth, zeroHeight);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_ResizeToZeroSize_ClearsImageSource_DoesNotCallDrawHandler)
+    TEST_METHOD_EX(CanvasControl_ResizeToZeroSize_ClearsImageSource_DoesNotCallDrawHandler)
     {
         ResizeFixture f;
 
@@ -617,19 +590,15 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(zeroWidth, zeroHeight);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_ZeroWidth_DoesNotCreateImageSource)
+    TEST_METHOD_EX(CanvasControl_ZeroWidth_DoesNotCreateImageSource)
     {
         ResizeFixture f;
 
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(zeroWidth, anyHeight);
-
-        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasControl_ZeroHeight_DoesNotCreateImageSource)
@@ -639,8 +608,6 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         f.ExpectImageSourceSetToNull();
         f.ExpectNoDrawEvent();
         f.Execute(anyWidth, zeroHeight);
-
-        Expectations::Instance()->Validate();
     }
 
 
@@ -900,7 +867,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
         }
     };
 
-    TEST_METHOD(CanvasControl_Dpi)
+    TEST_METHOD_EX(CanvasControl_Dpi)
     {
         auto deviceContext = Make<MockD2DDeviceContext>();
         deviceContext->ClearMethod.AllowAnyCall();
@@ -998,8 +965,6 @@ TEST_CLASS(CanvasControlTests_Dpi)
             ThrowIfFailed(controlAsFrameworkElement->get_ActualHeight(&verifyHeight));
             Assert::AreEqual<double>(verifyWidth, controlSize);
             Assert::AreEqual<double>(verifyHeight, controlSize);
-
-            Expectations::Instance()->Validate();
         }
     }
 };
@@ -1032,7 +997,7 @@ public:
         ThrowIfFailed(m_userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
     }
 
-    TEST_METHOD(CanvasControl_AfterSurfaceContentsLostEvent_RecreatesSurfaceImageSource)
+    TEST_METHOD_EX(CanvasControl_AfterSurfaceContentsLostEvent_RecreatesSurfaceImageSource)
     {
         m_adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
         m_onDraw.SetExpectedCalls(1);
@@ -1041,11 +1006,9 @@ public:
 
         RaiseAnyNumberOfSurfaceContentsLostEvents();
         m_adapter->RaiseCompositionRenderingEvent();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersSurfaceContentsLostEvent)
+    TEST_METHOD_EX(CanvasControl_WhenDestroyed_UnregistersSurfaceContentsLostEvent)
     {
         m_adapter->SurfaceContentsLostEventSource->AddMethod.SetExpectedCalls(1);
         CreateControl();
@@ -1053,11 +1016,9 @@ public:
         m_adapter->SurfaceContentsLostEventSource->RemoveMethod.SetExpectedCalls(1);
 
         m_control.Reset();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenWindowIsNotVisible_DrawEventIsNotInvoked)
+    TEST_METHOD_EX(CanvasControl_WhenWindowIsNotVisible_DrawEventIsNotInvoked)
     {
         m_window->SetVisible(false);
         m_adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(0);
@@ -1065,11 +1026,9 @@ public:
 
         CreateControl();
         RaiseAnyNumberOfCompositionRenderingEvents();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenWindowBecomesVisible_DrawEventIsInvoked)
+    TEST_METHOD_EX(CanvasControl_WhenWindowBecomesVisible_DrawEventIsInvoked)
     {
         m_adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
         m_window->SetVisible(false);
@@ -1081,8 +1040,6 @@ public:
         m_onDraw.SetExpectedCalls(1);
 
         RaiseAnyNumberOfCompositionRenderingEvents();        
-
-        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD(CanvasControl_WhenWindowBecomesVisibleWithValidContents_DrawEventIsNotInvoked)
@@ -1102,18 +1059,16 @@ public:
         RaiseAnyNumberOfCompositionRenderingEvents();
     }
 
-    TEST_METHOD(CanvasControl_WhenWindowIsNotVisible_NoRenderingEventHandlerIsAdded)
+    TEST_METHOD_EX(CanvasControl_WhenWindowIsNotVisible_NoRenderingEventHandlerIsAdded)
     {
         m_window->SetVisible(false);
         m_adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(0);
 
         CreateControl();
         RaiseAnyNumberOfCompositionRenderingEvents();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WindowWindowBecomesNotVisible_ExistingRenderingEventHandlerIsRemoved)
+    TEST_METHOD_EX(CanvasControl_WindowWindowBecomesNotVisible_ExistingRenderingEventHandlerIsRemoved)
     {
         m_adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(1);
         CreateControl();
@@ -1122,44 +1077,36 @@ public:
         m_adapter->CompositionRenderingEventSource->RemoveMethod.SetExpectedCalls(1);
 
         m_window->SetVisible(false);
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersRenderingEvent)
+    TEST_METHOD_EX(CanvasControl_WhenDestroyed_UnregistersRenderingEvent)
     {
         m_adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(1);
         m_adapter->CompositionRenderingEventSource->RemoveMethod.SetExpectedCalls(1);
 
         CreateControl();
         m_control.Reset();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenDestroyed_UnregistersVisibilityChangedEvent)
+    TEST_METHOD_EX(CanvasControl_WhenDestroyed_UnregistersVisibilityChangedEvent)
     {
         m_window->VisibilityChangedEventSource->AddMethod.SetExpectedCalls(1);
         m_window->VisibilityChangedEventSource->RemoveMethod.SetExpectedCalls(1);
 
         CreateControl();
         m_control.Reset();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenDestroyed_UnregisterDpiChangedEvent)
+    TEST_METHOD_EX(CanvasControl_WhenDestroyed_UnregisterDpiChangedEvent)
     {
         m_adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(1);
         m_adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(1);
 
         CreateControl();
         m_control.Reset();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenAppSuspended_TrimCalledOnDevice)
+    TEST_METHOD_EX(CanvasControl_WhenAppSuspended_TrimCalledOnDevice)
     {
         CreateControl();
         
@@ -1170,8 +1117,6 @@ public:
         canvasDevice->TrimMethod.SetExpectedCalls(1);
 
         ThrowIfFailed(m_adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
-
-        Expectations::Instance()->Validate();
     }
 
 private:
@@ -1245,7 +1190,7 @@ public:
         Assert::AreEqual(anyColor, actualColor);
     }
 
-    TEST_METHOD(CanvasControl_SettingDifferentClearColorTriggersRedraw)
+    TEST_METHOD_EX(CanvasControl_SettingDifferentClearColorTriggersRedraw)
     {
         Color currentColor;
         ThrowIfFailed(m_control->get_ClearColor(&currentColor));
@@ -1257,11 +1202,9 @@ public:
 
         m_onDraw.SetExpectedCalls(1);
         RaiseAnyNumberOfCompositionRenderingEvents();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_SettingClearColorToCurrentValueDoesNotTriggerRedraw)
+    TEST_METHOD_EX(CanvasControl_SettingClearColorToCurrentValueDoesNotTriggerRedraw)
     {
         Color currentColor;
         ThrowIfFailed(m_control->get_ClearColor(&currentColor));
@@ -1270,11 +1213,9 @@ public:
 
         m_onDraw.SetExpectedCalls(0);
         RaiseAnyNumberOfCompositionRenderingEvents();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_DeviceContextIsClearedToCorrectColorBeforeDrawHandlerIsCalled)
+    TEST_METHOD_EX(CanvasControl_DeviceContextIsClearedToCorrectColorBeforeDrawHandlerIsCalled)
     {
         Color anyColor{ 1, 2, 3, 4 };
 
@@ -1289,11 +1230,9 @@ public:
 
         ThrowIfFailed(m_control->put_ClearColor(anyColor));
         RaiseAnyNumberOfCompositionRenderingEvents();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenClearColorBecomesOpaque_SurfaceImageSourceIsCreatedWithOpaqueBackgroundMode)
+    TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesOpaque_SurfaceImageSourceIsCreatedWithOpaqueBackgroundMode)
     {
         m_onDraw.AllowAnyCall();
 
@@ -1313,11 +1252,9 @@ public:
             });
 
         RaiseAnyNumberOfCompositionRenderingEvents();
-
-        Expectations::Instance()->Validate();
     }
 
-    TEST_METHOD(CanvasControl_WhenClearColorBecomesTransparent_SurfaceImageSourceIsCreatedWithTransparentBackgroundMode)
+    TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesTransparent_SurfaceImageSourceIsCreatedWithTransparentBackgroundMode)
     {
         m_onDraw.AllowAnyCall();
 
@@ -1338,8 +1275,6 @@ public:
             });
 
         RaiseAnyNumberOfCompositionRenderingEvents();
-
-        Expectations::Instance()->Validate();
     }
 
 private:

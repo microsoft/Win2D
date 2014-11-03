@@ -34,7 +34,7 @@ public:
             };
     }
 
-    TEST_METHOD(CanvasImage_GetBounds_CorrectContext)
+    TEST_METHOD_EX(CanvasImage_GetBounds_CorrectContext)
     {
         ABI::Windows::Foundation::Rect bounds;
 
@@ -77,7 +77,5 @@ public:
         canvasBitmap->GetBounds(drawingSession.Get(), &bounds);
 
         Assert::AreEqual(someTransform, currentTransform); 
-
-        Expectations::Instance()->Validate();
     }
 };

@@ -307,7 +307,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasDevice->get_MaximumBitmapSize(nullptr));
     }
 
-    TEST_METHOD(CanvasDevice_MaximumBitmapSize_Property)
+    TEST_METHOD_EX(CanvasDevice_MaximumBitmapSize_Property)
     {
         auto d2dDevice = Make<MockD2DDevice>();
 
@@ -329,8 +329,6 @@ public:
         canvasDevice->get_MaximumBitmapSize(&maximumBitmapSize);
 
         Assert::AreEqual(someSize, maximumBitmapSize);
-
-        Expectations::Instance()->Validate();
     }
 };
 
