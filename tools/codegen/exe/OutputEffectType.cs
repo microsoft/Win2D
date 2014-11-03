@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may
 // not use these files except in compliance with the License. You may obtain
@@ -479,6 +479,18 @@ namespace CodeGen
                    select value.ToString();
         }
 
+        static string FloatToString(float value)
+        {
+            if(float.IsInfinity(value))
+            {
+                return (value < 0 ? "-" : "") + stdInfinity;
+            }
+            else
+            {
+                return value.ToString();
+            }
+        }
+
         static IEnumerable<string> ConvertVectorToRect(IEnumerable<string> values)
         {
             // This is in left/top/right/bottom format.
@@ -489,7 +501,7 @@ namespace CodeGen
             rectValues[3] -= rectValues[1];
 
             return from value in rectValues
-                   select value.ToString().Replace("Infinity", stdInfinity);
+                   select FloatToString(value);
         }
 
         static float StringToFloat(string value)
