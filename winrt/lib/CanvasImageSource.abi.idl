@@ -96,7 +96,10 @@ namespace Microsoft.Graphics.Canvas
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSessionWithUpdateRectangle(
             [in]          Windows.UI.Color clearColor,
-            [in]          Windows.Foundation.Rect updateRectangle,
+            [in]          INT32 leftInPixels,
+            [in]          INT32 topInPixels,
+            [in]          INT32 widthInPixels,
+            [in]          INT32 heightInPixels,
             [out, retval] CanvasDrawingSession** drawingSession);
 
         //

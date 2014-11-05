@@ -25,7 +25,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
             Color const& clearColor,
-            Rect const& updateRect,
+            RECT const& updateRectangle,
             float dpi) const = 0;
     };
 
@@ -80,7 +80,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(CreateDrawingSessionWithUpdateRectangle)(
             _In_         Color clearColor,
-            _In_         Rect updateRectangle,
+            _In_         int32_t leftInPixels,
+            _In_         int32_t topInPixels,
+            _In_         int32_t widthInPixels,
+            _In_         int32_t heightInPixels,
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
 
         ComPtr<ICanvasDrawingSession> CreateDrawingSessionWithDpi(
@@ -102,7 +105,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ICanvasDrawingSession> CreateDrawingSessionWithUpdateRectangleAndDpi(
             Color const& clearColor,
-            Rect const& updateRectangle,
+            RECT const& updateRectangle,
             float dpi);
     };
 
@@ -124,7 +127,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
             Color const& clearColor,
-            Rect const& updateRect,
+            RECT const& updateRectangle,
             float dpi) const override;
     };
 }}}}

@@ -17,16 +17,16 @@ namespace canvas
     class MockCanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
     {
     public:
-        CALL_COUNTER_WITH_MOCK(CreateMethod, ComPtr<ICanvasDrawingSession>(ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const&, float));
+        CALL_COUNTER_WITH_MOCK(CreateMethod, ComPtr<ICanvasDrawingSession>(ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const&, float));
 
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
             Color const& clearColor,
-            Rect const& updateRect,
+            RECT const& updateRectangle,
             float dpi) const override
         {
-            return CreateMethod.WasCalled(owner, sisNative, clearColor, updateRect, dpi);
+            return CreateMethod.WasCalled(owner, sisNative, clearColor, updateRectangle, dpi);
         }
     };
 }

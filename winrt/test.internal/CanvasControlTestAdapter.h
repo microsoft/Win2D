@@ -113,7 +113,7 @@ public:
 
         auto dsFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         dsFactory->CreateMethod.AllowAnyCall(
-            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const&, float)
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const&, float)
             {
                 if (OnCanvasImageSourceDrawingSessionFactory_Create)
                 {

@@ -196,46 +196,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ToWindowsColor(D2D1_COLOR_F{ vector.X, vector.Y, vector.Z, 1 });
     }
 
-    inline RECT ToRECT(ABI::Windows::Foundation::Rect const& rect)
+    inline RECT ToRECT(int32_t left, int32_t top, int32_t width, int32_t height)
     {
-        float floatRight = rect.X + rect.Width;
-        float floatBottom = rect.Y + rect.Height;
-
-        //
-        // Outside this range the conversion becomes inprecise, so we don't
-        // allow it.  This is because ToRECT is generally used to convert to a
-        // RECT that is going to specify a region in pixels, and float precision
-        // errors could have very surprising effects here.
-        //
-        // This causes us a problem because VirtualSurfaceImageSources may want
-        // to specify regions with values up to 17000000 and we cannot reliably
-        // convert Rect to RECT for all regions in the VSIS.
-        //
-        // Realistically this won't happen since nobody would create a VSIS that
-        // was 1x17000000.  The next valid size would be 2x8500000, and this
-        // falls within this range, and even that is excessively rectangular.
-        //
-        const float maxMagnitude = 16777216.0f;
-        const float minMagnitude = -maxMagnitude;
-
-        if (rect.X < minMagnitude || rect.X > maxMagnitude)
-            ThrowHR(E_INVALIDARG);
-
-        if (rect.Y < minMagnitude || rect.Y > maxMagnitude)
-            ThrowHR(E_INVALIDARG);
-
-        if (floatRight < minMagnitude || floatRight > maxMagnitude)
-            ThrowHR(E_INVALIDARG);
-
-        if (floatBottom < minMagnitude || floatBottom > maxMagnitude)
-            ThrowHR(E_INVALIDARG);
-
-        auto left   = static_cast<long>(rect.X);
-        auto top    = static_cast<long>(rect.Y);
-        auto right  = static_cast<long>(floatRight);
-        auto bottom = static_cast<long>(floatBottom);
-
-        return RECT{ left, top, right, bottom };
+        return RECT{ left, top, left + width, top + height };
     }
 
     inline D2D1_POINT_2F ToD2DPoint(Numerics::Vector2 const& point)

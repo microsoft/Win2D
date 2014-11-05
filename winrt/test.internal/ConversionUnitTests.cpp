@@ -99,37 +99,6 @@ TEST_CLASS(ConversionUnitTests)
 
     }
 
-    TEST_METHOD(RectToRECT)
-    {
-        Assert::AreEqual(RECT{ 1, 2, 4, 6 }, ToRECT(Rect{ 1, 2, 3, 4 }));
-        
-        //
-        // floats can losslessly store integers up to magnitude 2^24 (16777216).
-        // This causes us a problem because VirtualImageSources may want to
-        // specify regions with values up to 17000000 and we cannot reliably
-        // convert Rect to RECT for these.
-        //
-        // ToRECT will fail with E_INVALIDARG if you attempt to convert to a
-        // RECT with values outside of this range.
-        //
-        const uint32_t mv = 16777216;
-        const float mvf = static_cast<float>(mv);
-        Assert::AreEqual(static_cast<uint32_t>(mvf), mv);
-        Assert::AreEqual(RECT{ 0, 0, mv, mv }, ToRECT(Rect{ 0, 0, mvf, mvf }));
-
-        ExpectHResultException(E_INVALIDARG, 
-            [&] { ToRECT(Rect{ 0, 0, mvf + 2, mvf }); });
-
-        ExpectHResultException(E_INVALIDARG, 
-            [&] { ToRECT(Rect{ 0, 0, mvf, mvf + 2 }); });
-
-        ExpectHResultException(E_INVALIDARG, 
-            [&] { ToRECT(Rect{ 2, 0, mvf, mvf }); });
-
-        ExpectHResultException(E_INVALIDARG, 
-            [&] { ToRECT(Rect{ 0, 2, mvf, mvf }); });
-    }
-
     TEST_METHOD(PointToD2DPoint)
     {
         Assert::AreEqual(D2D1_POINT_2F{ 1, 2 }, ToD2DPoint(Vector2{ 1, 2 }));
