@@ -26,7 +26,7 @@ namespace NativeComponent
 
             ComPtr<ID3D11Device> d3dDevice;
 
-            ThrowIfFailed(D3D11CreateDevice(
+            if (FAILED(D3D11CreateDevice(
                 nullptr,            // adapter
                 D3D_DRIVER_TYPE_WARP,
                 nullptr,            // software
@@ -36,10 +36,23 @@ namespace NativeComponent
                 D3D11_SDK_VERSION,
                 &d3dDevice,
                 nullptr,        // feature level
-                nullptr));      // immediate context
+                nullptr)))
+            {
+                __abi_ThrowIfFailed(D3D11CreateDevice(
+                    nullptr,            // adapter
+                    D3D_DRIVER_TYPE_WARP,
+                    nullptr,            // software
+                    0,                    // flags
+                    nullptr,            // feature levels
+                    0,                  // feature levels count
+                    D3D11_SDK_VERSION,
+                    &d3dDevice,
+                    nullptr,        // feature level
+                    nullptr));      // immediate context
+            }
 
             ComPtr<IDXGIDevice> dxgiDevice;
-            ThrowIfFailed(d3dDevice.As(&dxgiDevice));
+            __abi_ThrowIfFailed(d3dDevice.As(&dxgiDevice));
             return CreateDirect3DDevice(dxgiDevice.Get());
         }
     };
