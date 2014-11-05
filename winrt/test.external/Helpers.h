@@ -258,7 +258,7 @@ inline ComPtr<ID3D11Device> CreateD3DDevice()
     D3D_FEATURE_LEVEL featureLevel;
     ComPtr<ID3D11DeviceContext> immediateContext;
 
-    ThrowIfFailed(D3D11CreateDevice(
+    if (FAILED(D3D11CreateDevice(
         nullptr,            // adapter
         D3D_DRIVER_TYPE_WARP,
         nullptr,            // software
@@ -268,7 +268,21 @@ inline ComPtr<ID3D11Device> CreateD3DDevice()
         D3D11_SDK_VERSION,
         &d3dDevice,
         &featureLevel,
-        &immediateContext));
+        &immediateContext)))
+    {
+        // Avoid taking hard dependency on the D3D debug layer.
+        ThrowIfFailed(D3D11CreateDevice(
+            nullptr,            // adapter
+            D3D_DRIVER_TYPE_WARP,
+            nullptr,            // software
+            D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+            nullptr,            // feature levels
+            0,                  // feature levels count
+            D3D11_SDK_VERSION,
+            &d3dDevice,
+            &featureLevel,
+            &immediateContext));
+    }
 
     return d3dDevice;
 }
