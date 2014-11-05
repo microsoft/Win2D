@@ -619,6 +619,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 ThrowIfFailed(m_drawEventList.Add(value, token));
+                if (m_isLoaded)
+                    m_guardedState->TriggerRender(this);
             });
     }
 

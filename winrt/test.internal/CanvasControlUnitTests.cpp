@@ -14,14 +14,6 @@
 
 #include "CanvasControlTestAdapter.h"
 
-template<typename T, typename HANDLER>
-EventRegistrationToken Add(T* obj, HRESULT (STDMETHODCALLTYPE T::* addMethod)(HANDLER*, EventRegistrationToken*), HANDLER* handler)
-{
-    EventRegistrationToken token;
-    ThrowIfFailed((obj->*addMethod)(handler, &token));
-    return token;
-}
-
 struct BasicControlFixture
 {
     std::shared_ptr<CanvasControlTestAdapter> Adapter;
@@ -47,6 +39,25 @@ struct BasicControlFixture
     void RaiseCompositionRenderingEvent()
     {
         Adapter->RaiseCompositionRenderingEvent();
+    }
+
+    EventRegistrationToken AddCreateResourcesHandler(CreateResourcesEventHandlerType* handler)
+    {
+        return AddEventHandler(&CanvasControl::add_CreateResources, handler);
+    }
+
+    EventRegistrationToken AddDrawHandler(DrawEventHandlerType* handler)
+    {
+        return AddEventHandler(&CanvasControl::add_Draw, handler);
+    }
+
+private:
+    template<typename T, typename HANDLER>
+    EventRegistrationToken AddEventHandler(HRESULT (STDMETHODCALLTYPE T::* addMethod)(HANDLER*, EventRegistrationToken*), HANDLER* handler)
+    {
+        EventRegistrationToken token;
+        ThrowIfFailed((Control.Get()->*addMethod)(handler, &token));
+        return token;
     }
 };
 
@@ -105,7 +116,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         // Register one CreateResources handler.
         // Note that Loaded hasn't occured yet, so it shouldn't actually be fired.
         auto onCreateResources = MockEventHandler<CreateResourcesEventHandlerType>(L"CreateResources", ExpectedEventParams::OnlySender);
-        auto createResourcesEventToken0 = Add(f.Control.Get(), &CanvasControl::add_CreateResources, onCreateResources.Get());
+        auto createResourcesEventToken0 = f.AddCreateResourcesHandler(onCreateResources.Get());
 
         // Issue a Loaded.
         // Should fire CreateResources.
@@ -118,14 +129,14 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         // Because the Loaded event has already occurred, add_CreateResources should immediately fire the event too.
         onCreateResources.SetExpectedCalls(1);
 
-        auto createResourcesEventToken1 = Add(f.Control.Get(), &CanvasControl::add_CreateResources, onCreateResources.Get());
+        auto createResourcesEventToken1 = f.AddCreateResourcesHandler(onCreateResources.Get());
 
         onCreateResources.Validate();
 
         // Register the Draw handler.
         auto onDraw = MockEventHandler<DrawEventHandlerType>(L"Draw", ExpectedEventParams::Both);
 
-        auto drawEventToken = Add(f.Control.Get(), &CanvasControl::add_Draw, onDraw.Get());
+        auto drawEventToken = f.AddDrawHandler(onDraw.Get());
 
         // Invalidate and ensure the Draw callback is called.
         onDraw.SetExpectedCalls(1);
@@ -151,6 +162,45 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         ThrowIfFailed(f.Control->remove_Draw(drawEventToken));
     }
 
+    TEST_METHOD_EX(CanvasControl_WhenDrawHandlerAdded_RedrawIsTriggered)
+    {
+        CanvasControlFixture f;
+        f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+
+        f.RaiseLoadedEvent();
+        f.RaiseCompositionRenderingEvent();
+
+        auto onDraw1 = MockEventHandler<DrawEventHandlerType>(L"Draw1");
+        f.AddDrawHandler(onDraw1.Get());
+
+        onDraw1.SetExpectedCalls(1);
+
+        f.RaiseCompositionRenderingEvent();
+
+        auto onDraw2 = MockEventHandler<DrawEventHandlerType>(L"Draw2");
+        f.AddDrawHandler(onDraw2.Get());
+
+        onDraw1.SetExpectedCalls(1);
+        onDraw2.SetExpectedCalls(1);
+
+        f.RaiseCompositionRenderingEvent();
+    }
+
+    TEST_METHOD_EX(CanvasControl_WhenDrawHandlerAddedBeforeLoadedEvent_RedrawIsTriggeredAfterLoadedEvent)
+    {
+        CanvasControlFixture f;
+        f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+
+        auto onDraw = MockEventHandler<DrawEventHandlerType>(L"Draw");
+        f.AddDrawHandler(onDraw.Get());
+
+        f.RaiseCompositionRenderingEvent();
+        f.RaiseLoadedEvent();
+
+        onDraw.SetExpectedCalls(1);
+        f.RaiseCompositionRenderingEvent();
+    }
+
     //
     // Fixture for tests that have a canvas control with a CreateResources event
     // handler registered.
@@ -162,7 +212,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         CreateResourcesFixture()
             : OnCreateResources(MockEventHandler<CreateResourcesEventHandlerType>(L"onCreateResources"))
         {
-            Add(Control.Get(), &CanvasControl::add_CreateResources, OnCreateResources.Get());
+            AddCreateResourcesHandler(OnCreateResources.Get());
         }
 
         HRESULT GetDeviceRemovedReason()
@@ -287,7 +337,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                 return DXGI_ERROR_DEVICE_REMOVED;
             });
 
-        Add(f->Control.Get(), &CanvasControl::add_CreateResources, newlyAddedCreateResources.Get());
+        f->AddCreateResourcesHandler(newlyAddedCreateResources.Get());
 
         Expectations::Instance()->ValidateNotSatisfied();
         f->Adapter->RaiseCompositionRenderingEvent();
@@ -321,7 +371,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                 }
             });
 
-        Add(f->Control.Get(), &CanvasControl::add_CreateResources, newlyAddedCreateResources.Get());
+        f->AddCreateResourcesHandler(newlyAddedCreateResources.Get());
         for (int i=0; i<devicesLostInARow - 1; ++i)
         {
             Expectations::Instance()->ValidateNotSatisfied();
@@ -347,7 +397,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
             [&]
             {
-                Add(f->Control.Get(), &CanvasControl::add_CreateResources, newlyAddedCreateResources.Get());
+                f->AddCreateResourcesHandler(newlyAddedCreateResources.Get());
             });
     }
 
@@ -360,7 +410,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         {
             OnCreateResources.SetExpectedCalls(1);
             RaiseLoadedEvent(); 
-            Add(Control.Get(), &CanvasControl::add_Draw, OnDraw.Get());
+            AddDrawHandler(OnDraw.Get());
 
             Adapter->CreateCanvasImageSourceMethod.AllowAnyCall(
                 [](ICanvasDevice* device, int, int, CanvasBackground)
@@ -996,10 +1046,7 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         void CreateControl()
         {
             BasicControlFixture::CreateControl();
-
-            EventRegistrationToken ignoredToken;
-            ThrowIfFailed(Control->add_Draw(OnDraw.Get(), &ignoredToken));
-
+            AddDrawHandler(OnDraw.Get());
             RaiseLoadedEvent();
         }
 
