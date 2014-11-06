@@ -390,7 +390,7 @@ public:
         auto mockDeviceContext = Make<MockD2DDeviceContext>();
         auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();        
         RECT expectedUpdateRect{ 1, 2, 3, 4 };
-        POINT expectedOffset{ 5, 6 };
+        POINT beginDrawOffset{ 5, 6 };
         D2D1_COLOR_F expectedClearColor{ 7, 8, 9, 10 };
 
         mockSurfaceImageSource->BeginDrawMethod.SetExpectedCalls(1,
@@ -400,7 +400,7 @@ public:
                 Assert::AreEqual(_uuidof(ID2D1DeviceContext), iid);
 
                 HRESULT hr = mockDeviceContext.CopyTo(iid, updateObject);
-                *offset = expectedOffset;
+                *offset = beginDrawOffset;
                 return hr;
             });
 
@@ -413,13 +413,18 @@ public:
         mockDeviceContext->SetTransformMethod.SetExpectedCalls(1,
             [&](const D2D1_MATRIX_3X2_F* m)
             {
-                // We expect the transform to be set to just the offset
+                // We expect the transform to be set to just the offset as
+                // calculated from the offset returned by BeginDraw and the
+                // update rectangle
+                float expectedOffsetX = static_cast<float>(beginDrawOffset.x - expectedUpdateRect.left);
+                float expectedOffsetY = static_cast<float>(beginDrawOffset.y - expectedUpdateRect.top);
+
                 Assert::AreEqual(1.0f, m->_11);
                 Assert::AreEqual(0.0f, m->_12);
                 Assert::AreEqual(0.0f, m->_21);
                 Assert::AreEqual(1.0f, m->_22);
-                Assert::AreEqual(static_cast<float>(expectedOffset.x), m->_31);
-                Assert::AreEqual(static_cast<float>(expectedOffset.y), m->_32);
+                Assert::AreEqual(expectedOffsetX, m->_31);
+                Assert::AreEqual(expectedOffsetY, m->_32);
             });
 
         mockDeviceContext->SetDpiMethod.SetExpectedCalls(1,

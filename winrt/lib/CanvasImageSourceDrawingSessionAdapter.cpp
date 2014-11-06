@@ -58,6 +58,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         const float dpiScalingFactor = dpi / DEFAULT_DPI;
 
+        // Update the offset to account for the updateRect (so the resulting
+        // drawing session has the same coordinate system relative to the entire
+        // image, rather than relative to the updateRect).
+        offset.x -= updateRect.left;
+        offset.y -= updateRect.top;
+
         const D2D1_POINT_2F renderingSurfaceOffset = D2D1::Point2F(
             static_cast<float>(offset.x / dpiScalingFactor),
             static_cast<float>(offset.y / dpiScalingFactor));
