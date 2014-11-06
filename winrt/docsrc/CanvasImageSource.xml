@@ -55,7 +55,7 @@ under the License.
       <summary>Returns a new drawing session for redrawing the entire image source.</summary>
       <remarks>The entire image is automatically cleared to the specified color before this method returns.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color,Windows.Foundation.Rect)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Returns a new drawing session for updating a region of the image source.</summary>
       <remarks>The specified region of the image is cleared to the specified color before this method returns.</remarks>
     </member>
