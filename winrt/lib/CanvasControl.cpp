@@ -670,13 +670,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     }
                     
                     auto clearColor = m_guardedState->PreDrawAndGetClearColor(this);
-
-                    if (m_drawEventList.GetSize() == 0)
-                    {
-                        return;
-                    }
-                    
                     auto backgroundMode = clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
+
                     EnsureSizeDependentResources(backgroundMode);
                     CallDrawHandlers(clearColor);
                 }

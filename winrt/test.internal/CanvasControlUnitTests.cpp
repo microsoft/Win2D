@@ -213,6 +213,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             : OnCreateResources(MockEventHandler<CreateResourcesEventHandlerType>(L"onCreateResources"))
         {
             AddCreateResourcesHandler(OnCreateResources.Get());
+            Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
         }
 
         HRESULT GetDeviceRemovedReason()
@@ -1215,13 +1216,19 @@ TEST_CLASS(CanvasControl_ClearColor)
 {
     struct Fixture
     {
+        enum Options
+        {
+            Default            = 0x0,
+            DontRegisterOnDraw = 0x1
+        };
+
         ComPtr<MockD2DDeviceContext> DeviceContext;
         std::shared_ptr<CanvasControlTestAdapter> Adapter;
         ComPtr<CanvasControl> Control;
         ComPtr<StubUserControl> UserControl;
         MockEventHandler<DrawEventHandlerType> OnDraw;
 
-        Fixture()
+        Fixture(Options options = Default)
         {
             DeviceContext = Make<MockD2DDeviceContext>();
             DeviceContext->ClearMethod.AllowAnyCall();
@@ -1234,13 +1241,20 @@ TEST_CLASS(CanvasControl_ClearColor)
 
             OnDraw = MockEventHandler<DrawEventHandlerType>(L"Draw");
 
-            EventRegistrationToken ignoredToken;
-            ThrowIfFailed(Control->add_Draw(OnDraw.Get(), &ignoredToken));
+            bool shouldRegisterOnDraw = !(options & DontRegisterOnDraw);
+
+            if (shouldRegisterOnDraw)
+            {
+                EventRegistrationToken ignoredToken;
+                ThrowIfFailed(Control->add_Draw(OnDraw.Get(), &ignoredToken));
+            }
 
             Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
             ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
 
-            OnDraw.SetExpectedCalls(1);
+            if (shouldRegisterOnDraw)
+                OnDraw.SetExpectedCalls(1);
+
             RaiseAnyNumberOfCompositionRenderingEvents();
         }
 
@@ -1320,6 +1334,22 @@ TEST_CLASS(CanvasControl_ClearColor)
             {
                 Assert::AreEqual(ToD2DColor(anyColor), *color);
                 f.OnDraw.SetExpectedCalls(1);
+            });
+
+        ThrowIfFailed(f.Control->put_ClearColor(anyColor));
+        f.RaiseAnyNumberOfCompositionRenderingEvents();
+    }
+
+    TEST_METHOD_EX(CanvasControl_DeviceContextIsClearedToCorrectColorEvenIfNoDrawHandlersRegistered)
+    {
+        Fixture f(Fixture::DontRegisterOnDraw);
+
+        Color anyColor{ 1, 2, 3, 4 };
+
+        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
+            [&](D2D1_COLOR_F const* color)
+            {
+                Assert::AreEqual(ToD2DColor(anyColor), *color);
             });
 
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
