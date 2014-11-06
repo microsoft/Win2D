@@ -30,7 +30,7 @@ namespace Microsoft.Graphics.Canvas
     }
 
     [version(VERSION), activatable(ICanvasDrawEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
-    runtimeclass CanvasDrawEventArgs : Windows.UI.Xaml.DependencyObject
+    runtimeclass CanvasDrawEventArgs
     {
         [default] interface ICanvasDrawEventArgs;
     }
