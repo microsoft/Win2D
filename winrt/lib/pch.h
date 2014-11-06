@@ -46,6 +46,7 @@
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>
+#include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
 

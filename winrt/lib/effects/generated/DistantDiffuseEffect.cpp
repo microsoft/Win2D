@@ -30,19 +30,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_DISTANTDIFFUSE_PROP_SCALE_MODE, D2D1_DISTANTDIFFUSE_SCALE_MODE_LINEAR);
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantDiffuseEffect,
+    IMPLEMENT_PROPERTY(DistantDiffuseEffect,
         Azimuth,
+        ConvertRadiansToDegrees,
         float,
-        float,
-        D2D1_DISTANTDIFFUSE_PROP_AZIMUTH,
-        (value >= 0.0f) && (value <= 360.0f))
+        D2D1_DISTANTDIFFUSE_PROP_AZIMUTH)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantDiffuseEffect,
+    IMPLEMENT_PROPERTY(DistantDiffuseEffect,
         Elevation,
+        ConvertRadiansToDegrees,
         float,
-        float,
-        D2D1_DISTANTDIFFUSE_PROP_ELEVATION,
-        (value >= 0.0f) && (value <= 360.0f))
+        D2D1_DISTANTDIFFUSE_PROP_ELEVATION)
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantDiffuseEffect,
         DiffuseAmount,

@@ -116,6 +116,9 @@ namespace CodeGen
                 public bool IsHandCoded;
 
                 [XmlAttributeAttribute]
+                public bool ConvertRadiansToDegrees;
+
+                [XmlAttributeAttribute]
                 public string Type;
             }
 

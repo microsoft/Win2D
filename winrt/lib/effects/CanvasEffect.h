@@ -147,6 +147,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
 
+        // Marker type, used as TBoxed for float values that should be converted between radians and degrees.
+        struct ConvertRadiansToDegrees { };
+
+
     private:
         void SetProperties();
 
@@ -286,6 +290,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 Numerics::Vector4 value;
                 VectorConverter::Unbox(propertyValue, &value);
                 *result = FromD2DRect(*ReinterpretAs<D2D1_RECT_F*>(&value));
+            }
+        };
+
+
+        // Handle the conversion for angles that are exposed as radians in WinRT, while internally D2D uses degrees.
+        template<>
+        struct PropertyTypeConverter<ConvertRadiansToDegrees, float>
+        {
+            static ComPtr<IPropertyValue> Box(IPropertyValueStatics* factory, float value)
+            {
+                return CreateProperty(factory, ::DirectX::XMConvertToDegrees(value));
+            }
+
+            static void Unbox(IPropertyValue* propertyValue, float* result)
+            {
+                float degrees;
+                GetPropertyValue(propertyValue, &degrees);
+                *result = ::DirectX::XMConvertToRadians(degrees);
             }
         };
 

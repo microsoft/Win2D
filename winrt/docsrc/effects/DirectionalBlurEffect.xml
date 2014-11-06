@@ -51,7 +51,7 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DirectionalBlurEffect.Angle">
       <summary>Angle of the blur relative to the x-axis, in the counterclockwise direction.
-               Units are specified in degrees. Default value 0, range 0 to 360.</summary>
+               Units are specified in radians. Default value 0, range 0 to 2*pi.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DirectionalBlurEffect.EffectId">
       <summary>Gets the unique identifier for the effect.</summary>

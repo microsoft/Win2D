@@ -138,6 +138,8 @@ namespace CodeGen
             public bool IsHidden { get; set; }
             public bool IsHandCoded { get; set; }
 
+            public bool ConvertRadiansToDegrees { get; set; }
+
             public string NativePropertyName { get; set; }
 
             public List<string> ExcludedEnumIndexes { get; set; }
@@ -531,6 +533,7 @@ namespace CodeGen
                     }
 
                     property.IsHidden = propertyOverride.IsHidden;
+                    property.ConvertRadiansToDegrees = propertyOverride.ConvertRadiansToDegrees;
                 }
 
                 if (property == null || propertyOverride.IsHandCoded)

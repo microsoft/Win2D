@@ -54,15 +54,15 @@ under the License.
                Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.Elevation">
-      <summary>Elevation of the light source, measured in degrees in the YZ plane, 
-               counter-clockwise relative to the Y axis. Default value 0, range 0 to 360.</summary>
+      <summary>Elevation of the light source, measured in radians in the YZ plane, 
+               counter-clockwise relative to the Y axis. Default value 0, range 0 to 2*pi.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.DiffuseAmount">
       <summary>Intensity of the diffuse light. Default value 1.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.Azimuth">
-      <summary>Direction of the light source, measured in degrees in the XY plane, 
-               counter-clockwise relative to the X axis. Default value 0, range 0 to 360.</summary>
+      <summary>Direction of the light source, measured in radians in the XY plane, 
+               counter-clockwise relative to the X axis. Default value 0, range 0 to 2*pi.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.EffectId">
       <summary>Gets the unique identifier for the effect.</summary>

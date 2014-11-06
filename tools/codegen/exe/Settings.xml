@@ -116,6 +116,10 @@ under the License.
     </Effect>
     <Effect Name="DirectionalBlurEffect">
       <Property Name="StandardDeviation" ProjectedNameOverride="BlurAmount"/>
+      <Property Name="Angle" ConvertRadiansToDegrees="true"/>
+    </Effect>
+    <Effect Name="HueRotationEffect">
+      <Property Name="Angle" ConvertRadiansToDegrees="true"/>
     </Effect>
     <Effect Name="DisplacementMapEffect">
       <Property Name="Scale" ProjectedNameOverride="Amount"/>
@@ -126,6 +130,8 @@ under the License.
       <Property Name="Color" ProjectedNameOverride="LightColor"/>
       <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
       <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+      <Property Name="Azimuth" ConvertRadiansToDegrees="true"/>
+      <Property Name="Elevation" ConvertRadiansToDegrees="true"/>
     </Effect>
     <Effect Name="DistantSpecularEffect">
       <Property Name="SpecularConstant" ProjectedNameOverride="SpecularAmount"/>
@@ -133,6 +139,8 @@ under the License.
       <Property Name="Color" ProjectedNameOverride="LightColor"/>
       <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
       <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+      <Property Name="Azimuth" ConvertRadiansToDegrees="true"/>
+      <Property Name="Elevation" ConvertRadiansToDegrees="true"/>
     </Effect>
     <Effect Name="DpiCompensationEffect">
       <Property Name="InputDpi" ProjectedNameOverride="SourceDpi"/>
@@ -174,6 +182,7 @@ under the License.
       <Property Name="Color" ProjectedNameOverride="LightColor"/>
       <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
       <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+      <Property Name="LimitingConeAngle" ConvertRadiansToDegrees="true"/>
     </Effect>
     <Effect Name="SpotSpecularEffect">
       <Property Name="PointsAt" ProjectedNameOverride="LightTarget"/>
@@ -182,6 +191,7 @@ under the License.
       <Property Name="Color" ProjectedNameOverride="LightColor"/>
       <Property Name="KernelUnitLength" ProjectedNameOverride="HeightMapKernelSize"/>
       <Property Name="ScaleMode" ProjectedNameOverride="HeightMapInterpolationMode"/>
+      <Property Name="LimitingConeAngle" ConvertRadiansToDegrees="true"/>
     </Effect>
     <Effect Name="TileEffect">
       <Property Name="Rect" ProjectedNameOverride="SourceRectangle"/>

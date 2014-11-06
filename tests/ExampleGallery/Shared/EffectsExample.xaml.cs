@@ -438,7 +438,7 @@ namespace ExampleGallery
             // Animation changes the blur direction and amount.
             animationFunction = elapsedTime =>
             {
-                blurEffect.Angle = (elapsedTime * 50) % 360;
+                blurEffect.Angle = elapsedTime;
                 blurEffect.BlurAmount = ((float)Math.Sin(elapsedTime * 2) + 1) * 16;
             };
 
@@ -529,7 +529,7 @@ namespace ExampleGallery
             // Animation changes the hue.
             animationFunction = elapsedTime =>
             {
-                hueRotationEffect.Angle = (elapsedTime * 250) % 360;
+                hueRotationEffect.Angle = elapsedTime * 4;
             };
 
             return hueRotationEffect;
@@ -570,7 +570,7 @@ namespace ExampleGallery
             {
                 Source = heightMap,
                 HeightMapScale = 2,
-                LimitingConeAngle = 15,
+                LimitingConeAngle = 0.25f,
                 LightTarget = new Vector3(bitmapTiger.Size.ToVector2(), 0) / 2
             };
 
@@ -578,7 +578,7 @@ namespace ExampleGallery
             {
                 Source = heightMap,
                 SpecularExponent = 16,
-                LimitingConeAngle = 15,
+                LimitingConeAngle = 0.25f,
                 LightTarget = new Vector3(bitmapTiger.Size.ToVector2(), 0) / 2
             };
 
@@ -607,10 +607,10 @@ namespace ExampleGallery
             animationFunction = elapsedTime =>
             {
                 distantDiffuseEffect.Azimuth = 
-                distantSpecularEffect.Azimuth = (elapsedTime * 50) % 360;
-                
-                distantDiffuseEffect.Elevation = 
-                distantSpecularEffect.Elevation = 90 + (float)Math.Sin(elapsedTime / 2) * 80;
+                distantSpecularEffect.Azimuth = elapsedTime % ((float)Math.PI * 2);
+
+                distantDiffuseEffect.Elevation =
+                distantSpecularEffect.Elevation = (float)Math.PI / 4 + (float)Math.Sin(elapsedTime / 2) * (float)Math.PI / 8;
 
                 pointDiffuseEffect.LightPosition = 
                 pointSpecularEffect.LightPosition =

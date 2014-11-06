@@ -36,7 +36,7 @@ under the License.
       <summary>Gets or sets the input source for HueRotation effect.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.Angle">
-      <summary>Angle to rotate the hue, in degrees. Default value 0, range 0 to 360.</summary>
+      <summary>Angle to rotate the hue, in radians. Default value 0, range 0 to 2*pi.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.EffectId">
       <summary>Gets the unique identifier for the effect.</summary>

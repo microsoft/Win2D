@@ -48,8 +48,8 @@ under the License.
       <summary>Gets or sets the input source for SpotSpecular effect.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.SpotSpecularEffect.LimitingConeAngle">
-      <summary>Angle that restricts the region where light is projected. No light is projected 
-               outside the cone. Default value 90.</summary>
+      <summary>Angle (in radians) that restricts the region where light is projected.
+               No light is projected outside the cone. Default value pi/2.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.SpotSpecularEffect.LightTarget">
       <summary>Target that the spot light is pointing at. Default value (0,0,0).</summary>

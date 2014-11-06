@@ -31,19 +31,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_DISTANTSPECULAR_PROP_SCALE_MODE, D2D1_DISTANTSPECULAR_SCALE_MODE_LINEAR);
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
+    IMPLEMENT_PROPERTY(DistantSpecularEffect,
         Azimuth,
+        ConvertRadiansToDegrees,
         float,
-        float,
-        D2D1_DISTANTSPECULAR_PROP_AZIMUTH,
-        (value >= 0.0f) && (value <= 360.0f))
+        D2D1_DISTANTSPECULAR_PROP_AZIMUTH)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
+    IMPLEMENT_PROPERTY(DistantSpecularEffect,
         Elevation,
+        ConvertRadiansToDegrees,
         float,
-        float,
-        D2D1_DISTANTSPECULAR_PROP_ELEVATION,
-        (value >= 0.0f) && (value <= 360.0f))
+        D2D1_DISTANTSPECULAR_PROP_ELEVATION)
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
         SpecularExponent,

@@ -133,14 +133,14 @@ namespace test.managed
                 properties[i].SetValue(effect, testValue1);
 
                 var matches1 = (from j in Enumerable.Range(0, effectProperties.Count)
-                                where BoxedValuesAreEqual(effectProperties[j], Box(testValue1), properties[i].PropertyType)
+                                where BoxedValuesAreEqual(effectProperties[j], Box(testValue1, properties[i]), properties[i])
                                 select j).ToList();
 
                 // Change the same property to a different value, and see which collection properties match now.
                 properties[i].SetValue(effect, testValue2);
 
                 var matches2 = (from j in Enumerable.Range(0, effectProperties.Count)
-                                where BoxedValuesAreEqual(effectProperties[j], Box(testValue2), properties[i].PropertyType)
+                                where BoxedValuesAreEqual(effectProperties[j], Box(testValue2, properties[i]), properties[i])
                                 select j).ToList();
 
                 // There should be one and only one property that matched both times. If not,
@@ -152,8 +152,8 @@ namespace test.managed
                 whichIndexIsProperty.Add(whichIndexIsThis);
 
                 // Change the property value back to its initial state.
-                properties[i].SetValue(effect, Unbox(initialValues[whichIndexIsThis], properties[i].PropertyType));
-                Assert.IsTrue(BoxedValuesAreEqual(initialValues[whichIndexIsThis], effectProperties[whichIndexIsThis], properties[i].PropertyType));
+                properties[i].SetValue(effect, Unbox(initialValues[whichIndexIsThis], properties[i]));
+                Assert.IsTrue(BoxedValuesAreEqual(initialValues[whichIndexIsThis], effectProperties[whichIndexIsThis], properties[i]));
             }
 
             // Should not have any duplicate property mappings.
@@ -165,8 +165,8 @@ namespace test.managed
                 object testValue1 = GetArbitraryTestValue(properties[i].PropertyType, true);
                 object testValue2 = GetArbitraryTestValue(properties[i].PropertyType, false);
 
-                object boxed1 = Box(testValue1);
-                object boxed2 = Box(testValue2);
+                object boxed1 = Box(testValue1, properties[i]);
+                object boxed2 = Box(testValue2, properties[i]);
 
                 // Fixup for color properties that don't include alpha.
                 if (properties[i].PropertyType == typeof(Color) && ((float[])initialValues[whichIndexIsProperty[i]]).Length == 3)
@@ -176,22 +176,32 @@ namespace test.managed
                 }
 
                 effectProperties[whichIndexIsProperty[i]] = boxed1;
-                Assert.IsTrue(PropertyValuesAreEqual(testValue1, properties[i].GetValue(effect)));
+                AssertPropertyValuesAreEqual(testValue1, properties[i].GetValue(effect));
 
                 effectProperties[whichIndexIsProperty[i]] = boxed2;
-                Assert.IsTrue(PropertyValuesAreEqual(testValue2, properties[i].GetValue(effect)));
+                AssertPropertyValuesAreEqual(testValue2, properties[i].GetValue(effect));
             }
         }
 
 
-        static object Box(object value)
+        static object Box(object value, PropertyInfo property)
         {
             if (value is int ||
-                value is float ||
                 value is bool ||
                 value is float[])
             {
                 return value;
+            }
+            else if (value is float)
+            {
+                if (NeedsRadianToDegreeConversion(property))
+                {
+                    return (float)value * 180f / (float)Math.PI;
+                }
+                else
+                {
+                    return value;
+                }
             }
             else if (value is Enum)
             {
@@ -282,14 +292,26 @@ namespace test.managed
         }
 
         
-        static object Unbox(object value, Type type)
+        static object Unbox(object value, PropertyInfo property)
         {
+            Type type = property.PropertyType;
+
             if (type == typeof(int) ||
-                type == typeof(float) ||
                 type == typeof(bool) ||
                 type == typeof(float[]))
             {
                 return value;
+            }
+            else if (type == typeof(float))
+            {
+                if (NeedsRadianToDegreeConversion(property))
+                {
+                    return (float)value * (float)Math.PI / 180f;
+                }
+                else
+                {
+                    return value;
+                }
             }
             else if (type.GetTypeInfo().IsEnum)
             {
@@ -395,7 +417,7 @@ namespace test.managed
         }
 
 
-        static bool BoxedValuesAreEqual(object value1, object value2, Type type)
+        static bool BoxedValuesAreEqual(object value1, object value2, PropertyInfo property)
         {
             if (value1.GetType() != value2.GetType())
             {
@@ -404,21 +426,25 @@ namespace test.managed
 
             if (value1 is int || 
                 value1 is uint ||
-                value1 is float ||
                 value1 is bool)
             {
                 return value1.Equals(value2);
+            }
+            else if (value1 is float)
+            {
+                return Math.Abs((float)value1 - (float)value2) < 0.000001;
             }
             else if (value1 is float[])
             {
                 float[] a1 = (float[])value1;
                 float[] a2 = (float[])value2;
 
-                if (type == typeof(Color))
+                if (property.PropertyType == typeof(Color))
                 {
                     a1 = ConvertRgbToRgba(a1);
                     a2 = ConvertRgbToRgba(a2);
                 }
+
                 return a1.SequenceEqual(a2);
             }
             else
@@ -428,14 +454,20 @@ namespace test.managed
         }
 
 
-        static bool PropertyValuesAreEqual(object value1, object value2)
+        static void AssertPropertyValuesAreEqual(object value1, object value2)
         {
             if (value1 is float[] && value2 is float[])
             {
-                return (value1 as float[]).SequenceEqual(value2 as float[]);
+                Assert.IsTrue((value1 as float[]).SequenceEqual(value2 as float[]));
             }
-
-            return value1.Equals(value2);
+            else if (value1 is float)
+            {
+                Assert.IsTrue(Math.Abs((float)value1 - (float)value2) < 0.000001);
+            }
+            else
+            {
+                Assert.AreEqual(value1, value2);
+            }
         }
 
 
@@ -455,6 +487,20 @@ namespace test.managed
         static float[] ConvertRgbaToRgb(float[] value)
         {
             return value.Take(3).ToArray();
+        }
+
+
+        static bool NeedsRadianToDegreeConversion(PropertyInfo property)
+        {
+            string[] anglePropertyNames =
+            {
+                "Angle",
+                "Azimuth",
+                "Elevation",
+                "LimitingConeAngle",
+            };
+
+            return anglePropertyNames.Contains(property.Name);
         }
 
 

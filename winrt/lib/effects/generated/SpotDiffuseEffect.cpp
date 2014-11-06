@@ -51,12 +51,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_SPOTDIFFUSE_PROP_FOCUS,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(SpotDiffuseEffect,
+    IMPLEMENT_PROPERTY(SpotDiffuseEffect,
         LimitingConeAngle,
+        ConvertRadiansToDegrees,
         float,
-        float,
-        D2D1_SPOTDIFFUSE_PROP_LIMITING_CONE_ANGLE,
-        (value >= -90.0f) && (value <= 90.0f))
+        D2D1_SPOTDIFFUSE_PROP_LIMITING_CONE_ANGLE)
 
     IMPLEMENT_PROPERTY_WITH_VALIDATION(SpotDiffuseEffect,
         DiffuseAmount,

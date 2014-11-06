@@ -314,7 +314,7 @@ namespace CodeGen
 
             bool isWithUnsupported = (property.ExcludedEnumIndexes != null) && (property.ExcludedEnumIndexes.Count != 0);
 
-            bool isValidation = (min != null) || (max != null) || isWithUnsupported;
+            bool isValidation = ((min != null) || (max != null) || isWithUnsupported) && !property.ConvertRadiansToDegrees;
 
             string implementMacro = property.IsArray ? "IMPLEMENT_ARRAY_PROPERTY" : "IMPLEMENT_PROPERTY";
 
@@ -326,7 +326,7 @@ namespace CodeGen
             output.WriteLine(implementMacro + "(" + effect.ClassName + ",");
             output.Indent();
             output.WriteLine(property.Name + ",");
-            output.WriteLine(property.TypeNameBoxed + ",");
+            output.WriteLine((property.ConvertRadiansToDegrees ? "ConvertRadiansToDegrees" : property.TypeNameBoxed) + ",");
 
             if (!property.IsArray)
             {

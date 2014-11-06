@@ -34,12 +34,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION,
         (value >= 0.0f) && (value <= 250.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DirectionalBlurEffect,
+    IMPLEMENT_PROPERTY(DirectionalBlurEffect,
         Angle,
+        ConvertRadiansToDegrees,
         float,
-        float,
-        D2D1_DIRECTIONALBLUR_PROP_ANGLE,
-        (value >= 0.0f) && (value <= 360.0f))
+        D2D1_DIRECTIONALBLUR_PROP_ANGLE)
 
     IMPLEMENT_PROPERTY(DirectionalBlurEffect,
         Optimization,
