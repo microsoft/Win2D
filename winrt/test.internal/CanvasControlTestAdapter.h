@@ -25,7 +25,7 @@ class CanvasControlTestAdapter : public ICanvasControlAdapter
 
 public:
     CALL_COUNTER_WITH_MOCK(CreateCanvasDeviceMethod, ComPtr<ICanvasDevice>());
-    ComPtr<MockEventSource<DpiChangedHandler>> DpiChangedEventSource;
+    ComPtr<MockEventSource<DpiChangedEventHandler>> DpiChangedEventSource;
     ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
@@ -33,7 +33,7 @@ public:
 
     CanvasControlTestAdapter()
         : m_mockWindow(Make<MockWindow>())
-        , DpiChangedEventSource(Make<MockEventSource<DpiChangedHandler>>(L"DpiChanged"))
+        , DpiChangedEventSource(Make<MockEventSource<DpiChangedEventHandler>>(L"DpiChanged"))
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
         , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
@@ -150,7 +150,7 @@ public:
         return DEFAULT_DPI;
     }
 
-    virtual RegisteredEvent AddDpiChangedCallback(DpiChangedHandler* value) override
+    virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* value) override
     {
         return DpiChangedEventSource->Add(value);
     }

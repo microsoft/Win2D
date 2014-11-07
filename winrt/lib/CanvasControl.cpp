@@ -223,7 +223,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return logicalDpi;
         }
 
-        virtual RegisteredEvent AddDpiChangedCallback(ITypedEventHandler<DisplayInformation*, IInspectable*>* handler) override
+        virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* handler) override
         {
             // Don't register for the DPI changed event if we're in design mode
             if (IsDesignModeEnabled())
@@ -430,7 +430,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // The logic in EnsureSizeDependentResources ensures that the Source
         // assigned to the Image control matches the CanvasImageSource extents.
         //
-        ThrowIfFailed(m_imageControl->put_Stretch(ABI::Windows::UI::Xaml::Media::Stretch_Fill));
+        ThrowIfFailed(m_imageControl->put_Stretch(Stretch_Fill));
 
         //
         // Set the image control as the content of this control.
@@ -560,7 +560,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // invalidate if it represents a size change from what the
                 // control was last set to.
                 //
-                ABI::Windows::Foundation::Size newSize{};                
+                Size newSize{};                
                 ThrowIfFailed(args->get_NewSize(&newSize));
 
                 auto newWidth = static_cast<int>(newSize.Width);
@@ -574,7 +574,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasControl::add_CreateResources(
-        ITypedEventHandler<CanvasControl*, IInspectable*>* value,
+        CreateResourcesEventHandler* value,
         EventRegistrationToken *token)
     {
         return ExceptionBoundary(
@@ -612,7 +612,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasControl::add_Draw(
-        ABI::Windows::Foundation::ITypedEventHandler<ABI::Microsoft::Graphics::Canvas::CanvasControl*, ABI::Microsoft::Graphics::Canvas::CanvasDrawEventArgs*>* value,
+        DrawEventHandler* value,
         EventRegistrationToken* token)
     {
         return ExceptionBoundary(
@@ -813,8 +813,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasControl::MeasureOverride(
-        ABI::Windows::Foundation::Size availableSize, 
-        ABI::Windows::Foundation::Size* returnValue)
+        Size availableSize, 
+        Size* returnValue)
     {
         return ExceptionBoundary(
             [&]
@@ -831,13 +831,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // However, we ignore how they respond and reply that we're
                 // happy to be sized however the layout engine wants to size us.
                 //
-                *returnValue = ABI::Windows::Foundation::Size{};
+                *returnValue = Size{};
             });
     }
     
     IFACEMETHODIMP CanvasControl::ArrangeOverride(
-        ABI::Windows::Foundation::Size finalSize, 
-        ABI::Windows::Foundation::Size* returnValue)
+        Size finalSize, 
+        Size* returnValue)
     {
         return ExceptionBoundary(
             [&]

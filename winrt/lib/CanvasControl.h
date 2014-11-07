@@ -49,8 +49,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
          IFACEMETHODIMP get_DrawingSession(ICanvasDrawingSession** value);
     };
 
-    typedef ITypedEventHandler<CanvasControl*, IInspectable*> CreateResourcesEventHandlerType;
-    typedef ITypedEventHandler<CanvasControl*, CanvasDrawEventArgs*> DrawEventHandlerType;
+    typedef ITypedEventHandler<CanvasControl*, IInspectable*> CreateResourcesEventHandler;
+    typedef ITypedEventHandler<CanvasControl*, CanvasDrawEventArgs*> DrawEventHandler;
+    typedef ITypedEventHandler<DisplayInformation*, IInspectable*> DpiChangedEventHandler;
 
     class ICanvasControlAdapter
     {
@@ -65,8 +66,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
 
-        typedef ITypedEventHandler<DisplayInformation*, IInspectable*> DpiChangedHandler;
-        virtual RegisteredEvent AddDpiChangedCallback(DpiChangedHandler* handler) = 0;
+        virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* handler) = 0;
 
         virtual ComPtr<IWindow> GetCurrentWindow() = 0;
 
@@ -115,8 +115,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // called from that window's thread.
         ComPtr<IWindow> m_window;
 
-        EventSource<CreateResourcesEventHandlerType, InvokeModeOptions<StopOnFirstError>> m_createResourcesEventList;
-        EventSource<DrawEventHandlerType, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
+        EventSource<CreateResourcesEventHandler, InvokeModeOptions<StopOnFirstError>> m_createResourcesEventList;
+        EventSource<DrawEventHandler, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
         RegisteredEvent m_applicationSuspendingEventRegistration;
         RegisteredEvent m_surfaceContentsLostEventRegistration;
@@ -144,44 +144,44 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         IFACEMETHODIMP add_CreateResources(
-            CreateResourcesEventHandlerType* value,
-            EventRegistrationToken *token);
+            CreateResourcesEventHandler* value,
+            EventRegistrationToken *token) override;
 
         IFACEMETHODIMP remove_CreateResources(
-            EventRegistrationToken token);
+            EventRegistrationToken token) override;
 
         IFACEMETHODIMP add_Draw(
-            DrawEventHandlerType* value,
-            EventRegistrationToken* token);
+            DrawEventHandler* value,
+            EventRegistrationToken* token) override;
 
         IFACEMETHODIMP remove_Draw(
-            EventRegistrationToken token);
+            EventRegistrationToken token) override;
 
-        IFACEMETHODIMP put_ClearColor(Color value);
+        IFACEMETHODIMP put_ClearColor(Color value) override;
 
-        IFACEMETHODIMP get_ClearColor(Color* value);
+        IFACEMETHODIMP get_ClearColor(Color* value) override;
+
+        IFACEMETHODIMP Invalidate() override;
 
         //
         // ICanvasResourceCreator
         //
 
-        IFACEMETHODIMP get_Device(ICanvasDevice** value);
-
-        IFACEMETHODIMP Invalidate();
+        IFACEMETHODIMP get_Device(ICanvasDevice** value) override;
 
         //
         // IFrameworkElementOverrides
         //
 
         IFACEMETHODIMP MeasureOverride(
-            ABI::Windows::Foundation::Size availableSize, 
-            ABI::Windows::Foundation::Size* returnValue);
+            Size availableSize, 
+            Size* returnValue) override;
 
         IFACEMETHODIMP ArrangeOverride(
-            ABI::Windows::Foundation::Size finalSize, 
-            ABI::Windows::Foundation::Size* returnValue);
+            Size finalSize, 
+            Size* returnValue) override;
 
-        IFACEMETHODIMP OnApplyTemplate();
+        IFACEMETHODIMP OnApplyTemplate() override;
 
     private:
         enum class InvalidateReason
