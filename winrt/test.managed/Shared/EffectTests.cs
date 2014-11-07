@@ -761,6 +761,18 @@ namespace test.managed
 
         class NotACanvasImage : IEffectInput { }
 
+        void VerifyExceptionMessage(string expected, string sourceMessage)
+        {
+            // Exception messages contain something like 
+            // "Invalid pointer\r\n\r\nEffect input #0 is null",
+            // The 'invalid pointer' part is locale 
+            // dependent and is stripped out.
+
+            string delimiterString = "\r\n\r\n";
+            int delimiterPosition = sourceMessage.LastIndexOf(delimiterString);
+            string exceptionMessage = sourceMessage.Substring(delimiterPosition + delimiterString.Length);
+            Assert.AreEqual(expected, exceptionMessage);
+        }
 
         [TestMethod]
         public void EffectExceptionMessages()
@@ -779,7 +791,7 @@ namespace test.managed
                 }
                 catch (NullReferenceException e)
                 {
-                    Assert.AreEqual("Invalid pointer\r\n\r\nEffect input #0 is null.", e.Message);
+                    VerifyExceptionMessage("Effect input #0 is null.", e.Message);
                 }
 
                 // Invalid source type.
@@ -792,7 +804,7 @@ namespace test.managed
                 }
                 catch (InvalidCastException e)
                 {
-                    Assert.AreEqual("No such interface supported\r\n\r\nEffect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.", e.Message);
+                    VerifyExceptionMessage("Effect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.", e.Message);
                 }
 
                 // Null property.
@@ -806,7 +818,7 @@ namespace test.managed
                 }
                 catch (NullReferenceException e)
                 {
-                    Assert.AreEqual("Invalid pointer\r\n\r\nEffect property #0 is null.", e.Message);
+                    VerifyExceptionMessage("Effect property #0 is null.", e.Message);
                 }
 
                 // Invalid property type.
@@ -819,7 +831,7 @@ namespace test.managed
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("The parameter is incorrect.\r\n\r\nEffect property #0 is the wrong type for this effect.", e.Message);
+                    VerifyExceptionMessage("Effect property #0 is the wrong type for this effect.", e.Message);
                 }
             }
         }
