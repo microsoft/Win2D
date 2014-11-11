@@ -12,6 +12,9 @@
 
 #pragma once
 
+#include <RecreatableDeviceManager.h>
+
+#include "MockCanvasDeviceActivationFactory.h"
 #include "MockHelpers.h"
 #include "MockWindow.h"
 
@@ -19,26 +22,30 @@ using ABI::Windows::Graphics::Display::DisplayInformation;
 using namespace ABI::Windows::ApplicationModel;
 using namespace ABI::Windows::ApplicationModel::Core;
 
-class CanvasControlTestAdapter : public ICanvasControlAdapter
+class CanvasControlTestAdapter : public ICanvasControlAdapter, public std::enable_shared_from_this<CanvasControlTestAdapter>
 {
     ComPtr<MockWindow> m_mockWindow;
 
 public:
-    CALL_COUNTER_WITH_MOCK(CreateCanvasDeviceMethod, ComPtr<ICanvasDevice>());
     ComPtr<MockEventSource<DpiChangedEventHandler>> DpiChangedEventSource;
     ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
+    CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<IRecreatableDeviceManager>());
     CALL_COUNTER_WITH_MOCK(CreateCanvasImageSourceMethod, ComPtr<CanvasImageSource>(ICanvasDevice*, int, int, CanvasBackground));
 
+    ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
+
     CanvasControlTestAdapter()
-        : m_mockWindow(Make<MockWindow>())
+        : DeviceFactory(Make<MockCanvasDeviceActivationFactory>())
+        , m_mockWindow(Make<MockWindow>())
         , DpiChangedEventSource(Make<MockEventSource<DpiChangedEventHandler>>(L"DpiChanged"))
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
         , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
     {
-        CreateCanvasDeviceMethod.AllowAnyCall();
+        CreateRecreatableDeviceManagerMethod.AllowAnyCall();
+        DeviceFactory->ActivateInstanceMethod.AllowAnyCall();
     }
 
     virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
@@ -51,12 +58,13 @@ public:
         return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, control);
     }
 
-    virtual ComPtr<ICanvasDevice> CreateCanvasDevice() override
+    virtual std::unique_ptr<IRecreatableDeviceManager> CreateRecreatableDeviceManager() override
     {
-        auto device = CreateCanvasDeviceMethod.WasCalled();
-        if (device)
-            return device;
-        return Make<StubCanvasDevice>();
+        auto manager = CreateRecreatableDeviceManagerMethod.WasCalled();
+        if (manager)
+            return manager;
+
+        return std::make_unique<RecreatableDeviceManager>(DeviceFactory.Get());
     }
 
     virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* value) override

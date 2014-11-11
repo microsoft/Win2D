@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -46,6 +46,7 @@
     <ClInclude Include="CanvasControlTestAdapter.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="MockCanvasDevice.h" />
+    <ClInclude Include="MockCanvasDeviceActivationFactory.h" />
     <ClInclude Include="MockCanvasDrawingSession.h" />
     <ClInclude Include="MockCanvasImageSourceDrawingSessionFactory.h" />
     <ClInclude Include="MockCoreApplication.h" />
@@ -55,16 +56,19 @@
     <ClInclude Include="MockD2DDeviceContext.h" />
     <ClInclude Include="MockD2DEffect.h" />
     <ClInclude Include="MockD2DGradientStopCollection.h" />
+    <ClInclude Include="MockD2DImageBrush.h" />
     <ClInclude Include="MockD2DLinearGradientBrush.h" />
     <ClInclude Include="MockD2DRadialGradientBrush.h" />
     <ClInclude Include="MockD2DSolidColorBrush.h" />
     <ClInclude Include="MockD2DFactory.h" />
     <ClInclude Include="MockD2DStrokeStyle.h" />
     <ClInclude Include="MockD3D11Device.h" />
+    <ClInclude Include="MockHelpers.h" />
     <ClInclude Include="MockSurfaceImageSource.h" />
     <ClInclude Include="MockSurfaceImageSourceFactory.h" />
     <ClInclude Include="MockWICBitmap.h" />
     <ClInclude Include="MockWICFormatConverter.h" />
+    <ClInclude Include="MockWindow.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="StubCanvasBrush.h" />
     <ClInclude Include="StubCanvasDevice.h" />
@@ -72,8 +76,10 @@
     <ClInclude Include="StubD2DBrush.h" />
     <ClInclude Include="StubD2DDeviceContext.h" />
     <ClInclude Include="StubD2DStrokeStyle.h" />
+    <ClInclude Include="StubImageControl.h" />
     <ClInclude Include="StubSurfaceImageSource.h" />
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
+    <ClInclude Include="StubUserControl.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="StubD2DResources.h" />
     <ClInclude Include="TestBitmapResourceCreationAdapter.h" />
@@ -108,6 +114,9 @@
     <ClCompile Include="VectorTests.cpp" />
     <ClCompile Include="WinStringBuilderTests.cpp" />
     <ClCompile Include="WinStringTests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />

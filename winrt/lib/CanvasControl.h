@@ -26,6 +26,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::UI::Xaml;
 
+    class IRecreatableDeviceManager;
+
     class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawEventArgs, BaseTrust);
@@ -57,7 +59,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) = 0;
-        virtual ComPtr<ICanvasDevice> CreateCanvasDevice() = 0;
+        virtual std::unique_ptr<IRecreatableDeviceManager> CreateRecreatableDeviceManager() = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
@@ -115,7 +117,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // called from that window's thread.
         ComPtr<IWindow> m_window;
 
-        EventSource<CreateResourcesEventHandler, InvokeModeOptions<StopOnFirstError>> m_createResourcesEventList;
+        std::unique_ptr<IRecreatableDeviceManager> m_recreatableDeviceManager;
+
         EventSource<DrawEventHandler, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
         RegisteredEvent m_applicationSuspendingEventRegistration;
@@ -123,7 +126,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RegisteredEvent m_windowVisibilityChangedEventRegistration;
         RegisteredEvent m_dpiChangedEventRegistration;
 
-        ComPtr<ICanvasDevice> m_canvasDevice;
         ComPtr<IImage> m_imageControl;
         ComPtr<CanvasImageSource> m_canvasImageSource;
         bool m_isLoaded;
@@ -239,11 +241,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         HRESULT OnWindowVisibilityChanged(IInspectable* sender, IVisibilityChangedEventArgs* args);
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        
-        void EnsureSizeDependentResources(CanvasBackground backgroundMode);
+        void EnsureSizeDependentResources(ICanvasDevice* device, CanvasBackground backgroundMode);
         void CallDrawHandlers(Color const& clearColor);
-
-        void InvokeCreateResources();
-        void HandleDeviceLost();
     };
 
 }}}}

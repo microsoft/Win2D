@@ -259,8 +259,8 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         f->OnCreateResources.SetExpectedCalls(1,
             [=]
             {
-                f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
-                    [=]
+                f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
+                    [=](IInspectable**)
                     {
                         f->OnCreateResources.SetExpectedCalls(1,
                             [=]
@@ -269,7 +269,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                                 return S_OK;
                             });
 
-                        return nullptr;
+                        return S_OK;
                     });
 
                 f->MarkControlDeviceAsLost();
@@ -296,7 +296,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                 if (f->OnCreateResources.GetCurrentCallCount() != devicesLostInARow)
                 {
                     f->MarkControlDeviceAsLost();
-                    f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1);
+                    f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1);
                     return DXGI_ERROR_DEVICE_REMOVED;
                 }
                 else
@@ -338,12 +338,12 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             {
                 f->MarkControlDeviceAsLost();
 
-                f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
-                    [=, &newlyAddedCreateResources]
+                f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
+                    [=, &newlyAddedCreateResources](IInspectable**)
                     {
                         f->OnCreateResources.SetExpectedCalls(1);
                         newlyAddedCreateResources.SetExpectedCalls(1);
-                        return nullptr;
+                        return S_OK;
                     });
 
                 return DXGI_ERROR_DEVICE_REMOVED;
@@ -372,7 +372,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                 if (newlyAddedCreateResources.GetCurrentCallCount() != devicesLostInARow)
                 {
                     f->MarkControlDeviceAsLost();
-                    f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1);
+                    f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1);
                     f->OnCreateResources.SetExpectedCalls(1);
                     return DXGI_ERROR_DEVICE_REMOVED;
                 }
@@ -401,7 +401,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
         // The CanvasControl's device hasn't actually been lost, so we don't
         // expect it to be recreated.
-        f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(0);
+        f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(0);
 
         newlyAddedCreateResources.SetExpectedCalls(1, DXGI_ERROR_DEVICE_REMOVED);
 
@@ -442,8 +442,8 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         
         // For the second Rendering, we expect CreateCanvasDevice to be called
         // to recreate the lost device...
-        f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
-            [=]
+        f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
+            [=](IInspectable**)
             {
                 // ...after that we expect CreateResources to be called to
                 // recreate resources
@@ -458,7 +458,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                 // ...and a new CanvasImageSource to be created
                 f->Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
 
-                return nullptr;
+                return S_OK;
             });
 
         f->RaiseCompositionRenderingEvent();        
@@ -492,8 +492,8 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
         // We expect CreateCanvasDevice to be called to recreate the lost
         // device...
-        f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
-            [=]
+        f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
+            [=](IInspectable**)
             {
                 // ...after that we expect CreateResources to be called to
                 // recreate resources
@@ -505,7 +505,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                         return S_OK;
                     });
 
-                return nullptr;
+                return S_OK;
             });
 
         f->RaiseCompositionRenderingEvent();
@@ -526,8 +526,8 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         f->RaiseCompositionRenderingEvent();
 
         // then we expect CreateCanvasDevice...
-        f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
-            [=]
+        f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
+            [=](IInspectable**)
             {
                 // ...CreateResources
                 f->OnCreateResources.SetExpectedCalls(1,
@@ -538,7 +538,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                         return S_OK;
                     });
                 
-                return nullptr;
+                return S_OK;
             });
 
         f->Adapter->RaiseCompositionRenderingEvent();
@@ -586,8 +586,8 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         f->Adapter->OnCanvasImageSourceDrawingSessionFactory_Create = nullptr;
         
         // After this we expect the following to happen:
-        f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
-            [=]
+        f->Adapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
+            [=](IInspectable**)
             {
                 f->OnCreateResources.SetExpectedCalls(1,
                     [=]
@@ -595,7 +595,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                         f->OnDraw.SetExpectedCalls(1);
                         return S_OK;
                     });
-                return nullptr;
+                return S_OK;
             });
 
         f->RaiseCompositionRenderingEvent();
@@ -1420,3 +1420,5 @@ TEST_CLASS(CanvasControl_ClearColor)
         f.RaiseAnyNumberOfCompositionRenderingEvents();
     }
 };
+
+// TODO: CanvasControl::OnApplicationSuspending - test for case when there's no device

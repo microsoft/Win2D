@@ -255,10 +255,10 @@ public:
             };
 
         auto canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
-        canvasControlAdapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
-            [=]
+        canvasControlAdapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
+            [=](IInspectable** value)
             {
-                return canvasDevice;
+                return canvasDevice.CopyTo(value);
             });
         canvasControlAdapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 

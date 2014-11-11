@@ -288,6 +288,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gradients.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TextureUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RecreatableDeviceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
