@@ -32,7 +32,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasBufferPrecision bufferPrecision)
     {
         ComPtr<ICanvasDevice> device;
-        resourceCreator->get_Device(&device);
+        ThrowIfFailed(resourceCreator->get_Device(&device));
 
         ComPtr<ICanvasDeviceInternal> deviceInternal;
         ThrowIfFailed(device.As(&deviceInternal));
@@ -61,7 +61,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1GradientStopCollection1* stopCollection)
     {
         ComPtr<ICanvasDevice> device;
-        resourceCreator->get_Device(&device);
+        ThrowIfFailed(resourceCreator->get_Device(&device));
 
         ComPtr<ICanvasDeviceInternal> deviceInternal;
         ThrowIfFailed(device.As(&deviceInternal));
@@ -100,7 +100,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckAndClearOutPointer(linearGradientBrush);
 
                 ComPtr<ICanvasDevice> canvasDevice;
-                resourceCreator->get_Device(&canvasDevice);
+                ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
                 ComPtr<ID2D1GradientStopCollection1> stopCollection =
                     CreateSimpleGradientStopCollection(canvasDevice.Get(), startColor, endColor, CanvasEdgeBehavior::Clamp);
@@ -174,7 +174,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckAndClearOutPointer(canvasLinearGradientBrush);
 
                 ComPtr<ICanvasDevice> canvasDevice;
-                resourceCreator->get_Device(&canvasDevice);
+                ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
                 ComPtr<ID2D1GradientStopCollection1> stopCollection =
                     CreateRainbowGradientStopCollection(canvasDevice.Get(), eldritchness);

@@ -242,23 +242,9 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Transform(transformActual));
     }
 
-    class CanvasControlAdapter_SpecificDevice : public CanvasControlTestAdapter
-    {
-        ComPtr<ICanvasDevice> m_device;
-
-    public:
-        CanvasControlAdapter_SpecificDevice(ComPtr<ICanvasDevice> device)
-            : m_device(device) {}
-
-        virtual ComPtr<ICanvasDevice> CreateCanvasDevice() override
-        {
-            return m_device;
-        }
-    };
-
     TEST_METHOD_EX(CanvasSolidColorBrush_CreateThroughCanvasControl)
     {
-        ComPtr<MockCanvasDevice> canvasDevice = Make<MockCanvasDevice>();
+        auto canvasDevice = Make<StubCanvasDevice>();
 
         bool createSolidColorBrushCalled = false;
         canvasDevice->MockCreateSolidColorBrush =
@@ -268,10 +254,20 @@ public:
                 return Make<MockD2DSolidColorBrush>();
             };
 
-        std::shared_ptr<CanvasControlAdapter_SpecificDevice> canvasControlAdapter =
-            std::make_shared<CanvasControlAdapter_SpecificDevice>(canvasDevice);
+        auto canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
+        canvasControlAdapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
+            [=]
+            {
+                return canvasDevice;
+            });
+        canvasControlAdapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter);
+
+        // Get the control to a point where it has created the device.
+        auto userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
+        ThrowIfFailed(userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
+        canvasControlAdapter->RaiseCompositionRenderingEvent();
 
         auto brush = m_colorBrushManager->Create(canvasControl.Get(), Color{ 255, 0, 0, 0 });
 

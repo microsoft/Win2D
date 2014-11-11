@@ -89,6 +89,17 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(E_INVALIDARG, f.Control->get_Device(nullptr));
     }
 
+    TEST_METHOD_EX(CanvasControl_DevicePropertyReportsUnderstandableErrorWhenCalledBeforeDeviceCreated)
+    {
+        CanvasControlFixture f;
+        
+        ComPtr<ICanvasDevice> device;
+        Assert::AreEqual(E_INVALIDARG, f.Control->get_Device(&device));
+
+        ValidateStoredErrorState(E_INVALIDARG, L"The CanvasControl does not currently have a CanvasDevice associated with it. "
+            L"Ensure that resources are created from a CreateResources or Draw event handler.");
+    }
+
     TEST_METHOD_EX(CanvasControl_DrawEventArgs_Getter)
     {
         ComPtr<ICanvasDrawingSession> drawingSession = Make<MockCanvasDrawingSession>();
@@ -118,15 +129,21 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         auto onCreateResources = MockEventHandler<CreateResourcesEventHandler>(L"CreateResources", ExpectedEventParams::OnlySender);
         auto createResourcesEventToken0 = f.AddCreateResourcesHandler(onCreateResources.Get());
 
-        // Issue a Loaded.
-        // Should fire CreateResources.
+        // Before the control received the Loaded event,
+        // CompositionRenderingEvents should essentially be ignored.
+        f.RaiseCompositionRenderingEvent();
+
+        // Issue a Loaded.  Now, the next CompositionRenderingEvent will cause
+        // CreateResources to be raised.
         onCreateResources.SetExpectedCalls(1);
         f.RaiseLoadedEvent();
+        f.RaiseCompositionRenderingEvent();
 
         onCreateResources.Validate();
  
-        // Register the CreateResources handler again.
-        // Because the Loaded event has already occurred, add_CreateResources should immediately fire the event too.
+        // Register the CreateResources handler again.  Because the device has
+        // already been created, add_CreateResources should immediately fire the
+        // event too.
         onCreateResources.SetExpectedCalls(1);
 
         auto createResourcesEventToken1 = f.AddCreateResourcesHandler(onCreateResources.Get());
@@ -214,6 +231,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         {
             AddCreateResourcesHandler(OnCreateResources.Get());
             Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+            RaiseLoadedEvent();
         }
 
         HRESULT GetDeviceRemovedReason()
@@ -234,7 +252,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         }
     };
 
-    TEST_METHOD_EX(CanvasControl_WhenCreateResourcesHandlerCalledOnLoadAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourcesHandlerCalledAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain)
     {
         auto f = std::make_shared<CreateResourcesFixture>();
 
@@ -259,14 +277,12 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
         
 
-        f->RaiseLoadedEvent();
-
+        f->RaiseCompositionRenderingEvent(); // Device is created, and CreateResources called, failing with device lost
         Expectations::Instance()->ValidateNotSatisfied();
-        
-        f->RaiseCompositionRenderingEvent();
+        f->RaiseCompositionRenderingEvent(); // Device is re-created and CreateResources called again
     }
 
-    TEST_METHOD_EX(CanvasControl_WhenCreateResourcesHandlerCalledOnLoadAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain_EvenIfDeviceIsLostImmediatelyAfterRecreation)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourcesHandlerCalledAndItThrowsDeviceLost_ThenDeviceIsRecreatedAndAllHandlersCalledAgain_EvenIfDeviceIsLostImmediatelyAfterRecreation)
     {
         auto f = std::make_shared<CreateResourcesFixture>();
 
@@ -289,28 +305,23 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                 }
             });
 
-        f->RaiseLoadedEvent();
-        for (int i = 0; i < devicesLostInARow - 1; ++i)
+        for (int i = 0; i < devicesLostInARow; ++i)
         {
             Expectations::Instance()->ValidateNotSatisfied();
             f->Adapter->RaiseCompositionRenderingEvent();
         }
     }
 
-    TEST_METHOD_EX(CanvasControl_WhenCreateResourceHandlerCalledOnLoadAndItAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
+    TEST_METHOD_EX(CanvasControl_WhenCreateResourceHandlerCalledAndItAlwaysThrowsDeviceLost_ThenExceptionIsPropagated)
     {
         auto f = std::make_shared<CreateResourcesFixture>();
-
-        // The CanvasControl's device hasn't actually been lost, so we don't
-        // expect it to be recreated.
-        f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(0);
 
         f->OnCreateResources.SetExpectedCalls(1, DXGI_ERROR_DEVICE_REMOVED);
 
         ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
             [=]
             { 
-                f->RaiseLoadedEvent(); 
+                f->RaiseCompositionRenderingEvent();
             });
     }
 
@@ -319,7 +330,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     {
         auto f = std::make_shared<CreateResourcesFixture>();
         f->OnCreateResources.SetExpectedCalls(1);
-        f->RaiseLoadedEvent();
+        f->RaiseCompositionRenderingEvent();
 
         auto newlyAddedCreateResources = MockEventHandler<CreateResourcesEventHandler>(L"newlyAddedCreateResources");
         newlyAddedCreateResources.SetExpectedCalls(1,
@@ -341,7 +352,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         f->AddCreateResourcesHandler(newlyAddedCreateResources.Get());
 
         Expectations::Instance()->ValidateNotSatisfied();
-        f->Adapter->RaiseCompositionRenderingEvent();
+        f->RaiseCompositionRenderingEvent();
     }
 
 
@@ -349,7 +360,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     {
         auto f = std::make_shared<CreateResourcesFixture>();
         f->OnCreateResources.SetExpectedCalls(1);
-        f->RaiseLoadedEvent();
 
         int devicesLostInARow = 10;
         auto newlyAddedCreateResources = MockEventHandler<CreateResourcesEventHandler>(L"newlyAddedCreateResources");
@@ -373,10 +383,10 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             });
 
         f->AddCreateResourcesHandler(newlyAddedCreateResources.Get());
-        for (int i=0; i<devicesLostInARow - 1; ++i)
+        for (int i=0; i<devicesLostInARow; ++i)
         {
             Expectations::Instance()->ValidateNotSatisfied();
-            f->Adapter->RaiseCompositionRenderingEvent();
+            f->RaiseCompositionRenderingEvent();
         }
     }
 
@@ -385,7 +395,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     {
         auto f = std::make_shared<CreateResourcesFixture>();
         f->OnCreateResources.SetExpectedCalls(1);
-        f->RaiseLoadedEvent();
+        f->RaiseCompositionRenderingEvent();
 
         auto newlyAddedCreateResources = MockEventHandler<CreateResourcesEventHandler>(L"newlyAddedCreateResources");
 
@@ -412,27 +422,24 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
             OnCreateResources.SetExpectedCalls(1);
             RaiseLoadedEvent(); 
             AddDrawHandler(OnDraw.Get());
-
-            Adapter->CreateCanvasImageSourceMethod.AllowAnyCall(
-                [](ICanvasDevice* device, int, int, CanvasBackground)
-                {
-                    auto d3dDevice = GetDXGIInterface<ID3D11Device>(device);
-                    ThrowIfFailed(d3dDevice->GetDeviceRemovedReason());
-                    return nullptr;
-                });
-        }   
+        }
     };
 
     TEST_METHOD_EX(CanvasControl_WhenDrawingAndCreateImageSourceReportsDeviceLost_CreateResourcesIsCalledAndDrawSucceeds)
     {
         auto f = std::make_shared<CreateResourcesAndDrawFixture>();
 
-        f->MarkControlDeviceAsLost();
+        f->Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
+            [=](ICanvasDevice*, int, int, CanvasBackground) -> nullptr_t 
+            {
+                f->MarkControlDeviceAsLost();
+                ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
+            });
 
         // First Rendering we don't expect OnDraw to be called because
         // CreateCanvasImageSource fails before we get that far.
         f->RaiseCompositionRenderingEvent();
-
+        
         // For the second Rendering, we expect CreateCanvasDevice to be called
         // to recreate the lost device...
         f->Adapter->CreateCanvasDeviceMethod.SetExpectedCalls(1,
@@ -447,6 +454,9 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
                         f->OnDraw.SetExpectedCalls(1);
                         return S_OK;
                     });
+
+                // ...and a new CanvasImageSource to be created
+                f->Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
 
                 return nullptr;
             });
@@ -1199,7 +1209,12 @@ TEST_CLASS(CanvasControl_ExternalEvents)
     {
         Fixture f;
 
+        // Create the control and trigger one render to force a device to be
+        // created
         f.CreateControl();
+        f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+        f.OnDraw.AllowAnyCall();
+        f.RaiseCompositionRenderingEvent();
         
         ComPtr<ICanvasDevice> icanvasDevice;
         ThrowIfFailed(f.Control->get_Device(&icanvasDevice));

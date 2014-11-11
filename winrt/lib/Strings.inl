@@ -27,3 +27,5 @@ STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than Ca
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");
 STRING(WrongArrayLength, L"The array was expected to be of size #%d; actual array was of size #%d.")
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
+STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The CanvasControl does not currently have a CanvasDevice associated with it. "
+    L"Ensure that resources are created from a CreateResources or Draw event handler.");

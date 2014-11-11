@@ -92,17 +92,4 @@ TEST_CLASS(CanvasControlTests)
                 CanvasDrawEventArgs^ drawEventArgs = ref new CanvasDrawEventArgs(drawingSession);
             });
     }
-
-    TEST_METHOD(CanvasControl_ControlAsResourceAllocator)
-    {
-        RunOnUIThread(
-            []
-            {
-                CanvasControl^ canvasControl = ref new CanvasControl();
-
-                CanvasSolidColorBrush^ brush = ref new CanvasSolidColorBrush(
-                    canvasControl,
-                    Windows::UI::Colors::Magenta);
-            });
-    }
 };

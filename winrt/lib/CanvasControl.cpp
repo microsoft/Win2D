@@ -301,6 +301,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasControl::GuardedState::TriggerRender(CanvasControl* control, InvalidateReason reason)
     {
+        assert(control->m_isLoaded);
+
         std::unique_lock<std::mutex> lock(m_lock);
         TriggerRenderImpl(control, reason);
     }
@@ -400,7 +402,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasControl::CanvasControl(std::shared_ptr<ICanvasControlAdapter> adapter)
         : m_adapter(adapter)
         , m_window(m_adapter->GetCurrentWindow())
-        , m_canvasDevice(m_adapter->CreateCanvasDevice())
         , m_isLoaded(false)
         , m_currentWidth(0)
         , m_currentHeight(0)
@@ -497,24 +498,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 m_isLoaded = true;
-
-                // The scheme for the CreateResources event is:
-                // - On Loaded, all handlers are invoked.
-                // - If any handler is added thereafter, it is invoked as soon as it is added.
-                //
-                // And so, there isn't a need to keep track of which handlers
-                // have been invoked and which have not.
-                //
-
-                try
-                {
-                    InvokeCreateResources();
-                    m_guardedState->TriggerRender(this);
-                }
-                catch (DeviceLostException const&)
-                {
-                    HandleDeviceLost();
-                }
+                m_guardedState->TriggerRender(this);
             });
     }
 
@@ -585,11 +569,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ThrowIfFailed(m_createResourcesEventList.Add(value, token));
 
-                // CreateResources will never be invoked until the control is
-                // Loaded.
-                if (!m_isLoaded)
+                //
+                // If the device hasn't been created yet then we know that when
+                // it does get created CreateResources will be raised.
+                //
+                if (!m_canvasDevice)
+                {
                     return;
+                }
 
+                //
+                // If the device has already been created then we need to call
+                // the handler now.
+                //
                 try
                 {
                     ThrowIfFailed(value->Invoke(this, nullptr));
@@ -871,7 +863,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckAndClearOutPointer(value);
-                ThrowIfFailed(m_canvasDevice.CopyTo(value));
+
+                if (m_canvasDevice)
+                    ThrowIfFailed(m_canvasDevice.CopyTo(value));
+                else
+                    ThrowHR(E_INVALIDARG, HStringReference(Strings::CanvasDeviceGetDeviceWhenNotCreated).Get());
             });
     }
     

@@ -214,10 +214,16 @@ public:
 
     TEST_METHOD_EX(CanvasImageSource_CreateFromCanvasControl)
     {
-        std::shared_ptr<CanvasControlTestAdapter> canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
+        auto canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
         
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter);
+        auto canvasControl = Make<CanvasControl>(canvasControlAdapter);
 
+        // Get the control to a point where it has created the device.
+        canvasControlAdapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+        auto userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
+        ThrowIfFailed(userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
+        canvasControlAdapter->RaiseCompositionRenderingEvent();
+        
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
 
         auto canvasImageSource = Make<CanvasImageSource>(

@@ -45,7 +45,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckAndClearOutPointer(canvasImageBrush);
 
                 ComPtr<ICanvasDevice> device;
-                resourceAllocator->get_Device(&device);
+                ThrowIfFailed(resourceAllocator->get_Device(&device));
 
                 auto newImageBrush = Make<CanvasImageBrush>(
                     device.Get());

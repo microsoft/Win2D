@@ -67,7 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color color)
     {
         ComPtr<ICanvasDevice> device;
-        resourceCreator->get_Device(&device);
+        ThrowIfFailed(resourceCreator->get_Device(&device));
 
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(device.As(&canvasDeviceInternal));

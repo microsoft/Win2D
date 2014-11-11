@@ -42,14 +42,6 @@ TEST_CLASS(CanvasImageSourceTests)
                 delete drawingSession;
 
                 delete canvasImageSource;
-
-                // Verify creation off of a canvas control.
-                CanvasControl^ canvasControl = ref new CanvasControl();
-
-                canvasImageSource = ref new CanvasImageSource(
-                    canvasControl,
-                    1,
-                    1);
             });
     }
 };
