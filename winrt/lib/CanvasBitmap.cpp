@@ -749,7 +749,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             WinStringBuilder message;
             message.Format(Strings::WrongArrayLength, expectedArraySize, valueCount);
-            ThrowHR(E_INVALIDARG);
+            ThrowHR(E_INVALIDARG, message.Get());
         }
 
         ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
@@ -788,7 +788,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             WinStringBuilder message;
             message.Format(Strings::WrongArrayLength, expectedArraySize, valueCount);
-            ThrowHR(E_INVALIDARG);
+            ThrowHR(E_INVALIDARG, message.Get());
         }
 
         if (d2dBitmap->GetPixelFormat().format != DXGI_FORMAT_B8G8R8A8_UNORM)

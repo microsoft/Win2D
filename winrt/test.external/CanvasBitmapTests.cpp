@@ -1076,6 +1076,40 @@ public:
         }
     }
 
+    TEST_METHOD(CanvasRenderTarget_SetBytes_InvalidArraySize_ThrowsDescriptiveException)
+    {
+        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2);
+        Platform::Array<byte>^ bytes = ref new Platform::Array<byte>(1);
+
+        try
+        {
+            rt->SetBytes(bytes, 0, 0, 2, 2);
+            Assert::Fail(L"Expected exception not thrown");
+        }
+        catch (Platform::InvalidArgumentException^ e)
+        {
+            std::wstring msg(e->Message->Data());
+            Assert::IsTrue(msg.find(L"The array was expected to be of size 16; actual array was of size 1.") != std::wstring::npos);
+        }
+    }
+
+    TEST_METHOD(CanvasRenderTarget_SetColors_InvalidArraySize_ThrowsDescriptiveException)
+    {
+        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2);
+        Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
+
+        try
+        {
+            rt->SetColors(colors, 0, 0, 2, 2);
+            Assert::Fail(L"Expected exception not thrown");
+        }
+        catch (Platform::InvalidArgumentException^ e)
+        {
+            std::wstring msg(e->Message->Data());
+            Assert::IsTrue(msg.find(L"The array was expected to be of size 4; actual array was of size 1.") != std::wstring::npos);
+        }
+    }
+
     TEST_METHOD(CanvasBitmap_SetBytesAndSetColors_ZeroArrayOnZeroSizedBitmap)
     {
         //
