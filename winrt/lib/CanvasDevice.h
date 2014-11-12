@@ -140,7 +140,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration* value) override;
 
-        IFACEMETHOD(get_MaximumBitmapSize)(int32_t* value) override;
+        IFACEMETHOD(get_MaximumBitmapSizeInPixels)(int32_t* value) override;
 
         //
         // ICanvasResourceCreator

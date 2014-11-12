@@ -59,11 +59,11 @@ namespace Microsoft.Graphics.Canvas
         //
         // await myBitmap.SaveToFileAsync("Myfile.png", CanvasBitmapFileFormat.Png);
         //
-        // Use myBitmap.Description.Format to make sense of GetBytes() .
-        // byte[] byteArr = m_bitmap_tiger.GetBytes(); 
+        // Use myBitmap.Description.Format to make sense of GetPixelBytes() .
+        // byte[] byteArr = m_bitmap_tiger.GetPixelBytes(); 
         //
         // Note that this fails if the bitmap's format is not B8G8R8A8 UNORM.     
-        // Color[] colorArr = m_bitmap_tiger.GetColors(); 
+        // Color[] colorArr = m_bitmap_tiger.GetPixelColors(); 
         //
             
         // This overload infers the encoder from the file extension.
@@ -98,13 +98,13 @@ namespace Microsoft.Graphics.Canvas
             [in] float quality,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
-        [overload("GetBytes")]
-        HRESULT GetBytes(
+        [overload("GetPixelBytes")]
+        HRESULT GetPixelBytes(
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] BYTE** valueElements);
 
-        [overload("GetBytes")]
-        HRESULT GetBytesWithSubrectangle(
+        [overload("GetPixelBytes")]
+        HRESULT GetPixelBytesWithSubrectangle(
             [in] INT32 left,
             [in] INT32 top,
             [in] INT32 width,
@@ -112,13 +112,13 @@ namespace Microsoft.Graphics.Canvas
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] BYTE** valueElements);
 
-        [overload("GetColors")]
-        HRESULT GetColors(
+        [overload("GetPixelColors")]
+        HRESULT GetPixelColors(
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] Windows.UI.Color** valueElements);
 
-        [overload("GetColors")]
-        HRESULT GetColorsWithSubrectangle(
+        [overload("GetPixelColors")]
+        HRESULT GetPixelColorsWithSubrectangle(
             [in] INT32 left,
             [in] INT32 top,
             [in] INT32 width,
@@ -126,13 +126,13 @@ namespace Microsoft.Graphics.Canvas
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] Windows.UI.Color** valueElements);
 
-        [overload("SetBytes")]
-        HRESULT SetBytes(
+        [overload("SetPixelBytes")]
+        HRESULT SetPixelBytes(
             [in] UINT32 valueCount,
             [in, size_is(valueCount)] BYTE* valueElements);
 
-        [overload("SetBytes")]
-        HRESULT SetBytesWithSubrectangle(
+        [overload("SetPixelBytes")]
+        HRESULT SetPixelBytesWithSubrectangle(
             [in] UINT32 valueCount,
             [in, size_is(valueCount)] BYTE* valueElements,
             [in] INT32 left,
@@ -140,13 +140,13 @@ namespace Microsoft.Graphics.Canvas
             [in] INT32 width,
             [in] INT32 height);
 
-        [overload("SetColors")]
-        HRESULT SetColors(
+        [overload("SetPixelColors")]
+        HRESULT SetPixelColors(
             [in] UINT32 valueCount,
             [in, size_is(valueCount)] Windows.UI.Color* valueElements);
 
-        [overload("SetColors")]
-        HRESULT SetColorsWithSubrectangle(
+        [overload("SetPixelColors")]
+        HRESULT SetPixelColorsWithSubrectangle(
             [in] UINT32 valueCount,
             [in, size_is(valueCount)] Windows.UI.Color* valueElements,
             [in] INT32 left,
@@ -154,18 +154,18 @@ namespace Microsoft.Graphics.Canvas
             [in] INT32 width,
             [in] INT32 height);
 
-        [overload("CopyFromBitmap")]
-        HRESULT CopyFromBitmap(
+        [overload("CopyPixelsFromBitmap")]
+        HRESULT CopyPixelsFromBitmap(
             [in] CanvasBitmap* otherBitmap);
 
-        [overload("CopyFromBitmap")]
-        HRESULT CopyFromBitmapWithDestPoint(
+        [overload("CopyPixelsFromBitmap")]
+        HRESULT CopyPixelsFromBitmapWithDestPoint(
             [in] CanvasBitmap* otherBitmap,
             [in] INT32 destX,
             [in] INT32 destY);
 
-        [overload("CopyFromBitmap")]
-        HRESULT CopyFromBitmapWithDestPointAndSourceRect(
+        [overload("CopyPixelsFromBitmap")]
+        HRESULT CopyPixelsFromBitmapWithDestPointAndSourceRect(
             [in] CanvasBitmap* otherBitmap,
             [in] INT32 destX,
             [in] INT32 destY,

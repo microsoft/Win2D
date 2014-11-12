@@ -304,7 +304,7 @@ public:
     {
         auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
 
-        Assert::AreEqual(E_INVALIDARG, canvasDevice->get_MaximumBitmapSize(nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->get_MaximumBitmapSizeInPixels(nullptr));
     }
 
     TEST_METHOD_EX(CanvasDevice_MaximumBitmapSize_Property)
@@ -326,7 +326,7 @@ public:
         auto canvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
 
         INT32 maximumBitmapSize;
-        canvasDevice->get_MaximumBitmapSize(&maximumBitmapSize);
+        canvasDevice->get_MaximumBitmapSizeInPixels(&maximumBitmapSize);
 
         Assert::AreEqual(someSize, maximumBitmapSize);
     }

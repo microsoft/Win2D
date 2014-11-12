@@ -67,9 +67,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP get_MaximumBitmapSize(int32_t* value) override
+        IFACEMETHODIMP get_MaximumBitmapSizeInPixels(int32_t* value) override
         {
-            Assert::Fail(L"Unexpected call to get_MaximumBitmapSize");
+            Assert::Fail(L"Unexpected call to get_MaximumBitmapSizeInPixels");
             return E_NOTIMPL;
         }
 

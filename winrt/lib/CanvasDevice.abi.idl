@@ -56,7 +56,7 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasHardwareAcceleration* value);
 
         [propget]
-        HRESULT MaximumBitmapSize(
+        HRESULT MaximumBitmapSizeInPixels(
             [out, retval] INT32* value);
     };
 

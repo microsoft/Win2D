@@ -106,9 +106,9 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
 
         auto otherBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyFromBitmap(otherBitmap.Get()));
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyFromBitmapWithDestPoint(otherBitmap.Get(), 0, 0));
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyFromBitmapWithDestPointAndSourceRect(otherBitmap.Get(), 0, 0, 0, 0, 0, 0));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyPixelsFromBitmap(otherBitmap.Get()));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyPixelsFromBitmapWithDestPoint(otherBitmap.Get(), 0, 0));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(otherBitmap.Get(), 0, 0, 0, 0, 0, 0));
     }
 
     TEST_METHOD_EX(CanvasBitmap_Get_Size)
@@ -182,15 +182,15 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
     }
 
-    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmap_NullArg)
+    TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmap_NullArg)
     {
         Fixture f;
 
         auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
-        Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyFromBitmap(nullptr));
-        Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyFromBitmapWithDestPoint(nullptr, 0, 0));
-        Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyFromBitmapWithDestPointAndSourceRect(nullptr, 0, 0, 0, 0, 0, 0));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyPixelsFromBitmap(nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyPixelsFromBitmapWithDestPoint(nullptr, 0, 0));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(nullptr, 0, 0, 0, 0, 0, 0));
     }
 
     struct CopyFromBitmapFixture : public Fixture
@@ -282,21 +282,21 @@ TEST_CLASS(CanvasBitmapUnitTest)
     };
 
 
-    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmap)
+    TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmap)
     {
         CopyFromBitmapFixture f;
-        ThrowIfFailed(f.DestBitmap->CopyFromBitmap(f.SourceBitmap.Get()));
+        ThrowIfFailed(f.DestBitmap->CopyPixelsFromBitmap(f.SourceBitmap.Get()));
     }
 
-    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmapWithDestPoint)
+    TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmapWithDestPoint)
     {
         int32_t destPoint[] = { 234, 2 };
 
         CopyFromBitmapFixture f(&destPoint[0], &destPoint[1]);
-        ThrowIfFailed(f.DestBitmap->CopyFromBitmapWithDestPoint(f.SourceBitmap.Get(), destPoint[0], destPoint[1]));
+        ThrowIfFailed(f.DestBitmap->CopyPixelsFromBitmapWithDestPoint(f.SourceBitmap.Get(), destPoint[0], destPoint[1]));
     }
 
-    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmapWithDestPointAndSourceRect)
+    TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmapWithDestPointAndSourceRect)
     {
         int32_t destPoint[] = { 234, 2 };
         int32_t sourceRect[] = { 444, 555, 666, 772 };
@@ -309,7 +309,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
             &sourceRect[2],
             &sourceRect[3]);
 
-        ThrowIfFailed(f.DestBitmap->CopyFromBitmapWithDestPointAndSourceRect(
+        ThrowIfFailed(f.DestBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(
             f.SourceBitmap.Get(), 
             destPoint[0], 
             destPoint[1],
@@ -319,7 +319,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
             sourceRect[3]));
     }
 
-    TEST_METHOD_EX(CanvasBitmap_CopyFromBitmap_InvalidCoordinates)
+    TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmap_InvalidCoordinates)
     {
         Fixture f;
 
@@ -334,13 +334,13 @@ TEST_CLASS(CanvasBitmapUnitTest)
         auto destBitmap = f.m_bitmapManager->Create(canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied);
 
         // Negative coordinates
-        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyFromBitmapWithDestPoint(sourceBitmap.Get(), -1, 100));
-        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyFromBitmapWithDestPoint(sourceBitmap.Get(), 99, -2));
+        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyPixelsFromBitmapWithDestPoint(sourceBitmap.Get(), -1, 100));
+        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyPixelsFromBitmapWithDestPoint(sourceBitmap.Get(), 99, -2));
 
         // Negative source rect extents
-        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, -1, 1, 5, 5));
-        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, 1, -1, 5, 5));
-        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, 1, 1, -5, 5));
-        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, 1, 1, 5, -5));
+        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, -1, 1, 5, 5));
+        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, 1, -1, 5, 5));
+        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, 1, 1, -5, 5));
+        Assert::AreEqual(E_INVALIDARG, destBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(sourceBitmap.Get(), 0, 0, 1, 1, 5, -5));
     }
 };

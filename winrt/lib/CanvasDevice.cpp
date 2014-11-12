@@ -410,7 +410,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    IFACEMETHODIMP CanvasDevice::get_MaximumBitmapSize(int32_t* value)
+    IFACEMETHODIMP CanvasDevice::get_MaximumBitmapSizeInPixels(int32_t* value)
     {
         return ExceptionBoundary(
             [&]

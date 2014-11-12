@@ -195,13 +195,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IInspectable** wrapper) override;
     };
 
-    void GetBytesImpl(
+    void GetPixelBytesImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
         uint8_t** valueElements);
 
-    void GetColorsImpl(
+    void GetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
@@ -223,19 +223,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float quality,
         IAsyncAction **resultAsyncAction);
 
-    void SetBytesImpl(
+    void SetPixelBytesImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t valueCount,
         uint8_t* valueElements);
 
-    void SetColorsImpl(
+    void SetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t valueCount,
         Color *valueElements);
 
-    HRESULT CopyFromBitmapImpl(
+    HRESULT CopyPixelsFromBitmapImpl(
         ICanvasBitmap* to,
         ICanvasBitmap* from,
         int32_t* destX = nullptr,
@@ -448,7 +448,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetBytes(
+        HRESULT STDMETHODCALLTYPE GetPixelBytes(
             uint32_t* valueCount,
             uint8_t** valueElements) override
         {
@@ -457,7 +457,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    GetBytesImpl(
+                    GetPixelBytesImpl(
                         d2dBitmap,
                         GetResourceBitmapExtents(d2dBitmap),
                         valueCount, 
@@ -465,7 +465,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetBytesWithSubrectangle(
+        HRESULT STDMETHODCALLTYPE GetPixelBytesWithSubrectangle(
             int32_t left,
             int32_t top,
             int32_t width,
@@ -478,7 +478,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    GetBytesImpl(
+                    GetPixelBytesImpl(
                         d2dBitmap,
                         ToD2DRectU(left, top, width, height),
                         valueCount, 
@@ -486,7 +486,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetColors(
+        HRESULT STDMETHODCALLTYPE GetPixelColors(
             uint32_t* valueCount,
             ABI::Windows::UI::Color **valueElements) override
         {
@@ -495,7 +495,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    GetColorsImpl(
+                    GetPixelColorsImpl(
                         d2dBitmap,
                         GetResourceBitmapExtents(d2dBitmap),
                         valueCount, 
@@ -503,7 +503,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetColorsWithSubrectangle(
+        HRESULT STDMETHODCALLTYPE GetPixelColorsWithSubrectangle(
             int32_t left,
             int32_t top,
             int32_t width,
@@ -516,7 +516,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    GetColorsImpl(
+                    GetPixelColorsImpl(
                         d2dBitmap,
                         ToD2DRectU(left, top, width, height),
                         valueCount, 
@@ -524,7 +524,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetBytes(
+        HRESULT STDMETHODCALLTYPE SetPixelBytes(
             uint32_t valueCount,
             uint8_t* valueElements) override
         {
@@ -533,7 +533,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    SetBytesImpl(
+                    SetPixelBytesImpl(
                         d2dBitmap,
                         GetResourceBitmapExtents(d2dBitmap),
                         valueCount, 
@@ -541,7 +541,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetBytesWithSubrectangle(
+        HRESULT STDMETHODCALLTYPE SetPixelBytesWithSubrectangle(
             uint32_t valueCount,
             uint8_t* valueElements,
             int32_t left,
@@ -554,7 +554,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    SetBytesImpl(
+                    SetPixelBytesImpl(
                         d2dBitmap,
                         ToD2DRectU(left, top, width, height),
                         valueCount, 
@@ -562,7 +562,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetColors(
+        HRESULT STDMETHODCALLTYPE SetPixelColors(
             uint32_t valueCount,
             ABI::Windows::UI::Color* valueElements) override
         {
@@ -571,7 +571,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    SetColorsImpl(
+                    SetPixelColorsImpl(
                         d2dBitmap,
                         GetResourceBitmapExtents(d2dBitmap),
                         valueCount, 
@@ -579,7 +579,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetColorsWithSubrectangle(
+        HRESULT STDMETHODCALLTYPE SetPixelColorsWithSubrectangle(
             uint32_t valueCount,
             ABI::Windows::UI::Color* valueElements,
             int32_t left,
@@ -592,7 +592,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto& d2dBitmap = GetResource();
 
-                    SetColorsImpl(
+                    SetPixelColorsImpl(
                         d2dBitmap,
                         ToD2DRectU(left, top, width, height),
                         valueCount, 
@@ -630,27 +630,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE CopyFromBitmap(
+        HRESULT STDMETHODCALLTYPE CopyPixelsFromBitmap(
             ICanvasBitmap* otherBitmap)
         {
-            return CopyFromBitmapImpl(
+            return CopyPixelsFromBitmapImpl(
                 this,
                 otherBitmap);
         }
 
-        HRESULT STDMETHODCALLTYPE CopyFromBitmapWithDestPoint(
+        HRESULT STDMETHODCALLTYPE CopyPixelsFromBitmapWithDestPoint(
             ICanvasBitmap* otherBitmap,
             int32_t destX,
             int32_t destY)
         {
-            return CopyFromBitmapImpl(
+            return CopyPixelsFromBitmapImpl(
                 this,
                 otherBitmap,
                 &destX,
                 &destY);
         }
 
-        HRESULT STDMETHODCALLTYPE CopyFromBitmapWithDestPointAndSourceRect(
+        HRESULT STDMETHODCALLTYPE CopyPixelsFromBitmapWithDestPointAndSourceRect(
             ICanvasBitmap* otherBitmap,
             int32_t destX,
             int32_t destY,
@@ -659,7 +659,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t sourceRectWidth,
             int32_t sourceRectHeight)
         {      
-            return CopyFromBitmapImpl(
+            return CopyPixelsFromBitmapImpl(
                 this, 
                 otherBitmap, 
                 &destX, 

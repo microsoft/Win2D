@@ -709,7 +709,7 @@ public:
         {
             unsigned int sliceDimension = 8 >> i;
 
-            Platform::Array<byte>^ byteData = f.GetRenderTarget(i)->GetBytes();
+            Platform::Array<byte>^ byteData = f.GetRenderTarget(i)->GetPixelBytes();
             Assert::AreEqual(sliceDimension * sliceDimension * 4, byteData->Length);
             for (unsigned int j = 0; j < byteData->Length; j += 4)
             {
@@ -719,7 +719,7 @@ public:
                 Assert::AreEqual(f.GetExpectedByte(i, 3), byteData[j + 3]);
             }
 
-            Platform::Array<Color>^ colorData = f.GetRenderTarget(i)->GetColors();
+            Platform::Array<Color>^ colorData = f.GetRenderTarget(i)->GetPixelColors();
             Assert::AreEqual(sliceDimension * sliceDimension, colorData->Length);
             for (Color c : colorData)
             {
@@ -783,13 +783,13 @@ public:
     template<>
     Platform::Array<byte>^ GetDataFunction(CanvasBitmap^ canvasBitmap)
     {
-        return canvasBitmap->GetBytes();
+        return canvasBitmap->GetPixelBytes();
     }
 
     template<>
     Platform::Array<Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap)
     {
-        return canvasBitmap->GetColors();
+        return canvasBitmap->GetPixelColors();
     }
 
     template<typename TYPE>
@@ -802,33 +802,33 @@ public:
     template<>
     Platform::Array<byte>^ GetDataFunction(CanvasBitmap^ canvasBitmap, int left, int top, int width, int height)
     {
-        return canvasBitmap->GetBytes(left, top, width, height);
+        return canvasBitmap->GetPixelBytes(left, top, width, height);
     }
 
     template<>
     Platform::Array<Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap, int left, int top, int width, int height)
     {
-        return canvasBitmap->GetColors(left, top, width, height);
+        return canvasBitmap->GetPixelColors(left, top, width, height);
     }
 
     void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<byte>^ dataArray)
     {
-        return canvasBitmap->SetBytes(dataArray);
+        return canvasBitmap->SetPixelBytes(dataArray);
     }
 
     void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Color>^ dataArray)
     {
-        return canvasBitmap->SetColors(dataArray);
+        return canvasBitmap->SetPixelColors(dataArray);
     }
 
     void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<byte>^ dataArray, int left, int top, int width, int height)
     {
-        return canvasBitmap->SetBytes(dataArray, left, top, width, height);
+        return canvasBitmap->SetPixelBytes(dataArray, left, top, width, height);
     }
 
     void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Color>^ dataArray, int left, int top, int width, int height)
     {
-        return canvasBitmap->SetColors(dataArray, left, top, width, height);
+        return canvasBitmap->SetPixelColors(dataArray, left, top, width, height);
     }
 
     void IncrementColor(byte& b)
@@ -982,7 +982,7 @@ public:
         VerifySetSubrectangleData<TYPE>(canvasBitmap, bitmapWidth, imageData, elementsPerPixel, wholeBounds);
     }
 
-    TEST_METHOD(CanvasBitmap_GetBytesAndSetBytes)
+    TEST_METHOD(CanvasBitmap_GetPixelBytesAndSetPixelBytes)
     {
         // Test that a byte pattern roundtrips.
         const int width = 8;
@@ -1007,7 +1007,7 @@ public:
         VerifyBitmapSetData<byte>(canvasBitmap, width, imageData, 4);
     }
 
-    TEST_METHOD(CanvasBitmap_GetColorsAndSetColors)
+    TEST_METHOD(CanvasBitmap_GetPixelColorsAndSetPixelColors)
     {
         // Test that a color pattern roundtrips.
         const int width = 8;
@@ -1031,7 +1031,7 @@ public:
         VerifyBitmapSetData<Color>(canvasBitmap, width, imageData, 1);
     }
 
-    TEST_METHOD(CanvasBitmap_GetAndSetBytesAndColors_InvalidArguments)
+    TEST_METHOD(CanvasBitmap_GetAndSetPixelBytesAndColors_InvalidArguments)
     {
         auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
 
@@ -1052,38 +1052,38 @@ public:
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
-                    canvasBitmap->GetBytes(testCase.Left, testCase.Top, testCase.Width, testCase.Height);
+                canvasBitmap->GetPixelBytes(testCase.Left, testCase.Top, testCase.Width, testCase.Height);
                 });
 
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
-                    canvasBitmap->GetColors(testCase.Left, testCase.Top, testCase.Width, testCase.Height);
+                canvasBitmap->GetPixelColors(testCase.Left, testCase.Top, testCase.Width, testCase.Height);
                 });
 
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
-                    canvasBitmap->SetBytes(byteArray, testCase.Left, testCase.Top, testCase.Width, testCase.Height);
+                canvasBitmap->SetPixelBytes(byteArray, testCase.Left, testCase.Top, testCase.Width, testCase.Height);
                 });
 
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
-                    canvasBitmap->SetColors(colorArray, testCase.Left, testCase.Top, testCase.Width, testCase.Height);
+                canvasBitmap->SetPixelColors(colorArray, testCase.Left, testCase.Top, testCase.Width, testCase.Height);
                 });
 
         }
     }
 
-    TEST_METHOD(CanvasRenderTarget_SetBytes_InvalidArraySize_ThrowsDescriptiveException)
+    TEST_METHOD(CanvasRenderTarget_SetPixelBytes_InvalidArraySize_ThrowsDescriptiveException)
     {
         auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2);
         Platform::Array<byte>^ bytes = ref new Platform::Array<byte>(1);
 
         try
         {
-            rt->SetBytes(bytes, 0, 0, 2, 2);
+            rt->SetPixelBytes(bytes, 0, 0, 2, 2);
             Assert::Fail(L"Expected exception not thrown");
         }
         catch (Platform::InvalidArgumentException^ e)
@@ -1093,14 +1093,14 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasRenderTarget_SetColors_InvalidArraySize_ThrowsDescriptiveException)
+    TEST_METHOD(CanvasRenderTarget_SetPixelColors_InvalidArraySize_ThrowsDescriptiveException)
     {
         auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2);
         Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
 
         try
         {
-            rt->SetColors(colors, 0, 0, 2, 2);
+            rt->SetPixelColors(colors, 0, 0, 2, 2);
             Assert::Fail(L"Expected exception not thrown");
         }
         catch (Platform::InvalidArgumentException^ e)
@@ -1110,7 +1110,7 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasBitmap_SetBytesAndSetColors_ZeroArrayOnZeroSizedBitmap)
+    TEST_METHOD(CanvasBitmap_SetPixelBytesAndSetPixelColors_ZeroArrayOnZeroSizedBitmap)
     {
         //
         // Because we have the convention that you cannot get a zero-sized array
@@ -1123,28 +1123,28 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                canvasBitmap->SetBytes(zeroSizedByteArray);
+                canvasBitmap->SetPixelBytes(zeroSizedByteArray);
             });
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                canvasBitmap->SetBytes(zeroSizedByteArray, 0, 0, 0, 0);
+                canvasBitmap->SetPixelBytes(zeroSizedByteArray, 0, 0, 0, 0);
             });
 
         Platform::Array<Color>^ zeroSizedColorArray = ref new Platform::Array<Color>(0);
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                canvasBitmap->SetColors(zeroSizedColorArray);
+                canvasBitmap->SetPixelColors(zeroSizedColorArray);
             });
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                canvasBitmap->SetColors(zeroSizedColorArray, 0, 0, 0, 0);
+                canvasBitmap->SetPixelColors(zeroSizedColorArray, 0, 0, 0, 0);
             });
     }
 
-    TEST_METHOD(CanvasBitmap_SetBytesAndSetColors_InvalidArguments)
+    TEST_METHOD(CanvasBitmap_SetPixelBytesAndSetPixelColors_InvalidArguments)
     {
         const int bitmapWidth = 2;
         const int bitmapHeight = 3;
@@ -1165,26 +1165,26 @@ public:
                 [&]
                 {
                     Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfBitmap + testCase);
-                    canvasBitmap->SetBytes(array);
+                    canvasBitmap->SetPixelBytes(array);
                 });
 
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
                     Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfBitmap + testCase);
-                    canvasBitmap->SetColors(array);
+                    canvasBitmap->SetPixelColors(array);
                 });
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
                     Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfSubrectangle + testCase);
-                    canvasBitmap->SetBytes(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
+                    canvasBitmap->SetPixelBytes(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
                 });
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
                     Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfSubrectangle + testCase);
-                    canvasBitmap->SetColors(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
+                    canvasBitmap->SetPixelColors(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
                 });
         }
     }
@@ -1234,10 +1234,10 @@ public:
         }
     }
 
-    TEST_METHOD(CanavasBitmap_CopyFromBitmap_MistmachingDevices)
+    TEST_METHOD(CanavasBitmap_CopyPixelsFromBitmap_MistmachingDevices)
     {
         //
-        // This verifies that bitmaps used with CopyFromBitmap must belong to
+        // This verifies that bitmaps used with CopyPixelsFromBitmap must belong to
         // the same device. This is validated by D2D. Still, Win2D should
         // not do anything to interfere with this behavior or cause
         // ungraceful errors.
@@ -1248,17 +1248,17 @@ public:
         auto canvasDevice1 = ref new CanvasDevice();
         auto bitmap1 = ref new CanvasRenderTarget(canvasDevice1, 1, 1);
 
-        Assert::ExpectException<Platform::COMException^>([&] { bitmap0->CopyFromBitmap(bitmap1); });        
+        Assert::ExpectException<Platform::COMException^>([&] { bitmap0->CopyPixelsFromBitmap(bitmap1); });        
     }
 
-    TEST_METHOD(CanavasBitmap_CopyFromBitmap_SameBitmap)
+    TEST_METHOD(CanavasBitmap_CopyPixelsFromBitmap_SameBitmap)
     {
         //
         // This is validated by D2D. Ensure the expected error occurs.
         //
         auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
 
-        Assert::ExpectException<Platform::COMException^>([&] { bitmap->CopyFromBitmap(bitmap); });
+        Assert::ExpectException<Platform::COMException^>([&] { bitmap->CopyPixelsFromBitmap(bitmap); });
     }
 
     TEST_METHOD(CanvasBitmap_SaveToStreamAsync_InvalidArguments)

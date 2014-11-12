@@ -221,7 +221,7 @@ namespace ExampleGallery
                 colors[i] = (random.NextDouble() < 0.25) ? Colors.White : Colors.Black;
             }
 
-            currentSurface.SetColors(colors);
+            currentSurface.SetPixelColors(colors);
         }
 
         // Clears the simulation state.
@@ -279,13 +279,13 @@ namespace ExampleGallery
                     ((x != lastPointerX || y != lastPointerY)))
                 {
                     // Read the current color.
-                    var cellColor = currentSurface.GetColors(x, y, 1, 1);
+                    var cellColor = currentSurface.GetPixelColors(x, y, 1, 1);
 
                     // Toggle the value.
                     cellColor[0] = cellColor[0].R > 0 ? Colors.Black : Colors.White;
 
                     // Set the new color.
-                    currentSurface.SetColors(cellColor, x, y, 1, 1);
+                    currentSurface.SetPixelColors(cellColor, x, y, 1, 1);
 
                     lastPointerX = x;
                     lastPointerY = y;

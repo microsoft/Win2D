@@ -578,7 +578,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void GetBytesImpl(
+    void GetPixelBytesImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
@@ -617,7 +617,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         array.Detach(valueCount, valueElements);
     }
 
-    void GetColorsImpl(
+    void GetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
@@ -729,7 +729,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(asyncAction.CopyTo(resultAsyncAction));
     }
 
-    void SetBytesImpl(
+    void SetPixelBytesImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t valueCount,
@@ -770,7 +770,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void SetColorsImpl(
+    void SetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t valueCount,
@@ -820,7 +820,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    HRESULT CopyFromBitmapImpl(
+    HRESULT CopyPixelsFromBitmapImpl(
         ICanvasBitmap* to,
         ICanvasBitmap* from,
         int32_t* destX,

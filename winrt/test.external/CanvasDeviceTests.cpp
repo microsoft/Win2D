@@ -53,7 +53,7 @@ TEST_CLASS(CanvasDeviceTests)
         delete canvasDevice;
             
         ExpectObjectClosed([&]{ canvasDevice->HardwareAcceleration; });
-        ExpectObjectClosed([&]{ canvasDevice->MaximumBitmapSize; });
+        ExpectObjectClosed([&]{ canvasDevice->MaximumBitmapSizeInPixels; });
         ExpectObjectClosed([&]{ GetDXGIDevice(canvasDevice); });
     }
 
