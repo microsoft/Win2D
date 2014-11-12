@@ -296,7 +296,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasControl::GuardedState::TriggerRender(CanvasControl* control, InvalidateReason reason)
     {
-        assert(control->m_isLoaded);
+        if (!control->m_isLoaded)
+            return;
 
         std::unique_lock<std::mutex> lock(m_lock);
         TriggerRenderImpl(control, reason);
@@ -508,13 +509,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 //
-                // If we get a size changed before we've loaded then we don't do
-                // anything.
-                //
-                if (!m_isLoaded)
-                    return;
-
-                //
                 // OnSizeChanged can get called multiple times.  We only want to
                 // invalidate if it represents a size change from what the
                 // control was last set to.
@@ -568,8 +562,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 ThrowIfFailed(m_drawEventList.Add(value, token));
-                if (m_isLoaded)
-                    m_guardedState->TriggerRender(this);
+                m_guardedState->TriggerRender(this);
             });
     }
 

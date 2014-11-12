@@ -116,6 +116,13 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(drawingSession.Get(), drawingSessionRetrieved.Get());
     }
 
+    TEST_METHOD_EX(CanvasControl_WhenInvalidateIsCalledBeforeLoadedEvent_ThenNothingBadHappens)
+    {
+        CanvasControlFixture f;
+
+        ThrowIfFailed(f.Control->Invalidate());
+    }
+
     TEST_METHOD_EX(CanvasControl_Callbacks)
     {
         using namespace ABI::Windows::Foundation;
