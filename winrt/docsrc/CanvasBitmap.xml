@@ -60,20 +60,9 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.Dispose">
       <summary>Releases all resources used by the CanvasBitmap.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
-      <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
-    </member>    
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
-      <summary>Loads a bitmap from a stream, with a default alpha behavior of CanvasAlphaBehavior.Premultiplied.</summary>
-      <remarks>This method requires that the stream be readable.</remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
-      <summary>Loads a bitmap from a stream, with the specified alpha behavior.</summary>
-      <remarks>This method requires that the stream be readable.</remarks>
-    </member>
     
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
-      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface.</summary>
+      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using premultiplied alpha and default (96) DPI.</summary>
       <remarks>
         <p>The bitmap's properties are determined by the properties of surface.</p>
         <p>If the surface is able to be used as a render target then a
@@ -100,9 +89,6 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified alpha behavior and default (96) DPI.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,System.Single)">
-      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified DPI and premultiplied alpha behavior.</summary>
-    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified alpha behavior and DPI.</summary>
     </member>
@@ -118,14 +104,42 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, alpha behavior and DPI.</summary>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
+      <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
+      <remarks>The bitmap is created at default (96) DPI and set to premultiplied alpha.</remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified alpha behavior.</summary>
+      <remarks>The bitmap is created at default (96) DPI.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+      <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified alpha behavior and DPI.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI.</summary>
+      <remarks>The bitmap is created at default (96) DPI and set to premultiplied alpha.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified alpha behavior.</summary>
+      <remarks>The bitmap is created at default (96) DPI.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+      <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified alpha behavior and DPI.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
+      <summary>Loads a bitmap from a stream.</summary>
+      <remarks>This method requires that the stream be readable.
+               The bitmap is created at default (96) DPI and set to premultiplied alpha.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+      <summary>Loads a bitmap from a stream, and assigns it the specified alpha behavior.</summary>
+      <remarks>This method requires that the stream be readable.
+               The bitmap is created at default (96) DPI.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+      <summary>Loads a bitmap from a stream, and assigns it the specified alpha behavior and DPI.</summary>
+      <remarks>This method requires that the stream be readable.</remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String)">

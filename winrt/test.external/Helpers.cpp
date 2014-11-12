@@ -48,13 +48,13 @@ ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap(D2D1_BITMAP_OPTIONS options, ComPtr<ID2
     return d2dBitmap;
 }
 
-void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode, float dpiTolerance)
+void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode)
 {
     float dpiX, dpiY;
     d2dBitmap->GetDpi(&dpiX, &dpiY);
 
-    Assert::AreEqual(expectedDpi, dpiX, dpiTolerance);
-    Assert::AreEqual(expectedDpi, dpiY, dpiTolerance);
+    Assert::AreEqual(expectedDpi, dpiX);
+    Assert::AreEqual(expectedDpi, dpiY);
 
     Assert::AreEqual(expectedAlphaMode, d2dBitmap->GetPixelFormat().alphaMode);
 }

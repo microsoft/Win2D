@@ -69,7 +69,7 @@ public:
 
     TEST_METHOD(CanvasImageBrush_ImageProperty_WithRenderTarget)
     {
-        auto anyRenderTarget = ref new CanvasRenderTarget(m_device, Size{1,1});
+        auto anyRenderTarget = ref new CanvasRenderTarget(m_device, 1, 1);
 
         auto brush = ref new CanvasImageBrush(m_device);
         brush->Image = anyRenderTarget;

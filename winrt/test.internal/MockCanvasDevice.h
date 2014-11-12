@@ -134,7 +134,8 @@ namespace canvas
 
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICFormatConverter* converter,
-            CanvasAlphaBehavior alpha) override
+            CanvasAlphaBehavior alpha,
+            float dpi) override
         {
             if (!MockCreateBitmapFromWicResource)
             {

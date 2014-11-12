@@ -27,7 +27,7 @@ TEST_CLASS(CanvasRenderTargetTests)
         // While this scenario is impractical and uncommon, verify it does not 
         // throw any errors. 
         //
-        CanvasRenderTarget^ renderTarget = ref new CanvasRenderTarget(canvasDevice, Size(0, 0));
+        CanvasRenderTarget^ renderTarget = ref new CanvasRenderTarget(canvasDevice, 0, 0);
         Assert::AreEqual(0.0f, renderTarget->Size.Width);
         Assert::AreEqual(0.0f, renderTarget->Size.Height);
         Assert::AreEqual(0.0f, renderTarget->SizeInPixels.Width);
@@ -42,7 +42,7 @@ TEST_CLASS(CanvasRenderTargetTests)
     TEST_METHOD(CanvasRenderTarget_NativeInterop)
     {
         auto canvasDevice = ref new CanvasDevice();
-        auto originalRenderTarget = ref new CanvasRenderTarget(canvasDevice, Size(1, 1));
+        auto originalRenderTarget = ref new CanvasRenderTarget(canvasDevice, 1, 1);
         auto originalD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(originalRenderTarget);
 
         //

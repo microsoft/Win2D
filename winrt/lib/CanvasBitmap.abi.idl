@@ -192,13 +192,6 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasBitmap** bitmap);
 
         [overload("CreateFromDirect3D11Surface")]
-        HRESULT CreateFromDirect3D11SurfaceWithDpi(
-            [in] ICanvasResourceCreator* resourceCreator,
-            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
-            [in] float dpi,
-            [out, retval] CanvasBitmap** bitmap);
-
-        [overload("CreateFromDirect3D11Surface")]
         HRESULT CreateFromDirect3D11SurfaceWithAlphaAndDpi(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
@@ -263,6 +256,14 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasAlphaBehavior alpha,
             [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
 
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromHstringWithAlphaAndDpi(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] HSTRING fileName,
+            [in] CanvasAlphaBehavior alpha,
+            [in] float dpi,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
+
         [overload("LoadAsync"), default_overload]
         HRESULT LoadAsyncFromUri(
             [in] ICanvasResourceCreator* resourceCreator,
@@ -276,6 +277,14 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasAlphaBehavior alpha,
             [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
 
+        [overload("LoadAsync"), default_overload]
+        HRESULT LoadAsyncFromUriWithAlphaAndDpi(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Uri* uri,
+            [in] CanvasAlphaBehavior alpha,
+            [in] float dpi,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
+
         [overload("LoadAsync")]
         HRESULT LoadAsyncFromStream(
             [in] ICanvasResourceCreator* resourceCreator,
@@ -287,6 +296,14 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Windows.Storage.Streams.IRandomAccessStream* stream,
             [in] CanvasAlphaBehavior alpha,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
+
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromStreamWithAlphaAndDpi(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in] CanvasAlphaBehavior alpha,
+            [in] float dpi,
             [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
     };
 
@@ -306,17 +323,12 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasRenderTargetFactory : IInspectable
     {
         //
-        // Creates a renderable bitmap with some defaults- a format of B8G8R8A8
-        // UNORM, premultiplied alpha, 96x96 DPI, and the render target view 
+        // For constructor overloads that don't specify them, defaults are a format of
+        // B8G8R8A8_UNORM, premultiplied alpha, 96x96 DPI, and the render target view
         // bind flag as well as shader resource view. The D2D resource is
         // flagged as TARGET, meaning this bitmap can be used both as a source
         // and as a target.
         //
-
-        HRESULT Create(
-            [in] ICanvasResourceCreator* resourceCreator,
-            [in] Windows.Foundation.Size size,
-            [out, retval] CanvasRenderTarget** renderTarget);
 
         HRESULT CreateWithWidthAndHeight(
             [in] ICanvasResourceCreator* resourceCreator,
@@ -363,13 +375,6 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
             [in] CanvasAlphaBehavior alpha,
-            [out, retval] CanvasRenderTarget** bitmap);
-
-        [overload("CreateFromDirect3D11Surface")]
-        HRESULT CreateFromDirect3D11SurfaceWithDpi(
-            [in] ICanvasResourceCreator* resourceCreator,
-            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
-            [in] float dpi,
             [out, retval] CanvasRenderTarget** bitmap);
 
         [overload("CreateFromDirect3D11Surface")]

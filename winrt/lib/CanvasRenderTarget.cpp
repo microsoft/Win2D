@@ -75,21 +75,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-    IFACEMETHODIMP CanvasRenderTargetFactory::Create(
-        ICanvasResourceCreator* resourceCreator,
-        ABI::Windows::Foundation::Size size,
-        ICanvasRenderTarget** renderTarget)
-    {
-        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
-            resourceCreator,
-            size.Width,
-            size.Height,
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
-            CanvasAlphaBehavior::Premultiplied,
-            DEFAULT_DPI,
-            renderTarget);
-    }
-
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeight(
         ICanvasResourceCreator* resourceCreator,
         float width,
@@ -215,20 +200,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             surface,
             alpha,
             DEFAULT_DPI,
-            canvasRenderTarget);
-    }
-
-    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithDpi(
-        ICanvasResourceCreator* resourceCreator,
-        IDirect3DSurface* surface,
-        float dpi,
-        ICanvasRenderTarget** canvasRenderTarget)
-    {
-        return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
-            resourceCreator,
-            surface,
-            CanvasAlphaBehavior::Premultiplied,
-            dpi,
             canvasRenderTarget);
     }
 

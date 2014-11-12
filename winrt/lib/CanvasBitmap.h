@@ -99,12 +99,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaBehavior alpha,
             ICanvasBitmap** canvasBitmap) override;
 
-        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpi)(
-            ICanvasResourceCreator* resourceCreator,
-            IDirect3DSurface* surface,
-            float dpi,
-            ICanvasBitmap** canvasBitmap) override;
-
         IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlphaAndDpi)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
@@ -163,6 +157,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaBehavior alpha,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
+        IFACEMETHOD(LoadAsyncFromHstringWithAlphaAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            HSTRING fileName,
+            CanvasAlphaBehavior alpha,
+            float dpi,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
         IFACEMETHOD(LoadAsyncFromUri)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::Foundation::IUriRuntimeClass* uri,
@@ -174,6 +175,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaBehavior alpha,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
+        IFACEMETHOD(LoadAsyncFromUriWithAlphaAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            ABI::Windows::Foundation::IUriRuntimeClass* uri,
+            CanvasAlphaBehavior alpha,
+            float dpi,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
         IFACEMETHOD(LoadAsyncFromStream)(
             ICanvasResourceCreator* resourceCreator,
             IRandomAccessStream* stream,
@@ -183,6 +191,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasResourceCreator* resourceCreator,
             IRandomAccessStream* stream,
             CanvasAlphaBehavior alpha,
+            ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
+
+        IFACEMETHOD(LoadAsyncFromStreamWithAlphaAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            IRandomAccessStream* stream,
+            CanvasAlphaBehavior alpha,
+            float dpi,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
         //
@@ -705,12 +720,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* canvasDevice, 
             HSTRING fileName,
-            CanvasAlphaBehavior alpha);
+            CanvasAlphaBehavior alpha,
+            float dpi);
 
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* canvasDevice,
             IStream* fileStream,
-            CanvasAlphaBehavior alpha);
+            CanvasAlphaBehavior alpha,
+            float dpi);
 
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* device,

@@ -456,17 +456,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicResource(
         IWICFormatConverter* wicConverter,
-        CanvasAlphaBehavior alpha)
+        CanvasAlphaBehavior alpha,
+        float dpi)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
-
-        double dpiX, dpiY;
-        ThrowIfFailed(wicConverter->GetResolution(&dpiX, &dpiY));
-        bitmapProperties.dpiX = static_cast<float>(dpiX);
-        bitmapProperties.dpiY = static_cast<float>(dpiY);
+        bitmapProperties.dpiX = bitmapProperties.dpiY = dpi;
 
         ComPtr<ID2D1Bitmap1> bitmap;
         ThrowIfFailed(deviceContext->CreateBitmapFromWicBitmap(wicConverter, &bitmapProperties, &bitmap));

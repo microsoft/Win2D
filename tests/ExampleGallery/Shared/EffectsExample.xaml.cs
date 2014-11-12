@@ -755,7 +755,7 @@ namespace ExampleGallery
 
         private ICanvasImage CreateShadow()
         {
-            var renderTarget = new CanvasRenderTarget(canvas, new Size(360, 150));
+            var renderTarget = new CanvasRenderTarget(canvas, 360, 150);
 
             using (var ds = renderTarget.CreateDrawingSession())
             {
@@ -847,7 +847,7 @@ namespace ExampleGallery
 
         private ICanvasImage AddTextOverlay(ICanvasImage effect, float x, float y)
         {
-            var textOverlay = new CanvasRenderTarget(canvas, new Size(200, 30));
+            var textOverlay = new CanvasRenderTarget(canvas, 200, 30);
 
             using (var ds = textOverlay.CreateDrawingSession())
             {

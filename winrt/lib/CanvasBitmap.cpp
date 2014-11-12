@@ -36,12 +36,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
         ICanvasDevice* canvasDevice,
         HSTRING fileName,
-        CanvasAlphaBehavior alpha)
+        CanvasAlphaBehavior alpha,
+        float dpi)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(m_adapter->CreateWICFormatConverter(fileName).Get(), alpha);
+        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(m_adapter->CreateWICFormatConverter(fileName).Get(), alpha, dpi);
 
         auto bitmap = Make<CanvasBitmap>(
             shared_from_this(),
@@ -55,12 +56,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
         ICanvasDevice* canvasDevice,
         IStream* fileStream,
-        CanvasAlphaBehavior alpha)
+        CanvasAlphaBehavior alpha,
+        float dpi)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(m_adapter->CreateWICFormatConverter(fileStream).Get(), alpha);
+        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(m_adapter->CreateWICFormatConverter(fileStream).Get(), alpha, dpi);
 
         auto bitmap = Make<CanvasBitmap>(
             shared_from_this(),
@@ -238,20 +240,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             canvasBitmap);
     }
 
-    IFACEMETHODIMP CanvasBitmapFactory::CreateFromDirect3D11SurfaceWithDpi(
-        ICanvasResourceCreator* resourceCreator,
-        IDirect3DSurface* surface,
-        float dpi,
-        ICanvasBitmap** canvasBitmap)
-    {
-        return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
-            resourceCreator,
-            surface,
-            CanvasAlphaBehavior::Premultiplied,
-            dpi,
-            canvasBitmap);
-    }
-
     IFACEMETHODIMP CanvasBitmapFactory::CreateFromDirect3D11SurfaceWithAlphaAndDpi(
         ICanvasResourceCreator* resourceCreator,
         IDirect3DSurface* surface,
@@ -391,10 +379,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         HSTRING fileName,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
     {
-        return LoadAsyncFromHstringWithAlpha(
+        return LoadAsyncFromHstringWithAlphaAndDpi(
             resourceCreator,
             fileName,
             CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI,
             canvasBitmapAsyncOperation);
     }
 
@@ -402,6 +391,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasResourceCreator* resourceCreator,
         HSTRING fileName,
         CanvasAlphaBehavior alpha,
+        ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
+    {
+        return LoadAsyncFromHstringWithAlphaAndDpi(
+            resourceCreator,
+            fileName,
+            alpha,
+            DEFAULT_DPI,
+            canvasBitmapAsyncOperation);
+    }
+
+    IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromHstringWithAlphaAndDpi(
+        ICanvasResourceCreator* resourceCreator,
+        HSTRING fileName,
+        CanvasAlphaBehavior alpha,
+        float dpi,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
     {
         return ExceptionBoundary(
@@ -419,7 +423,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
                     [=]
                     {
-                        return GetManager()->CreateBitmap(canvasDevice.Get(), fileName, alpha);
+                        return GetManager()->CreateBitmap(canvasDevice.Get(), fileName, alpha, dpi);
                     });
 
                 CheckMakeResult(asyncOperation);
@@ -432,10 +436,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ABI::Windows::Foundation::IUriRuntimeClass* uri,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
     {
-        return LoadAsyncFromUriWithAlpha(
+        return LoadAsyncFromUriWithAlphaAndDpi(
             resourceCreator, 
             uri, 
             CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI,
             canvasBitmapAsyncOperation);
     }
 
@@ -445,7 +450,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasAlphaBehavior alpha,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
     {
-
+        return LoadAsyncFromUriWithAlphaAndDpi(
+            resourceCreator,
+            uri,
+            alpha,
+            DEFAULT_DPI,
+            canvasBitmapAsyncOperation);
+    }
+     
+    IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromUriWithAlphaAndDpi(
+        ICanvasResourceCreator* resourceCreator,
+        ABI::Windows::Foundation::IUriRuntimeClass* uri,
+        CanvasAlphaBehavior alpha,
+        float dpi,
+        ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
+    {
         return ExceptionBoundary(
             [&]
             {
@@ -472,7 +491,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ComPtr<IStream> stream;
                     ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
 
-                    return GetManager()->CreateBitmap(canvasDevice.Get(), stream.Get(), alpha);
+                    return GetManager()->CreateBitmap(canvasDevice.Get(), stream.Get(), alpha, dpi);
                 });
 
                 CheckMakeResult(asyncOperation);
@@ -485,17 +504,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IRandomAccessStream* stream,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
     {
-        return LoadAsyncFromStreamWithAlpha(
+        return LoadAsyncFromStreamWithAlphaAndDpi(
             resourceCreator,
             stream,
             CanvasAlphaBehavior::Premultiplied,
+            DEFAULT_DPI,
             canvasBitmapAsyncOperation);
     }
 
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromStreamWithAlpha(
         ICanvasResourceCreator* resourceCreator,
+        IRandomAccessStream* stream,
+        CanvasAlphaBehavior alpha,
+        ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
+    {
+        return LoadAsyncFromStreamWithAlphaAndDpi(
+            resourceCreator,
+            stream,
+            alpha,
+            DEFAULT_DPI,
+            canvasBitmapAsyncOperation);
+    }
+
+    IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromStreamWithAlphaAndDpi(
+        ICanvasResourceCreator* resourceCreator,
         IRandomAccessStream* rawStream,
         CanvasAlphaBehavior alpha,
+        float dpi,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
     {
         return ExceptionBoundary(
@@ -516,7 +551,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ComPtr<IStream> nativeStream;
                     ThrowIfFailed(CreateStreamOverRandomAccessStream(stream.Get(), IID_PPV_ARGS(&nativeStream)));
 
-                    return GetManager()->CreateBitmap(canvasDevice.Get(), nativeStream.Get(), alpha);
+                    return GetManager()->CreateBitmap(canvasDevice.Get(), nativeStream.Get(), alpha, dpi);
                 });
 
                 CheckMakeResult(asyncOperation);

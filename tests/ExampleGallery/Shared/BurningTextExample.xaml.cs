@@ -60,8 +60,7 @@ namespace ExampleGallery
             {
                 oldCanvasSize = newCanvasSize;
 
-                // CanvasRenderTarget expects an integer size.
-                SetupText(new Size((int)newCanvasSize.Width, (int)newCanvasSize.Height));
+                SetupText(newCanvasSize);
             };
 
             UpdateAnimation((float)timer.Elapsed.TotalSeconds);
@@ -87,7 +86,7 @@ namespace ExampleGallery
         /// </summary>
         private void SetupText(Size targetSize)
         {
-            textRenderTarget = new CanvasRenderTarget(this.canvas, targetSize);
+            textRenderTarget = new CanvasRenderTarget(this.canvas, (int)targetSize.Width, (int)targetSize.Height);
 
             using (var ds = textRenderTarget.CreateDrawingSession())
             {
@@ -188,7 +187,7 @@ namespace ExampleGallery
 
         private void textInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SetupText(new Size((int)oldCanvasSize.Width, (int)oldCanvasSize.Height));
+            SetupText(oldCanvasSize);
         }
     }
 }

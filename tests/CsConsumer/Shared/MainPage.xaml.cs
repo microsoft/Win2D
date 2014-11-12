@@ -87,7 +87,7 @@ namespace CsConsumer
             UpdateCanvasControlSize();
             m_imageBrush = new CanvasImageBrush(sender);
 
-            m_offscreenTarget = new CanvasRenderTarget(sender, new Size(100, 100));
+            m_offscreenTarget = new CanvasRenderTarget(sender, 100, 100);
 
             using (CanvasDrawingSession ds = m_offscreenTarget.CreateDrawingSession())
             {

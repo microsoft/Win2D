@@ -28,11 +28,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasRenderTargetFactory();
     
-        IFACEMETHOD(Create)(
-            ICanvasResourceCreator* resourceCreator,
-            ABI::Windows::Foundation::Size size,
-            ICanvasRenderTarget** renderTarget);
-
         IFACEMETHOD(CreateWithWidthAndHeight)(
             ICanvasResourceCreator* resourceCreator,
             float width,
@@ -81,12 +76,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
             CanvasAlphaBehavior alpha,
-            ICanvasRenderTarget** canvasRenderTarget) override;
-
-        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpi)(
-            ICanvasResourceCreator* resourceCreator,
-            IDirect3DSurface* surface,
-            float dpi,
             ICanvasRenderTarget** canvasRenderTarget) override;
 
         IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlphaAndDpi)(

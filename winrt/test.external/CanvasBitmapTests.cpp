@@ -22,7 +22,6 @@ using namespace Windows::UI;
 using namespace Windows::Storage::Streams;
 using Platform::String;
 
-const float c_dpiTolerance = 0.1f;
 const int c_subresourceSliceCount = 3;
 
 struct SignedRect
@@ -37,50 +36,34 @@ struct SignedRect
 
 TEST_CLASS(CanvasBitmapTests)
 {
-    struct TestImage
-    {
-        Platform::String^ fileName;
-        int widthInPixels;
-        int heightInPixels;
-
-        float m_dpi;
-        float widthInDip;
-        float heightInDip;
-    };
-
-    TestImage m_testImage;
     CanvasDevice^ m_sharedDevice;
+
+    static const int testImageWidth = 196;
+    static const int testImageHeight = 147;
+
+    Platform::String^ testImageFileName;
 
 public:
     CanvasBitmapTests()
     {
-        m_testImage.fileName = L"Assets/imageTiger.jpg";
-        m_testImage.widthInPixels = 196;
-        m_testImage.heightInPixels = 147;
+        testImageFileName = L"Assets/imageTiger.jpg";
 
-        m_testImage.m_dpi = 72.0f;
-        const float dpiScaling = DEFAULT_DPI / m_testImage.m_dpi;
-        m_testImage.widthInDip = 196.0f * dpiScaling;
-        m_testImage.heightInDip = 147.0f * dpiScaling;
-        
         m_sharedDevice = ref new CanvasDevice();
     }
 
     TEST_METHOD(CanvasBitmap_PropertiesAndClose)
     {
-
         WIN32_FILE_ATTRIBUTE_DATA fileInfo;
-        Assert::AreNotEqual(GetFileAttributesEx(m_testImage.fileName->Data(), GetFileExInfoStandard, &fileInfo), 0);
+        Assert::AreNotEqual(GetFileAttributesEx(testImageFileName->Data(), GetFileExInfoStandard, &fileInfo), 0);
         
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
 
-        auto bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, m_testImage.fileName));
-        Assert::AreEqual(m_testImage.widthInPixels, (int)bitmapJpeg->SizeInPixels.Width);
-        Assert::AreEqual(m_testImage.heightInPixels, (int)bitmapJpeg->SizeInPixels.Height);
-        Assert::AreEqual(m_testImage.widthInDip, bitmapJpeg->Size.Width);
-        Assert::AreEqual(m_testImage.heightInDip, bitmapJpeg->Size.Height);
+        auto bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, testImageFileName));
+        Assert::AreEqual((float)testImageWidth, bitmapJpeg->SizeInPixels.Width);
+        Assert::AreEqual((float)testImageHeight, bitmapJpeg->SizeInPixels.Height);
+        Assert::AreEqual((float)testImageWidth, bitmapJpeg->Size.Width);
+        Assert::AreEqual((float)testImageHeight, bitmapJpeg->Size.Height);
     }
-
 
     TEST_METHOD(CanvasBitmap_LoadFromInvalidParameters)
     {
@@ -112,11 +95,15 @@ public:
         for (int i = 0; i < 2; ++i)
         {
             IAsyncOperation<CanvasBitmap^>^ bitmapAsync;
+            IAsyncOperation<CanvasBitmap^>^ highDpiAsync;
+
+            const float highDpi = 150;
 
             Uri^ uri = ref new Uri("ms-appx:///Assets/HighDpiGrid.png");
             if (i == 0)
             {
                 bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, uri, CanvasAlphaBehavior::Ignore);
+                highDpiAsync = CanvasBitmap::LoadAsync(canvasDevice, uri, CanvasAlphaBehavior::Ignore, highDpi);
             }
             else
             {
@@ -124,18 +111,36 @@ public:
                 auto stream = WaitExecution(storageFile->OpenReadAsync());
 
                 bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, stream, CanvasAlphaBehavior::Ignore);
+
+                storageFile = WaitExecution(Windows::Storage::StorageFile::GetFileFromApplicationUriAsync(uri));
+                stream = WaitExecution(storageFile->OpenReadAsync());
+
+                highDpiAsync = CanvasBitmap::LoadAsync(canvasDevice, stream, CanvasAlphaBehavior::Ignore, highDpi);
             }
 
+            // Verify loading at default DPI.
             auto bitmap = WaitExecution(bitmapAsync);
 
-            Assert::AreEqual(2.00001454f, bitmap->Size.Width);
-            Assert::AreEqual(2.00001454f, bitmap->Size.Height);
+            Assert::AreEqual(4.0f, bitmap->Size.Width);
+            Assert::AreEqual(4.0f, bitmap->Size.Height);
             Assert::AreEqual(4.0f, bitmap->SizeInPixels.Width);
             Assert::AreEqual(4.0f, bitmap->SizeInPixels.Height);
 
             auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
 
-            VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_IGNORE, c_dpiTolerance);
+            VerifyDpiAndAlpha(d2dBitmap, 96, D2D1_ALPHA_MODE_IGNORE);
+
+            // Verify loading at high DPI.
+            bitmap = WaitExecution(highDpiAsync);
+
+            Assert::AreEqual(4.0f * 96 / highDpi, bitmap->Size.Width);
+            Assert::AreEqual(4.0f * 96 / highDpi, bitmap->Size.Height);
+            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Width);
+            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Height);
+
+            d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+
+            VerifyDpiAndAlpha(d2dBitmap, highDpi, D2D1_ALPHA_MODE_IGNORE);
         }
     }
 
@@ -194,12 +199,11 @@ public:
         }
     }
 
-
     TEST_METHOD(CanvasBitmap_NativeInterop)
     {
         auto canvasDevice = ref new CanvasDevice();
 
-        auto originalBitmap = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, m_testImage.fileName));
+        auto originalBitmap = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, testImageFileName));
         auto originalD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(originalBitmap);
         auto newBitmap = GetOrCreate<CanvasBitmap>(canvasDevice, originalD2DBitmap.Get());
         auto newD2DBitmap = GetWrappedResource<ID2D1Bitmap1>(newBitmap);
@@ -353,37 +357,15 @@ public:
         auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, L"Assets/HighDpiGrid.png"));
 
         auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(canvasBitmap);
-        VerifyDpiAndAlpha(d2dBitmap, 192, D2D1_ALPHA_MODE_PREMULTIPLIED, c_dpiTolerance);
+
+        // We should ignore the DPI metadata saved in the file, and return a bitmap with default 96 DPI.
+        VerifyDpiAndAlpha(d2dBitmap, DEFAULT_DPI, D2D1_ALPHA_MODE_PREMULTIPLIED);
     }
 
-    enum DpiVerifyType
+    void VerifyBitmapDecoderDimensionsMatchTestImage(BitmapDecoder^ bitmapDecoder)
     {
-        Exact,
-        Fuzzy,
-        NotSupported
-    };
-
-    void VerifyBitmapDecoderDimensionsMatchTestImage(BitmapDecoder^ bitmapDecoder, DpiVerifyType dpiVerifyType)
-    {
-        Assert::AreEqual(m_testImage.widthInPixels, (int)bitmapDecoder->PixelWidth);
-        Assert::AreEqual(m_testImage.heightInPixels, (int)bitmapDecoder->PixelHeight);
-
-        if (dpiVerifyType == Exact)
-        {
-            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiX));
-            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiY));
-        }
-        else if (dpiVerifyType == Fuzzy)
-        {
-            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiX), c_dpiTolerance);
-            Assert::AreEqual(m_testImage.m_dpi, static_cast<float>(bitmapDecoder->DpiY), c_dpiTolerance);
-        }
-        else
-        {
-            assert(dpiVerifyType == NotSupported);
-            Assert::AreEqual(DEFAULT_DPI, static_cast<float>(bitmapDecoder->DpiX));
-            Assert::AreEqual(DEFAULT_DPI, static_cast<float>(bitmapDecoder->DpiY));
-        }
+        Assert::AreEqual(testImageWidth, (int)bitmapDecoder->PixelWidth);
+        Assert::AreEqual(testImageHeight, (int)bitmapDecoder->PixelHeight);
     }
 
     BitmapDecoder^ LoadBitmapDecoderFromPath(String^ path, ULONGLONG* optionalSizeOut = nullptr)
@@ -444,7 +426,7 @@ public:
 
     TEST_METHOD(CanvasBitmap_SaveToFileAsync_DetermineEncoderFromFileExtension)
     {
-        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, m_testImage.fileName));
+        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, testImageFileName));
 
         String^ tempFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;
         String^ pathPrefix = String::Concat(tempFolder, L"\\test.");
@@ -453,22 +435,21 @@ public:
         {
             std::wstring Extension;
             Platform::Guid ImagingFormat;
-            DpiVerifyType DpiVerify;
         } testCases[] = {
-                { L"bmp",   BitmapDecoder::BmpDecoderId,    DpiVerifyType::Fuzzy },
-                { L"dib",   BitmapDecoder::BmpDecoderId,    DpiVerifyType::Fuzzy },
-                { L"rle",   BitmapDecoder::BmpDecoderId,    DpiVerifyType::Fuzzy },
-                { L"png",   BitmapDecoder::PngDecoderId,    DpiVerifyType::Fuzzy },
-                { L"jpg",   BitmapDecoder::JpegDecoderId,   DpiVerifyType::Exact },
-                { L"JPE",   BitmapDecoder::JpegDecoderId,   DpiVerifyType::Exact },
-                { L"jpeg",  BitmapDecoder::JpegDecoderId,   DpiVerifyType::Exact },
-                { L"jfif",  BitmapDecoder::JpegDecoderId,   DpiVerifyType::Exact },
-                { L"EXIF",  BitmapDecoder::JpegDecoderId,   DpiVerifyType::Exact },
-                { L"tif",   BitmapDecoder::TiffDecoderId,   DpiVerifyType::Exact },
-                { L"tiff",  BitmapDecoder::TiffDecoderId,   DpiVerifyType::Exact },
-                { L"gif",   BitmapDecoder::GifDecoderId,    DpiVerifyType::NotSupported },
-                { L"wdp",   BitmapDecoder::JpegXRDecoderId, DpiVerifyType::Exact },
-                { L"jxr",   BitmapDecoder::JpegXRDecoderId, DpiVerifyType::Exact },
+                { L"bmp",   BitmapDecoder::BmpDecoderId    },
+                { L"dib",   BitmapDecoder::BmpDecoderId    },
+                { L"rle",   BitmapDecoder::BmpDecoderId    },
+                { L"png",   BitmapDecoder::PngDecoderId    },
+                { L"jpg",   BitmapDecoder::JpegDecoderId   },
+                { L"JPE",   BitmapDecoder::JpegDecoderId   },
+                { L"jpeg",  BitmapDecoder::JpegDecoderId   },
+                { L"jfif",  BitmapDecoder::JpegDecoderId   },
+                { L"EXIF",  BitmapDecoder::JpegDecoderId   },
+                { L"tif",   BitmapDecoder::TiffDecoderId   },
+                { L"tiff",  BitmapDecoder::TiffDecoderId   },
+                { L"gif",   BitmapDecoder::GifDecoderId    },
+                { L"wdp",   BitmapDecoder::JpegXRDecoderId },
+                { L"jxr",   BitmapDecoder::JpegXRDecoderId },
         };
 
         for (auto testCase : testCases)
@@ -481,13 +462,13 @@ public:
 
             Assert::AreEqual(testCase.ImagingFormat, bitmapDecoder->DecoderInformation->CodecId);
 
-            VerifyBitmapDecoderDimensionsMatchTestImage(bitmapDecoder, testCase.DpiVerify);
+            VerifyBitmapDecoderDimensionsMatchTestImage(bitmapDecoder);
         }
     }
 
     TEST_METHOD(CanvasBitmap_SaveToFileAndStreamAsync_UseSpecifiedEncoder)
     {
-        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, m_testImage.fileName));
+        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, testImageFileName));
 
         String^ tempFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;
         String^ targetPath = String::Concat(tempFolder, L"\\test.bin");
@@ -501,14 +482,13 @@ public:
         {
             CanvasBitmapFileFormat CanvasFormat;
             Platform::Guid ImagingFormat;
-            DpiVerifyType DpiVerify;
         } testCases[] = {
-            { CanvasBitmapFileFormat::Jpeg,     BitmapDecoder::JpegDecoderId,   DpiVerifyType::Exact },
-            { CanvasBitmapFileFormat::Bmp,      BitmapDecoder::BmpDecoderId,    DpiVerifyType::Fuzzy },
-            { CanvasBitmapFileFormat::Png,      BitmapDecoder::PngDecoderId,    DpiVerifyType::Fuzzy },
-            { CanvasBitmapFileFormat::Tiff,     BitmapDecoder::TiffDecoderId,   DpiVerifyType::Exact },
-            { CanvasBitmapFileFormat::Gif,      BitmapDecoder::GifDecoderId,    DpiVerifyType::NotSupported },
-            { CanvasBitmapFileFormat::JpegXR,   BitmapDecoder::JpegXRDecoderId, DpiVerifyType::Exact },
+            { CanvasBitmapFileFormat::Jpeg,     BitmapDecoder::JpegDecoderId   },
+            { CanvasBitmapFileFormat::Bmp,      BitmapDecoder::BmpDecoderId    },
+            { CanvasBitmapFileFormat::Png,      BitmapDecoder::PngDecoderId    },
+            { CanvasBitmapFileFormat::Tiff,     BitmapDecoder::TiffDecoderId   },
+            { CanvasBitmapFileFormat::Gif,      BitmapDecoder::GifDecoderId    },
+            { CanvasBitmapFileFormat::JpegXR,   BitmapDecoder::JpegXRDecoderId },
         };
 
         for (auto testCase : testCases)
@@ -519,7 +499,7 @@ public:
 
             Assert::AreEqual(testCase.ImagingFormat, bitmapDecoder->DecoderInformation->CodecId);
 
-            VerifyBitmapDecoderDimensionsMatchTestImage(bitmapDecoder, testCase.DpiVerify);
+            VerifyBitmapDecoderDimensionsMatchTestImage(bitmapDecoder);
         }
 
         for (auto testCase : testCases)
@@ -532,13 +512,13 @@ public:
 
             Assert::AreEqual(testCase.ImagingFormat, bitmapDecoder->DecoderInformation->CodecId);
 
-            VerifyBitmapDecoderDimensionsMatchTestImage(bitmapDecoder, testCase.DpiVerify);
+            VerifyBitmapDecoderDimensionsMatchTestImage(bitmapDecoder);
         }
     }
 
     TEST_METHOD(CanvasBitmap_SaveToBitmapAsync_ImageQuality)
     {
-        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, m_testImage.fileName));
+        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, testImageFileName));
 
         String^ tempFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;
 
@@ -546,14 +526,13 @@ public:
         {
             CanvasBitmapFileFormat FileFormat;
             bool SupportsQuality;
-            DpiVerifyType DpiVerify;
         } testCases[] {
-                { CanvasBitmapFileFormat::Bmp, false, DpiVerifyType::Fuzzy },
-                { CanvasBitmapFileFormat::Gif, false, DpiVerifyType::NotSupported },
-                { CanvasBitmapFileFormat::Jpeg, true, DpiVerifyType::Exact },
-                { CanvasBitmapFileFormat::JpegXR, true, DpiVerifyType::Exact },
-                { CanvasBitmapFileFormat::Png, false, DpiVerifyType::Fuzzy },
-                { CanvasBitmapFileFormat::Tiff, false, DpiVerifyType::Exact },
+                { CanvasBitmapFileFormat::Bmp,    false },
+                { CanvasBitmapFileFormat::Gif,    false },
+                { CanvasBitmapFileFormat::Jpeg,   true  },
+                { CanvasBitmapFileFormat::JpegXR, true  },
+                { CanvasBitmapFileFormat::Png,    false },
+                { CanvasBitmapFileFormat::Tiff,   false },
         };
 
         for (auto testCase : testCases)
@@ -566,11 +545,11 @@ public:
 
             ULONGLONG lowQSize;
             auto lowQDecoder = LoadBitmapDecoderFromPath(lowQPath, &lowQSize);
-            VerifyBitmapDecoderDimensionsMatchTestImage(lowQDecoder, testCase.DpiVerify);
+            VerifyBitmapDecoderDimensionsMatchTestImage(lowQDecoder);
 
             ULONGLONG highQSize;
             auto highQDecoder = LoadBitmapDecoderFromPath(highQPath, &highQSize);
-            VerifyBitmapDecoderDimensionsMatchTestImage(highQDecoder, testCase.DpiVerify);
+            VerifyBitmapDecoderDimensionsMatchTestImage(highQDecoder);
 
             if (testCase.SupportsQuality) Assert::IsTrue(lowQSize < highQSize);
             else Assert::AreEqual(lowQSize, highQSize);
