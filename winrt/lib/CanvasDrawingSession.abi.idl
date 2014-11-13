@@ -26,7 +26,7 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(F60AFD09-E623-4BE0-B750-578AA920B1DB), exclusiveto(CanvasDrawingSession)]
     interface ICanvasDrawingSession : IInspectable
-        requires Windows.Foundation.IClosable, ICanvasResourceCreator
+        requires Windows.Foundation.IClosable, ICanvasResourceCreatorWithDpi
     {
         HRESULT Clear([in] Windows.UI.Color color);
 

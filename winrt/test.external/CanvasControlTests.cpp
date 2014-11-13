@@ -13,6 +13,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::DirectX;
 
 TEST_CLASS(CanvasControlTests)
 {
@@ -86,7 +87,7 @@ TEST_CLASS(CanvasControlTests)
             []
             {
                 auto device = ref new CanvasDevice();
-                auto renderTarget = ref new CanvasRenderTarget(device, 1, 1);
+                auto renderTarget = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
                 auto drawingSession = renderTarget->CreateDrawingSession();
 
                 CanvasDrawEventArgs^ drawEventArgs = ref new CanvasDrawEventArgs(drawingSession);

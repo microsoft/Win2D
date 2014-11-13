@@ -54,6 +54,12 @@ namespace Microsoft.Graphics.Canvas
         [propget]
         HRESULT Bounds([out, retval] Windows.Foundation.Rect* bounds);
 
+        [propget]
+        HRESULT Dpi([out, retval] float* dpi);
+
+        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
+        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
+
         //
         // Example usage (in C#):
         //
@@ -184,7 +190,7 @@ namespace Microsoft.Graphics.Canvas
             [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
             [out, retval] CanvasBitmap** bitmap);
 
-        [overload("CreateFromDirect3D11Surface"), default_overload]
+        [overload("CreateFromDirect3D11Surface")]
         HRESULT CreateFromDirect3D11SurfaceWithAlpha(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
@@ -331,20 +337,20 @@ namespace Microsoft.Graphics.Canvas
         //
 
         HRESULT CreateWithWidthAndHeight(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] ICanvasResourceCreatorWithDpi* resourceCreator,
             [in] float width,
             [in] float height,
             [out, retval] CanvasRenderTarget** renderTarget);
 
-        HRESULT CreateWithWidthAndHeightAndFormat(
+        HRESULT CreateWithWidthAndHeightAndDpi(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] float width,
             [in] float height,
-            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            [in] float dpi,
             [out, retval] CanvasRenderTarget** renderTarget);
 
         HRESULT CreateWithWidthAndHeightAndFormatAndAlpha(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] ICanvasResourceCreatorWithDpi* resourceCreator,
             [in] float width,
             [in] float height,
             [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
@@ -370,7 +376,7 @@ namespace Microsoft.Graphics.Canvas
             [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,
             [out, retval] CanvasRenderTarget** bitmap);
 
-        [overload("CreateFromDirect3D11Surface"), default_overload]
+        [overload("CreateFromDirect3D11Surface")]
         HRESULT CreateFromDirect3D11SurfaceWithAlpha(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface* surface,

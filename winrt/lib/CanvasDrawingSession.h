@@ -42,6 +42,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasDrawingSession : RESOURCE_WRAPPER_RUNTIME_CLASS(
         CanvasDrawingSessionTraits,
+        ICanvasResourceCreatorWithDpi,
         ICanvasResourceCreator)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
@@ -863,6 +864,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         IFACEMETHODIMP get_Device(ICanvasDevice** value);
+
+        //
+        // ICanvasResourceCreatorWithDpi
+        //
+
+        IFACEMETHODIMP get_Dpi(float* dpi);
+
+        IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips);
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels);
 
     private:
         void DrawLineImpl(

@@ -27,7 +27,7 @@ TEST_CLASS(CanvasRenderTargetTests)
         ComPtr<MockD2DDevice> m_d2dDevice;
         ComPtr<StubCanvasDevice> m_canvasDevice;
         
-        Fixture()
+        Fixture(float expectedDpi = DEFAULT_DPI)
         {
             auto converter = Make<MockWICFormatConverter>();
             auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
@@ -37,9 +37,16 @@ TEST_CLASS(CanvasRenderTargetTests)
 
             // Make the D2D device return StubD2DDeviceContexts
             m_d2dDevice->MockCreateDeviceContext = 
-                [&](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
+                [&, expectedDpi](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
                 {
                     auto deviceContext = Make<StubD2DDeviceContext>(m_d2dDevice.Get());
+
+                    deviceContext->SetDpiMethod.AllowAnyCall([=](float dpiX, float dpiY)
+                    {
+                        Assert::AreEqual(expectedDpi, dpiX);
+                        Assert::AreEqual(expectedDpi, dpiY);
+                    });
+
                     ThrowIfFailed(deviceContext.CopyTo(value));
                 };
         }
@@ -50,7 +57,6 @@ TEST_CLASS(CanvasRenderTargetTests)
         {
             if (!bitmap)
                 bitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
-
 
             m_canvasDevice->MockCreateRenderTargetBitmap =
                 [&](float, float, DirectXPixelFormat, CanvasAlphaBehavior, float)
@@ -118,12 +124,18 @@ TEST_CLASS(CanvasRenderTargetTests)
         Assert::AreEqual(RO_E_CLOSED, renderTarget->CreateDrawingSession(&drawingSession));
     }
 
-
     TEST_METHOD_EX(CanvasRenderTarget_DrawingSession)
     {        
         Fixture f;
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);    
         auto renderTarget = f.CreateRenderTarget(d2dBitmap);
+
+        d2dBitmap->GetDpiMethod.SetExpectedCalls(1, [](float* dpiX, float* dpiY)
+        { 
+            *dpiX = DEFAULT_DPI;
+            *dpiY = DEFAULT_DPI;
+            return S_OK;
+        });
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
@@ -131,11 +143,37 @@ TEST_CLASS(CanvasRenderTargetTests)
         ValidateDrawingSession(drawingSession.Get(), f.m_d2dDevice.Get(), d2dBitmap.Get());
     }
 
+    TEST_METHOD_EX(CanvasRenderTarget_PropagatesDpiToDrawingSession)
+    {
+        const float expectedDpi = 123;
+        
+        Fixture f(expectedDpi);
+        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
+        auto renderTarget = f.CreateRenderTarget(d2dBitmap);
+
+        d2dBitmap->GetDpiMethod.SetExpectedCalls(1, [&](float* dpiX, float* dpiY)
+        {
+            *dpiX = expectedDpi;
+            *dpiY = expectedDpi;
+            return S_OK;
+        });
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
+    }
+
     TEST_METHOD_EX(CanvasRenderTarget_Wrapped_CreatesDrawingSession)
     {
         Fixture f;
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
         auto renderTarget = f.CreateRenderTargetAsWrapper(f.m_canvasDevice.Get(), d2dBitmap);
+
+        d2dBitmap->GetDpiMethod.SetExpectedCalls(1, [](float* dpiX, float* dpiY)
+        {
+            *dpiX = DEFAULT_DPI;
+            *dpiY = DEFAULT_DPI;
+            return S_OK;
+        });
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
@@ -203,7 +241,7 @@ TEST_CLASS(CanvasRenderTargetTests)
             [&] { return D2D1_SIZE_F{expectedSize.Width, expectedSize.Height}; });
 
         d2dBitmap->GetPixelSizeMethod.AllowAnyCall(
-            [&] { return ToD2DSizeU(expectedSize.Width, expectedSize.Height); });
+            [&] { return D2D_SIZE_U{ (unsigned)expectedSize.Width, (unsigned)expectedSize.Height }; });
 
         auto renderTarget = f.CreateRenderTarget(d2dBitmap, expectedSize);
 

@@ -76,9 +76,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeight(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        float width,
+        float height,
+        ICanvasRenderTarget** renderTarget)
+    {
+        return CreateWithWidthAndHeightAndFormatAndAlpha(
+            resourceCreator,
+            width,
+            height,
+            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            CanvasAlphaBehavior::Premultiplied,
+            renderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndDpi(
         ICanvasResourceCreator* resourceCreator,
         float width,
         float height,
+        float dpi,
         ICanvasRenderTarget** renderTarget)
     {
         return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
@@ -87,43 +103,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             height,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
             CanvasAlphaBehavior::Premultiplied,
-            DEFAULT_DPI,
-            renderTarget);
-    }
-
-    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormat(
-        ICanvasResourceCreator* resourceCreator,
-        float width,
-        float height,
-        DirectXPixelFormat format,
-        ICanvasRenderTarget** renderTarget)
-    {
-        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
-            resourceCreator,
-            width,
-            height,
-            format,
-            CanvasAlphaBehavior::Premultiplied,
-            DEFAULT_DPI,
+            dpi,
             renderTarget);
     }
 
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormatAndAlpha(
-        ICanvasResourceCreator* resourceCreator,
+        ICanvasResourceCreatorWithDpi* resourceCreator,
         float width,
         float height,
         DirectXPixelFormat format,
         CanvasAlphaBehavior alpha,
         ICanvasRenderTarget** renderTarget)
     {
-        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
-            resourceCreator,
-            width,
-            height,
-            format,
-            alpha,
-            DEFAULT_DPI,
-            renderTarget);
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckAndClearOutPointer(renderTarget);
+
+                float dpi;
+                ThrowIfFailed(resourceCreator->get_Dpi(&dpi));
+
+                ComPtr<ICanvasDevice> canvasDevice;
+                ThrowIfFailed(As<ICanvasResourceCreator>(resourceCreator)->get_Device(&canvasDevice));
+
+                auto bitmap = GetManager()->CreateRenderTarget(
+                    canvasDevice.Get(), 
+                    width, 
+                    height, 
+                    format, 
+                    alpha, 
+                    dpi);
+
+                ThrowIfFailed(bitmap.CopyTo(renderTarget));
+            });
     }
 
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
@@ -279,6 +292,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Set the target
         //
         deviceContext->SetTarget(targetBitmap);
+
+        //
+        // Set the DPI
+        //
+        float dpiX, dpiY;
+        targetBitmap->GetDpi(&dpiX, &dpiY);
+        deviceContext->SetDpi(dpiX, dpiY);
 
         auto adapter = std::make_shared<CanvasBitmapDrawingSessionAdapter>(deviceContext.Get());
 

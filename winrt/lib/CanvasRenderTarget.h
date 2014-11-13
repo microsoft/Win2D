@@ -29,20 +29,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasRenderTargetFactory();
     
         IFACEMETHOD(CreateWithWidthAndHeight)(
-            ICanvasResourceCreator* resourceCreator,
+            ICanvasResourceCreatorWithDpi* resourceCreator,
             float width,
             float height,
             ICanvasRenderTarget** renderTarget);
 
-        IFACEMETHOD(CreateWithWidthAndHeightAndFormat)(
+        IFACEMETHOD(CreateWithWidthAndHeightAndDpi)(
             ICanvasResourceCreator* resourceCreator,
             float width,
             float height,
-            DirectXPixelFormat format,
+            float dpi,
             ICanvasRenderTarget** renderTarget);
 
         IFACEMETHOD(CreateWithWidthAndHeightAndFormatAndAlpha)(
-            ICanvasResourceCreator* resourceCreator,
+            ICanvasResourceCreatorWithDpi* resourceCreator,
             float width,
             float height,
             DirectXPixelFormat format,

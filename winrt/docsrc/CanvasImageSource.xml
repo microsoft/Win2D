@@ -35,7 +35,7 @@ under the License.
                Most apps should use CanvasControl instead of directly managing their own CanvasImageSource.</summary>
 
       <example><code>
-        var imageSource = new CanvasImageSource(canvasDevice, widthInPixels, heightInPixels);
+        var imageSource = new CanvasImageSource(canvasDevice, width, height, dpi);
                                                 
         imageControl.Source = imageSource;
         
@@ -45,19 +45,28 @@ under the License.
         }
       </code></example>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
+      <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasBackground)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
+      <remarks>Size is in device independent pixels (dips), using the specified DPI.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasBackground)">
+      <summary>Initializes a new instance of the CanvasImageSource class.</summary>
+      <remarks>Size is in device independent pixels (dips), using the specified DPI.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color)">
       <summary>Returns a new drawing session for redrawing the entire image source.</summary>
       <remarks>The entire image is automatically cleared to the specified color before this method returns.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color,System.Int32,System.Int32,System.Int32,System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color,Windows.Foundation.Rect)">
       <summary>Returns a new drawing session for updating a region of the image source.</summary>
-      <remarks>The specified region of the image is cleared to the specified color before this method returns.</remarks>
+      <remarks>
+        The specified region of the image is cleared to the specified color before this method returns.
+        The region is in device independent pixels (dips).
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Device">
       <summary>Gets or sets the device used by this image source.</summary>
@@ -65,6 +74,19 @@ under the License.
         Changing this property binds the image source to a different device.
         This is used after a new device is recovered after a device lost.
       </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Dpi">
+      <summary>Gets the dots-per-inch (DPI) of this image source.</summary>
+      <remarks>
+        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
+        The identity DPI value is 96, which means dips and pixels are the same.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (dips) based on the DPI of this image source.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.ConvertDipsToPixels(System.Single)">
+      <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this image source.</summary>
     </member>
     
   </members>

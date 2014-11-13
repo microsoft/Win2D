@@ -19,9 +19,7 @@ namespace Microsoft.Graphics.Canvas
     //
     // Usage (C#):
     //
-    //   var imageSource = new CanvasImageSource(canvasDevice,
-    //                                           widthInPixels,
-    //                                           heightInPixels);
+    //   var imageSource = new CanvasImageSource(canvasDevice, width, height, dpi);
     //
     //   imageControl.Source = imageSource;
     //
@@ -62,16 +60,24 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasImageSourceFactory : IInspectable
     {
         HRESULT Create(
-            [in]          ICanvasResourceCreator* resourceCreator,
-            [in]          INT32 widthInPixels, // INT32 picked to match SurfaceImageSource constructor
-            [in]          INT32 heightInPixels, 
+            [in]          ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in]          float width,
+            [in]          float height, 
             [out, retval] CanvasImageSource** imageSource);
 
-        HRESULT CreateWithBackground(
+        HRESULT CreateWithDpi(
             [in]          ICanvasResourceCreator* resourceCreator,
-            [in]          INT32 widthInPixels, 
-            [in]          INT32 heightInPixels, 
-            [in]          CanvasBackground background, 
+            [in]          float width,
+            [in]          float height,
+            [in]          float dpi,
+            [out, retval] CanvasImageSource** imageSource);
+
+        HRESULT CreateWithDpiAndBackground(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          float width,
+            [in]          float height,
+            [in]          float dpi,
+            [in]          CanvasBackground background,
             [out, retval] CanvasImageSource** imageSource);
     };
 
@@ -91,15 +97,12 @@ namespace Microsoft.Graphics.Canvas
 
         //
         // Returns a new drawing session for updating a region of the image
-        // source.  The entire region is cleared to the speicfied color.
+        // source.  The entire region is cleared to the specified color.
         //
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSessionWithUpdateRectangle(
             [in]          Windows.UI.Color clearColor,
-            [in]          INT32 leftInPixels,
-            [in]          INT32 topInPixels,
-            [in]          INT32 widthInPixels,
-            [in]          INT32 heightInPixels,
+            [in]          Windows.Foundation.Rect updateRectangle,
             [out, retval] CanvasDrawingSession** drawingSession);
 
         //
@@ -116,6 +119,18 @@ namespace Microsoft.Graphics.Canvas
         [propput]
         HRESULT Device(
             [in] CanvasDevice* value);
+
+        //
+        // Gets the DPI of the image source.
+        //
+        [propget]
+        HRESULT Dpi([out, retval] float* dpi);
+
+        //
+        // Convert units between dips and pixels.
+        //
+        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
+        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
     };
 
     [version(VERSION), 

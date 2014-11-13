@@ -58,25 +58,54 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSourceFactory::Create(
-        ICanvasResourceCreator* resourceCreator,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
+    ICanvasResourceCreatorWithDpi* resourceCreator,
+        float width,
+        float height,
         ICanvasImageSource** imageSource)
     {
-        return CreateWithBackground(
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+
+                float dpi;
+                ThrowIfFailed(resourceCreator->get_Dpi(&dpi));
+
+                ThrowIfFailed(CreateWithDpiAndBackground(
+                    As<ICanvasResourceCreator>(resourceCreator).Get(),
+                    width,
+                    height,
+                    dpi,
+                    CanvasBackground::Transparent,
+                    imageSource));
+            });
+    }
+
+
+    _Use_decl_annotations_
+    IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpi(
+        ICanvasResourceCreator* resourceCreator,
+        float width,
+        float height,
+        float dpi,
+        ICanvasImageSource** imageSource)
+    {
+        return CreateWithDpiAndBackground(
             resourceCreator,
-            widthInPixels,
-            heightInPixels,
+            width,
+            height,
+            dpi,
             CanvasBackground::Transparent,
             imageSource);
     }
 
 
     _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSourceFactory::CreateWithBackground(
+    IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpiAndBackground(
         ICanvasResourceCreator* resourceCreator,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
+        float width,
+        float height,
+        float dpi,
         CanvasBackground background,
         ICanvasImageSource** imageSource)
     {
@@ -104,8 +133,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 //
                 auto newCanvasImageSource = Make<CanvasImageSource>(
                     resourceCreator,
-                    widthInPixels,
-                    heightInPixels,
+                    width,
+                    height,
+                    dpi,
                     background,
                     baseFactory.Get(),
                     m_drawingSessionFactory);
@@ -123,14 +153,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     _Use_decl_annotations_
     CanvasImageSource::CanvasImageSource(
         ICanvasResourceCreator* resourceCreator,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
+        float width,
+        float height,
+        float dpi,
         CanvasBackground background,
         ISurfaceImageSourceFactory* surfaceImageSourceFactory,
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
         : m_drawingSessionFactory(drawingSessionFactory)
-        , m_widthInPixels(widthInPixels)
-        , m_heightInPixels(heightInPixels)
+        , m_width(width)
+        , m_height(height)
+        , m_dpi(dpi)
     {
         bool isOpaque = (background == CanvasBackground::Opaque);
 
@@ -147,8 +179,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IInspectable> baseInspectable;
 
         ThrowIfFailed(surfaceImageSourceFactory->CreateInstanceWithDimensionsAndOpacity(
-            m_widthInPixels,
-            m_heightInPixels,
+            DipsToPixels(m_width, m_dpi),
+            DipsToPixels(m_height, m_dpi),
             isOpaque,
             this,
             &baseInspectable,
@@ -201,61 +233,46 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color clearColor,
         ICanvasDrawingSession** drawingSession)
     {
-        return ExceptionBoundary(
-            [&]()
-            {
-                auto ds = CreateDrawingSessionWithDpi(clearColor, DEFAULT_DPI);
-                ThrowIfFailed(ds.CopyTo(drawingSession));
-            });
+        Rect updateRectangle{ 0, 0, m_width, m_height };
+
+        return CreateDrawingSessionWithUpdateRectangle(
+            clearColor,
+            updateRectangle,
+            drawingSession);
     }
 
     
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
         Color clearColor,
-        int32_t leftInPixels,
-        int32_t topInPixels,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
+        Rect updateRectangle,
         ICanvasDrawingSession** drawingSession)
     {
         return ExceptionBoundary(
             [&]()
             {
-                auto updateRectangle = ToRECT(leftInPixels, topInPixels, widthInPixels, heightInPixels);
-                auto ds = CreateDrawingSessionWithUpdateRectangleAndDpi(clearColor, updateRectangle, DEFAULT_DPI);
+                ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
+                ThrowIfFailed(GetComposableBase().As(&sisNative));
+
+                RECT rectInPixels =
+                {
+                    DipsToPixels(updateRectangle.X, m_dpi),
+                    DipsToPixels(updateRectangle.Y, m_dpi),
+                    DipsToPixels(updateRectangle.X + updateRectangle.Width, m_dpi),
+                    DipsToPixels(updateRectangle.Y + updateRectangle.Height, m_dpi),
+                };
+
+                auto ds = m_drawingSessionFactory->Create(
+                    m_device.Get(),
+                    sisNative.Get(),
+                    clearColor,
+                    rectInPixels,
+                    m_dpi);
+            
                 ThrowIfFailed(ds.CopyTo(drawingSession));
             });
     }
 
-
-    _Use_decl_annotations_
-    ComPtr<ICanvasDrawingSession> CanvasImageSource::CreateDrawingSessionWithDpi(Color const& clearColor, float dpi)
-    {
-        RECT updateRectangle = { 0, 0, m_widthInPixels, m_heightInPixels };
-
-        return CreateDrawingSessionWithUpdateRectangleAndDpi(
-            clearColor,
-            updateRectangle,
-            dpi);
-    }
-
-
-    ComPtr<ICanvasDrawingSession> CanvasImageSource::CreateDrawingSessionWithUpdateRectangleAndDpi(
-        Color const& clearColor,
-        RECT const& updateRectangle,
-        float dpi)
-    {
-        ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
-        ThrowIfFailed(GetComposableBase().As(&sisNative));
-
-        return m_drawingSessionFactory->Create(
-            m_device.Get(),
-            sisNative.Get(),
-            clearColor,
-            updateRectangle,
-            dpi);
-    }
 
     _Use_decl_annotations_
     IFACEMETHODIMP CanvasImageSource::get_Device(
@@ -269,7 +286,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     
 
     _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::put_Device(
+        IFACEMETHODIMP CanvasImageSource::put_Device(
         ICanvasDevice* value) 
     {
         return ExceptionBoundary(
@@ -281,6 +298,47 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(value->QueryInterface(resourceCreator.GetAddressOf()));
 
                 SetResourceCreator(resourceCreator.Get());
+            });
+    }
+
+
+    _Use_decl_annotations_
+    IFACEMETHODIMP CanvasImageSource::get_Dpi(
+        float* dpi)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(dpi);
+                *dpi = m_dpi;
+            });
+    }
+
+
+    _Use_decl_annotations_
+    IFACEMETHODIMP CanvasImageSource::ConvertPixelsToDips(
+        int pixels, 
+        float* dips)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(dips);
+                *dips = PixelsToDips(pixels, m_dpi);
+            });
+    }
+
+
+    _Use_decl_annotations_
+    IFACEMETHODIMP CanvasImageSource::ConvertDipsToPixels(
+        float dips, 
+        int* pixels)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(pixels);
+                *pixels = DipsToPixels(dips, m_dpi);
             });
     }
 

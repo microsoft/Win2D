@@ -489,8 +489,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(format);
         bitmapProperties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
 
+        int pixelWidth = DipsToPixels(width, dpi);
+        int pixelHeight = DipsToPixels(height, dpi);
+
         ThrowIfFailed(deviceContext->CreateBitmap(
-            ToD2DSizeU(width, height), 
+            D2D1_SIZE_U{ pixelWidth, pixelHeight },
             nullptr, // data 
             0,  // data pitch
             &bitmapProperties, 

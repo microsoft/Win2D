@@ -178,16 +178,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 handler);
         }
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) override 
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) override 
         {
             ComPtr<ICanvasResourceCreator> resourceCreator;
             ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
 
             ComPtr<ICanvasImageSource> imageSource;
-            ThrowIfFailed(m_canvasImageSourceFactory->CreateWithBackground(
+            ThrowIfFailed(m_canvasImageSourceFactory->CreateWithDpiAndBackground(
                 resourceCreator.Get(),
                 width, 
                 height,
+                dpi,
                 backgroundMode,
                 &imageSource));
 
@@ -210,6 +211,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         float GetLogicalDpi() override
         {
+            // Don't try to look up display information if we're in design mode
+            if (IsDesignModeEnabled())
+                return DEFAULT_DPI;
+
             ComPtr<IDisplayInformation> displayInformation;
             ThrowIfFailed(m_displayInformationStatics->GetForCurrentView(&displayInformation));
 
@@ -399,9 +404,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : m_adapter(adapter)
         , m_window(m_adapter->GetCurrentWindow())
         , m_recreatableDeviceManager(m_adapter->CreateRecreatableDeviceManager())
+        , m_imageSourceDpi(0)
+        , m_imageSourceWidth(0)
+        , m_imageSourceHeight(0)
         , m_isLoaded(false)
-        , m_currentWidth(0)
-        , m_currentHeight(0)
+        , m_dpi(m_adapter->GetLogicalDpi())
         , m_guardedState(std::make_unique<GuardedState>())
     {
         CreateBaseClass();
@@ -516,10 +523,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 Size newSize{};                
                 ThrowIfFailed(args->get_NewSize(&newSize));
 
-                auto newWidth = static_cast<int>(newSize.Width);
-                auto newHeight = static_cast<int>(newSize.Height);
+                auto newWidth = static_cast<float>(newSize.Width);
+                auto newHeight = static_cast<float >(newSize.Height);
 
-                if (newWidth == m_currentWidth && newHeight == m_currentHeight)
+                if (newWidth == m_imageSourceWidth && newHeight == m_imageSourceHeight)
                     return;
 
                 m_guardedState->TriggerRender(this);
@@ -648,28 +655,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(thisAsFrameworkElement->get_ActualWidth(&actualWidth));
         ThrowIfFailed(thisAsFrameworkElement->get_ActualHeight(&actualHeight));
 
-        assert(actualWidth <= static_cast<double>(INT_MAX));
-        assert(actualHeight <= static_cast<double>(INT_MAX));
-        
-        const float logicalDpi = m_adapter->GetLogicalDpi();
-        const double dpiScalingFactor = logicalDpi / DEFAULT_DPI;
-
-        const double deviceDependentWidth = actualWidth * dpiScalingFactor;
-        const double deviceDependentHeight = actualHeight * dpiScalingFactor;
-
-        assert(deviceDependentWidth <= static_cast<double>(INT_MAX));
-        assert(deviceDependentWidth >= 0.0);
-        assert(deviceDependentHeight <= static_cast<double>(INT_MAX));
-        assert(deviceDependentHeight >= 0.0);
-
-        auto width = static_cast<int>(ceil(deviceDependentWidth));
-        auto height = static_cast<int>(ceil(deviceDependentHeight));
+        float width = (float)actualWidth;
+        float height = (float)actualHeight;
 
         if (m_canvasImageSource)
         {
             // If we already have an image source that's the right size we don't
             // need to do anything.
-            if (width == m_currentWidth && height == m_currentHeight)
+            if (width == m_imageSourceWidth && height == m_imageSourceHeight && m_dpi == m_imageSourceDpi)
                 return;
         }
 
@@ -677,8 +670,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             // Zero-sized controls don't have image sources
             m_canvasImageSource.Reset();
-            m_currentWidth = 0;
-            m_currentHeight = 0;
+            m_imageSourceWidth = 0;
+            m_imageSourceHeight = 0;
+            m_imageSourceDpi = 0;
             ThrowIfFailed(m_imageControl->put_Source(nullptr));
         }
         else
@@ -688,11 +682,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 device,
                 width,
                 height,
+                m_dpi,
                 backgroundMode);
             
-            m_currentWidth = width;
-            m_currentHeight = height;
-            
+            m_imageSourceWidth = width;
+            m_imageSourceHeight = height;
+            m_imageSourceDpi = m_dpi;
+
             //
             // Set this new image source on the image control
             //
@@ -708,7 +704,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        auto drawingSession = m_canvasImageSource->CreateDrawingSessionWithDpi(clearColor, m_adapter->GetLogicalDpi());
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(clearColor, &drawingSession));
+
         ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 
@@ -818,11 +816,43 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
     
+    IFACEMETHODIMP CanvasControl::get_Dpi(float* dpi)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(dpi);
+                *dpi = m_dpi;
+            });
+    }
+
+    IFACEMETHODIMP CanvasControl::ConvertPixelsToDips(int pixels, float* dips)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(dips);
+                *dips = PixelsToDips(pixels, m_dpi);
+            });
+    }
+
+    IFACEMETHODIMP CanvasControl::ConvertDipsToPixels(float dips, int* pixels)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(pixels);
+                *pixels = DipsToPixels(dips, m_dpi);
+            });
+    }
+
     HRESULT CanvasControl::OnDpiChanged(IDisplayInformation*, IInspectable*)
     {
         return ExceptionBoundary(
             [&]
             {
+                m_dpi = m_adapter->GetLogicalDpi();
+
                 m_guardedState->TriggerRender(this);
             });
     }

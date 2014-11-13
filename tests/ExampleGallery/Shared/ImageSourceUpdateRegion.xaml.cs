@@ -12,6 +12,7 @@
 
 using Microsoft.Graphics.Canvas;
 using System;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -68,7 +69,7 @@ namespace ExampleGallery
 
             try
             {
-                using (var ds = imageSource.CreateDrawingSession(color, updateLeft, updateTop, updateWidth, updateHeight))
+                using (var ds = imageSource.CreateDrawingSession(color, new Rect(updateLeft, updateTop, updateWidth, updateHeight)))
                 {
                     CanvasTextFormat format = new CanvasTextFormat
                     {

@@ -2219,7 +2219,43 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 }
 
                 ThrowIfFailed(m_owner.CopyTo(value));
-        });
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::get_Dpi(float* dpi)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(dpi);
+
+                *dpi = GetDpi(deviceContext);
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::ConvertPixelsToDips(int pixels, float* dips)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(dips);
+
+                *dips = PixelsToDips(pixels, GetDpi(deviceContext));
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::ConvertDipsToPixels(float dips, int* pixels)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(pixels);
+
+                *pixels = DipsToPixels(dips, GetDpi(deviceContext));
+            });
     }
 
     ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);

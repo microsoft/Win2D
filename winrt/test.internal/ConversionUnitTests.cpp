@@ -173,4 +173,37 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual((BYTE)23, DesaturateChannel(23, -50));
         Assert::AreEqual((BYTE)127, DesaturateChannel(23, 999));
     }
+
+    TEST_METHOD(DpiConversion)
+    {
+        Assert::AreEqual(0, DipsToPixels(0, 96));
+        Assert::AreEqual(23, DipsToPixels(23, 96));
+        Assert::AreEqual(1234, DipsToPixels(1234, 96));
+
+        Assert::AreEqual(0, DipsToPixels(0, 144));
+        Assert::AreEqual(23 * 3 / 2, DipsToPixels(22.999f, 144));
+        Assert::AreEqual(1234 * 3 / 2, DipsToPixels(1234, 144));
+
+        Assert::AreEqual(0, DipsToPixels(0, 64));
+        Assert::AreEqual(23 * 2 / 3, DipsToPixels(23, 64));
+        Assert::AreEqual(1234 * 2 / 3, DipsToPixels(1233.5f, 64));
+
+        Assert::AreEqual(42, DipsToPixels(42.0f, 96));
+        Assert::AreEqual(42, DipsToPixels(42.1f, 96));
+        Assert::AreEqual(42, DipsToPixels(42.4f, 96));
+        Assert::AreEqual(43, DipsToPixels(42.6f, 96));
+        Assert::AreEqual(43, DipsToPixels(42.9f, 96));
+
+        Assert::AreEqual(0.0f, PixelsToDips(0, 96));
+        Assert::AreEqual(23.0f, PixelsToDips(23, 96));
+        Assert::AreEqual(1234.0f, PixelsToDips(1234, 96));
+
+        Assert::AreEqual(0.0f, PixelsToDips(0, 144));
+        Assert::AreEqual(23.0f * 2 / 3, PixelsToDips(23, 144));
+        Assert::AreEqual(1234.0f * 2 / 3, PixelsToDips(1234, 144));
+
+        Assert::AreEqual(0.0f, PixelsToDips(0, 64));
+        Assert::AreEqual(23.0f * 3 / 2, PixelsToDips(23, 64));
+        Assert::AreEqual(1234.0f * 3 / 2, PixelsToDips(1234, 64));
+    }
 };

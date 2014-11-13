@@ -182,6 +182,35 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
     }
 
+    TEST_METHOD_EX(CanvasBitmap_DpiProperties)
+    {
+        const float dpi = 144;
+
+        Fixture f;
+        auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, CanvasAlphaBehavior::Premultiplied, dpi);
+
+        f.m_bitmap->GetDpiMethod.SetExpectedCalls(3, [&](float* dpiX, float* dpiY)
+        {
+            *dpiX = dpi;
+            *dpiY = dpi;
+            return S_OK;
+        });
+
+        float actualDpi = 0;
+        ThrowIfFailed(canvasBitmap->get_Dpi(&actualDpi));
+        Assert::AreEqual(dpi, actualDpi);
+
+        const float testValue = 100;
+
+        int pixels = 0;
+        ThrowIfFailed(canvasBitmap->ConvertDipsToPixels(testValue, &pixels));
+        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
+
+        float dips = 0;
+        ThrowIfFailed(canvasBitmap->ConvertPixelsToDips((int)testValue, &dips));
+        Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+    }
+
     TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmap_NullArg)
     {
         Fixture f;

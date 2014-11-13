@@ -1866,6 +1866,36 @@ public:
             Assert::AreEqual(deviceVerify.Get(), deviceReverify.Get());
         }
     }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DpiProperties)
+    {
+        const float dpi = 144;
+
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
+        auto drawingSession = manager->Create(deviceContext.Get(), adapter);
+
+        deviceContext->GetDpiMethod.SetExpectedCalls(3, [&](float* dpiX, float* dpiY)
+        {
+            *dpiX = dpi;
+            *dpiY = dpi;
+        });
+
+        float actualDpi = 0;
+        ThrowIfFailed(drawingSession->get_Dpi(&actualDpi));
+        Assert::AreEqual(dpi, actualDpi);
+
+        const float testValue = 100;
+
+        int pixels = 0;
+        ThrowIfFailed(drawingSession->ConvertDipsToPixels(testValue, &pixels));
+        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
+
+        float dips = 0;
+        ThrowIfFailed(drawingSession->ConvertPixelsToDips((int)testValue, &dips));
+        Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+    }
 };
 
 TEST_CLASS(CanvasDrawingSession_DrawTextTests)

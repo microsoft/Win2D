@@ -26,7 +26,7 @@ TEST_CLASS(CanvasImageTests)
         const float bitmapHeight = 3;
 
         auto device = ref new CanvasDevice();
-        auto sourceBitmap = ref new CanvasRenderTarget(device, bitmapWidth, bitmapHeight);
+        auto sourceBitmap = ref new CanvasRenderTarget(device, bitmapWidth, bitmapHeight, DEFAULT_DPI);
         auto cropEffect = ref new CropEffect;
         cropEffect->Source = sourceBitmap;
         cropEffect->SourceRectangle = Rect(1, 1, bitmapWidth-2, bitmapHeight-2); //Crops out a border of pixels
@@ -78,7 +78,12 @@ TEST_CLASS(CanvasImageTests)
                     if (imageCase == 0)
                     {
                         testImage = cropEffect;
-                        expectedBounds = cropEffect->SourceRectangle;
+                        // TODO: DPI scale shouldn't be needed here - will go away once effects automatically insert DpiCompensationEffect
+                        float dpiScale = (units == CanvasUnits::Dips) ? DEFAULT_DPI / dpi : 1;
+                        expectedBounds = Rect(cropEffect->SourceRectangle.X,
+                                              cropEffect->SourceRectangle.Y,
+                                              cropEffect->SourceRectangle.Width * dpiScale,
+                                              cropEffect->SourceRectangle.Height * dpiScale);
                     }
                     else
                     {

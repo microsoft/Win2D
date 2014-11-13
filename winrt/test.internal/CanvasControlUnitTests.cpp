@@ -437,7 +437,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         auto f = std::make_shared<CreateResourcesAndDrawFixture>();
 
         f->Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
-            [=](ICanvasDevice*, int, int, CanvasBackground) -> nullptr_t 
+            [=](ICanvasDevice*, float, float, float, CanvasBackground) -> nullptr_t
             {
                 f->MarkControlDeviceAsLost();
                 ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
@@ -639,7 +639,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         for (auto const& testStep : testSteps)
         {
             if (testStep.ExpectRecreation) 
-                f.ExpectOneCreateCanvasImageSource(testStep.ResizeWidth, testStep.ResizeHeight);
+                f.ExpectOneCreateCanvasImageSource((float)testStep.ResizeWidth, (float)testStep.ResizeHeight);
 
             if (testStep.ExpectDraw)
                 f.ExpectOneDrawEvent();
@@ -662,7 +662,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         ResizeFixture f;
 
         f.ExpectOneDrawEvent();
-        f.ExpectOneCreateCanvasImageSource(anyWidth, anyHeight);
+        f.ExpectOneCreateCanvasImageSource((float)anyWidth, (float)anyHeight);
         f.Execute(anyWidth, anyHeight);
 
         f.ExpectImageSourceSetToNull();
@@ -747,8 +747,9 @@ TEST_CLASS(CanvasControlTests_SizeTests)
     {
         bool m_createCanvasImageSourceExpected;
         bool m_createCanvasImageSourceSeen;
-        int m_expectedImageSourceWidth;
-        int m_expectedImageSourceHeight;
+        float m_expectedImageSourceWidth;
+        float m_expectedImageSourceHeight;
+        float m_expectedImageSourceDpi;
         ComPtr<MockImageControl> m_imageControl;
 
     public:
@@ -757,14 +758,16 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             , m_createCanvasImageSourceSeen(false)
             , m_expectedImageSourceWidth(-1)
             , m_expectedImageSourceHeight(-1)
+            , m_expectedImageSourceDpi(-1)
             , m_imageControl(Make<MockImageControl>())
         {}
 
-        void ExpectOneCreateCanvasImageSource(int width, int height)
+        void ExpectOneCreateCanvasImageSource(float width, float height, float dpi = DEFAULT_DPI)
         {
             CreateCanvasImageSourceMethod.SetExpectedCalls(1);
             m_expectedImageSourceWidth = width;
             m_expectedImageSourceHeight = height;
+            m_expectedImageSourceDpi = dpi;
             m_imageControl->ExpectOnePutSource(MockImageControl::NonNullSource);
         }
 
@@ -789,12 +792,13 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             return m_imageControl;
         }
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) override
         {
             Assert::AreEqual(m_expectedImageSourceWidth, width, L"ExpectedImageSourceWidth");
             Assert::AreEqual(m_expectedImageSourceHeight, height, L"ExpectedImageSourceHeight");
+            Assert::AreEqual(m_expectedImageSourceDpi, dpi, L"ExpectedImageSourceDpi");
 
-            return __super::CreateCanvasImageSource(device, width, height, backgroundMode);
+            return __super::CreateCanvasImageSource(device, width, height, dpi, backgroundMode);
         }
     };
 
@@ -828,7 +832,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             m_onDraw.SetExpectedCalls(0);
         }
 
-        void ExpectOneCreateCanvasImageSource(int width, int height)
+        void ExpectOneCreateCanvasImageSource(float width, float height)
         {
             m_adapter->ExpectOneCreateCanvasImageSource(width, height);
         }
@@ -871,11 +875,12 @@ public:
 
     virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(
         ICanvasDevice* device, 
-        int width, 
-        int height, 
+        float width, 
+        float height, 
+        float dpi,
         CanvasBackground backgroundMode) override
     {
-        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, backgroundMode);
+        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, dpi, backgroundMode);
         if (result)
             return result;
 
@@ -906,6 +911,7 @@ public:
             resourceCreator.Get(),
             width,
             height,
+            dpi,
             backgroundMode,
             sisFactory.Get(),
             dsFactory);
@@ -918,8 +924,8 @@ TEST_CLASS(CanvasControlTests_Dpi)
     {
     public:
         float m_dpi;
-        int m_lastImageSourceWidth;
-        int m_lastImageSourceHeight;
+        float m_lastImageSourceWidth;
+        float m_lastImageSourceHeight;
         int m_imageSourceCount;
 
         CanvasControlTestAdapter_VerifyDpi(ID2D1DeviceContext* deviceContext)
@@ -930,13 +936,13 @@ TEST_CLASS(CanvasControlTests_Dpi)
             , m_imageSourceCount(0) 
         {}
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) override
         {
             m_lastImageSourceWidth = width;
             m_lastImageSourceHeight = height;
             m_imageSourceCount++;
             
-            return __super::CreateCanvasImageSource(device, width, height, backgroundMode);
+            return __super::CreateCanvasImageSource(device, width, height, dpi, backgroundMode);
         }
 
         virtual float GetLogicalDpi() override
@@ -953,9 +959,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
 
         float dpiCases[] = {
             50, 
-            DEFAULT_DPI - (DEFAULT_DPI * FLT_EPSILON),
             DEFAULT_DPI,
-            DEFAULT_DPI + (DEFAULT_DPI * FLT_EPSILON),
             200};
 
         for (auto dpiCase : dpiCases)
@@ -996,14 +1000,8 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
 
             // Verify the backing store size is correct
-            const float dpiScale = dpiCase / DEFAULT_DPI;
-            float expectedBackingStoreDim = controlSize * dpiScale;
-            float truncatedDimF = ceil(expectedBackingStoreDim);
-            assert(truncatedDimF <= INT_MAX);
-            int truncatedDimI = static_cast<int>(truncatedDimF);
-
-            Assert::AreEqual(truncatedDimI, adapter->m_lastImageSourceWidth);
-            Assert::AreEqual(truncatedDimI, adapter->m_lastImageSourceHeight);
+            Assert::AreEqual(controlSize, adapter->m_lastImageSourceWidth);
+            Assert::AreEqual(controlSize, adapter->m_lastImageSourceHeight);
 
             // Verify the public, device-independent size of the control.
             ComPtr<IFrameworkElement> controlAsFrameworkElement;
@@ -1035,8 +1033,8 @@ TEST_CLASS(CanvasControlTests_Dpi)
             // Verify the backing store got resized as appropriate.
             if (expectResize) expectedImageSourceCount++;
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
-            Assert::AreEqual(static_cast<int>(controlSize), adapter->m_lastImageSourceWidth);
-            Assert::AreEqual(static_cast<int>(controlSize), adapter->m_lastImageSourceHeight);
+            Assert::AreEqual(controlSize, adapter->m_lastImageSourceWidth);
+            Assert::AreEqual(controlSize, adapter->m_lastImageSourceHeight);
 
             // Verify the size of the control again.
             ThrowIfFailed(controlAsFrameworkElement->get_ActualWidth(&verifyWidth));
@@ -1044,6 +1042,30 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual<double>(verifyWidth, controlSize);
             Assert::AreEqual<double>(verifyHeight, controlSize);
         }
+    }
+
+    TEST_METHOD_EX(CanvasControl_DpiProperties)
+    {
+        const float dpi = 144;
+
+        auto deviceContext = Make<MockD2DDeviceContext>();
+        auto adapter = std::make_shared<CanvasControlTestAdapter_VerifyDpi>(deviceContext.Get());
+        adapter->m_dpi = dpi;
+        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
+
+        float actualDpi = 0;
+        ThrowIfFailed(canvasControl->get_Dpi(&actualDpi));
+        Assert::AreEqual(dpi, actualDpi);
+
+        const float testValue = 100;
+
+        int pixels = 0;
+        ThrowIfFailed(canvasControl->ConvertDipsToPixels(testValue, &pixels));
+        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
+
+        float dips = 0;
+        ThrowIfFailed(canvasControl->ConvertPixelsToDips((int)testValue, &dips));
+        Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
     }
 };
 
@@ -1393,7 +1415,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         ThrowIfFailed(f.Control->put_ClearColor(anyOpaqueColor));
 
         f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
-            [&](ICanvasDevice*, int, int, CanvasBackground backgroundMode)
+            [&](ICanvasDevice*, float, float, float, CanvasBackground backgroundMode)
             {
                 Assert::AreEqual(CanvasBackground::Opaque, backgroundMode);
                 return nullptr;
@@ -1418,7 +1440,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         ThrowIfFailed(f.Control->put_ClearColor(anyTransparentColor));
 
         f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
-            [&](ICanvasDevice*, int, int, CanvasBackground backgroundMode)
+            [&](ICanvasDevice*, float, float, float, CanvasBackground backgroundMode)
             {
                 Assert::AreEqual(CanvasBackground::Transparent, backgroundMode);
                 return nullptr;

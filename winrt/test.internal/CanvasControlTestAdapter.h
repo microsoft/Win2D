@@ -32,7 +32,7 @@ public:
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
     CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<IRecreatableDeviceManager>());
-    CALL_COUNTER_WITH_MOCK(CreateCanvasImageSourceMethod, ComPtr<CanvasImageSource>(ICanvasDevice*, int, int, CanvasBackground));
+    CALL_COUNTER_WITH_MOCK(CreateCanvasImageSourceMethod, ComPtr<CanvasImageSource>(ICanvasDevice*, float, float, float, CanvasBackground));
 
     ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
 
@@ -104,11 +104,12 @@ public:
 
     virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(
         ICanvasDevice* device, 
-        int width, 
-        int height, 
+        float width, 
+        float height,
+        float dpi,
         CanvasBackground backgroundMode) override
     {
-        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, backgroundMode);
+        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, dpi, backgroundMode);
         if (result)
             return result;
 
@@ -143,6 +144,7 @@ public:
             resourceCreator.Get(),
             width,
             height,
+            dpi,
             backgroundMode,
             sisFactory.Get(),
             dsFactory);

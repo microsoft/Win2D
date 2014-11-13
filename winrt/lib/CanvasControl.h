@@ -64,7 +64,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler*, IWindow*) = 0;
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, int width, int height, CanvasBackground backgroundMode) = 0;
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         virtual float GetLogicalDpi() = 0;
 
@@ -103,6 +103,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasControl : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasControl,
+        ICanvasResourceCreatorWithDpi,
         ICanvasResourceCreator,
         ABI::Windows::UI::Xaml::IFrameworkElementOverrides,
         ComposableBase<ABI::Windows::UI::Xaml::Controls::IUserControl>>
@@ -128,9 +129,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<IImage> m_imageControl;
         ComPtr<CanvasImageSource> m_canvasImageSource;
+        float m_imageSourceDpi;
+        float m_imageSourceWidth;
+        float m_imageSourceHeight;
+
         bool m_isLoaded;
-        int m_currentWidth;
-        int m_currentHeight;
+        float m_dpi;
 
         class GuardedState;
         std::unique_ptr<GuardedState> m_guardedState;
@@ -170,6 +174,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         IFACEMETHODIMP get_Device(ICanvasDevice** value) override;
+
+        //
+        // ICanvasResourceCreatorWithDpi
+        //
+
+        IFACEMETHODIMP get_Dpi(float* dpi) override;
+
+        IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override;
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override;
 
         //
         // IFrameworkElementOverrides

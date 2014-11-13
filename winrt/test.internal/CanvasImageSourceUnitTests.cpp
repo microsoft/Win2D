@@ -100,8 +100,9 @@ public:
         //
         auto canvasImageSource = Make<CanvasImageSource>(
             mockCanvasDevice.Get(),
-            expectedWidth,
-            expectedHeight,
+            (float)expectedWidth,
+            (float)expectedHeight,
+            DEFAULT_DPI,
             expectedBackground,
             mockSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
@@ -128,8 +129,9 @@ public:
 
         auto canvasImageSource = Make<CanvasImageSource>(
             static_cast<ICanvasResourceCreator*>(static_cast<StubCanvasDevice*>(expectedCanvasDevice.Get())),
-            1,
-            1,
+            1.0f,
+            1.0f,
+            DEFAULT_DPI,
             CanvasBackground::Transparent,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
@@ -155,8 +157,9 @@ public:
 
         auto canvasImageSource = Make<CanvasImageSource>(
             firstCanvasDevice.Get(),
-            1,
-            1,
+            1.0f,
+            1.0f,
+            DEFAULT_DPI,
             CanvasBackground::Transparent,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
@@ -228,8 +231,9 @@ public:
 
         auto canvasImageSource = Make<CanvasImageSource>(
             canvasControl.Get(),
-            123,
-            456,
+            123.0f,
+            456.0f,
+            DEFAULT_DPI,
             CanvasBackground::Opaque,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
@@ -263,8 +267,9 @@ public:
 
         auto canvasImageSource = Make<CanvasImageSource>(
             drawingSession.Get(),
-            5,
-            10,
+            5.0f,
+            10.0f,
+            DEFAULT_DPI,
             CanvasBackground::Opaque,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
@@ -276,6 +281,55 @@ public:
         ThrowIfFailed(canvasImageSource->get_Device(&sisDevice));
 
         Assert::AreEqual(static_cast<ICanvasDevice*>(canvasDevice.Get()), sisDevice.Get());
+    }
+
+    TEST_METHOD_EX(CanvasImageSource_DpiProperties)
+    {
+        const float dpi = 144;
+
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        auto resourceCreator = manager->Create(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
+        auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
+        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, dpi, CanvasBackground::Opaque, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
+
+        float actualDpi = 0;
+        ThrowIfFailed(canvasImageSource->get_Dpi(&actualDpi));
+        Assert::AreEqual(dpi, actualDpi);
+
+        const float testValue = 100;
+
+        int pixels = 0;
+        ThrowIfFailed(canvasImageSource->ConvertDipsToPixels(testValue, &pixels));
+        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
+
+        float dips = 0;
+        ThrowIfFailed(canvasImageSource->ConvertPixelsToDips((int)testValue, &dips));
+        Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+    }
+
+    TEST_METHOD_EX(CanvasImageSource_PropagatesDpiToDrawingSession)
+    {
+        const float expectedDpi = 144;
+
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        auto resourceCreator = manager->Create(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
+        auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
+        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, expectedDpi, CanvasBackground::Opaque, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
+
+        mockDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const&, float dpi)
+        {
+            Assert::AreEqual(expectedDpi, dpi);
+            return nullptr;
+        });
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(canvasImageSource->CreateDrawingSession(Color{}, &drawingSession));
     }
 };
 
@@ -292,7 +346,7 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
         int m_imageHeight;
         Color m_anyColor;
 
-        Fixture()
+        Fixture(float dpi = DEFAULT_DPI)
         {
             m_canvasDevice = Make<StubCanvasDevice>();
             m_surfaceImageSource = Make<MockSurfaceImageSource>();
@@ -306,8 +360,9 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
             
             m_canvasImageSource = Make<CanvasImageSource>(
                 m_canvasDevice.Get(),
-                m_imageWidth,
-                m_imageHeight,
+                (float)m_imageWidth,
+                (float)m_imageHeight,
+                dpi,
                 CanvasBackground::Transparent,
                 m_surfaceImageSourceFactory.Get(),
                 m_canvasImageSourceDrawingSessionFactory);
@@ -360,7 +415,32 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
 
 
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(f.m_anyColor, left, top, width, height, &drawingSession));
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(f.m_anyColor, Rect{ (float)left, (float)top, (float)width, (float)height }, &drawingSession));
+        Assert::IsTrue(drawingSession);
+    }
+
+    TEST_METHOD_EX(CanvasImageSource_CreateDrawingSessionWithUpdateRegion_PassesSpecifiedUpdateRegion_HighDpi)
+    {
+        Fixture f(DEFAULT_DPI * 2);
+
+        int32_t left = 1;
+        int32_t top = 2;
+        int32_t width = 3;
+        int32_t height = 4;
+
+        f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const& updateRect, float)
+        {
+            Assert::AreEqual(left * 2, (int32_t)updateRect.left);
+            Assert::AreEqual(top * 2, (int32_t)updateRect.top);
+            Assert::AreEqual((left + width) * 2, (int32_t)updateRect.right);
+            Assert::AreEqual((top + height) * 2, (int32_t)updateRect.bottom);
+            return Make<MockCanvasDrawingSession>();
+        });
+
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(f.m_anyColor, Rect{ (float)left, (float)top, (float)width, (float)height }, &drawingSession));
         Assert::IsTrue(drawingSession);
     }
 
@@ -384,7 +464,7 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
 
         ComPtr<ICanvasDrawingSession> ignoredDrawingSession;
         ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSession(expectedColor, &ignoredDrawingSession));
-        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedColor, anyLeft, anyTop, anyWidth, anyHeight, &ignoredDrawingSession));
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedColor, Rect{ (float)anyLeft, (float)anyTop, (float)anyWidth, (float)anyHeight }, &ignoredDrawingSession));
     }
 };
 

@@ -335,6 +335,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        IFACEMETHODIMP get_Dpi(float* dpi) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& resource = GetResource();
+                    CheckInPointer(dpi);
+
+                    *dpi = GetDpi(resource);
+                });
+        }
+
+        IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& resource = GetResource();
+                    CheckInPointer(dips);
+
+                    *dips = PixelsToDips(pixels, GetDpi(resource));
+                });
+        }
+
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& resource = GetResource();
+                    CheckInPointer(pixels);
+
+                    *pixels = DipsToPixels(dips, GetDpi(resource));
+                });
+        }
+
         // IDirect3DSurface
         IFACEMETHODIMP get_Description(Direct3DSurfaceDescription* value) override
         {

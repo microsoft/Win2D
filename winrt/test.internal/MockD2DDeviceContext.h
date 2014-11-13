@@ -36,6 +36,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(GetUnitModeMethod           , D2D1_UNIT_MODE());
         CALL_COUNTER_WITH_MOCK(SetUnitModeMethod           , void(D2D1_UNIT_MODE));
         CALL_COUNTER_WITH_MOCK(SetDpiMethod                , void(float dpiX, float dpiY));
+        CALL_COUNTER_WITH_MOCK(GetDpiMethod                , void(float* dpiX, float* dpiY));
         CALL_COUNTER_WITH_MOCK(DrawLineMethod              , void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*));
         CALL_COUNTER_WITH_MOCK(DrawRectangleMethod         , void(D2D1_RECT_F const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
         CALL_COUNTER_WITH_MOCK(FillRectangleMethod         , void(D2D1_RECT_F const*,ID2D1Brush*));
@@ -337,9 +338,9 @@ namespace canvas
             SetDpiMethod.WasCalled(dpiX, dpiY);
         }
 
-        IFACEMETHODIMP_(void) GetDpi(FLOAT *,FLOAT *) const override
+        IFACEMETHODIMP_(void) GetDpi(FLOAT* dpiX, FLOAT* dpiY) const override
         {
-            Assert::Fail(L"Unexpected call to GetDpi");
+            GetDpiMethod.WasCalled(dpiX, dpiY);
         }
 
         IFACEMETHODIMP_(D2D1_SIZE_F) GetSize() const override

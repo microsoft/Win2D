@@ -196,11 +196,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ToWindowsColor(D2D1_COLOR_F{ vector.X, vector.Y, vector.Z, 1 });
     }
 
-    inline RECT ToRECT(int32_t left, int32_t top, int32_t width, int32_t height)
-    {
-        return RECT{ left, top, left + width, top + height };
-    }
-
     inline D2D1_POINT_2F ToD2DPoint(Numerics::Vector2 const& point)
     {
         return D2D1_POINT_2F{ point.X, point.Y };
@@ -230,20 +225,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ABI::Windows::Foundation::Rect rect{ x, y, width, height };
         return rect;
-    }
-
-    inline D2D1_SIZE_U ToD2DSizeU(float width, float height)
-    {
-        if (width < 0) ThrowHR(E_INVALIDARG);
-        if (height < 0) ThrowHR(E_INVALIDARG);
-
-        if (width > static_cast<float>(UINT_MAX)) ThrowHR(E_INVALIDARG);
-        if (height > static_cast<float>(UINT_MAX)) ThrowHR(E_INVALIDARG);
-
-        if (floorf(width) != width) ThrowHR(E_INVALIDARG);
-        if (floorf(height) != height) ThrowHR(E_INVALIDARG);
-
-        return D2D1_SIZE_U{ static_cast<UINT>(width), static_cast<UINT>(height) };
     }
 
     inline D2D1_RECT_U ToD2DRectU(int32_t left, int32_t top, int32_t width, int32_t height)
@@ -368,5 +349,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             case D2D1_BUFFER_PRECISION_32BPC_FLOAT: return CanvasBufferPrecision::Precision32Float;
             default: assert(false); return CanvasBufferPrecision::Precision8UIntNormalized;
         }
+    }
+
+    inline float PixelsToDips(int pixels, float dpi)
+    {
+        return pixels * DEFAULT_DPI / dpi;
+    }
+
+    inline int DipsToPixels(float dips, float dpi)
+    {
+        return (int)roundf(dips * dpi / DEFAULT_DPI);
     }
 }}}}

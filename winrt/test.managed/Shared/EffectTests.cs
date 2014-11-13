@@ -18,6 +18,7 @@ using Windows.Foundation;
 using Windows.UI;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.DirectX;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Numerics;
 
@@ -780,7 +781,7 @@ namespace test.managed
             var effect = new GaussianBlurEffect();
 
             using (var device = new CanvasDevice())
-            using (var renderTarget = new CanvasRenderTarget(device, 1, 1))
+            using (var renderTarget = new CanvasRenderTarget(device, 1, 1, 96))
             using (var drawingSession = renderTarget.CreateDrawingSession())
             {
                 // Null source.

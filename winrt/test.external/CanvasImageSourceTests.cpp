@@ -35,7 +35,8 @@ TEST_CLASS(CanvasImageSourceTests)
                 auto canvasImageSource = ref new CanvasImageSource(
                     canvasDevice,
                     1,
-                    1);
+                    1,
+                    DEFAULT_DPI);
                     
                 auto drawingSession = canvasImageSource->CreateDrawingSession(anyColor);
                 Assert::AreEqual(drawingSession->Device, canvasImageSource->Device);

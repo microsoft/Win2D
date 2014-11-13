@@ -558,7 +558,7 @@ public:
 
     TEST_METHOD(CanvasBitmap_SaveToFileAsync_InvalidArguments)
     {
-        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
         String^ validPath = String::Concat(Windows::Storage::ApplicationData::Current->TemporaryFolder->Path, L"\\test.bin");
 
@@ -1012,7 +1012,7 @@ public:
 
     TEST_METHOD(CanvasBitmap_GetAndSetPixelBytesAndColors_InvalidArguments)
     {
-        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
         SignedRect testCases[] = {
             SignedRect(0, 0, 0, 0), // Retrieval of a zero-sized subregion should fail.
@@ -1057,7 +1057,7 @@ public:
 
     TEST_METHOD(CanvasRenderTarget_SetPixelBytes_InvalidArraySize_ThrowsDescriptiveException)
     {
-        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2);
+        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2, DEFAULT_DPI);
         Platform::Array<byte>^ bytes = ref new Platform::Array<byte>(1);
 
         try
@@ -1074,7 +1074,7 @@ public:
 
     TEST_METHOD(CanvasRenderTarget_SetPixelColors_InvalidArraySize_ThrowsDescriptiveException)
     {
-        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2);
+        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2, DEFAULT_DPI);
         Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
 
         ExpectExceptionMessage(
@@ -1088,7 +1088,7 @@ public:
 
     TEST_METHOD(CanvasRenderTarget_PixelColors_InvalidPixelFormat_ThrowsDescriptiveException)
     {
-        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DirectXPixelFormat::R8G8B8A8UIntNormalized);
+        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DirectXPixelFormat::R8G8B8A8UIntNormalized, CanvasAlphaBehavior::Premultiplied, DEFAULT_DPI);
         Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
 
         const wchar_t* expectedMessage = L"This method only supports resources with pixel format DirectXPixelFormat::B8G8R8A8UIntNormalized.";
@@ -1113,7 +1113,7 @@ public:
         // as data, we also have the convention that you cannot set a zero array. 
         // Verify this corner case on a zero-sized bitmap.
         //
-        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 0, 0);
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 0, 0, DEFAULT_DPI);
 
         Platform::Array<byte>^ zeroSizedByteArray = ref new Platform::Array<byte>(0);
         Assert::ExpectException<Platform::InvalidArgumentException^>(
@@ -1147,7 +1147,7 @@ public:
         const int expectedByteSizeOfBitmap = bitmapWidth * bitmapHeight * 4;
         const int expectedColorCountOfBitmap = bitmapWidth * bitmapHeight;
 
-        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, static_cast<float>(bitmapWidth), static_cast<float>(bitmapHeight));
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, static_cast<float>(bitmapWidth), static_cast<float>(bitmapHeight), DEFAULT_DPI);
         
         SignedRect subrectangle(0, 0, 1, 2);
         const int expectedByteSizeOfSubrectangle = subrectangle.Width * subrectangle.Height * 4;
@@ -1239,10 +1239,10 @@ public:
         // ungraceful errors.
         //
         auto canvasDevice0 = ref new CanvasDevice();
-        auto bitmap0 = ref new CanvasRenderTarget(canvasDevice0, 1, 1);
+        auto bitmap0 = ref new CanvasRenderTarget(canvasDevice0, 1, 1, DEFAULT_DPI);
 
         auto canvasDevice1 = ref new CanvasDevice();
-        auto bitmap1 = ref new CanvasRenderTarget(canvasDevice1, 1, 1);
+        auto bitmap1 = ref new CanvasRenderTarget(canvasDevice1, 1, 1, DEFAULT_DPI);
 
         Assert::ExpectException<Platform::COMException^>([&] { bitmap0->CopyPixelsFromBitmap(bitmap1); });        
     }
@@ -1252,14 +1252,14 @@ public:
         //
         // This is validated by D2D. Ensure the expected error occurs.
         //
-        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
         Assert::ExpectException<Platform::COMException^>([&] { bitmap->CopyPixelsFromBitmap(bitmap); });
     }
 
     TEST_METHOD(CanvasBitmap_SaveToStreamAsync_InvalidArguments)
     {
-        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+        auto canvasBitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
         auto validStream = ref new InMemoryRandomAccessStream();
 
@@ -1390,7 +1390,7 @@ public:
 
         // Ensure an unwritable stream causes SaveToStreamAsync to fail.
         StreamWithRestrictions^ streamWithNoWrite = ref new StreamWithRestrictions(true, false);
-        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
         auto asyncSave = bitmap->SaveToStreamAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp);        
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
@@ -1505,7 +1505,7 @@ public:
                 WaitExecution(asyncLoad);
             });
 
-        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1);
+            auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
         auto asyncSave = bitmap->SaveToStreamAsync(unreliableStream, CanvasBitmapFileFormat::Bmp);
         ExpectCOMExceptionWithHresult(INET_E_CONNECTION_TIMEOUT,

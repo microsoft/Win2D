@@ -45,7 +45,8 @@ public:
                     auto canvasImageSource = ref new CanvasImageSource(
                         canvasDevice,
                         1,
-                        1);
+                        1,
+                        DEFAULT_DPI);
                     brush = ref new CanvasSolidColorBrush(canvasDevice, Windows::UI::Colors::Red);
                     drawingSession = canvasImageSource->CreateDrawingSession(m_anyColor);
                 }
@@ -80,7 +81,8 @@ public:
                 auto canvasImageSource = ref new CanvasImageSource(
                     canvasDevice,
                     1,
-                    1);
+                    1,
+                    DEFAULT_DPI);
                 brush = ref new CanvasSolidColorBrush(canvasDevice, Windows::UI::Colors::Red);
                 drawingSession = canvasImageSource->CreateDrawingSession(m_anyColor);
 

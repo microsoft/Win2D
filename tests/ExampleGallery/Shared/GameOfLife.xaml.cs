@@ -55,8 +55,10 @@ namespace ExampleGallery
 
         void Canvas_CreateResources(CanvasControl sender, object args)
         {
-            currentSurface = new CanvasRenderTarget(sender, simulationW, simulationH);
-            nextSurface = new CanvasRenderTarget(sender, simulationW, simulationH);
+            const float defaultDpi = 96;
+
+            currentSurface = new CanvasRenderTarget(sender, simulationW, simulationH, defaultDpi);
+            nextSurface = new CanvasRenderTarget(sender, simulationW, simulationH, defaultDpi);
 
             CreateEffects();
 

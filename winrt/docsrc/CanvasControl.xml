@@ -85,6 +85,19 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasControl.Device">
       <summary>Gets the underlying device used by this control.</summary>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasControl.Dpi">
+      <summary>Gets the current dots-per-inch (DPI) of this control.</summary>
+      <remarks>
+        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
+        The identity DPI value is 96, which means dips and pixels are the same.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasControl.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (dips) based on the current DPI of this control.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasControl.ConvertDipsToPixels(System.Single)">
+      <summary>Converts units from device independent pixels (dips) to physical pixels based on the current DPI of this control.</summary>
+    </member>
     <member name="E:Microsoft.Graphics.Canvas.CanvasControl.CreateResources">
       <summary>Hook this event to create any resources needed for your drawing.</summary>
       <remarks>The CreateResources event is raised once when the CanvasControl is first initialized, then

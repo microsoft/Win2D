@@ -39,7 +39,7 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(F006E06D-79DB-484F-B898-479CF069C0F5), exclusiveto(CanvasControl)]
     interface ICanvasControl : IInspectable
-        requires ICanvasResourceCreator
+        requires ICanvasResourceCreatorWithDpi
     {
         [eventadd] HRESULT CreateResources(
             [in] Windows.Foundation.TypedEventHandler<CanvasControl*, IInspectable*>* value,

@@ -56,4 +56,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return GetDXGIInterface<T>(As<IDXGIInterfaceAccess>(obj).Get());
     }
 
- }}}}
+    template<typename T>
+    float GetDpi(ComPtr<T> const& obj)
+    {
+        float dpiX, dpiY;
+
+        obj->GetDpi(&dpiX, &dpiY);
+
+        return dpiX;
+    }
+
+}}}}

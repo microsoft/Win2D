@@ -60,16 +60,6 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.Dispose">
       <summary>Releases all resources used by the CanvasBitmap.</summary>
     </member>
-    
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
-      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using premultiplied alpha and default (96) DPI.</summary>
-      <remarks>
-        <p>The bitmap's properties are determined by the properties of surface.</p>
-        <p>If the surface is able to be used as a render target then a
-        CanvasRenderTarget instance is actually returned.  However, to avoid needing to cast, use <see
-        cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.</p>
-      </remarks>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size">
       <summary>Gets the size of the bitmap, in device independent pixels (dips).</summary>
     </member>
@@ -83,14 +73,45 @@ under the License.
         The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.Size).
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Dpi">
+      <summary>Gets the dots-per-inch (DPI) of this bitmap.</summary>
+      <remarks>
+        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
+        The identity DPI value is 96, which means dips and pixels are the same.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (dips) based on the DPI of this bitmap.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.ConvertDipsToPixels(System.Single)">
+      <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this bitmap.</summary>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Description">
       <summary>The description of this bitmap's underlying surface.</summary>
-    </member>  
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
+      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using premultiplied alpha and default (96) DPI.</summary>
+      <remarks>
+        The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
+        a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
+        <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+      </remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified alpha behavior and default (96) DPI.</summary>
+      <remarks>
+        The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
+        a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
+        <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified alpha behavior and DPI.</summary>
+      <remarks>
+        The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
+        a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
+        <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Creates a CanvasBitmap from an array of bytes, using the specified pixel width/height, alpha behavior and default (96) DPI.</summary>
@@ -107,22 +128,22 @@ under the License.
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
-      <remarks>The bitmap is created at default (96) DPI and set to premultiplied alpha.</remarks>
+      <remarks>The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified alpha behavior.</summary>
-      <remarks>The bitmap is created at default (96) DPI.</remarks>
+      <remarks>The bitmap is set to default (96) DPI.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified alpha behavior and DPI.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI.</summary>
-      <remarks>The bitmap is created at default (96) DPI and set to premultiplied alpha.</remarks>
+      <remarks>The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified alpha behavior.</summary>
-      <remarks>The bitmap is created at default (96) DPI.</remarks>
+      <remarks>The bitmap is set to default (96) DPI.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified alpha behavior and DPI.</summary>
@@ -130,12 +151,12 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
       <summary>Loads a bitmap from a stream.</summary>
       <remarks>This method requires that the stream be readable.
-               The bitmap is created at default (96) DPI and set to premultiplied alpha.</remarks>
+               The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Loads a bitmap from a stream, and assigns it the specified alpha behavior.</summary>
       <remarks>This method requires that the stream be readable.
-               The bitmap is created at default (96) DPI.</remarks>
+               The bitmap is set to default (96) DPI.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
       <summary>Loads a bitmap from a stream, and assigns it the specified alpha behavior and DPI.</summary>
@@ -143,7 +164,8 @@ under the License.
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String)">
-      <summary>Saves the entire bitmap to a file with the specified file name, using a default quality level of 0.9 and CanvasBitmapFileFormat.Auto. CanvasBitmapFileFormat.Auto will determine which encoding format to use based on the file extension.</summary>
+      <summary>Saves the entire bitmap to a file with the specified file name, using a default quality level of 0.9 and CanvasBitmapFileFormat.Auto.</summary>
+      <remarks>CanvasBitmapFileFormat.Auto will determine which encoding format to use based on the file extension.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
       <summary>Saves the entire bitmap to a file with the specified file name and file format, and a default quality level of 0.9.</summary>
@@ -162,23 +184,96 @@ under the License.
     </member>
     
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes">
-      <summary>Returns an array of raw byte data for the entire bitmap. Works on bitmaps of any format. The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).</summary>
+      <summary>Returns an array of raw byte data for the entire bitmap.</summary>
       <remarks>
-      The number of bytes per pixel is determined from CanvasBitmap's pixel format. For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+        Works on bitmaps of any format.
+        The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).
+        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
+        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(System.Int32,System.Int32,System.Int32,System.Int32)">
-      <summary>Returns an array of raw byte data for a subregion of the bitmap. Works on bitmaps of any format. The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).</summary>
+      <summary>Returns an array of raw byte data for a subregion of the bitmap.</summary>
       <remarks>
-      The number of bytes per pixel is determined from CanvasBitmap's pixel format. For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+        Works on bitmaps of any format.
+        The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
+        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
+        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+        The region is specified in pixels (not dips).
       </remarks>    
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelColors">
-      <summary>Returns an array of color data for the entire bitmap. The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels).</summary>
+      <summary>Returns an array of color data for the entire bitmap.</summary>
+      <remarks>
+        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
+        The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels).
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelColors(System.Int32,System.Int32,System.Int32,System.Int32)">
-      <summary>Returns an array of color data for a subregion of the bitmap The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels).</summary>
+      <summary>Returns an array of color data for a subregion of the bitmap.</summary>
+      <remarks>
+        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
+        The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels).
+        The region is specified in pixels (not dips).
+      </remarks>
     </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(System.Byte[])">
+      <summary>Sets the byte data of the bitmap from the specified array.</summary>
+      <remarks>
+        Works on bitmaps of any format.
+        The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).        
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(System.Byte[],System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Sets the byte data of a subregion of the bitmap.</summary>
+      <remarks>
+        Works on bitmaps of any format.
+        The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
+        The region is specified in pixels (not dips).
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelColors(Windows.UI.Color[])">
+      <summary>Sets the color data of the bitmap from the specified array.</summary>
+      <remarks>
+        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
+        The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels).
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelColors(Windows.UI.Color[],System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Sets the color data for a subregion of the bitmap from the specified array.</summary>
+      <remarks>
+        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
+        The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels).
+        The region is specified in pixels (not dips).
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <remarks>These bounds are the area the image would fill if it were drawn at target offset (0, 0), and identity transform on the specified drawing session.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
+      <remarks>These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</remarks>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap)">
+      <summary>Copies the entire bitmap specified into this bitmap, at position (0, 0).</summary>
+      <remarks>The bitmap specified must be able to fit, and the pixel formats must match.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32)">
+      <summary>Copies the entire bitmap specified into this bitmap at the point specified.</summary>
+      <remarks>The bitmap specified must be able to fit, and the pixel formats must match.
+               The destination point is specified in pixels (not dips).</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Copies the specified region of a bitmap into this bitmap, at the point specified.</summary>
+      <remarks>The region must be able to fit, and the pixel formats of the two bitmaps must match.
+               The destination point and source region are specified in pixels (not dips).</remarks>
+    </member>
+
+  
     <member name="T:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat">
       <summary>This denotes the format used when saving a bitmap to a file.</summary>
     </member>
@@ -188,14 +283,12 @@ under the License.
     <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Bmp">
       <summary>Indicates Windows Imaging Component's bitmap encoder.</summary>
       <remarks>
-      This format stores DPI as a measurement of pixels per meter, while Direct2D and many image-editing utilities store DPI as pixels per inch. While it's typically harmless, it's worth noting that use of this format can sometimes produce unexpectedly non-round-numbers for DPI.
       This file format doesn't support different quality levels. Different values for 'quality', if specified, will produce the same result.
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Png">
       <summary>Indicates Windows Imaging Component's PNG encoder.</summary>
       <remarks>
-      This format stores DPI as a measurement of pixels per meter, while Direct2D and many image-editing utilities store DPI as pixels per inch. While it's typically harmless, it's worth noting that use of this format can sometimes produce unexpectedly non-round-numbers for DPI.
       This file format doesn't support different quality levels. Different values for 'quality', if specified, will produce the same result.
       </remarks>
     </member>
@@ -215,7 +308,6 @@ under the License.
       <summary>Indicates Windows Imaging Component's GIF encoder.</summary>
       <remarks>
       This file format doesn't support different quality levels. Different values for 'quality', if specified, will produce the same result.
-      This format doesn't support storing DPI. No matter what DPI a CanvasBitmap has, a GIF file saved from it will have a default DPI of 96.
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.JpegXR">
@@ -225,40 +317,6 @@ under the License.
       This format is called Windows Media Photo (WMP) in some documentation.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0), and identity transform on the specified drawing session.</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
-    </member>
-    
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(System.Byte[])">
-      <summary>Sets the byte data of the bitmap from the specified array. Works on bitmaps of any format. The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(System.Byte[],System.Int32,System.Int32,System.Int32,System.Int32)">
-      <summary>Sets the byte data of a subregion of the bitmap. Works on bitmaps of any format. The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelColors(Windows.UI.Color[])">
-      <summary>Sets the color data of the bitmap from the specified array. The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels).</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelColors(Windows.UI.Color[],System.Int32,System.Int32,System.Int32,System.Int32)">
-      <summary>Sets the color data for a subregion of the bitmap from the specified array. The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM. The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels).</summary>
-    </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap)">
-      <summary>Copies the entire bitmap specified into this bitmap, at position (0, 0).</summary>
-      <remarks>The bitmap specified must be able to fit, and the pixel formats must match.</remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32)">
-      <summary>Copies the entire bitmap specified into this bitmap at the point specified.</summary>
-      <remarks>The bitmap specified must be able to fit, and the pixel formats must match.
-               The destination point is specified in pixels (not dips).</remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
-      <summary>Copies the specified region of a bitmap into this bitmap, at the point specified.</summary>
-      <remarks>The region must be able to fit, and the pixel formats of the two bitmaps must match.
-               The destination point and source region are specified in pixels (not dips).</remarks>
-    </member>
-    
   </members>
 </doc>

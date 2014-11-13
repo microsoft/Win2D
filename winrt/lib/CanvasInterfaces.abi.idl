@@ -44,4 +44,14 @@ namespace Microsoft.Graphics.Canvas
     {
         [propget] HRESULT Device([out, retval] CanvasDevice** value);
     };
+
+    [version(VERSION), uuid(1A75B512-E9FA-49E6-A876-38CAE194013E)]
+    interface ICanvasResourceCreatorWithDpi : IInspectable
+        requires ICanvasResourceCreator
+    {
+        [propget] HRESULT Dpi([out, retval] float* dpi);
+
+        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
+        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
+    };
 }

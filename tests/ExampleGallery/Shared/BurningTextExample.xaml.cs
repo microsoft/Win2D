@@ -86,7 +86,7 @@ namespace ExampleGallery
         /// </summary>
         private void SetupText(Size targetSize)
         {
-            textRenderTarget = new CanvasRenderTarget(this.canvas, (int)targetSize.Width, (int)targetSize.Height);
+            textRenderTarget = new CanvasRenderTarget(this.canvas, (float)targetSize.Width, (float)targetSize.Height);
 
             using (var ds = textRenderTarget.CreateDrawingSession())
             {

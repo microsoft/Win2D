@@ -13,6 +13,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::DirectX;
 using namespace Windows::UI;
 
 static CanvasBitmap^ CreateArbitraryCanvasBitmap(CanvasDevice^ device)
@@ -69,7 +70,7 @@ public:
 
     TEST_METHOD(CanvasImageBrush_ImageProperty_WithRenderTarget)
     {
-        auto anyRenderTarget = ref new CanvasRenderTarget(m_device, 1, 1);
+        auto anyRenderTarget = ref new CanvasRenderTarget(m_device, 1, 1, DEFAULT_DPI);
 
         auto brush = ref new CanvasImageBrush(m_device);
         brush->Image = anyRenderTarget;
