@@ -18,53 +18,146 @@ under the License.
 
     <introduction>
       <para>
-        Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics 
-        rendering with GPU acceleration. It is available to C# and C++ developers writing 
-        Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of 
+        Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
+        rendering with GPU acceleration. It is available to C# and C++ developers writing
+        Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of
         Direct2D, and integrates seamlessly with XAML and ICoreWindow.
       </para>
 
       <para>
         Win2D is work in progress and evolving rapidly. The goal of releasing this
-        code in an early, incomplete state is to solicit early developer feedback. The
-        <externalLink>
-          <linkUri>http://github.com/Microsoft/Win2D/wiki/Backlog</linkUri>
-          <linkText>project backlog</linkText>
-        </externalLink>
-        shows what we plan to add in the future, and the order in which we plan to add it.
+        code in an early, incomplete state is to solicit early developer feedback.
       </para>
 
-      <para>
-        Source code and issue tracking are available at
-        <externalLink>
-          <linkUri>http://github.com/Microsoft/Win2D</linkUri>
-          <linkText>http://github.com/Microsoft/Win2D</linkText>
-        </externalLink>
-      </para>
+      <list class="bullet">
+        <listItem>
+          <externalLink>
+            <linkText>Source code and issue tracking</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D</linkUri>
+          </externalLink>
+        </listItem>
+        <listItem>
+          <externalLink>
+            <linkText>NuGet packages</linkText>
+            <linkUri>http://www.nuget.org/packages/Win2D</linkUri>
+          </externalLink>
+        </listItem>
+        <listItem>
+          <externalLink>
+            <linkText>Features</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D/wiki/Features</linkUri>
+          </externalLink>
+          - <legacyItalic>what's implemented so far</legacyItalic>
+        </listItem>
+        <listItem>
+          <externalLink>
+            <linkText>Backlog</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D/wiki/Backlog</linkUri>
+          </externalLink>
+          - <legacyItalic>what we plan to add next</legacyItalic>
+        </listItem>
+        <listItem>
+          <externalLink>
+            <linkText>Team blog</linkText>
+            <linkUri>http://blogs.msdn.com/b/win2d</linkUri>
+          </externalLink>
+        </listItem>
+      </list>
     </introduction>
-    
+
     <section>
-      <title>Getting Started</title>
+      <title>Getting set up</title>
+
       <content>
         <para>
-          To get started using Win2D:
+          Install Visual Studio:
+        </para>
+        <list class="bullet">
+          <listItem>
+            Download <externalLink>
+              <linkText>here</linkText>
+              <linkUri>http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx</linkUri>
+            </externalLink>
+          </listItem>
+          <listItem>Recommended version: Visual Studio Community 2013 with Update 4</listItem>
+          <listItem>Minimum version: Visual Studio 2013 Update 2</listItem>
+          <listItem>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</listItem>
+        </list>
 
-          <list class="bullet">
-            <listItem>Clone the source code from github</listItem>
-            <listItem>Run build.cmd to compile it</listItem>
-            <listItem>Point Visual Studio at the resulting NuGet packages</listItem>
-            <listItem>Add a <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasControl</codeEntityReference> to your XAML page</listItem>
-          </list>
+        <para>Create your project:</para>
+        <list class="bullet">
+          <listItem>Go to 'File' -> 'New' -> 'Project...'</listItem>
+          <listItem>Select 'Visual C#' -> 'Store Apps' -> 'Universal Apps'</listItem>
+          <listItem>Create a 'Blank App (Universal Apps)'</listItem>
+          <listItem>Enter a project name of your choosing</listItem>
+          <listItem>Click 'OK'</listItem>
+        </list>
 
-          See the
+        <para>Add the Win2D NuGet package:</para>
+        <list class="bullet">
+          <listItem>Go to 'Tools' -> 'NuGet Package Manager' -> 'Manage NuGet Packages for Solution...'</listItem>
+          <listItem>Type 'Win2D' into the 'Search Online' box, and hit Enter</listItem>
+          <listItem>Select the 'Win2D' package and click 'Install', then 'OK'</listItem>
+          <listItem>Accept the license agreement</listItem>
+          <listItem>Click 'Close'</listItem>
+          <listItem>Change Solution Platform from 'Any CPU' to 'x86'</listItem>
+        </list>
+      </content>
+    </section>
+
+    <section>
+      <title>Write some code</title>
+      <content>
+        <para>Add a <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasControl</codeEntityReference> to your XAML page:</para>
+        <list class="bullet">
+          <listItem>Double click on MainPage.xaml in Solution Explorer to open the XAML editor</listItem>
+          <listItem>
+            Add the <codeEntityReference>N:Microsoft.Graphics.Canvas</codeEntityReference> namespace next to the existing xmlns statements:
+            <code>
+              xmlns:canvas="using:Microsoft.Graphics.Canvas"
+            </code>
+          </listItem>
+          <listItem>
+            Add a CanvasControl inside the existing Grid control:
+            <code>
+              &lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"&gt;
+                  &lt;canvas:CanvasControl Draw="CanvasControl_Draw" ClearColor="CornflowerBlue"/&gt;
+              &lt;/Grid&gt;
+            </code>
+          </listItem>
+        </list>
+
+        <para>Edit MainPage.xaml.cs, and add some Win2D drawing code:</para>
+        <code>
+          using Windows.UI;
+          using Windows.UI.Xaml.Controls;
+          using Microsoft.Graphics.Canvas;
+
+          public sealed partial class MainPage : Page
+          {
+              public MainPage()
+              {
+                  this.InitializeComponent();
+              }
+
+              void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+              {
+                  args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
+                  args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
+              }
+          }
+        </code>
+
+        <para>
+          If you prefer to build your own version of Win2D from source, see the 
           <externalLink>
             <linkUri>https://github.com/Microsoft/Win2D/blob/master/README.md</linkUri>
             <linkText>readme</linkText>
           </externalLink>
-          for more detailed instructions.
+          for instructions on how to clone from GitHub and compile it locally.
         </para>
       </content>
     </section>
-  
+
   </developerConceptualDocument>
 </topic>
