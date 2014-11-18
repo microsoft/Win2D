@@ -665,7 +665,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (d2dBitmap->GetPixelFormat().format != DXGI_FORMAT_B8G8R8A8_UNORM)
         {
-            ThrowHR(E_INVALIDARG);
+            ThrowHR(E_INVALIDARG, HStringReference(Strings::PixelColorsFormatRestriction).Get());
         }
 
         ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
@@ -828,7 +828,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (d2dBitmap->GetPixelFormat().format != DXGI_FORMAT_B8G8R8A8_UNORM)
         {
-            ThrowHR(E_INVALIDARG);
+            ThrowHR(E_INVALIDARG, HStringReference(Strings::PixelColorsFormatRestriction).Get());
         }
 
         ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);

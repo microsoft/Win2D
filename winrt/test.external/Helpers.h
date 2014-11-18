@@ -452,3 +452,25 @@ template<typename ACTION> static void ExpectCOMExceptionWithHresult(HRESULT hres
 
     Assert::Fail(); // Expected an exception, but none was thrown.
 }
+
+template<typename ACTION> static void ExpectExceptionMessage(const wchar_t* expectedExceptionText, HRESULT expectedHresult, ACTION functor)
+{
+    try
+    {
+        functor();
+    }
+    catch (Platform::COMException ^ e)
+    {
+        Assert::AreEqual(static_cast<unsigned int>(expectedHresult), static_cast<unsigned int>(e->HResult));
+
+        std::wstring msg(e->Message->Data());
+        Assert::IsTrue(msg.find(expectedExceptionText) != std::wstring::npos);
+        return;
+    }
+    catch (...)
+    {
+        Assert::Fail(L"ExpectExceptionMessage: An unexpected exception was thrown."); 
+    }
+
+    Assert::Fail(L"ExpectExceptionMessage: Expected an exception, but none was thrown.");
+}

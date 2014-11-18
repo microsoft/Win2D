@@ -1077,16 +1077,33 @@ public:
         auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2);
         Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
 
-        try
-        {
+        ExpectExceptionMessage(
+            L"The array was expected to be of size 4; actual array was of size 1.", 
+            E_INVALIDARG,
+            [&]
+            {
             rt->SetPixelColors(colors, 0, 0, 2, 2);
-            Assert::Fail(L"Expected exception not thrown");
-        }
-        catch (Platform::InvalidArgumentException^ e)
-        {
-            std::wstring msg(e->Message->Data());
-            Assert::IsTrue(msg.find(L"The array was expected to be of size 4; actual array was of size 1.") != std::wstring::npos);
-        }
+            });   
+    }
+
+    TEST_METHOD(CanvasRenderTarget_PixelColors_InvalidPixelFormat_ThrowsDescriptiveException)
+    {
+        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DirectXPixelFormat::R8G8B8A8UIntNormalized);
+        Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
+
+        const wchar_t* expectedMessage = L"This method only supports resources with pixel format DirectXPixelFormat::B8G8R8A8UIntNormalized.";
+
+        ExpectExceptionMessage(expectedMessage, E_INVALIDARG,
+            [&]
+            {
+                rt->SetPixelColors(colors);
+            });    
+            
+        ExpectExceptionMessage(expectedMessage, E_INVALIDARG,
+            [&]
+            {
+                rt->GetPixelColors();
+            });    
     }
 
     TEST_METHOD(CanvasBitmap_SetPixelBytesAndSetPixelColors_ZeroArrayOnZeroSizedBitmap)

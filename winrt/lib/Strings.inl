@@ -29,3 +29,4 @@ STRING(WrongArrayLength, L"The array was expected to be of size %d; actual array
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
 STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The CanvasControl does not currently have a CanvasDevice associated with it. "
     L"Ensure that resources are created from a CreateResources or Draw event handler.");
+STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat::B8G8R8A8UIntNormalized.")
