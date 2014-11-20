@@ -48,8 +48,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<IUnknown> m_previousDeviceIdentity;
         std::vector<uint64_t> m_previousInputRealizationIds;
-        int64_t m_realizationId;
+        uint64_t m_realizationId;
         
+        std::vector<ComPtr<ID2D1Effect>> m_dpiCompensators;
+
         bool m_insideGetImage;
 
     public:
@@ -84,7 +86,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasImageInternal
         //
 
-        ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId);
+        ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override;
+        RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) override;
 
     protected:
         // for effects with unknown number of inputs, inputs Size have to be set as zero
@@ -152,7 +155,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     private:
-        void SetProperties();
+        void SetD2DInputs(ID2D1DeviceContext* deviceContext, float targetDpi, bool wasRecreated);
+        void SetD2DProperties();
 
         void ThrowIfClosed();
 

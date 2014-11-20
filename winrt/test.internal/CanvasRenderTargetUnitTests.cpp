@@ -41,7 +41,7 @@ TEST_CLASS(CanvasRenderTargetTests)
                 {
                     auto deviceContext = Make<StubD2DDeviceContext>(m_d2dDevice.Get());
 
-                    deviceContext->SetDpiMethod.AllowAnyCall([=](float dpiX, float dpiY)
+                    deviceContext->SetDpiMethod.SetExpectedCalls(1, [=](float dpiX, float dpiY)
                     {
                         Assert::AreEqual(expectedDpi, dpiX);
                         Assert::AreEqual(expectedDpi, dpiY);
@@ -130,13 +130,6 @@ TEST_CLASS(CanvasRenderTargetTests)
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);    
         auto renderTarget = f.CreateRenderTarget(d2dBitmap);
 
-        d2dBitmap->GetDpiMethod.SetExpectedCalls(1, [](float* dpiX, float* dpiY)
-        { 
-            *dpiX = DEFAULT_DPI;
-            *dpiY = DEFAULT_DPI;
-            return S_OK;
-        });
-
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
 
@@ -148,15 +141,8 @@ TEST_CLASS(CanvasRenderTargetTests)
         const float expectedDpi = 123;
         
         Fixture f(expectedDpi);
-        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
+        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET, expectedDpi);
         auto renderTarget = f.CreateRenderTarget(d2dBitmap);
-
-        d2dBitmap->GetDpiMethod.SetExpectedCalls(1, [&](float* dpiX, float* dpiY)
-        {
-            *dpiX = expectedDpi;
-            *dpiY = expectedDpi;
-            return S_OK;
-        });
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
@@ -167,13 +153,6 @@ TEST_CLASS(CanvasRenderTargetTests)
         Fixture f;
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
         auto renderTarget = f.CreateRenderTargetAsWrapper(f.m_canvasDevice.Get(), d2dBitmap);
-
-        d2dBitmap->GetDpiMethod.SetExpectedCalls(1, [](float* dpiX, float* dpiY)
-        {
-            *dpiX = DEFAULT_DPI;
-            *dpiY = DEFAULT_DPI;
-            return S_OK;
-        });
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));

@@ -71,9 +71,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInternal
     //
 
-    ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId)
+    ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext)
     {
-        CheckInPointer(deviceContext);
+        ThrowIfClosed();
+
+        float targetDpi = GetDpi(deviceContext);
+        
+        return GetRealizedEffectNode(deviceContext, targetDpi).Image;
+    }
+
+    ICanvasImageInternal::RealizedEffectNode CanvasEffect::GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi)
+    {
         ThrowIfClosed();
 
         // Check if device is the same as previous device
@@ -85,6 +93,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             m_previousDeviceIdentity = deviceIdentity;
             m_resource.Reset();
+            m_dpiCompensators.clear();
         }
 
         // Create resource if not created yet
@@ -98,6 +107,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             m_realizationId++;
         }
 
+        // If this is a DPI compensation effect, we no longer need to insert
+        // any further compensation, so stop tracking the target DPI
+        if (IsEqualGUID(m_effectId, CLSID_D2D1DpiCompensation))
+        {
+            targetDpi = 0;
+        }
+
         // Check for graph cycles
         if (m_insideGetImage)
             ThrowHR(D2DERR_CYCLIC_GRAPH);
@@ -108,69 +124,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Update ID2D1Image with the latest property values if a change is detected
         if (wasRecreated || m_properties->IsChanged())
         {
-            SetProperties();
-            m_properties->SetChanged(false);
+            SetD2DProperties();
         }
 
         // Update ID2D1Image with the latest inputs, and recurse through 
         // the effect graph to make sure child nodes are properly realized
-        bool inputsChanged = wasRecreated || m_inputs->IsChanged();
-            
-        auto& inputs = m_inputs->InternalVector();
-        auto inputsSize = (unsigned int) inputs.size();
+        SetD2DInputs(deviceContext, targetDpi, wasRecreated);
 
-        // Resize input array?
-        if (inputsChanged)
-        {
-            m_resource->SetInputCount(inputsSize);
-            m_previousInputRealizationIds.resize(inputsSize);
-        }
-
-        for (unsigned int i = 0; i < inputsSize; ++i)
-        {
-            // Look up the WinRT interface representing this input
-            if (!inputs[i])
-            {
-                WinStringBuilder message;
-                message.Format(Strings::EffectNullInput, i);
-                ThrowHR(E_POINTER, message.Get());
-            }
-
-            ComPtr<ICanvasImageInternal> internalInput;
-            HRESULT hr = inputs[i].As(&internalInput);
-
-            if (FAILED(hr))
-            {
-                if (hr == E_NOINTERFACE)
-                {
-                    WinStringBuilder message;
-                    message.Format(Strings::EffectWrongInputType, i);
-                    ThrowHR(hr, message.Get());
-                }
-                else
-                {
-                    ThrowHR(hr);
-                }
-            }
-
-            // Get the underlying D2D interface (this call recurses through the effect graph)
-            uint64_t inputRealizationId;
-            auto realizedInput = internalInput->GetD2DImage(deviceContext, &inputRealizationId);
-
-            // If the input value has changed, update the D2D effect
-            if (inputsChanged || inputRealizationId != m_previousInputRealizationIds[i])
-            {
-                m_resource->SetInput(i, realizedInput.Get());
-                m_previousInputRealizationIds[i] = inputRealizationId;
-            }
-        }
-        
-        m_inputs->SetChanged(false);
-
-        if (realizationId)
-            *realizationId = m_realizationId;
-
-        return As<ID2D1Image>(m_resource);
+        return RealizedEffectNode{ As<ID2D1Image>(m_resource), 0, m_realizationId };
     }
 
     //
@@ -181,6 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         m_resource.Reset();
         m_previousDeviceIdentity.Reset();
+        m_dpiCompensators.clear();
         
         auto& inputs = m_inputs->InternalVector();
 
@@ -239,19 +201,103 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::SetInput(unsigned int index, IEffectInput* input)
     {
-        if (input)
-        {
-            ComPtr<IEffectInput> effectInput;
-            ThrowIfFailed(input->QueryInterface(effectInput.GetAddressOf()));
-            ThrowIfFailed(m_inputs->SetAt(index, effectInput.Get()));
-        }
-        else
-        {
-            ThrowIfFailed(m_inputs->SetAt(index, nullptr));
-        }
+        ThrowIfFailed(m_inputs->SetAt(index, input));
     }
 
-    void CanvasEffect::SetProperties()
+    static ComPtr<ID2D1Effect> InsertDpiCompensationEffect(ID2D1DeviceContext* deviceContext, ID2D1Image* inputImage, float inputDpi, ID2D1Effect* reuseExistingCompensator)
+    {
+        ComPtr<ID2D1Effect> dpiCompensator = reuseExistingCompensator;
+
+        // Create the D2D1DpiCompensation effect, if we don't have one already.
+        if (!dpiCompensator)
+        {
+            ThrowIfFailed(deviceContext->CreateEffect(CLSID_D2D1DpiCompensation, &dpiCompensator));
+
+            ThrowIfFailed(dpiCompensator->SetValue(D2D1_DPICOMPENSATION_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD));
+            ThrowIfFailed(dpiCompensator->SetValue(D2D1_DPICOMPENSATION_PROP_INTERPOLATION_MODE, D2D1_DPICOMPENSATION_INTERPOLATION_MODE_LINEAR));
+        }
+
+        // Set our input image as source for the DPI compensation.
+        dpiCompensator->SetInput(0, inputImage);
+        
+        // Set the DPI.
+        ThrowIfFailed(dpiCompensator->SetValue(D2D1_DPICOMPENSATION_PROP_INPUT_DPI, D2D1_VECTOR_2F{ inputDpi, inputDpi }));
+
+        return dpiCompensator;
+    }
+
+    void CanvasEffect::SetD2DInputs(ID2D1DeviceContext* deviceContext, float targetDpi, bool wasRecreated)
+    {
+        auto& inputs = m_inputs->InternalVector();
+        auto inputsSize = (unsigned int)inputs.size();
+
+        bool inputsChanged = wasRecreated || m_inputs->IsChanged();
+
+        // Resize input array?
+        if (inputsChanged)
+        {
+            m_resource->SetInputCount(inputsSize);
+            m_previousInputRealizationIds.resize(inputsSize);
+            m_dpiCompensators.resize(inputsSize);
+        }
+
+        for (unsigned int i = 0; i < inputsSize; ++i)
+        {
+            // Look up the WinRT interface representing this input
+            if (!inputs[i])
+            {
+                WinStringBuilder message;
+                message.Format(Strings::EffectNullInput, i);
+                ThrowHR(E_POINTER, message.Get());
+            }
+
+            ComPtr<ICanvasImageInternal> internalInput;
+            HRESULT hr = inputs[i].As(&internalInput);
+
+            if (FAILED(hr))
+            {
+                if (hr == E_NOINTERFACE)
+                {
+                    WinStringBuilder message;
+                    message.Format(Strings::EffectWrongInputType, i);
+                    ThrowHR(hr, message.Get());
+                }
+                else
+                {
+                    ThrowHR(hr);
+                }
+            }
+
+            // Get the underlying D2D interface (this call recurses through the effect graph)
+            auto realizedInput = internalInput->GetRealizedEffectNode(deviceContext, targetDpi);
+
+            bool needsDpiCompensation = (realizedInput.Dpi != targetDpi) && (realizedInput.Dpi != 0) && (targetDpi != 0);
+            bool hasDpiCompensation = m_dpiCompensators[i] != nullptr;
+
+            // If the input value has changed, update the D2D effect graph
+            if (inputsChanged || 
+                realizedInput.RealizationId != m_previousInputRealizationIds[i] ||
+                needsDpiCompensation != hasDpiCompensation)
+            {
+                if (needsDpiCompensation)
+                {
+                    m_dpiCompensators[i] = InsertDpiCompensationEffect(deviceContext, realizedInput.Image.Get(), realizedInput.Dpi, m_dpiCompensators[i].Get());
+                    realizedInput.Image = As<ID2D1Image>(m_dpiCompensators[i]);
+                }
+                else
+                {
+                    m_dpiCompensators[i].Reset();
+                }
+
+                m_resource->SetInput(i, realizedInput.Image.Get());
+                m_previousInputRealizationIds[i] = realizedInput.RealizationId;
+            }
+        }
+
+        m_inputs->SetChanged(false);
+    }
+
+    void CanvasEffect::SetD2DProperties()
     {
         auto& properties = m_properties->InternalVector();
         auto propertiesSize = (unsigned int) properties.size();
@@ -328,6 +374,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 }
             }
         }
+
+        m_properties->SetChanged(false);
     }
 
     void CanvasEffect::ThrowIfClosed()

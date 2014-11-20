@@ -57,7 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<typename T>
-    float GetDpi(ComPtr<T> const& obj)
+    float GetDpi(T const& obj)
     {
         float dpiX, dpiY;
 

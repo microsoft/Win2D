@@ -471,7 +471,7 @@ public:
         
         bool setInputCalled = false;
         mockEffect->MockSetInput = 
-            [&]
+            [&](UINT32, ID2D1Image*)
             {
                 Assert::IsFalse(setInputCalled);
                 setInputCalled = true;
@@ -479,7 +479,7 @@ public:
 
         bool setValueCalled = false;
         mockEffect->MockSetValue = 
-            [&]
+            [&](UINT32, D2D1_PROPERTY_TYPE, CONST BYTE*, UINT32)
             {
                 setValueCalled = true;
                 return S_OK;
@@ -493,7 +493,6 @@ public:
             return S_OK;
         };
 
-
         ComPtr<Effects::GaussianBlurEffect> blurEffect = Make<Effects::GaussianBlurEffect>();
         
         ThrowIfFailed(blurEffect->put_Source(f.Bitmap.Get()));
@@ -501,7 +500,15 @@ public:
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
 
         f.DeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(canvasDevice->GetD2DDevice());
-        f.DeviceContext->CreateEffectMethod.AllowAnyCall(
+
+        f.DeviceContext->GetDpiMethod.SetExpectedCalls(1,
+            [&](float* dpiX, float* dpiY)
+            {
+                *dpiX = DEFAULT_DPI;
+                *dpiY = DEFAULT_DPI;
+            });
+
+        f.DeviceContext->CreateEffectMethod.SetExpectedCalls(1,
             [&](IID const&, ID2D1Effect** effect)
             {
                 return mockEffect.CopyTo(effect);

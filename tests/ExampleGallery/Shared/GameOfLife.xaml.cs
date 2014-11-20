@@ -177,13 +177,30 @@ namespace ExampleGallery
                 BlueSlope  = -1, BlueOffset  = 1,
             };
 
-            // Step 4: a transform matrix scales up the simulation rendertarget and moves
+            // Step 4: insert our own DPI compensation effect to stop the system trying to
+            // automatically convert DPI for us. The Game of Life simulation always works
+            // in pixels (96 DPI) regardless of display DPI. Normally, the system would
+            // handle this mismatch automatically and scale the image up as needed to fit
+            // higher DPI displays. We don't want that behavior here, because it would use
+            // a linear filter while we want nearest neighbor. So we insert a no-op DPI
+            // converter of our own. This overrides the default adjustment by telling the
+            // system the source image is already the same DPI as the destination canvas
+            // (even though it really isn't). We'll handle any necessary scaling later
+            // ourselves, using Transform2DEffect to control the interpolation mode.
+
+            var dpiCompensationEffect = new DpiCompensationEffect
+            {
+                Source = invertEffect,
+                SourceDpi = new Vector2(canvas.Dpi),
+            };
+
+            // Step 5: a transform matrix scales up the simulation rendertarget and moves
             // it to the right part of the screen. This uses nearest neighbor filtering
             // to avoid unwanted blurring of the cell shapes.
 
             transformEffect = new Transform2DEffect
             {
-                Source = invertEffect,
+                Source = dpiCompensationEffect,
                 InterpolationMode = CanvasImageInterpolation.NearestNeighbor,
             };
         }
@@ -192,19 +209,20 @@ namespace ExampleGallery
         {
             // Scale our simulation surface to fill the CanvasControl.
             var canvasSize = new Vector2((float)canvas.ActualWidth, (float)canvas.ActualHeight);
-            var scale = canvasSize / new Vector2(simulationW, simulationH);
+            var simulationSize = new Vector2(canvas.ConvertPixelsToDips(simulationW), canvas.ConvertPixelsToDips(simulationH));
+            var scale = canvasSize / simulationSize;
             var offset = Vector2.Zero;
 
             // Letterbox or pillarbox to preserve aspect ratio.
             if (scale.X > scale.Y)
             {
-                offset.X = canvasSize.X * scale.Y / scale.X / 2;
                 scale.X = scale.Y;
+                offset.X = (canvasSize.X - simulationSize.X * scale.X) / 2;
             }
             else
             {
-                offset.Y = canvasSize.Y * scale.X / scale.Y / 2;
                 scale.Y = scale.X;
+                offset.Y = (canvasSize.Y - simulationSize.Y * scale.Y) / 2;
             }
 
             return Matrix3x2.CreateScale(scale) *
@@ -270,8 +288,8 @@ namespace ExampleGallery
 
                 var pos = Vector2.Transform(point.Position.ToVector2(), transform);
 
-                var x = (int)pos.X;
-                var y = (int)pos.Y;
+                var x = canvas.ConvertDipsToPixels(pos.X);
+                var y = canvas.ConvertDipsToPixels(pos.Y);
 
                 // If the point is within the bounds of the rendertarget, and not the same as the last point...
                 if (x >= 0 && 

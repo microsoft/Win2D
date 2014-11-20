@@ -78,12 +78,10 @@ TEST_CLASS(CanvasImageTests)
                     if (imageCase == 0)
                     {
                         testImage = cropEffect;
-                        // TODO: DPI scale shouldn't be needed here - will go away once effects automatically insert DpiCompensationEffect
-                        float dpiScale = (units == CanvasUnits::Dips) ? DEFAULT_DPI / dpi : 1;
                         expectedBounds = Rect(cropEffect->SourceRectangle.X,
                                               cropEffect->SourceRectangle.Y,
-                                              cropEffect->SourceRectangle.Width * dpiScale,
-                                              cropEffect->SourceRectangle.Height * dpiScale);
+                                              cropEffect->SourceRectangle.Width,
+                                              cropEffect->SourceRectangle.Height);
                     }
                     else
                     {

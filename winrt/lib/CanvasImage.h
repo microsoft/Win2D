@@ -21,14 +21,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasImageInternal : public IUnknown
     {
     public:
-        // Some image types (effects) are virtualized and may need to re-realize 
-        // their underlying D2D object for various reasons. To avoid having to hang 
-        // on to COM interface pointers (which introduces lifespan complexities) we 
-        // use a simple integer ID to detect these cases. The contract is that 
-        // whenever an ICanvasImage implementation changes its GetD2DImage return 
-        // value, it must also report a new realizationId (eg. by incrementing it).
+        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) = 0;
+      
+        // GetRealizedEffectNode is a fancier version of GetD2DImage, which propagates the
+        // extra information needed to realize an effect graph where input nodes may be
+        // either bitmaps or other effects.
+        //
+        // targetDpi passes in the DPI of the target device context. This is used to
+        // determine when a D2D1DpiCompensation effect needs to be inserted. If zero,
+        // DPI has already been handled and no further compensation is required.
+        //
+        // result.Dpi returns the DPI of a source bitmap, or zero if the image does not
+        // have a fixed DPI. A D2D1DpiCompensation effect will be inserted whenever
+        // targetDpi and imageDpi are different and both non-zero.
 
-        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId = nullptr) = 0;
+        // result.RealizationId is used to efficiently detect when the ID2D1Image returned by an
+        // ICanvasImage has changed. Effects are virtualized and may need to re-realize their
+        // underlying D2D objects for various reasons. To avoid having to hang on to COM
+        // interface pointers (which introduces lifespan complexities) we use a simple integer
+        // ID to detect these cases. The contract is that whenever an ICanvasImage implementation 
+        // changes its ID2D1Image, it must also report a new realizationId (eg. by incrementing it).
+
+        struct RealizedEffectNode
+        {
+            ComPtr<ID2D1Image> Image;
+            float Dpi;
+            uint64_t RealizationId;
+        };
+
+        virtual RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) = 0;
     };
 
     Rect GetImageBoundsImpl(

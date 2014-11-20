@@ -30,7 +30,7 @@ namespace canvas
         std::function<ComPtr<ID2D1SolidColorBrush>(D2D1_COLOR_F const&)> MockCreateSolidColorBrush;
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
-        std::function<ComPtr<ID2D1Bitmap1>()> MockCreateBitmapFromWicResource;
+        std::function<ComPtr<ID2D1Bitmap1>(IWICFormatConverter* converter, CanvasAlphaBehavior alpha, float dpi)> MockCreateBitmapFromWicResource;
         std::function<ComPtr<ID2D1Bitmap1>(
             float width,
             float height,
@@ -143,7 +143,7 @@ namespace canvas
                 Assert::Fail(L"Unexpected call to CreateBitmapFromWicResource");
                 return nullptr;
             }
-            return MockCreateBitmapFromWicResource();
+            return MockCreateBitmapFromWicResource(converter, alpha, dpi);
         }
 
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(

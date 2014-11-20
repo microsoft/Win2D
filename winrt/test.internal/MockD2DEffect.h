@@ -20,9 +20,9 @@ namespace canvas
         ChainInterfaces < ID2D1Effect, ID2D1Properties >>
     {
     public:
-        std::function<void()> MockSetInput;
+        std::function<void(UINT32 index, ID2D1Image* input)> MockSetInput;
         std::function<HRESULT()> MockSetInputCount;
-        std::function<HRESULT()> MockSetValue;
+        std::function<HRESULT(UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)> MockSetValue;
 
         //
         // ID2D1Effect
@@ -39,7 +39,7 @@ namespace canvas
                 Assert::Fail(L"Unexpected call to SetInput");
                 return;
             }
-            MockSetInput();
+            MockSetInput(index, input);
         }
 
         STDMETHOD(SetInputCount)(
@@ -144,7 +144,7 @@ namespace canvas
                 Assert::Fail(L"Unexpected call to SetValue");
                 return E_NOTIMPL;
             }
-            return MockSetValue();
+            return MockSetValue(index, type, data, dataSize);
         }
 
         STDMETHOD(GetValueByName)(

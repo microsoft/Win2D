@@ -68,12 +68,12 @@ public:
 };
 
 
-inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap()
+inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(float dpi = DEFAULT_DPI)
 {
     auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>();
     auto manager = std::make_shared<CanvasBitmapManager>(adapter);
 
-    return manager->GetOrCreate(Make<StubD2DBitmap>().Get());
+    return manager->GetOrCreate(Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
 }
 
 

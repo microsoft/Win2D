@@ -283,11 +283,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ChainInterfaces<MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ICanvasResourceWrapperNative>>>
         , public ResourceWrapper<TRAITS>
     {
+        float m_dpi;
+
     protected:
         CanvasBitmapImpl(
             std::shared_ptr<typename TRAITS::manager_t> manager, 
             ID2D1Bitmap1* resource)
             : ResourceWrapper(manager, resource)
+            , m_dpi(GetDpi(resource))
         {}
 
     public:
@@ -340,10 +343,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    auto& resource = GetResource();
                     CheckInPointer(dpi);
-
-                    *dpi = GetDpi(resource);
+                    *dpi = m_dpi;
                 });
         }
 
@@ -352,10 +353,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    auto& resource = GetResource();
                     CheckInPointer(dips);
-
-                    *dips = PixelsToDips(pixels, GetDpi(resource));
+                    *dips = PixelsToDips(pixels, m_dpi);
                 });
         }
 
@@ -364,10 +363,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    auto& resource = GetResource();
                     CheckInPointer(pixels);
-
-                    *pixels = DipsToPixels(dips, GetDpi(resource));
+                    *pixels = DipsToPixels(dips, m_dpi);
                 });
         }
 
@@ -387,14 +384,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         // ICanvasImageInternal
-        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext, uint64_t* realizationId) override
+        ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override
         {
-            CheckInPointer(deviceContext);
-
-            if (realizationId)
-                *realizationId = 0;
-
             return GetResource();
+        }
+
+        ICanvasImageInternal::RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) override
+        {
+            return RealizedEffectNode{ GetResource(), m_dpi, 0 };
         }
 
         // ICanvasBitmapInternal

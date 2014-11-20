@@ -102,17 +102,20 @@ class StubD2DBitmap : public MockD2DBitmap
 {
     ComPtr<IDXGISurface> m_surface;
     D2D1_BITMAP_PROPERTIES1 m_properties;
+    float m_dpi;
 
 public:
-    StubD2DBitmap(D2D1_BITMAP_OPTIONS options = D2D1_BITMAP_OPTIONS_NONE)
+    StubD2DBitmap(D2D1_BITMAP_OPTIONS options = D2D1_BITMAP_OPTIONS_NONE, float dpi = DEFAULT_DPI)
         : m_properties(D2D1::BitmapProperties1(options))
         , m_surface(Make<StubDxgiSurface>())
+        , m_dpi(dpi)
     {
     }
 
-    StubD2DBitmap(IDXGISurface* surface, D2D1_BITMAP_PROPERTIES1 const* properties)
+    StubD2DBitmap(IDXGISurface* surface, D2D1_BITMAP_PROPERTIES1 const* properties, float dpi = DEFAULT_DPI)
         : m_surface(surface)
         , m_properties(properties ? *properties : D2D1_BITMAP_PROPERTIES1{})
+        , m_dpi(dpi)
     {
     }
 
@@ -128,5 +131,13 @@ public:
         ) CONST override
     {
         return m_surface.CopyTo(out);
+    }
+
+    STDMETHOD_(void, GetDpi)(
+        FLOAT *dpiX,
+        FLOAT *dpiY) CONST override
+    {
+        *dpiX = m_dpi;
+        *dpiY = m_dpi;
     }
 };
