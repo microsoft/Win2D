@@ -325,8 +325,8 @@ public:
 
         auto canvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
 
-        INT32 maximumBitmapSize;
-        canvasDevice->get_MaximumBitmapSizeInPixels(&maximumBitmapSize);
+        int32_t maximumBitmapSize;
+        ThrowIfFailed(canvasDevice->get_MaximumBitmapSizeInPixels(&maximumBitmapSize));
 
         Assert::AreEqual(someSize, maximumBitmapSize);
     }

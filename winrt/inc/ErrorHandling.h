@@ -130,6 +130,13 @@ inline void ThrowIfNullPointer(T* ptr, HRESULT hrToThrow)
         ThrowHR(hrToThrow);
 }
 
+template<typename T>
+inline void ThrowIfNegative(T value)
+{
+    if (value < 0)
+        ThrowHR(E_INVALIDARG);
+}
+
 //
 // Checks that a given pointer argument is valid (ie non-null).  This is
 // expected to be used at the beginning of methods to validate pointer
@@ -192,4 +199,3 @@ HRESULT ExceptionBoundary(CALLABLE&& fn)
         return E_UNEXPECTED;
     }
 }
-

@@ -147,6 +147,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Gradients.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TextureUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
@@ -288,7 +289,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gradients.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TextureUtilities.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)RecreatableDeviceManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +434,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)CanvasSwapChain.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="effects">

@@ -23,6 +23,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageBrushTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Matrix5x4Test.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChainTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

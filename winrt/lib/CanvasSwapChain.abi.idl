@@ -1,0 +1,100 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+namespace Microsoft.Graphics.Canvas
+{
+    // 
+    // CanvasSwapChain is a wrapper for a Direct3D swap chain. It may be used
+    // standalone, from inside CanvasAnimatedControl or CanvasSwapChainPanel.
+    //
+    // It is associated with a CanvasDevice because of the explicit association
+    // with a D3D device in CreateSwapChainForComposition.
+    //
+    // When used by a CanvasAnimatedControl, CanvasSwapChain's device is the
+    // device of the control. For CanvasSwapChainPanel or CanvasSwapChain
+    // standalone, the device is passed in explicitly by the app at 
+    // construction time, like for CanvasImageSource.
+    //
+
+    runtimeclass CanvasSwapChain;
+
+    [version(VERSION), uuid(133C25CB-ED3C-492B-BFFE-7509B521842B), exclusiveto(CanvasSwapChain)]
+    interface ICanvasSwapChainFactory : IInspectable
+    {
+        // Creates a DXGI_FORMAT_B8G8R8A8_UNORM, 2-buffer premultiplied-alpha swap chain.
+        HRESULT CreateWithSize(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] INT32 width,
+            [in] INT32 height,
+            [out, retval] CanvasSwapChain** swapChain);
+
+        // Creates a 2-buffer premultiplied-alpha swap chain.
+        HRESULT CreateWithSizeAndFormat(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] INT32 width,
+            [in] INT32 height,
+            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            [out, retval] CanvasSwapChain** swapChain);
+
+        HRESULT CreateWithAllOptions(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] INT32 width,
+            [in] INT32 height,
+
+            // Must be one of R16G16B16A16_FLOAT, DXGI_FORMAT_B8G8R8A8_UNORM, or DXGI_FORMAT_R8G8B8A8_UNORM
+            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            
+            // Must be a number from 2 to 16
+            [in] INT32 bufferCount, 
+            
+            // This enum does not include UNSPECIFIED alpha and the native one does.
+            // However, there is an overloaded constructor which omits this argument entirely.
+            [in] CanvasAlphaBehavior alphaBehavior, 
+
+            // An IDXGIOutput* argument is not included here. It represents less common 
+            // usage scenarios and there is not a way to get to it from the current API.
+            
+            [out, retval] CanvasSwapChain** swapChain);
+    };
+
+    [version(VERSION), uuid(882E3C3A-5725-409C-9E76-F80B3BACF1B4), exclusiveto(CanvasSwapChain)]
+    interface ICanvasSwapChain : IInspectable
+        requires Windows.Foundation.IClosable,
+        ICanvasResourceCreator
+    {
+        HRESULT Present();
+
+        HRESULT ResizeBuffers(
+                [in] INT32 bufferCount,
+                [in] INT32 newWidth,
+                [in] INT32 newHeight,
+                [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat newFormat);
+
+        // Returns the properties used to create this swap chain object.
+        [propget] HRESULT Width([out, retval] INT32* value);
+        [propget] HRESULT Height([out, retval] INT32* value);
+        [propget] HRESULT Format([out, retval] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat* value);
+        [propget] HRESULT BufferCount([out, retval] INT32* value);
+        [propget] HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+
+        // Used to create a drawing session that targets this swap chain object.
+        HRESULT CreateDrawingSession(
+            [in] Windows.UI.Color clearColor,
+            [out, retval] CanvasDrawingSession** drawingSession);
+    };
+
+    [version(VERSION), activatable(ICanvasSwapChainFactory, VERSION), marshaling_behavior(agile), threading(both)]
+    runtimeclass CanvasSwapChain
+    {
+        [default] interface ICanvasSwapChain;
+    };
+}

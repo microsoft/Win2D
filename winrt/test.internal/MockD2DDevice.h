@@ -40,6 +40,12 @@ namespace canvas
             , m_dxgiDevice(Make<MockDxgiDevice>())
         {            
         }
+
+        MockD2DDevice(IDXGIDevice3* dxgiDevice)
+            : m_parentD2DFactory(nullptr)
+            , m_dxgiDevice(dxgiDevice)
+        {
+        }
         
         //
         // ID2D1Resource

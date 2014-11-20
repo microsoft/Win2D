@@ -636,5 +636,49 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return radialGradientBrush;
     }
 
+
+    ComPtr<IDXGISwapChain2> CanvasDevice::CreateSwapChain(
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        CanvasAlphaBehavior alphaBehavior)
+    {
+        auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+        ComPtr<IDXGIAdapter2> dxgiAdapter;
+        ThrowIfFailed(dxgiDevice->GetParent(IID_PPV_ARGS(&dxgiAdapter)));
+
+        ComPtr<IDXGIFactory2> dxgiFactory;
+        ThrowIfFailed(dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory)));
+
+        ThrowIfNegative(widthInPixels);
+        ThrowIfNegative(heightInPixels);
+        ThrowIfNegative(bufferCount);
+
+        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = { };
+        swapChainDesc.Width = static_cast<UINT>(widthInPixels);
+        swapChainDesc.Height = static_cast<UINT>(heightInPixels);
+        swapChainDesc.Format = static_cast<DXGI_FORMAT>(format);
+        swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        swapChainDesc.SampleDesc.Count = 1;
+        swapChainDesc.SampleDesc.Quality = 0;
+        swapChainDesc.BufferCount = static_cast<UINT>(bufferCount);
+        swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+        swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+        swapChainDesc.AlphaMode = ToDxgiAlphaMode(alphaBehavior);
+
+        ComPtr<IDXGISwapChain1> swapChainBase;
+        dxgiFactory->CreateSwapChainForComposition(
+            dxgiDevice.Get(), 
+            &swapChainDesc, 
+            nullptr, // restrictToOutput
+            &swapChainBase);
+
+        auto swapChain = As<IDXGISwapChain2>(swapChainBase);
+
+        return swapChain;
+    }
+
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
 }}}}

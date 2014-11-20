@@ -282,6 +282,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+    inline D2D1_ALPHA_MODE ConvertDxgiAlphaModeToD2DAlphaMode(DXGI_ALPHA_MODE alphaMode)
+    {
+        switch (alphaMode)
+        {
+            case DXGI_ALPHA_MODE_PREMULTIPLIED: return D2D1_ALPHA_MODE_PREMULTIPLIED; 
+            case DXGI_ALPHA_MODE_STRAIGHT: return D2D1_ALPHA_MODE_STRAIGHT; 
+            case DXGI_ALPHA_MODE_IGNORE: return D2D1_ALPHA_MODE_IGNORE; 
+            default:
+                assert(false); // Unexpected
+                ThrowHR(E_UNEXPECTED);
+        }
+
+    }
+
     inline D2D1_ALPHA_MODE ToD2DAlphaMode(CanvasAlphaBehavior alphaBehavior)
     {
         switch (alphaBehavior)
@@ -322,6 +336,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             case D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaBehavior::Premultiplied;
             case D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT: return CanvasAlphaBehavior::Straight;
             default: assert(false); return CanvasAlphaBehavior::Premultiplied;
+        }
+    }
+
+    inline CanvasAlphaBehavior FromDxgiAlphaMode(DXGI_ALPHA_MODE alphaMode)
+    {
+        switch (alphaMode)
+        {
+            case DXGI_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaBehavior::Premultiplied;
+            case DXGI_ALPHA_MODE_STRAIGHT: return CanvasAlphaBehavior::Straight;
+            case DXGI_ALPHA_MODE_IGNORE: return CanvasAlphaBehavior::Ignore;
+            default: assert(false); return CanvasAlphaBehavior::Premultiplied;
+        }
+    }
+
+    inline DXGI_ALPHA_MODE ToDxgiAlphaMode(CanvasAlphaBehavior alphaMode)
+    {
+        switch (alphaMode)
+        {
+            case CanvasAlphaBehavior::Premultiplied: return DXGI_ALPHA_MODE_PREMULTIPLIED;
+            case CanvasAlphaBehavior::Straight: return DXGI_ALPHA_MODE_STRAIGHT;
+            case CanvasAlphaBehavior::Ignore: return DXGI_ALPHA_MODE_IGNORE;
+            default: assert(false); return DXGI_ALPHA_MODE_PREMULTIPLIED;
         }
     }
 

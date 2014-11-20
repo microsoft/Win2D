@@ -64,6 +64,9 @@
     <ClInclude Include="MockD2DStrokeStyle.h" />
     <ClInclude Include="MockD3D11Device.h" />
     <ClInclude Include="MockHelpers.h" />
+    <ClInclude Include="MockDXGIAdapter.h" />
+    <ClInclude Include="MockDXGIFactory.h" />
+    <ClInclude Include="MockDXGISwapChain.h" />
     <ClInclude Include="MockSurfaceImageSource.h" />
     <ClInclude Include="MockSurfaceImageSourceFactory.h" />
     <ClInclude Include="MockWICBitmap.h" />
@@ -97,6 +100,7 @@
     <ClCompile Include="CanvasRenderTargetUnitTests.cpp" />
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />
+    <ClCompile Include="CanvasSwapChainUnitTests.cpp" />
     <ClCompile Include="CanvasTextFormatTests.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

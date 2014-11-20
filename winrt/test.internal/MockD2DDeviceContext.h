@@ -51,7 +51,11 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateEffectMethod          , HRESULT(IID const&, ID2D1Effect **));
         CALL_COUNTER_WITH_MOCK(CreateSolidColorBrushMethod , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
         CALL_COUNTER_WITH_MOCK(GetImageWorldBoundsMethod   , HRESULT(ID2D1Image*, D2D1_RECT_F*));
-        CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod  , UINT32());
+        CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod, UINT32());
+        CALL_COUNTER_WITH_MOCK(CreateBitmapFromDxgiSurfaceMethod, HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
+        CALL_COUNTER_WITH_MOCK(SetTargetMethod, void(ID2D1Image*));
+        CALL_COUNTER_WITH_MOCK(BeginDrawMethod, void());
+        CALL_COUNTER_WITH_MOCK(EndDrawMethod, HRESULT(D2D1_TAG*, D2D1_TAG*));
 
         MockD2DDeviceContext()
         {
@@ -318,13 +322,12 @@ namespace canvas
 
         IFACEMETHODIMP_(void) BeginDraw() override
         {
-            Assert::Fail(L"Unexpected call to BeginDraw");
+            BeginDrawMethod.WasCalled();
         }
 
-        IFACEMETHODIMP EndDraw(D2D1_TAG *,D2D1_TAG *) override
+        IFACEMETHODIMP EndDraw(D2D1_TAG* tag0, D2D1_TAG* tag1) override
         {
-            Assert::Fail(L"Unexpected call to EndDraw");
-            return E_NOTIMPL;
+            return EndDrawMethod.WasCalled(tag0, tag1);
         }
 
         IFACEMETHODIMP_(D2D1_PIXEL_FORMAT) GetPixelFormat() const override
@@ -398,10 +401,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateBitmapFromDxgiSurface(IDXGISurface *,const D2D1_BITMAP_PROPERTIES1 *,ID2D1Bitmap1 **) override
+        IFACEMETHODIMP CreateBitmapFromDxgiSurface(IDXGISurface* surface, const D2D1_BITMAP_PROPERTIES1* properties, ID2D1Bitmap1** bitmap) override
         {
-            Assert::Fail(L"Unexpected call to CreateBitmapFromDxgiSurface");
-            return E_NOTIMPL;
+            return CreateBitmapFromDxgiSurfaceMethod.WasCalled(surface, properties, bitmap);
         }
 
         IFACEMETHODIMP CreateEffect(IID const& iid, ID2D1Effect** effect) override
@@ -467,9 +469,9 @@ namespace canvas
             GetDeviceMethod.WasCalled(device);
         }
 
-        IFACEMETHODIMP_(void) SetTarget(ID2D1Image *) override
+        IFACEMETHODIMP_(void) SetTarget(ID2D1Image* target) override
         {
-            Assert::Fail(L"Unexpected call to SetTarget");
+            return SetTargetMethod.WasCalled(target);
         }
 
         IFACEMETHODIMP_(void) GetTarget(ID2D1Image **) const override

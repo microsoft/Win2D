@@ -23,6 +23,8 @@ class MockDxgiDevice : public RuntimeClass<
 public:
     std::function<void()> MockTrim;
 
+    std::function<HRESULT(IID const&, void **)> MockGetParent;
+
     STDMETHODIMP SetPrivateData(GUID const&,UINT,const void *)
     {
         Assert::Fail(L"Unexpected call to SetPrivateData");
@@ -41,8 +43,12 @@ public:
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP GetParent(IID const&,void **)
+    STDMETHODIMP GetParent(IID const& iid, void** out)
     {
+        if (MockGetParent)
+        {
+            return MockGetParent(iid, out);
+        }
         Assert::Fail(L"Unexpected call to GetParent");
         return E_NOTIMPL;
     }

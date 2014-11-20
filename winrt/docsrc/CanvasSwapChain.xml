@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSwapChain">
+      <summary>A swap chain is a series of buffers that can be drawn to and presented to the screen.</summary>
+      <remarks>Like a bitmap, a swap chain has a fixed with and height, and stores 2D 
+      information. Underlying this, however, it may consist of multiple 
+      buffers. For more information about native swap chains, see the 
+      documentation on 
+      <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174569(v=vs.85).aspx">IDXGISwapChain</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32)">
+      <summary>Initializes a new instance of the CanvasSwapChain class, with the specified width and height.</summary>
+      <remarks>The swap chain's pixel format will default to 
+      DirectXPixelFormat::B8G8R8A8UIntNormalized, its buffer count will be 2, 
+      and its alpha mode will be CanvasAlphaBehavior::Premultiplied. </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat)">
+      <summary>Initializes a new instance of the CanvasSwapChain class with 
+      the specified width, height, and pixel format.</summary>
+      <remarks>The swap chain's buffer count will default to 2, and its alpha
+      mode will be CanvasAlphaBehavior::Premultiplied. </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+      <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.Present">
+      <summary>Presents a rendered image.</summary>
+      <remarks>On a composed target such as a XAML control, no rendering can be observed from a CanvasSwapChain until Present is called.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Int32,System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat)">
+      <summary>Changes the CanvasSwapChain's back buffer size, pixel format, and number of buffers.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateDrawingSession(Windows.UI.Color)">
+      <summary>Creates a drawing session that will draw onto this CanvasSwapChain.</summary>
+      <remarks>This method clears the CanvasSwapChain to the specified color. When you have finished drawing to the swap chain, call Present so that the results can be observed.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.Dispose">
+      <summary>Releases all resources used by the CanvasSwapChain.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Device">
+      <summary>Gets the device associated with this CanvasSwapChain.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.AlphaMode">
+      <summary>Gets the alpha mode associated with this CanvasSwapChain.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.BufferCount">
+      <summary>Gets the number of buffers that comprise this CanvasSwapChain.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Format">
+      <summary>Gets the pixel format associated with this CanvasSwapChain.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Height">
+      <summary>Gets the width, in pixels, of this CanvasSwapChain.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Width">
+      <summary>Gets the height, in pixels, of this CanvasSwapChain.</summary>
+    </member>
+  </members>
+</doc>

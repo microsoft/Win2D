@@ -97,6 +97,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1RadialGradientBrush> CreateRadialGradientBrush(
             ID2D1GradientStopCollection1* stopCollection) = 0;
+
+        virtual ComPtr<IDXGISwapChain2> CreateSwapChain(
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaBehavior alphaBehavior) = 0;
     };
     struct CanvasDeviceTraits
     {
@@ -188,6 +195,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,
+            CanvasAlphaBehavior alphaBehavior) override;
+
+        virtual ComPtr<IDXGISwapChain2> CreateSwapChain(
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
             CanvasAlphaBehavior alphaBehavior) override;
 
         //

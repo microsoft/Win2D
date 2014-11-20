@@ -56,6 +56,7 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(TrimMethod, HRESULT());
         CALL_COUNTER_WITH_MOCK(GetDXGIInterfaceMethod, HRESULT(REFIID,void**));
+        CALL_COUNTER_WITH_MOCK(CreateSwapChainMethod, ComPtr<IDXGISwapChain2>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaBehavior));
 
         //
         // ICanvasDevice
@@ -240,6 +241,16 @@ namespace canvas
             }
 
             return MockCreateRadialGradientBrush(stopCollection);
+        }
+
+        virtual ComPtr<IDXGISwapChain2> CreateSwapChain(
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaBehavior alphaBehavior)
+        {
+            return CreateSwapChainMethod.WasCalled(widthInPixels, heightInPixels, format, bufferCount, alphaBehavior);
         }
     };
 }

@@ -18,13 +18,48 @@
 //
 class MockDxgiSurface : public RuntimeClass<
     RuntimeClassFlags<ClassicCom>,
-    IDXGISurface,
+    IDXGISurface2,
     IDXGIResource>
 {
 public:
     std::function<DXGI_SURFACE_DESC()> MockGetDesc;
     std::function<uint32_t()> MockGetEvictionPriority;
     std::function<void(uint32_t)> MockSetEvictionPriority;
+
+    //
+    // IDXGISurface2
+    //
+
+    virtual HRESULT STDMETHODCALLTYPE GetResource(
+        REFIID riid,
+        void** parentResource,
+        UINT* subresourceIndex) override
+    {
+        Assert::Fail(L"Unexpected call to GetResource");
+        return E_NOTIMPL;
+    }
+
+    //
+    // IDXGISurface1
+    //
+    virtual HRESULT STDMETHODCALLTYPE GetDC(
+        BOOL discard,
+        HDC* hdc) override
+    {
+        Assert::Fail(L"Unexpected call to GetDC");
+        return E_NOTIMPL;
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE ReleaseDC(
+        RECT* dirtyRect) override
+    {
+        Assert::Fail(L"Unexpected call to ReleaseDC");
+        return E_NOTIMPL;
+    }
+
+    //
+    // IDXGISurface
+    //
 
     STDMETHODIMP GetDevice(IID const&,void **)
     {

@@ -156,6 +156,7 @@ namespace Microsoft
             TO_STRING(ID2D1StrokeStyle1);
             TO_STRING(ID2D1Bitmap);
             TO_STRING(ID2D1Bitmap1);
+            TO_STRING(IDXGISurface);
 
 #undef TO_STRING
 
@@ -720,6 +721,11 @@ namespace Microsoft
             TO_STRING_AS_INT(DWRITE_FONT_WEIGHT);
             TO_STRING_AS_INT(CanvasDrawTextOptions);
             TO_STRING_AS_INT(D2D1_DRAW_TEXT_OPTIONS);
+            TO_STRING_AS_INT(DirectXPixelFormat);
+            TO_STRING_AS_INT(DXGI_FORMAT);
+            TO_STRING_AS_INT(D2D1_BITMAP_OPTIONS);
+            TO_STRING_AS_INT(D2D1_ALPHA_MODE);
+            TO_STRING_AS_INT(D2D1_DEVICE_CONTEXT_OPTIONS);
         }
 
         inline bool operator==(D2D1_POINT_2F const& a, D2D1_POINT_2F const& b)
