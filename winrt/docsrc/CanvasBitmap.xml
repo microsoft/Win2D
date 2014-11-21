@@ -163,22 +163,22 @@ under the License.
       <remarks>This method requires that the stream be readable.</remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(System.String)">
       <summary>Saves the entire bitmap to a file with the specified file name, using a default quality level of 0.9 and CanvasBitmapFileFormat.Auto.</summary>
       <remarks>CanvasBitmapFileFormat.Auto will determine which encoding format to use based on the file extension.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
       <summary>Saves the entire bitmap to a file with the specified file name and file format, and a default quality level of 0.9.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToFileAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
       <summary>Saves the entire bitmap to a file with the specified file name and file format, and quality level.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToStreamAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
       <summary>Saves the entire bitmap to the specified stream with the specified file format, using a default quality level of 0.9.</summary>
       <remarks>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveToStreamAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
       <summary>Saves the entire bitmap to the specified stream with the specified file format and quality level.</summary>
       <remarks>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</remarks>
     </member>

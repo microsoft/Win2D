@@ -63,7 +63,7 @@ namespace Microsoft.Graphics.Canvas
         //
         // Example usage (in C#):
         //
-        // await myBitmap.SaveToFileAsync("Myfile.png", CanvasBitmapFileFormat.Png);
+        // await myBitmap.SaveAsync("Myfile.png", CanvasBitmapFileFormat.Png);
         //
         // Use myBitmap.Description.Format to make sense of GetPixelBytes() .
         // byte[] byteArr = m_bitmap_tiger.GetPixelBytes(); 
@@ -73,31 +73,31 @@ namespace Microsoft.Graphics.Canvas
         //
             
         // This overload infers the encoder from the file extension.
-        [overload("SaveToFileAsync")]
+        [overload("SaveAsync")]
         HRESULT SaveToFileAsync(
             [in] HSTRING fileName,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
-        [overload("SaveToFileAsync"), default_overload]
+        [overload("SaveAsync"), default_overload]
         HRESULT SaveToFileWithBitmapFileFormatAsync(
             [in] HSTRING fileName,
             [in] CanvasBitmapFileFormat fileFormat,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
-        [overload("SaveToFileAsync"), default_overload]
+        [overload("SaveAsync"), default_overload]
         HRESULT SaveToFileWithBitmapFileFormatAndQualityAsync(
             [in] HSTRING fileName,
             [in] CanvasBitmapFileFormat fileFormat,
             [in] float quality,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
-        [overload("SaveToStreamAsync")]
+        [overload("SaveAsync")]
         HRESULT SaveToStreamAsync(
             [in] Windows.Storage.Streams.IRandomAccessStream* stream,
             [in] CanvasBitmapFileFormat fileFormat,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
-        [overload("SaveToStreamAsync")]
+        [overload("SaveAsync")]
         HRESULT SaveToStreamWithQualityAsync(
             [in] Windows.Storage.Streams.IRandomAccessStream* stream,
             [in] CanvasBitmapFileFormat fileFormat,

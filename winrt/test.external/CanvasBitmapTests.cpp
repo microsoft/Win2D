@@ -456,7 +456,7 @@ public:
         {
             String^ targetPath = String::Concat(pathPrefix, ref new String(testCase.Extension.c_str()));
 
-            WaitExecution(canvasBitmap->SaveToFileAsync(targetPath));
+            WaitExecution(canvasBitmap->SaveAsync(targetPath));
 
             auto bitmapDecoder = LoadBitmapDecoderFromPath(targetPath);
 
@@ -493,7 +493,7 @@ public:
 
         for (auto testCase : testCases)
         {
-            WaitExecution(canvasBitmap->SaveToFileAsync(targetPath, testCase.CanvasFormat));
+            WaitExecution(canvasBitmap->SaveAsync(targetPath, testCase.CanvasFormat));
 
             auto bitmapDecoder = LoadBitmapDecoderFromPath(targetPath);
 
@@ -506,7 +506,7 @@ public:
         {
             InMemoryRandomAccessStream^ memoryStream = ref new InMemoryRandomAccessStream();
 
-            WaitExecution(canvasBitmap->SaveToStreamAsync(memoryStream, testCase.CanvasFormat));
+            WaitExecution(canvasBitmap->SaveAsync(memoryStream, testCase.CanvasFormat));
 
             auto bitmapDecoder = WaitExecution_RequiresWorkerThread(BitmapDecoder::CreateAsync(memoryStream));
 
@@ -538,10 +538,10 @@ public:
         for (auto testCase : testCases)
         {
             String^ lowQPath = String::Concat(tempFolder, L"\\low.bin");
-            WaitExecution(canvasBitmap->SaveToFileAsync(lowQPath, testCase.FileFormat, 0.1f));
+            WaitExecution(canvasBitmap->SaveAsync(lowQPath, testCase.FileFormat, 0.1f));
 
             String^ highQPath = String::Concat(tempFolder, L"\\high.bin");
-            WaitExecution(canvasBitmap->SaveToFileAsync(highQPath, testCase.FileFormat, 1.0f));
+            WaitExecution(canvasBitmap->SaveAsync(highQPath, testCase.FileFormat, 1.0f));
 
             ULONGLONG lowQSize;
             auto lowQDecoder = LoadBitmapDecoderFromPath(lowQPath, &lowQSize);
@@ -565,31 +565,31 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToFileAsync(L"an invalid path"));
+                WaitExecution(canvasBitmap->SaveAsync(L"an invalid path"));
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToFileAsync(L"fileName.jpg."));
+                WaitExecution(canvasBitmap->SaveAsync(L"fileName.jpg."));
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToFileAsync(L""));
+                WaitExecution(canvasBitmap->SaveAsync(L""));
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToFileAsync(validPath, static_cast<CanvasBitmapFileFormat>(999)));
+                WaitExecution(canvasBitmap->SaveAsync(validPath, static_cast<CanvasBitmapFileFormat>(999)));
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToFileAsync(validPath, CanvasBitmapFileFormat::Jpeg, -FLT_EPSILON));
+                WaitExecution(canvasBitmap->SaveAsync(validPath, CanvasBitmapFileFormat::Jpeg, -FLT_EPSILON));
             });
     }
 
@@ -668,7 +668,7 @@ public:
 
         for (unsigned int i = 0; i < c_subresourceSliceCount; i++)
         {
-            WaitExecution(f.GetRenderTarget(i)->SaveToFileAsync(savePath, CanvasBitmapFileFormat::Jpeg));
+            WaitExecution(f.GetRenderTarget(i)->SaveAsync(savePath, CanvasBitmapFileFormat::Jpeg));
 
             unsigned int sliceDimension = 8 >> i;
 
@@ -1266,25 +1266,26 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                canvasBitmap->SaveToStreamAsync(nullptr, CanvasBitmapFileFormat::Bmp);
+                IRandomAccessStream^ nullStream = nullptr;
+                canvasBitmap->SaveAsync(nullStream, CanvasBitmapFileFormat::Bmp);
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToStreamAsync(validStream, CanvasBitmapFileFormat::Auto));
+                WaitExecution(canvasBitmap->SaveAsync(validStream, CanvasBitmapFileFormat::Auto));
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToStreamAsync(validStream, static_cast<CanvasBitmapFileFormat>(999)));
+                WaitExecution(canvasBitmap->SaveAsync(validStream, static_cast<CanvasBitmapFileFormat>(999)));
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                WaitExecution(canvasBitmap->SaveToStreamAsync(validStream, CanvasBitmapFileFormat::Jpeg, -FLT_EPSILON));
+                WaitExecution(canvasBitmap->SaveAsync(validStream, CanvasBitmapFileFormat::Jpeg, -FLT_EPSILON));
             });
     }
 
@@ -1391,14 +1392,14 @@ public:
         // Ensure an unwritable stream causes SaveToStreamAsync to fail.
         StreamWithRestrictions^ streamWithNoWrite = ref new StreamWithRestrictions(true, false);
         auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
-        auto asyncSave = bitmap->SaveToStreamAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp);        
+        auto asyncSave = bitmap->SaveAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp);
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
             {
                 WaitExecution(asyncSave);
             });
 
-        asyncSave = bitmap->SaveToStreamAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp, 0.6f);        
+        asyncSave = bitmap->SaveAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp, 0.6f);        
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
             {
@@ -1505,16 +1506,16 @@ public:
                 WaitExecution(asyncLoad);
             });
 
-            auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
+        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
-        auto asyncSave = bitmap->SaveToStreamAsync(unreliableStream, CanvasBitmapFileFormat::Bmp);
+        auto asyncSave = bitmap->SaveAsync(unreliableStream, CanvasBitmapFileFormat::Bmp);
         ExpectCOMExceptionWithHresult(INET_E_CONNECTION_TIMEOUT,
             [&]
             {
                 WaitExecution(asyncSave);
             });
         
-        asyncSave = bitmap->SaveToStreamAsync(unreliableStream, CanvasBitmapFileFormat::Bmp, 0.5f);
+        asyncSave = bitmap->SaveAsync(unreliableStream, CanvasBitmapFileFormat::Bmp, 0.5f);
         ExpectCOMExceptionWithHresult(INET_E_CONNECTION_TIMEOUT, 
             [&]
             {
