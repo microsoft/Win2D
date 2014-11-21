@@ -71,7 +71,7 @@ public:
 
         auto async = CanvasBitmap::LoadAsync(canvasDevice, "ThisImageFileDoesNotExist.jpg");
 
-        ExpectCOMExceptionWithHresult(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND),
+        ExpectCOMException(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND),
             [&]
             {
                 WaitExecution(async);
@@ -81,7 +81,7 @@ public:
 
         async = CanvasBitmap::LoadAsync(canvasDevice, uri);
 
-        ExpectCOMExceptionWithHresult(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND),
+        ExpectCOMException(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND),
             [&]
             {
                 WaitExecution(async);
@@ -1077,9 +1077,9 @@ public:
         auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2, DEFAULT_DPI);
         Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
 
-        ExpectExceptionMessage(
-            L"The array was expected to be of size 4; actual array was of size 1.", 
+        ExpectCOMException(
             E_INVALIDARG,
+            L"The array was expected to be of size 4; actual array was of size 1.", 
             [&]
             {
             rt->SetPixelColors(colors, 0, 0, 2, 2);
@@ -1093,13 +1093,13 @@ public:
 
         const wchar_t* expectedMessage = L"This method only supports resources with pixel format DirectXPixelFormat::B8G8R8A8UIntNormalized.";
 
-        ExpectExceptionMessage(expectedMessage, E_INVALIDARG,
+        ExpectCOMException(E_INVALIDARG, expectedMessage,
             [&]
             {
                 rt->SetPixelColors(colors);
             });    
             
-        ExpectExceptionMessage(expectedMessage, E_INVALIDARG,
+        ExpectCOMException(E_INVALIDARG, expectedMessage,
             [&]
             {
                 rt->GetPixelColors();
@@ -1493,14 +1493,14 @@ public:
         StreamWithNetworkProblems^ unreliableStream = ref new StreamWithNetworkProblems();
 
         auto asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, unreliableStream);
-        ExpectCOMExceptionWithHresult(INET_E_DOWNLOAD_FAILURE,
+        ExpectCOMException(INET_E_DOWNLOAD_FAILURE,
             [&]
             {
                 WaitExecution(asyncLoad);
             });
 
         asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, unreliableStream, CanvasAlphaBehavior::Ignore);
-        ExpectCOMExceptionWithHresult(INET_E_DOWNLOAD_FAILURE, 
+        ExpectCOMException(INET_E_DOWNLOAD_FAILURE, 
             [&]
             {
                 WaitExecution(asyncLoad);
@@ -1509,14 +1509,14 @@ public:
         auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
         auto asyncSave = bitmap->SaveAsync(unreliableStream, CanvasBitmapFileFormat::Bmp);
-        ExpectCOMExceptionWithHresult(INET_E_CONNECTION_TIMEOUT,
+        ExpectCOMException(INET_E_CONNECTION_TIMEOUT,
             [&]
             {
                 WaitExecution(asyncSave);
             });
         
         asyncSave = bitmap->SaveAsync(unreliableStream, CanvasBitmapFileFormat::Bmp, 0.5f);
-        ExpectCOMExceptionWithHresult(INET_E_CONNECTION_TIMEOUT, 
+        ExpectCOMException(INET_E_CONNECTION_TIMEOUT, 
             [&]
             {
                 WaitExecution(asyncSave);

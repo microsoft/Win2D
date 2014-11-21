@@ -289,7 +289,7 @@ inline ComPtr<ID3D11Device> CreateD3DDevice()
 }
 
 template<typename ACTION_ON_CLOSED_OBJECT>
-void ExpectObjectClosed(ACTION_ON_CLOSED_OBJECT&& fn)
+inline void ExpectObjectClosed(ACTION_ON_CLOSED_OBJECT&& fn)
 {
     Assert::ExpectException<Platform::ObjectDisposedException^>(
         [&]
@@ -309,7 +309,7 @@ void ExpectObjectClosed(ACTION_ON_CLOSED_OBJECT&& fn)
 // more is to attach a debugger.
 //
 template<typename CODE>
-void RunOnUIThread(CODE&& code)
+inline void RunOnUIThread(CODE&& code)
 {
     using namespace Microsoft::WRL::Wrappers;
     using namespace Windows::ApplicationModel::Core;
@@ -354,7 +354,7 @@ void RunOnUIThread(CODE&& code)
 }
 
 template<typename T>
-T WaitExecution(IAsyncOperation<T>^ asyncOperation)
+inline T WaitExecution(IAsyncOperation<T>^ asyncOperation)
 {
     using namespace Microsoft::WRL::Wrappers;
 
@@ -407,14 +407,14 @@ inline void WaitExecution(IAsyncAction^ ayncAction)
 };
 
 template<typename T, typename U>
-void AssertTypeName(U^ obj)
+inline void AssertTypeName(U^ obj)
 {
     Assert::AreEqual(T::typeid->FullName, obj->GetType()->FullName);
 }
 
 
 template<typename T, typename U>
-ComPtr<T> GetDXGIInterface(U^ obj)
+inline ComPtr<T> GetDXGIInterface(U^ obj)
 {
     ComPtr<T> dxgi;
     ThrowIfFailed(GetDXGIInterface<T>(obj, &dxgi));
@@ -435,43 +435,33 @@ struct WicBitmapTestFixture
 };
 WicBitmapTestFixture CreateWicBitmapTestFixture();
 
-template<typename ACTION> static void ExpectCOMExceptionWithHresult(HRESULT hresult, ACTION functor)
+template<typename T>
+inline void ExpectCOMException(HRESULT expectedHR, T&& lambda)
 {
     try
     {
-        functor();
+        lambda();
+        Assert::Fail(L"Expected this to throw.");
     }
     catch (Platform::COMException^ e)
     {
-        Assert::AreEqual(e->HResult, static_cast<int>(hresult));
-        return;
+        Assert::AreEqual<HRESULT>(expectedHR, e->HResult);
     }
-    catch (...)
-    {
-        Assert::Fail(); // Some other, unexpected exception was thrown.
-    }
-
-    Assert::Fail(); // Expected an exception, but none was thrown.
 }
 
-template<typename ACTION> static void ExpectExceptionMessage(const wchar_t* expectedExceptionText, HRESULT expectedHresult, ACTION functor)
+template<typename T>
+inline void ExpectCOMException(HRESULT expectedHR, wchar_t const* expectedExceptionText, T&& lambda)
 {
     try
     {
-        functor();
+        lambda();
+        Assert::Fail(L"Expected this to throw.");
     }
-    catch (Platform::COMException ^ e)
+    catch (Platform::COMException^ e)
     {
-        Assert::AreEqual(static_cast<unsigned int>(expectedHresult), static_cast<unsigned int>(e->HResult));
+        Assert::AreEqual<HRESULT>(expectedHR, e->HResult);
 
         std::wstring msg(e->Message->Data());
         Assert::IsTrue(msg.find(expectedExceptionText) != std::wstring::npos);
-        return;
     }
-    catch (...)
-    {
-        Assert::Fail(L"ExpectExceptionMessage: An unexpected exception was thrown."); 
-    }
-
-    Assert::Fail(L"ExpectExceptionMessage: Expected an exception, but none was thrown.");
 }
