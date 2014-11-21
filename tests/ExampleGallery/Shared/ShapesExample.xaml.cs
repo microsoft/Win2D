@@ -159,7 +159,7 @@ namespace ExampleGallery
             float width = (float)sender.ActualWidth;
             float height = (float)sender.ActualHeight;
 
-            float endpointMargin = 100;
+            float endpointMargin = Math.Min(width, height) / 8;
             float controlMarginX = endpointMargin * 4;
             float controlMarginY = endpointMargin * 2;
 
@@ -189,7 +189,7 @@ namespace ExampleGallery
                     float ttt = tt * t;
                     float x = (sss * bez[0].X) + (3 * ss * t * bez[1].X) + (3 * s * tt * bez[2].X) + (ttt * bez[3].X);
                     float y = (sss * bez[0].Y) + (3 * ss * t * bez[1].Y) + (3 * s * tt * bez[2].Y) + (ttt * bez[3].Y);
-                    float radius = ttt * 100;
+                    float radius = ttt * endpointMargin;
                     float strokeWidth = (0.5f - Math.Abs(ss - 0.5f)) * 10;
 
                     ds.DrawCircle(x, y, radius, GradientColor(t), strokeWidth);
