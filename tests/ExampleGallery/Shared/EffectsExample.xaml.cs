@@ -64,6 +64,7 @@ namespace ExampleGallery
 
         CanvasBitmap bitmapTiger;
         ICanvasImage effect;
+        Vector2 currentEffectSize;
         string textLabel;
         Action<float> animationFunction;
         Stopwatch timer;
@@ -88,23 +89,38 @@ namespace ExampleGallery
             if (!isLoaded)
                 return;
 
-            var position = new Vector2((float)sender.ActualWidth, (float)sender.ActualHeight) / 2;
-            position -= bitmapTiger.Size.ToVector2() / 2;
+            float w = (float)sender.ActualWidth;
+            float h = (float)sender.ActualHeight;
 
+            // Animate and then display the current image effect.
             animationFunction((float)timer.Elapsed.TotalSeconds);
 
-            ds.DrawImage(effect, position);
+            ds.DrawImage(effect, (new Vector2(w, h) - currentEffectSize) / 2);
 
-            string text = GetActiveEffectNames();
+            // Draw text showing which effects are in use, but only if the screen is large enough to fit it.
+            const float minSizeToShowText = 550;
 
-            if (textLabel != null)
+            if (w > minSizeToShowText && h > minSizeToShowText)
             {
-                text += "\n\n" + textLabel;
+                string text = GetActiveEffectNames();
+
+                if (textLabel != null)
+                {
+                    text += "\n\n" + textLabel;
+                }
+
+                ds.DrawText(text, 0, 80, Colors.White);
             }
 
-            ds.DrawText(text, 0, 0, Colors.White);
-
             sender.Invalidate();
+        }
+
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (isLoaded)
+            {
+                effect = CreateEffect();
+            }
         }
 
         private void SettingsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -122,6 +138,7 @@ namespace ExampleGallery
         private ICanvasImage CreateEffect()
         {
             timer = Stopwatch.StartNew();
+            currentEffectSize = bitmapTiger.Size.ToVector2();
             textLabel = null;
 
             switch (CurrentEffect)
@@ -348,6 +365,8 @@ namespace ExampleGallery
                 }
             };
 
+            currentEffectSize = Vector2.Zero;
+
             return compositeEffect;
         }
 
@@ -498,6 +517,8 @@ namespace ExampleGallery
                                                                          (float)Math.Sin(elapsedTime) * 50 - 50);
 
                 displacementEffect.Amount = (float)Math.Sin(elapsedTime * 0.7) * 50 + 75;
+
+                currentEffectSize = bitmapTiger.Size.ToVector2() + new Vector2(displacementEffect.Amount / 2);
             };
 
             return displacementEffect;
@@ -603,6 +624,23 @@ namespace ExampleGallery
                 }
             };
 
+            ICanvasImage finalEffect = compositeEffect;
+
+            // Check the screen size, and scale down our output if the screen is too small to fit the whole thing as-is.
+            var xScaleFactor = (float)canvas.ActualWidth / 750;
+            var yScaleFactor = (float)canvas.ActualHeight / 500;
+
+            var scaleFactor = Math.Min(xScaleFactor, yScaleFactor);
+
+            if (scaleFactor < 1)
+            {
+                finalEffect = new Transform2DEffect
+                {
+                    Source = compositeEffect,
+                    TransformMatrix = Matrix3x2.CreateScale(scaleFactor, bitmapTiger.Size.ToVector2() / 2)
+                };
+            }
+
             // Animation changes the light directions.
             animationFunction = elapsedTime =>
             {
@@ -618,7 +656,7 @@ namespace ExampleGallery
                 spotSpecularEffect.LightPosition = new Vector3((float)Math.Cos(elapsedTime), (float)Math.Sin(elapsedTime), 1) * 100;
             };
 
-            return compositeEffect;
+            return finalEffect;
         }
 
         private ICanvasImage CombineDiffuseAndSpecular(ICanvasImage diffuse, ICanvasImage specular, float x, float y)
@@ -647,6 +685,7 @@ namespace ExampleGallery
             var contrastAdjustedTiger = new LinearTransferEffect
             {
                 Source = bitmapTiger,
+
                 RedOffset = -3,
                 GreenOffset = -3,
                 BlueOffset = -3,
@@ -679,16 +718,22 @@ namespace ExampleGallery
                 Source = recombinedRgbAndAlpha
             };
 
-            var turbulenceSize = new Vector2(512, 512);
+            const float turbulenceSize = 128;
 
-            var backgroundImage = new Transform2DEffect
+            var backgroundImage = new CropEffect
             {
-                Source = new TurbulenceEffect
+                Source = new TileEffect
                 {
-                    Octaves = 8,
-                    Size = turbulenceSize
+                    Source = new TurbulenceEffect
+                    {
+                        Octaves = 8,
+                        Size = new Vector2(turbulenceSize),
+                        Tileable = true
+                    },
+                    SourceRectangle= new Rect(0, 0, turbulenceSize, turbulenceSize)
                 },
-                TransformMatrix = Matrix3x2.CreateTranslation((bitmapTiger.Size.ToVector2() - turbulenceSize) / 2)
+                SourceRectangle = new Rect((bitmapTiger.Size.ToVector2() * -0.5f).ToPoint(),
+                                           (bitmapTiger.Size.ToVector2() * 1.5f).ToPoint())
             };
 
             var tigerOnBackground = new BlendEffect
@@ -790,6 +835,8 @@ namespace ExampleGallery
 
             animationFunction = elapsedTime => { };
 
+            currentEffectSize = renderTarget.Size.ToVector2();
+
             return compositeEffect;
         }
 
@@ -820,6 +867,8 @@ namespace ExampleGallery
                                                                                    elapsedTime / 7,
                                                                                    elapsedTime * 5);
             };
+
+            currentEffectSize = Vector2.Zero;
 
             return transformEffect;
         }

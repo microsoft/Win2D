@@ -41,11 +41,11 @@ namespace ExampleGallery
 
         Stopwatch timer;
 
-        Size oldCanvasSize;
+        Size canvasSize;
 
         void Canvas_CreateResources(CanvasControl sender, object args)
         {
-            oldCanvasSize = new Size(0, 0);
+            canvasSize = new Size(0, 0);
             timer = Stopwatch.StartNew();
             CreateFlameEffect();
         }
@@ -56,11 +56,11 @@ namespace ExampleGallery
 
             // If the window size has changed, (re)create the text bitmap.
             var newCanvasSize = new Size(sender.ActualWidth, sender.ActualHeight);
-            if (oldCanvasSize != newCanvasSize)
+            if (canvasSize != newCanvasSize)
             {
-                oldCanvasSize = newCanvasSize;
+                canvasSize = newCanvasSize;
 
-                SetupText(newCanvasSize);
+                SetupText();
             };
 
             UpdateAnimation((float)timer.Elapsed.TotalSeconds);
@@ -75,18 +75,26 @@ namespace ExampleGallery
             flameAnimation.TransformMatrix = Matrix3x2.CreateTranslation(0, -elapsedMilliseconds * 60.0f);
 
             // Scale the flame effect 2x vertically, aligned so it starts above the text.
-            flamePosition.TransformMatrix = Matrix3x2.CreateScale(
-                new Vector2(1.0f, 2.0f),
-                new Vector2((float)this.canvas.ActualWidth / 2, (float)this.canvas.ActualHeight / 2 + 20));
+            var w = (float)canvas.ActualWidth;
+            var h = (float)canvas.ActualHeight;
+
+            float verticalOffset = GetFontSize(w) * 1.2f;
+
+            var centerPoint = new Vector2(w / 2, h / 2 + verticalOffset);
+
+            flamePosition.TransformMatrix = Matrix3x2.CreateScale(1, 2, centerPoint);
         }
 
         /// <summary>
         /// Renders text into an intermediate bitmap and sets this bitmap as the input to the flame
         /// effect graph. The effect graph must already be created before calling this method.
         /// </summary>
-        private void SetupText(Size targetSize)
+        private void SetupText()
         {
-            textRenderTarget = new CanvasRenderTarget(this.canvas, (float)targetSize.Width, (float)targetSize.Height);
+            float w = (float)canvasSize.Width;
+            float h = (float)canvasSize.Height;
+
+            textRenderTarget = new CanvasRenderTarget(this.canvas, w, h);
 
             using (var ds = textRenderTarget.CreateDrawingSession())
             {
@@ -94,22 +102,32 @@ namespace ExampleGallery
 
                 ds.DrawText(
                     textInput.Text,
-                    (float)targetSize.Width / 2,
-                    (float)targetSize.Height / 2,
+                    w / 2,
+                    h / 2,
                     Colors.White,
                     new CanvasTextFormat
                     {
                         FontFamily = "Segoe UI",
-                        FontSize = 72,
+                        FontSize = GetFontSize(w),
                         ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
-                        // Bottom alignment gives us a deterministic "bottom of text" position.
-                        VerticalAlignment = CanvasVerticalAlignment.Bottom
+                        VerticalAlignment = CanvasVerticalAlignment.Top
                     });
             }
 
             // Hook up the bitmap to the inputs of the flame effect graph.
             morphology.Source = textRenderTarget;
             composite.Inputs[1] = textRenderTarget;
+        }
+
+        /// <summary>
+        /// Calculates a good font size so the text will fit even on smaller phone screens.
+        /// </summary>
+        private static float GetFontSize(float displayWidth)
+        {
+            const float maxFontSize = 72;
+            const float scaleFactor = 12;
+
+            return Math.Min(displayWidth / scaleFactor, maxFontSize);
         }
 
         /// <summary>
@@ -187,7 +205,7 @@ namespace ExampleGallery
 
         private void textInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SetupText(oldCanvasSize);
+            SetupText();
         }
     }
 }

@@ -27,23 +27,17 @@ under the License.
     d:DesignWidth="400">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <canvas:CanvasControl x:Name="canvas" Margin="5"
+                              Draw="Canvas_Draw"
+                              CreateResources="Canvas_CreateResources"
+                              SizeChanged="Canvas_SizeChanged"/>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollMode="Disabled" HorizontalScrollMode="Auto" VerticalScrollBarVisibility="Hidden">
-            <StackPanel Orientation="Vertical" MinWidth="150" Margin="5" HorizontalAlignment="Left">
-                <TextBlock>Effect:</TextBlock>
-                <ComboBox 
-                      ItemsSource="{Binding ElementName=control, Path=EffectsList}"
+        <StackPanel Orientation="Vertical" MinWidth="150" Margin="5" HorizontalAlignment="Left">
+            <TextBlock>Effect:</TextBlock>
+            <ComboBox ItemsSource="{Binding ElementName=control, Path=EffectsList}"
                       SelectedItem="{Binding CurrentEffect, ElementName=control, Mode=TwoWay}"
                       FontSize="15"
                       SelectionChanged="SettingsCombo_SelectionChanged"/>
-            </StackPanel>
-        </ScrollViewer>
-        <canvas:CanvasControl x:Name="canvas" Grid.Row="1" Margin="5"
-                              Draw="Canvas_Draw"
-                              CreateResources="Canvas_CreateResources"/>
+        </StackPanel>
     </Grid>
 </UserControl>
