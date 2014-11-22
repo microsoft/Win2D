@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -49,6 +49,7 @@
     <ClInclude Include="MockCanvasDeviceActivationFactory.h" />
     <ClInclude Include="MockCanvasDrawingSession.h" />
     <ClInclude Include="MockCanvasImageSourceDrawingSessionFactory.h" />
+    <ClInclude Include="MockCanvasSwapChain.h" />
     <ClInclude Include="MockCoreApplication.h" />
     <ClInclude Include="MockD2DBitmap.h" />
     <ClInclude Include="MockD2DBitmapBrush.h" />
@@ -82,6 +83,7 @@
     <ClInclude Include="StubImageControl.h" />
     <ClInclude Include="StubSurfaceImageSource.h" />
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
+    <ClInclude Include="StubSwapChainPanel.h" />
     <ClInclude Include="StubUserControl.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="StubD2DResources.h" />
@@ -101,6 +103,7 @@
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="CanvasSwapChainUnitTests.cpp" />
+    <ClCompile Include="CanvasSwapChainPanelUnitTests.cpp" />
     <ClCompile Include="CanvasTextFormatTests.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

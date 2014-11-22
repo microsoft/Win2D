@@ -157,6 +157,8 @@ namespace Microsoft
             TO_STRING(ID2D1Bitmap);
             TO_STRING(ID2D1Bitmap1);
             TO_STRING(IDXGISurface);
+            TO_STRING(IDXGISwapChain);
+            TO_STRING(ICanvasSwapChain);
 
 #undef TO_STRING
 

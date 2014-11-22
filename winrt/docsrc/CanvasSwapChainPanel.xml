@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>  
+    <members>
+      <member name="T:Microsoft.Graphics.Canvas.CanvasSwapChainPanel">
+        <summary>A swap chain panel is a XAML control which draws to a swap chain.</summary>
+        <remarks>
+        The size of the swap chain may be different from the control's layout size. In particular, it does not stretch to fill the control. For more information on swap chains, see <see cref="T:Microsoft.Graphics.Canvas.CanvasSwapChain"/>.
+        </remarks>
+        <example>
+        <code>
+            CanvasSwapChain swapChain = new CanvasSwapChain(new CanvasDevice(), 800, 600);
+
+            canvasSwapChainPanel.SwapChain = swapChain;
+
+            using(CanvasDrawingSession ds = swapChain.CreateDrawingSession(Colors.White))
+            {
+                ds.DrawCircle(400, 300, 100, Colors.Red, 20);
+            }
+
+            swapChain.Present();
+        </code>
+        </example>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChainPanel.#ctor">
+        <summary>Initializes a new instance of the CanvasSwapChainPanel class.</summary>
+      </member>
+      <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChainPanel.SwapChain">
+        <summary>Gets or sets the associated swap chain object.</summary>
+      </member>
+  </members>
+</doc>

@@ -23,7 +23,7 @@ under the License.
     xmlns:canvas="using:Microsoft.Graphics.Canvas"
     mc:Ignorable="d">
 
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,5 +41,6 @@ under the License.
             <TextBlock x:Name="m_statusMessage"/>
         </StackPanel>
         <canvas:CanvasControl Grid.Row="1" x:Name="m_canvasControl"/>
+        <canvas:CanvasSwapChainPanel Grid.Row="1" x:Name="m_canvasSwapChainPanel" Visibility="Collapsed"/>
     </Grid>
 </Page>

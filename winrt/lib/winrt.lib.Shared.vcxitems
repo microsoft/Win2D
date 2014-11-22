@@ -52,6 +52,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChain.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gradients.h" />
@@ -127,6 +128,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChain.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.cpp" />
@@ -174,13 +176,14 @@
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasBitmap.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasSwapChain.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasControl.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasSwapChain.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)Strings.inl" />
     <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />

@@ -46,6 +46,7 @@ namespace CsConsumer
             OffscreenTarget,
             Gradients,
             AlternateBitmapLoading,
+            SwapChainPanel,
             Test_Scene0_Default,
             Test_Scene0_Wireframe,
             Test_Scene1_Default,
@@ -71,7 +72,7 @@ namespace CsConsumer
             }
             m_drawnContentTypeCombo.ItemsSource = drawnContentElements;
             m_drawnContentTypeCombo.SelectedIndex = 0;
-            m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;                     
+            m_drawnContentTypeCombo.SelectionChanged += ImageContentChanged;
         }
 
         void m_canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -83,7 +84,7 @@ namespace CsConsumer
         {
             m_bitmap_tiger = null;
             m_bitmap_colorGrids = null;
-            
+
             UpdateCanvasControlSize();
             m_imageBrush = new CanvasImageBrush(sender);
 
@@ -98,7 +99,7 @@ namespace CsConsumer
                 ds.DrawText("Def", 25, 25, Colors.LightGray);
                 ds.DrawText("Efg", 50, 50, Colors.LightGray);
             }
-            
+
             CanvasGradientStop[] stops = new CanvasGradientStop[4];
             stops[0].Position = 0;
             stops[0].Color = Colors.Black;
@@ -110,8 +111,8 @@ namespace CsConsumer
             stops[3].Color = Colors.Green;
             m_linearGradientBrush = CanvasLinearGradientBrush.CreateRainbow(sender, 0.0f);
             m_radialGradientBrush = new CanvasRadialGradientBrush(
-                sender, 
-                stops, 
+                sender,
+                stops,
                 CanvasEdgeBehavior.Clamp,
                 CanvasAlphaBehavior.Premultiplied);
         }
@@ -168,16 +169,17 @@ namespace CsConsumer
         {
             int horizontalLimit = (int)m_canvasControl.ActualWidth;
             int verticalLimit = (int)m_canvasControl.ActualHeight;
-
+            
             DrawnContentType drawnContentType = (DrawnContentType)m_drawnContentTypeCombo.SelectedValue;
 
             ds.Clear(NextRandomColor());
-                
+
             Vector2 point;
             float radiusX;
             float radiusY;
 
             Random random = new Random();
+            m_canvasSwapChainPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
             switch (drawnContentType)
             {
@@ -309,6 +311,19 @@ namespace CsConsumer
                         DrawNoBitmapErrorMessage(ds, horizontalLimit / 2, verticalLimit / 2);
                     break;
 
+                case DrawnContentType.SwapChainPanel:
+                    
+                    m_canvasSwapChainPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    CanvasSwapChain swapChain = new CanvasSwapChain(ds.Device, horizontalLimit, verticalLimit);
+                    m_canvasSwapChainPanel.SwapChain = swapChain;
+
+                    using(CanvasDrawingSession panelDS = swapChain.CreateDrawingSession(NextRandomColor()))
+                    {
+                        panelDS.DrawCircle((float)horizontalLimit / 2.0f, (float)verticalLimit / 2.0f, 100.0f, NextRandomColor(), 20.0f);
+                    }
+                    swapChain.Present();
+                    break;
+
                 case DrawnContentType.Test_Scene0_Default:
                     GeometryTestScene0.DrawGeometryTestScene(ds, TestSceneRenderingType.Default);
                     break;
@@ -406,10 +421,10 @@ namespace CsConsumer
                 };
             m_bitmap_colorGrids[1] = CanvasBitmap.CreateFromBytes( // Doesn't necessarily need to be async, but grouped here for organization.
                 m_canvasControl,
-                imageBytes, 
-                4, 
-                2, 
-                Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized, 
+                imageBytes,
+                4,
+                2,
+                Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized,
                 CanvasAlphaBehavior.Premultiplied);
 
             Color[] imageColors = new Color[]
@@ -417,7 +432,7 @@ namespace CsConsumer
                     Colors.Blue, Colors.Black, Colors.Black, Colors.Red,
                     Colors.White, Colors.White, Colors.White, Colors.White
                 };
-            m_bitmap_colorGrids[2] = CanvasBitmap.CreateFromColors( 
+            m_bitmap_colorGrids[2] = CanvasBitmap.CreateFromColors(
                 m_canvasControl,
                 imageColors,
                 4,
