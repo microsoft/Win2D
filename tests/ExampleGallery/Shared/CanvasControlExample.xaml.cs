@@ -11,8 +11,6 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
-using System;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -33,32 +31,12 @@ namespace ExampleGallery
             this.InitializeComponent();
         }
 
-        private void Button_ClickA(object sender, RoutedEventArgs e)
-        {
-            this.storyboardA.Begin();
-        }
-
-        private void Button_ClickB(object sender, RoutedEventArgs e)
-        {
-            this.storyboardB.Begin();
-        }
-
-        private void Button_ClickC(object sender, RoutedEventArgs e)
-        {
-            this.storyboardC.Begin();
-        }
-
-        private void Button_ClickD(object sender, RoutedEventArgs e)
-        {
-            this.storyboardD.Begin();
-        }
-
         private void DrawCanvasState(CanvasControl canvas, CanvasDrawingSession ds, int drawCount)
         {
             ds.DrawLine(0, 0, (float)canvas.ActualWidth, (float)canvas.ActualHeight, Colors.Aqua);
             ds.DrawLine(0, (float)canvas.ActualHeight, (float)canvas.ActualWidth, 0, Colors.Aqua);
 
-            var text = String.Format("{0}x{1}\n{2} redraws", (int)canvas.ActualWidth, (int)canvas.ActualHeight, drawCount);
+            var text = string.Format("{0}x{1}\n{2} redraws", (int)canvas.ActualWidth, (int)canvas.ActualHeight, drawCount);
 
             ds.DrawText(
                 text,

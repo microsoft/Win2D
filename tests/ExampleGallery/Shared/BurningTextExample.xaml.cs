@@ -78,7 +78,7 @@ namespace ExampleGallery
             var w = (float)canvas.ActualWidth;
             var h = (float)canvas.ActualHeight;
 
-            float verticalOffset = GetFontSize(w) * 1.2f;
+            float verticalOffset = GetFontSize(w) * 1.4f;
 
             var centerPoint = new Vector2(w / 2, h / 2 + verticalOffset);
 
