@@ -754,19 +754,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                //
-                // MeasureOverride must call Measure on its children (in this
-                // case this is just the image control).
-                //
-                ComPtr<IUIElement> imageOverrides;
-                ThrowIfFailed(m_imageControl.As(&imageOverrides));
-                ThrowIfFailed(imageOverrides->Measure(availableSize));
+                Size zeroSize{ 0, 0 };
 
                 //
-                // However, we ignore how they respond and reply that we're
-                // happy to be sized however the layout engine wants to size us.
+                // Call Measure on our children (in this case just the image control).
                 //
-                *returnValue = Size{};
+                ThrowIfFailed(As<IUIElement>(m_imageControl)->Measure(zeroSize));
+            
+                //
+                // Reply that we're happy to be sized however the layout engine wants to size us.
+                //
+                *returnValue = zeroSize;
             });
     }
     
@@ -778,12 +776,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 //
-                // Allow base class to handle this
+                // Call Arrange on our children (in this case just the image control).
                 //
-                ComPtr<IFrameworkElementOverrides> base;
-                ThrowIfFailed(GetComposableBase().As(&base));
-                ThrowIfFailed(base->ArrangeOverride(finalSize, returnValue));
-            });
+                ThrowIfFailed(As<IUIElement>(m_imageControl)->Arrange(Rect{ 0, 0, finalSize.Width, finalSize.Height }));
+
+                //
+                // Reply that we're happy to accept the size chosen by the layout engine.
+                //
+                *returnValue = finalSize;
+        });
     }
     
     IFACEMETHODIMP CanvasControl::OnApplyTemplate()
