@@ -21,6 +21,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CanvasControlExample.xaml.cs">
       <DependentUpon>CanvasControlExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DpiExample.xaml.cs">
+      <DependentUpon>DpiExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)EffectsExample.xaml.cs">
       <DependentUpon>EffectsExample.xaml</DependentUpon>
     </Compile>
@@ -49,6 +52,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)DpiExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)GameOfLife.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
