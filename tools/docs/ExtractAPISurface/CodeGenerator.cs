@@ -80,7 +80,11 @@ namespace ExtractAPISurface
             {
                 WriteInterface(type);
             }
-            else if (type.IsClass && !type.IsDelegate())
+            else if (type.IsDelegate())
+            {
+                WriteDelegate(type);
+            }
+            else if (type.IsClass)
             {
                 WriteClass(type);
             }
@@ -145,6 +149,17 @@ namespace ExtractAPISurface
         }
 
 
+        void WriteDelegate(TypeInfo type)
+        {
+            var invokeMethod = type.DeclaredMethods.First();
+            var returnType = FormatTypeName(invokeMethod.ReturnType);
+            output.WriteLine("public delegate {0} {1}({2});", 
+                returnType, 
+                type.Name, 
+                FormatParameterList(invokeMethod.GetParameters()));
+        }
+
+        
         void WriteClass(TypeInfo type)
         {
             // .NET lacks a dedicated flag for static classes, so it represents them by combining IsSealed and IsAbstract.

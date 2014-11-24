@@ -32,6 +32,14 @@ namespace canvas
             GetDXGIInterfaceMethod.AllowAnyCall();
         }
 
+        void MarkAsLost()
+        {
+            auto d3dDevice = GetDXGIInterfaceFromResourceCreator<ID3D11Device>(this);
+            auto mockD3DDevice = dynamic_cast<MockD3D11Device*>(d3dDevice.Get());
+            mockD3DDevice->GetDeviceRemovedReasonMethod.AllowAnyCall(
+                [] { return DXGI_ERROR_DEVICE_REMOVED; });
+        }
+
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override
         {
             return m_d2DDevice;

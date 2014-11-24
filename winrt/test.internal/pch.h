@@ -28,6 +28,7 @@
 #include <vector>
 
 // Win32
+#include <corerror.h>
 #include <d2d1_2.h>
 #include <d3d11.h>
 #include <dwrite_2.h>
@@ -84,9 +85,11 @@
 #include <CanvasTextFormat.h>
 #include <Conversion.h>
 #include <DxgiUtilities.h>
+#include <RecreatableDeviceManager.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>
+#include <Strings.h>
 #include <effects\CanvasEffect.h>
 
 

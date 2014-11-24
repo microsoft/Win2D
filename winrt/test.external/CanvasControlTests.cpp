@@ -28,7 +28,7 @@ TEST_CLASS(CanvasControlTests)
 
             Windows::Foundation::EventRegistrationToken createResourcesRegistrationToken;
 
-            createResourcesRegistrationToken = canvasControl->CreateResources += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, Object^>(this, &CallbackVerifier::OnCreateResources);
+            createResourcesRegistrationToken = canvasControl->CreateResources += ref new Windows::Foundation::TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>(this, &CallbackVerifier::OnCreateResources);
 
             canvasControl->CreateResources -= createResourcesRegistrationToken;
 
@@ -39,7 +39,7 @@ TEST_CLASS(CanvasControlTests)
             canvasControl->Draw -= drawRegistrationToken;
         }
 
-        void OnCreateResources(CanvasControl^ sender, Object^ args)
+        void OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args)
         {
         }
 

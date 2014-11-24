@@ -148,6 +148,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)TextureUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChain.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -293,7 +294,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)RecreatableDeviceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RecreatableDeviceManager.impl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgs.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

@@ -15,7 +15,7 @@
 #include "CanvasControl.h"
 #include "CanvasDevice.h"
 #include "CanvasImageSource.h"
-#include "RecreatableDeviceManager.h"
+#include "RecreatableDeviceManager.impl.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -131,9 +131,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return std::make_pair(userControlInspectable, userControl);
         }
 
-        virtual std::unique_ptr<IRecreatableDeviceManager> CreateRecreatableDeviceManager() override
+        virtual std::unique_ptr<ICanvasControlRecreatableDeviceManager> CreateRecreatableDeviceManager() override
         {
-            return std::make_unique<RecreatableDeviceManager>(m_canvasDeviceFactory.Get());
+            return std::make_unique<RecreatableDeviceManager<CanvasControlRecreatableDeviceManagerTraits>>(m_canvasDeviceFactory.Get());
         }
 
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* handler) override
@@ -462,6 +462,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &CanvasControl::OnDpiChanged);
         m_surfaceContentsLostEventRegistration = m_adapter->AddSurfaceContentsLostCallback(this, &CanvasControl::OnSurfaceContentsLost);
         m_windowVisibilityChangedEventRegistration = m_adapter->AddVisibilityChangedCallback(this, &CanvasControl::OnWindowVisibilityChanged, m_window.Get());
+
+        m_recreatableDeviceManager->SetChangedCallback(
+            [=]
+            {
+                m_guardedState->TriggerRender(this);
+            });
     }
 
     template<typename T, typename DELEGATE, typename HANDLER>
@@ -545,9 +551,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 CheckInPointer(token);
 
-                bool deviceWasLost = m_recreatableDeviceManager->AddSynchronousCreateResources(this, value, token);
-                if (deviceWasLost)
-                    m_guardedState->TriggerRender(this);
+                *token = m_recreatableDeviceManager->AddCreateResources(this, value);
             });
     }
     
@@ -557,7 +561,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                m_recreatableDeviceManager->RemoveSynchronousCreateResources(token);
+                m_recreatableDeviceManager->RemoveCreateResources(token);
+            });
+    }
+
+    IFACEMETHODIMP CanvasControl::get_ReadyToDraw(
+        boolean* value)
+    {
+        // TODO #1922 Ensure that this operation is threadsafe.  (Check
+        // m_window's CoreDispatcher::HasThreadAccess)
+
+        return ExceptionBoundary(
+            [=]
+            {
+                *value = m_recreatableDeviceManager->IsReadyToDraw();
             });
     }
 
@@ -610,21 +627,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!IsWindowVisible())
                     return;
 
-                bool deviceWasLost = m_recreatableDeviceManager->RunWithDevice(this,
-                    [=](ICanvasDevice* device, bool wasDeviceJustCreated)
+                m_recreatableDeviceManager->RunWithDevice(this,
+                    [=](ICanvasDevice* device, RunWithDeviceFlags flags)
                     {
-                        if (wasDeviceJustCreated)
+                        if ((flags & RunWithDeviceFlags::NewlyCreatedDevice) == RunWithDeviceFlags::NewlyCreatedDevice)
                             m_canvasImageSource.Reset();
 
                         auto clearColor = m_guardedState->PreDrawAndGetClearColor(this);
                         auto backgroundMode = clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
                         
                         EnsureSizeDependentResources(device, backgroundMode);
-                        CallDrawHandlers(clearColor);
+                        CallDrawHandlers(clearColor, (flags & RunWithDeviceFlags::ResourcesNotCreated) != RunWithDeviceFlags::ResourcesNotCreated);
                     });
-
-                if (deviceWasLost)
-                    m_guardedState->TriggerRender(this);
             });
     }
 
@@ -697,12 +711,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void CanvasControl::CallDrawHandlers(Color const& clearColor)
+    void CanvasControl::CallDrawHandlers(Color const& clearColor, bool resourcesHaveBeenCreated)
     {
         if (!m_canvasImageSource)
-        {
             return;
-        }
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(m_canvasImageSource->CreateDrawingSession(clearColor, &drawingSession));
@@ -710,7 +722,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasDrawEventArgs> drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession.Get());
         CheckMakeResult(drawEventArgs);
 
-        ThrowIfFailed(m_drawEventList.InvokeAll(this, drawEventArgs.Get()));
+        if (resourcesHaveBeenCreated)
+            ThrowIfFailed(m_drawEventList.InvokeAll(this, drawEventArgs.Get()));
 
         ComPtr<IClosable> drawingSessionClosable;
         ThrowIfFailed(drawingSession.As(&drawingSessionClosable));

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <RecreatableDeviceManager.h>
+#include <RecreatableDeviceManager.impl.h>
 
 #include "MockCanvasDeviceActivationFactory.h"
 #include "MockHelpers.h"
@@ -31,7 +31,7 @@ public:
     ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
-    CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<IRecreatableDeviceManager>());
+    CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<ICanvasControlRecreatableDeviceManager>());
     CALL_COUNTER_WITH_MOCK(CreateCanvasImageSourceMethod, ComPtr<CanvasImageSource>(ICanvasDevice*, float, float, float, CanvasBackground));
 
     ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
@@ -58,13 +58,13 @@ public:
         return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, control);
     }
 
-    virtual std::unique_ptr<IRecreatableDeviceManager> CreateRecreatableDeviceManager() override
+    virtual std::unique_ptr<ICanvasControlRecreatableDeviceManager> CreateRecreatableDeviceManager() override
     {
         auto manager = CreateRecreatableDeviceManagerMethod.WasCalled();
         if (manager)
             return manager;
 
-        return std::make_unique<RecreatableDeviceManager>(DeviceFactory.Get());
+        return std::make_unique<RecreatableDeviceManager<CanvasControlRecreatableDeviceManagerTraits>>(DeviceFactory.Get());
     }
 
     virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* value) override
@@ -131,7 +131,9 @@ public:
                     // OnCanvasImageSourceDrawingSessionFactory_Create without
                     // self-destructing.
                     auto createFunction = OnCanvasImageSourceDrawingSessionFactory_Create;
-                    return createFunction();
+                    auto result = createFunction();
+                    if (result)
+                        return result;
                 }
 
                 return Make<MockCanvasDrawingSession>();

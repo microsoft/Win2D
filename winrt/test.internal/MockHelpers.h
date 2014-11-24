@@ -390,6 +390,32 @@ private:
 
 
 //
+// Figure out sender/argument types for IEventHandler and ITypedEventHandler.
+//
+
+template<typename EVENTHANDLER>
+struct EventHandlerAbiTypes {};
+
+template<typename A>
+struct EventHandlerAbiTypes<ABI::Windows::Foundation::IEventHandler<A>>
+{
+    typedef typename IEventHandler<A>::T_complex Args_complex;
+
+    typedef IInspectable* Sender;
+    typedef typename ABI::Windows::Foundation::Internal::GetAbiType<Args_complex>::type Args;
+};
+
+template<typename S, typename A>
+struct EventHandlerAbiTypes<ABI::Windows::Foundation::ITypedEventHandler<S,A>>
+{
+    typedef typename ITypedEventHandler<S,A>::TSender_complex Sender_complex;
+    typedef typename ITypedEventHandler<S,A>::TArgs_complex Args_complex;
+
+    typedef typename ABI::Windows::Foundation::Internal::GetAbiType<Sender_complex>::type Sender;
+    typedef typename ABI::Windows::Foundation::Internal::GetAbiType<Args_complex>::type Args;
+};
+
+//
 // Helper for event handlers that track how many times they've been invoked.
 //
 // eg:
@@ -455,7 +481,7 @@ public:
         m_function = fn;
         m_nextReturnValue = S_OK;
     }
-
+    
     int GetCurrentCallCount() const
     {
         return m_callCounter.GetCurrentCallCount();
@@ -472,10 +498,8 @@ private:
         return m_callCounter.Message(msg);
     }
 
-    typedef typename EventHandlerType::TSender_complex TSender;
-    typedef typename EventHandlerType::TArgs_complex   TArgs;
-    typedef typename ABI::Windows::Foundation::Internal::GetAbiType<TSender>::type TSender_abi;
-    typedef typename ABI::Windows::Foundation::Internal::GetAbiType<TArgs>::type   TArgs_abi;
+    typedef typename EventHandlerAbiTypes<EventHandlerType>::Sender TSender_abi;
+    typedef typename EventHandlerAbiTypes<EventHandlerType>::Args   TArgs_abi;
 
     HRESULT OnInvoke(TSender_abi sender, TArgs_abi args)
     {

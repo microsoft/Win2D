@@ -48,10 +48,18 @@ under the License.
                   this.InitializeComponent();
               }
 
-              void myWidget_CreateResources(CanvasControl sender, object args)
+              void myWidget_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
               {
                   // Create any resources needed by the Draw event handler.
-                  // Load bitmaps, create brushes, etc.
+
+                  // Asynchronous work can be tracked with TrackAsyncAction:
+                  args.TrackAsyncAction(myWidget_CreateResourcesAsync(sender).AsAsyncAction());
+              }
+
+              async Task myWidget_CreateResourcesAsync(CanvasControl sender)
+              {
+                   // Load bitmaps, create brushes, etc.
+                   bitmapTiget = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
               }
 
               void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -127,10 +135,17 @@ under the License.
         </p>
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasControl.ReadyToDraw">
+      <summary>Gets whether the control is in a state where it is ready to draw.</summary>
+      <remarks>
+        This control is ready to draw when a device has been created and all
+        CreateResources event handlers have completed successfully.
+      </remarks>
+    </member>
 
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasDrawEventArgs">
-      <summary>Information passed to the CanvasControl.Draw event.</summary>
+      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.CanvasControl.Draw"/> event.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
       <summary>Initializes a new instance of the CanvasDrawEventArgs class.</summary>
@@ -139,5 +154,38 @@ under the License.
       <summary>Gets the drawing session for use by the current event handler.
                This provides methods to draw lines, rectangles, text etc.</summary>
     </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasCreateResourcesEventArgs">
+      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.CanvasControl.CreateResources"/> event.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasCreateResourcesEventArgs.TrackAsyncAction(Windows.Foundation.IAsyncAction)">
+      <summary>Causes the sender to track an action that must completed before
+      the CreateResources operation can be considered finished.</summary>
+      <remarks>
+        <p>
+          Use this when creating resources involves asynchronous method calls,
+          such as <see cref="O:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync">CanvasBitmap.LoadAsync</see>.
+        </p>
+        
+        <code>
+        void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
+        {
+            args.TrackAsyncAction(Canvas_CreateResourcesAsync(sender).AsAsyncAction());
+        }
+
+        async Task Canvas_CreateResourcesAsync(CanvasControl sender)
+        {
+            bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
+        }
+        </code>
+        <p>
+          In the current implementation, only one action can be tracked at a
+          time.  Attempting to track multiple actions simultaneously will cause
+          TrackAsyncAction to throw an exception.
+        </p>
+      </remarks>
+    </member>
+
   </members>
 </doc>

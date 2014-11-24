@@ -49,6 +49,7 @@
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
+#include <corerror.h>
 
 // WinRT
 #include <windows.foundation.h>

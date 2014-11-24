@@ -140,6 +140,7 @@ namespace Microsoft
                 return PointerToString(L#T, value);             \
             }
 
+            TO_STRING(ICanvasControl);
             TO_STRING(ICanvasDevice);
             TO_STRING(ICanvasDrawingSession);
             TO_STRING(ID2D1Brush);
@@ -176,6 +177,14 @@ namespace Microsoft
                 ENUM_VALUE(CanvasHardwareAcceleration::On);
                 ENUM_VALUE(CanvasHardwareAcceleration::Off);
                 END_ENUM(CanvasHardwareAcceleration);
+            }
+
+            ENUM_TO_STRING(RunWithDeviceFlags)
+            {
+                ENUM_VALUE(RunWithDeviceFlags::None);
+                ENUM_VALUE(RunWithDeviceFlags::NewlyCreatedDevice);
+                ENUM_VALUE(RunWithDeviceFlags::ResourcesNotCreated);
+                END_ENUM(RunWithDeviceFlags);
             }
 
             template<>
@@ -846,6 +855,12 @@ inline void ValidateStoredErrorState(HRESULT expectedHR, wchar_t const* expected
 {
     ComPtr<IRestrictedErrorInfo> errorInfo;
     ThrowIfFailed(GetRestrictedErrorInfo(&errorInfo));
+
+    if (expectedHR == S_OK)
+    {
+        Assert::IsNull(errorInfo.Get());
+        return;
+    }
 
     BSTR description = nullptr;
     BSTR restrictedDescription = nullptr;

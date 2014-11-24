@@ -114,6 +114,7 @@
     <ClCompile Include="ComArrayTests.cpp" />
     <ClCompile Include="ConversionUnitTests.cpp" />
     <ClCompile Include="PolymorphicBitmapManagerUnitTests.cpp" />
+    <ClCompile Include="RecreatableDeviceManagerTests.cpp" />
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DResources.cpp" />

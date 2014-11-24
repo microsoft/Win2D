@@ -17,11 +17,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace ExampleGallery
 {
@@ -68,26 +68,21 @@ namespace ExampleGallery
         string textLabel;
         Action<float> animationFunction;
         Stopwatch timer;
-        bool isLoaded;
 
-        async void Canvas_CreateResources(CanvasControl sender, object args)
+        void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            isLoaded = false;
+            args.TrackAsyncAction(Canvas_CreateResourcesAsync(sender).AsAsyncAction());
+        }
 
+        async Task Canvas_CreateResourcesAsync(CanvasControl sender)
+        {
             bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
-            
             effect = CreateEffect();
-
-            isLoaded = true;
-            this.canvas.Invalidate();
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var ds = args.DrawingSession;
-
-            if (!isLoaded)
-                return;
 
             float w = (float)sender.ActualWidth;
             float h = (float)sender.ActualHeight;
@@ -117,7 +112,7 @@ namespace ExampleGallery
 
         private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (isLoaded)
+            if (canvas.ReadyToDraw)
             {
                 effect = CreateEffect();
             }
@@ -129,7 +124,7 @@ namespace ExampleGallery
                                 e.RemovedItems.Count != 1 ||
                                 (EffectType)e.AddedItems[0] != (EffectType)e.RemovedItems[0];
 
-            if (reallyChanged && isLoaded)
+            if (reallyChanged && canvas.ReadyToDraw)
             {
                 effect = CreateEffect();
             }

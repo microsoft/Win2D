@@ -12,6 +12,11 @@
 
 namespace Microsoft.Graphics.Canvas
 {
+    runtimeclass CanvasControl;
+
+    //
+    // CanvasDrawEventArgs
+    //
     runtimeclass CanvasDrawEventArgs;
 
     [version(VERSION), uuid(7299D72C-F8E4-4A2F-9E30-7CDFCCF31C44), exclusiveto(CanvasDrawEventArgs)]
@@ -35,20 +40,69 @@ namespace Microsoft.Graphics.Canvas
         [default] interface ICanvasDrawEventArgs;
     }
 
-    runtimeclass CanvasControl;
+    //
+    // CanvasCreateResourcesEventArgs
+    //
+    runtimeclass CanvasCreateResourcesEventArgs;
+
+    [version(VERSION), uuid(EDC52108-F6BA-4A09-9FA3-10C97A24E49A), exclusiveto(CanvasCreateResourcesEventArgs)]
+    interface ICanvasCreateResourcesEventArgs : IInspectable
+    {
+        //
+        // Caller can set an AsyncAction to continue the create resources
+        // operation.  CanvasControl will wait until this has completed before
+        // calling any draw handlers.
+        //
+        // The same event args object is passed to all event handlers.  The
+        // AsyncAction may only be set once - attempting to set it when it
+        // already has a non-null value will result in an error.
+        //
+        HRESULT TrackAsyncAction(
+            [in] Windows.Foundation.IAsyncAction* action);
+    }
+
+    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasCreateResourcesEventArgs
+    {
+        [default] interface ICanvasCreateResourcesEventArgs;
+
+        // TODO #3046: this class should be activatable
+    }
+
+    // 
+    // CanvasControl
+    //
 
     [version(VERSION), uuid(F006E06D-79DB-484F-B898-479CF069C0F5), exclusiveto(CanvasControl)]
     interface ICanvasControl : IInspectable
         requires ICanvasResourceCreatorWithDpi
     {
+        //
+        // event CreateResources - this is the synchronous CreateResources
+        // event.  This is called after the device is created (or recreated
+        // after a device lost error) to allow the app to create device
+        // dependent resources.
+        //
         [eventadd] HRESULT CreateResources(
-            [in] Windows.Foundation.TypedEventHandler<CanvasControl*, IInspectable*>* value,
+            [in]          Windows.Foundation.TypedEventHandler<CanvasControl*, CanvasCreateResourcesEventArgs*>* value,
             [out, retval] EventRegistrationToken* token);
 
         [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);
 
+        //
+        // True if all required CreateResources calls (including the AsyncAction
+        // if set) are complete -- and so the Draw event will be raised for the
+        // next frame.
+        //
+        [propget] HRESULT ReadyToDraw(
+            [out, retval] boolean* value);
+
+        //
+        // The Draw event is raised to allow the app to draw onto the canvas
+        // control, using the CanvasDrawingSession provided in the args.
+        //
         [eventadd] HRESULT Draw(
-            [in] Windows.Foundation.TypedEventHandler<CanvasControl*, CanvasDrawEventArgs*>* value, 
+            [in]          Windows.Foundation.TypedEventHandler<CanvasControl*, CanvasDrawEventArgs*>* value, 
             [out, retval] EventRegistrationToken* token);
 
         [eventremove] HRESULT Draw([in] EventRegistrationToken token);
@@ -61,6 +115,9 @@ namespace Microsoft.Graphics.Canvas
         [propput] HRESULT ClearColor([in] Windows.UI.Color value);
         [propget] HRESULT ClearColor([out, retval] Windows.UI.Color* value);
 
+        //
+        // Marks the control to be redrawn on the next frame.
+        //
         HRESULT Invalidate();
     }
 

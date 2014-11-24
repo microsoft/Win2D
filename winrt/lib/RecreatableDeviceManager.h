@@ -16,129 +16,30 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    enum class RunWithDeviceFlags
+    {
+        None                = 0x00,
+        NewlyCreatedDevice  = 0x01,
+        ResourcesNotCreated = 0x02,
+    };
 
+    DEFINE_ENUM_FLAG_OPERATORS(RunWithDeviceFlags);
+
+    typedef std::function<void(ICanvasDevice*, RunWithDeviceFlags)> RunWithDeviceFunction;
+
+    template<typename TRAITS>
     class IRecreatableDeviceManager
     {
     public:
-        virtual bool RunWithDevice(CanvasControl* sender, std::function<void(ICanvasDevice*,bool)> fn) = 0;
+        typedef typename TRAITS::Sender Sender;
+        typedef typename TRAITS::CreateResourcesHandler CreateResourcesHandler;
+
+        virtual void SetChangedCallback(std::function<void()> fn) = 0;
+        virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction fn) = 0;
         virtual ComPtr<ICanvasDevice> const& GetDevice() = 0;
+        virtual bool IsReadyToDraw() = 0;
 
-        virtual bool AddSynchronousCreateResources(CanvasControl* sender, CreateResourcesEventHandler* value, EventRegistrationToken* outToken) = 0;
-        virtual void RemoveSynchronousCreateResources(EventRegistrationToken token) = 0;
+        virtual EventRegistrationToken AddCreateResources(Sender* sender, CreateResourcesHandler* value) = 0;
+        virtual void RemoveCreateResources(EventRegistrationToken token) = 0;
     };
-
-    class RecreatableDeviceManager : public IRecreatableDeviceManager
-    {
-        ComPtr<IActivationFactory> m_canvasDeviceFactory;
-        ComPtr<ICanvasDevice> m_device;
-        EventSource<CreateResourcesEventHandler, InvokeModeOptions<StopOnFirstError>> m_createResourcesEventList;
-
-    public:
-        RecreatableDeviceManager(IActivationFactory* canvasDeviceFactory)
-            : m_canvasDeviceFactory(canvasDeviceFactory)
-        {
-        }
-
-        virtual bool RunWithDevice(CanvasControl* sender, std::function<void(ICanvasDevice*,bool)> fn)
-        {
-            try
-            {
-                bool wasDeviceJustCreated = false;
-
-                if (!m_device)
-                {
-                    m_device = CreateDevice();
-                    ThrowIfFailed(m_createResourcesEventList.InvokeAll(sender, static_cast<IInspectable*>(nullptr)));
-                    wasDeviceJustCreated = true;
-                }
-
-                assert(m_device);
-
-                fn(m_device.Get(), wasDeviceJustCreated);
-                return false;
-            }
-            catch (DeviceLostException const&)
-            {
-                HandleDeviceLostException();
-                return true;
-            }
-        }
-
-        virtual ComPtr<ICanvasDevice> const& GetDevice() override
-        {
-            return m_device;
-        }
-
-        virtual bool AddSynchronousCreateResources(CanvasControl* sender, CreateResourcesEventHandler* value, EventRegistrationToken* outToken)
-        {
-            ThrowIfFailed(m_createResourcesEventList.Add(value, outToken));
-
-            //
-            // If the device hasn't been created yet then we know that when
-            // it does get created CreateResources will be raised.
-            //
-            if (!m_device)
-                return false;
-
-            try
-            {
-                //
-                // If the device has already been created then we need to call
-                // the handler now.
-                //
-                ThrowIfFailed(value->Invoke(sender, nullptr));
-            }
-            catch (DeviceLostException const&)
-            {
-                HandleDeviceLostException();
-                return true;
-            }
-
-            return false;
-        }
-
-        virtual void RemoveSynchronousCreateResources(EventRegistrationToken token) override
-        {
-            ThrowIfFailed(m_createResourcesEventList.Remove(token));
-        }
-
-    private:
-        ComPtr<ICanvasDevice> CreateDevice()
-        {
-            ComPtr<IInspectable> inspectableDevice;
-            ThrowIfFailed(m_canvasDeviceFactory->ActivateInstance(&inspectableDevice));
-
-            return As<ICanvasDevice>(inspectableDevice);
-        }
-
-        void HandleDeviceLostException()
-        {
-            // This function must be called from inside a catch block.
-            assert(std::current_exception());
-
-            if (HasValidDevice())
-            {
-                // The device lost exception wasn't caused by the device managed
-                // by this object.  Recreating therefore won't resolve this.  So
-                // instead we propogate the error.
-                throw;
-            }
-
-            m_device.Reset();
-        }
-
-        bool HasValidDevice()
-        {
-            if (!m_device)
-                return false;
-
-            auto d3dDevice = GetDXGIInterface<ID3D11Device>(m_device.Get());
-
-            if (d3dDevice->GetDeviceRemovedReason() == S_OK)
-                return true;
-
-            return false;
-        }
-    };
-
 } } } }

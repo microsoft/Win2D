@@ -19,6 +19,15 @@ class MockCanvasDeviceActivationFactory : public RuntimeClass<IActivationFactory
 public:
     CALL_COUNTER_WITH_MOCK(ActivateInstanceMethod, HRESULT(IInspectable**));
 
+    void ExpectToActivateOne(ComPtr<ICanvasDevice> device = Make<StubCanvasDevice>())
+    {
+        ActivateInstanceMethod.SetExpectedCalls(1,
+            [=](IInspectable** value)
+            {
+                return device.CopyTo(value);
+            });
+    }
+
     IFACEMETHODIMP ActivateInstance(IInspectable** value)
     {
         return ExceptionBoundary(

@@ -16,6 +16,8 @@
 
 #include <RegisteredEvent.h>
 
+#include "RecreatableDeviceManager.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::ApplicationModel;
@@ -25,8 +27,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::UI::Xaml;
-
-    class IRecreatableDeviceManager;
 
     class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>
     {
@@ -51,15 +51,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
          IFACEMETHODIMP get_DrawingSession(ICanvasDrawingSession** value);
     };
 
-    typedef ITypedEventHandler<CanvasControl*, IInspectable*> CreateResourcesEventHandler;
+    typedef ITypedEventHandler<CanvasControl*, CanvasCreateResourcesEventArgs*> CreateResourcesEventHandler;
     typedef ITypedEventHandler<CanvasControl*, CanvasDrawEventArgs*> DrawEventHandler;
     typedef ITypedEventHandler<DisplayInformation*, IInspectable*> DpiChangedEventHandler;
+
+    struct CanvasControlRecreatableDeviceManagerTraits
+    {
+        typedef CanvasControl Sender;
+        typedef CreateResourcesEventHandler CreateResourcesHandler;
+    };
+
+    typedef IRecreatableDeviceManager<CanvasControlRecreatableDeviceManagerTraits> ICanvasControlRecreatableDeviceManager;
 
     class ICanvasControlAdapter
     {
     public:
         virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) = 0;
-        virtual std::unique_ptr<IRecreatableDeviceManager> CreateRecreatableDeviceManager() = 0;
+        virtual std::unique_ptr<ICanvasControlRecreatableDeviceManager> CreateRecreatableDeviceManager() = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
@@ -118,7 +126,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // called from that window's thread.
         ComPtr<IWindow> m_window;
 
-        std::unique_ptr<IRecreatableDeviceManager> m_recreatableDeviceManager;
+        std::unique_ptr<ICanvasControlRecreatableDeviceManager> m_recreatableDeviceManager;
 
         EventSource<DrawEventHandler, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
@@ -155,6 +163,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHODIMP remove_CreateResources(
             EventRegistrationToken token) override;
+
+        IFACEMETHODIMP get_ReadyToDraw(
+            boolean* value) override;
 
         IFACEMETHODIMP add_Draw(
             DrawEventHandler* value,
@@ -255,7 +266,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);        
         void EnsureSizeDependentResources(ICanvasDevice* device, CanvasBackground backgroundMode);
-        void CallDrawHandlers(Color const& clearColor);
+        void CallDrawHandlers(Color const& clearColor, bool resourcesHaveBeenCreated);
     };
 
 }}}}
