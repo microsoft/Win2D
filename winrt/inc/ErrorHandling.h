@@ -71,6 +71,7 @@ public:
         case DXGI_ERROR_DEVICE_RESET:
         case DXGI_ERROR_DRIVER_INTERNAL_ERROR:
         case DXGI_ERROR_INVALID_CALL:
+        case D2DERR_RECREATE_TARGET:
             return true;
 
         default:
@@ -96,8 +97,8 @@ inline void ThrowHR(HRESULT hr)
 
 //
 // Throws the appropriate exception for the given HRESULT, attaching a custom error message
-// string. To avoid leaks, the message string should be owned by an RAII  wrapper such as
-// WinString. We don't take this parameter directly as a WinString  to break what would
+// string. To avoid leaks, the message string should be owned by an RAII wrapper such as
+// WinString. We don't take this parameter directly as a WinString to break what would
 // otherwise be a circular dependency (WinString uses ErrorHandling.h in its implementation).
 //
 __declspec(noreturn) __declspec(noinline)
