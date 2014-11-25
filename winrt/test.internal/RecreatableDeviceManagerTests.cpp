@@ -286,7 +286,7 @@ public:
             OnCreateResourcesToken1 = DeviceManager->AddCreateResources(AnySender, OnCreateResources1.Get());
         }
 
-        void AddCreateResources1(std::function<HRESULT()> fn)
+        void AddCreateResources1(std::function<HRESULT(IInspectable*, ICanvasCreateResourcesEventArgs*)> fn)
         {
             OnCreateResources1.SetExpectedCalls(1, fn);
             OnCreateResourcesToken1 = DeviceManager->AddCreateResources(AnySender, OnCreateResources1.Get());
@@ -431,8 +431,6 @@ public:
         f.OnCreateResources1.SetExpectedCalls(1);
         f.OnCreateResources2.SetExpectedCalls(0);
         f.CallRunWithDevice();
-
-        
     }
 
     TEST_METHOD_EX(RecreatableDeviceManager_WhenCreateResourcesThrowsDeviceLost_ThenDeviceIsRecreated)
@@ -444,7 +442,7 @@ public:
 
         f.ChangedCallback.SetExpectedCalls(1);
         f.AddCreateResources1(
-            [=]()
+            [=](IInspectable*, ICanvasCreateResourcesEventArgs*)
             {
                 deviceThatGetsLost->MarkAsLost();
                 return DXGI_ERROR_DEVICE_REMOVED;
@@ -469,7 +467,7 @@ public:
 
         f.ChangedCallback.SetExpectedCalls(1);
         f.AddCreateResources1(
-            [=]()
+            [=](IInspectable*, ICanvasCreateResourcesEventArgs*)
             {
                 deviceThatGetsLost->MarkAsLost();
                 return DXGI_ERROR_DEVICE_REMOVED;
@@ -479,6 +477,130 @@ public:
 
         f.OnCreateResources1.SetExpectedCalls(1);
         f.VerifyDeviceGetsRecreated();
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_WhenRunWithDeviceCallsCreateResources_TheReasonIsFirstTime)
+    {
+        FixtureWithCreateResources f;
+        f.DeviceFactory->ExpectToActivateOne();
+
+        f.AddCreateResources1(
+            [](IInspectable*, ICanvasCreateResourcesEventArgs* args)
+            {
+                CanvasCreateResourcesReason reason = (CanvasCreateResourcesReason)-1;
+                ThrowIfFailed(args->get_Reason(&reason));
+                Assert::AreEqual(CanvasCreateResourcesReason::FirstTime, reason);
+                return S_OK;
+            });
+
+        f.CallRunWithDevice();
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_WhenAddCreateResourcesCalledAfterDeviceCreated_TheReasonIsFirstTime)
+    {
+        FixtureWithCreateResources f;
+        f.GetIntoStateWhereDeviceHasBeenCreated();
+
+        f.AddCreateResources1(
+            [](IInspectable* sender, ICanvasCreateResourcesEventArgs* args)
+            {
+                CanvasCreateResourcesReason reason = (CanvasCreateResourcesReason)-1;
+                ThrowIfFailed(args->get_Reason(&reason));
+                Assert::AreEqual(CanvasCreateResourcesReason::FirstTime, reason);
+                return S_OK;
+            });
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_WhenLostDeviceRecoveryCallsCreateResources_TheReasonIsNewDevice)
+    {
+        Fixture f;
+        int createCount = 0;
+
+        auto onCreateResources = Callback<CreateResourcesHandler>(
+            [&](IInspectable* sender, ICanvasCreateResourcesEventArgs* args)
+        {
+            auto expectedReason = (createCount == 0) ? CanvasCreateResourcesReason::FirstTime : CanvasCreateResourcesReason::NewDevice;
+            createCount++;
+
+            CanvasCreateResourcesReason reason = (CanvasCreateResourcesReason)-1;
+            ThrowIfFailed(args->get_Reason(&reason));
+            Assert::AreEqual(expectedReason, reason);
+
+            return S_OK;
+        });
+
+        f.DeviceManager->AddCreateResources(f.AnySender, onCreateResources.Get());
+
+        // Create the first device.
+        auto deviceThatGetsLost = Make<StubCanvasDevice>();
+        f.DeviceFactory->ExpectToActivateOne(deviceThatGetsLost);
+        Assert::AreEqual(0, createCount);
+        f.CallRunWithDevice();
+        Assert::AreEqual(1, createCount);
+
+        // Cause the device to become lost.
+        f.ChangedCallback.SetExpectedCalls(1);
+        f.CallRunWithDevice(
+            [=](ICanvasDevice*, RunWithDeviceFlags)
+        {
+            deviceThatGetsLost->MarkAsLost();
+            ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
+        });
+
+        // Recover to a second device.
+        f.DeviceFactory->ExpectToActivateOne();
+        Assert::AreEqual(1, createCount);
+        f.CallRunWithDevice();
+        Assert::AreEqual(2, createCount);
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_DpiChangeCallsCreateResources)
+    {
+        Fixture f;
+        int createCount = 0;
+
+        auto onCreateResources = Callback<CreateResourcesHandler>(
+            [&](IInspectable* sender, ICanvasCreateResourcesEventArgs* args)
+        {
+            auto expectedReason = (createCount == 0) ? CanvasCreateResourcesReason::FirstTime : CanvasCreateResourcesReason::DpiChanged;
+            createCount++;
+
+            CanvasCreateResourcesReason reason = (CanvasCreateResourcesReason)-1;
+            ThrowIfFailed(args->get_Reason(&reason));
+            Assert::AreEqual(expectedReason, reason);
+
+            return S_OK;
+        });
+
+        f.DeviceManager->AddCreateResources(f.AnySender, onCreateResources.Get());
+
+        // Changing the DPI before initial device creation should be a no-op: we expect the first
+        // CreateResources to be reported as FirstTime, subsuming the fact that DPI also changed.
+        f.ChangedCallback.SetExpectedCalls(1);
+        f.DeviceManager->SetDpiChanged();
+
+        // Create the first device.
+        f.DeviceFactory->ExpectToActivateOne();
+        Assert::AreEqual(0, createCount);
+        f.CallRunWithDevice();
+        Assert::AreEqual(1, createCount);
+
+        // At this point there should be no pending DPI change state.
+        f.CallRunWithDevice();
+        Assert::AreEqual(1, createCount);
+
+        // Change the DPI.
+        f.ChangedCallback.SetExpectedCalls(1);
+        f.DeviceManager->SetDpiChanged();
+
+        // This should not activate a new device, but should re-raise CreateResources with reason = DpiChanged.
+        Assert::AreEqual(1, createCount);
+        f.CallRunWithDevice();
+        Assert::AreEqual(2, createCount);
+
+        // At this point there should be no pending DPI change state.
+        f.CallRunWithDevice();
+        Assert::AreEqual(2, createCount);
     }
 
     //
@@ -872,5 +994,46 @@ public:
             [&] { f.CallRunWithDeviceDontExpectFunctionToBeCalled(); });
 
         Assert::IsTrue(called);
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_WhenDpiChangesDuringCreateResourcesAsync_ItIsDeferredUntilTheProperTime)
+    {
+        FixtureWithCreateResourcesAsync f;
+        f.CreateDeviceAndTriggerCreateResourcesAsync();
+        int createCount = 0;
+
+        auto onCreateResources = Callback<CreateResourcesHandler>(
+            [&](IInspectable* sender, ICanvasCreateResourcesEventArgs* args)
+        {
+            auto expectedReason = (createCount == 0) ? CanvasCreateResourcesReason::FirstTime : CanvasCreateResourcesReason::DpiChanged;
+            createCount++;
+
+            CanvasCreateResourcesReason reason = (CanvasCreateResourcesReason)-1;
+            ThrowIfFailed(args->get_Reason(&reason));
+            Assert::AreEqual(expectedReason, reason);
+
+            return S_OK;
+        });
+
+        f.DeviceManager->AddCreateResources(f.AnySender, onCreateResources.Get());
+        f.CallRunWithDevice();
+        Assert::AreEqual(1, createCount);
+
+        // Change the DPI.
+        f.DeviceManager->SetDpiChanged();
+
+        // This should not trigger CreateResources, because the previous async create is still running.
+        f.CallRunWithDevice();
+        Assert::AreEqual(1, createCount);
+
+        // Complete the original async create.
+        f.ChangedCallback.SetExpectedCalls(1);
+        f.Action->FireCompletion();
+        Assert::AreEqual(1, createCount);
+
+        // Now we expect the DPI change to be handled.
+        f.OnCreateResources.SetExpectedCalls(1);
+        f.CallRunWithDevice();
+        Assert::AreEqual(2, createCount);
     }
 };

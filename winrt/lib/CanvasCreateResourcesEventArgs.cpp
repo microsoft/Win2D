@@ -17,9 +17,21 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
 
-    CanvasCreateResourcesEventArgs::CanvasCreateResourcesEventArgs(std::function<void(IAsyncAction*)> trackAsyncActionCallback)
-        : m_trackAsyncActionCallback(trackAsyncActionCallback)
+    CanvasCreateResourcesEventArgs::CanvasCreateResourcesEventArgs(CanvasCreateResourcesReason reason, std::function<void(IAsyncAction*)> trackAsyncActionCallback)
+        : m_reason(reason)
+        , m_trackAsyncActionCallback(trackAsyncActionCallback)
     {
+    }
+
+
+    IFACEMETHODIMP CanvasCreateResourcesEventArgs::get_Reason(CanvasCreateResourcesReason* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                *value = m_reason;
+            });
     }
 
 

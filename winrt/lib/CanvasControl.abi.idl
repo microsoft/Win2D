@@ -43,11 +43,21 @@ namespace Microsoft.Graphics.Canvas
     //
     // CanvasCreateResourcesEventArgs
     //
+    [version(VERSION)]
+    typedef enum CanvasCreateResourcesReason
+    {
+        FirstTime,
+        NewDevice,
+        DpiChanged,
+    } CanvasCreateResourcesReason;
+
     runtimeclass CanvasCreateResourcesEventArgs;
 
     [version(VERSION), uuid(EDC52108-F6BA-4A09-9FA3-10C97A24E49A), exclusiveto(CanvasCreateResourcesEventArgs)]
     interface ICanvasCreateResourcesEventArgs : IInspectable
     {
+        [propget] HRESULT Reason([out, retval] CanvasCreateResourcesReason* value);
+
         //
         // Caller can set an AsyncAction to continue the create resources
         // operation.  CanvasControl will wait until this has completed before

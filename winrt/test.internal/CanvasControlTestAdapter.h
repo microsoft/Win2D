@@ -36,6 +36,8 @@ public:
 
     ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
 
+    float LogicalDpi;
+
     CanvasControlTestAdapter()
         : DeviceFactory(Make<MockCanvasDeviceActivationFactory>())
         , m_mockWindow(Make<MockWindow>())
@@ -43,6 +45,7 @@ public:
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
         , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
+        , LogicalDpi(DEFAULT_DPI)
     {
         CreateRecreatableDeviceManagerMethod.AllowAnyCall();
         DeviceFactory->ActivateInstanceMethod.AllowAnyCall();
@@ -159,7 +162,7 @@ public:
 
     virtual float GetLogicalDpi() override
     {
-        return DEFAULT_DPI;
+        return LogicalDpi;
     }
 
     virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* value) override

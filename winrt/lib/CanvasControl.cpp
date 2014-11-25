@@ -865,9 +865,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                m_dpi = m_adapter->GetLogicalDpi();
+                float newDpi = m_adapter->GetLogicalDpi();
 
-                m_guardedState->TriggerRender(this);
+                if (newDpi != m_dpi)
+                {
+                    m_dpi = newDpi;
+
+                    m_recreatableDeviceManager->SetDpiChanged();
+                }
             });
     }
 

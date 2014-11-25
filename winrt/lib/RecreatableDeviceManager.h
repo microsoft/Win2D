@@ -38,6 +38,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction fn) = 0;
         virtual ComPtr<ICanvasDevice> const& GetDevice() = 0;
         virtual bool IsReadyToDraw() = 0;
+        virtual void SetDpiChanged() = 0;
 
         virtual EventRegistrationToken AddCreateResources(Sender* sender, CreateResourcesHandler* value) = 0;
         virtual void RemoveCreateResources(EventRegistrationToken token) = 0;

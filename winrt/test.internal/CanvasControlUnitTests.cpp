@@ -241,6 +241,7 @@ public:
     CALL_COUNTER_WITH_MOCK(IsReadyToDrawMethod, bool());
     CALL_COUNTER_WITH_MOCK(AddCreateResourcesMethod, EventRegistrationToken(CanvasControl*, CreateResourcesEventHandler*));
     CALL_COUNTER_WITH_MOCK(RemoveCreateResourcesMethod, void(EventRegistrationToken));
+    CALL_COUNTER_WITH_MOCK(SetDpiChangedMethod, void())
 
     virtual void SetChangedCallback(std::function<void()> fn) override
     {
@@ -285,6 +286,11 @@ public:
         return IsReadyToDrawMethod.WasCalled();
     }
     
+    virtual void SetDpiChanged() override
+    {
+        SetDpiChangedMethod.WasCalled();
+    }
+
     virtual EventRegistrationToken AddCreateResources(CanvasControl* sender, CreateResourcesEventHandler* value) override
     {
         return AddCreateResourcesMethod.WasCalled(sender, value);
@@ -346,6 +352,20 @@ TEST_CLASS(CanvasControlTests_InteractionWithRecreatableDeviceManager)
         f.DeviceManager->SetDevice(nullDevice);
 
         ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasControl_WhenDpiChangedEventRaised_ForwardsToDeviceManager)
+    {
+        Fixture f;
+
+        // DPI change event without an actual change to the value should be ignored.
+        f.Adapter->RaiseDpiChangedEvent();
+
+        // But if the value changes, this should be passed on to the device manager.
+        f.Adapter->LogicalDpi = 100;
+
+        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
+        f.Adapter->RaiseDpiChangedEvent();
     }
 
     TEST_METHOD_EX(CanvasControl_add_CreateResources_ForwardsToDeviceManager)
@@ -948,7 +968,6 @@ TEST_CLASS(CanvasControlTests_Dpi)
 
             ThrowIfFailed(userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
 
-
             // An event handler needs to be registered for a drawing session to be constructed.
             auto onDrawFn = 
                 Callback<DrawEventHandler>([](ICanvasControl*, ICanvasDrawEventArgs*) { return S_OK; });
@@ -982,7 +1001,9 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual<double>(verifyHeight, controlSize);
 
             // Raise a DpiChanged.
-            deviceContext->SetDpiMethod.SetExpectedCalls(1,
+            bool expectResize = controlSize != ceil(controlSize * dpiCase / DEFAULT_DPI);
+
+            deviceContext->SetDpiMethod.SetExpectedCalls(expectResize ? 1 : 0,
                 [](float dpiX, float dpiY)
                 {
                     Assert::AreEqual(DEFAULT_DPI, dpiX);
@@ -990,7 +1011,6 @@ TEST_CLASS(CanvasControlTests_Dpi)
                 });            
 
             adapter->m_dpi = DEFAULT_DPI;
-            bool expectResize = controlSize != ceil(controlSize * dpiCase / DEFAULT_DPI);
             adapter->RaiseDpiChangedEvent();
 
             // Here, verify that no recreation occurred yet. The backing store recreation

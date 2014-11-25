@@ -18,11 +18,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCreateResourcesEventArgs, BaseTrust);
 
+        CanvasCreateResourcesReason m_reason;
         std::function<void(IAsyncAction*)> m_trackAsyncActionCallback;
 
     public:
-        CanvasCreateResourcesEventArgs(std::function<void(IAsyncAction*)> trackAsyncActionCallback);
+        CanvasCreateResourcesEventArgs(CanvasCreateResourcesReason reason, std::function<void(IAsyncAction*)> trackAsyncActionCallback);
 
+        IFACEMETHODIMP get_Reason(CanvasCreateResourcesReason* value) override;
         IFACEMETHODIMP TrackAsyncAction(IAsyncAction* action) override;
     };
 } } } }

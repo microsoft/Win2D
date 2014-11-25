@@ -51,6 +51,8 @@ namespace ExampleGallery
         public GameOfLife()
         {
             this.InitializeComponent();
+
+            timer = Stopwatch.StartNew();
         }
 
         void Canvas_CreateResources(CanvasControl sender, object args)
@@ -64,8 +66,6 @@ namespace ExampleGallery
 
             // Initialize cells to random values.
             RandomizeSimulation(null, null);
-
-            timer = Stopwatch.StartNew();
         }
 
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)

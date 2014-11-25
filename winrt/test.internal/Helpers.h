@@ -187,6 +187,14 @@ namespace Microsoft
                 END_ENUM(RunWithDeviceFlags);
             }
 
+            ENUM_TO_STRING(CanvasCreateResourcesReason)
+            {
+                ENUM_VALUE(CanvasCreateResourcesReason::FirstTime);
+                ENUM_VALUE(CanvasCreateResourcesReason::NewDevice);
+                ENUM_VALUE(CanvasCreateResourcesReason::DpiChanged);
+                END_ENUM(CanvasCreateResourcesReason);
+            }
+
             template<>
             static inline std::wstring ToString<ABI::Windows::UI::Color>(ABI::Windows::UI::Color const& value)
             {

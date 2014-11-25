@@ -439,11 +439,14 @@ enum class ExpectedEventParams
 template<typename EventHandlerType>
 class MockEventHandler
 {
+    typedef typename EventHandlerAbiTypes<EventHandlerType>::Sender TSender_abi;
+    typedef typename EventHandlerAbiTypes<EventHandlerType>::Args   TArgs_abi;
+
     CallCounter<> m_callCounter;
     ComPtr<EventHandlerType> m_callback;
     ExpectedEventParams m_expectedParams;
     HRESULT m_nextReturnValue;
-    std::function<HRESULT()> m_function;
+    std::function<HRESULT(TSender_abi, TArgs_abi)> m_function;
 
 public:
     MockEventHandler(std::wstring name = L"", ExpectedEventParams expectedParams = ExpectedEventParams::DontCare)
@@ -475,7 +478,7 @@ public:
         m_function = nullptr;
     }
 
-    void SetExpectedCalls(int value, std::function<HRESULT()> fn)
+    void SetExpectedCalls(int value, std::function<HRESULT(TSender_abi, TArgs_abi)> fn)
     {
         SetExpectedCalls(value);
         m_function = fn;
@@ -497,9 +500,6 @@ private:
     {
         return m_callCounter.Message(msg);
     }
-
-    typedef typename EventHandlerAbiTypes<EventHandlerType>::Sender TSender_abi;
-    typedef typename EventHandlerAbiTypes<EventHandlerType>::Args   TArgs_abi;
 
     HRESULT OnInvoke(TSender_abi sender, TArgs_abi args)
     {
@@ -524,7 +524,7 @@ private:
         }
 
         if (m_function)
-            return m_function();
+            return m_function(sender, args);
         else
             return m_nextReturnValue;
     }

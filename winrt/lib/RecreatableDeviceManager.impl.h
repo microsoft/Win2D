@@ -29,11 +29,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDevice> m_committedDevice;
 
         State m_state;
+        CanvasCreateResourcesReason m_createResourcesReason;
 
     public:
-        CommittedDevice(ComPtr<ICanvasDevice> const& device)
+        CommittedDevice(ComPtr<ICanvasDevice> const& device, CanvasCreateResourcesReason createResourcesReason)
             : m_committedDevice(device)
             , m_state(State::NeedCreateResources)
+            , m_createResourcesReason(createResourcesReason)
         {
         }
 
@@ -66,9 +68,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             }
         }
 
+        void SetDpiChanged()
+        {
+            if (m_state == State::ResourcesCreated)
+            {
+                m_state = State::NeedCreateResources;
+                m_createResourcesReason = CanvasCreateResourcesReason::DpiChanged;
+            }
+        }
+
         bool NeedsCreateResources()
         {
             return (m_state == State::NeedCreateResources);
+        }
+
+        CanvasCreateResourcesReason GetCreateResourcesReason()
+        {
+            assert(m_state == State::NeedCreateResources);
+            return m_createResourcesReason;
         }
 
         bool IsLost()
@@ -103,10 +120,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         std::unique_ptr<CommittedDevice> m_committedDevice;
 
+        bool m_dpiChanged;
+
     public:
         RecreatableDeviceManager(IActivationFactory* canvasDeviceFactory)
             : m_canvasDeviceFactory(canvasDeviceFactory)
             , m_currentOperationIsPending(false)
+            , m_dpiChanged(false)
         {
         }
 
@@ -161,6 +181,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return !m_currentOperationIsPending;
         }
 
+        virtual void SetDpiChanged() override
+        {
+            std::unique_lock<std::recursive_mutex> lock(m_currentOperationMutex);
+         
+            m_dpiChanged = true;
+
+            if (!m_currentOperationIsPending && m_changedCallback)
+            {
+                m_changedCallback();
+            }
+        }
+
         virtual EventRegistrationToken AddCreateResources(Sender* sender, CreateResourcesHandler* value)
         {
             //
@@ -174,7 +206,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             //
             if (m_committedDevice && !m_committedDevice->IsLost())
             {
-                auto eventArgs = MakeEventArgs();
+                auto eventArgs = MakeEventArgs(CanvasCreateResourcesReason::FirstTime);
 
                 try
                 {
@@ -247,18 +279,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // If we haven't already, we can commit to the new device.
             //
             if (!m_committedDevice || m_committedDevice->IsLost())
-                m_committedDevice = std::make_unique<CommittedDevice>(m_device);
+            {
+                auto reason = !m_committedDevice ? CanvasCreateResourcesReason::FirstTime : 
+                                                   CanvasCreateResourcesReason::NewDevice;
+
+                m_committedDevice = std::make_unique<CommittedDevice>(m_device, reason);
+            }
 
             assert(m_committedDevice->GetDevice() == m_device);
 
             //
+            // If the DPI has changed, tell the device that it needs to reload resources.
+            //
+            if (m_dpiChanged)
+            {
+                m_committedDevice->SetDpiChanged();
+                m_dpiChanged = false;
+            }
+
+            //
             // Raise the CreateResources event if we haven't managed to
             // successfully CreateResources since we committed to the new
-            // device.
+            // device, or if the DPI has changed.
             //
             if (m_committedDevice->NeedsCreateResources())
             {
-                ThrowIfFailed(m_createResourcesEventSource.InvokeAll(sender, MakeEventArgs().Get()));
+                auto eventArgs = MakeEventArgs(m_committedDevice->GetCreateResourcesReason());
+
+                ThrowIfFailed(m_createResourcesEventSource.InvokeAll(sender, eventArgs.Get()));
 
                 //
                 // One of the CreateResources handlers might have registered an
@@ -368,13 +416,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             }
         }
 
-        ComPtr<ICanvasCreateResourcesEventArgs> MakeEventArgs()
+        ComPtr<ICanvasCreateResourcesEventArgs> MakeEventArgs(CanvasCreateResourcesReason reason)
         {
-            return Make<CanvasCreateResourcesEventArgs>(
+            auto eventArgs = Make<CanvasCreateResourcesEventArgs>(reason,
                 [=](IAsyncAction* action)
                 {
                     TrackAsyncAction(action);
                 });
+
+            CheckMakeResult(eventArgs);
+            return eventArgs;
         }
 
         void TrackAsyncAction(IAsyncAction* action)
@@ -387,6 +438,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowHR(COR_E_NOTSUPPORTED, HStringReference(Strings::MultipleAsyncCreateResourcesNotSupported).Get());
 
             auto onCompleted = Callback<IAsyncActionCompletedHandler>(this, &RecreatableDeviceManager::OnAsynchronousCreateResourcesCompleted);
+            CheckMakeResult(onCompleted);
             ThrowIfFailed(action->put_Completed(onCompleted.Get()));
             m_currentOperation = As<IAsyncInfo>(action);                
             m_currentOperationIsPending = true;
