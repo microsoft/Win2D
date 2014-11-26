@@ -76,6 +76,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ID2D1ImageBrush> m_d2dImageBrush;
 
+        // TODO #2630: stop explicitly storing this once we support proper effect interop.
+        ComPtr<ICanvasImageInternal> m_effectNeedingDpiFixup;
+
         bool m_useBitmapBrush;
 
         bool m_isSourceRectSet;
@@ -110,7 +113,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Close)() override;
 
         // ICanvasBrushInternal
-        virtual ComPtr<ID2D1Brush> GetD2DBrush() override;
+        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext) override;
 
         // ICanvasImageBrushInternal
         virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() override;

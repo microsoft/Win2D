@@ -2058,6 +2058,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+    ComPtr<ID2D1Brush> CanvasDrawingSession::ToD2DBrush(ICanvasBrush* brush)
+    {
+        if (!brush)
+            return nullptr;
+
+        auto& deviceContext = GetResource();
+
+        return As<ICanvasBrushInternal>(brush)->GetD2DBrush(deviceContext.Get());
+    }
+
+
     IFACEMETHODIMP CanvasDrawingSession::get_Antialiasing(CanvasAntialiasing* value)
     {
         return ExceptionBoundary(

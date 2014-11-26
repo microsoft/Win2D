@@ -308,7 +308,7 @@ public:
         Assert::IsTrue(createSolidColorBrushCalled);
         ComPtr<ICanvasBrushInternal> createdBrushInternal;
         ThrowIfFailed(createdBrush.As(&createdBrushInternal));
-        ComPtr<ID2D1Brush> createdD2DBrush = createdBrushInternal->GetD2DBrush();
+        ComPtr<ID2D1Brush> createdD2DBrush = createdBrushInternal->GetD2DBrush(nullptr);
         Assert::AreEqual(static_cast<ID2D1Brush*>(expectedBrush.Get()), createdD2DBrush.Get());
     }
 };

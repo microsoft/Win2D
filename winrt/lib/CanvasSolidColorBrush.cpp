@@ -28,7 +28,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]()
             {
                 CheckInPointer(value);
-                *value = GetD2DBrush()->GetOpacity();
+                *value = GetD2DBrush(nullptr)->GetOpacity();
             });
     }
 
@@ -37,7 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DBrush()->SetOpacity(value);
+                GetD2DBrush(nullptr)->SetOpacity(value);
             });
     }
 
@@ -49,7 +49,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                GetD2DBrush()->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
+                GetD2DBrush(nullptr)->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
             });
     }
 
@@ -58,7 +58,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]()
             {
-                GetD2DBrush()->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
+                GetD2DBrush(nullptr)->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
             });
     }
 
@@ -145,7 +145,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ResourceWrapper::Close();
     }
 
-    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush()
+    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext)
     {
         return GetResource();
     }

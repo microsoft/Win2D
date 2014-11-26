@@ -935,6 +935,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasTextFormat* GetDefaultTextFormat();
 
         ID2D1SolidColorBrush* GetColorBrush(ABI::Windows::UI::Color const& color);
+        ComPtr<ID2D1Brush> ToD2DBrush(ICanvasBrush* brush);
 
         HRESULT DrawImageImpl(
             ICanvasImage* image,

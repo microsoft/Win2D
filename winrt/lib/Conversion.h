@@ -261,16 +261,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1::Ellipse(ToD2DPoint(point), rx, ry);
     }
 
-    inline ComPtr<ID2D1Brush> ToD2DBrush(ICanvasBrush* brush)
-    {
-        if (!brush)
-            return nullptr;
-
-        ComPtr<ICanvasBrushInternal> internal;
-        ThrowIfFailed(brush->QueryInterface(IID_PPV_ARGS(&internal)));
-        return internal->GetD2DBrush();
-    }
-
     inline D2D1_COLOR_INTERPOLATION_MODE ToD2DColorInterpolation(CanvasAlphaBehavior alphaBehavior)
     {
         switch (alphaBehavior)

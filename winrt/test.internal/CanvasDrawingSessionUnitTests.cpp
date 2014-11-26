@@ -203,7 +203,7 @@ public:
         else
         {
             // When testing a WithBrush overload, we expect to see the stub brush provided by CanvasDrawingSessionFixture.
-            m_expectedBrush = f.Brush->GetD2DBrush().Get();
+            m_expectedBrush = f.Brush->GetD2DBrush(nullptr).Get();
         }
     }
 

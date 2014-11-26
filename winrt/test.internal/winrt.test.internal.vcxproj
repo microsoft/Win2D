@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -85,6 +85,7 @@
     <ClInclude Include="StubSurfaceImageSourceFactory.h" />
     <ClInclude Include="StubSwapChainPanel.h" />
     <ClInclude Include="StubUserControl.h" />
+    <ClInclude Include="SwitchableTestBrushFixture.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="StubD2DResources.h" />
     <ClInclude Include="TestBitmapResourceCreationAdapter.h" />

@@ -33,7 +33,7 @@ namespace canvas
         // ICanvasBrushInternal
         //
 
-        virtual ComPtr<ID2D1Brush> GetD2DBrush() override
+        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext) override
         {
             return m_brush;
         }

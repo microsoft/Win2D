@@ -194,6 +194,51 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to GetFactory");
         }
+    };
 
+
+    class MockD2DEffectThatCountsCalls : public MockD2DEffect
+    {
+    public:
+        IID m_effectId;
+
+        int m_setInputCalls;
+        int m_setValueCalls;
+
+        std::vector<ComPtr<ID2D1Image>> m_inputs;
+        std::vector<std::vector<byte>> m_properties;
+
+        MockD2DEffectThatCountsCalls(IID const& effectId = CLSID_D2D1GaussianBlur)
+          : m_effectId(effectId)
+          , m_setInputCalls(0)
+          , m_setValueCalls(0)
+        {
+            MockSetInputCount = []
+            {
+                return S_OK;
+            };
+
+            MockSetInput = [&](UINT32 index, ID2D1Image* input)
+            {
+                m_setInputCalls++;
+
+                if (index >= m_inputs.size())
+                    m_inputs.resize(index + 1);
+
+                m_inputs[index] = input;
+            };
+
+            MockSetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)
+            {
+                m_setValueCalls++;
+
+                if (index >= m_properties.size())
+                    m_properties.resize(index + 1);
+
+                m_properties[index] = std::vector<byte>(data, data + dataSize);
+
+                return S_OK;
+            };
+        }
     };
 }

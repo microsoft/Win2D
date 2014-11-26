@@ -302,7 +302,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ResourceWrapper::Close();
     }
 
-    ComPtr<ID2D1Brush> CanvasLinearGradientBrush::GetD2DBrush()
+    ComPtr<ID2D1Brush> CanvasLinearGradientBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext)
     {
         return GetResource();
     }
