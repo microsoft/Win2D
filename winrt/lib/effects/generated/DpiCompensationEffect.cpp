@@ -22,7 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         // Set default values
         SetProperty<uint32_t>(D2D1_DPICOMPENSATION_PROP_INTERPOLATION_MODE, D2D1_DPICOMPENSATION_INTERPOLATION_MODE_LINEAR);
-        SetProperty<uint32_t>(D2D1_DPICOMPENSATION_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        SetProperty<uint32_t>(D2D1_DPICOMPENSATION_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD);
         SetProperty<float[2]>(D2D1_DPICOMPENSATION_PROP_INPUT_DPI, Numerics::Vector2{ 96, 96 });
     }
 

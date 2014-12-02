@@ -144,6 +144,7 @@ under the License.
     </Effect>
     <Effect Name="DpiCompensationEffect">
       <Property Name="InputDpi" ProjectedNameOverride="SourceDpi"/>
+      <Property Name="BorderMode" DefaultValueOverride="1"/>
     </Effect>
     <Effect Name="GaussianBlurEffect">
       <Property Name="StandardDeviation" ProjectedNameOverride="BlurAmount"/>

@@ -110,6 +110,9 @@ namespace CodeGen
                 public string ProjectedNameOverride;
 
                 [XmlAttributeAttribute]
+                public string DefaultValueOverride;
+
+                [XmlAttributeAttribute]
                 public bool IsHidden;
 
                 [XmlAttributeAttribute]

@@ -532,6 +532,12 @@ namespace CodeGen
                         property.Name = propertyOverride.ProjectedNameOverride;
                     }
 
+                    if (propertyOverride.DefaultValueOverride != null)
+                    {
+                        var defaultProperty = property.Properties.Single(p => p.Name == "Default");
+                        defaultProperty.Value = propertyOverride.DefaultValueOverride;
+                    }
+
                     property.IsHidden = propertyOverride.IsHidden;
                     property.ConvertRadiansToDegrees = propertyOverride.ConvertRadiansToDegrees;
                 }

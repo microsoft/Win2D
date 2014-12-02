@@ -836,5 +836,17 @@ namespace test.managed
                 }
             }
         }
+
+
+        [TestMethod]
+        public void EffectPropertyDefaults()
+        {
+            // We have customised the default value of DpiCompensationEffect border mode property.
+            Assert.AreEqual(EffectBorderMode.Hard, new DpiCompensationEffect().BorderMode);
+
+            // Other effects should still have the standard D2D default value.
+            Assert.AreEqual(EffectBorderMode.Soft, new GaussianBlurEffect().BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, new Transform3DEffect().BorderMode);
+        }
     }
 }
