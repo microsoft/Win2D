@@ -23,62 +23,90 @@ namespace canvas
     {
     public:
         CALL_COUNTER_WITH_MOCK(GetResourceMethod, HRESULT(const IID&, void**));
+        CALL_COUNTER_WITH_MOCK(GetDpiMethod, HRESULT(float*));
 
         IFACEMETHOD(CreateDrawingSession)(
             Color clearColor,
             ICanvasDrawingSession** drawingSession) override
         {
+            Assert::Fail(L"Unexpected call to CreateDrawingSession");
             return E_NOTIMPL;
         }
 
-        IFACEMETHOD(get_Width)(int32_t* value) override
+        IFACEMETHOD(get_Size)(Size* value) override
         {
+            Assert::Fail(L"Unexpected call to get_Size");
             return E_NOTIMPL;
         }
 
-        IFACEMETHOD(get_Height)(int32_t* value) override
+        IFACEMETHOD(get_SizeInPixels)(Size* value) override
         {
+            Assert::Fail(L"Unexpected call to get_SizeInPixels");
             return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(get_Dpi)(float* value) override
+        {
+            return GetDpiMethod.WasCalled(value);
         }
 
         IFACEMETHOD(get_Format)(DirectXPixelFormat* value) override
         {
+            Assert::Fail(L"Unexpected call to get_Format");
             return E_NOTIMPL;
         }
 
         IFACEMETHOD(get_BufferCount)(int32_t* value) override
         {
+            Assert::Fail(L"Unexpected call to get_BufferCount");
             return E_NOTIMPL;
         }
 
         IFACEMETHOD(get_AlphaMode)(CanvasAlphaBehavior* value) override
         {
+            Assert::Fail(L"Unexpected call to get_AlphaMode");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override
+        {
+            Assert::Fail(L"Unexpected call to ConvertPixelsToDips");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override
+        {
+            Assert::Fail(L"Unexpected call to ConvertDipsToPixels");
             return E_NOTIMPL;
         }
 
         IFACEMETHOD(Present)() override
         {
+            Assert::Fail(L"Unexpected call to Present");
             return E_NOTIMPL;
         }
 
         IFACEMETHOD(ResizeBuffers)(
             int32_t bufferCount,
-            int32_t newWidth,
-            int32_t newHeight,
+            float newWidth,
+            float newHeight,
             DirectXPixelFormat newFormat) override
         {
+            Assert::Fail(L"Unexpected call to ResizeBuffers");
             return E_NOTIMPL;
         }
 
         // IClosable
         IFACEMETHOD(Close)() override
         {
+            Assert::Fail(L"Unexpected call to Close");
             return E_NOTIMPL;
         }
 
         // ICanvasResourceCreator
         IFACEMETHOD(get_Device)(ICanvasDevice** value) override
         {
+            Assert::Fail(L"Unexpected call to get_Device");
             return E_NOTIMPL;
         }
 

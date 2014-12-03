@@ -29,42 +29,43 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasSwapChainFactory::CreateWithSize(
-        ICanvasResourceCreator* resourceCreator,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        float width,
+        float height,
         ICanvasSwapChain** swapChain)
     {
         return CreateWithAllOptions(
             resourceCreator,
-            widthInPixels,
-            heightInPixels,
+            width,
+            height,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
             2,
             CanvasAlphaBehavior::Premultiplied,
             swapChain);
     }
 
-    IFACEMETHODIMP CanvasSwapChainFactory::CreateWithSizeAndFormat(
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateWithSizeAndDpi(
         ICanvasResourceCreator* resourceCreator,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
-        DirectXPixelFormat format,
+        float width,
+        float height,
+        float dpi,
         ICanvasSwapChain** swapChain)
     {
-        return CreateWithAllOptions(
+        return CreateWithAllOptionsAndDpi(
             resourceCreator, 
-            widthInPixels, 
-            heightInPixels, 
-            format, 
+            width, 
+            height, 
+            DirectXPixelFormat::B8G8R8A8UIntNormalized,
             2, 
             CanvasAlphaBehavior::Premultiplied, 
+            dpi,
             swapChain);
     }
 
     IFACEMETHODIMP CanvasSwapChainFactory::CreateWithAllOptions(
-        ICanvasResourceCreator* resourceCreator,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        float width,
+        float height,
         DirectXPixelFormat format,
         int32_t bufferCount,
         CanvasAlphaBehavior alphaBehavior,
@@ -76,13 +77,47 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(resourceCreator);
                 CheckAndClearOutPointer(swapChain);
                 
+                float dpi;
+                ThrowIfFailed(resourceCreator->get_Dpi(&dpi));
+
                 auto newCanvasSwapChain = GetManager()->Create(
-                    resourceCreator,
-                    widthInPixels,
-                    heightInPixels,
+                    As<ICanvasResourceCreator>(resourceCreator).Get(),
+                    width,
+                    height,
                     format,
                     bufferCount,
                     alphaBehavior,
+                    dpi,
+                    m_drawingSessionFactory);
+
+                ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateWithAllOptionsAndDpi(
+        ICanvasResourceCreator* resourceCreator,
+        float width,
+        float height,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        CanvasAlphaBehavior alphaBehavior,
+        float dpi,
+        ICanvasSwapChain** swapChain)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckAndClearOutPointer(swapChain);
+                
+                auto newCanvasSwapChain = GetManager()->Create(
+                    resourceCreator,
+                    width,
+                    height,
+                    format,
+                    bufferCount,
+                    alphaBehavior,
+                    dpi,
                     m_drawingSessionFactory);
 
                 ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
@@ -90,13 +125,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     //
-    // ICanvasFactoryNative
+    // ICanvasDeviceResourceWithDpiFactoryNative
     //
 
 
     IFACEMETHODIMP CanvasSwapChainFactory::GetOrCreate(
         ICanvasDevice* device,
         IUnknown* resource,
+        float dpi,
         IInspectable** wrapper)
     {
         return ExceptionBoundary(
@@ -108,7 +144,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<IDXGISwapChain2> dxgiSwapChain;
                 ThrowIfFailed(resource->QueryInterface(dxgiSwapChain.GetAddressOf()));
 
-                auto newCanvasSwapChain = GetManager()->GetOrCreate(device, dxgiSwapChain.Get());
+                auto newCanvasSwapChain = GetManager()->GetOrCreate(device, dxgiSwapChain.Get(), dpi);
 
                 ThrowIfFailed(newCanvasSwapChain.CopyTo(wrapper));
             });
@@ -118,9 +154,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasResourceCreator* resourceCreator,
         std::shared_ptr<CanvasSwapChainManager> swapChainManager,
         std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> drawingSessionFactory,
-        IDXGISwapChain2* dxgiSwapChain)
+        IDXGISwapChain2* dxgiSwapChain,
+        float dpi)
         : ResourceWrapper(swapChainManager, dxgiSwapChain)
         , m_drawingSessionFactory(drawingSessionFactory)
+        , m_dpi(dpi)
     {
         ThrowIfFailed(resourceCreator->get_Device(&m_device));
     }
@@ -139,35 +177,53 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto newDrawingSession = m_drawingSessionFactory->Create(
                     device.Get(),
                     dxgiSwapChain.Get(),
-                    clearColor);
+                    clearColor,
+                    m_dpi);
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::get_Width(int32_t* value) 
+    IFACEMETHODIMP CanvasSwapChain::get_Size(Size* value)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(value);
 
-                *value = GetResourceDescription().Width;
-            });
+                auto desc = GetResourceDescription();
+
+                *value = Size{ PixelsToDips(desc.Width, m_dpi),
+                               PixelsToDips(desc.Height, m_dpi) };
+        });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::get_Height(int32_t* value)
+    IFACEMETHODIMP CanvasSwapChain::get_SizeInPixels(Size* value)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(value);
 
-                *value = GetResourceDescription().Height;
+                auto desc = GetResourceDescription();
+
+                *value = Size{ static_cast<float>(desc.Width), 
+                               static_cast<float>(desc.Height) };
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::get_Format(DirectXPixelFormat* value) 
+    IFACEMETHODIMP CanvasSwapChain::get_Dpi(float *value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                *value = m_dpi;
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::get_Format(DirectXPixelFormat* value)
     {
         return ExceptionBoundary(
             [&]
@@ -200,6 +256,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasSwapChain::ConvertPixelsToDips(int pixels, float* dips)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(dips);
+
+                *dips = PixelsToDips(pixels, m_dpi);
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::ConvertDipsToPixels(float dips, int* pixels)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(pixels);
+
+                *pixels = DipsToPixels(dips, m_dpi);
+            });
+    }
+
     IFACEMETHODIMP CanvasSwapChain::Present() 
     {
         return ExceptionBoundary(
@@ -214,8 +292,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasSwapChain::ResizeBuffers(
         int32_t bufferCount,
-        int32_t newWidth,
-        int32_t newHeight,
+        float newWidth,
+        float newHeight,
         DirectXPixelFormat newFormat) 
     {
         return ExceptionBoundary(
@@ -223,14 +301,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto resource = GetResource();
 
+                int widthInPixels = DipsToPixels(newWidth, m_dpi);
+                int heightInPixels = DipsToPixels(newHeight, m_dpi);
+
                 ThrowIfNegative(bufferCount);
-                ThrowIfNegative(newWidth);
-                ThrowIfNegative(newHeight);
+                ThrowIfNegative(widthInPixels);
+                ThrowIfNegative(heightInPixels);
 
                 ThrowIfFailed(resource->ResizeBuffers(
                     bufferCount, 
-                    newWidth,
-                    newHeight, 
+                    widthInPixels,
+                    heightInPixels,
                     static_cast<DXGI_FORMAT>(newFormat), 
                     0));
             });
@@ -283,6 +364,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* owner,
             IDXGISwapChain2* swapChainResource,
             D2D1_COLOR_F const& clearColor,
+            float dpi,
             ID2D1DeviceContext1** outDeviceContext)
         {
             auto deviceInternal = As<ICanvasDeviceInternal>(owner);
@@ -320,6 +402,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             deviceContext->Clear(&clearColor);
 
+            deviceContext->SetDpi(dpi, dpi);
+
             //
             // This function can't fail now, so we can dismiss the end draw warden.
             //
@@ -354,7 +438,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ICanvasDrawingSession> CanvasSwapChainDrawingSessionFactory::Create(
         ICanvasDevice* owner,
         IDXGISwapChain2* swapChainResource,
-        Color const& clearColor) const
+        Color const& clearColor,
+        float dpi) const
     {
         CheckInPointer(owner);
 
@@ -363,20 +448,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             owner,
             swapChainResource,
             ToD2DColor(clearColor),
+            dpi,
             &deviceContext);
 
-
         return m_drawingSessionManager->Create(deviceContext.Get(), adapter);
-
     }
 
     ComPtr<CanvasSwapChain> CanvasSwapChainManager::CreateNew(
         ICanvasResourceCreator* resourceCreator,
-        int32_t widthInPixels,
-        int32_t heightInPixels,
+        float width,
+        float height,
         DirectXPixelFormat format,
         int32_t bufferCount,
         CanvasAlphaBehavior alphaBehavior,
+        float dpi,
         std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> const& drawingSessionFactory)
     {
         ComPtr<ICanvasDevice> device;
@@ -384,6 +469,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ICanvasDeviceInternal> deviceInternal;
         ThrowIfFailed(device.As(&deviceInternal));
+
+        int widthInPixels = DipsToPixels(width, dpi);
+        int heightInPixels = DipsToPixels(height, dpi);
 
         ComPtr<IDXGISwapChain2> dxgiSwapChain = deviceInternal->CreateSwapChain(
             widthInPixels,
@@ -396,7 +484,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator,
             shared_from_this(),
             drawingSessionFactory,
-            dxgiSwapChain.Get());
+            dxgiSwapChain.Get(),
+            dpi);
         CheckMakeResult(canvasSwapChain);
 
         return canvasSwapChain;
@@ -404,7 +493,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<CanvasSwapChain> CanvasSwapChainManager::CreateWrapper(
         ICanvasDevice* device,
-        IDXGISwapChain2* resource)
+        IDXGISwapChain2* resource,
+        float dpi)
     {
         auto resourceCreator = As<ICanvasResourceCreator>(device);
 
@@ -412,7 +502,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator.Get(),
             shared_from_this(),
             nullptr, // drawing session factory
-            resource);
+            resource,
+            dpi);
         CheckMakeResult(swapChain);
 
         return swapChain;

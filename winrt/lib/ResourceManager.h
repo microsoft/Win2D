@@ -68,24 +68,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return wrapper;
         }
 
-        ComPtr<wrapper_t> GetOrCreate(resource_t* resource)
+        template<typename... Arguments>
+        ComPtr<wrapper_t> GetOrCreate(Arguments&&... args)
         {
             return m_tracker.GetOrCreate(
-                resource,
+                args...,
                 [&] 
                 {
-                    return GetManager()->CreateWrapper(resource); 
-                });
-        }
-
-        ComPtr<wrapper_t> GetOrCreate(ICanvasDevice* device, resource_t* resource)
-        {
-            return m_tracker.GetOrCreate(
-                device,
-                resource,
-                [&]
-                {
-                    return GetManager()->CreateWrapper(device, resource);
+                    return GetManager()->CreateWrapper(args...); 
                 });
         }
 

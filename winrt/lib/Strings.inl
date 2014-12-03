@@ -31,3 +31,5 @@ STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The CanvasControl does not current
     L"Ensure that resources are created from a CreateResources or Draw event handler.");
 STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat::B8G8R8A8UIntNormalized.")
 STRING(MultipleAsyncCreateResourcesNotSupported, L"Only one asynchronous CreateResources action can be tracked at a time.")
+STRING(ResourceTrackerWrongDevice, L"Existing resource wrapper is associated with a different device.")
+STRING(ResourceTrackerWrongDpi, L"Existing resource wrapper has a different DPI.")

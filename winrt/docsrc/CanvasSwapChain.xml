@@ -27,27 +27,37 @@ under the License.
       documentation on 
       <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174569(v=vs.85).aspx">IDXGISwapChain</a>.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasSwapChain class, with the specified width and height.</summary>
-      <remarks>The swap chain's pixel format will default to 
-      DirectXPixelFormat::B8G8R8A8UIntNormalized, its buffer count will be 2, 
-      and its alpha mode will be CanvasAlphaBehavior::Premultiplied. </remarks>
+      <remarks>
+        The swap chain's pixel format will default to DirectXPixelFormat::B8G8R8A8UIntNormalized,
+        its buffer count will be 2, and its alpha mode will be CanvasAlphaBehavior::Premultiplied.
+        Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.
+      </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat)">
-      <summary>Initializes a new instance of the CanvasSwapChain class with 
-      the specified width, height, and pixel format.</summary>
-      <remarks>The swap chain's buffer count will default to 2, and its alpha
-      mode will be CanvasAlphaBehavior::Premultiplied. </remarks>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
+      <summary>Initializes a new instance of the CanvasSwapChain class with the specified width, height, and dpi.</summary>
+      <remarks>
+        The swap chain's pixel format will default to DirectXPixelFormat::B8G8R8A8UIntNormalized,
+        its buffer count will be 2, and its alpha mode will be CanvasAlphaBehavior::Premultiplied.
+        Size is in device independent pixels (dips).
+      </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
       <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
+      <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+      <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
+      <remarks>Size is in device independent pixels (dips).</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.Present">
       <summary>Presents a rendered image.</summary>
       <remarks>On a composed target such as a XAML control, no rendering can be observed from a CanvasSwapChain until Present is called.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Int32,System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Int32,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat)">
       <summary>Changes the CanvasSwapChain's back buffer size, pixel format, and number of buffers.</summary>
+      <remarks>Size is in device independent pixels (dips).</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateDrawingSession(Windows.UI.Color)">
       <summary>Creates a drawing session that will draw onto this CanvasSwapChain.</summary>
@@ -68,11 +78,24 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Format">
       <summary>Gets the pixel format associated with this CanvasSwapChain.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Height">
-      <summary>Gets the width, in pixels, of this CanvasSwapChain.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Size">
+      <summary>Gets the size of the swapchain, in device independent pixels (dips).</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Width">
-      <summary>Gets the height, in pixels, of this CanvasSwapChain.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.SizeInPixels">
+      <summary>Gets the size of the swapchain, in pixels.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Dpi">
+      <summary>Gets the dots-per-inch (DPI) of this swapchain.</summary>
+      <remarks>
+        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
+        The identity DPI value is 96, which means dips and pixels are the same.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (dips) based on the DPI of this swapchain.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ConvertDipsToPixels(System.Single)">
+      <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this swapchain.</summary>
     </member>
   </members>
 </doc>

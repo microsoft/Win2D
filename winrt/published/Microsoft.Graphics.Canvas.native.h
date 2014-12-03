@@ -49,6 +49,18 @@ namespace ABI
                 };
 
                 //
+                // Interface provided by the various Canvas factories that is
+                // able to get or create objects that wrap resources that are
+                // associated with a specific CanvasDevice and need to know DPI.
+                //
+                [uuid({BDE18E86-4EDC-497D-9EB8-8C26B1EC149C})]
+                class ICanvasDeviceResourceWithDpiFactoryNative : public IInspectable
+                {
+                public:
+                    IFACEMETHOD(GetOrCreate)(ICanvasDevice* device, IUnknown* resource, float dpi, IInspectable** wrapper) = 0;
+                };
+
+                //
                 // Interface provided by various Canvas objects that is able to
                 // retrieve the wrapped resource.
                 //
@@ -114,12 +126,38 @@ namespace Microsoft
                 return safe_cast<WRAPPER^>(objectWrapper);
             }
 
+            template<class WRAPPER>
+            WRAPPER^ GetOrCreate(CanvasDevice^ device, IUnknown* resource, float dpi)
+            {
+                using namespace Microsoft::WRL;
+                namespace abi = ABI::Microsoft::Graphics::Canvas;
+
+                ComPtr<abi::ICanvasDeviceResourceWithDpiFactoryNative> factory;
+                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                    reinterpret_cast<HSTRING>(WRAPPER::typeid->FullName),
+                    &factory));
+
+                ComPtr<IInspectable> inspectableWrapper;
+                __abi_ThrowIfFailed(factory->GetOrCreate(reinterpret_cast<abi::ICanvasDevice*>(device), resource, dpi, &inspectableWrapper));
+
+                Platform::Object^ objectWrapper = reinterpret_cast<Platform::Object^>(inspectableWrapper.Get());
+
+                return safe_cast<WRAPPER^>(objectWrapper);
+            }
+
 
             template<class WRAPPER>
             WRAPPER^ GetOrCreate(ID2D1Device1* device, IUnknown* resource)
             {
                 CanvasDevice^ canvasDevice = GetOrCreate<CanvasDevice>(device);
                 return GetOrCreate<WRAPPER>(canvasDevice, resource);
+            }
+
+            template<class WRAPPER>
+            WRAPPER^ GetOrCreate(ID2D1Device1* device, IUnknown* resource, float dpi)
+            {
+                CanvasDevice^ canvasDevice = GetOrCreate<CanvasDevice>(device);
+                return GetOrCreate<WRAPPER>(canvasDevice, resource, dpi);
             }
 
 

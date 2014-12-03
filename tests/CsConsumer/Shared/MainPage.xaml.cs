@@ -312,9 +312,8 @@ namespace CsConsumer
                     break;
 
                 case DrawnContentType.SwapChainPanel:
-                    
                     m_canvasSwapChainPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    CanvasSwapChain swapChain = new CanvasSwapChain(ds.Device, horizontalLimit, verticalLimit);
+                    CanvasSwapChain swapChain = new CanvasSwapChain(ds, horizontalLimit, verticalLimit);
                     m_canvasSwapChainPanel.SwapChain = swapChain;
 
                     using(CanvasDrawingSession panelDS = swapChain.CreateDrawingSession(NextRandomColor()))

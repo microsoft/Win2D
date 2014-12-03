@@ -28,7 +28,7 @@ TEST_CLASS(CanvasSwapChainTests)
     {
         auto canvasDevice = ref new CanvasDevice();
 
-        auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 2);
+        auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 2, DEFAULT_DPI);
 
         auto dxgiSwapChain = GetWrappedResource<IDXGISwapChain2>(canvasSwapChain);
 
@@ -37,18 +37,24 @@ TEST_CLASS(CanvasSwapChainTests)
         Assert::AreEqual(1u, swapChainDescription.Width);
         Assert::AreEqual(2u, swapChainDescription.Height);
 
-        auto newCanvasSwapChain = GetOrCreate<CanvasSwapChain>(canvasDevice, dxgiSwapChain.Get());
+        auto newCanvasSwapChain = GetOrCreate<CanvasSwapChain>(canvasDevice, dxgiSwapChain.Get(), DEFAULT_DPI);
         auto newDxgiSwapChain = GetWrappedResource<IDXGISwapChain2>(newCanvasSwapChain);
 
         Assert::AreEqual(canvasSwapChain, newCanvasSwapChain);
         Assert::AreEqual(dxgiSwapChain.Get(), newDxgiSwapChain.Get());
+
+        ExpectCOMException(E_INVALIDARG, L"Existing resource wrapper has a different DPI.",
+            [&]
+            {
+                GetOrCreate<CanvasSwapChain>(canvasDevice, dxgiSwapChain.Get(), DEFAULT_DPI + 3);
+            });
     }
 
     TEST_METHOD(CanvasSwapChain_DrawOperation)
     {
         auto canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
 
-        auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 1);
+        auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 1, DEFAULT_DPI);
 
         Color referenceColor = Colors::Red;
 
@@ -68,5 +74,16 @@ TEST_CLASS(CanvasSwapChainTests)
 
         Assert::AreEqual(1u, color->Length);
         Assert::AreEqual(referenceColor, color[0]);
+    }
+
+    TEST_METHOD(CanvasSwapChain_PropagatesDpiToDrawingSession)
+    {
+        const float dpi = 145;
+
+        auto canvasDevice = ref new CanvasDevice();
+        auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 2, dpi);
+        auto drawingSession = canvasSwapChain->CreateDrawingSession(Colors::Black);
+
+        Assert::AreEqual(dpi, drawingSession->Dpi);
     }
 };

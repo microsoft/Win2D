@@ -669,11 +669,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         swapChainDesc.AlphaMode = ToDxgiAlphaMode(alphaBehavior);
 
         ComPtr<IDXGISwapChain1> swapChainBase;
-        dxgiFactory->CreateSwapChainForComposition(
+        ThrowIfFailed(dxgiFactory->CreateSwapChainForComposition(
             dxgiDevice.Get(), 
             &swapChainDesc, 
             nullptr, // restrictToOutput
-            &swapChainBase);
+            &swapChainBase));
 
         auto swapChain = As<IDXGISwapChain2>(swapChainBase);
 

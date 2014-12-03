@@ -23,7 +23,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             IDXGISwapChain2* swapChainResource,
-            Color const& clearColor) const = 0;
+            Color const& clearColor,
+            float dpi) const = 0;
     };
 
     class CanvasSwapChainManager;
@@ -31,7 +32,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasSwapChainFactory
         : public ActivationFactory<
         ICanvasSwapChainFactory,
-        CloakedIid<ICanvasDeviceResourceFactoryNative>> ,
+        CloakedIid<ICanvasDeviceResourceWithDpiFactoryNative>> ,
         public PerApplicationManager<CanvasSwapChainFactory, CanvasSwapChainManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
@@ -42,34 +43,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasSwapChainFactory();
 
         IFACEMETHOD(CreateWithSize)(
-            ICanvasResourceCreator* resourceCreator,
-            int32_t widthInPixels,
-            int32_t heightInPixels,
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            float width,
+            float height,
             ICanvasSwapChain** SwapChain) override;
 
-        IFACEMETHOD(CreateWithSizeAndFormat)(
+        IFACEMETHOD(CreateWithSizeAndDpi)(
             ICanvasResourceCreator* resourceCreator,
-            int32_t widthInPixels,
-            int32_t heightInPixels,
-            DirectXPixelFormat format,
+            float width,
+            float height,
+            float dpi,
             ICanvasSwapChain** SwapChain) override;
 
         IFACEMETHOD(CreateWithAllOptions)(
-            ICanvasResourceCreator* resourceCreator,
-            int32_t widthInPixels,
-            int32_t heightInPixels,
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            float width,
+            float height,
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaBehavior alphaBehavior,
             ICanvasSwapChain** SwapChain) override;
 
+        IFACEMETHOD(CreateWithAllOptionsAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaBehavior alphaBehavior,
+            float dpi,
+            ICanvasSwapChain** SwapChain) override;
+
         //
-        // ICanvasDeviceResourceFactoryNative
+        // ICanvasDeviceResourceWithDpiFactoryNative
         //
 
         IFACEMETHOD(GetOrCreate)(
             ICanvasDevice* device,
             IUnknown* resource,
+            float dpi,
             IInspectable** wrapper) override;
     };
 
@@ -90,13 +102,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ClosablePtr<ICanvasDevice> m_device;
         std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> m_drawingSessionFactory;
+        float m_dpi;
 
     public:
         CanvasSwapChain(
             ICanvasResourceCreator* resourceCreator,
             std::shared_ptr<CanvasSwapChainManager> swapChainManager,
             std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> drawingSessionFactory,
-            IDXGISwapChain2* dxgiSwapChain);
+            IDXGISwapChain2* dxgiSwapChain,
+            float dpi);
 
         IFACEMETHOD(CreateDrawingSession)(
             Color clearColor,
@@ -104,9 +118,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ICanvasSwapChain
 
-        IFACEMETHOD(get_Width)(int32_t* value) override;
+        IFACEMETHOD(get_Size)(Size* value) override;
 
-        IFACEMETHOD(get_Height)(int32_t* value) override;
+        IFACEMETHOD(get_SizeInPixels)(Size* value) override;
+
+        IFACEMETHOD(get_Dpi)(float* value) override;
 
         IFACEMETHOD(get_Format)(DirectXPixelFormat* value) override;
 
@@ -114,12 +130,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_AlphaMode)(CanvasAlphaBehavior* value) override;
 
+        IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override;
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override;
+
         IFACEMETHOD(Present)() override;
 
         IFACEMETHOD(ResizeBuffers)(
             int32_t bufferCount,
-            int32_t newWidth,
-            int32_t newHeight,
+            float newWidth,
+            float newHeight,
             DirectXPixelFormat newFormat) override;
 
         // IClosable
@@ -138,16 +157,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         ComPtr<CanvasSwapChain> CreateNew(
             ICanvasResourceCreator* resourceCreator,
-            int32_t widthInPixels,
-            int32_t heightInPixels,
+            float width,
+            float height,
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaBehavior alphaBehavior,
+            float dpi,
             std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> const& drawingSessionFactory);
 
         ComPtr<CanvasSwapChain> CreateWrapper(
             ICanvasDevice* device,
-            IDXGISwapChain2* resource);
+            IDXGISwapChain2* resource,
+            float dpi);
     };
 
     //
@@ -165,7 +186,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             IDXGISwapChain2* swapChainResource,
-            Color const& clearColor) const override;
+            Color const& clearColor,
+            float dpi) const override;
     };
 
 }}}}

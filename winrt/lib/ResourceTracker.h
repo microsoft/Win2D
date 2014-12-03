@@ -12,9 +12,12 @@
 
 #pragma once
 
+#include "Strings.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
+    using namespace ::Microsoft::WRL::Wrappers;
 
     template<typename RESOURCE>
     class ResourceTracker
@@ -60,7 +63,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return GetOrCreateWorker(key, constructFn).second;
         }
 
-
         template<typename CONSTRUCT_FN>
         ComPtr<VALUE> GetOrCreate(ICanvasDevice* device, KEY* key, CONSTRUCT_FN&& constructFn)
         {
@@ -69,33 +71,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             auto wasNewlyConstructed = result.first;
             auto const& value = result.second;
 
-            //
-            // Validate that the object we got back reports that it is
-            // associated with the requested device.
-            //
-            ComPtr<ICanvasDevice> existingDevice;
-            ThrowIfFailed(value->get_Device(&existingDevice));
-
-            if (existingDevice.Get() != device)
-            {
-                if (wasNewlyConstructed)
-                {
-                    // A device mismatch on a newly created device indicates an
-                    // internal error
-                    assert(false && L"constructFn didn't create a wrapper associated with the expected device");
-                    ThrowHR(E_UNEXPECTED);
-                }
-                else
-                {
-                    // A device mismatch on a fetched device indicates a caller
-                    // error
-                    ThrowHR(E_INVALIDARG, WinString(L"Existing wrapper reports that it associated with a different device."));
-                }
-            }
+            ValidateDevice(value, wasNewlyConstructed, device);
 
             return value;
         }
 
+        template<typename CONSTRUCT_FN>
+        ComPtr<VALUE> GetOrCreate(ICanvasDevice* device, KEY* key, float dpi, CONSTRUCT_FN&& constructFn)
+        {
+            auto result = GetOrCreateWorker(key, constructFn);
+
+            auto wasNewlyConstructed = result.first;
+            auto const& value = result.second;
+
+            ValidateDevice(value, wasNewlyConstructed, device);
+            ValidateDpi(value, wasNewlyConstructed, dpi);
+
+            return value;
+        }
 
         void Remove(KEY* key)
         {
@@ -162,6 +155,58 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 std::make_pair(keyIdentity.Get(), weakValue));
 
             return std::make_pair(true, value);
+        }
+
+        void ValidateDevice(ComPtr<VALUE> const& value, bool wasNewlyConstructed, ICanvasDevice* expectedDevice)
+        {
+            //
+            // Validate that the object we got back reports that it is
+            // associated with the requested device.
+            //
+            ComPtr<ICanvasDevice> existingDevice;
+            ThrowIfFailed(value->get_Device(&existingDevice));
+
+            if (existingDevice.Get() != expectedDevice)
+            {
+                if (wasNewlyConstructed)
+                {
+                    // A device mismatch on a newly created device indicates an
+                    // internal error
+                    assert(false && L"constructFn didn't create a wrapper associated with the expected device");
+                    ThrowHR(E_UNEXPECTED);
+                }
+                else
+                {
+                    // A device mismatch on a fetched device indicates a caller
+                    // error
+                    ThrowHR(E_INVALIDARG, HStringReference(Strings::ResourceTrackerWrongDevice).Get());
+                }
+            }
+        }
+
+        void ValidateDpi(ComPtr<VALUE> const& value, bool wasNewlyConstructed, float expectedDpi)
+        {
+            //
+            // Validate that the object we got back reports that it has
+            // the requested DPI.
+            //
+            float existingDpi;
+            ThrowIfFailed(value->get_Dpi(&existingDpi));
+
+            if (existingDpi != expectedDpi)
+            {
+                if (wasNewlyConstructed)
+                {
+                    // DPI mismatch on a newly created resource indicates an internal error
+                    assert(false && L"constructFn didn't create a wrapper associated with the expected DPI");
+                    ThrowHR(E_UNEXPECTED);
+                }
+                else
+                {
+                    // A device mismatch on a fetched resource indicates a caller error
+                    ThrowHR(E_INVALIDARG, HStringReference(Strings::ResourceTrackerWrongDpi).Get());
+                }
+            }
         }
     };
 }}}}

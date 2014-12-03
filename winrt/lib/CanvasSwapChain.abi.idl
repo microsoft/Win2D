@@ -32,23 +32,32 @@ namespace Microsoft.Graphics.Canvas
     {
         // Creates a DXGI_FORMAT_B8G8R8A8_UNORM, 2-buffer premultiplied-alpha swap chain.
         HRESULT CreateWithSize(
-            [in] ICanvasResourceCreator* resourceCreator,
-            [in] INT32 width,
-            [in] INT32 height,
+            [in] ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in] float width,
+            [in] float height,
             [out, retval] CanvasSwapChain** swapChain);
 
-        // Creates a 2-buffer premultiplied-alpha swap chain.
-        HRESULT CreateWithSizeAndFormat(
+        // Creates a DXGI_FORMAT_B8G8R8A8_UNORM, 2-buffer premultiplied-alpha swap chain.
+        HRESULT CreateWithSizeAndDpi(
             [in] ICanvasResourceCreator* resourceCreator,
-            [in] INT32 width,
-            [in] INT32 height,
-            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            [in] float width,
+            [in] float height,
+            [in] float dpi,
             [out, retval] CanvasSwapChain** swapChain);
 
         HRESULT CreateWithAllOptions(
+            [in] ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in] float width,
+            [in] float height,
+            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            [in] INT32 bufferCount,
+            [in] CanvasAlphaBehavior alphaBehavior,
+            [out, retval] CanvasSwapChain** swapChain);
+
+        HRESULT CreateWithAllOptionsAndDpi(
             [in] ICanvasResourceCreator* resourceCreator,
-            [in] INT32 width,
-            [in] INT32 height,
+            [in] float width,
+            [in] float height,
 
             // Must be one of R16G16B16A16_FLOAT, DXGI_FORMAT_B8G8R8A8_UNORM, or DXGI_FORMAT_R8G8B8A8_UNORM
             [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
@@ -63,6 +72,7 @@ namespace Microsoft.Graphics.Canvas
             // An IDXGIOutput* argument is not included here. It represents less common 
             // usage scenarios and there is not a way to get to it from the current API.
             
+            [in] float dpi,
             [out, retval] CanvasSwapChain** swapChain);
     };
 
@@ -75,16 +85,20 @@ namespace Microsoft.Graphics.Canvas
 
         HRESULT ResizeBuffers(
                 [in] INT32 bufferCount,
-                [in] INT32 newWidth,
-                [in] INT32 newHeight,
+                [in] float newWidth,
+                [in] float newHeight,
                 [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat newFormat);
 
         // Returns the properties used to create this swap chain object.
-        [propget] HRESULT Width([out, retval] INT32* value);
-        [propget] HRESULT Height([out, retval] INT32* value);
+        [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
+        [propget] HRESULT SizeInPixels([out, retval] Windows.Foundation.Size* size);
+        [propget] HRESULT Dpi([out, retval] float* dpi);
         [propget] HRESULT Format([out, retval] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat* value);
         [propget] HRESULT BufferCount([out, retval] INT32* value);
         [propget] HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+
+        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
+        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
 
         // Used to create a drawing session that targets this swap chain object.
         HRESULT CreateDrawingSession(

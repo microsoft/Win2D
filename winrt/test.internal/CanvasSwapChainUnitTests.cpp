@@ -22,13 +22,14 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     class MockCanvasSwapChainDrawingSessionFactory : public ICanvasSwapChainDrawingSessionFactory
     {
     public:
-        CALL_COUNTER_WITH_MOCK(CreateMethod, ComPtr<ICanvasDrawingSession>(ICanvasDevice*, IDXGISwapChain2*, Color const&));
+        CALL_COUNTER_WITH_MOCK(CreateMethod, ComPtr<ICanvasDrawingSession>(ICanvasDevice*, IDXGISwapChain2*, Color const&, float));
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             IDXGISwapChain2* swapChainResource,
-            Color const& clearColor) const override
+            Color const& clearColor,
+            float dpi) const override
         {
-            return CreateMethod.WasCalled(owner, swapChainResource, clearColor);
+            return CreateMethod.WasCalled(owner, swapChainResource, clearColor, dpi);
         }
     };
 
@@ -50,15 +51,16 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             });
         }
 
-        ComPtr<CanvasSwapChain> CreateTestSwapChain()
+        ComPtr<CanvasSwapChain> CreateTestSwapChain(float dpi = DEFAULT_DPI)
         {
             return m_swapChainManager->Create(
                 m_canvasDevice.Get(),
-                1,
-                1,
+                1.0f,
+                1.0f,
                 DirectXPixelFormat::B8G8R8A8UIntNormalized,
                 2,
                 CanvasAlphaBehavior::Premultiplied,
+                dpi,
                 m_drawingSessionFactory);
         }
     };
@@ -67,11 +69,13 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     {
         StubDeviceFixture f;
 
+        const int dpiScale = 2;
+
         f.m_canvasDevice->CreateSwapChainMethod.SetExpectedCalls(1, 
             [=](int32_t widthInPixels, int32_t heightInPixels, DirectXPixelFormat format, int32_t bufferCount, CanvasAlphaBehavior alphaBehavior)
             {
-                Assert::AreEqual(23, widthInPixels);
-                Assert::AreEqual(45, heightInPixels);
+                Assert::AreEqual(23 * dpiScale, widthInPixels);
+                Assert::AreEqual(45 * dpiScale, heightInPixels);
                 Assert::AreEqual(DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb, format);
                 Assert::AreEqual(4, bufferCount);
                 Assert::AreEqual(CanvasAlphaBehavior::Ignore, alphaBehavior);
@@ -80,12 +84,17 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         auto swapChain = f.m_swapChainManager->Create(
             f.m_canvasDevice.Get(),
-            23,
-            45,
+            23.0f,
+            45.0f,
             DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb,
             4,
             CanvasAlphaBehavior::Ignore,
+            DEFAULT_DPI * dpiScale,
             f.m_drawingSessionFactory);
+
+        float dpi = 0;
+        ThrowIfFailed(swapChain->get_Dpi(&dpi));
+        Assert::AreEqual(DEFAULT_DPI * dpiScale, dpi);
     }
 
     struct FullDeviceFixture
@@ -135,7 +144,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             m_drawingSessionFactory = std::make_shared<MockCanvasSwapChainDrawingSessionFactory>();
         }
 
-        ComPtr<CanvasSwapChain> CreateTestSwapChain(int32_t width, int32_t height, int32_t bufferCount)
+        ComPtr<CanvasSwapChain> CreateTestSwapChain(float width, float height, int32_t bufferCount)
         {
             return m_swapChainManager->Create(
                 m_canvasDevice.Get(),
@@ -144,6 +153,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 DirectXPixelFormat::B8G8R8A8UIntNormalized,
                 bufferCount,
                 CanvasAlphaBehavior::Premultiplied,
+                DEFAULT_DPI,
                 m_drawingSessionFactory);
         }
     };
@@ -171,13 +181,14 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         ComPtr<ICanvasDrawingSession> drawingSession;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->CreateDrawingSession(Color{}, &drawingSession));
 
-        int32_t i;
-        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Width(&i));
-        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Height(&i));
+        Size s;
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Size(&s));
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_SizeInPixels(&s));
 
         DirectXPixelFormat pixelFormat;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Format(&pixelFormat));
 
+        int32_t i;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_BufferCount(&i));
 
         CanvasAlphaBehavior alphaBehavior;
@@ -197,8 +208,9 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto canvasSwapChain = f.CreateTestSwapChain();
 
         Assert::AreEqual(E_INVALIDARG, canvasSwapChain->CreateDrawingSession(Color{}, nullptr));
-        Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_Width(nullptr));
-        Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_Height(nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_Size(nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_SizeInPixels(nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_Dpi(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_Format(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_BufferCount(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasSwapChain->get_AlphaMode(nullptr));
@@ -223,6 +235,8 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     {
         StubDeviceFixture f;
 
+        const float testDpi = 144;
+
         auto swapChain = Make<MockDxgiSwapChain>();
             
         f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaBehavior)
@@ -230,20 +244,28 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             return swapChain;
         });
 
-        auto canvasSwapChain = f.CreateTestSwapChain();
+        auto canvasSwapChain = f.CreateTestSwapChain(testDpi);
 
         int32_t i;
+        Size size;
+        float dpi;
         DirectXPixelFormat pixelFormat;
         CanvasAlphaBehavior alphaBehavior;
         ComPtr<ICanvasDevice> device;
 
         ResetForPropertyTest(swapChain);
-        ThrowIfFailed(canvasSwapChain->get_Width(&i));
-        Assert::AreEqual(123, i);
+        ThrowIfFailed(canvasSwapChain->get_Size(&size));
+        Assert::AreEqual(123.0f * DEFAULT_DPI / testDpi, size.Width);
+        Assert::AreEqual(456.0f * DEFAULT_DPI / testDpi, size.Height);
 
         ResetForPropertyTest(swapChain);
-        ThrowIfFailed(canvasSwapChain->get_Height(&i));
-        Assert::AreEqual(456, i);
+        ThrowIfFailed(canvasSwapChain->get_SizeInPixels(&size));
+        Assert::AreEqual(123.0f, size.Width);
+        Assert::AreEqual(456.0f, size.Height);
+        
+        swapChain->GetDesc1Method.SetExpectedCalls(0);
+        ThrowIfFailed(canvasSwapChain->get_Dpi(&dpi));
+        Assert::AreEqual(testDpi, dpi);
 
         ResetForPropertyTest(swapChain);
         ThrowIfFailed(canvasSwapChain->get_Format(&pixelFormat));
@@ -332,9 +354,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         Color expectedClearColor = { 1, 2, 3, 4 };
 
         f.m_drawingSessionFactory->CreateMethod.SetExpectedCalls(1, 
-            [&] (ICanvasDevice* owner, IDXGISwapChain2* swapChainResource, Color const& clearColor)
+            [&] (ICanvasDevice* owner, IDXGISwapChain2* swapChainResource, Color const& clearColor, float dpi)
             {
                 Assert::AreEqual(expectedClearColor, clearColor);
+                Assert::AreEqual(DEFAULT_DPI, dpi);
                 Assert::AreEqual(static_cast<ICanvasDevice*>(f.m_canvasDevice.Get()), owner);
                 Assert::IsNotNull(swapChainResource);
 
@@ -466,11 +489,12 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         {
             return m_swapChainManager->Create(
                 m_canvasDevice.Get(),
-                1,
-                1,
+                1.0f,
+                1.0f,
                 DirectXPixelFormat::B8G8R8A8UIntNormalized,
                 2,
                 CanvasAlphaBehavior::Premultiplied,
+                DEFAULT_DPI,
                 m_drawingSessionFactory);
         }
     };
@@ -485,6 +509,8 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         DrawingSessionAdapterFixture f;
 
         auto canvasSwapChain = f.CreateTestSwapChain();
+
+        f.m_deviceContext->SetDpiMethod.SetExpectedCalls(1);
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         Color canvasBlue = { 255, 0, 0, 255 };
@@ -511,5 +537,34 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         Assert::AreEqual(E_NOTIMPL, canvasSwapChain->CreateDrawingSession(Color{0, 0, 0, 0}, &drawingSession));
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_DpiProperties)
+    {
+        const float dpi = 144;
+
+        StubDeviceFixture f;
+
+        auto swapChain = f.m_swapChainManager->Create(f.m_canvasDevice.Get(),
+                                                      1.0f, 1.0f,
+                                                      DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb,
+                                                      2,
+                                                      CanvasAlphaBehavior::Ignore,
+                                                      dpi,
+                                                      f.m_drawingSessionFactory);
+
+        float actualDpi = 0;
+        ThrowIfFailed(swapChain->get_Dpi(&actualDpi));
+        Assert::AreEqual(dpi, actualDpi);
+
+        const float testValue = 100;
+
+        int pixels = 0;
+        ThrowIfFailed(swapChain->ConvertDipsToPixels(testValue, &pixels));
+        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
+
+        float dips = 0;
+        ThrowIfFailed(swapChain->ConvertPixelsToDips((int)testValue, &dips));
+        Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
     }
 };
