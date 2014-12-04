@@ -290,11 +290,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::ResizeBuffers(
-        int32_t bufferCount,
+    IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithSize(
+        float newWidth,
+        float newHeight)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto desc = GetResourceDescription();
+
+                ThrowIfFailed(ResizeBuffersWithAllOptions(
+                    newWidth,
+                    newHeight,
+                    static_cast<DirectXPixelFormat>(desc.Format),
+                    desc.BufferCount));
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithAllOptions(
         float newWidth,
         float newHeight,
-        DirectXPixelFormat newFormat) 
+        DirectXPixelFormat newFormat,
+        int32_t bufferCount)
     {
         return ExceptionBoundary(
             [&]

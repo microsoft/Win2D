@@ -83,11 +83,17 @@ namespace Microsoft.Graphics.Canvas
     {
         HRESULT Present();
 
-        HRESULT ResizeBuffers(
-                [in] INT32 bufferCount,
-                [in] float newWidth,
-                [in] float newHeight,
-                [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat newFormat);
+        [overload("ResizeBuffers")]
+        HRESULT ResizeBuffersWithSize(
+            [in] float newWidth,
+            [in] float newHeight);
+
+        [overload("ResizeBuffers")]
+        HRESULT ResizeBuffersWithAllOptions(
+            [in] float newWidth,
+            [in] float newHeight,
+            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat newFormat,
+            [in] INT32 bufferCount);
 
         // Returns the properties used to create this swap chain object.
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);

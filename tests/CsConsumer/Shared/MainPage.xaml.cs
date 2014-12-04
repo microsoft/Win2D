@@ -33,6 +33,7 @@ namespace CsConsumer
         CanvasRenderTarget m_offscreenTarget;
         CanvasLinearGradientBrush m_linearGradientBrush;
         CanvasRadialGradientBrush m_radialGradientBrush;
+        CanvasSwapChain m_swapChain;
 
         enum DrawnContentType
         {
@@ -313,14 +314,25 @@ namespace CsConsumer
 
                 case DrawnContentType.SwapChainPanel:
                     m_canvasSwapChainPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    CanvasSwapChain swapChain = new CanvasSwapChain(ds, horizontalLimit, verticalLimit);
-                    m_canvasSwapChainPanel.SwapChain = swapChain;
 
-                    using(CanvasDrawingSession panelDS = swapChain.CreateDrawingSession(NextRandomColor()))
+                    float swapChainWidth = horizontalLimit * ((float)random.NextDouble() / 2 + 0.5f);
+                    float swapChainHeight = verticalLimit * ((float)random.NextDouble() / 2 + 0.5f);
+
+                    if (m_swapChain == null)
                     {
-                        panelDS.DrawCircle((float)horizontalLimit / 2.0f, (float)verticalLimit / 2.0f, 100.0f, NextRandomColor(), 20.0f);
+                        m_swapChain = new CanvasSwapChain(ds, swapChainWidth, swapChainHeight);
+                        m_canvasSwapChainPanel.SwapChain = m_swapChain;
                     }
-                    swapChain.Present();
+                    else
+                    {
+                        m_swapChain.ResizeBuffers(swapChainWidth, swapChainHeight);
+                    }
+
+                    using (CanvasDrawingSession panelDS = m_swapChain.CreateDrawingSession(NextRandomColor()))
+                    {
+                        panelDS.DrawCircle(swapChainWidth / 2.0f, swapChainHeight / 2.0f, 100.0f, NextRandomColor(), 20.0f);
+                    }
+                    m_swapChain.Present();
                     break;
 
                 case DrawnContentType.Test_Scene0_Default:

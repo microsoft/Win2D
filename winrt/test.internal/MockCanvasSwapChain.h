@@ -86,11 +86,18 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHOD(ResizeBuffers)(
-            int32_t bufferCount,
+        IFACEMETHOD(ResizeBuffersWithSize)(
+            float newWidth,
+            float newHeight) override
+        {
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(ResizeBuffersWithAllOptions)(
             float newWidth,
             float newHeight,
-            DirectXPixelFormat newFormat) override
+            DirectXPixelFormat newFormat,
+            int32_t bufferCount) override
         {
             Assert::Fail(L"Unexpected call to ResizeBuffers");
             return E_NOTIMPL;

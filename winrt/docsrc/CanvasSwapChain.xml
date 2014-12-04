@@ -55,7 +55,11 @@ under the License.
       <summary>Presents a rendered image.</summary>
       <remarks>On a composed target such as a XAML control, no rendering can be observed from a CanvasSwapChain until Present is called.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Int32,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single)">
+      <summary>Changes the CanvasSwapChain's back buffer size.</summary>
+      <remarks>Size is in device independent pixels (dips).</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32)">
       <summary>Changes the CanvasSwapChain's back buffer size, pixel format, and number of buffers.</summary>
       <remarks>Size is in device independent pixels (dips).</remarks>
     </member>

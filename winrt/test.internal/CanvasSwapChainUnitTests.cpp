@@ -194,7 +194,8 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         CanvasAlphaBehavior alphaBehavior;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_AlphaMode(&alphaBehavior));
 
-        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffers(2, 2, 2, DirectXPixelFormat::B8G8R8A8UIntNormalized));
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithSize(2, 2));
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithAllOptions(2, 2, DirectXPixelFormat::B8G8R8A8UIntNormalized, 2));
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Device(&device));
@@ -292,27 +293,77 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             auto swapChain = Make<MockDxgiSwapChain>();
 
             swapChain->ResizeBuffersMethod.SetExpectedCalls(1,
-                [=](
-                UINT bufferCount,
-                UINT width,
-                UINT height,
-                DXGI_FORMAT newFormat,
-                UINT swapChainFlags)
-            {
-                Assert::AreEqual(3u, bufferCount);
-                Assert::AreEqual(555u, width);
-                Assert::AreEqual(666u, height);
-                Assert::AreEqual(DXGI_FORMAT_R8G8B8A8_UNORM, newFormat);
-                Assert::AreEqual(0u, swapChainFlags);
-                return S_OK;
-            });
+                [=](UINT bufferCount,
+                    UINT width,
+                    UINT height,
+                    DXGI_FORMAT newFormat,
+                    UINT swapChainFlags)
+                {
+                    Assert::AreEqual(3u, bufferCount);
+                    Assert::AreEqual(555u, width);
+                    Assert::AreEqual(666u, height);
+                    Assert::AreEqual(DXGI_FORMAT_R8G8B8A8_UNORM, newFormat);
+                    Assert::AreEqual(0u, swapChainFlags);
+                    return S_OK;
+                });
 
             return swapChain;
         });
 
         auto canvasSwapChain = f.CreateTestSwapChain();
 
-        ThrowIfFailed(canvasSwapChain->ResizeBuffers(3, 555, 666, DirectXPixelFormat::R8G8B8A8UIntNormalized));
+        ThrowIfFailed(canvasSwapChain->ResizeBuffersWithAllOptions(555, 666, DirectXPixelFormat::R8G8B8A8UIntNormalized, 3));
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_ResizeBuffersSizeOnly)
+    {
+        StubDeviceFixture f;
+
+        const DirectXPixelFormat originalPixelFormat = DirectXPixelFormat::R16G16B16A16Float;
+        const int originalBufferCount = 7;
+
+        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaBehavior)
+        {
+            auto swapChain = Make<MockDxgiSwapChain>();
+
+            swapChain->ResizeBuffersMethod.SetExpectedCalls(1,
+                [=](UINT bufferCount,
+                    UINT width,
+                    UINT height,
+                    DXGI_FORMAT newFormat,
+                    UINT swapChainFlags)
+                {
+                    Assert::AreEqual(originalBufferCount, (int)bufferCount);
+                    Assert::AreEqual(555u, width);
+                    Assert::AreEqual(666u, height);
+                    Assert::AreEqual(static_cast<DXGI_FORMAT>(originalPixelFormat), newFormat);
+                    Assert::AreEqual(0u, swapChainFlags);
+                    return S_OK;
+                });
+
+            swapChain->GetDesc1Method.SetExpectedCalls(1,
+                [=](DXGI_SWAP_CHAIN_DESC1* desc)
+                {
+                    desc->Width = 1;
+                    desc->Height = 1;
+                    desc->Format = static_cast<DXGI_FORMAT>(originalPixelFormat);
+                    desc->BufferCount = originalBufferCount;
+                    desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+                    return S_OK;
+                });
+
+            return swapChain;
+        });
+
+        auto canvasSwapChain = f.m_swapChainManager->Create(f.m_canvasDevice.Get(),
+                                                            1.0f, 1.0f,
+                                                            originalPixelFormat,
+                                                            originalBufferCount,
+                                                            CanvasAlphaBehavior::Premultiplied,
+                                                            DEFAULT_DPI,
+                                                            f.m_drawingSessionFactory);
+
+        ThrowIfFailed(canvasSwapChain->ResizeBuffersWithSize(555, 666));
     }
 
     TEST_METHOD_EX(CanvasSwapChain_Present)

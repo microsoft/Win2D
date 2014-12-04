@@ -135,11 +135,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(Present)() override;
 
-        IFACEMETHOD(ResizeBuffers)(
-            int32_t bufferCount,
+        IFACEMETHOD(ResizeBuffersWithSize)(
+            float newWidth,
+            float newHeight) override;
+
+        IFACEMETHOD(ResizeBuffersWithAllOptions)(
             float newWidth,
             float newHeight,
-            DirectXPixelFormat newFormat) override;
+            DirectXPixelFormat newFormat,
+            int32_t bufferCount) override;
 
         // IClosable
         IFACEMETHOD(Close)() override;
