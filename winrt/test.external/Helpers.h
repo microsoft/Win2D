@@ -89,6 +89,17 @@ namespace Microsoft
             }
 
             template<>
+            static inline std::wstring ToString<Windows::Foundation::Size>(Windows::Foundation::Size const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Size{%f,%f}", value.Width, value.Height));
+                return buf;
+            }
+
+            template<>
             static inline std::wstring ToString<Windows::Foundation::Rect>(Windows::Foundation::Rect const& value)
             {
                 wchar_t buf[256];
@@ -210,6 +221,19 @@ namespace Microsoft
                     case D2D1_ALPHA_MODE_STRAIGHT: return L"D2D1_ALPHA_MODE_STRAIGHT";
                     case D2D1_ALPHA_MODE_IGNORE: return L"D2D1_ALPHA_MODE_IGNORE";
                     default: assert(false); return L"<unknown D2D1_ALPHA_MODE_UNKNOWN>";
+                }
+            }
+
+            template<>
+            static inline std::wstring ToString<CanvasSwapChainRotation>(CanvasSwapChainRotation const& value)
+            {
+                switch (value)
+                {
+                    case CanvasSwapChainRotation::None: return L"CanvasSwapChainRotation::None";
+                    case CanvasSwapChainRotation::Rotate90: return L"CanvasSwapChainRotation::Rotate90";
+                    case CanvasSwapChainRotation::Rotate180: return L"CanvasSwapChainRotation::Rotate180";
+                    case CanvasSwapChainRotation::Rotate270: return L"CanvasSwapChainRotation::Rotate270";
+                    default: assert(false); return L"<unknown CanvasSwapChainRotation>";
                 }
             }
 

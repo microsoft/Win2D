@@ -14,6 +14,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
     using namespace ::Microsoft::WRL;
 
@@ -129,11 +130,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_BufferCount)(int32_t* value) override;
 
         IFACEMETHOD(get_AlphaMode)(CanvasAlphaBehavior* value) override;
+        
+        IFACEMETHOD(get_Rotation)(CanvasSwapChainRotation* value) override;
+        IFACEMETHOD(put_Rotation)(CanvasSwapChainRotation value) override;
+
+        IFACEMETHOD(get_SourceSize)(Size* value) override;
+        IFACEMETHOD(put_SourceSize)(Size value) override;
+
+        IFACEMETHOD(get_TransformMatrix)(Matrix3x2* value) override;
+        IFACEMETHOD(put_TransformMatrix)(Matrix3x2 value) override;
 
         IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override;
         IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override;
 
         IFACEMETHOD(Present)() override;
+        IFACEMETHOD(PresentWithSyncInterval)(int32_t syncInterval) override;
 
         IFACEMETHOD(ResizeBuffersWithSize)(
             float newWidth,

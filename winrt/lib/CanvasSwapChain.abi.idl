@@ -12,6 +12,15 @@
 
 namespace Microsoft.Graphics.Canvas
 {
+    [version(VERSION)]
+    typedef enum CanvasSwapChainRotation
+    {
+        None,
+        Rotate90,
+        Rotate180,
+        Rotate270,
+    } CanvasSwapChainRotation;
+
     // 
     // CanvasSwapChain is a wrapper for a Direct3D swap chain. It may be used
     // standalone, from inside CanvasAnimatedControl or CanvasSwapChainPanel.
@@ -81,7 +90,11 @@ namespace Microsoft.Graphics.Canvas
         requires Windows.Foundation.IClosable,
         ICanvasResourceCreator
     {
+        [overload("Present")]
         HRESULT Present();
+        
+        [overload("Present")]
+        HRESULT PresentWithSyncInterval([in] INT32 syncInterval);
 
         [overload("ResizeBuffers")]
         HRESULT ResizeBuffersWithSize(
@@ -102,6 +115,15 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT Format([out, retval] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat* value);
         [propget] HRESULT BufferCount([out, retval] INT32* value);
         [propget] HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+        
+        [propget] HRESULT Rotation([out, retval] CanvasSwapChainRotation* value);
+        [propput] HRESULT Rotation([in] CanvasSwapChainRotation value);
+
+        [propget] HRESULT SourceSize([out, retval] Windows.Foundation.Size* value);
+        [propput] HRESULT SourceSize([in] Windows.Foundation.Size value);
+
+        [propget] HRESULT TransformMatrix([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix3x2* value);
+        [propput] HRESULT TransformMatrix([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
 
         HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
         HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);

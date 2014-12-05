@@ -90,32 +90,6 @@ TEST_CLASS(CanvasSwapChainPanelUnitTests)
                 return dxgiResource.CopyTo(reinterpret_cast<IDXGISwapChain2**>(out));
             });
 
-        const float testDpi = 144;
-
-        swapChain->GetDpiMethod.SetExpectedCalls(1,
-            [&](float* out)
-            {
-                *out = testDpi;
-                return S_OK;
-            });
-
-        dxgiResource->SetMatrixTransformMethod.SetExpectedCalls(1,
-            [&](const DXGI_MATRIX_3X2_F* value)
-            {
-                const float expectedDpiScale = DEFAULT_DPI / testDpi;
-
-                Assert::AreEqual(expectedDpiScale, value->_11, FLT_EPSILON);
-                Assert::AreEqual(0.0f, value->_12);
-
-                Assert::AreEqual(0.0f, value->_21);
-                Assert::AreEqual(expectedDpiScale, value->_22, FLT_EPSILON);
-            
-                Assert::AreEqual(0.0f, value->_31);
-                Assert::AreEqual(0.0f, value->_32);
-
-                return S_OK;
-            });
-
         f.m_adapter->m_stubSwapChainPanel->SetSwapChainMethod.SetExpectedCalls(1,
             [dxgiResource](IDXGISwapChain* swapChain)
             {

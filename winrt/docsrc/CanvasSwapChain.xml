@@ -55,6 +55,16 @@ under the License.
       <summary>Presents a rendered image.</summary>
       <remarks>On a composed target such as a XAML control, no rendering can be observed from a CanvasSwapChain until Present is called.</remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.Present(System.Int32)">
+      <summary>Presents a rendered image, using the specified sync interval.</summary>
+      <remarks>
+        <p>Sync interval determines how the swapchain synchronizes with display vertical blank:</p>
+        <p>0 - cancel any remaining time on the previously presented frame, and discard this frame if a newer frame is queued.</p>
+        <p>1,2,3,4 - synchronize presentation for at least n vertical blanks.</p>
+        <p>Values greater than 4 are not supported.</p>
+        <p>For instance on a 60hz display, specifying a sync interval of 2 limits the swapchain to present at a maximum of 30 fps.</p>
+      </remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single)">
       <summary>Changes the CanvasSwapChain's back buffer size.</summary>
       <remarks>Size is in device independent pixels (dips).</remarks>
@@ -101,5 +111,58 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ConvertDipsToPixels(System.Single)">
       <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this swapchain.</summary>
     </member>
-  </members>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.Rotation">
+      <summary>Rotates the swapchain.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.TransformMatrix">
+      <summary>Specifies a transform matrix that will be applied to the swapchain upon the next present.</summary>
+      <remarks>
+        <p>This matrix scales and/or translates how the swapchain appears on the display.
+           It defaults to identity, which maps swapchain pixels 1:1 with the output.</p>
+        <p>Swapchain scaling may be used to render at a lower resolution than the physical screen.</p>
+        <p>Only scale and translation components are allowed in the matrix (no rotation, skew, etc.)</p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.SourceSize">
+      <summary>Specifies that only a subregion of the swapchain should be displayed.</summary>
+      <remarks>
+        <p>
+          This property can be used to optimize rendering by only drawing to part of the swapchain, then
+          scaling up that region to fill the same area that would normally have been covered by the entire
+          swapchain. Because fewer pixels need to be written, this can reduce GPU rendering cost. The
+          source size can be efficiently changed before every present, dynamically adjusting resolution
+          to match the current rendering workload.
+        </p>
+        <p>
+          The source size must be less than or equal to the size of the swapchain. When set to a smaller
+          value, only the top left subregion of the swapchain will be displayed. Setting this property
+          is functionally equivalent to using ResizeBuffers followed by TransformMatrix with a scale of
+          originalSize / newSize, but changing the SourceSize is much more efficient than ResizeBuffers
+          when you want to adjust resolution on the fly.
+        </p>
+        <p>
+          The source size property only affects how the swapchain is displayed. You must separately use
+          other drawing APIs to restrict your rendering to the specified top left region of the swapchain.
+        </p>
+        <p>The size is specified in device independent pixels (dips).</p>
+      </remarks>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSwapChainRotation">
+      <summary>Specifies the rotation of a swapchain.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSwapChainRotation.None">
+      <summary>The swapchain is not rotated.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSwapChainRotation.Rotate90">
+      <summary>The swapchain is rotated 90 degrees clockwise.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSwapChainRotation.Rotate180">
+      <summary>The swapchain is rotated by 180 degrees clockwise.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSwapChainRotation.Rotate270">
+      <summary>The swapchain is rotated 270 degrees clockwise.</summary>
+    </member>
+
+</members>
 </doc>

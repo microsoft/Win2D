@@ -256,6 +256,113 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasSwapChain::get_Rotation(CanvasSwapChainRotation* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                auto& resource = GetResource();
+
+                DXGI_MODE_ROTATION rotation;
+                ThrowIfFailed(resource->GetRotation(&rotation));
+
+                *value = FromDxgiRotation(rotation);
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::put_Rotation(CanvasSwapChainRotation value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& resource = GetResource();
+
+                ThrowIfFailed(resource->SetRotation(ToDxgiRotation(value)));
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::get_SourceSize(Size* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                auto& resource = GetResource();
+
+                uint32_t width;
+                uint32_t height;
+
+                ThrowIfFailed(resource->GetSourceSize(&width, &height));
+
+                *value = Size{ PixelsToDips(width, m_dpi),
+                               PixelsToDips(height, m_dpi) };
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::put_SourceSize(Size value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& resource = GetResource();
+
+                uint32_t width = DipsToPixels(value.Width, m_dpi);
+                uint32_t height = DipsToPixels(value.Height, m_dpi);
+
+                ThrowIfFailed(resource->SetSourceSize(width, height));
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::get_TransformMatrix(Matrix3x2* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                auto& resource = GetResource();
+
+                DXGI_MATRIX_3X2_F matrix;
+                ThrowIfFailed(resource->GetMatrixTransform(&matrix));
+
+                // Remove our extra DPI scaling from the transform.
+                float dpiScale = m_dpi / DEFAULT_DPI;
+
+                matrix._11 *= dpiScale;
+                matrix._12 *= dpiScale;
+                matrix._21 *= dpiScale;
+                matrix._22 *= dpiScale;
+                matrix._31 *= dpiScale;
+                matrix._32 *= dpiScale;
+
+                *value = *ReinterpretAs<Matrix3x2*>(&matrix);
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::put_TransformMatrix(Matrix3x2 value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& resource = GetResource();
+
+                // Insert additional scaling to account for display DPI.
+                float dpiScale = DEFAULT_DPI / m_dpi;
+
+                value.M11 *= dpiScale;
+                value.M12 *= dpiScale;
+                value.M21 *= dpiScale;
+                value.M22 *= dpiScale;
+                value.M31 *= dpiScale;
+                value.M32 *= dpiScale;
+
+                ThrowIfFailed(resource->SetMatrixTransform(ReinterpretAs<DXGI_MATRIX_3X2_F*>(&value)));
+            });
+    }
+
     IFACEMETHODIMP CanvasSwapChain::ConvertPixelsToDips(int pixels, float* dips)
     {
         return ExceptionBoundary(
@@ -280,13 +387,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasSwapChain::Present() 
     {
+        return PresentWithSyncInterval(1);
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::PresentWithSyncInterval(int32_t syncInterval)
+    {
         return ExceptionBoundary(
             [&]
             {
-                auto resource = GetResource();
+                auto& resource = GetResource();
 
                 DXGI_PRESENT_PARAMETERS presentParameters = { 0 };
-                ThrowIfFailed(resource->Present1(1, 0, &presentParameters));
+                ThrowIfFailed(resource->Present1(syncInterval, 0, &presentParameters));
             });
     }
 
@@ -316,7 +428,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto resource = GetResource();
+                auto& resource = GetResource();
 
                 int widthInPixels = DipsToPixels(newWidth, m_dpi);
                 int heightInPixels = DipsToPixels(newHeight, m_dpi);
@@ -499,6 +611,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             dxgiSwapChain.Get(),
             dpi);
         CheckMakeResult(canvasSwapChain);
+
+        ThrowIfFailed(canvasSwapChain->put_TransformMatrix(Matrix3x2{ 1, 0, 0, 1, 0, 0 }));
 
         return canvasSwapChain;
     }

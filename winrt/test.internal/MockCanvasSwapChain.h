@@ -68,6 +68,42 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHOD(get_Rotation)(CanvasSwapChainRotation* value) override
+        {
+            Assert::Fail(L"Unexpected call to get_Rotation");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(put_Rotation)(CanvasSwapChainRotation value) override
+        {
+            Assert::Fail(L"Unexpected call to put_Rotation");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(get_SourceSize)(Size* value) override
+        {
+            Assert::Fail(L"Unexpected call to get_SourceSize");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(put_SourceSize)(Size value) override
+        {
+            Assert::Fail(L"Unexpected call to put_SourceSize");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(get_TransformMatrix)(Matrix3x2* value) override
+        {
+            Assert::Fail(L"Unexpected call to get_TransformMatrix");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(put_TransformMatrix)(Matrix3x2 value) override
+        {
+            Assert::Fail(L"Unexpected call to put_TransformMatrix");
+            return E_NOTIMPL;
+        }
+
         IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override
         {
             Assert::Fail(L"Unexpected call to ConvertPixelsToDips");
@@ -83,6 +119,12 @@ namespace canvas
         IFACEMETHOD(Present)() override
         {
             Assert::Fail(L"Unexpected call to Present");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(PresentWithSyncInterval)(int32_t syncInterval) override
+        {
+            Assert::Fail(L"Unexpected call to PresentWithSyncInterval");
             return E_NOTIMPL;
         }
 

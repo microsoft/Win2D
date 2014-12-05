@@ -123,7 +123,7 @@ namespace ExampleGallery
             imageSource = new CanvasImageSource(sender, controlSize, controlSize);
             imageControl.Source = imageSource;
 
-            swapChain = new CanvasSwapChain(sender, (int)controlSize, (int)controlSize);
+            swapChain = new CanvasSwapChain(sender, controlSize, controlSize);
             swapChainPanel.SwapChain = swapChain;
         }
 

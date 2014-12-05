@@ -108,21 +108,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto swapChainResourceWrapper = As<ICanvasResourceWrapperNative>(value);
 
                     ThrowIfFailed(swapChainResourceWrapper->GetResource(IID_PPV_ARGS(&dxgiSwapChain)));
-
-                    // Scale the swapchain so it will map 1:1 with display pixels regardless of DPI.
-                    float swapChainDpi;
-                    ThrowIfFailed(value->get_Dpi(&swapChainDpi));
-
-                    float dpiScale = DEFAULT_DPI / swapChainDpi;
-
-                    DXGI_MATRIX_3X2_F dpiTransform =
-                    {
-                        dpiScale, 0,
-                        0,        dpiScale,
-                        0,        0,
-                    };
-
-                    dxgiSwapChain->SetMatrixTransform(&dpiTransform);
                 }
 
                 ThrowIfFailed(swapChainPanelNative->SetSwapChain(dxgiSwapChain.Get()));

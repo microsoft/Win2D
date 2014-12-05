@@ -195,6 +195,15 @@ namespace Microsoft
                 END_ENUM(CanvasCreateResourcesReason);
             }
 
+            ENUM_TO_STRING(CanvasSwapChainRotation)
+            {
+                ENUM_VALUE(CanvasSwapChainRotation::None);
+                ENUM_VALUE(CanvasSwapChainRotation::Rotate90);
+                ENUM_VALUE(CanvasSwapChainRotation::Rotate180);
+                ENUM_VALUE(CanvasSwapChainRotation::Rotate270);
+                END_ENUM(CanvasSwapChainRotation);
+            }
+
             template<>
             static inline std::wstring ToString<ABI::Windows::UI::Color>(ABI::Windows::UI::Color const& value)
             {

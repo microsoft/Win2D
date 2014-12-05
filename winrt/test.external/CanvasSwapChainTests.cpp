@@ -13,10 +13,11 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::DirectX;
+using namespace Microsoft::Graphics::Canvas::Numerics;
 using namespace Microsoft::WRL::Wrappers;
 using namespace Windows::Foundation;
 using namespace Windows::Devices::Enumeration;
-using namespace Microsoft::Graphics::Canvas::DirectX;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::UI;
 using namespace Windows::Storage::Streams;
@@ -85,5 +86,38 @@ TEST_CLASS(CanvasSwapChainTests)
         auto drawingSession = canvasSwapChain->CreateDrawingSession(Colors::Black);
 
         Assert::AreEqual(dpi, drawingSession->Dpi);
+    }
+
+    TEST_METHOD(CanvasSwapChain_ResizeBuffersPreservesRotationAndTransformButResetsSourceSize)
+    {
+        auto device = ref new CanvasDevice();
+        auto swapChain = ref new CanvasSwapChain(device, 256, 256, DEFAULT_DPI);
+
+        // Validate the initial property values.
+        Assert::AreEqual(Size{ 256, 256 }, swapChain->Size);
+        Assert::AreEqual(Size{ 256, 256 }, swapChain->SizeInPixels);
+        Assert::AreEqual(CanvasSwapChainRotation::None, swapChain->Rotation);
+        Assert::AreEqual(Matrix3x2{ 1, 0, 0, 1, 0, 0 }, swapChain->TransformMatrix);
+        Assert::AreEqual(Size{ 256, 256 }, swapChain->SourceSize);
+
+        // Change the rotation, transform, and source size.
+        swapChain->Rotation = CanvasSwapChainRotation::Rotate270;
+        swapChain->TransformMatrix = Matrix3x2{ 2, 0, 0, 3, 4, 5 };
+        swapChain->SourceSize = Size{ 123, 234 };
+
+        // Read back the modified values.
+        Assert::AreEqual(CanvasSwapChainRotation::Rotate270, swapChain->Rotation);
+        Assert::AreEqual(Matrix3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
+        Assert::AreEqual(Size{ 123, 234 }, swapChain->SourceSize);
+
+        // Resize the swapchain.
+        swapChain->ResizeBuffers(257, 257);
+
+        // This should preserve rotation and transform, but reset the SourceSize.
+        Assert::AreEqual(Size{ 257, 257 }, swapChain->Size);
+        Assert::AreEqual(Size{ 257, 257 }, swapChain->SizeInPixels);
+        Assert::AreEqual(CanvasSwapChainRotation::Rotate270, swapChain->Rotation);
+        Assert::AreEqual(Matrix3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
+        Assert::AreEqual(Size{ 257, 257 }, swapChain->SourceSize);
     }
 };
