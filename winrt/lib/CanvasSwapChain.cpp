@@ -384,12 +384,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             ID2D1DeviceContext1** outDeviceContext)
         {
-            auto deviceInternal = As<ICanvasDeviceInternal>(owner);
-
-            auto d2dDevice = deviceInternal->GetD2DDevice();
-
-            ComPtr<ID2D1DeviceContext1> deviceContext;
-            ThrowIfFailed(d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &deviceContext));
+            auto deviceContext = As<ICanvasDeviceInternal>(owner)->CreateDeviceContext();
 
             DXGI_SWAP_CHAIN_DESC1 swapChainDescription;
             ThrowIfFailed(swapChainResource->GetDesc1(&swapChainDescription));

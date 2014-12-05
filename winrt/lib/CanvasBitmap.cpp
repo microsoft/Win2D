@@ -83,12 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasAlphaBehavior alpha,
         float dpi)
     {
-        auto d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
-
-        ComPtr<ID2D1DeviceContext1> deviceContext;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &deviceContext));
+        auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContext();
 
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);

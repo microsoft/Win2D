@@ -442,6 +442,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return GetResource();
     }
 
+    ComPtr<ID2D1DeviceContext1> CanvasDevice::CreateDeviceContext()
+    {
+        ComPtr<ID2D1DeviceContext1> dc;
+        ThrowIfFailed(GetResource()->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
+        return dc;
+    }
+
     ComPtr<ID2D1SolidColorBrush> CanvasDevice::CreateSolidColorBrush(D2D1_COLOR_F const& color)
     {
         // TODO #802: this isn't very threadsafe - we should really have a different

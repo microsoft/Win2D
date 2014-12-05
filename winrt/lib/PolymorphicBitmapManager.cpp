@@ -298,12 +298,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpi)
     {
         auto dxgiSurface = GetDXGIInterface<IDXGISurface2>(surface);
-        auto d2dDevice = As<ICanvasDeviceInternal>(canvasDevice)->GetD2DDevice();
-
-        ComPtr<ID2D1DeviceContext1> deviceContext;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &deviceContext));
+        auto deviceContext = As<ICanvasDeviceInternal>(canvasDevice)->CreateDeviceContext();
 
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);

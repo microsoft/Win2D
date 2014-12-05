@@ -281,12 +281,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         // Create a new ID2D1DeviceContext
         //
-        ComPtr<ICanvasDeviceInternal> deviceInternal;
-        ThrowIfFailed(owner->QueryInterface(deviceInternal.GetAddressOf()));
-        auto d2dDevice = deviceInternal->GetD2DDevice();
-
-        ComPtr<ID2D1DeviceContext1> deviceContext;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &deviceContext));
+        auto deviceContext = As<ICanvasDeviceInternal>(owner)->CreateDeviceContext();
 
         //
         // Set the target

@@ -45,6 +45,13 @@ namespace canvas
             return m_d2DDevice;
         }
 
+        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContext() override
+        {
+            ComPtr<ID2D1DeviceContext1> dc;
+            ThrowIfFailed(m_d2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
+            return dc;
+        }
+
         IFACEMETHODIMP get_Device(ICanvasDevice** value) override
         {
             ComPtr<ICanvasDevice> device(this);
