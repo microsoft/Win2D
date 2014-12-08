@@ -14,12 +14,13 @@
 #include "Helpers.h"
 
 using namespace Windows::Foundation::Numerics;
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace NumericsTests
 {
-    TEST_CLASS(PlaneTest)
+    NUMERICS_TEST_CLASS(PlaneTest)
     {
+        NUMERICS_TEST_CLASS_INNER(PlaneTest)
+
     public:
         // A test for operator != (plane, plane)
         TEST_METHOD(PlaneInequalityTest)
@@ -345,12 +346,15 @@ namespace NumericsTests
             Assert::IsTrue(std::is_trivially_destructible<plane>::value);
         }
 
-        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+
+#ifndef DISABLE_NUMERICS_INTEROP_TESTS
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and the WinRT struct types
         TEST_METHOD(PlaneWinRTInteropTest)
         {
             plane a(23, 42, 100, -1);
 
-            Microsoft::Graphics::Canvas::Numerics::Plane b = a;
+            NUMERICS_ABI_NAMESPACE::Plane b = a;
 
             Assert::AreEqual(a.normal.x, b.Normal.X);
             Assert::AreEqual(a.normal.y, b.Normal.Y);
@@ -361,5 +365,7 @@ namespace NumericsTests
 
             Assert::AreEqual(a, c);
         }
+
+#endif
     };
 }

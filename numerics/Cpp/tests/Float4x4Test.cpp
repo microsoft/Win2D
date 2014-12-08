@@ -14,12 +14,13 @@
 #include "Helpers.h"
 
 using namespace Windows::Foundation::Numerics;
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace NumericsTests
 {
-    TEST_CLASS(Float4x4Test)
+    NUMERICS_TEST_CLASS(Float4x4Test)
     {
+        NUMERICS_TEST_CLASS_INNER(Float4x4Test)
+
     public:
         static float4x4 GenerateMatrixNumberFrom1To16()
         {
@@ -2222,12 +2223,15 @@ namespace NumericsTests
             Assert::IsTrue(std::is_trivially_destructible<float4x4>::value);
         }
 
-        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+
+#ifndef DISABLE_NUMERICS_INTEROP_TESTS
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and the WinRT struct types
         TEST_METHOD(Float4x4WinRTInteropTest)
         {
             float4x4 a(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
-            Microsoft::Graphics::Canvas::Numerics::Matrix4x4 b = a;
+            NUMERICS_ABI_NAMESPACE::Matrix4x4 b = a;
 
             Assert::AreEqual(a.m11, b.M11);
             Assert::AreEqual(a.m12, b.M12);
@@ -2253,5 +2257,7 @@ namespace NumericsTests
 
             Assert::AreEqual(a, c);
         }
+
+#endif
     };
 }

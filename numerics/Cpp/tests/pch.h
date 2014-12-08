@@ -19,4 +19,11 @@
 #include <SDKDDKVer.h>
 #include <CppUnitTest.h>
 
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+#define NUMERICS_TEST_CLASS(ClassName) TEST_CLASS(ClassName)
+#define NUMERICS_TEST_CLASS_INNER(ClassName)
+
+#define NUMERICS_ABI_NAMESPACE Microsoft::Graphics::Canvas::Numerics
+
 #include "Helpers.h"

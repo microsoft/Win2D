@@ -14,12 +14,13 @@
 #include "Helpers.h"
 
 using namespace Windows::Foundation::Numerics;
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace NumericsTests
 {
-    TEST_CLASS(Float2Test)
+    NUMERICS_TEST_CLASS(Float2Test)
     {
+        NUMERICS_TEST_CLASS_INNER(Float2Test)
+        
     public:
         // A test for distance (float2, float2)
         TEST_METHOD(Float2DistanceTest)
@@ -1033,12 +1034,15 @@ namespace NumericsTests
             Assert::IsTrue(std::is_trivially_destructible<float2>::value);
         }
 
-        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+
+#ifndef DISABLE_NUMERICS_INTEROP_TESTS
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and the WinRT struct types
         TEST_METHOD(Float2WinRTInteropTest)
         {
             float2 a(23, 42);
 
-            Microsoft::Graphics::Canvas::Numerics::Vector2 b = a;
+            NUMERICS_ABI_NAMESPACE::Vector2 b = a;
 
             Assert::AreEqual(a.x, b.X);
             Assert::AreEqual(a.y, b.Y);
@@ -1047,5 +1051,7 @@ namespace NumericsTests
 
             Assert::AreEqual(a, c);
         }
+
+#endif
     };
 }

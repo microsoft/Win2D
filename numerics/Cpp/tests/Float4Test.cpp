@@ -14,12 +14,13 @@
 #include "Helpers.h"
 
 using namespace Windows::Foundation::Numerics;
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace NumericsTests
 {
-    TEST_CLASS(Float4Test)
+    NUMERICS_TEST_CLASS(Float4Test)
     {
+        NUMERICS_TEST_CLASS_INNER(Float4Test)
+
     public:
         // A test for distance_squared (float4, float4)
         TEST_METHOD(Float4DistanceSquaredTest)
@@ -1145,12 +1146,15 @@ namespace NumericsTests
             Assert::IsTrue(std::is_trivially_destructible<float4>::value);
         }
 
-        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+
+#ifndef DISABLE_NUMERICS_INTEROP_TESTS
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and the WinRT struct types
         TEST_METHOD(Float4WinRTInteropTest)
         {
             float4 a(23, 42, 100, -1);
 
-            Microsoft::Graphics::Canvas::Numerics::Vector4 b = a;
+            NUMERICS_ABI_NAMESPACE::Vector4 b = a;
 
             Assert::AreEqual(a.x, b.X);
             Assert::AreEqual(a.y, b.Y);
@@ -1161,5 +1165,7 @@ namespace NumericsTests
 
             Assert::AreEqual(a, c);
         }
+
+#endif
     };
 }

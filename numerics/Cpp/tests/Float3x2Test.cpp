@@ -14,12 +14,13 @@
 #include "Helpers.h"
 
 using namespace Windows::Foundation::Numerics;
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace NumericsTests
 {
-    TEST_CLASS(Float3x2Test)
+    NUMERICS_TEST_CLASS(Float3x2Test)
     {
+        NUMERICS_TEST_CLASS_INNER(Float3x2Test)
+
     public:
         static float3x2 GenerateMatrixNumberFrom1To6()
         {
@@ -940,12 +941,15 @@ namespace NumericsTests
             Assert::IsTrue(std::is_trivially_destructible<float3x2>::value);
         }
 
-        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+
+#ifndef DISABLE_NUMERICS_INTEROP_TESTS
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and the WinRT struct types
         TEST_METHOD(Float3x2WinRTInteropTest)
         {
             float3x2 a(1, 2, 3, 4, 5, 6);
 
-            Microsoft::Graphics::Canvas::Numerics::Matrix3x2 b = a;
+            NUMERICS_ABI_NAMESPACE::Matrix3x2 b = a;
 
             Assert::AreEqual(a.m11, b.M11);
             Assert::AreEqual(a.m12, b.M12);
@@ -958,5 +962,7 @@ namespace NumericsTests
 
             Assert::AreEqual(a, c);
         }
+
+#endif
     };
 }

@@ -13,8 +13,13 @@
 #pragma once
 
 #include <DirectXMath.h>
+
+// If C++ exception handling is enabled, allow operations that throw on error
+#ifdef _CPPUNWIND
 #include <stdexcept>
 #include <limits>
+#define _WINDOWS_NUMERICS_USE_STL_
+#endif
 
 
 #if defined __cplusplus_winrt && _MSC_VER >= 1900
@@ -30,7 +35,11 @@
 #elif defined __windows2Efoundation2Enumerics_h__
 
 // Raw COM mode using ABI interop (after including windows.foundation.numerics.h).
+#ifdef BUILD_WINDOWS
+#define _WINDOWS_NUMERICS_INTEROP_NAMESPACE_ Windows::Foundation::Numerics
+#else
 #define _WINDOWS_NUMERICS_INTEROP_NAMESPACE_ ABI::Windows::Foundation::Numerics
+#endif
 
 #endif
 

@@ -1584,34 +1584,34 @@ namespace Windows { namespace Foundation { namespace Numerics
     {
         float3x2 result;
 
-        radians = fmodf(radians, DirectX::XM_2PI);
+        radians = fmodf(radians, ::DirectX::XM_2PI);
 
         if (radians < 0)
-            radians += DirectX::XM_2PI;
+            radians += ::DirectX::XM_2PI;
 
         float c, s;
 
-        const float epsilon = 0.001f * DirectX::XM_PI / 180.0f;     // 0.1% of a degree
+        const float epsilon = 0.001f * ::DirectX::XM_PI / 180.0f;     // 0.1% of a degree
 
-        if (radians < epsilon || radians > DirectX::XM_2PI - epsilon)
+        if (radians < epsilon || radians > ::DirectX::XM_2PI - epsilon)
         {
             // Exact case for zero rotation.
             c = 1;
             s = 0;
         }
-        else if (radians > DirectX::XM_PIDIV2 - epsilon && radians < DirectX::XM_PIDIV2 + epsilon)
+        else if (radians > ::DirectX::XM_PIDIV2 - epsilon && radians < ::DirectX::XM_PIDIV2 + epsilon)
         {
             // Exact case for 90 degree rotation.
             c = 0;
             s = 1;
         }
-        else if (radians > DirectX::XM_PI - epsilon && radians < DirectX::XM_PI + epsilon)
+        else if (radians > ::DirectX::XM_PI - epsilon && radians < ::DirectX::XM_PI + epsilon)
         {
             // Exact case for 180 degree rotation.
             c = -1;
             s = 0;
         }
-        else if (radians > DirectX::XM_PI + DirectX::XM_PIDIV2 - epsilon && radians < DirectX::XM_PI + DirectX::XM_PIDIV2 + epsilon)
+        else if (radians > ::DirectX::XM_PI + ::DirectX::XM_PIDIV2 - epsilon && radians < ::DirectX::XM_PI + ::DirectX::XM_PIDIV2 + epsilon)
         {
             // Exact case for 270 degree rotation.
             c = 0;
@@ -1639,34 +1639,34 @@ namespace Windows { namespace Foundation { namespace Numerics
     {
         float3x2 result;
 
-        radians = fmodf(radians, DirectX::XM_2PI);
+        radians = fmodf(radians, ::DirectX::XM_2PI);
 
         if (radians < 0)
-            radians += DirectX::XM_2PI;
+            radians += ::DirectX::XM_2PI;
 
         float c, s;
 
-        const float epsilon = 0.001f * DirectX::XM_PI / 180.0f;     // 0.1% of a degree
+        const float epsilon = 0.001f * ::DirectX::XM_PI / 180.0f;     // 0.1% of a degree
 
-        if (radians < epsilon || radians > DirectX::XM_2PI - epsilon)
+        if (radians < epsilon || radians > ::DirectX::XM_2PI - epsilon)
         {
             // Exact case for zero rotation.
             c = 1;
             s = 0;
         }
-        else if (radians > DirectX::XM_PIDIV2 - epsilon && radians < DirectX::XM_PIDIV2 + epsilon)
+        else if (radians > ::DirectX::XM_PIDIV2 - epsilon && radians < ::DirectX::XM_PIDIV2 + epsilon)
         {
             // Exact case for 90 degree rotation.
             c = 0;
             s = 1;
         }
-        else if (radians > DirectX::XM_PI - epsilon && radians < DirectX::XM_PI + epsilon)
+        else if (radians > ::DirectX::XM_PI - epsilon && radians < ::DirectX::XM_PI + epsilon)
         {
             // Exact case for 180 degree rotation.
             c = -1;
             s = 0;
         }
-        else if (radians > DirectX::XM_PI + DirectX::XM_PIDIV2 - epsilon && radians < DirectX::XM_PI + DirectX::XM_PIDIV2 + epsilon)
+        else if (radians > ::DirectX::XM_PI + ::DirectX::XM_PIDIV2 - epsilon && radians < ::DirectX::XM_PI + ::DirectX::XM_PIDIV2 + epsilon)
         {
             // Exact case for 270 degree rotation.
             c = 0;
@@ -1842,7 +1842,11 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (fabs(det) < FLT_EPSILON)
         {
+#ifdef _WINDOWS_NUMERICS_USE_STL_
             const float nan = std::numeric_limits<float>::quiet_NaN();
+#else
+            const float nan = 0.0f;
+#endif
             *result = float3x2(nan, nan, nan, nan, nan, nan);
             return false;
         }
@@ -1951,7 +1955,7 @@ namespace Windows { namespace Foundation { namespace Numerics
     inline float4x4 make_float4x4_constrained_billboard(float3 const& objectPosition, float3 const& cameraPosition, float3 const& rotateAxis, float3 const& cameraForwardVector, float3 const& objectForwardVector)
     {
         const float epsilon = 1e-4f;
-        const float minAngle = 1.0f - (0.1f * (DirectX::XM_PI / 180.0f)); // 0.1 degrees
+        const float minAngle = 1.0f - (0.1f * (::DirectX::XM_PI / 180.0f)); // 0.1 degrees
 
         // Treat the case when object and camera positions are too close.
         float3 faceDir;
@@ -2305,7 +2309,9 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4x4 make_float4x4_perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
     {
-        if (fieldOfView <= 0.0f || fieldOfView >= DirectX::XM_PI)
+#ifdef _WINDOWS_NUMERICS_USE_STL_
+
+        if (fieldOfView <= 0.0f || fieldOfView >= ::DirectX::XM_PI)
             throw std::invalid_argument("fieldOfView");
 
         if (nearPlaneDistance <= 0.0f)
@@ -2316,6 +2322,8 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (nearPlaneDistance >= farPlaneDistance )
             throw std::invalid_argument("nearPlaneDistance");
+
+#endif // _WINDOWS_NUMERICS_USE_STL_
 
         float yScale = 1.0f / tanf(fieldOfView * 0.5f);
         float xScale = yScale / aspectRatio;
@@ -2341,6 +2349,8 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4x4 make_float4x4_perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
     {
+#ifdef _WINDOWS_NUMERICS_USE_STL_
+
         if (nearPlaneDistance <= 0.0f)
             throw std::invalid_argument("nearPlaneDistance");
 
@@ -2349,6 +2359,8 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (nearPlaneDistance >= farPlaneDistance)
             throw std::invalid_argument("nearPlaneDistance");
+
+#endif // _WINDOWS_NUMERICS_USE_STL_
 
         float4x4 result;
 
@@ -2371,6 +2383,8 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4x4 make_float4x4_perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
     {
+#ifdef _WINDOWS_NUMERICS_USE_STL_
+
         if (nearPlaneDistance <= 0.0f)
             throw std::invalid_argument("nearPlaneDistance");
 
@@ -2379,6 +2393,8 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (nearPlaneDistance >= farPlaneDistance)
             throw std::invalid_argument("nearPlaneDistance");
+
+#endif // _WINDOWS_NUMERICS_USE_STL_
 
         float4x4 result;
 
@@ -2901,7 +2917,11 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (fabs(det) < FLT_EPSILON)
         {
+#ifdef _WINDOWS_NUMERICS_USE_STL_
             const float nan = std::numeric_limits<float>::quiet_NaN();
+#else
+            const float nan = 0.0f;
+#endif
 
             *result = float4x4(nan, nan, nan, nan,
                                nan, nan, nan, nan,

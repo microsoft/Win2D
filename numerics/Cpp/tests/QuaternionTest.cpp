@@ -14,12 +14,13 @@
 #include "Helpers.h"
 
 using namespace Windows::Foundation::Numerics;
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace NumericsTests
 {
-    TEST_CLASS(QuaternionTest)
+    NUMERICS_TEST_CLASS(QuaternionTest)
     {
+        NUMERICS_TEST_CLASS_INNER(QuaternionTest)
+
     public:
         // A test for dot (quaternion, quaternion)
         TEST_METHOD(QuaternionDotTest)
@@ -904,12 +905,15 @@ namespace NumericsTests
             Assert::IsTrue(std::is_trivially_destructible<quaternion>::value);
         }
 
-        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and WinRT (Microsoft::Graphics::Canvas::Numerics)
+
+#ifndef DISABLE_NUMERICS_INTEROP_TESTS
+
+        // A test to validate interop between WindowsNumerics.h (Windows::Foundation::Numerics) and the WinRT struct types
         TEST_METHOD(QuaternionWinRTInteropTest)
         {
             quaternion a(23, 42, 100, -1);
 
-            Microsoft::Graphics::Canvas::Numerics::Quaternion b = a;
+            NUMERICS_ABI_NAMESPACE::Quaternion b = a;
 
             Assert::AreEqual(a.x, b.X);
             Assert::AreEqual(a.y, b.Y);
@@ -920,5 +924,7 @@ namespace NumericsTests
 
             Assert::AreEqual(a, c);
         }
+
+#endif
     };
 }
