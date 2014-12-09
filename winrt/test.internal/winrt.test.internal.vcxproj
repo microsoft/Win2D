@@ -45,6 +45,7 @@
   <ItemGroup>
     <ClInclude Include="CanvasControlTestAdapter.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="MockAsyncAction.h" />
     <ClInclude Include="MockCanvasDevice.h" />
     <ClInclude Include="MockCanvasDeviceActivationFactory.h" />
     <ClInclude Include="MockCanvasDrawingSession.h" />
@@ -94,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsyncOperationTests.cpp" />
+    <ClCompile Include="CanvasCommandListUnitTests.cpp" />
     <ClCompile Include="CanvasControlUnitTests.cpp" />
     <ClCompile Include="CanvasBitmapUnitTest.cpp" />
     <ClCompile Include="CanvasGradientBrushUnitTests.cpp" />

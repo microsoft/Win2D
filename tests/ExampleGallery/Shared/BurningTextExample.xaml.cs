@@ -33,7 +33,7 @@ namespace ExampleGallery
         }
 
         // References to specific effects so we can dynamically update their properties.
-        CanvasRenderTarget textRenderTarget;
+        CanvasCommandList textCommandList;
         MorphologyEffect morphology;
         CompositeEffect composite;
         Transform2DEffect flameAnimation;
@@ -41,30 +41,40 @@ namespace ExampleGallery
 
         Stopwatch timer;
 
-        Size canvasSize;
+        float fontSize;
 
-        void Canvas_CreateResources(CanvasControl sender, object args)
+        void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            canvasSize = new Size(0, 0);
+            if (args.Reason == CanvasCreateResourcesReason.DpiChanged)
+            {
+                // These resources are all DPI independent, so no need to recreate them
+                // if only the DPI has changed.
+                return;
+            }
+
             timer = Stopwatch.StartNew();
             CreateFlameEffect();
+            fontSize = GetFontSize((float)sender.ActualWidth);
+            SetupText();
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var ds = args.DrawingSession;
 
-            // If the window size has changed, (re)create the text bitmap.
-            var newCanvasSize = new Size(sender.ActualWidth, sender.ActualHeight);
-            if (canvasSize != newCanvasSize)
+            // If the font size has changed then recreate the text
+            var newFontSize = GetFontSize((float)sender.ActualWidth);
+            if (newFontSize != fontSize)
             {
-                canvasSize = newCanvasSize;
-
+                fontSize = newFontSize;
                 SetupText();
             };
 
             UpdateAnimation((float)timer.Elapsed.TotalSeconds);
-            ds.DrawImage(composite);
+
+            var centerX = (float)sender.ActualWidth / 2;
+            var centerY = (float)sender.ActualHeight / 2;
+            ds.DrawImage(composite, centerX, centerY);
 
             sender.Invalidate();
         }
@@ -75,12 +85,9 @@ namespace ExampleGallery
             flameAnimation.TransformMatrix = Matrix3x2.CreateTranslation(0, -elapsedMilliseconds * 60.0f);
 
             // Scale the flame effect 2x vertically, aligned so it starts above the text.
-            var w = (float)canvas.ActualWidth;
-            var h = (float)canvas.ActualHeight;
+            float verticalOffset = fontSize * 1.4f;
 
-            float verticalOffset = GetFontSize(w) * 1.4f;
-
-            var centerPoint = new Vector2(w / 2, h / 2 + verticalOffset);
+            var centerPoint = new Vector2(0, verticalOffset);
 
             flamePosition.TransformMatrix = Matrix3x2.CreateScale(1, 2, centerPoint);
         }
@@ -91,32 +98,29 @@ namespace ExampleGallery
         /// </summary>
         private void SetupText()
         {
-            float w = (float)canvasSize.Width;
-            float h = (float)canvasSize.Height;
+            textCommandList = new CanvasCommandList(this.canvas);
 
-            textRenderTarget = new CanvasRenderTarget(this.canvas, w, h);
-
-            using (var ds = textRenderTarget.CreateDrawingSession())
+            using (var ds = textCommandList.CreateDrawingSession())
             {
                 ds.Clear(Color.FromArgb(0, 0, 0, 0));
 
                 ds.DrawText(
                     textInput.Text,
-                    w / 2,
-                    h / 2,
+                    0,
+                    0,
                     Colors.White,
                     new CanvasTextFormat
                     {
                         FontFamily = "Segoe UI",
-                        FontSize = GetFontSize(w),
+                        FontSize = fontSize,
                         ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
                         VerticalAlignment = CanvasVerticalAlignment.Top
                     });
             }
 
             // Hook up the bitmap to the inputs of the flame effect graph.
-            morphology.Source = textRenderTarget;
-            composite.Inputs[1] = textRenderTarget;
+            morphology.Source = textCommandList;
+            composite.Inputs[1] = textCommandList;
         }
 
         /// <summary>

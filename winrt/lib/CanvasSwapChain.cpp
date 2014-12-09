@@ -469,7 +469,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto& device = m_device.EnsureNotClosed();
 
-                device.CopyTo(value);
+                ThrowIfFailed(device.CopyTo(value));
             });
     }
 

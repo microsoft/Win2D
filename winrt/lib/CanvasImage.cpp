@@ -17,11 +17,11 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Foundation;
-
-    Rect GetImageBoundsImpl(
+    
+    static Rect GetImageBoundsImpl(
         ICanvasImageInternal* imageInternal,
         ICanvasDrawingSession *drawingSession,
-        Numerics::Matrix3x2 transform)
+        Numerics::Matrix3x2 const* transform)
     {
         auto drawingSessionResourceWrapper = As<ICanvasResourceWrapperNative>(drawingSession);
 
@@ -37,10 +37,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto restoreTransformWarden = MakeScopeWarden([&] { d2dDeviceContext->SetTransform(previousTransform); });
 
-        d2dDeviceContext->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&transform));
+        d2dDeviceContext->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F const*>(transform));
 
         ThrowIfFailed(d2dDeviceContext->GetImageWorldBounds(d2dImage.Get(), &d2dBounds));
 
         return FromD2DRect(d2dBounds);
+    }
+
+    HRESULT GetImageBoundsImpl(
+        ICanvasImageInternal* imageInternal,
+        ICanvasDrawingSession* drawingSession,
+        Numerics::Matrix3x2 const* transform,
+        Rect* bounds)
+    {
+        static Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
+
+        if (!transform)
+            transform = &identity;
+
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(drawingSession);
+                CheckInPointer(bounds);
+
+                *bounds = GetImageBoundsImpl(imageInternal, drawingSession, transform);
+            });
     }
 }}}}

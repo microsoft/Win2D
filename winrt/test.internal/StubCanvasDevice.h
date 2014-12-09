@@ -30,6 +30,13 @@ namespace canvas
             : m_d2DDevice(device)
         {
             GetDXGIInterfaceMethod.AllowAnyCall();
+            CreateDeviceContextMethod.AllowAnyCall(
+                [=]
+                {
+                    ComPtr<ID2D1DeviceContext1> dc;
+                    ThrowIfFailed(m_d2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
+                    return dc;
+                });
         }
 
         void MarkAsLost()
@@ -43,13 +50,6 @@ namespace canvas
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override
         {
             return m_d2DDevice;
-        }
-
-        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContext() override
-        {
-            ComPtr<ID2D1DeviceContext1> dc;
-            ThrowIfFailed(m_d2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
-            return dc;
         }
 
         IFACEMETHODIMP get_Device(ICanvasDevice** value) override

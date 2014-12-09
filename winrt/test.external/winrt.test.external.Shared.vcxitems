@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -19,6 +19,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCommandListTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControlTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmapTests.cpp" />

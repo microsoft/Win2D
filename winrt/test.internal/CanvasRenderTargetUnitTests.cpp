@@ -183,11 +183,7 @@ TEST_CLASS(CanvasRenderTargetTests)
         //
         // Pull the ID2D1DeviceContext1 out of the drawing session
         //
-        ComPtr<ICanvasResourceWrapperNative> drawingSessionResourceWrapper;
-        ThrowIfFailed(drawingSession->QueryInterface(drawingSessionResourceWrapper.GetAddressOf()));
-
-        ComPtr<ID2D1DeviceContext1> deviceContext;
-        ThrowIfFailed(drawingSessionResourceWrapper->GetResource(IID_PPV_ARGS(&deviceContext)));
+        auto deviceContext = GetWrappedResource<ID2D1DeviceContext1>(drawingSession);
 
         //
         // Check the device

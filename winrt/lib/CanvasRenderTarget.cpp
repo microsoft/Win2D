@@ -244,33 +244,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    //
-    // CanvasBitmapDrawingSessionAdapter
-    //
-
-
-    class CanvasBitmapDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
-    {
-        ComPtr<ID2D1DeviceContext1> m_d2dDeviceContext;
-
-    public:
-        CanvasBitmapDrawingSessionAdapter(ID2D1DeviceContext1* d2dDeviceContext)
-            : m_d2dDeviceContext(d2dDeviceContext) 
-        {
-            d2dDeviceContext->BeginDraw();
-        }
-
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
-        {
-            return D2D1::Point2F(0, 0);
-        }
-
-        virtual void EndDraw() override
-        {
-            ThrowIfFailed(m_d2dDeviceContext->EndDraw());
-        }
-    };
-
     static ComPtr<ICanvasDrawingSession> CreateDrawingSessionOverD2DBitmap(
         ICanvasDevice* owner,
         ID2D1Bitmap1* targetBitmap)
@@ -295,7 +268,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         targetBitmap->GetDpi(&dpiX, &dpiY);
         deviceContext->SetDpi(dpiX, dpiY);
 
-        auto adapter = std::make_shared<CanvasBitmapDrawingSessionAdapter>(deviceContext.Get());
+        auto adapter = std::make_shared<SimpleCanvasDrawingSessionAdapter>(deviceContext.Get());
 
         auto drawingSessionManager = CanvasDrawingSessionFactory::GetOrCreateManager();
         return drawingSessionManager->Create(owner, deviceContext.Get(), adapter);

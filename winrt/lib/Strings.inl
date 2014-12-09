@@ -33,3 +33,4 @@ STRING(PixelColorsFormatRestriction, L"This method only supports resources with 
 STRING(MultipleAsyncCreateResourcesNotSupported, L"Only one asynchronous CreateResources action can be tracked at a time.")
 STRING(ResourceTrackerWrongDevice, L"Existing resource wrapper is associated with a different device.")
 STRING(ResourceTrackerWrongDpi, L"Existing resource wrapper has a different DPI.")
+STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")

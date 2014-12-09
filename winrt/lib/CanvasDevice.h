@@ -107,7 +107,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaBehavior alphaBehavior) = 0;
+
+        virtual ComPtr<ID2D1CommandList> CreateCommandList() = 0;
     };
+
+
     struct CanvasDeviceTraits
     {
         typedef ID2D1Device1 resource_t;
@@ -115,6 +119,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef ICanvasDevice wrapper_interface_t;
         typedef CanvasDeviceManager manager_t;
     };
+
 
     //
     // The CanvasDevice class itself.
@@ -207,6 +212,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaBehavior alphaBehavior) override;
+
+        virtual ComPtr<ID2D1CommandList> CreateCommandList() override;
 
         //
         // IDirect3DDevice

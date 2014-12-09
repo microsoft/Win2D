@@ -910,3 +910,12 @@ void AssertClassName(ComPtr<T> obj, wchar_t const* expectedClassName)
     
     Assert::AreEqual(expectedClassName, static_cast<wchar_t const*>(className));
 }
+
+
+template<typename T, typename U>
+ComPtr<T> GetWrappedResource(U&& wrapper)
+{
+    ComPtr<T> resource;
+    ThrowIfFailed(As<ICanvasResourceWrapperNative>(wrapper)->GetResource(IID_PPV_ARGS(&resource)));
+    return resource;
+}

@@ -1,0 +1,48 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+namespace Microsoft.Graphics.Canvas
+{
+    runtimeclass CanvasCommandList;
+
+    [version(VERSION), uuid(B3D44E68-D931-4B5B-B957-0888980A7D50), exclusiveto(CanvasCommandList)]
+    interface ICanvasCommandListFactory : IInspectable
+    {
+        HRESULT Create(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [out, retval] CanvasCommandList** commandList);
+    }
+
+    [version(VERSION), uuid(B71E73CF-2FE7-4D3A-BBB8-19F016F5BE1B), exclusiveto(CanvasCommandList)]
+    interface ICanvasCommandList : IInspectable
+        requires ICanvasImage
+    {
+        //
+        // Creates a drawing session; if this command list has already been used
+        // then this will fail with E_INVALIDARG.
+        //
+        HRESULT CreateDrawingSession([out, retval] CanvasDrawingSession** drawingSession);
+
+        [propget]
+        HRESULT Device([out, retval] CanvasDevice** value);
+
+        // TODO #850: Support for streaming the contents of the command list
+    }
+
+    [version(VERSION), threading(both), marshaling_behavior(agile), activatable(ICanvasCommandListFactory, VERSION)]
+    runtimeclass CanvasCommandList
+    {
+        [default] interface ICanvasCommandList;
+        interface Windows.Foundation.IClosable;
+    }
+}
+

@@ -26,7 +26,6 @@ namespace canvas
     {
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
-        std::function<ComPtr<ID2D1DeviceContext1>()> MockCreateDeviceContext;
         std::function<void(ICanvasDevice**)> Mockget_Device;
         std::function<ComPtr<ID2D1SolidColorBrush>(D2D1_COLOR_F const&)> MockCreateSolidColorBrush;
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
@@ -57,7 +56,9 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(TrimMethod, HRESULT());
         CALL_COUNTER_WITH_MOCK(GetDXGIInterfaceMethod, HRESULT(REFIID,void**));
+        CALL_COUNTER_WITH_MOCK(CreateDeviceContextMethod, ComPtr<ID2D1DeviceContext1>());
         CALL_COUNTER_WITH_MOCK(CreateSwapChainMethod, ComPtr<IDXGISwapChain2>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaBehavior));
+        CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
 
         //
         // ICanvasDevice
@@ -125,13 +126,7 @@ namespace canvas
 
         virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContext() override
         {
-            if (!MockCreateDeviceContext)
-            {
-                Assert::Fail(L"Unexpected call to CreateDeviceContext");
-                ThrowHR(E_NOTIMPL);
-            }
-
-            return MockCreateDeviceContext();
+            return CreateDeviceContextMethod.WasCalled();
         }
 
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override
@@ -213,7 +208,7 @@ namespace canvas
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaBehavior alphaBehavior)
+            CanvasAlphaBehavior alphaBehavior) override
         {
             if (!MockCreateGradientStopCollection)
             {
@@ -232,7 +227,7 @@ namespace canvas
         }
 
         virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(
-            ID2D1GradientStopCollection1* stopCollection)
+            ID2D1GradientStopCollection1* stopCollection) override
         {
             if (!MockCreateLinearGradientBrush)
             {
@@ -244,7 +239,7 @@ namespace canvas
         }
 
         virtual ComPtr<ID2D1RadialGradientBrush> CreateRadialGradientBrush(
-            ID2D1GradientStopCollection1* stopCollection)
+            ID2D1GradientStopCollection1* stopCollection) override
         {
             if (!MockCreateRadialGradientBrush)
             {
@@ -260,9 +255,14 @@ namespace canvas
             int32_t heightInPixels,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaBehavior alphaBehavior)
+            CanvasAlphaBehavior alphaBehavior) override
         {
             return CreateSwapChainMethod.WasCalled(widthInPixels, heightInPixels, format, bufferCount, alphaBehavior);
+        }
+
+        virtual ComPtr<ID2D1CommandList> CreateCommandList() override
+        {
+            return CreateCommandListMethod.WasCalled();
         }
     };
 }

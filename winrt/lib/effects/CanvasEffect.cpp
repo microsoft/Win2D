@@ -37,34 +37,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInternal
     //
 
-    STDMETHODIMP CanvasEffect::GetBounds(
-        ICanvasDrawingSession *drawingSession,
-        Rect *bounds)
+    IFACEMETHODIMP CanvasEffect::GetBounds(
+        ICanvasDrawingSession* drawingSession,
+        Rect* bounds)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(drawingSession);
-                CheckInPointer(bounds);
-
-                Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
-                *bounds = GetImageBoundsImpl(this, drawingSession, identity);
-            });
+        return GetImageBoundsImpl(this, drawingSession, nullptr, bounds);
     }
 
-    STDMETHODIMP CanvasEffect::GetBoundsWithTransform(
-        ICanvasDrawingSession *drawingSession,
+    IFACEMETHODIMP CanvasEffect::GetBoundsWithTransform(
+        ICanvasDrawingSession* drawingSession,
         Numerics::Matrix3x2 transform,
-        Rect *bounds)
+        Rect* bounds)
     {
-        return ExceptionBoundary(
-            [&]
-        {
-            CheckInPointer(drawingSession);
-            CheckInPointer(bounds);
-
-            *bounds = GetImageBoundsImpl(this, drawingSession, transform);
-        });
+        return GetImageBoundsImpl(this, drawingSession, &transform, bounds);
     }
 
     //

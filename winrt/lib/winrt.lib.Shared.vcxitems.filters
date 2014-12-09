@@ -150,6 +150,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCommandList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
@@ -298,6 +299,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasCommandList.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -443,6 +445,7 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)CanvasSwapChain.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)CanvasSwapChainPanel.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)CanvasCommandList.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="effects">

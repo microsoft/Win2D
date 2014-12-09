@@ -12,6 +12,7 @@
 
 #include "pch.h"
 
+#include "MockD2DCommandList.h"
 #include "TestDeviceResourceCreationAdapter.h"
 
 TEST_CLASS(CanvasDeviceTests)
@@ -329,6 +330,31 @@ public:
         ThrowIfFailed(canvasDevice->get_MaximumBitmapSizeInPixels(&maximumBitmapSize));
 
         Assert::AreEqual(someSize, maximumBitmapSize);
+    }
+
+    TEST_METHOD_EX(CanvasDevice_CreateCommandList_ReturnsCommandListFromDeviceContext)
+    {
+        auto d2dDevice = Make<MockD2DDevice>();
+
+        auto d2dCommandList = Make<MockD2DCommandList>();
+
+        auto deviceContext = Make<StubD2DDeviceContext>(d2dDevice.Get());
+        deviceContext->CreateCommandListMethod.SetExpectedCalls(1,
+            [&](ID2D1CommandList** value)
+            {
+                return d2dCommandList.CopyTo(value);
+            });
+
+        d2dDevice->MockCreateDeviceContext =
+            [&](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
+            {
+                ThrowIfFailed(deviceContext.CopyTo(value));
+            };
+
+        auto canvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
+        auto actualD2DCommandList = canvasDevice->CreateCommandList();
+
+        Assert::IsTrue(IsSameInstance(d2dCommandList.Get(), actualD2DCommandList.Get()));
     }
 };
 

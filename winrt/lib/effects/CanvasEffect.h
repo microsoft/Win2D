@@ -73,11 +73,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasImage
         //
 
-        HRESULT STDMETHODCALLTYPE GetBounds(
+        IFACEMETHOD(GetBounds)(
             ICanvasDrawingSession *drawingSession,
             Rect *bounds) override;
 
-        HRESULT STDMETHODCALLTYPE GetBoundsWithTransform(
+        IFACEMETHOD(GetBoundsWithTransform)(
             ICanvasDrawingSession *drawingSession,
             Numerics::Matrix3x2 transform,
             Rect *bounds) override;

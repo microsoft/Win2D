@@ -687,5 +687,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return swapChain;
     }
 
+
+    ComPtr<ID2D1CommandList> CanvasDevice::CreateCommandList()
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1CommandList> cl;
+        ThrowIfFailed(deviceContext->CreateCommandList(&cl));
+
+        return cl;
+    }
+
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
 }}}}

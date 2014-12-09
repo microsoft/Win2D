@@ -52,8 +52,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) = 0;
     };
 
-    Rect GetImageBoundsImpl(
+    HRESULT GetImageBoundsImpl(
         ICanvasImageInternal* imageInternal,
-        ICanvasDrawingSession *drawingSession,
-        Numerics::Matrix3x2 transform);
+        ICanvasDrawingSession* drawingSession,
+        Numerics::Matrix3x2 const* optionalTransform,
+        Rect* bounds);
 }}}}

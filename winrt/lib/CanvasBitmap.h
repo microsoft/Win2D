@@ -413,7 +413,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SaveToFileAsync(
+        IFACEMETHODIMP SaveToFileAsync(
             HSTRING fileName,
             IAsyncAction **resultAsyncAction) override
         {
@@ -424,7 +424,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 resultAsyncAction);
         }        
 
-        HRESULT STDMETHODCALLTYPE SaveToFileWithBitmapFileFormatAsync(
+        IFACEMETHODIMP SaveToFileWithBitmapFileFormatAsync(
             HSTRING fileName,
             CanvasBitmapFileFormat fileFormat,
             IAsyncAction **resultAsyncAction) override
@@ -436,7 +436,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 resultAsyncAction);
         }
 
-        HRESULT STDMETHODCALLTYPE SaveToFileWithBitmapFileFormatAndQualityAsync(
+        IFACEMETHODIMP SaveToFileWithBitmapFileFormatAndQualityAsync(
             HSTRING rawfileName,
             CanvasBitmapFileFormat fileFormat,
             float quality,
@@ -460,7 +460,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SaveToStreamAsync(
+        IFACEMETHODIMP SaveToStreamAsync(
             IRandomAccessStream* stream,
             CanvasBitmapFileFormat fileFormat,
             IAsyncAction** asyncAction) override
@@ -472,7 +472,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 asyncAction);
         }
 
-        HRESULT STDMETHODCALLTYPE SaveToStreamWithQualityAsync(
+        IFACEMETHODIMP SaveToStreamWithQualityAsync(
             IRandomAccessStream* stream,
             CanvasBitmapFileFormat fileFormat,
             float quality,
@@ -496,7 +496,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetPixelBytes(
+        IFACEMETHODIMP GetPixelBytes(
             uint32_t* valueCount,
             uint8_t** valueElements) override
         {
@@ -513,7 +513,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetPixelBytesWithSubrectangle(
+        IFACEMETHODIMP GetPixelBytesWithSubrectangle(
             int32_t left,
             int32_t top,
             int32_t width,
@@ -534,7 +534,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetPixelColors(
+        IFACEMETHODIMP GetPixelColors(
             uint32_t* valueCount,
             ABI::Windows::UI::Color **valueElements) override
         {
@@ -551,7 +551,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetPixelColorsWithSubrectangle(
+        IFACEMETHODIMP GetPixelColorsWithSubrectangle(
             int32_t left,
             int32_t top,
             int32_t width,
@@ -572,7 +572,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetPixelBytes(
+        IFACEMETHODIMP SetPixelBytes(
             uint32_t valueCount,
             uint8_t* valueElements) override
         {
@@ -589,7 +589,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetPixelBytesWithSubrectangle(
+        IFACEMETHODIMP SetPixelBytesWithSubrectangle(
             uint32_t valueCount,
             uint8_t* valueElements,
             int32_t left,
@@ -610,7 +610,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetPixelColors(
+        IFACEMETHODIMP SetPixelColors(
             uint32_t valueCount,
             ABI::Windows::UI::Color* valueElements) override
         {
@@ -627,7 +627,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE SetPixelColorsWithSubrectangle(
+        IFACEMETHODIMP SetPixelColorsWithSubrectangle(
             uint32_t valueCount,
             ABI::Windows::UI::Color* valueElements,
             int32_t left,
@@ -648,37 +648,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT STDMETHODCALLTYPE GetBounds(
+        IFACEMETHODIMP GetBounds(
             ICanvasDrawingSession *drawingSession,
             Rect *bounds) override
         {
-            return ExceptionBoundary(
-                [&]
-                {
-                    CheckInPointer(drawingSession);
-                    CheckInPointer(bounds);
-
-                    Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
-                    *bounds = GetImageBoundsImpl(this, drawingSession, identity);
-                });
+            return GetImageBoundsImpl(this, drawingSession, nullptr, bounds);
         }
 
-        HRESULT STDMETHODCALLTYPE GetBoundsWithTransform(
+        IFACEMETHODIMP GetBoundsWithTransform(
             ICanvasDrawingSession *drawingSession,
             Numerics::Matrix3x2 transform,
             Rect *bounds) override
         {
-            return ExceptionBoundary(
-                [&]
-                {
-                    CheckInPointer(drawingSession);
-                    CheckInPointer(bounds);
-
-                    *bounds = GetImageBoundsImpl(this, drawingSession, transform);
-                });
+            return GetImageBoundsImpl(this, drawingSession, &transform, bounds);
         }
 
-        HRESULT STDMETHODCALLTYPE CopyPixelsFromBitmap(
+        IFACEMETHODIMP CopyPixelsFromBitmap(
             ICanvasBitmap* otherBitmap)
         {
             return CopyPixelsFromBitmapImpl(
@@ -686,7 +671,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 otherBitmap);
         }
 
-        HRESULT STDMETHODCALLTYPE CopyPixelsFromBitmapWithDestPoint(
+        IFACEMETHODIMP CopyPixelsFromBitmapWithDestPoint(
             ICanvasBitmap* otherBitmap,
             int32_t destX,
             int32_t destY)
@@ -698,7 +683,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 &destY);
         }
 
-        HRESULT STDMETHODCALLTYPE CopyPixelsFromBitmapWithDestPointAndSourceRect(
+        IFACEMETHODIMP CopyPixelsFromBitmapWithDestPointAndSourceRect(
             ICanvasBitmap* otherBitmap,
             int32_t destX,
             int32_t destY,

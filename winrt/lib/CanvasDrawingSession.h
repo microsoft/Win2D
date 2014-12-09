@@ -984,4 +984,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
     };
+
+
+    //
+    // A CanvasDrawingSessionAdapter that calls BeginDraw and EndDraw on the
+    // device context.
+    //
+    class SimpleCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
+    {
+        ComPtr<ID2D1DeviceContext1> m_d2dDeviceContext;
+
+    public:
+        SimpleCanvasDrawingSessionAdapter(ID2D1DeviceContext1* d2dDeviceContext)
+            : m_d2dDeviceContext(d2dDeviceContext) 
+        {
+            d2dDeviceContext->BeginDraw();
+        }
+
+        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
+        {
+            return D2D1::Point2F(0, 0);
+        }
+
+        virtual void EndDraw() override
+        {
+            ThrowIfFailed(m_d2dDeviceContext->EndDraw());
+        }
+    };
 }}}}

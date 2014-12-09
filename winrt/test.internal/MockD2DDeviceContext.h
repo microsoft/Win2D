@@ -49,13 +49,14 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(DrawBitmapMethod            , void(ID2D1Bitmap*, D2D1_RECT_F const*, FLOAT, D2D1_INTERPOLATION_MODE, D2D1_RECT_F const*, D2D1_MATRIX_4X4_F const*));
         CALL_COUNTER_WITH_MOCK(GetDeviceMethod             , void(ID2D1Device**));
         CALL_COUNTER_WITH_MOCK(CreateEffectMethod          , HRESULT(IID const&, ID2D1Effect **));
+        CALL_COUNTER_WITH_MOCK(CreateCommandListMethod     , HRESULT(ID2D1CommandList**));
         CALL_COUNTER_WITH_MOCK(CreateSolidColorBrushMethod , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
         CALL_COUNTER_WITH_MOCK(GetImageWorldBoundsMethod   , HRESULT(ID2D1Image*, D2D1_RECT_F*));
-        CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod, UINT32());
+        CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod  , UINT32());
         CALL_COUNTER_WITH_MOCK(CreateBitmapFromDxgiSurfaceMethod, HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
-        CALL_COUNTER_WITH_MOCK(SetTargetMethod, void(ID2D1Image*));
-        CALL_COUNTER_WITH_MOCK(BeginDrawMethod, void());
-        CALL_COUNTER_WITH_MOCK(EndDrawMethod, HRESULT(D2D1_TAG*, D2D1_TAG*));
+        CALL_COUNTER_WITH_MOCK(SetTargetMethod             , void(ID2D1Image*));
+        CALL_COUNTER_WITH_MOCK(BeginDrawMethod             , void());
+        CALL_COUNTER_WITH_MOCK(EndDrawMethod               , HRESULT(D2D1_TAG*, D2D1_TAG*));
 
         MockD2DDeviceContext()
         {
@@ -429,10 +430,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateCommandList(ID2D1CommandList **) override
+        IFACEMETHODIMP CreateCommandList(ID2D1CommandList** value) override
         {
-            Assert::Fail(L"Unexpected call to CreateCommandList");
-            return E_NOTIMPL;
+            return CreateCommandListMethod.WasCalled(value);
         }
 
         IFACEMETHODIMP_(BOOL) IsDxgiFormatSupported(DXGI_FORMAT) const override

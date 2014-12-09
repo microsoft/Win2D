@@ -36,6 +36,7 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 #include "CanvasControl.abi.idl"
 #include "CanvasSwapChain.abi.idl"
 #include "CanvasSwapChainPanel.abi.idl"
+#include "CanvasCommandList.abi.idl"
 
 #include "effects\generated\ArithmeticCompositeEffect.abi.idl"
 #include "effects\generated\AtlasEffect.abi.idl"

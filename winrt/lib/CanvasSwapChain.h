@@ -191,6 +191,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //    
     class CanvasDrawingSessionManager;
 
+    // TODO: is this class really required?  It doesn't track any more state
+    // than m_drawingSessionManager.
     class CanvasSwapChainDrawingSessionFactory : public ICanvasSwapChainDrawingSessionFactory
     {
         std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
