@@ -23,7 +23,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     CanvasSwapChainFactory::CanvasSwapChainFactory()
-        : m_drawingSessionFactory(std::make_shared<CanvasSwapChainDrawingSessionFactory>())
     {
 
     }
@@ -87,8 +86,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     format,
                     bufferCount,
                     alphaBehavior,
-                    dpi,
-                    m_drawingSessionFactory);
+                    dpi);
 
                 ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
             });
@@ -117,8 +115,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     format,
                     bufferCount,
                     alphaBehavior,
-                    dpi,
-                    m_drawingSessionFactory);
+                    dpi);
 
                 ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
             });
@@ -153,35 +150,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasSwapChain::CanvasSwapChain(
         ICanvasResourceCreator* resourceCreator,
         std::shared_ptr<CanvasSwapChainManager> swapChainManager,
-        std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> drawingSessionFactory,
         IDXGISwapChain2* dxgiSwapChain,
         float dpi)
         : ResourceWrapper(swapChainManager, dxgiSwapChain)
-        , m_drawingSessionFactory(drawingSessionFactory)
         , m_dpi(dpi)
     {
         ThrowIfFailed(resourceCreator->get_Device(&m_device));
-    }
-
-    IFACEMETHODIMP CanvasSwapChain::CreateDrawingSession(
-        Color clearColor,
-        ICanvasDrawingSession** drawingSession) 
-    {
-        return ExceptionBoundary(
-            [&]
-            {            
-                CheckAndClearOutPointer(drawingSession);
-                auto& dxgiSwapChain = GetResource();
-                auto& device = m_device.EnsureNotClosed();
-
-                auto newDrawingSession = m_drawingSessionFactory->Create(
-                    device.Get(),
-                    dxgiSwapChain.Get(),
-                    clearColor,
-                    m_dpi);
-
-                ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
-            });
     }
 
     IFACEMETHODIMP CanvasSwapChain::get_Size(Size* value)
@@ -553,29 +527,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     };
 
-    CanvasSwapChainDrawingSessionFactory::CanvasSwapChainDrawingSessionFactory()
-        : m_drawingSessionManager(CanvasDrawingSessionFactory::GetOrCreateManager())
+    IFACEMETHODIMP CanvasSwapChain::CreateDrawingSession(
+        Color clearColor,
+        ICanvasDrawingSession** drawingSession) 
     {
+        return ExceptionBoundary(
+            [&]
+            {            
+                CheckAndClearOutPointer(drawingSession);
+                auto& dxgiSwapChain = GetResource();
+                auto& device = m_device.EnsureNotClosed();
 
-    }
+                ComPtr<ID2D1DeviceContext1> deviceContext;
+                auto adapter = CanvasSwapChainDrawingSessionAdapter::Create(
+                    device.Get(),
+                    dxgiSwapChain.Get(),
+                    ToD2DColor(clearColor),
+                    m_dpi,
+                    &deviceContext);
+                
+                auto drawingSessionManager = CanvasDrawingSessionFactory::GetOrCreateManager();
+                auto newDrawingSession = drawingSessionManager->Create(deviceContext.Get(), adapter);
 
-    ComPtr<ICanvasDrawingSession> CanvasSwapChainDrawingSessionFactory::Create(
-        ICanvasDevice* owner,
-        IDXGISwapChain2* swapChainResource,
-        Color const& clearColor,
-        float dpi) const
-    {
-        CheckInPointer(owner);
-
-        ComPtr<ID2D1DeviceContext1> deviceContext;
-        auto adapter = CanvasSwapChainDrawingSessionAdapter::Create(
-            owner,
-            swapChainResource,
-            ToD2DColor(clearColor),
-            dpi,
-            &deviceContext);
-
-        return m_drawingSessionManager->Create(deviceContext.Get(), adapter);
+                ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
+            });
     }
 
     ComPtr<CanvasSwapChain> CanvasSwapChainManager::CreateNew(
@@ -585,8 +560,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         DirectXPixelFormat format,
         int32_t bufferCount,
         CanvasAlphaBehavior alphaBehavior,
-        float dpi,
-        std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> const& drawingSessionFactory)
+        float dpi)
     {
         ComPtr<ICanvasDevice> device;
         resourceCreator->get_Device(&device);
@@ -607,7 +581,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto canvasSwapChain = Make<CanvasSwapChain>(
             resourceCreator,
             shared_from_this(),
-            drawingSessionFactory,
             dxgiSwapChain.Get(),
             dpi);
         CheckMakeResult(canvasSwapChain);
@@ -627,7 +600,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto swapChain = Make<CanvasSwapChain>(
             resourceCreator.Get(),
             shared_from_this(),
-            nullptr, // drawing session factory
             resource,
             dpi);
         CheckMakeResult(swapChain);

@@ -19,31 +19,15 @@
 
 TEST_CLASS(CanvasSwapChainUnitTests)
 {
-    class MockCanvasSwapChainDrawingSessionFactory : public ICanvasSwapChainDrawingSessionFactory
-    {
-    public:
-        CALL_COUNTER_WITH_MOCK(CreateMethod, ComPtr<ICanvasDrawingSession>(ICanvasDevice*, IDXGISwapChain2*, Color const&, float));
-        virtual ComPtr<ICanvasDrawingSession> Create(
-            ICanvasDevice* owner,
-            IDXGISwapChain2* swapChainResource,
-            Color const& clearColor,
-            float dpi) const override
-        {
-            return CreateMethod.WasCalled(owner, swapChainResource, clearColor, dpi);
-        }
-    };
-
     struct StubDeviceFixture
     {
         std::shared_ptr<CanvasSwapChainManager> m_swapChainManager;
-        std::shared_ptr<MockCanvasSwapChainDrawingSessionFactory> m_drawingSessionFactory;
         ComPtr<StubCanvasDevice> m_canvasDevice;
 
         StubDeviceFixture()
         {
             m_canvasDevice = Make<StubCanvasDevice>();
             m_swapChainManager = std::make_shared<CanvasSwapChainManager>();
-            m_drawingSessionFactory = std::make_shared<MockCanvasSwapChainDrawingSessionFactory>();
             
             m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaBehavior)
             {
@@ -62,8 +46,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 DirectXPixelFormat::B8G8R8A8UIntNormalized,
                 2,
                 CanvasAlphaBehavior::Premultiplied,
-                dpi,
-                m_drawingSessionFactory);
+                dpi);
         }
     };
 
@@ -106,8 +89,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb,
             4,
             CanvasAlphaBehavior::Ignore,
-            DEFAULT_DPI * dpiScale,
-            f.m_drawingSessionFactory);
+            DEFAULT_DPI * dpiScale);
 
         float dpi = 0;
         ThrowIfFailed(swapChain->get_Dpi(&dpi));
@@ -119,7 +101,6 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     public:
         ComPtr<CanvasDevice> m_canvasDevice;
         std::shared_ptr<CanvasSwapChainManager> m_swapChainManager;
-        std::shared_ptr<MockCanvasSwapChainDrawingSessionFactory> m_drawingSessionFactory;
 
         FullDeviceFixture()
         {
@@ -157,8 +138,6 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             m_canvasDevice = deviceManager->GetOrCreate(d2dDevice.Get());
 
             m_swapChainManager = std::make_shared<CanvasSwapChainManager>();
-
-            m_drawingSessionFactory = std::make_shared<MockCanvasSwapChainDrawingSessionFactory>();
         }
 
         ComPtr<CanvasSwapChain> CreateTestSwapChain(float width, float height, int32_t bufferCount)
@@ -170,8 +149,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 DirectXPixelFormat::B8G8R8A8UIntNormalized,
                 bufferCount,
                 CanvasAlphaBehavior::Premultiplied,
-                DEFAULT_DPI,
-                m_drawingSessionFactory);
+                DEFAULT_DPI);
         }
     };
 
@@ -577,8 +555,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                                                             originalPixelFormat,
                                                             originalBufferCount,
                                                             CanvasAlphaBehavior::Premultiplied,
-                                                            DEFAULT_DPI,
-                                                            f.m_drawingSessionFactory);
+                                                            DEFAULT_DPI);
 
         ThrowIfFailed(canvasSwapChain->ResizeBuffersWithSize(555, 666));
     }
@@ -655,30 +632,92 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     {
         StubDeviceFixture f;
 
+        float anyDpi = 123.0f;
+        auto anyPixelFormat = static_cast<DXGI_FORMAT>(DirectXPixelFormat::B8G8R8A8UIntNormalized);
         Color expectedClearColor = { 1, 2, 3, 4 };
 
-        f.m_drawingSessionFactory->CreateMethod.SetExpectedCalls(1, 
-            [&] (ICanvasDevice* owner, IDXGISwapChain2* swapChainResource, Color const& clearColor, float dpi)
-            {
-                Assert::AreEqual(expectedClearColor, clearColor);
-                Assert::AreEqual(DEFAULT_DPI, dpi);
-                Assert::AreEqual(static_cast<ICanvasDevice*>(f.m_canvasDevice.Get()), owner);
-                Assert::IsNotNull(swapChainResource);
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+        auto dxgiSurface = Make<MockDxgiSurface>();
+        auto deviceContext = Make<MockD2DDeviceContext>();
+        auto d2dBitmap = Make<MockD2DBitmap>();
 
-                return Make<MockCanvasDrawingSession>();
+        auto canvasSwapChain = f.m_swapChainManager->GetOrCreate(
+            f.m_canvasDevice.Get(),
+            dxgiSwapChain.Get(),
+            anyDpi);
+
+
+        dxgiSwapChain->GetDesc1Method.SetExpectedCalls(1,
+            [&] (DXGI_SWAP_CHAIN_DESC1* desc)
+            {
+                desc->Width = 123;
+                desc->Height = 456;
+                desc->Format = anyPixelFormat;
+                desc->BufferCount = 5;
+                desc->AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
+                return S_OK;
             });
 
-        auto canvasSwapChain = f.CreateTestSwapChain();
+        dxgiSwapChain->GetBufferMethod.SetExpectedCalls(1,
+            [&] (UINT buffer, REFIID riid, void** surface)
+            {
+                Assert::AreEqual(0U, buffer);
+                return dxgiSurface.CopyTo(riid, surface);
+            });
+
+
+        f.m_canvasDevice->CreateDeviceContextMethod.SetExpectedCalls(1,
+            [&] ()
+            {
+                return deviceContext;
+            });
+
+
+        deviceContext->ClearMethod.SetExpectedCalls(1,
+            [&] (D2D1_COLOR_F const* actualClearColor)
+            {
+                Assert::AreEqual(ToD2DColor(expectedClearColor), *actualClearColor);
+            });
+
+        deviceContext->SetDpiMethod.SetExpectedCalls(1,
+            [&] (float dpiX, float dpiY)
+            {
+                Assert::AreEqual(anyDpi, dpiX);
+                Assert::AreEqual(anyDpi, dpiY);
+            });
+
+        deviceContext->CreateBitmapFromDxgiSurfaceMethod.SetExpectedCalls(1,
+            [&] (IDXGISurface* surface, D2D1_BITMAP_PROPERTIES1 const* properties, ID2D1Bitmap1** value)
+            {
+                Assert::AreEqual<IDXGISurface*>(dxgiSurface.Get(), surface);
+                Assert::AreEqual(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, properties->bitmapOptions);
+                Assert::AreEqual(anyPixelFormat, properties->pixelFormat.format);
+                Assert::AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, properties->pixelFormat.alphaMode);
+                return d2dBitmap.CopyTo(value);
+            });
+
+        deviceContext->SetTargetMethod.SetExpectedCalls(1,
+            [&] (ID2D1Image* target)
+            {
+                Assert::AreEqual<ID2D1Image*>(d2dBitmap.Get(), target);
+            });
+
+        deviceContext->BeginDrawMethod.SetExpectedCalls(1);
+
+        deviceContext->EndDrawMethod.SetExpectedCalls(1);
+
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(canvasSwapChain->CreateDrawingSession(expectedClearColor, &drawingSession));
+
+        auto retrievedDeviceContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+        Assert::IsTrue(IsSameInstance(deviceContext.Get(), retrievedDeviceContext.Get()));
     }
 
     struct DrawingSessionAdapterFixture
     {
         std::shared_ptr<CanvasSwapChainManager> m_swapChainManager;
         ComPtr<StubCanvasDevice> m_canvasDevice;
-        std::shared_ptr<CanvasSwapChainDrawingSessionFactory> m_drawingSessionFactory;
         ComPtr<MockD2DDeviceContext> m_deviceContext;
 
         enum Options
@@ -690,8 +729,6 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         DrawingSessionAdapterFixture(Options options = None)
         {
             m_swapChainManager = std::make_shared<CanvasSwapChainManager>();
-
-            m_drawingSessionFactory = std::make_shared<CanvasSwapChainDrawingSessionFactory>();
 
             m_deviceContext = Make<MockD2DDeviceContext>();
 
@@ -800,8 +837,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 DirectXPixelFormat::B8G8R8A8UIntNormalized,
                 2,
                 CanvasAlphaBehavior::Premultiplied,
-                DEFAULT_DPI,
-                m_drawingSessionFactory);
+                DEFAULT_DPI);
         }
     };
 
@@ -856,8 +892,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                                                       DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb,
                                                       2,
                                                       CanvasAlphaBehavior::Ignore,
-                                                      dpi,
-                                                      f.m_drawingSessionFactory);
+                                                      dpi);
 
         float actualDpi = 0;
         ThrowIfFailed(swapChain->get_Dpi(&actualDpi));

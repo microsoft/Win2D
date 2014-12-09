@@ -18,16 +18,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ::Microsoft::WRL;
 
-    class ICanvasSwapChainDrawingSessionFactory
-    {
-    public:
-        virtual ComPtr<ICanvasDrawingSession> Create(
-            ICanvasDevice* owner,
-            IDXGISwapChain2* swapChainResource,
-            Color const& clearColor,
-            float dpi) const = 0;
-    };
-
     class CanvasSwapChainManager;
 
     class CanvasSwapChainFactory
@@ -37,8 +27,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         public PerApplicationManager<CanvasSwapChainFactory, CanvasSwapChainManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
-
-        std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> m_drawingSessionFactory;
 
     public:
         CanvasSwapChainFactory();
@@ -102,14 +90,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
 
         ClosablePtr<ICanvasDevice> m_device;
-        std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> m_drawingSessionFactory;
         float m_dpi;
 
     public:
         CanvasSwapChain(
             ICanvasResourceCreator* resourceCreator,
             std::shared_ptr<CanvasSwapChainManager> swapChainManager,
-            std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> drawingSessionFactory,
             IDXGISwapChain2* dxgiSwapChain,
             float dpi);
 
@@ -177,34 +163,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaBehavior alphaBehavior,
-            float dpi,
-            std::shared_ptr<ICanvasSwapChainDrawingSessionFactory> const& drawingSessionFactory);
+            float dpi);
 
         ComPtr<CanvasSwapChain> CreateWrapper(
             ICanvasDevice* device,
             IDXGISwapChain2* resource,
             float dpi);
-    };
-
-    //
-    // Drawing session factory
-    //    
-    class CanvasDrawingSessionManager;
-
-    // TODO: is this class really required?  It doesn't track any more state
-    // than m_drawingSessionManager.
-    class CanvasSwapChainDrawingSessionFactory : public ICanvasSwapChainDrawingSessionFactory
-    {
-        std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
-
-    public:
-        CanvasSwapChainDrawingSessionFactory();
-
-        virtual ComPtr<ICanvasDrawingSession> Create(
-            ICanvasDevice* owner,
-            IDXGISwapChain2* swapChainResource,
-            Color const& clearColor,
-            float dpi) const override;
     };
 
 }}}}
