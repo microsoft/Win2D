@@ -350,11 +350,11 @@ namespace ExampleGallery
             if (dpi == defaultDpi)
             {
                 // We could always just use the "else" path, but want to test this default overload as well.
-                return CanvasBitmap.CreateFromColors(resourceCreator, colors, pixelSize, pixelSize, CanvasAlphaBehavior.Premultiplied);
+                return CanvasBitmap.CreateFromColors(resourceCreator, colors, pixelSize, pixelSize, CanvasAlphaMode.Premultiplied);
             }
             else
             {
-                return CanvasBitmap.CreateFromColors(resourceCreator, colors, pixelSize, pixelSize, CanvasAlphaBehavior.Premultiplied, dpi);
+                return CanvasBitmap.CreateFromColors(resourceCreator, colors, pixelSize, pixelSize, CanvasAlphaMode.Premultiplied, dpi);
             }
         }
 

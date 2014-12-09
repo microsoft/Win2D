@@ -70,7 +70,7 @@ TEST_CLASS(CanvasImageTests)
                         1,
                         1,
                         DirectXPixelFormat::B8G8R8A8UIntNormalized,
-                        CanvasAlphaBehavior::Premultiplied,
+                        CanvasAlphaMode::Premultiplied,
                         dpi);
 
                     ICanvasImage^ testImage;

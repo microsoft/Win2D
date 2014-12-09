@@ -120,6 +120,10 @@ public:
         ComPtr<IInspectable> expectedComposableBase;
         ThrowIfFailed(mockSurfaceImageSource.As(&expectedComposableBase));
         Assert::AreEqual(canvasImageSource->GetComposableBase().Get(), expectedComposableBase.Get());
+
+        CanvasBackground actualBackground;
+        ThrowIfFailed(canvasImageSource->get_Background(&actualBackground));
+        Assert::AreEqual(CanvasBackground::Opaque, actualBackground);
     }
 
     TEST_METHOD_EX(CanvasImageSourceGetDevice)

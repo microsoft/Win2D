@@ -30,6 +30,9 @@ namespace Microsoft.Graphics.Canvas
 
         [propput]
         HRESULT Transform([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
+
+        [propget]
+        HRESULT Device([out, retval] CanvasDevice** value);
     };
 
     //
@@ -156,12 +159,12 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
 
         // Defaults to color interpolation sRGB-premultiplied.
-        HRESULT CreateWithEdgeBehaviorAndAlphaBehavior(
+        HRESULT CreateWithEdgeBehaviorAndAlphaMode(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
             [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaBehavior alphaBehavior,
+            [in] CanvasAlphaMode alphaMode,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
 
         // Exposes all creation options.
@@ -170,7 +173,7 @@ namespace Microsoft.Graphics.Canvas
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
             [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaBehavior alphaBehavior,
+            [in] CanvasAlphaMode alphaMode,
             [in] CanvasColorSpace preInterpolationSpace,
             [in] CanvasColorSpace postInterpolationSpace,
             [in] CanvasBufferPrecision bufferPrecision,
@@ -211,7 +214,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT BufferPrecision([out, retval] CanvasBufferPrecision* value);
 
         [propget]
-        HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+        HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
     };
 
     [version(VERSION), uuid(E9DE3392-8FBF-478C-8E6A-D0A0EA753B37), exclusiveto(CanvasLinearGradientBrush)]
@@ -245,12 +248,12 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
 
         // Defaults to color interpolation sRGB-premultiplied.
-        HRESULT CreateWithEdgeBehaviorAndAlphaBehavior(
+        HRESULT CreateWithEdgeBehaviorAndAlphaMode(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
             [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaBehavior alphaBehavior,
+            [in] CanvasAlphaMode alphaMode,
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
 
         // Exposes all creation options.
@@ -259,7 +262,7 @@ namespace Microsoft.Graphics.Canvas
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
             [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaBehavior alphaBehavior,
+            [in] CanvasAlphaMode alphaMode,
             [in] CanvasColorSpace preInterpolationSpace,
             [in] CanvasColorSpace postInterpolationSpace,
             [in] CanvasBufferPrecision bufferPrecision,
@@ -312,7 +315,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT BufferPrecision([out, retval] CanvasBufferPrecision* value);
 
         [propget]
-        HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+        HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
     };
 
     [version(VERSION), uuid(3B0D4DAE-3E21-4818-99B4-779ACAAF18BE), exclusiveto(CanvasRadialGradientBrush)]

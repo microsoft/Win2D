@@ -74,13 +74,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) = 0;
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICFormatConverter* wicConverter,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi) = 0;
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
             float width,
             float height,
             DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi) = 0;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) = 0;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) = 0;
@@ -93,7 +93,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaBehavior alphaBehavior) = 0;
+            CanvasAlphaMode alphaMode) = 0;
 
         virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(
             ID2D1GradientStopCollection1* stopCollection) = 0;
@@ -106,7 +106,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t heightInPixels,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaBehavior alphaBehavior) = 0;
+            CanvasAlphaMode alphaMode) = 0;
 
         virtual ComPtr<ID2D1CommandList> CreateCommandList() = 0;
     };
@@ -179,13 +179,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override;
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICFormatConverter* wicConverter,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi) override;
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
             float width,
             float height,
             DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi) override;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) override;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) override;
@@ -204,14 +204,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaBehavior alphaBehavior) override;
+            CanvasAlphaMode alphaMode) override;
 
         virtual ComPtr<IDXGISwapChain2> CreateSwapChain(
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaBehavior alphaBehavior) override;
+            CanvasAlphaMode alphaMode) override;
 
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override;
 
@@ -295,8 +295,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(CreateFromDirect3D11Device)(
-            CanvasDebugLevel debugLevel,
             IDirect3DDevice* direct3DDevice,
+            CanvasDebugLevel debugLevel,
             ICanvasDevice** canvasDevice) override;
 
         //

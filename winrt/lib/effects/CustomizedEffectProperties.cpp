@@ -73,9 +73,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     // ColorMatrixEffect.AlphaMode property needs special enum value conversion, because our
-    // CanvasAlphaBehavior enum doesn't match the numeric values of D2D1_COLORMATRIX_ALPHA_MODE.
+    // CanvasAlphaMode enum doesn't match the numeric values of D2D1_COLORMATRIX_ALPHA_MODE.
 
-    IFACEMETHODIMP ColorMatrixEffect::get_AlphaMode(_Out_ CanvasAlphaBehavior* value)
+    IFACEMETHODIMP ColorMatrixEffect::get_AlphaMode(_Out_ CanvasAlphaMode* value)
     {
         return ExceptionBoundary([&]
         {
@@ -85,9 +85,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         });
     }
 
-    IFACEMETHODIMP ColorMatrixEffect::put_AlphaMode(_In_ CanvasAlphaBehavior value)
+    IFACEMETHODIMP ColorMatrixEffect::put_AlphaMode(_In_ CanvasAlphaMode value)
     {
-        if (value == CanvasAlphaBehavior::Ignore)
+        if (value == CanvasAlphaMode::Ignore)
         {
             return E_INVALIDARG;
         }

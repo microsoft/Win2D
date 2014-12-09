@@ -60,7 +60,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float height,
             [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
             [in] INT32 bufferCount,
-            [in] CanvasAlphaBehavior alphaBehavior,
+            [in] CanvasAlphaMode alphaMode,
             [out, retval] CanvasSwapChain** swapChain);
 
         HRESULT CreateWithAllOptionsAndDpi(
@@ -76,7 +76,7 @@ namespace Microsoft.Graphics.Canvas
             
             // This enum does not include UNSPECIFIED alpha and the native one does.
             // However, there is an overloaded constructor which omits this argument entirely.
-            [in] CanvasAlphaBehavior alphaBehavior, 
+            [in] CanvasAlphaMode alphaMode, 
 
             // An IDXGIOutput* argument is not included here. It represents less common 
             // usage scenarios and there is not a way to get to it from the current API.
@@ -87,8 +87,7 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(882E3C3A-5725-409C-9E76-F80B3BACF1B4), exclusiveto(CanvasSwapChain)]
     interface ICanvasSwapChain : IInspectable
-        requires Windows.Foundation.IClosable,
-        ICanvasResourceCreator
+        requires Windows.Foundation.IClosable
     {
         [overload("Present")]
         HRESULT Present();
@@ -109,12 +108,13 @@ namespace Microsoft.Graphics.Canvas
             [in] INT32 bufferCount);
 
         // Returns the properties used to create this swap chain object.
+        [propget] HRESULT Device([out, retval] CanvasDevice** value);
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
         [propget] HRESULT SizeInPixels([out, retval] Windows.Foundation.Size* size);
         [propget] HRESULT Dpi([out, retval] float* dpi);
         [propget] HRESULT Format([out, retval] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat* value);
         [propget] HRESULT BufferCount([out, retval] INT32* value);
-        [propget] HRESULT AlphaMode([out, retval] CanvasAlphaBehavior* value);
+        [propget] HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
         
         [propget] HRESULT Rotation([out, retval] CanvasSwapChainRotation* value);
         [propput] HRESULT Rotation([in] CanvasSwapChainRotation value);

@@ -365,7 +365,7 @@ public:
         float anyWidth = 1.0f;
         float anyHeight = 2.0f;
         auto anyFormat = DirectXPixelFormat::R16G16B16A16UIntNormalized;
-        auto anyAlphaMode = CanvasAlphaBehavior::Ignore;
+        auto anyAlphaMode = CanvasAlphaMode::Ignore;
         float anyDpi = 3.0f;
 
         auto deviceContext = Make<StubD2DDeviceContext>(d2dDevice.Get());

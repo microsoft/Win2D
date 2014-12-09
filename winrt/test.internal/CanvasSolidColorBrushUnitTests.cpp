@@ -162,8 +162,9 @@ public:
 
         SolidColorBrushCounters counters;
         auto testD2DSolidColorBrush = Make<TestD2DSolidColorBrush>(d2dRed, &counters);
+        auto canvasDevice = Make<TestCanvasDevice>();
 
-        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(testD2DSolidColorBrush.Get());
+        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(canvasDevice.Get(), testD2DSolidColorBrush.Get());
 
         // Verify the brush resource got initialized correctly and didn't call
         // any unexpected methods.
@@ -213,6 +214,11 @@ public:
         canvasSolidColorBrush->get_Transform(&transformActual);
         Assert::AreEqual(scaleAndTranslate, transformActual);
         Assert::AreEqual(1, counters.NumGetTransformCalls);
+
+        // get_Device
+        ComPtr<ICanvasDevice> actualDevice;
+        canvasSolidColorBrush->get_Device(&actualDevice);
+        Assert::AreEqual<ICanvasDevice*>(canvasDevice.Get(), actualDevice.Get());
     }
 
     TEST_METHOD_EX(CanvasSolidColorBrush_Closed)
@@ -220,7 +226,8 @@ public:
         Color color = { 255, 127, 127, 127 };
 
         auto d2dBrush = Make<MockD2DSolidColorBrush>();
-        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(d2dBrush.Get());
+        auto canvasDevice = Make<TestCanvasDevice>();
+        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(canvasDevice.Get(), d2dBrush.Get());
 
         Assert::IsNotNull(canvasSolidColorBrush.Get());
 
@@ -240,6 +247,9 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->get_Transform(&transformActual));
 
         Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->put_Transform(transformActual));
+
+        ComPtr<ICanvasDevice> actualDevice;
+        Assert::AreEqual(RO_E_CLOSED, canvasSolidColorBrush->get_Device(&actualDevice));
     }
 
     TEST_METHOD_EX(CanvasSolidColorBrush_CreateThroughCanvasControl)

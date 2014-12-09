@@ -63,8 +63,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_renderTargetManager->Create(args...);
         }
 
-        ComPtr<ICanvasBitmap> CreateBitmapFromSurface(ICanvasDevice* device, IDirect3DSurface* surface, CanvasAlphaBehavior alpha, float dpi);
-        ComPtr<CanvasRenderTarget> CreateRenderTargetFromSurface(ICanvasDevice* device, IDirect3DSurface* surface, CanvasAlphaBehavior alpha, float dpi);
+        ComPtr<ICanvasBitmap> CreateBitmapFromSurface(ICanvasDevice* device, IDirect3DSurface* surface, CanvasAlphaMode alpha, float dpi);
+        ComPtr<CanvasRenderTarget> CreateRenderTargetFromSurface(ICanvasDevice* device, IDirect3DSurface* surface, CanvasAlphaMode alpha, float dpi);
 
         //
         // Returns a wrapper around the given d2dBitmap.  Depending on the

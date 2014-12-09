@@ -112,6 +112,9 @@ public:
         Numerics::Matrix3x2 transform;
         Assert::AreEqual(RO_E_CLOSED, brush->get_Transform(&transform));
         Assert::AreEqual(RO_E_CLOSED, brush->put_Transform(transform));
+
+        ComPtr<ICanvasDevice> actualDevice;
+        Assert::AreEqual(RO_E_CLOSED, brush->get_Device(&actualDevice));
     }
 
     TEST_METHOD_EX(CanvasImageBrush_Properties_NullArgs)
@@ -130,7 +133,8 @@ public:
     template<class BackingBrushType>
     void VerifyCommonBrushProperties(
         ComPtr<CanvasImageBrush> const& brush,
-        ComPtr<BackingBrushType> const& backingBrush)
+        ComPtr<BackingBrushType> const& backingBrush,
+        ICanvasDevice* expectedDevice)
     {
         {
             bool getExtendXCalled = false;
@@ -241,6 +245,9 @@ public:
             Assert::IsTrue(setTransformCalled);
         }
 
+        ComPtr<ICanvasDevice> actualDevice;
+        brush->get_Device(&actualDevice);
+        Assert::AreEqual(expectedDevice, actualDevice.Get());
     }
 
     TEST_METHOD_EX(CanvasImageBrush_BitmapBrushProperties)
@@ -257,7 +264,7 @@ public:
 
         auto brush = Make<CanvasImageBrush>(canvasDevice.Get());
 
-        VerifyCommonBrushProperties(brush, bitmapBrush);
+        VerifyCommonBrushProperties(brush, bitmapBrush, canvasDevice.Get());
 
         bool setBitmapCalled = false;
         bitmapBrush->MockSetBitmap =
@@ -377,7 +384,7 @@ public:
         // a non-NULL source rectangle.
         ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(rectangle.Get()));
 
-        VerifyCommonBrushProperties(f.m_canvasImageBrush.Get(), f.m_imageBrush);
+        VerifyCommonBrushProperties(f.m_canvasImageBrush.Get(), f.m_imageBrush, f.m_canvasDevice.Get());
 
         bool setImageCalled = false;
         f.m_imageBrush->MockSetImage =

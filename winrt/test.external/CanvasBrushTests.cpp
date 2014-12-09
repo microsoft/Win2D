@@ -63,12 +63,15 @@ TEST_CLASS(CanvasBrushTests)
     {
         ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
 
+        ComPtr<ID2D1Device> device;
+        context->GetDevice(&device);
+
         D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
 
         ComPtr<ID2D1SolidColorBrush> brush;
         ThrowIfFailed(context->CreateSolidColorBrush(d2dRed, &brush));
 
-        auto canvasBrush = GetOrCreate<CanvasSolidColorBrush>(brush.Get());
+        auto canvasBrush = GetOrCreate<CanvasSolidColorBrush>(As<ID2D1Device1>(device).Get(), brush.Get());
 
         auto actualBrush = GetWrappedResource<ID2D1SolidColorBrush>(canvasBrush);
 
@@ -113,6 +116,9 @@ TEST_CLASS(CanvasBrushTests)
     {
         ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
 
+        ComPtr<ID2D1Device> device;
+        context->GetDevice(&device);
+
         auto stopCollection = CreateTestStopCollection(context.Get());
 
         ComPtr<ID2D1LinearGradientBrush> d2dLinearGradientBrush;
@@ -124,7 +130,7 @@ TEST_CLASS(CanvasBrushTests)
             &d2dLinearGradientBrush));
 
         auto canvasLinearGradientBrushBrush =
-            GetOrCreate<CanvasLinearGradientBrush>(d2dLinearGradientBrush.Get());
+            GetOrCreate<CanvasLinearGradientBrush>(As<ID2D1Device1>(device).Get(), d2dLinearGradientBrush.Get());
 
         auto actualBrush = GetWrappedResource<ID2D1LinearGradientBrush>(canvasLinearGradientBrushBrush);
 
@@ -136,6 +142,9 @@ TEST_CLASS(CanvasBrushTests)
     TEST_METHOD(CanvasRadialGradientBrush_ConstructionAndInterop)
     {
         ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
+
+        ComPtr<ID2D1Device> device;
+        context->GetDevice(&device);
 
         auto stopCollection = CreateTestStopCollection(context.Get());
 
@@ -150,7 +159,7 @@ TEST_CLASS(CanvasBrushTests)
             &d2dRadialGradientBrush));
 
         auto canvasRadialGradientBrushBrush =
-            GetOrCreate<CanvasRadialGradientBrush>(d2dRadialGradientBrush.Get());
+            GetOrCreate<CanvasRadialGradientBrush>(As<ID2D1Device1>(device).Get(), d2dRadialGradientBrush.Get());
 
         auto actualBrush = GetWrappedResource<ID2D1RadialGradientBrush>(canvasRadialGradientBrushBrush);
 
@@ -170,7 +179,7 @@ TEST_CLASS(CanvasBrushTests)
                     device,
                     gradientStopArray,
                     CanvasEdgeBehavior::Clamp,
-                    CanvasAlphaBehavior::Ignore,
+                    CanvasAlphaMode::Ignore,
                     CanvasColorSpace::Srgb,
                     CanvasColorSpace::Srgb,
                     CanvasBufferPrecision::Precision8UIntNormalizedSrgb);

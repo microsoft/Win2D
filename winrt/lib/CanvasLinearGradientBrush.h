@@ -39,7 +39,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasLinearGradientBrush(
             std::shared_ptr<CanvasLinearGradientBrushManager> manager,
-            ID2D1LinearGradientBrush* brush);
+            ID2D1LinearGradientBrush* brush,
+            ICanvasDevice* device);
 
         IFACEMETHOD(get_StartPoint)(_Out_ Vector2* value) override;
 
@@ -53,7 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_EdgeBehavior)(CanvasEdgeBehavior* value) override;
 
-        IFACEMETHOD(get_AlphaMode)(CanvasAlphaBehavior* value) override;
+        IFACEMETHOD(get_AlphaMode)(CanvasAlphaMode* value) override;
 
         IFACEMETHOD(get_PreInterpolationSpace)(CanvasColorSpace* value) override;
 
@@ -79,7 +80,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             UINT32 gradientStopCount,
             CanvasGradientStop* gradientStops,
             CanvasEdgeBehavior edgeBehavior,
-            CanvasAlphaBehavior alphaBehavior,
+            CanvasAlphaMode alphaMode,
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision);
@@ -89,20 +90,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1GradientStopCollection1* stopCollection);
 
         ComPtr<CanvasLinearGradientBrush> CreateWrapper(
+            ICanvasDevice* device,
             ID2D1LinearGradientBrush* resource);
     };
 
     class CanvasLinearGradientBrushFactory
         : public ActivationFactory<
         ICanvasLinearGradientBrushFactory,
-        CloakedIid<ICanvasFactoryNative>,
+        CloakedIid<ICanvasDeviceResourceFactoryNative>,
         ICanvasLinearGradientBrushStatics>,
         public PerApplicationManager<CanvasLinearGradientBrushFactory, CanvasLinearGradientBrushManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasLinearGradientBrush, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
         
         IFACEMETHOD(CreateSimple)(
             ICanvasResourceCreator* resourceCreator,
@@ -110,12 +112,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color endColor,
             ICanvasLinearGradientBrush** canvasLinearGradientBrush) override;
 
-        IFACEMETHOD(CreateWithEdgeBehaviorAndAlphaBehavior)(
+        IFACEMETHOD(CreateWithEdgeBehaviorAndAlphaMode)(
             ICanvasResourceCreator* resourceAllocator,
             UINT32 gradientStopCount,
             CanvasGradientStop* gradientStops,
             CanvasEdgeBehavior extend,
-            CanvasAlphaBehavior alphaBehavior,
+            CanvasAlphaMode alphaMode,
             ICanvasLinearGradientBrush** linearGradientBrush) override;
 
         IFACEMETHOD(CreateWithEdgeBehaviorAndInterpolationOptions)(
@@ -123,7 +125,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             UINT32 gradientStopCount,
             CanvasGradientStop* gradientStops,
             CanvasEdgeBehavior edgeBehavior,
-            CanvasAlphaBehavior alphaBehavior,
+            CanvasAlphaMode alphaMode,
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,

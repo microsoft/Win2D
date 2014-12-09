@@ -160,7 +160,7 @@ public:
 
         ComPtr<ID2D1SolidColorBrush> d2dSolidColorBrush;
         ThrowIfFailed(d2dDeviceContext->CreateSolidColorBrush(D2D1::ColorF(1, 0, 0), &d2dSolidColorBrush));
-        auto canvasBrush = GetOrCreate<CanvasSolidColorBrush>(d2dSolidColorBrush.Get());
+        auto canvasBrush = GetOrCreate<CanvasSolidColorBrush>(As<ID2D1Device1>(d2dDevice).Get(), d2dSolidColorBrush.Get());
 
         ComPtr<ID2D1StrokeStyle1> d2dStrokeStyle;
         D2D1_STROKE_STYLE_PROPERTIES1 strokeStyleProperties = D2D1::StrokeStyleProperties1();

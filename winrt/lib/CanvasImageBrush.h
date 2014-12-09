@@ -70,8 +70,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Bitmap brush is eligible when the source image is a bitmap and the source rect
         // is NULL.
 
-        ClosablePtr<ICanvasDevice> m_device;
-
         ComPtr<ID2D1BitmapBrush1> m_d2dBitmapBrush;
 
         ComPtr<ID2D1ImageBrush> m_d2dImageBrush;

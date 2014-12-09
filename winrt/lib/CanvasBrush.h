@@ -29,6 +29,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasBrush, 
             CloakedIid<ICanvasBrushInternal>>
     {
+    protected:
+        ClosablePtr<ICanvasDevice> m_device;
+
+        CanvasBrush(ICanvasDevice* device)
+            : m_device(device)
+        { }
+        
+        void Close();
+
     public:
         IFACEMETHOD(get_Opacity)(_Out_ float *value) override;
 
@@ -37,6 +46,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_Transform)(_Out_ Numerics::Matrix3x2 *value) override;
 
         IFACEMETHOD(put_Transform)(_In_ Numerics::Matrix3x2 value) override;
+
+        IFACEMETHOD(get_Device)(_COM_Outptr_ ICanvasDevice** value) override;
     };
 
 } } } }

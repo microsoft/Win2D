@@ -31,7 +31,7 @@ under the License.
       <summary>Initializes a new instance of the CanvasSwapChain class, with the specified width and height.</summary>
       <remarks>
         The swap chain's pixel format will default to DirectXPixelFormat::B8G8R8A8UIntNormalized,
-        its buffer count will be 2, and its alpha mode will be CanvasAlphaBehavior::Premultiplied.
+        its buffer count will be 2, and its alpha mode will be CanvasAlphaMode::Premultiplied.
         Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.
       </remarks>
     </member>
@@ -39,15 +39,15 @@ under the License.
       <summary>Initializes a new instance of the CanvasSwapChain class with the specified width, height, and dpi.</summary>
       <remarks>
         The swap chain's pixel format will default to DirectXPixelFormat::B8G8R8A8UIntNormalized,
-        its buffer count will be 2, and its alpha mode will be CanvasAlphaBehavior::Premultiplied.
+        its buffer count will be 2, and its alpha mode will be CanvasAlphaMode::Premultiplied.
         Size is in device independent pixels (dips).
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
       <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
       <remarks>Size is in device independent pixels (dips).</remarks>
     </member>

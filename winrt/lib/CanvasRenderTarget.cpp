@@ -35,7 +35,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float width,
         float height,
         DirectXPixelFormat format,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         float dpi)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
@@ -86,7 +86,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             width,
             height,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
-            CanvasAlphaBehavior::Premultiplied,
+            CanvasAlphaMode::Premultiplied,
             renderTarget);
     }
 
@@ -102,7 +102,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             width,
             height,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
-            CanvasAlphaBehavior::Premultiplied,
+            CanvasAlphaMode::Premultiplied,
             dpi,
             renderTarget);
     }
@@ -112,7 +112,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float width,
         float height,
         DirectXPixelFormat format,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         ICanvasRenderTarget** renderTarget)
     {
         return ExceptionBoundary(
@@ -144,7 +144,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float width,
         float height,
         DirectXPixelFormat format,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         float dpi,
         ICanvasRenderTarget** renderTarget)
     {
@@ -197,7 +197,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
             resourceCreator,
             surface,
-            CanvasAlphaBehavior::Premultiplied,
+            CanvasAlphaMode::Premultiplied,
             DEFAULT_DPI,
             canvasRenderTarget);
     }
@@ -205,7 +205,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithAlpha(
         ICanvasResourceCreator* resourceCreator,
         IDirect3DSurface* surface,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         ICanvasRenderTarget** canvasRenderTarget)
     {
         return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
@@ -219,7 +219,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithAlphaAndDpi(
         ICanvasResourceCreator* resourceCreator,
         IDirect3DSurface* surface,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         float dpi,
         ICanvasRenderTarget** canvasRenderTarget)
     {
@@ -283,8 +283,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<CanvasRenderTargetManager> manager,
         ID2D1Bitmap1* d2dBitmap,
         ICanvasDevice* canvasDevice)
-        : CanvasBitmapImpl(manager, d2dBitmap)
-        , m_device(canvasDevice)
+        : CanvasBitmapImpl(manager, d2dBitmap, canvasDevice)
     {
         assert(IsRenderTargetBitmap(d2dBitmap) 
             && "CanvasRenderTarget should never be constructed with a non-target bitmap.  This should have been validated before construction.");
@@ -309,16 +308,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-
-    IFACEMETHODIMP CanvasRenderTarget::get_Device(
-        ICanvasDevice** value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                ThrowIfFailed(m_device.CopyTo(value));
-            });
-    }
 
     ActivatableClassWithFactory(CanvasRenderTarget, CanvasRenderTargetFactory);
 }}}}

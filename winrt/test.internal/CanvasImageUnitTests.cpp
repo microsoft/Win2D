@@ -29,7 +29,7 @@ TEST_CLASS(CanvasImageUnitTests)
             m_canvasDevice = Make<StubCanvasDevice>();
             
             m_canvasDevice->MockCreateRenderTargetBitmap =
-                [&](float, float, DirectXPixelFormat, CanvasAlphaBehavior, float)
+                [&](float, float, DirectXPixelFormat, CanvasAlphaMode, float)
                 {
                     return Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
                 };
@@ -76,7 +76,7 @@ TEST_CLASS(CanvasImageUnitTests)
             1.0f,
             1.0f,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
-            CanvasAlphaBehavior::Premultiplied,
+            CanvasAlphaMode::Premultiplied,
             DEFAULT_DPI);
         canvasBitmap->GetBounds(drawingSession.Get(), &bounds);
 

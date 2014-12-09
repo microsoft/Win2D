@@ -163,6 +163,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_width(width)
         , m_height(height)
         , m_dpi(dpi)
+        , m_background(background)
     {
         bool isOpaque = (background == CanvasBackground::Opaque);
 
@@ -339,6 +340,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(pixels);
                 *pixels = DipsToPixels(dips, m_dpi);
+            });
+    }
+
+
+    _Use_decl_annotations_
+    IFACEMETHODIMP CanvasImageSource::get_Background(
+        CanvasBackground* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                *value = m_background;
             });
     }
 

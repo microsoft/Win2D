@@ -43,9 +43,6 @@ under the License.
       </example>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRenderTarget.Device">
-      <summary>The device associated with this CanvasRenderTarget.</summary>
-    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>
       <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
@@ -54,21 +51,21 @@ under the License.
       <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>
       <remarks>Size is in device independent pixels (dips), using the specified DPI.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>
       <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>
       <remarks>Size is in device independent pixels (dips), using the specified DPI.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
       <summary>Creates a CanvasRenderTarget from an existing Direct3D graphics surface, using premultiplied alpha and default (96) DPI.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Creates a CanvasRenderTarget from an existing Direct3D graphics surface, using the specified alpha behavior and default (96) DPI.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Creates a CanvasRenderTarget from an existing Direct3D graphics surface, using the specified alpha behavior and DPI.</summary>
     </member>
     

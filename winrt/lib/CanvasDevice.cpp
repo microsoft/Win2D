@@ -329,8 +329,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasDeviceFactory::CreateFromDirect3D11Device(
-        CanvasDebugLevel debugLevel,
         IDirect3DDevice* direct3DDevice,
+        CanvasDebugLevel debugLevel,
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
@@ -463,7 +463,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicResource(
         IWICFormatConverter* wicConverter,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         float dpi)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
@@ -483,7 +483,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float width,
         float height,
         DirectXPixelFormat format,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         float dpi)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
@@ -578,7 +578,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasColorSpace preInterpolationSpace,
         CanvasColorSpace postInterpolationSpace,
         CanvasBufferPrecision bufferPrecision,
-        CanvasAlphaBehavior alphaBehavior)
+        CanvasAlphaMode alphaMode)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 
@@ -598,7 +598,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             static_cast<D2D1_COLOR_SPACE>(postInterpolationSpace),
             ToD2DBufferPrecision(bufferPrecision),
             static_cast<D2D1_EXTEND_MODE>(edgeBehavior),
-            ToD2DColorInterpolation(alphaBehavior),
+            ToD2DColorInterpolation(alphaMode),
             gradientStopCollection.GetAddressOf()));
 
         return gradientStopCollection;
@@ -649,7 +649,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         int32_t heightInPixels,
         DirectXPixelFormat format,
         int32_t bufferCount,
-        CanvasAlphaBehavior alphaBehavior)
+        CanvasAlphaMode alphaMode)
     {
         auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
 
@@ -673,7 +673,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         swapChainDesc.BufferCount = static_cast<UINT>(bufferCount);
         swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-        swapChainDesc.AlphaMode = ToDxgiAlphaMode(alphaBehavior);
+        swapChainDesc.AlphaMode = ToDxgiAlphaMode(alphaMode);
 
         ComPtr<IDXGISwapChain1> swapChainBase;
         ThrowIfFailed(dxgiFactory->CreateSwapChainForComposition(

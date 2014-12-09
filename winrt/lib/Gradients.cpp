@@ -38,7 +38,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasColorSpace::Srgb,
             CanvasColorSpace::Srgb,
             CanvasBufferPrecision::Precision8UIntNormalized,
-            CanvasAlphaBehavior::Premultiplied);
+            CanvasAlphaMode::Premultiplied);
 
         return stopCollection;
     }
@@ -83,7 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasColorSpace::Srgb,
             CanvasColorSpace::Srgb,
             CanvasBufferPrecision::Precision8UIntNormalized,
-            CanvasAlphaBehavior::Premultiplied);
+            CanvasAlphaMode::Premultiplied);
 
         return stopCollection;
     }

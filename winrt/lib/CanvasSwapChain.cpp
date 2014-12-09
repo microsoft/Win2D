@@ -39,7 +39,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             height,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
             2,
-            CanvasAlphaBehavior::Premultiplied,
+            CanvasAlphaMode::Premultiplied,
             swapChain);
     }
 
@@ -56,7 +56,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             height, 
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
             2, 
-            CanvasAlphaBehavior::Premultiplied, 
+            CanvasAlphaMode::Premultiplied, 
             dpi,
             swapChain);
     }
@@ -67,7 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float height,
         DirectXPixelFormat format,
         int32_t bufferCount,
-        CanvasAlphaBehavior alphaBehavior,
+        CanvasAlphaMode alphaMode,
         ICanvasSwapChain** swapChain)
     {
         return ExceptionBoundary(
@@ -85,7 +85,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     height,
                     format,
                     bufferCount,
-                    alphaBehavior,
+                    alphaMode,
                     dpi);
 
                 ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
@@ -98,7 +98,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float height,
         DirectXPixelFormat format,
         int32_t bufferCount,
-        CanvasAlphaBehavior alphaBehavior,
+        CanvasAlphaMode alphaMode,
         float dpi,
         ICanvasSwapChain** swapChain)
     {
@@ -114,7 +114,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     height,
                     format,
                     bufferCount,
-                    alphaBehavior,
+                    alphaMode,
                     dpi);
 
                 ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
@@ -219,7 +219,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::get_AlphaMode(CanvasAlphaBehavior* value) 
+    IFACEMETHODIMP CanvasSwapChain::get_AlphaMode(CanvasAlphaMode* value) 
     {
         return ExceptionBoundary(
             [&]
@@ -432,14 +432,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return S_OK;
     }
 
-    // ICanvasResourceCreator
-
     IFACEMETHODIMP CanvasSwapChain::get_Device(ICanvasDevice** value)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
+            CheckInPointer(value);
 
                 auto& device = m_device.EnsureNotClosed();
 
@@ -559,7 +557,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float height,
         DirectXPixelFormat format,
         int32_t bufferCount,
-        CanvasAlphaBehavior alphaBehavior,
+        CanvasAlphaMode alphaMode,
         float dpi)
     {
         ComPtr<ICanvasDevice> device;
@@ -576,7 +574,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             heightInPixels,
             format,
             bufferCount,
-            alphaBehavior);
+            alphaMode);
 
         auto canvasSwapChain = Make<CanvasSwapChain>(
             resourceCreator,

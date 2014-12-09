@@ -33,10 +33,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT ClampOutput([in] boolean value);
 
         [propget]
-        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaBehavior* value);
+        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
 
         [propput]
-        HRESULT AlphaMode([in] Microsoft.Graphics.Canvas.CanvasAlphaBehavior value);
+        HRESULT AlphaMode([in] Microsoft.Graphics.Canvas.CanvasAlphaMode value);
 
         [propget]
         HRESULT Source([out, retval] IEffectInput** input);

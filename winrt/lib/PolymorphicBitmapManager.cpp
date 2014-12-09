@@ -294,7 +294,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     static ComPtr<ID2D1Bitmap1> CreateD2DBitmap(
         ICanvasDevice* canvasDevice, 
         IDirect3DSurface* surface,
-        CanvasAlphaBehavior alpha, 
+        CanvasAlphaMode alpha, 
         float dpi)
     {
         auto dxgiSurface = GetDXGIInterface<IDXGISurface2>(surface);
@@ -347,7 +347,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ICanvasBitmap> PolymorphicBitmapManager::CreateBitmapFromSurface(
         ICanvasDevice* canvasDevice,
         IDirect3DSurface* surface, 
-        CanvasAlphaBehavior alpha, 
+        CanvasAlphaMode alpha, 
         float dpi)
     {
         return GetOrCreateBitmap(
@@ -359,7 +359,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<CanvasRenderTarget> PolymorphicBitmapManager::CreateRenderTargetFromSurface(
         ICanvasDevice* canvasDevice,
         IDirect3DSurface* surface,
-        CanvasAlphaBehavior alpha,
+        CanvasAlphaMode alpha,
         float dpi)
     {
         return GetOrCreateRenderTarget(
@@ -375,7 +375,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         if (IsRenderTargetBitmap(d2dBitmap))
             return m_renderTargetManager->GetOrCreate(device, d2dBitmap);
         else
-            return m_bitmapManager->GetOrCreate(d2dBitmap);
+            return m_bitmapManager->GetOrCreate(device, d2dBitmap);
     }
 
 

@@ -677,12 +677,12 @@ namespace Microsoft
                 END_ENUM(D2D1_INTERPOLATION_MODE);
             }
 
-            ENUM_TO_STRING(CanvasAlphaBehavior)
+            ENUM_TO_STRING(CanvasAlphaMode)
             {
-                ENUM_VALUE(CanvasAlphaBehavior::Ignore);
-                ENUM_VALUE(CanvasAlphaBehavior::Premultiplied);
-                ENUM_VALUE(CanvasAlphaBehavior::Straight);
-                END_ENUM(CanvasAlphaBehavior);
+                ENUM_VALUE(CanvasAlphaMode::Ignore);
+                ENUM_VALUE(CanvasAlphaMode::Premultiplied);
+                ENUM_VALUE(CanvasAlphaMode::Straight);
+                END_ENUM(CanvasAlphaMode);
             }
 
             ENUM_TO_STRING(CanvasColorSpace)

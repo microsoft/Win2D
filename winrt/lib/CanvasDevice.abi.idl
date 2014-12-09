@@ -40,8 +40,8 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasDeviceStatics : IInspectable
     {
         HRESULT CreateFromDirect3D11Device(
-            [in] CanvasDebugLevel debugLevel,
             [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice* direct3DDevice,
+            [in] CanvasDebugLevel debugLevel,
             [out, retval] CanvasDevice** canvasDevice);
     };
 

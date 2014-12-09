@@ -64,7 +64,7 @@ under the License.
         <Field Name="16BPC_FLOAT" ShouldProject="true" ProjectedNameOverride="Precision16Float" ProjectedValueOverride="3"/>
         <Field Name="32BPC_FLOAT" ShouldProject="true" ProjectedNameOverride="Precision32Float" ProjectedValueOverride="4"/>
     </Enum>
-    <Enum Name="ALPHA_MODE" ShouldProject="true" ProjectedNameOverride="AlphaBehavior">
+    <Enum Name="ALPHA_MODE" ShouldProject="true">
         <Field Name="UNKNOWN" ShouldProject="false"/>
         <Field Name="PREMULTIPLIED" ShouldProject="true" ProjectedValueOverride="0"/>
         <Field Name="STRAIGHT" ShouldProject="true" ProjectedValueOverride="1"/>
@@ -94,7 +94,7 @@ under the License.
     <Enum Name="EffectYChannelSelect" ShouldProject="false" ProjectedNameOverride="EffectChannelSelect"/>
     <Enum Name="EffectEdgeModeX" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
     <Enum Name="EffectEdgeModeY" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
-    <Enum Name="ColorMatrixEffectAlphaMode" ShouldProject="false" ProjectedNameOverride="CanvasAlphaBehavior" Namespace="Microsoft.Graphics.Canvas">
+    <Enum Name="ColorMatrixEffectAlphaMode" ShouldProject="false" ProjectedNameOverride="CanvasAlphaMode" Namespace="Microsoft.Graphics.Canvas">
       <Field Name="Ignore" Index="2" ShouldProject="false"/>
     </Enum>
     <Enum Name="CompositeEffectMode" ShouldProject="false" ProjectedNameOverride="CanvasComposite" Namespace="Microsoft.Graphics.Canvas"/>

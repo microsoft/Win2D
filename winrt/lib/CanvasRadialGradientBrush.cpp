@@ -26,7 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         UINT32 gradientStopCount,
         CanvasGradientStop* gradientStops,
         CanvasEdgeBehavior edgeBehavior,
-        CanvasAlphaBehavior alphaBehavior,
+        CanvasAlphaMode alphaMode,
         CanvasColorSpace preInterpolationSpace,
         CanvasColorSpace postInterpolationSpace,
         CanvasBufferPrecision bufferPrecision)
@@ -44,13 +44,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             preInterpolationSpace,
             postInterpolationSpace,
             bufferPrecision,
-            alphaBehavior);
+            alphaMode);
 
         auto d2dBrush = deviceInternal->CreateRadialGradientBrush(stopCollection.Get());
 
         auto canvasRadialGradientBrush = Make<CanvasRadialGradientBrush>(
             shared_from_this(),
-            d2dBrush.Get());
+            d2dBrush.Get(),
+            device.Get());
         CheckMakeResult(canvasRadialGradientBrush);
 
         return canvasRadialGradientBrush;
@@ -70,18 +71,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto canvasRadialGradientBrush = Make<CanvasRadialGradientBrush>(
             shared_from_this(),
-            d2dBrush.Get());
+            d2dBrush.Get(),
+            device.Get());
         CheckMakeResult(canvasRadialGradientBrush);
 
         return canvasRadialGradientBrush;
     }
 
     ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrushManager::CreateWrapper(
+        ICanvasDevice* device,
         ID2D1RadialGradientBrush* resource)
     {
         auto canvasRadialGradientBrush = Make<CanvasRadialGradientBrush>(
             shared_from_this(),
-            resource);
+            resource,
+            device);
         CheckMakeResult(canvasRadialGradientBrush);
 
         return canvasRadialGradientBrush;
@@ -113,12 +117,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });    
      }
 
-    IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndAlphaBehavior(
+    IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndAlphaMode(
         ICanvasResourceCreator* resourceAllocator,
         UINT32 gradientStopCount,
         CanvasGradientStop* gradientStops,
         CanvasEdgeBehavior edgeBehavior,
-        CanvasAlphaBehavior alphaBehavior,
+        CanvasAlphaMode alphaMode,
         ICanvasRadialGradientBrush** radialGradientBrush)
     {
         return CreateWithEdgeBehaviorAndInterpolationOptions(
@@ -126,7 +130,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             gradientStopCount,
             gradientStops,
             edgeBehavior,
-            alphaBehavior,
+            alphaMode,
             CanvasColorSpace::Srgb,
             CanvasColorSpace::Srgb,
             CanvasBufferPrecision::Precision8UIntNormalized,
@@ -138,7 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         UINT32 gradientStopCount,
         CanvasGradientStop* gradientStops,
         CanvasEdgeBehavior edgeBehavior,
-        CanvasAlphaBehavior alphaBehavior,
+        CanvasAlphaMode alphaMode,
         CanvasColorSpace preInterpolationSpace,
         CanvasColorSpace postInterpolationSpace,
         CanvasBufferPrecision bufferPrecision,
@@ -155,7 +159,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     gradientStopCount,
                     gradientStops,
                     edgeBehavior,
-                    alphaBehavior,
+                    alphaMode,
                     preInterpolationSpace,
                     postInterpolationSpace,
                     bufferPrecision);
@@ -189,8 +193,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasRadialGradientBrush::CanvasRadialGradientBrush(
         std::shared_ptr<CanvasRadialGradientBrushManager> manager,
-        ID2D1RadialGradientBrush* brush)
-        : ResourceWrapper(manager, brush)
+        ID2D1RadialGradientBrush* brush,
+        ICanvasDevice* device)
+        : CanvasBrush(device)
+        , ResourceWrapper(manager, brush)
     {
     }
 
@@ -295,7 +301,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasRadialGradientBrush::get_AlphaMode(CanvasAlphaBehavior* value)
+    IFACEMETHODIMP CanvasRadialGradientBrush::get_AlphaMode(CanvasAlphaMode* value)
     {
         return ExceptionBoundary(
             [&]()
@@ -337,6 +343,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasRadialGradientBrush::Close()
     {
+        CanvasBrush::Close();
         return ResourceWrapper::Close();
     }
 

@@ -131,6 +131,12 @@ namespace Microsoft.Graphics.Canvas
         //
         HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
         HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
+
+        //
+        // Gets the image source background mode.
+        //
+        [propget]
+        HRESULT Background([out, retval] CanvasBackground* value);
     };
 
     [version(VERSION), 

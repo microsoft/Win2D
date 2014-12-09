@@ -275,7 +275,7 @@ public:
         {
             auto d2dBitmap = Make<StubD2DBitmap>();
             Image = As<ID2D1Image>(d2dBitmap);
-            Bitmap = MakeBitmapManager()->GetOrCreate(d2dBitmap.Get());
+            Bitmap = MakeBitmapManager()->GetOrCreate(nullptr, d2dBitmap.Get());
         }
 
     private:

@@ -737,26 +737,26 @@ namespace test.managed
             var effect = new ColorMatrixEffect();
 
             // Verify defaults.
-            Assert.AreEqual(CanvasAlphaBehavior.Premultiplied, effect.AlphaMode);
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
             Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, effect.Properties[1]);
 
             // Changing the boxed value should change the associated property.
             effect.Properties[1] = D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT;
-            Assert.AreEqual(CanvasAlphaBehavior.Straight, effect.AlphaMode);
+            Assert.AreEqual(CanvasAlphaMode.Straight, effect.AlphaMode);
 
             effect.Properties[1] = D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED;
-            Assert.AreEqual(CanvasAlphaBehavior.Premultiplied, effect.AlphaMode);
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
 
             // Change the property, and verify that the boxed value changes to match.
-            effect.AlphaMode = CanvasAlphaBehavior.Straight;
+            effect.AlphaMode = CanvasAlphaMode.Straight;
             Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT, effect.Properties[1]);
 
-            effect.AlphaMode = CanvasAlphaBehavior.Premultiplied;
+            effect.AlphaMode = CanvasAlphaMode.Premultiplied;
             Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, effect.Properties[1]);
 
             // Verify unsupported value throws.
-            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaBehavior.Ignore; });
-            Assert.AreEqual(CanvasAlphaBehavior.Premultiplied, effect.AlphaMode);
+            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
         }
 
 

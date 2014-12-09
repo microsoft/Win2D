@@ -46,7 +46,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float width,
             float height,
             DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             ICanvasRenderTarget** renderTarget);
 
         IFACEMETHOD(CreateWithWidthAndHeightAndFormatAndAlphaAndDpi)(
@@ -54,7 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float width,
             float height,
             DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi,
             ICanvasRenderTarget** renderTarget);
 
@@ -75,13 +75,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlpha)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             ICanvasRenderTarget** canvasRenderTarget) override;
 
         IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlphaAndDpi)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi,
             ICanvasRenderTarget** canvasRenderTarget) override;
     };
@@ -99,13 +99,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : public RuntimeClass<
             RuntimeClassFlags<WinRtClassicComMix>,
             ICanvasRenderTarget,
-            ICanvasResourceCreator,
             MixIn<CanvasRenderTarget, CanvasBitmapImpl<CanvasRenderTargetTraits>>>
         , public CanvasBitmapImpl<CanvasRenderTargetTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget, BaseTrust);
-
-        ComPtr<ICanvasDevice> m_device;
 
     public:
         CanvasRenderTarget(
@@ -115,8 +112,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(CreateDrawingSession)(
             _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
-
-        IFACEMETHOD(get_Device)(ICanvasDevice** device) override;
     };
 
 
@@ -132,7 +127,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float width,
             float height,
             DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi);
 
         ComPtr<CanvasRenderTarget> CreateWrapper(

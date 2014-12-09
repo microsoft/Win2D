@@ -62,6 +62,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasBrush::get_Device(ICanvasDevice** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(value));
+            });
+    }
+
+    void CanvasBrush::Close()
+    {
+        m_device.Close();
+    }
+
     ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
         ICanvasResourceCreator* resourceCreator,
         Color color)
@@ -76,7 +91,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
             shared_from_this(),
-            d2dBrush.Get());
+            d2dBrush.Get(),
+            device.Get());
         CheckMakeResult(canvasSolidColorBrush);
         
         return canvasSolidColorBrush;
@@ -84,11 +100,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateWrapper(
+        ICanvasDevice* device,
         ID2D1SolidColorBrush* brush)
     {
         auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
             shared_from_this(),
-            brush);
+            brush,
+            device);
         CheckMakeResult(canvasSolidColorBrush);
 
         return canvasSolidColorBrush;
@@ -116,8 +134,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasSolidColorBrush::CanvasSolidColorBrush(
         std::shared_ptr<CanvasSolidColorBrushManager> manager,
-        ID2D1SolidColorBrush* brush)
-        : ResourceWrapper(manager, brush)
+        ID2D1SolidColorBrush* brush,
+        ICanvasDevice *device)
+        : CanvasBrush(device)
+        , ResourceWrapper(manager, brush)
     {
     }
 
@@ -142,6 +162,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasSolidColorBrush::Close()
     {
+        CanvasBrush::Close();
         return ResourceWrapper::Close();
     }
 

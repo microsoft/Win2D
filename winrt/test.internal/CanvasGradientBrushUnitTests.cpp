@@ -84,7 +84,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         bool getStopsCalled = false;
         bool getStopCountCalled = false;
         bool getEdgeBehaviorCalled = false;
-        bool getAlphaBehaviorCalled = false;
+        bool getAlphaModeCalled = false;
         bool getPreInterpolationSpaceCalled = false;
         bool getPostInterpolationSpaceCalled = false;
         bool getBufferPrecisionCalled = false;
@@ -121,8 +121,8 @@ TEST_CLASS(CanvasGradientBrushTests)
         mockStopCollection->MockGetColorInterpolationMode =
             [&]()
             {
-                Assert::IsFalse(getAlphaBehaviorCalled);
-                getAlphaBehaviorCalled = true;
+                Assert::IsFalse(getAlphaModeCalled);
+                getAlphaModeCalled = true;
                 return D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT;
             };
         mockStopCollection->MockGetPreInterpolationSpace =
@@ -197,7 +197,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         Numerics::Matrix3x2 m;
         CanvasGradientStop* stops;
         CanvasEdgeBehavior edgeBehavior;
-        CanvasAlphaBehavior alpha;
+        CanvasAlphaMode alpha;
         CanvasColorSpace colorSpace;
         CanvasBufferPrecision bufferPrecision;
 
@@ -210,9 +210,9 @@ TEST_CLASS(CanvasGradientBrushTests)
         getGradientStopCollectionCalled = false;
 
         ThrowIfFailed(brush->get_AlphaMode(&alpha));
-        Assert::AreEqual(CanvasAlphaBehavior::Straight, alpha);
+        Assert::AreEqual(CanvasAlphaMode::Straight, alpha);
         Assert::IsTrue(getGradientStopCollectionCalled);
-        Assert::IsTrue(getAlphaBehaviorCalled);
+        Assert::IsTrue(getAlphaModeCalled);
         getGradientStopCollectionCalled = false;
 
         ThrowIfFailed(brush->get_PreInterpolationSpace(&colorSpace));
@@ -259,6 +259,10 @@ TEST_CLASS(CanvasGradientBrushTests)
         m = Numerics::Matrix3x2{ 12, 34, 56, 78, 90, 12 };
         ThrowIfFailed(brush->put_Transform(m));
         Assert::IsTrue(setTransformCalled);
+
+        ComPtr<ICanvasDevice> actualDevice;
+        brush->get_Device(&actualDevice);
+        Assert::AreEqual<ICanvasDevice*>(testDevice.Get(), actualDevice.Get());
     }
 
     TEST_METHOD_EX(CanvasGradientBrush_TestCommonProperties)
@@ -525,9 +529,10 @@ TEST_CLASS(CanvasGradientBrushTests)
         UINT i;
         CanvasGradientStop* stops;
         CanvasEdgeBehavior edgeBehavior;
-        CanvasAlphaBehavior alpha;
+        CanvasAlphaMode alpha;
         CanvasColorSpace colorSpace;
         CanvasBufferPrecision bufferPrecision;
+        ComPtr<ICanvasDevice> actualDevice;
 
         auto linearGradientBrush = f.m_linearGradientBrushManager->Create(f.m_canvasDevice.Get(), stopCollection.Get());
         ThrowIfFailed(linearGradientBrush->Close());
@@ -546,6 +551,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         Assert::AreEqual(RO_E_CLOSED, linearGradientBrush->put_Opacity(fv));
         Assert::AreEqual(RO_E_CLOSED, linearGradientBrush->get_Transform(&m));
         Assert::AreEqual(RO_E_CLOSED, linearGradientBrush->put_Transform(m));
+        Assert::AreEqual(RO_E_CLOSED, linearGradientBrush->get_Device(&actualDevice));
 
         auto radialGradientBrush = f.m_radialGradientBrushManager->Create(f.m_canvasDevice.Get(), stopCollection.Get());
         ThrowIfFailed(radialGradientBrush->Close());
@@ -568,5 +574,6 @@ TEST_CLASS(CanvasGradientBrushTests)
         Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->put_Opacity(fv));
         Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->get_Transform(&m));
         Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->put_Transform(m));
+        Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->get_Device(&actualDevice));
     }
 };

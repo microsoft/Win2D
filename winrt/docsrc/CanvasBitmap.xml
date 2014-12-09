@@ -80,6 +80,15 @@ under the License.
         The identity DPI value is 96, which means dips and pixels are the same.
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Device">
+      <summary>The device associated with this bitmap.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.AlphaMode">
+      <summary>Gets the alpha mode of this bitmap.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format">
+      <summary>Gets the pixel format of this bitmap.</summary>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.ConvertPixelsToDips(System.Int32)">
       <summary>Converts units from physical pixels to device independent pixels (dips) based on the DPI of this bitmap.</summary>
     </member>
@@ -97,7 +106,7 @@ under the License.
         <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified alpha behavior and default (96) DPI.</summary>
       <remarks>
         The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
@@ -105,7 +114,7 @@ under the License.
         <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified alpha behavior and DPI.</summary>
       <remarks>
         The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
@@ -113,16 +122,16 @@ under the License.
         <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Creates a CanvasBitmap from an array of bytes, using the specified pixel width/height, alpha behavior and default (96) DPI.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Creates a CanvasBitmap from an array of bytes, using the specified pixel width/height, alpha behavior and DPI.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, alpha behavior and default (96) DPI.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, alpha behavior and DPI.</summary>
     </member>
 
@@ -130,22 +139,22 @@ under the License.
       <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
       <remarks>The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified alpha behavior.</summary>
       <remarks>The bitmap is set to default (96) DPI.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified alpha behavior and DPI.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI.</summary>
       <remarks>The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified alpha behavior.</summary>
       <remarks>The bitmap is set to default (96) DPI.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified alpha behavior and DPI.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
@@ -153,12 +162,12 @@ under the License.
       <remarks>This method requires that the stream be readable.
                The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Loads a bitmap from a stream, and assigns it the specified alpha behavior.</summary>
       <remarks>This method requires that the stream be readable.
                The bitmap is set to default (96) DPI.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaBehavior,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Loads a bitmap from a stream, and assigns it the specified alpha behavior and DPI.</summary>
       <remarks>This method requires that the stream be readable.</remarks>
     </member>

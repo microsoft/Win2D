@@ -30,12 +30,12 @@ namespace canvas
         std::function<ComPtr<ID2D1SolidColorBrush>(D2D1_COLOR_F const&)> MockCreateSolidColorBrush;
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
-        std::function<ComPtr<ID2D1Bitmap1>(IWICFormatConverter* converter, CanvasAlphaBehavior alpha, float dpi)> MockCreateBitmapFromWicResource;
+        std::function<ComPtr<ID2D1Bitmap1>(IWICFormatConverter* converter, CanvasAlphaMode alpha, float dpi)> MockCreateBitmapFromWicResource;
         std::function<ComPtr<ID2D1Bitmap1>(
             float width,
             float height,
             DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi)> MockCreateRenderTargetBitmap;
         std::function<ComPtr<ID2D1Image>(ICanvasImage* canvasImage)> MockGetD2DImage;
 
@@ -46,7 +46,7 @@ namespace canvas
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaBehavior alphaBehavior)> MockCreateGradientStopCollection;
+            CanvasAlphaMode alphaMode)> MockCreateGradientStopCollection;
 
         std::function<ComPtr<ID2D1LinearGradientBrush>(
             ID2D1GradientStopCollection1* stopCollection)> MockCreateLinearGradientBrush;
@@ -57,7 +57,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(TrimMethod, HRESULT());
         CALL_COUNTER_WITH_MOCK(GetDXGIInterfaceMethod, HRESULT(REFIID,void**));
         CALL_COUNTER_WITH_MOCK(CreateDeviceContextMethod, ComPtr<ID2D1DeviceContext1>());
-        CALL_COUNTER_WITH_MOCK(CreateSwapChainMethod, ComPtr<IDXGISwapChain2>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaBehavior));
+        CALL_COUNTER_WITH_MOCK(CreateSwapChainMethod, ComPtr<IDXGISwapChain2>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
 
         //
@@ -142,7 +142,7 @@ namespace canvas
 
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICFormatConverter* converter,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi) override
         {
             if (!MockCreateBitmapFromWicResource)
@@ -157,7 +157,7 @@ namespace canvas
             float width,
             float height,
             DirectXPixelFormat format,
-            CanvasAlphaBehavior alpha,
+            CanvasAlphaMode alpha,
             float dpi) override
         {
             if (!MockCreateRenderTargetBitmap)
@@ -208,7 +208,7 @@ namespace canvas
             CanvasColorSpace preInterpolationSpace,
             CanvasColorSpace postInterpolationSpace,
             CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaBehavior alphaBehavior) override
+            CanvasAlphaMode alphaMode) override
         {
             if (!MockCreateGradientStopCollection)
             {
@@ -223,7 +223,7 @@ namespace canvas
                 preInterpolationSpace,
                 postInterpolationSpace,
                 bufferPrecision,
-                alphaBehavior);
+                alphaMode);
         }
 
         virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(
@@ -255,9 +255,9 @@ namespace canvas
             int32_t heightInPixels,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaBehavior alphaBehavior) override
+            CanvasAlphaMode alphaMode) override
         {
-            return CreateSwapChainMethod.WasCalled(widthInPixels, heightInPixels, format, bufferCount, alphaBehavior);
+            return CreateSwapChainMethod.WasCalled(widthInPixels, heightInPixels, format, bufferCount, alphaMode);
         }
 
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override

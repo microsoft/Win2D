@@ -41,12 +41,12 @@ namespace Microsoft.Graphics.Canvas
     } CanvasAntialiasing;
 
     [version(VERSION)]
-    typedef enum CanvasAlphaBehavior
+    typedef enum CanvasAlphaMode
     {
         Premultiplied = (int)0,
         Straight = (int)1,
         Ignore = (int)2
-    } CanvasAlphaBehavior;
+    } CanvasAlphaMode;
 
     [version(VERSION)]
     typedef enum CanvasEdgeBehavior

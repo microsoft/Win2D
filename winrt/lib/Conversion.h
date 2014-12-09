@@ -262,13 +262,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return D2D1::Ellipse(ToD2DPoint(point), rx, ry);
     }
 
-    inline D2D1_COLOR_INTERPOLATION_MODE ToD2DColorInterpolation(CanvasAlphaBehavior alphaBehavior)
+    inline D2D1_COLOR_INTERPOLATION_MODE ToD2DColorInterpolation(CanvasAlphaMode alphaMode)
     {
-        switch (alphaBehavior)
+        switch (alphaMode)
         {
-            case CanvasAlphaBehavior::Premultiplied: return D2D1_COLOR_INTERPOLATION_MODE_PREMULTIPLIED;
-            case CanvasAlphaBehavior::Straight: return D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT;
-            case CanvasAlphaBehavior::Ignore:
+            case CanvasAlphaMode::Premultiplied: return D2D1_COLOR_INTERPOLATION_MODE_PREMULTIPLIED;
+            case CanvasAlphaMode::Straight: return D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT;
+            case CanvasAlphaMode::Ignore:
             default: return D2D1_COLOR_INTERPOLATION_MODE_FORCE_DWORD;
         }
     }
@@ -284,70 +284,80 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 assert(false); // Unexpected
                 ThrowHR(E_UNEXPECTED);
         }
-
     }
 
-    inline D2D1_ALPHA_MODE ToD2DAlphaMode(CanvasAlphaBehavior alphaBehavior)
+    inline CanvasAlphaMode FromD2DAlphaMode(D2D1_ALPHA_MODE alphaMode)
     {
-        switch (alphaBehavior)
+        switch (alphaMode)
         {
-            case CanvasAlphaBehavior::Premultiplied: return D2D1_ALPHA_MODE_PREMULTIPLIED;
-            case CanvasAlphaBehavior::Straight: return D2D1_ALPHA_MODE_STRAIGHT;
-            case CanvasAlphaBehavior::Ignore: return D2D1_ALPHA_MODE_IGNORE;
+            case D2D1_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaMode::Premultiplied;
+            case D2D1_ALPHA_MODE_STRAIGHT: return CanvasAlphaMode::Straight;
+            case D2D1_ALPHA_MODE_IGNORE: return CanvasAlphaMode::Ignore;
+            default: assert(false); return CanvasAlphaMode::Premultiplied;
+        }
+    }
+
+    inline D2D1_ALPHA_MODE ToD2DAlphaMode(CanvasAlphaMode alphaMode)
+    {
+        switch (alphaMode)
+        {
+            case CanvasAlphaMode::Premultiplied: return D2D1_ALPHA_MODE_PREMULTIPLIED;
+            case CanvasAlphaMode::Straight: return D2D1_ALPHA_MODE_STRAIGHT;
+            case CanvasAlphaMode::Ignore: return D2D1_ALPHA_MODE_IGNORE;
             default: return D2D1_ALPHA_MODE_FORCE_DWORD;
         }
     }
 
-    inline CanvasAlphaBehavior FromD2DColorInterpolation(D2D1_COLOR_INTERPOLATION_MODE colorInterpolation)
+    inline CanvasAlphaMode FromD2DColorInterpolation(D2D1_COLOR_INTERPOLATION_MODE colorInterpolation)
     {
         switch (colorInterpolation)
         {
-            case D2D1_COLOR_INTERPOLATION_MODE_PREMULTIPLIED: return CanvasAlphaBehavior::Premultiplied;
-            case D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT: return CanvasAlphaBehavior::Straight;
+            case D2D1_COLOR_INTERPOLATION_MODE_PREMULTIPLIED: return CanvasAlphaMode::Premultiplied;
+            case D2D1_COLOR_INTERPOLATION_MODE_STRAIGHT: return CanvasAlphaMode::Straight;
             default: assert(false); break;
         }
-        return CanvasAlphaBehavior::Premultiplied;
+        return CanvasAlphaMode::Premultiplied;
     }
 
-    inline D2D1_COLORMATRIX_ALPHA_MODE ToD2DColorMatrixAlphaMode(CanvasAlphaBehavior alphaBehavior)
+    inline D2D1_COLORMATRIX_ALPHA_MODE ToD2DColorMatrixAlphaMode(CanvasAlphaMode alphaMode)
     {
-        switch (alphaBehavior)
+        switch (alphaMode)
         {
-            case CanvasAlphaBehavior::Premultiplied: return D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED;
-            case CanvasAlphaBehavior::Straight: return D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT;
-            case CanvasAlphaBehavior::Ignore:
+            case CanvasAlphaMode::Premultiplied: return D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED;
+            case CanvasAlphaMode::Straight: return D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT;
+            case CanvasAlphaMode::Ignore:
             default: return D2D1_COLORMATRIX_ALPHA_MODE_FORCE_DWORD;
         }
     }
 
-    inline CanvasAlphaBehavior FromD2DColorMatrixAlphaMode(D2D1_COLORMATRIX_ALPHA_MODE alphaMode)
+    inline CanvasAlphaMode FromD2DColorMatrixAlphaMode(D2D1_COLORMATRIX_ALPHA_MODE alphaMode)
     {
         switch (alphaMode)
         {
-            case D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaBehavior::Premultiplied;
-            case D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT: return CanvasAlphaBehavior::Straight;
-            default: assert(false); return CanvasAlphaBehavior::Premultiplied;
+            case D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaMode::Premultiplied;
+            case D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT: return CanvasAlphaMode::Straight;
+            default: assert(false); return CanvasAlphaMode::Premultiplied;
         }
     }
 
-    inline CanvasAlphaBehavior FromDxgiAlphaMode(DXGI_ALPHA_MODE alphaMode)
+    inline CanvasAlphaMode FromDxgiAlphaMode(DXGI_ALPHA_MODE alphaMode)
     {
         switch (alphaMode)
         {
-            case DXGI_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaBehavior::Premultiplied;
-            case DXGI_ALPHA_MODE_STRAIGHT: return CanvasAlphaBehavior::Straight;
-            case DXGI_ALPHA_MODE_IGNORE: return CanvasAlphaBehavior::Ignore;
-            default: assert(false); return CanvasAlphaBehavior::Premultiplied;
+            case DXGI_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaMode::Premultiplied;
+            case DXGI_ALPHA_MODE_STRAIGHT: return CanvasAlphaMode::Straight;
+            case DXGI_ALPHA_MODE_IGNORE: return CanvasAlphaMode::Ignore;
+            default: assert(false); return CanvasAlphaMode::Premultiplied;
         }
     }
 
-    inline DXGI_ALPHA_MODE ToDxgiAlphaMode(CanvasAlphaBehavior alphaMode)
+    inline DXGI_ALPHA_MODE ToDxgiAlphaMode(CanvasAlphaMode alphaMode)
     {
         switch (alphaMode)
         {
-            case CanvasAlphaBehavior::Premultiplied: return DXGI_ALPHA_MODE_PREMULTIPLIED;
-            case CanvasAlphaBehavior::Straight: return DXGI_ALPHA_MODE_STRAIGHT;
-            case CanvasAlphaBehavior::Ignore: return DXGI_ALPHA_MODE_IGNORE;
+            case CanvasAlphaMode::Premultiplied: return DXGI_ALPHA_MODE_PREMULTIPLIED;
+            case CanvasAlphaMode::Straight: return DXGI_ALPHA_MODE_STRAIGHT;
+            case CanvasAlphaMode::Ignore: return DXGI_ALPHA_MODE_IGNORE;
             default: assert(false); return DXGI_ALPHA_MODE_PREMULTIPLIED;
         }
     }

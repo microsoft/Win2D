@@ -62,7 +62,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHOD(get_AlphaMode)(CanvasAlphaBehavior* value) override
+        IFACEMETHOD(get_AlphaMode)(CanvasAlphaMode* value) override
         {
             Assert::Fail(L"Unexpected call to get_AlphaMode");
             return E_NOTIMPL;

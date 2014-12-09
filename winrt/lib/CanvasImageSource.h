@@ -73,6 +73,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         const float m_width;
         const float m_height;
         const float m_dpi;
+        const CanvasBackground m_background;
 
     public:
         CanvasImageSource(
@@ -109,6 +110,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(ConvertDipsToPixels)(
             _In_  float dips, 
             _Out_ int* pixels) override;
+
+        IFACEMETHOD(get_Background)(
+            _Out_ CanvasBackground* value) override;
 
     private:
         void CreateBaseClass(

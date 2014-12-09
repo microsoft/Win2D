@@ -91,7 +91,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice* device,
         ID2D1BitmapBrush1* bitmapBrush,
         ID2D1ImageBrush* imageBrush)
-        : m_device(device)
+        : CanvasBrush(device)
         , m_d2dBitmapBrush(bitmapBrush)
         , m_d2dImageBrush(imageBrush)
         , m_useBitmapBrush(true)
@@ -393,7 +393,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasImageBrush::Close()
     {
-        m_device.Close();
+        CanvasBrush::Close();
         m_d2dBitmapBrush.Reset();
         m_d2dImageBrush.Reset();
         return S_OK;

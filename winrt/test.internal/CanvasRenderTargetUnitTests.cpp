@@ -59,7 +59,7 @@ TEST_CLASS(CanvasRenderTargetTests)
                 bitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
 
             m_canvasDevice->MockCreateRenderTargetBitmap =
-                [&](float, float, DirectXPixelFormat, CanvasAlphaBehavior, float)
+                [&](float, float, DirectXPixelFormat, CanvasAlphaMode, float)
                 {
                     Assert::IsNotNull(bitmap.Get());
                     auto result = bitmap;
@@ -72,7 +72,7 @@ TEST_CLASS(CanvasRenderTargetTests)
                 size.Width, 
                 size.Height, 
                 DirectXPixelFormat::B8G8R8A8UIntNormalized,
-                CanvasAlphaBehavior::Premultiplied,
+                CanvasAlphaMode::Premultiplied,
                 DEFAULT_DPI);
 
             m_canvasDevice->MockCreateRenderTargetBitmap = nullptr;

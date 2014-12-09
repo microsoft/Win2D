@@ -115,7 +115,7 @@ namespace CsConsumer
                 sender,
                 stops,
                 CanvasEdgeBehavior.Clamp,
-                CanvasAlphaBehavior.Premultiplied);
+                CanvasAlphaMode.Premultiplied);
         }
 
         private void OnRedrawClicked(object sender, RoutedEventArgs e)
@@ -436,7 +436,7 @@ namespace CsConsumer
                 4,
                 2,
                 Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized,
-                CanvasAlphaBehavior.Premultiplied);
+                CanvasAlphaMode.Premultiplied);
 
             Color[] imageColors = new Color[]
                 {
@@ -448,7 +448,7 @@ namespace CsConsumer
                 imageColors,
                 4,
                 2,
-                CanvasAlphaBehavior.Premultiplied);
+                CanvasAlphaMode.Premultiplied);
 
             m_canvasControl.Invalidate();
         }

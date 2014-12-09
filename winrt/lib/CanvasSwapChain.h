@@ -50,7 +50,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float height,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaBehavior alphaBehavior,
+            CanvasAlphaMode alphaMode,
             ICanvasSwapChain** SwapChain) override;
 
         IFACEMETHOD(CreateWithAllOptionsAndDpi)(
@@ -59,7 +59,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float height,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaBehavior alphaBehavior,
+            CanvasAlphaMode alphaMode,
             float dpi,
             ICanvasSwapChain** SwapChain) override;
 
@@ -84,7 +84,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasSwapChain : RESOURCE_WRAPPER_RUNTIME_CLASS(
         CanvasSwapChainTraits,
-        ICanvasResourceCreator,
         IClosable)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
@@ -104,18 +103,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDrawingSession** drawingSession) override;
 
         // ICanvasSwapChain
-
+        IFACEMETHOD(get_Device)(ICanvasDevice** value) override;
         IFACEMETHOD(get_Size)(Size* value) override;
-
         IFACEMETHOD(get_SizeInPixels)(Size* value) override;
-
         IFACEMETHOD(get_Dpi)(float* value) override;
-
         IFACEMETHOD(get_Format)(DirectXPixelFormat* value) override;
-
         IFACEMETHOD(get_BufferCount)(int32_t* value) override;
-
-        IFACEMETHOD(get_AlphaMode)(CanvasAlphaBehavior* value) override;
+        IFACEMETHOD(get_AlphaMode)(CanvasAlphaMode* value) override;
         
         IFACEMETHOD(get_Rotation)(CanvasSwapChainRotation* value) override;
         IFACEMETHOD(put_Rotation)(CanvasSwapChainRotation value) override;
@@ -145,9 +139,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // IClosable
         IFACEMETHOD(Close)() override;
 
-        // ICanvasResourceCreator
-        IFACEMETHOD(get_Device)(ICanvasDevice** value) override;
-
     private:
         DXGI_SWAP_CHAIN_DESC1 GetResourceDescription(); // Expected to be called from exception boundary.
 
@@ -162,7 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float height,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaBehavior alphaBehavior,
+            CanvasAlphaMode alphaMode,
             float dpi);
 
         ComPtr<CanvasSwapChain> CreateWrapper(

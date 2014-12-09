@@ -88,6 +88,9 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.ConvertDipsToPixels(System.Single)">
       <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this image source.</summary>
     </member>
-    
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Background">
+      <summary>Queries whether the background of this image source is transparent or opaque.</summary>
+    </member>
+
   </members>
 </doc>

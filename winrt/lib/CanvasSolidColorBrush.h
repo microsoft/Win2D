@@ -40,7 +40,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasSolidColorBrush(
             std::shared_ptr<CanvasSolidColorBrushManager> manager,
-            ID2D1SolidColorBrush* brush);
+            ID2D1SolidColorBrush* brush,
+            ICanvasDevice* device);
 
         IFACEMETHOD(get_Color)(_Out_ ABI::Windows::UI::Color *value) override;
 
@@ -61,19 +62,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color color);
 
         ComPtr<CanvasSolidColorBrush> CreateWrapper(
+            ICanvasDevice* device,
             ID2D1SolidColorBrush* resource);
     };
 
     class CanvasSolidColorBrushFactory 
         : public ActivationFactory<
             ICanvasSolidColorBrushFactory,
-            CloakedIid<ICanvasFactoryNative>>,
+            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
           public PerApplicationManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
 
         //
         // ICanvasSolidColorBrushFactory
@@ -83,6 +85,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::UI::Color color,
             ICanvasSolidColorBrush** canvasSolidColorBrush) override;
-
     };
 }}}}

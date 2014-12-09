@@ -21,6 +21,7 @@ namespace canvas
     public:
         CALL_COUNTER_WITH_MOCK(GetPixelSizeMethod, D2D1_SIZE_U());
         CALL_COUNTER_WITH_MOCK(GetSizeMethod, D2D1_SIZE_F());
+        CALL_COUNTER_WITH_MOCK(GetPixelFormatMethod, D2D1_PIXEL_FORMAT());
         CALL_COUNTER_WITH_MOCK(GetDpiMethod, HRESULT(float*, float*));
         CALL_COUNTER_WITH_MOCK(CopyFromBitmapMethod, HRESULT(D2D1_POINT_2U const*, ID2D1Bitmap*, D2D1_RECT_U const*));
 
@@ -84,10 +85,7 @@ namespace canvas
 
         STDMETHOD_(D2D1_PIXEL_FORMAT, GetPixelFormat)() CONST 
         {
-            Assert::Fail(L"Unexpected call to GetPixelFormat");
-
-            D2D1_PIXEL_FORMAT format{};
-            return format;
+            return GetPixelFormatMethod.WasCalled();
         }
 
         STDMETHOD_(void, GetDpi)(

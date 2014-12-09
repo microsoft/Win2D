@@ -253,22 +253,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 // This macro can be placed inside an activation factory class definition to
 // provide a default implementation of ICanvasFactoryNative
 //
-#define IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE()                        \
-    IFACEMETHODIMP GetOrCreate(IUnknown* resource, IInspectable** wrapper) override \
-    {                                                                   \
-        return ExceptionBoundary(                                       \
-            [&]                                                         \
-            {                                                           \
-                CheckInPointer(resource);                               \
-                CheckAndClearOutPointer(wrapper);                       \
-                                                                        \
-                ComPtr<typename manager_t::resource_t> typedResource; \
-                ThrowIfFailed(resource->QueryInterface(typedResource.GetAddressOf())); \
-                                                                        \
-                auto newWrapper = GetManager()->GetOrCreate(typedResource.Get()); \
-                                                                        \
-                ThrowIfFailed(newWrapper.CopyTo(wrapper));              \
-            });                                                         \
+#define IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE()                                        \
+    IFACEMETHODIMP GetOrCreate(IUnknown* resource, IInspectable** wrapper) override     \
+    {                                                                                   \
+        return ExceptionBoundary(                                                       \
+            [&]                                                                         \
+            {                                                                           \
+                CheckInPointer(resource);                                               \
+                CheckAndClearOutPointer(wrapper);                                       \
+                                                                                        \
+                ComPtr<typename manager_t::resource_t> typedResource;                   \
+                ThrowIfFailed(resource->QueryInterface(typedResource.GetAddressOf()));  \
+                                                                                        \
+                auto newWrapper = GetManager()->GetOrCreate(typedResource.Get());       \
+                                                                                        \
+                ThrowIfFailed(newWrapper.CopyTo(wrapper));                              \
+            });                                                                         \
+    }
+
+#define IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE()                                              \
+    IFACEMETHODIMP GetOrCreate(ICanvasDevice* device, IUnknown* resource, IInspectable** wrapper) override  \
+    {                                                                                                       \
+        return ExceptionBoundary(                                                                           \
+            [&]                                                                                             \
+            {                                                                                               \
+                CheckInPointer(resource);                                                                   \
+                CheckAndClearOutPointer(wrapper);                                                           \
+                                                                                                            \
+                ComPtr<typename manager_t::resource_t> typedResource;                                       \
+                ThrowIfFailed(resource->QueryInterface(typedResource.GetAddressOf()));                      \
+                                                                                                            \
+                auto newWrapper = GetManager()->GetOrCreate(device, typedResource.Get());                   \
+                                                                                                            \
+                ThrowIfFailed(newWrapper.CopyTo(wrapper));                                                  \
+            });                                                                                             \
     }
 
 }}}}

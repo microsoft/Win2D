@@ -220,7 +220,7 @@ namespace Microsoft
                     case D2D1_ALPHA_MODE_PREMULTIPLIED: return L"D2D1_ALPHA_MODE_PREMULTIPLIED";
                     case D2D1_ALPHA_MODE_STRAIGHT: return L"D2D1_ALPHA_MODE_STRAIGHT";
                     case D2D1_ALPHA_MODE_IGNORE: return L"D2D1_ALPHA_MODE_IGNORE";
-                    default: assert(false); return L"<unknown D2D1_ALPHA_MODE_UNKNOWN>";
+                    default: assert(false); return L"<unknown D2D1_ALPHA_MODE>";
                 }
             }
 

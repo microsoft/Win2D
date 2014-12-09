@@ -40,21 +40,31 @@ namespace canvas
 
         IFACEMETHOD(get_Opacity)(_Out_ float *value) override
         {
+            Assert::Fail(L"Unexpected call to get_Opacity");
             return E_NOTIMPL;
         }
 
         IFACEMETHOD(put_Opacity)(_In_ float value) override
         {
+            Assert::Fail(L"Unexpected call to put_Opacity");
             return E_NOTIMPL;
         }
 
         IFACEMETHOD(get_Transform)(_Out_ Numerics::Matrix3x2 *value) override
         {
+            Assert::Fail(L"Unexpected call to get_Transform");
             return E_NOTIMPL;
         }
 
         IFACEMETHOD(put_Transform)(_In_ Numerics::Matrix3x2 value) override
         {
+            Assert::Fail(L"Unexpected call to put_Transform");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(get_Device)(_COM_Outptr_ ICanvasDevice** value) override
+        {
+            Assert::Fail(L"Unexpected call to get_Device");
             return E_NOTIMPL;
         }
     };
