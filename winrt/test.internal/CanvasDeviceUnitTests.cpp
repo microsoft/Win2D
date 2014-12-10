@@ -356,6 +356,45 @@ public:
 
         Assert::IsTrue(IsSameInstance(d2dCommandList.Get(), actualD2DCommandList.Get()));
     }
+
+    TEST_METHOD_EX(CanvasDevice_CreateRenderTarget_ReturnsBitmapCreatedWithCorrectProperties)
+    {
+        auto d2dDevice = Make<MockD2DDevice>();
+        auto d2dBitmap = Make<MockD2DBitmap>();
+
+        float anyWidth = 1.0f;
+        float anyHeight = 2.0f;
+        auto anyFormat = DirectXPixelFormat::R16G16B16A16UIntNormalized;
+        auto anyAlphaMode = CanvasAlphaBehavior::Ignore;
+        float anyDpi = 3.0f;
+
+        auto deviceContext = Make<StubD2DDeviceContext>(d2dDevice.Get());
+        deviceContext->CreateBitmapMethod.SetExpectedCalls(1,
+            [&] (D2D1_SIZE_U size, void const* sourceData, UINT32 pitch, D2D1_BITMAP_PROPERTIES1 const* bitmapProperties, ID2D1Bitmap1** bitmap)
+            {
+                Assert::AreEqual<int>(DipsToPixels(anyWidth, anyDpi), size.width);
+                Assert::AreEqual<int>(DipsToPixels(anyHeight, anyDpi), size.height);
+                Assert::IsNull(sourceData);
+                Assert::AreEqual(0U, pitch);
+                Assert::AreEqual(D2D1_BITMAP_OPTIONS_TARGET, bitmapProperties->bitmapOptions);
+                Assert::AreEqual(anyDpi, bitmapProperties->dpiX);
+                Assert::AreEqual(anyDpi, bitmapProperties->dpiY);
+                Assert::AreEqual(static_cast<DXGI_FORMAT>(anyFormat), bitmapProperties->pixelFormat.format);
+                Assert::AreEqual(ToD2DAlphaMode(anyAlphaMode), bitmapProperties->pixelFormat.alphaMode);
+                return d2dBitmap.CopyTo(bitmap);
+            });
+
+        d2dDevice->MockCreateDeviceContext =
+            [&](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
+            {
+                ThrowIfFailed(deviceContext.CopyTo(value));
+            };
+
+        auto canvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
+        auto actualBitmap = canvasDevice->CreateRenderTargetBitmap(anyWidth, anyHeight, anyFormat, anyAlphaMode, anyDpi);
+
+        Assert::IsTrue(IsSameInstance(d2dBitmap.Get(), actualBitmap.Get()));
+    }
 };
 
 TEST_CLASS(DefaultDeviceResourceCreationAdapterTests)

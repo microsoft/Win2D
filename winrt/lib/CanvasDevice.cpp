@@ -494,7 +494,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bitmapProperties.dpiX = dpi;
         bitmapProperties.dpiY = dpi;
         bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(format);
-        bitmapProperties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
 
         int pixelWidth = DipsToPixels(width, dpi);
         int pixelHeight = DipsToPixels(height, dpi);

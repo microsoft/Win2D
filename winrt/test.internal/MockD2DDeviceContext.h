@@ -53,6 +53,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateSolidColorBrushMethod , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
         CALL_COUNTER_WITH_MOCK(GetImageWorldBoundsMethod   , HRESULT(ID2D1Image*, D2D1_RECT_F*));
         CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod  , UINT32());
+        CALL_COUNTER_WITH_MOCK(CreateBitmapMethod          , HRESULT(D2D1_SIZE_U, void const*, UINT32, D2D1_BITMAP_PROPERTIES1 const*, ID2D1Bitmap1**));
         CALL_COUNTER_WITH_MOCK(CreateBitmapFromDxgiSurfaceMethod, HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
         CALL_COUNTER_WITH_MOCK(SetTargetMethod             , void(ID2D1Image*));
         CALL_COUNTER_WITH_MOCK(BeginDrawMethod             , void());
@@ -372,10 +373,14 @@ namespace canvas
 
         // ID2D1DeviceContext
 
-        IFACEMETHODIMP CreateBitmap(D2D1_SIZE_U,const void *,UINT32,const D2D1_BITMAP_PROPERTIES1 *,ID2D1Bitmap1 **) override
+        IFACEMETHODIMP CreateBitmap(D2D1_SIZE_U size, void const* sourceData, UINT32 pitch, D2D1_BITMAP_PROPERTIES1 const* bitmapProperties, ID2D1Bitmap1** bitmap) override
         {
-            Assert::Fail(L"Unexpected call to CreateBitmap");
-            return E_NOTIMPL;
+            return CreateBitmapMethod.WasCalled(
+                size,
+                sourceData,
+                pitch,
+                bitmapProperties,
+                bitmap);
         }
 
         IFACEMETHODIMP CreateBitmapFromWicBitmap(IWICBitmapSource *,const D2D1_BITMAP_PROPERTIES1 *,ID2D1Bitmap1 **) override
