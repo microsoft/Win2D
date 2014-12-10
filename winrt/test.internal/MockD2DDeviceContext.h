@@ -56,6 +56,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateBitmapMethod          , HRESULT(D2D1_SIZE_U, void const*, UINT32, D2D1_BITMAP_PROPERTIES1 const*, ID2D1Bitmap1**));
         CALL_COUNTER_WITH_MOCK(CreateBitmapFromDxgiSurfaceMethod, HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
         CALL_COUNTER_WITH_MOCK(SetTargetMethod             , void(ID2D1Image*));
+        CALL_COUNTER_WITH_MOCK(GetTargetMethod             , void(ID2D1Image**));
         CALL_COUNTER_WITH_MOCK(BeginDrawMethod             , void());
         CALL_COUNTER_WITH_MOCK(EndDrawMethod               , HRESULT(D2D1_TAG*, D2D1_TAG*));
 
@@ -479,9 +480,9 @@ namespace canvas
             return SetTargetMethod.WasCalled(target);
         }
 
-        IFACEMETHODIMP_(void) GetTarget(ID2D1Image **) const override
+        IFACEMETHODIMP_(void) GetTarget(ID2D1Image ** target) const override
         {
-            Assert::Fail(L"Unexpected call to GetTarget");
+            return GetTargetMethod.WasCalled(target);
         }
 
         IFACEMETHODIMP_(void) SetRenderingControls(const D2D1_RENDERING_CONTROLS *) override

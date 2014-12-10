@@ -15,6 +15,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
+    auto MAGIC_FORCE_DPI_COMPENSATION_VALUE = -1.0f;
+
     CanvasEffect::CanvasEffect(IID effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed)
         : m_effectId(effectId)
         , m_realizationId(0)
@@ -56,12 +58,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInternal
     //
 
+    static float GetTargetDpi(ID2D1DeviceContext* deviceContext)
+    {
+        ComPtr<ID2D1Image> target;
+        deviceContext->GetTarget(&target);
+
+        if (MaybeAs<ID2D1CommandList>(target))
+        {
+            // Command lists are DPI independent, so we always need to insert
+            // DPI compensation.
+            return MAGIC_FORCE_DPI_COMPENSATION_VALUE;
+        }
+        else
+        {
+            return GetDpi(deviceContext);
+        }        
+    }
+
     ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ID2D1DeviceContext* deviceContext)
     {
         ThrowIfClosed();
 
-        float targetDpi = GetDpi(deviceContext);
-        
+        float targetDpi = GetTargetDpi(deviceContext);
+
         return GetRealizedEffectNode(deviceContext, targetDpi).Image;
     }
 

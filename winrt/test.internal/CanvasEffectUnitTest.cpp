@@ -11,7 +11,11 @@
 // under the License.
 
 #include "pch.h"
+
+#include <CanvasCommandList.h>
 #include <effects\CanvasEffect.h>
+
+#include "MockD2DCommandList.h"
 #include "SwitchableTestBrushFixture.h"
 #include "TestEffect.h"
 
@@ -178,6 +182,12 @@ public:
                 *dpiX = m_dpi;
                 *dpiY = m_dpi;
             });
+
+            deviceContext->GetTargetMethod.AllowAnyCall(
+                [] (ID2D1Image** target)
+                {
+                    *target = nullptr;
+                });
 
             return deviceContext;
         }
@@ -537,6 +547,114 @@ public:
         CheckEffectTypeAndInput(mockEffects[0].Get(), m_blurGuid, mockEffects[3].Get());
         CheckEffectTypeAndInput(mockEffects[3].Get(), CLSID_D2D1DpiCompensation, highDpiBitmap.Get(), f.m_deviceContext.Get());
         Assert::IsTrue(IsSameInstance(mockEffects[3].Get(), As<ICanvasImageInternal>(dpiCompensationEffect)->GetD2DImage(f.m_deviceContext.Get()).Get()));
+    }
+
+    struct CommandListFixture
+    {
+        ComPtr<StubCanvasDevice> CanvasDevice;
+        ComPtr<MockD2DDeviceContext> DeviceContext;
+        std::vector<ComPtr<MockD2DEffectThatCountsCalls>> MockEffects;
+        ComPtr<ID2D1Image> CurrentTarget;
+        ComPtr<CanvasCommandListFactory> CommandListFactory;
+
+        CommandListFixture()
+            : CanvasDevice(Make<StubCanvasDevice>())
+            , DeviceContext(Make<MockD2DDeviceContext>())
+            , CommandListFactory(Make<CanvasCommandListFactory>())
+        {
+            DeviceContext->CreateEffectMethod.AllowAnyCall(
+                [=](IID const& effectId, ID2D1Effect** effect)
+                {
+                    MockEffects.push_back(Make<MockD2DEffectThatCountsCalls>(effectId));
+                    return MockEffects.back().CopyTo(effect);
+                });
+            
+            DeviceContext->BeginDrawMethod.AllowAnyCall();
+            DeviceContext->EndDrawMethod.AllowAnyCall();
+            DeviceContext->DrawImageMethod.AllowAnyCall();
+
+            DeviceContext->SetTargetMethod.SetExpectedCalls(1,
+                [&] (ID2D1Image* newTarget)
+                {
+                    CurrentTarget = newTarget;
+                });
+            
+            DeviceContext->GetTargetMethod.SetExpectedCalls(1,
+                [&] (ID2D1Image** value)
+                {
+                    CurrentTarget.CopyTo(value);
+                });
+
+            DeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(CanvasDevice->GetD2DDevice());
+
+            // CanvasEffect must not query the DPI when the device context is being
+            // used with a command list.
+            DeviceContext->GetDpiMethod.SetExpectedCalls(0);
+
+            CanvasDevice->CreateCommandListMethod.AllowAnyCall(
+                [] 
+                { 
+                    auto d2dCl = Make<MockD2DCommandList>();
+                    d2dCl->CloseMethod.AllowAnyCall();
+                    return d2dCl;
+                });
+
+            CanvasDevice->CreateDeviceContextMethod.SetExpectedCalls(1, [=] { return DeviceContext; });            
+        }
+
+        ComPtr<ICanvasCommandList> CreateCommandList()
+        {
+            ComPtr<ICanvasCommandList> cl;
+            ThrowIfFailed(CommandListFactory->Create(CanvasDevice.Get(), &cl));
+            return cl;
+        }
+
+        void DrawEffectToCommandList(ComPtr<TestEffect> effect)
+        {
+            auto cl = CreateCommandList();
+
+            ComPtr<ICanvasDrawingSession> drawingSession;
+            ThrowIfFailed(cl->CreateDrawingSession(&drawingSession));
+
+            ThrowIfFailed(drawingSession->DrawImageAtOrigin(effect.Get()));
+        }        
+    };
+
+    TEST_METHOD_EX(CanvasEffect_When_BitmapSource_DrawnIntoCommandList_DpiCompensationAlwaysAdded)
+    {
+        for (auto dpi : { DEFAULT_DPI / 2, DEFAULT_DPI, DEFAULT_DPI * 2 })
+        {
+            Check_BitmapSource_DrawnIntoCommandList_DpiCompensationAdded(dpi);
+        }
+    }
+
+    void Check_BitmapSource_DrawnIntoCommandList_DpiCompensationAdded(float dpi)
+    {
+        CommandListFixture f;
+
+        auto testBitmap = CreateStubCanvasBitmap(dpi);
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1, true);
+        ThrowIfFailed(testEffect->put_Source(testBitmap.Get()));
+
+        f.DrawEffectToCommandList(testEffect);
+
+        Assert::AreEqual<size_t>(2, f.MockEffects.size());
+        CheckEffectTypeAndInput(f.MockEffects[0].Get(), m_blurGuid, f.MockEffects[1].Get());
+        CheckEffectTypeAndInput(f.MockEffects[1].Get(), CLSID_D2D1DpiCompensation, testBitmap.Get(), f.DeviceContext.Get(), dpi);
+    }
+
+    TEST_METHOD_EX(CanvasEffect_When_DpiIndependentEffect_DrawingIntoCommandList_NoDpiCompensationIsAdded)
+    {
+        CommandListFixture f;
+
+        auto commandListUsedAsEffectInput = f.CreateCommandList();
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1, true);
+        ThrowIfFailed(testEffect->put_Source(As<IEffectInput>(commandListUsedAsEffectInput).Get()));
+
+        f.DrawEffectToCommandList(testEffect);
+
+        Assert::AreEqual<size_t>(1, f.MockEffects.size());
+        Assert::IsTrue(!!IsEqualGUID(m_blurGuid, f.MockEffects[0]->m_effectId));
     }
 
     TEST_METHOD_EX(CanvasEffect_EffectAsImageBrushSource_DpiCompensation)

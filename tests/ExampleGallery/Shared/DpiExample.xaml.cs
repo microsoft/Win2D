@@ -42,6 +42,8 @@ namespace ExampleGallery
             HighDpiRenderTarget,
             LowDpiRenderTarget,
             ImageEffect,
+            CommandList,
+            ImageEffectInCommandList
         }
 
         public enum OutputMode
@@ -219,29 +221,47 @@ namespace ExampleGallery
 
         ICanvasImage WrapSourceWithIntermediateImage(IntermediateMode mode)
         {
-            if (mode == IntermediateMode.ImageEffect)
+            switch (mode)
             {
-                // We can either feed our graphics through an image effect...
-                saturationEffect.Source = GetSourceBitmap() ??
-                                          WrapSourceWithIntermediateImage(IntermediateMode.None);
+                case IntermediateMode.ImageEffect:
+                    // We can either feed our graphics through an image effect...
+                    saturationEffect.Source = GetSourceBitmap() ??
+                                              WrapSourceWithIntermediateImage(IntermediateMode.None);
 
-                message += "SaturationEffect ->\n";
+                    message += "SaturationEffect ->\n";
 
-                return saturationEffect;
-            }
-            else
-            {
-                // ... or draw them into a rendertarget.
-                var renderTarget = GetIntermediateRenderTarget(mode);
+                    return saturationEffect;
 
-                using (var ds = renderTarget.CreateDrawingSession())
-                {
-                    DrawSourceGraphic(ds, 0);
-                }
+                case IntermediateMode.CommandList:
+                    var cl = new CanvasCommandList(canvasControl);
+                    using (var ds = cl.CreateDrawingSession())
+                    {
+                        DrawSourceGraphic(ds, 0);
+                    }
+                    message += "CommandList ->\n";
+                    return cl;
 
-                message += string.Format("RenderTarget (dpi: {0}, size: {1}, pixels: {2}) ->\n", renderTarget.Dpi, renderTarget.Size, renderTarget.SizeInPixels);
+                case IntermediateMode.ImageEffectInCommandList:
+                    var cl2 = new CanvasCommandList(canvasControl);
+                    using (var ds = cl2.CreateDrawingSession())
+                    {
+                        ds.DrawImage(WrapSourceWithIntermediateImage(IntermediateMode.ImageEffect));
+                    }
+                    message += "CommandList ->\n";
+                    return cl2;
 
-                return renderTarget;
+                default:
+                    // ... or draw them into a rendertarget.
+                    var renderTarget = GetIntermediateRenderTarget(mode);
+
+                    using (var ds = renderTarget.CreateDrawingSession())
+                    {
+                        DrawSourceGraphic(ds, 0);
+                    }
+
+                    message += string.Format("RenderTarget (dpi: {0}, size: {1}, pixels: {2}) ->\n", renderTarget.Dpi, renderTarget.Size, renderTarget.SizeInPixels);
+
+                    return renderTarget;
             }
         }
 

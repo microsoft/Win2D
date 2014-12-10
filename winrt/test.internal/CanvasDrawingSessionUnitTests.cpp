@@ -508,6 +508,12 @@ public:
                 *dpiY = DEFAULT_DPI;
             });
 
+        f.DeviceContext->GetTargetMethod.SetExpectedCalls(1,
+            [&](ID2D1Image** target)
+            {
+                *target = nullptr;
+            });
+
         f.DeviceContext->CreateEffectMethod.SetExpectedCalls(1,
             [&](IID const&, ID2D1Effect** effect)
             {
