@@ -15,6 +15,24 @@
 #pragma warning(disable: 4756) // overflow in constant arithmetic
 
 
+#ifdef _CPPUNWIND
+
+// If C++ exception handling is enabled, we can throw exceptions and use STL to access NaN.
+#include <stdexcept>
+#include <limits>
+
+#define _WINDOWS_NUMERICS_THROW_(e) throw e
+#define _WINDOWS_NUMERICS_NAN_      std::numeric_limits<float>::quiet_NaN()
+
+#else
+
+// Fallback for environments with exception handling disabled.
+#define _WINDOWS_NUMERICS_THROW_(e) (void)0
+#define _WINDOWS_NUMERICS_NAN_      ::DirectX::XMVectorGetX(::DirectX::XMVectorSplatQNaN())
+
+#endif
+
+
 namespace DirectX
 {
     inline XMVECTOR XM_CALLCONV XMLoadFloat2(_In_ Windows::Foundation::Numerics::float2 const* pSource)
@@ -209,91 +227,56 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float2 operator +(float2 const& value1, float2 const& value2)
     {
-        float2 ans;
-
-        ans.x = value1.x + value2.x;
-        ans.y = value1.y + value2.y;
-
-        return ans;
+        return float2(value1.x + value2.x,
+                      value1.y + value2.y);
     }
 
 
     inline float2 operator -(float2 const& value1, float2 const& value2)
     {
-        float2 ans;
-
-        ans.x = value1.x - value2.x;
-        ans.y = value1.y - value2.y;
-
-        return ans;
+        return float2(value1.x - value2.x,
+                      value1.y - value2.y);
     }
 
 
     inline float2 operator *(float2 const& value1, float2 const& value2)
     {
-        float2 ans;
-
-        ans.x = value1.x * value2.x;
-        ans.y = value1.y * value2.y;
-
-        return ans;
+        return float2(value1.x * value2.x,
+                      value1.y * value2.y);
     }
 
 
     inline float2 operator *(float2 const& value1, float value2)
     {
-        float2 ans;
-
-        ans.x = value1.x * value2;
-        ans.y = value1.y * value2;
-
-        return ans;
+        return float2(value1.x * value2,
+                      value1.y * value2);
     }
 
 
     inline float2 operator *(float value1, float2 const& value2)
     {
-        float2 ans;
-
-        ans.x = value1 * value2.x;
-        ans.y = value1 * value2.y;
-
-        return ans;
+        return float2(value1 * value2.x,
+                      value1 * value2.y);
     }
 
 
     inline float2 operator /(float2 const& value1, float2 const& value2)
     {
-        float2 ans;
-
-        ans.x = value1.x / value2.x;
-        ans.y = value1.y / value2.y;
-
-        return ans;
+        return float2(value1.x / value2.x,
+                      value1.y / value2.y);
     }
 
 
     inline float2 operator /(float2 const& value1, float value2)
     {
-        float2 ans;
-
-        float invDiv = 1.0f / value2;
-
-        ans.x = value1.x * invDiv;
-        ans.y = value1.y * invDiv;
-
-        return ans;
+        return value1 * (1.0f / value2);
     }
 
 
     inline float2 operator -(float2 const& value)
     {
-        float2 ans;
-
-        ans.x = -value.x;
-        ans.y = -value.y;
-
-        return ans;
+        return float2(-value.x,
+                      -value.y);
     }
 
 
@@ -361,35 +344,25 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float length(float2 const& value)
     {
-        float ls = value.x * value.x + value.y * value.y;
-
-        return sqrtf(ls);
+        return sqrtf(length_squared(value));
     }
 
 
     inline float length_squared(float2 const& value)
     {
-        return value.x * value.x + value.y * value.y;
+        return dot(value, value);
     }
 
 
     inline float distance(float2 const& value1, float2 const& value2)
     {
-        float dx = value1.x - value2.x;
-        float dy = value1.y - value2.y;
-
-        float ls = dx * dx + dy * dy;
-
-        return sqrtf(ls);
+        return sqrtf(distance_squared(value1, value2));
     }
 
 
     inline float distance_squared(float2 const& value1, float2 const& value2)
     {
-        float dx = value1.x - value2.x;
-        float dy = value1.y - value2.y;
-
-        return dx * dx + dy * dy;
+        return length_squared(value1 - value2);
     }
 
 
@@ -402,57 +375,32 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float2 normalize(float2 const& value)
     {
-        float2 ans;
-
-        float ls = value.x * value.x + value.y * value.y;
-        float invNorm = 1.0f / sqrtf(ls);
-
-        ans.x = value.x * invNorm;
-        ans.y = value.y * invNorm;
-
-        return ans;
+        return value / length(value);
     }
 
 
     inline float2 reflect(float2 const& vector, float2 const& normal)
     {
-        float2 ans;
-
-        float dot = vector.x * normal.x + vector.y * normal.y;
-
-        ans.x = vector.x - 2.0f * dot * normal.x;
-        ans.y = vector.y - 2.0f * dot * normal.y;
-
-        return ans;
+        return vector - 2.0f * dot(vector, normal) * normal;
     }
 
 
     inline float2 (min)(float2 const& value1, float2 const& value2)
     {
-        float2 ans;
-
-        ans.x = (value1.x < value2.x) ? value1.x : value2.x;
-        ans.y = (value1.y < value2.y) ? value1.y : value2.y;
-
-        return ans;
+        return float2((value1.x < value2.x) ? value1.x : value2.x,
+                      (value1.y < value2.y) ? value1.y : value2.y);
     }
 
 
     inline float2 (max)(float2 const& value1, float2 const& value2)
     {
-        float2 ans;
-
-        ans.x = (value1.x > value2.x) ? value1.x : value2.x;
-        ans.y = (value1.y > value2.y) ? value1.y : value2.y;
-
-        return ans;
+        return float2((value1.x > value2.x) ? value1.x : value2.x,
+                      (value1.y > value2.y) ? value1.y : value2.y);
     }
 
 
     inline float2 clamp(float2 const& value1, float2 const& min, float2 const& max)
     {
-        float2 result;
-
         float x = value1.x;
         x = (x > max.x) ? max.x : x;
         x = (x < min.x) ? min.x : x;
@@ -461,72 +409,46 @@ namespace Windows { namespace Foundation { namespace Numerics
         y = (y > max.y) ? max.y : y;
         y = (y < min.y) ? min.y : y;
 
-        result.x = x;
-        result.y = y;
-
-        return result;
+        return float2(x, y);
     }
 
 
     inline float2 lerp(float2 const& value1, float2 const& value2, float amount)
     {
-        float2 ans;
-
-        ans.x = value1.x + (value2.x - value1.x) * amount;
-        ans.y = value1.y + (value2.y - value1.y) * amount;
-
-        return ans;
+        return value1 + (value2 - value1) * amount;
     }
 
 
     inline float2 transform(float2 const& position, float3x2 const& matrix)
     {
-        float2 result;
-
-        result.x = position.x * matrix.m11 + position.y * matrix.m21 + matrix.m31;
-        result.y = position.x * matrix.m12 + position.y * matrix.m22 + matrix.m32;
-
-        return result;
+        return float2(position.x * matrix.m11 + position.y * matrix.m21 + matrix.m31,
+                      position.x * matrix.m12 + position.y * matrix.m22 + matrix.m32);
     }
 
 
     inline float2 transform(float2 const& position, float4x4 const& matrix)
     {
-        float2 result;
-
-        result.x = position.x * matrix.m11 + position.y * matrix.m21 + matrix.m41;
-        result.y = position.x * matrix.m12 + position.y * matrix.m22 + matrix.m42;
-
-        return result;
+        return float2(position.x * matrix.m11 + position.y * matrix.m21 + matrix.m41,
+                      position.x * matrix.m12 + position.y * matrix.m22 + matrix.m42);
     }
 
 
     inline float2 transform_normal(float2 const& normal, float3x2 const& matrix)
     {
-        float2 result;
-
-        result.x = normal.x * matrix.m11 + normal.y * matrix.m21;
-        result.y = normal.x * matrix.m12 + normal.y * matrix.m22;
-
-        return result;
+        return float2(normal.x * matrix.m11 + normal.y * matrix.m21,
+                      normal.x * matrix.m12 + normal.y * matrix.m22);
     }
 
 
     inline float2 transform_normal(float2 const& normal, float4x4 const& matrix)
     {
-        float2 result;
-
-        result.x = normal.x * matrix.m11 + normal.y * matrix.m21;
-        result.y = normal.x * matrix.m12 + normal.y * matrix.m22;
-
-        return result;
+        return float2(normal.x * matrix.m11 + normal.y * matrix.m21,
+                      normal.x * matrix.m12 + normal.y * matrix.m22);
     }
 
 
     inline float2 transform(float2 const& value, quaternion const& rotation)
     {
-        float2 result;
-
         float x2 = rotation.x + rotation.x;
         float y2 = rotation.y + rotation.y;
         float z2 = rotation.z + rotation.z;
@@ -537,10 +459,8 @@ namespace Windows { namespace Foundation { namespace Numerics
         float yy2 = rotation.y * y2;
         float zz2 = rotation.z * z2;
 
-        result.x = value.x * (1.0f - yy2 - zz2) + value.y * (xy2 - wz2);
-        result.y = value.x * (xy2 + wz2) + value.y * (1.0f - xx2 - zz2);
-
-        return result;
+        return float2(value.x * (1.0f - yy2 - zz2) + value.y * (xy2 - wz2),
+                      value.x * (xy2 + wz2) + value.y * (1.0f - xx2 - zz2));
     }
 
 
@@ -591,99 +511,63 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float3 operator +(float3 const& value1, float3 const& value2)
     {
-        float3 ans;
-
-        ans.x = value1.x + value2.x;
-        ans.y = value1.y + value2.y;
-        ans.z = value1.z + value2.z;
-
-        return ans;
+        return float3(value1.x + value2.x,
+                      value1.y + value2.y,
+                      value1.z + value2.z);
     }
 
 
     inline float3 operator -(float3 const& value1, float3 const& value2)
     {
-        float3 ans;
-
-        ans.x = value1.x - value2.x;
-        ans.y = value1.y - value2.y;
-        ans.z = value1.z - value2.z;
-
-        return ans;
+        return float3(value1.x - value2.x,
+                      value1.y - value2.y,
+                      value1.z - value2.z);
     }
 
 
     inline float3 operator *(float3 const& value1, float3 const& value2)
     {
-        float3 ans;
-
-        ans.x = value1.x * value2.x;
-        ans.y = value1.y * value2.y;
-        ans.z = value1.z * value2.z;
-
-        return ans;
+        return float3(value1.x * value2.x,
+                      value1.y * value2.y,
+                      value1.z * value2.z);
     }
 
 
     inline float3 operator *(float3 const& value1, float value2)
     {
-        float3 ans;
-
-        ans.x = value1.x * value2;
-        ans.y = value1.y * value2;
-        ans.z = value1.z * value2;
-
-        return ans;
+        return float3(value1.x * value2,
+                      value1.y * value2,
+                      value1.z * value2);
     }
 
 
     inline float3 operator *(float value1, float3 const& value2)
     {
-        float3 ans;
-
-        ans.x = value1 * value2.x;
-        ans.y = value1 * value2.y;
-        ans.z = value1 * value2.z;
-
-        return ans;
+        return float3(value1 * value2.x,
+                      value1 * value2.y,
+                      value1 * value2.z);
     }
 
 
     inline float3 operator /(float3 const& value1, float3 const& value2)
     {
-        float3 ans;
-
-        ans.x = value1.x / value2.x;
-        ans.y = value1.y / value2.y;
-        ans.z = value1.z / value2.z;
-
-        return ans;
+        return float3(value1.x / value2.x,
+                      value1.y / value2.y,
+                      value1.z / value2.z);
     }
 
 
     inline float3 operator /(float3 const& value1, float value2)
     {
-        float3 ans;
-
-        float invDiv = 1.0f / value2;
-
-        ans.x = value1.x * invDiv;
-        ans.y = value1.y * invDiv;
-        ans.z = value1.z * invDiv;
-
-        return ans;
+        return value1 * (1.0f / value2);
     }
 
 
     inline float3 operator -(float3 const& value)
     {
-        float3 ans;
-
-        ans.x = -value.x;
-        ans.y = -value.y;
-        ans.z = -value.z;
-
-        return ans;
+        return float3(-value.x,
+                      -value.y,
+                      -value.z);
     }
 
 
@@ -753,37 +637,25 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float length(float3 const& value)
     {
-        float ls = value.x * value.x + value.y * value.y + value.z * value.z;
-
-        return sqrtf(ls);
+        return sqrtf(length_squared(value));
     }
 
 
     inline float length_squared(float3 const& value)
     {
-        return value.x * value.x + value.y * value.y + value.z * value.z;
+        return dot(value, value);
     }
 
 
     inline float distance(float3 const& value1, float3 const& value2)
     {
-        float dx = value1.x - value2.x;
-        float dy = value1.y - value2.y;
-        float dz = value1.z - value2.z;
-
-        float ls = dx * dx + dy * dy + dz * dz;
-
-        return sqrtf(ls);
+        return sqrtf(distance_squared(value1, value2));
     }
 
 
     inline float distance_squared(float3 const& value1, float3 const& value2)
     {
-        float dx = value1.x - value2.x;
-        float dy = value1.y - value2.y;
-        float dz = value1.z - value2.z;
-
-        return dx * dx + dy * dy + dz * dz;
+        return length_squared(value1 - value2);
     }
 
 
@@ -797,73 +669,42 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float3 normalize(float3 const& value)
     {
-        float3 ans;
-
-        float ls = value.x * value.x + value.y * value.y + value.z * value.z;
-        float invNorm = 1.0f / sqrtf(ls);
-
-        ans.x = value.x * invNorm;
-        ans.y = value.y * invNorm;
-        ans.z = value.z * invNorm;
-
-        return ans;
+        return value / length(value);
     }
 
 
     inline float3 cross(float3 const& vector1, float3 const& vector2)
     {
-        float3 ans;
-
-        ans.x = vector1.y * vector2.z - vector1.z * vector2.y;
-        ans.y = vector1.z * vector2.x - vector1.x * vector2.z;
-        ans.z = vector1.x * vector2.y - vector1.y * vector2.x;
-
-        return ans;
+        return float3(vector1.y * vector2.z - vector1.z * vector2.y,
+                      vector1.z * vector2.x - vector1.x * vector2.z,
+                      vector1.x * vector2.y - vector1.y * vector2.x);
     }
 
 
     inline float3 reflect(float3 const& vector, float3 const& normal)
     {
-        float3 ans;
-
-        float dot = vector.x * normal.x + vector.y * normal.y + vector.z * normal.z;
-
-        ans.x = vector.x - 2.0f * dot * normal.x;
-        ans.y = vector.y - 2.0f * dot * normal.y;
-        ans.z = vector.z - 2.0f * dot * normal.z;
-
-        return ans;
+        return vector - 2.0f * dot(vector, normal) * normal;
     }
 
 
     inline float3 (min)(float3 const& value1, float3 const& value2)
     {
-        float3 ans;
-
-        ans.x = (value1.x < value2.x) ? value1.x : value2.x;
-        ans.y = (value1.y < value2.y) ? value1.y : value2.y;
-        ans.z = (value1.z < value2.z) ? value1.z : value2.z;
-
-        return ans;
+        return float3((value1.x < value2.x) ? value1.x : value2.x,
+                      (value1.y < value2.y) ? value1.y : value2.y,
+                      (value1.z < value2.z) ? value1.z : value2.z);
     }
 
 
     inline float3 (max)(float3 const& value1, float3 const& value2)
     {
-        float3 ans;
-
-        ans.x = (value1.x > value2.x) ? value1.x : value2.x;
-        ans.y = (value1.y > value2.y) ? value1.y : value2.y;
-        ans.z = (value1.z > value2.z) ? value1.z : value2.z;
-
-        return ans;
+        return float3((value1.x > value2.x) ? value1.x : value2.x,
+                      (value1.y > value2.y) ? value1.y : value2.y,
+                      (value1.z > value2.z) ? value1.z : value2.z);
     }
 
 
     inline float3 clamp(float3 const& value1, float3 const& min, float3 const& max)
     {
-        float3 result;
-
         float x = value1.x;
         x = (x > max.x) ? max.x : x;
         x = (x < min.x) ? min.x : x;
@@ -876,54 +717,34 @@ namespace Windows { namespace Foundation { namespace Numerics
         z = (z > max.z) ? max.z : z;
         z = (z < min.z) ? min.z : z;
 
-        result.x = x;
-        result.y = y;
-        result.z = z;
-
-        return result;
+        return float3(x, y, z);
     }
 
 
     inline float3 lerp(float3 const& value1, float3 const& value2, float amount)
     {
-        float3 ans;
-
-        ans.x = value1.x + (value2.x - value1.x) * amount;
-        ans.y = value1.y + (value2.y - value1.y) * amount;
-        ans.z = value1.z + (value2.z - value1.z) * amount;
-
-        return ans;
+        return value1 + (value2 - value1) * amount;
     }
 
 
     inline float3 transform(float3 const& position, float4x4 const& matrix)
     {
-        float3 result;
-
-        result.x = position.x * matrix.m11 + position.y * matrix.m21 + position.z * matrix.m31 + matrix.m41;
-        result.y = position.x * matrix.m12 + position.y * matrix.m22 + position.z * matrix.m32 + matrix.m42;
-        result.z = position.x * matrix.m13 + position.y * matrix.m23 + position.z * matrix.m33 + matrix.m43;
-
-        return result;
+        return float3(position.x * matrix.m11 + position.y * matrix.m21 + position.z * matrix.m31 + matrix.m41,
+                      position.x * matrix.m12 + position.y * matrix.m22 + position.z * matrix.m32 + matrix.m42,
+                      position.x * matrix.m13 + position.y * matrix.m23 + position.z * matrix.m33 + matrix.m43);
     }
 
 
     inline float3 transform_normal(float3 const& normal, float4x4 const& matrix)
     {
-        float3 result;
-
-        result.x = normal.x * matrix.m11 + normal.y * matrix.m21 + normal.z * matrix.m31;
-        result.y = normal.x * matrix.m12 + normal.y * matrix.m22 + normal.z * matrix.m32;
-        result.z = normal.x * matrix.m13 + normal.y * matrix.m23 + normal.z * matrix.m33;
-
-        return result;
+        return float3(normal.x * matrix.m11 + normal.y * matrix.m21 + normal.z * matrix.m31,
+                      normal.x * matrix.m12 + normal.y * matrix.m22 + normal.z * matrix.m32,
+                      normal.x * matrix.m13 + normal.y * matrix.m23 + normal.z * matrix.m33);
     }
 
 
     inline float3 transform(float3 const& value, quaternion const& rotation)
     {
-        float3 result;
-
         float x2 = rotation.x + rotation.x;
         float y2 = rotation.y + rotation.y;
         float z2 = rotation.z + rotation.z;
@@ -938,11 +759,9 @@ namespace Windows { namespace Foundation { namespace Numerics
         float yz2 = rotation.y * z2;
         float zz2 = rotation.z * z2;
 
-        result.x = value.x * (1.0f - yy2 - zz2) + value.y * (xy2 - wz2) + value.z * (xz2 + wy2);
-        result.y = value.x * (xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (yz2 - wx2);
-        result.z = value.x * (xz2 - wy2) + value.y * (yz2 + wx2) + value.z * (1.0f - xx2 - yy2);
-
-        return result;
+        return float3(value.x * (1.0f - yy2 - zz2) + value.y * (xy2 - wz2) + value.z * (xz2 + wy2),
+                      value.x * (xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (yz2 - wx2),
+                      value.x * (xz2 - wy2) + value.y * (yz2 + wx2) + value.z * (1.0f - xx2 - yy2));
     }
 
 
@@ -1004,107 +823,70 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4 operator +(float4 const& value1, float4 const& value2)
     {
-        float4 ans;
-
-        ans.x = value1.x + value2.x;
-        ans.y = value1.y + value2.y;
-        ans.z = value1.z + value2.z;
-        ans.w = value1.w + value2.w;
-
-        return ans;
+        return float4(value1.x + value2.x,
+                      value1.y + value2.y,
+                      value1.z + value2.z,
+                      value1.w + value2.w);
     }
 
 
     inline float4 operator -(float4 const& value1, float4 const& value2)
     {
-        float4 ans;
-
-        ans.x = value1.x - value2.x;
-        ans.y = value1.y - value2.y;
-        ans.z = value1.z - value2.z;
-        ans.w = value1.w - value2.w;
-
-        return ans;
+        return float4(value1.x - value2.x,
+                      value1.y - value2.y,
+                      value1.z - value2.z,
+                      value1.w - value2.w);
     }
 
 
     inline float4 operator *(float4 const& value1, float4 const& value2)
     {
-        float4 ans;
-
-        ans.x = value1.x * value2.x;
-        ans.y = value1.y * value2.y;
-        ans.z = value1.z * value2.z;
-        ans.w = value1.w * value2.w;
-
-        return ans;
+        return float4(value1.x * value2.x,
+                      value1.y * value2.y,
+                      value1.z * value2.z,
+                      value1.w * value2.w);
     }
 
 
     inline float4 operator *(float4 const& value1, float value2)
     {
-        float4 ans;
-
-        ans.x = value1.x * value2;
-        ans.y = value1.y * value2;
-        ans.z = value1.z * value2;
-        ans.w = value1.w * value2;
-
-        return ans;
+        return float4(value1.x * value2,
+                      value1.y * value2,
+                      value1.z * value2,
+                      value1.w * value2);
     }
 
 
     inline float4 operator *(float value1, float4 const& value2)
     {
-        float4 ans;
-
-        ans.x = value1 * value2.x;
-        ans.y = value1 * value2.y;
-        ans.z = value1 * value2.z;
-        ans.w = value1 * value2.w;
-
-        return ans;
+        return float4(value1 * value2.x,
+                      value1 * value2.y,
+                      value1 * value2.z,
+                      value1 * value2.w);
     }
 
 
     inline float4 operator /(float4 const& value1, float4 const& value2)
     {
-        float4 ans;
-
-        ans.x = value1.x / value2.x;
-        ans.y = value1.y / value2.y;
-        ans.z = value1.z / value2.z;
-        ans.w = value1.w / value2.w;
-
-        return ans;
+        return float4(value1.x / value2.x,
+                      value1.y / value2.y,
+                      value1.z / value2.z,
+                      value1.w / value2.w);
     }
 
 
     inline float4 operator /(float4 const& value1, float value2)
     {
-        float4 ans;
-
-        float invDiv = 1.0f / value2;
-        
-        ans.x = value1.x * invDiv;
-        ans.y = value1.y * invDiv;
-        ans.z = value1.z * invDiv;
-        ans.w = value1.w * invDiv;
-
-        return ans;
+        return value1 * (1.0f / value2);
     }
 
 
     inline float4 operator -(float4 const& value)
     {
-        float4 ans;
-
-        ans.x = -value.x;
-        ans.y = -value.y;
-        ans.z = -value.z;
-        ans.w = -value.w;
-
-        return ans;
+        return float4(-value.x,
+                      -value.y,
+                      -value.z,
+                      -value.w);
     }
 
 
@@ -1176,39 +958,25 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float length(float4 const& value)
     {
-        float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-        
-        return sqrtf(ls);
+        return sqrtf(length_squared(value));
     }
 
 
     inline float length_squared(float4 const& value)
     {
-        return value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
+        return dot(value, value);
     }
 
 
     inline float distance(float4 const& value1, float4 const& value2)
     {
-        float dx = value1.x - value2.x;
-        float dy = value1.y - value2.y;
-        float dz = value1.z - value2.z;
-        float dw = value1.w - value2.w;
-        
-        float ls = dx * dx + dy * dy + dz * dz + dw * dw;
-
-        return sqrtf(ls);
+        return sqrtf(distance_squared(value1, value2));
     }
 
 
     inline float distance_squared(float4 const& value1, float4 const& value2)
     {
-        float dx = value1.x - value2.x;
-        float dy = value1.y - value2.y;
-        float dz = value1.z - value2.z;
-        float dw = value1.w - value2.w;
-        
-        return dx * dx + dy * dy + dz * dz + dw * dw;
+        return length_squared(value1 - value2);
     }
 
 
@@ -1221,52 +989,32 @@ namespace Windows { namespace Foundation { namespace Numerics
     }
 
 
-    inline float4 normalize(float4 const& vector)
+    inline float4 normalize(float4 const& value)
     {
-        float4 ans;
-
-        float ls = vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w;
-        float invNorm = 1.0f / sqrtf(ls);
-
-        ans.x = vector.x * invNorm;
-        ans.y = vector.y * invNorm;
-        ans.z = vector.z * invNorm;
-        ans.w = vector.w * invNorm;
-
-        return ans;
+        return value / length(value);
     }
 
 
     inline float4 (min)(float4 const& value1, float4 const& value2)
     {
-        float4 ans;
-
-        ans.x = (value1.x < value2.x) ? value1.x : value2.x;
-        ans.y = (value1.y < value2.y) ? value1.y : value2.y;
-        ans.z = (value1.z < value2.z) ? value1.z : value2.z;
-        ans.w = (value1.w < value2.w) ? value1.w : value2.w;
-
-        return ans;
+        return float4((value1.x < value2.x) ? value1.x : value2.x,
+                      (value1.y < value2.y) ? value1.y : value2.y,
+                      (value1.z < value2.z) ? value1.z : value2.z,
+                      (value1.w < value2.w) ? value1.w : value2.w);
     }
 
 
     inline float4 (max)(float4 const& value1, float4 const& value2)
     {
-        float4 ans;
-
-        ans.x = (value1.x > value2.x) ? value1.x : value2.x;
-        ans.y = (value1.y > value2.y) ? value1.y : value2.y;
-        ans.z = (value1.z > value2.z) ? value1.z : value2.z;
-        ans.w = (value1.w > value2.w) ? value1.w : value2.w;
-
-        return ans;
+        return float4((value1.x > value2.x) ? value1.x : value2.x,
+                      (value1.y > value2.y) ? value1.y : value2.y,
+                      (value1.z > value2.z) ? value1.z : value2.z,
+                      (value1.w > value2.w) ? value1.w : value2.w);
     }
 
 
     inline float4 clamp(float4 const& value1, float4 const& min, float4 const& max)
     {
-        float4 result;
-
         float x = value1.x;
         x = (x > max.x) ? max.x : x;
         x = (x < min.x) ? min.x : x;
@@ -1283,71 +1031,45 @@ namespace Windows { namespace Foundation { namespace Numerics
         w = (w > max.w) ? max.w : w;
         w = (w < min.w) ? min.w : w;
 
-        result.x = x;
-        result.y = y;
-        result.z = z;
-        result.w = w;
-
-        return result;
+        return float4(x, y, z, w);
     }
 
 
     inline float4 lerp(float4 const& value1, float4 const& value2, float amount)
     {
-        float4 ans;
-
-        ans.x = value1.x + (value2.x - value1.x) * amount;
-        ans.y = value1.y + (value2.y - value1.y) * amount;
-        ans.z = value1.z + (value2.z - value1.z) * amount;
-        ans.w = value1.w + (value2.w - value1.w) * amount;
-
-        return ans;
+        return value1 + (value2 - value1) * amount;
     }
 
 
     inline float4 transform(float4 const& vector, float4x4 const& matrix)
     {
-        float4 result;
-
-        result.x = vector.x * matrix.m11 + vector.y * matrix.m21 + vector.z * matrix.m31 + vector.w * matrix.m41;
-        result.y = vector.x * matrix.m12 + vector.y * matrix.m22 + vector.z * matrix.m32 + vector.w * matrix.m42;
-        result.z = vector.x * matrix.m13 + vector.y * matrix.m23 + vector.z * matrix.m33 + vector.w * matrix.m43;
-        result.w = vector.x * matrix.m14 + vector.y * matrix.m24 + vector.z * matrix.m34 + vector.w * matrix.m44;
-
-        return result;
+        return float4(vector.x * matrix.m11 + vector.y * matrix.m21 + vector.z * matrix.m31 + vector.w * matrix.m41,
+                      vector.x * matrix.m12 + vector.y * matrix.m22 + vector.z * matrix.m32 + vector.w * matrix.m42,
+                      vector.x * matrix.m13 + vector.y * matrix.m23 + vector.z * matrix.m33 + vector.w * matrix.m43,
+                      vector.x * matrix.m14 + vector.y * matrix.m24 + vector.z * matrix.m34 + vector.w * matrix.m44);
     }
 
 
     inline float4 transform4(float3 const& position, float4x4 const& matrix)
     {
-        float4 result;
-
-        result.x = position.x * matrix.m11 + position.y * matrix.m21 + position.z * matrix.m31 + matrix.m41;
-        result.y = position.x * matrix.m12 + position.y * matrix.m22 + position.z * matrix.m32 + matrix.m42;
-        result.z = position.x * matrix.m13 + position.y * matrix.m23 + position.z * matrix.m33 + matrix.m43;
-        result.w = position.x * matrix.m14 + position.y * matrix.m24 + position.z * matrix.m34 + matrix.m44;
-
-        return result;
+        return float4(position.x * matrix.m11 + position.y * matrix.m21 + position.z * matrix.m31 + matrix.m41,
+                      position.x * matrix.m12 + position.y * matrix.m22 + position.z * matrix.m32 + matrix.m42,
+                      position.x * matrix.m13 + position.y * matrix.m23 + position.z * matrix.m33 + matrix.m43,
+                      position.x * matrix.m14 + position.y * matrix.m24 + position.z * matrix.m34 + matrix.m44);
     }
 
 
     inline float4 transform4(float2 const& position, float4x4 const& matrix)
     {
-        float4 result;
-
-        result.x = position.x * matrix.m11 + position.y * matrix.m21 + matrix.m41;
-        result.y = position.x * matrix.m12 + position.y * matrix.m22 + matrix.m42;
-        result.z = position.x * matrix.m13 + position.y * matrix.m23 + matrix.m43;
-        result.w = position.x * matrix.m14 + position.y * matrix.m24 + matrix.m44;
-
-        return result;
+        return float4(position.x * matrix.m11 + position.y * matrix.m21 + matrix.m41,
+                      position.x * matrix.m12 + position.y * matrix.m22 + matrix.m42,
+                      position.x * matrix.m13 + position.y * matrix.m23 + matrix.m43,
+                      position.x * matrix.m14 + position.y * matrix.m24 + matrix.m44);
     }
 
 
     inline float4 transform(float4 const& value, quaternion const& rotation)
     {
-        float4 result;
-
         float x2 = rotation.x + rotation.x;
         float y2 = rotation.y + rotation.y;
         float z2 = rotation.z + rotation.z;
@@ -1362,19 +1084,15 @@ namespace Windows { namespace Foundation { namespace Numerics
         float yz2 = rotation.y * z2;
         float zz2 = rotation.z * z2;
 
-        result.x = value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2) + value.z * (       xz2 + wy2);
-        result.y = value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (       yz2 - wx2);
-        result.z = value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2) + value.z * (1.0f - xx2 - yy2);
-        result.w = value.w;
-
-        return result;
+        return float4(value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2) + value.z * (       xz2 + wy2),
+                      value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (       yz2 - wx2),
+                      value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2) + value.z * (1.0f - xx2 - yy2),
+                      value.w);
     }
 
 
     inline float4 transform4(float3 const& value, quaternion const& rotation)
     {
-        float4 result;
-
         float x2 = rotation.x + rotation.x;
         float y2 = rotation.y + rotation.y;
         float z2 = rotation.z + rotation.z;
@@ -1389,19 +1107,15 @@ namespace Windows { namespace Foundation { namespace Numerics
         float yz2 = rotation.y * z2;
         float zz2 = rotation.z * z2;
 
-        result.x = value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2) + value.z * (       xz2 + wy2);
-        result.y = value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (       yz2 - wx2);
-        result.z = value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2) + value.z * (1.0f - xx2 - yy2);
-        result.w = 1.0f;
-
-        return result;
+        return float4(value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2) + value.z * (       xz2 + wy2),
+                      value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2) + value.z * (       yz2 - wx2),
+                      value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2) + value.z * (1.0f - xx2 - yy2),
+                      1.0f);
     }
 
 
     inline float4 transform4(float2 const& value, quaternion const& rotation)
     {
-        float4 result;
-
         float x2 = rotation.x + rotation.x;
         float y2 = rotation.y + rotation.y;
         float z2 = rotation.z + rotation.z;
@@ -1416,12 +1130,10 @@ namespace Windows { namespace Foundation { namespace Numerics
         float yz2 = rotation.y * z2;
         float zz2 = rotation.z * z2;
 
-        result.x = value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2);
-        result.y = value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2);
-        result.z = value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2);
-        result.w = 1.0f;
-
-        return result;
+        return float4(value.x * (1.0f - yy2 - zz2) + value.y * (       xy2 - wz2),
+                      value.x * (       xy2 + wz2) + value.y * (1.0f - xx2 - zz2),
+                      value.x * (       xz2 - wy2) + value.y * (       yz2 + wx2),
+                      1.0f);
     }
 
 
@@ -1440,205 +1152,108 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float3x2 make_float3x2_translation(float2 const& position)
     {
-        float3x2 result;
-
-        result.m11 = 1.0f; result.m12 = 0.0f;
-        result.m21 = 0.0f; result.m22 = 1.0f;
-
-        result.m31 = position.x;
-        result.m32 = position.y;
-
-        return result;
+        return float3x2(1, 0,
+                        0, 1,
+                        position.x, position.y);
     }
 
 
     inline float3x2 make_float3x2_translation(float xPosition, float yPosition)
     {
-        float3x2 result;
-
-        result.m11 = 1.0f; result.m12 = 0.0f;
-        result.m21 = 0.0f; result.m22 = 1.0f;
-
-        result.m31 = xPosition;
-        result.m32 = yPosition;
-
-        return result;
+        return float3x2(1, 0,
+                        0, 1,
+                        xPosition, yPosition);
     }
 
 
     inline float3x2 make_float3x2_scale(float xScale, float yScale)
     {
-        float3x2 result;
-
-        result.m11 = xScale; result.m12 = 0.0f;
-        result.m21 = 0.0f;   result.m22 = yScale;
-        result.m31 = 0.0f;   result.m32 = 0.0f;
-
-        return result;
+        return float3x2(xScale, 0,
+                        0,      yScale,
+                        0,      0);
     }
 
 
     inline float3x2 make_float3x2_scale(float xScale, float yScale, float2 const& centerPoint)
     {
-        float3x2 result;
-
         float tx = centerPoint.x * (1 - xScale);
         float ty = centerPoint.y * (1 - yScale);
 
-        result.m11 = xScale; result.m12 = 0.0f;
-        result.m21 = 0.0f;   result.m22 = yScale;
-        result.m31 = tx;     result.m32 = ty;
-
-        return result;
+        return float3x2(xScale, 0,
+                        0,      yScale,
+                        tx,     ty);
     }
 
 
     inline float3x2 make_float3x2_scale(float2 const& scales)
     {
-        float3x2 result;
-
-        result.m11 = scales.x; result.m12 = 0.0f;
-        result.m21 = 0.0f;     result.m22 = scales.y;
-        result.m31 = 0.0f;     result.m32 = 0.0f;
-        
-        return result;
+        return float3x2(scales.x, 0,
+                        0,        scales.y,
+                        0,        0);
     }
 
 
     inline float3x2 make_float3x2_scale(float2 const& scales, float2 const& centerPoint)
     {
-        float3x2 result;
+        float2 t = centerPoint * (float2::one() - scales);
 
-        float tx = centerPoint.x * (1 - scales.x);
-        float ty = centerPoint.y * (1 - scales.y);
-
-        result.m11 = scales.x; result.m12 = 0.0f;
-        result.m21 = 0.0f;     result.m22 = scales.y;
-        result.m31 = tx;       result.m32 = ty;
-
-        return result;
+        return float3x2(scales.x, 0,
+                        0,        scales.y,
+                        t.x,      t.y);
     }
 
 
     inline float3x2 make_float3x2_scale(float scale)
     {
-        float3x2 result;
-
-        result.m11 = scale; result.m12 = 0.0f;
-        result.m21 = 0.0f;  result.m22 = scale;
-        result.m31 = 0.0f;  result.m32 = 0.0f;
-
-        return result;
+        return float3x2(scale, 0,
+                        0,     scale,
+                        0,     0);
     }
 
 
     inline float3x2 make_float3x2_scale(float scale, float2 const& centerPoint)
     {
-        float3x2 result;
+        float2 t = centerPoint * (1 - scale);
 
-        float tx = centerPoint.x * (1 - scale);
-        float ty = centerPoint.y * (1 - scale);
-
-        result.m11 = scale; result.m12 = 0.0f;
-        result.m21 = 0.0f;  result.m22 = scale;
-        result.m31 = tx;    result.m32 = ty;
-
-        return result;
+        return float3x2(scale, 0,
+                        0,     scale,
+                        t.x,   t.y);
     }
 
 
     inline float3x2 make_float3x2_skew(float radiansX, float radiansY)
     {
-        float3x2 result;
-
         float xTan = tanf(radiansX);
         float yTan = tanf(radiansY);
 
-        result.m11 = 1.0f; result.m12 = yTan;
-        result.m21 = xTan; result.m22 = 1.0f;
-        result.m31 = 0.0f; result.m32 = 0.0f;
-
-        return result;
+        return float3x2(1,    yTan,
+                        xTan, 1,
+                        0,    0);
     }
 
 
     inline float3x2 make_float3x2_skew(float radiansX, float radiansY, float2 const& centerPoint)
     {
-        float3x2 result;
-
         float xTan = tanf(radiansX);
         float yTan = tanf(radiansY);
 
         float tx = -centerPoint.y * xTan;
         float ty = -centerPoint.x * yTan;
 
-        result.m11 = 1.0f; result.m12 = yTan;
-        result.m21 = xTan; result.m22 = 1.0f;
-        result.m31 = tx;   result.m32 = ty;
-
-        return result;
+        return float3x2(1,    yTan,
+                        xTan, 1,
+                        tx,   ty);
     }
 
 
     inline float3x2 make_float3x2_rotation(float radians)
     {
-        float3x2 result;
-
-        radians = fmodf(radians, ::DirectX::XM_2PI);
-
-        if (radians < 0)
-            radians += ::DirectX::XM_2PI;
-
-        float c, s;
-
-        const float epsilon = 0.001f * ::DirectX::XM_PI / 180.0f;     // 0.1% of a degree
-
-        if (radians < epsilon || radians > ::DirectX::XM_2PI - epsilon)
-        {
-            // Exact case for zero rotation.
-            c = 1;
-            s = 0;
-        }
-        else if (radians > ::DirectX::XM_PIDIV2 - epsilon && radians < ::DirectX::XM_PIDIV2 + epsilon)
-        {
-            // Exact case for 90 degree rotation.
-            c = 0;
-            s = 1;
-        }
-        else if (radians > ::DirectX::XM_PI - epsilon && radians < ::DirectX::XM_PI + epsilon)
-        {
-            // Exact case for 180 degree rotation.
-            c = -1;
-            s = 0;
-        }
-        else if (radians > ::DirectX::XM_PI + ::DirectX::XM_PIDIV2 - epsilon && radians < ::DirectX::XM_PI + ::DirectX::XM_PIDIV2 + epsilon)
-        {
-            // Exact case for 270 degree rotation.
-            c = 0;
-            s = -1;
-        }
-        else
-        {
-            // Arbitrary rotation.
-            c = cosf(radians);
-            s = sinf(radians);
-        }
-
-        // [  c  s ]
-        // [ -s  c ]
-        // [  0  0 ]
-        result.m11 =    c; result.m12 =    s;
-        result.m21 =   -s; result.m22 =    c;
-        result.m31 = 0.0f; result.m32 = 0.0f;
-
-        return result;
+        return make_float3x2_rotation(radians, float2::zero());
     }
 
 
     inline float3x2 make_float3x2_rotation(float radians, float2 const& centerPoint)
     {
-        float3x2 result;
-
         radians = fmodf(radians, ::DirectX::XM_2PI);
 
         if (radians < 0)
@@ -1682,82 +1297,60 @@ namespace Windows { namespace Foundation { namespace Numerics
         float x = centerPoint.x * (1 - c) + centerPoint.y * s;
         float y = centerPoint.y * (1 - c) - centerPoint.x * s;
 
-        // [  c  s ]
-        // [ -s  c ]
-        // [  x  y ]
-        result.m11 =  c; result.m12 = s;
-        result.m21 = -s; result.m22 = c;
-        result.m31 =  x; result.m32 = y;
-
-        return result;
+        return float3x2( c, s,
+                        -s, c,
+                         x, y);
     }
 
 
     inline float3x2 operator +(float3x2 const& value1, float3x2 const& value2)
     {
-        float3x2 m;
-
-        m.m11 = value1.m11 + value2.m11; m.m12 = value1.m12 + value2.m12;
-        m.m21 = value1.m21 + value2.m21; m.m22 = value1.m22 + value2.m22;
-        m.m31 = value1.m31 + value2.m31; m.m32 = value1.m32 + value2.m32;
-
-        return m;
+        return float3x2(value1.m11 + value2.m11,  value1.m12 + value2.m12,
+                        value1.m21 + value2.m21,  value1.m22 + value2.m22,
+                        value1.m31 + value2.m31,  value1.m32 + value2.m32);
     }
 
 
     inline float3x2 operator -(float3x2 const& value1, float3x2 const& value2)
     {
-        float3x2 m;
-
-        m.m11 = value1.m11 - value2.m11; m.m12 = value1.m12 - value2.m12;
-        m.m21 = value1.m21 - value2.m21; m.m22 = value1.m22 - value2.m22;
-        m.m31 = value1.m31 - value2.m31; m.m32 = value1.m32 - value2.m32;
-
-        return m;
+        return float3x2(value1.m11 - value2.m11,  value1.m12 - value2.m12,
+                        value1.m21 - value2.m21,  value1.m22 - value2.m22,
+                        value1.m31 - value2.m31,  value1.m32 - value2.m32);
     }
 
 
     inline float3x2 operator *(float3x2 const& value1, float3x2 const& value2)
     {
-        float3x2 m;
-
-        // First row
-        m.m11 = value1.m11 * value2.m11 + value1.m12 * value2.m21;
-        m.m12 = value1.m11 * value2.m12 + value1.m12 * value2.m22;
-        
-        // Second row
-        m.m21 = value1.m21 * value2.m11 + value1.m22 * value2.m21;
-        m.m22 = value1.m21 * value2.m12 + value1.m22 * value2.m22;
-        
-        // Third row
-        m.m31 = value1.m31 * value2.m11 + value1.m32 * value2.m21 + value2.m31;
-        m.m32 = value1.m31 * value2.m12 + value1.m32 * value2.m22 + value2.m32;
-
-        return m;
+        return float3x2
+        (
+            // First row
+            value1.m11 * value2.m11 + value1.m12 * value2.m21,
+            value1.m11 * value2.m12 + value1.m12 * value2.m22,
+            
+            // Second row
+            value1.m21 * value2.m11 + value1.m22 * value2.m21,
+            value1.m21 * value2.m12 + value1.m22 * value2.m22,
+            
+            // Third row
+            value1.m31 * value2.m11 + value1.m32 * value2.m21 + value2.m31,
+            value1.m31 * value2.m12 + value1.m32 * value2.m22 + value2.m32
+        );
     }
 
 
     inline float3x2 operator *(float3x2 const& value1, float value2)
     {
-        float3x2 m;
-
-        m.m11 = value1.m11 * value2; m.m12 = value1.m12 * value2;
-        m.m21 = value1.m21 * value2; m.m22 = value1.m22 * value2;
-        m.m31 = value1.m31 * value2; m.m32 = value1.m32 * value2;
-
-        return m;
+        return float3x2(value1.m11 * value2,  value1.m12 * value2,
+                        value1.m21 * value2,  value1.m22 * value2,
+                        value1.m31 * value2,  value1.m32 * value2);
     }
 
 
     inline float3x2 operator -(float3x2 const& value)
     {
-        float3x2 m;
-
-        m.m11 = -value.m11; m.m12 = -value.m12;
-        m.m21 = -value.m21; m.m22 = -value.m22;
-        m.m31 = -value.m31; m.m32 = -value.m32;
-
-        return m;
+        return float3x2(-value.m11, -value.m12,
+                        -value.m21, -value.m22,
+                        -value.m31, -value.m32);
     }
 
 
@@ -1827,26 +1420,17 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float2 translation(float3x2 const& value)
     {
-        float2 ans;
-            
-        ans.x = value.m31; 
-        ans.y = value.m32;
-            
-        return ans;
+        return float2(value.m31, value.m32);
     }
 
 
     inline bool invert(float3x2 const& matrix, _Out_ float3x2* result)
     {
-        float det = (matrix.m11 * matrix.m22) - (matrix.m21 * matrix.m12);
+        float det = determinant(matrix);
 
         if (fabs(det) < FLT_EPSILON)
         {
-#ifdef _WINDOWS_NUMERICS_USE_STL_
-            const float nan = std::numeric_limits<float>::quiet_NaN();
-#else
-            const float nan = 0.0f;
-#endif
+            const float nan = _WINDOWS_NUMERICS_NAN_;
             *result = float3x2(nan, nan, nan, nan, nan, nan);
             return false;
         }
@@ -1855,10 +1439,15 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         *result = float3x2
         (
+            // First row
             matrix.m22 * invDet,
             -matrix.m12 * invDet,
+
+            // Second row
             -matrix.m21 * invDet,
             matrix.m11 * invDet,
+
+            // Third row
             (matrix.m21 * matrix.m32 - matrix.m31 * matrix.m22) * invDet,
             (matrix.m31 * matrix.m12 - matrix.m11 * matrix.m32) * invDet
         );
@@ -1869,21 +1458,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float3x2 lerp(float3x2 const& matrix1, float3x2 const& matrix2, float amount)
     {
-        float3x2 result;
-        
-        // First row
-        result.m11 = matrix1.m11 + (matrix2.m11 - matrix1.m11) * amount;
-        result.m12 = matrix1.m12 + (matrix2.m12 - matrix1.m12) * amount;
-        
-        // Second row
-        result.m21 = matrix1.m21 + (matrix2.m21 - matrix1.m21) * amount;
-        result.m22 = matrix1.m22 + (matrix2.m22 - matrix1.m22) * amount;
-        
-        // Third row
-        result.m31 = matrix1.m31 + (matrix2.m31 - matrix1.m31) * amount;
-        result.m32 = matrix1.m32 + (matrix2.m32 - matrix1.m32) * amount;
-
-        return result;
+        return matrix1 + (matrix2 - matrix1) * amount;
     }
 
 
@@ -1916,11 +1491,7 @@ namespace Windows { namespace Foundation { namespace Numerics
     {
         const float epsilon = 1e-4f;
 
-        float3 zaxis;
-
-        zaxis.x = objectPosition.x - cameraPosition.x;
-        zaxis.y = objectPosition.y - cameraPosition.y;
-        zaxis.z = objectPosition.z - cameraPosition.z;
+        float3 zaxis = objectPosition - cameraPosition;
 
         float norm = length_squared(zaxis);
 
@@ -1937,18 +1508,10 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         float3 yaxis = cross(zaxis, xaxis);
 
-        float4x4 result;
-
-        result.m11 = xaxis.x; result.m12 = xaxis.y; result.m13 = xaxis.z; result.m14 = 0.0f;
-        result.m21 = yaxis.x; result.m22 = yaxis.y; result.m23 = yaxis.z; result.m24 = 0.0f;
-        result.m31 = zaxis.x; result.m32 = zaxis.y; result.m33 = zaxis.z; result.m34 = 0.0f;
-
-        result.m41 = objectPosition.x;
-        result.m42 = objectPosition.y;
-        result.m43 = objectPosition.z;
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(xaxis.x,          xaxis.y,          xaxis.z,          0,
+                        yaxis.x,          yaxis.y,          yaxis.z,          0,
+                        zaxis.x,          zaxis.y,          zaxis.z,          0,
+                        objectPosition.x, objectPosition.y, objectPosition.z, 1);
     }
 
 
@@ -1958,11 +1521,7 @@ namespace Windows { namespace Foundation { namespace Numerics
         const float minAngle = 1.0f - (0.1f * (::DirectX::XM_PI / 180.0f)); // 0.1 degrees
 
         // Treat the case when object and camera positions are too close.
-        float3 faceDir;
-
-        faceDir.x = objectPosition.x - cameraPosition.x;
-        faceDir.y = objectPosition.y - cameraPosition.y;
-        faceDir.z = objectPosition.z - cameraPosition.z;
+        float3 faceDir = objectPosition - cameraPosition;
 
         float norm = length_squared(faceDir);
 
@@ -1998,271 +1557,171 @@ namespace Windows { namespace Foundation { namespace Numerics
             zaxis = normalize(cross(xaxis, yaxis));
         }
 
-        float4x4 result;
-
-        result.m11 = xaxis.x; result.m12 = xaxis.y; result.m13 = xaxis.z; result.m14 = 0.0f;
-        result.m21 = yaxis.x; result.m22 = yaxis.y; result.m23 = yaxis.z; result.m24 = 0.0f;
-        result.m31 = zaxis.x; result.m32 = zaxis.y; result.m33 = zaxis.z; result.m34 = 0.0f;
-
-        result.m41 = objectPosition.x;
-        result.m42 = objectPosition.y;
-        result.m43 = objectPosition.z;
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(xaxis.x,          xaxis.y,          xaxis.z,          0,
+                        yaxis.x,          yaxis.y,          yaxis.z,          0,
+                        zaxis.x,          zaxis.y,          zaxis.z,          0,
+                        objectPosition.x, objectPosition.y, objectPosition.z, 1);
     }
 
 
     inline float4x4 make_float4x4_translation(float3 const& position)
     {
-        float4x4 result;
-
-        result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
-        result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
-        result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
-
-        result.m41 = position.x;
-        result.m42 = position.y;
-        result.m43 = position.z;
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(1, 0, 0, 0,
+                        0, 1, 0, 0,
+                        0, 0, 1, 0,
+                        position.x, position.y, position.z, 1);
     }
 
 
     inline float4x4 make_float4x4_translation(float xPosition, float yPosition, float zPosition)
     {
-        float4x4 result;
-
-        result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
-        result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
-        result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
-
-        result.m41 = xPosition;
-        result.m42 = yPosition;
-        result.m43 = zPosition;
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(1, 0, 0, 0,
+                        0, 1, 0, 0,
+                        0, 0, 1, 0,
+                        xPosition, yPosition, zPosition, 1);
     }
 
 
     inline float4x4 make_float4x4_scale(float xScale, float yScale, float zScale)
     {
-        float4x4 result;
-        
-        result.m11 = xScale; result.m12 = 0.0f;   result.m13 = 0.0f;   result.m14 = 0.0f;
-        result.m21 = 0.0f;   result.m22 = yScale; result.m23 = 0.0f;   result.m24 = 0.0f;
-        result.m31 = 0.0f;   result.m32 = 0.0f;   result.m33 = zScale; result.m34 = 0.0f;
-        result.m41 = 0.0f;   result.m42 = 0.0f;   result.m43 = 0.0f;   result.m44 = 1.0f;
-
-        return result;
+        return float4x4(xScale, 0,      0,      0,
+                        0,      yScale, 0,      0,
+                        0,      0,      zScale, 0,
+                        0,      0,      0,      1);
     }
 
 
     inline float4x4 make_float4x4_scale(float xScale, float yScale, float zScale, float3 const& centerPoint)
     { 
-        float4x4 result;
-
         float tx = centerPoint.x * (1 - xScale);
         float ty = centerPoint.y * (1 - yScale);
         float tz = centerPoint.z * (1 - zScale);
 
-        result.m11 = xScale; result.m12 = 0.0f;   result.m13 = 0.0f;   result.m14 = 0.0f;
-        result.m21 = 0.0f;   result.m22 = yScale; result.m23 = 0.0f;   result.m24 = 0.0f;
-        result.m31 = 0.0f;   result.m32 = 0.0f;   result.m33 = zScale; result.m34 = 0.0f;
-        result.m41 = tx;     result.m42 = ty;     result.m43 = tz;     result.m44 = 1.0f;
-
-        return result;
+        return float4x4(xScale, 0,      0,      0,
+                        0,      yScale, 0,      0,
+                        0,      0,      zScale, 0,
+                        tx,     ty,     tz,     1);
     }
 
 
     inline float4x4 make_float4x4_scale(float3 const& scales)
     {
-        float4x4 result;
-
-        result.m11 = scales.x; result.m12 = 0.0f;     result.m13 = 0.0f;     result.m14 = 0.0f;
-        result.m21 = 0.0f;     result.m22 = scales.y; result.m23 = 0.0f;     result.m24 = 0.0f;
-        result.m31 = 0.0f;     result.m32 = 0.0f;     result.m33 = scales.z; result.m34 = 0.0f;
-        result.m41 = 0.0f;     result.m42 = 0.0f;     result.m43 = 0.0f;     result.m44 = 1.0f;
-
-        return result;
+        return float4x4(scales.x, 0,        0,        0,
+                        0,        scales.y, 0,        0,
+                        0,        0,        scales.z, 0,
+                        0,        0,        0,        1);
     }
 
 
     inline float4x4 make_float4x4_scale(float3 const& scales, float3 const& centerPoint)
     {
-        float4x4 result;
+        float3 t = centerPoint * (float3::one() - scales);
 
-        float tx = centerPoint.x * (1 - scales.x);
-        float ty = centerPoint.y * (1 - scales.y);
-        float tz = centerPoint.z * (1 - scales.z);
-
-        result.m11 = scales.x; result.m12 = 0.0f;     result.m13 = 0.0f;     result.m14 = 0.0f;
-        result.m21 = 0.0f;     result.m22 = scales.y; result.m23 = 0.0f;     result.m24 = 0.0f;
-        result.m31 = 0.0f;     result.m32 = 0.0f;     result.m33 = scales.z; result.m34 = 0.0f;
-        result.m41 = tx;       result.m42 = ty;       result.m43 = tz;       result.m44 = 1.0f;
-
-        return result;
+        return float4x4(scales.x, 0,        0,        0,
+                        0,        scales.y, 0,        0,
+                        0,        0,        scales.z, 0,
+                        t.x,      t.y,      t.z,      1);
     }
 
 
     inline float4x4 make_float4x4_scale(float scale)
     {
-        float4x4 result;
-
-        result.m11 = scale; result.m12 = 0.0f;  result.m13 = 0.0f;  result.m14 = 0.0f;
-        result.m21 = 0.0f;  result.m22 = scale; result.m23 = 0.0f;  result.m24 = 0.0f;
-        result.m31 = 0.0f;  result.m32 = 0.0f;  result.m33 = scale; result.m34 = 0.0f;
-        result.m41 = 0.0f;  result.m42 = 0.0f;  result.m43 = 0.0f;  result.m44 = 1.0f;
-
-        return result;
+        return float4x4(scale, 0,     0,     0,
+                        0,     scale, 0,     0,
+                        0,     0,     scale, 0,
+                        0,     0,     0,     1);
     }
 
 
     inline float4x4 make_float4x4_scale(float scale, float3 const& centerPoint)
     {
-        float4x4 result;
+        float3 t = centerPoint * (1 - scale);
 
-        float tx = centerPoint.x * (1 - scale);
-        float ty = centerPoint.y * (1 - scale);
-        float tz = centerPoint.z * (1 - scale);
-
-        result.m11 = scale; result.m12 = 0.0f;  result.m13 = 0.0f;  result.m14 = 0.0f;
-        result.m21 = 0.0f;  result.m22 = scale; result.m23 = 0.0f;  result.m24 = 0.0f;
-        result.m31 = 0.0f;  result.m32 = 0.0f;  result.m33 = scale; result.m34 = 0.0f;
-        result.m41 = tx;    result.m42 = ty;    result.m43 = tz;    result.m44 = 1.0f;
-
-        return result;
+        return float4x4(scale, 0,     0,     0,
+                        0,     scale, 0,     0,
+                        0,     0,     scale, 0,
+                        t.x,   t.y,   t.z,   1);
     }
 
 
     inline float4x4 make_float4x4_rotation_x(float radians)
     {
-        float4x4 result;
-
         float c = cosf(radians);
         float s = sinf(radians);
 
-        // [  1  0  0  0 ]
-        // [  0  c  s  0 ]
-        // [  0 -s  c  0 ]
-        // [  0  0  0  1 ]
-        result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
-        result.m21 = 0.0f; result.m22 =    c; result.m23 =    s; result.m24 = 0.0f;
-        result.m31 = 0.0f; result.m32 =   -s; result.m33 =    c; result.m34 = 0.0f;
-        result.m41 = 0.0f; result.m42 = 0.0f; result.m43 = 0.0f; result.m44 = 1.0f;
-
-        return result;
+        return float4x4(1,  0, 0, 0,
+                        0,  c, s, 0,
+                        0, -s, c, 0,
+                        0,  0, 0, 1);
     }
 
 
     inline float4x4 make_float4x4_rotation_x(float radians, float3 const& centerPoint)
     {
-        float4x4 result;
-
         float c = cosf(radians);
         float s = sinf(radians);
 
         float y = centerPoint.y * (1 - c) + centerPoint.z * s;
         float z = centerPoint.z * (1 - c) - centerPoint.y * s;
 
-        // [  1  0  0  0 ]
-        // [  0  c  s  0 ]
-        // [  0 -s  c  0 ]
-        // [  0  y  z  1 ]
-        result.m11 = 1.0f; result.m12 = 0.0f; result.m13 = 0.0f; result.m14 = 0.0f;
-        result.m21 = 0.0f; result.m22 =    c; result.m23 =    s; result.m24 = 0.0f;
-        result.m31 = 0.0f; result.m32 =   -s; result.m33 =    c; result.m34 = 0.0f;
-        result.m41 = 0.0f; result.m42 =    y; result.m43 =    z; result.m44 = 1.0f;
-
-        return result;
+        return float4x4(1,  0, 0, 0,
+                        0,  c, s, 0,
+                        0, -s, c, 0,
+                        0,  y, z, 1);
     }
 
 
     inline float4x4 make_float4x4_rotation_y(float radians)
     {
-        float4x4 result;
-
         float c = cosf(radians);
         float s = sinf(radians);
 
-        // [  c  0 -s  0 ]
-        // [  0  1  0  0 ]
-        // [  s  0  c  0 ]
-        // [  0  0  0  1 ]
-        result.m11 =    c; result.m12 = 0.0f; result.m13 =   -s; result.m14 = 0.0f;
-        result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
-        result.m31 =    s; result.m32 = 0.0f; result.m33 =    c; result.m34 = 0.0f;
-        result.m41 = 0.0f; result.m42 = 0.0f; result.m43 = 0.0f; result.m44 = 1.0f;
-
-        return result;
+        return float4x4(c, 0, -s, 0,
+                        0, 1,  0, 0,
+                        s, 0,  c, 0,
+                        0, 0,  0, 1);
     }
 
 
     inline float4x4 make_float4x4_rotation_y(float radians, float3 const& centerPoint)
     {
-        float4x4 result;
-
         float c = cosf(radians);
         float s = sinf(radians);
 
         float x = centerPoint.x * (1 - c) - centerPoint.z * s;
         float z = centerPoint.z * (1 - c) + centerPoint.x * s;
 
-        // [  c  0 -s  0 ]
-        // [  0  1  0  0 ]
-        // [  s  0  c  0 ]
-        // [  x  0  z  1 ]
-        result.m11 =    c; result.m12 = 0.0f; result.m13 =   -s; result.m14 = 0.0f;
-        result.m21 = 0.0f; result.m22 = 1.0f; result.m23 = 0.0f; result.m24 = 0.0f;
-        result.m31 =    s; result.m32 = 0.0f; result.m33 =    c; result.m34 = 0.0f;
-        result.m41 =    x; result.m42 = 0.0f; result.m43 =    z; result.m44 = 1.0f;
-
-        return result;
+        return float4x4(c, 0, -s, 0,
+                        0, 1,  0, 0,
+                        s, 0,  c, 0,
+                        x, 0,  z, 1);
     }
 
 
     inline float4x4 make_float4x4_rotation_z(float radians)
     {
-        float4x4 result;
-
         float c = cosf(radians);
         float s = sinf(radians);
 
-        // [  c  s  0  0 ]
-        // [ -s  c  0  0 ]
-        // [  0  0  1  0 ]
-        // [  0  0  0  1 ]
-        result.m11 =    c; result.m12 =    s; result.m13 = 0.0f; result.m14 = 0.0f;
-        result.m21 =   -s; result.m22 =    c; result.m23 = 0.0f; result.m24 = 0.0f;
-        result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
-        result.m41 = 0.0f; result.m42 = 0.0f; result.m43 = 0.0f; result.m44 = 1.0f;
-
-        return result;
+        return float4x4( c, s, 0, 0,
+                        -s, c, 0, 0,
+                         0, 0, 1, 0,
+                         0, 0, 0, 1);
     }
 
 
     inline float4x4 make_float4x4_rotation_z(float radians, float3 const& centerPoint)
     {
-        float4x4 result;
-
         float c = cosf(radians);
         float s = sinf(radians);
 
         float x = centerPoint.x * (1 - c) + centerPoint.y * s;
         float y = centerPoint.y * (1 - c) - centerPoint.x * s;
 
-        // [  c  s  0  0 ]
-        // [ -s  c  0  0 ]
-        // [  0  0  1  0 ]
-        // [  x  y  0  1 ]
-        result.m11 =    c; result.m12 =    s; result.m13 = 0.0f; result.m14 = 0.0f;
-        result.m21 =   -s; result.m22 =    c; result.m23 = 0.0f; result.m24 = 0.0f;
-        result.m31 = 0.0f; result.m32 = 0.0f; result.m33 = 1.0f; result.m34 = 0.0f;
-        result.m41 =    x; result.m42 =    y; result.m43 = 0.0f; result.m44 = 1.0f;
-
-        return result;
+        return float4x4( c, s, 0, 0,
+                        -s, c, 0, 0,
+                         0, 0, 1, 0,
+                         x, y, 0, 1);
     }
 
 
@@ -2273,7 +1732,7 @@ namespace Windows { namespace Foundation { namespace Numerics
         //
         // Rotation matrix M can be computed by below equation.
         //
-        //  M = uu + (cos a)( I-uu ) + (sin a)S
+        //  M = uu + (cos a)(I-uu) + (sin a)S
         //
         // Where:
         //
@@ -2286,176 +1745,103 @@ namespace Windows { namespace Foundation { namespace Numerics
         //      [ 1 0 0 ]
         //  I = [ 0 1 0 ]
         //      [ 0 0 1 ]
-        //
-        //     [  xx+cosa*(1-xx)   yx-cosa*yx-sina*z zx-cosa*xz+sina*y ]
-        // M = [ xy-cosa*yx+sina*z    yy+cosa(1-yy)  yz-cosa*yz-sina*x ]
-        //     [ zx-cosa*zx-sina*y zy-cosa*zy+sina*x   zz+cosa*(1-zz)  ]
-        //
+
         float x = axis.x, y = axis.y, z = axis.z;
         float sa = sinf(angle), ca = cosf(angle);
         float xx = x * x, yy = y * y, zz = z * z;
         float xy = x * y, xz = x * z, yz = y * z;
 
-        float4x4 result;
-
-        result.m11 = xx + ca * ( 1.0f - xx );   result.m12 = xy - ca * xy + sa * z;     result.m13 = xz - ca * xz - sa * y;     result.m14 = 0.0f;
-        result.m21 = xy - ca * xy - sa * z;     result.m22 = yy + ca * ( 1.0f - yy );   result.m23 = yz - ca * yz + sa * x;     result.m24 = 0.0f;
-        result.m31 = xz - ca * xz + sa * y;     result.m32 = yz - ca * yz - sa * x;     result.m33 = zz + ca * ( 1.0f - zz );   result.m34 = 0.0f;
-        result.m41 = 0.0f;                      result.m42 = 0.0f;                      result.m43 = 0.0f;                      result.m44 = 1.0f;
-
-        return result;
+        return float4x4(xx + ca * (1 - xx),     xy - ca * xy + sa * z,  xz - ca * xz - sa * y,  0,
+                        xy - ca * xy - sa * z,  yy + ca * (1 - yy),     yz - ca * yz + sa * x,  0,
+                        xz - ca * xz + sa * y,  yz - ca * yz - sa * x,  zz + ca * (1 - zz),     0,
+                        0,                      0,                      0,                      1);
     }
 
 
     inline float4x4 make_float4x4_perspective_field_of_view(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
     {
-#ifdef _WINDOWS_NUMERICS_USE_STL_
-
         if (fieldOfView <= 0.0f || fieldOfView >= ::DirectX::XM_PI)
-            throw std::invalid_argument("fieldOfView");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("fieldOfView"));
 
         if (nearPlaneDistance <= 0.0f)
-            throw std::invalid_argument("nearPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("nearPlaneDistance"));
 
         if (farPlaneDistance <= 0.0f)
-            throw std::invalid_argument("farPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("farPlaneDistance"));
 
         if (nearPlaneDistance >= farPlaneDistance )
-            throw std::invalid_argument("nearPlaneDistance");
-
-#endif // _WINDOWS_NUMERICS_USE_STL_
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("nearPlaneDistance"));
 
         float yScale = 1.0f / tanf(fieldOfView * 0.5f);
         float xScale = yScale / aspectRatio;
+        float clipDist = nearPlaneDistance - farPlaneDistance;
 
-        float4x4 result;
-
-        result.m11 = xScale;
-        result.m12 = result.m13 = result.m14 = 0.0f;
-
-        result.m22 = yScale;
-        result.m21 = result.m23 = result.m24 = 0.0f;
-
-        result.m31 = result.m32 = 0.0f;
-        result.m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-        result.m34 = -1.0f;
-
-        result.m41 = result.m42 = result.m44 = 0.0f;
-        result.m43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-
-        return result;
+        return float4x4(xScale, 0,      0,                                                0,
+                        0,      yScale, 0,                                                0,
+                        0,      0,      farPlaneDistance / clipDist,                     -1,
+                        0,      0,      nearPlaneDistance * farPlaneDistance / clipDist,  0);
     }
 
 
     inline float4x4 make_float4x4_perspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
     {
-#ifdef _WINDOWS_NUMERICS_USE_STL_
-
         if (nearPlaneDistance <= 0.0f)
-            throw std::invalid_argument("nearPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("nearPlaneDistance"));
 
         if (farPlaneDistance <= 0.0f)
-            throw std::invalid_argument("farPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("farPlaneDistance"));
 
         if (nearPlaneDistance >= farPlaneDistance)
-            throw std::invalid_argument("nearPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("nearPlaneDistance"));
 
-#endif // _WINDOWS_NUMERICS_USE_STL_
+        float clipDist = nearPlaneDistance - farPlaneDistance;
 
-        float4x4 result;
-
-        result.m11 = 2.0f * nearPlaneDistance / width;
-        result.m12 = result.m13 = result.m14 = 0.0f;
-
-        result.m22 = 2.0f * nearPlaneDistance / height;
-        result.m21 = result.m23 = result.m24 = 0.0f;
-
-        result.m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-        result.m31 = result.m32 = 0.0f;
-        result.m34 = -1.0f;
-
-        result.m41 = result.m42 = result.m44 = 0.0f;
-        result.m43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-
-        return result;
+        return float4x4(2 * nearPlaneDistance / width, 0,                              0,                                                0,
+                        0,                             2 * nearPlaneDistance / height, 0,                                                0,
+                        0,                             0,                              farPlaneDistance / clipDist,                     -1,
+                        0,                             0,                              nearPlaneDistance * farPlaneDistance / clipDist,  0);
     }
 
 
     inline float4x4 make_float4x4_perspective_off_center(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
     {
-#ifdef _WINDOWS_NUMERICS_USE_STL_
-
         if (nearPlaneDistance <= 0.0f)
-            throw std::invalid_argument("nearPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("nearPlaneDistance"));
 
         if (farPlaneDistance <= 0.0f)
-            throw std::invalid_argument("farPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("farPlaneDistance"));
 
         if (nearPlaneDistance >= farPlaneDistance)
-            throw std::invalid_argument("nearPlaneDistance");
+            _WINDOWS_NUMERICS_THROW_(std::invalid_argument("nearPlaneDistance"));
 
-#endif // _WINDOWS_NUMERICS_USE_STL_
+        float clipDist = nearPlaneDistance - farPlaneDistance;
 
-        float4x4 result;
-
-        result.m11 = 2.0f * nearPlaneDistance / (right - left);
-        result.m12 = result.m13 = result.m14 = 0.0f;
-
-        result.m22 = 2.0f * nearPlaneDistance / (top - bottom);
-        result.m21 = result.m23 = result.m24 = 0.0f;
-
-        result.m31 = (left + right) / (right - left);
-        result.m32 = (top + bottom) / (top - bottom);
-        result.m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-        result.m34 = -1.0f;
-
-        result.m43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-        result.m41 = result.m42 = result.m44 = 0.0f;
-
-        return result;
+        return float4x4(2 * nearPlaneDistance / (right - left), 0,                                      0,                                                0,
+                        0,                                      2 * nearPlaneDistance / (top - bottom), 0,                                                0,
+                        (left + right) / (right - left),        (top + bottom) / (top - bottom),        farPlaneDistance / clipDist,                     -1,
+                        0,                                      0,                                      nearPlaneDistance * farPlaneDistance / clipDist,  0);
     }
 
 
     inline float4x4 make_float4x4_orthographic(float width, float height, float zNearPlane, float zFarPlane)
     {
-        float4x4 result;
+        float clipDist = zNearPlane - zFarPlane;
 
-        result.m11 = 2.0f / width;
-        result.m12 = result.m13 = result.m14 = 0.0f;
-
-        result.m22 = 2.0f / height;
-        result.m21 = result.m23 = result.m24 = 0.0f;
-
-        result.m33 = 1.0f / (zNearPlane - zFarPlane);
-        result.m31 = result.m32 = result.m34 = 0.0f;
-
-        result.m41 = result.m42 = 0.0f;
-        result.m43 = zNearPlane / (zNearPlane - zFarPlane);
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(2 / width, 0,          0,                     0,
+                        0,         2 / height, 0,                     0,
+                        0,         0,          1 / clipDist,          0,
+                        0,         0,          zNearPlane / clipDist, 1);
     }
 
 
     inline float4x4 make_float4x4_orthographic_off_center(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)
     {
-        float4x4 result;
+        float clipDist = zNearPlane - zFarPlane;
 
-        result.m11 = 2.0f / (right - left);
-        result.m12 = result.m13 = result.m14 = 0.0f;
-
-        result.m22 = 2.0f / (top - bottom);
-        result.m21 = result.m23 = result.m24 = 0.0f;
-
-        result.m33 = 1.0f / (zNearPlane - zFarPlane);
-        result.m31 = result.m32 = result.m34 = 0.0f;
-
-        result.m41 = (left + right) / (left - right);
-        result.m42 = (top + bottom) / (bottom - top);
-        result.m43 = zNearPlane / (zNearPlane - zFarPlane);
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(2 / (right - left),              0,                               0,                     0,
+                        0,                               2 / (top - bottom),              0,                     0,
+                        0,                               0,                               1 / clipDist,          0,
+                        (left + right) / (left - right), (top + bottom) / (bottom - top), zNearPlane / clipDist, 1);
     }
 
 
@@ -2465,17 +1851,10 @@ namespace Windows { namespace Foundation { namespace Numerics
         float3 xaxis = normalize(cross(cameraUpVector, zaxis));
         float3 yaxis = cross(zaxis, xaxis);
 
-        float4x4 result;
-
-        result.m11 = xaxis.x; result.m12 = yaxis.x; result.m13 = zaxis.x; result.m14 = 0.0f;
-        result.m21 = xaxis.y; result.m22 = yaxis.y; result.m23 = zaxis.y; result.m24 = 0.0f;
-        result.m31 = xaxis.z; result.m32 = yaxis.z; result.m33 = zaxis.z; result.m34 = 0.0f;
-        result.m41 = -dot(xaxis, cameraPosition);
-        result.m42 = -dot(yaxis, cameraPosition);
-        result.m43 = -dot(zaxis, cameraPosition);
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(xaxis.x,                     yaxis.x,                     zaxis.x,                     0,
+                        xaxis.y,                     yaxis.y,                     zaxis.y,                     0,
+                        xaxis.z,                     yaxis.z,                     zaxis.z,                     0,
+                        -dot(xaxis, cameraPosition), -dot(yaxis, cameraPosition), -dot(zaxis, cameraPosition), 1);
     }
 
 
@@ -2485,24 +1864,15 @@ namespace Windows { namespace Foundation { namespace Numerics
         float3 xaxis = normalize(cross(up, zaxis));
         float3 yaxis = cross(zaxis, xaxis);
 
-        float4x4 result;
-
-        result.m11 = xaxis.x; result.m12 = xaxis.y; result.m13 = xaxis.z; result.m14 = 0.0f;
-        result.m21 = yaxis.x; result.m22 = yaxis.y; result.m23 = yaxis.z; result.m24 = 0.0f;
-        result.m31 = zaxis.x; result.m32 = zaxis.y; result.m33 = zaxis.z; result.m34 = 0.0f;
-        result.m41 = position.x;
-        result.m42 = position.y;
-        result.m43 = position.z;
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(xaxis.x,    xaxis.y,    xaxis.z,    0,
+                        yaxis.x,    yaxis.y,    yaxis.z,    0,
+                        zaxis.x,    zaxis.y,    zaxis.z,    0,
+                        position.x, position.y, position.z, 1);
     }
 
 
     inline float4x4 make_float4x4_from_quaternion(quaternion const& quaternion)
     {
-        float4x4 result;
-
         float xx = quaternion.x * quaternion.x;
         float yy = quaternion.y * quaternion.y;
         float zz = quaternion.z * quaternion.z;
@@ -2514,12 +1884,10 @@ namespace Windows { namespace Foundation { namespace Numerics
         float yz = quaternion.y * quaternion.z;
         float wx = quaternion.x * quaternion.w;
 
-        result.m11 = 1.0f - 2.0f * (yy + zz);   result.m12 = 2.0f * (xy + wz);          result.m13 = 2.0f * (xz - wy);          result.m14 = 0.0f;
-        result.m21 = 2.0f * (xy - wz);          result.m22 = 1.0f - 2.0f * (zz + xx);   result.m23 = 2.0f * (yz + wx);          result.m24 = 0.0f;
-        result.m31 = 2.0f * (xz + wy);          result.m32 = 2.0f * (yz - wx);          result.m33 = 1.0f - 2.0f * (yy + xx);   result.m34 = 0.0f;
-        result.m41 = 0.0f;                      result.m42 = 0.0f;                      result.m43 = 0.0f;                      result.m44 = 1.0f;
-
-        return result;
+        return float4x4(1 - 2 * (yy + zz),  2 * (xy + wz),      2 * (xz - wy),      0,
+                        2 * (xy - wz),      1 - 2 * (zz + xx),  2 * (yz + wx),      0,
+                        2 * (xz + wy),      2 * (yz - wx),      1 - 2 * (yy + xx),  0,
+                        0,                  0,                  0,                  1);
     }
 
 
@@ -2535,35 +1903,17 @@ namespace Windows { namespace Foundation { namespace Numerics
     {
         auto p = normalize(plane);
 
-        float dot = p.normal.x * lightDirection.x + p.normal.y * lightDirection.y + p.normal.z * lightDirection.z;
+        float dot = dot_normal(p, lightDirection);
+
         float a = -p.normal.x;
         float b = -p.normal.y;
         float c = -p.normal.z;
         float d = -p.d;
 
-        float4x4 result;
-
-        result.m11 = a * lightDirection.x + dot;
-        result.m21 = b * lightDirection.x;
-        result.m31 = c * lightDirection.x;
-        result.m41 = d * lightDirection.x;
-
-        result.m12 = a * lightDirection.y;
-        result.m22 = b * lightDirection.y + dot;
-        result.m32 = c * lightDirection.y;
-        result.m42 = d * lightDirection.y;
-
-        result.m13 = a * lightDirection.z;
-        result.m23 = b * lightDirection.z;
-        result.m33 = c * lightDirection.z + dot;
-        result.m43 = d * lightDirection.z;
-
-        result.m14 = 0.0f;
-        result.m24 = 0.0f;
-        result.m34 = 0.0f;
-        result.m44 = dot;
-
-        return result;
+        return float4x4(a * lightDirection.x + dot,  a * lightDirection.y,        a * lightDirection.z,        0,
+                        b * lightDirection.x,        b * lightDirection.y + dot,  b * lightDirection.z,        0,
+                        c * lightDirection.x,        c * lightDirection.y,        c * lightDirection.z + dot,  0,
+                        d * lightDirection.x,        d * lightDirection.y,        d * lightDirection.z,        dot);
     }
 
 
@@ -2575,117 +1925,81 @@ namespace Windows { namespace Foundation { namespace Numerics
         float b = v.normal.y;
         float c = v.normal.z;
 
-        float fa = -2.0f * a;
-        float fb = -2.0f * b;
-        float fc = -2.0f * c;
+        float fa = -2 * a;
+        float fb = -2 * b;
+        float fc = -2 * c;
 
-        float4x4 result;
-
-        result.m11 = fa * a + 1.0f;
-        result.m12 = fb * a;
-        result.m13 = fc * a;
-        result.m14 = 0.0f;
-
-        result.m21 = fa * b;
-        result.m22 = fb * b + 1.0f;
-        result.m23 = fc * b;
-        result.m24 = 0.0f;
-
-        result.m31 = fa * c;
-        result.m32 = fb * c;
-        result.m33 = fc * c + 1.0f;
-        result.m34 = 0.0f;
-
-        result.m41 = fa * v.d;
-        result.m42 = fb * v.d;
-        result.m43 = fc * v.d;
-        result.m44 = 1.0f;
-
-        return result;
+        return float4x4(fa * a + 1,  fb * a,      fc * a,      0,
+                        fa * b,      fb * b + 1,  fc * b,      0,
+                        fa * c,      fb * c,      fc * c + 1,  0,
+                        fa * v.d,    fb * v.d,    fc * v.d,    1);
     }
 
 
     inline float4x4 operator +(float4x4 const& value1, float4x4 const& value2)
     {
-        float4x4 m;
-
-        m.m11 = value1.m11 + value2.m11; m.m12 = value1.m12 + value2.m12; m.m13 = value1.m13 + value2.m13; m.m14 = value1.m14 + value2.m14;
-        m.m21 = value1.m21 + value2.m21; m.m22 = value1.m22 + value2.m22; m.m23 = value1.m23 + value2.m23; m.m24 = value1.m24 + value2.m24;
-        m.m31 = value1.m31 + value2.m31; m.m32 = value1.m32 + value2.m32; m.m33 = value1.m33 + value2.m33; m.m34 = value1.m34 + value2.m34;
-        m.m41 = value1.m41 + value2.m41; m.m42 = value1.m42 + value2.m42; m.m43 = value1.m43 + value2.m43; m.m44 = value1.m44 + value2.m44;
-
-        return m;
+        return float4x4(value1.m11 + value2.m11,  value1.m12 + value2.m12,  value1.m13 + value2.m13,  value1.m14 + value2.m14,
+                        value1.m21 + value2.m21,  value1.m22 + value2.m22,  value1.m23 + value2.m23,  value1.m24 + value2.m24,
+                        value1.m31 + value2.m31,  value1.m32 + value2.m32,  value1.m33 + value2.m33,  value1.m34 + value2.m34,
+                        value1.m41 + value2.m41,  value1.m42 + value2.m42,  value1.m43 + value2.m43,  value1.m44 + value2.m44);
     }
 
 
     inline float4x4 operator -(float4x4 const& value1, float4x4 const& value2)
     {
-        float4x4 m;
-
-        m.m11 = value1.m11 - value2.m11; m.m12 = value1.m12 - value2.m12; m.m13 = value1.m13 - value2.m13; m.m14 = value1.m14 - value2.m14;
-        m.m21 = value1.m21 - value2.m21; m.m22 = value1.m22 - value2.m22; m.m23 = value1.m23 - value2.m23; m.m24 = value1.m24 - value2.m24;
-        m.m31 = value1.m31 - value2.m31; m.m32 = value1.m32 - value2.m32; m.m33 = value1.m33 - value2.m33; m.m34 = value1.m34 - value2.m34;
-        m.m41 = value1.m41 - value2.m41; m.m42 = value1.m42 - value2.m42; m.m43 = value1.m43 - value2.m43; m.m44 = value1.m44 - value2.m44;
-
-        return m;
+        return float4x4(value1.m11 - value2.m11,  value1.m12 - value2.m12,  value1.m13 - value2.m13,  value1.m14 - value2.m14,
+                        value1.m21 - value2.m21,  value1.m22 - value2.m22,  value1.m23 - value2.m23,  value1.m24 - value2.m24,
+                        value1.m31 - value2.m31,  value1.m32 - value2.m32,  value1.m33 - value2.m33,  value1.m34 - value2.m34,
+                        value1.m41 - value2.m41,  value1.m42 - value2.m42,  value1.m43 - value2.m43,  value1.m44 - value2.m44);
     }
 
 
     inline float4x4 operator *(float4x4 const& value1, float4x4 const& value2)
     {
-        float4x4 m;
+        return float4x4
+        (
+            // First row
+            value1.m11 * value2.m11 + value1.m12 * value2.m21 + value1.m13 * value2.m31 + value1.m14 * value2.m41,
+            value1.m11 * value2.m12 + value1.m12 * value2.m22 + value1.m13 * value2.m32 + value1.m14 * value2.m42,
+            value1.m11 * value2.m13 + value1.m12 * value2.m23 + value1.m13 * value2.m33 + value1.m14 * value2.m43,
+            value1.m11 * value2.m14 + value1.m12 * value2.m24 + value1.m13 * value2.m34 + value1.m14 * value2.m44,
 
-        // First row
-        m.m11 = value1.m11 * value2.m11 + value1.m12 * value2.m21 + value1.m13 * value2.m31 + value1.m14 * value2.m41;
-        m.m12 = value1.m11 * value2.m12 + value1.m12 * value2.m22 + value1.m13 * value2.m32 + value1.m14 * value2.m42;
-        m.m13 = value1.m11 * value2.m13 + value1.m12 * value2.m23 + value1.m13 * value2.m33 + value1.m14 * value2.m43;
-        m.m14 = value1.m11 * value2.m14 + value1.m12 * value2.m24 + value1.m13 * value2.m34 + value1.m14 * value2.m44;
-        
-        // Second row
-        m.m21 = value1.m21 * value2.m11 + value1.m22 * value2.m21 + value1.m23 * value2.m31 + value1.m24 * value2.m41;
-        m.m22 = value1.m21 * value2.m12 + value1.m22 * value2.m22 + value1.m23 * value2.m32 + value1.m24 * value2.m42;
-        m.m23 = value1.m21 * value2.m13 + value1.m22 * value2.m23 + value1.m23 * value2.m33 + value1.m24 * value2.m43;
-        m.m24 = value1.m21 * value2.m14 + value1.m22 * value2.m24 + value1.m23 * value2.m34 + value1.m24 * value2.m44;
-        
-        // Third row
-        m.m31 = value1.m31 * value2.m11 + value1.m32 * value2.m21 + value1.m33 * value2.m31 + value1.m34 * value2.m41;
-        m.m32 = value1.m31 * value2.m12 + value1.m32 * value2.m22 + value1.m33 * value2.m32 + value1.m34 * value2.m42;
-        m.m33 = value1.m31 * value2.m13 + value1.m32 * value2.m23 + value1.m33 * value2.m33 + value1.m34 * value2.m43;
-        m.m34 = value1.m31 * value2.m14 + value1.m32 * value2.m24 + value1.m33 * value2.m34 + value1.m34 * value2.m44;
-        
-        // Fourth row
-        m.m41 = value1.m41 * value2.m11 + value1.m42 * value2.m21 + value1.m43 * value2.m31 + value1.m44 * value2.m41;
-        m.m42 = value1.m41 * value2.m12 + value1.m42 * value2.m22 + value1.m43 * value2.m32 + value1.m44 * value2.m42;
-        m.m43 = value1.m41 * value2.m13 + value1.m42 * value2.m23 + value1.m43 * value2.m33 + value1.m44 * value2.m43;
-        m.m44 = value1.m41 * value2.m14 + value1.m42 * value2.m24 + value1.m43 * value2.m34 + value1.m44 * value2.m44;
+            // Second row
+            value1.m21 * value2.m11 + value1.m22 * value2.m21 + value1.m23 * value2.m31 + value1.m24 * value2.m41,
+            value1.m21 * value2.m12 + value1.m22 * value2.m22 + value1.m23 * value2.m32 + value1.m24 * value2.m42,
+            value1.m21 * value2.m13 + value1.m22 * value2.m23 + value1.m23 * value2.m33 + value1.m24 * value2.m43,
+            value1.m21 * value2.m14 + value1.m22 * value2.m24 + value1.m23 * value2.m34 + value1.m24 * value2.m44,
 
-        return m;
+            // Third row
+            value1.m31 * value2.m11 + value1.m32 * value2.m21 + value1.m33 * value2.m31 + value1.m34 * value2.m41,
+            value1.m31 * value2.m12 + value1.m32 * value2.m22 + value1.m33 * value2.m32 + value1.m34 * value2.m42,
+            value1.m31 * value2.m13 + value1.m32 * value2.m23 + value1.m33 * value2.m33 + value1.m34 * value2.m43,
+            value1.m31 * value2.m14 + value1.m32 * value2.m24 + value1.m33 * value2.m34 + value1.m34 * value2.m44,
+
+            // Fourth row
+            value1.m41 * value2.m11 + value1.m42 * value2.m21 + value1.m43 * value2.m31 + value1.m44 * value2.m41,
+            value1.m41 * value2.m12 + value1.m42 * value2.m22 + value1.m43 * value2.m32 + value1.m44 * value2.m42,
+            value1.m41 * value2.m13 + value1.m42 * value2.m23 + value1.m43 * value2.m33 + value1.m44 * value2.m43,
+            value1.m41 * value2.m14 + value1.m42 * value2.m24 + value1.m43 * value2.m34 + value1.m44 * value2.m44
+        );
     }
 
 
     inline float4x4 operator *(float4x4 const& value1, float value2)
     {
-        float4x4 m;
-
-        m.m11 = value1.m11 * value2; m.m12 = value1.m12 * value2; m.m13 = value1.m13 * value2; m.m14 = value1.m14 * value2;
-        m.m21 = value1.m21 * value2; m.m22 = value1.m22 * value2; m.m23 = value1.m23 * value2; m.m24 = value1.m24 * value2;
-        m.m31 = value1.m31 * value2; m.m32 = value1.m32 * value2; m.m33 = value1.m33 * value2; m.m34 = value1.m34 * value2;
-        m.m41 = value1.m41 * value2; m.m42 = value1.m42 * value2; m.m43 = value1.m43 * value2; m.m44 = value1.m44 * value2;
-
-        return m;
+        return float4x4(value1.m11 * value2,  value1.m12 * value2,  value1.m13 * value2,  value1.m14 * value2,
+                        value1.m21 * value2,  value1.m22 * value2,  value1.m23 * value2,  value1.m24 * value2,
+                        value1.m31 * value2,  value1.m32 * value2,  value1.m33 * value2,  value1.m34 * value2,
+                        value1.m41 * value2,  value1.m42 * value2,  value1.m43 * value2,  value1.m44 * value2);
     }
 
 
     inline float4x4 operator -(float4x4 const& value)
     {
-        float4x4 m;
-
-        m.m11 = -value.m11; m.m12 = -value.m12; m.m13 = -value.m13; m.m14 = -value.m14;
-        m.m21 = -value.m21; m.m22 = -value.m22; m.m23 = -value.m23; m.m24 = -value.m24;
-        m.m31 = -value.m31; m.m32 = -value.m32; m.m33 = -value.m33; m.m34 = -value.m34;
-        m.m41 = -value.m41; m.m42 = -value.m42; m.m43 = -value.m43; m.m44 = -value.m44;
-
-        return m;
+        return float4x4(-value.m11, -value.m12, -value.m13, -value.m14,
+                        -value.m21, -value.m22, -value.m23, -value.m24,
+                        -value.m31, -value.m32, -value.m33, -value.m34,
+                        -value.m41, -value.m42, -value.m43, -value.m44);
     }
 
 
@@ -2794,13 +2108,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float3 translation(float4x4 const& value)
     {
-        float3 ans;
-            
-        ans.x = value.m41; 
-        ans.y = value.m42;
-        ans.z = value.m43;
-            
-        return ans;
+        return float3(value.m41, value.m42, value.m43);
     }
 
 
@@ -2917,11 +2225,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         if (fabs(det) < FLT_EPSILON)
         {
-#ifdef _WINDOWS_NUMERICS_USE_STL_
-            const float nan = std::numeric_limits<float>::quiet_NaN();
-#else
-            const float nan = 0.0f;
-#endif
+            const float nan = _WINDOWS_NUMERICS_NAN_;
 
             *result = float4x4(nan, nan, nan, nan,
                                nan, nan, nan, nan,
@@ -2972,197 +2276,20 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline bool decompose(float4x4 const& matrix, _Out_ float3* scale, _Out_ quaternion* rotation, _Out_ float3* translation)
     {
-        bool result = true;
+        using namespace DirectX;
 
-        float* pfScales = &scale->x;
+        XMVECTOR s, r, t;
 
-        const float EPSILON = 0.0001f;
-        float det;
-
-        struct CanonicalBasis
+        if (!XMMatrixDecompose(&s, &r, &t, XMLoadFloat4x4(&matrix)))
         {
-            float3 Row0;
-            float3 Row1;
-            float3 Row2;
-        };
-
-        struct VectorBasis
-        {
-            float3* Element0;
-            float3* Element1;
-            float3* Element2;
-        };
-
-        VectorBasis vectorBasis;
-        float3** pVectorBasis = (float3**)&vectorBasis;
-
-        float4x4 matTemp = float4x4::identity();
-        CanonicalBasis canonicalBasis;
-        float3* pCanonicalBasis = &canonicalBasis.Row0;
-
-        canonicalBasis.Row0 = float3(1.0f, 0.0f, 0.0f);
-        canonicalBasis.Row1 = float3(0.0f, 1.0f, 0.0f);
-        canonicalBasis.Row2 = float3(0.0f, 0.0f, 1.0f);
-
-        translation->x = matrix.m41;
-        translation->y = matrix.m42;
-        translation->z = matrix.m43;
-
-        pVectorBasis[0] = (float3*)&matTemp.m11;
-        pVectorBasis[1] = (float3*)&matTemp.m21;
-        pVectorBasis[2] = (float3*)&matTemp.m31;
-
-        *(pVectorBasis[0]) = float3(matrix.m11, matrix.m12, matrix.m13);
-        *(pVectorBasis[1]) = float3(matrix.m21, matrix.m22, matrix.m23);
-        *(pVectorBasis[2]) = float3(matrix.m31, matrix.m32, matrix.m33);
-
-        scale->x = length(*pVectorBasis[0]);
-        scale->y = length(*pVectorBasis[1]);
-        scale->z = length(*pVectorBasis[2]);
-
-        int a, b, c;
-        float x = pfScales[0], y = pfScales[1], z = pfScales[2];
-        if (x < y)
-        {
-            if (y < z)
-            {
-                a = 2;
-                b = 1;
-                c = 0;
-            }
-            else
-            {
-                a = 1;
-
-                if (x < z)
-                {
-                    b = 2;
-                    c = 0;
-                }
-                else
-                {
-                    b = 0;
-                    c = 2;
-                }
-            }
-        }
-        else
-        {
-            if (x < z)
-            {
-                a = 2;
-                b = 0;
-                c = 1;
-            }
-            else
-            {
-                a = 0;
-
-                if (y < z)
-                {
-                    b = 2;
-                    c = 1;
-                }
-                else
-                {
-                    b = 1;
-                    c = 2;
-                }
-            }
+            return false;
         }
 
-        if (pfScales[a] < EPSILON)
-        {
-            *(pVectorBasis[a]) = pCanonicalBasis[a];
-        }
+        XMStoreFloat3(scale, s);
+        XMStoreQuaternion(rotation, r);
+        XMStoreFloat3(translation, t);
 
-        *pVectorBasis[a] = normalize(*pVectorBasis[a]);
-
-        if (pfScales[b] < EPSILON)
-        {
-            int cc;
-            float fAbsX, fAbsY, fAbsZ;
-
-            fAbsX = fabs(pVectorBasis[a]->x);
-            fAbsY = fabs(pVectorBasis[a]->y);
-            fAbsZ = fabs(pVectorBasis[a]->z);
-
-            if (fAbsX < fAbsY)
-            {
-                if (fAbsY < fAbsZ)
-                {
-                    cc = 0;
-                }
-                else
-                {
-                    if (fAbsX < fAbsZ)
-                    {
-                        cc = 0;
-                    }
-                    else
-                    {
-                        cc = 2;
-                    }
-                }
-            }
-            else
-            {
-                if (fAbsX < fAbsZ)
-                {
-                    cc = 1;
-                }
-                else
-                {
-                    if (fAbsY < fAbsZ)
-                    {
-                        cc = 1;
-                    }
-                    else
-                    {
-                        cc = 2;
-                    }
-                }
-            }
-
-            *(pCanonicalBasis + cc) = cross(*pVectorBasis[b], *pVectorBasis[a]);
-        }
-
-        *pVectorBasis[b] = normalize(*pVectorBasis[b]);
-
-        if (pfScales[c] < EPSILON)
-        {
-            *pVectorBasis[b] = cross(*pVectorBasis[c], *pVectorBasis[a]);
-        }
-
-        *pVectorBasis[c] = normalize(*pVectorBasis[c]);
-
-        det = determinant(matTemp);
-
-        // use Kramer's rule to check for handedness of coordinate system
-        if (det < 0.0f)
-        {
-            // switch coordinate system by negating the scale and inverting the basis vector on the x-axis
-            pfScales[a] = -pfScales[a];
-            *pVectorBasis[a] = -(*pVectorBasis[a]);
-
-            det = -det;
-        }
-
-        det -= 1.0f;
-        det *= det;
-
-        if ((EPSILON < det))
-        {
-            // Non-SRT matrix encountered
-            *rotation = quaternion::identity();
-            result = false;
-        }
-        else
-        {
-            *rotation = make_quaternion_from_rotation_matrix(matTemp);
-        }
-
-        return result;
+        return true;
     }
 
 
@@ -3183,90 +2310,59 @@ namespace Windows { namespace Foundation { namespace Numerics
         float yz2 = rotation.y * z2;
         float zz2 = rotation.z * z2;
 
-        float q11 = 1.0f - yy2 - zz2;
+        float q11 = 1 - yy2 - zz2;
         float q21 = xy2 - wz2;
         float q31 = xz2 + wy2;
 
         float q12 = xy2 + wz2;
-        float q22 = 1.0f - xx2 - zz2;
+        float q22 = 1 - xx2 - zz2;
         float q32 = yz2 - wx2;
 
         float q13 = xz2 - wy2;
         float q23 = yz2 + wx2;
-        float q33 = 1.0f - xx2 - yy2;
+        float q33 = 1 - xx2 - yy2;
 
-        float4x4 result;
+        return float4x4
+        (
+            // First row
+            value.m11 * q11 + value.m12 * q21 + value.m13 * q31,
+            value.m11 * q12 + value.m12 * q22 + value.m13 * q32,
+            value.m11 * q13 + value.m12 * q23 + value.m13 * q33,
+            value.m14,
 
-        // First row
-        result.m11 = value.m11 * q11 + value.m12 * q21 + value.m13 * q31;
-        result.m12 = value.m11 * q12 + value.m12 * q22 + value.m13 * q32;
-        result.m13 = value.m11 * q13 + value.m12 * q23 + value.m13 * q33;
-        result.m14 = value.m14;
+            // Second row
+            value.m21 * q11 + value.m22 * q21 + value.m23 * q31,
+            value.m21 * q12 + value.m22 * q22 + value.m23 * q32,
+            value.m21 * q13 + value.m22 * q23 + value.m23 * q33,
+            value.m24,
 
-        // Second row
-        result.m21 = value.m21 * q11 + value.m22 * q21 + value.m23 * q31;
-        result.m22 = value.m21 * q12 + value.m22 * q22 + value.m23 * q32;
-        result.m23 = value.m21 * q13 + value.m22 * q23 + value.m23 * q33;
-        result.m24 = value.m24;
+            // Third row
+            value.m31 * q11 + value.m32 * q21 + value.m33 * q31,
+            value.m31 * q12 + value.m32 * q22 + value.m33 * q32,
+            value.m31 * q13 + value.m32 * q23 + value.m33 * q33,
+            value.m34,
 
-        // Third row
-        result.m31 = value.m31 * q11 + value.m32 * q21 + value.m33 * q31;
-        result.m32 = value.m31 * q12 + value.m32 * q22 + value.m33 * q32;
-        result.m33 = value.m31 * q13 + value.m32 * q23 + value.m33 * q33;
-        result.m34 = value.m34;
-
-        // Fourth row
-        result.m41 = value.m41 * q11 + value.m42 * q21 + value.m43 * q31;
-        result.m42 = value.m41 * q12 + value.m42 * q22 + value.m43 * q32;
-        result.m43 = value.m41 * q13 + value.m42 * q23 + value.m43 * q33;
-        result.m44 = value.m44;
-
-        return result;
+            // Fourth row
+            value.m41 * q11 + value.m42 * q21 + value.m43 * q31,
+            value.m41 * q12 + value.m42 * q22 + value.m43 * q32,
+            value.m41 * q13 + value.m42 * q23 + value.m43 * q33,
+            value.m44
+        );
     }
 
 
     inline float4x4 transpose(float4x4 const& matrix)
     {
-        float4x4 result;
-
-        result.m11 = matrix.m11; result.m12 = matrix.m21; result.m13 = matrix.m31; result.m14 = matrix.m41;
-        result.m21 = matrix.m12; result.m22 = matrix.m22; result.m23 = matrix.m32; result.m24 = matrix.m42;
-        result.m31 = matrix.m13; result.m32 = matrix.m23; result.m33 = matrix.m33; result.m34 = matrix.m43;
-        result.m41 = matrix.m14; result.m42 = matrix.m24; result.m43 = matrix.m34; result.m44 = matrix.m44;
-
-        return result;
+        return float4x4(matrix.m11, matrix.m21, matrix.m31, matrix.m41,
+                        matrix.m12, matrix.m22, matrix.m32, matrix.m42,
+                        matrix.m13, matrix.m23, matrix.m33, matrix.m43,
+                        matrix.m14, matrix.m24, matrix.m34, matrix.m44);
     }
 
 
     inline float4x4 lerp(float4x4 const& matrix1, float4x4 const& matrix2, float amount)
     {
-        float4x4 result;
-        
-        // First row
-        result.m11 = matrix1.m11 + (matrix2.m11 - matrix1.m11) * amount;
-        result.m12 = matrix1.m12 + (matrix2.m12 - matrix1.m12) * amount;
-        result.m13 = matrix1.m13 + (matrix2.m13 - matrix1.m13) * amount;
-        result.m14 = matrix1.m14 + (matrix2.m14 - matrix1.m14) * amount;
-        
-        // Second row
-        result.m21 = matrix1.m21 + (matrix2.m21 - matrix1.m21) * amount;
-        result.m22 = matrix1.m22 + (matrix2.m22 - matrix1.m22) * amount;
-        result.m23 = matrix1.m23 + (matrix2.m23 - matrix1.m23) * amount;
-        result.m24 = matrix1.m24 + (matrix2.m24 - matrix1.m24) * amount;
-        
-        // Third row
-        result.m31 = matrix1.m31 + (matrix2.m31 - matrix1.m31) * amount;
-        result.m32 = matrix1.m32 + (matrix2.m32 - matrix1.m32) * amount;
-        result.m33 = matrix1.m33 + (matrix2.m33 - matrix1.m33) * amount;
-        result.m34 = matrix1.m34 + (matrix2.m34 - matrix1.m34) * amount;
-        
-        // Fourth row
-        result.m41 = matrix1.m41 + (matrix2.m41 - matrix1.m41) * amount;
-        result.m42 = matrix1.m42 + (matrix2.m42 - matrix1.m42) * amount;
-        result.m43 = matrix1.m43 + (matrix2.m43 - matrix1.m43) * amount;
-        result.m44 = matrix1.m44 + (matrix2.m44 - matrix1.m44) * amount;
-
-        return result;
+        return matrix1 + (matrix2 - matrix1) * amount;
     }
 
 
@@ -3287,33 +2383,13 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline plane make_plane_from_vertices(float3 const& point1, float3 const& point2, float3 const& point3)
     {
-        plane result;
+        float3 a = point2 - point1;
+        float3 b = point3 - point1;
 
-        float ax = point2.x - point1.x;
-        float ay = point2.y - point1.y;
-        float az = point2.z - point1.z;
+        float3 normal = normalize(cross(a, b));
+        float d = -dot(normal, point1);
 
-        float bx = point3.x - point1.x;
-        float by = point3.y - point1.y;
-        float bz = point3.z - point1.z;
-
-        // N=Cross(a,b)
-        float nx = ay * bz - az * by;
-        float ny = az * bx - ax * bz;
-        float nz = ax * by - ay * bx;
-
-        // Normalize(N)
-        float ls = nx * nx + ny * ny + nz * nz;
-        float invNorm = 1.0f / sqrtf(ls);
-
-        result.normal.x = nx * invNorm;
-        result.normal.y = ny * invNorm;
-        result.normal.z = nz * invNorm;
-
-        // D = - Dot(N, point1)
-        result.d = -(result.normal.x * point1.x + result.normal.y * point1.y + result.normal.z * point1.z);
-
-        return result;
+        return plane(normal, d);
     }
 
 
@@ -3337,88 +2413,35 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline plane normalize(plane const& value)
     {
-        plane result;
-
-        float f = value.normal.x * value.normal.x + value.normal.y * value.normal.y + value.normal.z * value.normal.z;
+        float f = length_squared(value.normal);
 
         if (fabs(f - 1.0f) < FLT_EPSILON)
         {
-            result.normal = value.normal;
-            result.d = value.d;
-            return result;
+            return value;
         }
 
         float fInv = 1.0f / sqrtf(f);
 
-        result.normal.x = value.normal.x * fInv;
-        result.normal.y = value.normal.y * fInv;
-        result.normal.z = value.normal.z * fInv;
-
-        result.d = value.d * fInv;
-
-        return result;
+        return plane(value.normal * fInv, value.d * fInv);
     }
 
 
     inline plane transform(plane const& plane, float4x4 const& matrix)
     {
-        float4x4 m;
-        invert(matrix, &m);
+        float4 planeAsVector(plane.normal, plane.d);
 
-        Numerics::plane result;
+        float4x4 inverseMatrix;
+        invert(matrix, &inverseMatrix);
 
-        float x = plane.normal.x, y = plane.normal.y, z = plane.normal.z, w = plane.d;
-
-        result.normal.x = x * m.m11 + y * m.m12 + z * m.m13 + w * m.m14;
-        result.normal.y = x * m.m21 + y * m.m22 + z * m.m23 + w * m.m24;
-        result.normal.z = x * m.m31 + y * m.m32 + z * m.m33 + w * m.m34;
-
-        result.d = x * m.m41 + y * m.m42 + z * m.m43 + w * m.m44;
-
-        return result;
+        return Numerics::plane(transform(planeAsVector, transpose(inverseMatrix)));
     }
 
 
     inline plane transform(plane const& plane, quaternion const& rotation)
     {
-        // Compute rotation matrix.
-        float x2 = rotation.x + rotation.x;
-        float y2 = rotation.y + rotation.y;
-        float z2 = rotation.z + rotation.z;
+        float4 planeAsVector(plane.normal, plane.d);
 
-        float wx2 = rotation.w * x2;
-        float wy2 = rotation.w * y2;
-        float wz2 = rotation.w * z2;
-        float xx2 = rotation.x * x2;
-        float xy2 = rotation.x * y2;
-        float xz2 = rotation.x * z2;
-        float yy2 = rotation.y * y2;
-        float yz2 = rotation.y * z2;
-        float zz2 = rotation.z * z2;
-
-        float m11 = 1.0f - yy2 - zz2;
-        float m21 = xy2 - wz2;
-        float m31 = xz2 + wy2;
-
-        float m12 = xy2 + wz2;
-        float m22 = 1.0f - xx2 - zz2;
-        float m32 = yz2 - wx2;
-
-        float m13 = xz2 - wy2;
-        float m23 = yz2 + wx2;
-        float m33 = 1.0f - xx2 - yy2;
-
-        Numerics::plane result;
-
-        float x = plane.normal.x, y = plane.normal.y, z = plane.normal.z;
-
-        result.normal.x = x * m11 + y * m21 + z * m31;
-        result.normal.y = x * m12 + y * m22 + z * m32;
-        result.normal.z = x * m13 + y * m23 + z * m33;
-
-        result.d = plane.d;
-
-        return result;
+        return Numerics::plane(transform(planeAsVector, rotation));
     }
 
 
@@ -3466,18 +2489,11 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline quaternion make_quaternion_from_axis_angle(float3 const& axis, float angle)
     {
-        quaternion ans;
-
         float halfAngle = angle * 0.5f;
         float s = sinf(halfAngle);
         float c = cosf(halfAngle);
 
-        ans.x = axis.x * s;
-        ans.y = axis.y * s;
-        ans.z = axis.z * s;
-        ans.w = c;
-
-        return ans;
+        return quaternion(axis * s, c);
     }
 
 
@@ -3496,181 +2512,110 @@ namespace Windows { namespace Foundation { namespace Numerics
         float halfYaw = yaw * 0.5f;
         sy = sinf(halfYaw); cy = cosf(halfYaw);
 
-        quaternion result;
-        
-        result.x = cy * sp * cr + sy * cp * sr;
-        result.y = sy * cp * cr - cy * sp * sr;
-        result.z = cy * cp * sr - sy * sp * cr;
-        result.w = cy * cp * cr + sy * sp * sr;
-
-        return result;
+        return quaternion(cy * sp * cr + sy * cp * sr,
+                          sy * cp * cr - cy * sp * sr,
+                          cy * cp * sr - sy * sp * cr,
+                          cy * cp * cr + sy * sp * sr);
     }
 
 
     inline quaternion make_quaternion_from_rotation_matrix(float4x4 const& matrix)
     {
-        float trace = matrix.m11 + matrix.m22 + matrix.m33;
-        
-        quaternion q;
-        
-        if (trace > 0.0f)
+        if (matrix.m11 + matrix.m22 + matrix.m33 > 0.0f)
         {
-            float s = sqrtf(trace + 1.0f);
-            q.w = s * 0.5f;
-            s = 0.5f / s;
-            q.x = (matrix.m23 - matrix.m32) * s;
-            q.y = (matrix.m31 - matrix.m13) * s;
-            q.z = (matrix.m12 - matrix.m21) * s;
+            float s = sqrtf(1.0f + matrix.m11 + matrix.m22 + matrix.m33);
+            float invS = 0.5f / s;
+
+            return quaternion((matrix.m23 - matrix.m32) * invS,
+                              (matrix.m31 - matrix.m13) * invS,
+                              (matrix.m12 - matrix.m21) * invS,
+                              s * 0.5f);
+        }
+        else if (matrix.m11 >= matrix.m22 && matrix.m11 >= matrix.m33)
+        {
+            float s = sqrtf(1.0f + matrix.m11 - matrix.m22 - matrix.m33);
+            float invS = 0.5f / s;
+
+            return quaternion(0.5f * s,
+                              (matrix.m12 + matrix.m21) * invS,
+                              (matrix.m13 + matrix.m31) * invS,
+                              (matrix.m23 - matrix.m32) * invS);
+        }
+        else if (matrix.m22 > matrix.m33)
+        {
+            float s = sqrtf(1.0f + matrix.m22 - matrix.m11 - matrix.m33);
+            float invS = 0.5f / s;
+
+            return quaternion((matrix.m21 + matrix.m12) * invS,
+                              0.5f * s,
+                              (matrix.m32 + matrix.m23) * invS,
+                              (matrix.m31 - matrix.m13) * invS);
         }
         else
         {
-            if (matrix.m11 >= matrix.m22 && matrix.m11 >= matrix.m33)
-            {
-                float s = sqrtf(1.0f + matrix.m11 - matrix.m22 - matrix.m33);
-                float invS = 0.5f / s;
-                q.x = 0.5f * s;
-                q.y = (matrix.m12 + matrix.m21) * invS;
-                q.z = (matrix.m13 + matrix.m31) * invS;
-                q.w = (matrix.m23 - matrix.m32) * invS;
-            }
-            else if (matrix.m22 > matrix.m33)
-            {
-                float s = sqrtf(1.0f + matrix.m22 - matrix.m11 - matrix.m33);
-                float invS = 0.5f / s;
-                q.x = (matrix.m21 + matrix.m12) * invS;
-                q.y = 0.5f * s;
-                q.z = (matrix.m32 + matrix.m23) * invS;
-                q.w = (matrix.m31 - matrix.m13) * invS;
-            }
-            else
-            {
-                float s = sqrtf(1.0f + matrix.m33 - matrix.m11 - matrix.m22);
-                float invS = 0.5f / s;
-                q.x = (matrix.m31 + matrix.m13) * invS;
-                q.y = (matrix.m32 + matrix.m23) * invS;
-                q.z = 0.5f * s;
-                q.w = (matrix.m12 - matrix.m21) * invS;
-            }
-        }
+            float s = sqrtf(1.0f + matrix.m33 - matrix.m11 - matrix.m22);
+            float invS = 0.5f / s;
 
-        return q;
+            return quaternion((matrix.m31 + matrix.m13) * invS,
+                              (matrix.m32 + matrix.m23) * invS,
+                              0.5f * s,
+                              (matrix.m12 - matrix.m21) * invS);
+        }
     }
 
 
     inline quaternion operator +(quaternion const& value1, quaternion const& value2)
     {
-        quaternion ans;
-
-        ans.x = value1.x + value2.x;
-        ans.y = value1.y + value2.y;
-        ans.z = value1.z + value2.z;
-        ans.w = value1.w + value2.w;
-
-        return ans;
+        return quaternion(value1.x + value2.x,
+                          value1.y + value2.y,
+                          value1.z + value2.z,
+                          value1.w + value2.w);
     }
 
 
     inline quaternion operator -(quaternion const& value1, quaternion const& value2)
     {
-        quaternion ans;
-
-        ans.x = value1.x - value2.x;
-        ans.y = value1.y - value2.y;
-        ans.z = value1.z - value2.z;
-        ans.w = value1.w - value2.w;
-
-        return ans;
+        return quaternion(value1.x - value2.x,
+                          value1.y - value2.y,
+                          value1.z - value2.z,
+                          value1.w - value2.w);
     }
 
 
     inline quaternion operator *(quaternion const& value1, quaternion const& value2)
     {
-        quaternion ans;
+        float3 q1(value1.x, value1.y, value1.z);
+        float3 q2(value2.x, value2.y, value2.z);
 
-        float q1x = value1.x;
-        float q1y = value1.y;
-        float q1z = value1.z;
-        float q1w = value1.w;
+        float3 c = cross(q1, q2);
+        float d = dot(q1, q2);
 
-        float q2x = value2.x;
-        float q2y = value2.y;
-        float q2z = value2.z;
-        float q2w = value2.w;
-
-        // cross(av, bv)
-        float cx = q1y * q2z - q1z * q2y;
-        float cy = q1z * q2x - q1x * q2z;
-        float cz = q1x * q2y - q1y * q2x;
-
-        float dot = q1x * q2x + q1y * q2y + q1z * q2z;
-
-        ans.x = q1x * q2w + q2x * q1w + cx;
-        ans.y = q1y * q2w + q2y * q1w + cy;
-        ans.z = q1z * q2w + q2z * q1w + cz;
-        ans.w = q1w * q2w - dot;
-
-        return ans;
+        return quaternion(q1 * value2.w + q2 * value1.w + c,
+                          value1.w * value2.w - d);
     }
 
 
     inline quaternion operator *(quaternion const& value1, float value2)
     {
-        quaternion ans;
-
-        ans.x = value1.x * value2;
-        ans.y = value1.y * value2;
-        ans.z = value1.z * value2;
-        ans.w = value1.w * value2;
-
-        return ans;
+        return quaternion(value1.x * value2,
+                          value1.y * value2,
+                          value1.z * value2,
+                          value1.w * value2);
     }
 
 
     inline quaternion operator /(quaternion const& value1, quaternion const& value2)
     {
-        quaternion ans;
-
-        float q1x = value1.x;
-        float q1y = value1.y;
-        float q1z = value1.z;
-        float q1w = value1.w;
-
-        // Inverse part.
-        float ls = value2.x * value2.x + value2.y * value2.y +
-                   value2.z * value2.z + value2.w * value2.w;
-        float invNorm = 1.0f / ls;
-
-        float q2x = -value2.x * invNorm;
-        float q2y = -value2.y * invNorm;
-        float q2z = -value2.z * invNorm;
-        float q2w = value2.w * invNorm;
-
-        // Multiply part.
-        float cx = q1y * q2z - q1z * q2y;
-        float cy = q1z * q2x - q1x * q2z;
-        float cz = q1x * q2y - q1y * q2x;
-
-        float dot = q1x * q2x + q1y * q2y + q1z * q2z;
-
-        ans.x = q1x * q2w + q2x * q1w + cx;
-        ans.y = q1y * q2w + q2y * q1w + cy;
-        ans.z = q1z * q2w + q2z * q1w + cz;
-        ans.w = q1w * q2w - dot;
-
-        return ans;
+        return value1 * inverse(value2);
     }
 
 
     inline quaternion operator -(quaternion const& value)
     {
-        quaternion ans;
-
-        ans.x = -value.x;
-        ans.y = -value.y;
-        ans.z = -value.z;
-        ans.w = -value.w;
-
-        return ans;
+        return quaternion(-value.x,
+                          -value.y,
+                          -value.z,
+                          -value.w);
     }
 
 
@@ -3743,15 +2688,13 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float length(quaternion const& value)
     {
-        float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-
-        return sqrtf(ls);
+        return sqrtf(length_squared(value));
     }
 
 
     inline float length_squared(quaternion const& value)
     {
-        return value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
+        return dot(value, value);
     }
 
 
@@ -3766,51 +2709,22 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline quaternion normalize(quaternion const& value)
     {
-        quaternion ans;
-
-        float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-        
-        float invNorm = 1.0f / sqrtf(ls);
-
-        ans.x = value.x * invNorm;
-        ans.y = value.y * invNorm;
-        ans.z = value.z * invNorm;
-        ans.w = value.w * invNorm;
-
-        return ans;
+        return value * (1.0f / length(value));
     }
 
 
     inline quaternion conjugate(quaternion const& value)
     {
-        quaternion ans;
-        
-        ans.x = -value.x;
-        ans.y = -value.y;
-        ans.z = -value.z;
-        ans.w = value.w;
-
-        return ans;
+        return quaternion(-value.x,
+                          -value.y,
+                          -value.z,
+                           value.w);
     }
 
 
     inline quaternion inverse(quaternion const& value)
     {
-        //  -1   (       a              -v       )
-        // q   = ( -------------   ------------- )
-        //       (  a^2 + |v|^2  ,  a^2 + |v|^2  )
-
-        quaternion ans;
-        
-        float ls = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
-        float invNorm = 1.0f / ls;
-
-        ans.x = -value.x * invNorm;
-        ans.y = -value.y * invNorm;
-        ans.z = -value.z * invNorm;
-        ans.w = value.w * invNorm;
-
-        return ans;
+        return conjugate(value * (1.0f / length_squared(value)));
     }
 
 
@@ -3819,10 +2733,7 @@ namespace Windows { namespace Foundation { namespace Numerics
         const float epsilon = 1e-6f;
 
         float t = amount;
-        
-        float cosOmega = quaternion1.x * quaternion2.x + quaternion1.y * quaternion2.y +
-                         quaternion1.z * quaternion2.z + quaternion1.w * quaternion2.w;
-
+        float cosOmega = dot(quaternion1, quaternion2);
         bool flip = false;
         
         if (cosOmega < 0.0f)
@@ -3837,7 +2748,7 @@ namespace Windows { namespace Foundation { namespace Numerics
         {
             // Too close, do straight linear interpolation.
             s1 = 1.0f - t;
-            s2 = (flip) ? -t : t;
+            s2 = flip ? -t : t;
         }
         else
         {
@@ -3845,91 +2756,42 @@ namespace Windows { namespace Foundation { namespace Numerics
             float invSinOmega = 1.0f / sinf(omega);
 
             s1 = sinf((1.0f - t) * omega) * invSinOmega;
-            s2 = (flip)
-                ? -sinf(t * omega) * invSinOmega
-                : sinf(t * omega) * invSinOmega;
+            s2 = flip ? -sinf(t * omega) * invSinOmega
+                      :  sinf(t * omega) * invSinOmega;
         }
 
-        quaternion ans;
-
-        ans.x = s1 * quaternion1.x + s2 * quaternion2.x;
-        ans.y = s1 * quaternion1.y + s2 * quaternion2.y;
-        ans.z = s1 * quaternion1.z + s2 * quaternion2.z;
-        ans.w = s1 * quaternion1.w + s2 * quaternion2.w;
-
-        return ans;
+        return quaternion(s1 * quaternion1.x + s2 * quaternion2.x,
+                          s1 * quaternion1.y + s2 * quaternion2.y,
+                          s1 * quaternion1.z + s2 * quaternion2.z,
+                          s1 * quaternion1.w + s2 * quaternion2.w);
     }
 
 
     inline quaternion lerp(quaternion const& quaternion1, quaternion const& quaternion2, float amount)
     {
-        float t = amount;
-        float t1 = 1.0f - t;
+        float t2 = amount;
+        float t1 = 1.0f - amount;
 
-        quaternion r;
-
-        float dot = quaternion1.x * quaternion2.x + quaternion1.y * quaternion2.y +
-                    quaternion1.z * quaternion2.z + quaternion1.w * quaternion2.w;
-
-        if (dot >= 0.0f)
+        if (dot(quaternion1, quaternion2) < 0.0f)
         {
-            r.x = t1 * quaternion1.x + t * quaternion2.x;
-            r.y = t1 * quaternion1.y + t * quaternion2.y;
-            r.z = t1 * quaternion1.z + t * quaternion2.z;
-            r.w = t1 * quaternion1.w + t * quaternion2.w;
-        }
-        else
-        {
-            r.x = t1 * quaternion1.x - t * quaternion2.x;
-            r.y = t1 * quaternion1.y - t * quaternion2.y;
-            r.z = t1 * quaternion1.z - t * quaternion2.z;
-            r.w = t1 * quaternion1.w - t * quaternion2.w;
+            t2 = -t2;
         }
 
-        // Normalize it.
-        float ls = r.x * r.x + r.y * r.y + r.z * r.z + r.w * r.w;
-        float invNorm = 1.0f / sqrtf(ls);
-
-        r.x *= invNorm;
-        r.y *= invNorm;
-        r.z *= invNorm;
-        r.w *= invNorm;
-
-        return r;
+        return normalize(quaternion(t1 * quaternion1.x + t2 * quaternion2.x,
+                                    t1 * quaternion1.y + t2 * quaternion2.y,
+                                    t1 * quaternion1.z + t2 * quaternion2.z,
+                                    t1 * quaternion1.w + t2 * quaternion2.w));
     }
 
 
     inline quaternion concatenate(quaternion const& value1, quaternion const& value2)
     {
-        quaternion ans;
-
-        // Concatenate rotation is actually q2 * q1 instead of q1 * q2.
-        // So that's why value2 goes q1 and value1 goes q2.
-        float q1x = value2.x;
-        float q1y = value2.y;
-        float q1z = value2.z;
-        float q1w = value2.w;
-
-        float q2x = value1.x;
-        float q2y = value1.y;
-        float q2z = value1.z;
-        float q2w = value1.w;
-
-        // cross(av, bv)
-        float cx = q1y * q2z - q1z * q2y;
-        float cy = q1z * q2x - q1x * q2z;
-        float cz = q1x * q2y - q1y * q2x;
-
-        float dot = q1x * q2x + q1y * q2y + q1z * q2z;
-
-        ans.x = q1x * q2w + q2x * q1w + cx;
-        ans.y = q1y * q2w + q2y * q1w + cy;
-        ans.z = q1z * q2w + q2z * q1w + cz;
-        ans.w = q1w * q2w - dot;
-
-        return ans;
+        return value2 * value1;
     }
 }}}
 
+
+#undef _WINDOWS_NUMERICS_THROW_
+#undef _WINDOWS_NUMERICS_NAN_
 
 #pragma warning(pop)
