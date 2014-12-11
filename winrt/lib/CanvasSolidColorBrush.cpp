@@ -166,7 +166,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ResourceWrapper::Close();
     }
 
-    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext)
+    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush(ID2D1DeviceContext*)
     {
         return GetResource();
     }

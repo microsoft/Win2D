@@ -12,8 +12,6 @@
 
 #pragma once
 
-#pragma warning(disable: 4100)  // "unreferenced formal parameter"
-
 #include <sdkddkver.h>
 
 #ifndef WIN32_LEAN_AND_MEAN

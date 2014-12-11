@@ -492,7 +492,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-    HRESULT CanvasControl::OnApplicationSuspending(IInspectable* sender, ISuspendingEventArgs* args)
+    HRESULT CanvasControl::OnApplicationSuspending(IInspectable*, ISuspendingEventArgs*)
     {
         return ExceptionBoundary(
             [&]
@@ -506,7 +506,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    HRESULT CanvasControl::OnLoaded(IInspectable* sender, IRoutedEventArgs* args)
+    HRESULT CanvasControl::OnLoaded(IInspectable*, IRoutedEventArgs*)
     {
         return ExceptionBoundary(
             [&]
@@ -516,7 +516,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    HRESULT CanvasControl::OnSizeChanged(IInspectable* sender, ISizeChangedEventArgs* args)
+    HRESULT CanvasControl::OnSizeChanged(IInspectable*, ISizeChangedEventArgs* args)
     {
         return ExceptionBoundary(
             [&]
@@ -764,6 +764,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Size availableSize, 
         Size* returnValue)
     {
+        UNREFERENCED_PARAMETER(availableSize);
+
         return ExceptionBoundary(
             [&]
             {

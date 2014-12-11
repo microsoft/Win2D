@@ -444,7 +444,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_currentOperationIsPending = true;
         }
 
-        HRESULT OnAsynchronousCreateResourcesCompleted(IAsyncAction*, AsyncStatus status)
+        HRESULT OnAsynchronousCreateResourcesCompleted(IAsyncAction*, AsyncStatus)
         {
             return ExceptionBoundary(
                 [&]
