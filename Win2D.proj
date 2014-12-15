@@ -72,6 +72,9 @@
     <WindowsProject Include="numerics\DotNet\tests\Windows\DotNetNumericsTests.Windows.csproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
+    <WindowsProject Include="numerics\Cpp\perftest\CppNumericsPerfTest.vcxproj">
+      <Platforms>Win32;x64</Platforms>
+    </WindowsProject>
   </ItemGroup>
 
   <!-- Windows Phone test projects -->
