@@ -255,8 +255,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float2 operator *(float value1, float2 const& value2)
     {
-        return float2(value1 * value2.x,
-                      value1 * value2.y);
+        return value2 * value1;
     }
 
 
@@ -356,7 +355,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float distance(float2 const& value1, float2 const& value2)
     {
-        return sqrtf(distance_squared(value1, value2));
+        return length(value1 - value2);
     }
 
 
@@ -375,7 +374,16 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float2 normalize(float2 const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return value / length(value);
+#else
+        using namespace ::DirectX;
+
+        float2 result;
+        XMVECTOR v = XMLoadFloat2(&value);
+        XMStoreFloat2(&result, XMVectorDivide(v, XMVector2Length(v)));
+        return result;
+#endif
     }
 
 
@@ -399,17 +407,9 @@ namespace Windows { namespace Foundation { namespace Numerics
     }
 
 
-    inline float2 clamp(float2 const& value1, float2 const& min, float2 const& max)
+    inline float2 clamp(float2 const& value1, float2 const& minValue, float2 const& maxValue)
     {
-        float x = value1.x;
-        x = (x > max.x) ? max.x : x;
-        x = (x < min.x) ? min.x : x;
-
-        float y = value1.y;
-        y = (y > max.y) ? max.y : y;
-        y = (y < min.y) ? min.y : y;
-
-        return float2(x, y);
+        return (max)((min)(value1, maxValue), minValue);
     }
 
 
@@ -543,9 +543,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float3 operator *(float value1, float3 const& value2)
     {
-        return float3(value1 * value2.x,
-                      value1 * value2.y,
-                      value1 * value2.z);
+        return value2 * value1;
     }
 
 
@@ -649,7 +647,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float distance(float3 const& value1, float3 const& value2)
     {
-        return sqrtf(distance_squared(value1, value2));
+        return length(value1 - value2);
     }
 
 
@@ -669,7 +667,16 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float3 normalize(float3 const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return value / length(value);
+#else
+        using namespace ::DirectX;
+
+        float3 result;
+        XMVECTOR v = XMLoadFloat3(&value);
+        XMStoreFloat3(&result, XMVectorDivide(v, XMVector3Length(v)));
+        return result;
+#endif
     }
 
 
@@ -703,21 +710,9 @@ namespace Windows { namespace Foundation { namespace Numerics
     }
 
 
-    inline float3 clamp(float3 const& value1, float3 const& min, float3 const& max)
+    inline float3 clamp(float3 const& value1, float3 const& minValue, float3 const& maxValue)
     {
-        float x = value1.x;
-        x = (x > max.x) ? max.x : x;
-        x = (x < min.x) ? min.x : x;
-
-        float y = value1.y;
-        y = (y > max.y) ? max.y : y;
-        y = (y < min.y) ? min.y : y;
-
-        float z = value1.z;
-        z = (z > max.z) ? max.z : z;
-        z = (z < min.z) ? min.z : z;
-
-        return float3(x, y, z);
+        return (max)((min)(value1, maxValue), minValue);
     }
 
 
@@ -823,55 +818,92 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4 operator +(float4 const& value1, float4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4(value1.x + value2.x,
                       value1.y + value2.y,
                       value1.z + value2.z,
                       value1.w + value2.w);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorAdd(XMLoadFloat4(&value1), XMLoadFloat4(&value2)));
+        return result;
+#endif
     }
 
 
     inline float4 operator -(float4 const& value1, float4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4(value1.x - value2.x,
                       value1.y - value2.y,
                       value1.z - value2.z,
                       value1.w - value2.w);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorSubtract(XMLoadFloat4(&value1), XMLoadFloat4(&value2)));
+        return result;
+#endif
     }
 
 
     inline float4 operator *(float4 const& value1, float4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4(value1.x * value2.x,
                       value1.y * value2.y,
                       value1.z * value2.z,
                       value1.w * value2.w);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorMultiply(XMLoadFloat4(&value1), XMLoadFloat4(&value2)));
+        return result;
+#endif
     }
 
 
     inline float4 operator *(float4 const& value1, float value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4(value1.x * value2,
                       value1.y * value2,
                       value1.z * value2,
                       value1.w * value2);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorScale(XMLoadFloat4(&value1), value2));
+        return result;
+#endif
     }
 
 
     inline float4 operator *(float value1, float4 const& value2)
     {
-        return float4(value1 * value2.x,
-                      value1 * value2.y,
-                      value1 * value2.z,
-                      value1 * value2.w);
+        return value2 * value1;
     }
 
 
     inline float4 operator /(float4 const& value1, float4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4(value1.x / value2.x,
                       value1.y / value2.y,
                       value1.z / value2.z,
                       value1.w / value2.w);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorDivide(XMLoadFloat4(&value1), XMLoadFloat4(&value2)));
+        return result;
+#endif
     }
 
 
@@ -883,10 +915,18 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4 operator -(float4 const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4(-value.x,
                       -value.y,
                       -value.z,
                       -value.w);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorNegate(XMLoadFloat4(&value)));
+        return result;
+#endif
     }
 
 
@@ -970,7 +1010,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float distance(float4 const& value1, float4 const& value2)
     {
-        return sqrtf(distance_squared(value1, value2));
+        return length(value1 - value2);
     }
 
 
@@ -991,47 +1031,56 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4 normalize(float4 const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return value / length(value);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMVECTOR v = XMLoadFloat4(&value);
+        XMStoreFloat4(&result, XMVectorDivide(v, XMVector4Length(v)));
+        return result;
+#endif
     }
 
 
     inline float4 (min)(float4 const& value1, float4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4((value1.x < value2.x) ? value1.x : value2.x,
                       (value1.y < value2.y) ? value1.y : value2.y,
                       (value1.z < value2.z) ? value1.z : value2.z,
                       (value1.w < value2.w) ? value1.w : value2.w);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorMin(XMLoadFloat4(&value1), XMLoadFloat4(&value2)));
+        return result;
+#endif
     }
 
 
     inline float4 (max)(float4 const& value1, float4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4((value1.x > value2.x) ? value1.x : value2.x,
                       (value1.y > value2.y) ? value1.y : value2.y,
                       (value1.z > value2.z) ? value1.z : value2.z,
                       (value1.w > value2.w) ? value1.w : value2.w);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVectorMax(XMLoadFloat4(&value1), XMLoadFloat4(&value2)));
+        return result;
+#endif
     }
 
 
-    inline float4 clamp(float4 const& value1, float4 const& min, float4 const& max)
+    inline float4 clamp(float4 const& value1, float4 const& minValue, float4 const& maxValue)
     {
-        float x = value1.x;
-        x = (x > max.x) ? max.x : x;
-        x = (x < min.x) ? min.x : x;
-
-        float y = value1.y;
-        y = (y > max.y) ? max.y : y;
-        y = (y < min.y) ? min.y : y;
-
-        float z = value1.z;
-        z = (z > max.z) ? max.z : z;
-        z = (z < min.z) ? min.z : z;
-
-        float w = value1.w;
-        w = (w > max.w) ? max.w : w;
-        w = (w < min.w) ? min.w : w;
-
-        return float4(x, y, z, w);
+        return (max)((min)(value1, maxValue), minValue);
     }
 
 
@@ -1043,10 +1092,18 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4 transform(float4 const& vector, float4x4 const& matrix)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4(vector.x * matrix.m11 + vector.y * matrix.m21 + vector.z * matrix.m31 + vector.w * matrix.m41,
                       vector.x * matrix.m12 + vector.y * matrix.m22 + vector.z * matrix.m32 + vector.w * matrix.m42,
                       vector.x * matrix.m13 + vector.y * matrix.m23 + vector.z * matrix.m33 + vector.w * matrix.m43,
                       vector.x * matrix.m14 + vector.y * matrix.m24 + vector.z * matrix.m34 + vector.w * matrix.m44);
+#else
+        using namespace ::DirectX;
+
+        float4 result;
+        XMStoreFloat4(&result, XMVector4Transform(XMLoadFloat4(&vector), XMLoadFloat4x4(&matrix)));
+        return result;
+#endif
     }
 
 
@@ -1938,24 +1995,41 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4x4 operator +(float4x4 const& value1, float4x4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4x4(value1.m11 + value2.m11,  value1.m12 + value2.m12,  value1.m13 + value2.m13,  value1.m14 + value2.m14,
                         value1.m21 + value2.m21,  value1.m22 + value2.m22,  value1.m23 + value2.m23,  value1.m24 + value2.m24,
                         value1.m31 + value2.m31,  value1.m32 + value2.m32,  value1.m33 + value2.m33,  value1.m34 + value2.m34,
                         value1.m41 + value2.m41,  value1.m42 + value2.m42,  value1.m43 + value2.m43,  value1.m44 + value2.m44);
+#else
+        using namespace ::DirectX;
+
+        float4x4 result;
+        XMStoreFloat4x4(&result, XMLoadFloat4x4(&value1) + XMLoadFloat4x4(&value2));
+        return result;
+#endif
     }
 
 
     inline float4x4 operator -(float4x4 const& value1, float4x4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4x4(value1.m11 - value2.m11,  value1.m12 - value2.m12,  value1.m13 - value2.m13,  value1.m14 - value2.m14,
                         value1.m21 - value2.m21,  value1.m22 - value2.m22,  value1.m23 - value2.m23,  value1.m24 - value2.m24,
                         value1.m31 - value2.m31,  value1.m32 - value2.m32,  value1.m33 - value2.m33,  value1.m34 - value2.m34,
                         value1.m41 - value2.m41,  value1.m42 - value2.m42,  value1.m43 - value2.m43,  value1.m44 - value2.m44);
+#else
+        using namespace ::DirectX;
+
+        float4x4 result;
+        XMStoreFloat4x4(&result, XMLoadFloat4x4(&value1) - XMLoadFloat4x4(&value2));
+        return result;
+#endif
     }
 
 
     inline float4x4 operator *(float4x4 const& value1, float4x4 const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4x4
         (
             // First row
@@ -1982,24 +2056,47 @@ namespace Windows { namespace Foundation { namespace Numerics
             value1.m41 * value2.m13 + value1.m42 * value2.m23 + value1.m43 * value2.m33 + value1.m44 * value2.m43,
             value1.m41 * value2.m14 + value1.m42 * value2.m24 + value1.m43 * value2.m34 + value1.m44 * value2.m44
         );
+#else
+        using namespace ::DirectX;
+
+        float4x4 result;
+        XMStoreFloat4x4(&result, XMMatrixMultiply(XMLoadFloat4x4(&value1), XMLoadFloat4x4(&value2)));
+        return result;
+#endif
     }
 
 
     inline float4x4 operator *(float4x4 const& value1, float value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4x4(value1.m11 * value2,  value1.m12 * value2,  value1.m13 * value2,  value1.m14 * value2,
                         value1.m21 * value2,  value1.m22 * value2,  value1.m23 * value2,  value1.m24 * value2,
                         value1.m31 * value2,  value1.m32 * value2,  value1.m33 * value2,  value1.m34 * value2,
                         value1.m41 * value2,  value1.m42 * value2,  value1.m43 * value2,  value1.m44 * value2);
+#else
+        using namespace ::DirectX;
+
+        float4x4 result;
+        XMStoreFloat4x4(&result, XMLoadFloat4x4(&value1) * value2);
+        return result;
+#endif
     }
 
 
     inline float4x4 operator -(float4x4 const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4x4(-value.m11, -value.m12, -value.m13, -value.m14,
                         -value.m21, -value.m22, -value.m23, -value.m24,
                         -value.m31, -value.m32, -value.m33, -value.m34,
                         -value.m41, -value.m42, -value.m43, -value.m44);
+#else
+        using namespace ::DirectX;
+
+        float4x4 result;
+        XMStoreFloat4x4(&result, -XMLoadFloat4x4(&value));
+        return result;
+#endif
     }
 
 
@@ -2276,7 +2373,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline bool decompose(float4x4 const& matrix, _Out_ float3* scale, _Out_ quaternion* rotation, _Out_ float3* translation)
     {
-        using namespace DirectX;
+        using namespace ::DirectX;
 
         XMVECTOR s, r, t;
 
@@ -2353,10 +2450,18 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float4x4 transpose(float4x4 const& matrix)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return float4x4(matrix.m11, matrix.m21, matrix.m31, matrix.m41,
                         matrix.m12, matrix.m22, matrix.m32, matrix.m42,
                         matrix.m13, matrix.m23, matrix.m33, matrix.m43,
                         matrix.m14, matrix.m24, matrix.m34, matrix.m44);
+#else
+        using namespace ::DirectX;
+
+        float4x4 result;
+        XMStoreFloat4x4(&result, XMMatrixTranspose(XMLoadFloat4x4(&matrix)));
+        return result;
+#endif
     }
 
 
@@ -2413,6 +2518,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline plane normalize(plane const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         float f = length_squared(value.normal);
 
         if (fabs(f - 1.0f) < FLT_EPSILON)
@@ -2423,31 +2529,46 @@ namespace Windows { namespace Foundation { namespace Numerics
         float fInv = 1.0f / sqrtf(f);
 
         return plane(value.normal * fInv, value.d * fInv);
+#else
+        using namespace ::DirectX;
+
+        plane result;
+        XMStorePlane(&result, XMPlaneNormalize(XMLoadPlane(&value)));
+        return result;
+#endif
     }
 
 
-    inline plane transform(plane const& plane, float4x4 const& matrix)
+    inline plane transform(plane const& value, float4x4 const& matrix)
     {
-        float4 planeAsVector(plane.normal, plane.d);
-
         float4x4 inverseMatrix;
         invert(matrix, &inverseMatrix);
 
-        return Numerics::plane(transform(planeAsVector, transpose(inverseMatrix)));
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
+        float4 planeAsVector(value.normal, value.d);
+
+        return plane(transform(planeAsVector, transpose(inverseMatrix)));
+#else
+        using namespace ::DirectX;
+
+        plane result;
+        XMStorePlane(&result, XMPlaneTransform(XMLoadPlane(&value), XMMatrixTranspose(XMLoadFloat4x4(&inverseMatrix))));
+        return result;
+#endif
     }
 
 
-    inline plane transform(plane const& plane, quaternion const& rotation)
+    inline plane transform(plane const& value, quaternion const& rotation)
     {
-        float4 planeAsVector(plane.normal, plane.d);
+        float4 planeAsVector(value.normal, value.d);
 
-        return Numerics::plane(transform(planeAsVector, rotation));
+        return plane(transform(planeAsVector, rotation));
     }
 
 
     inline float dot(plane const& plane, float4 const& value)
     {
-        return plane.normal.x * value.x + 
+        return plane.normal.x * value.x +
                plane.normal.y * value.y + 
                plane.normal.z * value.z + 
                plane.d * value.w;
@@ -2456,7 +2577,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float dot_coordinate(plane const& plane, float3 const& value)
     {
-        return plane.normal.x * value.x + 
+        return plane.normal.x * value.x +
                plane.normal.y * value.y + 
                plane.normal.z * value.z + 
                plane.d;
@@ -2465,7 +2586,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float dot_normal(plane const& plane, float3 const& value)
     {
-        return plane.normal.x * value.x + 
+        return plane.normal.x * value.x +
                plane.normal.y * value.y + 
                plane.normal.z * value.z;
     }
@@ -2566,24 +2687,41 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline quaternion operator +(quaternion const& value1, quaternion const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return quaternion(value1.x + value2.x,
                           value1.y + value2.y,
                           value1.z + value2.z,
                           value1.w + value2.w);
+#else
+        using namespace ::DirectX;
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMVectorAdd(XMLoadQuaternion(&value1), XMLoadQuaternion(&value2)));
+        return result;
+#endif
     }
 
 
     inline quaternion operator -(quaternion const& value1, quaternion const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return quaternion(value1.x - value2.x,
                           value1.y - value2.y,
                           value1.z - value2.z,
                           value1.w - value2.w);
+#else
+        using namespace ::DirectX;
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMVectorSubtract(XMLoadQuaternion(&value1), XMLoadQuaternion(&value2)));
+        return result;
+#endif
     }
 
 
     inline quaternion operator *(quaternion const& value1, quaternion const& value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         float3 q1(value1.x, value1.y, value1.z);
         float3 q2(value2.x, value2.y, value2.z);
 
@@ -2592,15 +2730,30 @@ namespace Windows { namespace Foundation { namespace Numerics
 
         return quaternion(q1 * value2.w + q2 * value1.w + c,
                           value1.w * value2.w - d);
+#else
+        using namespace ::DirectX;
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMQuaternionMultiply(XMLoadQuaternion(&value2), XMLoadQuaternion(&value1)));
+        return result;
+#endif
     }
 
 
     inline quaternion operator *(quaternion const& value1, float value2)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return quaternion(value1.x * value2,
                           value1.y * value2,
                           value1.z * value2,
                           value1.w * value2);
+#else
+        using namespace ::DirectX;
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMVectorScale(XMLoadQuaternion(&value1), value2));
+        return result;
+#endif
     }
 
 
@@ -2612,10 +2765,18 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline quaternion operator -(quaternion const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return quaternion(-value.x,
                           -value.y,
                           -value.z,
                           -value.w);
+#else
+        using namespace ::DirectX;
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMVectorNegate(XMLoadQuaternion(&value)));
+        return result;
+#endif
     }
 
 
@@ -2700,7 +2861,7 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline float dot(quaternion const& quaternion1, quaternion const& quaternion2)
     {
-        return quaternion1.x * quaternion2.x + 
+        return quaternion1.x * quaternion2.x +
                quaternion1.y * quaternion2.y + 
                quaternion1.z * quaternion2.z + 
                quaternion1.w * quaternion2.w;
@@ -2715,10 +2876,18 @@ namespace Windows { namespace Foundation { namespace Numerics
 
     inline quaternion conjugate(quaternion const& value)
     {
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return quaternion(-value.x,
                           -value.y,
                           -value.z,
                            value.w);
+#else
+        using namespace ::DirectX;
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMQuaternionConjugate(XMLoadQuaternion(&value)));
+        return result;
+#endif
     }
 
 
@@ -2760,10 +2929,21 @@ namespace Windows { namespace Foundation { namespace Numerics
                       :  sinf(t * omega) * invSinOmega;
         }
 
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return quaternion(s1 * quaternion1.x + s2 * quaternion2.x,
                           s1 * quaternion1.y + s2 * quaternion2.y,
                           s1 * quaternion1.z + s2 * quaternion2.z,
                           s1 * quaternion1.w + s2 * quaternion2.w);
+#else
+        using namespace ::DirectX;
+
+        XMVECTOR q1 = XMVectorScale(XMLoadQuaternion(&quaternion1), s1);
+        XMVECTOR q2 = XMVectorScale(XMLoadQuaternion(&quaternion2), s2);
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMVectorAdd(q1, q2));
+        return result;
+#endif
     }
 
 
@@ -2777,10 +2957,21 @@ namespace Windows { namespace Foundation { namespace Numerics
             t2 = -t2;
         }
 
+#ifdef WINDOWS_NUMERICS_DISABLE_SIMD
         return normalize(quaternion(t1 * quaternion1.x + t2 * quaternion2.x,
                                     t1 * quaternion1.y + t2 * quaternion2.y,
                                     t1 * quaternion1.z + t2 * quaternion2.z,
                                     t1 * quaternion1.w + t2 * quaternion2.w));
+#else
+        using namespace ::DirectX;
+
+        XMVECTOR q1 = XMVectorScale(XMLoadQuaternion(&quaternion1), t1);
+        XMVECTOR q2 = XMVectorScale(XMLoadQuaternion(&quaternion2), t2);
+
+        quaternion result;
+        XMStoreQuaternion(&result, XMQuaternionNormalize(XMVectorAdd(q1, q2)));
+        return result;
+#endif
     }
 
 
