@@ -33,6 +33,13 @@
 #endif
 
 
+// Implementing some operations via the SIMD DirectXMath API is a performance
+// win for SSE CPU architectures (x86 and x64), but not for ARM NEON.
+#if defined _M_ARM && !defined WINDOWS_NUMERICS_DISABLE_SIMD
+#define WINDOWS_NUMERICS_DISABLE_SIMD
+#endif
+
+
 namespace DirectX
 {
     inline XMVECTOR XM_CALLCONV XMLoadFloat2(_In_ Windows::Foundation::Numerics::float2 const* pSource)
