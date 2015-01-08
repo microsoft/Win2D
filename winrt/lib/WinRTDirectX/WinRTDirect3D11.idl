@@ -85,7 +85,7 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
     //
 
     [version(VERSION), 
-     uuid(A37624AB-8D5F-4650-9D3E-9EAE3D9BC670)]
+     uuid(24F4A47F-911C-4E60-AA3B-556B15CD8CE6)]
     interface IDirect3DDevice : IInspectable
         requires Windows.Foundation.IClosable
     {
@@ -104,7 +104,7 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
     //
 
     [version(VERSION),
-     uuid(0BF4A146-13C1-4694-BEE3-7ABF15EAF586)]
+     uuid(04E9D2A5-9AA1-47DA-9FFC-D481CDDAC4EE)]
     interface IDirect3DSurface : IInspectable
         requires Windows.Foundation.IClosable
     {
