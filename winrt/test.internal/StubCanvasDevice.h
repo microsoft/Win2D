@@ -29,7 +29,7 @@ namespace canvas
         StubCanvasDevice(ComPtr<ID2D1Device1> device = Make<StubD2DDevice>())
             : m_d2DDevice(device)
         {
-            GetDXGIInterfaceMethod.AllowAnyCall();
+            GetInterfaceMethod.AllowAnyCall();
             CreateDeviceContextMethod.AllowAnyCall(
                 [=]
                 {
@@ -61,9 +61,9 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p) override
+        IFACEMETHODIMP GetInterface(REFIID iid, void** p) override
         {
-            HRESULT hr = __super::GetDXGIInterface(iid, p);
+            HRESULT hr = __super::GetInterface(iid, p);
             if (SUCCEEDED(hr) && !*p)
             {
                 if (!m_d3dDevice)

@@ -74,7 +74,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IEffectInput);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DSurface);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ABI::Windows::Foundation::IClosable);
-        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDXGIInterfaceAccess);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DDxgiInterfaceAccess);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInternal);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmapInternal);
     }
@@ -99,7 +99,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Size(&size));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Bounds(&bounds));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Description(&surfaceDescription));
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetDXGIInterface(IID_PPV_ARGS(&dxgiSurface)));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetInterface(IID_PPV_ARGS(&dxgiSurface)));
 
         auto drawingSession = CreateStubDrawingSession();
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBounds(drawingSession.Get(), &bounds));

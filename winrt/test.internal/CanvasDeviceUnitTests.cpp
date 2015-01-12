@@ -191,7 +191,7 @@ public:
         Assert::AreEqual(S_OK, canvasDevice->Close());
 
         ComPtr<IDXGIDevice> dxgiDevice;
-        Assert::AreEqual(RO_E_CLOSED, canvasDevice->GetDXGIInterface(IID_PPV_ARGS(&dxgiDevice)));
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->GetInterface(IID_PPV_ARGS(&dxgiDevice)));
 
         CanvasHardwareAcceleration hardwareAccelerationActual = static_cast<CanvasHardwareAcceleration>(1);
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_HardwareAcceleration(&hardwareAccelerationActual));

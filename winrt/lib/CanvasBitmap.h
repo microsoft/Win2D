@@ -25,6 +25,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Storage;
     using namespace ABI::Windows::Storage::Streams;
     using namespace ABI::Windows::Foundation;
+    using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
 
     class CanvasBitmapManager;
 
@@ -279,7 +280,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IDirect3DSurface,
         CloakedIid<ICanvasImageInternal>,
         CloakedIid<ICanvasBitmapInternal>,
-        CloakedIid<IDXGIInterfaceAccess>,
+        CloakedIid<IDirect3DDxgiInterfaceAccess>,
         ChainInterfaces<MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ICanvasResourceWrapperNative>>>
         , public ResourceWrapper<TRAITS>
     {
@@ -449,8 +450,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return GetResource();
         }
 
-        // IDXGIInterfaceAccess
-        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p)
+        // IDirect3DDxgiInterfaceAccess
+        IFACEMETHODIMP GetInterface(REFIID iid, void** p)
         {
             return ExceptionBoundary(
                 [&]

@@ -17,6 +17,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+    using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
 
     template<typename U>
     inline ComPtr<ICanvasDevice> GetCanvasDevice(U* resourceCreator)
@@ -37,17 +38,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<typename T>
-    ComPtr<T> GetDXGIInterface(IDXGIInterfaceAccess* dxgiInterfaceAccess)
+    ComPtr<T> GetDXGIInterface(IDirect3DDxgiInterfaceAccess* dxgiInterfaceAccess)
     {
         ComPtr<T> dxgiInterface;
-        ThrowIfFailed(dxgiInterfaceAccess->GetDXGIInterface(IID_PPV_ARGS(&dxgiInterface)));
+        ThrowIfFailed(dxgiInterfaceAccess->GetInterface(IID_PPV_ARGS(&dxgiInterface)));
         return dxgiInterface;
     }
 
     template<typename T, typename U>
     ComPtr<T> GetDXGIInterface(U* obj)
     {
-        return GetDXGIInterface<T>(As<IDXGIInterfaceAccess>(obj).Get());
+        return GetDXGIInterface<T>(As<IDirect3DDxgiInterfaceAccess>(obj).Get());
     }
 
     template<typename T, typename U>

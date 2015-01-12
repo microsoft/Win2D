@@ -30,16 +30,16 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
     _In_         IDXGISurface* dgxiSurface,
     _COM_Outptr_ IInspectable** graphicsSurface);
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11 {
+namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11 {
 
-    [uuid(0A55F0AC-0BDD-4CFA-A9E7-8B2743AD33B7)]
-    class IDXGIInterfaceAccess : public IUnknown
+    [uuid(6173F6BA-35C0-46F9-A944-BD7661DA6E6E)]
+    class IDirect3DDxgiInterfaceAccess : public IUnknown
     {
     public:
-        IFACEMETHOD(GetDXGIInterface)(REFIID iid, void** p) = 0;
+        IFACEMETHOD(GetInterface)(REFIID iid, void** p) = 0;
     };
                         
-}}}}}}
+}}}}}
 
 #if defined(__cplusplus_winrt)
 
@@ -85,16 +85,16 @@ namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX 
         _COM_Outptr_ void** p)
     {
         using Microsoft::WRL::ComPtr;
-        using ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDXGIInterfaceAccess;
+        using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
 
         IInspectable* deviceInspectable = reinterpret_cast<IInspectable*>(object);
-        ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
+        ComPtr<IDirect3DDxgiInterfaceAccess> dxgiInterfaceAccess;
         
         HRESULT hr = deviceInspectable->QueryInterface(IID_PPV_ARGS(&dxgiInterfaceAccess));
 
         if (SUCCEEDED(hr))
         {
-            hr = dxgiInterfaceAccess->GetDXGIInterface(iid, p);
+            hr = dxgiInterfaceAccess->GetInterface(iid, p);
         }
 
         return hr;

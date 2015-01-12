@@ -129,7 +129,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CloakedIid<ICanvasDeviceInternal>,
         ICanvasResourceCreator,
         IDirect3DDevice,
-        CloakedIid<IDXGIInterfaceAccess>)
+        CloakedIid<IDirect3DDxgiInterfaceAccess>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
@@ -222,10 +222,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Trim)() override;
 
         //
-        // IDirect3DDeviceInternal
+        // IDirect3DDxgiInterfaceAccess
         //
 
-        IFACEMETHOD(GetDXGIInterface)(IID const&, void**) override;
+        IFACEMETHOD(GetInterface)(IID const&, void**) override;
 
     private:
         ComPtr<ID2D1Factory2> GetD2DFactory();

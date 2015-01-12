@@ -22,7 +22,7 @@ namespace canvas
         CloakedIid<ICanvasDeviceInternal>,
         ICanvasResourceCreator,
         IDirect3DDevice,
-        IDXGIInterfaceAccess>
+        IDirect3DDxgiInterfaceAccess>
     {
     public:        
         std::function<ComPtr<ID2D1Device1>()> MockGetD2DDevice;
@@ -55,7 +55,7 @@ namespace canvas
             ID2D1GradientStopCollection1* stopCollection)> MockCreateRadialGradientBrush;
 
         CALL_COUNTER_WITH_MOCK(TrimMethod, HRESULT());
-        CALL_COUNTER_WITH_MOCK(GetDXGIInterfaceMethod, HRESULT(REFIID,void**));
+        CALL_COUNTER_WITH_MOCK(GetInterfaceMethod, HRESULT(REFIID,void**));
         CALL_COUNTER_WITH_MOCK(CreateDeviceContextMethod, ComPtr<ID2D1DeviceContext1>());
         CALL_COUNTER_WITH_MOCK(CreateSwapChainMethod, ComPtr<IDXGISwapChain2>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
@@ -102,11 +102,11 @@ namespace canvas
         }
 
         //
-        // IDXGIInterfaceAccess
+        // IDirect3DDxgiInterfaceAccess
         //
-        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p) override
+        IFACEMETHODIMP GetInterface(REFIID iid, void** p) override
         {
-            return GetDXGIInterfaceMethod.WasCalled(iid, p);
+            return GetInterfaceMethod.WasCalled(iid, p);
         }
 
         //

@@ -188,11 +188,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CheckInPointer(direct3DDevice);
         CheckInPointer(d2dFactory);
 
-        ComPtr<IDXGIInterfaceAccess> dxgiInterfaceAccess;
+        ComPtr<IDirect3DDxgiInterfaceAccess> dxgiInterfaceAccess;
         ThrowIfFailed(direct3DDevice->QueryInterface(IID_PPV_ARGS(&dxgiInterfaceAccess)));
 
         ComPtr<IDXGIDevice3> dxgiDevice;
-        ThrowIfFailed(dxgiInterfaceAccess->GetDXGIInterface(IID_PPV_ARGS(&dxgiDevice)));
+        ThrowIfFailed(dxgiInterfaceAccess->GetInterface(IID_PPV_ARGS(&dxgiDevice)));
 
         ComPtr<ID2D1Device1> d2dDevice;
         ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
@@ -496,8 +496,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(format);
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
 
-        int pixelWidth = DipsToPixels(width, dpi);
-        int pixelHeight = DipsToPixels(height, dpi);
+        auto pixelWidth = static_cast<uint32_t>(DipsToPixels(width, dpi));
+        auto pixelHeight = static_cast<uint32_t>(DipsToPixels(height, dpi));
 
         ThrowIfFailed(deviceContext->CreateBitmap(
             D2D1_SIZE_U{ pixelWidth, pixelHeight },
@@ -560,7 +560,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDevice::GetDXGIInterface(REFIID iid, void** p)
+    IFACEMETHODIMP CanvasDevice::GetInterface(REFIID iid, void** p)
     {
         return ExceptionBoundary(
             [&]

@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RuntimeClassFlags<WinRtClassicComMix>,
         ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DSurface,
         ABI::Windows::Foundation::IClosable,
-        CloakedIid<IDXGIInterfaceAccess>>
+        CloakedIid<IDirect3DDxgiInterfaceAccess>>
     {
         InspectableClass(L"Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface", BaseTrust);
 
@@ -80,8 +80,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        // IDXGIInterfaceAccess
-        IFACEMETHODIMP GetDXGIInterface(REFIID iid, void** p) override
+        // IDirect3DDxgiInterfaceAccess
+        IFACEMETHODIMP GetInterface(REFIID iid, void** p) override
         {
             return ExceptionBoundary(
                 [&]
