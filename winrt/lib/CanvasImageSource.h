@@ -111,6 +111,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             _In_  float dips, 
             _Out_ int* pixels) override;
 
+        IFACEMETHOD(get_SizeInPixels)(
+            _Out_ BitmapSize* size) override;
+
+        IFACEMETHOD(get_Size)(
+            _Out_ ABI::Windows::Foundation::Size* size) override;
+
         IFACEMETHOD(get_Background)(
             _Out_ CanvasBackground* value) override;
 

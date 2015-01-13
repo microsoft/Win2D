@@ -335,6 +335,31 @@ public:
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(canvasImageSource->CreateDrawingSession(Color{}, &drawingSession));
     }
+
+    TEST_METHOD_EX(CanvasImageSource_SizeProperties)
+    {
+        const float width = 123;
+        const float height = 456;
+        const float dpi = 144;
+
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto manager = std::make_shared<CanvasDrawingSessionManager>();
+        auto resourceCreator = manager->Create(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
+        auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
+        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), width, height, dpi, CanvasBackground::Opaque, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
+
+        Size size = { 0, 0 };
+        ThrowIfFailed(canvasImageSource->get_Size(&size));
+        Assert::AreEqual(width, size.Width);
+        Assert::AreEqual(height, size.Height);
+
+        BitmapSize bitmapSize = { 0, 0 };
+        ThrowIfFailed(canvasImageSource->get_SizeInPixels(&bitmapSize));
+        Assert::AreEqual(static_cast<uint32_t>(round(width * dpi / DEFAULT_DPI)), bitmapSize.Width);
+        Assert::AreEqual(static_cast<uint32_t>(round(height * dpi / DEFAULT_DPI)), bitmapSize.Height);
+    }
 };
 
 TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)

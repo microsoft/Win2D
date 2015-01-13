@@ -105,7 +105,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasSwapChain
         IFACEMETHOD(get_Device)(ICanvasDevice** value) override;
         IFACEMETHOD(get_Size)(Size* value) override;
-        IFACEMETHOD(get_SizeInPixels)(Size* value) override;
+        IFACEMETHOD(get_SizeInPixels)(BitmapSize* value) override;
         IFACEMETHOD(get_Dpi)(float* value) override;
         IFACEMETHOD(get_Format)(DirectXPixelFormat* value) override;
         IFACEMETHOD(get_BufferCount)(int32_t* value) override;

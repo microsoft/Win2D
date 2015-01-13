@@ -287,7 +287,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     
 
     _Use_decl_annotations_
-        IFACEMETHODIMP CanvasImageSource::put_Device(
+    IFACEMETHODIMP CanvasImageSource::put_Device(
         ICanvasDevice* value) 
     {
         return ExceptionBoundary(
@@ -341,6 +341,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(pixels);
                 *pixels = DipsToPixels(dips, m_dpi);
             });
+    }
+
+
+    _Use_decl_annotations_
+    IFACEMETHODIMP CanvasImageSource::get_SizeInPixels(
+        BitmapSize* size)
+    {
+        return ExceptionBoundary(
+            [&]
+        {
+            CheckInPointer(size);
+            size->Width = DipsToPixels(m_width, m_dpi);
+            size->Height = DipsToPixels(m_height, m_dpi);
+        });
+    }
+
+
+    _Use_decl_annotations_
+    IFACEMETHODIMP CanvasImageSource::get_Size(
+        ABI::Windows::Foundation::Size* size)
+    {
+        return ExceptionBoundary(
+            [&]
+        {
+            CheckInPointer(size);
+            size->Width = m_width;
+            size->Height = m_height;
+        });
     }
 
 

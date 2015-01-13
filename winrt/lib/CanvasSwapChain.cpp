@@ -172,7 +172,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::get_SizeInPixels(Size* value)
+    IFACEMETHODIMP CanvasSwapChain::get_SizeInPixels(BitmapSize* value)
     {
         return ExceptionBoundary(
             [&]
@@ -181,8 +181,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto desc = GetResourceDescription();
 
-                *value = Size{ static_cast<float>(desc.Width), 
-                               static_cast<float>(desc.Height) };
+                *value = BitmapSize{ desc.Width, desc.Height };
             });
     }
 

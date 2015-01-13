@@ -110,7 +110,7 @@ namespace Microsoft.Graphics.Canvas
         // Returns the properties used to create this swap chain object.
         [propget] HRESULT Device([out, retval] CanvasDevice** value);
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
-        [propget] HRESULT SizeInPixels([out, retval] Windows.Foundation.Size* size);
+        [propget] HRESULT SizeInPixels([out, retval] BitmapSize* size);
         [propget] HRESULT Dpi([out, retval] float* dpi);
         [propget] HRESULT Format([out, retval] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat* value);
         [propget] HRESULT BufferCount([out, retval] INT32* value);

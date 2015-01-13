@@ -133,6 +133,15 @@ namespace Microsoft.Graphics.Canvas
         HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
 
         //
+        // Gets the size of the image source, in dips or pixels.
+        //
+        [propget]
+        HRESULT Size([out, retval] Windows.Foundation.Size* size);
+
+        [propget]
+        HRESULT SizeInPixels([out, retval] BitmapSize* size);
+
+        //
         // Gets the image source background mode.
         //
         [propget]

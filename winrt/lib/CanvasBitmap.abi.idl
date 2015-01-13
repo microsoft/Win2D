@@ -20,6 +20,16 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasDevice;
 
     //
+    // An integer based size struct, used to report SizeInPixels.
+    //
+    [version(VERSION)]
+    typedef struct BitmapSize
+    {
+        UINT32 Width;
+        UINT32 Height;
+    } BitmapSize;
+
+    //
     // Projection of the encoders described here: 
     // http://msdn.microsoft.com/en-us/library/windows/desktop/ee690311(v=vs.85).aspx
     //
@@ -46,7 +56,7 @@ namespace Microsoft.Graphics.Canvas
                  Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface
     {
         [propget]
-        HRESULT SizeInPixels([out, retval] Windows.Foundation.Size* size);
+        HRESULT SizeInPixels([out, retval] BitmapSize* size);
 
         [propget]
         HRESULT Size([out, retval] Windows.Foundation.Size* size);

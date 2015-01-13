@@ -95,7 +95,7 @@ TEST_CLASS(CanvasSwapChainTests)
 
         // Validate the initial property values.
         Assert::AreEqual(Size{ 256, 256 }, swapChain->Size);
-        Assert::AreEqual(Size{ 256, 256 }, swapChain->SizeInPixels);
+        Assert::AreEqual(BitmapSize{ 256, 256 }, swapChain->SizeInPixels);
         Assert::AreEqual(CanvasSwapChainRotation::None, swapChain->Rotation);
         Assert::AreEqual(Matrix3x2{ 1, 0, 0, 1, 0, 0 }, swapChain->TransformMatrix);
         Assert::AreEqual(Size{ 256, 256 }, swapChain->SourceSize);
@@ -115,7 +115,7 @@ TEST_CLASS(CanvasSwapChainTests)
 
         // This should preserve rotation and transform, but reset the SourceSize.
         Assert::AreEqual(Size{ 257, 257 }, swapChain->Size);
-        Assert::AreEqual(Size{ 257, 257 }, swapChain->SizeInPixels);
+        Assert::AreEqual(BitmapSize{ 257, 257 }, swapChain->SizeInPixels);
         Assert::AreEqual(CanvasSwapChainRotation::Rotate270, swapChain->Rotation);
         Assert::AreEqual(Matrix3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
         Assert::AreEqual(Size{ 257, 257 }, swapChain->SourceSize);

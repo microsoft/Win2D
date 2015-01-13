@@ -39,7 +39,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHOD(get_SizeInPixels)(Size* value) override
+        IFACEMETHOD(get_SizeInPixels)(BitmapSize* value) override
         {
             Assert::Fail(L"Unexpected call to get_SizeInPixels");
             return E_NOTIMPL;

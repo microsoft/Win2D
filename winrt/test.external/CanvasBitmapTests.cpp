@@ -59,8 +59,8 @@ public:
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
 
         auto bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, testImageFileName));
-        Assert::AreEqual((float)testImageWidth, bitmapJpeg->SizeInPixels.Width);
-        Assert::AreEqual((float)testImageHeight, bitmapJpeg->SizeInPixels.Height);
+        Assert::AreEqual((uint32_t)testImageWidth, bitmapJpeg->SizeInPixels.Width);
+        Assert::AreEqual((uint32_t)testImageHeight, bitmapJpeg->SizeInPixels.Height);
         Assert::AreEqual((float)testImageWidth, bitmapJpeg->Size.Width);
         Assert::AreEqual((float)testImageHeight, bitmapJpeg->Size.Height);
     }
@@ -123,8 +123,8 @@ public:
 
             Assert::AreEqual(4.0f, bitmap->Size.Width);
             Assert::AreEqual(4.0f, bitmap->Size.Height);
-            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Width);
-            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Height);
+            Assert::AreEqual(4u, bitmap->SizeInPixels.Width);
+            Assert::AreEqual(4u, bitmap->SizeInPixels.Height);
 
             auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
 
@@ -135,8 +135,8 @@ public:
 
             Assert::AreEqual(4.0f * 96 / highDpi, bitmap->Size.Width);
             Assert::AreEqual(4.0f * 96 / highDpi, bitmap->Size.Height);
-            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Width);
-            Assert::AreEqual(4.0f, bitmap->SizeInPixels.Height);
+            Assert::AreEqual(4u, bitmap->SizeInPixels.Width);
+            Assert::AreEqual(4u, bitmap->SizeInPixels.Height);
 
             d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
 
@@ -194,8 +194,8 @@ public:
         {
             Assert::IsNotNull(bitmaps[i]);
 
-            Assert::AreEqual(196.0f, bitmaps[i]->SizeInPixels.Width);
-            Assert::AreEqual(147.0f, bitmaps[i]->SizeInPixels.Height);
+            Assert::AreEqual(196u, bitmaps[i]->SizeInPixels.Width);
+            Assert::AreEqual(147u, bitmaps[i]->SizeInPixels.Height);
         }
     }
 
@@ -243,8 +243,8 @@ public:
                 99.0f);
             auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
             auto size = bitmap->SizeInPixels;
-            Assert::AreEqual(static_cast<float>(testCase.width), size.Width);
-            Assert::AreEqual(static_cast<float>(testCase.height), size.Height);
+            Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
+            Assert::AreEqual(static_cast<uint32_t>(testCase.height), size.Height);
             VerifyDpiAndAlpha(d2dBitmap, 99.0f, D2D1_ALPHA_MODE_STRAIGHT);
 
             bitmap = CanvasBitmap::CreateFromColors(
@@ -256,8 +256,8 @@ public:
                 25.0f);
             d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
             size = bitmap->SizeInPixels;
-            Assert::AreEqual(static_cast<float>(testCase.width), size.Width);
-            Assert::AreEqual(static_cast<float>(testCase.height), size.Height);
+            Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
+            Assert::AreEqual(static_cast<uint32_t>(testCase.height), size.Height);
             VerifyDpiAndAlpha(d2dBitmap, 25.0f, D2D1_ALPHA_MODE_IGNORE);
         }
 
@@ -303,8 +303,8 @@ public:
         auto bitmap = CanvasBitmap::CreateFromBytes(device, zeroSizedArray, 0, 0, anyFormat, anyAlphaMode);
         
         auto size = bitmap->SizeInPixels;
-        Assert::AreEqual(0.0f, size.Width);
-        Assert::AreEqual(0.0f, size.Height);
+        Assert::AreEqual(0u, size.Width);
+        Assert::AreEqual(0u, size.Height);
     }
 
     TEST_METHOD(CanvasBitmap_CreateFromColors_AcceptsZeroSizedArray)
@@ -316,8 +316,8 @@ public:
         auto bitmap = CanvasBitmap::CreateFromColors(device, zeroSizedArray, 0, 0, anyAlphaMode);
         
         auto size = bitmap->SizeInPixels;
-        Assert::AreEqual(0.0f, size.Width);
-        Assert::AreEqual(0.0f, size.Height);
+        Assert::AreEqual(0u, size.Width);
+        Assert::AreEqual(0u, size.Height);
     }
 
     TEST_METHOD(CanvasBitmap_CreateFromBytes_FailsIfArrayTooSmall)

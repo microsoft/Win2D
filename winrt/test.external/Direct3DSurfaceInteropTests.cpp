@@ -131,10 +131,10 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
         auto bitmap = CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, wrappedSurface);
 
         // Verify each resource size reflects the slice size, not the whole texture.
-        Assert::AreEqual(2.0f, renderTarget->SizeInPixels.Width);
-        Assert::AreEqual(2.0f, renderTarget->SizeInPixels.Height);
-        Assert::AreEqual(2.0f, bitmap->SizeInPixels.Width);
-        Assert::AreEqual(2.0f, bitmap->SizeInPixels.Height);
+        Assert::AreEqual(2u, renderTarget->SizeInPixels.Width);
+        Assert::AreEqual(2u, renderTarget->SizeInPixels.Height);
+        Assert::AreEqual(2u, bitmap->SizeInPixels.Width);
+        Assert::AreEqual(2u, bitmap->SizeInPixels.Height);
     }
 
     TEST_METHOD(CreateRenderTargetFromDirect3DSurface_AlphaAndDpiAreSet)

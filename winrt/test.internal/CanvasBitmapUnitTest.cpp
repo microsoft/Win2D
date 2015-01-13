@@ -84,6 +84,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Fixture f;
 
         ABI::Windows::Foundation::Size size;
+        BitmapSize bitmapSize;
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = {0};
         Direct3DSurfaceDescription surfaceDescription;
@@ -95,7 +96,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
         Assert::AreEqual(S_OK, canvasBitmap->Close());
 
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_SizeInPixels(&size));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_SizeInPixels(&bitmapSize));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Size(&size));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Bounds(&bounds));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Description(&surfaceDescription));
@@ -174,6 +175,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Fixture f;
 
         ABI::Windows::Foundation::Size size;
+        BitmapSize bitmapSize;
 
         bool isConverterCreated = false;
         f.m_adapter->MockCreateWICFormatConverter =
@@ -187,10 +189,10 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
         Assert::AreEqual(true, isConverterCreated);
 
-        HRESULT result = canvasBitmap->get_SizeInPixels(&size);
+        HRESULT result = canvasBitmap->get_SizeInPixels(&bitmapSize);
         Assert::AreEqual(S_OK, result);
-        Assert::AreEqual(f.m_testImageWidth, (int)size.Width);
-        Assert::AreEqual(f.m_testImageHeight, (int)size.Height);
+        Assert::AreEqual(f.m_testImageWidth, (int)bitmapSize.Width);
+        Assert::AreEqual(f.m_testImageHeight, (int)bitmapSize.Height);
 
         result = canvasBitmap->get_Size(&size);
         Assert::AreEqual(S_OK, result);

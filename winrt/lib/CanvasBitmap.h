@@ -305,7 +305,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ResourceWrapper::Close();
         }
 
-        IFACEMETHODIMP get_SizeInPixels(_Out_ ABI::Windows::Foundation::Size* size) override
+        IFACEMETHODIMP get_SizeInPixels(_Out_ BitmapSize* size) override
         {
             return ExceptionBoundary(
                 [&]
@@ -314,8 +314,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     
                     auto& resource = GetResource();
                     D2D1_SIZE_U d2dSize = resource->GetPixelSize();
-                    size->Height = static_cast<float>(d2dSize.height);
-                    size->Width = static_cast<float>(d2dSize.width);
+                    size->Height = d2dSize.height;
+                    size->Width = d2dSize.width;
                 });
         }
         

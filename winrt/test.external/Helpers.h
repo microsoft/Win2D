@@ -100,6 +100,17 @@ namespace Microsoft
             }
 
             template<>
+            static inline std::wstring ToString<BitmapSize>(BitmapSize const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"BitmapSize{%u,%u}", value.Width, value.Height));
+                return buf;
+            }
+
+            template<>
             static inline std::wstring ToString<Windows::Foundation::Rect>(Windows::Foundation::Rect const& value)
             {
                 wchar_t buf[256];
@@ -247,9 +258,15 @@ namespace Microsoft
             inline bool operator==(Windows::UI::Color const& a, Windows::UI::Color const& b)
             {
                 return a.A == b.A &&
-                    a.R == b.R &&
-                    a.G == b.G &&
-                    a.B == b.B;
+                       a.R == b.R &&
+                       a.G == b.G &&
+                       a.B == b.B;
+            }
+
+            inline bool operator==(BitmapSize const& a, BitmapSize const& b)
+            {
+                return a.Width == b.Width &&
+                       a.Height == b.Height;
             }
 
             inline bool operator==(Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& a, Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& b)
@@ -268,9 +285,9 @@ namespace Microsoft
             inline bool operator==(D2D1_RECT_F const& a, D2D1_RECT_F const& b)
             {
                 return a.left == b.left &&
-                    a.top == b.top &&
-                    a.right == b.right &&
-                    a.bottom == b.bottom;
+                       a.top == b.top &&
+                       a.right == b.right &&
+                       a.bottom == b.bottom;
             }
         }
     }

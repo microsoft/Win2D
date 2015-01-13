@@ -224,6 +224,7 @@ TEST_CLASS(CanvasRenderTargetTests)
         ThrowIfFailed(renderTarget.As(&renderTargetAsBitmap));
 
         Size retrievedSize;
+        BitmapSize retrievedBitmapSize;
 
         ThrowIfFailed(renderTargetAsBitmap->get_Size(&retrievedSize));
         Assert::AreEqual(expectedSize.Width, retrievedSize.Width);
@@ -231,8 +232,8 @@ TEST_CLASS(CanvasRenderTargetTests)
 
         // Bitmaps are constructed against default DPI, currently, so the pixel 
         // size and dips size should be equal.
-        ThrowIfFailed(renderTargetAsBitmap->get_SizeInPixels(&retrievedSize));
-        Assert::AreEqual(expectedSize.Width, retrievedSize.Width);
-        Assert::AreEqual(expectedSize.Height, retrievedSize.Height);
+        ThrowIfFailed(renderTargetAsBitmap->get_SizeInPixels(&retrievedBitmapSize));
+        Assert::AreEqual(static_cast<uint32_t>(expectedSize.Width), retrievedBitmapSize.Width);
+        Assert::AreEqual(static_cast<uint32_t>(expectedSize.Height), retrievedBitmapSize.Height);
     }
 };

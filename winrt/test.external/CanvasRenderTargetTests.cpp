@@ -31,8 +31,8 @@ TEST_CLASS(CanvasRenderTargetTests)
         CanvasRenderTarget^ renderTarget = ref new CanvasRenderTarget(canvasDevice, 0, 0, DEFAULT_DPI);
         Assert::AreEqual(0.0f, renderTarget->Size.Width);
         Assert::AreEqual(0.0f, renderTarget->Size.Height);
-        Assert::AreEqual(0.0f, renderTarget->SizeInPixels.Width);
-        Assert::AreEqual(0.0f, renderTarget->SizeInPixels.Height);
+        Assert::AreEqual(0u, renderTarget->SizeInPixels.Width);
+        Assert::AreEqual(0u, renderTarget->SizeInPixels.Height);
 
         CanvasDrawingSession^ drawingSession = renderTarget->CreateDrawingSession();
         drawingSession->Clear(Colors::White);

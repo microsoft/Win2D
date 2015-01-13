@@ -177,8 +177,9 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->CreateDrawingSession(Color{}, &drawingSession));
 
         Size s;
+        BitmapSize bs;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Size(&s));
-        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_SizeInPixels(&s));
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_SizeInPixels(&bs));
 
         DirectXPixelFormat pixelFormat;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Format(&pixelFormat));
@@ -257,6 +258,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         int32_t i;
         Size size;
+        BitmapSize bitmapSize;
         float dpi;
         DirectXPixelFormat pixelFormat;
         CanvasAlphaMode alphaMode;
@@ -268,9 +270,9 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         Assert::AreEqual(456.0f * DEFAULT_DPI / testDpi, size.Height);
 
         ResetForPropertyTest(swapChain);
-        ThrowIfFailed(canvasSwapChain->get_SizeInPixels(&size));
-        Assert::AreEqual(123.0f, size.Width);
-        Assert::AreEqual(456.0f, size.Height);
+        ThrowIfFailed(canvasSwapChain->get_SizeInPixels(&bitmapSize));
+        Assert::AreEqual(123u, bitmapSize.Width);
+        Assert::AreEqual(456u, bitmapSize.Height);
         
         swapChain->GetDesc1Method.SetExpectedCalls(0);
         ThrowIfFailed(canvasSwapChain->get_Dpi(&dpi));
