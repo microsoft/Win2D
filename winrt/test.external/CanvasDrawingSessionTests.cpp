@@ -38,8 +38,8 @@ TEST_CLASS(CanvasDrawingSessionTests)
     {
         ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
 
-        Numerics::Matrix3x2 someTransform = { 1, 2, 3, 4, 5, 6 };
-        Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0};
+        float3x2 someTransform = { 1, 2, 3, 4, 5, 6 };
+        float3x2 identity = { 1, 0, 0, 1, 0, 0};
 
         context->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
         context->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
@@ -52,7 +52,7 @@ TEST_CLASS(CanvasDrawingSessionTests)
         Assert::AreEqual(CanvasAntialiasing::Aliased, drawingSession->Antialiasing);
         Assert::AreEqual(CanvasBlend::Copy, drawingSession->Blend);
         Assert::AreEqual(CanvasTextAntialiasing::Aliased, drawingSession->TextAntialiasing);
-        Assert::AreEqual(someTransform, drawingSession->Transform);
+        Assert::AreEqual<float3x2>(someTransform, drawingSession->Transform);
         Assert::AreEqual(CanvasUnits::Pixels, drawingSession->Units);
 
         drawingSession->Antialiasing = CanvasAntialiasing::Antialiased;
@@ -66,7 +66,7 @@ TEST_CLASS(CanvasDrawingSessionTests)
         Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT, context->GetTextAntialiasMode());
         Assert::AreEqual(D2D1_UNIT_MODE_DIPS, context->GetUnitMode());
 
-        Numerics::Matrix3x2 verifyTransform;
+        float3x2 verifyTransform;
         context->GetTransform(reinterpret_cast<D2D1_MATRIX_3X2_F*>(&verifyTransform));
         Assert::AreEqual(identity, verifyTransform);
     }

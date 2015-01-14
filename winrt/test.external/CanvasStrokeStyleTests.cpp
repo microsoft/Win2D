@@ -13,7 +13,6 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Numerics;
 using namespace Windows::UI;
 
 TEST_CLASS(CanvasStrokeStyleTests)
@@ -62,7 +61,7 @@ public:
                     strokeStyle = GetOrCreate<CanvasStrokeStyle>(d2dStrokeStyle.Get());
                 }
 
-                Vector2 point{ 1, 1 };
+                float2 point{ 1, 1 };
                 drawingSession->DrawLine(point, point, brush, 5, strokeStyle);
 
                 delete drawingSession;
@@ -88,7 +87,7 @@ public:
 
                 CanvasStrokeStyle^ strokeStyle = ref new CanvasStrokeStyle();
 
-                Vector2 point{ 1, 1 };
+                float2 point{ 1, 1 };
                 drawingSession->DrawLine(point, point, brush, 5, strokeStyle);
 
                 delete drawingSession;
@@ -168,7 +167,7 @@ public:
         ThrowIfFailed(d2dFactory->CreateStrokeStyle(&strokeStyleProperties, NULL, 0, &d2dStrokeStyle));
         auto canvasStrokeStyle = GetOrCreate<CanvasStrokeStyle>(d2dStrokeStyle.Get());
 
-        Vector2 point{ 0, 1 };
+        float2 point{ 0, 1 };
         drawingSession->DrawLine(point, point, canvasBrush, 5.0f, canvasStrokeStyle);
 
         delete drawingSession;

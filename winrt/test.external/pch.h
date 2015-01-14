@@ -34,6 +34,8 @@
 #include <Constants.h>
 
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#include <windowsnumerics.h>
+
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <Canvas.abi.h>
 

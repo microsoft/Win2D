@@ -89,8 +89,8 @@ TEST_CLASS(CanvasImageTests)
                         expectedBounds = Rect(0, 0, bitmapWidth, bitmapHeight);
                     }
 
-                    Numerics::Matrix3x2 someTransform = { 1, 2, 3, 5, 8, 13 };
-                    Numerics::Matrix3x2 scaleAndTranslate = { 2, 0, 0, 2, 123, 456 };
+                    float3x2 someTransform = { 1, 2, 3, 5, 8, 13 };
+                    float3x2 scaleAndTranslate = { 2, 0, 0, 2, 123, 456 };
 
                     CanvasDrawingSession^ drawingSession = renderTargetBitmap->CreateDrawingSession();
                     drawingSession->Transform = someTransform;
@@ -101,18 +101,18 @@ TEST_CLASS(CanvasImageTests)
                     Assert::AreEqual(expectedBounds, bounds);
 
                     // Ensure GetBounds didn't scramble the transform.
-                    Assert::AreEqual(someTransform, drawingSession->Transform);
+                    Assert::AreEqual<float3x2>(someTransform, drawingSession->Transform);
 
                     // While specifying transform. Ensure returned bounds are correct.
                     bounds = testImage->GetBounds(drawingSession, scaleAndTranslate);
                     Assert::AreEqual(Rect(
-                        scaleAndTranslate.M31 + (expectedBounds.Left * scaleAndTranslate.M11),
-                        scaleAndTranslate.M32 + (expectedBounds.Top * scaleAndTranslate.M22),
-                        expectedBounds.Width * scaleAndTranslate.M11,
-                        expectedBounds.Height * scaleAndTranslate.M22), bounds);
+                        scaleAndTranslate.m31 + (expectedBounds.Left * scaleAndTranslate.m11),
+                        scaleAndTranslate.m32 + (expectedBounds.Top * scaleAndTranslate.m22),
+                        expectedBounds.Width * scaleAndTranslate.m11,
+                        expectedBounds.Height * scaleAndTranslate.m22), bounds);
 
                     // Ensure GetBounds didn't scramble the transform.
-                    Assert::AreEqual(someTransform, drawingSession->Transform);
+                    Assert::AreEqual<float3x2>(someTransform, drawingSession->Transform);
                 }
             }
         }

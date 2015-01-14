@@ -150,11 +150,11 @@ TEST_CLASS(CanvasBitmapTests)
         Transform3DEffect^ transformEffect = ref new Transform3DEffect();
 
         // Check enum property access through strongly typed interface
-        Numerics::Matrix4x4 matrix;
+        float4x4 matrix;
         float newValue = 5.0f;
-        matrix.M22 = newValue;
+        matrix.m22 = newValue;
         transformEffect->TransformMatrix = matrix;
-        Assert::AreEqual(newValue, transformEffect->TransformMatrix.M22);
+        Assert::AreEqual(newValue, static_cast<float4x4>(transformEffect->TransformMatrix).m22);
 
         // Check that IEffect Interface connect to the same data vector
         Platform::Array<float, 1U>^ propertyArray;
@@ -166,7 +166,7 @@ TEST_CLASS(CanvasBitmapTests)
         propertyArray[6] = newValue;
         IPropertyValue^ newPropertyValue = safe_cast<IPropertyValue^>(PropertyValue::CreateSingleArray(propertyArray));
         transformEffect->Properties->SetAt(2, newPropertyValue);
-        Assert::AreEqual(newValue, transformEffect->TransformMatrix.M23);
+        Assert::AreEqual(newValue, static_cast<float4x4>(transformEffect->TransformMatrix).m23);
     }
 
     TEST_METHOD(CanvasEffect_LimitedInputs)

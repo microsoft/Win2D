@@ -16,10 +16,12 @@
 #include <ppltasks.h>
 
 using namespace concurrency;
-using namespace Windows::Foundation;
 using namespace Microsoft::Graphics::Canvas;
 using namespace Windows::UI::Core;
 using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Foundation;
+using namespace Windows::Foundation::Numerics;
+using namespace Microsoft::Graphics::Canvas::DirectX;
 using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 
 namespace Microsoft
@@ -141,16 +143,16 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Microsoft::Graphics::Canvas::Numerics::Matrix3x2>(Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& value)
+            static inline std::wstring ToString<float3x2>(float3x2 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
                     buf,
                     _countof(buf),
-                    L"Numerics.Matrix{M11=%f,M12=%f,M21=%f,M22=%f,M31=%f,M32=%f}",
-                    value.M11, value.M12,
-                    value.M21, value.M22,
-                    value.M31, value.M32));
+                    L"Numerics.float3x2{m11=%f,m12=%f,m21=%f,m22=%f,m31=%f,m32=%f}",
+                    value.m11, value.m12,
+                    value.m21, value.m22,
+                    value.m31, value.m32));
 
                 return buf;
             }
@@ -269,13 +271,6 @@ namespace Microsoft
                        a.Height == b.Height;
             }
 
-            inline bool operator==(Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& a, Microsoft::Graphics::Canvas::Numerics::Matrix3x2 const& b)
-            {
-                return
-                    a.M11 == b.M11 && a.M12 == b.M12 &&
-                    a.M21 == b.M21 && a.M22 == b.M22 &&
-                    a.M31 == b.M31 && a.M32 == b.M32;
-            }
 
             inline bool operator==(Windows::UI::Text::FontWeight const& a, Windows::UI::Text::FontWeight const& b)
             {

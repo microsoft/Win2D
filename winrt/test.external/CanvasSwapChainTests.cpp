@@ -97,17 +97,17 @@ TEST_CLASS(CanvasSwapChainTests)
         Assert::AreEqual(Size{ 256, 256 }, swapChain->Size);
         Assert::AreEqual(BitmapSize{ 256, 256 }, swapChain->SizeInPixels);
         Assert::AreEqual(CanvasSwapChainRotation::None, swapChain->Rotation);
-        Assert::AreEqual(Matrix3x2{ 1, 0, 0, 1, 0, 0 }, swapChain->TransformMatrix);
+        Assert::AreEqual<float3x2>(float3x2{ 1, 0, 0, 1, 0, 0 }, swapChain->TransformMatrix);
         Assert::AreEqual(Size{ 256, 256 }, swapChain->SourceSize);
 
         // Change the rotation, transform, and source size.
         swapChain->Rotation = CanvasSwapChainRotation::Rotate270;
-        swapChain->TransformMatrix = Matrix3x2{ 2, 0, 0, 3, 4, 5 };
+        swapChain->TransformMatrix = float3x2{ 2, 0, 0, 3, 4, 5 };
         swapChain->SourceSize = Size{ 123, 234 };
 
         // Read back the modified values.
         Assert::AreEqual(CanvasSwapChainRotation::Rotate270, swapChain->Rotation);
-        Assert::AreEqual(Matrix3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
+        Assert::AreEqual<float3x2>(float3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
         Assert::AreEqual(Size{ 123, 234 }, swapChain->SourceSize);
 
         // Resize the swapchain.
@@ -117,7 +117,7 @@ TEST_CLASS(CanvasSwapChainTests)
         Assert::AreEqual(Size{ 257, 257 }, swapChain->Size);
         Assert::AreEqual(BitmapSize{ 257, 257 }, swapChain->SizeInPixels);
         Assert::AreEqual(CanvasSwapChainRotation::Rotate270, swapChain->Rotation);
-        Assert::AreEqual(Matrix3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
+        Assert::AreEqual<float3x2>(float3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
         Assert::AreEqual(Size{ 257, 257 }, swapChain->SourceSize);
     }
 };
