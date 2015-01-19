@@ -183,6 +183,13 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.CreateRainbow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single)">
       <summary>A convenience for producing a rainbow-colored gradient.</summary>
+      <param name="eldritchness">
+        <i>Zero for a unicorny rainbow of gladness,<br/>
+        One for Seattle style depressing gray and sadness.<br/>
+        Since this value is a float,<br/>
+        you may use fractional values to denote,<br/>
+        sheens inbetween.</i>
+      </param>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.Transform">
       <summary>The transform affecting the brush.</summary>
@@ -236,6 +243,13 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.CreateRainbow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single)">
       <summary>A convenience for producing a rainbow-colored gradient.</summary>
+      <param name="eldritchness">
+        <i>Zero for a unicorny rainbow of gladness,<br/>
+        One for Seattle style depressing gray and sadness.<br/>
+        Since this value is a float,<br/>
+        you may use fractional values to denote,<br/>
+        sheens inbetween.</i>
+      </param>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.RadiusY">
       <summary>Specifies the vertical radius of the brush's radial gradient.</summary>
