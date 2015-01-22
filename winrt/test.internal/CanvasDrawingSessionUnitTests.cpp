@@ -270,12 +270,13 @@ public:
     public:
         ComPtr<ID2D1Image> Image;
         ComPtr<CanvasBitmap> Bitmap;
+        ComPtr<StubD2DBitmap> StubBitmap;
 
         BitmapFixture()
         {
-            auto d2dBitmap = Make<StubD2DBitmap>();
-            Image = As<ID2D1Image>(d2dBitmap);
-            Bitmap = MakeBitmapManager()->GetOrCreate(nullptr, d2dBitmap.Get());
+            StubBitmap = Make<StubD2DBitmap>();
+            Image = As<ID2D1Image>(StubBitmap);
+            Bitmap = MakeBitmapManager()->GetOrCreate(nullptr, StubBitmap.Get());
         }
 
     private:
@@ -315,18 +316,216 @@ public:
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor, Matrix4x4{}));
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_Bitmap)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_BitmapInterpolationModes)
+    {
+        struct
+        {
+            CanvasImageInterpolation InterpolationMode;
+            bool ExpectDrawBitmapFastPath;
+        }
+        testPasses[] =
+        {
+            { CanvasImageInterpolation::NearestNeighbor,   true  },
+            { CanvasImageInterpolation::Linear,            true  },
+            { CanvasImageInterpolation::Cubic,             false },
+            { CanvasImageInterpolation::MultiSampleLinear, false },
+            { CanvasImageInterpolation::Anisotropic,       false },
+            { CanvasImageInterpolation::HighQualityCubic,  false },
+        };
+
+        for (auto& testPass : testPasses)
+        {
+            BitmapFixture f;
+
+            f.DeviceContext->GetPrimitiveBlendMethod.SetExpectedCalls(1, [] { return D2D1_PRIMITIVE_BLEND_SOURCE_OVER; });
+
+            if (testPass.ExpectDrawBitmapFastPath)
+            {
+                f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                    [&](ID2D1Bitmap* bitmap, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE interpolationMode, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
+                    {
+                        Assert::IsTrue(IsSameInstance(f.Image.Get(), bitmap));
+                        Assert::AreEqual(testPass.InterpolationMode, (CanvasImageInterpolation)interpolationMode);
+                    });
+            }
+            else
+            {
+                f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE)
+                    {
+                        Assert::AreEqual(f.Image.Get(), image);
+                        Assert::AreEqual(testPass.InterpolationMode, (CanvasImageInterpolation)interpolationMode);
+                    });
+            }
+
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 0, 0, Rect{}, testPass.InterpolationMode));
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_BitmapCompositeModes)
+    {
+        struct
+        {
+            CanvasComposite CompositeMode;
+            D2D1_PRIMITIVE_BLEND PrimitiveBlend;
+            bool ExpectDrawBitmapFastPath;
+        }
+        testPasses[] =
+        {
+            { CanvasComposite::SourceOver,      D2D1_PRIMITIVE_BLEND_SOURCE_OVER, true  },
+            { CanvasComposite::SourceOver,      D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::SourceOver,      D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::SourceOver,      D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::DestinationOver, D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::DestinationOver, D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::DestinationOver, D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::DestinationOver, D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::SourceIn,        D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::SourceIn,        D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::SourceIn,        D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::SourceIn,        D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::DestinationIn,   D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::DestinationIn,   D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::DestinationIn,   D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::DestinationIn,   D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::SourceOut,       D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::SourceOut,       D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::SourceOut,       D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::SourceOut,       D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::DestinationOut,  D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::DestinationOut,  D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::DestinationOut,  D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::DestinationOut,  D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::SourceAtop,      D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::SourceAtop,      D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::SourceAtop,      D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::SourceAtop,      D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::DestinationAtop, D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::DestinationAtop, D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::DestinationAtop, D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::DestinationAtop, D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::Xor,             D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::Xor,             D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::Xor,             D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::Xor,             D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::Add,             D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::Add,             D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::Add,             D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::Add,             D2D1_PRIMITIVE_BLEND_ADD,         true  },
+
+            { CanvasComposite::Copy,            D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::Copy,            D2D1_PRIMITIVE_BLEND_COPY,        true  },
+            { CanvasComposite::Copy,            D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::Copy,            D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::BoundedCopy,     D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::BoundedCopy,     D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::BoundedCopy,     D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::BoundedCopy,     D2D1_PRIMITIVE_BLEND_ADD,         false },
+
+            { CanvasComposite::MaskInvert,      D2D1_PRIMITIVE_BLEND_SOURCE_OVER, false },
+            { CanvasComposite::MaskInvert,      D2D1_PRIMITIVE_BLEND_COPY,        false },
+            { CanvasComposite::MaskInvert,      D2D1_PRIMITIVE_BLEND_MIN,         false },
+            { CanvasComposite::MaskInvert,      D2D1_PRIMITIVE_BLEND_ADD,         false },
+        };
+
+        for (auto& testPass : testPasses)
+        {
+            BitmapFixture f;
+
+            f.DeviceContext->GetPrimitiveBlendMethod.SetExpectedCalls(1, [&] { return testPass.PrimitiveBlend; });
+
+            if (testPass.ExpectDrawBitmapFastPath)
+            {
+                f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                    [&](ID2D1Bitmap* bitmap, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
+                    {
+                        Assert::IsTrue(IsSameInstance(f.Image.Get(), bitmap));
+                    });
+            }
+            else
+            {
+                f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE compositeMode)
+                    {
+                        Assert::AreEqual(f.Image.Get(), image);
+                        Assert::AreEqual((D2D1_COMPOSITE_MODE)testPass.CompositeMode, compositeMode);
+                    });
+            }
+
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), 0, 0, Rect{}, CanvasImageInterpolation::Linear, testPass.CompositeMode));
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_BitmapComputesCorrectDestinationSize)
     {
         BitmapFixture f;
 
-        f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
-            [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+        const float x = 23;
+        const float y = 42;
+        const float w = 12;
+        const float h = 34;
+
+        f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
+
+        // When passing an explicit source size to DrawImage, that should be used to compute the DrawBitmap destination rect.
+        Rect sourceRect{ 1, 2, 3, 4 };
+
+        f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+            [&](ID2D1Bitmap*, const D2D1_RECT_F* dest, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F* source, const D2D1_MATRIX_4X4_F*)
             {
-                Assert::IsNotNull(image);
-                Assert::AreEqual(f.Image.Get(), image);
+                Assert::AreEqual(ToD2DRect(sourceRect), *source);
+
+                Assert::AreEqual(x, dest->left);
+                Assert::AreEqual(y, dest->top);
+                Assert::AreEqual(x + sourceRect.Width, dest->right);
+                Assert::AreEqual(y + sourceRect.Height, dest->bottom);
             });
 
-        ThrowIfFailed(f.DS->DrawImageAtOrigin(f.Bitmap.Get()));
+        ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(), x, y, sourceRect));
+
+        // When drawing with unit mode = dips, the bitmap size in dips should be used.
+        f.DeviceContext->GetUnitModeMethod.SetExpectedCalls(1, [] { return D2D1_UNIT_MODE_DIPS; });
+        f.StubBitmap->GetSizeMethod.SetExpectedCalls(1, [&] { return D2D1_SIZE_F{ w, h }; });
+
+        f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+            [&](ID2D1Bitmap*, const D2D1_RECT_F* dest, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F* source, const D2D1_MATRIX_4X4_F*)
+            {
+                Assert::IsNull(source);
+
+                Assert::AreEqual(x, dest->left);
+                Assert::AreEqual(y, dest->top);
+                Assert::AreEqual(x + w, dest->right);
+                Assert::AreEqual(y + h, dest->bottom);
+            });
+
+        ThrowIfFailed(f.DS->DrawImageAtCoords(f.Bitmap.Get(), x, y));
+
+        // Or when drawing with unit mode = pixels, the bitmap size should be queried in pixel format instead.
+        f.DeviceContext->GetUnitModeMethod.SetExpectedCalls(1, [] { return D2D1_UNIT_MODE_PIXELS; });
+        f.StubBitmap->GetPixelSizeMethod.SetExpectedCalls(1, [&] { return D2D1_SIZE_U{ static_cast<uint32_t>(w), static_cast<uint32_t>(h) }; });
+
+        f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+            [&](ID2D1Bitmap*, const D2D1_RECT_F* dest, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F* source, const D2D1_MATRIX_4X4_F*)
+            {
+                Assert::IsNull(source);
+
+                Assert::AreEqual(x, dest->left);
+                Assert::AreEqual(y, dest->top);
+                Assert::AreEqual(x + w, dest->right);
+                Assert::AreEqual(y + h, dest->bottom);
+            });
+
+        ThrowIfFailed(f.DS->DrawImageAtCoords(f.Bitmap.Get(), x, y));
     }
 
     class BitmapFixtureWithDrawImageVerification : public BitmapFixture
@@ -341,6 +540,8 @@ public:
             D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
             D2D1_COMPOSITE_MODE expectedComposite = static_cast<D2D1_COMPOSITE_MODE>(composite);
             
+            DeviceContext->GetPrimitiveBlendMethod.SetExpectedCalls(1, [] { return D2D1_PRIMITIVE_BLEND_MIN; });
+
             DeviceContext->DrawImageMethod.SetExpectedCalls(1,
                 [=](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
                 {

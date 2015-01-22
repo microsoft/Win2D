@@ -297,6 +297,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, opacity, interpolation, &perspective);
     }
 
+    // DrawBitmap uses the current primitive blend setting, but DrawImage takes an explicit
+    // composite mode parameter. We can only substitute the former for the latter if these match.
+    // In some cases where they do not match, we could change the primitive blend, use DrawBitmap,
+    // then change it back again. But that would be more intrusive, so this implementation plays
+    // it safe and only optimizes the simple case where the modes match exactly.
+    static bool IsValidDrawBitmapCompositeMode(CanvasComposite composite, ID2D1DeviceContext1* deviceContext)
+    {
+        switch (deviceContext->GetPrimitiveBlend())
+        {
+        case D2D1_PRIMITIVE_BLEND_SOURCE_OVER:
+            return (composite == CanvasComposite::SourceOver);
+
+        case D2D1_PRIMITIVE_BLEND_COPY:
+            return (composite == CanvasComposite::Copy);
+
+        case D2D1_PRIMITIVE_BLEND_ADD:
+            return (composite == CanvasComposite::Add);
+
+        default:
+            return false;
+        }
+    }
+
+    static bool IsValidDrawBitmapInterpolationMode(CanvasImageInterpolation interpolation)
+    {
+        return interpolation == CanvasImageInterpolation::Linear ||
+               interpolation == CanvasImageInterpolation::NearestNeighbor;
+    }
+
     HRESULT CanvasDrawingSession::DrawImageImpl(
         ICanvasImage* image,
         Vector2 offset,
@@ -310,19 +339,67 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             auto& deviceContext = GetResource();
             CheckInPointer(image);
 
-            ComPtr<ICanvasImageInternal> internal;
-            ThrowIfFailed(image->QueryInterface(IID_PPV_ARGS(&internal)));
-
-            D2D1_POINT_2F d2dOffset = ToD2DPoint(offset);
             D2D1_RECT_F d2dSourceRect;
             if (sourceRect) d2dSourceRect = ToD2DRect(*sourceRect);
 
-            deviceContext->DrawImage(
-                internal->GetD2DImage(deviceContext.Get()).Get(),
-                &d2dOffset,
-                sourceRect ? &d2dSourceRect : nullptr,
-                static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
-                static_cast<D2D1_COMPOSITE_MODE>(composite));
+            // If this is a bitmap being drawn with sufficiently simple options, we can take the DrawBitmap fast path.
+            auto internalBitmap = MaybeAs<ICanvasBitmapInternal>(image);
+            
+            if (internalBitmap &&
+                IsValidDrawBitmapCompositeMode(composite, deviceContext.Get()) &&
+                IsValidDrawBitmapInterpolationMode(interpolation))
+            {
+                auto& d2dBitmap = internalBitmap->GetD2DBitmap();
+
+                // DrawImage infers output size from the source image, but DrawBitmap takes an explicit dest rect.
+                // So to use DrawBitmap, we must duplicate the same size logic that DrawImage would normally apply for us.
+                D2D1_SIZE_F destSize;
+                
+                if (sourceRect)
+                {
+                    // If there is an explicit source rectangle, that determines the destination size too.
+                    destSize = D2D1_SIZE_F{ sourceRect->Width, sourceRect->Height };
+                }
+                else if (deviceContext->GetUnitMode() == D2D1_UNIT_MODE_DIPS)
+                {
+                    // Use the size of the bitmap, in dips.
+                    destSize = d2dBitmap->GetSize();
+                }
+                else
+                {
+                    // Use the size of the bitmap, in pixels.
+                    auto pixelSize = d2dBitmap->GetPixelSize();
+                    destSize = D2D1_SIZE_F{ static_cast<float>(pixelSize.width), static_cast<float>(pixelSize.height) };
+                }
+
+                D2D1_RECT_F d2dDestRect
+                {
+                    offset.X,
+                    offset.Y,
+                    offset.X + destSize.width,
+                    offset.Y + destSize.height
+                };
+                
+                deviceContext->DrawBitmap(
+                    d2dBitmap.Get(),
+                    &d2dDestRect,
+                    1,
+                    static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
+                    sourceRect ? &d2dSourceRect : nullptr,
+                    nullptr);
+            }
+            else
+            {
+                // If DrawBitmap cannot handle this request, we must use the DrawImage slow path.
+                D2D1_POINT_2F d2dOffset = ToD2DPoint(offset);
+
+                deviceContext->DrawImage(
+                    As<ICanvasImageInternal>(image)->GetD2DImage(deviceContext.Get()).Get(),
+                    &d2dOffset,
+                    sourceRect ? &d2dSourceRect : nullptr,
+                    static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
+                    static_cast<D2D1_COMPOSITE_MODE>(composite));
+            }
         });
 
     }
