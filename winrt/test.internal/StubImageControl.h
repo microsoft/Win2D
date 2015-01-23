@@ -14,6 +14,8 @@
 
 namespace canvas
 {
+    using namespace ABI::Windows::UI::Xaml;
+
     class StubImageControl : public RuntimeClass<IImage, IUIElement>
     {
     public:

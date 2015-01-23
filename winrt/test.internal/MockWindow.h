@@ -20,6 +20,7 @@ class MockWindow : public RuntimeClass<IWindow>
 
 public:
     ComPtr<MockEventSource<IWindowVisibilityChangedEventHandler>> VisibilityChangedEventSource;
+    CALL_COUNTER_WITH_MOCK(get_DispatcherMethod, HRESULT(ICoreDispatcher**));
 
     MockWindow()
         : m_visible(true)
@@ -89,8 +90,7 @@ public:
     IFACEMETHODIMP get_Dispatcher( 
         ABI::Windows::UI::Core::ICoreDispatcher **value)
     {
-        Assert::Fail(L"Unexpected call to IWindow::get_Dispatcher");
-        return E_UNEXPECTED;
+        return get_DispatcherMethod.WasCalled(value);
     }
 
     IFACEMETHODIMP add_Activated( 

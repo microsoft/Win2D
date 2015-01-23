@@ -12,7 +12,7 @@
 
 #include "pch.h"
 #include "TestDeviceResourceCreationAdapter.h"
-#include "CanvasControlTestAdapter.h"
+#include "controls\CanvasControlTestAdapter.h"
 
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
@@ -265,6 +265,7 @@ public:
             };
 
         auto canvasControlAdapter = std::make_shared<CanvasControlTestAdapter>();
+
         canvasControlAdapter->DeviceFactory->ActivateInstanceMethod.SetExpectedCalls(1,
             [=](IInspectable** value)
             {
@@ -272,7 +273,7 @@ public:
             });
         canvasControlAdapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter);
+        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter); 
 
         // Get the control to a point where it has created the device.
         auto userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());

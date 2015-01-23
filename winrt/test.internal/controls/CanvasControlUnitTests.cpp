@@ -12,81 +12,10 @@
 
 #include "pch.h"
 
+#include "..\MockAsyncAction.h"
+#include "BasicControlFixture.h"
 #include "CanvasControlTestAdapter.h"
-#include "MockAsyncAction.h"
-
-struct BasicControlFixture
-{
-    std::shared_ptr<CanvasControlTestAdapter> Adapter;
-    ComPtr<CanvasControl> Control;
-    ComPtr<StubUserControl> UserControl;
-
-    BasicControlFixture()
-        : Adapter(std::make_shared<CanvasControlTestAdapter>())
-    {
-    }
-
-    void CreateControl()
-    {
-        Control = Make<CanvasControl>(Adapter);
-        UserControl = dynamic_cast<StubUserControl*>(As<IUserControl>(Control).Get());
-    }
-
-    void RaiseLoadedEvent()
-    {
-        ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
-    }
-
-    void RaiseCompositionRenderingEvent()
-    {
-        Adapter->RaiseCompositionRenderingEvent();
-    }
-
-    void RaiseAnyNumberOfSurfaceContentsLostEvents()
-    {
-        int anyNumberOfTimes = 5;
-        for (auto i = 0; i < anyNumberOfTimes; ++i)
-            Adapter->RaiseSurfaceContentsLostEvent();
-    }
-    
-    void RaiseAnyNumberOfCompositionRenderingEvents()
-    {
-        int anyNumberOfTimes = 5;
-        for (auto i = 0; i < anyNumberOfTimes; ++i)
-            Adapter->RaiseCompositionRenderingEvent();
-    }
-
-    EventRegistrationToken AddCreateResourcesHandler(CreateResourcesEventHandler* handler)
-    {
-        return AddEventHandler(&CanvasControl::add_CreateResources, handler);
-    }
-
-    EventRegistrationToken AddDrawHandler(DrawEventHandler* handler)
-    {
-        return AddEventHandler(&CanvasControl::add_Draw, handler);
-    }
-
-private:
-    template<typename T, typename HANDLER>
-    EventRegistrationToken AddEventHandler(HRESULT (STDMETHODCALLTYPE T::* addMethod)(HANDLER*, EventRegistrationToken*), HANDLER* handler)
-    {
-        EventRegistrationToken token;
-        ThrowIfFailed((Control.Get()->*addMethod)(handler, &token));
-        return token;
-    }
-};
-
-struct CanvasControlFixture : public BasicControlFixture
-{
-    CanvasControlFixture()
-    {
-        CreateControl();
-    }
-
-    CanvasControlFixture(CanvasControlFixture const&) = delete;
-    CanvasControlFixture& operator=(CanvasControlFixture const&) = delete;
-};
-
+#include "ControlFixtures.h"
 
 TEST_CLASS(CanvasControlTests_CommonAdapter)
 {
@@ -120,13 +49,6 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(drawingSession.Get(), drawingSessionRetrieved.Get());
     }
 
-    TEST_METHOD_EX(CanvasControl_WhenInvalidateIsCalledBeforeLoadedEvent_ThenNothingBadHappens)
-    {
-        CanvasControlFixture f;
-
-        ThrowIfFailed(f.Control->Invalidate());
-    }
-
     TEST_METHOD_EX(CanvasControl_Callbacks)
     {
         using namespace ABI::Windows::Foundation;
@@ -137,18 +59,18 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
         // Register one CreateResources handler.
         // Note that Loaded hasn't occured yet, so it shouldn't actually be fired.
-        auto onCreateResources = MockEventHandler<CreateResourcesEventHandler>(L"CreateResources", ExpectedEventParams::Both);
+        auto onCreateResources = MockEventHandler<Static_CreateResourcesEventHandler>(L"CreateResources", ExpectedEventParams::Both);
         auto createResourcesEventToken0 = f.AddCreateResourcesHandler(onCreateResources.Get());
 
         // Before the control received the Loaded event,
         // CompositionRenderingEvents should essentially be ignored.
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
 
         // Issue a Loaded.  Now, the next CompositionRenderingEvent will cause
         // CreateResources to be raised.
         onCreateResources.SetExpectedCalls(1);
         f.RaiseLoadedEvent();
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
 
         onCreateResources.Validate();
  
@@ -162,27 +84,27 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         onCreateResources.Validate();
 
         // Register the Draw handler.
-        auto onDraw = MockEventHandler<DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
+        auto onDraw = MockEventHandler<Static_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
 
         auto drawEventToken = f.AddDrawHandler(onDraw.Get());
 
         // Invalidate and ensure the Draw callback is called.
         onDraw.SetExpectedCalls(1);
         f.Control->Invalidate();
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
         onDraw.Validate();
 
         // Ensure a subsequent invalidation doesn't recreate resources.
         onDraw.SetExpectedCalls(1);
         f.Control->Invalidate();
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
 
         // Unregister the events. Call invalidate. Ensure the handler doesn't get called again (the event was correctly unregistered).
         ThrowIfFailed(f.Control->remove_CreateResources(createResourcesEventToken0));
         ThrowIfFailed(f.Control->remove_CreateResources(createResourcesEventToken1));
         ThrowIfFailed(f.Control->remove_Draw(drawEventToken));
         f.Control->Invalidate();
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
 
         // Unregistering the same event twice should do nothing.
         ThrowIfFailed(f.Control->remove_CreateResources(createResourcesEventToken0));
@@ -196,22 +118,22 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
         f.RaiseLoadedEvent();
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
 
-        auto onDraw1 = MockEventHandler<DrawEventHandler>(L"Draw1");
+        auto onDraw1 = MockEventHandler<Static_DrawEventHandler>(L"Draw1");
         f.AddDrawHandler(onDraw1.Get());
 
         onDraw1.SetExpectedCalls(1);
 
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
 
-        auto onDraw2 = MockEventHandler<DrawEventHandler>(L"Draw2");
+        auto onDraw2 = MockEventHandler<Static_DrawEventHandler>(L"Draw2");
         f.AddDrawHandler(onDraw2.Get());
 
         onDraw1.SetExpectedCalls(1);
         onDraw2.SetExpectedCalls(1);
 
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
     }
 
     TEST_METHOD_EX(CanvasControl_WhenDrawHandlerAddedBeforeLoadedEvent_RedrawIsTriggeredAfterLoadedEvent)
@@ -219,385 +141,16 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         CanvasControlFixture f;
         f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
-        auto onDraw = MockEventHandler<DrawEventHandler>(L"Draw");
+        auto onDraw = MockEventHandler<Static_DrawEventHandler>(L"Draw");
         f.AddDrawHandler(onDraw.Get());
 
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
         f.RaiseLoadedEvent();
 
         onDraw.SetExpectedCalls(1);
-        f.RaiseCompositionRenderingEvent();
+        f.RenderSingleFrame();
     }
 };
-
-
-class MockRecreatableDeviceManager : public ICanvasControlRecreatableDeviceManager
-{
-    ComPtr<ICanvasDevice> m_device;
-
-public:
-    CALL_COUNTER_WITH_MOCK(SetChangedCallbackMethod, void(std::function<void()>));
-    CALL_COUNTER_WITH_MOCK(RunWithDeviceMethod, void(CanvasControl*, RunWithDeviceFunction));
-    CALL_COUNTER_WITH_MOCK(IsReadyToDrawMethod, bool());
-    CALL_COUNTER_WITH_MOCK(AddCreateResourcesMethod, EventRegistrationToken(CanvasControl*, CreateResourcesEventHandler*));
-    CALL_COUNTER_WITH_MOCK(RemoveCreateResourcesMethod, void(EventRegistrationToken));
-    CALL_COUNTER_WITH_MOCK(SetDpiChangedMethod, void())
-
-    virtual void SetChangedCallback(std::function<void()> fn) override
-    {
-        return SetChangedCallbackMethod.WasCalled(fn);
-    }
-
-    virtual void RunWithDevice(CanvasControl* sender, RunWithDeviceFunction fn) override
-    {
-        return RunWithDeviceMethod.WasCalled(sender, fn);
-    }
-
-    void SetRunWithDeviceFlags(RunWithDeviceFlags flags, int expectedCalls)
-    {
-        RunWithDeviceMethod.SetExpectedCalls(expectedCalls,
-            [=](CanvasControl*, RunWithDeviceFunction fn)
-            {
-                fn(m_device.Get(), flags);
-            });
-    }
-
-    void SetRunWithDeviceFlags(RunWithDeviceFlags flags)
-    {
-        RunWithDeviceMethod.AllowAnyCall(
-            [=](CanvasControl*, RunWithDeviceFunction fn)
-            {
-                fn(m_device.Get(), flags);
-            });
-    }
-
-    void SetDevice(ComPtr<ICanvasDevice> device)
-    {
-        m_device = device;
-    }
-
-    virtual ComPtr<ICanvasDevice> const& GetDevice() override
-    {
-        return m_device;
-    }
-
-    virtual bool IsReadyToDraw() override
-    {
-        return IsReadyToDrawMethod.WasCalled();
-    }
-    
-    virtual void SetDpiChanged() override
-    {
-        SetDpiChangedMethod.WasCalled();
-    }
-
-    virtual EventRegistrationToken AddCreateResources(CanvasControl* sender, CreateResourcesEventHandler* value) override
-    {
-        return AddCreateResourcesMethod.WasCalled(sender, value);
-    }
-
-    virtual void RemoveCreateResources(EventRegistrationToken token) override
-    {
-        return RemoveCreateResourcesMethod.WasCalled(token);
-    }
-};
-
-
-TEST_CLASS(CanvasControlTests_InteractionWithRecreatableDeviceManager)
-{
-    struct Fixture : public BasicControlFixture
-    {
-        MockRecreatableDeviceManager* DeviceManager;
-        std::function<void()> ChangedCallback;
-
-        Fixture()
-            : DeviceManager(nullptr)
-        {
-            Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
-                [=]
-                {
-                    Assert::IsNull(DeviceManager);
-                    auto manager = std::make_unique<MockRecreatableDeviceManager>();
-                    manager->SetChangedCallbackMethod.SetExpectedCalls(1,
-                        [=](std::function<void()> fn)
-                        {
-                            ChangedCallback = fn;
-                        });
-
-                    DeviceManager = manager.get();
-                    return manager;
-                });
-
-            CreateControl();
-        }
-    };
-
-    TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaised_TrimCalledOnDevice)
-    {
-        Fixture f;
-
-        auto anyDevice = Make<MockCanvasDevice>();
-        f.DeviceManager->SetDevice(anyDevice);
-
-        anyDevice->TrimMethod.SetExpectedCalls(1);
-
-        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaisedAndThereIsNoDevice_NothingBadHappens)
-    {
-        Fixture f;
-
-        ComPtr<ICanvasDevice> nullDevice;
-        f.DeviceManager->SetDevice(nullDevice);
-
-        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenDpiChangedEventRaised_ForwardsToDeviceManager)
-    {
-        Fixture f;
-
-        // DPI change event without an actual change to the value should be ignored.
-        f.Adapter->RaiseDpiChangedEvent();
-
-        // But if the value changes, this should be passed on to the device manager.
-        f.Adapter->LogicalDpi = 100;
-
-        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
-        f.Adapter->RaiseDpiChangedEvent();
-    }
-
-    TEST_METHOD_EX(CanvasControl_add_CreateResources_ForwardsToDeviceManager)
-    {
-        Fixture f;
-
-        EventRegistrationToken anyToken{0x1234567890ABCDEF};
-        auto anyHandler = Callback<CreateResourcesEventHandler>(
-            [](ICanvasControl*, IInspectable*) { return S_OK; } );
-
-        f.DeviceManager->AddCreateResourcesMethod.SetExpectedCalls(1,
-            [&](CanvasControl* control, CreateResourcesEventHandler* handler)
-            {
-                Assert::IsTrue(IsSameInstance(f.Control.Get(), control));
-                Assert::IsTrue(IsSameInstance(anyHandler.Get(), handler));
-                return anyToken;
-            });
-
-        EventRegistrationToken actualToken;
-        ThrowIfFailed(f.Control->add_CreateResources(anyHandler.Get(), &actualToken));
-
-        Assert::AreEqual(anyToken.value, actualToken.value);
-    }
-
-    TEST_METHOD_EX(CanvasControl_remove_CreateResources_ForwardsToDeviceManager)
-    {
-        Fixture f;
-
-        EventRegistrationToken anyToken{0x1234567890ABCDEF};
-        f.DeviceManager->RemoveCreateResourcesMethod.SetExpectedCalls(1,
-            [&](EventRegistrationToken token)
-            {
-                Assert::AreEqual(anyToken.value, token.value);
-            });
-
-        ThrowIfFailed(f.Control->remove_CreateResources(anyToken));
-    }
-
-    TEST_METHOD_EX(CanvasControl_get_ReadyToDraw_ForwardsToDeviceManager)
-    {
-        Fixture f;
-
-        f.DeviceManager->IsReadyToDrawMethod.SetExpectedCalls(1,
-            [] { return true; });
-
-        boolean value;
-        ThrowIfFailed(f.Control->get_ReadyToDraw(&value));
-        Assert::IsTrue(!!value);
-
-        f.DeviceManager->IsReadyToDrawMethod.SetExpectedCalls(1,
-            [] { return false; });
-
-        ThrowIfFailed(f.Control->get_ReadyToDraw(&value));
-        Assert::IsFalse(!!value);
-    }
-
-    TEST_METHOD_EX(CanvasControl_get_Device_ForwardsToDeviceManager)
-    {
-        Fixture f;
-
-        auto anyDevice = Make<MockCanvasDevice>();
-        f.DeviceManager->SetDevice(anyDevice);
-
-        ComPtr<ICanvasDevice> device;
-        ThrowIfFailed(f.Control->get_Device(&device));
-
-        Assert::IsTrue(IsSameInstance(anyDevice.Get(), device.Get()));
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenGetDeviceReturnsNull_get_Device_ReportsUnderstandableErrorMessage)
-    {
-        Fixture f;
-
-        ComPtr<ICanvasDevice> device;
-        Assert::AreEqual(E_INVALIDARG, f.Control->get_Device(&device));
-
-        ValidateStoredErrorState(E_INVALIDARG, L"The CanvasControl does not currently have a CanvasDevice associated with it. "
-            L"Ensure that resources are created from a CreateResources or Draw event handler.");
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenDrawing_RunWithDrawIsPassedTheCorrectControl)
-    {
-        Fixture f;
-
-        f.DeviceManager->RunWithDeviceMethod.SetExpectedCalls(1,
-            [&](CanvasControl* control, RunWithDeviceFunction)
-            {
-                Assert::IsTrue(IsSameInstance(f.Control.Get(), control));
-            });
-
-        f.RaiseLoadedEvent();
-        f.RaiseCompositionRenderingEvent();
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenDeviceIsNewlyCreated_ANewImageSourceIsCreated)
-    {
-        Fixture f;
-        f.RaiseLoadedEvent();
-
-        auto anyDevice = Make<StubCanvasDevice>();
-        f.DeviceManager->SetDevice(anyDevice);
-
-        f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::NewlyCreatedDevice, 2);
-
-        f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(2,
-            [&](ICanvasDevice* device, float, float, float, CanvasBackground)
-            {
-                Assert::IsTrue(IsSameInstance(anyDevice.Get(), device));
-                return nullptr;
-            });
-
-        f.RaiseCompositionRenderingEvent();
-
-        // Second render, image source is created again
-        anyDevice = Make<StubCanvasDevice>();
-        f.DeviceManager->SetDevice(anyDevice);
-
-        ThrowIfFailed(f.Control->Invalidate());
-        f.RaiseCompositionRenderingEvent();
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenDeviceIsNotNewlyCreated_NoImageSourceIsCreated)
-    {
-        Fixture f;
-        f.RaiseLoadedEvent();
-
-        auto anyDevice = Make<StubCanvasDevice>();
-        f.DeviceManager->SetDevice(anyDevice);
-
-        f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None, 2);
-
-        // First render, the image source is created
-        f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
-        f.RaiseCompositionRenderingEvent();
-
-        // Second render, no new image source is created
-        f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(0);
-        ThrowIfFailed(f.Control->Invalidate());
-        f.RaiseCompositionRenderingEvent();
-    }
-
-    struct LoadedFixture : public Fixture
-    {
-        ComPtr<StubCanvasDevice> Device;
-
-        LoadedFixture()
-            : Device(Make<StubCanvasDevice>())
-        {
-            RaiseLoadedEvent();
-            DeviceManager->SetDevice(Device);
-        }
-    };
-
-    TEST_METHOD_EX(CanvasControl_WhenRendering_DrawingSessionIsCreatedOnImageSource_RegardlessOfFlags)
-    {
-        LoadedFixture f;
-        f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
-
-        int maxFlag = static_cast<int>(RunWithDeviceFlags::NewlyCreatedDevice | RunWithDeviceFlags::ResourcesNotCreated);
-
-        for (int i = 0; i <= maxFlag; ++i)
-        {
-            VerifyDrawingSessionCreated(&f, static_cast<RunWithDeviceFlags>(i));
-        }
-    }
-
-    void VerifyDrawingSessionCreated(LoadedFixture* f, RunWithDeviceFlags flags)
-    {
-        CallCounter<> createDrawingSessionMethod(L"CanvasImageSourceDrawingSessionFactory::Create");
-        createDrawingSessionMethod.SetExpectedCalls(1);
-
-        f->Adapter->OnCanvasImageSourceDrawingSessionFactory_Create =
-            [&] 
-            { 
-                createDrawingSessionMethod.WasCalled(); 
-                return nullptr;
-            };
-
-        f->DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None, 1);
-        ThrowIfFailed(f->Control->Invalidate());
-        f->RaiseCompositionRenderingEvent();
-    }
-
-    struct DrawFixture : public LoadedFixture
-    {
-        MockEventHandler<DrawEventHandler> OnDraw;
-
-        DrawFixture()
-            : OnDraw(L"OnDraw")
-        {
-            Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
-
-            AddDrawHandler(OnDraw.Get());
-            RaiseLoadedEvent();
-        }
-    };
-
-    TEST_METHOD_EX(CanvasControl_WhenResourcesAreNotCreated_DrawHandlersAreNotCalled)
-    {
-        DrawFixture f;
-
-        f.OnDraw.SetExpectedCalls(0);
-        f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::ResourcesNotCreated, 1);
-
-        f.RaiseCompositionRenderingEvent();
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenResourcesAreCreated_DrawHandlersAreCalled)
-    {
-        DrawFixture f;
-
-        f.OnDraw.SetExpectedCalls(1);
-        f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None, 1);
-
-        f.RaiseCompositionRenderingEvent();
-    }
-
-    TEST_METHOD_EX(CanvasControl_WhenChangedCallbackIsCalled_RedrawIsTriggered)
-    {
-        DrawFixture f;
-        f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None);
-
-        f.OnDraw.SetExpectedCalls(1);
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
-
-        f.ChangedCallback();
-
-        f.OnDraw.SetExpectedCalls(1);
-        f.RaiseAnyNumberOfCompositionRenderingEvents();        
-    }
-};
-
 
 TEST_CLASS(CanvasControlTests_SizeTests)
 {
@@ -704,11 +257,11 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             switch (m_expectedSource)
             {
             case None:
-                Assert::IsFalse(m_sourceSeen, L"put_Source wasn't called");
+                Assert::IsFalse(m_sourceSeen, L"put_Source was called, but we didn't expect it to be.");
                 break;
 
             default:
-                Assert::IsTrue(m_sourceSeen, L"put_Source was called");
+                Assert::IsTrue(m_sourceSeen, L"Expected put_Source to be called, but it wasn't.");
                 break;
             }
 
@@ -796,7 +349,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         std::shared_ptr<CanvasControlTestAdapter_VerifyCreateImageSource> m_adapter;
         ComPtr<CanvasControl> m_control;
         ComPtr<StubUserControl> m_userControl;
-        MockEventHandler<DrawEventHandler> m_onDraw;
+        MockEventHandler<Static_DrawEventHandler> m_onDraw;
 
     public:
         ResizeFixture()
@@ -850,61 +403,6 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             m_onDraw.Validate();
         }
     };
-};
-
-class CanvasControlTestAdapter_InjectDeviceContext : public CanvasControlTestAdapter
-{
-    ComPtr<ID2D1DeviceContext> m_deviceContext;
-
-public:
-    CanvasControlTestAdapter_InjectDeviceContext(ID2D1DeviceContext* deviceContext)
-        : m_deviceContext(deviceContext)
-    {
-    }
-
-    virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(
-        ICanvasDevice* device, 
-        float width, 
-        float height, 
-        float dpi,
-        CanvasBackground backgroundMode) override
-    {
-        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, dpi, backgroundMode);
-        if (result)
-            return result;
-
-        auto sisFactory = Make<MockSurfaceImageSourceFactory>();
-        sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
-            [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
-            {
-                auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
-                                        
-                mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
-                    [&](RECT const&, IID const& iid, void** updateObject, POINT*)
-                    {
-                        return m_deviceContext.CopyTo(iid, updateObject);
-                    });
-
-                mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
-                mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
-
-                return mockSurfaceImageSource;
-            };
-
-        auto dsFactory = std::make_shared<CanvasImageSourceDrawingSessionFactory>();
-
-        ComPtr<ICanvasResourceCreator> resourceCreator;
-        ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
-
-        return Make<CanvasImageSource>(
-            resourceCreator.Get(),
-            width,
-            height,
-            dpi,
-            backgroundMode,
-            sisFactory.Get(),
-            dsFactory);
-    }
 };
 
 TEST_CLASS(CanvasControlTests_Dpi)
@@ -970,7 +468,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
 
             // An event handler needs to be registered for a drawing session to be constructed.
             auto onDrawFn = 
-                Callback<DrawEventHandler>([](ICanvasControl*, ICanvasDrawEventArgs*) { return S_OK; });
+                Callback<Static_DrawEventHandler>([](ICanvasControl*, ICanvasDrawEventArgs*) { return S_OK; });
             EventRegistrationToken drawEventToken;
             ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
 
@@ -1033,43 +531,26 @@ TEST_CLASS(CanvasControlTests_Dpi)
         }
     }
 
-    TEST_METHOD_EX(CanvasControl_DpiProperties)
+    TEST_METHOD_EX(CanvasControl_WhenInvalidateIsCalledBeforeLoadedEvent_ThenNothingBadHappens)
     {
-        const float dpi = 144;
-
-        auto deviceContext = Make<MockD2DDeviceContext>();
-        auto adapter = std::make_shared<CanvasControlTestAdapter_VerifyDpi>(deviceContext.Get());
-        adapter->m_dpi = dpi;
-        ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
-
-        float actualDpi = 0;
-        ThrowIfFailed(canvasControl->get_Dpi(&actualDpi));
-        Assert::AreEqual(dpi, actualDpi);
-
-        const float testValue = 100;
-
-        int pixels = 0;
-        ThrowIfFailed(canvasControl->ConvertDipsToPixels(testValue, &pixels));
-        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
-
-        float dips = 0;
-        ThrowIfFailed(canvasControl->ConvertPixelsToDips((int)testValue, &dips));
-        Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+        CanvasControlFixture f;
+        ThrowIfFailed(f.Control->Invalidate());
     }
 };
 
 
 TEST_CLASS(CanvasControl_ExternalEvents)
 {
-    struct Fixture : public BasicControlFixture
+    struct Fixture : public Static_BasicControlFixture
     {
         ComPtr<MockWindow> Window;
-        MockEventHandler<DrawEventHandler> OnDraw;
+        MockEventHandler<Static_DrawEventHandler> OnDraw;
 
         Fixture()
-            : Window(Adapter->GetCurrentMockWindow())
-            , OnDraw(MockEventHandler<DrawEventHandler>(L"Draw"))
+            : OnDraw(MockEventHandler<Static_DrawEventHandler>(L"Draw"))
         {
+            CreateAdapter(); 
+            Window = Adapter->GetCurrentMockWindow();
         }
 
         void CreateControl()
@@ -1089,8 +570,16 @@ TEST_CLASS(CanvasControl_ExternalEvents)
 
         f.CreateControl();
 
+        f.RenderSingleFrame();
+
+        // Now, after a surface contents lost event we should recreate the image
+        // source on the next redraw.
         f.RaiseAnyNumberOfSurfaceContentsLostEvents();
-        f.RaiseCompositionRenderingEvent();
+
+        f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(1);
+
+        f.RenderSingleFrame();
     }
 
     TEST_METHOD_EX(CanvasControl_WhenDestroyed_UnregistersSurfaceContentsLostEvent)
@@ -1114,7 +603,7 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.OnDraw.SetExpectedCalls(0);
 
         f.CreateControl();
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
     }
 
     TEST_METHOD_EX(CanvasControl_WhenWindowBecomesVisible_DrawEventIsInvoked)
@@ -1125,12 +614,12 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.Window->SetVisible(false);
 
         f.CreateControl();
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
 
         f.Window->SetVisible(true);
         f.OnDraw.SetExpectedCalls(1);
 
-        f.RaiseAnyNumberOfCompositionRenderingEvents();        
+        f.RenderAnyNumberOfFrames();        
     }
 
     TEST_METHOD_EX(CanvasControl_WhenWindowBecomesVisibleWithValidContents_DrawEventIsNotInvoked)
@@ -1141,15 +630,15 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.OnDraw.SetExpectedCalls(1);
 
         f.CreateControl();
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
 
         f.OnDraw.SetExpectedCalls(0);
 
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
         f.Window->SetVisible(false);
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
         f.Window->SetVisible(true);
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
     }
 
     TEST_METHOD_EX(CanvasControl_WhenWindowIsNotVisible_NoRenderingEventHandlerIsAdded)
@@ -1160,7 +649,7 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.Adapter->CompositionRenderingEventSource->AddMethod.SetExpectedCalls(0);
 
         f.CreateControl();
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
     }
 
     TEST_METHOD_EX(CanvasControl_WindowWindowBecomesNotVisible_ExistingRenderingEventHandlerIsRemoved)
@@ -1213,87 +702,10 @@ TEST_CLASS(CanvasControl_ExternalEvents)
 
 TEST_CLASS(CanvasControl_ClearColor)
 {
-    struct Fixture
-    {
-        enum Options
-        {
-            Default            = 0x0,
-            DontRegisterOnDraw = 0x1
-        };
-
-        ComPtr<MockD2DDeviceContext> DeviceContext;
-        std::shared_ptr<CanvasControlTestAdapter> Adapter;
-        ComPtr<CanvasControl> Control;
-        ComPtr<StubUserControl> UserControl;
-        MockEventHandler<DrawEventHandler> OnDraw;
-
-        Fixture(Options options = Default)
-        {
-            DeviceContext = Make<MockD2DDeviceContext>();
-            DeviceContext->ClearMethod.AllowAnyCall();
-            DeviceContext->SetTransformMethod.AllowAnyCall();
-            DeviceContext->SetDpiMethod.AllowAnyCall();
-
-            Adapter = std::make_shared<CanvasControlTestAdapter_InjectDeviceContext>(DeviceContext.Get());
-            Control = Make<CanvasControl>(Adapter);
-            UserControl = dynamic_cast<StubUserControl*>(As<IUserControl>(Control).Get());
-
-            OnDraw = MockEventHandler<DrawEventHandler>(L"Draw");
-
-            bool shouldRegisterOnDraw = !(options & DontRegisterOnDraw);
-
-            if (shouldRegisterOnDraw)
-            {
-                EventRegistrationToken ignoredToken;
-                ThrowIfFailed(Control->add_Draw(OnDraw.Get(), &ignoredToken));
-            }
-
-            Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
-            ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
-
-            if (shouldRegisterOnDraw)
-                OnDraw.SetExpectedCalls(1);
-
-            RaiseAnyNumberOfCompositionRenderingEvents();
-        }
-
-        void RaiseAnyNumberOfCompositionRenderingEvents()
-        {
-            int anyNumberOfTimes = 5;
-            for (auto i = 0; i < anyNumberOfTimes; ++i)
-                Adapter->RaiseCompositionRenderingEvent();
-        }
-    };
-
-    TEST_METHOD_EX(CanvasControl_DefaultClearColorIsTransparentBlack)
-    {
-        Fixture f;
-
-        Color expectedColor{ 0, 0, 0, 0 };
-
-        Color actualColor{ 0xFF, 0xFF, 0xFF, 0xFF };
-        ThrowIfFailed(f.Control->get_ClearColor(&actualColor));
-
-        Assert::AreEqual(expectedColor, actualColor);
-    }
-
-    TEST_METHOD_EX(CanvasControl_ClearColorValueIsPersisted)
-    {
-        Fixture f;
-
-        Color anyColor{ 1, 2, 3, 4 };
-
-        ThrowIfFailed(f.Control->put_ClearColor(anyColor));
-
-        Color actualColor{ 0xFF, 0xFF, 0xFF, 0xFF };
-        ThrowIfFailed(f.Control->get_ClearColor(&actualColor));
-
-        Assert::AreEqual(anyColor, actualColor);
-    }
-
     TEST_METHOD_EX(CanvasControl_SettingDifferentClearColorTriggersRedraw)
     {
-        Fixture f;
+        ClearColorFixture<CanvasControlTraits> f;
+        f.RegisterOnDraw();
 
         Color currentColor;
         ThrowIfFailed(f.Control->get_ClearColor(&currentColor));
@@ -1304,12 +716,20 @@ TEST_CLASS(CanvasControl_ClearColor)
         ThrowIfFailed(f.Control->put_ClearColor(differentColor));
 
         f.OnDraw.SetExpectedCalls(1);
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+
+        f.RaiseLoadedEvent();
+        f.RenderAnyNumberOfFrames();
     }
 
     TEST_METHOD_EX(CanvasControl_SettingClearColorToCurrentValueDoesNotTriggerRedraw)
     {
-        Fixture f;
+        ClearColorFixture<CanvasControlTraits> f;
+
+        f.RegisterOnDraw();
+        f.OnDraw.SetExpectedCalls(1);
+
+        f.RaiseLoadedEvent();
+        f.RenderAnyNumberOfFrames();
 
         Color currentColor;
         ThrowIfFailed(f.Control->get_ClearColor(&currentColor));
@@ -1317,47 +737,12 @@ TEST_CLASS(CanvasControl_ClearColor)
         ThrowIfFailed(f.Control->put_ClearColor(currentColor));
 
         f.OnDraw.SetExpectedCalls(0);
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
-    }
-
-    TEST_METHOD_EX(CanvasControl_DeviceContextIsClearedToCorrectColorBeforeDrawHandlerIsCalled)
-    {
-        Fixture f;
-
-        Color anyColor{ 1, 2, 3, 4 };
-
-        f.OnDraw.SetExpectedCalls(0);
-
-        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
-            [&](D2D1_COLOR_F const* color)
-            {
-                Assert::AreEqual(ToD2DColor(anyColor), *color);
-                f.OnDraw.SetExpectedCalls(1);
-            });
-
-        ThrowIfFailed(f.Control->put_ClearColor(anyColor));
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
-    }
-
-    TEST_METHOD_EX(CanvasControl_DeviceContextIsClearedToCorrectColorEvenIfNoDrawHandlersRegistered)
-    {
-        Fixture f(Fixture::DontRegisterOnDraw);
-
-        Color anyColor{ 1, 2, 3, 4 };
-
-        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
-            [&](D2D1_COLOR_F const* color)
-            {
-                Assert::AreEqual(ToD2DColor(anyColor), *color);
-            });
-
-        ThrowIfFailed(f.Control->put_ClearColor(anyColor));
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
     }
 
     TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesOpaque_SurfaceImageSourceIsCreatedWithOpaqueBackgroundMode)
     {
-        Fixture f;
+        ClearColorFixture<CanvasControlTraits> f;
 
         f.OnDraw.AllowAnyCall();
 
@@ -1376,19 +761,22 @@ TEST_CLASS(CanvasControl_ClearColor)
                 return nullptr;
             });
 
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RaiseLoadedEvent();
+        f.RenderAnyNumberOfFrames();
     }
 
     TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesTransparent_SurfaceImageSourceIsCreatedWithTransparentBackgroundMode)
     {
-        Fixture f;
+        ClearColorFixture<CanvasControlTraits> f;
 
         f.OnDraw.AllowAnyCall();
 
         // First ensure we have an opaque color set
         Color anyOpaqueColor{ 255, 1, 2, 3};
         ThrowIfFailed(f.Control->put_ClearColor(anyOpaqueColor));
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+
+        f.RaiseLoadedEvent();
+        f.RenderAnyNumberOfFrames();
 
         // Now set it to transparent
         Color anyTransparentColor{ 254, 1, 2, 3 };
@@ -1401,6 +789,6 @@ TEST_CLASS(CanvasControl_ClearColor)
                 return nullptr;
             });
 
-        f.RaiseAnyNumberOfCompositionRenderingEvents();
+        f.RenderAnyNumberOfFrames();
     }
 };

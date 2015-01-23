@@ -13,10 +13,10 @@
 #include "pch.h"
 
 #include <corerror.h>
-#include <RecreatableDeviceManager.impl.h>
+#include <controls\RecreatableDeviceManager.impl.h>
 
-#include "MockAsyncAction.h"
-#include "MockCanvasDeviceActivationFactory.h"
+#include "..\MockAsyncAction.h"
+#include "..\MockCanvasDeviceActivationFactory.h"
 
 using Internal::AggregateType;
 
@@ -28,8 +28,8 @@ struct ITypedEventHandler<IInspectable*, CanvasCreateResourcesEventArgs*>
 
 struct TestRecreatableDeviceManagerTraits
 {
-    typedef IInspectable Sender;
-    typedef ITypedEventHandler<IInspectable*, CanvasCreateResourcesEventArgs*> CreateResourcesHandler;
+    typedef IInspectable control_t;
+    typedef ITypedEventHandler<IInspectable*, CanvasCreateResourcesEventArgs*> createResourcesEventHandler_t;
 };
 
 typedef IRecreatableDeviceManager<TestRecreatableDeviceManagerTraits> ITestRecreatableDeviceManager;
@@ -42,7 +42,7 @@ static std::unique_ptr<ITestRecreatableDeviceManager> MakeRecreatableDeviceManag
 TEST_CLASS(RecreatableDeviceManagerTests)
 {
 public:
-    typedef TestRecreatableDeviceManagerTraits::CreateResourcesHandler CreateResourcesHandler;
+    typedef TestRecreatableDeviceManagerTraits::createResourcesEventHandler_t CreateResourcesHandler;
 
     struct Fixture
     {

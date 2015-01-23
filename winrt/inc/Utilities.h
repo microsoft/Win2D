@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <windows.foundation.h>
+
 
 // Compares two interface pointers, querying to IUnknown to follow COM identity rules.
 template<typename T, typename U>
@@ -61,4 +63,9 @@ inline Microsoft::WRL::ComPtr<T> MaybeAs(U* u)
         return t;
     else
         return nullptr;
+}
+
+inline bool operator!=(ABI::Windows::Foundation::Size const& left, ABI::Windows::Foundation::Size const& right)
+{
+    return (left.Width != right.Width) || (left.Height != right.Height);
 }

@@ -127,7 +127,7 @@ under the License.
       <summary>The color that the control is cleared to before the Draw event is raised.</summary>
       <remarks>
         <p>
-          ClearColor defaults to transparent black, that is Color.FromArgb(0,0,0,0).
+          ClearColor defaults to transparent black, that is, Color.FromArgb(0,0,0,0).
         </p>
         <p>
           Modifying ClearColor will cause the control to redraw, as if

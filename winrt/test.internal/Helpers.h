@@ -112,6 +112,19 @@ namespace Microsoft
             }
 
             template<>
+            static inline std::wstring ToString<ABI::Windows::Foundation::Size>(ABI::Windows::Foundation::Size const& s)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Size{%f,%f}",
+                    s.Width,
+                    s.Height));
+                return buf;
+            }
+
+            template<>
             static inline std::wstring ToString<IID>(IID const& iid)
             {
                 wchar_t* iidString = nullptr;
@@ -119,6 +132,19 @@ namespace Microsoft
                 std::wstring value(iidString);
                 CoTaskMemFree(iidString);
                 return value;
+            }            
+
+            template<>
+            static inline std::wstring ToString<CanvasTimingInformation>(CanvasTimingInformation const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"CanvasTimingInformation{UpdateCount=%d,TotalTime=%I64d,ElapsedTime=%I64d,IsRunningSlowly=%d}",
+                    value.UpdateCount, value.TotalTime.Duration, value.ElapsedTime.Duration, value.IsRunningSlowly));
+
+                return buf;
             }
 
             static inline std::wstring PointerToString(const wchar_t* name, void* value)
@@ -721,6 +747,15 @@ namespace Microsoft
                 END_ENUM(D2D1_COMPOSITE_MODE);
             }
 
+            ENUM_TO_STRING(ABI::Windows::UI::Core::CoreDispatcherPriority)
+            {
+                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_Idle);
+                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_Low);
+                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_Normal);
+                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_High);
+                END_ENUM(ABI::Windows::UI::Core::CoreDispatcherPriority);
+            }
+
             template<typename T>
             static inline std::wstring ToStringAsInt(T value)
             {
@@ -816,9 +851,22 @@ namespace Microsoft
         inline bool operator==(ABI::Windows::Foundation::Rect const& a, ABI::Windows::Foundation::Rect const& b)
         {
             return a.X == b.X &&
-            a.Y == b.Y &&
-            a.Width == b.Width &&
-            a.Height == b.Height;
+                a.Y == b.Y &&
+                a.Width == b.Width &&
+                a.Height == b.Height;
+        }
+
+        inline bool operator==(ABI::Windows::Foundation::Size const& a, ABI::Windows::Foundation::Size const& b)
+        {
+            return a.Width == b.Width && a.Height == b.Height;
+        }
+
+        inline bool operator==(CanvasTimingInformation const& a, CanvasTimingInformation const& b)
+        {
+            return a.UpdateCount == b.UpdateCount &&
+                a.TotalTime.Duration == b.TotalTime.Duration &&
+                a.ElapsedTime.Duration == b.ElapsedTime.Duration &&
+                a.IsRunningSlowly == b.IsRunningSlowly;
         }
 
     }

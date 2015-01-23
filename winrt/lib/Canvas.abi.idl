@@ -33,10 +33,11 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 #include "CanvasTextFormat.abi.idl"
 #include "CanvasDrawingSession.abi.idl"
 #include "CanvasImageSource.abi.idl"
-#include "CanvasControl.abi.idl"
 #include "CanvasSwapChain.abi.idl"
-#include "CanvasSwapChainPanel.abi.idl"
 #include "CanvasCommandList.abi.idl"
+#include "controls\CanvasAnimatedControl.abi.idl"
+#include "controls\CanvasControl.abi.idl"
+#include "controls\CanvasSwapChainPanel.abi.idl"
 
 #include "effects\generated\ArithmeticCompositeEffect.abi.idl"
 #include "effects\generated\AtlasEffect.abi.idl"

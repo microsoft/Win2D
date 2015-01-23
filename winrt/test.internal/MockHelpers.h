@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <RegisteredEvent.h>
+
 //
 // Helpers for common mocking operations (eg counting how many times a method
 // was called, or an event was invoked).
@@ -362,6 +364,11 @@ public:
             return MakeDefaultReturnValue<std::function<FN>::result_type>();
     }
 
+    bool HasMock()
+    {
+        return static_cast<bool>(m_mock);
+    }
+
 private:
     template<typename RET>
     static RET MakeDefaultReturnValue()
@@ -469,6 +476,12 @@ public:
     void AllowAnyCall()
     {
         m_callCounter.AllowAnyCall();
+    }
+
+    void AllowAnyCall(std::function<HRESULT(TSender_abi, TArgs_abi)> fn)
+    {
+        m_callCounter.AllowAnyCall();
+        m_function = fn;
     }
 
     void SetExpectedCalls(int value, HRESULT nextReturnValue = S_OK)

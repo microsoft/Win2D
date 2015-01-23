@@ -1,0 +1,177 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+namespace Microsoft.Graphics.Canvas
+{
+    [version(VERSION)]
+    typedef struct CanvasTimingInformation
+    {
+        // Represents a tally of the number of updates raised, ever, for this control.
+        INT64 UpdateCount;
+
+        // Represents the elapsed time, in ticks, for which the creation of this control has ever been running.
+        Windows.Foundation.TimeSpan TotalTime;
+
+        // Represents the amount of time, in ticks, since the last update.
+        Windows.Foundation.TimeSpan ElapsedTime;
+
+        // For fixed-timestep, this indicates that the game's rendering work was not completed quickly enough.
+        boolean IsRunningSlowly;
+    } CanvasTimingInformation;
+
+    runtimeclass CanvasAnimatedUpdateEventArgs;
+
+    [version(VERSION), uuid(766F4867-B22A-464B-89B1-0DA6AB62BE68), exclusiveto(CanvasAnimatedUpdateEventArgs)]
+    interface ICanvasAnimatedUpdateEventArgsFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] CanvasTimingInformation timingInformation,
+            [out, retval] CanvasAnimatedUpdateEventArgs** updateEventArgs);
+    };
+
+    // The same update structure is shared between fixed and variable timestep.
+    [version(VERSION), uuid(A96B2B2A-0C6E-4AA8-925B-7137263B4E44), exclusiveto(CanvasAnimatedUpdateEventArgs)]
+    interface ICanvasAnimatedUpdateEventArgs : IInspectable
+    {
+        [propget] HRESULT Timing([out, retval] CanvasTimingInformation* value);
+    }
+
+    [version(VERSION), activatable(ICanvasAnimatedUpdateEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasAnimatedUpdateEventArgs
+    {
+        [default] interface ICanvasAnimatedUpdateEventArgs;
+    }
+
+    runtimeclass CanvasAnimatedDrawEventArgs;
+
+    [version(VERSION), uuid(C0C8FDAC-0DFC-4E18-A6E9-9EF7DC82BCC2), exclusiveto(CanvasAnimatedDrawEventArgs)]
+    interface ICanvasAnimatedDrawEventArgsFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] CanvasDrawingSession* canvasDrawingSession,
+            [in] CanvasTimingInformation timingInformation,
+            [out, retval] CanvasAnimatedDrawEventArgs** animatedControlDrawEventArgs
+            );
+    };
+
+    [version(VERSION), uuid(BC01FF4D-FF6C-4D4D-A9E9-8EEB2139F23F), exclusiveto(CanvasAnimatedDrawEventArgs)]
+    interface ICanvasAnimatedDrawEventArgs : IInspectable
+    {
+        [propget] HRESULT DrawingSession([out, retval] CanvasDrawingSession** value);
+
+        [propget] HRESULT Timing([out, retval] CanvasTimingInformation* value);
+    }
+
+    [version(VERSION), activatable(ICanvasAnimatedDrawEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasAnimatedDrawEventArgs
+    {
+        [default] interface ICanvasAnimatedDrawEventArgs;
+    }
+
+    runtimeclass CanvasAnimatedControl;
+
+    runtimeclass CanvasCreateResourcesEventArgs;
+
+    [version(VERSION), uuid(9BD47D0D-D57D-43B7-82CB-489CC566E887)]
+    interface ICanvasAnimatedControl : IInspectable
+        requires ICanvasResourceCreatorWithDpi
+    {
+        //
+        // Similarly to CanvasControl, CreateResources is issued on the default (UI) thread.
+        //
+        // By design, add_CreateResources and remove_CreateResources must also be called 
+        // on the UI thread.
+        //
+
+        [eventadd] HRESULT CreateResources(
+            [in] Windows.Foundation.TypedEventHandler<CanvasAnimatedControl*, CanvasCreateResourcesEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);
+
+        // Draw and Update events are issued on the AnimatedControl's worker 
+        // thread, if the control's state is not Paused.
+        //
+        // Since the event collections are implemented with EventSource, add_Update/remove_Update
+        // and add_Draw/remove_Draw are designed to be threadsafe.
+        //
+
+        [eventadd] HRESULT Update(
+            [in] Windows.Foundation.TypedEventHandler<ICanvasAnimatedControl*, CanvasAnimatedUpdateEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT Update([in] EventRegistrationToken token);
+
+        [eventadd] HRESULT Draw(
+            [in] Windows.Foundation.TypedEventHandler<ICanvasAnimatedControl*, CanvasAnimatedDrawEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT Draw([in] EventRegistrationToken token);
+
+        //
+        // True if all required CreateResources calls (including the AsyncAction
+        // if set) are complete.
+        //
+        // This method must be called from the UI thread.
+        //
+        [propget] HRESULT ReadyToDraw(
+            [out, retval] boolean* value);
+
+        // Indicates whether this control uses fixed or variable timestep.  Default is TRUE.
+        //
+        // These methods can be called from any thread.
+        //
+        [propput] HRESULT IsFixedTimeStep([in] boolean value);
+        [propget] HRESULT IsFixedTimeStep([out, retval] boolean* value);
+
+        // Gets or sets the expected time for each iteration of the Draw/Update loop.
+        // Default is 1/60th of a second.
+        //
+        // These methods can be called from any thread.
+        //
+        [propput] HRESULT TargetElapsedTime([in] Windows.Foundation.TimeSpan value);
+        [propget] HRESULT TargetElapsedTime([out, retval] Windows.Foundation.TimeSpan* value);
+
+        // Used to pause or un-pause draw/update. 
+        //
+        // These methods can be called from any thread.
+        //
+        [propput] HRESULT Paused([in] boolean value);
+        [propget] HRESULT Paused([out, retval] boolean* value);
+
+        // Control is cleared to this color at the start of each rendering event. 
+        //
+        // These methods can be called from any thread.
+        //
+        [propput] HRESULT ClearColor([in] Windows.UI.Color value);
+        [propget] HRESULT ClearColor([out, retval] Windows.UI.Color* value);
+
+        // The current size of the control; this is safe to call from Update/Draw
+        //
+        // These methods can be called from any thread.
+        //
+        [propget] HRESULT Size([out, retval] Windows.Foundation.Size* value);
+
+        // Resets the elapsed time.
+        //
+        // These methods can be called from any thread.
+        //
+        HRESULT ResetElapsedTime();
+    }
+
+    [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
+    runtimeclass CanvasAnimatedControl : Windows.UI.Xaml.Controls.UserControl
+    {
+        [default] interface ICanvasAnimatedControl;
+    }
+
+}

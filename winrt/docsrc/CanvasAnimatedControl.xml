@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl">
+      <summary>XAML control providing swap chain rendering. Useful for scenarios with large amounts of quickly animating content.</summary>
+      <remarks>
+        <p>
+        To add an animated control to your app, add CanvasAnimatedControl to your
+        XAML tree. Subscribe to its CanvasAnimatedControl.Draw event and 
+        CanvasAnimatedControl.Update events. In the Draw handler, use 
+        CanvasDrawEventArgs.DrawingSession to draw your immediate mode 2D graphics.
+        In the Update handler, update any animation data as necessary.
+        </p>
+        
+        <p>
+        CanvasAnimatedControl is designed to run an app's drawing and animation state updating
+        logic on a timer. This timer two timing options: fixed, and variable. The 
+        default is fixed.
+        </p>        
+
+        <p>
+        Fixed timing causes draw/update to be called at a fixed rate. This fixed rate 
+        is specified with TargetElapsedTime. An app can simply update its animation 
+        state by some fixed amount per update,  and simply rely on Update to be issued
+        the right number of times, at the right frequency.
+        </p>
+        
+        <p>
+        However, if the rendering work is too costly to complete within TargetElapsedTime,
+        the Update will still be issued, just late. Depending on how slow things are, Update 
+        will be called multiple times as necessary, in order to 'catch up'. An app can
+        identify that this is happening based on the IsRunningSlowly field of CanvasTimingInformation.
+        </p>
+        
+        <p>
+        Variable timestep works a bit differently. Draw/Update are called as fast as possible,
+        and the timing information is returned to the app. The app determines how long it has been
+        since the previous update, and uses that to control animation.
+        </p>        
+      </remarks>
+    </member> 
+    <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedControl">
+      <summary>XAML control providing swap chain rendering. Useful for scenarios with large amounts of quickly animating content.</summary>
+      <inheritdoc/>
+    </member>   
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.#ctor">
+      <summary>Initializes a new instance of the CanvasAnimatedControl class.</summary>
+    </member>    
+    
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ResetElapsedTime">
+      <summary>Resets the elapsed time of the control's timer.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ResetElapsedTime">
+      <summary>Resets the elapsed time of the control's timer.</summary>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ClearColor">
+      <summary>The color that the control is cleared to before the Draw event is raised.</summary>
+      <remarks>
+        <p>
+          ClearColor defaults to transparent black, that is, Color.FromArgb(0,0,0,0).
+        </p>
+        <p>
+          Modifying ClearColor will cause the control to redraw.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ClearColor">
+      <summary>The color that the control is cleared to before the Draw event is raised.</summary>
+      <inheritdoc/>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.IsFixedTimeStep">
+      <summary>Indicates whether the control's timer is fixed time step, as opposed to variable time step.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.IsFixedTimeStep">
+      <summary>Indicates whether the control's timer is fixed time step, as opposed to variable time step.</summary>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Paused">
+      <summary>Indicates whether the control's rendering is paused.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Paused">
+      <summary>Indicates whether the control's rendering is paused.</summary>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ReadyToDraw">
+      <summary>Gets whether the control is in a state where it is ready to draw.</summary>
+      <remarks>
+        This control is ready to draw when a device has been created and all
+        CreateResources event handlers have completed successfully.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ReadyToDraw">
+      <summary>Gets whether the control is in a state where it is ready to draw.</summary>
+      <inheritdoc/>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Size">
+      <summary>Gets the current size of the control.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Size">
+      <summary>Gets the current size of the control.</summary>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.TargetElapsedTime">
+      <summary>Gets or sets the expected time for each iteration of the Draw/Update loop.</summary>
+      <remarks>The default is 1/60th of a second.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.TargetElapsedTime">
+      <summary>Gets or sets the expected time for each iteration of the Draw/Update loop.</summary>
+      <inheritdoc/>
+    </member>
+    
+    <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.CreateResources">
+      <summary>Hook this event to create any resources needed for your drawing.</summary>
+      <remarks>The CreateResources event is raised once when the CanvasAnimatedControl is first initialized, then
+               again any time the resources need to be recreated, for instance if the underlying GPU gets reset.
+      </remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.CreateResources">
+      <summary>Hook this event to create any resources needed for your drawing.</summary>
+      <inheritdoc/>
+    </member>
+    
+    <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Draw">
+      <summary>Hook this event to issue your immediate mode 2D drawing calls.</summary>
+      <remarks>
+           The Draw event is raised any time its contents need to be redrawn, and the control isn't
+           paused. This occurs on a timed interval, based on the target elapsed time.
+      </remarks>
+    </member>
+    
+    <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Draw">
+      <summary>Hook this event to issue your immediate mode 2D drawing calls.</summary>
+      <inheritdoc/>
+    </member>
+        
+    <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Update">
+      <summary>Hook this event to update any data, as necessary, for your app's animation.</summary>
+      <remarks>
+           The Update event is raised on a timed interval, based on the target elapsed time.
+           It doesn't get raised if the control is paused.
+      </remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Update">
+      <summary>Hook this event to update any data, as necessary, for your app's animation.</summary>
+      <inheritdoc/>
+    </member>            
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (dips) based on the current DPI of this control.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ConvertDipsToPixels(System.Single)">
+      <summary>Converts units from device independent pixels (dips) to physical pixels based on the current DPI of this control.</summary>
+    </member>
+    
+    
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Device">
+      <summary>Gets the underlying device used by this control.</summary>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Dpi">
+      <summary>Gets the current dots-per-inch (DPI) of this control.</summary>
+      <remarks>
+        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
+        The identity DPI value is 96, which means dips and pixels are the same.
+      </remarks>
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs">
+      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Draw"/> event.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.CanvasTimingInformation)">
+      <summary>Initializes a new instance of the CanvasAnimatedDrawEventArgs class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs.DrawingSession">
+      <summary>Gets the drawing session for use by the Draw event handler.
+               This provides methods to draw lines, rectangles, text etc.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs.Timing">
+      <summary>Gets the control's timing information for use by the event handler.</summary>
+      <remarks>This data is especially useful for apps which use variable-step timing,
+               since these apps will likely control their animation based on the delta
+               between timestamps.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedUpdateEventArgs">
+      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Update"/> event.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedUpdateEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasTimingInformation)">
+      <summary>Initializes a new instance of the CanvasAnimatedUpdateEventArgs class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedUpdateEventArgs.Timing">
+      <summary>Gets the control's timing information for use by the event handler.</summary>
+      <remarks>This data is especially useful for apps which use variable-step timing,
+               since these apps will likely control their animation based on the delta
+               between timestamps.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasTimingInformation">
+      <summary>Contains information about a CanvasAnimatedControl's timer.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.UpdateCount">
+      <summary>The number of times the Update/Draw loop has occurred.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.TotalTime">
+      <summary>Represents the elapsed time, in ticks, for which this control has ever been running.</summary>
+      <remarks>Time in which the control is paused doesn't contribute to this time.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.ElapsedTime">
+      <summary>Represents the amount of time, in ticks, since the last update.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.IsRunningSlowly">
+      <summary>For fixed-timestep, this indicates that the app's rendering work was not completed quickly enough.</summary>
+      <remarks>This field is always 'false' for variable-timestep.</remarks>
+    </member>
+
+  </members>
+</doc>

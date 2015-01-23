@@ -25,11 +25,13 @@ namespace canvas
 
     public:
         ComPtr<MockEventSource<IRoutedEventHandler>> LoadedEventSource;
+        ComPtr<MockEventSource<IRoutedEventHandler>> UnloadedEventSource;
         ComPtr<MockEventSource<ISizeChangedEventHandler>> SizeChangedEventSource;
 
         StubUserControl()
             : m_actualSize(Size{128.0f, 128.0f})
             , LoadedEventSource(Make<MockEventSource<IRoutedEventHandler>>(L"Loaded"))
+            , UnloadedEventSource(Make<MockEventSource<IRoutedEventHandler>>(L"Unloaded"))
             , SizeChangedEventSource(Make<MockEventSource<ISizeChangedEventHandler>>(L"SizeChanged"))
         {
         }
@@ -310,16 +312,14 @@ namespace canvas
             return LoadedEventSource->remove_Event(token);
         }
 
-        IFACEMETHODIMP add_Unloaded(IRoutedEventHandler *,EventRegistrationToken *) override 
+        IFACEMETHODIMP add_Unloaded(IRoutedEventHandler* handler, EventRegistrationToken* token) override
         {
-            Assert::Fail(L"Unexpected call to add_Unloaded");
-            return E_NOTIMPL; 
+            return UnloadedEventSource->add_Event(handler, token);
         }
 
-        IFACEMETHODIMP remove_Unloaded(EventRegistrationToken) override 
+        IFACEMETHODIMP remove_Unloaded(EventRegistrationToken token) override
         {
-            Assert::Fail(L"Unexpected call to remove_Unloaded");
-            return E_NOTIMPL; 
+            return UnloadedEventSource->remove_Event(token);
         }
 
         IFACEMETHODIMP add_SizeChanged(ISizeChangedEventHandler* handler, EventRegistrationToken* token) override 

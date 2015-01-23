@@ -14,6 +14,8 @@
 
 #include "RecreatableDeviceManager.h"
 #include "CanvasCreateResourcesEventArgs.h"
+#include "CanvasControl.h"
+#include "CanvasAnimatedControl.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

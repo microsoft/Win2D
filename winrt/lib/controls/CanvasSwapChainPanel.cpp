@@ -19,31 +19,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace ::Microsoft::WRL::Wrappers;
 
-    class CanvasSwapChainPanelAdapter : public ICanvasSwapChainPanelAdapter
+    CanvasSwapChainPanelAdapter::CanvasSwapChainPanelAdapter()
     {
-        ComPtr<ISwapChainPanelFactory> m_swapChainPanelFactory;
+        ThrowIfFailed(GetActivationFactory(
+            HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_SwapChainPanel).Get(),
+            &m_swapChainPanelFactory));
+    }
 
-    public:
-        CanvasSwapChainPanelAdapter()
-        {
-            ThrowIfFailed(GetActivationFactory(
-                HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_SwapChainPanel).Get(),
-                &m_swapChainPanelFactory));
-        }
+    std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CanvasSwapChainPanelAdapter::CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
+    {
+        ComPtr<IInspectable> swapChainPanelInspectable;
+        ComPtr<ISwapChainPanel> swapChainPanel;
 
-        virtual std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChain) override
-        {
-            ComPtr<IInspectable> swapChainPanelInspectable;
-            ComPtr<ISwapChainPanel> swapChainPanel;
+        // Instantiates the SwapChainPanel XAML object.
+        ThrowIfFailed(m_swapChainPanelFactory->CreateInstance(
+            canvasSwapChainPanel,
+            &swapChainPanelInspectable,
+            &swapChainPanel));
 
-            ThrowIfFailed(m_swapChainPanelFactory->CreateInstance(
-                canvasSwapChain,
-                &swapChainPanelInspectable,
-                &swapChainPanel));
-
-            return std::make_pair(swapChainPanelInspectable, swapChainPanel);
-        }
-    };
+        return std::make_pair(swapChainPanelInspectable, swapChainPanel);
+    }
 
     class CanvasSwapChainPanelFactory : public ActivationFactory<>
     {

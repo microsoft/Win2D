@@ -93,7 +93,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     public:
         CanvasSwapChain(
-            ICanvasResourceCreator* resourceCreator,
+            ICanvasDevice* device,
             std::shared_ptr<CanvasSwapChainManager> swapChainManager,
             IDXGISwapChain2* dxgiSwapChain,
             float dpi);
@@ -148,7 +148,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         ComPtr<CanvasSwapChain> CreateNew(
-            ICanvasResourceCreator* resourceCreator,
+            ICanvasDevice* device,
             float width,
             float height,
             DirectXPixelFormat format,
@@ -156,7 +156,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaMode alphaMode,
             float dpi);
 
-        ComPtr<CanvasSwapChain> CreateWrapper(
+        virtual ComPtr<CanvasSwapChain> CreateWrapper(
             ICanvasDevice* device,
             IDXGISwapChain2* resource,
             float dpi);

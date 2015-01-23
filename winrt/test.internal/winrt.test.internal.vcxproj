@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -43,7 +43,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CanvasControlTestAdapter.h" />
+    <ClInclude Include="controls\BasicControlFixture.h" />
+    <ClInclude Include="controls\CanvasControlTestAdapter.h" />
+    <ClInclude Include="controls\CanvasSwapChainPanelTestAdapter.h" />
+    <ClInclude Include="controls\ControlFixtures.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="MockAsyncAction.h" />
     <ClInclude Include="MockCanvasDevice.h" />
@@ -54,6 +57,7 @@
     <ClInclude Include="MockCoreApplication.h" />
     <ClInclude Include="MockD2DBitmap.h" />
     <ClInclude Include="MockD2DBitmapBrush.h" />
+    <ClInclude Include="MockD2DCommandList.h" />
     <ClInclude Include="MockD2DDevice.h" />
     <ClInclude Include="MockD2DDeviceContext.h" />
     <ClInclude Include="MockD2DEffect.h" />
@@ -65,10 +69,12 @@
     <ClInclude Include="MockD2DFactory.h" />
     <ClInclude Include="MockD2DStrokeStyle.h" />
     <ClInclude Include="MockD3D11Device.h" />
+    <ClInclude Include="MockDispatcher.h" />
     <ClInclude Include="MockHelpers.h" />
     <ClInclude Include="MockDXGIAdapter.h" />
     <ClInclude Include="MockDXGIFactory.h" />
     <ClInclude Include="MockDXGISwapChain.h" />
+    <ClInclude Include="controls\MockRecreatableDeviceManager.h" />
     <ClInclude Include="MockSurfaceImageSource.h" />
     <ClInclude Include="MockSurfaceImageSourceFactory.h" />
     <ClInclude Include="MockWICBitmap.h" />
@@ -95,18 +101,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsyncOperationTests.cpp" />
+    <ClCompile Include="controls\CanvasAnimatedControlUnitTests.cpp" />
     <ClCompile Include="CanvasCommandListUnitTests.cpp" />
-    <ClCompile Include="CanvasControlUnitTests.cpp" />
+    <ClCompile Include="controls\CanvasControlUnitTests.cpp" />
     <ClCompile Include="CanvasBitmapUnitTest.cpp" />
     <ClCompile Include="CanvasGradientBrushUnitTests.cpp" />
     <ClCompile Include="CanvasImageUnitTests.cpp" />
     <ClCompile Include="CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="CanvasEffectUnitTest.cpp" />
     <ClCompile Include="CanvasRenderTargetUnitTests.cpp" />
+    <ClCompile Include="controls\CanvasSharedControlUnitTests.cpp" />
+    <ClCompile Include="controls\BaseControlUnitTests.cpp" />
     <ClCompile Include="CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="CanvasSwapChainUnitTests.cpp" />
-    <ClCompile Include="CanvasSwapChainPanelUnitTests.cpp" />
+    <ClCompile Include="controls\CanvasSwapChainPanelUnitTests.cpp" />
     <ClCompile Include="CanvasTextFormatTests.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -116,8 +125,9 @@
     <ClCompile Include="CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="ComArrayTests.cpp" />
     <ClCompile Include="ConversionUnitTests.cpp" />
+    <ClCompile Include="controls\ControlFixtures.cpp" />
     <ClCompile Include="PolymorphicBitmapManagerUnitTests.cpp" />
-    <ClCompile Include="RecreatableDeviceManagerTests.cpp" />
+    <ClCompile Include="controls\RecreatableDeviceManagerTests.cpp" />
     <ClCompile Include="ResourceManagerUnitTests.cpp" />
     <ClCompile Include="ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="StubD2DResources.cpp" />

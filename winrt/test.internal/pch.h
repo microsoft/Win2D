@@ -24,6 +24,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <set>
 #include <vector>
 
@@ -71,7 +72,6 @@
 // winrt.lib
 #include <CanvasBitmap.h>
 #include <CanvasBrush.h>
-#include <CanvasControl.h>
 #include <CanvasDevice.h>
 #include <CanvasDrawingSession.h>
 #include <CanvasImageBrush.h>
@@ -82,10 +82,12 @@
 #include <CanvasRenderTarget.h>
 #include <CanvasSolidColorBrush.h>
 #include <CanvasStrokeStyle.h>
+#include <CanvasSwapChain.h>
+#include <controls\CanvasSwapChainPanel.h>
 #include <CanvasTextFormat.h>
 #include <Conversion.h>
 #include <DxgiUtilities.h>
-#include <RecreatableDeviceManager.h>
+#include <controls\RecreatableDeviceManager.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>

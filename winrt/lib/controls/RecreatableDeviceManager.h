@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "CanvasControl.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     enum class RunWithDeviceFlags
@@ -25,14 +23,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     DEFINE_ENUM_FLAG_OPERATORS(RunWithDeviceFlags);
 
+    inline bool IsSet(RunWithDeviceFlags flags, RunWithDeviceFlags toTest)
+    { 
+        return (flags & toTest) == toTest; 
+    }
+
     typedef std::function<void(ICanvasDevice*, RunWithDeviceFlags)> RunWithDeviceFunction;
 
     template<typename TRAITS>
     class IRecreatableDeviceManager
     {
     public:
-        typedef typename TRAITS::Sender Sender;
-        typedef typename TRAITS::CreateResourcesHandler CreateResourcesHandler;
+        typedef typename TRAITS::control_t                     Sender;
+        typedef typename TRAITS::createResourcesEventHandler_t CreateResourcesHandler;
 
         virtual void SetChangedCallback(std::function<void()> fn) = 0;
         virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction fn) = 0;

@@ -12,68 +12,25 @@
 
 #pragma once
 
-#include <RecreatableDeviceManager.impl.h>
+#include "BaseControlTestAdapter.h"
 
-#include "MockCanvasDeviceActivationFactory.h"
-#include "MockHelpers.h"
-#include "MockWindow.h"
-
-using ABI::Windows::Graphics::Display::DisplayInformation;
-using namespace ABI::Windows::ApplicationModel;
-using namespace ABI::Windows::ApplicationModel::Core;
-
-class CanvasControlTestAdapter : public ICanvasControlAdapter, public std::enable_shared_from_this<CanvasControlTestAdapter>
+class CanvasControlTestAdapter : 
+    public BaseControlTestAdapter<CanvasControlTraits>
 {
     ComPtr<MockWindow> m_mockWindow;
 
 public:
-    ComPtr<MockEventSource<DpiChangedEventHandler>> DpiChangedEventSource;
-    ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     ComPtr<MockEventSourceUntyped> SurfaceContentsLostEventSource;
-    ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
-    CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<ICanvasControlRecreatableDeviceManager>());
+    ComPtr<MockEventSourceUntyped> CompositionRenderingEventSource;
     CALL_COUNTER_WITH_MOCK(CreateCanvasImageSourceMethod, ComPtr<CanvasImageSource>(ICanvasDevice*, float, float, float, CanvasBackground));
 
-    ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
-
-    float LogicalDpi;
 
     CanvasControlTestAdapter()
-        : DeviceFactory(Make<MockCanvasDeviceActivationFactory>())
-        , m_mockWindow(Make<MockWindow>())
-        , DpiChangedEventSource(Make<MockEventSource<DpiChangedEventHandler>>(L"DpiChanged"))
+        : SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
-        , SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
-        , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
-        , LogicalDpi(DEFAULT_DPI)
     {
-        CreateRecreatableDeviceManagerMethod.AllowAnyCall();
-        DeviceFactory->ActivateInstanceMethod.AllowAnyCall();
     }
 
-    virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
-    {
-        auto control = Make<StubUserControl>();
-
-        ComPtr<IInspectable> inspectableControl;
-        ThrowIfFailed(control.As(&inspectableControl));
-
-        return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, control);
-    }
-
-    virtual std::unique_ptr<ICanvasControlRecreatableDeviceManager> CreateRecreatableDeviceManager() override
-    {
-        auto manager = CreateRecreatableDeviceManagerMethod.WasCalled();
-        if (manager)
-            return manager;
-
-        return std::make_unique<RecreatableDeviceManager<CanvasControlRecreatableDeviceManagerTraits>>(DeviceFactory.Get());
-    }
-
-    virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* value) override
-    {
-        return SuspendingEventSource->Add(value);
-    }
 
     virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>* value) override
     {
@@ -85,6 +42,12 @@ public:
         IInspectable* sender = nullptr;
         IInspectable* arg = nullptr;
         ThrowIfFailed(CompositionRenderingEventSource->InvokeAll(sender, arg));
+    }
+
+    virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* value, IWindow* window) override
+    {
+        MockWindow* mockWindow = dynamic_cast<MockWindow*>(window);
+        return mockWindow->VisibilityChangedEventSource->Add(value);
     }
 
     virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
@@ -158,36 +121,5 @@ public:
     virtual ComPtr<IImage> CreateImageControl() override
     {
         return Make<StubImageControl>();
-    }
-
-    virtual float GetLogicalDpi() override
-    {
-        return LogicalDpi;
-    }
-
-    virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* value) override
-    {
-        return DpiChangedEventSource->Add(value);
-    }
-
-    void RaiseDpiChangedEvent()
-    {
-        ThrowIfFailed(DpiChangedEventSource->InvokeAll(nullptr, nullptr));
-    }
-
-    virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* value, IWindow* window)
-    {
-        MockWindow* mockWindow = dynamic_cast<MockWindow*>(window);
-        return mockWindow->VisibilityChangedEventSource->Add(value);
-    }
-
-    virtual ComPtr<IWindow> GetCurrentWindow() override
-    {
-        return m_mockWindow;
-    }
-
-    ComPtr<MockWindow> GetCurrentMockWindow()
-    {
-        return m_mockWindow;
     }
 };

@@ -12,25 +12,39 @@
 
 #pragma once
 
+#include "MockDxgiSwapChain.h"
+
 namespace canvas
 {
-    class MockCanvasSwapChain : public RuntimeClass<
-        RuntimeClassFlags<WinRtClassicComMix>,
-        ICanvasSwapChain,
-        ICanvasResourceCreator,
-        IClosable,
-        CloakedIid<ICanvasResourceWrapperNative>>
+    class MockCanvasSwapChain : public CanvasSwapChain
     {
     public:
-        CALL_COUNTER_WITH_MOCK(GetResourceMethod, HRESULT(const IID&, void**));
-        CALL_COUNTER_WITH_MOCK(GetDpiMethod, HRESULT(float*));
+        CALL_COUNTER_WITH_MOCK(PresentMethod, HRESULT());
+        CALL_COUNTER_WITH_MOCK(CreateDrawingSessionMethod, HRESULT(Color, ICanvasDrawingSession**));
+        CALL_COUNTER_WITH_MOCK(put_TransformMethod, HRESULT(Matrix3x2));
+
+        MockCanvasSwapChain(
+            ICanvasDevice* device,
+            std::shared_ptr<CanvasSwapChainManager> manager,
+            IDXGISwapChain2* dxgiSwapChain,
+            float dpi)
+            : CanvasSwapChain(device, manager, dxgiSwapChain, dpi)
+        {
+            CreateDrawingSessionMethod.AllowAnyCall();
+        }
 
         IFACEMETHOD(CreateDrawingSession)(
             Color clearColor,
             ICanvasDrawingSession** drawingSession) override
         {
-            Assert::Fail(L"Unexpected call to CreateDrawingSession");
-            return E_NOTIMPL;
+            auto hadMock = CreateDrawingSessionMethod.HasMock();
+
+            auto result = CreateDrawingSessionMethod.WasCalled(clearColor, drawingSession);
+
+            if (hadMock)
+                return result;
+            else
+                return CanvasSwapChain::CreateDrawingSession(clearColor, drawingSession);
         }
 
         IFACEMETHOD(get_Size)(Size* value) override
@@ -47,7 +61,7 @@ namespace canvas
 
         IFACEMETHOD(get_Dpi)(float* value) override
         {
-            return GetDpiMethod.WasCalled(value);
+            return CanvasSwapChain::get_Dpi(value);
         }
 
         IFACEMETHOD(get_Format)(DirectXPixelFormat* value) override
@@ -100,8 +114,7 @@ namespace canvas
 
         IFACEMETHOD(put_TransformMatrix)(Matrix3x2 value) override
         {
-            Assert::Fail(L"Unexpected call to put_TransformMatrix");
-            return E_NOTIMPL;
+            return put_TransformMethod.WasCalled(value);
         }
 
         IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override
@@ -118,8 +131,7 @@ namespace canvas
 
         IFACEMETHOD(Present)() override
         {
-            Assert::Fail(L"Unexpected call to Present");
-            return E_NOTIMPL;
+            return PresentMethod.WasCalled();
         }
 
         IFACEMETHOD(PresentWithSyncInterval)(int32_t syncInterval) override
@@ -155,15 +167,71 @@ namespace canvas
         // ICanvasResourceCreator
         IFACEMETHOD(get_Device)(ICanvasDevice** value) override
         {
-            Assert::Fail(L"Unexpected call to get_Device");
-            return E_NOTIMPL;
+            return CanvasSwapChain::get_Device(value);
         }
 
         // ICanvasResourceWrapperNative
         IFACEMETHOD(GetResource)(const IID& iid, void** out) override
         {
-            return GetResourceMethod.WasCalled(iid, out);
+            return CanvasSwapChain::GetResource(iid, out);
         }
 
+    };
+
+    class MockCanvasSwapChainManager : public CanvasSwapChainManager
+    {
+    public:
+        ComPtr<MockCanvasSwapChain> CreateMock(
+            ICanvasDevice* device = Make<StubCanvasDevice>().Get(),
+            IDXGISwapChain2* dxgiSwapChain = MakeMockSwapChain().Get(),
+            float dpi = DEFAULT_DPI)
+        {
+            auto swapChain = GetOrCreate(device, dxgiSwapChain, dpi);
+            ComPtr<MockCanvasSwapChain> mockSwapChain(dynamic_cast<MockCanvasSwapChain*>(swapChain.Get()));
+            Assert::IsNotNull(mockSwapChain.Get());
+            return mockSwapChain;
+        }
+
+        virtual ComPtr<CanvasSwapChain> CreateWrapper(
+            ICanvasDevice* device,
+            IDXGISwapChain2* resource,
+            float dpi) override
+        {
+            return Make<MockCanvasSwapChain>(device, shared_from_this(), resource, dpi);
+        }
+
+    private:
+        static ComPtr<IDXGISwapChain2> MakeMockSwapChain()
+        {
+            auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+            dxgiSwapChain->SetMatrixTransformMethod.AllowAnyCall(
+                [] (const DXGI_MATRIX_3X2_F* value)
+                {
+                    return S_OK;
+                });
+            
+            dxgiSwapChain->GetDesc1Method.AllowAnyCall(
+                [] (DXGI_SWAP_CHAIN_DESC1* desc)
+                {
+                    desc->Width = 1;
+                    desc->Height = 1;
+                    desc->Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+                    desc->BufferCount = 2;
+                    desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+                    return S_OK;
+                });
+
+            dxgiSwapChain->GetBufferMethod.AllowAnyCall(
+                [] (UINT index, const IID& iid, void** out)
+                {
+                    Assert::AreEqual(__uuidof(IDXGISurface2), iid);
+                    auto surface = Make<MockDxgiSurface>();
+
+                    return surface.CopyTo(reinterpret_cast<IDXGISurface2**>(out));
+                });
+
+            return dxgiSwapChain;
+        }
     };
 }

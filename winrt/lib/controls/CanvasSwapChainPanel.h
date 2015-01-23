@@ -23,6 +23,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) = 0;
     };
+    
+    class CanvasSwapChainPanelAdapter : public ICanvasSwapChainPanelAdapter
+    {
+        ComPtr<ISwapChainPanelFactory> m_swapChainPanelFactory;
+
+    public:
+        CanvasSwapChainPanelAdapter();
+
+        virtual std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChain) override;
+    };
 
     class CanvasSwapChainPanel : public RuntimeClass<
         ICanvasSwapChainPanel,
