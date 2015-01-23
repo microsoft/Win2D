@@ -358,7 +358,7 @@ public:
                     });
             }
 
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 0, 0, Rect{}, testPass.InterpolationMode));
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), 0, 0, Rect{}, testPass.InterpolationMode, CanvasComposite::SourceOver));
         }
     }
 
@@ -466,6 +466,46 @@ public:
         }
     }
 
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_InheritsCompositeModeFromPrimitiveBlend)
+    {
+        struct
+        {
+            D2D1_PRIMITIVE_BLEND PrimitiveBlend;
+            D2D1_COMPOSITE_MODE ExpectedCompositeMode;
+        }
+        testPasses[] =
+        {
+            { D2D1_PRIMITIVE_BLEND_SOURCE_OVER, D2D1_COMPOSITE_MODE_SOURCE_OVER },
+            { D2D1_PRIMITIVE_BLEND_COPY,        D2D1_COMPOSITE_MODE_SOURCE_COPY },
+            { D2D1_PRIMITIVE_BLEND_ADD,         D2D1_COMPOSITE_MODE_PLUS        },
+        };
+
+        for (auto& testPass : testPasses)
+        {
+            BitmapFixture f;
+
+            f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([&] { return testPass.PrimitiveBlend; });
+
+            f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE compositeMode)
+                {
+                    Assert::AreEqual(testPass.ExpectedCompositeMode, compositeMode);
+                });
+
+            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 0, 0, Rect{}, CanvasImageInterpolation::Cubic));
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_ErrorForPrimitiveBlendMin)
+    {
+        BitmapFixture f;
+
+        f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([&] { return D2D1_PRIMITIVE_BLEND_MIN; });
+
+        Assert::AreEqual(E_FAIL, f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 0, 0, Rect{}, CanvasImageInterpolation::Cubic));
+        ValidateStoredErrorState(E_FAIL, Strings::DrawImageMinBlendNotSupported);
+    }
+
     TEST_METHOD_EX(CanvasDrawingSession_DrawImage_BitmapComputesCorrectDestinationSize)
     {
         BitmapFixture f;
@@ -534,13 +574,13 @@ public:
         BitmapFixtureWithDrawImageVerification(
             Rect const& sourceRect,
             CanvasImageInterpolation interpolation = CanvasImageInterpolation::Linear,
-            CanvasComposite composite = CanvasComposite::SourceOver)
+            CanvasComposite composite = CanvasComposite::Copy)
         {
             D2D1_RECT_F expectedSourceRect = ToD2DRect(sourceRect);
             D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
             D2D1_COMPOSITE_MODE expectedComposite = static_cast<D2D1_COMPOSITE_MODE>(composite);
             
-            DeviceContext->GetPrimitiveBlendMethod.SetExpectedCalls(1, [] { return D2D1_PRIMITIVE_BLEND_MIN; });
+            DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([] { return D2D1_PRIMITIVE_BLEND_COPY; });
 
             DeviceContext->DrawImageMethod.SetExpectedCalls(1,
                 [=](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
@@ -575,6 +615,8 @@ public:
             D2D1_MATRIX_4X4_F expectedPerspective;
             if (perspective) expectedPerspective = *(ReinterpretAs<D2D1_MATRIX_4X4_F*>(perspective));
             bool expectPerspective = perspective != nullptr;
+
+            DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
 
             DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
                 [=](ID2D1Bitmap* bitmap, const D2D1_RECT_F* destRect, FLOAT opacity, D2D1_INTERPOLATION_MODE interpolation, const D2D1_RECT_F* sourceRect, const D2D1_MATRIX_4X4_F* perspective)
@@ -619,7 +661,7 @@ public:
         Matrix4x4 perspective = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 
         {
-            BitmapFixtureWithDrawImageVerification f(sourceRect);
+            BitmapFixtureWithDrawBitmapVerification f(Rect{ 123, 456, sourceRect.Width, sourceRect.Height }, &sourceRect);
             ThrowIfFailed(f.DS->DrawImageWithSourceRect(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect));
         }
         {
@@ -631,7 +673,7 @@ public:
             ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation, composite));
         }
         {
-            BitmapFixtureWithDrawImageVerification f(sourceRect);
+            BitmapFixtureWithDrawBitmapVerification f(Rect{ 123, 456, sourceRect.Width, sourceRect.Height }, &sourceRect);
             ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(), 123, 456, sourceRect));
         }
         {
@@ -701,6 +743,7 @@ public:
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
 
         f.DeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(canvasDevice->GetD2DDevice());
+        f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
 
         f.DeviceContext->GetDpiMethod.SetExpectedCalls(1,
             [&](float* dpiX, float* dpiY)

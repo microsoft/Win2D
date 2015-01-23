@@ -163,7 +163,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasImage* image,
         Vector2 offset)
     {
-        return DrawImageImpl(image, offset, nullptr, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
+        return DrawImageImpl(image, offset, nullptr, CanvasImageInterpolation::Linear, nullptr);
     }
 
 
@@ -172,14 +172,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float x,
         float y)
     {
-        return DrawImageImpl(image, Vector2{ x, y }, nullptr, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
+        return DrawImageImpl(image, Vector2{ x, y }, nullptr, CanvasImageInterpolation::Linear, nullptr);
     }
 
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOrigin(
         ICanvasImage* image)
     {
-        return DrawImageImpl(image, Vector2{ 0, 0 }, nullptr, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
+        return DrawImageImpl(image, Vector2{ 0, 0 }, nullptr, CanvasImageInterpolation::Linear, nullptr);
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRect(
@@ -187,7 +187,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Vector2 offset,
         Rect sourceRect)
     {
-        return DrawImageImpl(image, offset, &sourceRect, CanvasImageInterpolation::Linear, CanvasComposite::SourceOver);
+        return DrawImageImpl(image, offset, &sourceRect, CanvasImageInterpolation::Linear, nullptr);
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRectAndInterpolation(
@@ -196,7 +196,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Rect sourceRect,
         CanvasImageInterpolation interpolation)
     {
-        return DrawImageImpl(image, offset, &sourceRect, interpolation, CanvasComposite::SourceOver);
+        return DrawImageImpl(image, offset, &sourceRect, interpolation, nullptr);
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRectAndInterpolationAndComposite(
@@ -206,7 +206,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasImageInterpolation interpolation,
         CanvasComposite composite)
     {
-        return DrawImageImpl(image, offset, &sourceRect, interpolation, composite);
+        return DrawImageImpl(image, offset, &sourceRect, interpolation, &composite);
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRect(
@@ -215,13 +215,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float y,
         Rect sourceRect)
     {
-        return DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
-            image,
-            x,
-            y,
-            sourceRect,
-            CanvasImageInterpolation::Linear,
-            CanvasComposite::SourceOver);
+        return DrawImageImpl(image, Vector2{ x, y }, &sourceRect, CanvasImageInterpolation::Linear, nullptr);
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndInterpolation(
@@ -231,13 +225,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Rect sourceRect,
         CanvasImageInterpolation interpolation)
     {
-        return DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
-            image,
-            x,
-            y,
-            sourceRect,
-            interpolation,
-            CanvasComposite::SourceOver);
+        return DrawImageImpl(image, Vector2{ x, y }, &sourceRect, interpolation, nullptr);
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
@@ -248,7 +236,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasImageInterpolation interpolation,
         CanvasComposite composite)
     {
-        return DrawImageWithSourceRectAndInterpolationAndComposite(image, Vector2{x, y}, sourceRect, interpolation, composite);
+        return DrawImageImpl(image, Vector2{ x, y }, &sourceRect, interpolation, &composite);
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRect(
@@ -299,24 +287,52 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     // DrawBitmap uses the current primitive blend setting, but DrawImage takes an explicit
     // composite mode parameter. We can only substitute the former for the latter if these match.
+    //
     // In some cases where they do not match, we could change the primitive blend, use DrawBitmap,
     // then change it back again. But that would be more intrusive, so this implementation plays
     // it safe and only optimizes the simple case where the modes match exactly.
-    static bool IsValidDrawBitmapCompositeMode(CanvasComposite composite, ID2D1DeviceContext1* deviceContext)
+    //
+    // If the composite parameter is null, the caller did not explicitly specify a composite mode.
+    // In that case we will use GetCompositeModeFromPrimitiveBlend, so any primitive blend that
+    // has a matching composite mode is valid.
+    static bool IsValidDrawBitmapCompositeMode(CanvasComposite const* composite, ID2D1DeviceContext1* deviceContext)
     {
         switch (deviceContext->GetPrimitiveBlend())
         {
         case D2D1_PRIMITIVE_BLEND_SOURCE_OVER:
-            return (composite == CanvasComposite::SourceOver);
+            return !composite || *composite == CanvasComposite::SourceOver;
 
         case D2D1_PRIMITIVE_BLEND_COPY:
-            return (composite == CanvasComposite::Copy);
+            return !composite || *composite == CanvasComposite::Copy;
 
         case D2D1_PRIMITIVE_BLEND_ADD:
-            return (composite == CanvasComposite::Add);
+            return !composite || *composite == CanvasComposite::Add;
 
         default:
             return false;
+        }
+    }
+
+    // When using a DrawImage overload that does not take an explicit composite mode parameter,
+    // we try to match the current device context primitive blend setting.
+    static D2D1_COMPOSITE_MODE GetCompositeModeFromPrimitiveBlend(ID2D1DeviceContext1* deviceContext)
+    {
+        switch (deviceContext->GetPrimitiveBlend())
+        {
+        case D2D1_PRIMITIVE_BLEND_SOURCE_OVER:
+            return D2D1_COMPOSITE_MODE_SOURCE_OVER;
+
+        case D2D1_PRIMITIVE_BLEND_COPY:
+            return D2D1_COMPOSITE_MODE_SOURCE_COPY;
+
+        case D2D1_PRIMITIVE_BLEND_ADD:
+            return D2D1_COMPOSITE_MODE_PLUS;
+
+        case D2D1_PRIMITIVE_BLEND_MIN:
+            ThrowHR(E_FAIL, HStringReference(Strings::DrawImageMinBlendNotSupported).Get());
+
+        default:
+            ThrowHR(E_UNEXPECTED);
         }
     }
 
@@ -331,7 +347,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Vector2 offset,
         Rect* sourceRect,
         CanvasImageInterpolation interpolation,
-        CanvasComposite composite)
+        CanvasComposite const* composite)
     {
         return ExceptionBoundary(
             [&]
@@ -393,12 +409,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // If DrawBitmap cannot handle this request, we must use the DrawImage slow path.
                 D2D1_POINT_2F d2dOffset = ToD2DPoint(offset);
 
+                D2D1_COMPOSITE_MODE compositeMode = composite ? static_cast<D2D1_COMPOSITE_MODE>(*composite)
+                                                              : GetCompositeModeFromPrimitiveBlend(deviceContext.Get());
+
                 deviceContext->DrawImage(
                     As<ICanvasImageInternal>(image)->GetD2DImage(deviceContext.Get()).Get(),
                     &d2dOffset,
                     sourceRect ? &d2dSourceRect : nullptr,
                     static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
-                    static_cast<D2D1_COMPOSITE_MODE>(composite));
+                    compositeMode);
             }
         });
 

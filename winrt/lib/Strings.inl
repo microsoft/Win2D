@@ -34,3 +34,4 @@ STRING(ResourceTrackerWrongDevice, L"Existing resource wrapper is associated wit
 STRING(ResourceTrackerWrongDpi, L"Existing resource wrapper has a different DPI.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(ExpectedPositiveNonzero, L"A positive, non-zero number was expected for this method.")
+STRING(DrawImageMinBlendNotSupported, L"This DrawImage overload is not valid when CanvasDrawingSession.Blend is set to CanvasBlend.Min.")

@@ -942,7 +942,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Vector2 offset,
             Rect* sourceRect,
             CanvasImageInterpolation interpolation,
-            CanvasComposite composite);
+            CanvasComposite const* composite);
 
         HRESULT DrawBitmapWithDestRectAndSourceRectImpl(
             ICanvasBitmap* bitmap,

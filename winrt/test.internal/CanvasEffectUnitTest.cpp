@@ -175,6 +175,7 @@ public:
             auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
 
             deviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(m_stubDevice);
+            deviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
 
             deviceContext->GetDpiMethod.AllowAnyCall(
                 [&](float* dpiX, float* dpiY)
@@ -572,6 +573,7 @@ public:
             DeviceContext->BeginDrawMethod.AllowAnyCall();
             DeviceContext->EndDrawMethod.AllowAnyCall();
             DeviceContext->DrawImageMethod.AllowAnyCall();
+            DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
 
             DeviceContext->SetTargetMethod.SetExpectedCalls(1,
                 [&] (ID2D1Image* newTarget)
