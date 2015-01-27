@@ -31,8 +31,8 @@
     <!-- File extensions and directories to check vs. ignore -->
     <CppExt>cpp;h;inl;cs;idl;rc</CppExt>
     <XmlExt>xml;xaml;aml</XmlExt>
-    <SkipExt>;gitattributes;gitignore;orig;jpg;png;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe</SkipExt>
-    <SkipDir>.git;obj;bin;TestResults;build</SkipDir>
+    <SkipExt>;gitattributes;gitignore;orig;jpg;png;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe;org</SkipExt>
+    <SkipDir>.git;obj;bin;TestResults;build;.vs;packages</SkipDir>
 
     <!-- Commandline arguments for the Copyright.exe tool -->
     <Args>$(CopyrightFile) /rootdir:$(RootDir) /cppext:$(CppExt) /xmlext:$(XmlExt) /skipext:$(SkipExt) /skipdir:$(SkipDir)</Args>

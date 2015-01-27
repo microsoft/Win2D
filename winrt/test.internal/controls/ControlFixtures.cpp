@@ -96,7 +96,7 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
                 device,
                 1.0f,
                 1.0f,
-                DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
                 2,
                 CanvasAlphaMode::Premultiplied,
                 DEFAULT_DPI);

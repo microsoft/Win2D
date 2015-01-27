@@ -1013,7 +1013,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
                         isRunningSlowly = false;
                     }
 
-                    ExpectedTiming expected{ m_updateCount, m_totalTime, timeSinceLastUpdate, isRunningSlowly };
+                    ExpectedTiming expected{ m_updateCount, m_totalTime, timeSinceLastUpdate, static_cast<boolean>(isRunningSlowly) };
 
                     m_expectedOnUpdate.push(expected);
 

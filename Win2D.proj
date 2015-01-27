@@ -16,23 +16,52 @@
     <BuildConfigurations>Debug;Release</BuildConfigurations>
     <BuildWindows>true</BuildWindows>
     <BuildPhone>true</BuildPhone>
+    <BuildUAP>true</BuildUAP>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
     <BuildDocs>true</BuildDocs>
     <RunTests>true</RunTests>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Has81Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot81)' != ''">true</Has81Sdk>
+    <Has10Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)' != ''">true</Has10Sdk>
+  </PropertyGroup>
+
+  <!-- Disable building targets when the SDK isn't installed -->
+
+  <PropertyGroup Condition="'$(Has81Sdk)' != 'true' and $(BuildWindows)">
+    <BuildWindows>false</BuildWindows>
+    <SkippedBuildWindows>true</SkippedBuildWindows>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Has81Sdk)' != 'true' and $(BuildPhone)">
+    <BuildPhone>false</BuildPhone>
+    <SkippedBuildPhone>true</SkippedBuildPhone>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Has10Sdk)' != 'true' and $(BuildUAP)">
+    <BuildUAP>false</BuildUAP>
+    <SkippedBuildUAP>true</SkippedBuildUAP>
+  </PropertyGroup>
 
   <!-- Set default platforms for each project type -->
   <ItemDefinitionGroup>
     <WindowsProject>
       <Platforms>Win32;x64;ARM</Platforms>
+      <BinDir>Windows</BinDir>
     </WindowsProject>
     <PhoneProject>
       <Platforms>Win32;ARM</Platforms>
+      <BinDir>Phone</BinDir>
     </PhoneProject>
+    <UAPProject>
+      <Platforms>Win32;x64;ARM</Platforms>
+      <BinDir>UAP</BinDir>
+    </UAPProject>
     <AnyCPUProject>
       <Platforms>AnyCPU</Platforms>
+      <BinDir>Windows</BinDir>
     </AnyCPUProject>
   </ItemDefinitionGroup>
 
@@ -51,9 +80,15 @@
     <PhoneProject Include="numerics\DotNet\DotNetNumerics.WindowsPhone.csproj" />
   </ItemGroup>
 
+  <!-- UAP projects implementing the Canvas API -->
+  <ItemGroup Condition="$(BuildUAP)">
+    <UAPProject Include="winrt\lib\winrt.lib.uap.vcxproj" />
+    <UAPProject Include="winrt\dll\winrt.dll.uap.vcxproj" />
+  </ItemGroup>
+
   <!-- Windows test projects -->
   <ItemGroup Condition="$(BuildWindows) and $(BuildTests)">
-    <WindowsProject Include="winrt\test.internal\winrt.test.internal.vcxproj">
+    <WindowsProject Include="winrt\test.internal\winrt.test.internal.Windows.vcxproj">
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests>desktop</AutomatedTests>
     </WindowsProject>
@@ -88,6 +123,33 @@
     <PhoneProject Include="numerics\DotNet\tests\WindowsPhone\DotNetNumericsTests.WindowsPhone.csproj" />
   </ItemGroup>
 
+  <!-- UAP test projects -->
+  <ItemGroup Condition="$(BuildUAP) and $(BuildTests)">
+    <UAPProject Include="winrt\test.internal\winrt.test.internal.uap.vcxproj">
+      <Platforms>Win32;x64</Platforms>
+      <AutomatedTests>desktop</AutomatedTests>
+    </UAPProject>
+    <!-- TODO: winrt.test.external.uap disabled since there's no cpp unit test framework for UAPs
+    <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
+      <AutomatedTests>store</AutomatedTests>
+    </UAPProject>
+    -->
+    <!-- TODO: winrt.test.nativecomponent.uap needs to be added - this is only
+         useful for unit tests, and there's no UT framework for UAP.
+
+    <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
+    -->
+    <!-- TODO: winrt.test.managed.uap needs to be added - there's no UT
+         framework for UAP
+
+    <UAPProject Include="winrt\test.managed\UAP\winrt.test.managed.uap.csproj">
+      <AutomatedTests>store</AutomatedTests>
+    </UAPProject>
+    -->
+    <UAPProject Include="tests\CsConsumer\UAP\CsConsumer.uap.csproj" />
+    <UAPProject Include="tests\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
+  </ItemGroup>
+
   <!-- Tools projects -->
   <ItemGroup Condition="$(BuildTools)">
     <AnyCPUProject Include="tools\copyright\copyright.csproj" />
@@ -108,7 +170,7 @@
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild"
+          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ListSkippedTargets"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -127,7 +189,7 @@
       <BuildConfiguration Include="$(BuildConfigurations)" />
 
       <!-- Generate the cartesian product of all projects * all platforms we are building -->
-      <CandidateProjects Include="@(WindowsProject);@(PhoneProject);@(AnyCPUProject)">
+      <CandidateProjects Include="@(WindowsProject);@(PhoneProject);@(UAPProject);@(AnyCPUProject)">
         <Platform>%(BuildPlatform.Identity)</Platform>
       </CandidateProjects>
 
@@ -222,6 +284,14 @@
 
 
   <!-- Run the automated tests -->
+
+  <PropertyGroup>
+    <_VsTestPathUnderCommonTools>..\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe</_VsTestPathUnderCommonTools>
+    <_VsTest Condition="Exists('$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <VsTest>"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
+  </PropertyGroup>
+
   <Target Name="RunTests"
           Condition="$(BuildTests) and $(RunTests)"
           DependsOnTargets="ChooseProjectsToBuild; ChooseTestsToRun"
@@ -230,7 +300,7 @@
 
     <Message Importance="High" Text="Running tests: %(TestProjects.Filename) (%(TestProjects.Configuration)|%(TestProjects.Platform))" />
 
-    <Exec Command="vstest.console %(TestProjects.TestBinary)%(TestProjects.TestArgs)" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="$(VsTest) %(TestProjects.TestBinary)%(TestProjects.TestArgs)" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
 
@@ -242,7 +312,7 @@
         <TestPlatform Condition="%(ProjectsToBuild.Platform) != Win32">%(ProjectsToBuild.Platform)</TestPlatform>
 
         <!-- Work out where the test binaries are located -->
-        <TestPath>bin\Windows%(TestProjects.TestPlatform)\%(ProjectsToBuild.Configuration)</TestPath>
+        <TestPath>bin\%(ProjectsToBuild.BinDir)%(TestProjects.TestPlatform)\%(ProjectsToBuild.Configuration)</TestPath>
 
         <TestAppX Condition="%(ProjectsToBuild.Configuration) == Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)</TestAppX>
         <TestAppX Condition="%(ProjectsToBuild.Configuration) != Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)_%(ProjectsToBuild.Configuration)</TestAppX>
@@ -256,6 +326,18 @@
         <TestArgs Condition="%(ProjectsToBuild.Platform) == x64 or %(ProjectsToBuild.AutomatedTests) == store">%(TestProjects.TestArgs) /InIsolation</TestArgs>
       </TestProjects>
     </ItemGroup>
+  </Target>
+
+  
+  <Target Name="ListSkippedTargets">
+    <Warning Condition="'$(SkippedBuildWindows)' == 'true'"
+             Text="Skipped building for Windows 8.1 since Windows 8.1 SDK is not installed." />
+
+    <Warning Condition="'$(SkippedBuildPhone)' == 'true'"
+             Text="Skipped building for Windows Phone 8.1 since Windows 8.1 SDK is not installed." />
+
+    <Warning Condition="'$(SkippedBuildUAP)' == 'true'"
+             Text="Skipped building for Windows 10 UAP since Windows 10 SDK is not installed." />
   </Target>
 
 </Project>

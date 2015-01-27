@@ -9,10 +9,8 @@
   -->
 
   <PropertyGroup>
-    <DeviceType Condition="'$(ApplicationType)' == 'Windows Store'">Windows</DeviceType>
-    <DeviceType Condition="'$(ApplicationType)' == 'Windows Phone'">Phone</DeviceType>
-    <DeviceType Condition="'$(ApplicationType)' == ''">Windows</DeviceType>
     <DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</DeviceType>
+    <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -43,7 +41,10 @@
 
     <__OutputPath>$(BinariesDirectory)\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\obj\$(MSBuildProjectName)\$(FullPlatform)\$(Configuration)\</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+
+    <!-- TODO: MakeRelative shouldn't be necessary, but the .NET native build tools assume IntermediateOutputPath is relative to MSBuildProjectDirectory -->
+    <IntermediateOutputPath>$([MSBuild]::MakeRelative($(MSBuildProjectDirectory), $(BaseIntermediateOutputPath)))</IntermediateOutputPath>
+
     <AssetDir>$(MSBuildThisFileDirectory)assets\</AssetDir>
   </PropertyGroup>
 

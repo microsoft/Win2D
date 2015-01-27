@@ -35,6 +35,8 @@
       <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="lib\win" />
       <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="lib\wpa" />
       <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="lib\wpa" />
+      <file src="$bin$\UAPx86\release\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" target="lib\netcore451" />
+      <file src="$bin$\UAPx86\release\winrt.dll.uap\Microsoft.Graphics.Canvas.winmd" target="lib\netcore451" />
 
       <!-- 
            These are the actual files that will be referenced by the project.
@@ -45,6 +47,9 @@
 
            Running with -NoPackageAnalysis suppresses the warnings.
       -->
+
+      <!-- Windows -->
+
       <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
       <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
       <file src="$bin$\windowsx86\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
@@ -66,6 +71,8 @@
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x64" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x64" />
 
+      <!-- Windows Phone -->
+
       <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
       <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
       <file src="$bin$\phonex86\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
@@ -80,6 +87,23 @@
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
 
+      <!-- UAP -->
+      <file src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\x86" />
+      <file src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\x86" />
+      <file src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x86" />
+
+      <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\arm" />
+      <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\arm" />
+      <file src="bin\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\arm" />
+
+      <file src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\x64" />
+      <file src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\x64" />
+      <file src="bin\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x64" />
+
+
       <!-- Build scripts used by managed Windows Store Apps -->
       <file src="build\nuget\Win2D.props" target="build\win\Win2D.props" />
       <file src="build\nuget\Win2D-managed.targets" target="build\win\Win2D.targets" />
@@ -88,13 +112,17 @@
       <file src="build\nuget\Win2D.props" target="build\wpa\Win2D.props" />
       <file src="build\nuget\Win2D-managed.targets" target="build\wpa\Win2D.targets" />
 
-      <!-- Build scripts used by native apps (Windows Store and Windows Phone) -->
+      <!-- Build scripts used by managed UAP apps -->
+      <file src="build\nuget\Win2D.props" target="build\netcore451\Win2D.props" />
+      <file src="build\nuget\Win2D-netcore451.targets" target="build\netcore451\Win2D.targets" />
+
+      <!-- Build scripts used by native apps (Windows Store, Windows Phone and UAP) -->
       <file src="build\nuget\Win2D-native.targets" target="build\native\Win2D.targets" />
       <file src="build\nuget\Win2D.props" target="build\native\Win2D.props" />
 
       <!-- Header files used by native apps -->
       <file src="winrt\published\*" target="Include"/>
-      <file src="numerics\cpp\WindowsNumerics.*" target="Include"/>
+      <file src="numerics\cpp\WindowsNumerics.*" target="Include"/> <!-- TODO: need to make this not available to UAP -->
 
       <!-- SHA-1 hash of the git HEAD this package was built from -->
       <file src="obj\Win2d.githash.txt" />

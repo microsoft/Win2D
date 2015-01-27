@@ -224,7 +224,7 @@ public:
 
         {
             // Ensure the fallback works.
-            auto canvasDevice = m_deviceManager->Create(
+            canvasDevice = m_deviceManager->Create(
                 CanvasDebugLevel::None,
                 CanvasHardwareAcceleration::Auto);
             d3dDeviceCreationCount++;
@@ -364,7 +364,7 @@ public:
 
         float anyWidth = 1.0f;
         float anyHeight = 2.0f;
-        auto anyFormat = DirectXPixelFormat::R16G16B16A16UIntNormalized;
+        auto anyFormat = PIXEL_FORMAT(R16G16B16A16UIntNormalized);
         auto anyAlphaMode = CanvasAlphaMode::Ignore;
         float anyDpi = 3.0f;
 

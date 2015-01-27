@@ -12,6 +12,8 @@
 
 #include "pch.h"
 
+#if (WINVER== 0x0603)
+
 using namespace Microsoft::Graphics::Canvas::Numerics;
 
 // Because these WinRT types are just structures without any methods, there is no actual 
@@ -260,3 +262,5 @@ namespace WinRTNumericsTests
     static_assert(offsetof(Quaternion, Z) == 8, "wrong offsetof(Quaternion, Z)");
     static_assert(offsetof(Quaternion, W) == 12, "wrong offsetof(Quaternion, W)");
 }
+
+#endif

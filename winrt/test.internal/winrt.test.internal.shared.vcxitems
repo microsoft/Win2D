@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <CodeSharingProject>248F659F-DAC5-46E8-AC09-60EC9FC95053</CodeSharingProject>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>93909408-e542-453d-bc71-ec336764891f</SharedGUID>
+    <ItemsProjectGuid>{B038B2A3-0FF2-4313-A0DB-B7B59DC2DC4C}</ItemsProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <PrecompiledHeader>Use</PrecompiledHeader>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\Inc;..\lib;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;windowscodecs.lib;dwrite.lib;kernel32.lib;runtimeobject.lib;rpcrt4.lib;oleaut32.lib;shcore.lib;</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\BasicControlFixture.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasControlTestAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanelTestAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\ControlFixtures.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockAsyncAction.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasDeviceActivationFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasImageSourceDrawingSessionFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCanvasSwapChain.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockCoreApplication.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DBitmap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DBitmapBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DCommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DDeviceContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DGradientStopCollection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DImageBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DLinearGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DRadialGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DSolidColorBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD2DStrokeStyle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockD3D11Device.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockDispatcher.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockDXGIAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockDXGIFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockDXGISwapChain.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\MockRecreatableDeviceManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockSurfaceImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockSurfaceImageSourceFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockWICBitmap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockWICFormatConverter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MockWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubCanvasBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubCanvasDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubCanvasDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubD2DBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubD2DDeviceContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubD2DStrokeStyle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubImageControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubSurfaceImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubSurfaceImageSourceFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubSwapChainPanel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubUserControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SwitchableTestBrushFixture.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StubD2DResources.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TestBitmapResourceCreationAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TestDeviceResourceCreationAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TestEffect.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AsyncOperationTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasAnimatedControlUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCommandListUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasControlUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasGradientBrushUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageBrushUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasEffectUnitTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTargetUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasSharedControlUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\BaseControlUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrushUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyleTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChainUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanelUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormatTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ComArrayTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ConversionUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\ControlFixtures.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManagerUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\RecreatableDeviceManagerTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ResourceManagerUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ResourceTrackerUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StubD2DResources.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)RegisteredEventUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VectorTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinStringBuilderTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinStringTests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+</Project>

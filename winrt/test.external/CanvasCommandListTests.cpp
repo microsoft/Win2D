@@ -12,6 +12,8 @@
 
 #include "pch.h"
 
+using Windows::Foundation::Rect;
+
 TEST_CLASS(CanvasCommandListTests)
 {
     CanvasDevice^ m_device;

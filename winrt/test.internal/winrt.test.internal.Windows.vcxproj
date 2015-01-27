@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>winrt_test</RootNamespace>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <PlatformToolset>v120</PlatformToolset>
+    <TargetName>winrt.test.internal.windows</TargetName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lib\winrt.lib.Windows.vcxproj">
+      <Project>{8e9fef0d-edb6-4c76-9383-a070314e5ff4}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Import Project="winrt.test.internal.shared.vcxitems" Label="Shared" />
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
+</Project>

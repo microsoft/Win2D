@@ -21,10 +21,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT LightPosition([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector3* value);
+        HRESULT LightPosition([out, retval] NUMERICS.Vector3* value);
 
         [propput]
-        HRESULT LightPosition([in] Microsoft.Graphics.Canvas.Numerics.Vector3 value);
+        HRESULT LightPosition([in] NUMERICS.Vector3 value);
 
         [propget]
         HRESULT DiffuseAmount([out, retval] float* value);
@@ -45,10 +45,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT LightColor([in] Windows.UI.Color value);
 
         [propget]
-        HRESULT HeightMapKernelSize([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT HeightMapKernelSize([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT HeightMapKernelSize([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT HeightMapKernelSize([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT HeightMapInterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);

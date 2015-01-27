@@ -53,8 +53,12 @@ public:
         }
     }
 
-    ScopeWarden(ScopeWarden&&) = delete;
-    ScopeWarden(ScopeWarden const&) = delete;
+    ScopeWarden(ScopeWarden const& other) // TODO: MakeScopeWarden assumes that this won't be called, but if we =delete this we get a compile error.
+    {
+        // This compiles, but the assumption is that this will always be optimize out.  I haven't tried running yet.  Need to investigate further.
+        ThrowHR(E_UNEXPECTED);
+    }
+
     ScopeWarden& operator=(ScopeWarden const&) = delete;
 
 private:

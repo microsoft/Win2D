@@ -4,10 +4,11 @@
   <PropertyGroup>
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'Windows'">Windows</win2d-DeviceType>
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</win2d-DeviceType>
+    <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'UAP'">UAP</win2d-DeviceType>
   </PropertyGroup>
 
   <Target Name="win2d-DeviceType-Check" BeforeTargets="ResolveAssemblyReferences">
-      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if Windows or Windows Phone app" />
+      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if Windows, Windows Phone or UAP app" />
   </Target>
 
   <ItemGroup>
@@ -19,7 +20,7 @@
   <ItemDefinitionGroup>
     <Link>
       <AdditionalLibraryDirectories>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Microsoft.Graphics.Canvas.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(TargetPlatformIdentifier)' != 'UAP'">Microsoft.Graphics.Canvas.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 

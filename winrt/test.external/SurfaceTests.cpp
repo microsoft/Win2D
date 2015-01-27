@@ -12,6 +12,8 @@
 
 #include "pch.h"
 
+#if (WINVER == 0x0603)
+
 using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 using namespace Microsoft::WRL;
 
@@ -189,3 +191,5 @@ private:
         return texture;
     }
 };
+
+#endif

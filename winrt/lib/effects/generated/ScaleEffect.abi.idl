@@ -21,16 +21,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT Scale([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT Scale([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT Scale([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT Scale([in] NUMERICS.Vector2 value);
 
         [propget]
-        HRESULT CenterPoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT CenterPoint([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT CenterPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT CenterPoint([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);

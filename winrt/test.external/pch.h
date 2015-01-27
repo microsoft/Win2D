@@ -23,7 +23,10 @@
 
 #include <d3d11.h>
 #include <dxgi1_3.h>
+#pragma warning(push)
+#pragma warning(disable: 4458)  // TODO: Disable "hides class member" warning until we pick up fix to MS.601961
 #include <d2d1_2.h>
+#pragma warning(pop)
 #include <dwrite_2.h>
 #include <DirectXMath.h>
 #include <Combaseapi.h>
@@ -33,7 +36,15 @@
 #include <Utilities.h>
 #include <Constants.h>
 
-#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#if (WINVER > 0x0603)
+# include <windows.graphics.directx.h>
+# include <windows.graphics.directx.direct3d11.interop.h>
+#endif
+
+#if (WINVER == 0x0603)
+# include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#endif
+
 #include <windowsnumerics.h>
 
 #include <Microsoft.Graphics.Canvas.native.h>

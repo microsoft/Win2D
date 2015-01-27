@@ -9,6 +9,7 @@
     <ApplicationType>Windows Phone</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <ProjectName>winrt.test.nativecomponent.WindowsPhone</ProjectName>
+    <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
   <Import Project="winrt.test.nativecomponent.Shared.vcxitems" Label="Shared" />
   <ItemGroup>

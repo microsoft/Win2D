@@ -75,7 +75,7 @@ TEST_CLASS(CanvasImageUnitTests)
             f.m_canvasDevice.Get(),
             1.0f,
             1.0f,
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             CanvasAlphaMode::Premultiplied,
             DEFAULT_DPI);
         canvasBitmap->GetBounds(drawingSession.Get(), &bounds);

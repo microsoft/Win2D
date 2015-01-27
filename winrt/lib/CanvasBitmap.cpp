@@ -146,7 +146,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             convertedBytes.empty() ? nullptr : &convertedBytes[0],
             widthInPixels,
             heightInPixels,
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             alpha,
             dpi);
     }
@@ -403,7 +403,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromHstringWithAlphaAndDpi(
         ICanvasResourceCreator* resourceCreator,
-        HSTRING fileName,
+        HSTRING rawFileName,
         CanvasAlphaMode alpha,
         float dpi,
         ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation)
@@ -412,13 +412,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckInPointer(resourceCreator);
-                CheckInPointer(fileName);
+                CheckInPointer(rawFileName);
                 CheckAndClearOutPointer(canvasBitmapAsyncOperation);
 
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                WinString fileName(fileName);
+                WinString fileName(rawFileName);
 
                 auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
                     [=]

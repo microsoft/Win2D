@@ -28,22 +28,22 @@ namespace Microsoft.Graphics.Canvas.Effects
         requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT Offset([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT Offset([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT Offset([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT Offset([in] NUMERICS.Vector2 value);
 
         [propget]
-        HRESULT Size([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT Size([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT Size([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT Size([in] NUMERICS.Vector2 value);
 
         [propget]
-        HRESULT Frequency([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT Frequency([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT Frequency([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT Frequency([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT Octaves([out, retval] INT32* value);

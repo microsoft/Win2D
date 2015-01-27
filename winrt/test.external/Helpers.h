@@ -21,8 +21,16 @@ using namespace Windows::UI::Core;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Numerics;
+
+#if (WINVER > 0x0603)
+using ::Windows::Graphics::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
+using namespace ::Windows::Graphics::DirectX;
+using namespace ::Windows::Graphics::DirectX::Direct3D11;
+#else
 using namespace Microsoft::Graphics::Canvas::DirectX;
 using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
+#endif
 
 namespace Microsoft
 {
@@ -270,7 +278,6 @@ namespace Microsoft
                 return a.Width == b.Width &&
                        a.Height == b.Height;
             }
-
 
             inline bool operator==(Windows::UI::Text::FontWeight const& a, Windows::UI::Text::FontWeight const& b)
             {

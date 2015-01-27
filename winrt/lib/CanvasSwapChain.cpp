@@ -37,7 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator,
             width,
             height,
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             2,
             CanvasAlphaMode::Premultiplied,
             swapChain);
@@ -54,7 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator, 
             width, 
             height, 
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             2, 
             CanvasAlphaMode::Premultiplied, 
             dpi,

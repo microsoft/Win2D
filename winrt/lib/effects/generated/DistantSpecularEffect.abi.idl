@@ -57,10 +57,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT LightColor([in] Windows.UI.Color value);
 
         [propget]
-        HRESULT HeightMapKernelSize([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT HeightMapKernelSize([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT HeightMapKernelSize([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT HeightMapKernelSize([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT HeightMapInterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);

@@ -19,6 +19,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
 
+#if (WINVER > 0x0603)
+    namespace DirectX = ::ABI::Windows::Graphics::DirectX;
+#endif
+
     template<typename TOutput, typename TInput> TOutput ReinterpretAs(TInput value)
     {
         static_assert(std::is_pointer<TInput>::value, "Types must be pointers");

@@ -21,16 +21,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT WhitePoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT WhitePoint([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT WhitePoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT WhitePoint([in] NUMERICS.Vector2 value);
 
         [propget]
-        HRESULT BlackPoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT BlackPoint([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT BlackPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT BlackPoint([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT Source([out, retval] IEffectInput** input);

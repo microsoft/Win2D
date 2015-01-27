@@ -43,7 +43,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 m_canvasDevice.Get(),
                 1.0f,
                 1.0f,
-                DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
                 2,
                 CanvasAlphaMode::Premultiplied,
                 dpi);
@@ -61,7 +61,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             {
                 Assert::AreEqual(23 * dpiScale, widthInPixels);
                 Assert::AreEqual(45 * dpiScale, heightInPixels);
-                Assert::AreEqual(DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb, format);
+                Assert::AreEqual(PIXEL_FORMAT(B8G8R8A8UIntNormalizedSrgb), format);
                 Assert::AreEqual(4, bufferCount);
                 Assert::AreEqual(CanvasAlphaMode::Ignore, alphaMode);
 
@@ -86,7 +86,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             f.m_canvasDevice.Get(),
             23.0f,
             45.0f,
-            DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalizedSrgb),
             4,
             CanvasAlphaMode::Ignore,
             DEFAULT_DPI * dpiScale);
@@ -146,7 +146,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 m_canvasDevice.Get(),
                 width,
                 height,
-                DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
                 bufferCount,
                 CanvasAlphaMode::Premultiplied,
                 DEFAULT_DPI);
@@ -202,7 +202,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->put_Rotation(CanvasSwapChainRotation::None));
 
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithSize(2, 2));
-        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithAllOptions(2, 2, DirectXPixelFormat::B8G8R8A8UIntNormalized, 2));
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithAllOptions(2, 2, PIXEL_FORMAT(B8G8R8A8UIntNormalized), 2));
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Device(&device));
@@ -280,7 +280,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         ResetForPropertyTest(swapChain);
         ThrowIfFailed(canvasSwapChain->get_Format(&pixelFormat));
-        Assert::AreEqual(DirectXPixelFormat::R16G16B16A16UIntNormalized, pixelFormat);
+        Assert::AreEqual(PIXEL_FORMAT(R16G16B16A16UIntNormalized), pixelFormat);
 
         ResetForPropertyTest(swapChain);
         ThrowIfFailed(canvasSwapChain->get_BufferCount(&i));
@@ -507,14 +507,14 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         auto canvasSwapChain = f.CreateTestSwapChain();
 
-        ThrowIfFailed(canvasSwapChain->ResizeBuffersWithAllOptions(555, 666, DirectXPixelFormat::R8G8B8A8UIntNormalized, 3));
+        ThrowIfFailed(canvasSwapChain->ResizeBuffersWithAllOptions(555, 666, PIXEL_FORMAT(R8G8B8A8UIntNormalized), 3));
     }
 
     TEST_METHOD_EX(CanvasSwapChain_ResizeBuffersSizeOnly)
     {
         StubDeviceFixture f;
 
-        const DirectXPixelFormat originalPixelFormat = DirectXPixelFormat::R16G16B16A16Float;
+        const DirectXPixelFormat originalPixelFormat = PIXEL_FORMAT(R16G16B16A16Float);
         const int originalBufferCount = 7;
 
         f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
@@ -635,7 +635,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         StubDeviceFixture f;
 
         float anyDpi = 123.0f;
-        auto anyPixelFormat = static_cast<DXGI_FORMAT>(DirectXPixelFormat::B8G8R8A8UIntNormalized);
+        auto anyPixelFormat = static_cast<DXGI_FORMAT>(PIXEL_FORMAT(B8G8R8A8UIntNormalized));
         Color expectedClearColor = { 1, 2, 3, 4 };
 
         auto dxgiSwapChain = Make<MockDxgiSwapChain>();
@@ -836,7 +836,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 m_canvasDevice.Get(),
                 1.0f,
                 1.0f,
-                DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
                 2,
                 CanvasAlphaMode::Premultiplied,
                 DEFAULT_DPI);
@@ -891,7 +891,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         auto swapChain = f.m_swapChainManager->Create(f.m_canvasDevice.Get(),
                                                       1.0f, 1.0f,
-                                                      DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb,
+                                                      PIXEL_FORMAT(B8G8R8A8UIntNormalizedSrgb),
                                                       2,
                                                       CanvasAlphaMode::Ignore,
                                                       dpi);

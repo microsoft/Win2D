@@ -8,6 +8,7 @@
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Phone</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
+    <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
     <TestApplication>true</TestApplication>
     <AppxPackage>True</AppxPackage>
     <DoNotBuild Condition="'$(TF_BUILD)' == 'true'">true</DoNotBuild>

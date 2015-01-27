@@ -20,7 +20,7 @@ using namespace Platform;
 TEST_CLASS(CanvasBitmapTests)
 {
 
-    TEST_METHOD(CanvasEffect_IEffectInerface)
+    TEST_METHOD(CanvasEffect_IEffectInterface)
     {
         // Use gaussian blur for testing IEffect interface
         GaussianBlurEffect^ blurEffect = ref new GaussianBlurEffect();

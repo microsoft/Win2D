@@ -40,7 +40,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasDeviceStatics : IInspectable
     {
         HRESULT CreateFromDirect3D11Device(
-            [in] Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice* direct3DDevice,
+            [in] IDIRECT3DDEVICE* direct3DDevice,
             [in] CanvasDebugLevel debugLevel,
             [out, retval] CanvasDevice** canvasDevice);
     };
@@ -49,7 +49,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasDevice : IInspectable
         requires Windows.Foundation.IClosable, 
                  ICanvasResourceCreator, 
-                 Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice
+                 IDIRECT3DDEVICE
     {
         [propget] 
         HRESULT HardwareAcceleration(

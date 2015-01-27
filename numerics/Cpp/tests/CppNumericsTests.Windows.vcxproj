@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2D1259AC-E4C6-4345-AF91-5962E0C5112D}</ProjectGuid>
@@ -11,6 +11,7 @@
     <AppContainerApplication>true</AppContainerApplication>
     <CppWindowsStoreUnitTestLibraryType>true</CppWindowsStoreUnitTestLibraryType>
     <ApplicationType>Windows Store</ApplicationType>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>

@@ -12,6 +12,8 @@
 
 #include "pch.h"
 
+#if WINVER <= 0x0603
+
 using namespace Microsoft::WRL;
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11
@@ -112,3 +114,5 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
             ThrowIfFailed(direct3DSurface.CopyTo(inspectableDirect3DSurface));
         });
 }
+
+#endif

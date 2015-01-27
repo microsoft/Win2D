@@ -13,8 +13,11 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+#if (WINVER > 0x0603)
+using namespace Windows::Graphics::DirectX;
+#else
 using namespace Microsoft::Graphics::Canvas::DirectX;
-using namespace Microsoft::Graphics::Canvas::Numerics;
+#endif
 using namespace Microsoft::WRL::Wrappers;
 using namespace Windows::Foundation;
 using namespace Windows::Devices::Enumeration;
@@ -53,7 +56,7 @@ TEST_CLASS(CanvasSwapChainTests)
 
     TEST_METHOD(CanvasSwapChain_DrawOperation)
     {
-        auto canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
+        auto canvasDevice = ref new CanvasDevice(); // TODO TH: CanvasDebugLevel::Information);
 
         auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 1, DEFAULT_DPI);
 

@@ -33,10 +33,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT BorderMode([in] EffectBorderMode value);
 
         [propget]
-        HRESULT TransformMatrix([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix4x4* value);
+        HRESULT TransformMatrix([out, retval] NUMERICS.Matrix4x4* value);
 
         [propput]
-        HRESULT TransformMatrix([in] Microsoft.Graphics.Canvas.Numerics.Matrix4x4 value);
+        HRESULT TransformMatrix([in] NUMERICS.Matrix4x4 value);
 
         [propget]
         HRESULT Source([out, retval] IEffectInput** input);

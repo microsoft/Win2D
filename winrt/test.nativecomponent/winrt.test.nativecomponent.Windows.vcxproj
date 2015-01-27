@@ -10,6 +10,7 @@
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
   </PropertyGroup>
   <Import Project="winrt.test.nativecomponent.Shared.vcxitems" Label="Shared" />
   <ItemGroup>

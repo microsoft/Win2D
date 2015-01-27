@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -29,8 +30,10 @@
 #include <vector>
 
 // Win32
-#include <corerror.h>
+#pragma warning(push)
+#pragma warning(disable: 4458)  // TODO: Disable "hides class member" warning until we pick up fix to MS.601961
 #include <d2d1_2.h>
+#pragma warning(pop)
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>
@@ -45,6 +48,11 @@
 #include <windows.applicationmodel.h>
 #include <windows.graphics.display.h>
 #include <windows.ui.xaml.media.dxinterop.h>
+
+#if (WINVER > 0x0603)
+# include <windows.graphics.directx.h>
+# include <windows.graphics.directx.direct3d11.interop.h>
+#endif
 
 // UnitTest
 #include <CppUnitTest.h>
@@ -66,7 +74,9 @@
 #include <WinStringWrapper.h>
 
 // Public
-#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#if (WINVER == 0x0603)
+# include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#endif
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // winrt.lib
