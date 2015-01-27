@@ -73,6 +73,14 @@ under the License.
                                      Width="168" Height="168"
                                      HorizontalAlignment="Left" VerticalAlignment="top"/>
 
+        <canvas:CanvasAnimatedControl x:Name="animatedControl"
+                                      Grid.Column="1"
+                                      Margin="5"
+                                      Width="168" Height="168"
+                                      HorizontalAlignment="Left" VerticalAlignment="top"
+                                      CreateResources="AnimatedCanvas_CreateResources"
+                                      Draw="AnimatedCanvas_Draw"/>
+
         <Image x:Name="imageControl"
                Grid.Column="1"
                Margin="5"
