@@ -53,8 +53,11 @@ public:
         }
     }
 
-    ScopeWarden(ScopeWarden&&) = delete;
-    ScopeWarden(ScopeWarden const&) = delete;
+    // Copy constructor is public, but not implemented - return-value
+    // optimization will mean that any attempt to actually copy one will fail at
+    // link time.
+    ScopeWarden(ScopeWarden const& other);
+
     ScopeWarden& operator=(ScopeWarden const&) = delete;
 
 private:
