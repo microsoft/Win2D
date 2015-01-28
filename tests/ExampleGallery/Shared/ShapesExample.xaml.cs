@@ -11,10 +11,9 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Numerics;
 using System;
 using System.Collections.Generic;
-using Windows.Foundation;
+using System.Numerics;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

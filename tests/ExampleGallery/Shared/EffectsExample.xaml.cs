@@ -896,7 +896,11 @@ namespace ExampleGallery
             using (var ds = textOverlay.CreateDrawingSession())
             {
                 ds.Clear(Color.FromArgb(0, 0, 0, 0));
+#if WINDOWS_UAP // TODO: fix reflection for UAPs
+                ds.DrawText("<<EFFECT>>", 0, 0, Colors.White);
+#else
                 ds.DrawText(effect.GetType().Name.Replace("Effect", ""), 0, 0, Colors.White);
+#endif
             }
 
             return new Transform2DEffect
@@ -913,6 +917,9 @@ namespace ExampleGallery
 
         private string GetActiveEffectNames()
         {
+#if WINDOWS_UAP // TODO: fix reflection for UAPs
+            return "<<TODO: metadata not working on UAP>>";
+#else
             var typesSeen = new List<Type>();
 
             GetActiveEffects(effect, typesSeen);
@@ -922,6 +929,7 @@ namespace ExampleGallery
                         select type.Name;
 
             return "Effects used:\n    " + string.Join("\n    ", names.Distinct());
+#endif
         }
 
         private static void GetActiveEffects(IEffectInput effectInput, List<Type> typesSeen)
