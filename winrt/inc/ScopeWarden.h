@@ -53,11 +53,10 @@ public:
         }
     }
 
-    ScopeWarden(ScopeWarden const& other) // TODO: MakeScopeWarden assumes that this won't be called, but if we =delete this we get a compile error.
-    {
-        // This compiles, but the assumption is that this will always be optimize out.  I haven't tried running yet.  Need to investigate further.
-        ThrowHR(E_UNEXPECTED);
-    }
+    // Copy constructor is public, but not implemented - return-value
+    // optimization will mean that any attempt to actually copy one will fail at
+    // link time.
+    ScopeWarden(ScopeWarden const& other);
 
     ScopeWarden& operator=(ScopeWarden const&) = delete;
 
