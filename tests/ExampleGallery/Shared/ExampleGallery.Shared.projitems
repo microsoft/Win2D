@@ -24,6 +24,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CanvasControlExample.xaml.cs">
       <DependentUpon>CanvasControlExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ControlTransforms.xaml.cs">
+      <DependentUpon>ControlTransforms.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DpiExample.xaml.cs">
       <DependentUpon>DpiExample.xaml</DependentUpon>
     </Compile>
@@ -56,6 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)AnimatedControlExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)ControlTransforms.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

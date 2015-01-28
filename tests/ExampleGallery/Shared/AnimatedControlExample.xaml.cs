@@ -13,22 +13,11 @@
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace ExampleGallery
 {
@@ -53,7 +42,7 @@ namespace ExampleGallery
             var ds = args.DrawingSession;
 
             var size = sender.Size;
-            var middle = new Vector2((float)size.Width / 2, (float)size.Height / 2);
+            var middle = size.ToVector2() / 2;
             var radius = (float)size.Width / 10;
 
             ds.FillCircle(middle, radius, Colors.Blue);

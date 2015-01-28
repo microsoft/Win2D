@@ -46,6 +46,7 @@ namespace ExampleGallery
             this.definitions.Add(new ExampleDefinition() { Name = "ImageSource Update Region", Control = typeof(ImageSourceUpdateRegion) });
             this.definitions.Add(new ExampleDefinition() { Name = "DPI", Control = typeof(DpiExample) });
             this.definitions.Add(new ExampleDefinition() { Name = "Animated Control", Control = typeof(AnimatedControlExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Control Transforms", Control = typeof(ControlTransforms) });
         }
     }
 }
