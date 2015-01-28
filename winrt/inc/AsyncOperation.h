@@ -18,7 +18,7 @@
 #include <functional>
 #include "ErrorHandling.h"
 
-// TODO #3186 - this started using std::function to workaround DevDev# 1104728.
+// TODO #3318 - this started using std::function to workaround DevDev# 1104728.
 // This has been reported as fixed, so we should be able to roll this back once
 // we pick up a build with the fix.
 
