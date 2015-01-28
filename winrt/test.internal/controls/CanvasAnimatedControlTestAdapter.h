@@ -23,43 +23,22 @@ class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter < CanvasA
     int64_t m_performanceCounter;
     bool m_hasUIThreadAccess;
     ComPtr<StubSwapChainPanel> m_swapChainPanel;
-    FLOAT m_compositionScaleX;
-    FLOAT m_compositionScaleY;
 
 public:
     CALL_COUNTER_WITH_MOCK(CreateCanvasSwapChainMethod, ComPtr<CanvasSwapChain>(ICanvasDevice*, float, float, float, CanvasAlphaMode));
     std::shared_ptr<CanvasSwapChainManager> SwapChainManager;
     ComPtr<StubCanvasDevice> InitialDevice;
-    ComPtr<MockEventSource<CompositionScaleChangedEventHandler>> CompositionScaleChangedEventSource;
-
 
     CanvasAnimatedControlTestAdapter(StubCanvasDevice* initialDevice = nullptr)
         : m_performanceCounter(0)
         , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         , InitialDevice(initialDevice)
         , m_hasUIThreadAccess(true)
-        , CompositionScaleChangedEventSource(Make<MockEventSource<CompositionScaleChangedEventHandler>>(L"CompositionScaleChanged"))
-        , m_compositionScaleX(1.0f)
-        , m_compositionScaleY(1.0f)
         , m_swapChainPanel(Make<StubSwapChainPanel>())
     {
         m_swapChainPanel->SetSwapChainMethod.AllowAnyCall(
             [=](IDXGISwapChain*)
             {
-                return S_OK;
-            });
-
-        m_swapChainPanel->get_CompositionScaleXMethod.AllowAnyCall(
-            [=](FLOAT* value)
-            {
-                *value = m_compositionScaleX;
-                return S_OK;
-            });
-
-        m_swapChainPanel->get_CompositionScaleYMethod.AllowAnyCall(
-            [=](FLOAT* value)
-            {
-                *value = m_compositionScaleY;
                 return S_OK;
             });
 
@@ -140,13 +119,6 @@ public:
         return m_changedAsyncAction;
     }
 
-    virtual RegisteredEvent AddCompositionScaleChangedCallback(
-        ComPtr<ISwapChainPanel> const& swapChainPanel, 
-        CompositionScaleChangedEventHandler* handler)
-    {
-        return CompositionScaleChangedEventSource->Add(handler);
-    }
-
     void DoChanged()
     {
         if (m_changedFn)
@@ -211,19 +183,5 @@ public:
     void SetHasUIThreadAccess(bool value)
     {
         m_hasUIThreadAccess = value;
-    }
-
-    void RaiseCompositionScaleChangedEvent()
-    {
-        ThrowIfFailed(CompositionScaleChangedEventSource->InvokeAll(m_swapChainPanel.Get(), nullptr));
-    }
-
-    void SetCompositionScaleAndRaiseEvent(FLOAT x, FLOAT y)
-    {
-        m_compositionScaleX = x;
-
-        m_compositionScaleY = y;
-
-        RaiseCompositionScaleChangedEvent();
     }
 };

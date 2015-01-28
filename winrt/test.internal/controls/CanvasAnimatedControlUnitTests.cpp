@@ -451,26 +451,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_CompositionScaleChanged)
-    {
-        FixtureWithSwapChainAccess f;
-
-        f.RaiseLoadedAndVerify();
-
-        f.Adapter->SetCompositionScaleAndRaiseEvent(2, 2);
-
-        //
-        // TODO #3277: It may not be necessary to restart the render thread.
-        // Possible perf gain to be had.
-        //
-        f.ExpectAChangeThatRestartsRenderThread();
-
-        f.SetExpectedSwapChainScale(2, 2);
-        f.Adapter->Tick(); // When the render thread starts once again, it will apply the new composition scale.
-
-        f.ExpectStableState();
-    }
-
     TEST_METHOD_EX(CanvasAnimatedControl_Resizing)
     {
         struct TestCase
