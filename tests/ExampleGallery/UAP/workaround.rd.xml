@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- 
+     TODO #3343: check if this is still necessary on latest VS2015 build
+ 
+     This is to workaround .NET native not automatically realizing we need to support reflection over
+     the winmds referenced by this app.
+     
+-->
+<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
+  <Application>
+    <Namespace Name="Microsoft.Graphics.Canvas" Dynamic="Required All" />
+  </Application>
+</Directives>
