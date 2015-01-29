@@ -20,7 +20,7 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ExampleGallery.UAP.App">
       <uap:VisualElements DisplayName="Win2D Example Gallery" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="Window Canvas Example Gallery" ForegroundText="light" BackgroundColor="#464646">
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black"/>
       </uap:VisualElements>
     </Application>
   </Applications>
