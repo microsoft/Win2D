@@ -179,7 +179,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                             self->UpdateRenderLoop(action, beforeLoopFn, tickFn, afterLoopFn);
                         });
                 });
-            
+
             ComPtr<IAsyncAction> action;
             ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
                 handler.Get(),
@@ -192,9 +192,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
         {
+            if (IsDesignModeEnabled())
+            {
+                return nullptr;
+            }
+
             ComPtr<ICoreDispatcher> dispatcher;
             ThrowIfFailed(window->get_Dispatcher(&dispatcher));
-            
+
             auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
                 [=]()->HRESULT
                 {
@@ -623,6 +628,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 self->ChangedImpl();
             });
 
+        if (!m_changedAction)
+            return;
+
         auto completed = Callback<IAsyncActionCompletedHandler>(
             [self](IAsyncAction*, AsyncStatus)
             {
@@ -634,7 +642,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
 
         CheckMakeResult(completed);
-        
+
         ThrowIfFailed(m_changedAction->put_Completed(completed.Get()));
     }
 
@@ -713,7 +721,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     });
 
                 CheckMakeResult(completed);
-        
+
                 ThrowIfFailed(m_renderLoopAction->put_Completed(completed.Get()));
             });
     }
@@ -815,26 +823,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     bool CanvasAnimatedControl::Update()
     {
         bool updated = false;
-        m_stepTimer.Tick(
-            [this, &updated](bool isRunningSlowly)
-            {
-                auto timing = GetTimingInformationFromTimer();
-                timing.IsRunningSlowly = isRunningSlowly;
-
-                auto updateEventArgs = Make<CanvasAnimatedUpdateEventArgs>(timing);
-                ThrowIfFailed(m_updateEventList.InvokeAll(this, updateEventArgs.Get()));
-
-                updated = true;
-            });
-
-        if (!updated && m_forceUpdate)
+        
+        auto updateFunction = [this, &updated](bool isRunningSlowly)
         {
             auto timing = GetTimingInformationFromTimer();
+            timing.IsRunningSlowly = isRunningSlowly;
 
-            auto updateEventArgs = Make<CanvasAnimatedUpdateEventArgs>(timing); 
+            auto updateEventArgs = Make<CanvasAnimatedUpdateEventArgs>(timing);
             ThrowIfFailed(m_updateEventList.InvokeAll(this, updateEventArgs.Get()));
+
             m_forceUpdate = false;
             updated = true;
+        };
+
+        m_stepTimer.Tick(updateFunction);
+                
+        if (!updated && m_forceUpdate)
+        {
+            updateFunction(false);
         }
 
         return updated;
