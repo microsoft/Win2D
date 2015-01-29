@@ -13,11 +13,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
-#if (WINVER > 0x0603)
-using namespace Windows::Graphics::DirectX;
-#else
-using namespace Microsoft::Graphics::Canvas::DirectX;
-#endif
+using namespace WinRTDirectX;
 
 TEST_CLASS(CanvasDeviceTests)
 {

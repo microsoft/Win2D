@@ -12,6 +12,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace ABI::Windows::UI;
+
     ComPtr<ID2D1GradientStopCollection1> CreateSimpleGradientStopCollection(
         ICanvasDevice* canvasDevice,
         Color startColor,

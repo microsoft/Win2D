@@ -18,15 +18,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-#if (WINVER > 0x0603)
-    using ::Windows::Graphics::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
-    using namespace ABI::Windows::Graphics::DirectX;
-    using namespace ABI::Windows::Graphics::DirectX::Direct3D11;
-#else
-    using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
-#endif
+    using namespace WinRTDirectX;
 
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Effects;

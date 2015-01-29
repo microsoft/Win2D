@@ -49,16 +49,14 @@
 #include <windows.graphics.display.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
-#if (WINVER > 0x0603)
-# include <windows.graphics.directx.h>
-# include <windows.graphics.directx.direct3d11.interop.h>
-#endif
-
 // UnitTest
 #include <CppUnitTest.h>
 
 // Headers generated from IDL files
 #include <Canvas.abi.h>
+
+// Pick up the inbox or local WinRT DirectX types as appropriate
+#include "WinRTDirectX.h"
 
 // Inc
 #include <AsyncOperation.h>
@@ -74,9 +72,6 @@
 #include <WinStringWrapper.h>
 
 // Public
-#if (WINVER == 0x0603)
-# include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
-#endif
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // winrt.lib

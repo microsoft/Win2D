@@ -12,7 +12,9 @@
 
 #include "pch.h"
 
-#if WINVER <= 0x0603
+#ifndef USE_LOCAL_WINRT_DIRECTX
+#error This file should only be built when using local WinRT DirectX 
+#endif
 
 using namespace Microsoft::WRL;
 
@@ -90,5 +92,3 @@ STDAPI CreateDirect3D11DeviceFromDXGIDevice(
             ThrowIfFailed(direct3DDevice.CopyTo(inspectableDirect3DDevice));
         });
 }
-
-#endif

@@ -17,20 +17,11 @@
 
 using namespace concurrency;
 using namespace Microsoft::Graphics::Canvas;
-using namespace Windows::UI::Core;
+using namespace WinRTDirectX;
 using namespace Windows::ApplicationModel::Core;
-using namespace Windows::Foundation;
 using namespace Windows::Foundation::Numerics;
-
-#if (WINVER > 0x0603)
-using ::Windows::Graphics::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
-using namespace ::Windows::Graphics::DirectX;
-using namespace ::Windows::Graphics::DirectX::Direct3D11;
-#else
-using namespace Microsoft::Graphics::Canvas::DirectX;
-using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
-using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
-#endif
+using namespace Windows::Foundation;
+using namespace Windows::UI::Core;
 
 namespace Microsoft
 {

@@ -61,18 +61,7 @@
 #include <windows.ui.xaml.media.dxinterop.h>
 #include <windows.graphics.display.h>
 
-#if (WINVER > 0x0603)
-# include <windows.graphics.directx.h>
-# include <windows.graphics.directx.direct3d11.interop.h>
-#endif
-
-using ABI::Windows::UI::Color;
-
 // Public
-#if (WINVER == 0x0603)
-# include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
-#endif
-
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // Inc
@@ -90,6 +79,9 @@ using ABI::Windows::UI::Color;
 
 // Generated from local IDLs
 #include <Canvas.abi.h>
+
+// Pick up the inbox or local WinRT DirectX types as appropriate
+#include "WinRTDirectX.h"
 
 // local
 #include "Conversion.h"

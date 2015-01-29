@@ -36,19 +36,13 @@
 #include <Utilities.h>
 #include <Constants.h>
 
-#if (WINVER > 0x0603)
-# include <windows.graphics.directx.h>
-# include <windows.graphics.directx.direct3d11.interop.h>
-#endif
-
-#if (WINVER == 0x0603)
-# include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
-#endif
-
 #include <windowsnumerics.h>
 
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <Canvas.abi.h>
+
+// Pick up the inbox or local WinRT DirectX types as appropriate
+#include <WinRTDirectX.h>
 
 #pragma warning(disable: 4100)  // "unreferenced formal parameter"
 #pragma warning(disable: 4351)  // "elements of {array} will be default initialized"

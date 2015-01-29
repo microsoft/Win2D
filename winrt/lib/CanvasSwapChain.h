@@ -14,15 +14,11 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
-    using namespace ::Microsoft::WRL;
-
-#if (WINVER > 0x0603)
-    namespace DirectX = ::ABI::Windows::Graphics::DirectX;
-#endif
-
-    using DirectX::DirectXPixelFormat;
+    using namespace ABI::Windows::UI;
+    using namespace WinRTDirectX;
 
     class CanvasSwapChainManager;
 

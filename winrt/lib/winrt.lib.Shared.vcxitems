@@ -136,8 +136,8 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Strings.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
