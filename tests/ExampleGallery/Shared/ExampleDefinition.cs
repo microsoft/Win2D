@@ -43,9 +43,10 @@ namespace ExampleGallery
             this.definitions.Add(new ExampleDefinition() { Name = "Burning Text", Control = typeof(BurningTextExample) });
             this.definitions.Add(new ExampleDefinition() { Name = "Game of Life", Control = typeof(GameOfLife) });
             this.definitions.Add(new ExampleDefinition() { Name = "Canvas Control", Control = typeof(CanvasControlExample) });
-            this.definitions.Add(new ExampleDefinition() { Name = "ImageSource Update Region", Control = typeof(ImageSourceUpdateRegion) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Image Source Update Region", Control = typeof(ImageSourceUpdateRegion) });
             this.definitions.Add(new ExampleDefinition() { Name = "DPI", Control = typeof(DpiExample) });
             this.definitions.Add(new ExampleDefinition() { Name = "Animated Control", Control = typeof(AnimatedControlExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Control Transforms", Control = typeof(ControlTransforms) });
 #if WINDOWS_UAP
             this.definitions.Add(new ExampleDefinition() { Name = "Video Effect", Control = typeof(BasicVideoEffectExample) });
 #endif

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <!--
 Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -21,24 +21,55 @@ under the License.
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+    SizeChanged="OnSizeChanged">
 
     <Page.Resources>
-        <DataTemplate x:Key="ItemTemplate">
-            <Grid Style="{StaticResource ExampleListGridStyle}">
-                <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}"/>
+        <DataTemplate x:Key="WideItemTemplate">
+            <Grid Style="{StaticResource ExampleListGridStyle}" Width="300" Height="150" Margin="10">
+                <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" Margin="20" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NarrowItemTemplate">
+            <Grid Style="{StaticResource ExampleListGridStyle}"  Width="150" Height="150" Margin="5">
+                <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" Margin="10" />
             </Grid>
         </DataTemplate>
     </Page.Resources>
 
-    <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <ScrollViewer x:Name="scrollViewer" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SizeStates">
+                <VisualState x:Name="SmallScreen">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="gridView" Storyboard.TargetProperty="ItemTemplate">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource NarrowItemTemplate}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation Duration="0" To="32" Storyboard.TargetProperty="(TextBlock.FontSize)" Storyboard.TargetName="textBlock" d:IsOptimized="True"/>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="BigScreen">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="gridView" Storyboard.TargetProperty="ItemTemplate">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource WideItemTemplate}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation Duration="0" To="40" Storyboard.TargetProperty="(TextBlock.FontSize)" Storyboard.TargetName="textBlock" d:IsOptimized="True"/>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+
+
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Style="{StaticResource HeaderTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0,0,0,10">Win2D Example Gallery</TextBlock>
-            <GridView Grid.Row="1" ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding Definitions}" VerticalContentAlignment="Top" ItemClick="GridView_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
+            <TextBlock x:Name="textBlock" Grid.Row="0" Style="{StaticResource HeaderTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0,0,0,10" FontFamily="Global User Interface">Win2D Example Gallery</TextBlock>
+            <GridView x:Name="gridView" Grid.Row="1" ItemsSource="{Binding Definitions}" VerticalContentAlignment="Top" ItemClick="GridView_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition IsStaggeringEnabled="true"/>
@@ -54,4 +85,5 @@ under the License.
                 </GridView.ItemsPanel>
             </GridView>
         </Grid>
-    </ScrollViewer></Page>
+    </ScrollViewer>
+</Page>

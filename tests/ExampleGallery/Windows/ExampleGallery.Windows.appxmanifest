@@ -16,7 +16,7 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ExampleGallery.Windows.App">
       <m2:VisualElements DisplayName="Win2D Example Gallery" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="Window Canvas Example Gallery" ForegroundText="light" BackgroundColor="#464646" ToastCapable="false">
-        <m2:SplashScreen Image="Assets\SplashScreen.png" />
+        <m2:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black" />
       </m2:VisualElements>
     </Application>
   </Applications>

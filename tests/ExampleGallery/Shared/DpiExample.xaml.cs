@@ -19,6 +19,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -52,6 +53,7 @@ namespace ExampleGallery
             CanvasImageBrush,
             CanvasImageSource,
             CanvasSwapChain,
+            CanvasAnimatedControl,
         }
 
         public SourceMode       CurrentSource       { get; set; }
@@ -70,32 +72,79 @@ namespace ExampleGallery
         const float highDpi = 192;
         const float lowDpi = 48;
 
-        CanvasBitmap defaultDpiBitmap;
-        CanvasBitmap highDpiBitmap;
-        CanvasBitmap lowDpiBitmap;
 
-        CanvasRenderTarget autoDpiRenderTarget;
-        CanvasRenderTarget highDpiRenderTarget;
-        CanvasRenderTarget lowDpiRenderTarget;
+        // We need two copies of all these graphics resources, one for the main CanvasDevice used on the
+        // UI thread, plus a second set for use by the CanvasAnimatedControl which runs on a separate thread.
+        class PerDeviceResources
+        {
+            public readonly ICanvasResourceCreatorWithDpi ResourceCreator;
 
-        SaturationEffect saturationEffect;
+            public readonly CanvasBitmap DefaultDpiBitmap;
+            public readonly CanvasBitmap HighDpiBitmap;
+            public readonly CanvasBitmap LowDpiBitmap;
+
+            public readonly CanvasRenderTarget AutoDpiRenderTarget;
+            public readonly CanvasRenderTarget HighDpiRenderTarget;
+            public readonly CanvasRenderTarget LowDpiRenderTarget;
+
+            public readonly SaturationEffect SaturationEffect;
+
+            public readonly CanvasTextFormat TextFormat = new CanvasTextFormat
+            {
+                VerticalAlignment = CanvasVerticalAlignment.Center,
+                ParagraphAlignment = ParagraphAlignment.Center,
+            };
+
+            string message;
+            int drawCount;
+
+
+            public PerDeviceResources(ICanvasResourceCreatorWithDpi resourceCreator)
+            {
+                ResourceCreator = resourceCreator;
+
+                DefaultDpiBitmap = CreateTestBitmap(resourceCreator, defaultDpi);
+                HighDpiBitmap = CreateTestBitmap(resourceCreator, highDpi);
+                LowDpiBitmap = CreateTestBitmap(resourceCreator, lowDpi);
+
+                AutoDpiRenderTarget = new CanvasRenderTarget(resourceCreator, testSize, testSize);
+                HighDpiRenderTarget = new CanvasRenderTarget(resourceCreator, testSize, testSize, highDpi);
+                LowDpiRenderTarget = new CanvasRenderTarget(resourceCreator, testSize, testSize, lowDpi);
+
+                SaturationEffect = new SaturationEffect { Saturation = 0 };
+            }
+
+
+            public void InitMessage()
+            {
+                message = "The test graphic should fit the yellow guide markers, regardless of display DPI or what drawing options are selected.\n\n";
+            }
+
+            public void AddMessage(string format, params object[] args)
+            {
+                message += string.Format(format, args);
+            }
+
+            public string GetFinalMessage()
+            {
+                AddMessage("\n\nRedraw count: {0}", ++drawCount);
+
+                return message;
+            }
+        }
+        
+
+        PerDeviceResources mainDeviceResources;
+        PerDeviceResources animatedDeviceResources;
+
         CanvasImageBrush imageBrush;
         CanvasImageSource imageSource;
         CanvasSwapChain swapChain;
-
-        CanvasTextFormat textFormat = new CanvasTextFormat
-        {
-            VerticalAlignment = CanvasVerticalAlignment.Center,
-            ParagraphAlignment = ParagraphAlignment.Center,
-        };
 
         DispatcherTimer cycleTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(0.25)
         };
-
-        string message;
-        int drawCount;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -110,16 +159,8 @@ namespace ExampleGallery
 
         void Canvas_CreateResources(CanvasControl sender, object args)
         {
-            defaultDpiBitmap = CreateTestBitmap(sender, defaultDpi);
-            highDpiBitmap    = CreateTestBitmap(sender, highDpi);
-            lowDpiBitmap     = CreateTestBitmap(sender, lowDpi);
+            mainDeviceResources = new PerDeviceResources(sender);
 
-            autoDpiRenderTarget = new CanvasRenderTarget(sender, testSize, testSize);
-            highDpiRenderTarget = new CanvasRenderTarget(sender, testSize, testSize, highDpi);
-            lowDpiRenderTarget  = new CanvasRenderTarget(sender, testSize, testSize, lowDpi);
-
-            saturationEffect = new SaturationEffect { Saturation = 0 };
-            
             imageBrush = new CanvasImageBrush(sender);
 
             imageSource = new CanvasImageSource(sender, controlSize, controlSize);
@@ -130,14 +171,20 @@ namespace ExampleGallery
         }
 
 
+        void AnimatedCanvas_CreateResources(ICanvasAnimatedControl sender, object args)
+        {
+            animatedDeviceResources = new PerDeviceResources(sender);
+        }
+
+
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            message = "The test graphic should fit the yellow guide markers, regardless of display DPI or what drawing options are selected.\n\n";
+            mainDeviceResources.InitMessage();
 
             switch (CurrentOutput)
             {
                 case OutputMode.CanvasControl:
-                    DrawToOutput(args.DrawingSession);
+                    DrawToOutput(mainDeviceResources, args.DrawingSession);
                     break;
 
                 case OutputMode.CanvasImageBrush:
@@ -154,44 +201,60 @@ namespace ExampleGallery
             }
 
             // Show or hide overlay controls to fit the current mode.
-            imageControl.Visibility = (CurrentOutput == OutputMode.CanvasImageSource) ? Visibility.Visible : Visibility.Collapsed;
-            swapChainPanel.Visibility = (CurrentOutput == OutputMode.CanvasSwapChain) ? Visibility.Visible : Visibility.Collapsed;
+            imageControl.Visibility    = (CurrentOutput == OutputMode.CanvasImageSource)     ? Visibility.Visible : Visibility.Collapsed;
+            swapChainPanel.Visibility  = (CurrentOutput == OutputMode.CanvasSwapChain)       ? Visibility.Visible : Visibility.Collapsed;
+            animatedControl.Visibility = (CurrentOutput == OutputMode.CanvasAnimatedControl) ? Visibility.Visible : Visibility.Collapsed;
+            animatedControl.Paused     = (CurrentOutput != OutputMode.CanvasAnimatedControl);
 
             // Update the info text.
-            message += string.Format("\n\nRedraw count: {0}", ++drawCount);
-
-            textBlock.Text = message;
+            textBlock.Text = mainDeviceResources.GetFinalMessage();
         }
 
-        
-        void DrawToOutput(CanvasDrawingSession ds)
+
+        void AnimatedCanvas_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+        {
+            animatedDeviceResources.InitMessage();
+
+            DrawToOutput(animatedDeviceResources, args.DrawingSession);
+
+            // Update the info text.
+            var message = animatedDeviceResources.GetFinalMessage();
+
+            var task = textBlock.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                textBlock.Text = message;
+            });
+        }
+
+
+        void DrawToOutput(PerDeviceResources resources, CanvasDrawingSession ds)
         {
             if (CurrentIntermediate == IntermediateMode.None)
             {
                 // We can either draw directly to the output...
-                DrawSourceGraphic(ds, testOffset);
+                DrawSourceGraphic(resources, ds, testOffset);
             }
             else
             {
                 // Or go via an intermediate such as a rendertarget or image effect.
-                var intermediateImage = WrapSourceWithIntermediateImage(CurrentIntermediate);
+                var intermediateImage = WrapSourceWithIntermediateImage(resources, CurrentIntermediate);
 
                 ds.DrawImage(intermediateImage, testOffset, testOffset);
             }
 
-            message += string.Format("{0} (dpi: {1})", CurrentOutput, ds.Dpi);
+            resources.AddMessage("{0} (dpi: {1})", CurrentOutput, ds.Dpi);
         }
 
 
         void DrawViaImageBrush(CanvasDrawingSession ds)
         {
-            imageBrush.Image = WrapSourceWithIntermediateImage(CurrentIntermediate);
+            imageBrush.Image = WrapSourceWithIntermediateImage(mainDeviceResources, CurrentIntermediate);
             imageBrush.SourceRectangle = new Rect(0, 0, testSize, testSize);
             imageBrush.Transform = Matrix3x2.CreateTranslation(testOffset, testOffset);
 
             ds.FillRectangle(testOffset, testOffset, testSize, testSize, imageBrush);
 
-            message += string.Format("CanvasImageBrush ->\nCanvasControl (dpi: {0})", ds.Dpi);
+            mainDeviceResources.AddMessage("CanvasImageBrush ->\nCanvasControl (dpi: {0})", ds.Dpi);
         }
 
 
@@ -203,7 +266,7 @@ namespace ExampleGallery
 
             using (var ds = imageSource.CreateDrawingSession(Colors.Transparent))
             {
-                DrawToOutput(ds);
+                DrawToOutput(mainDeviceResources, ds);
             }
         }
 
@@ -212,63 +275,63 @@ namespace ExampleGallery
         {
             using (var ds = swapChain.CreateDrawingSession(Colors.Transparent))
             {
-                DrawToOutput(ds);
+                DrawToOutput(mainDeviceResources, ds);
             }
 
             swapChain.Present();
         }
 
 
-        ICanvasImage WrapSourceWithIntermediateImage(IntermediateMode mode)
+        ICanvasImage WrapSourceWithIntermediateImage(PerDeviceResources resources, IntermediateMode mode)
         {
             switch (mode)
             {
                 case IntermediateMode.ImageEffect:
                     // We can either feed our graphics through an image effect...
-                    saturationEffect.Source = GetSourceBitmap() ??
-                                              WrapSourceWithIntermediateImage(IntermediateMode.None);
+                    resources.SaturationEffect.Source = GetSourceBitmap(resources) ??
+                                                        WrapSourceWithIntermediateImage(resources, IntermediateMode.None);
 
-                    message += "SaturationEffect ->\n";
+                    resources.AddMessage("SaturationEffect ->\n");
 
-                    return saturationEffect;
+                    return resources.SaturationEffect;
 
                 case IntermediateMode.CommandList:
-                    var cl = new CanvasCommandList(canvasControl);
+                    var cl = new CanvasCommandList(resources.ResourceCreator);
                     using (var ds = cl.CreateDrawingSession())
                     {
-                        DrawSourceGraphic(ds, 0);
+                        DrawSourceGraphic(resources, ds, 0);
                     }
-                    message += "CommandList ->\n";
+                    resources.AddMessage("CommandList ->\n");
                     return cl;
 
                 case IntermediateMode.ImageEffectInCommandList:
-                    var cl2 = new CanvasCommandList(canvasControl);
+                    var cl2 = new CanvasCommandList(resources.ResourceCreator);
                     using (var ds = cl2.CreateDrawingSession())
                     {
-                        ds.DrawImage(WrapSourceWithIntermediateImage(IntermediateMode.ImageEffect));
+                        ds.DrawImage(WrapSourceWithIntermediateImage(resources, IntermediateMode.ImageEffect));
                     }
-                    message += "CommandList ->\n";
+                    resources.AddMessage("CommandList ->\n");
                     return cl2;
 
                 default:
                     // ... or draw them into a rendertarget.
-                    var renderTarget = GetIntermediateRenderTarget(mode);
+                    var renderTarget = GetIntermediateRenderTarget(resources, mode);
 
                     using (var ds = renderTarget.CreateDrawingSession())
                     {
-                        DrawSourceGraphic(ds, 0);
+                        DrawSourceGraphic(resources, ds, 0);
                     }
 
-                    message += string.Format("RenderTarget (dpi: {0}, size: {1}, pixels: {2}) ->\n", renderTarget.Dpi, renderTarget.Size, renderTarget.SizeInPixels);
+                    resources.AddMessage("RenderTarget (dpi: {0}, size: {1}, pixels: {2}) ->\n", renderTarget.Dpi, renderTarget.Size, renderTarget.SizeInPixels);
 
                     return renderTarget;
             }
         }
 
 
-        void DrawSourceGraphic(CanvasDrawingSession ds, float offset)
+        void DrawSourceGraphic(PerDeviceResources resources, CanvasDrawingSession ds, float offset)
         {
-            var source = GetSourceBitmap();
+            var source = GetSourceBitmap(resources);
 
             if (source != null)
             {
@@ -285,46 +348,46 @@ namespace ExampleGallery
 
                 ds.DrawRectangle(offset + 0.5f, offset + 0.5f, testSize - 1, testSize - 1, Colors.Blue);
 
-                ds.DrawText("DPI test", new Vector2(offset + testSize / 2), Colors.Blue, textFormat);
+                ds.DrawText("DPI test", new Vector2(offset + testSize / 2), Colors.Blue, resources.TextFormat);
 
-                message += "DrawingSession ->\n";
+                resources.AddMessage("DrawingSession ->\n");
             }
         }
 
 
-        CanvasBitmap GetSourceBitmap()
+        CanvasBitmap GetSourceBitmap(PerDeviceResources resources)
         {
             CanvasBitmap bitmap;
 
             switch (CurrentSource)
             {
-                case SourceMode.DefaultDpiBitmap: bitmap = defaultDpiBitmap; break;
-                case SourceMode.HighDpiBitmap:    bitmap = highDpiBitmap;    break;
-                case SourceMode.LowDpiBitmap:     bitmap = lowDpiBitmap;     break;
-                default:                          bitmap = null;             break;
+                case SourceMode.DefaultDpiBitmap: bitmap = resources.DefaultDpiBitmap; break;
+                case SourceMode.HighDpiBitmap:    bitmap = resources.HighDpiBitmap;    break;
+                case SourceMode.LowDpiBitmap:     bitmap = resources.LowDpiBitmap;     break;
+                default:                          bitmap = null;                       break;
             }
 
             if (bitmap != null)
             {
-                message += string.Format("Bitmap (dpi: {0}, size: {1}, pixels: {2}) ->\n", bitmap.Dpi, bitmap.Size, bitmap.SizeInPixels);
+                resources.AddMessage("Bitmap (dpi: {0}, size: {1}, pixels: {2}) ->\n", bitmap.Dpi, bitmap.Size, bitmap.SizeInPixels);
             }
 
             return bitmap;
         }
 
 
-        CanvasRenderTarget GetIntermediateRenderTarget(IntermediateMode mode)
+        static CanvasRenderTarget GetIntermediateRenderTarget(PerDeviceResources resources, IntermediateMode mode)
         {
             switch (mode)
             {
-                case IntermediateMode.HighDpiRenderTarget: return highDpiRenderTarget;
-                case IntermediateMode.LowDpiRenderTarget:  return lowDpiRenderTarget;
-                default:                                   return autoDpiRenderTarget;
+                case IntermediateMode.HighDpiRenderTarget: return resources.HighDpiRenderTarget;
+                case IntermediateMode.LowDpiRenderTarget:  return resources.LowDpiRenderTarget;
+                default:                                   return resources.AutoDpiRenderTarget;
             }
         }
         
 
-        static CanvasBitmap CreateTestBitmap(CanvasControl resourceCreator, float dpi)
+        static CanvasBitmap CreateTestBitmap(ICanvasResourceCreatorWithDpi resourceCreator, float dpi)
         {
             int pixelSize = (int)Math.Round(testSize * dpi / defaultDpi);
 

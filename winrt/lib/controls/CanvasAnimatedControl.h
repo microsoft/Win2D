@@ -97,8 +97,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef CanvasSwapChain renderTarget_t;
     };
 
-    typedef ITypedEventHandler<SwapChainPanel*, IInspectable*> CompositionScaleChangedEventHandler;
-
     class ICanvasAnimatedControlAdapter : 
         public IBaseControlAdapter<CanvasAnimatedControlTraits>,
         public ICanvasSwapChainPanelAdapter,
@@ -117,10 +115,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(std::function<bool()> tickFn) = 0;
 
         virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
-
-        virtual RegisteredEvent AddCompositionScaleChangedCallback(
-            ComPtr<ISwapChainPanel> const& swapChainPanel, 
-            CompositionScaleChangedEventHandler* handler) = 0;
     };
 
 
@@ -136,13 +130,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         EventSource<Animated_UpdateEventHandler, InvokeModeOptions<StopOnFirstError>> m_updateEventList;
 
-        RegisteredEvent m_compositionScaleChangedRegistration;
-
         ComPtr<ICanvasSwapChainPanel> m_canvasSwapChainPanel;
 
         ComPtr<IAsyncAction> m_renderLoopAction;
-
-        Size m_compositionScale; 
 
         StepTimer m_stepTimer;
 
@@ -232,7 +222,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool Tick(
             CanvasSwapChain* target, 
             Color const& clearColor,
-            Size const& compositionScale, 
             bool areResourcesCreated);
 
         bool Update();
@@ -244,10 +233,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasTimingInformation GetTimingInformationFromTimer();
 
         void CheckUIThreadAccess();
-
-        HRESULT OnCompositionScaleChanged(ISwapChainPanel*, IInspectable*);
-
-        void RegisterAnimationEventHandlers();
     };
 
 }}}}

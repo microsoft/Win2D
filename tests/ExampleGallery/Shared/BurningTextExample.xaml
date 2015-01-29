@@ -37,10 +37,10 @@ under the License.
                  HorizontalAlignment="Left"
                  Text="Image effects are hot!"
                  TextChanged="textInput_TextChanged" />
-        <canvas:CanvasControl x:Name="canvas"
-                              Grid.Row="1"
-                              Margin="5"
-                              Draw="Canvas_Draw"
-                              CreateResources="Canvas_CreateResources" />
+        <canvas:CanvasAnimatedControl x:Name="canvas"
+                                      Grid.Row="1"
+                                      Margin="5"
+                                      Draw="Canvas_Draw"
+                                      CreateResources="Canvas_CreateResources" />
     </Grid>
 </UserControl>

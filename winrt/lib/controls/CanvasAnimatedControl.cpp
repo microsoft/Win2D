@@ -208,17 +208,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return asyncAction;
         }
 
-        virtual RegisteredEvent AddCompositionScaleChangedCallback(
-            ComPtr<ISwapChainPanel> const& swapChainPanel,
-            CompositionScaleChangedEventHandler* handler)
-        {
-            return RegisteredEvent(
-                swapChainPanel.Get(),
-                &ISwapChainPanel::add_CompositionScaleChanged,
-                &ISwapChainPanel::remove_CompositionScaleChanged,
-                handler);
-        }
-
         void UpdateRenderLoop(IAsyncAction* action, std::function<bool()> const& tickFn)
         {
             auto asyncInfo = As<IAsyncInfo>(action);
@@ -315,12 +304,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CreateSwapChainPanel();
 
         auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
-
-        ThrowIfFailed(swapChainPanel->get_CompositionScaleX(&m_compositionScale.Width));
-
-        ThrowIfFailed(swapChainPanel->get_CompositionScaleY(&m_compositionScale.Height));
-
-        RegisterAnimationEventHandlers();
 
         m_isStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
 
@@ -674,14 +657,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ComPtr<CanvasAnimatedControl> self = this;
 
-                Size compositionScale = m_compositionScale;
-
                 m_renderLoopAction = GetAdapter()->StartUpdateRenderLoop(
-                    [target, clearColor, compositionScale, areResourcesCreated, self]
+                    [target, clearColor, areResourcesCreated, self]
                     {
                         auto keepSelfAlive = self;
 
-                        return self->Tick(target.Get(), clearColor, compositionScale, areResourcesCreated);
+                        return self->Tick(target.Get(), clearColor, areResourcesCreated);
                     });
                 
                 auto completed = Callback<IAsyncActionCompletedHandler>(
@@ -740,7 +721,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     bool CanvasAnimatedControl::Tick(
         CanvasSwapChain* target, 
         Color const& clearColor, 
-        Size const& compositionScale,
         bool areResourcesCreated)
     {
         auto lock = GetLock();
@@ -777,14 +757,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             //
             Draw(target, clearColor, areResourcesCreated);
 
-            if (target)
-            {
-                // TODO #3264: Make sure this co-operates with the DPI logic in CanvasSwapChain.
-                Matrix3x2 transform{ compositionScale.Width, 0, 0, compositionScale.Height, 0, 0 };
-                ThrowIfFailed(target->put_TransformMatrix(transform));
-
-                ThrowIfFailed(target->Present());
-            }
+            ThrowIfFailed(target->Present());
         }
 
         if (needToRestartRenderThread)
@@ -854,44 +827,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             ThrowHR(RPC_E_WRONG_THREAD);
         }
-    }
-
-    HRESULT CanvasAnimatedControl::OnCompositionScaleChanged(ISwapChainPanel* swapChainPanel, IInspectable*)
-    {
-        float scaleX, scaleY;
-
-        ThrowIfFailed(swapChainPanel->get_CompositionScaleX(&scaleX));
-
-        ThrowIfFailed(swapChainPanel->get_CompositionScaleY(&scaleY));
-
-        if (scaleX == m_compositionScale.Width && scaleY == m_compositionScale.Height)
-        {
-            return S_OK;
-        }
-
-        m_compositionScale.Width = scaleX;
-
-        m_compositionScale.Height = scaleY;
-
-        {
-            auto lock = GetLock();
-
-            m_needToRestartRenderThread = true;
-        }
-
-        Changed();
-
-        return S_OK;
-    }
-
-    void CanvasAnimatedControl::RegisterAnimationEventHandlers()
-    {
-        auto callback = Callback<CompositionScaleChangedEventHandler>(this, &CanvasAnimatedControl::OnCompositionScaleChanged);
-
-        auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
-
-        m_compositionScaleChangedRegistration =
-            GetAdapter()->AddCompositionScaleChangedCallback(swapChainPanel, callback.Get());
     }
 
     ActivatableClassWithFactory(CanvasAnimatedUpdateEventArgs, CanvasAnimatedUpdateEventArgsFactory);

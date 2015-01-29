@@ -39,11 +39,13 @@ namespace ExampleGallery
         Transform2DEffect flameAnimation;
         Transform2DEffect flamePosition;
 
-        Stopwatch timer;
-
+        // Store both current and previous values, so we can detect when textCommandList needs to be recreated.
+        // The text needs to be copied because the AnimatedCanvasControl render thread cannot directly access
+        // the XAML textInput control, which is a UI element and so only valid on the UI thread.
+        string text, newText;
         float fontSize;
 
-        void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
+        void Canvas_CreateResources(ICanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
         {
             if (args.Reason == CanvasCreateResourcesReason.DpiChanged)
             {
@@ -52,37 +54,34 @@ namespace ExampleGallery
                 return;
             }
 
-            timer = Stopwatch.StartNew();
             CreateFlameEffect();
-            fontSize = GetFontSize((float)sender.ActualWidth);
-            SetupText();
+
+            text = null;
+            newText = textInput.Text;
         }
 
-        private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        private void Canvas_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             var ds = args.DrawingSession;
 
-            // If the font size has changed then recreate the text
-            var newFontSize = GetFontSize((float)sender.ActualWidth);
-            if (newFontSize != fontSize)
+            // If the text or font size has changed then recreate the text command list.
+            var newFontSize = GetFontSize(sender.Size);
+            if (newText != text || newFontSize != fontSize)
             {
+                text = newText;
                 fontSize = newFontSize;
                 SetupText();
             };
 
-            UpdateAnimation((float)timer.Elapsed.TotalSeconds);
+            ConfigureEffect(args.Timing);
 
-            var centerX = (float)sender.ActualWidth / 2;
-            var centerY = (float)sender.ActualHeight / 2;
-            ds.DrawImage(composite, centerX, centerY);
-
-            sender.Invalidate();
+            ds.DrawImage(composite, sender.Size.ToVector2() / 2);
         }
 
-        private void UpdateAnimation(float elapsedMilliseconds)
+        private void ConfigureEffect(CanvasTimingInformation timing)
         {
             // Animate the flame by shifting the Perlin noise upwards (-Y) over time.
-            flameAnimation.TransformMatrix = Matrix3x2.CreateTranslation(0, -elapsedMilliseconds * 60.0f);
+            flameAnimation.TransformMatrix = Matrix3x2.CreateTranslation(0, -(float)timing.TotalTime.TotalSeconds * 60.0f);
 
             // Scale the flame effect 2x vertically, aligned so it starts above the text.
             float verticalOffset = fontSize * 1.4f;
@@ -105,7 +104,7 @@ namespace ExampleGallery
                 ds.Clear(Color.FromArgb(0, 0, 0, 0));
 
                 ds.DrawText(
-                    textInput.Text,
+                    text,
                     0,
                     0,
                     Colors.White,
@@ -126,12 +125,12 @@ namespace ExampleGallery
         /// <summary>
         /// Calculates a good font size so the text will fit even on smaller phone screens.
         /// </summary>
-        private static float GetFontSize(float displayWidth)
+        private static float GetFontSize(Size displaySize)
         {
             const float maxFontSize = 72;
             const float scaleFactor = 12;
 
-            return Math.Min(displayWidth / scaleFactor, maxFontSize);
+            return Math.Min((float)displaySize.Width / scaleFactor, maxFontSize);
         }
 
         /// <summary>
@@ -203,13 +202,13 @@ namespace ExampleGallery
             composite = new CompositeEffect()
             {
                 Inputs = { flamePosition, null }
-                // Replace null with the text bitmap when it is created.
+                // Replace null with the text command list when it is created.
             };
         }
 
         private void textInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SetupText();
+            newText = textInput.Text;
         }
     }
 }
