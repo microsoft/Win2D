@@ -10,6 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -44,6 +45,22 @@ namespace ExampleGallery
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedFrom(e);
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // How much room do we have?
+            double gridMargin = 20;
+            double gridWidth = e.NewSize.Width - gridMargin;
+
+            // How much do we allow for each item?
+            const double itemWidth = 330;
+            
+            // We want at least 3 across
+            if (itemWidth* 3 <= gridWidth)
+                VisualStateManager.GoToState(this, "BigScreen", false);
+            else
+                VisualStateManager.GoToState(this, "SmallScreen", false);
         }
     }
 }
