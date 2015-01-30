@@ -30,6 +30,11 @@ namespace ExampleGallery
 
         async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            this.mediaElement.Visibility = Visibility.Collapsed;
+            this.progressInfo.Visibility = Visibility.Visible;
+            this.progressRing.IsActive = true;
+            this.progressText.Text = "Downloading video...";
+
             var thumbnailFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Logo.scale-100.png"));
             var thumbnail = RandomAccessStreamReference.CreateFromFile(thumbnailFile);
 
@@ -39,14 +44,19 @@ namespace ExampleGallery
                 new Uri(url),
                 thumbnail);
 
+            this.progressText.Text = "Creating clip...";
             var clip = await MediaClip.CreateFromFileAsync(file);
             clip.VideoEffectDefinitions.Add(new VideoEffectDefinition(typeof(ExampleVideoEffect).FullName));
 
             var composition = new MediaComposition();
             composition.Clips.Add(clip);
-
+           
             mediaElement.SetMediaStreamSource(composition.GenerateMediaStreamSource());
             mediaElement.IsLooping = true;
+        
+            this.mediaElement.Visibility = Visibility.Visible;
+            this.progressInfo.Visibility = Visibility.Collapsed;
+            this.progressRing.IsActive = false;
         }
     }
 }

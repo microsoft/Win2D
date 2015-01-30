@@ -26,6 +26,10 @@ under the License.
     Loaded="OnLoaded">
     
     <Grid>
-        <MediaElement x:Name="mediaElement" AreTransportControlsEnabled="True"/>
+        <MediaElement x:Name="mediaElement" AreTransportControlsEnabled="True" />
+        <StackPanel x:Name="progressInfo" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ProgressRing x:Name="progressRing" />
+            <TextBlock x:Name="progressText" FontSize="{StaticResource TextStyleLargeFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </StackPanel>
     </Grid>
 </UserControl>
