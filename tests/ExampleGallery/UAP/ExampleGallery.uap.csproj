@@ -99,6 +99,7 @@
       <Project>{2b157b97-cbf7-4014-8655-1456f2807f43}</Project>
       <Name>ExampleGallery.Effects</Name>
     </ProjectReference>
+    <SDKReference Include="Windows Mobile, Version=10.0.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicVideoEffectExample.xaml.cs">
