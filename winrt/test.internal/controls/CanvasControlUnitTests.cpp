@@ -150,6 +150,29 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         onDraw.SetExpectedCalls(1);
         f.RenderSingleFrame();
     }
+
+    TEST_METHOD_EX(CanvasControl_ThreadingRestrictions)
+    {
+        CanvasControlFixture f;
+        boolean b = false;
+        Color color = {};
+        MockEventHandler<Static_DrawEventHandler> onDraw;
+        MockEventHandler<Static_CreateResourcesEventHandler> onCreateResources;
+        EventRegistrationToken token;
+
+        VERIFY_THREADING_RESTRICTION(RPC_E_WRONG_THREAD, f.Control->add_CreateResources(onCreateResources.Get(), &token));
+        VERIFY_THREADING_RESTRICTION(RPC_E_WRONG_THREAD, f.Control->remove_CreateResources(token));
+
+        VERIFY_THREADING_RESTRICTION(RPC_E_WRONG_THREAD, f.Control->get_ReadyToDraw(&b));
+
+        VERIFY_THREADING_RESTRICTION(S_OK, f.Control->add_Draw(onDraw.Get(), &token));
+        VERIFY_THREADING_RESTRICTION(S_OK, f.Control->remove_Draw(token));
+
+        VERIFY_THREADING_RESTRICTION(S_OK, f.Control->put_ClearColor(color));
+        VERIFY_THREADING_RESTRICTION(S_OK, f.Control->get_ClearColor(&color));
+
+        VERIFY_THREADING_RESTRICTION(S_OK, f.Control->Invalidate());
+    }
 };
 
 TEST_CLASS(CanvasControlTests_SizeTests)

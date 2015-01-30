@@ -11,7 +11,6 @@
 // under the License.
 
 #include "ControlFixtures.h"
-#include "MockDispatcher.h"
 
 template<typename TRAITS>
 struct BasicControlFixture

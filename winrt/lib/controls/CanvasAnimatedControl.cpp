@@ -599,11 +599,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void CanvasAnimatedControl::CheckThreadRestrictionIfNecessary()
-    {
-        CheckUIThreadAccess();
-    }
-
     void CanvasAnimatedControl::Changed()
     {
         //
@@ -855,27 +850,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         timing.IsRunningSlowly = false;
 
         return timing;
-    }
-
-    void CanvasAnimatedControl::CheckUIThreadAccess()
-    {
-        // 
-        // Verifies execution on this control's window's UI thread.
-        // Certain methods should not be executed on other threads-
-        // they are not designed to have a locking mechanism to
-        // protect them.
-        //
-
-        ComPtr<ICoreDispatcher> dispatcher;
-        ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
-
-        boolean hasAccess;
-        ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasAccess));
-
-        if (!hasAccess)
-        {
-            ThrowHR(RPC_E_WRONG_THREAD);
-        }
     }
 
     ActivatableClassWithFactory(CanvasAnimatedUpdateEventArgs, CanvasAnimatedUpdateEventArgsFactory);

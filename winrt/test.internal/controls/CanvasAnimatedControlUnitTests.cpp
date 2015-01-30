@@ -304,12 +304,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged();
     }
 
-#define VERIFY_THREADING_RESTRICTION(EXPECTED_HR, FUNC) \
-    f.Adapter->SetHasUIThreadAccess(false);             \
-    Assert::AreEqual(EXPECTED_HR, FUNC);                \
-    f.Adapter->SetHasUIThreadAccess(true);              \
-    Assert::AreEqual(S_OK, FUNC);                      
-
     TEST_METHOD_EX(CanvasAnimatedControl_ThreadingRestrictions)
     {
         CanvasAnimatedControlFixture f;
@@ -347,8 +341,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         VERIFY_THREADING_RESTRICTION(S_OK, f.Control->get_ClearColor(&color));
     }
 
-#undef VERIFY_THREADING_RESTRICTION
-    
     class FixtureWithSwapChainAccess : public CanvasAnimatedControlFixture
     {
         float m_swapChainTransformScaleX;

@@ -219,8 +219,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Unloaded() override final;
 
-        virtual void CheckThreadRestrictionIfNecessary() override final;
-
     private:
         std::unique_lock<std::mutex> GetLock()
         { return std::unique_lock<std::mutex>(m_mutex); }
@@ -239,8 +237,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void ChangedImpl();
 
         CanvasTimingInformation GetTimingInformationFromTimer();
-
-        void CheckUIThreadAccess();
     };
 
 }}}}

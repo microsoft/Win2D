@@ -15,14 +15,12 @@
 #include "..\MockAsyncAction.h"
 #include "BaseControlTestAdapter.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
-#include "MockDispatcher.h"
 #include "MockCoreIndependentInputSource.h"
 
 class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter<CanvasAnimatedControlTraits>
 {
     std::shared_ptr<CanvasSwapChainPanelTestAdapter> m_swapChainPanelAdapter;
     int64_t m_performanceCounter;
-    bool m_hasUIThreadAccess;
     ComPtr<StubSwapChainPanel> m_swapChainPanel;
     ComPtr<StubCoreIndependentInputSource> m_coreIndependentInputSource;
 
@@ -35,7 +33,6 @@ public:
         : m_performanceCounter(0)
         , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         , InitialDevice(initialDevice)
-        , m_hasUIThreadAccess(true)
         , m_swapChainPanel(Make<StubSwapChainPanel>())
         , m_coreIndependentInputSource(Make<StubCoreIndependentInputSource>())
     {
@@ -52,35 +49,6 @@ public:
             });
 
         m_swapChainPanelAdapter = std::make_shared<CanvasSwapChainPanelTestAdapter>(m_swapChainPanel);
-        
-        GetCurrentMockWindow()->get_DispatcherMethod.AllowAnyCall(
-            [=](ICoreDispatcher** out)
-            {
-                auto dispatcher = Make<MockDispatcher>();
-
-                dispatcher->RunAsyncMethod.AllowAnyCall(
-                    [=](CoreDispatcherPriority priority, IDispatchedHandler *agileCallback, IAsyncAction **asyncAction)
-                    {
-                        // This just launches the action right away, and doesn't copy out an async action object.
-                        // Currently, product code doesn't use it anyway.
-
-                        *asyncAction = nullptr;
-
-                        ThrowIfFailed(agileCallback->Invoke());
-
-                        return S_OK;
-                    });
-
-                dispatcher->get_HasThreadAccessMethod.AllowAnyCall(
-                    [=](boolean* out)
-                    {
-                        *out = m_hasUIThreadAccess;
-
-                        return S_OK;
-                    });
-
-                return dispatcher.CopyTo(out);
-            });
     }
 
     ComPtr<CanvasSwapChain> CreateCanvasSwapChain(
@@ -205,11 +173,6 @@ public:
         LARGE_INTEGER l;
         l.QuadPart = StepTimer::TicksPerSecond;
         return l;
-    }
-
-    void SetHasUIThreadAccess(bool value)
-    {
-        m_hasUIThreadAccess = value;
     }
 
     void SetCoreIndpendentInputSource(ComPtr<StubCoreIndependentInputSource> const& value)

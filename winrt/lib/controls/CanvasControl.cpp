@@ -331,10 +331,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-    void CanvasControl::CheckThreadRestrictionIfNecessary()
-    {
-    }
-
     void CanvasControl::HookCompositionRenderingIfNecessary()
     {
         if (m_renderingEventRegistration)

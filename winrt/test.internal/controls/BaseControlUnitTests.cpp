@@ -90,7 +90,6 @@ namespace
         CALL_COUNTER_WITH_MOCK(ChangedClearColorMethod, void(bool));
         CALL_COUNTER_WITH_MOCK(ChangedSizeMethod, void());
         CALL_COUNTER_WITH_MOCK(UnloadedMethod, void());
-        CALL_COUNTER_WITH_MOCK(CheckThreadRestrictionIfNecessaryMethod, void());
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
@@ -126,11 +125,6 @@ namespace
         virtual void Unloaded() override final
         {
             UnloadedMethod.WasCalled();
-        }
-
-        virtual void CheckThreadRestrictionIfNecessary() override final
-        {
-            CheckThreadRestrictionIfNecessaryMethod.WasCalled();
         }
 
         template<typename FN>

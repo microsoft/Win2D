@@ -173,8 +173,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Unloaded() override final;
 
-        virtual void CheckThreadRestrictionIfNecessary() override final;
-        
     private:
         std::unique_lock<std::mutex> GetLock()
         {
