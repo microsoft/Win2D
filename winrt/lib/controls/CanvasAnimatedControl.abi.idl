@@ -157,15 +157,22 @@ namespace Microsoft.Graphics.Canvas
 
         // The current size of the control; this is safe to call from Update/Draw
         //
-        // These methods can be called from any thread.
+        // This method can be called from any thread.
         //
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* value);
 
         // Resets the elapsed time.
         //
-        // These methods can be called from any thread.
+        // This method can be called from any thread.
         //
         HRESULT ResetElapsedTime();
+
+        //
+        // Provides pointer input functionality.
+        // 
+        // This method can be called from any thread.
+        //
+        [propget] HRESULT Input([out, retval] Windows.UI.Core.ICorePointerInputSource** value);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

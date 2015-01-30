@@ -163,17 +163,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return static_cast<CanvasSwapChain*>(swapChain.Get());
         }
 
-        virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(std::function<bool()> tickFn)
+        virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(
+            std::function<void()> const& beforeLoopFn,
+            std::function<bool()> const& tickFn,
+            std::function<void()> const& afterLoopFn)
         {
             auto self = shared_from_this();
 
             auto handler = Callback<AddFtmBase<IWorkItemHandler>::Type>(
-                [self, tickFn](IAsyncAction* action)
+                [self, beforeLoopFn, tickFn, afterLoopFn](IAsyncAction* action)
                 {
                     return ExceptionBoundary(
                         [&]
                         {
-                            self->UpdateRenderLoop(action, tickFn);
+                            self->UpdateRenderLoop(action, beforeLoopFn, tickFn, afterLoopFn);
                         });
                 });
             
@@ -208,9 +211,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return asyncAction;
         }
 
-        void UpdateRenderLoop(IAsyncAction* action, std::function<bool()> const& tickFn)
+        void UpdateRenderLoop(
+            IAsyncAction* action,
+            std::function<void()> const& beforeLoopFn,
+            std::function<bool()> const& tickFn,
+            std::function<void()> const& afterLoopFn)
         {
             auto asyncInfo = As<IAsyncInfo>(action);
+
+            beforeLoopFn();
+
+            auto afterLoopWarden = MakeScopeWarden([&] { afterLoopFn(); });
 
             for (;;)
             {
@@ -223,6 +234,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!tickFn())
                     break;
             };
+            
         }
 
         virtual std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override
@@ -305,6 +317,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
 
+        m_input = Make<AnimatedControlInput>(swapChainPanel);
+
         m_isStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
 
         m_targetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
@@ -315,6 +329,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         assert(!m_renderLoopAction);
 
         assert(!m_changedAction);
+
+
     }
 
     //
@@ -451,6 +467,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto lock = GetLock();
 
                 m_shouldResetElapsedTime = true;
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasAnimatedControl::get_Input(ICorePointerInputSource** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(value);
+
+                ThrowIfFailed(m_input.CopyTo(value));
             });
     }
 
@@ -622,6 +650,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         // This method, as an action, is always run on the UI thread.
         //
+
         m_currentSize = GetActualSize();
 
         // Changed() already verified whether the control is loaded.
@@ -656,14 +685,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_stepTimer.ResetElapsedTime();
 
                 ComPtr<CanvasAnimatedControl> self = this;
+                
+                auto beforeLoopFn = 
+                    [self]()
+                    {
+                        self->m_input->SetSource();
+                    };
 
-                m_renderLoopAction = GetAdapter()->StartUpdateRenderLoop(
+                auto onEachTickFn = 
                     [target, clearColor, areResourcesCreated, self]
                     {
-                        auto keepSelfAlive = self;
-
                         return self->Tick(target.Get(), clearColor, areResourcesCreated);
-                    });
+                    };
+
+                auto afterLoopFn = 
+                    [self]()
+                    {
+                        self->m_input->RemoveSource();
+                    };
+
+                m_renderLoopAction = GetAdapter()->StartUpdateRenderLoop(beforeLoopFn, onEachTickFn, afterLoopFn);
                 
                 auto completed = Callback<IAsyncActionCompletedHandler>(
                     [self](IAsyncAction* asyncAction, AsyncStatus asyncStatus)
@@ -723,6 +764,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color const& clearColor, 
         bool areResourcesCreated)
     {
+        m_input->ProcessEvents();
+
         auto lock = GetLock();
 
         m_stepTimer.SetTargetElapsedTicks(m_targetElapsedTime);

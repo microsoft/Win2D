@@ -15,6 +15,7 @@
 class MockDispatcher : public RuntimeClass<ICoreDispatcher>
 {
 public:
+    CALL_COUNTER_WITH_MOCK(ProcessEventsMethod, HRESULT(CoreProcessEventsOption));
     CALL_COUNTER_WITH_MOCK(RunAsyncMethod, HRESULT(CoreDispatcherPriority, IDispatchedHandler*, IAsyncAction**));
     CALL_COUNTER_WITH_MOCK(get_HasThreadAccessMethod, HRESULT(boolean*));
 
@@ -26,8 +27,7 @@ public:
     virtual IFACEMETHODIMP ProcessEvents(
         CoreProcessEventsOption options) override
     {
-        Assert::Fail(L"Unexpected call to ICoreDispatcher::ProcessEvents");
-        return E_UNEXPECTED;
+        return ProcessEventsMethod.WasCalled(options);
     }
 
     virtual IFACEMETHODIMP RunAsync(

@@ -47,6 +47,7 @@
     <ClInclude Include="controls\CanvasControlTestAdapter.h" />
     <ClInclude Include="controls\CanvasSwapChainPanelTestAdapter.h" />
     <ClInclude Include="controls\ControlFixtures.h" />
+    <ClInclude Include="controls\MockCoreIndependentInputSource.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="MockAsyncAction.h" />
     <ClInclude Include="MockCanvasDevice.h" />

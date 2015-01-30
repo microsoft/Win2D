@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -26,12 +27,18 @@ namespace ExampleGallery
         public AnimatedControlExample()
         {
             this.InitializeComponent();
+
+            animatedControl.Input.PointerPressed += OnAnimatedControlPointerPressed;
+            animatedControl.Input.PointerMoved += OnAnimatedControlPointerMoved;
         }
 
         Queue<int> updatesPerDraw = new Queue<int>();
 
         int drawCount;
         int updatesThisDraw;
+
+        Queue<Vector2> pointerPoints = new Queue<Vector2>();
+        const int pointerPointLimit = 100;
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
@@ -77,6 +84,20 @@ namespace ExampleGallery
                 index++;
             }
 
+            int pointerPointIndex = 0;
+            Vector2 prev = new Vector2(0, 0);
+            const float penRadius = 10;
+            foreach (Vector2 p in pointerPoints)
+            {
+                if (pointerPointIndex != 0)
+                {
+                    ds.DrawLine(prev, p, Colors.DarkRed, penRadius * 2);
+                }
+                ds.FillEllipse(p, penRadius, penRadius, Colors.DarkRed);
+                prev = p;
+                pointerPointIndex++;
+            }
+
             updatesThisDraw = 0;
         }
 
@@ -88,6 +109,8 @@ namespace ExampleGallery
 
         private void OnUpdate(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
+            if (pointerPoints.Count > 0) pointerPoints.Dequeue();
+
             updatesThisDraw++;
         }
 
@@ -101,6 +124,23 @@ namespace ExampleGallery
         {
             var button = (ToggleButton)sender;
             this.animatedControl.Paused = button.IsChecked.Value;
+        }
+
+        void OnAnimatedControlPointerPressed(object sender, PointerEventArgs args)
+        {
+            pointerPoints.Clear();
+        }
+
+        void OnAnimatedControlPointerMoved(object sender, PointerEventArgs args)
+        {
+            if (args.CurrentPoint.IsInContact)
+            {
+                if (pointerPoints.Count > pointerPointLimit)
+                {
+                    pointerPoints.Dequeue();
+                }
+                pointerPoints.Enqueue(new Vector2((float)args.CurrentPoint.Position.X, (float)args.CurrentPoint.Position.Y));
+            }
         }
     }
 }

@@ -16,13 +16,15 @@
 #include "BaseControlTestAdapter.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
 #include "MockDispatcher.h"
+#include "MockCoreIndependentInputSource.h"
 
-class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter < CanvasAnimatedControlTraits >
+class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter<CanvasAnimatedControlTraits>
 {
     std::shared_ptr<CanvasSwapChainPanelTestAdapter> m_swapChainPanelAdapter;
     int64_t m_performanceCounter;
     bool m_hasUIThreadAccess;
     ComPtr<StubSwapChainPanel> m_swapChainPanel;
+    ComPtr<StubCoreIndependentInputSource> m_coreIndependentInputSource;
 
 public:
     CALL_COUNTER_WITH_MOCK(CreateCanvasSwapChainMethod, ComPtr<CanvasSwapChain>(ICanvasDevice*, float, float, float, CanvasAlphaMode));
@@ -35,11 +37,18 @@ public:
         , InitialDevice(initialDevice)
         , m_hasUIThreadAccess(true)
         , m_swapChainPanel(Make<StubSwapChainPanel>())
+        , m_coreIndependentInputSource(Make<StubCoreIndependentInputSource>())
     {
         m_swapChainPanel->SetSwapChainMethod.AllowAnyCall(
             [=](IDXGISwapChain*)
             {
                 return S_OK;
+            });
+
+        m_swapChainPanel->CreateCoreIndependentInputSourceMethod.AllowAnyCall(
+            [=](CoreInputDeviceTypes, ICoreInputSourceBase** out)
+            {
+                return m_coreIndependentInputSource.CopyTo(out);
             });
 
         m_swapChainPanelAdapter = std::make_shared<CanvasSwapChainPanelTestAdapter>(m_swapChainPanel);
@@ -91,16 +100,23 @@ public:
         return swapChainPanel;
     }
 
+    std::function<void()> m_beforeLoopFn;
     std::function<bool()> m_currentTickFn;
+    std::function<void()> m_afterLoopFn;
     ComPtr<MockAsyncAction> m_outstandingWorkItemAsyncAction;
 
-    virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(std::function<bool()> tickFn)
+    virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(
+        std::function<void()> const& beforeLoopFn,
+        std::function<bool()> const& tickFn,
+        std::function<void()> const& afterLoopFn)
     {
         Assert::IsFalse(static_cast<bool>(m_currentTickFn));
         Assert::IsFalse(m_outstandingWorkItemAsyncAction);
 
         m_outstandingWorkItemAsyncAction = Make<MockAsyncAction>();
+        m_beforeLoopFn = beforeLoopFn;
         m_currentTickFn = tickFn;
+        m_afterLoopFn = afterLoopFn;
 
         return m_outstandingWorkItemAsyncAction;
     }
@@ -135,6 +151,11 @@ public:
 
     void Tick()
     {
+        if (m_beforeLoopFn)
+        {
+            m_beforeLoopFn();
+            m_beforeLoopFn = nullptr;
+        }
         if (m_currentTickFn)
         {
             bool continueRunning;
@@ -142,6 +163,12 @@ public:
 
             if (SUCCEEDED(hr) && continueRunning)
                 return;
+
+            if (m_afterLoopFn)
+            {
+                m_afterLoopFn();
+                m_afterLoopFn = nullptr;
+            }
 
             auto action = m_outstandingWorkItemAsyncAction;
             m_currentTickFn = nullptr;
@@ -183,5 +210,15 @@ public:
     void SetHasUIThreadAccess(bool value)
     {
         m_hasUIThreadAccess = value;
+    }
+
+    void SetCoreIndpendentInputSource(ComPtr<StubCoreIndependentInputSource> const& value)
+    {
+        m_coreIndependentInputSource = value;
+    }
+
+    ComPtr<StubCoreIndependentInputSource> GetCoreIndependentInputSource()
+    {
+        return m_coreIndependentInputSource;
     }
 };
