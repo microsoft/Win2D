@@ -12,11 +12,11 @@
 
 #include "pch.h"
 
-#include <controls\CanvasAnimatedControl.h>
+#include <CanvasAnimatedControl.h>
 
 #include "CanvasControlTestAdapter.h"
 #include "BasicControlFixture.h"
-#include "..\MockCanvasSwapChain.h"
+#include "MockCanvasSwapChain.h"
 
 TEST_CLASS(CanvasAnimatedControl_DrawArgs)
 {

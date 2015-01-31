@@ -15,7 +15,7 @@
 #pragma warning(disable: 4100)  // "unreferenced formal parameter"
 #pragma warning(disable: 4702)  // "unreachable code"
 
-#include "targetver.h"
+#include <SDKDDKVer.h>
 
 // Standard C++
 #include <assert.h>
@@ -83,11 +83,11 @@
 #include <CanvasSolidColorBrush.h>
 #include <CanvasStrokeStyle.h>
 #include <CanvasSwapChain.h>
-#include <controls\CanvasSwapChainPanel.h>
+#include <CanvasSwapChainPanel.h>
 #include <CanvasTextFormat.h>
 #include <Conversion.h>
 #include <DxgiUtilities.h>
-#include <controls\RecreatableDeviceManager.h>
+#include <RecreatableDeviceManager.h>
 #include <ResourceManager.h>
 #include <ResourceTracker.h>
 #include <ResourceWrapper.h>

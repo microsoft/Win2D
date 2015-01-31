@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-#include "controls\CanvasControlTestAdapter.h"
+#include "CanvasControlTestAdapter.h"
 
 TEST_CLASS(CanvasImageSourceUnitTests)
 {

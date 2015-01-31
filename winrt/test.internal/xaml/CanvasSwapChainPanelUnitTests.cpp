@@ -12,10 +12,10 @@
 
 #include "pch.h"
 
-#include <controls\CanvasSwapChainPanel.h>
+#include <CanvasSwapChainPanel.h>
 
-#include "..\MockCanvasSwapChain.h"
-#include "..\MockDXGISwapChain.h"
+#include "MockCanvasSwapChain.h"
+#include "MockDXGISwapChain.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
 
 TEST_CLASS(CanvasSwapChainPanelUnitTests)

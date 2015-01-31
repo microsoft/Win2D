@@ -12,8 +12,8 @@
 
 #include "pch.h"
 
-#include <controls\BaseControl.h>
-#include <controls\BaseControlAdapter.h>
+#include <BaseControl.h>
+#include <BaseControlAdapter.h>
 
 #include "CanvasControlTestAdapter.h"
 #include "BasicControlFixture.h"

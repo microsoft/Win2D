@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "..\MockAsyncAction.h"
+#include "MockAsyncAction.h"
 #include "BaseControlTestAdapter.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
 #include "MockCoreIndependentInputSource.h"
