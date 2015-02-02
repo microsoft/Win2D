@@ -243,6 +243,47 @@
     <HelpKINode Title="CanvasRadialGradientBrush.BufferPrecision Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasRadialGradientBrush_BufferPrecision.htm" />
   </HelpKINode>
   <HelpKINode Title="CanvasAlphaMode enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasAlphaMode.htm" />
+  <HelpKINode Title="CanvasAnimatedControl class">
+    <HelpKINode Title="CanvasAnimatedControl Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedControl.htm" />
+    <HelpKINode Title="about CanvasAnimatedControl class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedControl.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl__ctor.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_Microsoft_Graphics_Canvas_CanvasAnimatedControl.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_CanvasAnimatedControl.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasAnimatedControl.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CanvasAnimatedControl.CanvasAnimatedControl constructor" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl__ctor.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.ClearColor property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ClearColor.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.ConvertDipsToPixels method" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ConvertDipsToPixels.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.ConvertPixelsToDips method" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ConvertPixelsToDips.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.CreateResources event" Url="html/E_Microsoft_Graphics_Canvas_CanvasAnimatedControl_CreateResources.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.Device property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Device.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.Dpi property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Dpi.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.Draw event" Url="html/E_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Draw.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.Input property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Input.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.IsFixedTimeStep property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_IsFixedTimeStep.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.Paused property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Paused.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.ReadyToDraw property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ReadyToDraw.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.ResetElapsedTime method" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ResetElapsedTime.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.Size property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Size.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.TargetElapsedTime property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_TargetElapsedTime.htm" />
+  <HelpKINode Title="CanvasAnimatedControl.Update event" Url="html/E_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Update.htm" />
+  <HelpKINode Title="CanvasAnimatedDrawEventArgs class">
+    <HelpKINode Title="CanvasAnimatedDrawEventArgs Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs.htm" />
+    <HelpKINode Title="about CanvasAnimatedDrawEventArgs class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs__ctor.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CanvasAnimatedDrawEventArgs.CanvasAnimatedDrawEventArgs constructor" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs__ctor.htm" />
+  <HelpKINode Title="CanvasAnimatedDrawEventArgs.DrawingSession property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs_DrawingSession.htm" />
+  <HelpKINode Title="CanvasAnimatedDrawEventArgs.Timing property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs_Timing.htm" />
+  <HelpKINode Title="CanvasAnimatedUpdateEventArgs class">
+    <HelpKINode Title="CanvasAnimatedUpdateEventArgs Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs.htm" />
+    <HelpKINode Title="about CanvasAnimatedUpdateEventArgs class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs.htm" />
+    <HelpKINode Title="constructor" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs__ctor.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CanvasAnimatedUpdateEventArgs.CanvasAnimatedUpdateEventArgs constructor" Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs__ctor.htm" />
+  <HelpKINode Title="CanvasAnimatedUpdateEventArgs.Timing property" Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs_Timing.htm" />
   <HelpKINode Title="CanvasAntialiasing enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasAntialiasing.htm" />
   <HelpKINode Title="CanvasBackground enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasBackground.htm" />
   <HelpKINode Title="CanvasBitmap class">
@@ -566,6 +607,15 @@
   <HelpKINode Title="CanvasTextFormat.VerticalAlignment property" Url="html/P_Microsoft_Graphics_Canvas_CanvasTextFormat_VerticalAlignment.htm" />
   <HelpKINode Title="CanvasTextFormat.WordWrapping property" Url="html/P_Microsoft_Graphics_Canvas_CanvasTextFormat_WordWrapping.htm" />
   <HelpKINode Title="CanvasTextTrimmingGranularity enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextTrimmingGranularity.htm" />
+  <HelpKINode Title="CanvasTimingInformation structure">
+    <HelpKINode Title="CanvasTimingInformation Structure" Url="html/T_Microsoft_Graphics_Canvas_CanvasTimingInformation.htm" />
+    <HelpKINode Title="about CanvasTimingInformation structure" Url="html/T_Microsoft_Graphics_Canvas_CanvasTimingInformation.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_CanvasTimingInformation.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CanvasTimingInformation.ElapsedTime field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_ElapsedTime.htm" />
+  <HelpKINode Title="CanvasTimingInformation.IsRunningSlowly field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_IsRunningSlowly.htm" />
+  <HelpKINode Title="CanvasTimingInformation.TotalTime field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_TotalTime.htm" />
+  <HelpKINode Title="CanvasTimingInformation.UpdateCount field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_UpdateCount.htm" />
   <HelpKINode Title="CanvasUnits enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasUnits.htm" />
   <HelpKINode Title="CanvasVerticalAlignment enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasVerticalAlignment.htm" />
   <HelpKINode Title="CanvasWordWrapping enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasWordWrapping.htm" />
@@ -592,7 +642,11 @@
     <HelpKINode Title="TableTransferEffect.ClampOutput Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_TableTransferEffect_ClampOutput.htm" />
   </HelpKINode>
   <HelpKINode Title="Clear method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_Clear.htm" />
-  <HelpKINode Title="ClearColor property" Url="html/P_Microsoft_Graphics_Canvas_CanvasControl_ClearColor.htm" />
+  <HelpKINode Title="ClearColor property">
+    <HelpKINode Title="CanvasAnimatedControl.ClearColor Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ClearColor.htm" />
+    <HelpKINode Title="CanvasControl.ClearColor Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasControl_ClearColor.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.ClearColor Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_ClearColor.htm" />
+  </HelpKINode>
   <HelpKINode Title="ClearType enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextAntialiasing.htm" />
   <HelpKINode Title="Clip enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasDrawTextOptions.htm" />
   <HelpKINode Title="Color enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
@@ -657,6 +711,7 @@
   <HelpKINode Title="Conjugate method" Url="html/M_System_Numerics_Quaternion_Conjugate.htm" />
   <HelpKINode Title="ConstantBuffer enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DBindings.htm" />
   <HelpKINode Title="ConvertDipsToPixels method">
+    <HelpKINode Title="CanvasAnimatedControl.ConvertDipsToPixels Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ConvertDipsToPixels.htm" />
     <HelpKINode Title="CanvasBitmap.ConvertDipsToPixels Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasBitmap_ConvertDipsToPixels.htm" />
     <HelpKINode Title="CanvasControl.ConvertDipsToPixels Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasControl_ConvertDipsToPixels.htm" />
     <HelpKINode Title="CanvasDrawingSession.ConvertDipsToPixels Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_ConvertDipsToPixels.htm" />
@@ -665,6 +720,7 @@
     <HelpKINode Title="ICanvasResourceCreatorWithDpi.ConvertDipsToPixels Method " Url="html/M_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_ConvertDipsToPixels.htm" />
   </HelpKINode>
   <HelpKINode Title="ConvertPixelsToDips method">
+    <HelpKINode Title="CanvasAnimatedControl.ConvertPixelsToDips Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ConvertPixelsToDips.htm" />
     <HelpKINode Title="CanvasBitmap.ConvertPixelsToDips Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasBitmap_ConvertPixelsToDips.htm" />
     <HelpKINode Title="CanvasControl.ConvertPixelsToDips Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasControl_ConvertPixelsToDips.htm" />
     <HelpKINode Title="CanvasDrawingSession.ConvertPixelsToDips Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_ConvertPixelsToDips.htm" />
@@ -740,7 +796,11 @@
     <HelpKINode Title="CanvasRadialGradientBrush.CreateRainbow Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasRadialGradientBrush_CreateRainbow.htm" />
   </HelpKINode>
   <HelpKINode Title="CreateReflection method" Url="html/M_System_Numerics_Matrix4x4_CreateReflection.htm" />
-  <HelpKINode Title="CreateResources event" Url="html/E_Microsoft_Graphics_Canvas_CanvasControl_CreateResources.htm" />
+  <HelpKINode Title="CreateResources event">
+    <HelpKINode Title="CanvasAnimatedControl.CreateResources Event" Url="html/E_Microsoft_Graphics_Canvas_CanvasAnimatedControl_CreateResources.htm" />
+    <HelpKINode Title="CanvasControl.CreateResources Event" Url="html/E_Microsoft_Graphics_Canvas_CanvasControl_CreateResources.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.CreateResources Event" Url="html/E_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_CreateResources.htm" />
+  </HelpKINode>
   <HelpKINode Title="CreateRotation method" Url="html/Overload_System_Numerics_Matrix3x2_CreateRotation.htm" />
   <HelpKINode Title="CreateRotationX method" Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationX.htm" />
   <HelpKINode Title="CreateRotationY method" Url="html/Overload_System_Numerics_Matrix4x4_CreateRotationY.htm" />
@@ -777,8 +837,8 @@
   <HelpKINode Title="Custom enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasColorSpace.htm" />
   <HelpKINode Title="CustomDashStyle property" Url="html/P_Microsoft_Graphics_Canvas_CanvasStrokeStyle_CustomDashStyle.htm" />
   <HelpKINode Title="D field">
-    <HelpKINode Title="Plane.D Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_D.htm" />
     <HelpKINode Title="Plane.D Field" Url="html/F_System_Numerics_Plane_D.htm" />
+    <HelpKINode Title="Plane.D Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_D.htm" />
   </HelpKINode>
   <HelpKINode Title="D16UIntNormalized enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   <HelpKINode Title="D24UIntNormalizedS8UInt enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
@@ -814,6 +874,7 @@
   <HelpKINode Title="DestinationOut enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasComposite.htm" />
   <HelpKINode Title="DestinationOver enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasComposite.htm" />
   <HelpKINode Title="Device property">
+    <HelpKINode Title="CanvasAnimatedControl.Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Device.htm" />
     <HelpKINode Title="CanvasBitmap.Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasBitmap_Device.htm" />
     <HelpKINode Title="CanvasCommandList.Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasCommandList_Device.htm" />
     <HelpKINode Title="CanvasControl.Device Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasControl_Device.htm" />
@@ -1044,6 +1105,7 @@
   <HelpKINode Title="DotCoordinate method" Url="html/M_System_Numerics_Plane_DotCoordinate.htm" />
   <HelpKINode Title="DotNormal method" Url="html/M_System_Numerics_Plane_DotNormal.htm" />
   <HelpKINode Title="Dpi property">
+    <HelpKINode Title="CanvasAnimatedControl.Dpi Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Dpi.htm" />
     <HelpKINode Title="CanvasBitmap.Dpi Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasBitmap_Dpi.htm" />
     <HelpKINode Title="CanvasControl.Dpi Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasControl_Dpi.htm" />
     <HelpKINode Title="CanvasDrawingSession.Dpi Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Dpi.htm" />
@@ -1069,11 +1131,18 @@
   <HelpKINode Title="DpiCompensationEffect.Properties property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DpiCompensationEffect_Properties.htm" />
   <HelpKINode Title="DpiCompensationEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DpiCompensationEffect_Source.htm" />
   <HelpKINode Title="DpiCompensationEffect.SourceDpi property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DpiCompensationEffect_SourceDpi.htm" />
-  <HelpKINode Title="Draw event" Url="html/E_Microsoft_Graphics_Canvas_CanvasControl_Draw.htm" />
+  <HelpKINode Title="Draw event">
+    <HelpKINode Title="CanvasAnimatedControl.Draw Event" Url="html/E_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Draw.htm" />
+    <HelpKINode Title="CanvasControl.Draw Event" Url="html/E_Microsoft_Graphics_Canvas_CanvasControl_Draw.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.Draw Event" Url="html/E_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Draw.htm" />
+  </HelpKINode>
   <HelpKINode Title="DrawCircle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle.htm" />
   <HelpKINode Title="DrawEllipse method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse.htm" />
   <HelpKINode Title="DrawImage method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage.htm" />
-  <HelpKINode Title="DrawingSession property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawEventArgs_DrawingSession.htm" />
+  <HelpKINode Title="DrawingSession property">
+    <HelpKINode Title="CanvasAnimatedDrawEventArgs.DrawingSession Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs_DrawingSession.htm" />
+    <HelpKINode Title="CanvasDrawEventArgs.DrawingSession Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawEventArgs_DrawingSession.htm" />
+  </HelpKINode>
   <HelpKINode Title="DrawLine method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine.htm" />
   <HelpKINode Title="DrawRectangle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle.htm" />
   <HelpKINode Title="DrawRoundedRectangle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle.htm" />
@@ -1126,6 +1195,7 @@
     <HelpKINode Title="UnPremultiplyEffect.EffectId Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect_EffectId.htm" />
   </HelpKINode>
   <HelpKINode Title="EffectOptimization enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectOptimization.htm" />
+  <HelpKINode Title="ElapsedTime field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_ElapsedTime.htm" />
   <HelpKINode Title="Elevation property">
     <HelpKINode Title="DistantDiffuseEffect.Elevation Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_Elevation.htm" />
     <HelpKINode Title="DistantSpecularEffect.Elevation Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_Elevation.htm" />
@@ -1384,6 +1454,24 @@
     <HelpKINode Title="IAsyncOperation(T0) Interface" Url="html/T_Windows_Foundation_IAsyncOperation_1.htm" />
     <HelpKINode Title="about IAsyncOperation&lt;T0&gt; interface" Url="html/T_Windows_Foundation_IAsyncOperation_1.htm" />
   </HelpKINode>
+  <HelpKINode Title="ICanvasAnimatedControl interface">
+    <HelpKINode Title="ICanvasAnimatedControl Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasAnimatedControl.htm" />
+    <HelpKINode Title="about ICanvasAnimatedControl interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasAnimatedControl.htm" />
+    <HelpKINode Title="events" Url="html/Events_T_Microsoft_Graphics_Canvas_ICanvasAnimatedControl.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_ICanvasAnimatedControl.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_ICanvasAnimatedControl.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ICanvasAnimatedControl.ClearColor property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_ClearColor.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.CreateResources event" Url="html/E_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_CreateResources.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.Draw event" Url="html/E_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Draw.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.Input property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Input.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.IsFixedTimeStep property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_IsFixedTimeStep.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.Paused property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Paused.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.ReadyToDraw property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_ReadyToDraw.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.ResetElapsedTime method" Url="html/M_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_ResetElapsedTime.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.Size property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Size.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.TargetElapsedTime property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_TargetElapsedTime.htm" />
+  <HelpKINode Title="ICanvasAnimatedControl.Update event" Url="html/E_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Update.htm" />
   <HelpKINode Title="ICanvasBrush interface">
     <HelpKINode Title="ICanvasBrush Interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasBrush.htm" />
     <HelpKINode Title="about ICanvasBrush interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasBrush.htm" />
@@ -1413,6 +1501,10 @@
   <HelpKINode Title="ICanvasResourceCreatorWithDpi.ConvertDipsToPixels method" Url="html/M_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_ConvertDipsToPixels.htm" />
   <HelpKINode Title="ICanvasResourceCreatorWithDpi.ConvertPixelsToDips method" Url="html/M_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_ConvertPixelsToDips.htm" />
   <HelpKINode Title="ICanvasResourceCreatorWithDpi.Dpi property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_Dpi.htm" />
+  <HelpKINode Title="ICorePointerInputSource interface">
+    <HelpKINode Title="ICorePointerInputSource Interface" Url="html/T_Windows_UI_Core_ICorePointerInputSource.htm" />
+    <HelpKINode Title="about ICorePointerInputSource interface" Url="html/T_Windows_UI_Core_ICorePointerInputSource.htm" />
+  </HelpKINode>
   <HelpKINode Title="Identity property">
     <HelpKINode Title="Matrix3x2.Identity Property " Url="html/P_System_Numerics_Matrix3x2_Identity.htm" />
     <HelpKINode Title="Matrix4x4.Identity Property " Url="html/P_System_Numerics_Matrix4x4_Identity.htm" />
@@ -1457,6 +1549,10 @@
     <HelpKINode Title="Vector4.Inequality Operator " Url="html/M_System_Numerics_Vector4_op_Inequality.htm" />
   </HelpKINode>
   <HelpKINode Title="Information enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasDebugLevel.htm" />
+  <HelpKINode Title="Input property">
+    <HelpKINode Title="CanvasAnimatedControl.Input Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Input.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.Input Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Input.htm" />
+  </HelpKINode>
   <HelpKINode Title="Inputs property">
     <HelpKINode Title="ArithmeticCompositeEffect.Inputs Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_ArithmeticCompositeEffect_Inputs.htm" />
     <HelpKINode Title="AtlasEffect.Inputs Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_AtlasEffect_Inputs.htm" />
@@ -1515,11 +1611,16 @@
     <HelpKINode Title="IRandomAccessStream Interface" Url="html/T_Windows_Storage_Streams_IRandomAccessStream.htm" />
     <HelpKINode Title="about IRandomAccessStream interface" Url="html/T_Windows_Storage_Streams_IRandomAccessStream.htm" />
   </HelpKINode>
+  <HelpKINode Title="IsFixedTimeStep property">
+    <HelpKINode Title="CanvasAnimatedControl.IsFixedTimeStep Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_IsFixedTimeStep.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.IsFixedTimeStep Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_IsFixedTimeStep.htm" />
+  </HelpKINode>
   <HelpKINode Title="IsIdentity property">
     <HelpKINode Title="Matrix3x2.IsIdentity Property " Url="html/P_System_Numerics_Matrix3x2_IsIdentity.htm" />
     <HelpKINode Title="Matrix4x4.IsIdentity Property " Url="html/P_System_Numerics_Matrix4x4_IsIdentity.htm" />
     <HelpKINode Title="Quaternion.IsIdentity Property " Url="html/P_System_Numerics_Quaternion_IsIdentity.htm" />
   </HelpKINode>
+  <HelpKINode Title="IsRunningSlowly field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_IsRunningSlowly.htm" />
   <HelpKINode Title="Jpeg enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmapFileFormat.htm" />
   <HelpKINode Title="JpegXR enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmapFileFormat.htm" />
   <HelpKINode Title="KernelHeight property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ConvolveMatrixEffect_KernelHeight.htm" />
@@ -1625,22 +1726,22 @@
   <HelpKINode Title="LuminanceToAlphaEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_LuminanceToAlphaEffect_Source.htm" />
   <HelpKINode Title="Luminosity enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="M11 field">
-    <HelpKINode Title="Matrix3x2.M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M11.htm" />
     <HelpKINode Title="Matrix3x2.M11 Field" Url="html/F_System_Numerics_Matrix3x2_M11.htm" />
-    <HelpKINode Title="Matrix4x4.M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M11.htm" />
+    <HelpKINode Title="Matrix3x2.M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M11.htm" />
     <HelpKINode Title="Matrix4x4.M11 Field" Url="html/F_System_Numerics_Matrix4x4_M11.htm" />
+    <HelpKINode Title="Matrix4x4.M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M11.htm" />
     <HelpKINode Title="Matrix5x4.M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M11.htm" />
   </HelpKINode>
   <HelpKINode Title="M12 field">
-    <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_System_Numerics_Matrix3x2_M12.htm" />
     <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M12.htm" />
+    <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_System_Numerics_Matrix3x2_M12.htm" />
     <HelpKINode Title="Matrix4x4.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M12.htm" />
     <HelpKINode Title="Matrix4x4.M12 Field" Url="html/F_System_Numerics_Matrix4x4_M12.htm" />
     <HelpKINode Title="Matrix5x4.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M12.htm" />
   </HelpKINode>
   <HelpKINode Title="M13 field">
-    <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M13.htm" />
     <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_System_Numerics_Matrix4x4_M13.htm" />
+    <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M13.htm" />
     <HelpKINode Title="Matrix5x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M13.htm" />
   </HelpKINode>
   <HelpKINode Title="M14 field">
@@ -1649,8 +1750,8 @@
     <HelpKINode Title="Matrix5x4.M14 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M14.htm" />
   </HelpKINode>
   <HelpKINode Title="M21 field">
-    <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M21.htm" />
     <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_System_Numerics_Matrix3x2_M21.htm" />
+    <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M21.htm" />
     <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M21.htm" />
     <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_System_Numerics_Matrix4x4_M21.htm" />
     <HelpKINode Title="Matrix5x4.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M21.htm" />
@@ -1663,13 +1764,13 @@
     <HelpKINode Title="Matrix5x4.M22 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M22.htm" />
   </HelpKINode>
   <HelpKINode Title="M23 field">
-    <HelpKINode Title="Matrix4x4.M23 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M23.htm" />
     <HelpKINode Title="Matrix4x4.M23 Field" Url="html/F_System_Numerics_Matrix4x4_M23.htm" />
+    <HelpKINode Title="Matrix4x4.M23 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M23.htm" />
     <HelpKINode Title="Matrix5x4.M23 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M23.htm" />
   </HelpKINode>
   <HelpKINode Title="M24 field">
-    <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M24.htm" />
     <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_System_Numerics_Matrix4x4_M24.htm" />
+    <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M24.htm" />
     <HelpKINode Title="Matrix5x4.M24 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M24.htm" />
   </HelpKINode>
   <HelpKINode Title="M31 field">
@@ -1680,8 +1781,8 @@
     <HelpKINode Title="Matrix5x4.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M31.htm" />
   </HelpKINode>
   <HelpKINode Title="M32 field">
-    <HelpKINode Title="Matrix3x2.M32 Field" Url="html/F_System_Numerics_Matrix3x2_M32.htm" />
     <HelpKINode Title="Matrix3x2.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M32.htm" />
+    <HelpKINode Title="Matrix3x2.M32 Field" Url="html/F_System_Numerics_Matrix3x2_M32.htm" />
     <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M32.htm" />
     <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_System_Numerics_Matrix4x4_M32.htm" />
     <HelpKINode Title="Matrix5x4.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M32.htm" />
@@ -1692,8 +1793,8 @@
     <HelpKINode Title="Matrix5x4.M33 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M33.htm" />
   </HelpKINode>
   <HelpKINode Title="M34 field">
-    <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M34.htm" />
     <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_System_Numerics_Matrix4x4_M34.htm" />
+    <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M34.htm" />
     <HelpKINode Title="Matrix5x4.M34 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M34.htm" />
   </HelpKINode>
   <HelpKINode Title="M41 field">
@@ -1707,13 +1808,13 @@
     <HelpKINode Title="Matrix5x4.M42 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M42.htm" />
   </HelpKINode>
   <HelpKINode Title="M43 field">
-    <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M43.htm" />
     <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_System_Numerics_Matrix4x4_M43.htm" />
+    <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M43.htm" />
     <HelpKINode Title="Matrix5x4.M43 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M43.htm" />
   </HelpKINode>
   <HelpKINode Title="M44 field">
-    <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_System_Numerics_Matrix4x4_M44.htm" />
     <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M44.htm" />
+    <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_System_Numerics_Matrix4x4_M44.htm" />
     <HelpKINode Title="Matrix5x4.M44 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M44.htm" />
   </HelpKINode>
   <HelpKINode Title="M51 field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M51.htm" />
@@ -1724,8 +1825,8 @@
   <HelpKINode Title="Matrix3x2 structure">
     <HelpKINode Title="Matrix3x2 Structure" Url="html/T_System_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="Matrix3x2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
-    <HelpKINode Title="about Matrix3x2 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="about Matrix3x2 structure" Url="html/T_System_Numerics_Matrix3x2.htm" />
+    <HelpKINode Title="about Matrix3x2 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="constructor" Url="html/M_System_Numerics_Matrix3x2__ctor.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Matrix3x2.htm" />
@@ -1734,8 +1835,8 @@
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Matrix3x2.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2 to Matrix3x2 conversion">
-    <HelpKINode Title="Matrix3x2&#160;Implicit Conversion (Matrix3x2 to Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_op_Implicit_1.htm" />
     <HelpKINode Title="Matrix3x2&#160;Implicit Conversion (Matrix3x2 to Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_op_Implicit.htm" />
+    <HelpKINode Title="Matrix3x2&#160;Implicit Conversion (Matrix3x2 to Matrix3x2)" Url="html/M_System_Numerics_Matrix3x2_op_Implicit_1.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.Add method" Url="html/M_System_Numerics_Matrix3x2_Add.htm" />
   <HelpKINode Title="Matrix3x2.Addition operator" Url="html/M_System_Numerics_Matrix3x2_op_Addition.htm" />
@@ -1769,8 +1870,8 @@
     <HelpKINode Title="Matrix3x2.M22 Field" Url="html/F_System_Numerics_Matrix3x2_M22.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.M31 field">
-    <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_System_Numerics_Matrix3x2_M31.htm" />
     <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M31.htm" />
+    <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_System_Numerics_Matrix3x2_M31.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.M32 field">
     <HelpKINode Title="Matrix3x2.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M32.htm" />
@@ -1788,18 +1889,18 @@
   <HelpKINode Title="Matrix4x4 structure">
     <HelpKINode Title="Matrix4x4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="Matrix4x4 Structure" Url="html/T_System_Numerics_Matrix4x4.htm" />
-    <HelpKINode Title="about Matrix4x4 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="about Matrix4x4 structure" Url="html/T_System_Numerics_Matrix4x4.htm" />
+    <HelpKINode Title="about Matrix4x4 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Matrix4x4__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Matrix4x4.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4 to Matrix4x4 conversion">
-    <HelpKINode Title="Matrix4x4&#160;Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit.htm" />
     <HelpKINode Title="Matrix4x4&#160;Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit_1.htm" />
+    <HelpKINode Title="Matrix4x4&#160;Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.Add method" Url="html/M_System_Numerics_Matrix4x4_Add.htm" />
   <HelpKINode Title="Matrix4x4.Addition operator" Url="html/M_System_Numerics_Matrix4x4_op_Addition.htm" />
@@ -1841,8 +1942,8 @@
     <HelpKINode Title="Matrix4x4.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M12.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M13 field">
-    <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M13.htm" />
     <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_System_Numerics_Matrix4x4_M13.htm" />
+    <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M13.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M14 field">
     <HelpKINode Title="Matrix4x4.M14 Field" Url="html/F_System_Numerics_Matrix4x4_M14.htm" />
@@ -1853,12 +1954,12 @@
     <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_System_Numerics_Matrix4x4_M21.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M22 field">
-    <HelpKINode Title="Matrix4x4.M22 Field" Url="html/F_System_Numerics_Matrix4x4_M22.htm" />
     <HelpKINode Title="Matrix4x4.M22 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M22.htm" />
+    <HelpKINode Title="Matrix4x4.M22 Field" Url="html/F_System_Numerics_Matrix4x4_M22.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M23 field">
-    <HelpKINode Title="Matrix4x4.M23 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M23.htm" />
     <HelpKINode Title="Matrix4x4.M23 Field" Url="html/F_System_Numerics_Matrix4x4_M23.htm" />
+    <HelpKINode Title="Matrix4x4.M23 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M23.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M24 field">
     <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_System_Numerics_Matrix4x4_M24.htm" />
@@ -1885,16 +1986,16 @@
     <HelpKINode Title="Matrix4x4.M41 Field" Url="html/F_System_Numerics_Matrix4x4_M41.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M42 field">
-    <HelpKINode Title="Matrix4x4.M42 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M42.htm" />
     <HelpKINode Title="Matrix4x4.M42 Field" Url="html/F_System_Numerics_Matrix4x4_M42.htm" />
+    <HelpKINode Title="Matrix4x4.M42 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M42.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M43 field">
-    <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_System_Numerics_Matrix4x4_M43.htm" />
     <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M43.htm" />
+    <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_System_Numerics_Matrix4x4_M43.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M44 field">
-    <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_System_Numerics_Matrix4x4_M44.htm" />
     <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M44.htm" />
+    <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_System_Numerics_Matrix4x4_M44.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.Matrix4x4 constructor" Url="html/Overload_System_Numerics_Matrix4x4__ctor.htm" />
   <HelpKINode Title="Matrix4x4.Multiply method" Url="html/Overload_System_Numerics_Matrix4x4_Multiply.htm" />
@@ -1941,6 +2042,9 @@
   <HelpKINode Title="Microsoft.Graphics.Canvas namespace" Url="html/N_Microsoft_Graphics_Canvas.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.BitmapSize structure" Url="html/T_Microsoft_Graphics_Canvas_BitmapSize.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasAlphaMode enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasAlphaMode.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasAnimatedControl class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedControl.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasAnimatedUpdateEventArgs class" Url="html/T_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasAntialiasing enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasAntialiasing.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasBackground enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasBackground.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasBitmap class" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmap.htm" />
@@ -1981,6 +2085,7 @@
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasTextDirection enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextDirection.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasTextFormat class" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextFormat.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasTextTrimmingGranularity enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextTrimmingGranularity.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasTimingInformation structure" Url="html/T_Microsoft_Graphics_Canvas_CanvasTimingInformation.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasUnits enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasUnits.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasVerticalAlignment enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasVerticalAlignment.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.CanvasWordWrapping enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasWordWrapping.htm" />
@@ -2040,6 +2145,7 @@
   <HelpKINode Title="Microsoft.Graphics.Canvas.Effects.TurbulenceEffect class" Url="html/T_Microsoft_Graphics_Canvas_Effects_TurbulenceEffect.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Effects.TurbulenceEffectNoise enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_TurbulenceEffectNoise.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Effects.UnPremultiplyEffect class" Url="html/T_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.ICanvasAnimatedControl interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasAnimatedControl.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.ICanvasBrush interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasBrush.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.ICanvasImage interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasImage.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.ICanvasResourceCreator interface" Url="html/T_Microsoft_Graphics_Canvas_ICanvasResourceCreator.htm" />
@@ -2123,8 +2229,8 @@
   </HelpKINode>
   <HelpKINode Title="Normal enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasStrokeTransformBehavior.htm" />
   <HelpKINode Title="Normal field">
-    <HelpKINode Title="Plane.Normal Field" Url="html/F_System_Numerics_Plane_Normal.htm" />
     <HelpKINode Title="Plane.Normal Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_Normal.htm" />
+    <HelpKINode Title="Plane.Normal Field" Url="html/F_System_Numerics_Plane_Normal.htm" />
   </HelpKINode>
   <HelpKINode Title="Normalize method">
     <HelpKINode Title="Plane.Normalize Method " Url="html/M_System_Numerics_Plane_Normalize.htm" />
@@ -2189,11 +2295,15 @@
   <HelpKINode Title="PaddingRectangle property" Url="html/P_Microsoft_Graphics_Canvas_Effects_AtlasEffect_PaddingRectangle.htm" />
   <HelpKINode Title="ParagraphAlignment enumeration" Url="html/T_Windows_UI_Text_ParagraphAlignment.htm" />
   <HelpKINode Title="ParagraphAlignment property" Url="html/P_Microsoft_Graphics_Canvas_CanvasTextFormat_ParagraphAlignment.htm" />
+  <HelpKINode Title="Paused property">
+    <HelpKINode Title="CanvasAnimatedControl.Paused Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Paused.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.Paused Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Paused.htm" />
+  </HelpKINode>
   <HelpKINode Title="PinLight enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="Pixels enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasUnits.htm" />
   <HelpKINode Title="Plane structure">
-    <HelpKINode Title="Plane Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="Plane Structure" Url="html/T_System_Numerics_Plane.htm" />
+    <HelpKINode Title="Plane Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="about Plane structure" Url="html/T_System_Numerics_Plane.htm" />
     <HelpKINode Title="about Plane structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Plane__ctor.htm" />
@@ -2203,8 +2313,8 @@
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Plane.htm" />
   </HelpKINode>
   <HelpKINode Title="Plane to Plane conversion">
-    <HelpKINode Title="Plane&#160;Implicit Conversion (Plane to Plane)" Url="html/M_System_Numerics_Plane_op_Implicit_1.htm" />
     <HelpKINode Title="Plane&#160;Implicit Conversion (Plane to Plane)" Url="html/M_System_Numerics_Plane_op_Implicit.htm" />
+    <HelpKINode Title="Plane&#160;Implicit Conversion (Plane to Plane)" Url="html/M_System_Numerics_Plane_op_Implicit_1.htm" />
   </HelpKINode>
   <HelpKINode Title="Plane.CreateFromVertices method" Url="html/M_System_Numerics_Plane_CreateFromVertices.htm" />
   <HelpKINode Title="Plane.D field">
@@ -2351,15 +2461,15 @@
     <HelpKINode Title="about Quaternion structure" Url="html/T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="about Quaternion structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Quaternion__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Quaternion.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Quaternion.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion to Quaternion conversion">
-    <HelpKINode Title="Quaternion&#160;Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit.htm" />
     <HelpKINode Title="Quaternion&#160;Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit_1.htm" />
+    <HelpKINode Title="Quaternion&#160;Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion.Add method" Url="html/M_System_Numerics_Quaternion_Add.htm" />
   <HelpKINode Title="Quaternion.Addition operator" Url="html/M_System_Numerics_Quaternion_op_Addition.htm" />
@@ -2392,16 +2502,16 @@
   <HelpKINode Title="Quaternion.ToString method" Url="html/M_System_Numerics_Quaternion_ToString.htm" />
   <HelpKINode Title="Quaternion.UnaryNegation operator" Url="html/M_System_Numerics_Quaternion_op_UnaryNegation.htm" />
   <HelpKINode Title="Quaternion.W field">
-    <HelpKINode Title="Quaternion.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_W.htm" />
     <HelpKINode Title="Quaternion.W Field" Url="html/F_System_Numerics_Quaternion_W.htm" />
+    <HelpKINode Title="Quaternion.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_W.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion.X field">
     <HelpKINode Title="Quaternion.X Field" Url="html/F_System_Numerics_Quaternion_X.htm" />
     <HelpKINode Title="Quaternion.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion.Y field">
-    <HelpKINode Title="Quaternion.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Y.htm" />
     <HelpKINode Title="Quaternion.Y Field" Url="html/F_System_Numerics_Quaternion_Y.htm" />
+    <HelpKINode Title="Quaternion.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Y.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion.Z field">
     <HelpKINode Title="Quaternion.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
@@ -2472,7 +2582,11 @@
   <HelpKINode Title="RadiusX property" Url="html/P_Microsoft_Graphics_Canvas_CanvasRadialGradientBrush_RadiusX.htm" />
   <HelpKINode Title="RadiusY property" Url="html/P_Microsoft_Graphics_Canvas_CanvasRadialGradientBrush_RadiusY.htm" />
   <HelpKINode Title="ReadingDirection property" Url="html/P_Microsoft_Graphics_Canvas_CanvasTextFormat_ReadingDirection.htm" />
-  <HelpKINode Title="ReadyToDraw property" Url="html/P_Microsoft_Graphics_Canvas_CanvasControl_ReadyToDraw.htm" />
+  <HelpKINode Title="ReadyToDraw property">
+    <HelpKINode Title="CanvasAnimatedControl.ReadyToDraw Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ReadyToDraw.htm" />
+    <HelpKINode Title="CanvasControl.ReadyToDraw Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasControl_ReadyToDraw.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.ReadyToDraw Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_ReadyToDraw.htm" />
+  </HelpKINode>
   <HelpKINode Title="Reason property" Url="html/P_Microsoft_Graphics_Canvas_CanvasCreateResourcesEventArgs_Reason.htm" />
   <HelpKINode Title="Rect structure">
     <HelpKINode Title="Rect Structure" Url="html/T_Windows_Foundation_Rect.htm" />
@@ -2501,6 +2615,10 @@
     <HelpKINode Title="Vector3.Reflect Method " Url="html/M_System_Numerics_Vector3_Reflect.htm" />
   </HelpKINode>
   <HelpKINode Title="RenderTarget enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_Direct3D11_Direct3DBindings.htm" />
+  <HelpKINode Title="ResetElapsedTime method">
+    <HelpKINode Title="CanvasAnimatedControl.ResetElapsedTime Method " Url="html/M_Microsoft_Graphics_Canvas_CanvasAnimatedControl_ResetElapsedTime.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.ResetElapsedTime Method " Url="html/M_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_ResetElapsedTime.htm" />
+  </HelpKINode>
   <HelpKINode Title="ResizeBuffers method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasSwapChain_ResizeBuffers.htm" />
   <HelpKINode Title="RightToLeft enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextDirection.htm" />
   <HelpKINode Title="Rotate180 enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasSwapChainRotation.htm" />
@@ -2578,9 +2696,11 @@
     <HelpKINode Title="Transform2DEffect.Sharpness Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_Transform2DEffect_Sharpness.htm" />
   </HelpKINode>
   <HelpKINode Title="Size property">
+    <HelpKINode Title="CanvasAnimatedControl.Size Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Size.htm" />
     <HelpKINode Title="CanvasBitmap.Size Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasBitmap_Size.htm" />
     <HelpKINode Title="CanvasImageSource.Size Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasImageSource_Size.htm" />
     <HelpKINode Title="CanvasSwapChain.Size Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasSwapChain_Size.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.Size Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Size.htm" />
     <HelpKINode Title="TurbulenceEffect.Size Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_TurbulenceEffect_Size.htm" />
   </HelpKINode>
   <HelpKINode Title="Size structure">
@@ -2776,6 +2896,10 @@
   <HelpKINode Title="TableTransferEffect.RedTable property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TableTransferEffect_RedTable.htm" />
   <HelpKINode Title="TableTransferEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TableTransferEffect_Source.htm" />
   <HelpKINode Title="TableTransferEffect.TableTransferEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_TableTransferEffect__ctor.htm" />
+  <HelpKINode Title="TargetElapsedTime property">
+    <HelpKINode Title="CanvasAnimatedControl.TargetElapsedTime Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedControl_TargetElapsedTime.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.TargetElapsedTime Property " Url="html/P_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_TargetElapsedTime.htm" />
+  </HelpKINode>
   <HelpKINode Title="TextAntialiasing property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_TextAntialiasing.htm" />
   <HelpKINode Title="Tiff enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmapFileFormat.htm" />
   <HelpKINode Title="Tileable property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TurbulenceEffect_Tileable.htm" />
@@ -2794,6 +2918,10 @@
   <HelpKINode Title="TileEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TileEffect_Source.htm" />
   <HelpKINode Title="TileEffect.SourceRectangle property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TileEffect_SourceRectangle.htm" />
   <HelpKINode Title="TileEffect.TileEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_TileEffect__ctor.htm" />
+  <HelpKINode Title="Timing property">
+    <HelpKINode Title="CanvasAnimatedDrawEventArgs.Timing Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs_Timing.htm" />
+    <HelpKINode Title="CanvasAnimatedUpdateEventArgs.Timing Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs_Timing.htm" />
+  </HelpKINode>
   <HelpKINode Title="Top enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasVerticalAlignment.htm" />
   <HelpKINode Title="ToPoint method" Url="html/M_System_Numerics_VectorExtensions_ToPoint.htm" />
   <HelpKINode Title="TopToBottom enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasTextDirection.htm" />
@@ -2807,6 +2935,7 @@
     <HelpKINode Title="Vector3.ToString Method " Url="html/M_System_Numerics_Vector3_ToString.htm" />
     <HelpKINode Title="Vector4.ToString Method " Url="html/M_System_Numerics_Vector4_ToString.htm" />
   </HelpKINode>
+  <HelpKINode Title="TotalTime field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_TotalTime.htm" />
   <HelpKINode Title="ToVector2 method" Url="html/Overload_System_Numerics_VectorExtensions_ToVector2.htm" />
   <HelpKINode Title="TrackAsyncAction method" Url="html/M_Microsoft_Graphics_Canvas_CanvasCreateResourcesEventArgs_TrackAsyncAction.htm" />
   <HelpKINode Title="Transform method">
@@ -2951,6 +3080,11 @@
   <HelpKINode Title="UnPremultiplyEffect.Properties property" Url="html/P_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect_Properties.htm" />
   <HelpKINode Title="UnPremultiplyEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect_Source.htm" />
   <HelpKINode Title="UnPremultiplyEffect.UnPremultiplyEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect__ctor.htm" />
+  <HelpKINode Title="Update event">
+    <HelpKINode Title="CanvasAnimatedControl.Update Event" Url="html/E_Microsoft_Graphics_Canvas_CanvasAnimatedControl_Update.htm" />
+    <HelpKINode Title="ICanvasAnimatedControl.Update Event" Url="html/E_Microsoft_Graphics_Canvas_ICanvasAnimatedControl_Update.htm" />
+  </HelpKINode>
+  <HelpKINode Title="UpdateCount field" Url="html/F_Microsoft_Graphics_Canvas_CanvasTimingInformation_UpdateCount.htm" />
   <HelpKINode Title="UserControl class">
     <HelpKINode Title="UserControl Class" Url="html/T_Windows_UI_Xaml_Controls_UserControl.htm" />
     <HelpKINode Title="about UserControl class" Url="html/T_Windows_UI_Xaml_Controls_UserControl.htm" />
@@ -2958,18 +3092,18 @@
   <HelpKINode Title="Vector2 structure">
     <HelpKINode Title="Vector2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="Vector2 Structure" Url="html/T_System_Numerics_Vector2.htm" />
-    <HelpKINode Title="about Vector2 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="about Vector2 structure" Url="html/T_System_Numerics_Vector2.htm" />
+    <HelpKINode Title="about Vector2 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Vector2__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Vector2.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Vector2.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Vector2.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Vector2.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector2 to Vector2 conversion">
-    <HelpKINode Title="Vector2&#160;Implicit Conversion (Vector2 to Vector2)" Url="html/M_System_Numerics_Vector2_op_Implicit_1.htm" />
     <HelpKINode Title="Vector2&#160;Implicit Conversion (Vector2 to Vector2)" Url="html/M_System_Numerics_Vector2_op_Implicit.htm" />
+    <HelpKINode Title="Vector2&#160;Implicit Conversion (Vector2 to Vector2)" Url="html/M_System_Numerics_Vector2_op_Implicit_1.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector2.Add method" Url="html/M_System_Numerics_Vector2_Add.htm" />
   <HelpKINode Title="Vector2.Addition operator" Url="html/M_System_Numerics_Vector2_op_Addition.htm" />
@@ -3004,8 +3138,8 @@
   <HelpKINode Title="Vector2.UnitY property" Url="html/P_System_Numerics_Vector2_UnitY.htm" />
   <HelpKINode Title="Vector2.Vector2 constructor" Url="html/Overload_System_Numerics_Vector2__ctor.htm" />
   <HelpKINode Title="Vector2.X field">
-    <HelpKINode Title="Vector2.X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
     <HelpKINode Title="Vector2.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_X.htm" />
+    <HelpKINode Title="Vector2.X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector2.Y field">
     <HelpKINode Title="Vector2.Y Field" Url="html/F_System_Numerics_Vector2_Y.htm" />
@@ -3013,13 +3147,13 @@
   </HelpKINode>
   <HelpKINode Title="Vector2.Zero property" Url="html/P_System_Numerics_Vector2_Zero.htm" />
   <HelpKINode Title="Vector3 structure">
-    <HelpKINode Title="Vector3 Structure" Url="html/T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="Vector3 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm" />
-    <HelpKINode Title="about Vector3 structure" Url="html/T_System_Numerics_Vector3.htm" />
+    <HelpKINode Title="Vector3 Structure" Url="html/T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="about Vector3 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm" />
+    <HelpKINode Title="about Vector3 structure" Url="html/T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Vector3__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Vector3.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Vector3.htm" />
@@ -3063,12 +3197,12 @@
   <HelpKINode Title="Vector3.UnitZ property" Url="html/P_System_Numerics_Vector3_UnitZ.htm" />
   <HelpKINode Title="Vector3.Vector3 constructor" Url="html/Overload_System_Numerics_Vector3__ctor.htm" />
   <HelpKINode Title="Vector3.X field">
-    <HelpKINode Title="Vector3.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_X.htm" />
     <HelpKINode Title="Vector3.X Field" Url="html/F_System_Numerics_Vector3_X.htm" />
+    <HelpKINode Title="Vector3.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector3.Y field">
-    <HelpKINode Title="Vector3.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Y.htm" />
     <HelpKINode Title="Vector3.Y Field" Url="html/F_System_Numerics_Vector3_Y.htm" />
+    <HelpKINode Title="Vector3.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Y.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector3.Z field">
     <HelpKINode Title="Vector3.Z Field" Url="html/F_System_Numerics_Vector3_Z.htm" />
@@ -3076,10 +3210,10 @@
   </HelpKINode>
   <HelpKINode Title="Vector3.Zero property" Url="html/P_System_Numerics_Vector3_Zero.htm" />
   <HelpKINode Title="Vector4 structure">
-    <HelpKINode Title="Vector4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
     <HelpKINode Title="Vector4 Structure" Url="html/T_System_Numerics_Vector4.htm" />
-    <HelpKINode Title="about Vector4 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
+    <HelpKINode Title="Vector4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
     <HelpKINode Title="about Vector4 structure" Url="html/T_System_Numerics_Vector4.htm" />
+    <HelpKINode Title="about Vector4 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Vector4__ctor.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Vector4.htm" />
@@ -3088,8 +3222,8 @@
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Vector4.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4 to Vector4 conversion">
-    <HelpKINode Title="Vector4&#160;Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit.htm" />
     <HelpKINode Title="Vector4&#160;Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit_1.htm" />
+    <HelpKINode Title="Vector4&#160;Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.Add method" Url="html/M_System_Numerics_Vector4_Add.htm" />
   <HelpKINode Title="Vector4.Addition operator" Url="html/M_System_Numerics_Vector4_op_Addition.htm" />
@@ -3124,16 +3258,16 @@
   <HelpKINode Title="Vector4.UnitZ property" Url="html/P_System_Numerics_Vector4_UnitZ.htm" />
   <HelpKINode Title="Vector4.Vector4 constructor" Url="html/Overload_System_Numerics_Vector4__ctor.htm" />
   <HelpKINode Title="Vector4.W field">
-    <HelpKINode Title="Vector4.W Field" Url="html/F_System_Numerics_Vector4_W.htm" />
     <HelpKINode Title="Vector4.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_W.htm" />
+    <HelpKINode Title="Vector4.W Field" Url="html/F_System_Numerics_Vector4_W.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.X field">
-    <HelpKINode Title="Vector4.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_X.htm" />
     <HelpKINode Title="Vector4.X Field" Url="html/F_System_Numerics_Vector4_X.htm" />
+    <HelpKINode Title="Vector4.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.Y field">
-    <HelpKINode Title="Vector4.Y Field" Url="html/F_System_Numerics_Vector4_Y.htm" />
     <HelpKINode Title="Vector4.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Y.htm" />
+    <HelpKINode Title="Vector4.Y Field" Url="html/F_System_Numerics_Vector4_Y.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.Z field">
     <HelpKINode Title="Vector4.Z Field" Url="html/F_System_Numerics_Vector4_Z.htm" />
@@ -3155,8 +3289,8 @@
   <HelpKINode Title="W field">
     <HelpKINode Title="Quaternion.W Field" Url="html/F_System_Numerics_Quaternion_W.htm" />
     <HelpKINode Title="Quaternion.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_W.htm" />
-    <HelpKINode Title="Vector4.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_W.htm" />
     <HelpKINode Title="Vector4.W Field" Url="html/F_System_Numerics_Vector4_W.htm" />
+    <HelpKINode Title="Vector4.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_W.htm" />
   </HelpKINode>
   <HelpKINode Title="Warning enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasDebugLevel.htm" />
   <HelpKINode Title="WhitePoint property" Url="html/P_Microsoft_Graphics_Canvas_Effects_BrightnessEffect_WhitePoint.htm" />
@@ -3179,6 +3313,8 @@
   <HelpKINode Title="Windows.Storage.Streams.IRandomAccessStream interface" Url="html/T_Windows_Storage_Streams_IRandomAccessStream.htm" />
   <HelpKINode Title="Windows.UI namespace" Url="html/N_Windows_UI.htm" />
   <HelpKINode Title="Windows.UI.Color structure" Url="html/T_Windows_UI_Color.htm" />
+  <HelpKINode Title="Windows.UI.Core namespace" Url="html/N_Windows_UI_Core.htm" />
+  <HelpKINode Title="Windows.UI.Core.ICorePointerInputSource interface" Url="html/T_Windows_UI_Core_ICorePointerInputSource.htm" />
   <HelpKINode Title="Windows.UI.Text namespace" Url="html/N_Windows_UI_Text.htm" />
   <HelpKINode Title="Windows.UI.Text.FontStretch enumeration" Url="html/T_Windows_UI_Text_FontStretch.htm" />
   <HelpKINode Title="Windows.UI.Text.FontStyle enumeration" Url="html/T_Windows_UI_Text_FontStyle.htm" />
@@ -3200,20 +3336,20 @@
   <HelpKINode Title="X field">
     <HelpKINode Title="Quaternion.X Field" Url="html/F_System_Numerics_Quaternion_X.htm" />
     <HelpKINode Title="Quaternion.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_X.htm" />
-    <HelpKINode Title="Vector2.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_X.htm" />
     <HelpKINode Title="Vector2.X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
+    <HelpKINode Title="Vector2.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_X.htm" />
     <HelpKINode Title="Vector3.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_X.htm" />
     <HelpKINode Title="Vector3.X Field" Url="html/F_System_Numerics_Vector3_X.htm" />
-    <HelpKINode Title="Vector4.X Field" Url="html/F_System_Numerics_Vector4_X.htm" />
     <HelpKINode Title="Vector4.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_X.htm" />
+    <HelpKINode Title="Vector4.X Field" Url="html/F_System_Numerics_Vector4_X.htm" />
   </HelpKINode>
   <HelpKINode Title="X24TypelessG8UInt enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   <HelpKINode Title="X32TypelessG8X24UInt enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   <HelpKINode Title="XChannelSelect property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DisplacementMapEffect_XChannelSelect.htm" />
   <HelpKINode Title="Xor enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasComposite.htm" />
   <HelpKINode Title="Y field">
-    <HelpKINode Title="Quaternion.Y Field" Url="html/F_System_Numerics_Quaternion_Y.htm" />
     <HelpKINode Title="Quaternion.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Y.htm" />
+    <HelpKINode Title="Quaternion.Y Field" Url="html/F_System_Numerics_Quaternion_Y.htm" />
     <HelpKINode Title="Vector2.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_Y.htm" />
     <HelpKINode Title="Vector2.Y Field" Url="html/F_System_Numerics_Vector2_Y.htm" />
     <HelpKINode Title="Vector3.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Y.htm" />
@@ -3228,8 +3364,8 @@
   <HelpKINode Title="YChannelSelect property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DisplacementMapEffect_YChannelSelect.htm" />
   <HelpKINode Title="Yuy2 enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   <HelpKINode Title="Z field">
-    <HelpKINode Title="Quaternion.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
     <HelpKINode Title="Quaternion.Z Field" Url="html/F_System_Numerics_Quaternion_Z.htm" />
+    <HelpKINode Title="Quaternion.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
     <HelpKINode Title="Vector3.Z Field" Url="html/F_System_Numerics_Vector3_Z.htm" />
     <HelpKINode Title="Vector3.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Z.htm" />
     <HelpKINode Title="Vector4.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Z.htm" />
