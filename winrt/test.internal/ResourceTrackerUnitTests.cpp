@@ -97,7 +97,7 @@ namespace
 
 
 template<>
-static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DummyWrapper>(DummyWrapper* value)
+std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DummyWrapper>(DummyWrapper* value)
 {
     return PointerToString(L"DummyWrapper", value);
 }
@@ -263,7 +263,7 @@ namespace
 }
 
 template<>
-static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<MultipleInterfaceWrapper>(MultipleInterfaceWrapper* value)
+std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<MultipleInterfaceWrapper>(MultipleInterfaceWrapper* value)
 {
     return PointerToString(L"MultipleInterfaceWrapper", value);
 }

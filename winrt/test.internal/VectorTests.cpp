@@ -43,7 +43,7 @@ namespace Microsoft {
     namespace VisualStudio {
         namespace CppUnitTestFramework
         {
-            template<> static inline std::wstring ToString<MockInterface>(MockInterface* value)
+            template<> inline std::wstring ToString<MockInterface>(MockInterface* value)
             {
                 return PointerToString(L"MockInterface", value);
             }

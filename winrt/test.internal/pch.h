@@ -50,7 +50,10 @@
 #include <windows.ui.xaml.media.dxinterop.h>
 
 // UnitTest
+#pragma warning(push)
+#pragma warning(disable: 4499) // TODO: Disable "explicit specialization cannot have a storage class" warning until we pick up fix to DevDiv.1116774
 #include <CppUnitTest.h>
+#pragma warning(pop)
 
 // Headers generated from IDL files
 #include <Canvas.abi.h>

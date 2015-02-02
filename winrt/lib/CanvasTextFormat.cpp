@@ -27,7 +27,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(CanvasTextDirection value)
+    void ThrowIfInvalid(CanvasTextDirection value)
     {
         switch (value)
         {
@@ -43,7 +43,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(CanvasLineSpacingMethod value)
+    void ThrowIfInvalid(CanvasLineSpacingMethod value)
     {
         switch (value)
         {
@@ -57,7 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(ABI::Windows::UI::Text::FontStretch value)
+    void ThrowIfInvalid(ABI::Windows::UI::Text::FontStretch value)
     {
         switch (value)
         {
@@ -79,7 +79,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(ABI::Windows::UI::Text::FontStyle value)
+    void ThrowIfInvalid(ABI::Windows::UI::Text::FontStyle value)
     {
         switch (value)
         {
@@ -94,7 +94,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(CanvasWordWrapping value)
+    void ThrowIfInvalid(CanvasWordWrapping value)
     {
         switch (value)
         {
@@ -111,7 +111,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(CanvasTextTrimmingGranularity value)
+    void ThrowIfInvalid(CanvasTextTrimmingGranularity value)
     {
         switch (value)
         {
@@ -126,7 +126,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(ABI::Windows::UI::Text::ParagraphAlignment value)
+    void ThrowIfInvalid(ABI::Windows::UI::Text::ParagraphAlignment value)
     {
         switch (value)
         {
@@ -143,7 +143,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(CanvasVerticalAlignment value)
+    void ThrowIfInvalid(CanvasVerticalAlignment value)
     {
         switch (value)
         {
@@ -655,7 +655,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static bool IsSame(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
+    bool IsSame(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
     {
         return IsSame(&outputValue->Weight, value.Weight);
     }
@@ -680,7 +680,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
+    void SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
     {
         SetFrom(&outputValue->Weight, value.Weight);
     }
