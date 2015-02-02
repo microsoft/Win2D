@@ -186,6 +186,7 @@ namespace Microsoft
             TO_STRING(IDXGISurface);
             TO_STRING(IDXGISwapChain);
             TO_STRING(ICanvasSwapChain);
+            TO_STRING(ABI::Windows::UI::Core::ICoreCursor);
 
 #undef TO_STRING
 
@@ -344,6 +345,19 @@ namespace Microsoft
                     _countof(buf),
                     L"D2D1_RECT_U{l=%f,t=%f,r=%f,b=%f}",
                     value.left, value.top, value.right, value.bottom));
+
+                return buf;
+            }
+
+            template<>
+            static inline std::wstring ToString<ABI::Windows::Foundation::Point>(ABI::Windows::Foundation::Point const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Point{X=%f,Y=%f}",
+                    value.X, value.Y));
 
                 return buf;
             }
@@ -867,6 +881,11 @@ namespace Microsoft
                 a.TotalTime.Duration == b.TotalTime.Duration &&
                 a.ElapsedTime.Duration == b.ElapsedTime.Duration &&
                 a.IsRunningSlowly == b.IsRunningSlowly;
+        }
+
+        inline bool operator==(ABI::Windows::Foundation::Point const& a, ABI::Windows::Foundation::Point const& b)
+        {
+            return a.X == b.X && a.Y == b.Y;
         }
 
     }

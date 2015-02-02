@@ -16,6 +16,7 @@
 #include <RegisteredEvent.h>
 
 #include "BaseControl.h"
+#include "AnimatedControlInput.h"
 #include "CanvasSwapChainPanel.h"
 #include "CanvasSwapChain.h"
 #include "StepTimer.h"
@@ -112,7 +113,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<CanvasSwapChainPanel> CreateCanvasSwapChainPanel() = 0;
 
-        virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(std::function<bool()> tickFn) = 0;
+        virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(
+            std::function<void()> const& beforeLoopFn,
+            std::function<bool()> const& tickFn,
+            std::function<void()> const& afterLoopFn) = 0;
 
         virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
     };
@@ -131,6 +135,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventSource<Animated_UpdateEventHandler, InvokeModeOptions<StopOnFirstError>> m_updateEventList;
 
         ComPtr<ICanvasSwapChainPanel> m_canvasSwapChainPanel;
+
+        ComPtr<AnimatedControlInput> m_input;
 
         ComPtr<IAsyncAction> m_renderLoopAction;
 
@@ -189,6 +195,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHODIMP ResetElapsedTime() override;
 
+        IFACEMETHODIMP get_Input(ICorePointerInputSource** value) override;
+
         //
         // BaseControl
         //
@@ -211,8 +219,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Unloaded() override final;
 
-        virtual void CheckThreadRestrictionIfNecessary() override final;
-
     private:
         std::unique_lock<std::mutex> GetLock()
         { return std::unique_lock<std::mutex>(m_mutex); }
@@ -231,8 +237,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void ChangedImpl();
 
         CanvasTimingInformation GetTimingInformationFromTimer();
-
-        void CheckUIThreadAccess();
     };
 
 }}}}

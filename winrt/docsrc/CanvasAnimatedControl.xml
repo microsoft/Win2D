@@ -54,7 +54,25 @@ under the License.
         Variable timestep works a bit differently. Draw/Update are called as fast as possible,
         and the timing information is returned to the app. The app determines how long it has been
         since the previous update, and uses that to control animation.
-        </p>        
+        </p>
+        
+        <p>
+        Like many XAML constructs, this control is designed to be fully compatible with 
+        pointer (pen, mouse, touch) input. To be notified of pointer events which occur
+        overtop of the control, subscribe to input events such as PointerPressed
+        or PointerMoved using the Input field of CanvasAnimatedControl. This can be done from
+        anywhere in your app. Your app will recieve input notification events when they occur,
+        whenever the control is not paused.
+        </p>
+        
+        <p>
+        When listening to input events, this control processes them on its render thread,
+        rather than on the UI thread. An app's input notifications will, therefore, also 
+        occur on the render thread. Because of this, it's valuable to avoid overly costly
+        input handlers, and to be aware of non-UI-thread restrictions that exist for 
+        many XAML operations. This design lends itself to smooth program execution without 
+        stalling the UI. 
+        </p>   
       </remarks>
     </member> 
     <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedControl">
@@ -231,6 +249,13 @@ under the License.
     <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.IsRunningSlowly">
       <summary>For fixed-timestep, this indicates that the app's rendering work was not completed quickly enough.</summary>
       <remarks>This field is always 'false' for variable-timestep.</remarks>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Input">
+      <summary>Gets an object used to configure pointer input for the control.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Input">
+      <summary>Gets an object used to configure pointer input for the control.</summary>
     </member>
 
   </members>

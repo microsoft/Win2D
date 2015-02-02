@@ -17,11 +17,13 @@
 #include "..\MockCanvasDeviceActivationFactory.h"
 #include "..\MockHelpers.h"
 #include "..\MockWindow.h"
+#include "MockDispatcher.h"
 
 template<typename TRAITS>
 class BaseControlTestAdapter : public TRAITS::adapter_t
 {
     ComPtr<MockWindow> m_mockWindow;
+    bool m_hasUIThreadAccess;
 
 public:
     ComPtr<MockEventSource<DpiChangedEventHandler>> DpiChangedEventSource;
@@ -38,9 +40,39 @@ public:
         , DpiChangedEventSource(Make<MockEventSource<DpiChangedEventHandler>>(L"DpiChanged"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
         , LogicalDpi(DEFAULT_DPI)
+        , m_hasUIThreadAccess(true)
     {
         CreateRecreatableDeviceManagerMethod.AllowAnyCall();
         DeviceFactory->ActivateInstanceMethod.AllowAnyCall();
+
+        GetCurrentMockWindow()->get_DispatcherMethod.AllowAnyCall(
+            [=](ICoreDispatcher** out)
+            {
+                auto dispatcher = Make<MockDispatcher>();
+
+                dispatcher->RunAsyncMethod.AllowAnyCall(
+                    [=](CoreDispatcherPriority priority, IDispatchedHandler *agileCallback, IAsyncAction **asyncAction)
+                    {
+                        // This just launches the action right away, and doesn't copy out an async action object.
+                        // Currently, product code doesn't use it anyway.
+
+                        *asyncAction = nullptr;
+
+                        Assert::AreEqual(S_OK, agileCallback->Invoke());
+
+                        return S_OK;
+                    });
+
+                dispatcher->get_HasThreadAccessMethod.AllowAnyCall(
+                    [=](boolean* out)
+                    {
+                        *out = m_hasUIThreadAccess;
+
+                        return S_OK;
+                    });
+
+                return dispatcher.CopyTo(out);
+            });
     }
 
     virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
@@ -91,4 +123,15 @@ public:
 
         return std::make_unique<RecreatableDeviceManager<TRAITS>>(DeviceFactory.Get());
     }
+
+    void SetHasUIThreadAccess(bool value)
+    {
+        m_hasUIThreadAccess = value;
+    }
 };
+
+#define VERIFY_THREADING_RESTRICTION(EXPECTED_HR, FUNC) \
+    f.Adapter->SetHasUIThreadAccess(false);             \
+    Assert::AreEqual(EXPECTED_HR, FUNC);                \
+    f.Adapter->SetHasUIThreadAccess(true);              \
+    Assert::AreEqual(S_OK, FUNC);                      

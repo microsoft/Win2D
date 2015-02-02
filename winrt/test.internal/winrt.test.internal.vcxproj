@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -43,10 +43,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="controls\BaseControlTestAdapter.h" />
     <ClInclude Include="controls\BasicControlFixture.h" />
+    <ClInclude Include="controls\CanvasAnimatedControlTestAdapter.h" />
     <ClInclude Include="controls\CanvasControlTestAdapter.h" />
     <ClInclude Include="controls\CanvasSwapChainPanelTestAdapter.h" />
     <ClInclude Include="controls\ControlFixtures.h" />
+    <ClInclude Include="controls\MockCoreIndependentInputSource.h" />
+    <ClInclude Include="controls\MockDispatcher.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="MockAsyncAction.h" />
     <ClInclude Include="MockCanvasDevice.h" />
@@ -69,7 +73,6 @@
     <ClInclude Include="MockD2DFactory.h" />
     <ClInclude Include="MockD2DStrokeStyle.h" />
     <ClInclude Include="MockD3D11Device.h" />
-    <ClInclude Include="MockDispatcher.h" />
     <ClInclude Include="MockHelpers.h" />
     <ClInclude Include="MockDXGIAdapter.h" />
     <ClInclude Include="MockDXGIFactory.h" />

@@ -29,6 +29,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(SetSwapChainMethod, HRESULT(IDXGISwapChain*));
         CALL_COUNTER_WITH_MOCK(get_CompositionScaleXMethod, HRESULT(FLOAT*));
         CALL_COUNTER_WITH_MOCK(get_CompositionScaleYMethod, HRESULT(FLOAT*));
+        CALL_COUNTER_WITH_MOCK(CreateCoreIndependentInputSourceMethod, HRESULT(CoreInputDeviceTypes, ICoreInputSourceBase**));
 
         // ISwapChainPanelNative
         IFACEMETHODIMP SetSwapChain(IDXGISwapChain* swapChain) override
@@ -54,10 +55,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateCoreIndependentInputSource(CoreInputDeviceTypes, ICoreInputSourceBase**) override
+        IFACEMETHODIMP CreateCoreIndependentInputSource(CoreInputDeviceTypes type, ICoreInputSourceBase** out) override
         {
-            Assert::Fail(L"Unexpected call to CreateCoreIndependentInputSource");
-            return E_NOTIMPL;
+            return CreateCoreIndependentInputSourceMethod.WasCalled(type, out);
         }
 
         IFACEMETHODIMP remove_CompositionScaleChanged(EventRegistrationToken) override

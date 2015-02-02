@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
@@ -161,6 +161,9 @@
       <Filter>controls</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)controls\StepTimer.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\AnimatedControlInput.cpp">
       <Filter>controls</Filter>
     </ClCompile>
   </ItemGroup>
@@ -332,6 +335,9 @@
       <Filter>controls</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)controls\BaseControlAdapter.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\AnimatedControlInput.h">
       <Filter>controls</Filter>
     </ClInclude>
   </ItemGroup>

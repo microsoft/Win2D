@@ -159,7 +159,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     CheckInPointer(token);
 
-                    GetControl()->CheckThreadRestrictionIfNecessary();
+                    CheckIsOnUIThread();
 
                     *token = m_recreatableDeviceManager->AddCreateResources(GetControl(), value);
                 });
@@ -171,7 +171,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    GetControl()->CheckThreadRestrictionIfNecessary();
+                    CheckIsOnUIThread();
                     m_recreatableDeviceManager->RemoveCreateResources(token);
                 });
         }
@@ -204,7 +204,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [=]
                 {
-                    GetControl()->CheckThreadRestrictionIfNecessary();
+                    CheckIsOnUIThread();
                     *value = m_recreatableDeviceManager->IsReadyToDraw();
                 });
         }
@@ -281,7 +281,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Unloaded() = 0;
 
-        virtual void CheckThreadRestrictionIfNecessary() = 0;
+        void CheckIsOnUIThread()
+        {
+            // 
+            // Verifies execution on this control's window's UI thread.
+            // Certain methods should not be executed on other threads-
+            // they are not designed to have a locking mechanism to
+            // protect them.
+            //
+
+            ComPtr<ICoreDispatcher> dispatcher;
+            ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+
+            boolean hasAccess;
+            ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasAccess));
+
+            if (!hasAccess)
+            {
+                ThrowHR(RPC_E_WRONG_THREAD);
+            }
+        }
 
         IWindow* GetWindow()
         { 

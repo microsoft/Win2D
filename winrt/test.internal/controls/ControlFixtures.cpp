@@ -11,7 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasSwapChainPanelTestAdapter.h"
 #include "ControlFixtures.h"
 #include "..\MockDxgiSwapChain.h"
 

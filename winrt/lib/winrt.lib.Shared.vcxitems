@@ -22,8 +22,7 @@
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <!-- PROXY_CLSID {77089F19-0251-4FF4-9100-D10DFD76E958} -->
-      <PreprocessorDefinitions>WRT_EXPORT;ENTRY_PREFIX=Proxy;REGISTER_PROXY_DLL;PROXY_CLSID_IS={0x77089F19, 0x0251, 0x4FF4, {0x91, 0x00, 0xD1, 0x0D, 0xFD, 0x76, 0xE9, 0x58}};%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
@@ -46,9 +45,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasCommandList.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasCreateResourcesEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasLinearGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImage.h" />
@@ -62,21 +59,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChain.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\AnimatedControlInput.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\BaseControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\BaseControlAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasCreateResourcesEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasAnimatedControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\RecreatableDeviceManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\RecreatableDeviceManager.impl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)controls\StepTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\BaseControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Gradients.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\RecreatableDeviceManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\RecreatableDeviceManager.impl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\BaseControlAdapter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\StepTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Strings.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TextureUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
@@ -121,7 +121,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCommandList.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasCreateResourcesEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
@@ -130,7 +129,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasLinearGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CustomizedEffectProperties.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -143,10 +141,14 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\AnimatedControlInput.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasControl.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasCreateResourcesEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)controls\StepTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChain.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.cpp" />
@@ -187,7 +189,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Gradients.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\StepTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TextureUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
