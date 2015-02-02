@@ -14,15 +14,6 @@
 
 #include <wrl/module.h>
 
-extern "C" 
-{
-    BOOL WINAPI ProxyDllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved);
-    STDAPI ProxyDllCanUnloadNow(void);
-    STDAPI ProxyDllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv);
-    STDAPI ProxyDllRegisterServer(void);
-    STDAPI ProxyDllUnregisterServer(void);
-}
-
 STDAPI_(BOOL)
 DllMain(
     _In_     HINSTANCE inst,
@@ -30,8 +21,9 @@ DllMain(
     _In_opt_ void* pvreserved
     )
 {
-    if (!ProxyDllMain(inst, reason, pvreserved))
-        return FALSE;
+    UNREFERENCED_PARAMETER(inst);
+    UNREFERENCED_PARAMETER(reason);
+    UNREFERENCED_PARAMETER(pvreserved);
 
     return TRUE;
 }
@@ -52,24 +44,12 @@ DllGetClassObject(
     _Outptr_ void** obj
     )
 {
-    HRESULT hr;
     auto &module = ::Microsoft::WRL::Module< ::Microsoft::WRL::InProc >::GetModule();
-    hr =  module.GetClassObject(clsid, iid, obj);
-    if (FAILED(hr))
-    {
-        hr = ProxyDllGetClassObject(clsid, iid, obj);
-    }
-
-    return hr;
+    return module.GetClassObject(clsid, iid, obj);
 }
 
 STDAPI DllCanUnloadNow()
 {
     auto &module = ::Microsoft::WRL::Module< ::Microsoft::WRL::InProc >::GetModule();
-    HRESULT hr = ProxyDllCanUnloadNow();
-    if (hr == S_OK)
-    {
-        return module.Terminate() ? S_OK : S_FALSE;
-    }
-    return hr;
+    return module.Terminate() ? S_OK : S_FALSE;
 }

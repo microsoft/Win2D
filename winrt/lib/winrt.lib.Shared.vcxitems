@@ -22,8 +22,7 @@
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <!-- PROXY_CLSID {77089F19-0251-4FF4-9100-D10DFD76E958} -->
-      <PreprocessorDefinitions>WRT_EXPORT;ENTRY_PREFIX=Proxy;REGISTER_PROXY_DLL;PROXY_CLSID_IS={0x77089F19, 0x0251, 0x4FF4, {0x91, 0x00, 0xD1, 0x0D, 0xFD, 0x76, 0xE9, 0x58}};%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>

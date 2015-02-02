@@ -13,10 +13,6 @@
       <DataSource Persistence="ProjectFile" ItemType="MidlRT" Label="" HasConfigurationCondition="false"/>
     </Rule.DataSource>
 
-    <BoolProperty Name="HasInterfaces" 
-                  DisplayName="Has Interfaces" 
-                  Description="If this IDL file doesn't contain any interfaces and you are getting errors about missing *_p.c files then set this to property to no." 
-                  Category="General"/>
   </Rule>
 
   <ItemType Name="MidlRT" DisplayName="IDL for WinRT"/>

@@ -1,11 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemDefinitionGroup>
-    <MidlRT>
-      <!-- If an IDL file doesn't define any interfaces then this needs to be
-           set to false to prevent us from attempting to compile the proxy/stubs
-           files. -->
-      <HasInterfaces>true</HasInterfaces>
-    </MidlRT>
-  </ItemDefinitionGroup>
 </Project>
