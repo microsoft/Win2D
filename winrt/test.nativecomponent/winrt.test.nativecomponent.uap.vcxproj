@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9936FFEF-2686-4DF6-8D64-2BFA78B1222A}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>winrt.test.nativecomponent.uap</ProjectName>
+    <RootNamespace>NativeComponent</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>8.2</ApplicationTypeRevision>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+  </PropertyGroup>
+  <Import Project="winrt.test.nativecomponent.Shared.vcxitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\winrt\dll\winrt.dll.uap.vcxproj">
+      <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

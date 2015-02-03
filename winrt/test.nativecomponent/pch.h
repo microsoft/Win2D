@@ -14,12 +14,13 @@
 
 #include <collection.h>
 #include <ppltasks.h>
+#include <assert.h>
 
 #include <Windows.Foundation.h>
 
 #include <d3d11.h>
 
-#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#include <WinRTDirectX.h>
 
 #include <ErrorHandling.h>
 

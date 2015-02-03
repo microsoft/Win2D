@@ -18,9 +18,15 @@ using Windows.Foundation;
 using Windows.UI;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.DirectX;
 using Microsoft.Graphics.Canvas.Effects;
+
+#if WINDOWS_UAP
+using Windows.Graphics.DirectX;
+using System.Numerics;
+#else
+using Microsoft.Graphics.Canvas.DirectX;
 using Microsoft.Graphics.Canvas.Numerics;
+#endif
 
 namespace test.managed
 {

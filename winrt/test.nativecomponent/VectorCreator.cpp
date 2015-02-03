@@ -13,6 +13,7 @@
 #include "pch.h"
 #include <Vector.h>
 
+#if (WINVER <= 0x0603)
 namespace ABI {
     namespace Windows {
         namespace Foundation {
@@ -26,6 +27,7 @@ namespace ABI {
         }
     }
 }
+#endif
 
 namespace NativeComponent
 {

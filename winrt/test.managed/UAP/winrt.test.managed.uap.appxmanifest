@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  IgnorableNamespaces="uap mp">
+  <Identity Name="E2C40EB9-8CCE-48B1-9A5C-4C8CA4999631"
+            Publisher="CN=Microsoft Corporation"
+            Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="e2c40eb9-8cce-48b1-9a5c-4c8ca4999631" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <Properties>
+    <DisplayName>winrt.test.managed.uap</DisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetPlatform Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" 
+        Executable="vstest.executionengine.appcontainer.exe" 
+        EntryPoint="Microsoft.VisualStudio.TestPlatform.TestExecutor.AppContainer.App">
+        <uap:VisualElements
+            DisplayName="winrt.test.managed.uap"
+            Square150x150Logo="Assets\Logo.png"
+            Square44x44Logo="Assets\SmallLogo.png"
+            Description="winrt.test.managed.uap"
+            ForegroundText="light"
+            BackgroundColor="#464646">
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        </uap:VisualElements>
+    </Application>
+    <Application Id="vstest.executionengine.App"
+        Executable="vstest.executionengine.appcontainer.exe"
+        EntryPoint="vstest.executionengine.App">
+      <uap:VisualElements
+        DisplayName="winrt.test.managed.uap"
+        Square150x150Logo="Assets\Logo.png"
+        Square44x44Logo="Assets\SmallLogo.png"
+        Description="winrt.test.managed.uap"
+        ForegroundText="light"
+        BackgroundColor="#464646">
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+    </Application>
+    <Application Id="vstest.executionengine.x86.App"
+        Executable="vstest.executionengine.appcontainer.x86.exe"
+        EntryPoint="vstest.executionengine.x86.App">
+      <uap:VisualElements
+        DisplayName="winrt.test.managed.uap"
+        Square150x150Logo="Assets\Logo.png"
+        Square44x44Logo="Assets\SmallLogo.png"
+        Description="winrt.test.managed.uap"
+        ForegroundText="light"
+        BackgroundColor="#464646">
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClientServer" />
+  </Capabilities> 
+</Package>

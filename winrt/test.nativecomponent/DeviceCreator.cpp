@@ -15,7 +15,7 @@
 namespace NativeComponent
 {
     using namespace Microsoft::Graphics::Canvas;
-    using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+    using namespace WinRTDirectX;
 
     public ref class DeviceCreator sealed
     {
