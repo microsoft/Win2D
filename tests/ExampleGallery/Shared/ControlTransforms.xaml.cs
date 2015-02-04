@@ -22,6 +22,7 @@ namespace ExampleGallery
 {
     public sealed partial class ControlTransforms : UserControl
     {
+        CanvasImageSource imageSource;
         CanvasSwapChain swapChain;
 
 
@@ -55,7 +56,7 @@ namespace ExampleGallery
         // Draw to the CanvasImageSource.
         void DrawToImageSource(Size size)
         {
-            var imageSource = new CanvasImageSource(canvasControl, (float)size.Width, (float)size.Height);
+            imageSource = new CanvasImageSource(canvasControl, (float)size.Width, (float)size.Height);
 
             using (var ds = imageSource.CreateDrawingSession(Colors.Yellow))
             {
@@ -108,7 +109,12 @@ namespace ExampleGallery
         {
             if (canvasControl.ReadyToDraw)
             {
-                DrawToImageSource(e.NewSize);
+                // Only redraw if the size really has changed. This avoids layout cycles where assigning
+                // a new CanvasImageSource to imageControl.Source causes a no-op SizeChanged notification.
+                if (e.NewSize != imageSource.Size)
+                {
+                    DrawToImageSource(e.NewSize);
+                }
             }
         }
 
@@ -117,6 +123,9 @@ namespace ExampleGallery
         {
             if (canvasControl.ReadyToDraw)
             {
+                // Unlike imageControl_SizeChanged, this does not need to bother checking
+                // for no-op because swapChain.ResizeBuffers does not trigger XAML layout.
+
                 DrawToSwapChain(e.NewSize);
             }
         }

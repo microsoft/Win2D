@@ -17,11 +17,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <Midl>
-      <AdditionalIncludeDirectories>..\..\Numerics\WinRT;WinRTDirectX</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Numerics\WinRT;directx</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Inc;.\brushes;.\xaml;.\drawing;.\images;.\text;.\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -43,45 +43,30 @@
     <!-- TODO: should pass '-v' to mdmerge once MS:1341138 is resolved -->
   </Target>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBrush.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasCommandList.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasLinearGradientBrush.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImage.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasBitmap.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageBrush.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSource.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasTextFormat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)CanvasSwapChain.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\AnimatedControlInput.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\BaseControl.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\BaseControlAdapter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasCreateResourcesEventArgs.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasControl.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanel.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\CanvasAnimatedControl.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\RecreatableDeviceManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\RecreatableDeviceManager.impl.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)controls\StepTimer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Conversion.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)DxgiUtilities.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Gradients.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ResourceManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ResourceTracker.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Strings.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)TextureUtilities.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)version.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasLinearGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlInput.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControlAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasCreateResourcesEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSourceDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\RecreatableDeviceManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\RecreatableDeviceManager.impl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StepTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.h" />
@@ -115,42 +100,49 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\PolymorphicBitmapManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceTracker.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceWrapper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCommandList.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSolidColorBrush.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmap.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageBrush.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasLinearGradientBrush.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRadialGradientBrush.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTarget.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\CustomizedEffectProperties.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Strings.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DDevice.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinRTDirectX\Direct3DSurface.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImage.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSource.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasImageSourceDrawingSessionAdapter.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\AnimatedControlInput.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasAnimatedControl.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasControl.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasCreateResourcesEventArgs.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanel.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)controls\StepTimer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormat.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChain.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasLinearGradientBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)brushes\Gradients.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlInput.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasCreateResourcesEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSourceDrawingSessionAdapter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\StepTimer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\CustomizedEffectProperties.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.cpp" />
@@ -184,38 +176,36 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapManager.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Gradients.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)TextureUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\PolymorphicBitmapManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
+    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasBrush.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasBitmap.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasCommandList.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)controls\CanvasAnimatedControl.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)controls\CanvasControl.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasDevice.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasDrawingSession.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasImageSource.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasInterfaces.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasStrokeStyle.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasSwapChain.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)controls\CanvasSwapChainPanel.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)CanvasTextFormat.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)Strings.inl" />
-    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirect3D11.idl" />
-    <None Include="$(MSBuildThisFileDirectory)WinRTDirectX\WinRTDirectXCommon.idl" />
-    <None Include="$(MSBuildThisFileDirectory)..\..\numerics\WinRT\WinRTNumerics.idl" />
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\EffectsCommon.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IEffectInput.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\Matrix5x4.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\BlendEffect.abi.idl" />
@@ -232,6 +222,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DistantDiffuseEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DistantSpecularEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\DpiCompensationEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\EffectsCommon.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GammaTransferEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GaussianBlurEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\HueRotationEffect.abi.idl" />
@@ -249,9 +240,16 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\SpotSpecularEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TableTransferEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TileEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform2DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl" />
+    <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirectXCommon.idl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

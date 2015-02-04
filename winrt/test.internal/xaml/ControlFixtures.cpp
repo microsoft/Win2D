@@ -12,7 +12,7 @@
 
 #include "pch.h"
 #include "ControlFixtures.h"
-#include "..\MockDxgiSwapChain.h"
+#include "MockDxgiSwapChain.h"
 
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
     ComPtr<MockD2DDeviceContext> const& deviceContext)

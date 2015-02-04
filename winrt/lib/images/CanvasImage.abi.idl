@@ -33,25 +33,4 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Matrix3x2 transform,
             [out, retval] Windows.Foundation.Rect* bounds);
     }
-    
-    //
-    // ICanvasResourceCreator
-    //
-    runtimeclass CanvasDevice;
-
-    [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
-    interface ICanvasResourceCreator : IInspectable
-    {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
-    };
-
-    [version(VERSION), uuid(1A75B512-E9FA-49E6-A876-38CAE194013E)]
-    interface ICanvasResourceCreatorWithDpi : IInspectable
-        requires ICanvasResourceCreator
-    {
-        [propget] HRESULT Dpi([out, retval] float* dpi);
-
-        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
-    };
 }

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "..\CanvasImage.h"
+#include "CanvasImage.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {

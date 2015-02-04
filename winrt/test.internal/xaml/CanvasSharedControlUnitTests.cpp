@@ -15,7 +15,7 @@
 #include "BasicControlFixture.h"
 #include "CanvasControlTestAdapter.h"
 #include "ControlFixtures.h"
-#include "..\MockCanvasSwapChain.h"
+#include "MockCanvasSwapChain.h"
 #include "MockRecreatableDeviceManager.h"
 
 #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)          \

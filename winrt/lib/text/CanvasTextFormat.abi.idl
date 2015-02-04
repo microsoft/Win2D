@@ -14,8 +14,6 @@ import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "Windows.UI.Text.idl";
 
-#include "version.h"
-
 namespace Microsoft.Graphics.Canvas
 {
     runtimeclass CanvasTextFormat;

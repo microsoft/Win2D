@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-#include "..\MockAsyncAction.h"
+#include "MockAsyncAction.h"
 #include "BasicControlFixture.h"
 #include "CanvasControlTestAdapter.h"
 #include "ControlFixtures.h"
