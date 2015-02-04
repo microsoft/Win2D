@@ -343,32 +343,14 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     class FixtureWithSwapChainAccess : public CanvasAnimatedControlFixture
     {
-        float m_swapChainTransformScaleX;
-        float m_swapChainTransformScaleY;
-
     protected:
         ComPtr<MockDxgiSwapChain> m_dxgiSwapChain;
 
     public:
         FixtureWithSwapChainAccess()
             : m_dxgiSwapChain(Make<MockDxgiSwapChain>())
-            , m_swapChainTransformScaleX(1.0f)
-            , m_swapChainTransformScaleY(1.0f)
         {
             m_dxgiSwapChain->Present1Method.AllowAnyCall();
-
-            m_dxgiSwapChain->SetMatrixTransformMethod.AllowAnyCall(
-                [=](DXGI_MATRIX_3X2_F const* matrix)
-                {
-                    Assert::IsNotNull(matrix);
-                    Assert::AreEqual(m_swapChainTransformScaleX, matrix->_11);
-                    Assert::AreEqual(0.0f, matrix->_12);
-                    Assert::AreEqual(0.0f, matrix->_21);
-                    Assert::AreEqual(m_swapChainTransformScaleY, matrix->_22);
-                    Assert::AreEqual(0.0f, matrix->_31);
-                    Assert::AreEqual(0.0f, matrix->_32);
-                    return S_OK;
-                });
 
             m_dxgiSwapChain->GetDesc1Method.AllowAnyCall(
                 [=](DXGI_SWAP_CHAIN_DESC1* desc)
@@ -405,13 +387,11 @@ TEST_CLASS(CanvasAnimatedControlTests)
                     return canvasSwapChain;
                 });  
         }
+    };
 
-        void SetExpectedSwapChainScale(float scaleX, float scaleY)
-        {
-            m_swapChainTransformScaleX = scaleX;
-            m_swapChainTransformScaleY = scaleY;
-        }
-
+    class ResizeFixture : public FixtureWithSwapChainAccess
+    {
+    public:
         void ExpectOneResizeBuffers(UINT expectedWidth, UINT expectedHeight)
         {
             m_dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1,
@@ -458,7 +438,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
             {  50,  51, false }, // Change nothing
         };
 
-        FixtureWithSwapChainAccess f;
+        ResizeFixture f;
         f.RaiseLoadedEvent();
         f.Adapter->DoChanged();
 
