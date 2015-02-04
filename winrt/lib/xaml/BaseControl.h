@@ -111,6 +111,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RegisteredEvent m_dpiChangedEventRegistration;
 
         std::mutex m_mutex;
+        Size m_currentSize;     // protected by m_mutex
         Color m_clearColor;     // protected by m_mutex
 
         RenderTarget m_currentRenderTarget;
@@ -122,6 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             , m_isLoaded(false)
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_dpi(adapter->GetLogicalDpi())
+            , m_currentSize{}
             , m_clearColor{}
             , m_currentRenderTarget{}
         {
@@ -389,6 +391,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_clearColor;
         }
 
+        Size GetCurrentSize()
+        {
+            auto lock = GetLock();
+            return m_currentSize;
+        }
+
     private:
         std::unique_lock<std::mutex> GetLock()
         {
@@ -536,11 +544,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     // invalidate if it represents a size change from what the
                     // control was last set to.
                     //
-                    Size newSize{};
+                    Size newSize;
                     ThrowIfFailed(args->get_NewSize(&newSize));
 
-                    if (newSize != m_currentRenderTarget.Size)
+                    auto lock = GetLock();
+                    if (m_currentSize != newSize)
                     {
+                        m_currentSize = newSize;
+                        lock.unlock();
+
                         ChangedSize();
                     }
                 });

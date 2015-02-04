@@ -149,18 +149,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         ComPtr<IAsyncAction> m_changedAction;       
 
-        bool m_isPaused;
+        // State shared between the UI thread and the update/render thread
+        struct SharedState
+        {
+            bool IsPaused;
+            bool NeedToRestartRenderThread;
+            bool ForceUpdate;
+            bool IsStepTimerFixedStep;
+            uint64_t TargetElapsedTime;
+            bool ShouldResetElapsedTime;
+        };
 
-        Size m_currentSize; // We need to store this so we can access it from the update/render loop     
-
-        bool m_needToRestartRenderThread;
-
-        bool m_forceUpdate;
-
-        // These are duplicated from the step timer, to avoid putting locks around StepTimer as a whole.
-        bool m_isStepTimerFixedStep;
-        uint64_t m_targetElapsedTime;
-        bool m_shouldResetElapsedTime;
+        SharedState m_sharedState;
 
     public:
         CanvasAnimatedControl(
@@ -230,7 +230,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Color const& clearColor,
             bool areResourcesCreated);
 
-        bool Update();
+        void UpdateAndGetSharedState(bool* isPaused, bool* needToRestartRenderThread, bool* forceUpdate);
+
+        bool Update(bool forceUpdate);
 
         HRESULT OnRenderLoopCompleted(IAsyncAction*, AsyncStatus);
 

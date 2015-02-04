@@ -312,11 +312,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedControlAdapter> adapter)
         : BaseControl<CanvasAnimatedControlTraits>(adapter)
-        , m_isPaused(false)
+        , m_sharedState{}
         , m_stepTimer(adapter)
-        , m_forceUpdate(false)
-        , m_needToRestartRenderThread(false)
-        , m_shouldResetElapsedTime(false)
     {
         CreateSwapChainPanel();
 
@@ -324,18 +321,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         m_input = Make<AnimatedControlInput>(swapChainPanel);
 
-        m_isStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
-
-        m_targetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
+        m_sharedState.IsStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
+        m_sharedState.TargetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
     }
 
     CanvasAnimatedControl::~CanvasAnimatedControl()
     {
         assert(!m_renderLoopAction);
-
         assert(!m_changedAction);
-
-
     }
 
     //
@@ -370,7 +363,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto lock = GetLock();
 
-                m_isStepTimerFixedStep = !!value;
+                m_sharedState.IsStepTimerFixedStep = !!value;
             });
     }
 
@@ -383,7 +376,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto lock = GetLock();
 
-                *value = m_isStepTimerFixedStep; 
+                *value = m_sharedState.IsStepTimerFixedStep; 
             });
     }
 
@@ -399,7 +392,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ThrowHR(E_INVALIDARG, HStringReference(Strings::ExpectedPositiveNonzero).Get());
                 }
 
-                m_targetElapsedTime = value.Duration;
+                m_sharedState.TargetElapsedTime = value.Duration;
             });
     }
 
@@ -412,10 +405,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto lock = GetLock();
 
-                assert(m_targetElapsedTime <= INT64_MAX);
+                assert(m_sharedState.TargetElapsedTime <= INT64_MAX);
 
                 TimeSpan timeSpan = {};
-                timeSpan.Duration = static_cast<INT64>(m_targetElapsedTime);
+                timeSpan.Duration = static_cast<INT64>(m_sharedState.TargetElapsedTime);
                 *value = timeSpan;
             });
     }
@@ -427,13 +420,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto lock = GetLock();
 
-                m_isPaused = !!value;
+                m_sharedState.IsPaused = !!value;
 
-                bool paused = m_isPaused;
+                bool paused = m_sharedState.IsPaused;
 
                 lock.unlock();
 
-                if (!paused)
+                if (!paused)    // TODO: should this be if (paused != !!value)?
                     Changed();
             });
     }
@@ -447,7 +440,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto lock = GetLock();
 
-                *value = m_isPaused;
+                *value = m_sharedState.IsPaused;
             });
     }
 
@@ -458,9 +451,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                auto lock = GetLock();
-
-                *value = m_currentSize;
+                *value = GetCurrentSize();
             });
     }
 
@@ -471,7 +462,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto lock = GetLock();
 
-                m_shouldResetElapsedTime = true;
+                m_sharedState.ShouldResetElapsedTime = true;
             });
     }
 
@@ -552,10 +543,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         if (differentAlphaMode)
         {
-            {
-                auto lock = GetLock();
-                m_needToRestartRenderThread = true;
-            }
+            auto lock = GetLock();
+            m_sharedState.NeedToRestartRenderThread = true;
+            lock.unlock();
 
             Changed();
         }
@@ -563,10 +553,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasAnimatedControl::ChangedSize()
     {
-        {
-            auto lock = GetLock();
-            m_needToRestartRenderThread = true;
-        }
+        auto lock = GetLock();
+        m_sharedState.NeedToRestartRenderThread = true;
+        lock.unlock();
 
         Changed();
     }
@@ -654,16 +643,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // This method, as an action, is always run on the UI thread.
         //
 
-        m_currentSize = GetActualSize();
-
         // Changed() already verified whether the control is loaded.
         assert(IsLoaded());
 
-        {
-            auto lock = GetLock();
-
-            m_forceUpdate = true;
-        }
+        auto lock = GetLock();
+        m_sharedState.ForceUpdate = true;
+        lock.unlock();
 
         if (m_renderLoopAction)
         {
@@ -737,9 +722,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         auto lock = GetLock();
 
-        bool needsRenderThreadRestart = m_needToRestartRenderThread;
-
-        m_needToRestartRenderThread = false;
+        bool needsRenderThreadRestart = m_sharedState.NeedToRestartRenderThread;
+        m_sharedState.NeedToRestartRenderThread = false;
 
         lock.unlock();
 
@@ -767,33 +751,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color const& clearColor, 
         bool areResourcesCreated)
     {
+        // Access shared state that's shared between the UI thread and the
+        // update/render thread
+        bool isPaused;
+        bool needToRestartRenderThread;
+        bool forceUpdate;
+
+        UpdateAndGetSharedState(&isPaused, &needToRestartRenderThread, &forceUpdate);
+
         m_input->ProcessEvents();
 
-        auto lock = GetLock();
-
-        m_stepTimer.SetTargetElapsedTicks(m_targetElapsedTime);
-
-        m_stepTimer.SetFixedTimeStep(m_isStepTimerFixedStep);
-
-        if (m_shouldResetElapsedTime)
-        {
-            m_stepTimer.ResetElapsedTime();
-            m_shouldResetElapsedTime = false;
-        }
-
-        if (m_isPaused)
+        if (isPaused)
         {
             // Prevents drawing logic from occurring while control is paused.
             areResourcesCreated = false;
         }
 
-        bool needToRestartRenderThread = m_needToRestartRenderThread;
-        lock.unlock();
-
         bool updated = true;
 
         if (areResourcesCreated)
-            updated = Update();
+            updated = Update(forceUpdate);
 
         if (updated)
         {
@@ -815,7 +792,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return areResourcesCreated;
     }
 
-    bool CanvasAnimatedControl::Update()
+    void CanvasAnimatedControl::UpdateAndGetSharedState(bool* isPaused, bool* needToRestartRenderThread, bool* forceUpdate)
+    {
+        auto lock = GetLock();
+
+        m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);
+        m_stepTimer.SetFixedTimeStep(m_sharedState.IsStepTimerFixedStep);
+
+        if (m_sharedState.ShouldResetElapsedTime)
+        {
+            m_stepTimer.ResetElapsedTime();
+        }
+
+        *isPaused = m_sharedState.IsPaused;
+        *needToRestartRenderThread = m_sharedState.NeedToRestartRenderThread;
+        *forceUpdate = m_sharedState.ForceUpdate;
+        
+        m_sharedState.ShouldResetElapsedTime = false;
+        m_sharedState.ForceUpdate = false;
+    }
+
+    bool CanvasAnimatedControl::Update(bool forceUpdate)
     {
         bool updated = false;
         
@@ -827,13 +824,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             auto updateEventArgs = Make<CanvasAnimatedUpdateEventArgs>(timing);
             ThrowIfFailed(m_updateEventList.InvokeAll(this, updateEventArgs.Get()));
 
-            m_forceUpdate = false;
             updated = true;
         };
 
         m_stepTimer.Tick(updateFunction);
                 
-        if (!updated && m_forceUpdate)
+        if (!updated && forceUpdate)
         {
             updateFunction(false);
         }
