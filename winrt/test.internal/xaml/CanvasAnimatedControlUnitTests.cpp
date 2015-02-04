@@ -392,7 +392,19 @@ TEST_CLASS(CanvasAnimatedControlTests)
     class ResizeFixture : public FixtureWithSwapChainAccess
     {
     public:
-        void ExpectOneResizeBuffers(UINT expectedWidth, UINT expectedHeight)
+        static int const InitialWidth = 100;
+        static int const InitialHeight = 200;
+
+        ResizeFixture()
+        {
+            // The SizeChanged event is raised before the Loaded event
+            UserControl->Resize(Size{InitialWidth, InitialHeight});
+
+            RaiseLoadedEvent();
+            Adapter->DoChanged();
+        }
+
+        void ExpectOneResizeBuffers(Size size)
         {
             m_dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1,
                 [=](UINT bufferCount,
@@ -402,55 +414,52 @@ TEST_CLASS(CanvasAnimatedControlTests)
                     UINT swapChainFlags)
                     {
                         Assert::AreEqual(2u, bufferCount);
-                        Assert::AreEqual(expectedWidth, width);
-                        Assert::AreEqual(expectedHeight, height);
+                        Assert::AreEqual(static_cast<UINT>(size.Width), width);
+                        Assert::AreEqual(static_cast<UINT>(size.Height), height);
                         Assert::AreEqual(DXGI_FORMAT_B8G8R8A8_UNORM, newFormat);
                         Assert::AreEqual(0u, swapChainFlags);
                         return S_OK;
                     });
         }
 
-        void Execute(UINT width, UINT height)
+        void Execute(Size size)
         {
-            UserControl->Resize(Size{ static_cast<float>(width), static_cast<float>(height) });
+            UserControl->Resize(size);
 
-            Adapter->Tick();
-
-            Adapter->DoChanged();
+            for (int i = 0; i < 5; ++i)
+            {
+                Adapter->Tick();
+                Adapter->DoChanged();
+            }
 
             Expectations::Instance()->Validate();
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_Resizing)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResized_ThenResizeBuffersIsCalled)
     {
-        struct TestCase
-        {
-            UINT ResizeWidth;
-            UINT ResizeHeight;
-            bool ExpectResize;
-        } testSteps[]
-        {
-            { 100, 100,  true }, // Initial sizing; resource always re-created
-            { 123, 456,  true }, // Change width and height
-            {  50, 456,  true }, // Change width only
-            {  50,  51,  true }, // Change height only
-            {  50,  51, false }, // Change nothing
+        Size sizes[] 
+        { 
+            { ResizeFixture::InitialWidth + 1, ResizeFixture::InitialHeight     }, // width only
+            { ResizeFixture::InitialWidth,     ResizeFixture::InitialHeight + 1 }, // height only
+            { ResizeFixture::InitialWidth + 1, ResizeFixture::InitialHeight + 1 }, // both
         };
 
-        ResizeFixture f;
-        f.RaiseLoadedEvent();
-        f.Adapter->DoChanged();
-
-        for (auto const& testStep : testSteps)
+        for (auto size : sizes)
         {
-            if (testStep.ExpectResize)
-                f.ExpectOneResizeBuffers(testStep.ResizeWidth, testStep.ResizeHeight);
-
-            f.Execute(testStep.ResizeWidth, testStep.ResizeHeight);
+            ResizeFixture f;
+            f.ExpectOneResizeBuffers(size);
+            f.Execute(size);
         }
     }
-    
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToCurrentSize_ThenResizeBuffersIsNotCalled)
+    {
+        ResizeFixture f;
+        f.Execute(Size{ ResizeFixture::InitialWidth, ResizeFixture::InitialHeight });
+    }
+
+
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess
     {
