@@ -14,6 +14,7 @@ using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Reflection;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -30,6 +31,18 @@ namespace ExampleGallery
 
             animatedControl.Input.PointerPressed += OnAnimatedControlPointerPressed;
             animatedControl.Input.PointerMoved += OnAnimatedControlPointerMoved;
+
+            var colors = typeof(Colors).GetTypeInfo().DeclaredProperties;
+            PropertyInfo transparentPropertyInfo = null;
+            foreach (var item in colors)
+            {
+                clearColor.Items.Add(item);
+                if (item.Name == "Transparent")
+                    transparentPropertyInfo = item;
+            }
+
+            animatedControl.ClearColor = Colors.Transparent;
+            clearColor.SelectedItem = transparentPropertyInfo;
         }
 
         Queue<int> updatesPerDraw = new Queue<int>();
@@ -141,6 +154,12 @@ namespace ExampleGallery
                 }
                 pointerPoints.Enqueue(new Vector2((float)args.CurrentPoint.Position.X, (float)args.CurrentPoint.Position.Y));
             }
+        }
+
+        private void clearColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var color = (Color)((PropertyInfo)clearColor.SelectedItem).GetValue(null);
+            animatedControl.ClearColor = color;
         }
     }
 }

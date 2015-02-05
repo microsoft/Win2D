@@ -35,8 +35,22 @@ under the License.
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" Margin="0, 0, 10, 0">
             <ToggleButton Content="Pause" Checked="Pause_Checked" Unchecked="Pause_Unchecked"/>
+            <ComboBox x:Name="clearColor" Width="200" Height="40" ItemsSource="{Binding Colors}" SelectionChanged="clearColor_SelectionChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Rectangle Width="35" Height="20" Fill="{Binding Name}" Margin="5,0"/>
+                            <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding Name}" Foreground="Black"/>
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </StackPanel>
         
         <canvas:CanvasAnimatedControl x:Name="animatedControl" Grid.Row="0" Grid.Column="1"
