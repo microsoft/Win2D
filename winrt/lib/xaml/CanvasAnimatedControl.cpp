@@ -747,7 +747,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     bool CanvasAnimatedControl::Tick(
         CanvasSwapChain* target, 
-        Color const& clearColor, 
+        Color const& /*clearColor*/, 
         bool areResourcesCreated)
     {
         // Access shared state that's shared between the UI thread and the
@@ -765,6 +765,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // Prevents drawing logic from occurring while control is paused.
             areResourcesCreated = false;
         }
+
+        auto clearColor = GetClearColor();
 
         bool updated = true;
 

@@ -304,6 +304,22 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged();
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_ChangingClearColor_DoesNotRestartUpdateRenderLoop)
+    {
+        CanvasAnimatedControlFixture f;
+        f.Load();
+        f.Adapter->DoChanged();
+
+        f.Adapter->Tick();
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopStillActive());
+        f.Adapter->DoChanged();
+
+        ThrowIfFailed(f.Control->put_ClearColor(Color{ 1, 2, 3, 4 }));
+        f.Adapter->Tick();
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopStillActive());
+        f.Adapter->DoChanged();       
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_ThreadingRestrictions)
     {
         CanvasAnimatedControlFixture f;

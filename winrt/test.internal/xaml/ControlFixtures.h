@@ -167,6 +167,11 @@ inline void ClearColorFixture<CanvasControlTraits>::Load()
 
 inline void ClearColorFixture<CanvasAnimatedControlTraits>::Load()
 {
+    // Set the control to variable timestep mode.  This means that
+    // RenderAnyNumberOfFrames can trigger updates & renders without having to
+    // fake time moving forwards.
+    ThrowIfFailed(Control->put_IsFixedTimeStep(FALSE));
+
     UserControl->Resize(Size{ 100, 200 });
     ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
 

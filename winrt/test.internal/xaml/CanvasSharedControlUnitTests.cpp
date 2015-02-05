@@ -72,7 +72,7 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
         f.OnDraw.SetExpectedCalls(0);
 
-        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
             [&](D2D1_COLOR_F const* color)
             {
                 Assert::AreEqual(ToD2DColor(anyColor), *color);
@@ -91,7 +91,7 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
         Color anyColor{ 1, 2, 3, 4 };
 
-        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
             [&](D2D1_COLOR_F const* color)
             {
                 Assert::AreEqual(ToD2DColor(anyColor), *color);
@@ -100,6 +100,36 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
 
         f.Load();
+        f.RenderAnyNumberOfFrames();
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DeviceContextIsClearedToCorrectColorWhenColorChanges)
+    {
+        ClearColorFixture<TRAITS> f;
+
+        Color anyColor{ 1, 2, 3, 4 };
+
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
+            [&](D2D1_COLOR_F const* color)
+            {
+                Assert::AreEqual(ToD2DColor(anyColor), *color);
+            });
+        
+        ThrowIfFailed(f.Control->put_ClearColor(anyColor));
+
+        f.Load();
+        f.RenderAnyNumberOfFrames();
+
+        Color anyOtherColor{ 5, 6, 7, 8 };
+
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
+            [&](D2D1_COLOR_F const* color)
+            {
+                Assert::AreEqual(ToD2DColor(anyOtherColor), *color);
+            });
+
+        ThrowIfFailed(f.Control->put_ClearColor(anyOtherColor));
+
         f.RenderAnyNumberOfFrames();
     }
 
