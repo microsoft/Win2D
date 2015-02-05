@@ -142,10 +142,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         StepTimer m_stepTimer;
 
-        std::mutex m_mutex;
-
         //
-        // The variables below are protected by m_mutex:
+        // The variables below are protected by BaseControl's mutex
         //
         ComPtr<IAsyncAction> m_changedAction;       
 
@@ -214,9 +212,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void Unloaded() override final;
 
     private:
-        std::unique_lock<std::mutex> GetLock()
-        { return std::unique_lock<std::mutex>(m_mutex); }
-
         void CreateSwapChainPanel();
 
         bool Tick(

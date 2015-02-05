@@ -110,9 +110,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasControl, BaseTrust);
 
-        std::mutex m_mutex;
-        RegisteredEvent m_renderingEventRegistration; // protected by m_mutex
-        bool m_needToHookCompositionRendering;        // protected by m_mutex
+        RegisteredEvent m_renderingEventRegistration; // protected by BaseControl's mutex
+        bool m_needToHookCompositionRendering;        // protected by BaseControl's mutex
 
         RegisteredEvent m_windowVisibilityChangedEventRegistration;
         RegisteredEvent m_surfaceContentsLostEventRegistration;
@@ -169,11 +168,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void Unloaded() override final;
 
     private:
-        std::unique_lock<std::mutex> GetLock()
-        {
-            return std::unique_lock<std::mutex>(m_mutex);
-        }        
-
         void HookCompositionRenderingIfNecessary();
 
         void CreateImageControl();

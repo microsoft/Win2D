@@ -821,12 +821,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_sharedState.ShouldResetElapsedTime = false;
         m_sharedState.ForceUpdate = false;
 
-        lock.unlock();
-
-        // TODO: this is bouncing BaseControl's mutex.  Ideally we'd have only
-        // one mutex used for m_sharedState and BaseControl's state.
-        *clearColor = GetClearColor();
-        *currentSize = GetCurrentSize();
+        GetSharedState(lock, clearColor, currentSize);
     }
 
     bool CanvasAnimatedControl::Update(bool forceUpdate)

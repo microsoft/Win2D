@@ -383,6 +383,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_currentSize;
         }
 
+        void GetSharedState(std::unique_lock<std::mutex> const& lock, Color* clearColor, Size* currentSize)
+        {
+            assert(lock.owns_lock());
+            UNREFERENCED_PARAMETER(lock);
+
+            *clearColor = m_clearColor;
+            *currentSize = m_currentSize;
+        }
+
         std::unique_lock<std::mutex> GetLock()
         {
             return std::unique_lock<std::mutex>(m_mutex);
