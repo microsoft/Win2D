@@ -146,7 +146,7 @@ struct ClearColorFixture
         UserControl = dynamic_cast<StubUserControl*>(As<IUserControl>(Control).Get());
     }
 
-    void Load() {}
+    void Load();
 
     void RegisterOnDraw()
     {
@@ -154,18 +154,18 @@ struct ClearColorFixture
         ThrowIfFailed(Control->add_Draw(OnDraw.Get(), &ignoredToken));
     }
 
-    void RenderAnyNumberOfFrames() {}
+    void RenderAnyNumberOfFrames();
 };
 
 
-void ClearColorFixture<CanvasControlTraits>::Load()
+inline void ClearColorFixture<CanvasControlTraits>::Load()
 {
     UserControl->Resize(Size{ 100, 200 });
     ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
 }
 
 
-void ClearColorFixture<CanvasAnimatedControlTraits>::Load()
+inline void ClearColorFixture<CanvasAnimatedControlTraits>::Load()
 {
     UserControl->Resize(Size{ 100, 200 });
     ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
