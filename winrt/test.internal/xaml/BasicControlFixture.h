@@ -20,6 +20,9 @@ struct BasicControlFixture
     typedef typename TRAITS::createResourcesEventHandler_t createResourcesEventHandler_t;
     typedef typename TRAITS::drawEventHandler_t            drawEventHandler_t;
 
+    static int const InitialWidth = 100;
+    static int const InitialHeight = 200;
+
     std::shared_ptr<adapter_t> Adapter;
     ComPtr<control_t> Control;
     ComPtr<StubUserControl> UserControl;
@@ -42,8 +45,9 @@ struct BasicControlFixture
         UserControl = dynamic_cast<StubUserControl*>(As<IUserControl>(Control).Get());
     }
 
-    void RaiseLoadedEvent()
+    void Load()
     {
+        UserControl->Resize(Size{InitialWidth, InitialHeight});
         ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
     }
 
@@ -163,7 +167,7 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
     void RaiseLoadedAndVerify()
     {
         Assert::IsFalse(IsChangedActionRunning());
-        RaiseLoadedEvent();
+        Load();
         Assert::IsTrue(IsChangedActionRunning());
         Adapter->DoChanged();
         Assert::IsFalse(IsChangedActionRunning());

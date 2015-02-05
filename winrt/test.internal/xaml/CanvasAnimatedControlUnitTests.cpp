@@ -120,7 +120,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
     TEST_METHOD_EX(CanvasAnimatedControl_RedundantChangedCallsDoNothing)
     {
         CanvasAnimatedControlFixture f;
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         auto onDraw = MockEventHandler<Animated_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
@@ -202,7 +202,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.AddCreateResourcesHandler(onCreateResources.Get());
         onCreateResources.SetExpectedCalls(1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
     }
 
@@ -216,7 +216,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->DoChanged();
 
-        f.RaiseLoadedEvent();
+        f.Load();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_put_TargetElapsedTime_MustBePositiveNonZero)
@@ -237,7 +237,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         CanvasAnimatedControlFixture f;
         auto swapChainManager = f.Adapter->SwapChainManager;
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         
         f.Adapter->CreateCanvasSwapChainMethod.SetExpectedCalls(1, 
@@ -282,7 +282,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         CanvasAnimatedControlFixture f;
         auto swapChainManager = f.Adapter->SwapChainManager;
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         
         f.ExpectOneCreateSwapChain();
@@ -392,15 +392,9 @@ TEST_CLASS(CanvasAnimatedControlTests)
     class ResizeFixture : public FixtureWithSwapChainAccess
     {
     public:
-        static int const InitialWidth = 100;
-        static int const InitialHeight = 200;
-
         ResizeFixture()
         {
-            // The SizeChanged event is raised before the Loaded event
-            UserControl->Resize(Size{InitialWidth, InitialHeight});
-
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
         }
 
@@ -596,7 +590,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         DeviceLostFixture f;
         f.ThrowDeviceRemovedDuringNextCreateResources();
         f.MarkAsLost();
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
     }
 
@@ -608,7 +602,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         DeviceLostFixture f;
         f.ThrowDeviceRemovedDuringCreateResources();
         f.MarkAsLost();
-        f.RaiseLoadedEvent();
+        f.Load();
 
         //
         // If we attempt to re-create the device, and fail, control should 
@@ -664,7 +658,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
             OnUpdate.SetExpectedCalls(1);
             OnDraw.SetExpectedCalls(1);
@@ -701,7 +695,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->ProgressTime(initialTime);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         f.RenderSingleFrame();
     }
@@ -716,7 +710,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->ProgressTime(0);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         f.Adapter->Tick();
     }
@@ -833,7 +827,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
             RenderSingleFrame();
         }
@@ -941,7 +935,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
             RenderSingleFrame();
         }
@@ -1080,7 +1074,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
         }
 
@@ -1099,7 +1093,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
     TEST_METHOD_EX(CanvasAnimatedControl_LoadedCausesChanged)
     {
         Fixture f;
-        f.RaiseLoadedEvent();
+        f.Load();
         Assert::IsTrue(f.IsChangedActionRunning());
     }
 
@@ -1141,7 +1135,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
     TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileChangedIsPending)
     {
         Fixture f;
-        f.RaiseLoadedEvent();
+        f.Load();
         Assert::IsTrue(f.IsChangedActionRunning());
         f.Control.Reset();
 
@@ -1246,7 +1240,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
     {
         Fixture f;
         
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         f.ExpectRender();
@@ -1261,7 +1255,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         ThrowIfFailed(f.Control->put_Paused(TRUE));
         f.Adapter->DoChanged();
         
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         f.ExpectRender();
@@ -1274,7 +1268,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
     {
         Fixture f;
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         f.AllowAnyRendering();
@@ -1464,7 +1458,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     {
         InputFixture()
         {
-            RaiseLoadedEvent();
+            Load();
         }
 
         ComPtr<ICorePointerInputSource> GetInputSource()

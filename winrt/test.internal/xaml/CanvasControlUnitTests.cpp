@@ -69,7 +69,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         // Issue a Loaded.  Now, the next CompositionRenderingEvent will cause
         // CreateResources to be raised.
         onCreateResources.SetExpectedCalls(1);
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderSingleFrame();
 
         onCreateResources.Validate();
@@ -117,7 +117,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         CanvasControlFixture f;
         f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderSingleFrame();
 
         auto onDraw1 = MockEventHandler<Static_DrawEventHandler>(L"Draw1");
@@ -145,7 +145,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         f.AddDrawHandler(onDraw.Get());
 
         f.RenderSingleFrame();
-        f.RaiseLoadedEvent();
+        f.Load();
 
         onDraw.SetExpectedCalls(1);
         f.RenderSingleFrame();
@@ -580,7 +580,7 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         {
             BasicControlFixture::CreateControl();
             AddDrawHandler(OnDraw.Get());
-            RaiseLoadedEvent();
+            Load();
         }
     };
     
@@ -740,7 +740,7 @@ TEST_CLASS(CanvasControl_ClearColor)
 
         f.OnDraw.SetExpectedCalls(1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
     }
 
@@ -751,7 +751,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         f.RegisterOnDraw();
         f.OnDraw.SetExpectedCalls(1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
 
         Color currentColor;
@@ -784,7 +784,7 @@ TEST_CLASS(CanvasControl_ClearColor)
                 return nullptr;
             });
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
     }
 
@@ -798,7 +798,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         Color anyOpaqueColor{ 255, 1, 2, 3};
         ThrowIfFailed(f.Control->put_ClearColor(anyOpaqueColor));
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
 
         // Now set it to transparent

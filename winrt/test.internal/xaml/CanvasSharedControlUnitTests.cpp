@@ -81,7 +81,7 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
     }
 
@@ -99,7 +99,7 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
         
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
     }
 
@@ -277,7 +277,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
                 Assert::IsTrue(IsSameInstance(f.Control.Get(), control));
             });
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
     }
@@ -356,7 +356,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.OnDraw.SetExpectedCalls(0);
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::ResourcesNotCreated, 1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
     }
@@ -368,7 +368,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.OnDraw.SetExpectedCalls(1);
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None, 1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
     }
@@ -380,7 +380,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
         f.OnDraw.SetExpectedCalls(1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.EnsureChangedCallback();
         f.RenderAnyNumberOfFrames();
 
