@@ -242,7 +242,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!IsWindowVisible())
                     return;
 
-                RunWithRenderTarget(GetActualSize(),
+                RunWithRenderTarget(GetCurrentSize(),
                     [&](CanvasImageSource* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                     {
                         if (!target)

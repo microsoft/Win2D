@@ -336,22 +336,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_adapter;
         }
 
-        Size GetActualSize()
-        {
-            auto frameworkElement = As<IFrameworkElement>(GetControl()->GetComposableBase());
-            double actualWidth;
-            double actualHeight;
-            
-            ThrowIfFailed(frameworkElement->get_ActualWidth(&actualWidth));
-            ThrowIfFailed(frameworkElement->get_ActualHeight(&actualHeight));
-            
-            return Size{ static_cast<float>(actualWidth), static_cast<float>(actualHeight) };
-        }
-
         void ResetRenderTarget()
         {
             m_currentRenderTarget = RenderTarget{};
             Changed();
+        }
+
+        RenderTarget* GetCurrentRenderTarget()
+        {
+            return &m_currentRenderTarget;
         }
 
         //
@@ -520,6 +513,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 [&]
                 {
                     m_isLoaded = true;
+
+                    //
+                    // Grab the current size.
+                    //
+                    // TODO: this is actually working around that most of our
+                    // tests are incorrectly not sending a SizeChanged event
+                    // before Loaded event.  We should fix this.
+                    //
+                    auto frameworkElement = As<IFrameworkElement>(GetControl()->GetComposableBase());
+                    double actualWidth;
+                    double actualHeight;
+                    
+                    ThrowIfFailed(frameworkElement->get_ActualWidth(&actualWidth));
+                    ThrowIfFailed(frameworkElement->get_ActualHeight(&actualHeight));
+                    
+                    m_currentSize = Size{ static_cast<float>(actualWidth), static_cast<float>(actualHeight) };
+
                     Changed();
                 });
         }

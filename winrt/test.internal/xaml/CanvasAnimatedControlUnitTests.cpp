@@ -429,6 +429,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
             for (int i = 0; i < 5; ++i)
             {
                 Adapter->Tick();
+                Assert::IsTrue(Adapter->IsUpdateRenderLoopStillActive());
                 Adapter->DoChanged();
             }
 

@@ -89,6 +89,11 @@ public:
         return m_outstandingWorkItemAsyncAction;
     }
 
+    bool IsUpdateRenderLoopStillActive() const
+    {
+        return bool(m_currentTickFn);
+    }
+
 
     std::function<void()> m_changedFn;
     ComPtr<MockAsyncAction> m_changedAsyncAction;

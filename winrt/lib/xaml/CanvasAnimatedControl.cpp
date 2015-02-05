@@ -553,10 +553,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasAnimatedControl::ChangedSize()
     {
-        auto lock = GetLock();
-        m_sharedState.NeedToRestartRenderThread = true;
-        lock.unlock();
-
         Changed();
     }
 
@@ -660,9 +656,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        RunWithRenderTarget(GetActualSize(),
+        RunWithRenderTarget(GetCurrentSize(),
             [&] (CanvasSwapChain* rawTarget, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
             {
+                if (!rawTarget)
+                    return;
+
                 // 
                 // The early exit above, with the design of AnimatedControl, makes
                 // it impossible to ever have two worker threads at the same time.
@@ -775,11 +774,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         if (updated)
         {
             //
-            // An app's draw handlers may call methods like get_Size, and so the lock definitely
-            // shouldn't cover the invocation of them. 
+            // If the control's size has changed then the swapchain's buffers
+            // need to be resized as appropriate.  This can be done on the
+            // update/render thread because:
             //
-            Draw(target, clearColor, areResourcesCreated);
+            //  - no XAML methods are called
+            //
+            //  - the current render target won't be updated by the UI thread
+            //    while the update/render thread is running
+            //
+            RenderTarget* renderTarget = GetCurrentRenderTarget();
+            auto currentSize = GetCurrentSize();
+            if (renderTarget->Size != currentSize)
+            {
+                ThrowIfFailed(target->ResizeBuffersWithSize(currentSize.Width, currentSize.Height));
+                renderTarget->Size = currentSize;
+            }
 
+            Draw(target, clearColor, areResourcesCreated);
             ThrowIfFailed(target->Present());
         }
 
