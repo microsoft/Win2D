@@ -87,8 +87,6 @@ namespace
         CALL_COUNTER_WITH_MOCK(CreateOrUpdateRenderTargetMethod, void(ICanvasDevice*, CanvasBackground, float, Size, RenderTarget*));
         CALL_COUNTER_WITH_MOCK(CreateDrawEventArgsMethod, ComPtr<drawEventArgs_t>(ICanvasDrawingSession*));
         CALL_COUNTER_WITH_MOCK(ChangedMethod, void());
-        CALL_COUNTER_WITH_MOCK(ChangedClearColorMethod, void(bool));
-        CALL_COUNTER_WITH_MOCK(ChangedSizeMethod, void());
         CALL_COUNTER_WITH_MOCK(UnloadedMethod, void());
 
         virtual void CreateOrUpdateRenderTarget(
@@ -110,16 +108,6 @@ namespace
         virtual void Changed() override final
         {
             return ChangedMethod.WasCalled();
-        }
-
-        virtual void ChangedClearColor(bool differentAlphaMode) override final
-        {
-            ChangedClearColorMethod.WasCalled(differentAlphaMode);
-        }
-
-        virtual void ChangedSize() override final
-        {
-            ChangedSizeMethod.WasCalled();
         }
 
         virtual void Unloaded() override final

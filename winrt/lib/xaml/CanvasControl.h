@@ -166,11 +166,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDrawingSession* drawingSession) override final;
 
         virtual void Changed() override final;
-
-        virtual void ChangedClearColor(bool differentAlphaMode) override final;
-
-        virtual void ChangedSize() override final;
-
         virtual void Unloaded() override final;
 
     private:

@@ -539,23 +539,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return drawEventArgs;
     }
 
-    void CanvasAnimatedControl::ChangedClearColor(bool differentAlphaMode)
-    {
-        if (differentAlphaMode)
-        {
-            auto lock = GetLock();
-            m_sharedState.NeedToRestartRenderThread = true;
-            lock.unlock();
-
-            Changed();
-        }
-    }
-
-    void CanvasAnimatedControl::ChangedSize()
-    {
-        Changed();
-    }
-
     void CanvasAnimatedControl::Unloaded()
     {
         //
@@ -650,8 +633,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             // 
             // If the render thread is already running, this check prevents
-            // it from being launched again. Anything needing to stop the
-            // render thread is co-ordinated through m_needToRestartRenderThread.
+            // it from being launched again.
             //
             return;
         }
@@ -659,6 +641,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RunWithRenderTarget(GetCurrentSize(),
             [&] (CanvasSwapChain* rawTarget, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
             {
+                // The clearColor passed to us is ignored since this needs to be
+                // checked on each tick of the update/render loop.
+                UNREFERENCED_PARAMETER(clearColor);
+
                 if (!rawTarget)
                     return;
 
@@ -680,9 +666,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     };
 
                 auto onEachTickFn = 
-                    [target, clearColor, areResourcesCreated, self]
+                    [target, areResourcesCreated, self]
                     {
-                        return self->Tick(target.Get(), clearColor, areResourcesCreated);
+                        return self->Tick(target.Get(), areResourcesCreated);
                     };
 
                 auto afterLoopFn = 
@@ -721,12 +707,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         auto lock = GetLock();
 
-        bool needsRenderThreadRestart = m_sharedState.NeedToRestartRenderThread;
-        m_sharedState.NeedToRestartRenderThread = false;
+        bool isPaused = m_sharedState.IsPaused;
 
         lock.unlock();
 
-        if (needsRenderThreadRestart)
+        if (!isPaused)
         {
             Changed();
         }
@@ -747,26 +732,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     bool CanvasAnimatedControl::Tick(
         CanvasSwapChain* target, 
-        Color const& /*clearColor*/, 
         bool areResourcesCreated)
     {
         // Access shared state that's shared between the UI thread and the
         // update/render thread
         bool isPaused;
-        bool needToRestartRenderThread;
         bool forceUpdate;
+        Color clearColor;
+        Size currentSize;
 
-        UpdateAndGetSharedState(&isPaused, &needToRestartRenderThread, &forceUpdate);
+        UpdateAndGetSharedState(&isPaused, &forceUpdate, &clearColor, &currentSize);
 
+        // Process input events; this is always done in order to avoid events
+        // getting missed in the case of anything that restarts the
+        // update/render loop.
         m_input->ProcessEvents();
+
+        //
+        // If the opacity has changed then the swap chain will need to be
+        // recreated before we can draw.
+        //
+
+        RenderTarget* renderTarget = GetCurrentRenderTarget();
+
+        auto backgroundMode = GetBackgroundModeFromClearColor(clearColor);
+        if (backgroundMode != renderTarget->BackgroundMode)
+        {
+            // This will cause the update/render thread to stop, giving the UI
+            // thread an opportunity to recreate the swap chain.
+            return false;
+        }
 
         if (isPaused)
         {
             // Prevents drawing logic from occurring while control is paused.
             areResourcesCreated = false;
         }
-
-        auto clearColor = GetClearColor();
 
         bool updated = true;
 
@@ -785,8 +786,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             //  - the current render target won't be updated by the UI thread
             //    while the update/render thread is running
             //
-            RenderTarget* renderTarget = GetCurrentRenderTarget();
-            auto currentSize = GetCurrentSize();
             if (renderTarget->Size != currentSize)
             {
                 ThrowIfFailed(target->ResizeBuffersWithSize(currentSize.Width, currentSize.Height));
@@ -797,16 +796,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(target->Present());
         }
 
-        if (needToRestartRenderThread)
-        {
-            // Returning false out of here will stop the worker thread.
-            return false;
-        }
-
         return areResourcesCreated;
     }
 
-    void CanvasAnimatedControl::UpdateAndGetSharedState(bool* isPaused, bool* needToRestartRenderThread, bool* forceUpdate)
+    void CanvasAnimatedControl::UpdateAndGetSharedState(
+        bool* isPaused,
+        bool* forceUpdate,
+        Color* clearColor,
+        Size* currentSize)
     {
         auto lock = GetLock();
 
@@ -819,11 +816,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         *isPaused = m_sharedState.IsPaused;
-        *needToRestartRenderThread = m_sharedState.NeedToRestartRenderThread;
         *forceUpdate = m_sharedState.ForceUpdate;
         
         m_sharedState.ShouldResetElapsedTime = false;
         m_sharedState.ForceUpdate = false;
+
+        lock.unlock();
+
+        // TODO: this is bouncing BaseControl's mutex.  Ideally we'd have only
+        // one mutex used for m_sharedState and BaseControl's state.
+        *clearColor = GetClearColor();
+        *currentSize = GetCurrentSize();
     }
 
     bool CanvasAnimatedControl::Update(bool forceUpdate)

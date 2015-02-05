@@ -272,13 +272,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Changed() = 0;
 
-        //
-        // TODO #3276: Combine ChangedClearColor and ChangedSize into one function.
-        //
-        virtual void ChangedClearColor(bool differentAlphaMode) = 0;
-
-        virtual void ChangedSize() = 0;
-
         virtual void Unloaded() = 0;
 
         void CheckIsOnUIThread()
@@ -390,12 +383,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_currentSize;
         }
 
-    private:
         std::unique_lock<std::mutex> GetLock()
         {
             return std::unique_lock<std::mutex>(m_mutex);
         }
 
+        static CanvasBackground GetBackgroundModeFromClearColor(Color const& clearColor)
+        {
+            return clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
+        }
+
+    private:
         void SetClearColor(Color const& value)
         {
             auto lock = GetLock();
@@ -408,15 +406,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 return;
             }
 
-            const bool wasOpaque = m_clearColor.A == 255;
-            const bool isOpaque = value.A == 255;
-            const bool differentAlphaMode = wasOpaque != isOpaque;
-
             m_clearColor = value;
 
             lock.unlock();
 
-            ChangedClearColor(differentAlphaMode);
+            Changed();
         }
 
         template<typename FN>
@@ -434,7 +428,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             if (IsSet(flags, RunWithDeviceFlags::NewlyCreatedDevice))
                 m_currentRenderTarget = RenderTarget{};
 
-            auto backgroundMode = clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
+            auto backgroundMode = GetBackgroundModeFromClearColor(clearColor);
 
             // CanvasControl will recreate its CanvasImageSource if any of these
             // properties are different.  CanvasAnimatedControl is able to
@@ -546,7 +540,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         m_currentSize = newSize;
                         lock.unlock();
 
-                        ChangedSize();
+                        Changed();
                     }
                 });
         }

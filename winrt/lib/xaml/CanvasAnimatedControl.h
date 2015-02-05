@@ -153,7 +153,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         struct SharedState
         {
             bool IsPaused;
-            bool NeedToRestartRenderThread;
             bool ForceUpdate;
             bool IsStepTimerFixedStep;
             uint64_t TargetElapsedTime;
@@ -212,11 +211,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDrawingSession* drawingSession) override final;
 
         virtual void Changed() override final;
-
-        virtual void ChangedClearColor(bool differentAlphaMode) override final;
-
-        virtual void ChangedSize() override final;
-
         virtual void Unloaded() override final;
 
     private:
@@ -227,10 +221,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         bool Tick(
             CanvasSwapChain* target, 
-            Color const& clearColor,
             bool areResourcesCreated);
 
-        void UpdateAndGetSharedState(bool* isPaused, bool* needToRestartRenderThread, bool* forceUpdate);
+        void UpdateAndGetSharedState(
+            bool* isPaused,
+            bool* forceUpdate,
+            Color* clearColor,
+            Size* currentSize);
 
         bool Update(bool forceUpdate);
 

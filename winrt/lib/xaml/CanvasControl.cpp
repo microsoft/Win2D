@@ -299,16 +299,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return drawEventArgs;
     }
 
-    void CanvasControl::ChangedClearColor(bool)
-    {
-        Changed();
-    }
-
-    void CanvasControl::ChangedSize()
-    {
-        Changed();
-    }
-
     void CanvasControl::Changed()
     {
         if (!IsLoaded())
