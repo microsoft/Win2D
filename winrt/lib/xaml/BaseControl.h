@@ -184,7 +184,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 [&]
                 {
                     ThrowIfFailed(m_drawEventList.Add(value, token));
-                    Changed();
+                    Changed(GetLock());
                 });
         }
 
@@ -270,7 +270,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<drawEventArgs_t> CreateDrawEventArgs(
             ICanvasDrawingSession* drawingSession) = 0;
 
-        virtual void Changed() = 0;
+        enum class ChangeReason
+        {
+            Unknown,
+            ClearColor
+        };
+
+        typedef std::unique_lock<std::mutex> Lock;
+
+        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Unknown) = 0;
 
         virtual void Unloaded() = 0;
 
@@ -332,7 +340,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void ResetRenderTarget()
         {
             m_currentRenderTarget = RenderTarget{};
-            Changed();
+            Changed(GetLock());
         }
 
         RenderTarget* GetCurrentRenderTarget()
@@ -383,18 +391,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_currentSize;
         }
 
-        void GetSharedState(std::unique_lock<std::mutex> const& lock, Color* clearColor, Size* currentSize)
+        void GetSharedState(Lock const& lock, Color* clearColor, Size* currentSize)
         {
-            assert(lock.owns_lock());
-            UNREFERENCED_PARAMETER(lock);
+            MustOwnLock(lock);
 
             *clearColor = m_clearColor;
             *currentSize = m_currentSize;
         }
 
-        std::unique_lock<std::mutex> GetLock()
+        Lock GetLock()
         {
-            return std::unique_lock<std::mutex>(m_mutex);
+            return Lock(m_mutex);
+        }
+
+        void MustOwnLock(Lock const& lock)
+        {
+            assert(lock.owns_lock());
+            UNREFERENCED_PARAMETER(lock);
         }
 
         static CanvasBackground GetBackgroundModeFromClearColor(Color const& clearColor)
@@ -417,9 +430,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             m_clearColor = value;
 
-            lock.unlock();
-
-            Changed();
+            Changed(lock, ChangeReason::ClearColor);
         }
 
         template<typename FN>
@@ -488,7 +499,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_recreatableDeviceManager->SetChangedCallback(
                 [=]
                 {
-                    Changed();
+                    Changed(GetLock());
                 });
         }
 
@@ -516,7 +527,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 [&]
                 {
                     m_isLoaded = true;
-                    Changed();
+                    Changed(GetLock());
                 });
         }
 
@@ -547,9 +558,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     if (m_currentSize != newSize)
                     {
                         m_currentSize = newSize;
-                        lock.unlock();
 
-                        Changed();
+                        Changed(lock);
                     }
                 });
         }

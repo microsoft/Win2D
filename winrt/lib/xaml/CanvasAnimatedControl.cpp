@@ -323,6 +323,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         m_sharedState.IsStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
         m_sharedState.TargetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
+        m_sharedState.NeedsDraw = true;
     }
 
     CanvasAnimatedControl::~CanvasAnimatedControl()
@@ -424,10 +425,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 bool paused = m_sharedState.IsPaused;
 
-                lock.unlock();
-
                 if (!paused)    // TODO: should this be if (paused != !!value)?
-                    Changed();
+                    Changed(lock);
             });
     }
 
@@ -567,7 +566,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void CanvasAnimatedControl::Changed()
+    void CanvasAnimatedControl::Changed(Lock const& lock, ChangeReason reason)
     {
         //
         // This may be called from any thread.
@@ -576,7 +575,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         if (!IsLoaded())
             return;
 
-        auto lock = GetLock();
+        MustOwnLock(lock);
+
+        if (reason == ChangeReason::ClearColor)
+            m_sharedState.NeedsDraw = true;
 
         if (m_changedAction)
             return;
@@ -627,6 +629,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto lock = GetLock();
         m_sharedState.ForceUpdate = true;
+
+        bool needsDraw = m_sharedState.NeedsDraw;
+        bool isPaused = m_sharedState.IsPaused;
+
         lock.unlock();
 
         if (m_renderLoopAction)
@@ -638,9 +644,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
+        if (isPaused && !needsDraw)
+        {
+            //
+            // We don't want to spin up the update/render thread if we're paused
+            // - unless we need to draw (eg because the clear color has changed)
+            //
+            return;
+        }
+
         RunWithRenderTarget(GetCurrentSize(),
             [&] (CanvasSwapChain* rawTarget, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
             {
+                assert(!m_renderLoopAction);
+
                 // The clearColor passed to us is ignored since this needs to be
                 // checked on each tick of the update/render loop.
                 UNREFERENCED_PARAMETER(clearColor);
@@ -648,11 +665,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!rawTarget)
                     return;
 
-                // 
-                // The early exit above, with the design of AnimatedControl, makes
-                // it impossible to ever have two worker threads at the same time.
-                //
-                assert(!m_renderLoopAction);
+                if (!areResourcesCreated && !needsDraw)
+                {
+                    //
+                    // If resources aren't created then there's no point
+                    // spinning up the update/render thread.
+                    //
+                    return;
+                }
 
                 ComPtr<CanvasSwapChain> target(rawTarget);
                 m_stepTimer.ResetElapsedTime();
@@ -708,16 +728,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ThrowHR(errorCode);
                 }
         
-                auto lock = GetLock();
-
-                bool isPaused = m_sharedState.IsPaused;
-
-                lock.unlock();
-
-                if (!isPaused)
-                {
-                    Changed();
-                }
+                Changed(GetLock());
             });
     }   
 
@@ -736,26 +747,43 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasSwapChain* target, 
         bool areResourcesCreated)
     {
-        // Access shared state that's shared between the UI thread and the
-        // update/render thread
-        bool isPaused;
-        bool forceUpdate;
-        Color clearColor;
-        Size currentSize;
+        RenderTarget* renderTarget = GetCurrentRenderTarget();
 
-        UpdateAndGetSharedState(&isPaused, &forceUpdate, &clearColor, &currentSize);
-
+        //
         // Process input events; this is always done in order to avoid events
         // getting missed in the case of anything that restarts the
         // update/render loop.
+        //
         m_input->ProcessEvents();
 
         //
-        // If the opacity has changed then the swap chain will need to be
-        // recreated before we can draw.
+        // Access shared state that's shared between the UI thread and the
+        // update/render thread.  This is done in one place in order to hold the
+        // lock for as little time as possible.
         //
 
-        RenderTarget* renderTarget = GetCurrentRenderTarget();
+        auto lock = GetLock();
+
+        m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);
+        m_stepTimer.SetFixedTimeStep(m_sharedState.IsStepTimerFixedStep);
+
+        if (m_sharedState.ShouldResetElapsedTime)
+        {
+            m_stepTimer.ResetElapsedTime();
+        }
+
+        bool isPaused = m_sharedState.IsPaused;
+        bool forceUpdate = m_sharedState.ForceUpdate;
+        
+        m_sharedState.ShouldResetElapsedTime = false;
+        m_sharedState.ForceUpdate = false;
+
+        Color clearColor;
+        Size currentSize;
+        GetSharedState(lock, &clearColor, &currentSize);
+
+        // If the opacity has changed then the swap chain will need to be
+        // recreated before we can draw.
 
         auto backgroundMode = GetBackgroundModeFromClearColor(clearColor);
         if (backgroundMode != renderTarget->BackgroundMode)
@@ -764,6 +792,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // thread an opportunity to recreate the swap chain.
             return false;
         }
+
+        // At this point we know that we're going to draw (unless there's some
+        // kind of failure) so we can reset this flag now.  This is particularly
+        // relevant for the ClearColor, since this indicates that we've
+        // 'consumed' that color.
+        m_sharedState.NeedsDraw = false;
+        
+        lock.unlock();
+
+        //
+        // Now do the update/render for this tick
+        //
 
         if (isPaused)
         {
@@ -799,31 +839,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         return areResourcesCreated;
-    }
-
-    void CanvasAnimatedControl::UpdateAndGetSharedState(
-        bool* isPaused,
-        bool* forceUpdate,
-        Color* clearColor,
-        Size* currentSize)
-    {
-        auto lock = GetLock();
-
-        m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);
-        m_stepTimer.SetFixedTimeStep(m_sharedState.IsStepTimerFixedStep);
-
-        if (m_sharedState.ShouldResetElapsedTime)
-        {
-            m_stepTimer.ResetElapsedTime();
-        }
-
-        *isPaused = m_sharedState.IsPaused;
-        *forceUpdate = m_sharedState.ForceUpdate;
-        
-        m_sharedState.ShouldResetElapsedTime = false;
-        m_sharedState.ForceUpdate = false;
-
-        GetSharedState(lock, clearColor, currentSize);
     }
 
     bool CanvasAnimatedControl::Update(bool forceUpdate)

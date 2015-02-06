@@ -132,7 +132,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    Changed();
+                    Changed(GetLock());
                 });
         }
 
@@ -164,7 +164,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<CanvasDrawEventArgs> CreateDrawEventArgs(
             ICanvasDrawingSession* drawingSession) override final;
 
-        virtual void Changed() override final;
+        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Unknown) override final;
         virtual void Unloaded() override final;
 
     private:

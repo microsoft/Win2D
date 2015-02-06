@@ -105,7 +105,7 @@ namespace
             return CreateDrawEventArgsMethod.WasCalled(drawingSession);
         }
 
-        virtual void Changed() override final
+        virtual void Changed(Lock const&, ChangeReason) override final
         {
             return ChangedMethod.WasCalled();
         }

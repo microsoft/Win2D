@@ -155,6 +155,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             bool IsStepTimerFixedStep;
             uint64_t TargetElapsedTime;
             bool ShouldResetElapsedTime;
+            bool NeedsDraw;
         };
 
         SharedState m_sharedState;
@@ -208,7 +209,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<CanvasAnimatedDrawEventArgs> CreateDrawEventArgs(
             ICanvasDrawingSession* drawingSession) override final;
 
-        virtual void Changed() override final;
+        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Unknown) override final;
         virtual void Unloaded() override final;
 
     private:
@@ -217,12 +218,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool Tick(
             CanvasSwapChain* target, 
             bool areResourcesCreated);
-
-        void UpdateAndGetSharedState(
-            bool* isPaused,
-            bool* forceUpdate,
-            Color* clearColor,
-            Size* currentSize);
 
         bool Update(bool forceUpdate);
 

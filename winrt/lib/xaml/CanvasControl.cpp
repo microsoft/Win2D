@@ -299,12 +299,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return drawEventArgs;
     }
 
-    void CanvasControl::Changed()
+    void CanvasControl::Changed(Lock const& lock, ChangeReason)
     {
         if (!IsLoaded())
             return;
 
-        auto lock = GetLock();
+        MustOwnLock(lock);
 
         if (m_renderingEventRegistration)
             return;

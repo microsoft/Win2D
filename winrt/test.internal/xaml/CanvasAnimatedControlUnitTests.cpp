@@ -247,16 +247,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 return CanvasAnimatedControlFixture::CreateTestSwapChain(swapChainManager, device);
             });
 
-        //
-        // The put_ClearColor causes recreation in the following way:
-        //
-        // A flag is set in the control to exit out of the worker thread.
-        // Given that the worker thread is exited, the UI thread is free to 
-        // start it again. Before doing this, i.e. before RunWithRenderTarget's
-        // payload, there's a check to verify whether the target needs updating.
-        // Re-creation happens there.
-        //
-
         Assert::AreEqual(S_OK, f.Control->put_ClearColor(opaqueColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
@@ -1296,6 +1286,138 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.ClearCanceledActions();
 
         Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race0)
+    {
+        WhenBackgroundModeChanges(0);
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race1)
+    {
+        WhenBackgroundModeChanges(1);
+    }
+
+    void WhenBackgroundModeChanges(int race)
+    {
+        Color transparentColor { 0, 0, 0, 0 };
+        Color opaqueColor { 255, 255, 255, 255 };
+
+        Fixture f;
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(FALSE)); // ensure update/draw is always called
+        ThrowIfFailed(f.Control->put_ClearColor(transparentColor));
+        f.Load();
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.ExpectRender();
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        ThrowIfFailed(f.Control->put_ClearColor(opaqueColor));
+
+        // After the put_ClearColor then either Tick or DoChanged could happen
+        // first (since Tick runs on the update/render thread, while DoChanged
+        // runs on the UI thread).
+        switch (race)
+        {
+        case 0:
+            f.Adapter->Tick();
+            f.Adapter->DoChanged();
+            break;
+
+        case 1:
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+            break;
+
+        default:
+            Assert::Fail();
+        }
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.ExpectRender();
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+    }
+
+    struct AsyncCreateResourcesFixture : public Fixture
+    {
+        ComPtr<MockAsyncAction> Action;
+
+        AsyncCreateResourcesFixture()
+            : Action(Make<MockAsyncAction>())
+        {
+            // ensure update/draw is always called
+            ThrowIfFailed(Control->put_IsFixedTimeStep(FALSE));
+
+            auto onCreateResources = Callback<Animated_CreateResourcesEventHandler>(
+                [&] (IInspectable*, ICanvasCreateResourcesEventArgs* args)
+                {
+                    return ExceptionBoundary(
+                        [=]
+                        {
+                            ThrowIfFailed(args->TrackAsyncAction(Action.Get()));
+                        });
+                });
+            AddCreateResourcesHandler(onCreateResources.Get());
+        
+            Load();
+        }
+
+        void DoChangedAndTick()
+        {
+            Adapter->DoChanged();
+            Adapter->Tick();
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhileWaitingForAsyncCreateResources_OnlySingleFrameIsPresented)
+    {
+        AsyncCreateResourcesFixture f;
+
+        // We expect there to only be one frame presented while the async action
+        // is in progress
+        f.ExpectRender();
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.DoChangedAndTick();
+        }
+
+        // When the action completes we expect there to be a frame presented for
+        // each changed/tick that happens.
+        f.Action->SetResult(S_OK);
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.ExpectRender();
+            f.DoChangedAndTick();
+        }
+    }
+    
+    TEST_METHOD_EX(CanvasAnimatedControl_When_ClearColorIsChanged_WhileWaitingForAsyncCreateResource_ThenNewFrameIsPresented)
+    {
+        Color anyColors[] {
+            { 1, 2, 3, 4 },
+            { 2, 3, 4, 5 },
+            { 3, 4, 5, 6 } };
+
+        AsyncCreateResourcesFixture f;
+
+        f.ExpectRender();
+        f.DoChangedAndTick();
+
+        for (auto anyColor : anyColors)
+        {
+            ThrowIfFailed(f.Control->put_ClearColor(anyColor));
+            f.ExpectRender();
+            f.DoChangedAndTick();
+            f.DoChangedAndTick();
+        }
     }
 };
 
