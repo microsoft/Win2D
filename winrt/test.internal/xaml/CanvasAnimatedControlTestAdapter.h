@@ -89,7 +89,7 @@ public:
         return m_outstandingWorkItemAsyncAction;
     }
 
-    bool IsUpdateRenderLoopStillActive() const
+    bool IsUpdateRenderLoopActive() const
     {
         return bool(m_currentTickFn);
     }

@@ -311,12 +311,12 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged();
 
         f.Adapter->Tick();
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopStillActive());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
         f.Adapter->DoChanged();
 
         ThrowIfFailed(f.Control->put_ClearColor(Color{ 1, 2, 3, 4 }));
         f.Adapter->Tick();
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopStillActive());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
         f.Adapter->DoChanged();       
     }
 
@@ -439,7 +439,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
             for (int i = 0; i < 5; ++i)
             {
                 Adapter->Tick();
-                Assert::IsTrue(Adapter->IsUpdateRenderLoopStillActive());
+                Assert::IsTrue(Adapter->IsUpdateRenderLoopActive());
                 Adapter->DoChanged();
             }
 
@@ -1186,11 +1186,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
             CreateControl();
         }
 
-        bool IsUpdateRenderLoopRunning()
-        {
-            return static_cast<bool>(Adapter->m_outstandingWorkItemAsyncAction);
-        }
-
         void ExpectRender()
         {
             SwapChain->PresentMethod.SetExpectedCalls(1);
@@ -1249,7 +1244,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
     TEST_METHOD_EX(CanvasAnimatedControl_OnConstruction_UpdateRenderLoopIsNotRunning)
     {
         Fixture f;
-        Assert::IsFalse(f.IsUpdateRenderLoopRunning());
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenLoaded_SingleFrameIsPresented)
@@ -1262,7 +1257,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.ExpectRender();
         f.RenderSingleFrame();
 
-        Assert::IsTrue(f.IsUpdateRenderLoopRunning());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenLoadedWhilePaused_SingleFrameIsPresented_AndThen_UpdateRenderLoopIsNotRunning)
@@ -1277,7 +1272,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.ExpectRender();
         f.RenderSingleFrame();
 
-        Assert::IsFalse(f.IsUpdateRenderLoopRunning());        
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileRenderLoopIsPending)
@@ -1290,17 +1285,17 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.AllowAnyRendering();
         f.RenderSingleFrame();
 
-        Assert::IsTrue(f.IsUpdateRenderLoopRunning());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
 
         f.Control.Reset();
 
-        Assert::IsTrue(f.IsUpdateRenderLoopRunning());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
 
         f.RaiseUnloadedEvent();
 
         f.ClearCanceledActions();
 
-        Assert::IsFalse(f.IsUpdateRenderLoopRunning());
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
     }
 };
 
