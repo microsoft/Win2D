@@ -805,7 +805,24 @@ TEST_CLASS(CanvasAnimatedControlTests)
     // that CanvasAnimatedControl is hooked up to StepTimer.
     //
 
-    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPaused_UpdatesAndDrawsAreNotCalled)
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenInitiallyPaused_UpdatesAndDrawsAreNotCalled)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+        f.Load();
+        
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.RenderSingleFrame();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPausedAfterUpdate_UpdatesAndDrawsAreNotCalled)
     {
         UpdateRenderFixture f;
         f.GetIntoSteadyState();
@@ -817,6 +834,35 @@ TEST_CLASS(CanvasAnimatedControlTests)
         for (int i = 0; i < 10; ++i)
         {
             f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.RenderSingleFrame();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPausedAfterUpdateAndClearColorChanged_DrawIsCalled)
+    {
+        Color anyOpaqueColor { 1, 2, 3, 4 };
+        Color anyOtherOpaqueColor { 5, 6, 7, 8 };
+
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_ClearColor(anyOpaqueColor));
+        f.GetIntoSteadyState();
+
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.Adapter->DoChanged();
+        f.RenderSingleFrame();
+
+        ThrowIfFailed(f.Control->put_ClearColor(anyOtherOpaqueColor));
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
             f.RenderSingleFrame();
         }
     }
@@ -1306,6 +1352,15 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.RenderSingleFrame();
 
         Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+
+        // Confirm that the update/render loop doesn't get restarted
+        for (int i = 0; i < 5; ++i)
+        {
+            f.Adapter->DoChanged();
+            Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+            f.RenderSingleFrame();
+            Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+        }
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileRenderLoopIsPending)

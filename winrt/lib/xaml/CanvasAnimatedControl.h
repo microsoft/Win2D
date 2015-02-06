@@ -141,6 +141,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IAsyncAction> m_renderLoopAction;
 
         StepTimer m_stepTimer;
+        bool m_hasUpdated;
 
         //
         // The variables below are protected by BaseControl's mutex

@@ -312,8 +312,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedControlAdapter> adapter)
         : BaseControl<CanvasAnimatedControlTraits>(adapter)
-        , m_sharedState{}
         , m_stepTimer(adapter)
+        , m_hasUpdated(false)
+        , m_sharedState{}
     {
         CreateSwapChainPanel();
 
@@ -741,7 +742,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     bool CanvasAnimatedControl::Tick(
-        CanvasSwapChain* target, 
+        CanvasSwapChain*, 
         bool areResourcesCreated)
     {
         RenderTarget* renderTarget = GetCurrentRenderTarget();
@@ -789,6 +790,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // thread an opportunity to recreate the swap chain.
             return false;
         }
+        
+        bool forceDraw = m_sharedState.NeedsDraw;
 
         // At this point we know that we're going to draw (unless there's some
         // kind of failure) so we can reset this flag now.  This is particularly
@@ -802,18 +805,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Now do the update/render for this tick
         //
 
-        if (isPaused)
-        {
-            // Prevents drawing logic from occurring while control is paused.
-            areResourcesCreated = false;
-        }
+        bool updatedThisTick = false;
+        if (areResourcesCreated && !isPaused)
+            updatedThisTick = Update(forceUpdate);
 
-        bool updated = true;
+        m_hasUpdated |= updatedThisTick;
 
-        if (areResourcesCreated)
-            updated = Update(forceUpdate);
-
-        if (updated)
+        //
+        // We only ever Draw/Present if an Update has actually happened.  This
+        // results in us effectively busy-waiting for the next time to update.
+        // This is desireable since using Present to wait for the vsync can
+        // result in missed frames.
+        //
+        if (updatedThisTick || forceDraw)
         {
             //
             // If the control's size has changed then the swapchain's buffers
@@ -839,19 +843,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     //  - the current render target won't be updated by the UI thread
                     //    while the update/render thread is running
                     //
-                    ThrowIfFailed(target->ResizeBuffersWithSize(currentSize.Width, currentSize.Height));
+                    ThrowIfFailed(renderTarget->Target->ResizeBuffersWithSize(currentSize.Width, currentSize.Height));
                     renderTarget->Size = currentSize;
                 }
             }
 
             if (renderTarget->Target)
             {
-                Draw(target, clearColor, areResourcesCreated);
-                ThrowIfFailed(target->Present());
+                bool invokeDrawHandlers = (areResourcesCreated && m_hasUpdated);
+
+                Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers);
+                ThrowIfFailed(renderTarget->Target->Present());
             }
         }
 
-        return areResourcesCreated;
+        return areResourcesCreated && !isPaused;
     }
 
     bool CanvasAnimatedControl::Update(bool forceUpdate)
