@@ -693,30 +693,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     HRESULT CanvasAnimatedControl::OnRenderLoopCompleted(IAsyncAction* asyncAction, AsyncStatus asyncStatus)
     {
-        m_renderLoopAction.Reset();
+        return ExceptionBoundary(
+            [&]
+            {
+                m_renderLoopAction.Reset();
 
-        if (asyncStatus == AsyncStatus::Error)
-        {
-            auto asyncInfo = As<IAsyncInfo>(asyncAction);
+                if (asyncStatus == AsyncStatus::Error)
+                {
+                    auto asyncInfo = As<IAsyncInfo>(asyncAction);
 
-            HRESULT errorCode;
-            ThrowIfFailed(asyncInfo->get_ErrorCode(&errorCode));
+                    HRESULT errorCode;
+                    ThrowIfFailed(asyncInfo->get_ErrorCode(&errorCode));
             
-            return errorCode;
-        }
+                    ThrowHR(errorCode);
+                }
         
-        auto lock = GetLock();
+                auto lock = GetLock();
 
-        bool isPaused = m_sharedState.IsPaused;
+                bool isPaused = m_sharedState.IsPaused;
 
-        lock.unlock();
+                lock.unlock();
 
-        if (!isPaused)
-        {
-            Changed();
-        }
-
-        return S_OK;
+                if (!isPaused)
+                {
+                    Changed();
+                }
+            });
     }   
 
     void CanvasAnimatedControl::CreateSwapChainPanel()
