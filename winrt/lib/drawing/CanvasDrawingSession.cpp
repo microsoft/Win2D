@@ -2136,6 +2136,104 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_defaultTextFormat.Get();
     }
 
+    
+    //
+    // DrawGeometry
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrush(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush)
+    {
+        return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColor(
+        ICanvasGeometry* geometry,
+        Color color)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrushAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* ,
+        ICanvasBrush* ,
+        float ,
+        ICanvasStrokeStyle* )
+    {
+        return E_NOTIMPL;
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* geometry,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            color, 
+            strokeWidth, 
+            strokeStyle);
+    }
+
+
+    //
+    // FillGeometry
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithBrush(
+        ICanvasGeometry* ,
+        ICanvasBrush* )
+    {
+        return E_NOTIMPL;
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithColor(
+        ICanvasGeometry* ,
+        Color )
+    {
+        return E_NOTIMPL;
+    }
+
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {

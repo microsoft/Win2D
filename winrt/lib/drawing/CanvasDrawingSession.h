@@ -839,6 +839,59 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float h,
             ABI::Windows::UI::Color color,
             ICanvasTextFormat* format) override;
+        
+        //
+        // DrawGeometry
+        //
+
+        // 0 additional parameters
+        
+        IFACEMETHOD(DrawGeometryWithBrush)(
+            ICanvasGeometry* geometry,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawGeometryWithColor)(
+            ICanvasGeometry* geometry,
+            ABI::Windows::UI::Color color) override;
+
+        // 1 additional parameter (StrokeWidth)
+
+        IFACEMETHOD(DrawGeometryWithBrushAndStrokeWidth)(
+            ICanvasGeometry* geometry,
+            ICanvasBrush* brush,
+            float strokeWidth) override;
+
+        IFACEMETHOD(DrawGeometryWithColorAndStrokeWidth)(
+            ICanvasGeometry* geometry,
+            ABI::Windows::UI::Color color,
+            float strokeWidth) override;
+
+        // 2 additional parameters (StrokeWidth, StrokeStyle)
+
+        IFACEMETHOD(DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle)(
+            ICanvasGeometry* geometry,
+            ICanvasBrush* brush,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+
+        IFACEMETHOD(DrawGeometryWithColorAndStrokeWidthAndStrokeStyle)(
+            ICanvasGeometry* geometry,
+            ABI::Windows::UI::Color color,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle) override;
+
+        //
+        // FillGeometry
+        //
+
+        IFACEMETHOD(FillGeometryWithBrush)(
+            ICanvasGeometry* geometry,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(FillGeometryWithColor)(
+            ICanvasGeometry* geometry,
+            ABI::Windows::UI::Color color) override;
 
         //
         // State properties

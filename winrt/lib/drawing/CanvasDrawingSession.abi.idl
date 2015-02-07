@@ -919,6 +919,63 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasTextFormat* format);
 
         //
+        // DrawGeometry
+        //
+
+        [overload("DrawGeometry"), default_overload]
+        HRESULT DrawGeometryWithBrush(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryWithColor(
+            [in] CanvasGeometry* geometry,
+            [in] Windows.UI.Color color);
+
+        // 1 additional parameter (StrokeWidth)
+
+        [overload("DrawGeometry"), default_overload]
+        HRESULT DrawGeometryWithBrushAndStrokeWidth(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryWithColorAndStrokeWidth(
+            [in] CanvasGeometry* geometry,
+            [in] Windows.UI.Color color,
+            [in] float strokeWidth);
+
+        // 2 additional parameters (StrokeWidth, StrokeStyle)
+
+        [overload("DrawGeometry"), default_overload]
+        HRESULT DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            [in] CanvasGeometry* geometry,
+            [in] Windows.UI.Color color,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
+        //
+        // FillGeometry
+        //
+        [overload("FillGeometry"), default_overload]
+        HRESULT FillGeometryWithBrush(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush);
+
+        [overload("FillGeometry")]
+        HRESULT FillGeometryWithColor(
+            [in] CanvasGeometry* geometry,
+            [in] Windows.UI.Color color);
+
+        //
         // State properties
         //
 

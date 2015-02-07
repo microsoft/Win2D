@@ -482,6 +482,9 @@
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl">
       <Filter>drawing</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGeometry.abi.idl">
+      <Filter>drawing</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl">
       <Filter>drawing</Filter>
     </None>

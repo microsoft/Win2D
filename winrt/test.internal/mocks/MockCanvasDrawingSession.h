@@ -156,6 +156,16 @@ namespace canvas
         DONT_EXPECT(DrawTextAtPointCoordsWithColorAndFormat , HSTRING, float, float, Color, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtRectCoordsWithColorAndFormat  , HSTRING, float, float, float, float, Color, ICanvasTextFormat*);
 
+        DONT_EXPECT(DrawGeometryWithBrush                            , ICanvasGeometry*, ICanvasBrush*);
+        DONT_EXPECT(DrawGeometryWithColor                            , ICanvasGeometry*, Color);
+        DONT_EXPECT(DrawGeometryWithBrushAndStrokeWidth              , ICanvasGeometry*, ICanvasBrush*, float);
+        DONT_EXPECT(DrawGeometryWithColorAndStrokeWidth              , ICanvasGeometry*, Color, float);
+        DONT_EXPECT(DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawGeometryWithColorAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, Color, float, ICanvasStrokeStyle*);
+
+        DONT_EXPECT(FillGeometryWithBrush, ICanvasGeometry*, ICanvasBrush*);
+        DONT_EXPECT(FillGeometryWithColor, ICanvasGeometry*, Color);
+
         DONT_EXPECT(get_Antialiasing     , CanvasAntialiasing*);
         DONT_EXPECT(put_Antialiasing     , CanvasAntialiasing);
         DONT_EXPECT(get_Blend            , CanvasBlend*);
