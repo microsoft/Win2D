@@ -460,7 +460,50 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Execute(Size{ ResizeFixture::InitialWidth, ResizeFixture::InitialHeight });
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToZero_ThenSwapChainIsSetToNull)
+    {
+        ResizeFixture f;
 
+        // Resizing to zero should stop the update/render loop.
+        f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.SetExpectedCalls(0);
+        f.UserControl->Resize(Size{ 0, 0 });
+        f.Adapter->Tick();
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+
+        // The UI thread change handler should then restart the update/render loop.
+        f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.SetExpectedCalls(1, [](IDXGISwapChain* swapChain)
+            {
+                Assert::IsNull(swapChain);
+                return S_OK;
+            });
+
+        f.Adapter->DoChanged();
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+
+        // Should now be in a steady state where there are no more calls to ResizeBuffers or SetSwapChain.
+        f.Execute(Size{ 0, 0 });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToZero_ThenDrawIsNotCalled)
+    {
+        ResizeFixture f;
+
+        f.UserControl->Resize(Size{ 0, 0 });
+        f.Adapter->Tick();
+        f.Adapter->DoChanged();
+
+        // Should now be in a steady state where Update is called but not Draw.
+        MockEventHandler<Animated_UpdateEventHandler> onUpdate;
+        MockEventHandler<Animated_DrawEventHandler> onDraw;
+
+        f.AddUpdateHandler(onUpdate.Get());
+        f.AddDrawHandler(onDraw.Get());
+
+        onUpdate.ExpectAtLeastOneCall();
+        onDraw.SetExpectedCalls(0);
+
+        f.Execute(Size{ 0, 0 });
+    }
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess
     {

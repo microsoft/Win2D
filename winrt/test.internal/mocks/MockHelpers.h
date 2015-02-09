@@ -526,6 +526,13 @@ public:
         m_nextReturnValue = S_OK;
     }
     
+    void ExpectAtLeastOneCall()
+    {
+        m_callCounter.ExpectAtLeastOneCall();
+        m_function = nullptr;
+        m_nextReturnValue = S_OK;
+    }
+
     int GetCurrentCallCount() const
     {
         return m_callCounter.GetCurrentCallCount();

@@ -662,9 +662,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // checked on each tick of the update/render loop.
                 UNREFERENCED_PARAMETER(clearColor);
 
-                if (!rawTarget)
-                    return;
-
                 if (!areResourcesCreated && !needsDraw)
                 {
                     //
@@ -785,8 +782,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // If the opacity has changed then the swap chain will need to be
         // recreated before we can draw.
 
-        auto backgroundMode = GetBackgroundModeFromClearColor(clearColor);
-        if (backgroundMode != renderTarget->BackgroundMode)
+        if (renderTarget->Target &&
+            GetBackgroundModeFromClearColor(clearColor) != renderTarget->BackgroundMode)
         {
             // This will cause the update/render thread to stop, giving the UI
             // thread an opportunity to recreate the swap chain.
@@ -820,22 +817,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             //
             // If the control's size has changed then the swapchain's buffers
-            // need to be resized as appropriate.  This can be done on the
-            // update/render thread because:
-            //
-            //  - no XAML methods are called
-            //
-            //  - the current render target won't be updated by the UI thread
-            //    while the update/render thread is running
+            // need to be resized as appropriate.
             //
             if (renderTarget->Size != currentSize)
             {
-                ThrowIfFailed(target->ResizeBuffersWithSize(currentSize.Width, currentSize.Height));
-                renderTarget->Size = currentSize;
+                if (currentSize.Width <= 0 || currentSize.Height <= 0 || !renderTarget->Target)
+                {
+                    //
+                    // Switching between zero and non-zero sized rendertargets requires calling
+                    // CanvasSwapChainPanel::put_SwapChain, so must be done on the UI thread.
+                    // We must stop the update/render thread to allow this to happen.
+                    //
+                    return false;
+                }
+                else
+                {
+                    // This can be done on the update/render thread because:
+                    //
+                    //  - no XAML methods are called
+                    //
+                    //  - the current render target won't be updated by the UI thread
+                    //    while the update/render thread is running
+                    //
+                    ThrowIfFailed(target->ResizeBuffersWithSize(currentSize.Width, currentSize.Height));
+                    renderTarget->Size = currentSize;
+                }
             }
 
-            Draw(target, clearColor, areResourcesCreated);
-            ThrowIfFailed(target->Present());
+            if (renderTarget->Target)
+            {
+                Draw(target, clearColor, areResourcesCreated);
+                ThrowIfFailed(target->Present());
+            }
         }
 
         return areResourcesCreated;

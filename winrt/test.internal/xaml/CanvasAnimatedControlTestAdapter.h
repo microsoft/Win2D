@@ -68,6 +68,11 @@ public:
         return swapChainPanel;
     }
 
+    StubSwapChainPanel* GetSwapChainPanel()
+    {
+        return m_swapChainPanel.Get();
+    }
+
     std::function<void()> m_beforeLoopFn;
     std::function<bool()> m_currentTickFn;
     std::function<void()> m_afterLoopFn;
