@@ -37,6 +37,7 @@ under the License.
         
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" Margin="0, 0, 10, 0">
             <ToggleButton Content="Pause" Checked="Pause_Checked" Unchecked="Pause_Unchecked"/>
+            <Button x:Name="stepButton" Content="Step" Click="Step_Checked" IsEnabled="false" />
             <ComboBox x:Name="clearColor" Width="200" Height="40" ItemsSource="{Binding Colors}" SelectionChanged="clearColor_SelectionChanged">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>

@@ -125,18 +125,33 @@ namespace ExampleGallery
             if (pointerPoints.Count > 0) pointerPoints.Dequeue();
 
             updatesThisDraw++;
+
+            if (step)
+            {
+                sender.Paused = true;
+                step = false;
+            }
         }
 
         private void Pause_Checked(object sender, RoutedEventArgs e)
         {
             var button = (ToggleButton)sender;
             this.animatedControl.Paused = button.IsChecked.Value;
+            this.stepButton.IsEnabled = true;
         }
 
         private void Pause_Unchecked(object sender, RoutedEventArgs e)
         {
             var button = (ToggleButton)sender;
             this.animatedControl.Paused = button.IsChecked.Value;
+            this.stepButton.IsEnabled = false;
+        }
+
+        bool step = false;
+        private void Step_Checked(object sender, RoutedEventArgs e)
+        {
+            step = true;
+            this.animatedControl.Paused = false;
         }
 
         void OnAnimatedControlPointerPressed(object sender, PointerEventArgs args)
