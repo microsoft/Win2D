@@ -146,13 +146,17 @@ namespace ExampleGallery
 
         void OnAnimatedControlPointerMoved(object sender, PointerEventArgs args)
         {
-            if (args.CurrentPoint.IsInContact)
+            foreach (var point in args.GetIntermediatePoints())
             {
-                if (pointerPoints.Count > pointerPointLimit)
+                if (point.IsInContact)
                 {
-                    pointerPoints.Dequeue();
+                    if (pointerPoints.Count > pointerPointLimit)
+                    {
+                        pointerPoints.Dequeue();
+                    }
+
+                    pointerPoints.Enqueue(new Vector2((float)point.Position.X, (float)point.Position.Y));
                 }
-                pointerPoints.Enqueue(new Vector2((float)args.CurrentPoint.Position.X, (float)args.CurrentPoint.Position.Y));
             }
         }
 
