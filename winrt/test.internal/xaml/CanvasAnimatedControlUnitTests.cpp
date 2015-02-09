@@ -18,6 +18,13 @@
 #include "BasicControlFixture.h"
 #include "MockCanvasSwapChain.h"
 
+static Color const AnyColor                 {   1,   2,   3,   4 };
+static Color const AnyOtherColor            {   5,   6,   7,   8 };
+static Color const AnyOpaqueColor           { 255,   2,   3,   4 };
+static Color const AnyOtherOpaqueColor      { 255,   5,   6,   7 };
+static Color const AnyTranslucentColor      { 254, 253, 252, 251 };
+static Color const AnyOtherTranslucentColor { 250, 249, 248, 247 };
+
 TEST_CLASS(CanvasAnimatedControl_DrawArgs)
 {
     struct Fixture
@@ -232,9 +239,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     TEST_METHOD_EX(CanvasAnimatedControl_RecreatedSwapChainHasCorrectAlphaMode)
     {
-        Color opaqueColor{ 255, 255, 255, 255 };
-        Color translucentColor{ 254, 254, 254, 254 };
-
         CanvasAnimatedControlFixture f;
         auto swapChainManager = f.Adapter->SwapChainManager;
         f.Load();
@@ -247,7 +251,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 return CanvasAnimatedControlFixture::CreateTestSwapChain(swapChainManager, device);
             });
 
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(opaqueColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOpaqueColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
 
@@ -258,18 +262,13 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 return CanvasAnimatedControlFixture::CreateTestSwapChain(swapChainManager, device);
             });
 
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(translucentColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyTranslucentColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RedundantClearColorChangesDoNotCauseRecreation)
     {
-        Color opaqueColor{ 255, 255, 255, 255 };
-        Color otherOpaqueColor{ 255, 12, 34, 56 };
-        Color translucentColor{ 254, 254, 254, 254 };
-        Color otherTranslucentColor{ 200, 200, 200, 200 };
-
         CanvasAnimatedControlFixture f;
         auto swapChainManager = f.Adapter->SwapChainManager;
         f.Load();
@@ -277,19 +276,19 @@ TEST_CLASS(CanvasAnimatedControlTests)
         
         f.ExpectOneCreateSwapChain();
 
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(opaqueColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOpaqueColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(otherOpaqueColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOtherOpaqueColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
 
         f.ExpectOneCreateSwapChain();
 
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(translucentColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyTranslucentColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(otherTranslucentColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOtherTranslucentColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
     }
@@ -304,7 +303,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
         f.Adapter->DoChanged();
 
-        ThrowIfFailed(f.Control->put_ClearColor(Color{ 1, 2, 3, 4 }));
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
         f.Adapter->Tick();
         Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
         f.Adapter->DoChanged();       
@@ -841,11 +840,8 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPausedAfterUpdateAndClearColorChanged_DrawIsCalled)
     {
-        Color anyOpaqueColor { 1, 2, 3, 4 };
-        Color anyOtherOpaqueColor { 5, 6, 7, 8 };
-
         UpdateRenderFixture f;
-        ThrowIfFailed(f.Control->put_ClearColor(anyOpaqueColor));
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
         f.GetIntoSteadyState();
 
         f.OnUpdate.SetExpectedCalls(0);
@@ -856,7 +852,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged();
         f.RenderSingleFrame();
 
-        ThrowIfFailed(f.Control->put_ClearColor(anyOtherOpaqueColor));
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOtherColor));
         f.OnDraw.SetExpectedCalls(1);
 
         for (int i = 0; i < 10; ++i)
@@ -1260,8 +1256,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
 
         Assert::IsFalse(f.IsChangedActionRunning());
 
-        Color opaque = { 255, 255, 255, 255 };
-        ThrowIfFailed(f.Control->put_ClearColor(opaque));
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
 
         Assert::IsTrue(f.IsChangedActionRunning());
     }
@@ -1449,12 +1444,9 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 
     void WhenBackgroundModeChanges(int race)
     {
-        Color transparentColor { 0, 0, 0, 0 };
-        Color opaqueColor { 255, 255, 255, 255 };
-
         Fixture f;
         ThrowIfFailed(f.Control->put_IsFixedTimeStep(FALSE)); // ensure update/draw is always called
-        ThrowIfFailed(f.Control->put_ClearColor(transparentColor));
+        ThrowIfFailed(f.Control->put_ClearColor(AnyTranslucentColor));
         f.Load();
 
         for (int i = 0; i < 5; ++i)
@@ -1464,7 +1456,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
             f.Adapter->Tick();
         }
 
-        ThrowIfFailed(f.Control->put_ClearColor(opaqueColor));
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
 
         // After the put_ClearColor then either Tick or DoChanged could happen
         // first (since Tick runs on the update/render thread, while DoChanged
@@ -1796,8 +1788,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         InputFixture f;
         f.AllowWorkerThreadToStart();
 
-        Color opaqueColor{ 255, 255, 255, 255 };
-        f.Control->put_ClearColor(opaqueColor);
+        f.Control->put_ClearColor(AnyOpaqueColor);
         f.Adapter->DoChanged();
         f.Adapter->Tick();
 
