@@ -1965,3 +1965,82 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         f.TestEvent(L"PointerWheelChanged", f.CoreIndependentInputSource->add_PointerWheelChangedMethod, &ICorePointerInputSource::add_PointerWheelChanged);
     }
 };
+
+TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
+{
+    class Fixture : public CanvasAnimatedControlFixture
+    {
+    public:
+        ComPtr<MockSuspendingEventArgs> SuspendingEventArgs;
+        ComPtr<MockSuspendingOperation> SuspendingOperation;
+        ComPtr<MockSuspendingDeferral> SuspendingDeferral;
+
+        Fixture()
+        {
+            Load();
+            Adapter->DoChanged();
+
+            SuspendingEventArgs = Make<MockSuspendingEventArgs>();
+            SuspendingOperation = Make<MockSuspendingOperation>();
+            SuspendingDeferral = Make<MockSuspendingDeferral>();
+
+            SuspendingEventArgs->get_SuspendingOperationMethod.SetExpectedCalls(1, [=](ISuspendingOperation** value)
+                {
+                    return SuspendingOperation.CopyTo(value);
+                });
+
+            SuspendingOperation->GetDeferralMethod.SetExpectedCalls(1, [=](ISuspendingDeferral** value)
+                {
+                    return SuspendingDeferral.CopyTo(value);
+                });
+
+            SuspendingDeferral->CompleteMethod.SetExpectedCalls(1);
+        }
+
+        MockCanvasDevice* GetDevice()
+        {
+            ComPtr<ICanvasDevice> device;
+            Control->get_Device(&device);
+
+            return static_cast<MockCanvasDevice*>(device.Get());
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenSuspendingEventRaised_TrimCalledOnDeviceAfterRenderThreadStops)
+    {
+        Fixture f;
+
+        // Initial state should have the render thread active.
+        Assert::IsTrue(f.IsRenderActionRunning());
+
+        // Suspending event should stop the render thread.
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+
+        f.Adapter->Tick();
+        Assert::IsFalse(f.IsRenderActionRunning());
+
+        // Once rendering is stopped, Trim should be called.
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+
+        // Render thread should not be restarted by DoChanged while app is in the suspended state.
+        Assert::IsFalse(f.IsRenderActionRunning());
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenResumingEventRaised_RenderThreadRestarts)
+    {
+        Fixture f;
+
+        // Suspend the app.
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+        f.Adapter->Tick();
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        Assert::IsFalse(f.IsRenderActionRunning());
+
+        // Resume the app.
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
+        f.Adapter->DoChanged();
+        Assert::IsTrue(f.IsRenderActionRunning());
+    }
+};

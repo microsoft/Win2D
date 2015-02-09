@@ -43,6 +43,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="mocks\MockSuspendingEventArgs.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="xaml\BaseControlTestAdapter.h" />
     <ClInclude Include="xaml\BasicControlFixture.h" />

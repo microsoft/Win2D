@@ -286,6 +286,9 @@
     <ClInclude Include="utils\Helpers.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\MockSuspendingEventArgs.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />

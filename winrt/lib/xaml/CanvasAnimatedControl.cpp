@@ -314,6 +314,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : BaseControl<CanvasAnimatedControlTraits>(adapter)
         , m_stepTimer(adapter)
         , m_hasUpdated(false)
+        , m_pendingChange(false)
         , m_sharedState{}
     {
         CreateSwapChainPanel();
@@ -567,6 +568,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+    void CanvasAnimatedControl::ApplicationSuspending(ISuspendingEventArgs* args)
+    {
+        ComPtr<ISuspendingOperation> suspendingOperation;
+        ThrowIfFailed(args->get_SuspendingOperation(&suspendingOperation));
+
+        ThrowIfFailed(suspendingOperation->GetDeferral(&m_suspendingDeferral));
+
+        //
+        // We want to call Trim when the application suspends, but can't do that until the
+        // render thread has stopped. There are three possible ways this can take place:
+        //
+        //  1) Render thread is active, so this Changed call is ignored. The render thread
+        //     then notices the app is suspended, halts itself, and its completion handler
+        //     calls Changed again, which picks up the pending deferral and calls Trim.
+        //
+        //  2) Render thread is stopped, but another Changed action is already in progress.
+        //     The Changed implementation handles that for us and will process this request
+        //     after the previous Changed completes.
+        //
+        //  3) Nothing is active, in which case Changed will process the deferral and call
+        //     Trim straight away. In this case we could inline the Trim call and skip the
+        //     deferral altogether, but deferring that decision to the existing mechanisms
+        //     inside Changed allows sharing a single suspend codepath for all possible states.
+        //
+        Changed(GetLock());
+    }
+
+    void CanvasAnimatedControl::ApplicationResuming()
+    {
+        Changed(GetLock());
+    }
+
     void CanvasAnimatedControl::Changed(Lock const& lock, ChangeReason reason)
     {
         //
@@ -581,8 +614,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         if (reason == ChangeReason::ClearColor)
             m_sharedState.NeedsDraw = true;
 
+        //
+        // If a different change action is already in progress, flag that we
+        // must process this new request after the previous one completes.
+        //
         if (m_changedAction)
+        {
+            m_pendingChange = true;
             return;
+        }
 
         ComPtr<CanvasAnimatedControl> self = this;
 
@@ -598,11 +638,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
 
         auto completed = Callback<IAsyncActionCompletedHandler>(
-            [self](IAsyncAction*, AsyncStatus)
+            [self](IAsyncAction*, AsyncStatus status)
             {
                 auto lock = self->GetLock();
 
                 self->m_changedAction.Reset();
+
+                //
+                // If someone called Changed again while this action
+                // was in progress, process that second change now.
+                // 
+                if (self->m_pendingChange)
+                {
+                    self->m_pendingChange = false;
+
+                    if (status == AsyncStatus::Completed)
+                        self->Changed(lock);
+                }
 
                 return S_OK;
             });
@@ -625,8 +677,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // This method, as an action, is always run on the UI thread.
         //
 
-        // Changed() already verified whether the control is loaded.
-        assert(IsLoaded());
+        if (!IsLoaded())
+            return;
 
         auto lock = GetLock();
         m_sharedState.ForceUpdate = true;
@@ -642,6 +694,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // If the render thread is already running, this check prevents
             // it from being launched again.
             //
+            return;
+        }
+
+        //
+        // Call Trim on application suspend, but only once we are sure the
+        // render thread is no longer running.
+        //
+        if (IsSuspended())
+        {
+            if (m_suspendingDeferral)
+            {
+                Trim();
+
+                ThrowIfFailed(m_suspendingDeferral->Complete());
+                m_suspendingDeferral.Reset();
+            }
+
             return;
         }
 
@@ -761,6 +830,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         auto lock = GetLock();
+
+        if (IsSuspended())
+            return false;
 
         m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);
         m_stepTimer.SetFixedTimeStep(m_sharedState.IsStepTimerFixedStep);

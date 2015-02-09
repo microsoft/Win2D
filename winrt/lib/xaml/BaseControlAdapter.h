@@ -89,6 +89,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 handler);
         }
 
+        virtual RegisteredEvent AddApplicationResumingCallback(IEventHandler<IInspectable*>* handler) override
+        {
+            return RegisteredEvent(
+                m_coreApplication.Get(),
+                &ICoreApplication::add_Resuming,
+                &ICoreApplication::remove_Resuming,
+                handler);
+        }
+
         virtual float GetLogicalDpi() override
         {
             // Don't try to look up display information if we're in design mode

@@ -28,6 +28,7 @@ class BaseControlTestAdapter : public TRAITS::adapter_t
 public:
     ComPtr<MockEventSource<DpiChangedEventHandler>> DpiChangedEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
+    ComPtr<MockEventSource<IEventHandler<IInspectable*>>> ResumingEventSource;
     CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<IRecreatableDeviceManager<TRAITS>>());
 
     ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
@@ -39,6 +40,7 @@ public:
         , m_mockWindow(Make<MockWindow>())
         , DpiChangedEventSource(Make<MockEventSource<DpiChangedEventHandler>>(L"DpiChanged"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
+        , ResumingEventSource(Make<MockEventSource<IEventHandler<IInspectable*>>>(L"Resuming"))
         , LogicalDpi(DEFAULT_DPI)
         , m_hasUIThreadAccess(true)
     {
@@ -88,6 +90,11 @@ public:
     virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* value) override
     {
         return SuspendingEventSource->Add(value);
+    }
+
+    virtual RegisteredEvent AddApplicationResumingCallback(IEventHandler<IInspectable*>* value) override
+    {
+        return ResumingEventSource->Add(value);
     }
 
     virtual float GetLogicalDpi() override

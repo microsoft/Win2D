@@ -16,7 +16,6 @@
 #include "CanvasControlTestAdapter.h"
 #include "ControlFixtures.h"
 #include "MockCanvasSwapChain.h"
-#include "MockRecreatableDeviceManager.h"
 
 #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)          \
     TEST_METHOD_EX(CanvasControl_##NAME)            \
@@ -137,77 +136,9 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
 TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 {
-    template<class TRAITS>
-    struct Fixture : public ControlFixture<TRAITS>
-    {
-        MockRecreatableDeviceManager<TRAITS>* DeviceManager;
-        std::function<void()> ChangedCallback;
-
-        Fixture()
-            : DeviceManager(nullptr)
-        {
-            CreateAdapter();
-
-            Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
-                [=]
-                {
-                    Assert::IsNull(DeviceManager);
-                    auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
-                    manager->SetChangedCallbackMethod.SetExpectedCalls(1,
-                        [=](std::function<void()> fn)
-                        {
-                            ChangedCallback = fn;
-                        });
-
-                    DeviceManager = manager.get();
-                    return manager;
-                });
-
-            CreateControl();
-        }
-                
-        void EnsureChangedCallback()
-        {
-            EnsureChangedCallbackImpl<TRAITS>();
-        }
-
-    private:
-
-        template<typename T>
-        void EnsureChangedCallbackImpl() {}
-
-        template<>
-        void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
-        {
-            Adapter->DoChanged();
-        }
-    };
-
-    TEST_SHARED_CONTROL_BEHAVIOR(WhenSuspendingEventRaised_TrimCalledOnDevice)
-    {
-        Fixture<TRAITS> f;
-
-        auto anyDevice = Make<MockCanvasDevice>();
-        f.DeviceManager->SetDevice(anyDevice);
-
-        anyDevice->TrimMethod.SetExpectedCalls(1);
-
-        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
-    }
-
-    TEST_SHARED_CONTROL_BEHAVIOR(WhenSuspendingEventRaisedAndThereIsNoDevice_NothingBadHappens)
-    {
-        Fixture<TRAITS> f;
-
-        ComPtr<ICanvasDevice> nullDevice;
-        f.DeviceManager->SetDevice(nullDevice);
-
-        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
-    }
-
     TEST_SHARED_CONTROL_BEHAVIOR(WhenDpiChangedEventRaised_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         // DPI change event without an actual change to the value should be ignored.
         f.Adapter->RaiseDpiChangedEvent();
@@ -221,10 +152,10 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(add_CreateResources_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         EventRegistrationToken anyToken{0x1234567890ABCDEF};
-        auto anyHandler = Callback<Fixture<TRAITS>::createResourcesEventHandler_t>(
+        auto anyHandler = Callback<ControlFixtureWithRecreatableDeviceManager<TRAITS>::createResourcesEventHandler_t>(
             [](typename TRAITS::controlInterface_t*, IInspectable*) { return S_OK; } );
 
         f.DeviceManager->AddCreateResourcesMethod.SetExpectedCalls(1,
@@ -243,7 +174,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(remove_CreateResources_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         EventRegistrationToken anyToken{0x1234567890ABCDEF};
         f.DeviceManager->RemoveCreateResourcesMethod.SetExpectedCalls(1,
@@ -257,7 +188,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(get_ReadyToDraw_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         f.DeviceManager->IsReadyToDrawMethod.SetExpectedCalls(1,
             [] { return true; });
@@ -275,7 +206,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(get_Device_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         auto anyDevice = Make<MockCanvasDevice>();
         f.DeviceManager->SetDevice(anyDevice);
@@ -288,7 +219,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenGetDeviceReturnsNull_get_Device_ReportsUnderstandableErrorMessage)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(E_INVALIDARG, f.Control->get_Device(&device));
@@ -299,7 +230,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenDrawing_RunWithDrawIsPassedTheCorrectControl)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         f.DeviceManager->RunWithDeviceMethod.SetExpectedCalls(1,
             [&](typename TRAITS::control_t* control, RunWithDeviceFunction)
@@ -313,7 +244,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
     }
 
     template<typename TRAITS>
-    struct DrawFixture : public Fixture<TRAITS>
+    struct DrawFixture : public ControlFixtureWithRecreatableDeviceManager<TRAITS>
     {
         ComPtr<StubCanvasDevice> Device;
         MockEventHandler<typename TRAITS::drawEventHandler_t> OnDraw;

@@ -720,6 +720,28 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.CreateControl();
         f.Control.Reset();
     }
+
+    TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaised_TrimCalledOnDevice)
+    {
+        ControlFixtureWithRecreatableDeviceManager<CanvasControlTraits> f;
+
+        auto anyDevice = Make<MockCanvasDevice>();
+        f.DeviceManager->SetDevice(anyDevice);
+
+        anyDevice->TrimMethod.SetExpectedCalls(1);
+
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaisedAndThereIsNoDevice_NothingBadHappens)
+    {
+        ControlFixtureWithRecreatableDeviceManager<CanvasControlTraits> f;
+
+        ComPtr<ICanvasDevice> nullDevice;
+        f.DeviceManager->SetDevice(nullDevice);
+
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+    }
 };
 
 

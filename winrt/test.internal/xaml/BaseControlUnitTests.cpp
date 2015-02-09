@@ -17,7 +17,6 @@
 
 #include "CanvasControlTestAdapter.h"
 #include "BasicControlFixture.h"
-#include "MockRecreatableDeviceManager.h"
 
 //
 // These tests explicitly exercise BaseControl.  Generally we try and avoid
@@ -88,6 +87,8 @@ namespace
         CALL_COUNTER_WITH_MOCK(CreateDrawEventArgsMethod, ComPtr<drawEventArgs_t>(ICanvasDrawingSession*));
         CALL_COUNTER_WITH_MOCK(ChangedMethod, void());
         CALL_COUNTER_WITH_MOCK(UnloadedMethod, void());
+        CALL_COUNTER_WITH_MOCK(ApplicationSuspendingMethod, void(ISuspendingEventArgs*));
+        CALL_COUNTER_WITH_MOCK(ApplicationResumingMethod, void());
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
@@ -113,6 +114,16 @@ namespace
         virtual void Unloaded() override final
         {
             UnloadedMethod.WasCalled();
+        }
+
+        virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final
+        {
+            ApplicationSuspendingMethod.WasCalled(args);
+        }
+
+        virtual void ApplicationResuming() override final
+        {
+            ApplicationResumingMethod.WasCalled();
         }
 
         template<typename FN>

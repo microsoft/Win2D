@@ -37,6 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) = 0;
         virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
+        virtual RegisteredEvent AddApplicationResumingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual float GetLogicalDpi() = 0;
 
         virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* handler) = 0;
@@ -55,6 +56,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         CB_HELPER(AddApplicationSuspendingCallback);
+        CB_HELPER(AddApplicationResumingCallback);
         CB_HELPER(AddDpiChangedCallback);
 
 #undef CB_HELPER
@@ -103,11 +105,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<adapter_t> m_adapter;
         std::unique_ptr<IRecreatableDeviceManager<TRAITS>> m_recreatableDeviceManager;
         bool m_isLoaded;
+        bool m_isSuspended;
         float m_dpi;
 
         EventSource<drawEventHandler_t, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
         RegisteredEvent m_applicationSuspendingEventRegistration;
+        RegisteredEvent m_applicationResumingEventRegistration;
         RegisteredEvent m_dpiChangedEventRegistration;
 
         std::mutex m_mutex;
@@ -121,6 +125,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             : m_adapter(adapter)
             , m_recreatableDeviceManager(adapter->CreateRecreatableDeviceManager())
             , m_isLoaded(false)
+            , m_isSuspended(false)
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_dpi(adapter->GetLogicalDpi())
             , m_currentSize{}
@@ -282,6 +287,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Unloaded() = 0;
 
+        virtual void ApplicationSuspending(ISuspendingEventArgs* args) = 0;
+        virtual void ApplicationResuming() = 0;
+
         void CheckIsOnUIThread()
         {
             // 
@@ -330,6 +338,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool IsLoaded() const
         {
             return m_isLoaded;
+        }
+
+        bool IsSuspended() const
+        {
+            return m_isSuspended;
         }
 
         std::shared_ptr<adapter_t> GetAdapter()
@@ -415,6 +428,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
         }
 
+        void Trim()
+        {
+            auto& device = m_recreatableDeviceManager->GetDevice();
+            if (!device)
+                return;
+
+            auto direct3DDevice = As<IDirect3DDevice>(device);
+            ThrowIfFailed(direct3DDevice->Trim());
+        }
+
     private:
         void SetClearColor(Color const& value)
         {
@@ -494,6 +517,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 this, 
                 &BaseControl::OnApplicationSuspending);
 
+            m_applicationResumingEventRegistration = m_adapter->AddApplicationResumingCallback(
+                this,
+                &BaseControl::OnApplicationResuming);
+
             m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &BaseControl::OnDpiChanged);
 
             m_recreatableDeviceManager->SetChangedCallback(
@@ -564,17 +591,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        HRESULT OnApplicationSuspending(IInspectable*, ISuspendingEventArgs*)
+        HRESULT OnApplicationSuspending(IInspectable*, ISuspendingEventArgs* args)
         {
             return ExceptionBoundary(
                 [&]
                 {
-                    auto& device = m_recreatableDeviceManager->GetDevice();
-                    if (!device)
-                        return;
+                    m_isSuspended = true;
+                    ApplicationSuspending(args);
+                });
+        }
 
-                    auto direct3DDevice = As<IDirect3DDevice>(device);
-                    ThrowIfFailed(direct3DDevice->Trim());
+        HRESULT OnApplicationResuming(IInspectable*, IInspectable*)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    m_isSuspended = false;
+                    ApplicationResuming();
                 });
         }
 

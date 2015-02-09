@@ -321,6 +321,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
+    void CanvasControl::ApplicationSuspending(ISuspendingEventArgs*)
+    {
+        Trim();
+    }
+
+    void CanvasControl::ApplicationResuming()
+    {
+    }
+
     void CanvasControl::HookCompositionRenderingIfNecessary()
     {
         if (m_renderingEventRegistration)

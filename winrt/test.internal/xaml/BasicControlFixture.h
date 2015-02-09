@@ -218,3 +218,51 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
 
 typedef ControlFixture<CanvasControlTraits> CanvasControlFixture;
 typedef ControlFixture<CanvasAnimatedControlTraits> CanvasAnimatedControlFixture;
+
+
+template<class TRAITS>
+struct ControlFixtureWithRecreatableDeviceManager : public ControlFixture<TRAITS>
+{
+    MockRecreatableDeviceManager<TRAITS>* DeviceManager;
+    std::function<void()> ChangedCallback;
+
+    ControlFixtureWithRecreatableDeviceManager()
+        : DeviceManager(nullptr)
+    {
+        CreateAdapter();
+
+        Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
+            [=]
+            {
+                Assert::IsNull(DeviceManager);
+                auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
+                manager->SetChangedCallbackMethod.SetExpectedCalls(1,
+                    [=](std::function<void()> fn)
+                    {
+                        ChangedCallback = fn;
+                    });
+
+                DeviceManager = manager.get();
+                return manager;
+            });
+
+        CreateControl();
+    }
+
+    void EnsureChangedCallback()
+    {
+        EnsureChangedCallbackImpl<TRAITS>();
+    }
+
+private:
+
+    template<typename T>
+    void EnsureChangedCallbackImpl() {}
+
+    template<>
+    void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
+    {
+        Adapter->DoChanged();
+    }
+};
+    

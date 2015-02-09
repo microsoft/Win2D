@@ -139,6 +139,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<AnimatedControlInput> m_input;
 
         ComPtr<IAsyncAction> m_renderLoopAction;
+        
+        ComPtr<ISuspendingDeferral> m_suspendingDeferral;
 
         StepTimer m_stepTimer;
         bool m_hasUpdated;
@@ -147,6 +149,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // The variables below are protected by BaseControl's mutex
         //
         ComPtr<IAsyncAction> m_changedAction;       
+        bool m_pendingChange;
 
         // State shared between the UI thread and the update/render thread
         struct SharedState
@@ -212,6 +215,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Unknown) override final;
         virtual void Unloaded() override final;
+        virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
+        virtual void ApplicationResuming() override final;
 
     private:
         void CreateSwapChainPanel();
