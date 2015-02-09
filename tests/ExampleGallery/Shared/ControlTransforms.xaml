@@ -102,14 +102,14 @@ under the License.
         </Storyboard>
 
         <Storyboard x:Name="sizeAnimation">
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="canvasControl"   Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="canvasControl"   Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="animatedControl" Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="animatedControl" Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="imageControl"    Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="imageControl"    Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
-            <DoubleAnimation From="1" To="192" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="canvasControl"   Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="canvasControl"   Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="animatedControl" Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="animatedControl" Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="imageControl"    Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="imageControl"    Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
         </Storyboard>
     </UserControl.Resources>
 </UserControl>

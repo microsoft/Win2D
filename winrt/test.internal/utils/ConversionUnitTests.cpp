@@ -206,4 +206,31 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(23.0f * 3 / 2, PixelsToDips(23, 64));
         Assert::AreEqual(1234.0f * 3 / 2, PixelsToDips(1234, 64));
     }
+
+    TEST_METHOD(DipsToPixelsNeverRoundsPositiveValuesToZero)
+    {
+        Assert::AreEqual(0, DipsToPixels(0, 96));
+
+        Assert::AreEqual(0, DipsToPixels(-0.1f, 96));
+        Assert::AreEqual(0, DipsToPixels(-0.4f, 96));
+        Assert::AreEqual(-1, DipsToPixels(-0.6f, 96));
+        Assert::AreEqual(-1, DipsToPixels(-0.9f, 96));
+
+        Assert::AreEqual(1, DipsToPixels(0.1f, 96));
+        Assert::AreEqual(1, DipsToPixels(0.4f, 96));
+        Assert::AreEqual(1, DipsToPixels(0.6f, 96));
+        Assert::AreEqual(1, DipsToPixels(0.9f, 96));
+
+        Assert::AreEqual(0, DipsToPixels(0, 192));
+        
+        Assert::AreEqual(0, DipsToPixels(-0.1f, 192));
+        Assert::AreEqual(-1, DipsToPixels(-0.4f, 192));
+        Assert::AreEqual(-1, DipsToPixels(-0.6f, 192));
+        Assert::AreEqual(-2, DipsToPixels(-0.9f, 192));
+
+        Assert::AreEqual(1, DipsToPixels(0.1f, 192));
+        Assert::AreEqual(1, DipsToPixels(0.4f, 192));
+        Assert::AreEqual(1, DipsToPixels(0.6f, 192));
+        Assert::AreEqual(2, DipsToPixels(0.9f, 192));
+    }
 };

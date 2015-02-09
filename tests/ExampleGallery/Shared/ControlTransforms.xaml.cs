@@ -56,6 +56,12 @@ namespace ExampleGallery
         // Draw to the CanvasImageSource.
         void DrawToImageSource(Size size)
         {
+            if (size.Width <= 0 || size.Height <= 0)
+            {
+                imageControl.Source = null;
+                return;
+            }
+
             imageSource = new CanvasImageSource(canvasControl, (float)size.Width, (float)size.Height);
 
             using (var ds = imageSource.CreateDrawingSession(Colors.Yellow))
@@ -70,7 +76,13 @@ namespace ExampleGallery
         // Draw to the CanvasSwapChain.
         void DrawToSwapChain(Size size)
         {
-            if (swapChain == null)
+            if (size.Width <= 0 || size.Height <= 0)
+            {
+                swapChain = null;
+                swapChainPanel.SwapChain = null;
+                return;
+            }
+            else if (swapChain == null)
             {
                 swapChain = new CanvasSwapChain(canvasControl, (float)size.Width, (float)size.Height);
                 swapChainPanel.SwapChain = swapChain;

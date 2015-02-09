@@ -420,6 +420,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     inline int DipsToPixels(float dips, float dpi)
     {
-        return (int)roundf(dips * dpi / DEFAULT_DPI);
+        int result = (int)roundf(dips * dpi / DEFAULT_DPI);
+
+        // Zero versus non-zero is pretty important for things like control sizes, so we want
+        // to avoid ever rounding non-zero input sizes down to zero during conversion to pixels.
+        // If the input value was small but positive, it's safer to round up to one instead.
+        if (result == 0 && dips > 0)
+        {
+            return 1;
+        }
+
+        return result;
     }
 }}}}
