@@ -965,6 +965,64 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->Tick();
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_OnFirstUpdate_UpdateCount_Is_1)
+    {
+        UpdateRenderFixture f;
+        f.Load();
+
+        f.OnUpdate.SetExpectedCalls(1,
+            [&] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
+            {
+                CanvasTimingInformation timingInformation;
+                Assert::AreEqual(S_OK, args->get_Timing(&timingInformation));
+                Assert::AreEqual(1LL, timingInformation.UpdateCount);
+                return S_OK;
+            });
+        f.OnDraw.SetExpectedCalls(1);
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedStep_WhilePaused_UpdateCountIncrements)
+    {
+        WhilePaused_UpdateCountIncrements(true);
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_VariableStep_WhilePaused_UpdateCountIncrements)
+    {
+        WhilePaused_UpdateCountIncrements(false);
+    }
+
+    void WhilePaused_UpdateCountIncrements(bool isFixedTimeStep)
+    {
+        UpdateRenderFixture f;
+        f.OnDraw.AllowAnyCall();
+        f.Load();
+
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(isFixedTimeStep));
+        
+
+        int64_t expectedUpdateCount = 1;
+
+        for (int i = 0; i < 10; ++i)
+        {
+            ThrowIfFailed(f.Control->put_Paused(FALSE));
+            f.OnUpdate.SetExpectedCalls(1,
+                [&] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
+                {
+                    CanvasTimingInformation timingInformation;
+                    Assert::AreEqual(S_OK, args->get_Timing(&timingInformation));
+                    Assert::AreEqual(expectedUpdateCount, timingInformation.UpdateCount);
+                    ThrowIfFailed(f.Control->put_Paused(TRUE));
+                    return S_OK;
+                });
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+            ++expectedUpdateCount;
+        }        
+    }
+
     class TimingFixture : public CanvasAnimatedControlFixture
     {
         MockEventHandler<Animated_DrawEventHandler> m_onDraw;
@@ -989,7 +1047,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         TimingFixture(bool isFixedTimestep)
             : m_onDraw(L"OnDraw")
             , m_onUpdate(L"OnUpdate")
-            , m_updateCount(0)
+            , m_updateCount(1)
             , m_totalTime(0)
             , m_isFixedTimestep(isFixedTimestep)
         {
@@ -1013,13 +1071,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
             AddDrawHandler(m_onDraw.Get());
             AddUpdateHandler(m_onUpdate.Get());
-
-            //
-            // Both fixed and variable step have initial updates. However, fixed has a 'force'
-            // update called by the control, while variable has an initial update actually
-            // fired by the step timer.
-            //
-            if (!m_isFixedTimestep) m_updateCount = 1;
 
             ExpectedTiming initialUpdate{ m_updateCount, 0, 0, false };
             m_expectedOnDraw.push(initialUpdate);
@@ -1099,10 +1150,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
             const ExpectedTiming expected = notifications.front();
             notifications.pop();
 
-            Assert::AreEqual(expected.UpdateCount, timingInformation.UpdateCount);
-            Assert::AreEqual(expected.TotalTime, timingInformation.TotalTime.Duration);
-            Assert::AreEqual(expected.ElapsedTime, timingInformation.ElapsedTime.Duration);
-            Assert::AreEqual(expected.IsRunningSlowly, timingInformation.IsRunningSlowly);
+            Assert::AreEqual(expected.UpdateCount, timingInformation.UpdateCount, L"UpdateCount");
+            Assert::AreEqual(expected.TotalTime, timingInformation.TotalTime.Duration, L"TotalTime");
+            Assert::AreEqual(expected.ElapsedTime, timingInformation.ElapsedTime.Duration, L"ElapsedTime");
+            Assert::AreEqual(expected.IsRunningSlowly, timingInformation.IsRunningSlowly, L"IsRunningSlowly");
         }
     };
 

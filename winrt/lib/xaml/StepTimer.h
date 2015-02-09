@@ -132,7 +132,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // Update timer state, calling the specified Update function the appropriate number of times.
         template<typename CALLABLE>
-        void Tick(CALLABLE&& fn)
+        void Tick(bool forceUpdate, CALLABLE&& fn)
         {
             // Query the current time.
             LARGE_INTEGER currentTime;
@@ -179,6 +179,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 while (m_leftOverTicks >= m_targetElapsedTicks)
                 {
+                    forceUpdate = false;
                     m_elapsedTicks = m_targetElapsedTicks;
                     m_totalTicks += m_targetElapsedTicks;
                     m_leftOverTicks -= m_targetElapsedTicks;
@@ -187,6 +188,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     bool isRunningSlowly = m_leftOverTicks >= m_targetElapsedTicks;
 
                     fn(isRunningSlowly);
+                }
+
+                if (forceUpdate)
+                {
+                    m_frameCount++;
+                    fn(false);
                 }
             }
             else

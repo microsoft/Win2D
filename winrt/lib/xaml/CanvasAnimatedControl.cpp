@@ -864,23 +864,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         bool updated = false;
         
-        auto updateFunction = [this, &updated](bool isRunningSlowly)
-        {
-            auto timing = GetTimingInformationFromTimer();
-            timing.IsRunningSlowly = isRunningSlowly;
+        m_stepTimer.Tick(forceUpdate, 
+            [this, &updated](bool isRunningSlowly)
+            {
+                auto timing = GetTimingInformationFromTimer();
+                timing.IsRunningSlowly = isRunningSlowly;
 
-            auto updateEventArgs = Make<CanvasAnimatedUpdateEventArgs>(timing);
-            ThrowIfFailed(m_updateEventList.InvokeAll(this, updateEventArgs.Get()));
+                auto updateEventArgs = Make<CanvasAnimatedUpdateEventArgs>(timing);
+                ThrowIfFailed(m_updateEventList.InvokeAll(this, updateEventArgs.Get()));
 
-            updated = true;
-        };
-
-        m_stepTimer.Tick(updateFunction);
-                
-        if (!updated && forceUpdate)
-        {
-            updateFunction(false);
-        }
+                updated = true;
+            });
 
         return updated;
     }
