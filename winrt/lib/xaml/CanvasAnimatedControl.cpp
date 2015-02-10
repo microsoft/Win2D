@@ -190,18 +190,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return action;
         }
 
-        virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
+        virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
         {
             if (IsDesignModeEnabled())
             {
-                return nullptr;
+                return;
             }
 
             ComPtr<ICoreDispatcher> dispatcher;
             ThrowIfFailed(window->get_Dispatcher(&dispatcher));
 
             auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-                [=]()->HRESULT
+                [=]
                 {
                     return ExceptionBoundary(
                         [&]
@@ -212,8 +212,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             ComPtr<IAsyncAction> asyncAction;
             ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
-
-            return asyncAction;
         }
 
         void UpdateRenderLoop(
@@ -314,7 +312,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : BaseControl<CanvasAnimatedControlTraits>(adapter)
         , m_stepTimer(adapter)
         , m_hasUpdated(false)
-        , m_pendingChange(false)
         , m_sharedState{}
     {
         CreateSwapChainPanel();
@@ -330,8 +327,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasAnimatedControl::~CanvasAnimatedControl()
     {
-        assert(!m_renderLoopAction);
-        assert(!m_changedAction);
+        assert(!IsRenderLoopRunning());
+    }
+
+    bool CanvasAnimatedControl::IsRenderLoopRunning() const
+    {
+        if (!m_renderLoopAction)
+            return false;
+
+        AsyncStatus status;
+        ThrowIfFailed(As<IAsyncInfo>(m_renderLoopAction)->get_Status(&status));
+        return (status == AsyncStatus::Started);
     }
 
     //
@@ -542,27 +548,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasAnimatedControl::Unloaded()
     {
-        //
-        // ChangedImpl is always executed on the UI thread, and
-        // we expect the unloaded event on the UI thread, so 
-        // m_renderLoopAction does not need locking.
-        //
+        // Stop the update/render thread if it is running
         if (m_renderLoopAction)
         {
             auto asyncInfo = As<IAsyncInfo>(m_renderLoopAction);
-
-            ThrowIfFailed(asyncInfo->Cancel());
-        }
-        
-        //
-        // Changed (as opposed to ChangedImpl) touches m_changedAction
-        // and may be called from any thread, and so there is a lock here.
-        //
-        auto lock = GetLock();
-
-        if (m_changedAction)
-        {
-            auto asyncInfo = As<IAsyncInfo>(m_changedAction);
 
             ThrowIfFailed(asyncInfo->Cancel());
         }
@@ -615,53 +604,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_sharedState.NeedsDraw = true;
 
         //
-        // If a different change action is already in progress, flag that we
-        // must process this new request after the previous one completes.
+        // The remaining work must be done on the UI thread.  There's a chance
+        // that the this might result in Changed() being called again, or that
+        // Changed() may be called while ChangedImpl() happens.  Because of this
+        // we support reentrancy by allowing multiple changed actions to be
+        // scheduled at a time.
         //
-        if (m_changedAction)
-        {
-            m_pendingChange = true;
-            return;
-        }
 
         ComPtr<CanvasAnimatedControl> self = this;
 
-        auto window = GetWindow();
-
-        m_changedAction = GetAdapter()->StartChangedAction(window,
+        GetAdapter()->StartChangedAction(GetWindow(),
             [self]
             {
                 self->ChangedImpl();
             });
-
-        if (!m_changedAction)
-            return;
-
-        auto completed = Callback<IAsyncActionCompletedHandler>(
-            [self](IAsyncAction*, AsyncStatus status)
-            {
-                auto lock = self->GetLock();
-
-                self->m_changedAction.Reset();
-
-                //
-                // If someone called Changed again while this action
-                // was in progress, process that second change now.
-                // 
-                if (self->m_pendingChange)
-                {
-                    self->m_pendingChange = false;
-
-                    if (status == AsyncStatus::Completed)
-                        self->Changed(lock);
-                }
-
-                return S_OK;
-            });
-
-        CheckMakeResult(completed);
-
-        ThrowIfFailed(m_changedAction->put_Completed(completed.Get()));
     }
 
     void CanvasAnimatedControl::ChangedImpl()
@@ -688,13 +644,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         lock.unlock();
 
-        if (m_renderLoopAction)
+        //
+        // We don't want to spin up the update/render thread if we're paused -
+        // unless we need to draw (eg because the clear color has changed)
+        //
+        if (isPaused && !needsDraw)
         {
-            // 
-            // If the render thread is already running, this check prevents
-            // it from being launched again.
-            //
             return;
+        }
+
+        //
+        // Check the status of the update/render thread
+        //
+        auto renderLoopInfo = MaybeAs<IAsyncInfo>(m_renderLoopAction);
+        auto renderLoopStatus = AsyncStatus::Completed;
+
+        if (renderLoopInfo)
+        {
+            ThrowIfFailed(renderLoopInfo->get_Status(&renderLoopStatus));
+
+            switch (renderLoopStatus)
+            {
+            case AsyncStatus::Started:
+                // The update/render loop is still running
+                return;
+                
+            case AsyncStatus::Completed:
+            case AsyncStatus::Canceled:
+            case AsyncStatus::Error:
+                m_renderLoopAction.Reset();
+                // We still hold renderLoopInfo; this is used for error handling
+                // below
+                break;
+                
+            default:
+                assert(false);
+            }
         }
 
         //
@@ -714,23 +699,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
         }
 
-        if (isPaused && !needsDraw)
-        {
-            //
-            // We don't want to spin up the update/render thread if we're paused
-            // - unless we need to draw (eg because the clear color has changed)
-            //
-            return;
-        }
-
+        //
+        // Try and start the update/render thread
+        //
         RunWithRenderTarget(GetCurrentSize(),
             [&] (CanvasSwapChain* rawTarget, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
             {
-                assert(!m_renderLoopAction);
-
                 // The clearColor passed to us is ignored since this needs to be
                 // checked on each tick of the update/render loop.
                 UNREFERENCED_PARAMETER(clearColor);
+
+                //
+                // Process the results of the update/render loop here, within
+                // RunWithRenderTarget, so that it can handle errors (such as
+                // lost device).
+                //
+                assert(!m_renderLoopAction);
+                assert(renderLoopStatus != AsyncStatus::Started);
+
+                if (renderLoopStatus == AsyncStatus::Error)
+                {
+                    HRESULT hr = S_OK;
+                    ThrowIfFailed(renderLoopInfo->get_ErrorCode(&hr));
+                    ThrowHR(hr);
+                }
 
                 if (!areResourcesCreated && !needsDraw)
                 {
@@ -767,9 +759,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_renderLoopAction = GetAdapter()->StartUpdateRenderLoop(beforeLoopFn, onEachTickFn, afterLoopFn);
                 
                 auto completed = Callback<IAsyncActionCompletedHandler>(
-                    [self](IAsyncAction* asyncAction, AsyncStatus asyncStatus)
+                    [self](IAsyncAction*, AsyncStatus)
                     {
-                        return self->OnRenderLoopCompleted(asyncAction, asyncStatus);
+                        return ExceptionBoundary(
+                            [&]
+                            {
+                                self->Changed(self->GetLock());
+                            });
                     });
 
                 CheckMakeResult(completed);
@@ -777,27 +773,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(m_renderLoopAction->put_Completed(completed.Get()));
             });
     }
-
-    HRESULT CanvasAnimatedControl::OnRenderLoopCompleted(IAsyncAction* asyncAction, AsyncStatus asyncStatus)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                m_renderLoopAction.Reset();
-
-                if (asyncStatus == AsyncStatus::Error)
-                {
-                    auto asyncInfo = As<IAsyncInfo>(asyncAction);
-
-                    HRESULT errorCode;
-                    ThrowIfFailed(asyncInfo->get_ErrorCode(&errorCode));
-            
-                    ThrowHR(errorCode);
-                }
-        
-                Changed(GetLock());
-            });
-    }   
 
     void CanvasAnimatedControl::CreateSwapChainPanel()
     {

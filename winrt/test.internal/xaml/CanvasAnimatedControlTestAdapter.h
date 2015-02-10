@@ -100,30 +100,33 @@ public:
     }
 
 
-    std::function<void()> m_changedFn;
-    ComPtr<MockAsyncAction> m_changedAsyncAction;
-    virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
+    typedef std::queue<std::function<void()>> ActionQueue;
+
+    ActionQueue m_changedActions;
+
+    virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
     {
-        Assert::IsFalse(static_cast<bool>(m_changedFn));
-        Assert::IsFalse(m_changedAsyncAction);
+        m_changedActions.push(changedFn);
+    }
 
-        m_changedAsyncAction = Make<MockAsyncAction>();
-        m_changedFn = changedFn;
-
-        return m_changedAsyncAction;
+    bool HasPendingChangedActions() const
+    {
+        return !m_changedActions.empty();
     }
 
     void DoChanged()
     {
-        if (m_changedFn)
+        // Only process the actions that are currently queued (rather than any
+        // that are started as the result of processing one of the actions)
+        ActionQueue pendingActions;
+        std::swap(pendingActions, m_changedActions);
+
+        while (!pendingActions.empty())
         {
-            m_changedFn();
-
-            auto action = m_changedAsyncAction;
-            m_changedFn = nullptr;
-            m_changedAsyncAction.Reset();
-
-            action->SetResult(S_OK);
+            auto action = pendingActions.front();
+            pendingActions.pop();
+            
+            action();
         }
     }
 

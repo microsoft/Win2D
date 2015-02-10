@@ -506,187 +506,199 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess
     {
-        bool m_throwDeviceRemovedDuringNextCreateResources;
-
     public:
         MockEventHandler<Animated_DrawEventHandler> OnDraw;
         MockEventHandler<Animated_CreateResourcesEventHandler> OnCreateResources;
         MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
 
         DeviceLostFixture()
-            : m_throwDeviceRemovedDuringNextCreateResources(false)
+            : OnDraw(L"OnDraw")
+            , OnCreateResources(L"OnCreateResources")
+            , OnUpdate(L"OnUpdate")
         {
-            OnCreateResources.AllowAnyCall();
-            AddCreateResourcesHandler(OnCreateResources.Get());
+            // Use variable timestep so Update gets called on each tick
+            ThrowIfFailed(Control->put_IsFixedTimeStep(FALSE));
 
-            OnDraw.AllowAnyCall();
+            AddCreateResourcesHandler(OnCreateResources.Get());
+            AddUpdateHandler(OnUpdate.Get());
             AddDrawHandler(OnDraw.Get());
 
+            Load();
+
+            OnCreateResources.AllowAnyCall();
             OnUpdate.AllowAnyCall();
-            AddUpdateHandler(OnUpdate.Get());
+            OnDraw.AllowAnyCall();
         }
 
-        // Simulates a recoverable device.
-        void ThrowDeviceRemovedDuringNextCreateResources()
+        void LoseDeviceDuringPresent()
         {
-            m_throwDeviceRemovedDuringNextCreateResources = true;
-
-            OnCreateResources.AllowAnyCall(
-                [=](ICanvasAnimatedControl*, IInspectable*) -> HRESULT
+            m_dxgiSwapChain->Present1Method.SetExpectedCalls(1,
+                [=](UINT, UINT, const DXGI_PRESENT_PARAMETERS*)
                 {
-                    bool shouldThrow = m_throwDeviceRemovedDuringNextCreateResources;
-
-                    m_throwDeviceRemovedDuringNextCreateResources = false;
-
-                    if (shouldThrow)
-                        return DXGI_ERROR_DEVICE_REMOVED;
-
-                    return S_OK;
-                });
-        }
-        
-        // Simulates a permanently 'broken' device.
-        void ThrowDeviceRemovedDuringCreateResources()
-        {
-            OnCreateResources.AllowAnyCall(
-                [=](ICanvasAnimatedControl*, IInspectable*) -> HRESULT
-                {
+                    MarkDeviceAsLost();
                     return DXGI_ERROR_DEVICE_REMOVED;
                 });
         }
 
-        void ThrowDeviceRemovedDuringDraw()
-        {        
-            OnDraw.AllowAnyCall( 
-                [=](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*) -> HRESULT
-                {
-                    return DXGI_ERROR_DEVICE_REMOVED;
-                });
-        }
-
-        void MakePresentFail()
+        void PresentReportsDeviceLost()
         {
-            m_dxgiSwapChain->Present1Method.AllowAnyCall(
+            m_dxgiSwapChain->Present1Method.SetExpectedCalls(1,
                 [=](UINT, UINT, const DXGI_PRESENT_PARAMETERS*)
                 {
                     return DXGI_ERROR_DEVICE_REMOVED;
                 });
-
         }
 
-        void ForceRedraw()
+        void ExpectAtLeastOnePresent()
         {
-            Adapter->ProgressTime(TicksPerFrame);
+            m_dxgiSwapChain->Present1Method.ExpectAtLeastOneCall();
         }
 
-        void MarkAsLost()
+        void MarkDeviceAsLost()
         {
             Adapter->InitialDevice->MarkAsLost();
         }
 
-        void TickAndVerifyDeviceRemovedErrorCode()
+        void DoChangedAndTick()
         {
-            auto renderAction = Adapter->m_outstandingWorkItemAsyncAction;
-
+            Adapter->DoChanged();
             Adapter->Tick();
+        }
 
-            auto renderAsyncInfo = As<IAsyncInfo>(renderAction);
+        void VerifyDeviceRecovered()
+        {
+            DoChangedAndTick(); // Device lost first noticed
 
-            HRESULT errorCode;
-            ThrowIfFailed(renderAsyncInfo->get_ErrorCode(&errorCode));
+            OnCreateResources.SetExpectedCalls(1);
+            OnUpdate.ExpectAtLeastOneCall();
+            OnDraw.ExpectAtLeastOneCall();
+            ExpectAtLeastOnePresent();
 
-            Assert::AreEqual(DXGI_ERROR_DEVICE_REMOVED, errorCode);
+            // We need two changed/ticks to reliably have recreated the device
+            // depending on whether the UI thread or the render thread spotted
+            // the device lost.  In the render thread case this extra iteration
+            // is required in order to marshal the exception to the UI thread.
+            DoChangedAndTick();
+            DoChangedAndTick();
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_FirstPresentFails)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostOnFirstPresent_DeviceIsRecreated)
     {
         DeviceLostFixture f;
-        f.MakePresentFail();
-        f.RaiseLoadedAndVerify();
 
-        auto renderAction = f.Adapter->m_outstandingWorkItemAsyncAction;
-
-        //
-        // The Loaded event will begin the worker thread and issue
-        // the first draw, but the exception doesn't get propagated 
-        // until the worker thread completes, at the next tick.
-        //
-        f.TickAndVerifyDeviceRemovedErrorCode();
+        f.LoseDeviceDuringPresent();
+        f.VerifyDeviceRecovered();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_TypicalPresentFail)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringSubsequentPresent_DeviceIsRecreated)
     {
         DeviceLostFixture f;
-        f.RaiseLoadedAndVerify();
 
-        f.Adapter->Tick();
+        for (int i = 0; i < 5; ++i)
+            f.DoChangedAndTick();
 
-        f.MakePresentFail();
-        f.ForceRedraw();        
-
-        f.TickAndVerifyDeviceRemovedErrorCode();
+        f.LoseDeviceDuringPresent();
+        f.VerifyDeviceRecovered();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_LostDeviceDuringCreateResources)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenPresentReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
     {
-        //
-        // Device is lost on the UI thread, not the render thread, so it
-        // is recovered here without being seen at Tick(). Verify no
-        // exception gets propagated up.
-        //
         DeviceLostFixture f;
-        f.ThrowDeviceRemovedDuringNextCreateResources();
-        f.MarkAsLost();
-        f.Load();
-        f.Adapter->DoChanged();
+
+        f.PresentReportsDeviceLost();
+        f.DoChangedAndTick();
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_UnrecoverableDeviceDuringCreateResources)
-    {
-        //
-        // Similar to above, device is lost on the UI thread.
-        //
-        DeviceLostFixture f;
-        f.ThrowDeviceRemovedDuringCreateResources();
-        f.MarkAsLost();
-        f.Load();
-
-        //
-        // If we attempt to re-create the device, and fail, control should 
-        // never go into RunWithRenderTarget. No exceptions should 
-        // be propagated up.
-        //
-        for (int i = 0; i < 3; i++)
-        {
-            f.ForceRedraw();
-            f.Adapter->Tick();
-        }
-
-        //
-        // Worker thread should be gone.
-        //
-        Assert::IsFalse(f.IsRenderActionRunning());
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_LostDeviceDuringDraw)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringCreateResources_DeviceIsRecreated)
     {
         DeviceLostFixture f;
-        f.RaiseLoadedAndVerify();
-        f.ThrowDeviceRemovedDuringDraw();
-        f.MarkAsLost();
-
-        f.TickAndVerifyDeviceRemovedErrorCode();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_LostDeviceDuringDraw_ExceptionOnly)
-    {
-        DeviceLostFixture f;
-        f.RaiseLoadedAndVerify();
         
-        f.ThrowDeviceRemovedDuringDraw();
+        f.OnCreateResources.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, IInspectable*)
+            {
+                f.MarkDeviceAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
 
-        f.TickAndVerifyDeviceRemovedErrorCode();
+        f.VerifyDeviceRecovered();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCreateResourcesReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
+    {
+        DeviceLostFixture f;
+
+        f.OnCreateResources.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, IInspectable*)
+            {
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringDraw_DeviceIsRecreated)
+    {
+        DeviceLostFixture f;
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+            {
+                f.MarkDeviceAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.VerifyDeviceRecovered();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDrawReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
+    {
+        DeviceLostFixture f;
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+            {
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.DoChangedAndTick();
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringUpdate_DeviceIsRecreated)
+    {
+        DeviceLostFixture f;
+
+        f.OnUpdate.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs*)
+            {
+                f.MarkDeviceAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.VerifyDeviceRecovered();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenUpdateReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
+    {
+        DeviceLostFixture f;
+
+        f.OnUpdate.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs*)
+            {
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.DoChangedAndTick();
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
     }
 
     static auto const TicksPerFrame = StepTimer::TicksPerSecond / 60;
@@ -1222,7 +1234,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
 
         bool IsChangedActionRunning()
         {
-            return static_cast<bool>(Adapter->m_changedAsyncAction);
+            return Adapter->HasPendingChangedActions();
         }
     };
 
@@ -1343,16 +1355,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 
         void ClearCanceledActions()
         {
-            if (Adapter->m_changedAsyncAction)
-            {
-                AsyncStatus status = (AsyncStatus)-1;
-                Adapter->m_changedAsyncAction->get_Status(&status);
-                if (status == AsyncStatus::Canceled)
-                {
-                    Adapter->m_changedAsyncAction.Reset();
-                    Adapter->m_changedFn = nullptr;
-                }
-            }
             if (Adapter->m_outstandingWorkItemAsyncAction)
             {
                 AsyncStatus status = (AsyncStatus)-1;
@@ -1635,9 +1637,8 @@ TEST_CLASS(CanvasAnimatedControlAdapter_ChangedAction_UnitTests)
                 changedCalled = true;
             };
 
-        auto returnedAction = f.Adapter->StartChangedAction(f.Window, fakeChangedFn);
-
-        Assert::IsTrue(IsSameInstance(f.Action.Get(), returnedAction.Get()));
+        f.Adapter->StartChangedAction(f.Window, fakeChangedFn);
+        Assert::IsNotNull(f.Action.Get());
         Assert::IsNotNull(f.Handler.Get());
 
         ThrowIfFailed(f.Handler->Invoke());

@@ -161,7 +161,7 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
 
     bool IsChangedActionRunning()
     {
-        return static_cast<bool>(Adapter->m_changedAsyncAction);
+        return Adapter->HasPendingChangedActions();
     }
 
     void RaiseLoadedAndVerify()

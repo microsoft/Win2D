@@ -118,7 +118,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             std::function<bool()> const& tickFn,
             std::function<void()> const& afterLoopFn) = 0;
 
-        virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
+        virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
     };
 
 
@@ -146,12 +146,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool m_hasUpdated;
 
         //
-        // The variables below are protected by BaseControl's mutex
+        // State shared between the UI thread and the update/render thread.
+        // Access to this must be guarded using BaseControl's mutex.
         //
-        ComPtr<IAsyncAction> m_changedAction;       
-        bool m_pendingChange;
-
-        // State shared between the UI thread and the update/render thread
         struct SharedState
         {
             bool IsPaused;
@@ -219,6 +216,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void ApplicationResuming() override final;
 
     private:
+        bool IsRenderLoopRunning() const;
+
         void CreateSwapChainPanel();
 
         bool Tick(
@@ -226,8 +225,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             bool areResourcesCreated);
 
         bool Update(bool forceUpdate);
-
-        HRESULT OnRenderLoopCompleted(IAsyncAction*, AsyncStatus);
 
         void ChangedImpl();
 
