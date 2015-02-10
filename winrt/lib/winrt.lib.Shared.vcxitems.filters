@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -18,6 +18,9 @@
     </Filter>
     <Filter Include="drawing">
       <UniqueIdentifier>{da229805-bede-4d6d-9218-e3c2d82cbd2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry">
+      <UniqueIdentifier>{ffa6d1d6-2939-45c2-841a-9d1e477edfec}</UniqueIdentifier>
     </Filter>
     <Filter Include="images">
       <UniqueIdentifier>{5704d434-219b-4d12-ae42-3d9836906c48}</UniqueIdentifier>
@@ -202,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp">
       <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.cpp">
+      <Filter>geometry</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.cpp">
       <Filter>images</Filter>
@@ -416,6 +422,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h">
       <Filter>images</Filter>
     </ClInclude>
@@ -480,9 +489,6 @@
       <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl">
-      <Filter>drawing</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGeometry.abi.idl">
       <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl">
@@ -613,6 +619,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl">
       <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl">
+      <Filter>geometry</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl">
       <Filter>images</Filter>

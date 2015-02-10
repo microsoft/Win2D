@@ -60,6 +60,10 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateSwapChainMethod, ComPtr<IDXGISwapChain2>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
 
+        CALL_COUNTER_WITH_MOCK(CreateRectangleGeometryMethod, ComPtr<ID2D1RectangleGeometry>(D2D1_RECT_F const&));
+        CALL_COUNTER_WITH_MOCK(CreateEllipseGeometryMethod, ComPtr<ID2D1EllipseGeometry>(D2D1_ELLIPSE const&));
+        CALL_COUNTER_WITH_MOCK(CreateRoundedRectangleGeometryMethod, ComPtr<ID2D1RoundedRectangleGeometry>(D2D1_ROUNDED_RECT const&));
+
         //
         // ICanvasDevice
         //
@@ -263,6 +267,21 @@ namespace canvas
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override
         {
             return CreateCommandListMethod.WasCalled();
+        }
+
+        virtual ComPtr<ID2D1RectangleGeometry> CreateRectangleGeometry(D2D1_RECT_F const& rect) override
+        {
+            return CreateRectangleGeometryMethod.WasCalled(rect);
+        }
+
+        virtual ComPtr<ID2D1EllipseGeometry> CreateEllipseGeometry(D2D1_ELLIPSE const& ellipse) override
+        {
+            return CreateEllipseGeometryMethod.WasCalled(ellipse);
+        }
+
+        virtual ComPtr<ID2D1RoundedRectangleGeometry> CreateRoundedRectangleGeometry(D2D1_ROUNDED_RECT const& roundedRect) override
+        {
+            return CreateRoundedRectangleGeometryMethod.WasCalled(roundedRect);
         }
     };
 }

@@ -2190,14 +2190,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             nullptr);
     }
 
-
     IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
-        ICanvasGeometry* ,
-        ICanvasBrush* ,
-        float ,
-        ICanvasStrokeStyle* )
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
     {
-        return E_NOTIMPL;
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
+                CheckInPointer(brush);
+
+                deviceContext->DrawGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+            });
     }
 
 
@@ -2207,11 +2218,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float strokeWidth,
         ICanvasStrokeStyle* strokeStyle)
     {
-        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
-            geometry,
-            color, 
-            strokeWidth, 
-            strokeStyle);
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
+
+                deviceContext->DrawGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    GetColorBrush(color),
+                    strokeWidth,
+                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());  
+            });
     }
 
 
@@ -2220,20 +2238,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithBrush(
-        ICanvasGeometry* ,
-        ICanvasBrush* )
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush)
     {
-        return E_NOTIMPL;
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
+                CheckInPointer(brush);
+
+                deviceContext->FillGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    ToD2DBrush(brush).Get(),
+                    nullptr);
+            });
     }
 
 
     IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithColor(
-        ICanvasGeometry* ,
-        Color )
+        ICanvasGeometry* geometry,
+        Color color)
     {
-        return E_NOTIMPL;
-    }
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
 
+                deviceContext->FillGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    GetColorBrush(color),
+                    nullptr);
+            });
+    }    
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {

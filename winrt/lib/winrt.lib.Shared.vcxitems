@@ -21,7 +21,7 @@
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\Inc;.\brushes;.\xaml;.\drawing;.\images;.\text;.\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Inc;.\brushes;.\xaml;.\drawing;.\geometry;.\images;.\text;.\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -96,6 +96,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
@@ -193,7 +195,6 @@
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IEffect.abi.idl" />
@@ -237,6 +238,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />

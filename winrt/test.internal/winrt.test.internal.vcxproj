@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1FE831F7-6773-4445-B570-1F5570FAD88D}</ProjectGuid>
@@ -20,7 +20,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.\xaml;.\utils;.\mocks;.\stubs;..\Inc;..\lib;..\lib\brushes;..\lib\xaml;..\lib\drawing;..\lib\images;..\lib\text;..\lib\utils;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.\xaml;.\utils;.\mocks;.\stubs;..\Inc;..\lib;..\lib\brushes;..\lib\xaml;..\lib\drawing;..\lib\geometry;..\lib\images;..\lib\text;..\lib\utils;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level4</WarningLevel>
@@ -118,6 +118,7 @@
     <ClCompile Include="graphics\CanvasDeviceUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasEffectUnitTest.cpp" />
+    <ClCompile Include="graphics\CanvasGeometryUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasGradientBrushUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasImageSourceUnitTests.cpp" />

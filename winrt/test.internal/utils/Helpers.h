@@ -187,6 +187,7 @@ namespace Microsoft
             TO_STRING(IDXGISwapChain);
             TO_STRING(ICanvasSwapChain);
             TO_STRING(ABI::Windows::UI::Core::ICoreCursor);
+            TO_STRING(ID2D1Geometry);
 
 #undef TO_STRING
 
@@ -984,13 +985,4 @@ void AssertClassName(ComPtr<T> obj, wchar_t const* expectedClassName)
     ThrowIfFailed(inspectable->GetRuntimeClassName(className.GetAddressOf()));
     
     Assert::AreEqual(expectedClassName, static_cast<wchar_t const*>(className));
-}
-
-
-template<typename T, typename U>
-ComPtr<T> GetWrappedResource(U&& wrapper)
-{
-    ComPtr<T> resource;
-    ThrowIfFailed(As<ICanvasResourceWrapperNative>(wrapper)->GetResource(IID_PPV_ARGS(&resource)));
-    return resource;
 }

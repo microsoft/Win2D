@@ -74,6 +74,9 @@ namespace Microsoft
             TO_STRING(ID2D1RadialGradientBrush);
             TO_STRING_CX(ICanvasImage);
             TO_STRING(IDXGISwapChain2);
+            TO_STRING(ID2D1RectangleGeometry);
+            TO_STRING(ID2D1EllipseGeometry);
+            TO_STRING(ID2D1RoundedRectangleGeometry);
 
 #undef TO_STRING
 #undef TO_STRING_CX

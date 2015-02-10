@@ -74,6 +74,7 @@
 #include <CanvasBrush.h>
 #include <CanvasDevice.h>
 #include <CanvasDrawingSession.h>
+#include <CanvasGeometry.h>
 #include <CanvasImageBrush.h>
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>

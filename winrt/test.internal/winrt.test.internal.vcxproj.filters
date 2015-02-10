@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="xaml">
@@ -53,6 +53,9 @@
       <Filter>graphics</Filter>
     </ClCompile>
     <ClCompile Include="graphics\CanvasEffectUnitTest.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\CanvasGeometryUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
     <ClCompile Include="graphics\CanvasGradientBrushUnitTests.cpp">
@@ -184,6 +187,9 @@
     <ClInclude Include="mocks\MockD2DEffect.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\MockD2DEllipseGeometry.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="mocks\MockD2DFactory.h">
       <Filter>mocks</Filter>
     </ClInclude>
@@ -197,6 +203,12 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="mocks\MockD2DRadialGradientBrush.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="mocks\MockD2DRectangleGeometry.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="mocks\MockD2DRoundedRectangleGeometry.h">
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="mocks\MockD2DSolidColorBrush.h">

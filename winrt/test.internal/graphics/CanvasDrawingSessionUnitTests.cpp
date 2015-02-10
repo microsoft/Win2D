@@ -17,6 +17,7 @@
 #include "effects\generated\GaussianBlurEffect.h"
 #include "TestBitmapResourceCreationAdapter.h"
 #include "MockWICFormatConverter.h"
+#include "MockD2DRectangleGeometry.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
@@ -122,12 +123,22 @@ public:
     ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
     ComPtr<CanvasDrawingSession> DS;
     ComPtr<StubCanvasBrush> Brush;
+    ComPtr<CanvasGeometry> Geometry;
 
     CanvasDrawingSessionFixture()
         : DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
         , DS(MakeDrawingSession(DeviceContext.Get()))
         , Brush(Make<StubCanvasBrush>())
     {
+        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
+        canvasDevice->CreateRectangleGeometryMethod.AllowAnyCall(
+            [](D2D1_RECT_F const&)
+            {
+                return Make<MockD2DRectangleGeometry>();
+            });
+
+        auto geometryManager = std::make_shared<CanvasGeometryManager>();
+        Geometry = geometryManager->Create(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
     }
 
 private:
@@ -1881,6 +1892,165 @@ public:
         });
     }
 
+    //
+    // DrawGeometry
+    //
+
+    template<typename TDraw>
+    void TestDrawGeometry(bool isColorOverload, float expectedStrokeWidth, bool expectStrokeStyle, TDraw const& callDrawFunction)
+    {
+        CanvasDrawingSessionFixture f;
+        BrushValidator brushValidator(f, isColorOverload);
+
+        int expectedDrawGeometryCalls = isColorOverload ? 2 : 1;
+
+        ComPtr<ID2D1Geometry> nativeGeometryResource = f.Geometry->GetResource();
+
+        auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
+        canvasStrokeStyle->put_LineJoin(CanvasLineJoin::MiterOrBevel);
+        
+        f.DeviceContext->DrawGeometryMethod.SetExpectedCalls(expectedDrawGeometryCalls,
+            [&](ID2D1Geometry* geometry, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
+            {
+                Assert::AreEqual(nativeGeometryResource.Get(), geometry);
+
+                brushValidator.Check(brush);
+                Assert::AreEqual(expectedStrokeWidth, strokeWidth);
+                if (expectStrokeStyle)
+                {
+                    Assert::IsNotNull(strokeStyle);
+                    Assert::AreEqual(D2D1_LINE_JOIN_MITER_OR_BEVEL, f.DeviceContext->m_factory->m_lineJoin);
+                }
+                else
+                {
+                    Assert::IsNull(strokeStyle);
+                }
+            });
+
+        callDrawFunction(f, f.Geometry.Get(), canvasStrokeStyle.Get());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithBrush)
+    {
+        TestDrawGeometry(false, 1, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryWithBrush(geometry, f.Brush.Get()));
+            });
+
+        // Null brush or geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrush(f.Geometry.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrush(nullptr, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithColor)
+    {
+        TestDrawGeometry(true, 1, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryWithColor(geometry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawGeometryWithColor(geometry, ArbitraryMarkerColor2));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithBrushAndStrokeWidth)
+    {        
+        TestDrawGeometry(false, 123, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryWithBrushAndStrokeWidth(geometry, f.Brush.Get(), 123));
+            });
+
+        // Null brush or geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidth(f.Geometry.Get(), nullptr, 0));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidth(nullptr, f.Brush.Get(), 0));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithColorAndStrokeWidth)
+    {        
+        TestDrawGeometry(true, 123, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidth(geometry, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidth(geometry, ArbitraryMarkerColor2, 123));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle)
+    {
+        TestDrawGeometry(false, 123, true,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(geometry, f.Brush.Get(), 123, strokeStyle));
+            });
+
+        // Null brush or geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(f.Geometry.Get(), nullptr, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(nullptr, f.Brush.Get(), 0, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithColorAndStrokeWidthAndStrokeStyle)
+    {
+        TestDrawGeometry(true, 123, true,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(geometry, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(geometry, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
+    }
+
+    //
+    // FillGeometry
+    //    
+    
+    template<typename TDraw>
+    void TestFillGeometry(bool isColorOverload, TDraw const& callDrawFunction)
+    {
+        CanvasDrawingSessionFixture f;
+        BrushValidator brushValidator(f, isColorOverload);
+
+        int expectedFillGeometryCount = isColorOverload ? 2 : 1;
+
+        ComPtr<ID2D1Geometry> nativeGeometryResource = f.Geometry->GetResource();
+
+        f.DeviceContext->FillGeometryMethod.SetExpectedCalls(expectedFillGeometryCount,
+            [&](ID2D1Geometry* geometry, ID2D1Brush* brush, ID2D1Brush* opacityBrush)
+            {
+                Assert::AreEqual(nativeGeometryResource.Get(), geometry);
+                brushValidator.Check(brush);
+
+                Assert::IsNull(opacityBrush);
+            });
+
+        callDrawFunction(f, f.Geometry.Get());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithBrush)
+    {        
+        TestFillGeometry(false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryWithBrush(geometry, f.Brush.Get()));
+            });
+
+        // Null brush or geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrush(f.Geometry.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrush(nullptr, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithColor)
+    {
+        TestFillGeometry(true,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, ArbitraryMarkerColor2));
+            });
+    }
 
     TEST_METHOD_EX(CanvasDrawingSession_StateGettersWithNull)
     {

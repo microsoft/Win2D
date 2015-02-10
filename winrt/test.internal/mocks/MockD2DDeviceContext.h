@@ -59,6 +59,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(GetTargetMethod             , void(ID2D1Image**));
         CALL_COUNTER_WITH_MOCK(BeginDrawMethod             , void());
         CALL_COUNTER_WITH_MOCK(EndDrawMethod               , HRESULT(D2D1_TAG*, D2D1_TAG*));
+        CALL_COUNTER_WITH_MOCK(DrawGeometryMethod          , void(ID2D1Geometry*, ID2D1Brush*,float,ID2D1StrokeStyle*));
+        CALL_COUNTER_WITH_MOCK(FillGeometryMethod          , void(ID2D1Geometry*,ID2D1Brush*,ID2D1Brush*));
 
         MockD2DDeviceContext()
         {
@@ -185,14 +187,14 @@ namespace canvas
             FillEllipseMethod.WasCalled(ellipse, brush);
         }
 
-        IFACEMETHODIMP_(void) DrawGeometry(ID2D1Geometry *,ID2D1Brush *,FLOAT,ID2D1StrokeStyle *) override
+        IFACEMETHODIMP_(void) DrawGeometry(ID2D1Geometry* geometry, ID2D1Brush* brush, FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle) override
         {
-            Assert::Fail(L"Unexpected call to DrawGeometry");
+            DrawGeometryMethod.WasCalled(geometry, brush, strokeWidth, strokeStyle);
         }
 
-        IFACEMETHODIMP_(void) FillGeometry(ID2D1Geometry *,ID2D1Brush *,ID2D1Brush *) override
+        IFACEMETHODIMP_(void) FillGeometry(ID2D1Geometry* geometry, ID2D1Brush* brush, ID2D1Brush* opacityBrush) override
         {
-            Assert::Fail(L"Unexpected call to FillGeometry");
+            FillGeometryMethod.WasCalled(geometry, brush, opacityBrush);
         }
 
         IFACEMETHODIMP_(void) FillMesh(ID2D1Mesh *,ID2D1Brush *) override
