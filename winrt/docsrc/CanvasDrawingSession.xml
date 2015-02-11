@@ -472,6 +472,31 @@ under the License.
       <summary>Union of source and destination bitmaps with unchanged alpha. 
                Equation: O = (1 - D) * S + (1 - SA) * D.</summary>
     </member>
+  
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
+      <summary>Draws a geometry with a single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a geometry with a single unit stroke width, and using a brush to define the color.</summary>
+    </member>    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a geometry with the specified stroke width, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color,System.Single)">
+      <summary>Draws a geometry with the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a geometry with the specified stroke width and stroke style, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a geometry with the specified stroke width, stroke style, and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills a geometry, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
+      <summary>Fills a geometry with the specified color.</summary>
+    </member>    
    
   </members>
 </doc>
