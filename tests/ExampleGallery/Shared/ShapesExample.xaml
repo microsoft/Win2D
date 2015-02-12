@@ -30,14 +30,7 @@ under the License.
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ListBox x:Name="Shapes" Grid.Column="0" Margin="5" VerticalAlignment="Top" SelectionChanged="Shapes_SelectionChanged">
-            <ListBox.Items>
-                <local:Shape Name="Lines"/>
-                <local:Shape Name="Rectangles"/>
-                <local:Shape Name="Circles"/>
-            </ListBox.Items>
-        </ListBox>
-        <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"
-                              Draw="Canvas_Draw"/>
+        <ListBox x:Name="Shapes" Grid.Column="0" Margin="5" VerticalAlignment="Top" SelectionChanged="Shapes_SelectionChanged" />
+        <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"/>
     </Grid>
 </UserControl> 
