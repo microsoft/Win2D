@@ -728,9 +728,25 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         auto anyDevice = Make<MockCanvasDevice>();
         f.DeviceManager->SetDevice(anyDevice);
 
+        // When a new control has not yet been loaded, app suspend should be ignored.
+        anyDevice->TrimMethod.SetExpectedCalls(0);
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
+
+        // After the control is loaded, app suspend should call Trim.
+        f.Load();
+
         anyDevice->TrimMethod.SetExpectedCalls(1);
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+
+        anyDevice->TrimMethod.SetExpectedCalls(0);
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
+
+        // If the control is unloaded, Trim should be ignored once more.
+        f.RaiseUnloadedEvent();
 
         ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
     }
 
     TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaisedAndThereIsNoDevice_NothingBadHappens)

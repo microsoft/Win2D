@@ -70,7 +70,7 @@ namespace
         : public RuntimeClass<
             RuntimeClassFlags<WinRtClassicComMix>, 
             MixIn<AnyDerivedControl, BaseControl<AnyTraits>>,
-            ComposableBase<ABI::Windows::UI::Xaml::Controls::IUserControl>>,
+            ComposableBase<>>,
           public BaseControl<AnyTraits>
     {
         InspectableClass(L"AnyDerivedControl", BaseTrust);
@@ -86,6 +86,7 @@ namespace
         CALL_COUNTER_WITH_MOCK(CreateOrUpdateRenderTargetMethod, void(ICanvasDevice*, CanvasBackground, float, Size, RenderTarget*));
         CALL_COUNTER_WITH_MOCK(CreateDrawEventArgsMethod, ComPtr<drawEventArgs_t>(ICanvasDrawingSession*));
         CALL_COUNTER_WITH_MOCK(ChangedMethod, void());
+        CALL_COUNTER_WITH_MOCK(LoadedMethod, void());
         CALL_COUNTER_WITH_MOCK(UnloadedMethod, void());
         CALL_COUNTER_WITH_MOCK(ApplicationSuspendingMethod, void(ISuspendingEventArgs*));
         CALL_COUNTER_WITH_MOCK(ApplicationResumingMethod, void());
@@ -109,6 +110,11 @@ namespace
         virtual void Changed(Lock const&, ChangeReason) override final
         {
             return ChangedMethod.WasCalled();
+        }
+
+        virtual void Loaded() override final
+        {
+            LoadedMethod.WasCalled();
         }
 
         virtual void Unloaded() override final

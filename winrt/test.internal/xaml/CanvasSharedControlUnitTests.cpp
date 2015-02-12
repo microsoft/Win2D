@@ -139,6 +139,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
     TEST_SHARED_CONTROL_BEHAVIOR(WhenDpiChangedEventRaised_ForwardsToDeviceManager)
     {
         ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+        f.Load();
 
         // DPI change event without an actual change to the value should be ignored.
         f.Adapter->RaiseDpiChangedEvent();
@@ -148,6 +149,40 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
         f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
         f.Adapter->RaiseDpiChangedEvent();
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(WhenControlNotLoaded_DpiChangedEventIsIgnored)
+    {
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+
+        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(0);
+
+        // DPI change events on a new, not yet loaded control should be ignored.
+        f.Adapter->LogicalDpi = 100;
+        f.Adapter->RaiseDpiChangedEvent();
+
+        f.Adapter->LogicalDpi = 96;
+        f.Adapter->RaiseDpiChangedEvent();
+
+        // Ditto after loading and then unloading the control again.
+        f.Load();
+        f.RaiseUnloadedEvent();
+
+        f.Adapter->LogicalDpi = 100;
+        f.Adapter->RaiseDpiChangedEvent();
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(WhenDpiChangesWhileControlNotLoaded_LoadRaisesDpiChangedEvent)
+    {
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+
+        // DPI changes, but is ignored because the control is not yet loaded.
+        f.Adapter->LogicalDpi = 100;
+        f.Adapter->RaiseDpiChangedEvent();
+
+        // When the control loads, the DPI change shoudl be picked up.
+        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
+        f.Load();
     }
 
     TEST_SHARED_CONTROL_BEHAVIOR(add_CreateResources_ForwardsToDeviceManager)
@@ -362,5 +397,39 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
         float dips = 0;
         ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(WhenLoadedAndUnloaded_EventsAreRegisteredAndUnregistered)
+    {
+        BasicControlFixture<TRAITS> f;
+
+        f.CreateAdapter();
+
+        // Creating the control should not register events.
+        f.Adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(0);
+        f.Adapter->SuspendingEventSource->AddMethod.SetExpectedCalls(0);
+        f.Adapter->ResumingEventSource->AddMethod.SetExpectedCalls(0);
+
+        f.Adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(0);
+        f.Adapter->SuspendingEventSource->RemoveMethod.SetExpectedCalls(0);
+        f.Adapter->ResumingEventSource->RemoveMethod.SetExpectedCalls(0);
+
+        f.CreateControl();
+
+        // Loading the control should register events.
+        f.Adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(1);
+        f.Adapter->SuspendingEventSource->AddMethod.SetExpectedCalls(1);
+        f.Adapter->ResumingEventSource->AddMethod.SetExpectedCalls(1);
+
+        f.Load();
+
+        Expectations::Instance()->Validate();
+
+        // Unloading the control should unregister events.
+        f.Adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(1);
+        f.Adapter->SuspendingEventSource->RemoveMethod.SetExpectedCalls(1);
+        f.Adapter->ResumingEventSource->RemoveMethod.SetExpectedCalls(1);
+
+        f.RaiseUnloadedEvent();
     }
 };

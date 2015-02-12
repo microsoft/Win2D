@@ -240,7 +240,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             
         }
 
-        virtual std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override
+        virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override
         {
             return m_canvasSwapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);
         }
@@ -285,14 +285,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasAnimatedControlFactory : public ActivationFactory<>
     {
-        std::shared_ptr<ICanvasAnimatedControlAdapter> m_adapter;
+        std::weak_ptr<ICanvasAnimatedControlAdapter> m_adapter;
 
     public:
-        CanvasAnimatedControlFactory()
-            : m_adapter(CreateCanvasAnimatedControlAdapter())
-        {
-        }
-
         IFACEMETHODIMP ActivateInstance(IInspectable** obj)
         {
             return ExceptionBoundary(
@@ -300,7 +295,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     CheckAndClearOutPointer(obj);
 
-                    auto control = Make<CanvasAnimatedControl>(m_adapter);
+                    auto adapter = m_adapter.lock();
+
+                    if (!adapter)
+                        m_adapter = adapter = CreateCanvasAnimatedControlAdapter();
+
+                    auto control = Make<CanvasAnimatedControl>(adapter);
                     CheckMakeResult(control);
 
                     ThrowIfFailed(control.CopyTo(obj));
@@ -548,6 +548,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return drawEventArgs;
     }
 
+    void CanvasAnimatedControl::Loaded()
+    {
+    }
+
     void CanvasAnimatedControl::Unloaded()
     {
         // Stop the update/render thread if it is running
@@ -597,10 +601,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // This may be called from any thread.
         //
 
+        MustOwnLock(lock);
+
         if (!IsLoaded())
             return;
-
-        MustOwnLock(lock);
 
         switch (reason)
         {

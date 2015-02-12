@@ -36,6 +36,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)DWriteExperiments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Helpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Matrix5x4Test.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)RefCountTests.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />

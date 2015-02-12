@@ -189,7 +189,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ThrowIfFailed(SetComposableBasePointers(
             baseInspectable.Get(),
-            surfaceImageSourceFactory));
+            nullptr));
     }
 
 

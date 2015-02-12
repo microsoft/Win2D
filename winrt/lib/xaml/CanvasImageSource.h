@@ -64,7 +64,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasImageSource : public RuntimeClass<
         ICanvasImageSource,
-        ComposableBase<ISurfaceImageSourceFactory>>
+        ComposableBase<>>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
 

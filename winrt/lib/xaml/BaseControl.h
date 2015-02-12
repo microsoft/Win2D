@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class IBaseControlAdapter
     {
     public:
-        virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) = 0;
+        virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) = 0;
         virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
         virtual RegisteredEvent AddApplicationResumingCallback(IEventHandler<IInspectable*>*) = 0;
@@ -133,7 +133,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             , m_currentRenderTarget{}
         {
             CreateBaseClass();
-            RegisterEventHandlers();
+            RegisterEventHandlersOnSelf();
         }
 
         IFACEMETHODIMP put_ClearColor(Color value) override
@@ -279,6 +279,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) = 0;
 
+        virtual void Loaded() = 0;
         virtual void Unloaded() = 0;
 
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) = 0;
@@ -488,16 +489,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             auto base = GetAdapter()->CreateUserControl(As<IInspectable>(GetControl()).Get());
 
-            ThrowIfFailed(GetControl()->SetComposableBasePointers(base.first.Get(), base.second.Get()));
+            ThrowIfFailed(GetControl()->SetComposableBasePointers(base.Get(), nullptr));
         }
 
-        void RegisterEventHandlers()
+        // These handlers never need to be unregistered, so can
+        // be set up immediately when the object is constructed.
+        void RegisterEventHandlersOnSelf()
         {
             auto frameworkElement = As<IFrameworkElement>(GetControl());
 
             RegisterEventHandlerOnSelf(
-                frameworkElement, 
-                &IFrameworkElement::add_Loaded, 
+                frameworkElement,
+                &IFrameworkElement::add_Loaded,
                 &BaseControl::OnLoaded);
 
             RegisterEventHandlerOnSelf(
@@ -506,7 +509,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 &BaseControl::OnUnloaded);
 
             RegisterEventHandlerOnSelf(frameworkElement, &IFrameworkElement::add_SizeChanged, &BaseControl::OnSizeChanged);
-            
+
+            m_recreatableDeviceManager->SetChangedCallback(
+                [=] (ChangeReason reason)
+                {
+                    Changed(GetLock(), reason);
+                });
+        }
+
+        // These handlers have UI thread affinity, so must not be unregistered by a finalizer thread.
+        // They are registered and unregistered when the control is Loaded or Unloaded.
+        void RegisterEventHandlers()
+        {
             m_applicationSuspendingEventRegistration = m_adapter->AddApplicationSuspendingCallback(
                 this, 
                 &BaseControl::OnApplicationSuspending);
@@ -517,11 +531,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &BaseControl::OnDpiChanged);
 
-            m_recreatableDeviceManager->SetChangedCallback(
-                [=] (ChangeReason reason)
-                {
-                    Changed(GetLock(), reason);
-                });
+            // Check if the DPI changed while we weren't listening for events.
+            OnDpiChanged(nullptr, nullptr);
+        }
+
+        void UnregisterEventHandlers()
+        {
+            m_applicationSuspendingEventRegistration.Release();
+            m_applicationResumingEventRegistration.Release();
+            m_dpiChangedEventRegistration.Release();
         }
 
         template<typename T, typename DELEGATE, typename HANDLER>
@@ -547,8 +565,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
+                    auto lock = GetLock();
                     m_isLoaded = true;
-                    Changed(GetLock());
+                    RegisterEventHandlers();
+                    Loaded();
+                    Changed(lock);
                 });
         }
 
@@ -557,8 +578,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    GetControl()->Unloaded();
+                    auto lock = GetLock();
                     m_isLoaded = false;
+                    Unloaded();
+                    UnregisterEventHandlers();
                 });
         }
 

@@ -29,11 +29,8 @@ public:
     {
     }
 
-    virtual std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChain) override
+    virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChain) override
     {
-        ComPtr<IInspectable> inspectableControl;
-        ThrowIfFailed(m_stubSwapChainPanel.As(&inspectableControl));
-
-        return std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>>(inspectableControl, m_stubSwapChainPanel);
+        return As<IInspectable>(m_stubSwapChainPanel);
     }
 };

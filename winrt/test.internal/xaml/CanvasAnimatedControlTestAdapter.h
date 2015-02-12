@@ -159,7 +159,7 @@ public:
         }
     }
 
-    std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
+    ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
     {
         return m_swapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);
     }

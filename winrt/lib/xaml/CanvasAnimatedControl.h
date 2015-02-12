@@ -127,7 +127,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasAnimatedControl : public RuntimeClass<
         MixIn<CanvasAnimatedControl, BaseControl<CanvasAnimatedControlTraits>>,
-        ComposableBase<IUserControl>>,
+        ComposableBase<>>,
         public BaseControl<CanvasAnimatedControlTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedControl, BaseTrust);
@@ -211,6 +211,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDrawingSession* drawingSession) override final;
 
         virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
+        virtual void Loaded() override final;
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;

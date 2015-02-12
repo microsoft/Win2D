@@ -200,16 +200,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     
     //
-    // CanvasBitmapFactory
-    //
-
-
-    CanvasBitmapFactory::CanvasBitmapFactory()
-        : m_adapter(std::make_shared<DefaultCanvasBitmapAdapter>())
-    {
-    }
-
-    //
     // ICanvasBitmapStatics
     //
 
@@ -475,7 +465,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                ComPtr<IRandomAccessStreamReference> streamReference = m_adapter->CreateRandomAccessStreamFromUri(uri);
+                auto adapter = std::make_unique<DefaultCanvasBitmapAdapter>();
+                ComPtr<IRandomAccessStreamReference> streamReference = adapter->CreateRandomAccessStreamFromUri(uri);
 
                 // Start opening the file.
                 ComPtr<IAsyncOperation<IRandomAccessStreamWithContentType*>> openOperation;

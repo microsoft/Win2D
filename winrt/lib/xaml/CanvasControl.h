@@ -105,7 +105,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ABI::Windows::UI::Xaml::IFrameworkElementOverrides,
         MixIn<CanvasControl, BaseControl<CanvasControlTraits>>,
-        ComposableBase<ABI::Windows::UI::Xaml::Controls::IUserControl>>,
+        ComposableBase<>>,
         public BaseControl<CanvasControlTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasControl, BaseTrust);
@@ -165,6 +165,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDrawingSession* drawingSession) override final;
 
         virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
+        virtual void Loaded() override final;
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
@@ -174,6 +175,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void CreateImageControl();
         void RegisterEventHandlers();
+        void UnregisterEventHandlers();
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);
         HRESULT OnWindowVisibilityChanged(IInspectable*, IVisibilityChangedEventArgs* args);

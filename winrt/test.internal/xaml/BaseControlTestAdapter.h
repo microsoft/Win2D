@@ -77,14 +77,9 @@ public:
             });
     }
 
-    virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
+    virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) override
     {
-        auto control = Make<StubUserControl>();
-
-        ComPtr<IInspectable> inspectableControl;
-        ThrowIfFailed(control.As(&inspectableControl));
-
-        return std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>>(inspectableControl, control);
+        return As<IInspectable>(Make<StubUserControl>());
     }
 
     virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* value) override
