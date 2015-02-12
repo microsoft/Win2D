@@ -600,8 +600,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         MustOwnLock(lock);
 
-        if (reason == ChangeReason::ClearColor)
+        switch (reason)
+        {
+        case ChangeReason::ClearColor:
             m_sharedState.NeedsDraw = true;
+            break;
+
+        case ChangeReason::DeviceLost:
+            m_sharedState.NeedsDraw = true;
+            m_hasUpdated = false;
+            break;
+
+        default:
+            // nothing
+            break;
+        }
+
 
         //
         // The remaining work must be done on the UI thread.  There's a chance
@@ -627,9 +641,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // control to redraw itself.  For example, DPI has changed, device has
         // been lost, resources have been loaded.
         //
-        // In this case we want to force an Update() to happen, even if it
-        // wouldn't normally, so that we can draw something.
-        //
         // This method, as an action, is always run on the UI thread.
         //
 
@@ -645,16 +656,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         lock.unlock();
 
         //
-        // We don't want to spin up the update/render thread if we're paused -
-        // unless we need to draw (eg because the clear color has changed)
-        //
-        if (isPaused && !needsDraw)
-        {
-            return;
-        }
-
-        //
-        // Check the status of the update/render thread
+        // Get the status of the update/render thread.
         //
         auto renderLoopInfo = MaybeAs<IAsyncInfo>(m_renderLoopAction);
         auto renderLoopStatus = AsyncStatus::Completed;
@@ -673,14 +675,43 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             case AsyncStatus::Canceled:
             case AsyncStatus::Error:
                 m_renderLoopAction.Reset();
-                // We still hold renderLoopInfo; this is used for error handling
-                // below
+                // We still hold renderLoopInfo; this is used when we process
+                // the error from within the RunWithRenderTarget call below.
                 break;
                 
             default:
                 assert(false);
             }
         }
+
+        //
+        // Figure out if we should try and start the render loop.
+        //
+        bool ignorePaused = false;
+
+        if (renderLoopStatus == AsyncStatus::Error)
+        {
+            // If the last render loop ended due to an error (eg lost device)
+            // then we want to process the error.  The error is processed below
+            // where we try and start the render loop.  In this context we can
+            // rethrow the exception that was marshaled from the render loop and
+            // have it caught and handled by RunWithRenderTarget.
+            ignorePaused = true;
+        }
+
+        if (needsDraw)
+        {
+            // If we've marked that we need to redraw (eg because the clear
+            // color has changed) then we'll need to start the loop.
+            ignorePaused = true;
+        }
+
+        if (isPaused && !ignorePaused)
+        {
+            // Don't start the render loop if we're paused
+            return;
+        }
+
 
         //
         // Call Trim on application suspend, but only once we are sure the
@@ -710,9 +741,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 UNREFERENCED_PARAMETER(clearColor);
 
                 //
-                // Process the results of the update/render loop here, within
-                // RunWithRenderTarget, so that it can handle errors (such as
-                // lost device).
+                // Process the results of the previous update/render loop.  We
+                // do this here, within RunWithRenderTarget, so that it can
+                // handle errors (such as lost device).
                 //
                 assert(!m_renderLoopAction);
                 assert(renderLoopStatus != AsyncStatus::Started);

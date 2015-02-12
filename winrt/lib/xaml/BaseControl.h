@@ -275,15 +275,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<drawEventArgs_t> CreateDrawEventArgs(
             ICanvasDrawingSession* drawingSession) = 0;
 
-        enum class ChangeReason
-        {
-            Unknown,
-            ClearColor
-        };
-
         typedef std::unique_lock<std::mutex> Lock;
 
-        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Unknown) = 0;
+        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) = 0;
 
         virtual void Unloaded() = 0;
 
@@ -524,9 +518,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &BaseControl::OnDpiChanged);
 
             m_recreatableDeviceManager->SetChangedCallback(
-                [=]
+                [=] (ChangeReason reason)
                 {
-                    Changed(GetLock());
+                    Changed(GetLock(), reason);
                 });
         }
 

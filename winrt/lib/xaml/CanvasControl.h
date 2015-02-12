@@ -164,7 +164,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<CanvasDrawEventArgs> CreateDrawEventArgs(
             ICanvasDrawingSession* drawingSession) override final;
 
-        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Unknown) override final;
+        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;

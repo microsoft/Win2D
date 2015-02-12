@@ -705,13 +705,16 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     struct UpdateRenderFixture : public CanvasAnimatedControlFixture
     {
+        MockEventHandler<Animated_CreateResourcesEventHandler> OnCreateResources;
         MockEventHandler<Animated_DrawEventHandler> OnDraw;
         MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
 
         UpdateRenderFixture()
-            : OnDraw(L"OnDraw")
+            : OnCreateResources(L"OnCreateResources")
+            , OnDraw(L"OnDraw")
             , OnUpdate(L"OnUpdate")
         {
+            AddCreateResourcesHandler(OnCreateResources.Get());
             AddDrawHandler(OnDraw.Get());
             AddUpdateHandler(OnUpdate.Get());
         }
@@ -719,6 +722,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         void GetIntoSteadyState()
         {
             Load();
+            OnCreateResources.SetExpectedCalls(1);
             Adapter->DoChanged();
             OnUpdate.SetExpectedCalls(1);
             OnDraw.SetExpectedCalls(1);
@@ -750,6 +754,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;
         ThrowIfFailed(f.Control->put_IsFixedTimeStep(fixedTimeStep));
 
+        f.OnCreateResources.SetExpectedCalls(1);
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
 
@@ -765,6 +770,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;
         ThrowIfFailed(f.Control->put_IsFixedTimeStep(false));
 
+        f.OnCreateResources.SetExpectedCalls(1);
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
 
@@ -822,6 +828,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         ThrowIfFailed(f.Control->put_Paused(TRUE));
         f.Load();
         
+        f.OnCreateResources.SetExpectedCalls(1); // even when paused we still create resources
         f.OnUpdate.SetExpectedCalls(0);
         f.OnDraw.SetExpectedCalls(0);
 
@@ -872,6 +879,105 @@ TEST_CLASS(CanvasAnimatedControlTests)
             f.Adapter->ProgressTime(TicksPerFrame);
             f.Adapter->DoChanged();
             f.RenderSingleFrame();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceLost_DrawIsNotCalledUntilUpdateHasCompleted)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(false)); // ensure that update handlers are called on each tick
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
+
+        f.GetIntoSteadyState();
+
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        // Trigger a draw by changing the clear color, but this will report a
+        // lost device
+        f.OnDraw.SetExpectedCalls(1,
+            [] (ICanvasAnimatedControl* sender, ICanvasAnimatedDrawEventArgs*)
+            {
+                ComPtr<ICanvasDevice> device;
+                Assert::AreEqual(S_OK, As<ICanvasResourceCreator>(sender)->get_Device(&device));
+
+                auto stubDevice = dynamic_cast<StubCanvasDevice*>(device.Get());
+                Assert::IsNotNull(stubDevice);
+
+                stubDevice->MarkAsLost();
+
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOtherColor));
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        //
+        // At this point the device has been lost.  We don't expect any draw
+        // calls until the asynchronous create resources has completed.
+        //
+        f.OnDraw.SetExpectedCalls(0);
+
+        auto action = Make<MockAsyncAction>();
+        f.OnCreateResources.SetExpectedCalls(1,
+            [=] (IInspectable*, ICanvasCreateResourcesEventArgs* args)
+            {
+                return args->TrackAsyncAction(action.Get());
+            });
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        f.OnCreateResources.SetExpectedCalls(0);
+
+        //
+        // Event after resources have been created we still don't expect any
+        // draw calls since the control is paused and the draw handlers mustn't
+        // be called until there's been at least one update since the last
+        // CreateResources.
+        //
+        action->SetResult(S_OK); // this completes the CreateResources
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        //
+        // Changing the clear color would normally force the draw handlers to be
+        // called.  However, since there still hasn't been an update the draw
+        // handlers are not called.
+        //
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        //
+        // Now when the control is unpaused we expect an update/render.
+        //
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.OnUpdate.SetExpectedCalls(1);
+            f.OnDraw.SetExpectedCalls(1);
+            
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
         }
     }
 
@@ -978,6 +1084,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;
         f.Load();
 
+        f.OnCreateResources.SetExpectedCalls(1);
         f.OnUpdate.SetExpectedCalls(1,
             [&] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
             {
@@ -1005,6 +1112,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
     void WhilePaused_UpdateCountIncrements(bool isFixedTimeStep)
     {
         UpdateRenderFixture f;
+        f.OnCreateResources.SetExpectedCalls(1);
         f.OnDraw.AllowAnyCall();
         f.Load();
 

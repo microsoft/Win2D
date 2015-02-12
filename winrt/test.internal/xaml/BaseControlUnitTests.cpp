@@ -173,7 +173,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
     struct Fixture : public BasicControlFixture<AnyTraits>
     {
         MockRecreatableDeviceManager<AnyTraits>* DeviceManager;
-        std::function<void()> ChangedCallback;
+        std::function<void(ChangeReason)> ChangedCallback;
 
         Fixture()
             : DeviceManager(nullptr)
@@ -186,7 +186,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
                     Assert::IsNull(DeviceManager);
                     auto manager = std::make_unique<MockRecreatableDeviceManager<AnyTraits>>();
                     manager->SetChangedCallbackMethod.SetExpectedCalls(1,
-                        [=](std::function<void()> fn)
+                        [=](std::function<void(ChangeReason)> fn)
                         {
                             ChangedCallback = fn;
                         });
@@ -204,7 +204,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
     {
         Fixture f;
         f.Control->ChangedMethod.SetExpectedCalls(1);
-        f.ChangedCallback();
+        f.ChangedCallback(ChangeReason::Other);
     }
 
     TEST_METHOD_EX(BaseControl_WhenDeviceIsNewlyCreated_ANewRenderTargetIsCreated)

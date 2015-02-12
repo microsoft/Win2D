@@ -110,7 +110,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     template<typename TRAITS>
     class RecreatableDeviceManager : public IRecreatableDeviceManager<TRAITS>
     {
-        std::function<void()> m_changedCallback;
+        std::function<void(ChangeReason)> m_changedCallback;
         ComPtr<IActivationFactory> m_canvasDeviceFactory;
         EventSource<CreateResourcesHandler, InvokeModeOptions<StopOnFirstError>> m_createResourcesEventSource;
 
@@ -132,7 +132,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
         }
 
-        virtual void SetChangedCallback(std::function<void()> fn)
+        virtual void SetChangedCallback(std::function<void(ChangeReason)> fn)
         {
             m_changedCallback = fn;
         }
@@ -166,7 +166,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // any pending asynchronous CreateResources actions have completed.
             
             if (m_committedDevice)
+            {
                 return m_committedDevice->GetDevice();
+            }
             else
             {
                 static ComPtr<ICanvasDevice> nullCanvasDevice;
@@ -191,7 +193,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             if (!m_currentOperationIsPending && m_changedCallback)
             {
-                m_changedCallback();
+                m_changedCallback(ChangeReason::Other);
             }
         }
 
@@ -368,7 +370,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 
                 // Notify the control that it needs to try rendering again
                 if (m_changedCallback)
-                    m_changedCallback();
+                    m_changedCallback(ChangeReason::DeviceLost);
             }
         }
 
@@ -456,7 +458,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     lock.unlock();
                     
                     if (m_changedCallback)
-                        m_changedCallback();
+                        m_changedCallback(ChangeReason::Other);
                 });
         }
     };

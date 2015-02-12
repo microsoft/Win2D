@@ -345,7 +345,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.EnsureChangedCallback();
         f.RenderAnyNumberOfFrames();
 
-        f.ChangedCallback();
+        f.ChangedCallback(ChangeReason::Other);
         f.EnsureChangedCallback();
 
         f.OnDraw.SetExpectedCalls(1);

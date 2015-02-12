@@ -231,6 +231,14 @@ namespace Microsoft
                 END_ENUM(CanvasSwapChainRotation);
             }
 
+            ENUM_TO_STRING(ChangeReason)
+            {
+                ENUM_VALUE(ChangeReason::Other);
+                ENUM_VALUE(ChangeReason::ClearColor);
+                ENUM_VALUE(ChangeReason::DeviceLost);
+                END_ENUM(ChangeReason);
+            }
+
             template<>
             static inline std::wstring ToString<ABI::Windows::UI::Color>(ABI::Windows::UI::Color const& value)
             {

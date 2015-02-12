@@ -224,7 +224,7 @@ template<class TRAITS>
 struct ControlFixtureWithRecreatableDeviceManager : public ControlFixture<TRAITS>
 {
     MockRecreatableDeviceManager<TRAITS>* DeviceManager;
-    std::function<void()> ChangedCallback;
+    std::function<void(ChangeReason)> ChangedCallback;
 
     ControlFixtureWithRecreatableDeviceManager()
         : DeviceManager(nullptr)
@@ -237,7 +237,7 @@ struct ControlFixtureWithRecreatableDeviceManager : public ControlFixture<TRAITS
                 Assert::IsNull(DeviceManager);
                 auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
                 manager->SetChangedCallbackMethod.SetExpectedCalls(1,
-                    [=](std::function<void()> fn)
+                    [=](std::function<void(ChangeReason)> fn)
                     {
                         ChangedCallback = fn;
                     });
