@@ -332,25 +332,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
-    }
-
-    TEST_SHARED_CONTROL_BEHAVIOR(WhenChangedCallbackIsCalled_RedrawIsTriggered)
-    {
-        DrawFixture<TRAITS> f;
-        f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None);
-
-        f.OnDraw.SetExpectedCalls(1);
-
-        f.Load();
-        f.EnsureChangedCallback();
-        f.RenderAnyNumberOfFrames();
-
-        f.ChangedCallback(ChangeReason::Other);
-        f.EnsureChangedCallback();
-
-        f.OnDraw.SetExpectedCalls(1);
-        f.RenderAnyNumberOfFrames();        
-    }
+    }    
 };
 
 TEST_CLASS(CanvasSharedControlTests_CommonAdapter)

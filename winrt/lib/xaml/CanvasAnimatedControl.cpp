@@ -434,7 +434,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 bool paused = m_sharedState.IsPaused;
 
                 if (!paused)    // TODO: should this be if (paused != !!value)?
+                {
+                    m_sharedState.ForceUpdate = true;
                     Changed(lock);
+                }
             });
     }
 
@@ -648,7 +651,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return;
 
         auto lock = GetLock();
-        m_sharedState.ForceUpdate = true;
 
         bool needsDraw = m_sharedState.NeedsDraw;
         bool isPaused = m_sharedState.IsPaused;
@@ -885,7 +887,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         bool updatedThisTick = false;
         if (areResourcesCreated && !isPaused)
-            updatedThisTick = Update(forceUpdate);
+            updatedThisTick = Update(forceUpdate || !m_hasUpdated);
 
         m_hasUpdated |= updatedThisTick;
 

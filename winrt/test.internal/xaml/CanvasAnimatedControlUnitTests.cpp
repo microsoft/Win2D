@@ -492,8 +492,8 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged();
 
         // Should now be in a steady state where Update is called but not Draw.
-        MockEventHandler<Animated_UpdateEventHandler> onUpdate;
-        MockEventHandler<Animated_DrawEventHandler> onDraw;
+        MockEventHandler<Animated_UpdateEventHandler> onUpdate(L"OnUpdate");
+        MockEventHandler<Animated_DrawEventHandler> onDraw(L"OnDraw");
 
         f.AddUpdateHandler(onUpdate.Get());
         f.AddDrawHandler(onDraw.Get());
@@ -501,6 +501,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         onUpdate.ExpectAtLeastOneCall();
         onDraw.SetExpectedCalls(0);
 
+        f.Adapter->ProgressTime(TicksPerFrame);
         f.Execute(Size{ 0, 0 });
     }
 
@@ -1000,6 +1001,77 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
         f.RenderSingleFrame();
+    }
+
+
+    struct NoExtraUpdateFixture : public UpdateRenderFixture
+    {
+        void DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached()
+        {
+            OnUpdate.SetExpectedCalls(0);
+            OnDraw.SetExpectedCalls(0);
+
+            for (int i = 0; i < 10; ++i)
+            {
+                Adapter->DoChanged();
+                Adapter->Tick();
+            }
+
+            Adapter->ProgressTime(TicksPerFrame);
+
+            OnUpdate.SetExpectedCalls(1);
+            OnDraw.SetExpectedCalls(1);
+        
+            for (int i = 0; i < 10; ++i)
+            {
+                Adapter->DoChanged();
+                Adapter->Tick();
+            }
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenSizeChangedBeforeTargetElapsedTimeReached_UpdateAndDrawAreNotCalled)
+    {
+        NoExtraUpdateFixture f;
+
+        f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.AllowAnyCall(
+            [=] (IDXGISwapChain* swapChain)
+            {
+                auto dxgiSwapChain = dynamic_cast<MockDxgiSwapChain*>(swapChain);
+                Assert::IsNotNull(dxgiSwapChain);
+                dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+                return S_OK;
+            });
+
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+
+        f.GetIntoSteadyState();
+
+        f.UserControl->Resize(Size{123, 456});
+
+        f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached();        
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenClearColorChangedBeforeTargetElapsedTimeReached_UpdateAndDrawAreNotCalled)
+    {
+        NoExtraUpdateFixture f;
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+        
+        f.GetIntoSteadyState();
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOtherOpaqueColor));
+
+        // After the changing the clear color we allow one extra draw without an
+        // update - consider the case of a very long TargetElapsedTime, we want
+        // clear color changes to be reflected asap.
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached();
     }
 
     class ElapsedTicksFixture : public CanvasAnimatedControlFixture
