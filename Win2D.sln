@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D5
 		winrt\inc\ComArray.h = winrt\inc\ComArray.h
 		winrt\inc\Constants.h = winrt\inc\Constants.h
 		winrt\inc\ErrorHandling.h = winrt\inc\ErrorHandling.h
+		winrt\inc\Nullable.h = winrt\inc\Nullable.h
+		winrt\inc\RegisteredEvent.h = winrt\inc\RegisteredEvent.h
 		winrt\inc\ScopeWarden.h = winrt\inc\ScopeWarden.h
 		winrt\inc\Utilities.h = winrt\inc\Utilities.h
 		winrt\inc\Vector.h = winrt\inc\Vector.h
