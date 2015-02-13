@@ -323,6 +323,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_sharedState.IsStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
         m_sharedState.TargetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
         m_sharedState.NeedsDraw = true;
+        m_sharedState.FirstTickAfterWasPaused = true;
     }
 
     CanvasAnimatedControl::~CanvasAnimatedControl()
@@ -431,7 +432,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 m_sharedState.IsPaused = !!value;
 
-                if (!m_sharedState.IsPaused)    // TODO: should this be if (paused != !!value)?
+                if (!m_sharedState.IsPaused)
                 {
                     m_sharedState.FirstTickAfterWasPaused = true;
                     Changed(lock);
@@ -652,6 +653,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         bool needsDraw = m_sharedState.NeedsDraw;
         bool isPaused = m_sharedState.IsPaused;
+        bool wasPaused = m_sharedState.FirstTickAfterWasPaused;
 
         lock.unlock();
 
@@ -764,10 +766,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     return;
                 }
 
-                ComPtr<CanvasSwapChain> target(rawTarget);
-                m_stepTimer.ResetElapsedTime();
+                if (wasPaused)
+                    m_stepTimer.ResetElapsedTime();
 
-                ComPtr<CanvasAnimatedControl> self = this;
+                ComPtr<CanvasSwapChain> target(rawTarget);
+                ComPtr<CanvasAnimatedControl> self(this);
                 
                 auto beforeLoopFn = 
                     [self]()

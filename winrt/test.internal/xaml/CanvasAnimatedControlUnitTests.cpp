@@ -1006,7 +1006,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     struct NoExtraUpdateFixture : public UpdateRenderFixture
     {
-        void DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached()
+        void DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached(int64_t ticks = TicksPerFrame)
         {
             OnUpdate.SetExpectedCalls(0);
             OnDraw.SetExpectedCalls(0);
@@ -1017,7 +1017,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 Adapter->Tick();
             }
 
-            Adapter->ProgressTime(TicksPerFrame);
+            Adapter->ProgressTime(ticks);
 
             OnUpdate.SetExpectedCalls(1);
             OnDraw.SetExpectedCalls(1);
@@ -1072,6 +1072,40 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->Tick();
 
         f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenClearColorChangedFromTransparentToOpaqueBeforeTargetElapsedTimeReached_TimerIsNotReset)
+    {
+        NoExtraUpdateFixture f;
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyTranslucentColor));
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+        
+        f.GetIntoSteadyState();
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
+
+        // Move time forwards by only half a frame
+        f.Adapter->ProgressTime(TicksPerFrame / 2);
+
+        // Next changed/tick will cause the update/render loop to exit.
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+
+        // After the changing the clear color we allow one extra draw without an
+        // update - consider the case of a very long TargetElapsedTime, we want
+        // clear color changes to be reflected asap.
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        // The update should happen after just another half frame has passed.
+        // If the timer had been reset when the update/render loop was started
+        // then the update wouldn't happen since it would think that there had
+        // only been half a frame since the reset.
+        f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached(TicksPerFrame / 2);
     }
 
     class ElapsedTicksFixture : public CanvasAnimatedControlFixture
