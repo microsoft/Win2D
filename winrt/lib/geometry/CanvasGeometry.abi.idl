@@ -89,6 +89,10 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float radius,
             [out, retval] CanvasGeometry** geometry);
+
+        HRESULT CreatePath(
+            [in] CanvasPathBuilder* pathBuilder,
+            [out, retval] CanvasGeometry** geometry);
     }
 
     [version(VERSION), static(ICanvasGeometryStatics, VERSION)]

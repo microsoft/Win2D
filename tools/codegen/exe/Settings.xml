@@ -75,6 +75,15 @@ under the License.
         <Field Name="SOURCE_COPY" ProjectedNameOverride="Copy"/>
         <Field Name="BOUNDED_SOURCE_COPY" ProjectedNameOverride="BoundedCopy"/>
     </Enum>
+    <Enum Name="SWEEP_DIRECTION" ShouldProject="true"/>
+    <Enum Name="FIGURE_BEGIN" ShouldProject="true" ProjectedNameOverride="FigureFill">
+      <Field Name="HOLLOW" ShouldProject="true" ProjectedNameOverride="DoesNotAffectFills"/>
+      <Field Name="FILLED" ShouldProject="true" ProjectedNameOverride="Default"/>
+    </Enum>
+    <Enum Name="FIGURE_END" ShouldProject="true" ProjectedNameOverride="FigureLoop"/>
+    <Enum Name="FILL_MODE" ShouldProject="true" ProjectedNameOverride="FilledRegionDetermination"/>
+    <Enum Name="PATH_SEGMENT" ShouldProject="true" ProjectedNameOverride="FigureSegmentOptions"/>
+    <Enum Name="ARC_SIZE" ShouldProject="true"/>
 
   </Namespace>
   

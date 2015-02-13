@@ -728,5 +728,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return roundedRectangleGeometry;
     }
 
+    ComPtr<ID2D1PathGeometry1> CanvasDevice::CreatePathGeometry()
+    {
+        auto factory = GetD2DFactory();
+
+        ComPtr<ID2D1PathGeometry1> pathGeometry;
+        ThrowIfFailed(factory->CreatePathGeometry(&pathGeometry));
+
+        return pathGeometry;
+    }
+
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
 }}}}

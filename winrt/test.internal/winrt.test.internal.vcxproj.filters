@@ -193,6 +193,9 @@
     <ClInclude Include="mocks\MockD2DFactory.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\MockD2DGeometrySink.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="mocks\MockD2DGradientStopCollection.h">
       <Filter>mocks</Filter>
     </ClInclude>
@@ -200,6 +203,9 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="mocks\MockD2DLinearGradientBrush.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="mocks\MockD2DPathGeometry.h">
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="mocks\MockD2DRadialGradientBrush.h">

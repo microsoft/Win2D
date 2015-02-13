@@ -68,9 +68,11 @@
     <ClInclude Include="mocks\MockD2DDeviceContext.h" />
     <ClInclude Include="mocks\MockD2DEffect.h" />
     <ClInclude Include="mocks\MockD2DFactory.h" />
+    <ClInclude Include="mocks\MockD2DGeometrySink.h" />
     <ClInclude Include="mocks\MockD2DGradientStopCollection.h" />
     <ClInclude Include="mocks\MockD2DImageBrush.h" />
     <ClInclude Include="mocks\MockD2DLinearGradientBrush.h" />
+    <ClInclude Include="mocks\MockD2DPathGeometry.h" />
     <ClInclude Include="mocks\MockD2DRadialGradientBrush.h" />
     <ClInclude Include="mocks\MockD2DSolidColorBrush.h" />
     <ClInclude Include="mocks\MockD2DStrokeStyle.h" />

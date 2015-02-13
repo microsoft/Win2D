@@ -79,6 +79,7 @@
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>
 #include <CanvasLinearGradientBrush.h>
+#include <CanvasPathBuilder.h>
 #include <CanvasRadialGradientBrush.h>
 #include <CanvasRenderTarget.h>
 #include <CanvasSolidColorBrush.h>

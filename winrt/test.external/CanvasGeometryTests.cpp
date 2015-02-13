@@ -79,6 +79,49 @@ public:
         Assert::AreEqual(originalRoundedRectangleGeometry.Get(), retrievedRoundedRectangleGeometry.Get());
     }
 
+    TEST_METHOD(CanvasGeometry_NativeInterop_Path)
+    {
+        ComPtr<ID2D1PathGeometry> originalPathGeometry;
+
+        GetD2DFactory()->CreatePathGeometry(&originalPathGeometry);
+
+        auto canvasGeometry = GetOrCreate<CanvasGeometry>(m_device, originalPathGeometry.Get());
+
+        auto retrievedPathGeometry = GetWrappedResource<ID2D1PathGeometry>(canvasGeometry);
+
+        Assert::AreEqual(originalPathGeometry.Get(), retrievedPathGeometry.Get());
+    }
+
+    TEST_METHOD(CanvasPathBuilder_NullDevice)
+    {        
+        Assert::ExpectException< Platform::InvalidArgumentException^>(
+            [=]
+            {
+                ref new CanvasPathBuilder(nullptr);
+            });
+    }
+
+    TEST_METHOD(CanvasPathBuilder_NoInterop)
+    {
+        // 
+        // PathBuilder wraps an ID2D1GeometrySink, and ID2D1PathGeometry,
+        // but interop for these types should not exist.
+        //
+        auto canvasPathBuilder = ref new CanvasPathBuilder(m_device);
+        
+        Assert::ExpectException< Platform::InvalidCastException^>(
+            [=]
+            {
+                GetWrappedResource<ID2D1GeometrySink>(canvasPathBuilder);
+            });
+        
+        Assert::ExpectException< Platform::InvalidCastException^>(
+            [=]
+            {
+                GetWrappedResource<ID2D1PathGeometry1>(canvasPathBuilder);
+            });
+    }
+
 private:
     ComPtr<ID2D1Factory> GetD2DFactory()
     {

@@ -209,6 +209,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.cpp">
       <Filter>geometry</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.cpp">
       <Filter>images</Filter>
     </ClCompile>
@@ -425,6 +428,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.h">
       <Filter>geometry</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h">
       <Filter>images</Filter>
     </ClInclude>
@@ -621,6 +627,9 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl">
+      <Filter>geometry</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.abi.idl">
       <Filter>geometry</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl">

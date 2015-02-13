@@ -77,6 +77,7 @@ namespace Microsoft
             TO_STRING(ID2D1RectangleGeometry);
             TO_STRING(ID2D1EllipseGeometry);
             TO_STRING(ID2D1RoundedRectangleGeometry);
+            TO_STRING(ID2D1PathGeometry)
 
 #undef TO_STRING
 #undef TO_STRING_CX

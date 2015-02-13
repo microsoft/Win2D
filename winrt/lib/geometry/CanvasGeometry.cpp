@@ -13,6 +13,7 @@
 #include "pch.h"
 #include "CanvasGeometry.h"
 #include "CanvasDevice.h"
+#include "CanvasPathBuilder.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -126,6 +127,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return CreateEllipse(resourceCreator, Vector2{ centerX, centerY }, radius, radius, geometry);
     }
 
+    IFACEMETHODIMP CanvasGeometryFactory::CreatePath(
+        ICanvasPathBuilder* pathBuilder,
+        ICanvasGeometry** geometry)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(pathBuilder);
+                CheckAndClearOutPointer(geometry);
+
+                auto newCanvasGeometry = GetManager()->Create(pathBuilder);
+
+                ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
+            });
+    }
+
     CanvasGeometry::CanvasGeometry(
         std::shared_ptr<CanvasGeometryManager> manager,
         ID2D1Geometry* d2dGeometry,
@@ -200,6 +217,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto deviceInternal = As<ICanvasDeviceInternal>(device);
 
         auto d2dGeometry = deviceInternal->CreateRoundedRectangleGeometry(D2D1::RoundedRect(ToD2DRect(rect), radiusX, radiusY));
+
+        auto canvasGeometry = Make<CanvasGeometry>(
+            shared_from_this(),
+            d2dGeometry.Get(),
+            device.Get());
+        CheckMakeResult(canvasGeometry);
+
+        return canvasGeometry;
+    }
+
+    ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+        ICanvasPathBuilder* pathBuilder)
+    {
+        auto pathBuilderInternal = As<ICanvasPathBuilderInternal>(pathBuilder);
+
+        auto device = pathBuilderInternal->GetDevice();
+
+        auto d2dGeometry = pathBuilderInternal->CloseAndReturnPath();
 
         auto canvasGeometry = Make<CanvasGeometry>(
             shared_from_this(),

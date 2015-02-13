@@ -68,6 +68,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float radiusX,
             float radiusY);
 
+        ComPtr<CanvasGeometry> CreateNew(
+            ICanvasPathBuilder* pathBuilder);
+
         virtual ComPtr<CanvasGeometry> CreateWrapper(
             ICanvasDevice* device,
             ID2D1Geometry* resource);
@@ -141,6 +144,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float x,
             float y,
             float radius,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreatePath)(
+            ICanvasPathBuilder* pathBuilder,
             ICanvasGeometry** geometry) override;
     };
 }}}}

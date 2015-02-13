@@ -64,6 +64,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateEllipseGeometryMethod, ComPtr<ID2D1EllipseGeometry>(D2D1_ELLIPSE const&));
         CALL_COUNTER_WITH_MOCK(CreateRoundedRectangleGeometryMethod, ComPtr<ID2D1RoundedRectangleGeometry>(D2D1_ROUNDED_RECT const&));
 
+        CALL_COUNTER_WITH_MOCK(CreatePathGeometryMethod, ComPtr<ID2D1PathGeometry1>());
+
         //
         // ICanvasDevice
         //
@@ -282,6 +284,11 @@ namespace canvas
         virtual ComPtr<ID2D1RoundedRectangleGeometry> CreateRoundedRectangleGeometry(D2D1_ROUNDED_RECT const& roundedRect) override
         {
             return CreateRoundedRectangleGeometryMethod.WasCalled(roundedRect);
+        }
+
+        virtual ComPtr<ID2D1PathGeometry1> CreatePathGeometry() override
+        {
+            return CreatePathGeometryMethod.WasCalled();
         }
     };
 }
