@@ -431,11 +431,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 m_sharedState.IsPaused = !!value;
 
-                bool paused = m_sharedState.IsPaused;
-
-                if (!paused)    // TODO: should this be if (paused != !!value)?
+                if (!m_sharedState.IsPaused)    // TODO: should this be if (paused != !!value)?
                 {
-                    m_sharedState.ForceUpdate = true;
+                    m_sharedState.FirstTickAfterWasPaused = true;
                     Changed(lock);
                 }
             });
@@ -851,10 +849,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         bool isPaused = m_sharedState.IsPaused;
-        bool forceUpdate = m_sharedState.ForceUpdate;
+        bool firstTickAfterWasPaused = m_sharedState.FirstTickAfterWasPaused;
         
         m_sharedState.ShouldResetElapsedTime = false;
-        m_sharedState.ForceUpdate = false;
+        m_sharedState.FirstTickAfterWasPaused = false;
 
         Color clearColor;
         Size currentSize;
@@ -887,9 +885,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         bool updatedThisTick = false;
         if (areResourcesCreated && !isPaused)
-            updatedThisTick = Update(forceUpdate || !m_hasUpdated);
-
-        m_hasUpdated |= updatedThisTick;
+        {
+            bool forceUpdate = (firstTickAfterWasPaused || !m_hasUpdated);
+            updatedThisTick = Update(forceUpdate);
+            m_hasUpdated |= updatedThisTick;
+        }
 
         //
         // We only ever Draw/Present if an Update has actually happened.  This

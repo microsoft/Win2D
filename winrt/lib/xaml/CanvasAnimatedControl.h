@@ -152,7 +152,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         struct SharedState
         {
             bool IsPaused;
-            bool ForceUpdate;
+            bool FirstTickAfterWasPaused;
             bool IsStepTimerFixedStep;
             uint64_t TargetElapsedTime;
             bool ShouldResetElapsedTime;
