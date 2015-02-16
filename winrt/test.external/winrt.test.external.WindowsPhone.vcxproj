@@ -10,7 +10,6 @@
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <TestApplication>true</TestApplication>
     <AppxPackage>True</AppxPackage>
-    <DoNotBuild Condition="'$(TF_BUILD)' == 'true'">true</DoNotBuild>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

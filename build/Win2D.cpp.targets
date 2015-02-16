@@ -11,6 +11,4 @@
   <PropertyGroup>
     <BuildDependsOn>CheckWarningLevel;$(BuildDependsOn)</BuildDependsOn>
   </PropertyGroup>
-
-  <Import Project="Win2D.common.targets"/>
 </Project>
