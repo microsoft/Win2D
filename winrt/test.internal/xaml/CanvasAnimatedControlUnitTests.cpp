@@ -2275,6 +2275,21 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
         Assert::IsFalse(f.IsRenderActionRunning());
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenSuspendingEventRaisedWhileControlIsPaused_TrimIsStillCalled)
+    {
+        Fixture f;
+
+        ThrowIfFailed(f.Control->put_Paused(true));
+        f.Adapter->Tick();
+        Assert::IsFalse(f.IsRenderActionRunning());
+
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+        f.Adapter->Tick();
+
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenResumingEventRaised_RenderThreadRestarts)
     {
         Fixture f;

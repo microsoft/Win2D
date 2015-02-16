@@ -692,6 +692,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         //
+        // Call Trim on application suspend, but only once we are sure the
+        // render thread is no longer running.
+        //
+        if (IsSuspended())
+        {
+            if (m_suspendingDeferral)
+            {
+                Trim();
+
+                ThrowIfFailed(m_suspendingDeferral->Complete());
+                m_suspendingDeferral.Reset();
+            }
+
+            return;
+        }
+
+        //
         // Figure out if we should try and start the render loop.
         //
         bool ignorePaused = false;
@@ -716,24 +733,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         if (isPaused && !ignorePaused)
         {
             // Don't start the render loop if we're paused
-            return;
-        }
-
-
-        //
-        // Call Trim on application suspend, but only once we are sure the
-        // render thread is no longer running.
-        //
-        if (IsSuspended())
-        {
-            if (m_suspendingDeferral)
-            {
-                Trim();
-
-                ThrowIfFailed(m_suspendingDeferral->Complete());
-                m_suspendingDeferral.Reset();
-            }
-
             return;
         }
 
