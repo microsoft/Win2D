@@ -48,6 +48,7 @@ namespace ExampleGallery
             this.definitions.Add(new ExampleDefinition() { Name = "Animated Control", Control = typeof(AnimatedControlExample) });
             this.definitions.Add(new ExampleDefinition() { Name = "Control Transforms", Control = typeof(ControlTransforms) });
             this.definitions.Add(new ExampleDefinition() { Name = "Geometry Operations", Control = typeof(GeometryOperations) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Debugging Options", Control = typeof(DebuggingOptions) });
         }
     }
 }

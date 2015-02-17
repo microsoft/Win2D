@@ -27,6 +27,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ControlTransforms.xaml.cs">
       <DependentUpon>ControlTransforms.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DebuggingOptions.xaml.cs">
+      <DependentUpon>DebuggingOptions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DpiExample.xaml.cs">
       <DependentUpon>DpiExample.xaml</DependentUpon>
     </Compile>
@@ -66,6 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)ControlTransforms.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)DebuggingOptions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
