@@ -14,7 +14,7 @@
 
 TEST_CLASS(WinStringBuilderTests)
 {
-    TEST_METHOD(WinStringBuilder_Allocate)
+    TEST_METHOD_EX(WinStringBuilder_Allocate)
     {
         WinStringBuilder builder;
 
@@ -57,7 +57,7 @@ TEST_CLASS(WinStringBuilderTests)
     }
 
 
-    TEST_METHOD(WinStringBuilder_Format)
+    TEST_METHOD_EX(WinStringBuilder_Format)
     {
         WinStringBuilder builder;
 

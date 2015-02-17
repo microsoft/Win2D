@@ -283,7 +283,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return CreateCanvasAnimatedControlAdapter(threadPoolStatics.Get());
     }
 
-    class CanvasAnimatedControlFactory : public ActivationFactory<>
+    class CanvasAnimatedControlFactory : public ActivationFactory<>,
+                                         private LifespanTracker<CanvasAnimatedControlFactory>
     {
         std::weak_ptr<ICanvasAnimatedControlAdapter> m_adapter;
 

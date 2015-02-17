@@ -28,8 +28,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1StrokeStyle1> GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory) = 0;
     };
 
-    class CanvasStrokeStyleFactory : public ActivationFactory<
-        CloakedIid<ICanvasFactoryNative>>
+    class CanvasStrokeStyleFactory : public ActivationFactory<CloakedIid<ICanvasFactoryNative>>,
+                                     private LifespanTracker<CanvasStrokeStyleFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasStrokeStyle, BaseTrust);
 
@@ -54,7 +54,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasStrokeStyle,
         ABI::Windows::Foundation::IClosable,
-        CloakedIid<ICanvasStrokeStyleInternal>>
+        CloakedIid<ICanvasStrokeStyleInternal>>,
+        private LifespanTracker<CanvasStrokeStyle>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasStrokeStyle, BaseTrust);
 

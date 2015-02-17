@@ -21,7 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
 
     class CanvasTextFormatFactory : public ActivationFactory<
-        CloakedIid<ICanvasFactoryNative>>
+        CloakedIid<ICanvasFactoryNative>>,
+        private LifespanTracker<CanvasTextFormatFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextFormat, BaseTrust);
 
@@ -62,7 +63,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasTextFormat,
         ABI::Windows::Foundation::IClosable,
         CloakedIid<ICanvasTextFormatInternal>,
-        CloakedIid<ICanvasResourceWrapperNative>>
+        CloakedIid<ICanvasResourceWrapperNative>>,
+        private LifespanTracker<CanvasTextFormat>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextFormat, BaseTrust);
         

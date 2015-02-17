@@ -150,7 +150,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasControlFactory : public ActivationFactory<>
+    class CanvasControlFactory : public ActivationFactory<>,
+                                 private LifespanTracker<CanvasControlFactory>
     {
         std::weak_ptr<CanvasControlAdapter> m_adapter;
 

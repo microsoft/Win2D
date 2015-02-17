@@ -33,7 +33,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasImageBrushFactory
         : public ActivationFactory<
             ICanvasImageBrushFactory,
-            CloakedIid<ICanvasDeviceResourceFactoryNative>>
+            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
+          private LifespanTracker<CanvasImageBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageBrush, BaseTrust);
 
@@ -60,7 +61,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ChainInterfaces<CloakedIid<ICanvasImageBrushInternal>, CloakedIid<ICanvasBrushInternal>>,
         CloakedIid<ICanvasResourceWrapperNative>,
         MixIn<CanvasImageBrush, CanvasBrush>>,
-        public CanvasBrush
+        public CanvasBrush,
+        private LifespanTracker<CanvasImageBrush>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageBrush, BaseTrust);
 

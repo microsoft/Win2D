@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D5
 		winrt\inc\ComArray.h = winrt\inc\ComArray.h
 		winrt\inc\Constants.h = winrt\inc\Constants.h
 		winrt\inc\ErrorHandling.h = winrt\inc\ErrorHandling.h
+		winrt\inc\LifespanTracker.h = winrt\inc\LifespanTracker.h
 		winrt\inc\Nullable.h = winrt\inc\Nullable.h
 		winrt\inc\RegisteredEvent.h = winrt\inc\RegisteredEvent.h
 		winrt\inc\ScopeWarden.h = winrt\inc\ScopeWarden.h

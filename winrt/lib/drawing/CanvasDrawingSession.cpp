@@ -43,7 +43,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // ID2D1DeviceContext.  In this wrapper, interop, case we don't want
     // CanvasDrawingSession to call any additional methods in the device context.
     //
-    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
+    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+                                            private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
 

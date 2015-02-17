@@ -29,8 +29,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::System::Threading;
 
-    class CanvasAnimatedUpdateEventArgs : public RuntimeClass<
-        ICanvasAnimatedUpdateEventArgs>
+    class CanvasAnimatedUpdateEventArgs : public RuntimeClass<ICanvasAnimatedUpdateEventArgs>,
+                                          private LifespanTracker<CanvasAnimatedUpdateEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs, BaseTrust);
         
@@ -42,7 +42,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP get_Timing(CanvasTimingInformation* value);
     };
 
-    class CanvasAnimatedUpdateEventArgsFactory : public ActivationFactory<ICanvasAnimatedUpdateEventArgsFactory>
+    class CanvasAnimatedUpdateEventArgsFactory : public ActivationFactory<ICanvasAnimatedUpdateEventArgsFactory>,
+                                                 private LifespanTracker<CanvasAnimatedUpdateEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs, BaseTrust);
 
@@ -52,7 +53,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasAnimatedUpdateEventArgs** updateEventArgs);
     };
 
-    class CanvasAnimatedDrawEventArgsFactory : public ActivationFactory<ICanvasAnimatedDrawEventArgsFactory>
+    class CanvasAnimatedDrawEventArgsFactory : public ActivationFactory<ICanvasAnimatedDrawEventArgsFactory>,
+                                               private LifespanTracker<CanvasAnimatedDrawEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs, BaseTrust);
 
@@ -63,8 +65,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasAnimatedDrawEventArgs** drawEventArgs) override;
     };
 
-    class CanvasAnimatedDrawEventArgs : public RuntimeClass<
-        ICanvasAnimatedDrawEventArgs>
+    class CanvasAnimatedDrawEventArgs : public RuntimeClass<ICanvasAnimatedDrawEventArgs>,
+                                        private LifespanTracker<CanvasAnimatedDrawEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs, BaseTrust);
 

@@ -30,7 +30,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasImageSourceFactory : public ActivationFactory<ICanvasImageSourceFactory>
+    class CanvasImageSourceFactory : public ActivationFactory<ICanvasImageSourceFactory>,
+                                     private LifespanTracker<CanvasImageSourceFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
 
@@ -62,9 +63,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasImageSource : public RuntimeClass<
-        ICanvasImageSource,
-        ComposableBase<>>
+    class CanvasImageSource : public RuntimeClass<ICanvasImageSource, ComposableBase<>>,
+                              private LifespanTracker<CanvasImageSource>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
 
@@ -135,7 +135,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasDrawingSessionManager;
 
-    class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory
+    class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory,
+                                                   private LifespanTracker<CanvasImageSourceDrawingSessionFactory>
     {
         std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
 

@@ -109,20 +109,20 @@ TEST_CLASS(WinStringTests)
         CountWinString::Check();
     }
 
-    TEST_METHOD(WinString_SimpleCreateDelete)
+    TEST_METHOD_EX(WinString_SimpleCreateDelete)
     {
         CountWinString s(L"hello");
         Assert::AreEqual(1, s.RefCount());
     }
 
-    TEST_METHOD(WinString_CreateFromWstring)
+    TEST_METHOD_EX(WinString_CreateFromWstring)
     {
         CountWinString s(std::wstring(L"hello"));
         Assert::AreEqual(1, s.RefCount());
         Assert::AreEqual<std::wstring>(L"hello", static_cast<const wchar_t*>(s));
     }
 
-    TEST_METHOD(WinString_CreateFromHSTRING)
+    TEST_METHOD_EX(WinString_CreateFromHSTRING)
     {
         CountWinString s1(L"hello");
         Assert::AreEqual(1, s1.RefCount());
@@ -132,7 +132,7 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(2, s2.RefCount());
     }
 
-    TEST_METHOD(WinString_CopyConstructor)
+    TEST_METHOD_EX(WinString_CopyConstructor)
     {
         CountWinString s1(L"hello");
         Assert::AreEqual(1, s1.RefCount());
@@ -142,7 +142,7 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(2, s2.RefCount());
     }
 
-    TEST_METHOD(WinString_MoveConstructor)
+    TEST_METHOD_EX(WinString_MoveConstructor)
     {
         CountWinString s1(L"hello");
         Assert::AreEqual(1, s1.RefCount());
@@ -152,7 +152,7 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(1, s2.RefCount());        
     }
 
-    TEST_METHOD(WinString_Assignment)
+    TEST_METHOD_EX(WinString_Assignment)
     {
         CountWinString s1(L"hello");
         CountWinString s2(L"goodbye");
@@ -169,7 +169,7 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(1, s3.RefCount());
     }
 
-    TEST_METHOD(WinString_AssignToHSTRING)
+    TEST_METHOD_EX(WinString_AssignToHSTRING)
     {
         CountWinString s1(L"hello");
         CountWinString s2(s1);
@@ -186,7 +186,7 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(2, s3.RefCount());
     }
 
-    TEST_METHOD(WinString_MoveAssignment)
+    TEST_METHOD_EX(WinString_MoveAssignment)
     {
         CountWinString s1(L"hello");
         CountWinString s2(L"goodbye");
@@ -208,7 +208,7 @@ TEST_CLASS(WinStringTests)
         Assert::IsTrue(s3.RefCount() <= helloRefCount);
     }
 
-    TEST_METHOD(WinString_GetAddressOf)
+    TEST_METHOD_EX(WinString_GetAddressOf)
     {
         CountWinString s(L"hello");
 
@@ -219,7 +219,7 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(0, s.RefCount());
     }
 
-    TEST_METHOD(WinString_CopyTo)
+    TEST_METHOD_EX(WinString_CopyTo)
     {
         CountWinString s1(L"hello");
 
@@ -230,7 +230,7 @@ TEST_CLASS(WinStringTests)
         Assert::AreEqual(2, s2.RefCount());        
     }
 
-    TEST_METHOD(WinString_Equals)
+    TEST_METHOD_EX(WinString_Equals)
     {
         CountWinString s1(L"hello");
         CountWinString s2(L"hello");
@@ -240,7 +240,7 @@ TEST_CLASS(WinStringTests)
         Assert::IsTrue(s1.Equals(s2));            
     }
 
-    TEST_METHOD(WinString_EmbeddedNulls)
+    TEST_METHOD_EX(WinString_EmbeddedNulls)
     {
         CountWinString s1;
         ThrowIfFailed(CountWinString::WindowsCreateString(L"hello\0", 6, s1.GetAddressOf()));

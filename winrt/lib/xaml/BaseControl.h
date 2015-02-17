@@ -76,7 +76,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : public Implements<
             typename TRAITS::controlInterface_t, 
             ICanvasResourceCreator, 
-            ICanvasResourceCreatorWithDpi>
+            ICanvasResourceCreatorWithDpi>,
+          private LifespanTracker<typename TRAITS::control_t>
     {
     public:
         typedef typename TRAITS::control_t                     control_t;

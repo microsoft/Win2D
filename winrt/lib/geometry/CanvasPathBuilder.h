@@ -20,7 +20,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 
     class CanvasPathBuilderFactory
-        : public ActivationFactory<ICanvasPathBuilderFactory>
+        : public ActivationFactory<ICanvasPathBuilderFactory>,
+          private LifespanTracker<CanvasPathBuilderFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasPathBuilder, BaseTrust);
 
@@ -45,7 +46,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasPathBuilder,
         IClosable,
-        CloakedIid<ICanvasPathBuilderInternal>>
+        CloakedIid<ICanvasPathBuilderInternal>>,
+        private LifespanTracker<CanvasPathBuilder>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasPathBuilder, BaseTrust);
 

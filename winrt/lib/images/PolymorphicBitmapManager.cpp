@@ -142,7 +142,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(encoder->Commit());
     }
 
-    class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
+    class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter,
+                                                 private LifespanTracker<DefaultBitmapResourceCreationAdapter>
     {
         ComPtr<IWICImagingFactory2> m_wicFactory;
 

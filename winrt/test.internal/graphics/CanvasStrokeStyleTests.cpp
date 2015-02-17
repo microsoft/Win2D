@@ -17,7 +17,7 @@
 TEST_CLASS(CanvasStrokeStyleTests)
 {
 public: 
-    TEST_METHOD(CanvasStrokeStyle_Implements_Expected_Interfaces)
+    TEST_METHOD_EX(CanvasStrokeStyle_Implements_Expected_Interfaces)
     {
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
 
@@ -26,7 +26,7 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(canvasStrokeStyle, ICanvasStrokeStyleInternal);
     }
 
-    TEST_METHOD(CanvasStrokeStyle_NullOnGetters)
+    TEST_METHOD_EX(CanvasStrokeStyle_NullOnGetters)
     {
         // Test that getters return the expected error for nullptr in pointer.
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
@@ -49,7 +49,7 @@ public:
         // stroke style properties values.
     }
 
-    TEST_METHOD(CanvasStrokeStyle_Properties)
+    TEST_METHOD_EX(CanvasStrokeStyle_Properties)
     {
         using ABI::Windows::UI::Color;
 
@@ -228,7 +228,7 @@ public:
         ComPtr<StubD2DFactoryWithCreateStrokeStyle> m_testFactory;
     };
 
-    TEST_METHOD(CanvasStrokeStyle_Setters_Invalidate_Realization)
+    TEST_METHOD_EX(CanvasStrokeStyle_Setters_Invalidate_Realization)
     {
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
         auto testFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();
@@ -264,7 +264,7 @@ public:
             [&]{ canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Fixed); });
     }
 
-    TEST_METHOD(CanvasStrokeStyle_Closed)
+    TEST_METHOD_EX(CanvasStrokeStyle_Closed)
     {
         auto testFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();
 
@@ -314,7 +314,7 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasStrokeStyle_RedundantSettersDoNotCauseRealization)
+    TEST_METHOD_EX(CanvasStrokeStyle_RedundantSettersDoNotCauseRealization)
     {
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
         auto testFactory = Make<StubD2DFactoryWithCreateStrokeStyle>();

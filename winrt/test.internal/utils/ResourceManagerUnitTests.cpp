@@ -47,7 +47,7 @@ TEST_CLASS(FactoryWithResourceManagerUnitTests)
     // want a newly created factory to find any existing manager instance that
     // there may be and use that one on creation.
     //
-    TEST_METHOD(FactoryWithResourceManager_Manager_OutLives_Factory)
+    TEST_METHOD_EX(FactoryWithResourceManager_Manager_OutLives_Factory)
     {
         //
         // We don't want to use the 'real' CoreApplication because this test

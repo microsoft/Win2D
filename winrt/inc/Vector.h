@@ -15,6 +15,7 @@
 #include <wrl.h>
 #include <vector>
 #include "ErrorHandling.h"
+#include "LifespanTracker.h"
 
 namespace collections
 {
@@ -78,7 +79,8 @@ namespace collections
     // Implements the WinRT IVector interface.
     template<typename T, template<typename T_abi> class Traits = DefaultVectorTraits>
     class Vector : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::Collections::IVector<T>,
-                                                       ABI::Windows::Foundation::Collections::IIterable<T>>
+                                                       ABI::Windows::Foundation::Collections::IIterable<T>>,
+                   private LifespanTracker<Vector<T, Traits>>
     {
         InspectableClass(IVector<T>::z_get_rc_name_impl(), BaseTrust);
 
@@ -332,7 +334,8 @@ namespace collections
     // Implements the WinRT IVectorView interface.
     template<typename T, typename TVector>
     class VectorView : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::Collections::IVectorView<T>,
-                                                           ABI::Windows::Foundation::Collections::IIterable<T>>
+                                                           ABI::Windows::Foundation::Collections::IIterable<T>>,
+                       private LifespanTracker<VectorView<T, TVector>>
     {
         InspectableClass(IVectorView<T>::z_get_rc_name_impl(), BaseTrust);
 
@@ -374,7 +377,8 @@ namespace collections
 
     // Implements the WinRT IIterator interface.
     template<typename T, typename TVector>
-    class VectorIterator : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::Collections::IIterator<T>>
+    class VectorIterator : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::Collections::IIterator<T>>,
+                           private LifespanTracker<VectorIterator<T, TVector>>
     {
         InspectableClass(IIterator<T>::z_get_rc_name_impl(), BaseTrust);
 

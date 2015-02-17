@@ -30,7 +30,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IEffectInput,
             ICanvasImageInternal,
             ICanvasImage,
-            ABI::Windows::Foundation::IClosable>
+            ABI::Windows::Foundation::IClosable>,
+          private LifespanTracker<CanvasEffect>
     {
 
     private:

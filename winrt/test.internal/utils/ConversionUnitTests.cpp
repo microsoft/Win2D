@@ -14,7 +14,7 @@
 
 TEST_CLASS(ConversionUnitTests)
 {
-    TEST_METHOD(Uint8_NormalizedFloat)
+    TEST_METHOD_EX(Uint8_NormalizedFloat)
     {
         // Check some known values
         Assert::AreEqual(0.0f, ToNormalizedFloat(0));
@@ -32,7 +32,7 @@ TEST_CLASS(ConversionUnitTests)
         }
     }
 
-    TEST_METHOD(ColorToD2DColor)
+    TEST_METHOD_EX(ColorToD2DColor)
     {
         //
         // Check the components are passed through as expected, above tests
@@ -70,7 +70,7 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual<float>(d2dBlue.a, 0);
     }
 
-    TEST_METHOD(D2DColorToWindowsColor)
+    TEST_METHOD_EX(D2DColorToWindowsColor)
     {
         ABI::Windows::UI::Color alpha{ 255, 0, 0, 0 };
         Assert::AreEqual(alpha, ToWindowsColor(D2D1::ColorF(0, 0, 0, 1)));
@@ -99,12 +99,12 @@ TEST_CLASS(ConversionUnitTests)
 
     }
 
-    TEST_METHOD(PointToD2DPoint)
+    TEST_METHOD_EX(PointToD2DPoint)
     {
         Assert::AreEqual(D2D1_POINT_2F{ 1, 2 }, ToD2DPoint(Vector2{ 1, 2 }));
     }
 
-    TEST_METHOD(RectToD2DRect)
+    TEST_METHOD_EX(RectToD2DRect)
     {
         Assert::AreEqual(D2D_RECT_F{ 1, 2, 3, 4 }, ToD2DRect(Rect{ 1, 2, 2, 2 }));
 
@@ -116,7 +116,7 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(D2D_RECT_F{ -inf, -inf, inf, inf }, ToD2DRect(Rect{ -inf, -inf, inf, inf }));
     }
 
-    TEST_METHOD(RectAndRadiusToD2DRoundedRect)
+    TEST_METHOD_EX(RectAndRadiusToD2DRoundedRect)
     {
         using ABI::Windows::Foundation::Rect;
 
@@ -131,7 +131,7 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(ry, result.radiusY);
     }
 
-    TEST_METHOD(PointAndRadiusToD2DEllipse)
+    TEST_METHOD_EX(PointAndRadiusToD2DEllipse)
     {
         Vector2 point{ 1, 2 };
         float rx = 3;
@@ -144,7 +144,7 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(ry, result.radiusY);
     }
 
-    TEST_METHOD(RectFromD2DRect)
+    TEST_METHOD_EX(RectFromD2DRect)
     {
         using ABI::Windows::Foundation::Rect;
 
@@ -158,7 +158,7 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(Rect{ -inf, -inf, inf, inf }, FromD2DRect(D2D1::RectF(-inf, -inf, inf, inf)));
     }
 
-    TEST_METHOD(Desaturate)
+    TEST_METHOD_EX(Desaturate)
     {
         Assert::AreEqual((BYTE)0, DesaturateChannel(0, 0.0f));
         Assert::AreEqual((BYTE)200, DesaturateChannel(200, 0.0f));
@@ -174,7 +174,7 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual((BYTE)127, DesaturateChannel(23, 999));
     }
 
-    TEST_METHOD(DpiConversion)
+    TEST_METHOD_EX(DpiConversion)
     {
         Assert::AreEqual(0, DipsToPixels(0, 96));
         Assert::AreEqual(23, DipsToPixels(23, 96));
@@ -207,7 +207,7 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(1234.0f * 3 / 2, PixelsToDips(1234, 64));
     }
 
-    TEST_METHOD(DipsToPixelsNeverRoundsPositiveValuesToZero)
+    TEST_METHOD_EX(DipsToPixelsNeverRoundsPositiveValuesToZero)
     {
         Assert::AreEqual(0, DipsToPixels(0, 96));
 

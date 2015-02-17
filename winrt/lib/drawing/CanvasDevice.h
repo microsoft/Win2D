@@ -44,7 +44,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // Default implementation of the adapter that actually talks to D3D / D2D
     // that is used in production.
     //
-    class DefaultDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
+    class DefaultDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter,
+                                                 private LifespanTracker<DefaultDeviceResourceCreationAdapter>
     {
     public:
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) override;

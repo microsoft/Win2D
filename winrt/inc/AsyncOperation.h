@@ -17,6 +17,7 @@
 #include <Windows.System.Threading.h>
 #include <functional>
 #include "ErrorHandling.h"
+#include "LifespanTracker.h"
 
 
 // Helper for marking our callback delegates as agile, by mixing in FtmBase.
@@ -220,7 +221,8 @@ public:
 
 // Implements the WinRT IAsyncOperation interface.
 template<typename T>
-class AsyncOperation : public AsyncCommon<ABI::Windows::Foundation::IAsyncOperation<T*>>
+class AsyncOperation : public AsyncCommon<ABI::Windows::Foundation::IAsyncOperation<T*>>,
+                       private LifespanTracker<AsyncOperation<T>>
 {
     InspectableClass(IAsyncOperation<T*>::z_get_rc_name_impl(), BaseTrust);
 
@@ -278,7 +280,8 @@ protected:
 
 
 // Implements the WinRT IAsyncAction interface.
-class AsyncAction : public AsyncCommon<ABI::Windows::Foundation::IAsyncAction>
+class AsyncAction : public AsyncCommon<ABI::Windows::Foundation::IAsyncAction>,
+                    private LifespanTracker<AsyncAction>
 {
     InspectableClass(InterfaceName_Windows_Foundation_IAsyncAction, BaseTrust);
 

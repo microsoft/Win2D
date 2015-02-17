@@ -171,7 +171,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_adapter.get();
     }
 
-    class DefaultCanvasBitmapAdapter : public ICanvasBitmapAdapter
+    class DefaultCanvasBitmapAdapter : public ICanvasBitmapAdapter,
+                                       private LifespanTracker<DefaultCanvasBitmapAdapter>
     {
         ComPtr<IRandomAccessStreamReferenceStatics> m_randomAccessStreamReferenceStatics;
         ComPtr<IStorageFileStatics> m_storageFileStatics;

@@ -24,7 +24,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::UI::Xaml;
 
     template<typename TRAITS>
-    class BaseControlAdapter : public TRAITS::adapter_t
+    class BaseControlAdapter : public TRAITS::adapter_t,
+                               private LifespanTracker<typename TRAITS::adapter_t>
     {
         ComPtr<IActivationFactory> m_canvasDeviceFactory;
         ComPtr<IUserControlFactory> m_userControlFactory;

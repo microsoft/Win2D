@@ -24,7 +24,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) = 0;
     };
     
-    class CanvasSwapChainPanelAdapter : public ICanvasSwapChainPanelAdapter
+    class CanvasSwapChainPanelAdapter : public ICanvasSwapChainPanelAdapter,
+                                        private LifespanTracker<CanvasSwapChainPanelAdapter>
     {
         ComPtr<ISwapChainPanelFactory> m_swapChainPanelFactory;
 
@@ -36,7 +37,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasSwapChainPanel : public RuntimeClass<
         ICanvasSwapChainPanel,
-        ComposableBase<>>
+        ComposableBase<>>,
+        private LifespanTracker<CanvasSwapChainPanel>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChainPanel, BaseTrust);
 

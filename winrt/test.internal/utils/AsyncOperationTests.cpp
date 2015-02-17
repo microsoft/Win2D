@@ -48,7 +48,7 @@ TEST_CLASS(AsyncOperationTests)
     static const int waitTimeout = 5000;
 
 
-    TEST_METHOD(AsyncCompletesAfterAddingCallbackTest)
+    TEST_METHOD_EX(AsyncCompletesAfterAddingCallbackTest)
     {
         MockAsyncResult expectedResult;
         Event asyncCanFinishNow(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
@@ -135,7 +135,7 @@ TEST_CLASS(AsyncOperationTests)
     }
 
 
-    TEST_METHOD(AsyncCompletesBeforeAddingCallbackTest)
+    TEST_METHOD_EX(AsyncCompletesBeforeAddingCallbackTest)
     {
         MockAsyncResult expectedResult;
 
@@ -190,7 +190,7 @@ TEST_CLASS(AsyncOperationTests)
     }
 
 
-    TEST_METHOD(AsyncReturnsNullTest)
+    TEST_METHOD_EX(AsyncReturnsNullTest)
     {
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
@@ -230,7 +230,7 @@ TEST_CLASS(AsyncOperationTests)
     }
 
 
-    TEST_METHOD(AsyncThrowsExceptionTest)
+    TEST_METHOD_EX(AsyncThrowsExceptionTest)
     {
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
@@ -271,7 +271,7 @@ TEST_CLASS(AsyncOperationTests)
     }
 
 
-    TEST_METHOD(AsyncCanceledTest)
+    TEST_METHOD_EX(AsyncCanceledTest)
     {
         MockAsyncResult expectedResult;
         Event asyncCanFinishNow(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
@@ -333,7 +333,7 @@ TEST_CLASS(AsyncOperationTests)
     }
 
 
-    TEST_METHOD(AsyncContinuationTest)
+    TEST_METHOD_EX(AsyncContinuationTest)
     {
         MockAsyncResult result1, result2;
         
@@ -436,7 +436,7 @@ TEST_CLASS(AsyncOperationTests)
     }
 
 
-    TEST_METHOD(AsyncContinuationThrowsExceptionTest)
+    TEST_METHOD_EX(AsyncContinuationThrowsExceptionTest)
     {
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
 
@@ -495,7 +495,7 @@ TEST_CLASS(AsyncOperationTests)
     }
 
 
-    TEST_METHOD(AsyncContinuationCancelledTest)
+    TEST_METHOD_EX(AsyncContinuationCancelledTest)
     {
         Event asyncCanFinishNow(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
         Event asyncFinished(CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));

@@ -11,8 +11,8 @@
 // under the License.
 
 #include "pch.h"
-
 #include <wrl/module.h>
+#include "../inc/LifespanTracker.h"
 
 STDAPI_(BOOL)
 DllMain(
@@ -22,8 +22,14 @@ DllMain(
     )
 {
     UNREFERENCED_PARAMETER(inst);
-    UNREFERENCED_PARAMETER(reason);
     UNREFERENCED_PARAMETER(pvreserved);
+
+    switch (reason)
+    {
+    case DLL_PROCESS_DETACH:
+        LifespanInfo::ReportLiveObjectsNoLock();
+        break;
+    }
 
     return TRUE;
 }

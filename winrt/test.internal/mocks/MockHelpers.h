@@ -28,13 +28,18 @@
 //    }
 //
 
-#define TEST_METHOD_EX(METHOD_NAME)             \
-    TEST_METHOD(METHOD_NAME)                    \
-    {                                           \
-        Expectations e;                         \
-        METHOD_NAME##_();                       \
-        e.Validate();                           \
-    }                                           \
+#define TEST_METHOD_EX(METHOD_NAME)                                             \
+    TEST_METHOD(METHOD_NAME)                                                    \
+    {                                                                           \
+        LifespanInfo::Reset();                                                  \
+                                                                                \
+        Expectations e;                                                         \
+        METHOD_NAME##_();                                                       \
+        e.Validate();                                                           \
+                                                                                \
+        auto liveObjectCount = LifespanInfo::ReportLiveObjects();               \
+        Assert::AreEqual<size_t>(0, liveObjectCount, L"LifespanTracker leak");  \
+    }                                                                           \
     void METHOD_NAME##_()
 
 //

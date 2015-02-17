@@ -19,7 +19,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    class CommittedDevice
+    class CommittedDevice : LifespanTracker<CommittedDevice>
     {
         enum class State
         {
@@ -108,7 +108,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
     template<typename TRAITS>
-    class RecreatableDeviceManager : public IRecreatableDeviceManager<TRAITS>
+    class RecreatableDeviceManager : public IRecreatableDeviceManager<TRAITS>,
+                                     private LifespanTracker<RecreatableDeviceManager<TRAITS>>
     {
         std::function<void(ChangeReason)> m_changedCallback;
         ComPtr<IActivationFactory> m_canvasDeviceFactory;

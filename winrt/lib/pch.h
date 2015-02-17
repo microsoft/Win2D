@@ -67,6 +67,7 @@
 #include <ComArray.h>
 #include <Constants.h>
 #include <ErrorHandling.h>
+#include <LifespanTracker.h>
 #include <Nullable.h>
 #include <ScopeWarden.h>
 #include <Utilities.h>

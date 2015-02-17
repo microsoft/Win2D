@@ -43,7 +43,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // overloads first examines the properties on the bitmap to determine which
     // manager to delegate to.
     //
-    class PolymorphicBitmapManager
+    class PolymorphicBitmapManager : LifespanTracker<PolymorphicBitmapManager>
     {
         std::shared_ptr<CanvasBitmapManager> m_bitmapManager;
         std::shared_ptr<CanvasRenderTargetManager> m_renderTargetManager;

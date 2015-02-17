@@ -211,7 +211,7 @@ namespace canvas
     TEST_CLASS(CanvasTextFormatTests)
     {
     public:
-        TEST_METHOD(CanvasTextFormat_Implements_Expected_Interfaces)
+        TEST_METHOD_EX(CanvasTextFormat_Implements_Expected_Interfaces)
         {
             auto ctf = Make<CanvasTextFormat>();
 
@@ -220,7 +220,7 @@ namespace canvas
             ASSERT_IMPLEMENTS_INTERFACE(ctf, ICanvasResourceWrapperNative);
         }
 
-        TEST_METHOD(CanvasTextFormat_FlowDirection)
+        TEST_METHOD_EX(CanvasTextFormat_FlowDirection)
         {
             TEST_SIMPLE_PROPERTY(
                 FlowDirection,
@@ -234,7 +234,7 @@ namespace canvas
                 static_cast<CanvasTextDirection>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_FontFamily)
+        TEST_METHOD_EX(CanvasTextFormat_FontFamily)
         {
             auto canvasGetter =
                 [](CanvasTextFormat* ctf)
@@ -272,7 +272,7 @@ namespace canvas
                 L"realized font family");
         }
 
-        TEST_METHOD(CanvasTextFormat_FontSize)
+        TEST_METHOD_EX(CanvasTextFormat_FontSize)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontSize,
@@ -282,7 +282,7 @@ namespace canvas
             TEST_INVALID_PROPERTIES(FontSize, nanf(""), -1.0f);
         }
 
-        TEST_METHOD(CanvasTextFormat_FontStretch)
+        TEST_METHOD_EX(CanvasTextFormat_FontStretch)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontStretch,
@@ -292,7 +292,7 @@ namespace canvas
             TEST_INVALID_PROPERTIES(FontStretch, static_cast<ABI::Windows::UI::Text::FontStretch>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_FontStyle)
+        TEST_METHOD_EX(CanvasTextFormat_FontStyle)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontStyle,
@@ -302,7 +302,7 @@ namespace canvas
             TEST_INVALID_PROPERTIES(FontStyle, static_cast<ABI::Windows::UI::Text::FontStyle>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_FontWeight)
+        TEST_METHOD_EX(CanvasTextFormat_FontWeight)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontWeight,
@@ -315,7 +315,7 @@ namespace canvas
                 ABI::Windows::UI::Text::FontWeight{ 1000 });
         }
 
-        TEST_METHOD(CanvasTextFormat_IncrementalTabStop)
+        TEST_METHOD_EX(CanvasTextFormat_IncrementalTabStop)
         {
             TEST_SIMPLE_PROPERTY(
                 IncrementalTabStop,
@@ -330,7 +330,7 @@ namespace canvas
                 nanf(""));
         }
 
-        TEST_METHOD(CanvasTextFormat_LineSpacingMethod)
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacingMethod)
         {
             auto dwriteSetLineSpacingMethod = 
                 [](IDWriteTextFormat* dwf, DWRITE_LINE_SPACING_METHOD value)
@@ -360,7 +360,7 @@ namespace canvas
                 static_cast<CanvasLineSpacingMethod>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_LineSpacing)
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacing)
         {
             auto dwriteSetLineSpacing = 
                 [](IDWriteTextFormat* dwf, float value)
@@ -391,7 +391,7 @@ namespace canvas
                 nanf(""));
         }
 
-        TEST_METHOD(CanvasTextFormat_LineSpacingBaseline)
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacingBaseline)
         {
             auto dwriteSetLineSpacingBaseline = 
                 [](IDWriteTextFormat* dwf, float value)
@@ -421,7 +421,7 @@ namespace canvas
                 nanf(""));
         }
 
-        TEST_METHOD(CanvasTextFormat_LocaleName)
+        TEST_METHOD_EX(CanvasTextFormat_LocaleName)
         {
             auto canvasGetter =
                 [](CanvasTextFormat* ctf)
@@ -459,7 +459,7 @@ namespace canvas
                 L"en-us");            
         }
 
-        TEST_METHOD(CanvasTextFormat_VerticalAlignment)
+        TEST_METHOD_EX(CanvasTextFormat_VerticalAlignment)
         {
             TEST_PROPERTY(
                 VerticalAlignment,
@@ -474,7 +474,7 @@ namespace canvas
                 static_cast<CanvasVerticalAlignment>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_ReadingDirection)
+        TEST_METHOD_EX(CanvasTextFormat_ReadingDirection)
         {
             TEST_SIMPLE_PROPERTY(
                 ReadingDirection,
@@ -488,7 +488,7 @@ namespace canvas
                 static_cast<CanvasTextDirection>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_ParagraphAlignment)
+        TEST_METHOD_EX(CanvasTextFormat_ParagraphAlignment)
         {
             TEST_PROPERTY(
                 ParagraphAlignment,
@@ -503,7 +503,7 @@ namespace canvas
                 static_cast<ABI::Windows::UI::Text::ParagraphAlignment>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_TrimmingGranularity)
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingGranularity)
         {
             auto dwriteGetter =
                 [](IDWriteTextFormat* dwf)
@@ -534,7 +534,7 @@ namespace canvas
                 static_cast<CanvasTextTrimmingGranularity>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_TrimmingDelimiter)
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingDelimiter)
         {
             auto canvasGetter =
                 [](CanvasTextFormat* ctf)
@@ -580,7 +580,7 @@ namespace canvas
         }
 
 
-        TEST_METHOD(CanvasTextFormat_TrimmingDelimiterCount)
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingDelimiterCount)
         {
             auto dwriteGetter =
                 [](IDWriteTextFormat* dwf)
@@ -611,7 +611,7 @@ namespace canvas
                 -1);
         }
 
-        TEST_METHOD(CanvasTextFormat_WordWrapping)
+        TEST_METHOD_EX(CanvasTextFormat_WordWrapping)
         {
             TEST_SIMPLE_PROPERTY(
                 WordWrapping,
@@ -625,7 +625,7 @@ namespace canvas
                 static_cast<CanvasWordWrapping>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_Options)
+        TEST_METHOD_EX(CanvasTextFormat_Options)
         {
             // 'Options' isn't part of IDWriteTextFormat, and so we can't use
             // TestSimpleProperty with it.

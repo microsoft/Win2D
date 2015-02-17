@@ -1043,7 +1043,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // A CanvasDrawingSessionAdapter that calls BeginDraw and EndDraw on the
     // device context.
     //
-    class SimpleCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
+    class SimpleCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+                                              private LifespanTracker<SimpleCanvasDrawingSessionAdapter>
     {
         ComPtr<ID2D1DeviceContext1> m_d2dDeviceContext;
 

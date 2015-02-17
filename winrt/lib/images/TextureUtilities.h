@@ -14,7 +14,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    class ScopedBitmapLock
+    class ScopedBitmapLock : LifespanTracker<ScopedBitmapLock>
     {
         D3D11_MAPPED_SUBRESOURCE m_mappedSubresource;
         unsigned int m_subresourceIndex;
