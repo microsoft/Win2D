@@ -603,7 +603,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     {
                         m_currentSize = newSize;
 
-                        Changed(lock);
+                        Changed(lock, ChangeReason::Size);
                     }
                 });
         }

@@ -718,6 +718,15 @@ TEST_CLASS(CanvasAnimatedControlTests)
             AddCreateResourcesHandler(OnCreateResources.Get());
             AddDrawHandler(OnDraw.Get());
             AddUpdateHandler(OnUpdate.Get());
+
+            Adapter->GetSwapChainPanel()->SetSwapChainMethod.AllowAnyCall(
+                [=] (IDXGISwapChain* swapChain)
+                {
+                    auto dxgiSwapChain = dynamic_cast<MockDxgiSwapChain*>(swapChain);
+                    Assert::IsNotNull(dxgiSwapChain);
+                    dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+                    return S_OK;
+                });
         }
 
         void GetIntoSteadyState()
@@ -883,6 +892,30 @@ TEST_CLASS(CanvasAnimatedControlTests)
         }
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPausedAfterUpdateAndSizeChanged_DrawIsCalled)
+    {
+        UpdateRenderFixture f;
+        f.GetIntoSteadyState();
+
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.Adapter->DoChanged();
+        f.RenderSingleFrame();
+
+        f.UserControl->Resize(Size{123, 456});
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.RenderSingleFrame();
+        }
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceLost_DrawIsNotCalledUntilUpdateHasCompleted)
     {
         UpdateRenderFixture f;
@@ -1030,29 +1063,29 @@ TEST_CLASS(CanvasAnimatedControlTests)
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenSizeChangedBeforeTargetElapsedTimeReached_UpdateAndDrawAreNotCalled)
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenSizeChangedBeforeTargetElapsedTimeReached_DrawIsCalledOnce_AndThen_UpdateAndDrawAreNotCalled)
     {
         NoExtraUpdateFixture f;
-
-        f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.AllowAnyCall(
-            [=] (IDXGISwapChain* swapChain)
-            {
-                auto dxgiSwapChain = dynamic_cast<MockDxgiSwapChain*>(swapChain);
-                Assert::IsNotNull(dxgiSwapChain);
-                dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
-                return S_OK;
-            });
 
         ThrowIfFailed(f.Control->put_Paused(FALSE));
 
         f.GetIntoSteadyState();
 
         f.UserControl->Resize(Size{123, 456});
+        
+        // After resizing we allow one extra draw without an update - consider
+        // the case of a very long TargetElapsedTime, we want size changes to be
+        // reflected asap. (Also this simplifies handling the case when we're
+        // paused...)
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
 
         f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached();        
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenClearColorChangedBeforeTargetElapsedTimeReached_UpdateAndDrawAreNotCalled)
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenClearColorChangedBeforeTargetElapsedTimeReached_DrawIsCalledOnce_AndThen_UpdateAndDrawAreNotCalled)
     {
         NoExtraUpdateFixture f;
 

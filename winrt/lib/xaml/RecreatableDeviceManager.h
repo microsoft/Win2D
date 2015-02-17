@@ -34,6 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         Other,
         ClearColor,
+        Size,
         DeviceLost
     };
     

@@ -609,6 +609,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         switch (reason)
         {
         case ChangeReason::ClearColor:
+        case ChangeReason::Size:
             m_sharedState.NeedsDraw = true;
             break;
 
