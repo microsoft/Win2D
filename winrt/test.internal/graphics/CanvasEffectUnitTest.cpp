@@ -336,6 +336,9 @@ public:
         testEffect->put_Source(testEffect.Get());
 
         Assert::AreEqual(D2DERR_CYCLIC_GRAPH, f.m_drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+
+        // Break the cycle so we don't leak memory.
+        testEffect->put_Source(nullptr);
     }
 
     TEST_METHOD_EX(CanvasEffect_GetBounds_NullArg)
