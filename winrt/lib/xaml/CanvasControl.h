@@ -105,14 +105,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ABI::Windows::UI::Xaml::IFrameworkElementOverrides,
         MixIn<CanvasControl, BaseControl<CanvasControlTraits>>,
-        ComposableBase<ABI::Windows::UI::Xaml::Controls::IUserControl>>,
+        ComposableBase<>>,
         public BaseControl<CanvasControlTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasControl, BaseTrust);
 
-        std::mutex m_mutex;
-        RegisteredEvent m_renderingEventRegistration; // protected by m_mutex
-        bool m_needToHookCompositionRendering;        // protected by m_mutex
+        RegisteredEvent m_renderingEventRegistration; // protected by BaseControl's mutex
+        bool m_needToHookCompositionRendering;        // protected by BaseControl's mutex
 
         RegisteredEvent m_windowVisibilityChangedEventRegistration;
         RegisteredEvent m_surfaceContentsLostEventRegistration;
@@ -133,7 +132,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    Changed();
+                    Changed(GetLock());
                 });
         }
 
@@ -165,24 +164,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<CanvasDrawEventArgs> CreateDrawEventArgs(
             ICanvasDrawingSession* drawingSession) override final;
 
-        virtual void Changed() override final;
-
-        virtual void ChangedClearColor(bool differentAlphaMode) override final;
-
-        virtual void ChangedSize() override final;
-
+        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
+        virtual void Loaded() override final;
         virtual void Unloaded() override final;
+        virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
+        virtual void ApplicationResuming() override final;
 
     private:
-        std::unique_lock<std::mutex> GetLock()
-        {
-            return std::unique_lock<std::mutex>(m_mutex);
-        }        
-
         void HookCompositionRenderingIfNecessary();
 
         void CreateImageControl();
         void RegisterEventHandlers();
+        void UnregisterEventHandlers();
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);
         HRESULT OnWindowVisibilityChanged(IInspectable*, IVisibilityChangedEventArgs* args);

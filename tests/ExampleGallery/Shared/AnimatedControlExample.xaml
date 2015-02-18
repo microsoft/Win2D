@@ -14,33 +14,71 @@ under the License.
 -->
 
 <UserControl
-    x:Class="ExampleGallery.AnimatedControlExample"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ExampleGallery"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas"
+    xmlns:System="using:System"
+    x:Class="ExampleGallery.AnimatedControlExample"
+    x:Name="control"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
-            <ToggleButton Content="Pause" Checked="Pause_Checked" Unchecked="Pause_Unchecked"/>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" Margin="0, 0, 10, 0">
+            <TextBlock Text="TargetElapsedTime:" Margin="5" />
+            <ComboBox x:Name="targetElapsedTime" Width="200" Height="40" SelectedItem="{Binding SelectedTargetElapsedTime, ElementName=control, Mode=TwoWay}" Margin="5">
+                <x:Int32>41666</x:Int32>
+                <x:Int32>83333</x:Int32>
+                <x:Int32>166666</x:Int32>
+                <x:Int32>333333</x:Int32>
+                <x:Int32>500000</x:Int32>
+                <x:Int32>666666</x:Int32>
+                <x:Int32>1000000</x:Int32>
+                <x:Int32>1333333</x:Int32>
+                <x:Int32>2000000</x:Int32>
+                <x:Int32>3000000</x:Int32>
+                <x:Int32>4000000</x:Int32>
+                <x:Int32>5000000</x:Int32>
+                <x:Int32>6000000</x:Int32>
+                <x:Int32>7000000</x:Int32>
+                <x:Int32>8000000</x:Int32>
+                <x:Int32>9000000</x:Int32>
+                <x:Int32>10000000</x:Int32>
+            </ComboBox>
+
+            <ToggleButton Content="Pause" Checked="Pause_Checked" Unchecked="Pause_Unchecked" Margin="5" />
+            <Button x:Name="stepButton" Content="Step" Click="Step_Checked" IsEnabled="false" Margin="5" />
+            <ComboBox x:Name="clearColor" Width="200" Height="40" ItemsSource="{Binding Colors}" SelectionChanged="clearColor_SelectionChanged" Margin="5">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Rectangle Width="35" Height="20" Fill="{Binding Name}" Margin="5,0"/>
+                            <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding Name}" Foreground="Black"/>
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </StackPanel>
-        
+
         <canvas:CanvasAnimatedControl x:Name="animatedControl" Grid.Row="0" Grid.Column="1"
-                                      Draw="OnDraw" Update="OnUpdate"/>                                   
-                    
+			CreateResources="OnCreateResources" Draw="OnDraw" Update="OnUpdate"/>
+
     </Grid>
 </UserControl>

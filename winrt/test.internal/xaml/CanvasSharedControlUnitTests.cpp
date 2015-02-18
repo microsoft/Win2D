@@ -16,7 +16,6 @@
 #include "CanvasControlTestAdapter.h"
 #include "ControlFixtures.h"
 #include "MockCanvasSwapChain.h"
-#include "MockRecreatableDeviceManager.h"
 
 #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)          \
     TEST_METHOD_EX(CanvasControl_##NAME)            \
@@ -72,7 +71,7 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
         f.OnDraw.SetExpectedCalls(0);
 
-        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
             [&](D2D1_COLOR_F const* color)
             {
                 Assert::AreEqual(ToD2DColor(anyColor), *color);
@@ -81,7 +80,7 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
     }
 
@@ -91,7 +90,7 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
         Color anyColor{ 1, 2, 3, 4 };
 
-        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
             [&](D2D1_COLOR_F const* color)
             {
                 Assert::AreEqual(ToD2DColor(anyColor), *color);
@@ -99,7 +98,37 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
         
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
 
-        f.RaiseLoadedEvent();
+        f.Load();
+        f.RenderAnyNumberOfFrames();
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DeviceContextIsClearedToCorrectColorWhenColorChanges)
+    {
+        ClearColorFixture<TRAITS> f;
+
+        Color anyColor{ 1, 2, 3, 4 };
+
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
+            [&](D2D1_COLOR_F const* color)
+            {
+                Assert::AreEqual(ToD2DColor(anyColor), *color);
+            });
+        
+        ThrowIfFailed(f.Control->put_ClearColor(anyColor));
+
+        f.Load();
+        f.RenderAnyNumberOfFrames();
+
+        Color anyOtherColor{ 5, 6, 7, 8 };
+
+        f.DeviceContext->ClearMethod.ExpectAtLeastOneCall(
+            [&](D2D1_COLOR_F const* color)
+            {
+                Assert::AreEqual(ToD2DColor(anyOtherColor), *color);
+            });
+
+        ThrowIfFailed(f.Control->put_ClearColor(anyOtherColor));
+
         f.RenderAnyNumberOfFrames();
     }
 
@@ -107,77 +136,10 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
 TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 {
-    template<class TRAITS>
-    struct Fixture : public ControlFixture<TRAITS>
-    {
-        MockRecreatableDeviceManager<TRAITS>* DeviceManager;
-        std::function<void()> ChangedCallback;
-
-        Fixture()
-            : DeviceManager(nullptr)
-        {
-            CreateAdapter();
-
-            Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
-                [=]
-                {
-                    Assert::IsNull(DeviceManager);
-                    auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
-                    manager->SetChangedCallbackMethod.SetExpectedCalls(1,
-                        [=](std::function<void()> fn)
-                        {
-                            ChangedCallback = fn;
-                        });
-
-                    DeviceManager = manager.get();
-                    return manager;
-                });
-
-            CreateControl();
-        }
-                
-        void EnsureChangedCallback()
-        {
-            EnsureChangedCallbackImpl<TRAITS>();
-        }
-
-    private:
-
-        template<typename T>
-        void EnsureChangedCallbackImpl() {}
-
-        template<>
-        void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
-        {
-            Adapter->DoChanged();
-        }
-    };
-
-    TEST_SHARED_CONTROL_BEHAVIOR(WhenSuspendingEventRaised_TrimCalledOnDevice)
-    {
-        Fixture<TRAITS> f;
-
-        auto anyDevice = Make<MockCanvasDevice>();
-        f.DeviceManager->SetDevice(anyDevice);
-
-        anyDevice->TrimMethod.SetExpectedCalls(1);
-
-        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
-    }
-
-    TEST_SHARED_CONTROL_BEHAVIOR(WhenSuspendingEventRaisedAndThereIsNoDevice_NothingBadHappens)
-    {
-        Fixture<TRAITS> f;
-
-        ComPtr<ICanvasDevice> nullDevice;
-        f.DeviceManager->SetDevice(nullDevice);
-
-        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
-    }
-
     TEST_SHARED_CONTROL_BEHAVIOR(WhenDpiChangedEventRaised_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+        f.Load();
 
         // DPI change event without an actual change to the value should be ignored.
         f.Adapter->RaiseDpiChangedEvent();
@@ -189,12 +151,46 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.Adapter->RaiseDpiChangedEvent();
     }
 
+    TEST_SHARED_CONTROL_BEHAVIOR(WhenControlNotLoaded_DpiChangedEventIsIgnored)
+    {
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+
+        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(0);
+
+        // DPI change events on a new, not yet loaded control should be ignored.
+        f.Adapter->LogicalDpi = 100;
+        f.Adapter->RaiseDpiChangedEvent();
+
+        f.Adapter->LogicalDpi = 96;
+        f.Adapter->RaiseDpiChangedEvent();
+
+        // Ditto after loading and then unloading the control again.
+        f.Load();
+        f.RaiseUnloadedEvent();
+
+        f.Adapter->LogicalDpi = 100;
+        f.Adapter->RaiseDpiChangedEvent();
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(WhenDpiChangesWhileControlNotLoaded_LoadRaisesDpiChangedEvent)
+    {
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+
+        // DPI changes, but is ignored because the control is not yet loaded.
+        f.Adapter->LogicalDpi = 100;
+        f.Adapter->RaiseDpiChangedEvent();
+
+        // When the control loads, the DPI change shoudl be picked up.
+        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
+        f.Load();
+    }
+
     TEST_SHARED_CONTROL_BEHAVIOR(add_CreateResources_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         EventRegistrationToken anyToken{0x1234567890ABCDEF};
-        auto anyHandler = Callback<Fixture<TRAITS>::createResourcesEventHandler_t>(
+        auto anyHandler = Callback<ControlFixtureWithRecreatableDeviceManager<TRAITS>::createResourcesEventHandler_t>(
             [](typename TRAITS::controlInterface_t*, IInspectable*) { return S_OK; } );
 
         f.DeviceManager->AddCreateResourcesMethod.SetExpectedCalls(1,
@@ -213,7 +209,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(remove_CreateResources_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         EventRegistrationToken anyToken{0x1234567890ABCDEF};
         f.DeviceManager->RemoveCreateResourcesMethod.SetExpectedCalls(1,
@@ -227,7 +223,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(get_ReadyToDraw_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         f.DeviceManager->IsReadyToDrawMethod.SetExpectedCalls(1,
             [] { return true; });
@@ -245,7 +241,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(get_Device_ForwardsToDeviceManager)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         auto anyDevice = Make<MockCanvasDevice>();
         f.DeviceManager->SetDevice(anyDevice);
@@ -258,7 +254,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenGetDeviceReturnsNull_get_Device_ReportsUnderstandableErrorMessage)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(E_INVALIDARG, f.Control->get_Device(&device));
@@ -269,7 +265,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenDrawing_RunWithDrawIsPassedTheCorrectControl)
     {
-        Fixture<TRAITS> f;
+        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
         f.DeviceManager->RunWithDeviceMethod.SetExpectedCalls(1,
             [&](typename TRAITS::control_t* control, RunWithDeviceFunction)
@@ -277,13 +273,13 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
                 Assert::IsTrue(IsSameInstance(f.Control.Get(), control));
             });
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
     }
 
     template<typename TRAITS>
-    struct DrawFixture : public Fixture<TRAITS>
+    struct DrawFixture : public ControlFixtureWithRecreatableDeviceManager<TRAITS>
     {
         ComPtr<StubCanvasDevice> Device;
         MockEventHandler<typename TRAITS::drawEventHandler_t> OnDraw;
@@ -356,7 +352,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.OnDraw.SetExpectedCalls(0);
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::ResourcesNotCreated, 1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
     }
@@ -368,28 +364,10 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.OnDraw.SetExpectedCalls(1);
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None, 1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
-    }
-
-    TEST_SHARED_CONTROL_BEHAVIOR(WhenChangedCallbackIsCalled_RedrawIsTriggered)
-    {
-        DrawFixture<TRAITS> f;
-        f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None);
-
-        f.OnDraw.SetExpectedCalls(1);
-
-        f.RaiseLoadedEvent();
-        f.EnsureChangedCallback();
-        f.RenderAnyNumberOfFrames();
-
-        f.ChangedCallback();
-        f.EnsureChangedCallback();
-
-        f.OnDraw.SetExpectedCalls(1);
-        f.RenderAnyNumberOfFrames();        
-    }
+    }    
 };
 
 TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
@@ -419,5 +397,39 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
         float dips = 0;
         ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(WhenLoadedAndUnloaded_EventsAreRegisteredAndUnregistered)
+    {
+        BasicControlFixture<TRAITS> f;
+
+        f.CreateAdapter();
+
+        // Creating the control should not register events.
+        f.Adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(0);
+        f.Adapter->SuspendingEventSource->AddMethod.SetExpectedCalls(0);
+        f.Adapter->ResumingEventSource->AddMethod.SetExpectedCalls(0);
+
+        f.Adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(0);
+        f.Adapter->SuspendingEventSource->RemoveMethod.SetExpectedCalls(0);
+        f.Adapter->ResumingEventSource->RemoveMethod.SetExpectedCalls(0);
+
+        f.CreateControl();
+
+        // Loading the control should register events.
+        f.Adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(1);
+        f.Adapter->SuspendingEventSource->AddMethod.SetExpectedCalls(1);
+        f.Adapter->ResumingEventSource->AddMethod.SetExpectedCalls(1);
+
+        f.Load();
+
+        Expectations::Instance()->Validate();
+
+        // Unloading the control should unregister events.
+        f.Adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(1);
+        f.Adapter->SuspendingEventSource->RemoveMethod.SetExpectedCalls(1);
+        f.Adapter->ResumingEventSource->RemoveMethod.SetExpectedCalls(1);
+
+        f.RaiseUnloadedEvent();
     }
 };

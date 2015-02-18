@@ -12,6 +12,7 @@
 
 using Microsoft.Graphics.Canvas;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.UI;
@@ -20,35 +21,43 @@ using Windows.UI.Xaml.Controls;
 
 namespace ExampleGallery
 {
-    public delegate void ShapeDrawer(CanvasControl canvas, CanvasDrawingSession drawingSession);
-
-    public class Shape
-    {
-        public string Name { get; set; }
-        public ShapeDrawer Drawer { get; set;}
-
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
     public sealed partial class ShapesExample : UserControl
     {
+        class Shape
+        {
+            public string Name { get; set; }
+            public Action<CanvasControl, CanvasDrawingSession> Drawer { get; set; }
+        }
+
+        List<Shape> availableShapes;
+
         public ShapesExample()
         {
             this.InitializeComponent();
+
+            availableShapes = new List<Shape>
+            {
+                new Shape() { Name = "Line",              Drawer = this.DrawLine             },
+                new Shape() { Name = "Rectangle",         Drawer = this.DrawRectangle        },
+                new Shape() { Name = "Rounded Rectangle", Drawer = this.DrawRoundedRectangle },
+                new Shape() { Name = "Circle",            Drawer = this.DrawCircles          }
+            };
+
+            // TODO #3693: investigate why the CanvasControl never gets garbage collected
+            // if we hook the Draw event in the usual way - some kind of refcount cycle?
+            WeakReference weakThis = new WeakReference(this);
+
+            canvas.Draw += (sender, e) =>
+            {
+                var self = (ShapesExample)weakThis.Target;
+
+                self.Canvas_Draw(sender, e);
+            };
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Shapes.ItemsSource = new List<Shape>
-            {
-                new Shape() { Name = "Line", Drawer = this.DrawLine },
-                new Shape() { Name = "Rectangle", Drawer = this.DrawRectangle },
-                new Shape() { Name = "Rounded Rectangle", Drawer = this.DrawRoundedRectangle },
-                new Shape() { Name = "Circle", Drawer = this.DrawCircles }
-            };
+            this.Shapes.ItemsSource = from shape in availableShapes select shape.Name;
             this.Shapes.SelectedIndex = 0;
         }
 
@@ -59,17 +68,9 @@ namespace ExampleGallery
 
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            var ds = args.DrawingSession;
+            var currentShape = availableShapes[this.Shapes.SelectedIndex];
 
-            var shape = this.Shapes.SelectedItem as Shape;
-            if (shape == null)
-                return;
-
-            var width = sender.ActualWidth;
-            var height = sender.ActualHeight;
-
-            if (shape.Drawer != null)
-                shape.Drawer(sender, ds);
+            currentShape.Drawer(sender, args.DrawingSession);
         }
 
         private void DrawLine(CanvasControl sender, CanvasDrawingSession ds)

@@ -1,0 +1,104 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+namespace Microsoft.Graphics.Canvas
+{
+    runtimeclass CanvasGeometry;
+
+    [version(VERSION), uuid(74EA89FA-C87C-4D0D-9057-2743B8DB67EE), exclusiveto(CanvasGeometry)]
+    interface ICanvasGeometry : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+    }
+
+    [version(VERSION), uuid(D94E33CF-CD59-46F2-8DF4-55066AABFD56), exclusiveto(CanvasGeometry)]
+    interface ICanvasGeometryStatics : IInspectable
+    {
+        [overload("CreateRectangle"), default_overload]
+        HRESULT CreateRectangle(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Rect rect,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateRectangle")]
+        HRESULT CreateRectangleAtCoords(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] float x,
+            [in] float y,
+            [in] float w,
+            [in] float h,
+            [out, retval] CanvasGeometry** geometry); 
+
+        [overload("CreateRoundedRectangle"), default_overload]
+        HRESULT CreateRoundedRectangle(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Rect rect,
+            [in] float radiusX,
+            [in] float radiusY,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateRoundedRectangle")]
+        HRESULT CreateRoundedRectangleAtCoords(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] float x,
+            [in] float y,
+            [in] float w,
+            [in] float h,
+            [in] float radiusX,
+            [in] float radiusY,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateEllipse"), default_overload]
+        HRESULT CreateEllipse(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] NUMERICS.Vector2 centerPoint,
+            [in] float radiusX,
+            [in] float radiusY,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateEllipse")]
+        HRESULT CreateEllipseAtCoords(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] float x,
+            [in] float y,
+            [in] float radiusX,
+            [in] float radiusY,
+            [out, retval] CanvasGeometry** geometry);
+
+        // Docs should specify that this interops to ID2D1EllipseGeometry.
+        [overload("CreateCircle"), default_overload]
+        HRESULT CreateCircle(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] NUMERICS.Vector2 centerPoint,
+            [in] float radius,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateCircle")]
+        HRESULT CreateCircleAtCoords(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] float x,
+            [in] float y,
+            [in] float radius,
+            [out, retval] CanvasGeometry** geometry);
+
+        HRESULT CreatePath(
+            [in] CanvasPathBuilder* pathBuilder,
+            [out, retval] CanvasGeometry** geometry);
+    }
+
+    [version(VERSION), static(ICanvasGeometryStatics, VERSION)]
+    runtimeclass CanvasGeometry
+    {
+        [default] interface ICanvasGeometry;
+    }
+
+}

@@ -41,12 +41,12 @@ public:
 
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
-            [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
+            [=](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
             {
                 auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
                                         
                 mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
-                    [&](RECT const&, IID const& iid, void** updateObject, POINT*)
+                    [=](RECT const&, IID const& iid, void** updateObject, POINT*)
                     {
                         return m_deviceContext.CopyTo(iid, updateObject);
                     });
@@ -146,7 +146,7 @@ struct ClearColorFixture
         UserControl = dynamic_cast<StubUserControl*>(As<IUserControl>(Control).Get());
     }
 
-    void RaiseLoadedEvent() {}
+    void Load();
 
     void RegisterOnDraw()
     {
@@ -154,18 +154,25 @@ struct ClearColorFixture
         ThrowIfFailed(Control->add_Draw(OnDraw.Get(), &ignoredToken));
     }
 
-    void RenderAnyNumberOfFrames() {}
+    void RenderAnyNumberOfFrames();
 };
 
 
-void ClearColorFixture<CanvasControlTraits>::RaiseLoadedEvent()
+inline void ClearColorFixture<CanvasControlTraits>::Load()
 {
+    UserControl->Resize(Size{ 100, 200 });
     ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
 }
 
 
-void ClearColorFixture<CanvasAnimatedControlTraits>::RaiseLoadedEvent()
+inline void ClearColorFixture<CanvasAnimatedControlTraits>::Load()
 {
+    // Set the control to variable timestep mode.  This means that
+    // RenderAnyNumberOfFrames can trigger updates & renders without having to
+    // fake time moving forwards.
+    ThrowIfFailed(Control->put_IsFixedTimeStep(FALSE));
+
+    UserControl->Resize(Size{ 100, 200 });
     ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
 
     Adapter->DoChanged();

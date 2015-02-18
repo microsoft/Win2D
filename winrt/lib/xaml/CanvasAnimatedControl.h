@@ -118,7 +118,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             std::function<bool()> const& tickFn,
             std::function<void()> const& afterLoopFn) = 0;
 
-        virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
+        virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
     };
 
 
@@ -127,7 +127,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasAnimatedControl : public RuntimeClass<
         MixIn<CanvasAnimatedControl, BaseControl<CanvasAnimatedControlTraits>>,
-        ComposableBase<IUserControl>>,
+        ComposableBase<>>,
         public BaseControl<CanvasAnimatedControlTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedControl, BaseTrust);
@@ -139,28 +139,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<AnimatedControlInput> m_input;
 
         ComPtr<IAsyncAction> m_renderLoopAction;
+        
+        ComPtr<ISuspendingDeferral> m_suspendingDeferral;
 
         StepTimer m_stepTimer;
-
-        std::mutex m_mutex;
+        bool m_hasUpdated;
 
         //
-        // The variables below are protected by m_mutex:
+        // State shared between the UI thread and the update/render thread.
+        // Access to this must be guarded using BaseControl's mutex.
         //
-        ComPtr<IAsyncAction> m_changedAction;       
+        struct SharedState
+        {
+            bool IsPaused;
+            bool FirstTickAfterWasPaused;
+            bool IsStepTimerFixedStep;
+            uint64_t TargetElapsedTime;
+            bool ShouldResetElapsedTime;
+            bool NeedsDraw;
+        };
 
-        bool m_isPaused;
-
-        Size m_currentSize; // We need to store this so we can access it from the update/render loop     
-
-        bool m_needToRestartRenderThread;
-
-        bool m_forceUpdate;
-
-        // These are duplicated from the step timer, to avoid putting locks around StepTimer as a whole.
-        bool m_isStepTimerFixedStep;
-        uint64_t m_targetElapsedTime;
-        bool m_shouldResetElapsedTime;
+        SharedState m_sharedState;
 
     public:
         CanvasAnimatedControl(
@@ -211,28 +210,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<CanvasAnimatedDrawEventArgs> CreateDrawEventArgs(
             ICanvasDrawingSession* drawingSession) override final;
 
-        virtual void Changed() override final;
-
-        virtual void ChangedClearColor(bool differentAlphaMode) override final;
-
-        virtual void ChangedSize() override final;
-
+        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
+        virtual void Loaded() override final;
         virtual void Unloaded() override final;
+        virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
+        virtual void ApplicationResuming() override final;
 
     private:
-        std::unique_lock<std::mutex> GetLock()
-        { return std::unique_lock<std::mutex>(m_mutex); }
+        bool IsRenderLoopRunning() const;
 
         void CreateSwapChainPanel();
 
         bool Tick(
             CanvasSwapChain* target, 
-            Color const& clearColor,
             bool areResourcesCreated);
 
-        bool Update();
-
-        HRESULT OnRenderLoopCompleted(IAsyncAction*, AsyncStatus);
+        bool Update(bool forceUpdate);
 
         void ChangedImpl();
 

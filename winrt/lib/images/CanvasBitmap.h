@@ -79,11 +79,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
 
-        std::shared_ptr<ICanvasBitmapAdapter> m_adapter;
-
     public:
-        CanvasBitmapFactory();
-
         //
         // ICanvasBitmapStatics
         //

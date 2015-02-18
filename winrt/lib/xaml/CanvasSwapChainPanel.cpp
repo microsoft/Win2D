@@ -26,7 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             &m_swapChainPanelFactory));
     }
 
-    std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CanvasSwapChainPanelAdapter::CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
+    ComPtr<IInspectable> CanvasSwapChainPanelAdapter::CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
     {
         ComPtr<IInspectable> swapChainPanelInspectable;
         ComPtr<ISwapChainPanel> swapChainPanel;
@@ -37,7 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             &swapChainPanelInspectable,
             &swapChainPanel));
 
-        return std::make_pair(swapChainPanelInspectable, swapChainPanel);
+        return swapChainPanelInspectable;
     }
 
     class CanvasSwapChainPanelFactory : public ActivationFactory<>
@@ -48,14 +48,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // constructor, and so this activation factory is used to
         // pass in the adapter.
         //
-        std::shared_ptr<CanvasSwapChainPanelAdapter> m_adapter;
+        std::weak_ptr<CanvasSwapChainPanelAdapter> m_adapter;
 
     public:
-        CanvasSwapChainPanelFactory()
-            : m_adapter(std::make_shared<CanvasSwapChainPanelAdapter>())
-        {
-        }
-
         IFACEMETHODIMP ActivateInstance(IInspectable** obj) override
         {
             return ExceptionBoundary(
@@ -63,7 +58,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     CheckAndClearOutPointer(obj);
 
-                    auto swapChainPanel = Make<CanvasSwapChainPanel>(m_adapter);
+                    auto adapter = m_adapter.lock();
+
+                    if (!adapter)
+                        m_adapter = adapter = std::make_shared<CanvasSwapChainPanelAdapter>();
+
+                    auto swapChainPanel = Make<CanvasSwapChainPanel>(adapter);
                     CheckMakeResult(swapChainPanel);
 
                     ThrowIfFailed(swapChainPanel.CopyTo(obj));
@@ -75,7 +75,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : m_adapter(adapter)
     {
         auto base = m_adapter->CreateSwapChainPanel(static_cast<ICanvasSwapChainPanel*>(this));
-        ThrowIfFailed(SetComposableBasePointers(base.first.Get(), base.second.Get()));
+        ThrowIfFailed(SetComposableBasePointers(base.Get(), nullptr));
     }
 
     STDMETHODIMP CanvasSwapChainPanel::get_SwapChain(ICanvasSwapChain** value)

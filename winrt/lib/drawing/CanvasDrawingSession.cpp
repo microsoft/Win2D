@@ -2136,6 +2136,142 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_defaultTextFormat.Get();
     }
 
+    
+    //
+    // DrawGeometry
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrush(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush)
+    {
+        return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColor(
+        ICanvasGeometry* geometry,
+        Color color)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            color, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrushAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            brush, 
+            strokeWidth, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        Color color,
+        float strokeWidth)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            color, 
+            strokeWidth, 
+            nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
+                CheckInPointer(brush);
+
+                deviceContext->DrawGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* geometry,
+        Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
+
+                deviceContext->DrawGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    GetColorBrush(color),
+                    strokeWidth,
+                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());  
+            });
+    }
+
+
+    //
+    // FillGeometry
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithBrush(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
+                CheckInPointer(brush);
+
+                deviceContext->FillGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    ToD2DBrush(brush).Get(),
+                    nullptr);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithColor(
+        ICanvasGeometry* geometry,
+        Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(geometry);
+
+                deviceContext->FillGeometry(
+                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                    GetColorBrush(color),
+                    nullptr);
+            });
+    }    
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {

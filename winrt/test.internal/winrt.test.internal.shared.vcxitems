@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.\xaml;.\utils;.\mocks;.\stubs;..\Inc;..\lib;..\lib\brushes;..\lib\xaml;..\lib\drawing;..\lib\images;..\lib\text;..\lib\utils;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.\xaml;.\utils;.\mocks;.\stubs;..\Inc;..\lib;..\lib\brushes;..\lib\xaml;..\lib\drawing;..\lib\geometry;..\lib\images;..\lib\text;..\lib\utils;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level4</WarningLevel>
@@ -22,6 +22,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControlTestAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BasicControlFixture.h" />
@@ -46,9 +47,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DDeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometrySink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGradientStopCollection.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DLinearGradientBrush.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DPathGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DStrokeStyle.h" />
@@ -96,6 +99,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDeviceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasEffectUnitTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGeometryUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageSourceUnitTests.cpp" />

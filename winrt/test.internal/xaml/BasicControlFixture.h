@@ -20,6 +20,9 @@ struct BasicControlFixture
     typedef typename TRAITS::createResourcesEventHandler_t createResourcesEventHandler_t;
     typedef typename TRAITS::drawEventHandler_t            drawEventHandler_t;
 
+    static int const InitialWidth = 100;
+    static int const InitialHeight = 200;
+
     std::shared_ptr<adapter_t> Adapter;
     ComPtr<control_t> Control;
     ComPtr<StubUserControl> UserControl;
@@ -42,8 +45,9 @@ struct BasicControlFixture
         UserControl = dynamic_cast<StubUserControl*>(As<IUserControl>(Control).Get());
     }
 
-    void RaiseLoadedEvent()
+    void Load()
     {
+        UserControl->Resize(Size{InitialWidth, InitialHeight});
         ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
     }
 
@@ -157,13 +161,13 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
 
     bool IsChangedActionRunning()
     {
-        return static_cast<bool>(Adapter->m_changedAsyncAction);
+        return Adapter->HasPendingChangedActions();
     }
 
     void RaiseLoadedAndVerify()
     {
         Assert::IsFalse(IsChangedActionRunning());
-        RaiseLoadedEvent();
+        Load();
         Assert::IsTrue(IsChangedActionRunning());
         Adapter->DoChanged();
         Assert::IsFalse(IsChangedActionRunning());
@@ -214,3 +218,51 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
 
 typedef ControlFixture<CanvasControlTraits> CanvasControlFixture;
 typedef ControlFixture<CanvasAnimatedControlTraits> CanvasAnimatedControlFixture;
+
+
+template<class TRAITS>
+struct ControlFixtureWithRecreatableDeviceManager : public ControlFixture<TRAITS>
+{
+    MockRecreatableDeviceManager<TRAITS>* DeviceManager;
+    std::function<void(ChangeReason)> ChangedCallback;
+
+    ControlFixtureWithRecreatableDeviceManager()
+        : DeviceManager(nullptr)
+    {
+        CreateAdapter();
+
+        Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
+            [=]
+            {
+                Assert::IsNull(DeviceManager);
+                auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
+                manager->SetChangedCallbackMethod.SetExpectedCalls(1,
+                    [=](std::function<void(ChangeReason)> fn)
+                    {
+                        ChangedCallback = fn;
+                    });
+
+                DeviceManager = manager.get();
+                return manager;
+            });
+
+        CreateControl();
+    }
+
+    void EnsureChangedCallback()
+    {
+        EnsureChangedCallbackImpl<TRAITS>();
+    }
+
+private:
+
+    template<typename T>
+    void EnsureChangedCallbackImpl() {}
+
+    template<>
+    void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
+    {
+        Adapter->DoChanged();
+    }
+};
+    

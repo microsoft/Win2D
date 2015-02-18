@@ -30,6 +30,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     typedef std::function<void(ICanvasDevice*, RunWithDeviceFlags)> RunWithDeviceFunction;
 
+    enum class ChangeReason
+    {
+        Other,
+        ClearColor,
+        Size,
+        DeviceLost
+    };
+    
     template<typename TRAITS>
     class IRecreatableDeviceManager
     {
@@ -37,7 +45,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef typename TRAITS::control_t                     Sender;
         typedef typename TRAITS::createResourcesEventHandler_t CreateResourcesHandler;
 
-        virtual void SetChangedCallback(std::function<void()> fn) = 0;
+        virtual void SetChangedCallback(std::function<void(ChangeReason)> fn) = 0;
         virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction fn) = 0;
         virtual ComPtr<ICanvasDevice> const& GetDevice() = 0;
         virtual bool IsReadyToDraw() = 0;

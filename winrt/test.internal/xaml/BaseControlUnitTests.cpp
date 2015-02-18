@@ -17,7 +17,6 @@
 
 #include "CanvasControlTestAdapter.h"
 #include "BasicControlFixture.h"
-#include "MockRecreatableDeviceManager.h"
 
 //
 // These tests explicitly exercise BaseControl.  Generally we try and avoid
@@ -71,7 +70,7 @@ namespace
         : public RuntimeClass<
             RuntimeClassFlags<WinRtClassicComMix>, 
             MixIn<AnyDerivedControl, BaseControl<AnyTraits>>,
-            ComposableBase<ABI::Windows::UI::Xaml::Controls::IUserControl>>,
+            ComposableBase<>>,
           public BaseControl<AnyTraits>
     {
         InspectableClass(L"AnyDerivedControl", BaseTrust);
@@ -87,9 +86,10 @@ namespace
         CALL_COUNTER_WITH_MOCK(CreateOrUpdateRenderTargetMethod, void(ICanvasDevice*, CanvasBackground, float, Size, RenderTarget*));
         CALL_COUNTER_WITH_MOCK(CreateDrawEventArgsMethod, ComPtr<drawEventArgs_t>(ICanvasDrawingSession*));
         CALL_COUNTER_WITH_MOCK(ChangedMethod, void());
-        CALL_COUNTER_WITH_MOCK(ChangedClearColorMethod, void(bool));
-        CALL_COUNTER_WITH_MOCK(ChangedSizeMethod, void());
+        CALL_COUNTER_WITH_MOCK(LoadedMethod, void());
         CALL_COUNTER_WITH_MOCK(UnloadedMethod, void());
+        CALL_COUNTER_WITH_MOCK(ApplicationSuspendingMethod, void(ISuspendingEventArgs*));
+        CALL_COUNTER_WITH_MOCK(ApplicationResumingMethod, void());
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
@@ -107,24 +107,29 @@ namespace
             return CreateDrawEventArgsMethod.WasCalled(drawingSession);
         }
 
-        virtual void Changed() override final
+        virtual void Changed(Lock const&, ChangeReason) override final
         {
             return ChangedMethod.WasCalled();
         }
 
-        virtual void ChangedClearColor(bool differentAlphaMode) override final
+        virtual void Loaded() override final
         {
-            ChangedClearColorMethod.WasCalled(differentAlphaMode);
-        }
-
-        virtual void ChangedSize() override final
-        {
-            ChangedSizeMethod.WasCalled();
+            LoadedMethod.WasCalled();
         }
 
         virtual void Unloaded() override final
         {
             UnloadedMethod.WasCalled();
+        }
+
+        virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final
+        {
+            ApplicationSuspendingMethod.WasCalled(args);
+        }
+
+        virtual void ApplicationResuming() override final
+        {
+            ApplicationResumingMethod.WasCalled();
         }
 
         template<typename FN>
@@ -174,7 +179,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
     struct Fixture : public BasicControlFixture<AnyTraits>
     {
         MockRecreatableDeviceManager<AnyTraits>* DeviceManager;
-        std::function<void()> ChangedCallback;
+        std::function<void(ChangeReason)> ChangedCallback;
 
         Fixture()
             : DeviceManager(nullptr)
@@ -187,7 +192,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
                     Assert::IsNull(DeviceManager);
                     auto manager = std::make_unique<MockRecreatableDeviceManager<AnyTraits>>();
                     manager->SetChangedCallbackMethod.SetExpectedCalls(1,
-                        [=](std::function<void()> fn)
+                        [=](std::function<void(ChangeReason)> fn)
                         {
                             ChangedCallback = fn;
                         });
@@ -205,7 +210,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
     {
         Fixture f;
         f.Control->ChangedMethod.SetExpectedCalls(1);
-        f.ChangedCallback();
+        f.ChangedCallback(ChangeReason::Other);
     }
 
     TEST_METHOD_EX(BaseControl_WhenDeviceIsNewlyCreated_ANewRenderTargetIsCreated)

@@ -32,6 +32,8 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 #include "images\CanvasBitmap.abi.idl"
 #include "drawing\CanvasStrokeStyle.abi.idl"
 #include "text\CanvasTextFormat.abi.idl"
+#include "geometry\CanvasPathBuilder.abi.idl"
+#include "geometry\CanvasGeometry.abi.idl"
 #include "drawing\CanvasDrawingSession.abi.idl"
 #include "xaml\CanvasImageSource.abi.idl"
 #include "drawing\CanvasSwapChain.abi.idl"

@@ -112,6 +112,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<D2D1_SIZE_F>(D2D1_SIZE_F const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_SIZE_F{%f,%f}",
+                    value.width,
+                    value.height));
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<ABI::Windows::Foundation::Size>(ABI::Windows::Foundation::Size const& s)
             {
                 wchar_t buf[256];
@@ -187,6 +200,7 @@ namespace Microsoft
             TO_STRING(IDXGISwapChain);
             TO_STRING(ICanvasSwapChain);
             TO_STRING(ABI::Windows::UI::Core::ICoreCursor);
+            TO_STRING(ID2D1Geometry);
 
 #undef TO_STRING
 
@@ -229,6 +243,14 @@ namespace Microsoft
                 ENUM_VALUE(CanvasSwapChainRotation::Rotate180);
                 ENUM_VALUE(CanvasSwapChainRotation::Rotate270);
                 END_ENUM(CanvasSwapChainRotation);
+            }
+
+            ENUM_TO_STRING(ChangeReason)
+            {
+                ENUM_VALUE(ChangeReason::Other);
+                ENUM_VALUE(ChangeReason::ClearColor);
+                ENUM_VALUE(ChangeReason::DeviceLost);
+                END_ENUM(ChangeReason);
             }
 
             template<>
@@ -413,7 +435,7 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_CAP_STYLE_SQUARE);
                 ENUM_VALUE(D2D1_CAP_STYLE_ROUND);
                 ENUM_VALUE(D2D1_CAP_STYLE_TRIANGLE);
-                END_ENUM(D2D1_CAP_STYLE_TRIANGLE);
+                END_ENUM(D2D1_CAP_STYLE);
             }
 
             ENUM_TO_STRING(D2D1_LINE_JOIN)
@@ -422,7 +444,7 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_LINE_JOIN_BEVEL);
                 ENUM_VALUE(D2D1_LINE_JOIN_ROUND);
                 ENUM_VALUE(D2D1_LINE_JOIN_MITER_OR_BEVEL);
-                END_ENUM(D2D1_LINE_JOIN_MITER_OR_BEVEL);
+                END_ENUM(D2D1_LINE_JOIN);
             }
 
             ENUM_TO_STRING(D2D1_DASH_STYLE)
@@ -433,7 +455,7 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_DASH_STYLE_DASH_DOT);
                 ENUM_VALUE(D2D1_DASH_STYLE_DASH_DOT_DOT);
                 ENUM_VALUE(D2D1_DASH_STYLE_CUSTOM);
-                END_ENUM(D2D1_DASH_STYLE_CUSTOM);
+                END_ENUM(D2D1_DASH_STYLE);
             }
 
             ENUM_TO_STRING(D2D1_STROKE_TRANSFORM_TYPE)
@@ -441,7 +463,50 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_STROKE_TRANSFORM_TYPE_NORMAL);
                 ENUM_VALUE(D2D1_STROKE_TRANSFORM_TYPE_FIXED);
                 ENUM_VALUE(D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE);
-                END_ENUM(D2D1_STROKE_TRANSFORM_TYPE_HAIRLINE);
+                END_ENUM(D2D1_STROKE_TRANSFORM_TYPE);
+            }
+
+            ENUM_TO_STRING(D2D1_FIGURE_BEGIN)
+            {
+                ENUM_VALUE(D2D1_FIGURE_BEGIN_FILLED);
+                ENUM_VALUE(D2D1_FIGURE_BEGIN_HOLLOW);
+                END_ENUM(D2D1_FIGURE_BEGIN);
+            }
+
+            ENUM_TO_STRING(D2D1_FIGURE_END)
+            {
+                ENUM_VALUE(D2D1_FIGURE_END_CLOSED);
+                ENUM_VALUE(D2D1_FIGURE_END_OPEN);
+                END_ENUM(D2D1_FIGURE_END);
+            }
+
+            ENUM_TO_STRING(D2D1_SWEEP_DIRECTION)
+            {
+                ENUM_VALUE(D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE);
+                ENUM_VALUE(D2D1_SWEEP_DIRECTION_CLOCKWISE);
+                END_ENUM(D2D1_SWEEP_DIRECTION);
+            }
+
+            ENUM_TO_STRING(D2D1_ARC_SIZE)
+            {
+                ENUM_VALUE(D2D1_ARC_SIZE_SMALL);
+                ENUM_VALUE(D2D1_ARC_SIZE_LARGE);
+                END_ENUM(D2D1_ARC_SIZE);
+            }
+
+            ENUM_TO_STRING(D2D1_PATH_SEGMENT)
+            {
+                ENUM_VALUE(D2D1_PATH_SEGMENT_NONE);
+                ENUM_VALUE(D2D1_PATH_SEGMENT_FORCE_ROUND_LINE_JOIN);
+                ENUM_VALUE(D2D1_PATH_SEGMENT_FORCE_UNSTROKED);
+                END_ENUM(D2D1_PATH_SEGMENT);
+            }
+
+            ENUM_TO_STRING(D2D1_FILL_MODE)
+            {
+                ENUM_VALUE(D2D1_FILL_MODE_ALTERNATE);
+                ENUM_VALUE(D2D1_FILL_MODE_WINDING);
+                END_ENUM(D2D1_FILL_MODE);
             }
 
             template<>
@@ -888,6 +953,11 @@ namespace Microsoft
             return a.X == b.X && a.Y == b.Y;
         }
 
+        inline bool operator==(D2D1_SIZE_F const& a, D2D1_SIZE_F const& b)
+        {
+            return a.width == b.width && a.height == b.height;
+        }
+
     }
 }
 
@@ -976,13 +1046,4 @@ void AssertClassName(ComPtr<T> obj, wchar_t const* expectedClassName)
     ThrowIfFailed(inspectable->GetRuntimeClassName(className.GetAddressOf()));
     
     Assert::AreEqual(expectedClassName, static_cast<wchar_t const*>(className));
-}
-
-
-template<typename T, typename U>
-ComPtr<T> GetWrappedResource(U&& wrapper)
-{
-    ComPtr<T> resource;
-    ThrowIfFailed(As<ICanvasResourceWrapperNative>(wrapper)->GetResource(IID_PPV_ARGS(&resource)));
-    return resource;
 }

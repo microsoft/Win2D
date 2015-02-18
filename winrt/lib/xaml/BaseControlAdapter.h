@@ -67,7 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 &m_coreApplication));
         }
 
-        virtual std::pair<ComPtr<IInspectable>, ComPtr<IUserControl>> CreateUserControl(IInspectable* canvasControl) override
+        virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) override
         {
             ComPtr<IInspectable> userControlInspectable;
             ComPtr<IUserControl> userControl;
@@ -77,7 +77,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 &userControlInspectable,
                 &userControl));
 
-            return std::make_pair(userControlInspectable, userControl);
+            return userControlInspectable;
         }
 
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* handler) override
@@ -86,6 +86,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_coreApplication.Get(),
                 &ICoreApplication::add_Suspending,
                 &ICoreApplication::remove_Suspending,
+                handler);
+        }
+
+        virtual RegisteredEvent AddApplicationResumingCallback(IEventHandler<IInspectable*>* handler) override
+        {
+            return RegisteredEvent(
+                m_coreApplication.Get(),
+                &ICoreApplication::add_Resuming,
+                &ICoreApplication::remove_Resuming,
                 handler);
         }
 

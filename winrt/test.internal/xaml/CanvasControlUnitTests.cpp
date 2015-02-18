@@ -69,7 +69,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         // Issue a Loaded.  Now, the next CompositionRenderingEvent will cause
         // CreateResources to be raised.
         onCreateResources.SetExpectedCalls(1);
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderSingleFrame();
 
         onCreateResources.Validate();
@@ -117,7 +117,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         CanvasControlFixture f;
         f.Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderSingleFrame();
 
         auto onDraw1 = MockEventHandler<Static_DrawEventHandler>(L"Draw1");
@@ -145,7 +145,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         f.AddDrawHandler(onDraw.Get());
 
         f.RenderSingleFrame();
-        f.RaiseLoadedEvent();
+        f.Load();
 
         onDraw.SetExpectedCalls(1);
         f.RenderSingleFrame();
@@ -580,7 +580,7 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         {
             BasicControlFixture::CreateControl();
             AddDrawHandler(OnDraw.Get());
-            RaiseLoadedEvent();
+            Load();
         }
     };
     
@@ -720,6 +720,44 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.CreateControl();
         f.Control.Reset();
     }
+
+    TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaised_TrimCalledOnDevice)
+    {
+        ControlFixtureWithRecreatableDeviceManager<CanvasControlTraits> f;
+
+        auto anyDevice = Make<MockCanvasDevice>();
+        f.DeviceManager->SetDevice(anyDevice);
+
+        // When a new control has not yet been loaded, app suspend should be ignored.
+        anyDevice->TrimMethod.SetExpectedCalls(0);
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
+
+        // After the control is loaded, app suspend should call Trim.
+        f.Load();
+
+        anyDevice->TrimMethod.SetExpectedCalls(1);
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+
+        anyDevice->TrimMethod.SetExpectedCalls(0);
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
+
+        // If the control is unloaded, Trim should be ignored once more.
+        f.RaiseUnloadedEvent();
+
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaisedAndThereIsNoDevice_NothingBadHappens)
+    {
+        ControlFixtureWithRecreatableDeviceManager<CanvasControlTraits> f;
+
+        ComPtr<ICanvasDevice> nullDevice;
+        f.DeviceManager->SetDevice(nullDevice);
+
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, nullptr));
+    }
 };
 
 
@@ -740,7 +778,7 @@ TEST_CLASS(CanvasControl_ClearColor)
 
         f.OnDraw.SetExpectedCalls(1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
     }
 
@@ -751,7 +789,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         f.RegisterOnDraw();
         f.OnDraw.SetExpectedCalls(1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
 
         Color currentColor;
@@ -784,7 +822,7 @@ TEST_CLASS(CanvasControl_ClearColor)
                 return nullptr;
             });
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
     }
 
@@ -798,7 +836,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         Color anyOpaqueColor{ 255, 1, 2, 3};
         ThrowIfFailed(f.Control->put_ClearColor(anyOpaqueColor));
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.RenderAnyNumberOfFrames();
 
         // Now set it to transparent

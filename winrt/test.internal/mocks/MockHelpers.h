@@ -178,40 +178,48 @@ __declspec(selectany) Expectations* Expectations::s_instance;
 class CallCounterExpectation : public Expectation
 {
     std::wstring m_name;
-    bool m_allowAnyCall;
-    int m_expectedCallCount;
+    int m_minimumCallCount;
+    int m_maximumCallCount;
     int m_actualCallCount;
 
 public:
     CallCounterExpectation(std::wstring name)
         : m_name(name + L": ")
-        , m_allowAnyCall(false)
-        , m_expectedCallCount(0)
+        , m_minimumCallCount(-1)
+        , m_maximumCallCount(0)
         , m_actualCallCount(0)
     {
     }
 
     void AllowAnyCall()
     {
-        m_allowAnyCall = true;
+        Validate();
+        m_minimumCallCount = 0;
+        m_maximumCallCount = INT_MAX;
+        m_actualCallCount = 0;
     }
 
     void SetExpectedCalls(int value)
     {
         Validate();
-        m_expectedCallCount = value;
+        m_minimumCallCount = value;
+        m_maximumCallCount = value;
         m_actualCallCount = 0;
-        m_allowAnyCall = false;
+    }
+
+    void ExpectAtLeastOneCall()
+    {
+        Validate();
+        m_minimumCallCount = 1;
+        m_maximumCallCount = INT_MAX;
+        m_actualCallCount = 0;
     }
 
     void WasCalled()
     {
-        if (m_allowAnyCall)
-            return;
-
         ++m_actualCallCount;
 
-        Assert::IsTrue(m_actualCallCount <= m_expectedCallCount, Message(L"unexpected call").c_str());
+        Assert::IsTrue(m_actualCallCount <= m_maximumCallCount, Message(L"unexpected call").c_str());
     }
 
     int GetCurrentCallCount() const
@@ -221,18 +229,27 @@ public:
 
     virtual void Validate() override
     {
-        if (m_allowAnyCall)
-            return;
-
-        Assert::AreEqual(m_expectedCallCount, m_actualCallCount, Message(L"call count mismatch").c_str());
+        if (m_minimumCallCount == m_maximumCallCount)
+        {
+            // Special case when min==max so we can have a better assert message
+            Assert::AreEqual(m_maximumCallCount, m_actualCallCount, Message(L"call count mismatch").c_str());
+        }
+        else
+        {
+            Assert::IsTrue(m_actualCallCount >= m_minimumCallCount, Message(L"minimum call count not met").c_str());
+            Assert::IsTrue(m_actualCallCount <= m_maximumCallCount, Message(L"maximum call count not met").c_str());
+        }
     }
 
     virtual bool TryValidate() override
     {
-        if (m_allowAnyCall)
-            return true;
+        if (m_actualCallCount < m_minimumCallCount)
+            return false;
 
-        return (m_expectedCallCount == m_actualCallCount);
+        if (m_actualCallCount > m_maximumCallCount)
+            return false;
+
+        return true;
     }
 
     std::wstring Message(const wchar_t* msg)
@@ -297,6 +314,11 @@ public:
         m_expectation->SetExpectedCalls(value);
     }
 
+    void ExpectAtLeastOneCall()
+    {
+        m_expectation->ExpectAtLeastOneCall();
+    }
+
     void WasCalled()
     {
         m_expectation->WasCalled();
@@ -351,6 +373,12 @@ public:
     void SetExpectedCalls(int value, std::function<FN> mock = nullptr)
     {
         CallCounter::SetExpectedCalls(value);
+        m_mock = mock;
+    }
+
+    void ExpectAtLeastOneCall(std::function<FN> mock = nullptr)
+    {
+        CallCounter::ExpectAtLeastOneCall();
         m_mock = mock;
     }
 
@@ -498,6 +526,13 @@ public:
         m_nextReturnValue = S_OK;
     }
     
+    void ExpectAtLeastOneCall()
+    {
+        m_callCounter.ExpectAtLeastOneCall();
+        m_function = nullptr;
+        m_nextReturnValue = S_OK;
+    }
+
     int GetCurrentCallCount() const
     {
         return m_callCounter.GetCurrentCallCount();

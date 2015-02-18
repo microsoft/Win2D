@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+      <member name="T:Microsoft.Graphics.Canvas.CanvasGeometry">
+        <summary>Geometry objects provide a means of drawing and manipulating geometric shapes.</summary>
+        <remarks>  
+                <p>
+                A geometry is an arbitrary 2-D area, and a means of representing geometric
+                shapes. It may consist of lines, polygons with multiple segments, bezier curves, or any number 
+                of open or closed figures comprised of these. And there aren't any limits on how complex a 
+                geometry can be. It can be zero-sized, consist of one point, or be arbitrarily complex.
+                </p>
+        
+                <p>
+                A geometry object can be drawn using CanvasDrawingSession's 
+                <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/> 
+                or <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>.
+                </p>
+                 
+                <p>
+                Geometry objects are useful while doing manipulations (available, currently, through 
+                native interop) such as Widen or CombineWithGeometry.
+                </p>
+
+                <p>
+                Some primitives that can be created using static CanvasGeometry methods, such as Rectangle,
+                may also be drawn straightforwardly through CanvasDrawingSession's methods. In fact, for 
+                simple cases, CanvasDrawingSession's methods are recommended.
+                </p>                
+        </remarks>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Dispose">
+        <summary>Releases all resources used by the CanvasGeometry.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect)">
+        <summary>Creates a new rectangle geometry object with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
+        <summary>Creates a rectangular geometry primitive with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect,System.Single,System.Single)">
+        <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+        <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single)">
+        <summary>Creates a new ellipse geometry object with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
+        <summary>Creates a new ellipse geometry object with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single)">
+        <summary>Creates a new circle geometry object with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
+        <summary>Creates a new circle geometry object with the specified extents.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreatePath(Microsoft.Graphics.Canvas.CanvasPathBuilder)">
+        <summary>Creates a new path geometry, populated with data from the specified path builder.</summary>
+        <remarks>
+        	Creating a new CanvasGeometry will close the CanvasPathBuilder object, and render it unavailable for further use. 
+        	To create another CanvasGeometry, create a new CanvasPathBuilder.
+        	If your app needs to create multiple paths, say, where one is a strict subset of the other, 
+        	consider using multiple CanvasPathBuilder objects.</remarks>
+      </member>
+
+  </members>
+</doc>

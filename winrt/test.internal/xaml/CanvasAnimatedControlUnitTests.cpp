@@ -18,6 +18,13 @@
 #include "BasicControlFixture.h"
 #include "MockCanvasSwapChain.h"
 
+static Color const AnyColor                 {   1,   2,   3,   4 };
+static Color const AnyOtherColor            {   5,   6,   7,   8 };
+static Color const AnyOpaqueColor           { 255,   2,   3,   4 };
+static Color const AnyOtherOpaqueColor      { 255,   5,   6,   7 };
+static Color const AnyTranslucentColor      { 254, 253, 252, 251 };
+static Color const AnyOtherTranslucentColor { 250, 249, 248, 247 };
+
 TEST_CLASS(CanvasAnimatedControl_DrawArgs)
 {
     struct Fixture
@@ -120,7 +127,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
     TEST_METHOD_EX(CanvasAnimatedControl_RedundantChangedCallsDoNothing)
     {
         CanvasAnimatedControlFixture f;
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         auto onDraw = MockEventHandler<Animated_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
@@ -202,7 +209,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.AddCreateResourcesHandler(onCreateResources.Get());
         onCreateResources.SetExpectedCalls(1);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
     }
 
@@ -216,7 +223,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->DoChanged();
 
-        f.RaiseLoadedEvent();
+        f.Load();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_put_TargetElapsedTime_MustBePositiveNonZero)
@@ -232,12 +239,9 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     TEST_METHOD_EX(CanvasAnimatedControl_RecreatedSwapChainHasCorrectAlphaMode)
     {
-        Color opaqueColor{ 255, 255, 255, 255 };
-        Color translucentColor{ 254, 254, 254, 254 };
-
         CanvasAnimatedControlFixture f;
         auto swapChainManager = f.Adapter->SwapChainManager;
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         
         f.Adapter->CreateCanvasSwapChainMethod.SetExpectedCalls(1, 
@@ -247,17 +251,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 return CanvasAnimatedControlFixture::CreateTestSwapChain(swapChainManager, device);
             });
 
-        //
-        // The put_ClearColor causes recreation in the following way:
-        //
-        // A flag is set in the control to exit out of the worker thread.
-        // Given that the worker thread is exited, the UI thread is free to 
-        // start it again. Before doing this, i.e. before RunWithRenderTarget's
-        // payload, there's a check to verify whether the target needs updating.
-        // Re-creation happens there.
-        //
-
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(opaqueColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOpaqueColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
 
@@ -268,40 +262,51 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 return CanvasAnimatedControlFixture::CreateTestSwapChain(swapChainManager, device);
             });
 
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(translucentColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyTranslucentColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RedundantClearColorChangesDoNotCauseRecreation)
     {
-        Color opaqueColor{ 255, 255, 255, 255 };
-        Color otherOpaqueColor{ 255, 12, 34, 56 };
-        Color translucentColor{ 254, 254, 254, 254 };
-        Color otherTranslucentColor{ 200, 200, 200, 200 };
-
         CanvasAnimatedControlFixture f;
         auto swapChainManager = f.Adapter->SwapChainManager;
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         
         f.ExpectOneCreateSwapChain();
 
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(opaqueColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOpaqueColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(otherOpaqueColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOtherOpaqueColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
 
         f.ExpectOneCreateSwapChain();
 
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(translucentColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyTranslucentColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
-        Assert::AreEqual(S_OK, f.Control->put_ClearColor(otherTranslucentColor));
+        Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOtherTranslucentColor));
         f.Adapter->Tick();
         f.Adapter->DoChanged();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_ChangingClearColor_DoesNotRestartUpdateRenderLoop)
+    {
+        CanvasAnimatedControlFixture f;
+        f.Load();
+        f.Adapter->DoChanged();
+
+        f.Adapter->Tick();
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+        f.Adapter->DoChanged();
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
+        f.Adapter->Tick();
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+        f.Adapter->DoChanged();       
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_ThreadingRestrictions)
@@ -343,32 +348,14 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
     class FixtureWithSwapChainAccess : public CanvasAnimatedControlFixture
     {
-        float m_swapChainTransformScaleX;
-        float m_swapChainTransformScaleY;
-
     protected:
         ComPtr<MockDxgiSwapChain> m_dxgiSwapChain;
 
     public:
         FixtureWithSwapChainAccess()
             : m_dxgiSwapChain(Make<MockDxgiSwapChain>())
-            , m_swapChainTransformScaleX(1.0f)
-            , m_swapChainTransformScaleY(1.0f)
         {
             m_dxgiSwapChain->Present1Method.AllowAnyCall();
-
-            m_dxgiSwapChain->SetMatrixTransformMethod.AllowAnyCall(
-                [=](DXGI_MATRIX_3X2_F const* matrix)
-                {
-                    Assert::IsNotNull(matrix);
-                    Assert::AreEqual(m_swapChainTransformScaleX, matrix->_11);
-                    Assert::AreEqual(0.0f, matrix->_12);
-                    Assert::AreEqual(0.0f, matrix->_21);
-                    Assert::AreEqual(m_swapChainTransformScaleY, matrix->_22);
-                    Assert::AreEqual(0.0f, matrix->_31);
-                    Assert::AreEqual(0.0f, matrix->_32);
-                    return S_OK;
-                });
 
             m_dxgiSwapChain->GetDesc1Method.AllowAnyCall(
                 [=](DXGI_SWAP_CHAIN_DESC1* desc)
@@ -405,14 +392,18 @@ TEST_CLASS(CanvasAnimatedControlTests)
                     return canvasSwapChain;
                 });  
         }
+    };
 
-        void SetExpectedSwapChainScale(float scaleX, float scaleY)
+    class ResizeFixture : public FixtureWithSwapChainAccess
+    {
+    public:
+        ResizeFixture()
         {
-            m_swapChainTransformScaleX = scaleX;
-            m_swapChainTransformScaleY = scaleY;
+            Load();
+            Adapter->DoChanged();
         }
 
-        void ExpectOneResizeBuffers(UINT expectedWidth, UINT expectedHeight)
+        void ExpectOneResizeBuffers(Size size)
         {
             m_dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1,
                 [=](UINT bufferCount,
@@ -422,259 +413,326 @@ TEST_CLASS(CanvasAnimatedControlTests)
                     UINT swapChainFlags)
                     {
                         Assert::AreEqual(2u, bufferCount);
-                        Assert::AreEqual(expectedWidth, width);
-                        Assert::AreEqual(expectedHeight, height);
+                        Assert::AreEqual(static_cast<UINT>(size.Width), width);
+                        Assert::AreEqual(static_cast<UINT>(size.Height), height);
                         Assert::AreEqual(DXGI_FORMAT_B8G8R8A8_UNORM, newFormat);
                         Assert::AreEqual(0u, swapChainFlags);
                         return S_OK;
                     });
         }
 
-        void Execute(UINT width, UINT height)
+        void Execute(Size size)
         {
-            UserControl->Resize(Size{ static_cast<float>(width), static_cast<float>(height) });
+            UserControl->Resize(size);
 
-            Adapter->Tick();
-
-            Adapter->DoChanged();
+            for (int i = 0; i < 5; ++i)
+            {
+                Adapter->Tick();
+                Assert::IsTrue(Adapter->IsUpdateRenderLoopActive());
+                Adapter->DoChanged();
+            }
 
             Expectations::Instance()->Validate();
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_Resizing)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResized_ThenResizeBuffersIsCalled)
     {
-        struct TestCase
-        {
-            UINT ResizeWidth;
-            UINT ResizeHeight;
-            bool ExpectResize;
-        } testSteps[]
-        {
-            { 100, 100,  true }, // Initial sizing; resource always re-created
-            { 123, 456,  true }, // Change width and height
-            {  50, 456,  true }, // Change width only
-            {  50,  51,  true }, // Change height only
-            {  50,  51, false }, // Change nothing
+        Size sizes[] 
+        { 
+            { ResizeFixture::InitialWidth + 1, ResizeFixture::InitialHeight     }, // width only
+            { ResizeFixture::InitialWidth,     ResizeFixture::InitialHeight + 1 }, // height only
+            { ResizeFixture::InitialWidth + 1, ResizeFixture::InitialHeight + 1 }, // both
         };
 
-        FixtureWithSwapChainAccess f;
-        f.RaiseLoadedEvent();
-        f.Adapter->DoChanged();
-
-        for (auto const& testStep : testSteps)
+        for (auto size : sizes)
         {
-            if (testStep.ExpectResize)
-                f.ExpectOneResizeBuffers(testStep.ResizeWidth, testStep.ResizeHeight);
-
-            f.Execute(testStep.ResizeWidth, testStep.ResizeHeight);
+            ResizeFixture f;
+            f.ExpectOneResizeBuffers(size);
+            f.Execute(size);
         }
     }
-    
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToCurrentSize_ThenResizeBuffersIsNotCalled)
+    {
+        ResizeFixture f;
+        f.Execute(Size{ ResizeFixture::InitialWidth, ResizeFixture::InitialHeight });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToZero_ThenSwapChainIsSetToNull)
+    {
+        ResizeFixture f;
+
+        // Resizing to zero should stop the update/render loop.
+        f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.SetExpectedCalls(0);
+        f.UserControl->Resize(Size{ 0, 0 });
+        f.Adapter->Tick();
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+
+        // The UI thread change handler should then restart the update/render loop.
+        f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.SetExpectedCalls(1, [](IDXGISwapChain* swapChain)
+            {
+                Assert::IsNull(swapChain);
+                return S_OK;
+            });
+
+        f.Adapter->DoChanged();
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+
+        // Should now be in a steady state where there are no more calls to ResizeBuffers or SetSwapChain.
+        f.Execute(Size{ 0, 0 });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToZero_ThenDrawIsNotCalled)
+    {
+        ResizeFixture f;
+
+        f.UserControl->Resize(Size{ 0, 0 });
+        f.Adapter->Tick();
+        f.Adapter->DoChanged();
+
+        // Should now be in a steady state where Update is called but not Draw.
+        MockEventHandler<Animated_UpdateEventHandler> onUpdate(L"OnUpdate");
+        MockEventHandler<Animated_DrawEventHandler> onDraw(L"OnDraw");
+
+        f.AddUpdateHandler(onUpdate.Get());
+        f.AddDrawHandler(onDraw.Get());
+
+        onUpdate.ExpectAtLeastOneCall();
+        onDraw.SetExpectedCalls(0);
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.Execute(Size{ 0, 0 });
+    }
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess
     {
-        bool m_throwDeviceRemovedDuringNextCreateResources;
-
     public:
         MockEventHandler<Animated_DrawEventHandler> OnDraw;
         MockEventHandler<Animated_CreateResourcesEventHandler> OnCreateResources;
         MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
 
         DeviceLostFixture()
-            : m_throwDeviceRemovedDuringNextCreateResources(false)
+            : OnDraw(L"OnDraw")
+            , OnCreateResources(L"OnCreateResources")
+            , OnUpdate(L"OnUpdate")
         {
-            OnCreateResources.AllowAnyCall();
-            AddCreateResourcesHandler(OnCreateResources.Get());
+            // Use variable timestep so Update gets called on each tick
+            ThrowIfFailed(Control->put_IsFixedTimeStep(FALSE));
 
-            OnDraw.AllowAnyCall();
+            AddCreateResourcesHandler(OnCreateResources.Get());
+            AddUpdateHandler(OnUpdate.Get());
             AddDrawHandler(OnDraw.Get());
 
+            Load();
+
+            OnCreateResources.AllowAnyCall();
             OnUpdate.AllowAnyCall();
-            AddUpdateHandler(OnUpdate.Get());
+            OnDraw.AllowAnyCall();
         }
 
-        // Simulates a recoverable device.
-        void ThrowDeviceRemovedDuringNextCreateResources()
+        void LoseDeviceDuringPresent()
         {
-            m_throwDeviceRemovedDuringNextCreateResources = true;
-
-            OnCreateResources.AllowAnyCall(
-                [=](ICanvasAnimatedControl*, IInspectable*) -> HRESULT
+            m_dxgiSwapChain->Present1Method.SetExpectedCalls(1,
+                [=](UINT, UINT, const DXGI_PRESENT_PARAMETERS*)
                 {
-                    bool shouldThrow = m_throwDeviceRemovedDuringNextCreateResources;
-
-                    m_throwDeviceRemovedDuringNextCreateResources = false;
-
-                    if (shouldThrow)
-                        return DXGI_ERROR_DEVICE_REMOVED;
-
-                    return S_OK;
-                });
-        }
-        
-        // Simulates a permanently 'broken' device.
-        void ThrowDeviceRemovedDuringCreateResources()
-        {
-            OnCreateResources.AllowAnyCall(
-                [=](ICanvasAnimatedControl*, IInspectable*) -> HRESULT
-                {
+                    MarkDeviceAsLost();
                     return DXGI_ERROR_DEVICE_REMOVED;
                 });
         }
 
-        void ThrowDeviceRemovedDuringDraw()
-        {        
-            OnDraw.AllowAnyCall( 
-                [=](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*) -> HRESULT
-                {
-                    return DXGI_ERROR_DEVICE_REMOVED;
-                });
-        }
-
-        void MakePresentFail()
+        void PresentReportsDeviceLost()
         {
-            m_dxgiSwapChain->Present1Method.AllowAnyCall(
+            m_dxgiSwapChain->Present1Method.SetExpectedCalls(1,
                 [=](UINT, UINT, const DXGI_PRESENT_PARAMETERS*)
                 {
                     return DXGI_ERROR_DEVICE_REMOVED;
                 });
-
         }
 
-        void ForceRedraw()
+        void ExpectAtLeastOnePresent()
         {
-            Adapter->ProgressTime(TicksPerFrame);
+            m_dxgiSwapChain->Present1Method.ExpectAtLeastOneCall();
         }
 
-        void MarkAsLost()
+        void MarkDeviceAsLost()
         {
             Adapter->InitialDevice->MarkAsLost();
         }
 
-        void TickAndVerifyDeviceRemovedErrorCode()
+        void DoChangedAndTick()
         {
-            auto renderAction = Adapter->m_outstandingWorkItemAsyncAction;
-
+            Adapter->DoChanged();
             Adapter->Tick();
+        }
 
-            auto renderAsyncInfo = As<IAsyncInfo>(renderAction);
+        void VerifyDeviceRecovered()
+        {
+            DoChangedAndTick(); // Device lost first noticed
 
-            HRESULT errorCode;
-            ThrowIfFailed(renderAsyncInfo->get_ErrorCode(&errorCode));
+            OnCreateResources.SetExpectedCalls(1);
+            OnUpdate.ExpectAtLeastOneCall();
+            OnDraw.ExpectAtLeastOneCall();
+            ExpectAtLeastOnePresent();
 
-            Assert::AreEqual(DXGI_ERROR_DEVICE_REMOVED, errorCode);
+            // We need two changed/ticks to reliably have recreated the device
+            // depending on whether the UI thread or the render thread spotted
+            // the device lost.  In the render thread case this extra iteration
+            // is required in order to marshal the exception to the UI thread.
+            DoChangedAndTick();
+            DoChangedAndTick();
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_FirstPresentFails)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostOnFirstPresent_DeviceIsRecreated)
     {
         DeviceLostFixture f;
-        f.MakePresentFail();
-        f.RaiseLoadedAndVerify();
 
-        auto renderAction = f.Adapter->m_outstandingWorkItemAsyncAction;
-
-        //
-        // The Loaded event will begin the worker thread and issue
-        // the first draw, but the exception doesn't get propagated 
-        // until the worker thread completes, at the next tick.
-        //
-        f.TickAndVerifyDeviceRemovedErrorCode();
+        f.LoseDeviceDuringPresent();
+        f.VerifyDeviceRecovered();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_TypicalPresentFail)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringSubsequentPresent_DeviceIsRecreated)
     {
         DeviceLostFixture f;
-        f.RaiseLoadedAndVerify();
 
-        f.Adapter->Tick();
+        for (int i = 0; i < 5; ++i)
+            f.DoChangedAndTick();
 
-        f.MakePresentFail();
-        f.ForceRedraw();        
-
-        f.TickAndVerifyDeviceRemovedErrorCode();
+        f.LoseDeviceDuringPresent();
+        f.VerifyDeviceRecovered();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_LostDeviceDuringCreateResources)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenPresentReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
     {
-        //
-        // Device is lost on the UI thread, not the render thread, so it
-        // is recovered here without being seen at Tick(). Verify no
-        // exception gets propagated up.
-        //
         DeviceLostFixture f;
-        f.ThrowDeviceRemovedDuringNextCreateResources();
-        f.MarkAsLost();
-        f.RaiseLoadedEvent();
-        f.Adapter->DoChanged();
+
+        f.PresentReportsDeviceLost();
+        f.DoChangedAndTick();
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_UnrecoverableDeviceDuringCreateResources)
-    {
-        //
-        // Similar to above, device is lost on the UI thread.
-        //
-        DeviceLostFixture f;
-        f.ThrowDeviceRemovedDuringCreateResources();
-        f.MarkAsLost();
-        f.RaiseLoadedEvent();
-
-        //
-        // If we attempt to re-create the device, and fail, control should 
-        // never go into RunWithRenderTarget. No exceptions should 
-        // be propagated up.
-        //
-        for (int i = 0; i < 3; i++)
-        {
-            f.ForceRedraw();
-            f.Adapter->Tick();
-        }
-
-        //
-        // Worker thread should be gone.
-        //
-        Assert::IsFalse(f.IsRenderActionRunning());
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_LostDeviceDuringDraw)
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringCreateResources_DeviceIsRecreated)
     {
         DeviceLostFixture f;
-        f.RaiseLoadedAndVerify();
-        f.ThrowDeviceRemovedDuringDraw();
-        f.MarkAsLost();
-
-        f.TickAndVerifyDeviceRemovedErrorCode();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_LostDeviceDuringDraw_ExceptionOnly)
-    {
-        DeviceLostFixture f;
-        f.RaiseLoadedAndVerify();
         
-        f.ThrowDeviceRemovedDuringDraw();
+        f.OnCreateResources.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, IInspectable*)
+            {
+                f.MarkDeviceAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
 
-        f.TickAndVerifyDeviceRemovedErrorCode();
+        f.VerifyDeviceRecovered();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCreateResourcesReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
+    {
+        DeviceLostFixture f;
+
+        f.OnCreateResources.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, IInspectable*)
+            {
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringDraw_DeviceIsRecreated)
+    {
+        DeviceLostFixture f;
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+            {
+                f.MarkDeviceAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.VerifyDeviceRecovered();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDrawReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
+    {
+        DeviceLostFixture f;
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+            {
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.DoChangedAndTick();
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceIsLostDuringUpdate_DeviceIsRecreated)
+    {
+        DeviceLostFixture f;
+
+        f.OnUpdate.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs*)
+            {
+                f.MarkDeviceAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.VerifyDeviceRecovered();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenUpdateReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
+    {
+        DeviceLostFixture f;
+
+        f.OnUpdate.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs*)
+            {
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        f.DoChangedAndTick();
+
+        ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
+            [&] { f.Adapter->DoChanged(); });
     }
 
     static auto const TicksPerFrame = StepTimer::TicksPerSecond / 60;
 
     struct UpdateRenderFixture : public CanvasAnimatedControlFixture
     {
+        MockEventHandler<Animated_CreateResourcesEventHandler> OnCreateResources;
         MockEventHandler<Animated_DrawEventHandler> OnDraw;
         MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
 
         UpdateRenderFixture()
-            : OnDraw(L"OnDraw")
+            : OnCreateResources(L"OnCreateResources")
+            , OnDraw(L"OnDraw")
             , OnUpdate(L"OnUpdate")
         {
+            AddCreateResourcesHandler(OnCreateResources.Get());
             AddDrawHandler(OnDraw.Get());
             AddUpdateHandler(OnUpdate.Get());
+
+            Adapter->GetSwapChainPanel()->SetSwapChainMethod.AllowAnyCall(
+                [=] (IDXGISwapChain* swapChain)
+                {
+                    auto dxgiSwapChain = dynamic_cast<MockDxgiSwapChain*>(swapChain);
+                    Assert::IsNotNull(dxgiSwapChain);
+                    dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+                    return S_OK;
+                });
         }
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
+            OnCreateResources.SetExpectedCalls(1);
             Adapter->DoChanged();
             OnUpdate.SetExpectedCalls(1);
             OnDraw.SetExpectedCalls(1);
@@ -706,12 +764,13 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;
         ThrowIfFailed(f.Control->put_IsFixedTimeStep(fixedTimeStep));
 
+        f.OnCreateResources.SetExpectedCalls(1);
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
 
         f.Adapter->ProgressTime(initialTime);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         f.RenderSingleFrame();
     }
@@ -721,12 +780,13 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;
         ThrowIfFailed(f.Control->put_IsFixedTimeStep(false));
 
+        f.OnCreateResources.SetExpectedCalls(1);
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
 
         f.Adapter->ProgressTime(0);
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
         f.Adapter->Tick();
     }
@@ -772,7 +832,25 @@ TEST_CLASS(CanvasAnimatedControlTests)
     // that CanvasAnimatedControl is hooked up to StepTimer.
     //
 
-    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPaused_UpdatesAndDrawsAreNotCalled)
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenInitiallyPaused_UpdatesAndDrawsAreNotCalled)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+        f.Load();
+        
+        f.OnCreateResources.SetExpectedCalls(1); // even when paused we still create resources
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.RenderSingleFrame();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPausedAfterUpdate_UpdatesAndDrawsAreNotCalled)
     {
         UpdateRenderFixture f;
         f.GetIntoSteadyState();
@@ -784,7 +862,156 @@ TEST_CLASS(CanvasAnimatedControlTests)
         for (int i = 0; i < 10; ++i)
         {
             f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
             f.RenderSingleFrame();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPausedAfterUpdateAndClearColorChanged_DrawIsCalled)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
+        f.GetIntoSteadyState();
+
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.Adapter->DoChanged();
+        f.RenderSingleFrame();
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOtherColor));
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.RenderSingleFrame();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenPausedAfterUpdateAndSizeChanged_DrawIsCalled)
+    {
+        UpdateRenderFixture f;
+        f.GetIntoSteadyState();
+
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.Adapter->DoChanged();
+        f.RenderSingleFrame();
+
+        f.UserControl->Resize(Size{123, 456});
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.RenderSingleFrame();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceLost_DrawIsNotCalledUntilUpdateHasCompleted)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(false)); // ensure that update handlers are called on each tick
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
+
+        f.GetIntoSteadyState();
+
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        // Trigger a draw by changing the clear color, but this will report a
+        // lost device
+        f.OnDraw.SetExpectedCalls(1,
+            [] (ICanvasAnimatedControl* sender, ICanvasAnimatedDrawEventArgs*)
+            {
+                ComPtr<ICanvasDevice> device;
+                Assert::AreEqual(S_OK, As<ICanvasResourceCreator>(sender)->get_Device(&device));
+
+                auto stubDevice = dynamic_cast<StubCanvasDevice*>(device.Get());
+                Assert::IsNotNull(stubDevice);
+
+                stubDevice->MarkAsLost();
+
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOtherColor));
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        //
+        // At this point the device has been lost.  We don't expect any draw
+        // calls until the asynchronous create resources has completed.
+        //
+        f.OnDraw.SetExpectedCalls(0);
+
+        auto action = Make<MockAsyncAction>();
+        f.OnCreateResources.SetExpectedCalls(1,
+            [=] (IInspectable*, ICanvasCreateResourcesEventArgs* args)
+            {
+                return args->TrackAsyncAction(action.Get());
+            });
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        f.OnCreateResources.SetExpectedCalls(0);
+
+        //
+        // Event after resources have been created we still don't expect any
+        // draw calls since the control is paused and the draw handlers mustn't
+        // be called until there's been at least one update since the last
+        // CreateResources.
+        //
+        action->SetResult(S_OK); // this completes the CreateResources
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        //
+        // Changing the clear color would normally force the draw handlers to be
+        // called.  However, since there still hasn't been an update the draw
+        // handlers are not called.
+        //
+        ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        //
+        // Now when the control is unpaused we expect an update/render.
+        //
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.OnUpdate.SetExpectedCalls(1);
+            f.OnDraw.SetExpectedCalls(1);
+            
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
         }
     }
 
@@ -807,6 +1034,111 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
         f.RenderSingleFrame();
+    }
+
+
+    struct NoExtraUpdateFixture : public UpdateRenderFixture
+    {
+        void DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached(int64_t ticks = TicksPerFrame)
+        {
+            OnUpdate.SetExpectedCalls(0);
+            OnDraw.SetExpectedCalls(0);
+
+            for (int i = 0; i < 10; ++i)
+            {
+                Adapter->DoChanged();
+                Adapter->Tick();
+            }
+
+            Adapter->ProgressTime(ticks);
+
+            OnUpdate.SetExpectedCalls(1);
+            OnDraw.SetExpectedCalls(1);
+        
+            for (int i = 0; i < 10; ++i)
+            {
+                Adapter->DoChanged();
+                Adapter->Tick();
+            }
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenSizeChangedBeforeTargetElapsedTimeReached_DrawIsCalledOnce_AndThen_UpdateAndDrawAreNotCalled)
+    {
+        NoExtraUpdateFixture f;
+
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+
+        f.GetIntoSteadyState();
+
+        f.UserControl->Resize(Size{123, 456});
+        
+        // After resizing we allow one extra draw without an update - consider
+        // the case of a very long TargetElapsedTime, we want size changes to be
+        // reflected asap. (Also this simplifies handling the case when we're
+        // paused...)
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached();        
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenClearColorChangedBeforeTargetElapsedTimeReached_DrawIsCalledOnce_AndThen_UpdateAndDrawAreNotCalled)
+    {
+        NoExtraUpdateFixture f;
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+        
+        f.GetIntoSteadyState();
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOtherOpaqueColor));
+
+        // After the changing the clear color we allow one extra draw without an
+        // update - consider the case of a very long TargetElapsedTime, we want
+        // clear color changes to be reflected asap.
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_WhenClearColorChangedFromTransparentToOpaqueBeforeTargetElapsedTimeReached_TimerIsNotReset)
+    {
+        NoExtraUpdateFixture f;
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyTranslucentColor));
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+        
+        f.GetIntoSteadyState();
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
+
+        // Move time forwards by only half a frame
+        f.Adapter->ProgressTime(TicksPerFrame / 2);
+
+        // Next changed/tick will cause the update/render loop to exit.
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+
+        // After the changing the clear color we allow one extra draw without an
+        // update - consider the case of a very long TargetElapsedTime, we want
+        // clear color changes to be reflected asap.
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        // The update should happen after just another half frame has passed.
+        // If the timer had been reset when the update/render loop was started
+        // then the update wouldn't happen since it would think that there had
+        // only been half a frame since the reset.
+        f.DontExpectAnUpdateOrDrawUntilTargetElapsedTimeHasBeenReached(TicksPerFrame / 2);
     }
 
     class ElapsedTicksFixture : public CanvasAnimatedControlFixture
@@ -843,7 +1175,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
             RenderSingleFrame();
         }
@@ -886,6 +1218,66 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->Tick();
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_OnFirstUpdate_UpdateCount_Is_1)
+    {
+        UpdateRenderFixture f;
+        f.Load();
+
+        f.OnCreateResources.SetExpectedCalls(1);
+        f.OnUpdate.SetExpectedCalls(1,
+            [&] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
+            {
+                CanvasTimingInformation timingInformation;
+                Assert::AreEqual(S_OK, args->get_Timing(&timingInformation));
+                Assert::AreEqual(1LL, timingInformation.UpdateCount);
+                return S_OK;
+            });
+        f.OnDraw.SetExpectedCalls(1);
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedStep_WhilePaused_UpdateCountIncrements)
+    {
+        WhilePaused_UpdateCountIncrements(true);
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_VariableStep_WhilePaused_UpdateCountIncrements)
+    {
+        WhilePaused_UpdateCountIncrements(false);
+    }
+
+    void WhilePaused_UpdateCountIncrements(bool isFixedTimeStep)
+    {
+        UpdateRenderFixture f;
+        f.OnCreateResources.SetExpectedCalls(1);
+        f.OnDraw.AllowAnyCall();
+        f.Load();
+
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(isFixedTimeStep));
+        
+
+        int64_t expectedUpdateCount = 1;
+
+        for (int i = 0; i < 10; ++i)
+        {
+            ThrowIfFailed(f.Control->put_Paused(FALSE));
+            f.OnUpdate.SetExpectedCalls(1,
+                [&] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
+                {
+                    CanvasTimingInformation timingInformation;
+                    Assert::AreEqual(S_OK, args->get_Timing(&timingInformation));
+                    Assert::AreEqual(expectedUpdateCount, timingInformation.UpdateCount);
+                    ThrowIfFailed(f.Control->put_Paused(TRUE));
+                    return S_OK;
+                });
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+            ++expectedUpdateCount;
+        }        
+    }
+
     class TimingFixture : public CanvasAnimatedControlFixture
     {
         MockEventHandler<Animated_DrawEventHandler> m_onDraw;
@@ -910,7 +1302,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         TimingFixture(bool isFixedTimestep)
             : m_onDraw(L"OnDraw")
             , m_onUpdate(L"OnUpdate")
-            , m_updateCount(0)
+            , m_updateCount(1)
             , m_totalTime(0)
             , m_isFixedTimestep(isFixedTimestep)
         {
@@ -935,13 +1327,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
             AddDrawHandler(m_onDraw.Get());
             AddUpdateHandler(m_onUpdate.Get());
 
-            //
-            // Both fixed and variable step have initial updates. However, fixed has a 'force'
-            // update called by the control, while variable has an initial update actually
-            // fired by the step timer.
-            //
-            if (!m_isFixedTimestep) m_updateCount = 1;
-
             ExpectedTiming initialUpdate{ m_updateCount, 0, 0, false };
             m_expectedOnDraw.push(initialUpdate);
             m_expectedOnUpdate.push(initialUpdate);
@@ -951,7 +1336,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
             RenderSingleFrame();
         }
@@ -1020,10 +1405,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
             const ExpectedTiming expected = notifications.front();
             notifications.pop();
 
-            Assert::AreEqual(expected.UpdateCount, timingInformation.UpdateCount);
-            Assert::AreEqual(expected.TotalTime, timingInformation.TotalTime.Duration);
-            Assert::AreEqual(expected.ElapsedTime, timingInformation.ElapsedTime.Duration);
-            Assert::AreEqual(expected.IsRunningSlowly, timingInformation.IsRunningSlowly);
+            Assert::AreEqual(expected.UpdateCount, timingInformation.UpdateCount, L"UpdateCount");
+            Assert::AreEqual(expected.TotalTime, timingInformation.TotalTime.Duration, L"TotalTime");
+            Assert::AreEqual(expected.ElapsedTime, timingInformation.ElapsedTime.Duration, L"ElapsedTime");
+            Assert::AreEqual(expected.IsRunningSlowly, timingInformation.IsRunningSlowly, L"IsRunningSlowly");
         }
     };
 
@@ -1090,13 +1475,13 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
 
         void GetIntoSteadyState()
         {
-            RaiseLoadedEvent();
+            Load();
             Adapter->DoChanged();
         }
 
         bool IsChangedActionRunning()
         {
-            return static_cast<bool>(Adapter->m_changedAsyncAction);
+            return Adapter->HasPendingChangedActions();
         }
     };
 
@@ -1109,7 +1494,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
     TEST_METHOD_EX(CanvasAnimatedControl_LoadedCausesChanged)
     {
         Fixture f;
-        f.RaiseLoadedEvent();
+        f.Load();
         Assert::IsTrue(f.IsChangedActionRunning());
     }
 
@@ -1130,8 +1515,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
 
         Assert::IsFalse(f.IsChangedActionRunning());
 
-        Color opaque = { 255, 255, 255, 255 };
-        ThrowIfFailed(f.Control->put_ClearColor(opaque));
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
 
         Assert::IsTrue(f.IsChangedActionRunning());
     }
@@ -1151,7 +1535,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
     TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileChangedIsPending)
     {
         Fixture f;
-        f.RaiseLoadedEvent();
+        f.Load();
         Assert::IsTrue(f.IsChangedActionRunning());
         f.Control.Reset();
 
@@ -1186,11 +1570,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
             CreateControl();
         }
 
-        bool IsUpdateRenderLoopRunning()
-        {
-            return static_cast<bool>(Adapter->m_outstandingWorkItemAsyncAction);
-        }
-
         void ExpectRender()
         {
             SwapChain->PresentMethod.SetExpectedCalls(1);
@@ -1223,16 +1602,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 
         void ClearCanceledActions()
         {
-            if (Adapter->m_changedAsyncAction)
-            {
-                AsyncStatus status = (AsyncStatus)-1;
-                Adapter->m_changedAsyncAction->get_Status(&status);
-                if (status == AsyncStatus::Canceled)
-                {
-                    Adapter->m_changedAsyncAction.Reset();
-                    Adapter->m_changedFn = nullptr;
-                }
-            }
             if (Adapter->m_outstandingWorkItemAsyncAction)
             {
                 AsyncStatus status = (AsyncStatus)-1;
@@ -1249,20 +1618,20 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
     TEST_METHOD_EX(CanvasAnimatedControl_OnConstruction_UpdateRenderLoopIsNotRunning)
     {
         Fixture f;
-        Assert::IsFalse(f.IsUpdateRenderLoopRunning());
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenLoaded_SingleFrameIsPresented)
     {
         Fixture f;
         
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         f.ExpectRender();
         f.RenderSingleFrame();
 
-        Assert::IsTrue(f.IsUpdateRenderLoopRunning());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenLoadedWhilePaused_SingleFrameIsPresented_AndThen_UpdateRenderLoopIsNotRunning)
@@ -1271,36 +1640,174 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         ThrowIfFailed(f.Control->put_Paused(TRUE));
         f.Adapter->DoChanged();
         
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         f.ExpectRender();
         f.RenderSingleFrame();
 
-        Assert::IsFalse(f.IsUpdateRenderLoopRunning());        
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+
+        // Confirm that the update/render loop doesn't get restarted
+        for (int i = 0; i < 5; ++i)
+        {
+            f.Adapter->DoChanged();
+            Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+            f.RenderSingleFrame();
+            Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+        }
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileRenderLoopIsPending)
     {
         Fixture f;
 
-        f.RaiseLoadedEvent();
+        f.Load();
         f.Adapter->DoChanged();
 
         f.AllowAnyRendering();
         f.RenderSingleFrame();
 
-        Assert::IsTrue(f.IsUpdateRenderLoopRunning());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
 
         f.Control.Reset();
 
-        Assert::IsTrue(f.IsUpdateRenderLoopRunning());
+        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
 
         f.RaiseUnloadedEvent();
 
         f.ClearCanceledActions();
 
-        Assert::IsFalse(f.IsUpdateRenderLoopRunning());
+        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race0)
+    {
+        WhenBackgroundModeChanges(0);
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race1)
+    {
+        WhenBackgroundModeChanges(1);
+    }
+
+    void WhenBackgroundModeChanges(int race)
+    {
+        Fixture f;
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(FALSE)); // ensure update/draw is always called
+        ThrowIfFailed(f.Control->put_ClearColor(AnyTranslucentColor));
+        f.Load();
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.ExpectRender();
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        ThrowIfFailed(f.Control->put_ClearColor(AnyOpaqueColor));
+
+        // After the put_ClearColor then either Tick or DoChanged could happen
+        // first (since Tick runs on the update/render thread, while DoChanged
+        // runs on the UI thread).
+        switch (race)
+        {
+        case 0:
+            f.Adapter->Tick();
+            f.Adapter->DoChanged();
+            break;
+
+        case 1:
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+            break;
+
+        default:
+            Assert::Fail();
+        }
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.ExpectRender();
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+    }
+
+    struct AsyncCreateResourcesFixture : public Fixture
+    {
+        ComPtr<MockAsyncAction> Action;
+
+        AsyncCreateResourcesFixture()
+            : Action(Make<MockAsyncAction>())
+        {
+            // ensure update/draw is always called
+            ThrowIfFailed(Control->put_IsFixedTimeStep(FALSE));
+
+            auto onCreateResources = Callback<Animated_CreateResourcesEventHandler>(
+                [&] (IInspectable*, ICanvasCreateResourcesEventArgs* args)
+                {
+                    return ExceptionBoundary(
+                        [=]
+                        {
+                            ThrowIfFailed(args->TrackAsyncAction(Action.Get()));
+                        });
+                });
+            AddCreateResourcesHandler(onCreateResources.Get());
+        
+            Load();
+        }
+
+        void DoChangedAndTick()
+        {
+            Adapter->DoChanged();
+            Adapter->Tick();
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhileWaitingForAsyncCreateResources_OnlySingleFrameIsPresented)
+    {
+        AsyncCreateResourcesFixture f;
+
+        // We expect there to only be one frame presented while the async action
+        // is in progress
+        f.ExpectRender();
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.DoChangedAndTick();
+        }
+
+        // When the action completes we expect there to be a frame presented for
+        // each changed/tick that happens.
+        f.Action->SetResult(S_OK);
+
+        for (int i = 0; i < 5; ++i)
+        {
+            f.ExpectRender();
+            f.DoChangedAndTick();
+        }
+    }
+    
+    TEST_METHOD_EX(CanvasAnimatedControl_When_ClearColorIsChanged_WhileWaitingForAsyncCreateResource_ThenNewFrameIsPresented)
+    {
+        Color anyColors[] {
+            { 1, 2, 3, 4 },
+            { 2, 3, 4, 5 },
+            { 3, 4, 5, 6 } };
+
+        AsyncCreateResourcesFixture f;
+
+        f.ExpectRender();
+        f.DoChangedAndTick();
+
+        for (auto anyColor : anyColors)
+        {
+            ThrowIfFailed(f.Control->put_ClearColor(anyColor));
+            f.ExpectRender();
+            f.DoChangedAndTick();
+            f.DoChangedAndTick();
+        }
     }
 };
 
@@ -1377,9 +1884,8 @@ TEST_CLASS(CanvasAnimatedControlAdapter_ChangedAction_UnitTests)
                 changedCalled = true;
             };
 
-        auto returnedAction = f.Adapter->StartChangedAction(f.Window, fakeChangedFn);
-
-        Assert::IsTrue(IsSameInstance(f.Action.Get(), returnedAction.Get()));
+        f.Adapter->StartChangedAction(f.Window, fakeChangedFn);
+        Assert::IsNotNull(f.Action.Get());
         Assert::IsNotNull(f.Handler.Get());
 
         ThrowIfFailed(f.Handler->Invoke());
@@ -1474,7 +1980,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     {
         InputFixture()
         {
-            RaiseLoadedEvent();
+            Load();
         }
 
         ComPtr<ICorePointerInputSource> GetInputSource()
@@ -1530,8 +2036,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         InputFixture f;
         f.AllowWorkerThreadToStart();
 
-        Color opaqueColor{ 255, 255, 255, 255 };
-        f.Control->put_ClearColor(opaqueColor);
+        f.Control->put_ClearColor(AnyOpaqueColor);
         f.Adapter->DoChanged();
         f.Adapter->Tick();
 
@@ -1706,5 +2211,99 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         f.TestEvent(L"PointerReleased", f.CoreIndependentInputSource->add_PointerReleasedMethod, &ICorePointerInputSource::add_PointerReleased);
 
         f.TestEvent(L"PointerWheelChanged", f.CoreIndependentInputSource->add_PointerWheelChangedMethod, &ICorePointerInputSource::add_PointerWheelChanged);
+    }
+};
+
+TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
+{
+    class Fixture : public CanvasAnimatedControlFixture
+    {
+    public:
+        ComPtr<MockSuspendingEventArgs> SuspendingEventArgs;
+        ComPtr<MockSuspendingOperation> SuspendingOperation;
+        ComPtr<MockSuspendingDeferral> SuspendingDeferral;
+
+        Fixture()
+        {
+            Load();
+            Adapter->DoChanged();
+
+            SuspendingEventArgs = Make<MockSuspendingEventArgs>();
+            SuspendingOperation = Make<MockSuspendingOperation>();
+            SuspendingDeferral = Make<MockSuspendingDeferral>();
+
+            SuspendingEventArgs->get_SuspendingOperationMethod.SetExpectedCalls(1, [=](ISuspendingOperation** value)
+                {
+                    return SuspendingOperation.CopyTo(value);
+                });
+
+            SuspendingOperation->GetDeferralMethod.SetExpectedCalls(1, [=](ISuspendingDeferral** value)
+                {
+                    return SuspendingDeferral.CopyTo(value);
+                });
+
+            SuspendingDeferral->CompleteMethod.SetExpectedCalls(1);
+        }
+
+        MockCanvasDevice* GetDevice()
+        {
+            ComPtr<ICanvasDevice> device;
+            Control->get_Device(&device);
+
+            return static_cast<MockCanvasDevice*>(device.Get());
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenSuspendingEventRaised_TrimCalledOnDeviceAfterRenderThreadStops)
+    {
+        Fixture f;
+
+        // Initial state should have the render thread active.
+        Assert::IsTrue(f.IsRenderActionRunning());
+
+        // Suspending event should stop the render thread.
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+
+        f.Adapter->Tick();
+        Assert::IsFalse(f.IsRenderActionRunning());
+
+        // Once rendering is stopped, Trim should be called.
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+
+        // Render thread should not be restarted by DoChanged while app is in the suspended state.
+        Assert::IsFalse(f.IsRenderActionRunning());
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenSuspendingEventRaisedWhileControlIsPaused_TrimIsStillCalled)
+    {
+        Fixture f;
+
+        ThrowIfFailed(f.Control->put_Paused(true));
+        f.Adapter->Tick();
+        Assert::IsFalse(f.IsRenderActionRunning());
+
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+        f.Adapter->Tick();
+
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenResumingEventRaised_RenderThreadRestarts)
+    {
+        Fixture f;
+
+        // Suspend the app.
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+        f.Adapter->Tick();
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        Assert::IsFalse(f.IsRenderActionRunning());
+
+        // Resume the app.
+        ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
+        f.Adapter->DoChanged();
+        Assert::IsTrue(f.IsRenderActionRunning());
     }
 };

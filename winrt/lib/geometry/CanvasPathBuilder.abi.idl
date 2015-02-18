@@ -1,0 +1,80 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+namespace Microsoft.Graphics.Canvas
+{
+    runtimeclass CanvasPathBuilder;
+
+    [version(VERSION), uuid(BCF5822F-8127-4E5C-96B8-29983B915541), exclusiveto(CanvasPathBuilder)]
+    interface ICanvasPathBuilder : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [overload("BeginFigure"), default_overload]
+        HRESULT BeginFigureWithFigureFill(
+            [in] NUMERICS.Vector2 startPoint,
+            [in] CanvasFigureFill figureFill);
+
+        [overload("BeginFigure"), default_overload]
+        HRESULT BeginFigure(
+            [in] NUMERICS.Vector2 startPoint);
+
+        HRESULT AddArc(
+            [in] NUMERICS.Vector2 endPoint,
+            [in] float xRadius,
+            [in] float yRadius,
+            [in] float rotationAngle,
+            [in] CanvasSweepDirection sweepDirection,
+            [in] CanvasArcSize arcSize);
+
+        HRESULT AddCubicBezier(
+            [in] NUMERICS.Vector2 controlPoint1,
+            [in] NUMERICS.Vector2 controlPoint2,
+            [in] NUMERICS.Vector2 endPoint);
+
+        [overload("AddLine"), default_overload]
+        HRESULT AddLine(
+            [in] NUMERICS.Vector2 endPoint);
+
+        [overload("AddLine")]
+        HRESULT AddLineWithCoords(
+            [in] float x,
+            [in] float y);
+
+        HRESULT AddQuadraticBezier(
+            [in] NUMERICS.Vector2 controlPoint,
+            [in] NUMERICS.Vector2 endPoint);
+
+        HRESULT SetFilledRegionDetermination(
+            [in] CanvasFilledRegionDetermination filledRegionDetermination);
+
+        HRESULT SetSegmentOptions(
+            [in] CanvasFigureSegmentOptions figureSegmentOptions);
+
+        HRESULT EndFigure(
+            [in] CanvasFigureLoop figureLoop);
+    }
+
+    [version(VERSION), uuid(AC2BEE14-EFD1-4343-8E53-BA62153D8966), exclusiveto(CanvasPathBuilder)]
+    interface ICanvasPathBuilderFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [out, retval] CanvasPathBuilder** canvasPathBuilder);
+    };
+
+    [version(VERSION), activatable(ICanvasPathBuilderFactory, VERSION)]
+    runtimeclass CanvasPathBuilder
+    {
+        [default] interface ICanvasPathBuilder;
+    }
+
+}

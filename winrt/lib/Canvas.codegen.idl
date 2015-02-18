@@ -15,6 +15,13 @@
 namespace Microsoft.Graphics.Canvas
 {
     [version(VERSION)]
+    typedef enum CanvasArcSize
+    {
+        Small = (int)0,
+        Large = (int)1
+    } CanvasArcSize;
+
+    [version(VERSION)]
     typedef enum CanvasDashStyle
     {
         Solid = (int)0,
@@ -57,6 +64,28 @@ namespace Microsoft.Graphics.Canvas
     } CanvasEdgeBehavior;
 
     [version(VERSION)]
+    typedef enum CanvasFigureFill
+    {
+        Default = (int)0,
+        DoesNotAffectFills = (int)1
+    } CanvasFigureFill;
+
+    [version(VERSION)]
+    typedef enum CanvasFigureLoop
+    {
+        Open = (int)0,
+        Closed = (int)1
+    } CanvasFigureLoop;
+
+    [version(VERSION), flags]
+    typedef enum CanvasFigureSegmentOptions
+    {
+        None = 0x00000000,
+        ForceUnstroked = 0x00000001,
+        ForceRoundLineJoin = 0x00000002
+    } CanvasFigureSegmentOptions;
+
+    [version(VERSION)]
     typedef enum CanvasCapStyle
     {
         Flat = (int)0,
@@ -75,6 +104,13 @@ namespace Microsoft.Graphics.Canvas
     } CanvasLineJoin;
 
     [version(VERSION)]
+    typedef enum CanvasSweepDirection
+    {
+        CounterClockwise = (int)0,
+        Clockwise = (int)1
+    } CanvasSweepDirection;
+
+    [version(VERSION)]
     typedef enum CanvasTextAntialiasing
     {
         Default = (int)0,
@@ -82,6 +118,13 @@ namespace Microsoft.Graphics.Canvas
         Grayscale = (int)2,
         Aliased = (int)3
     } CanvasTextAntialiasing;
+
+    [version(VERSION)]
+    typedef enum CanvasFilledRegionDetermination
+    {
+        Alternate = (int)0,
+        Winding = (int)1
+    } CanvasFilledRegionDetermination;
 
     [version(VERSION)]
     typedef enum CanvasComposite

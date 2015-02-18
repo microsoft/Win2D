@@ -68,6 +68,11 @@ public:
         return swapChainPanel;
     }
 
+    StubSwapChainPanel* GetSwapChainPanel()
+    {
+        return m_swapChainPanel.Get();
+    }
+
     std::function<void()> m_beforeLoopFn;
     std::function<bool()> m_currentTickFn;
     std::function<void()> m_afterLoopFn;
@@ -89,31 +94,39 @@ public:
         return m_outstandingWorkItemAsyncAction;
     }
 
-
-    std::function<void()> m_changedFn;
-    ComPtr<MockAsyncAction> m_changedAsyncAction;
-    virtual ComPtr<IAsyncAction> StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
+    bool IsUpdateRenderLoopActive() const
     {
-        Assert::IsFalse(static_cast<bool>(m_changedFn));
-        Assert::IsFalse(m_changedAsyncAction);
+        return bool(m_currentTickFn);
+    }
 
-        m_changedAsyncAction = Make<MockAsyncAction>();
-        m_changedFn = changedFn;
 
-        return m_changedAsyncAction;
+    typedef std::queue<std::function<void()>> ActionQueue;
+
+    ActionQueue m_changedActions;
+
+    virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
+    {
+        m_changedActions.push(changedFn);
+    }
+
+    bool HasPendingChangedActions() const
+    {
+        return !m_changedActions.empty();
     }
 
     void DoChanged()
     {
-        if (m_changedFn)
+        // Only process the actions that are currently queued (rather than any
+        // that are started as the result of processing one of the actions)
+        ActionQueue pendingActions;
+        std::swap(pendingActions, m_changedActions);
+
+        while (!pendingActions.empty())
         {
-            m_changedFn();
-
-            auto action = m_changedAsyncAction;
-            m_changedFn = nullptr;
-            m_changedAsyncAction.Reset();
-
-            action->SetResult(S_OK);
+            auto action = pendingActions.front();
+            pendingActions.pop();
+            
+            action();
         }
     }
 
@@ -146,7 +159,7 @@ public:
         }
     }
 
-    std::pair<ComPtr<IInspectable>, ComPtr<ISwapChainPanel>> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
+    ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
     {
         return m_swapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);
     }

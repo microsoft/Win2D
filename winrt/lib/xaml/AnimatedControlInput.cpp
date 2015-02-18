@@ -250,6 +250,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         assert(m_source);
 
+        m_pointerCaptureLostEvent.Release();
+        m_pointerEnteredEvent.Release();
+        m_pointerExitedEvent.Release();
+        m_pointerMovedEvent.Release();
+        m_pointerPressedEvent.Release();
+        m_pointerReleasedEvent.Release();
+        m_pointerWheelChangedEvent.Release();
+
         m_source.Reset();
     }
 

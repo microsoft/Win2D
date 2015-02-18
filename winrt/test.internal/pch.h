@@ -82,10 +82,12 @@
 #include <CanvasBrush.h>
 #include <CanvasDevice.h>
 #include <CanvasDrawingSession.h>
+#include <CanvasGeometry.h>
 #include <CanvasImageBrush.h>
 #include <CanvasImageSource.h>
 #include <CanvasImageSourceDrawingSessionAdapter.h>
 #include <CanvasLinearGradientBrush.h>
+#include <CanvasPathBuilder.h>
 #include <CanvasRadialGradientBrush.h>
 #include <CanvasRenderTarget.h>
 #include <CanvasSolidColorBrush.h>
@@ -129,8 +131,10 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 #include "MockD2DGradientStopCollection.h"
 #include "MockD2DLinearGradientBrush.h"
 #include "MockD2DRadialGradientBrush.h"
+#include "MockRecreatableDeviceManager.h"
 #include "MockSurfaceImageSource.h"
 #include "MockSurfaceImageSourceFactory.h"
+#include "MockSuspendingEventArgs.h"
 #include "StubCanvasBrush.h"
 #include "StubCanvasDevice.h"
 #include "StubCanvasDrawingSessionAdapter.h"

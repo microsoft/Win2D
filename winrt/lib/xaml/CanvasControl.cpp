@@ -152,14 +152,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class CanvasControlFactory : public ActivationFactory<>
     {
-        std::shared_ptr<CanvasControlAdapter> m_adapter;
+        std::weak_ptr<CanvasControlAdapter> m_adapter;
 
     public:
-        CanvasControlFactory()
-            : m_adapter(std::make_shared<CanvasControlAdapter>())
-        {
-        }
-
         IFACEMETHODIMP ActivateInstance(IInspectable** obj) override
         {
             return ExceptionBoundary(
@@ -167,7 +162,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     CheckAndClearOutPointer(obj);
 
-                    auto control = Make<CanvasControl>(m_adapter);
+                    auto adapter = m_adapter.lock();
+
+                    if (!adapter)
+                        m_adapter = adapter = std::make_shared<CanvasControlAdapter>();
+
+                    auto control = Make<CanvasControl>(adapter);
                     CheckMakeResult(control);
 
                     ThrowIfFailed(control.CopyTo(obj));
@@ -181,7 +181,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_needToHookCompositionRendering(false)
     {
         CreateImageControl();
-        RegisterEventHandlers();
     }
 
     void CanvasControl::CreateImageControl()
@@ -223,6 +222,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_surfaceContentsLostEventRegistration = GetAdapter()->AddSurfaceContentsLostCallback(this, &CanvasControl::OnSurfaceContentsLost);
     }
 
+    void CanvasControl::UnregisterEventHandlers()
+    {
+        if (m_renderingEventRegistration)
+        {
+            m_renderingEventRegistration.Release();
+            m_needToHookCompositionRendering = true;
+        }
+
+        m_windowVisibilityChangedEventRegistration.Release();
+        m_surfaceContentsLostEventRegistration.Release();
+    }
+
     CanvasControl::~CanvasControl()
     {
     }
@@ -242,7 +253,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!IsWindowVisible())
                     return;
 
-                RunWithRenderTarget(GetActualSize(),
+                RunWithRenderTarget(GetCurrentSize(),
                     [&](CanvasImageSource* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                     {
                         if (!target)
@@ -299,22 +310,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return drawEventArgs;
     }
 
-    void CanvasControl::ChangedClearColor(bool)
+    void CanvasControl::Changed(Lock const& lock, ChangeReason)
     {
-        Changed();
-    }
+        MustOwnLock(lock);
 
-    void CanvasControl::ChangedSize()
-    {
-        Changed();
-    }
-
-    void CanvasControl::Changed()
-    {
         if (!IsLoaded())
             return;
-
-        auto lock = GetLock();
 
         if (m_renderingEventRegistration)
             return;
@@ -327,7 +328,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         HookCompositionRenderingIfNecessary();
     }
 
+    void CanvasControl::Loaded()
+    {
+        RegisterEventHandlers();
+    }
+
     void CanvasControl::Unloaded()
+    {
+        UnregisterEventHandlers();
+    }
+
+    void CanvasControl::ApplicationSuspending(ISuspendingEventArgs*)
+    {
+        Trim();
+    }
+
+    void CanvasControl::ApplicationResuming()
     {
     }
 
