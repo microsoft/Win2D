@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -10,22 +10,6 @@
     <ItemsProjectName>winrt.test.nativecomponent.Shared</ItemsProjectName>
     <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
-  <ItemGroup>
-    <ProjectCapability Include="SourceItemsFromImports" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
-    <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -47,6 +31,4 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
 </Project>
