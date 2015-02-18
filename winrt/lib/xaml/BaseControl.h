@@ -34,6 +34,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class IBaseControlAdapter
     {
     public:
+        virtual ~IBaseControlAdapter() = default;
+
         virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) = 0;
         virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
@@ -136,6 +138,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CreateBaseClass();
             RegisterEventHandlersOnSelf();
         }
+
+        virtual ~BaseControl() = default;
 
         IFACEMETHODIMP put_ClearColor(Color value) override
         {

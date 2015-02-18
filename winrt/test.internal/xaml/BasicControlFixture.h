@@ -34,6 +34,8 @@ struct BasicControlFixture
     BasicControlFixture(BasicControlFixture const&) = delete;
     BasicControlFixture& operator=(BasicControlFixture const&) = delete;
 
+    virtual ~BasicControlFixture() = default;
+
     virtual void CreateAdapter()
     {
         Adapter = std::make_shared<adapter_t>();

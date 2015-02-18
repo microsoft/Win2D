@@ -49,6 +49,8 @@
 // UnitTest
 #include <CppUnitTest.h>
 
+#pragma warning(default: 4265)  // "class has virtual functions, but destructor is not virtual"
+
 // Headers generated from IDL files
 #include <Canvas.abi.h>
 

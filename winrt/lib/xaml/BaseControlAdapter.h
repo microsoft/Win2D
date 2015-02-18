@@ -68,6 +68,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 &m_coreApplication));
         }
 
+        virtual ~BaseControlAdapter() = default;
+
         virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) override
         {
             ComPtr<IInspectable> userControlInspectable;

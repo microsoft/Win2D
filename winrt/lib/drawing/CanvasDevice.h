@@ -32,6 +32,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasDeviceResourceCreationAdapter
     {
     public:
+        virtual ~ICanvasDeviceResourceCreationAdapter() = default;
+
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) = 0;
 
         virtual bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device) = 0;

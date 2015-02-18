@@ -94,6 +94,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // for effects with unknown number of inputs, inputs Size have to be set as zero
         CanvasEffect(IID m_effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed);
 
+        virtual ~CanvasEffect() = default;
+
         void GetInput(unsigned int index, IEffectInput** input);
         void SetInput(unsigned int index, IEffectInput* input);
 

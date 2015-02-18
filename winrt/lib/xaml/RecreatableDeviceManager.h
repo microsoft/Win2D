@@ -45,6 +45,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef typename TRAITS::control_t                     Sender;
         typedef typename TRAITS::createResourcesEventHandler_t CreateResourcesHandler;
 
+        virtual ~IRecreatableDeviceManager() = default;
+
         virtual void SetChangedCallback(std::function<void(ChangeReason)> fn) = 0;
         virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction fn) = 0;
         virtual ComPtr<ICanvasDevice> const& GetDevice() = 0;

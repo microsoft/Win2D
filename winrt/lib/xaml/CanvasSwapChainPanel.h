@@ -21,6 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasSwapChainPanelAdapter
     {
     public:
+        virtual ~ICanvasSwapChainPanelAdapter() = default;
+
         virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) = 0;
     };
     

@@ -213,6 +213,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasGeometryManager : public ResourceManager<CanvasGeometryTraits>
     {
     public:
+        virtual ~CanvasGeometryManager() = default;
+
         ComPtr<CanvasGeometry> CreateNew(
             ICanvasResourceCreator* device,
             Rect rect);

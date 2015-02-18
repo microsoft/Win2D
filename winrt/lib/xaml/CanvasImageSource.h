@@ -21,6 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasImageSourceDrawingSessionFactory
     {
     public:
+        virtual ~ICanvasImageSourceDrawingSessionFactory() = default;
+
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,

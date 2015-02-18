@@ -108,6 +108,7 @@ class Expectation
 {
 public:
     Expectation() {}
+    virtual ~Expectation() = default;
 
     virtual void Validate() = 0;
     virtual bool TryValidate() = 0;
