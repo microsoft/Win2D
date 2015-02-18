@@ -123,9 +123,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
     };
 
+    class CanvasRenderLoop
+    {
+        ComPtr<IThreadPoolStatics> m_threadPoolStatics;
 
-    std::shared_ptr<ICanvasAnimatedControlAdapter> CreateCanvasAnimatedControlAdapter(
-        IThreadPoolStatics* threadPoolStatics);
+    public:
+        CanvasRenderLoop(IThreadPoolStatics* threadPoolStatics)
+            : m_threadPoolStatics(threadPoolStatics)
+        { }
+
+        ComPtr<IAsyncAction> StartUpdateRenderLoop(
+            std::function<void()> const& beforeLoopFn,
+            std::function<bool()> const& tickFn,
+            std::function<void()> const& afterLoopFn);
+
+        void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn);
+    };
 
     class CanvasAnimatedControl : public RuntimeClass<
         MixIn<CanvasAnimatedControl, BaseControl<CanvasAnimatedControlTraits>>,
@@ -219,8 +232,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void ApplicationResuming() override final;
 
     private:
-        bool IsRenderLoopRunning() const;
-
         void CreateSwapChainPanel();
 
         bool Tick(
