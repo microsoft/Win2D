@@ -10,6 +10,8 @@
     <AppxPackage>True</AppxPackage>
     <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
     <AppContainerApplication>true</AppContainerApplication>
+    <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
+    <TestApplication>True</TestApplication>
     <CppWindowsStoreUnitTestLibraryType>true</CppWindowsStoreUnitTestLibraryType>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>8.2</ApplicationTypeRevision>
@@ -35,8 +37,8 @@
   </ItemDefinitionGroup>
   <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
   <ItemGroup>
-<!--    <SDKReference Include="CppUnitTestFramework, Version=14.0" />
-    <SDKReference Include="TestPlatform, Version=14.0" /> -->
+    <SDKReference Include="CppUnitTestFramework, Version=$(UnitTestPlatformVersion)" />
+    <SDKReference Include="TestPlatform, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="winrt.test.external.uap.appxmanifest">
