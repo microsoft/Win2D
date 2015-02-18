@@ -14,7 +14,7 @@
 
 namespace
 {
-    class DummyResourceManager
+    class DummyResourceManager : public StoredInPropertyMap
     {
     };
 

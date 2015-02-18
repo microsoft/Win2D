@@ -16,6 +16,7 @@
 
 #include "ResourceTracker.h"
 #include "ResourceWrapper.h"
+#include "StoredInPropertyMap.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -53,6 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     template<typename TRAITS>
     class ResourceManager : public std::enable_shared_from_this<typename TRAITS::manager_t>,
+                            public StoredInPropertyMap,
                             private LifespanTracker<typename TRAITS::manager_t>
     {
         ResourceTracker<typename TRAITS::wrapper_t> m_tracker;
@@ -212,6 +214,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             boolean inserted = false;
             ThrowIfFailed(propertyMap->Insert(keyName.Get(), managerHolder.Get(), &inserted)); // Insert will replace an existing entry
 
+            manager->WhenDestroyedRemoveFromPropertyMap(propertyMap.Get(), keyName.Get());
+
             return manager;
         }
 
@@ -239,7 +243,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             std::weak_ptr<MANAGER> Manager;
         };
-
 
         //
         // FACTORY can provide it's own implementation of this if it needs more
