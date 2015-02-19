@@ -13,7 +13,9 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END
 )
 
-msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false
+:: TODO - once ARM UAP builds work again, roll this back to a single invocation for all device types
+msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false /p:BuildUAP=false
+msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false /p:BuildWindows=false /p:BuildPhone=false /p:BuildPlatforms="Win32;x64;AnyCPU"
 
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Build failed; aborting.

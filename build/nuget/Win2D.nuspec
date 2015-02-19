@@ -93,10 +93,11 @@
       <file src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\x86" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x86" />
 
-      <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\arm" />
-      <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\arm" />
-      <file src="bin\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\arm" />
-      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\arm" />
+      <!-- TODO: once ARM works again, uncomment the ARM lines -->
+      <!-- <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\arm" /> -->
+      <!-- <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\arm" /> -->
+      <!-- <file src="bin\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\arm" /> -->
+      <!-- <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\arm" /> -->
 
       <file src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\x64" />
       <file src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\x64" />
