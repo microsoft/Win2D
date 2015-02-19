@@ -202,7 +202,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->CombineWithGeometryMethod.SetExpectedCalls(1,
-            [=](ID2D1Geometry* geometry, D2D1_COMBINE_MODE combineMode, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](ID2D1Geometry* geometry, D2D1_COMBINE_MODE combineMode, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
             {
                 Assert::AreEqual(static_cast<ID2D1Geometry*>(f.D2DEllipseGeometry.Get()), geometry);
                 Assert::AreEqual(D2D1_COMBINE_MODE_INTERSECT, combineMode);
@@ -223,7 +223,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->CombineWithGeometryMethod.SetExpectedCalls(1,
-            [=](ID2D1Geometry* geometry, D2D1_COMBINE_MODE combineMode, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](ID2D1Geometry* geometry, D2D1_COMBINE_MODE combineMode, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
         {
             Assert::AreEqual(static_cast<ID2D1Geometry*>(f.D2DEllipseGeometry.Get()), geometry);
             Assert::AreEqual(D2D1_COMBINE_MODE_INTERSECT, combineMode);
@@ -256,7 +256,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->WidenMethod.SetExpectedCalls(1,
-            [=](FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
             {
                 Assert::AreEqual(5.0f, strokeWidth);
                 Assert::IsNull(transform);
@@ -277,7 +277,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->WidenMethod.SetExpectedCalls(1,
-            [=](FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
             {
                 Assert::AreEqual(5.0f, strokeWidth);
                 Assert::AreEqual(sc_someD2DTransform, *transform);
@@ -308,7 +308,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->OutlineMethod.SetExpectedCalls(1,
-            [=](CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
             {
                 Assert::AreEqual(sc_identityD2DTransform, *transform);
                 Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, tol);
@@ -327,7 +327,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->OutlineMethod.SetExpectedCalls(1,
-            [=](CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
             {
                 Assert::AreEqual(sc_someD2DTransform, *transform);
                 Assert::AreEqual(2.0f, tol);
@@ -355,7 +355,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->SimplifyMethod.SetExpectedCalls(1,
-            [=](D2D1_GEOMETRY_SIMPLIFICATION_OPTION simplification, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](D2D1_GEOMETRY_SIMPLIFICATION_OPTION simplification, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
             {
                 Assert::AreEqual(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_LINES, simplification);
                 Assert::AreEqual(sc_identityD2DTransform, *transform);
@@ -375,7 +375,7 @@ public:
         GeometryOperationsFixture_OutputsGeometry f;
 
         f.D2DRectangleGeometry->SimplifyMethod.SetExpectedCalls(1,
-            [=](D2D1_GEOMETRY_SIMPLIFICATION_OPTION simplification, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            [&](D2D1_GEOMETRY_SIMPLIFICATION_OPTION simplification, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
             {
                 Assert::AreEqual(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_LINES, simplification);
                 Assert::AreEqual(sc_someD2DTransform, *transform);
@@ -404,7 +404,7 @@ public:
         GeometryOperationsFixture_DoesNotOutputGeometry f;
 
         f.D2DRectangleGeometry->CompareWithGeometryMethod.SetExpectedCalls(1,
-            [=](ID2D1Geometry* otherGeometry, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, D2D1_GEOMETRY_RELATION* relation)
+            [&](ID2D1Geometry* otherGeometry, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, D2D1_GEOMETRY_RELATION* relation)
         {
             Assert::AreEqual(static_cast<ID2D1Geometry*>(f.D2DEllipseGeometry.Get()), otherGeometry);
             Assert::AreEqual(sc_identityD2DTransform, *transform);
@@ -425,7 +425,7 @@ public:
         GeometryOperationsFixture_DoesNotOutputGeometry f;
 
         f.D2DRectangleGeometry->CompareWithGeometryMethod.SetExpectedCalls(1,
-            [=](ID2D1Geometry* otherGeometry, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, D2D1_GEOMETRY_RELATION* relation)
+            [&](ID2D1Geometry* otherGeometry, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, D2D1_GEOMETRY_RELATION* relation)
             {
                 Assert::AreEqual(static_cast<ID2D1Geometry*>(f.D2DEllipseGeometry.Get()), otherGeometry);
                 Assert::AreEqual(sc_someD2DTransform, *transform);
