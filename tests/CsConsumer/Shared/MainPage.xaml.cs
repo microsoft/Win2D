@@ -133,13 +133,7 @@ namespace CsConsumer
         {
             try
             {
-                //
-                // Create a new image source for the specified width/height
-                //
-                int width = (int)m_canvasControl.ActualWidth;
-                int height = (int)m_canvasControl.ActualHeight;
-
-                m_statusMessage.Text = String.Format("{0}x{1} canvas control", width, height);
+                m_statusMessage.Text = String.Format("{0} canvas control", m_canvasControl.Size);
             }
             catch (Exception e)
             {

@@ -42,7 +42,7 @@ namespace ExampleGallery
         // Draw to the CanvasControl.
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            DrawTextLabel(args.DrawingSession, "Canvas\nControl", new Size(sender.ActualWidth, sender.ActualHeight));
+            DrawTextLabel(args.DrawingSession, "Canvas\nControl", sender.Size);
         }
 
 

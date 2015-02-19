@@ -432,4 +432,22 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
 
         f.RaiseUnloadedEvent();
     }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(SizeProperty)
+    {
+        BasicControlFixture<TRAITS> f;
+
+        f.CreateAdapter();
+        f.CreateControl();
+
+        Size size{ -1, -1 };
+        ThrowIfFailed(f.Control->get_Size(&size));
+        Assert::AreEqual(Size{ 0, 0 }, size);
+
+        Size newSize{ 123, 456 };
+        f.UserControl->Resize(newSize);
+
+        ThrowIfFailed(f.Control->get_Size(&size));
+        Assert::AreEqual(newSize, size);
+    }
 };

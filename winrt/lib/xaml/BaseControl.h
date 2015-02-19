@@ -219,6 +219,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        IFACEMETHODIMP get_Size(Size* value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(value);
+
+                    *value = GetCurrentSize();
+                });
+        }
+
         //
         // ICanvasResourceCreatorWithDpi
         //

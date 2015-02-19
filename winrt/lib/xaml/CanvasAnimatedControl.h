@@ -205,8 +205,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHODIMP get_Paused(boolean* value) override;
 
-        IFACEMETHODIMP get_Size(Size* value) override;
-
         IFACEMETHODIMP ResetElapsedTime() override;
 
         IFACEMETHODIMP get_Input(ICorePointerInputSource** value) override;

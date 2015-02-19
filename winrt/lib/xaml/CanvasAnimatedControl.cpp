@@ -436,17 +436,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasAnimatedControl::get_Size(Size* value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
-
-                *value = GetCurrentSize();
-            });
-    }
-
     IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
     {
         return ExceptionBoundary(
