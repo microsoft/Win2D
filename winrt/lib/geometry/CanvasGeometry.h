@@ -47,6 +47,167 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Close)();
 
         IFACEMETHOD(get_Device)(ICanvasDevice** device);
+
+        IFACEMETHOD(CombineWith)(
+            ICanvasGeometry* otherGeometry,
+            Matrix3x2 otherGeometryTransform,
+            CanvasGeometryCombine combine,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CombineWithUsingFlatteningTolerance)(
+            ICanvasGeometry* otherGeometry,
+            Matrix3x2 otherGeometryTransform,
+            CanvasGeometryCombine combine,
+            float flatteningTolerance,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(Stroke)(
+            float strokeWidth,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(StrokeWithAllOptions)(
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(Outline)(
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(OutlineWithTransformAndFlatteningTolerance)(
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(Simplify)(
+            CanvasGeometrySimplification simplification,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(SimplifyWithTransformAndFlatteningTolerance)(
+            CanvasGeometrySimplification simplification,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CompareWith)(
+            ICanvasGeometry* otherGeometry,
+            CanvasGeometryRelation* relation) override;
+
+        IFACEMETHOD(CompareWithUsingTransformAndFlatteningTolerance)(
+            ICanvasGeometry* otherGeometry,
+            Matrix3x2 otherGeometryTransform,
+            float flatteningTolerance,
+            CanvasGeometryRelation* relation) override;
+
+        IFACEMETHOD(ComputeArea)(
+            float* area) override;
+
+        IFACEMETHOD(ComputeAreaWithTransformAndFlatteningTolerance)(
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            float* area) override;
+
+        IFACEMETHOD(ComputePathLength)(
+            float* area) override;
+
+        IFACEMETHOD(ComputePathLengthWithTransformAndFlatteningTolerance)(
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            float* area) override;
+
+        IFACEMETHOD(ComputePointOnPath)(
+            float distance,
+            Vector2* point) override;
+
+        IFACEMETHOD(ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent)(
+            float distance,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            Vector2* tangent,
+            Vector2* point) override;
+
+        IFACEMETHOD(FillContainsPoint)(
+            Vector2 point,
+            boolean* containsPoint) override;
+
+        IFACEMETHOD(FillContainsPointWithTransformAndFlatteningTolerance)(
+            Vector2 point,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            boolean* containsPoint) override;
+
+        IFACEMETHOD(ComputeBounds)(
+            Rect* bounds) override;
+
+        IFACEMETHOD(ComputeBoundsWithTransform)(
+            Matrix3x2 transform,
+            Rect* bounds) override;
+
+        IFACEMETHOD(ComputeStrokeBounds)(
+            float strokeWidth,
+            Rect* bounds) override;
+
+        IFACEMETHOD(ComputeStrokeBoundsWithAllOptions)(
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            Rect* bounds) override;
+
+        IFACEMETHOD(StrokeContainsPoint)(
+            Vector2 point,
+            float strokeWidth,
+            boolean* containsPoint) override;
+
+        IFACEMETHOD(StrokeContainsPointWithAllOptions)(
+            Vector2 point,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            boolean* containsPoint) override;
+
+    private:
+        void StrokeImpl(
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Matrix3x2* transform,
+            float flatteningTolerance,
+            ICanvasGeometry** geometry);
+
+        void StrokeImpl(
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Matrix3x2* transform,
+            float flatteningTolerance,
+            ICanvasPathBuilder* targetPathBuilder);
+
+        void StrokeContainsPointImpl(
+            Vector2 point,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Matrix3x2* transform,
+            float flatteningTolerance,
+            boolean* containsPoint);
+
+        void ComputeStrokeBoundsImpl(
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Matrix3x2* transform,
+            float flatteningTolerance,
+            Rect* bounds);
+
+        void ComputePointOnPathImpl(
+            float distance,
+            Matrix3x2* transform,
+            float flatteningTolerance,
+            Vector2* tangent,
+            Vector2* point);
+
+        ComPtr<ID2D1StrokeStyle> TryGetStrokeStyleResource(
+            ComPtr<ID2D1Geometry> const& thisResource, 
+            ICanvasStrokeStyle* strokeStyle);
     };
 
     class CanvasGeometryManager : public ResourceManager<CanvasGeometryTraits>

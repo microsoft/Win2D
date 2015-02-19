@@ -13,6 +13,10 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Graphics.Canvas;
+using Windows.UI.Xaml;
+using System.Numerics;
+using Windows.Foundation;
 
 namespace ExampleGallery
 {
@@ -22,5 +26,30 @@ namespace ExampleGallery
         {
             return Enum.GetValues(typeof(T)).Cast<T>().ToList();
         }
+
+        public static Matrix3x2 GetDisplayTransform(Size controlSize, ICanvasResourceCreatorWithDpi canvas, int designWidth, int designHeight)
+        {
+            // Scale the display to fill the control.
+            Vector2 canvasSize = controlSize.ToVector2();
+            var simulationSize = new Vector2(canvas.ConvertPixelsToDips(designWidth), canvas.ConvertPixelsToDips(designHeight));
+            var scale = canvasSize / simulationSize;
+            var offset = Vector2.Zero;
+
+            // Letterbox or pillarbox to preserve aspect ratio.
+            if (scale.X > scale.Y)
+            {
+                scale.X = scale.Y;
+                offset.X = (canvasSize.X - simulationSize.X * scale.X) / 2;
+            }
+            else
+            {
+                scale.Y = scale.X;
+                offset.Y = (canvasSize.Y - simulationSize.Y * scale.Y) / 2;
+            }
+
+            return Matrix3x2.CreateScale(scale) *
+                   Matrix3x2.CreateTranslation(offset);
+        }
+
     }
 }

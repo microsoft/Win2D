@@ -22,6 +22,22 @@ namespace Microsoft.Graphics.Canvas
     } CanvasArcSize;
 
     [version(VERSION)]
+    typedef enum CanvasGeometrySimplification
+    {
+        CubicsAndLines = (int)0,
+        Lines = (int)1
+    } CanvasGeometrySimplification;
+
+    [version(VERSION)]
+    typedef enum CanvasGeometryCombine
+    {
+        Union = (int)0,
+        Intersect = (int)1,
+        Xor = (int)2,
+        Exclude = (int)3
+    } CanvasGeometryCombine;
+
+    [version(VERSION)]
     typedef enum CanvasDashStyle
     {
         Solid = (int)0,
@@ -76,6 +92,16 @@ namespace Microsoft.Graphics.Canvas
         Open = (int)0,
         Closed = (int)1
     } CanvasFigureLoop;
+
+    [version(VERSION)]
+    typedef enum CanvasGeometryRelation
+    {
+        Unknown = (int)0,
+        Disjoint = (int)1,
+        Contained = (int)2,
+        Contains = (int)3,
+        Overlap = (int)4
+    } CanvasGeometryRelation;
 
     [version(VERSION), flags]
     typedef enum CanvasFigureSegmentOptions

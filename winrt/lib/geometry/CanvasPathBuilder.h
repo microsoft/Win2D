@@ -36,6 +36,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<ICanvasDevice> GetDevice() = 0;
 
+        virtual ComPtr<ID2D1GeometrySink> GetGeometrySink() = 0;
+
         virtual ComPtr<ID2D1PathGeometry1> CloseAndReturnPath() = 0;
     };
 
@@ -90,6 +92,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Vector2 controlPoint,
             Vector2 endPoint) override;
 
+        IFACEMETHOD(AddGeometry)(
+            ICanvasGeometry* geometry) override;
+
         IFACEMETHOD(SetSegmentOptions)(
             CanvasFigureSegmentOptions figureSegmentOptions) override;
 
@@ -104,6 +109,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         virtual ComPtr<ICanvasDevice> GetDevice() override;
+
+        virtual ComPtr<ID2D1GeometrySink> GetGeometrySink() override;
 
         virtual ComPtr<ID2D1PathGeometry1> CloseAndReturnPath() override;
 

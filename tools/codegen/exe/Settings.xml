@@ -85,6 +85,11 @@ under the License.
     <Enum Name="PATH_SEGMENT" ShouldProject="true" ProjectedNameOverride="FigureSegmentOptions"/>
     <Enum Name="ARC_SIZE" ShouldProject="true"/>
 
+    <Enum Name="COMBINE_MODE" ShouldProject="true" ProjectedNameOverride="GeometryCombine"/>
+    <Enum Name="GEOMETRY_RELATION" ShouldProject="true">
+      <Field Name="IS_CONTAINED" ShouldProject="true" ProjectedNameOverride="Contained"/>
+    </Enum>
+    <Enum Name="GEOMETRY_SIMPLIFICATION_OPTION" ShouldProject="true" ProjectedNameOverride="GeometrySimplification"/>
   </Namespace>
   
   <Namespace Name="Effects">

@@ -181,6 +181,39 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasPathBuilder::AddGeometry(
+        ICanvasGeometry* geometry)
+    {        
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(geometry);
+
+                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+                auto otherD2DGeometry = GetWrappedResource<ID2D1Geometry>(geometry);
+
+                if (m_isInFigure)
+                {
+                    ThrowHR(E_INVALIDARG, HStringReference(Strings::PathBuilderAddGeometryMidFigure).Get());
+                }
+
+                auto otherD2DPathGeometry = MaybeAs<ID2D1PathGeometry>(otherD2DGeometry);
+
+                if (otherD2DPathGeometry)
+                {
+                    ThrowIfFailed(otherD2DPathGeometry->Stream(d2dGeometrySink.Get()));
+                }
+                else
+                {
+                    ThrowIfFailed(otherD2DGeometry->Simplify(
+                        D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES,
+                        nullptr,
+                        d2dGeometrySink.Get()));
+                }
+            });
+    }
+
     IFACEMETHODIMP CanvasPathBuilder::SetSegmentOptions(
         CanvasFigureSegmentOptions figureSegmentOptions)
     {
@@ -234,6 +267,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto& canvasDevice = m_canvasDevice.EnsureNotClosed();
 
         return canvasDevice;
+    }
+
+    ComPtr<ID2D1GeometrySink> CanvasPathBuilder::GetGeometrySink()
+    {
+        auto& geometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+        return geometrySink;
     }
 
     ComPtr<ID2D1PathGeometry1> CanvasPathBuilder::CloseAndReturnPath()

@@ -178,6 +178,15 @@ under the License.
         <summary>Adds a quadratic bezier to the path. The bezier starts where the path left off, and has the specified control point and end point.</summary>
         <remarks>To add a bezier with two control points, see <see cref="P:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddCubicBezier"/></remarks>
       </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddGeometry(Microsoft.Graphics.Canvas.CanvasGeometry)">
+      <summary>Adds all the figures of the specified geometry to the path.</summary>
+      <remarks>
+      	<p>This method will fail if BeginFigure was called without a subsequent call to EndFigure.</p>
+      	<p>If the input geometry was produced using CanvasGeometry.CreateRoundedRectangle, 
+      	CanvasGeometry.CreateEllipse, or CanvasGeometry.CreateCircle, this will result in the
+      	geometry being processed through CanvasGeometry.Simplify.</p>
+      </remarks>
+    </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.SetFilledRegionDetermination(Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination)">
         <summary>Specifies the method used to determine which points are inside the geometry described by this path builder, and which points are outside.</summary>
       </member>

@@ -2171,8 +2171,7 @@ public:
 
     TEST_METHOD_EX(CanvasDrawingSession_SiSOffsetIsHiddenFromTransformProperty)
     {
-        ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = 
-            Make<StubD2DDeviceContextWithGetFactory>();
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
