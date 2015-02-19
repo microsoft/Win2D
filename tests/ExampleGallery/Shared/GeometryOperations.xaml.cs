@@ -188,7 +188,7 @@ namespace ExampleGallery
                 float animationDistanceThisFrame = CurrentContourTracingAnimation == ContourTracingAnimationOption.Slow ? 1.0f : 20.0f;
                 currentDistanceOnContourPath = (currentDistanceOnContourPath + animationDistanceThisFrame) % totalDistanceOnContourPath;
 
-                pointOnContourPath = combinedGeometry.ComputePointOnPath(currentDistanceOnContourPath, Matrix3x2.Identity, 0.25f, out tangentOnContourPath);
+                pointOnContourPath = combinedGeometry.ComputePointOnPath(currentDistanceOnContourPath, out tangentOnContourPath);
             }
         }
 
@@ -204,7 +204,7 @@ namespace ExampleGallery
             {
                 CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle();
                 strokeStyle.DashStyle = CanvasDashStyle.Dash;
-                combinedGeometry = combinedGeometry.Stroke(15.0f, strokeStyle, Matrix3x2.Identity, 0.25f);
+                combinedGeometry = combinedGeometry.Stroke(15.0f, strokeStyle);
             }
 
             totalDistanceOnContourPath = combinedGeometry.ComputePathLength();

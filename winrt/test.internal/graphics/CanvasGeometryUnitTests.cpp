@@ -272,6 +272,27 @@ public:
         f.VerifyResult(g);
     }
 
+    TEST_METHOD_EX(CanvasGeometry_StrokeWithStrokeStyle)
+    {
+        GeometryOperationsFixture_OutputsGeometry f;
+
+        f.D2DRectangleGeometry->WidenMethod.SetExpectedCalls(1,
+            [&](FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, ID2D1SimplifiedGeometrySink* sink)
+            {
+                Assert::AreEqual(5.0f, strokeWidth);
+                Assert::IsNull(transform);
+                Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, tol);
+                Assert::IsNotNull(strokeStyle);
+                Assert::AreEqual<ID2D1SimplifiedGeometrySink*>(f.SinkForTemporaryPath.Get(), sink);
+                return S_OK;
+            });
+
+        ComPtr<ICanvasGeometry> g;
+        Assert::AreEqual(S_OK, f.RectangleGeometry->StrokeWithStrokeStyle(5.0f, f.StrokeStyle.Get(), &g));
+
+        f.VerifyResult(g, true);
+    }
+
     TEST_METHOD_EX(CanvasGeometry_StrokeWithAllOptions)
     {
         GeometryOperationsFixture_OutputsGeometry f;
@@ -299,6 +320,8 @@ public:
         ComPtr<ICanvasGeometry> g;
 
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->Stroke(0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeWithStrokeStyle(0, nullptr, &g));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeWithStrokeStyle(0, f.StrokeStyle.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeWithAllOptions(0, nullptr, Matrix3x2{}, 0, &g));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeWithAllOptions(0, f.StrokeStyle.Get(), Matrix3x2{}, 0, nullptr));
     }
@@ -561,6 +584,27 @@ public:
         Assert::AreEqual(Vector2{ 12, 34 }, point);
     }
 
+    TEST_METHOD_EX(CanvasGeometry_ComputePointOnPathWithTangent)
+    {
+        GeometryOperationsFixture_DoesNotOutputGeometry f;
+
+        f.D2DRectangleGeometry->ComputePointAtLengthMethod.SetExpectedCalls(1,
+            [&](FLOAT length, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, D2D1_POINT_2F* position, D2D1_POINT_2F* tangent)
+            {
+                Assert::AreEqual(99.0f, length);
+                Assert::IsNull(transform);
+                Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, tol);
+                *position = D2D1_POINT_2F{ 12, 34 };
+                *tangent = D2D1_POINT_2F{ 56, 78 };
+                return S_OK;
+            });
+
+        Vector2 tangent, point;
+        Assert::AreEqual(S_OK, f.RectangleGeometry->ComputePointOnPathWithTangent(99.0f, &tangent, &point));
+        Assert::AreEqual(Vector2{ 12, 34 }, point);
+        Assert::AreEqual(Vector2{ 56, 78 }, tangent);
+    }
+
     TEST_METHOD_EX(CanvasGeometry_ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent)
     {
         GeometryOperationsFixture_DoesNotOutputGeometry f;
@@ -588,6 +632,8 @@ public:
         Vector2 pt;
 
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputePointOnPath(0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputePointOnPathWithTangent(0, &pt, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputePointOnPathWithTangent(0, nullptr, &pt));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent(0, Matrix3x2{}, 0, &pt, nullptr));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent(0, Matrix3x2{}, 0, nullptr, &pt));
     }
@@ -700,6 +746,27 @@ public:
         Assert::AreEqual(Rect{ 1, 2, 3, 4 }, result);
     }
 
+    TEST_METHOD_EX(CanvasGeometry_ComputeStrokeBoundsWithStrokeStyle)
+    {
+        GeometryOperationsFixture_DoesNotOutputGeometry f;
+
+        f.D2DRectangleGeometry->GetWidenedBoundsMethod.SetExpectedCalls(1,
+            [&](FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle, CONST D2D1_MATRIX_3X2_F* transform, FLOAT flatteningTolerance, D2D1_RECT_F* bounds)
+            {
+                Assert::AreEqual(strokeWidth, 5.0f);
+                Assert::IsNotNull(strokeStyle);
+                Assert::IsNull(transform);
+                Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, flatteningTolerance);
+                *bounds = D2D1_RECT_F{ 1, 2, 1 + 3, 2 + 4 };
+                return S_OK;
+            });
+
+        Rect result;
+        Assert::AreEqual(S_OK, f.RectangleGeometry->ComputeStrokeBoundsWithStrokeStyle(5.0f, f.StrokeStyle.Get(), &result));
+        Assert::AreEqual(Rect{ 1, 2, 3, 4 }, result);
+        f.VerifyStrokeStyle();
+    }
+
     TEST_METHOD_EX(CanvasGeometry_ComputeStrokeBoundsWithAllOptions)
     {
         GeometryOperationsFixture_DoesNotOutputGeometry f;
@@ -727,6 +794,8 @@ public:
 
         Rect rect;
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputeStrokeBounds(0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputeStrokeBoundsWithStrokeStyle(0, nullptr, &rect));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputeStrokeBoundsWithStrokeStyle(0, f.StrokeStyle.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputeStrokeBoundsWithAllOptions(0, nullptr, Matrix3x2{}, 0, &rect));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->ComputeStrokeBoundsWithAllOptions(0, f.StrokeStyle.Get(), Matrix3x2{}, 0, nullptr));
     }
@@ -751,6 +820,28 @@ public:
         boolean result;
         Assert::AreEqual(S_OK, f.RectangleGeometry->StrokeContainsPoint(Vector2{ 123, 456 }, 5.0f, &result));
         Assert::IsTrue(!!result);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_StrokeContainsPointWithStrokeStyle)
+    {
+        GeometryOperationsFixture_DoesNotOutputGeometry f;
+
+        f.D2DRectangleGeometry->StrokeContainsPointMethod.SetExpectedCalls(1,
+            [&](D2D1_POINT_2F point, float strokeWidth, ID2D1StrokeStyle* strokeStyle, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, BOOL* contains)
+            {
+                Assert::AreEqual(D2D1_POINT_2F{ 123, 456 }, point);
+                Assert::AreEqual(5.0f, strokeWidth);
+                Assert::IsNotNull(strokeStyle);
+                Assert::IsNull(transform);
+                Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, tol);
+                *contains = true;
+                return S_OK;
+            });
+
+        boolean result;
+        Assert::AreEqual(S_OK, f.RectangleGeometry->StrokeContainsPointWithStrokeStyle(Vector2{ 123, 456 }, 5.0f, f.StrokeStyle.Get(), &result));
+        Assert::IsTrue(!!result);
+        f.VerifyStrokeStyle();
     }
 
     TEST_METHOD_EX(CanvasGeometry_StrokeContainsPointWithTransformAndFlatteningTolerance)
@@ -781,6 +872,8 @@ public:
 
         boolean b;
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeContainsPoint(Vector2{}, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeContainsPointWithStrokeStyle(Vector2{}, 0, nullptr, &b));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeContainsPointWithStrokeStyle(Vector2{}, 0, f.StrokeStyle.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, nullptr, Matrix3x2{}, 0, &b));
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, f.StrokeStyle.Get(), Matrix3x2{}, 0, nullptr));
     }
@@ -808,6 +901,7 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->CombineWithUsingFlatteningTolerance(otherCanvasGeometry.Get(), m, CanvasGeometryCombine::Union, 0, &g));        
 
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->Stroke(0, &g));
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeWithStrokeStyle(0, strokeStyle.Get(), &g));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeWithAllOptions(0, strokeStyle.Get(), m, 0, &g));
 
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->Outline(&g));
@@ -826,6 +920,7 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputePathLengthWithTransformAndFlatteningTolerance(m, 0, &fl));
 
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputePointOnPath(0, &pt));
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputePointOnPathWithTangent(0, &pt, &pt));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent(0, m, 0, &pt, &pt));
 
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->FillContainsPoint(Vector2{}, &b));
@@ -835,12 +930,29 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputeBoundsWithTransform(m, &rect));
 
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputeStrokeBounds(0, &rect));
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputeStrokeBoundsWithStrokeStyle(0, strokeStyle.Get(),&rect));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->ComputeStrokeBoundsWithAllOptions(0, strokeStyle.Get(), m, 0, &rect));
 
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPoint(Vector2{}, 0, &b));
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithStrokeStyle(Vector2{}, 0, strokeStyle.Get(), &b));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, strokeStyle.Get(), m, 0, &b));
     }
 
+    TEST_METHOD_EX(CanvasGeometry_DefaultFlatteningTolerance_CorrectValue)
+    {
+        auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
+
+        float flatteningTolerance;
+        Assert::AreEqual(S_OK, canvasGeometryFactory->get_DefaultFlatteningTolerance(&flatteningTolerance));
+        Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, flatteningTolerance);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_DefaultFlatteningTolerance_NullArg)
+    {
+        auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->get_DefaultFlatteningTolerance(nullptr));
+    }
 };
 
 TEST_CLASS(CanvasPathBuilderUnitTests)

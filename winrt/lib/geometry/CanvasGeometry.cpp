@@ -142,6 +142,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto newCanvasGeometry = GetManager()->Create(pathBuilder);
 
                 ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
+        });
+    }
+
+    IFACEMETHODIMP CanvasGeometryFactory::get_DefaultFlatteningTolerance(float* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                
+                *value = D2D1_DEFAULT_FLATTENING_TOLERANCE;
             });
     }
 
@@ -219,6 +230,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 return StrokeImpl(strokeWidth, nullptr, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
+            });
+    }
+
+    IFACEMETHODIMP CanvasGeometry::StrokeWithStrokeStyle(
+        float strokeWidth,
+        ICanvasStrokeStyle *strokeStyle,
+        ICanvasGeometry** geometry)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(strokeStyle);
+                return StrokeImpl(strokeWidth, strokeStyle, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
             });
     }
 
@@ -449,6 +473,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasGeometry::ComputePointOnPathWithTangent(
+        float distance,
+        Vector2* tangent,
+        Vector2* point)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(tangent);
+
+                ComputePointOnPathImpl(distance, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, tangent, point);
+            });
+    }
+
+
     IFACEMETHODIMP CanvasGeometry::ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent(
         float distance,
         Matrix3x2 transform,
@@ -569,6 +608,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasGeometry::ComputeStrokeBoundsWithStrokeStyle(
+        float strokeWidth,
+        ICanvasStrokeStyle *strokeStyle,
+        Rect* bounds)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(strokeStyle);
+                ComputeStrokeBoundsImpl(strokeWidth, strokeStyle, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, bounds);
+            });
+    }
+
     IFACEMETHODIMP CanvasGeometry::ComputeStrokeBoundsWithAllOptions(
         float strokeWidth,
         ICanvasStrokeStyle *strokeStyle,
@@ -617,6 +669,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             StrokeContainsPointImpl(point, strokeWidth, nullptr, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, containsPoint);
         });
+    }
+
+    IFACEMETHODIMP CanvasGeometry::StrokeContainsPointWithStrokeStyle(
+        Vector2 point,
+        float strokeWidth,
+        ICanvasStrokeStyle *strokeStyle,
+        boolean* containsPoint)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(strokeStyle);
+                StrokeContainsPointImpl(point, strokeWidth, strokeStyle, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, containsPoint);
+            });
     }
 
     IFACEMETHODIMP CanvasGeometry::StrokeContainsPointWithAllOptions(

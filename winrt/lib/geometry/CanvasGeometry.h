@@ -65,6 +65,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth,
             ICanvasGeometry** geometry) override;
 
+        IFACEMETHOD(StrokeWithStrokeStyle)(
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            ICanvasGeometry** geometry) override;
+
         IFACEMETHOD(StrokeWithAllOptions)(
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle,
@@ -120,6 +125,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float distance,
             Vector2* point) override;
 
+        IFACEMETHOD(ComputePointOnPathWithTangent)(
+            float distance,
+            Vector2* tangent,
+            Vector2* point) override;
+
         IFACEMETHOD(ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent)(
             float distance,
             Matrix3x2 transform,
@@ -148,6 +158,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth,
             Rect* bounds) override;
 
+        IFACEMETHOD(ComputeStrokeBoundsWithStrokeStyle)(
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            Rect* bounds) override;
+
         IFACEMETHOD(ComputeStrokeBoundsWithAllOptions)(
             float strokeWidth,
             ICanvasStrokeStyle* strokeStyle,
@@ -158,6 +173,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(StrokeContainsPoint)(
             Vector2 point,
             float strokeWidth,
+            boolean* containsPoint) override;
+
+        IFACEMETHOD(StrokeContainsPointWithStrokeStyle)(
+            Vector2 point,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
             boolean* containsPoint) override;
 
         IFACEMETHOD(StrokeContainsPointWithAllOptions)(
@@ -312,5 +333,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(CreatePath)(
             ICanvasPathBuilder* pathBuilder,
             ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(get_DefaultFlatteningTolerance)(float* value) override;
     };
 }}}}

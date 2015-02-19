@@ -97,6 +97,10 @@ under the License.
       <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
       <remarks>Uses default flattening tolerance and identity transform.</remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Stroke(System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
+      <remarks>Uses the default flattening tolerance and identity transform.</remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Stroke(System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
@@ -156,6 +160,10 @@ under the License.
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputePointOnPath(System.Single)">
+      <summary>Returns the point at the specified distance along the segments of the geometry.</summary>
+      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputePointOnPath(System.Single,Microsoft.Graphics.Canvas.Numerics.Vector2@)">
       <summary>Returns the point and tangent vector at the specified distance along the segments of the geometry.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
@@ -180,7 +188,11 @@ under the License.
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeStrokeBounds(System.Single)">
-      <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width and a default stroke style.</summary>
+      <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width.</summary>
+      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeStrokeBounds(System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width and stroke style.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeStrokeBounds(System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
@@ -189,6 +201,10 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.StrokeContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single)">
       <summary>Returns whether the stroked area of this geometry, with the specified stroke width and default stroke style, would contain the specified point.</summary>
+      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.StrokeContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Returns whether the stroked area of this geometry, with the specified stroke width and stroke style, would contain the specified point.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.StrokeContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
@@ -238,5 +254,24 @@ under the License.
       <summary>The output contains only line segments.</summary>
       <remarks>If there are any curves in the input geometry, the curves are output as roughly equivalent, very short lines.</remarks>
     </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.CanvasGeometry.DefaultFlatteningTolerance">
+      <summary>A suitable flattening tolerance for most situations.</summary>
+      <remarks>
+      <p>A flattening tolerance is a threshold at which a curved segment is 
+      transformed into roughly equivalent straight lines. 
+      </p>
+      <p>
+      The higher the zoom factor applied to a curve, the lower the flattening tolerance
+      should be in order to prevent perceivable artifacts. On the other hand, using very low flattening
+      tolerances everywhere can lead to an unnecessary performance cost. CanvasGeometry.DefaultFlatteningTolerance
+      provides a reasonable default for most purposes.
+      </p>
+      <p>
+      For more information, see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280327%28v=vs.85%29.aspx">ComputeFlatteningTolerance</a>.
+      </p>
+      </remarks>
+    </member>
+    
   </members>
 </doc>

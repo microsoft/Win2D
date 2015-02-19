@@ -42,6 +42,12 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasGeometry** geometry);
 
         [overload("Stroke"), default_overload]
+        HRESULT StrokeWithStrokeStyle(
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("Stroke"), default_overload]
         HRESULT StrokeWithAllOptions(
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle,
@@ -119,6 +125,12 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* point);
 
         [overload("ComputePointOnPath"), default_overload]
+        HRESULT ComputePointOnPathWithTangent(
+            [in] float distance,
+            [out] Microsoft.Graphics.Canvas.Numerics.Vector2* tangent,
+            [out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* point);
+
+        [overload("ComputePointOnPath"), default_overload]
         HRESULT ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent(
             [in] float length,
             [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
@@ -156,6 +168,12 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] Windows.Foundation.Rect* bounds);
 
         [overload("ComputeStrokeBounds"), default_overload]
+        HRESULT ComputeStrokeBoundsWithStrokeStyle(
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        [overload("ComputeStrokeBounds"), default_overload]
         HRESULT ComputeStrokeBoundsWithAllOptions(
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle,
@@ -168,6 +186,13 @@ namespace Microsoft.Graphics.Canvas
         HRESULT StrokeContainsPoint(
             [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
             [in] float strokeWidth,
+            [out, retval] boolean* containsPoint);
+
+        [overload("StrokeContainsPoint"), default_overload]
+        HRESULT StrokeContainsPointWithStrokeStyle(
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
             [out, retval] boolean* containsPoint);
 
         [overload("StrokeContainsPoint"), default_overload]
@@ -253,6 +278,8 @@ namespace Microsoft.Graphics.Canvas
         HRESULT CreatePath(
             [in] CanvasPathBuilder* pathBuilder,
             [out, retval] CanvasGeometry** geometry);
+
+        [propget] HRESULT DefaultFlatteningTolerance([out, retval] float* value);
     }
 
     [version(VERSION), static(ICanvasGeometryStatics, VERSION)]
