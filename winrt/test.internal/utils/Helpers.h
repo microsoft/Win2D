@@ -869,7 +869,6 @@ namespace Microsoft
 
             ENUM_TO_STRING(CanvasGeometryRelation)
             {
-                ENUM_VALUE(CanvasGeometryRelation::Unknown);
                 ENUM_VALUE(CanvasGeometryRelation::Disjoint);
                 ENUM_VALUE(CanvasGeometryRelation::Contained);
                 ENUM_VALUE(CanvasGeometryRelation::Contains);

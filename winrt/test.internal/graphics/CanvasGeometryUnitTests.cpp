@@ -426,21 +426,37 @@ public:
     {
         GeometryOperationsFixture_DoesNotOutputGeometry f;
 
-        f.D2DRectangleGeometry->CompareWithGeometryMethod.SetExpectedCalls(1,
-            [&](ID2D1Geometry* otherGeometry, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, D2D1_GEOMETRY_RELATION* relation)
+        struct GeometryRelationEnumMapping
         {
-            Assert::AreEqual(static_cast<ID2D1Geometry*>(f.D2DEllipseGeometry.Get()), otherGeometry);
-            Assert::AreEqual(sc_identityD2DTransform, *transform);
-            Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, tol);
+            CanvasGeometryRelation CanvasEnum;
+            D2D1_GEOMETRY_RELATION D2DEnum;
+        } testCases[] = 
+        {
+            { CanvasGeometryRelation::Disjoint, D2D1_GEOMETRY_RELATION_DISJOINT },
+            { CanvasGeometryRelation::Contained, D2D1_GEOMETRY_RELATION_IS_CONTAINED },
+            { CanvasGeometryRelation::Contains, D2D1_GEOMETRY_RELATION_CONTAINS },
+            { CanvasGeometryRelation::Overlap, D2D1_GEOMETRY_RELATION_OVERLAP },
+        };
 
-            *relation = D2D1_GEOMETRY_RELATION_DISJOINT;
+        for (auto testCase : testCases)
+        {
+            f.D2DRectangleGeometry->CompareWithGeometryMethod.SetExpectedCalls(1,
+                [&](ID2D1Geometry* otherGeometry, CONST D2D1_MATRIX_3X2_F* transform, FLOAT tol, D2D1_GEOMETRY_RELATION* relation)
+                {
+                    Assert::AreEqual(static_cast<ID2D1Geometry*>(f.D2DEllipseGeometry.Get()), otherGeometry);
+                    Assert::AreEqual(sc_identityD2DTransform, *transform);
+                    Assert::AreEqual(D2D1_DEFAULT_FLATTENING_TOLERANCE, tol);
 
-            return S_OK;
-        });
+                    *relation = testCase.D2DEnum;
 
-        CanvasGeometryRelation result;
-        Assert::AreEqual(S_OK, f.RectangleGeometry->CompareWith(f.EllipseGeometry.Get(), &result));
-        Assert::AreEqual(CanvasGeometryRelation::Disjoint, result);
+                    return S_OK;
+                });
+
+            CanvasGeometryRelation result;
+            Assert::AreEqual(S_OK, f.RectangleGeometry->CompareWith(f.EllipseGeometry.Get(), &result));
+            Assert::AreEqual(testCase.CanvasEnum, result);
+        }
+
     }
 
     TEST_METHOD_EX(CanvasGeometry_CompareWithUsingTransformAndFlatteningTolerance)

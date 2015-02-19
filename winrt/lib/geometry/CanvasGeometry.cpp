@@ -394,7 +394,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     flatteningTolerance,
                     &d2dRelation));
 
-                *relation = static_cast<CanvasGeometryRelation>(d2dRelation);
+                switch (d2dRelation)
+                {
+                    case D2D1_GEOMETRY_RELATION_DISJOINT: *relation = CanvasGeometryRelation::Disjoint; break;
+                    case D2D1_GEOMETRY_RELATION_IS_CONTAINED: *relation = CanvasGeometryRelation::Contained; break;
+                    case D2D1_GEOMETRY_RELATION_CONTAINS: *relation = CanvasGeometryRelation::Contains; break;
+                    case D2D1_GEOMETRY_RELATION_OVERLAP: *relation = CanvasGeometryRelation::Overlap; break;
+                    case D2D1_GEOMETRY_RELATION_UNKNOWN:
+                    default:
+                        assert(false); // Unexpected value returned from D2D.
+                        ThrowHR(E_UNEXPECTED);
+                }
             });
     }
 

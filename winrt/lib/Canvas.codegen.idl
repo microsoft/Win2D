@@ -96,11 +96,10 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION)]
     typedef enum CanvasGeometryRelation
     {
-        Unknown = (int)0,
-        Disjoint = (int)1,
-        Contained = (int)2,
-        Contains = (int)3,
-        Overlap = (int)4
+        Disjoint = (int)0,
+        Contained = (int)1,
+        Contains = (int)2,
+        Overlap = (int)3
     } CanvasGeometryRelation;
 
     [version(VERSION), flags]

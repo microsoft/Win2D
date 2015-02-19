@@ -229,9 +229,6 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.CanvasGeometryRelation">
       <summary>Describes how one geometry is spatially related to another geometry.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasGeometryRelation.Unknown">
-      <summary>The relationship between the two geometries cannot be determined.</summary>
-    </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasGeometryRelation.Disjoint">
       <summary>The two geometries do not intersect at all.</summary>
     </member>
