@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float[4]>(D2D1_FLOOD_PROP_COLOR, Color{ 255, 0, 0, 0 });
     }
 
-    IMPLEMENT_PROPERTY(ColorSourceEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ColorSourceEffect,
         Color,
         float[4],
         Color,

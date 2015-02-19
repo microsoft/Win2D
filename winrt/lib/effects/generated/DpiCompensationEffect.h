@@ -29,9 +29,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         DpiCompensationEffect();
 
-        PROPERTY(InterpolationMode, CanvasImageInterpolation);
-        PROPERTY(BorderMode, EffectBorderMode);
-        PROPERTY(SourceDpi, Numerics::Vector2);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
+        EFFECT_PROPERTY(BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(SourceDpi, Numerics::Vector2);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

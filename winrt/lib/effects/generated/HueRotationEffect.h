@@ -29,7 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         HueRotationEffect();
 
-        PROPERTY(Angle, float);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Angle, float);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

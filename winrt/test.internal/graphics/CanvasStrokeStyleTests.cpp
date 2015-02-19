@@ -11,8 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "TestDeviceResourceCreationAdapter.h"
-#include "StubD2DResources.h"
 
 TEST_CLASS(CanvasStrokeStyleTests)
 {

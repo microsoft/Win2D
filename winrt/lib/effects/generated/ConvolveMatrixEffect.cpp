@@ -34,76 +34,76 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_CONVOLVEMATRIX_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
         KernelScale,
         float[2],
         Numerics::Vector2,
         D2D1_CONVOLVEMATRIX_PROP_KERNEL_UNIT_LENGTH,
         (value.X >= 0.01f) && (value.Y >= 0.01f) && (value.X <= 100.0f) && (value.Y <= 100.0f))
 
-    IMPLEMENT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ConvolveMatrixEffect,
         InterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_CONVOLVEMATRIX_PROP_SCALE_MODE)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
         KernelWidth,
         int32_t,
         int32_t,
         D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_X,
         (value >= 1) && (value <= 100))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
         KernelHeight,
         int32_t,
         int32_t,
         D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_Y,
         (value >= 1) && (value <= 100))
 
-    IMPLEMENT_ARRAY_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(ConvolveMatrixEffect,
         KernelMatrix,
         float,
         D2D1_CONVOLVEMATRIX_PROP_KERNEL_MATRIX)
 
-    IMPLEMENT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ConvolveMatrixEffect,
         Divisor,
         float,
         float,
         D2D1_CONVOLVEMATRIX_PROP_DIVISOR)
 
-    IMPLEMENT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ConvolveMatrixEffect,
         Offset,
         float,
         float,
         D2D1_CONVOLVEMATRIX_PROP_BIAS)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
         KernelOffset,
         float[2],
         Numerics::Vector2,
         D2D1_CONVOLVEMATRIX_PROP_KERNEL_OFFSET,
         (value.X >= -50.0f) && (value.Y >= -50.0f) && (value.X <= 50.0f) && (value.Y <= 50.0f))
 
-    IMPLEMENT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ConvolveMatrixEffect,
         PreserveAlpha,
         boolean,
         boolean,
         D2D1_CONVOLVEMATRIX_PROP_PRESERVE_ALPHA)
 
-    IMPLEMENT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ConvolveMatrixEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_CONVOLVEMATRIX_PROP_BORDER_MODE)
 
-    IMPLEMENT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ConvolveMatrixEffect,
         ClampOutput,
         boolean,
         boolean,
         D2D1_CONVOLVEMATRIX_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_INPUT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(ConvolveMatrixEffect,
         Source,
         0)
 

@@ -29,15 +29,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         SpotDiffuseEffect();
 
-        PROPERTY(LightPosition, Numerics::Vector3);
-        PROPERTY(LightTarget, Numerics::Vector3);
-        PROPERTY(Focus, float);
-        PROPERTY(LimitingConeAngle, float);
-        PROPERTY(DiffuseAmount, float);
-        PROPERTY(HeightMapScale, float);
-        PROPERTY(LightColor, Color);
-        PROPERTY(HeightMapKernelSize, Numerics::Vector2);
-        PROPERTY(HeightMapInterpolationMode, CanvasImageInterpolation);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(LightPosition, Numerics::Vector3);
+        EFFECT_PROPERTY(LightTarget, Numerics::Vector3);
+        EFFECT_PROPERTY(Focus, float);
+        EFFECT_PROPERTY(LimitingConeAngle, float);
+        EFFECT_PROPERTY(DiffuseAmount, float);
+        EFFECT_PROPERTY(HeightMapScale, float);
+        EFFECT_PROPERTY(LightColor, Color);
+        EFFECT_PROPERTY(HeightMapKernelSize, Numerics::Vector2);
+        EFFECT_PROPERTY(HeightMapInterpolationMode, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

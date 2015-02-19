@@ -12,9 +12,7 @@
 
 #include "pch.h"
 #include "CanvasGeometry.h"
-#include "CanvasDevice.h"
 #include "CanvasPathBuilder.h"
-#include "CanvasStrokeStyle.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

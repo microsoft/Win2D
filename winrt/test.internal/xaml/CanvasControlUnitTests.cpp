@@ -12,11 +12,6 @@
 
 #include "pch.h"
 
-#include "MockAsyncAction.h"
-#include "BasicControlFixture.h"
-#include "CanvasControlTestAdapter.h"
-#include "ControlFixtures.h"
-
 TEST_CLASS(CanvasControlTests_CommonAdapter)
 {
     TEST_METHOD_EX(CanvasControl_Implements_Expected_Interfaces)

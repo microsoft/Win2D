@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "RegisteredEvent.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::UI::Core;

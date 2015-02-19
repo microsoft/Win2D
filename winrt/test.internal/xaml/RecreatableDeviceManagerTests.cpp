@@ -12,10 +12,8 @@
 
 #include "pch.h"
 
-#include <corerror.h>
 #include <RecreatableDeviceManager.impl.h>
 
-#include "MockAsyncAction.h"
 #include "MockCanvasDeviceActivationFactory.h"
 
 using Internal::AggregateType;

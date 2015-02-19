@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "ResourceManager.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace DirectX::Direct3D11;

@@ -12,12 +12,6 @@
 
 #include "pch.h"
 
-#include <CanvasAnimatedControl.h>
-
-#include "CanvasControlTestAdapter.h"
-#include "BasicControlFixture.h"
-#include "MockCanvasSwapChain.h"
-
 static Color const AnyColor                 {   1,   2,   3,   4 };
 static Color const AnyOtherColor            {   5,   6,   7,   8 };
 static Color const AnyOpaqueColor           { 255,   2,   3,   4 };

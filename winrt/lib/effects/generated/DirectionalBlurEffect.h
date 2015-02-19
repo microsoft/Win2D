@@ -29,10 +29,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         DirectionalBlurEffect();
 
-        PROPERTY(BlurAmount, float);
-        PROPERTY(Angle, float);
-        PROPERTY(Optimization, EffectOptimization);
-        PROPERTY(BorderMode, EffectBorderMode);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(BlurAmount, float);
+        EFFECT_PROPERTY(Angle, float);
+        EFFECT_PROPERTY(Optimization, EffectOptimization);
+        EFFECT_PROPERTY(BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

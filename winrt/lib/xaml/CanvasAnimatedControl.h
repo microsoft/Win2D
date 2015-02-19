@@ -12,13 +12,9 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-#include <RegisteredEvent.h>
-
 #include "BaseControl.h"
 #include "AnimatedControlInput.h"
 #include "CanvasSwapChainPanel.h"
-#include "CanvasSwapChain.h"
 #include "StepTimer.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas

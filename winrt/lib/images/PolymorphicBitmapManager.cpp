@@ -12,9 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasBitmap.h"
-#include "CanvasDevice.h"
-#include "CanvasRenderTarget.h"
 #include "PolymorphicBitmapManager.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas

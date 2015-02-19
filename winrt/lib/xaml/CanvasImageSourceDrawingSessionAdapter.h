@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "CanvasDrawingSession.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;

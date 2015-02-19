@@ -29,14 +29,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         DistantSpecularEffect();
 
-        PROPERTY(Azimuth, float);
-        PROPERTY(Elevation, float);
-        PROPERTY(SpecularExponent, float);
-        PROPERTY(SpecularAmount, float);
-        PROPERTY(HeightMapScale, float);
-        PROPERTY(LightColor, Color);
-        PROPERTY(HeightMapKernelSize, Numerics::Vector2);
-        PROPERTY(HeightMapInterpolationMode, CanvasImageInterpolation);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Azimuth, float);
+        EFFECT_PROPERTY(Elevation, float);
+        EFFECT_PROPERTY(SpecularExponent, float);
+        EFFECT_PROPERTY(SpecularAmount, float);
+        EFFECT_PROPERTY(HeightMapScale, float);
+        EFFECT_PROPERTY(LightColor, Color);
+        EFFECT_PROPERTY(HeightMapKernelSize, Numerics::Vector2);
+        EFFECT_PROPERTY(HeightMapInterpolationMode, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

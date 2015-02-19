@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "StubSurfaceImageSource.h"
-
 namespace canvas
 {
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;

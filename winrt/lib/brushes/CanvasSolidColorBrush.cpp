@@ -12,9 +12,6 @@
 
 #include "pch.h"
 #include "CanvasSolidColorBrush.h"
-#include "CanvasDevice.h"
-#include "CanvasImage.h"
-#include "CanvasBitmap.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

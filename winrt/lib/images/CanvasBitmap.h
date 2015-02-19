@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include "CanvasImage.h"
 #include "PolymorphicBitmapmanager.h"
 #include "TextureUtilities.h"
 

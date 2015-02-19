@@ -24,14 +24,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float>(D2D1_SATURATION_PROP_SATURATION, 0.5f);
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(SaturationEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SaturationEffect,
         Saturation,
         float,
         float,
         D2D1_SATURATION_PROP_SATURATION,
         (value >= 0.0f) && (value <= 2.0f))
 
-    IMPLEMENT_INPUT_PROPERTY(SaturationEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(SaturationEffect,
         Source,
         0)
 

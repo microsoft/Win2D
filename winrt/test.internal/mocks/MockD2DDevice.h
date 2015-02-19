@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include "../test.external/MockDxgiDevice.h" // TODO #997/#1429: move this file
-#include "MockD2DDeviceContext.h"
-
 namespace canvas
 {
     [uuid(D5B2FFD5-882E-4CB5-98FA-2342E52FC6F2)]

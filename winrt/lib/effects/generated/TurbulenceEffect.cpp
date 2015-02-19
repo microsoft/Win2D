@@ -30,47 +30,47 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_TURBULENCE_PROP_STITCHABLE, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_PROPERTY(TurbulenceEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TurbulenceEffect,
         Offset,
         float[2],
         Numerics::Vector2,
         D2D1_TURBULENCE_PROP_OFFSET)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
         Size,
         float[2],
         Numerics::Vector2,
         D2D1_TURBULENCE_PROP_SIZE,
         (value.X >= 0) && (value.Y >= 0))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
         Frequency,
         float[2],
         Numerics::Vector2,
         D2D1_TURBULENCE_PROP_BASE_FREQUENCY,
         (value.X >= 0) && (value.Y >= 0) && (value.X <= 1000) && (value.Y <= 1000))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
         Octaves,
         int32_t,
         int32_t,
         D2D1_TURBULENCE_PROP_NUM_OCTAVES,
         (value >= 1) && (value <= 15))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(TurbulenceEffect,
         Seed,
         int32_t,
         int32_t,
         D2D1_TURBULENCE_PROP_SEED,
         (value >= -10000) && (value <= 10000))
 
-    IMPLEMENT_PROPERTY(TurbulenceEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TurbulenceEffect,
         Noise,
         uint32_t,
         TurbulenceEffectNoise,
         D2D1_TURBULENCE_PROP_NOISE)
 
-    IMPLEMENT_PROPERTY(TurbulenceEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TurbulenceEffect,
         Tileable,
         boolean,
         boolean,

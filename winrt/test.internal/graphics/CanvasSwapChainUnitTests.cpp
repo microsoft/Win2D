@@ -11,11 +11,8 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasSwapChain.h"
 #include "MockDXGIAdapter.h"
-#include "MockDXGISwapChain.h"
 #include "MockDXGIFactory.h"
-#include "TestDeviceResourceCreationAdapter.h"
 
 TEST_CLASS(CanvasSwapChainUnitTests)
 {

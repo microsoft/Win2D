@@ -12,9 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasRenderTarget.h"
-#include "TestBitmapResourceCreationAdapter.h"
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace ABI::Windows::Foundation;
 

@@ -12,12 +12,7 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-#include <RegisteredEvent.h>
-
-#include "RecreatableDeviceManager.h"
 #include "BaseControl.h"
-#include "CanvasImageSource.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

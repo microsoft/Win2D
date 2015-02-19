@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "StubD2DResources.h"
-
 namespace canvas
 {
     //

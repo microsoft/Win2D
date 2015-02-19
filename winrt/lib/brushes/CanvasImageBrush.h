@@ -12,11 +12,6 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-
-#include "ClosablePtr.h"
-#include "ResourceManager.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;

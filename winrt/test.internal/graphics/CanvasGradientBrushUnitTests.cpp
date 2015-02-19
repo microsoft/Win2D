@@ -11,10 +11,8 @@
 // under the License.
 
 #include "pch.h"
-#include "TestDeviceResourceCreationAdapter.h"
-#include "MockD2DGradientStopCollection.h"
-#include "MockD2DLinearGradientBrush.h"
-#include "MockD2DRadialGradientBrush.h"
+#include <CanvasLinearGradientBrush.h>
+#include <CanvasRadialGradientBrush.h>
 
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;

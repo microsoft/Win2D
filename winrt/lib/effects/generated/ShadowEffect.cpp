@@ -26,26 +26,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_SHADOW_PROP_OPTIMIZATION, D2D1_SHADOW_OPTIMIZATION_BALANCED);
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(ShadowEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ShadowEffect,
         BlurAmount,
         float,
         float,
         D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION,
         (value >= 0.0f) && (value <= 250.0f))
 
-    IMPLEMENT_PROPERTY(ShadowEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ShadowEffect,
         ShadowColor,
         float[4],
         Color,
         D2D1_SHADOW_PROP_COLOR)
 
-    IMPLEMENT_PROPERTY(ShadowEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ShadowEffect,
         Optimization,
         uint32_t,
         EffectOptimization,
         D2D1_SHADOW_PROP_OPTIMIZATION)
 
-    IMPLEMENT_INPUT_PROPERTY(ShadowEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(ShadowEffect,
         Source,
         0)
 

@@ -25,17 +25,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_PROPERTY(ArithmeticCompositeEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ArithmeticCompositeEffect,
         ClampOutput,
         boolean,
         boolean,
         D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_INPUT_PROPERTY(ArithmeticCompositeEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(ArithmeticCompositeEffect,
         Source1,
         0)
 
-    IMPLEMENT_INPUT_PROPERTY(ArithmeticCompositeEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(ArithmeticCompositeEffect,
         Source2,
         1)
 

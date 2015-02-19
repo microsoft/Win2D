@@ -29,9 +29,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         Transform3DEffect();
 
-        PROPERTY(InterpolationMode, CanvasImageInterpolation);
-        PROPERTY(BorderMode, EffectBorderMode);
-        PROPERTY(TransformMatrix, Numerics::Matrix4x4);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
+        EFFECT_PROPERTY(BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(TransformMatrix, Numerics::Matrix4x4);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

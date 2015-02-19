@@ -12,11 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasBitmap.h"
-#include "CanvasDevice.h"
-#include "CanvasDrawingSession.h"
-#include "CanvasRenderTarget.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Storage::Streams;

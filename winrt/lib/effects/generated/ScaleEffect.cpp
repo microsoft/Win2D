@@ -28,39 +28,39 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float>(D2D1_SCALE_PROP_SHARPNESS, 0.0f);
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(ScaleEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ScaleEffect,
         Scale,
         float[2],
         Numerics::Vector2,
         D2D1_SCALE_PROP_SCALE,
         (value.X >= 0.01f) && (value.Y >= 0.01f))
 
-    IMPLEMENT_PROPERTY(ScaleEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ScaleEffect,
         CenterPoint,
         float[2],
         Numerics::Vector2,
         D2D1_SCALE_PROP_CENTER_POINT)
 
-    IMPLEMENT_PROPERTY(ScaleEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ScaleEffect,
         InterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_SCALE_PROP_INTERPOLATION_MODE)
 
-    IMPLEMENT_PROPERTY(ScaleEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ScaleEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_SCALE_PROP_BORDER_MODE)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(ScaleEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ScaleEffect,
         Sharpness,
         float,
         float,
         D2D1_SCALE_PROP_SHARPNESS,
         (value >= 0.0f) && (value <= 1.0f))
 
-    IMPLEMENT_INPUT_PROPERTY(ScaleEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(ScaleEffect,
         Source,
         0)
 

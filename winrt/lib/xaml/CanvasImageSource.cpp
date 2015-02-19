@@ -12,8 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasDevice.h"
-#include "CanvasImageSource.h"
 #include "CanvasImageSourceDrawingSessionAdapter.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas

@@ -12,11 +12,8 @@
 
 #include "pch.h"
 
-#include "StubD2DResources.h"
-
+#include "StubCanvasBrush.h"
 #include "effects\generated\GaussianBlurEffect.h"
-#include "TestBitmapResourceCreationAdapter.h"
-#include "MockWICFormatConverter.h"
 #include "MockD2DRectangleGeometry.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)

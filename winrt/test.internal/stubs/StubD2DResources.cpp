@@ -12,6 +12,8 @@
 
 #include "pch.h"
 
+#include "StubD2DStrokeStyle.h"
+
 STDMETHODIMP StubD2DFactoryWithCreateStrokeStyle::CreateStrokeStyle(
     _In_ CONST D2D1_STROKE_STYLE_PROPERTIES1 *strokeStyleProperties,
     _In_reads_opt_(dashesCount) CONST FLOAT *dashes,

@@ -26,26 +26,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float[16]>(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix4x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(Transform3DEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(Transform3DEffect,
         InterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE,
         (value != static_cast<CanvasImageInterpolation>(5)))
 
-    IMPLEMENT_PROPERTY(Transform3DEffect,
+    IMPLEMENT_EFFECT_PROPERTY(Transform3DEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_3DTRANSFORM_PROP_BORDER_MODE)
 
-    IMPLEMENT_PROPERTY(Transform3DEffect,
+    IMPLEMENT_EFFECT_PROPERTY(Transform3DEffect,
         TransformMatrix,
         float[16],
         Numerics::Matrix4x4,
         D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX)
 
-    IMPLEMENT_INPUT_PROPERTY(Transform3DEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(Transform3DEffect,
         Source,
         0)
 

@@ -12,7 +12,6 @@
 
 #include "pch.h"
 #include "CanvasPathBuilder.h"
-#include "CanvasDevice.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

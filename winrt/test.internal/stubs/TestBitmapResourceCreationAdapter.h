@@ -10,6 +10,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+#pragma once
+
 class TestBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
 {
     ComPtr<IWICFormatConverter> m_converter;

@@ -24,13 +24,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float>(D2D1_HUEROTATION_PROP_ANGLE, 0.0f);
     }
 
-    IMPLEMENT_PROPERTY(HueRotationEffect,
+    IMPLEMENT_EFFECT_PROPERTY(HueRotationEffect,
         Angle,
         ConvertRadiansToDegrees,
         float,
         D2D1_HUEROTATION_PROP_ANGLE)
 
-    IMPLEMENT_INPUT_PROPERTY(HueRotationEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(HueRotationEffect,
         Source,
         0)
 

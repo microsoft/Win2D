@@ -12,11 +12,6 @@
 
 #include "pch.h"
 
-#include "BasicControlFixture.h"
-#include "CanvasControlTestAdapter.h"
-#include "ControlFixtures.h"
-#include "MockCanvasSwapChain.h"
-
 #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)          \
     TEST_METHOD_EX(CanvasControl_##NAME)            \
     {                                               \

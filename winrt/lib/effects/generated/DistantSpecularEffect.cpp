@@ -31,59 +31,59 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_DISTANTSPECULAR_PROP_SCALE_MODE, D2D1_DISTANTSPECULAR_SCALE_MODE_LINEAR);
     }
 
-    IMPLEMENT_PROPERTY(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DistantSpecularEffect,
         Azimuth,
         ConvertRadiansToDegrees,
         float,
         D2D1_DISTANTSPECULAR_PROP_AZIMUTH)
 
-    IMPLEMENT_PROPERTY(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DistantSpecularEffect,
         Elevation,
         ConvertRadiansToDegrees,
         float,
         D2D1_DISTANTSPECULAR_PROP_ELEVATION)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
         SpecularExponent,
         float,
         float,
         D2D1_DISTANTSPECULAR_PROP_SPECULAR_EXPONENT,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
         SpecularAmount,
         float,
         float,
         D2D1_DISTANTSPECULAR_PROP_SPECULAR_CONSTANT,
         (value >= 0.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
         HeightMapScale,
         float,
         float,
         D2D1_DISTANTSPECULAR_PROP_SURFACE_SCALE,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DistantSpecularEffect,
         LightColor,
         float[3],
         Color,
         D2D1_DISTANTSPECULAR_PROP_COLOR)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(DistantSpecularEffect,
         HeightMapKernelSize,
         float[2],
         Numerics::Vector2,
         D2D1_DISTANTSPECULAR_PROP_KERNEL_UNIT_LENGTH,
         (value.X >= 0.01f) && (value.Y >= 0.01f) && (value.X <= 100.0f) && (value.Y <= 100.0f))
 
-    IMPLEMENT_PROPERTY(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DistantSpecularEffect,
         HeightMapInterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_DISTANTSPECULAR_PROP_SCALE_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(DistantSpecularEffect,
         Source,
         0)
 

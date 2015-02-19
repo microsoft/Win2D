@@ -29,10 +29,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         DisplacementMapEffect();
 
-        PROPERTY(Amount, float);
-        PROPERTY(XChannelSelect, EffectChannelSelect);
-        PROPERTY(YChannelSelect, EffectChannelSelect);
-        PROPERTY(Source, IEffectInput*);
-        PROPERTY(Displacement, IEffectInput*);
+        EFFECT_PROPERTY(Amount, float);
+        EFFECT_PROPERTY(XChannelSelect, EffectChannelSelect);
+        EFFECT_PROPERTY(YChannelSelect, EffectChannelSelect);
+        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Displacement, IEffectInput*);
     };
 }}}}}

@@ -33,72 +33,72 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_SPOTSPECULAR_PROP_SCALE_MODE, D2D1_SPOTSPECULAR_SCALE_MODE_LINEAR);
     }
 
-    IMPLEMENT_PROPERTY(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(SpotSpecularEffect,
         LightPosition,
         float[3],
         Numerics::Vector3,
         D2D1_SPOTSPECULAR_PROP_LIGHT_POSITION)
 
-    IMPLEMENT_PROPERTY(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(SpotSpecularEffect,
         LightTarget,
         float[3],
         Numerics::Vector3,
         D2D1_SPOTSPECULAR_PROP_POINTS_AT)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
         Focus,
         float,
         float,
         D2D1_SPOTSPECULAR_PROP_FOCUS,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(SpotSpecularEffect,
         LimitingConeAngle,
         ConvertRadiansToDegrees,
         float,
         D2D1_SPOTSPECULAR_PROP_LIMITING_CONE_ANGLE)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
         SpecularExponent,
         float,
         float,
         D2D1_SPOTSPECULAR_PROP_SPECULAR_EXPONENT,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
         SpecularAmount,
         float,
         float,
         D2D1_SPOTSPECULAR_PROP_SPECULAR_CONSTANT,
         (value >= 0.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
         HeightMapScale,
         float,
         float,
         D2D1_SPOTSPECULAR_PROP_SURFACE_SCALE,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(SpotSpecularEffect,
         LightColor,
         float[3],
         Color,
         D2D1_SPOTSPECULAR_PROP_COLOR)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SpotSpecularEffect,
         HeightMapKernelSize,
         float[2],
         Numerics::Vector2,
         D2D1_SPOTSPECULAR_PROP_KERNEL_UNIT_LENGTH,
         (value.X >= 0.01f) && (value.Y >= 0.01f) && (value.X <= 100.0f) && (value.Y <= 100.0f))
 
-    IMPLEMENT_PROPERTY(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(SpotSpecularEffect,
         HeightMapInterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_SPOTSPECULAR_PROP_SCALE_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(SpotSpecularEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(SpotSpecularEffect,
         Source,
         0)
 

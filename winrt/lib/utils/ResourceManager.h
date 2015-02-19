@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <type_traits>
-
 #include "ResourceTracker.h"
 #include "ResourceWrapper.h"
 #include "StoredInPropertyMap.h"

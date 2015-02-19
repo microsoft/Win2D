@@ -28,10 +28,13 @@
 #include <algorithm>
 #include <assert.h>
 #include <cstdint>
+#include <functional>
 #include <iterator>
 #include <map>
 #include <memory>
 #include <mutex>
+#include <queue>
+#include <set>
 #include <type_traits>
 #include <vector>
 
@@ -71,6 +74,7 @@
 #include <ErrorHandling.h>
 #include <LifespanTracker.h>
 #include <Nullable.h>
+#include <RegisteredEvent.h>
 #include <ScopeWarden.h>
 #include <Utilities.h>
 #include <Vector.h>
@@ -85,4 +89,20 @@
 #include "DxgiUtilities.h"
 #include "ResourceManager.h"
 #include "Strings.h"
-#include "effects\CanvasEffect.h"
+#include "CanvasImage.h"
+#include "CanvasBitmap.h"
+#include "CanvasEffect.h"
+#include "CanvasBrush.h"
+#include "CanvasDevice.h"
+#include "CanvasDrawingSession.h"
+#include "CanvasGeometry.h"
+#include "CanvasImageBrush.h"
+#include "CanvasImageSource.h"
+#include "CanvasImageSourceDrawingSessionAdapter.h"
+#include "CanvasRenderTarget.h"
+#include "CanvasStrokeStyle.h"
+#include "CanvasSwapChain.h"
+#include "CanvasTextFormat.h"
+#include "RecreatableDeviceManager.h"
+#include "CanvasAnimatedControl.h"
+#include "Gradients.h"

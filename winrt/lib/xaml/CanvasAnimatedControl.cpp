@@ -12,9 +12,7 @@
 
 #include "pch.h"
 
-#include "CanvasAnimatedControl.h"
 #include "BaseControlAdapter.h"
-#include "CanvasSwapChain.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

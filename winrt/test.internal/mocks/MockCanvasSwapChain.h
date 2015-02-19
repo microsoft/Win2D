@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "MockDxgiSwapChain.h"
-
 namespace canvas
 {
     class MockCanvasSwapChain : public CanvasSwapChain

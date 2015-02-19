@@ -29,17 +29,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         ConvolveMatrixEffect();
 
-        PROPERTY(KernelScale, Numerics::Vector2);
-        PROPERTY(InterpolationMode, CanvasImageInterpolation);
-        PROPERTY(KernelWidth, int32_t);
-        PROPERTY(KernelHeight, int32_t);
-        ARRAY_PROPERTY(KernelMatrix, float);
-        PROPERTY(Divisor, float);
-        PROPERTY(Offset, float);
-        PROPERTY(KernelOffset, Numerics::Vector2);
-        PROPERTY(PreserveAlpha, boolean);
-        PROPERTY(BorderMode, EffectBorderMode);
-        PROPERTY(ClampOutput, boolean);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(KernelScale, Numerics::Vector2);
+        EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
+        EFFECT_PROPERTY(KernelWidth, int32_t);
+        EFFECT_PROPERTY(KernelHeight, int32_t);
+        EFFECT_ARRAY_PROPERTY(KernelMatrix, float);
+        EFFECT_PROPERTY(Divisor, float);
+        EFFECT_PROPERTY(Offset, float);
+        EFFECT_PROPERTY(KernelOffset, Numerics::Vector2);
+        EFFECT_PROPERTY(PreserveAlpha, boolean);
+        EFFECT_PROPERTY(BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(ClampOutput, boolean);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

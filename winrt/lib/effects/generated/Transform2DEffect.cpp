@@ -27,32 +27,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float>(D2D1_2DAFFINETRANSFORM_PROP_SHARPNESS, 0.0f);
     }
 
-    IMPLEMENT_PROPERTY(Transform2DEffect,
+    IMPLEMENT_EFFECT_PROPERTY(Transform2DEffect,
         InterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE)
 
-    IMPLEMENT_PROPERTY(Transform2DEffect,
+    IMPLEMENT_EFFECT_PROPERTY(Transform2DEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_2DAFFINETRANSFORM_PROP_BORDER_MODE)
 
-    IMPLEMENT_PROPERTY(Transform2DEffect,
+    IMPLEMENT_EFFECT_PROPERTY(Transform2DEffect,
         TransformMatrix,
         float[6],
         Numerics::Matrix3x2,
         D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(Transform2DEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(Transform2DEffect,
         Sharpness,
         float,
         float,
         D2D1_2DAFFINETRANSFORM_PROP_SHARPNESS,
         (value >= 0.0f) && (value <= 1.0f))
 
-    IMPLEMENT_INPUT_PROPERTY(Transform2DEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(Transform2DEffect,
         Source,
         0)
 

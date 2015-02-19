@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-#include "effects\CanvasEffect.h"
+#pragma once
 
 #define IMPLEMENT_MOCK_PROPERTY(PROPERTY_NAME, TYPE)                                \
         IFACEMETHODIMP TestEffect::get_##PROPERTY_NAME(_Out_ TYPE* value)           \
@@ -44,7 +44,7 @@ public:
     {
     }
 
-    IMPLEMENT_PROPERTY(TestEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TestEffect,
         BlurAmount,
         float,
         float,
@@ -53,7 +53,7 @@ public:
     IMPLEMENT_MOCK_PROPERTY(Optimization, EffectOptimization)
     IMPLEMENT_MOCK_PROPERTY(BorderMode, EffectBorderMode)
 
-    IMPLEMENT_INPUT_PROPERTY(TestEffect, Source, 0)
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(TestEffect, Source, 0)
 
     std::function<void()> MockGetInput;
     std::function<void()> MockSetInput;

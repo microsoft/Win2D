@@ -12,10 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasSwapChain.h"
-#include "CanvasDevice.h"
-#include "CanvasDrawingSession.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //

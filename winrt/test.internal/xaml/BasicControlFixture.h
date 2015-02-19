@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-#include "ControlFixtures.h"
+#pragma once
 
 template<typename TRAITS>
 struct BasicControlFixture

@@ -29,11 +29,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         ScaleEffect();
 
-        PROPERTY(Scale, Numerics::Vector2);
-        PROPERTY(CenterPoint, Numerics::Vector2);
-        PROPERTY(InterpolationMode, CanvasImageInterpolation);
-        PROPERTY(BorderMode, EffectBorderMode);
-        PROPERTY(Sharpness, float);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Scale, Numerics::Vector2);
+        EFFECT_PROPERTY(CenterPoint, Numerics::Vector2);
+        EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
+        EFFECT_PROPERTY(BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Sharpness, float);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

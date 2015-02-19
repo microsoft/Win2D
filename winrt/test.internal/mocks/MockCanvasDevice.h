@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "MockHelpers.h"
-
 namespace canvas
 {
     class MockCanvasDevice : public RuntimeClass<

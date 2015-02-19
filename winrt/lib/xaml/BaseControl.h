@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include <RegisteredEvent.h>
-#include "RecreatableDeviceManager.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL::Wrappers;

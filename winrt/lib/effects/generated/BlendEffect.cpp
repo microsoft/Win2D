@@ -24,17 +24,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_BLEND_PROP_MODE, D2D1_BLEND_MODE_MULTIPLY);
     }
 
-    IMPLEMENT_PROPERTY(BlendEffect,
+    IMPLEMENT_EFFECT_PROPERTY(BlendEffect,
         Mode,
         uint32_t,
         BlendEffectMode,
         D2D1_BLEND_PROP_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(BlendEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(BlendEffect,
         Background,
         0)
 
-    IMPLEMENT_INPUT_PROPERTY(BlendEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(BlendEffect,
         Foreground,
         1)
 

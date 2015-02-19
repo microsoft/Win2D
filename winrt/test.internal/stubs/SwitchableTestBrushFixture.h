@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "TestBitmapResourceCreationAdapter.h"
-
 namespace canvas
 {
     class SwitchableTestBrushFixture

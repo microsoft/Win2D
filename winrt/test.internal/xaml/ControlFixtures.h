@@ -13,7 +13,6 @@
 #pragma once
 
 #include "CanvasAnimatedControlTestAdapter.h"
-#include "CanvasControlTestAdapter.h"
 
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
     ComPtr<MockD2DDeviceContext> const& deviceContext);

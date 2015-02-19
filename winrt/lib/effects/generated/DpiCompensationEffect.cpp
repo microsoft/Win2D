@@ -26,25 +26,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float[2]>(D2D1_DPICOMPENSATION_PROP_INPUT_DPI, Numerics::Vector2{ 96, 96 });
     }
 
-    IMPLEMENT_PROPERTY(DpiCompensationEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DpiCompensationEffect,
         InterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_DPICOMPENSATION_PROP_INTERPOLATION_MODE)
 
-    IMPLEMENT_PROPERTY(DpiCompensationEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DpiCompensationEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_DPICOMPENSATION_PROP_BORDER_MODE)
 
-    IMPLEMENT_PROPERTY(DpiCompensationEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DpiCompensationEffect,
         SourceDpi,
         float[2],
         Numerics::Vector2,
         D2D1_DPICOMPENSATION_PROP_INPUT_DPI)
 
-    IMPLEMENT_INPUT_PROPERTY(DpiCompensationEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(DpiCompensationEffect,
         Source,
         0)
 

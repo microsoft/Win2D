@@ -13,8 +13,6 @@
 #include "pch.h"
 
 #include "CanvasControl.h"
-#include "CanvasDevice.h"
-#include "CanvasImageSource.h"
 #include "RecreatableDeviceManager.impl.h"
 #include "BaseControlAdapter.h"
 

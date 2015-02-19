@@ -13,10 +13,7 @@
 #include "pch.h"
 
 #include <CanvasCommandList.h>
-#include <effects\CanvasEffect.h>
 
-#include "MockD2DCommandList.h"
-#include "SwitchableTestBrushFixture.h"
 #include "TestEffect.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

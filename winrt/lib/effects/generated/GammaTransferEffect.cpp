@@ -40,109 +40,109 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_GAMMATRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         RedAmplitude,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_RED_AMPLITUDE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         RedExponent,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_RED_EXPONENT)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         RedOffset,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_RED_OFFSET)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         RedDisable,
         boolean,
         boolean,
         D2D1_GAMMATRANSFER_PROP_RED_DISABLE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         GreenAmplitude,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_GREEN_AMPLITUDE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         GreenExponent,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_GREEN_EXPONENT)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         GreenOffset,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_GREEN_OFFSET)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         GreenDisable,
         boolean,
         boolean,
         D2D1_GAMMATRANSFER_PROP_GREEN_DISABLE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         BlueAmplitude,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_BLUE_AMPLITUDE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         BlueExponent,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_BLUE_EXPONENT)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         BlueOffset,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_BLUE_OFFSET)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         BlueDisable,
         boolean,
         boolean,
         D2D1_GAMMATRANSFER_PROP_BLUE_DISABLE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         AlphaAmplitude,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_ALPHA_AMPLITUDE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         AlphaExponent,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_ALPHA_EXPONENT)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         AlphaOffset,
         float,
         float,
         D2D1_GAMMATRANSFER_PROP_ALPHA_OFFSET)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         AlphaDisable,
         boolean,
         boolean,
         D2D1_GAMMATRANSFER_PROP_ALPHA_DISABLE)
 
-    IMPLEMENT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
         ClampOutput,
         boolean,
         boolean,
         D2D1_GAMMATRANSFER_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_INPUT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(GammaTransferEffect,
         Source,
         0)
 

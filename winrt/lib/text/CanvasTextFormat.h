@@ -12,10 +12,6 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-
-#include "WinStringWrapper.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;

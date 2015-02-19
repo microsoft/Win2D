@@ -36,85 +36,85 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_LINEARTRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         RedOffset,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_RED_Y_INTERCEPT)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         RedSlope,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_RED_SLOPE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         RedDisable,
         boolean,
         boolean,
         D2D1_LINEARTRANSFER_PROP_RED_DISABLE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         GreenOffset,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_GREEN_Y_INTERCEPT)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         GreenSlope,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_GREEN_SLOPE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         GreenDisable,
         boolean,
         boolean,
         D2D1_LINEARTRANSFER_PROP_GREEN_DISABLE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         BlueOffset,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_BLUE_Y_INTERCEPT)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         BlueSlope,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_BLUE_SLOPE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         BlueDisable,
         boolean,
         boolean,
         D2D1_LINEARTRANSFER_PROP_BLUE_DISABLE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         AlphaOffset,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_ALPHA_Y_INTERCEPT)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         AlphaSlope,
         float,
         float,
         D2D1_LINEARTRANSFER_PROP_ALPHA_SLOPE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         AlphaDisable,
         boolean,
         boolean,
         D2D1_LINEARTRANSFER_PROP_ALPHA_DISABLE)
 
-    IMPLEMENT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,
         ClampOutput,
         boolean,
         boolean,
         D2D1_LINEARTRANSFER_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_INPUT_PROPERTY(LinearTransferEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(LinearTransferEffect,
         Source,
         0)
 

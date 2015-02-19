@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "CanvasBrush.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;

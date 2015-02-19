@@ -24,13 +24,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float[4]>(D2D1_TILE_PROP_RECT, Rect{ 0, 0, 100, 100 });
     }
 
-    IMPLEMENT_PROPERTY(TileEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TileEffect,
         SourceRectangle,
         float[4],
         Rect,
         D2D1_TILE_PROP_RECT)
 
-    IMPLEMENT_INPUT_PROPERTY(TileEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(TileEffect,
         Source,
         0)
 

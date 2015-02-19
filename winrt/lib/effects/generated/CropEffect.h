@@ -29,8 +29,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         CropEffect();
 
-        PROPERTY(SourceRectangle, Rect);
-        PROPERTY(BorderMode, EffectBorderMode);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(SourceRectangle, Rect);
+        EFFECT_PROPERTY(BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-
 #include "RecreatableDeviceManager.impl.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas

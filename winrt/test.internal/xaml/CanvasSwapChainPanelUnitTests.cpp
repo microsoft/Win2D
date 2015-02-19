@@ -14,8 +14,6 @@
 
 #include <CanvasSwapChainPanel.h>
 
-#include "MockCanvasSwapChain.h"
-#include "MockDXGISwapChain.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
 
 TEST_CLASS(CanvasSwapChainPanelUnitTests)

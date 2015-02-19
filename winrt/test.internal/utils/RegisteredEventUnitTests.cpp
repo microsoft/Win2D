@@ -12,10 +12,6 @@
 
 #include "pch.h"
 
-#include <RegisteredEvent.h>
-
-#include "MockHelpers.h"
-
 class TestEventSource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
 {
     EventSource<IEventHandler<IInspectable*>> m_eventSource;

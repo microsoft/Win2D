@@ -29,12 +29,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         ArithmeticCompositeEffect();
 
-        PROPERTY(ClampOutput, boolean);
-        PROPERTY(MultiplyAmount, float);
-        PROPERTY(Source1Amount, float);
-        PROPERTY(Source2Amount, float);
-        PROPERTY(Offset, float);
-        PROPERTY(Source1, IEffectInput*);
-        PROPERTY(Source2, IEffectInput*);
+        EFFECT_PROPERTY(ClampOutput, boolean);
+        EFFECT_PROPERTY(MultiplyAmount, float);
+        EFFECT_PROPERTY(Source1Amount, float);
+        EFFECT_PROPERTY(Source2Amount, float);
+        EFFECT_PROPERTY(Offset, float);
+        EFFECT_PROPERTY(Source1, IEffectInput*);
+        EFFECT_PROPERTY(Source2, IEffectInput*);
     };
 }}}}}

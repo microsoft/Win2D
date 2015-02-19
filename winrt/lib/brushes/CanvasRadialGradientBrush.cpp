@@ -12,8 +12,6 @@
 
 #include "pch.h"
 #include "CanvasRadialGradientBrush.h"
-#include "CanvasDevice.h"
-#include "Gradients.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

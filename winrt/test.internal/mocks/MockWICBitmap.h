@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "wincodec.h"
-
 namespace canvas
 {
     class MockWICBitmap : public RuntimeClass <

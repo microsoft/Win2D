@@ -12,12 +12,7 @@
 
 #include "pch.h"
 
-#include "CanvasDrawingSession.h"
-#include "CanvasStrokeStyle.h"
 #include "CanvasTextFormat.h"
-#include "CanvasImage.h"
-#include "CanvasDevice.h"
-#include "CanvasBitmap.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

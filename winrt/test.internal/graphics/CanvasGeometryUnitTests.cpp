@@ -11,6 +11,7 @@
 // under the License.
 
 #include "pch.h"
+#include <CanvasPathBuilder.h>
 #include "MockD2DRectangleGeometry.h"
 #include "MockD2DEllipseGeometry.h"
 #include "MockD2DRoundedRectangleGeometry.h"

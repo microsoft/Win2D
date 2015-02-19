@@ -29,46 +29,46 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_POINTDIFFUSE_PROP_SCALE_MODE, D2D1_POINTDIFFUSE_SCALE_MODE_LINEAR);
     }
 
-    IMPLEMENT_PROPERTY(PointDiffuseEffect,
+    IMPLEMENT_EFFECT_PROPERTY(PointDiffuseEffect,
         LightPosition,
         float[3],
         Numerics::Vector3,
         D2D1_POINTDIFFUSE_PROP_LIGHT_POSITION)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(PointDiffuseEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(PointDiffuseEffect,
         DiffuseAmount,
         float,
         float,
         D2D1_POINTDIFFUSE_PROP_DIFFUSE_CONSTANT,
         (value >= 0.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(PointDiffuseEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(PointDiffuseEffect,
         HeightMapScale,
         float,
         float,
         D2D1_POINTDIFFUSE_PROP_SURFACE_SCALE,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY(PointDiffuseEffect,
+    IMPLEMENT_EFFECT_PROPERTY(PointDiffuseEffect,
         LightColor,
         float[3],
         Color,
         D2D1_POINTDIFFUSE_PROP_COLOR)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(PointDiffuseEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(PointDiffuseEffect,
         HeightMapKernelSize,
         float[2],
         Numerics::Vector2,
         D2D1_POINTDIFFUSE_PROP_KERNEL_UNIT_LENGTH,
         (value.X >= 0.01f) && (value.Y >= 0.01f) && (value.X <= 100.0f) && (value.Y <= 100.0f))
 
-    IMPLEMENT_PROPERTY(PointDiffuseEffect,
+    IMPLEMENT_EFFECT_PROPERTY(PointDiffuseEffect,
         HeightMapInterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_POINTDIFFUSE_PROP_SCALE_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(PointDiffuseEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(PointDiffuseEffect,
         Source,
         0)
 

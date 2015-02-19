@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <RegisteredEvent.h>
-
 //
 // Helpers for common mocking operations (eg counting how many times a method
 // was called, or an event was invoked).

@@ -29,8 +29,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         AtlasEffect();
 
-        PROPERTY(SourceRectangle, Rect);
-        PROPERTY(PaddingRectangle, Rect);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(SourceRectangle, Rect);
+        EFFECT_PROPERTY(PaddingRectangle, Rect);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}
