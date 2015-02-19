@@ -28,6 +28,14 @@ namespace ExampleGallery
         public MainPage()
         {
             this.InitializeComponent();
+
+#if WINDOWS_UAP
+            //
+            // TODO: remove this once 1584010 is resolved "Infinite layout cycle with unconstrained ScrollViewer
+            //
+            this.scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+#endif
+
             this.navigationHelper = new NavigationHelper(this);
         }
 

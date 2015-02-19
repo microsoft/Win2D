@@ -38,7 +38,7 @@ under the License.
         </DataTemplate>
     </Page.Resources>
 
-    <ScrollViewer x:Name="scrollViewer" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <ScrollViewer x:Name="scrollViewer" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalScrollMode="Enabled">
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SizeStates">
