@@ -4,10 +4,14 @@
   <PropertyGroup>
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'Windows'">Windows</win2d-DeviceType>
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</win2d-DeviceType>
+    <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'UAP'">UAP</win2d-DeviceType>
+
+    <win2d-vclibs>Microsoft.VCLibs, Version=12.0</win2d-vclibs>
+    <win2d-vclibs Condition="'$(TargetPlatformIdentifier)' == 'UAP'">Microsoft.VCLibs.AppLocal, Version=14.0</win2d-vclibs>
   </PropertyGroup>
 
   <Target Name="win2d-DeviceType-Check" BeforeTargets="InjectReference">
-      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if Windows or Windows Phone app" />
+      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if UAP, Windows or Windows Phone app" />
   </Target>
 
   <Target Name="InjectReference" BeforeTargets="ResolveAssemblyReferences">
@@ -25,8 +29,8 @@
   </Target>
 
   <ItemGroup>
-    <SDKReference Include="Microsoft.VCLibs, Version=12.0">
-      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
+    <SDKReference Include="$(win2d-vclibs)">
+      <Name>Microsoft Visual C++ Runtime Package</Name>
     </SDKReference>
   </ItemGroup>
 

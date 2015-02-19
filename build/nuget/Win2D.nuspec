@@ -35,8 +35,6 @@
       <file src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="lib\win" />
       <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="lib\wpa" />
       <file src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="lib\wpa" />
-      <file src="$bin$\UAPx86\release\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" target="lib\netcore451" />
-      <file src="$bin$\UAPx86\release\winrt.dll.uap\Microsoft.Graphics.Canvas.winmd" target="lib\netcore451" />
 
       <!-- 
            These are the actual files that will be referenced by the project.
@@ -105,17 +103,13 @@
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x64" />
 
 
-      <!-- Build scripts used by managed Windows Store Apps -->
+      <!-- Build scripts used by managed Windows Store Apps and UAP apps -->
       <file src="build\nuget\Win2D.props" target="build\win\Win2D.props" />
       <file src="build\nuget\Win2D-managed.targets" target="build\win\Win2D.targets" />
 
       <!-- Build scripts used by managed Windows Phone Apps -->
       <file src="build\nuget\Win2D.props" target="build\wpa\Win2D.props" />
       <file src="build\nuget\Win2D-managed.targets" target="build\wpa\Win2D.targets" />
-
-      <!-- Build scripts used by managed UAP apps -->
-      <file src="build\nuget\Win2D.props" target="build\netcore451\Win2D.props" />
-      <file src="build\nuget\Win2D-netcore451.targets" target="build\netcore451\Win2D.targets" />
 
       <!-- Build scripts used by native apps (Windows Store, Windows Phone and UAP) -->
       <file src="build\nuget\Win2D-native.targets" target="build\native\Win2D.targets" />
