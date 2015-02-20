@@ -138,6 +138,14 @@ under the License.
               Options = CanvasDrawTextOptions.Clip
           };
         </code>
+
+        Using a font loaded from a TTF file shipped with the application:
+        <code>
+          var format = new CanvasTextFormat()
+          {
+              FontFamily = "CustomFont.ttf#CustomFont"
+          };
+        </code>
       </example>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasTextFormat.#ctor">
@@ -200,6 +208,31 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontFamily">
       <summary>Specifies the font family name (Arial, Times New Roman, etc.)</summary>
+      <remarks>
+        <p>
+          The FontFamily property recognizes three styles of family name:
+          <dl>
+            <dt>familyname</dt> 
+            <dd>
+              A font family name of a font that's installed on the system.
+            </dd>
+
+            <dt>applicationUri#familyname</dt>            
+            <dd>
+              Specifies a font family that's contained in a font package (such
+              as a TTF file) that's distributed with the application.  The
+              applicationUri must begin with either <tt>ms-appx://</tt> or
+              <tt>ms-appdata://</tt>.
+            </dd>
+
+            <dt>filename#familyname</dt>
+            <dd>
+              As for applicationUri above, the filename is treated as a URI that
+              starts with <tt>ms-appx:///</tt>.
+            </dd>
+          </dl>
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FlowDirection">
       <summary>Specifies the direction in which the text lines are flowed.</summary>
