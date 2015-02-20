@@ -12,6 +12,7 @@
 
 #include "pch.h"
 
+#include "CanvasActiveLayer.h"
 #include "CanvasTextFormat.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -101,6 +102,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : ResourceWrapper(manager, deviceContext)
         , m_owner(owner)
         , m_adapter(adapter)
+        , m_nextLayerId(0)
     {
         CheckInPointer(adapter.get());
     }
@@ -124,6 +126,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                if (!m_activeLayerIds.empty())
+                    ThrowHR(E_FAIL, HStringReference(Strings::DidNotPopLayer).Get());
+
                 if (m_adapter)
                 {
                     // Arrange it so that m_adapter will always get
@@ -2534,6 +2539,174 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 *pixels = DipsToPixels(dips, GetDpi(deviceContext));
             });
     }
+
+
+    //
+    // CreateLayer
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacity(
+        float opacity,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, nullptr, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrush(
+        ICanvasBrush* opacityBrush,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, nullptr, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityAndClipRectangle(
+        float opacity,
+        Rect clipRectangle,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, &clipRectangle, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrushAndClipRectangle(
+        ICanvasBrush* opacityBrush,
+        Rect clipRectangle,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, &clipRectangle, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityAndClipGeometry(
+        float opacity,
+        ICanvasGeometry* clipGeometry,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, nullptr, clipGeometry, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrushAndClipGeometry(
+        ICanvasBrush* opacityBrush,
+        ICanvasGeometry* clipGeometry,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, nullptr, clipGeometry, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityAndClipGeometryAndTransform(
+        float opacity,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 geometryTransform,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, nullptr, clipGeometry, &geometryTransform, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrushAndClipGeometryAndTransform(
+        ICanvasBrush* opacityBrush,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 geometryTransform,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, nullptr, clipGeometry, &geometryTransform, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithAllOptions(
+        float opacity,
+        ICanvasBrush* opacityBrush,
+        Rect clipRectangle,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 geometryTransform,
+        CanvasLayerOptions options,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, opacityBrush, &clipRectangle, clipGeometry, &geometryTransform, options, layer);
+    }
+
+    HRESULT CanvasDrawingSession::CreateLayerImpl(
+        float opacity,
+        ICanvasBrush* opacityBrush,
+        Rect const* clipRectangle,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 const* geometryTransform,
+        CanvasLayerOptions options,
+        ICanvasActiveLayer** layer)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(layer);
+
+                auto& deviceContext = GetResource();
+
+                // Convert the layer parameters to D2D format.
+                auto d2dBrush = ToD2DBrush(opacityBrush);
+                auto d2dRect = clipRectangle ? ToD2DRect(*clipRectangle) : D2D1::InfiniteRect();
+                auto d2dGeometry = clipGeometry ? GetWrappedResource<ID2D1Geometry>(clipGeometry) : nullptr;
+                auto d2dMatrix = geometryTransform ? *ReinterpretAs<D2D1_MATRIX_3X2_F const*>(geometryTransform) : D2D1::Matrix3x2F::Identity();
+                auto d2dAntialiasMode = deviceContext->GetAntialiasMode();
+
+                D2D1_LAYER_PARAMETERS1 d2dParameters =
+                {
+                    d2dRect,
+                    d2dGeometry.Get(),
+                    d2dAntialiasMode,
+                    d2dMatrix,
+                    opacity,
+                    d2dBrush.Get(),
+                    static_cast<D2D1_LAYER_OPTIONS1>(options)
+                };
+
+                // Store a unique ID, used for validation in PopLayer. This extra state 
+                // is needed because the D2D PopLayer method always just pops the topmost 
+                // layer, but we want to make sure our CanvasActiveLayer objects are 
+                // closed in the right order if there is nesting.
+                //
+                // Unlike most places where we stash extra state in a resource wrapper 
+                // type, this does not break interop, because our IClosable based layer 
+                // API already prevents cross-API push and pop of layers. You can do 
+                // interop in code using layers, but cannot push from one side of the 
+                // interop boundary and then pop from the other, which is what would 
+                // break this tracking were it possible.
+
+                int layerId = ++m_nextLayerId;
+
+                m_activeLayerIds.push_back(layerId);
+
+                // Construct a scope object that will pop the layer when its Close method is called.
+                WeakRef weakSelf = AsWeak(this);
+
+                auto activeLayer = Make<CanvasActiveLayer>(
+                    [weakSelf, layerId]() mutable
+                    {
+                        auto strongSelf = LockWeakRef<ICanvasDrawingSession>(weakSelf);
+                        auto self = static_cast<CanvasDrawingSession*>(strongSelf.Get());
+
+                        if (self)
+                            self->PopLayer(layerId);
+                    });
+
+                CheckMakeResult(activeLayer);
+
+                // Tell D2D to push the layer.
+                deviceContext->PushLayer(&d2dParameters, nullptr);
+
+                ThrowIfFailed(activeLayer.CopyTo(layer));
+            });
+    }
+
+    void CanvasDrawingSession::PopLayer(int layerId)
+    {
+        auto& deviceContext = GetResource();
+
+        assert(!m_activeLayerIds.empty());
+
+        if (m_activeLayerIds.back() != layerId)
+            ThrowHR(E_FAIL, HStringReference(Strings::PoppedWrongLayer).Get());
+
+        m_activeLayerIds.pop_back();
+
+        deviceContext->PopLayer();
+    }
+
 
     ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
 }}}}

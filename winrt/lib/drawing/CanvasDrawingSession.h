@@ -48,6 +48,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1SolidColorBrush> m_solidColorBrush;
         ComPtr<ICanvasTextFormat> m_defaultTextFormat;
 
+        std::vector<int> m_activeLayerIds;
+        int m_nextLayerId;
+
         //
         // Contract:
         //     Drawing sessions created conventionally initialize this member.
@@ -922,6 +925,59 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(put_Units)(CanvasUnits value);
 
         //
+        // CreateLayer
+        //
+
+        IFACEMETHOD(CreateLayerWithOpacity)(
+            float opacity,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrush)(
+            ICanvasBrush* opacityBrush,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityAndClipRectangle)(
+            float opacity,
+            Rect clipRectangle,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrushAndClipRectangle)(
+            ICanvasBrush* opacityBrush,
+            Rect clipRectangle,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityAndClipGeometry)(
+            float opacity,
+            ICanvasGeometry* clipGeometry,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrushAndClipGeometry)(
+            ICanvasBrush* opacityBrush,
+            ICanvasGeometry* clipGeometry,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityAndClipGeometryAndTransform)(
+            float opacity,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 geometryTransform,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrushAndClipGeometryAndTransform)(
+            ICanvasBrush* opacityBrush,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 geometryTransform,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithAllOptions)(
+            float opacity,
+            ICanvasBrush* opacityBrush,
+            Rect clipRectangle,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 geometryTransform,
+            CanvasLayerOptions options,
+            ICanvasActiveLayer** layer) override;
+
+        //
         // ICanvasResourceCreator
         //
 
@@ -1013,6 +1069,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float opacity,
             CanvasImageInterpolation interpolation,
             ABI::Microsoft::Graphics::Canvas::Numerics::Matrix4x4* perspective);
+
+        HRESULT CreateLayerImpl(
+            float opacity,
+            ICanvasBrush* opacityBrush,
+            Rect const* clipRectangle,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 const* geometryTransform,
+            CanvasLayerOptions options,
+            ICanvasActiveLayer** layer);
+
+        void PopLayer(int layerId);
     };
 
 

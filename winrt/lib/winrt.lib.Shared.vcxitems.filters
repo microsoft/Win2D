@@ -482,6 +482,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\StoredInPropertyMap.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -499,6 +502,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.abi.idl">
       <Filter>xaml</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.abi.idl">
+      <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl">
       <Filter>drawing</Filter>

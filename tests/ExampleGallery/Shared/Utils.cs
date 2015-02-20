@@ -51,5 +51,23 @@ namespace ExampleGallery
                    Matrix3x2.CreateTranslation(offset);
         }
 
+        public static CanvasGeometry CreateStarGeometry(ICanvasResourceCreator resourceCreator, float scale, Vector2 center)
+        {
+            var pathBuilder = new CanvasPathBuilder(resourceCreator);
+
+            pathBuilder.BeginFigure(new Vector2(-0.24f, -0.24f) * scale + center);
+            pathBuilder.AddLine(new Vector2(0, -1) * scale + center);
+            pathBuilder.AddLine(new Vector2(0.24f, -0.24f) * scale + center);
+            pathBuilder.AddLine(new Vector2(1, -0.2f) * scale + center);
+            pathBuilder.AddLine(new Vector2(0.4f, 0.2f) * scale + center);
+            pathBuilder.AddLine(new Vector2(0.6f, 1) * scale + center);
+            pathBuilder.AddLine(new Vector2(0, 0.56f) * scale + center);
+            pathBuilder.AddLine(new Vector2(-0.6f, 1) * scale + center);
+            pathBuilder.AddLine(new Vector2(-0.4f, 0.2f) * scale + center);
+            pathBuilder.AddLine(new Vector2(-1, -0.2f) * scale + center);
+            pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+
+            return CanvasGeometry.CreatePath(pathBuilder);
+        }
     }
 }

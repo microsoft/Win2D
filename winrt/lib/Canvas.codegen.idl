@@ -222,4 +222,12 @@ namespace Microsoft.Graphics.Canvas
         Add = (int)3
     } CanvasBlend;
 
+    [version(VERSION), flags]
+    typedef enum CanvasLayerOptions
+    {
+        None = 0,
+        InitializeFromBackground = 1,
+        IgnoreAlpha = 2
+    } CanvasLayerOptions;
+
 }

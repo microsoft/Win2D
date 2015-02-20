@@ -94,6 +94,7 @@ under the License.
       <Field Name="OVERLAP" ShouldProject="true" ProjectedValueOverride="3"/>
     </Enum>
     <Enum Name="GEOMETRY_SIMPLIFICATION_OPTION" ShouldProject="true" ProjectedNameOverride="GeometrySimplification"/>
+    <Enum Name="LAYER_OPTIONS1" ShouldProject="true" ProjectedNameOverride="LayerOptions"/>
   </Namespace>
   
   <Namespace Name="Effects">

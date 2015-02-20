@@ -64,6 +64,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod , HRESULT(ID2D1Geometry*, FLOAT, ID2D1GeometryRealization**));
         CALL_COUNTER_WITH_MOCK(CreateStrokedGeometryRealizationMethod, HRESULT(ID2D1Geometry*, FLOAT, FLOAT, ID2D1StrokeStyle *, ID2D1GeometryRealization**));
         CALL_COUNTER_WITH_MOCK(DrawGeometryRealizationMethod         , void(ID2D1GeometryRealization*, ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(PushLayerMethod                       , void(const D2D1_LAYER_PARAMETERS1*, ID2D1Layer*));
+        CALL_COUNTER_WITH_MOCK(PopLayerMethod                        , void());
 
         MockD2DDeviceContext()
         {
@@ -294,7 +296,7 @@ namespace canvas
 
         IFACEMETHODIMP_(void) PopLayer() override
         {
-            Assert::Fail(L"Unexpected call to PopLayer");
+            PopLayerMethod.WasCalled();
         }
 
         IFACEMETHODIMP Flush(D2D1_TAG *,D2D1_TAG *) override
@@ -535,9 +537,9 @@ namespace canvas
             DrawBitmapMethod.WasCalled(bitmap, destRect, opacity, interpolationMode, sourceRect, perspective);
         }
 
-        IFACEMETHODIMP_(void) PushLayer(const D2D1_LAYER_PARAMETERS1 *,ID2D1Layer *) override
+        IFACEMETHODIMP_(void) PushLayer(const D2D1_LAYER_PARAMETERS1* parameters, ID2D1Layer* layer) override
         {
-            Assert::Fail(L"Unexpected call to PushLayer");
+            PushLayerMethod.WasCalled(parameters, layer);
         }
 
         IFACEMETHODIMP InvalidateEffectInputRectangle(ID2D1Effect *,UINT32,const D2D1_RECT_F *) override

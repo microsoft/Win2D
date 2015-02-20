@@ -101,19 +101,7 @@ namespace ExampleGallery
                 case GeometryType.Ellipse: return CanvasGeometry.CreateEllipse(resourceCreator, 275, 275, 225, 275);
                 case GeometryType.Star:
                     {
-                        CanvasPathBuilder pathBuilder = new CanvasPathBuilder(resourceCreator);
-                        pathBuilder.BeginFigure(new Vector2(190, 190));
-                        pathBuilder.AddLine(250, 0);
-                        pathBuilder.AddLine(310, 190);
-                        pathBuilder.AddLine(500, 200);
-                        pathBuilder.AddLine(350, 300);
-                        pathBuilder.AddLine(400, 500);
-                        pathBuilder.AddLine(250, 390);
-                        pathBuilder.AddLine(100, 500);
-                        pathBuilder.AddLine(150, 300);
-                        pathBuilder.AddLine(0, 200);
-                        pathBuilder.EndFigure(CanvasFigureLoop.Closed);
-                        return CanvasGeometry.CreatePath(pathBuilder);
+                        return Utils.CreateStarGeometry(resourceCreator, 250, new Vector2(250, 250));
                     }
                 case GeometryType.Group:
                     {

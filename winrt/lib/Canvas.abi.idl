@@ -35,6 +35,7 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 #include "geometry\CanvasPathBuilder.abi.idl"
 #include "geometry\CanvasGeometry.abi.idl"
 #include "geometry\CanvasCachedGeometry.abi.idl"
+#include "drawing\CanvasActiveLayer.abi.idl"
 #include "drawing\CanvasDrawingSession.abi.idl"
 #include "xaml\CanvasImageSource.abi.idl"
 #include "drawing\CanvasSwapChain.abi.idl"

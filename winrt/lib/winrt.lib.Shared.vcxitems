@@ -35,6 +35,7 @@
     <Exec Command="mdmerge -metadata_dir &quot;$(WindowsSDK_MetadataPath)&quot; -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -v -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.h" />
@@ -198,6 +199,7 @@
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl" />

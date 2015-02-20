@@ -877,6 +877,14 @@ namespace Microsoft
                 END_ENUM(CanvasGeometryRelation);
             }
 
+            ENUM_TO_STRING(CanvasLayerOptions)
+            {
+                ENUM_VALUE(CanvasLayerOptions::None);
+                ENUM_VALUE(CanvasLayerOptions::InitializeFromBackground);
+                ENUM_VALUE(CanvasLayerOptions::IgnoreAlpha);
+                END_ENUM(CanvasLayerOptions);
+            }
+
             template<typename T>
             static inline std::wstring ToStringAsInt(T value)
             {

@@ -180,6 +180,16 @@ namespace canvas
         DONT_EXPECT(get_Units            , CanvasUnits*);
         DONT_EXPECT(put_Units            , CanvasUnits);
 
+        DONT_EXPECT(CreateLayerWithOpacity                                , float, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithOpacityBrush                           , ICanvasBrush*, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithOpacityAndClipRectangle                , float, Rect, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithOpacityBrushAndClipRectangle           , ICanvasBrush*, Rect, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithOpacityAndClipGeometry                 , float, ICanvasGeometry*, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithOpacityBrushAndClipGeometry            , ICanvasBrush*, ICanvasGeometry*, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithOpacityAndClipGeometryAndTransform     , float, ICanvasGeometry*, Matrix3x2, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithOpacityBrushAndClipGeometryAndTransform, ICanvasBrush*, ICanvasGeometry*, Matrix3x2, ICanvasActiveLayer**);
+        DONT_EXPECT(CreateLayerWithAllOptions                             , float, ICanvasBrush*, Rect, ICanvasGeometry*, Matrix3x2, CanvasLayerOptions, ICanvasActiveLayer**);
+
         // ICanvasResourceWrapperNative
         DONT_EXPECT(GetResource, REFIID iid, void**);
 
