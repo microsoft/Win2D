@@ -26,7 +26,7 @@ under the License.
     d:DesignWidth="700">
 
     <StackPanel Orientation="Vertical" Margin="5">
-        <ToggleButton x:Name="gcButton" Content="Call GC.Collect once per second" Checked="gcButton_Checked" Unchecked="gcButton_Unchecked"/>
+        <ToggleButton x:Name="gcButton" Content="Call GC.Collect every 100 ms" Checked="gcButton_Checked" Unchecked="gcButton_Unchecked"/>
         <Button Content="Application.Exit" Click="exitButton_Click"/>
         <TextBlock Margin="16" FontSize="16" Foreground="Gray">
             This page contains debugging tools for developers who are working on Win2D itself.<LineBreak/>

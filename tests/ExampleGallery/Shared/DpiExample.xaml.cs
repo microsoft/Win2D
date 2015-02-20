@@ -157,6 +157,12 @@ namespace ExampleGallery
         }
 
 
+        void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            cycleTimer.Stop();
+        }
+
+
         void Canvas_CreateResources(CanvasControl sender, object args)
         {
             mainDeviceResources = new PerDeviceResources(sender);

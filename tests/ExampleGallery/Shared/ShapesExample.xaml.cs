@@ -43,17 +43,6 @@ namespace ExampleGallery
                 new Shape() { Name = "Rounded Rectangle", Drawer = this.DrawRoundedRectangle },
                 new Shape() { Name = "Circle",            Drawer = this.DrawCircles          }
             };
-
-            // TODO #3693: investigate why the CanvasControl never gets garbage collected
-            // if we hook the Draw event in the usual way - some kind of refcount cycle?
-            WeakReference weakThis = new WeakReference(this);
-
-            canvas.Draw += (sender, e) =>
-            {
-                var self = (ShapesExample)weakThis.Target;
-
-                self.Canvas_Draw(sender, e);
-            };
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

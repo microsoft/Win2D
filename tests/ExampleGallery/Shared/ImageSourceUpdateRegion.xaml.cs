@@ -39,6 +39,11 @@ namespace ExampleGallery
             dispatcherTimer.Start();
         }
 
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            dispatcherTimer.Stop();
+        }
+
         private void OnTick(object sender, object e)
         {
             int updateWidth = random.Next(step, Math.Min(width - step, step * 5));

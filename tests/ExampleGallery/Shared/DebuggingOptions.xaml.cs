@@ -32,7 +32,7 @@ namespace ExampleGallery
             if (timer == null)
             {
                 timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(1);
+                timer.Interval = TimeSpan.FromSeconds(0.1);
                 timer.Tick += timer_Tick;
             }
 
@@ -44,7 +44,7 @@ namespace ExampleGallery
             timer.Stop();
         }
 
-        void timer_Tick(object sender, object e)
+        static void timer_Tick(object sender, object e)
         {
             GC.Collect();
         }
