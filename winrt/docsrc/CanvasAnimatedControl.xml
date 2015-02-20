@@ -20,63 +20,261 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl">
-      <summary>XAML control providing swap chain rendering. Useful for scenarios with large amounts of quickly animating content.</summary>
+      <summary>XAML control intended for displaying animating content.</summary>
       <remarks>
         <p>
-        To add an animated control to your app, add CanvasAnimatedControl to your
-        XAML tree. Subscribe to its CanvasAnimatedControl.Draw event and 
-        CanvasAnimatedControl.Update events. In the Draw handler, use 
-        CanvasDrawEventArgs.DrawingSession to draw your immediate mode 2D graphics.
-        In the Update handler, update any animation data as necessary.
+          CanvasAnimatedControl uses a CanvasSwapChain and CanvasSwapChain panel
+          for displaying graphics.  The swap chain is automatically resized and
+          recreated as necessary.
         </p>
-        
-        <p>
-        CanvasAnimatedControl is designed to run an app's drawing and animation state updating
-        logic on a timer. This timer two timing options: fixed, and variable. The 
-        default is fixed.
-        </p>        
 
         <p>
-        Fixed timing causes draw/update to be called at a fixed rate. This fixed rate 
-        is specified with TargetElapsedTime. An app can simply update its animation 
-        state by some fixed amount per update,  and simply rely on Update to be issued
-        the right number of times, at the right frequency.
+          The control provides a game-style process-input, update and draw loop.
+          This game loop runs on a dedicated thread.  This means that the game
+          loop and XAML's UI thread cannot block each other, ensuring that XAML
+          UI elements remain responsive regardless of what the game loop is
+          doing (and vice versa).  However, it does require that care is taken
+          when accessing data shared between the UI thread and the game loop
+          thread.
+        </p>
+
+        <p>
+          The control has three events that can be subscribed to:
+
+          <dl>
+            <dt>CreateResources</dt>
+            <dd>
+              <p>
+                This is raised when a new device is created and is the
+                appropriate place to start loading bitmaps from disk and so on.
+              </p>
+              <p>
+                This event is raised on the UI thread.
+              </p>
+            </dd>
+
+            <dt>Update</dt>
+            <dd>
+              <p>
+                This tells the app to update animations, game logic, simulations
+                etc.  Update will only ever be raised after CreateResources,
+                including any tracked asynchronous actions, has completed.  See
+                <a
+                href="http://blogs.msdn.com/b/win2d/archive/2014/12/05/async-resource-loading-in-win2d.aspx">this
+                blog post</a> for more details on asynchronous loading.
+              </p>
+              <p>
+                Depending on the value of IsFixedTimeStep, Update may be raised
+                multiple times between each Draw event.  See below for more
+                details.
+              </p>
+              <p>
+                This event is raised on the game loop thread.
+              </p>
+            </dd>
+
+            <dt>Draw</dt>
+            <dd>
+              <p>
+                This tells the app to draw the contents of the control, using
+                CanvasDrawEventArgs.DrawingSession.  The control is been cleared
+                to ClearColor before the Draw event is raised.
+              </p>
+              <p>
+                This event will only ever be raised after at least one Update
+                has been completed.  However, it may be raised multiple times in
+                succession without an Update if the control is resized or the
+                ClearColor property is modified.
+              </p>
+              <p>
+                This event is raised on the game loop thread.
+              </p>
+            </dd>
+          </dl>
+        </p>
+
+        <h3>Game Loop</h3>
+        
+        <p>
+          Each iteration of the game loop:
+          <ul>
+            <li>Processes any input events</li>
+            <li>raises some number of Update events</li>
+            <li>raises one Draw event</li>
+          </ul>
+        </p>
+
+        <p>
+          The IsFixedTimeStep property controls how often the Update event is
+          raised.  This is a boolean value, and when set to true we say that the
+          control is running with "fixed timing".  When set to false it is
+          running with "variable timing".
+        </p>
+
+        <h4>Defaults</h4>
+        
+        <dl>          
+          <dt>IsFixedTimeStep</dt>   <dd>true</dd>
+          <dt>TargetElapsedTime</dt> <dd>16.6ms (60 fps)</dd>
+          <dt>Paused</dt>            <dd>false</dd>
+        </dl>
+
+        <h4>Fixed Timing</h4>
+
+        <p>
+          When IsFixedTimeStep is set to true, the control is running in fixed
+          timing mode.  This mode is particularly useful for games since it
+          provides a deterministic elapsed time between updates, providing
+          consistency in game simulation regardless of actual display framerate.
+        </p>
+
+        <p>
+          When running in fixed timing mode mode, the Update event is raised at
+          a fixed rate, controled by the TargetElapsedTime property.  For
+          example, if TargetElapsedTime is set to its default value of 16.6ms,
+          Update will be raised 60 times a second.  There are several different
+          scenarios depending on how long the Update and Draw handlers take to
+          complete:
+        </p>
+
+        <p>
+          The simplest situation is that the total time spent in Update + Draw
+          is exactly 1/60 of a second. In this case the control will raise
+          Update, then raise Draw, then look at the clock and notice it is time
+          for another Update, then Draw, and so on. Simple!
+        </p>
+
+        <p>
+          What if Update + Draw takes less than 1/60 of a second?  Also simple.
+          Here the control raises Update, then Draw, then looks at the clock,
+          notices there is some time left over, so waits until it is time to
+          raise Update again.
+        </p>
+
+        <p>
+          What if Update + Draw takes longer than 1/60 of a second?  This is
+          where things get complicated. There are many reasons why this could
+          happen: 
+
+          <ol>
+            <li>
+              The computer might be slightly too slow to run the at the desired
+              speed.
+            </li>
+
+            <li>
+              Or the computer might be way too slow to run the game at the
+              desired speed!
+            </li>
+
+            <li>
+              The computer might be basically fast enough, but this particular
+              frame might have taken an unusually long time for some
+              reason. Perhaps there were too many explosions on screen, or there
+              was a garbage collection.
+            </li>
+
+            <li>
+              The app could have been paused in the debugger.
+            </li>
+          </ol>
+
+          The control does the same thing in response to all four causes of slowness:
+
+          <ul>
+            <li>CanvasTimingInformation.IsRunningSlowly to true.</li>
+            <li>Raises Update extra times (without calling Draw) until it catches up.</li>
+            <li>If things are getting ridiculous and too many Updates are
+            required to catch up, it just gives up.</li>
+          </ul>
+         
+          More information on this algorithm can be found in <a
+          href="http://blogs.msdn.com/b/shawnhar/archive/2007/07/25/understanding-gametime.aspx">this
+          blog post</a>.
+        </p>
+
+        <h4>Variable Timing</h4>
+
+        <p>
+          When IsFixedTimeStep is set to false, the control is running in
+          variable timing mode.  In this mode one, and only one, Update event is
+          always raised before each Draw event.  The app can determine how much
+          time has passed between Update events by examining the
+          CanvasTimingInformation available through the event args.
+        </p>
+
+        <h4>Paused behavior</h4>
+
+        <p>
+          When the Paused property is set to true, the control will stop raising
+          Update events.  However, when the control is resized or the clear
+          color has changed, the Draw event will be raised to ensure that the
+          display has been updated accordingly.
+        </p>
+
+        <p>
+          When the control is paused the game loop thread stops running.
+        </p>
+
+        <h3>Input</h3>
+        <p>
+          CanvasAnimatedControl can raise pointer input (pen, mouse, touch)
+          events on the game loop thread (where usually for XAML controls these
+          are raised on the UI thread).  This allows apps to process input
+          events synchronized with their game loop, rather than with XAML's
+          event loop.  Since the events are raised on the game loop thread there
+          are no threading concerns about state shared between the input event
+          handlers, the update handler or the draw handler.
+        </p>
+
+        <p>
+          The pointer events can be subscribed to using the Input property.  For
+          example:
+
+          <code>
+            animatedControl.Input.PointerPressed += OnPointerPressed;
+          </code>
         </p>
         
         <p>
-        However, if the rendering work is too costly to complete within TargetElapsedTime,
-        the Update will still be issued, just late. Depending on how slow things are, Update 
-        will be called multiple times as necessary, in order to 'catch up'. An app can
-        identify that this is happening based on the IsRunningSlowly field of CanvasTimingInformation.
+          Note that, since the input processing happens in the game loop, no
+          input events will be raised while the Paused property is set to true.
         </p>
-        
+
+        <h4>Threading Considerations</h4>
+
         <p>
-        Variable timestep works a bit differently. Draw/Update are called as fast as possible,
-        and the timing information is returned to the app. The app determines how long it has been
-        since the previous update, and uses that to control animation.
+          CanvasAnimatedControl runs its game loop on a dedicated
+          thread.  In general, it aims to run this on the same thread.  However,
+          in some circumstances it is necessary for the thread to be recreated.
+          These include:
+          <ul>
+            <li>Handling a lost device</li>
+            <li>Clear color changing from fully opaque to translucent</li>
+            <li>Pausing / unpausing via the Paused property</li>
+          </ul>
+          This means that apps should not make assumptions about which thread
+          Update or Draw is raised on.  It is, however, guaranteed to not be
+          the UI thread.         
         </p>
-        
         <p>
-        Like many XAML constructs, this control is designed to be fully compatible with 
-        pointer (pen, mouse, touch) input. To be notified of pointer events which occur
-        overtop of the control, subscribe to input events such as PointerPressed
-        or PointerMoved using the Input field of CanvasAnimatedControl. This can be done from
-        anywhere in your app. Your app will recieve input notification events when they occur,
-        whenever the control is not paused.
+          The CreateResources event is raised on the UI thread.  Update and Draw
+          are raised on the game loop thread.  The control ensures that Update
+          and Draw will never run at the same time as CreateResources.
         </p>
-        
         <p>
-        When listening to input events, this control processes them on its render thread,
-        rather than on the UI thread. An app's input notifications will, therefore, also 
-        occur on the render thread. Because of this, it's valuable to avoid overly costly
-        input handlers, and to be aware of non-UI-thread restrictions that exist for 
-        many XAML operations. This design lends itself to smooth program execution without 
-        stalling the UI. 
-        </p>   
+          Update and Draw are only ever raised on the game loop thread and will
+          never be raised simultaneously on different threads.
+        </p>
+        <p>
+          Input events are raised on the game loop thread and will never run
+          simultaneously with the Update or Draw events.
+        </p>
+
       </remarks>
     </member> 
     <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedControl">
-      <summary>XAML control providing swap chain rendering. Useful for scenarios with large amounts of quickly animating content.</summary>
+      <summary>XAML control intended for displaying animating content.</summary>
       <inheritdoc/>
     </member>   
 
@@ -85,10 +283,11 @@ under the License.
     </member>    
     
     <member name="M:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ResetElapsedTime">
-      <summary>Resets the elapsed time of the control's timer.</summary>
+      <summary>Ensures that only a single Update event will be raised on the next iteration of the game loop.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ResetElapsedTime">
-      <summary>Resets the elapsed time of the control's timer.</summary>
+      <summary>Ensures that only a single Update event will be raised on the next iteration of the game loop.</summary>
+      <inheritdoc/>
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ClearColor">
@@ -98,7 +297,11 @@ under the License.
           ClearColor defaults to transparent black, that is, Color.FromArgb(0,0,0,0).
         </p>
         <p>
-          Modifying ClearColor will cause the control to redraw.
+          Modifying ClearColor will cause the control to redraw, even if Paused
+          is set to true.
+        </p>
+        <p>
+          This property can be accessed from any thread.
         </p>
       </remarks>
     </member>
@@ -108,24 +311,46 @@ under the License.
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.IsFixedTimeStep">
-      <summary>Indicates whether the control's timer is fixed time step, as opposed to variable time step.</summary>
+      <summary>Indicates whether the game loop is running in fixed or variable timing mode.</summary>
+      <remarks>
+        <p>
+          See the remarks section of <see
+          cref="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl" /> for more
+          details on the different timing modes.
+        </p>
+        <p>
+          This property can be accessed from any thread.
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.IsFixedTimeStep">
-      <summary>Indicates whether the control's timer is fixed time step, as opposed to variable time step.</summary>
+      <summary>Indicates whether the game loop is running in fixed or variable timing mode.</summary>
+      <inheritdoc />
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Paused">
-      <summary>Indicates whether the control's rendering is paused.</summary>
+      <summary>Indicates whether the control's game loop is paused.</summary>
+      <remarks>
+        <p>
+          This property can be accessed from any thread.
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Paused">
-      <summary>Indicates whether the control's rendering is paused.</summary>
+      <summary>Indicates whether the control's game loop is paused.</summary>
+      <inheritdoc />
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ReadyToDraw">
       <summary>Gets whether the control is in a state where it is ready to draw.</summary>
       <remarks>
-        This control is ready to draw when a device has been created and all
-        CreateResources event handlers have completed successfully.
+        <p>
+          This control is ready to draw when a device has been created and all
+          CreateResources event handlers have completed successfully.
+        </p>
+        <p>
+          This property may only be accessed from XAML's UI thread.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ReadyToDraw">
@@ -135,24 +360,59 @@ under the License.
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Size">
       <summary>Gets the current size of the control.</summary>
+      <remarks>
+        This property may be accessed from any thread, including the game loop
+        thread.  This means that it can be accessed from an Update or Draw
+        handler.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Size">
       <summary>Gets the current size of the control.</summary>
+      <inheritdoc/>
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.TargetElapsedTime">
-      <summary>Gets or sets the expected time for each iteration of the Draw/Update loop.</summary>
-      <remarks>The default is 1/60th of a second.</remarks>
+      <summary>Gets or sets the time between Update events</summary>
+      <remarks>
+        <p>
+          The default is 1/60th of a second.
+        </p>
+        <p>
+          See the remarks section of <see
+          cref="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl" /> for more
+          details.
+        </p>
+        <p>
+          This property may be accessed from any thread.
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.TargetElapsedTime">
-      <summary>Gets or sets the expected time for each iteration of the Draw/Update loop.</summary>
+      <summary>Gets or sets the time between Update events</summary>
       <inheritdoc/>
     </member>
     
     <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.CreateResources">
       <summary>Hook this event to create any resources needed for your drawing.</summary>
-      <remarks>The CreateResources event is raised once when the CanvasAnimatedControl is first initialized, then
-               again any time the resources need to be recreated, for instance if the underlying GPU gets reset.
+      <remarks>
+        <p>
+          The CreateResources event is raised once when the
+          CanvasAnimatedControl is first initialized, then again any time the
+          resources need to be recreated, for instance if the underlying GPU
+          gets reset.
+        </p>
+        <p>
+          The Update and Draw events will not be raised until CreateResources
+          (or any asynchronous operations it tracks) has completed.
+        </p>
+        <p>
+          See the remarks section of <see
+          cref="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl" /> for more
+          details.
+        </p>
+        <p>
+          The CreateResources event is raised on XAML's UI thread.
+        </p>
       </remarks>
     </member>
     <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.CreateResources">
@@ -161,23 +421,38 @@ under the License.
     </member>
     
     <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Draw">
-      <summary>Hook this event to issue your immediate mode 2D drawing calls.</summary>
+      <summary>Hook this event to draw the contents of the control.</summary>
       <remarks>
-           The Draw event is raised any time its contents need to be redrawn, and the control isn't
-           paused. This occurs on a timed interval, based on the target elapsed time.
+        <p>
+          The Draw event is raised any time its contents need to be redrawn.
+          Reasons it may be raised are:
+          <ul>
+            <li>One or more Update events have been raised</li>
+            <li>The control's size has changed</li>
+            <li>The control's clear color has changed</li>
+          </ul>
+        </p>
+        <p>
+          The Draw event is raised on the game loop thread.
+        </p>
       </remarks>
     </member>
     
     <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Draw">
-      <summary>Hook this event to issue your immediate mode 2D drawing calls.</summary>
+      <summary>Hook this event to draw the contents of the control.</summary>
       <inheritdoc/>
     </member>
         
     <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Update">
       <summary>Hook this event to update any data, as necessary, for your app's animation.</summary>
       <remarks>
-           The Update event is raised on a timed interval, based on the target elapsed time.
-           It doesn't get raised if the control is paused.
+        <p>
+          The Update event is raised on a timed interval, based on the target
+          elapsed time.  It doesn't get raised if the control is paused.
+        </p>
+        <p>
+          The Update event is raised on the game loop thread.
+        </p>
       </remarks>
     </member>
     <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Update">
@@ -195,13 +470,23 @@ under the License.
     
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Device">
       <summary>Gets the underlying device used by this control.</summary>
+      <remarks>
+        <p>
+          This property may be accessed from any thread.
+        </p>
+      </remarks>
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Dpi">
       <summary>Gets the current dots-per-inch (DPI) of this control.</summary>
       <remarks>
-        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
-        The identity DPI value is 96, which means dips and pixels are the same.
+        <p>
+          DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
+          The identity DPI value is 96, which means dips and pixels are the same.
+        </p>
+        <p>
+          This property may be accessed from any thread.
+        </p>
       </remarks>
     </member>
     
@@ -237,7 +522,7 @@ under the License.
       <summary>Contains information about a CanvasAnimatedControl's timer.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.UpdateCount">
-      <summary>The number of times the Update/Draw loop has occurred.</summary>
+      <summary>The number of times the update event has been raised.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.TotalTime">
       <summary>Represents the elapsed time, in ticks, for which this control has ever been running.</summary>
@@ -247,15 +532,27 @@ under the License.
       <summary>Represents the amount of time, in ticks, since the last update.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.IsRunningSlowly">
-      <summary>For fixed-timestep, this indicates that the app's rendering work was not completed quickly enough.</summary>
-      <remarks>This field is always 'false' for variable-timestep.</remarks>
+      <summary>
+        In fixed timing mode, indicates that each iteration of the game loop is
+        taking longer than TargetElapsedTime to complete.
+      </summary>
+      <remarks>
+        If IsFixedTimeStep is set to false then IsRunningSlowly will always be
+        false.
+      </remarks>
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Input">
       <summary>Gets an object used to configure pointer input for the control.</summary>
+      <remarks>
+        <p>
+          This property may be accessed from any thread.
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Input">
       <summary>Gets an object used to configure pointer input for the control.</summary>
+      <inheritdoc/>
     </member>
 
   </members>
