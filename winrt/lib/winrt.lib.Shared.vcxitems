@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -97,6 +97,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.cpp" />
@@ -241,6 +243,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl" />

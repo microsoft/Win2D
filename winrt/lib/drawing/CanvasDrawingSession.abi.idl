@@ -976,6 +976,19 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.UI.Color color);
 
         //
+        // DrawCachedGeometry
+        //
+        [overload("DrawCachedGeometry"), default_overload]
+        HRESULT DrawCachedGeometryWithBrush(
+            [in] CanvasCachedGeometry* geometry,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawCachedGeometry")]
+        HRESULT DrawCachedGeometryWithColor(
+            [in] CanvasCachedGeometry* geometry,
+            [in] Windows.UI.Color color);
+
+        //
         // State properties
         //
 

@@ -203,7 +203,8 @@ namespace Microsoft
             TO_STRING(ID2D1Geometry);
             TO_STRING(ID2D1PathGeometry);
             TO_STRING(ID2D1SimplifiedGeometrySink);
-            TO_STRING(ID2D1GeometrySink)
+            TO_STRING(ID2D1GeometrySink);
+            TO_STRING(ID2D1GeometryRealization);
 
 #undef TO_STRING
 

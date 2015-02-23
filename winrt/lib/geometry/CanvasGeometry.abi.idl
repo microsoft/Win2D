@@ -203,6 +203,8 @@ namespace Microsoft.Graphics.Canvas
             [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] boolean* containsPoint);
+
+        [propget] HRESULT Device([out, retval] CanvasDevice** value);
     }
 
     [version(VERSION), uuid(D94E33CF-CD59-46F2-8DF4-55066AABFD56), exclusiveto(CanvasGeometry)]

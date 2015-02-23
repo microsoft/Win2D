@@ -15,6 +15,8 @@
 #include "StubCanvasBrush.h"
 #include "effects\generated\GaussianBlurEffect.h"
 #include "MockD2DRectangleGeometry.h"
+#include "CanvasCachedGeometry.h"
+#include "MockD2DGeometryRealization.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
@@ -121,6 +123,7 @@ public:
     ComPtr<CanvasDrawingSession> DS;
     ComPtr<StubCanvasBrush> Brush;
     ComPtr<CanvasGeometry> Geometry;
+    ComPtr<CanvasCachedGeometry> CachedGeometry;
 
     CanvasDrawingSessionFixture()
         : DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
@@ -128,14 +131,12 @@ public:
         , Brush(Make<StubCanvasBrush>())
     {
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
-        canvasDevice->CreateRectangleGeometryMethod.AllowAnyCall(
-            [](D2D1_RECT_F const&)
-            {
-                return Make<MockD2DRectangleGeometry>();
-            });
 
         auto geometryManager = std::make_shared<CanvasGeometryManager>();
         Geometry = geometryManager->Create(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
+
+        auto cachedGeometryManager = std::make_shared<CanvasCachedGeometryManager>();
+        CachedGeometry = cachedGeometryManager->Create(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
     }
 
 private:
@@ -2046,6 +2047,54 @@ public:
             {
                 ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, ArbitraryMarkerColor1));
                 ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, ArbitraryMarkerColor2));
+            });
+    }
+
+    //
+    // DrawGeometryRealization
+    //    
+
+    template<typename TDraw>
+    void TestDrawGeometryRealization(bool isColorOverload, TDraw const& callDrawFunction)
+    {
+        CanvasDrawingSessionFixture f;
+        BrushValidator brushValidator(f, isColorOverload);
+
+        int expectedDrawGeometryRealizationCount = isColorOverload ? 2 : 1;
+
+        ComPtr<ID2D1GeometryRealization> nativeGeometryRealizationResource = f.CachedGeometry->GetResource();
+
+        f.DeviceContext->DrawGeometryRealizationMethod.SetExpectedCalls(expectedDrawGeometryRealizationCount,
+            [&](ID2D1GeometryRealization* geometryRealization, ID2D1Brush* brush)
+            {
+                Assert::AreEqual(nativeGeometryRealizationResource.Get(), geometryRealization);
+                brushValidator.Check(brush);
+            });
+
+        callDrawFunction(f, f.CachedGeometry.Get());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationWithBrush)
+    {
+        TestDrawGeometryRealization(false,
+            [](CanvasDrawingSessionFixture const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithBrush(cachedGeometry, f.Brush.Get()));
+            });
+
+        // Null brush or cached geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(f.CachedGeometry.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(nullptr, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationWithColor)
+    {
+        TestDrawGeometryRealization(true,
+            [](CanvasDrawingSessionFixture const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, ArbitraryMarkerColor2));
             });
     }
 

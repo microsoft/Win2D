@@ -165,13 +165,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasGeometry::Close()
     {
-        m_canvasDevice.Reset();
+        m_canvasDevice.Close();
         return ResourceWrapper::Close();
     }
 
     IFACEMETHODIMP CanvasGeometry::get_Device(ICanvasDevice** device)
     {
-        return m_canvasDevice.CopyTo(device);
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(device);
+
+                ThrowIfFailed(m_canvasDevice.EnsureNotClosed().CopyTo(device));
+            });
     }
 
 
@@ -204,7 +210,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto& resource = GetResource();
 
-                auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.Get());
+                auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
                 CheckMakeResult(temporaryPathBuilder);
                 auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
@@ -270,13 +276,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto& resource = GetResource();
 
-        auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.Get());
+        auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
         CheckMakeResult(temporaryPathBuilder);
         auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
         ThrowIfFailed(resource->Widen(
             strokeWidth,
-            TryGetStrokeStyleResource(resource, strokeStyle).Get(),
+            MaybeGetStrokeStyleResource(resource.Get(), strokeStyle).Get(),
             ReinterpretAs<D2D1_MATRIX_3X2_F*>(transform),
             flatteningTolerance,
             targetPathBuilderInternal->GetGeometrySink().Get()));
@@ -306,7 +312,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto& resource = GetResource();
 
-                auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.Get());
+                auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
                 CheckMakeResult(temporaryPathBuilder);
                 auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
@@ -344,7 +350,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto& resource = GetResource();
 
-                auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.Get());
+                auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
                 CheckMakeResult(temporaryPathBuilder);
                 auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
@@ -659,7 +665,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ThrowIfFailed(resource->GetWidenedBounds(
             strokeWidth,
-            TryGetStrokeStyleResource(resource, strokeStyle).Get(),
+            MaybeGetStrokeStyleResource(resource.Get(), strokeStyle).Get(),
             ReinterpretAs<D2D1_MATRIX_3X2_F*>(transform),
             flatteningTolerance,
             &d2dBounds));
@@ -726,27 +732,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(resource->StrokeContainsPoint(
             ToD2DPoint(point),
             strokeWidth,
-            TryGetStrokeStyleResource(resource, strokeStyle).Get(),
+            MaybeGetStrokeStyleResource(resource.Get(), strokeStyle).Get(),
             ReinterpretAs<D2D1_MATRIX_3X2_F*>(transform),
             flatteningTolerance,
             &d2dContainsPoint));
 
         *containsPoint = !!d2dContainsPoint;
-    }
-
-    ComPtr<ID2D1StrokeStyle> CanvasGeometry::TryGetStrokeStyleResource(
-        ComPtr<ID2D1Geometry> const& thisResource,
-        ICanvasStrokeStyle* strokeStyle)
-    {
-        ComPtr<ID2D1StrokeStyle> d2dStrokeStyle;
-        if (strokeStyle)
-        {
-            auto strokeStyleInternal = As<ICanvasStrokeStyleInternal>(strokeStyle);
-            ComPtr<ID2D1Factory> d2dFactory;
-            thisResource->GetFactory(&d2dFactory);
-            d2dStrokeStyle = strokeStyleInternal->GetRealizedD2DStrokeStyle(d2dFactory.Get());
-        }
-        return d2dStrokeStyle;
     }
 
     ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(

@@ -119,7 +119,6 @@ public:
         ComPtr<MockD2DEllipseGeometry> D2DEllipseGeometry;
         ComPtr<ICanvasGeometry> EllipseGeometry;
 
-        ComPtr<ID2D1StrokeStyle1> D2DStrokeStyle;
         ComPtr<ICanvasStrokeStyle> StrokeStyle;
 
         GeometryOperationsFixture_DoesNotOutputGeometry()
@@ -953,6 +952,9 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPoint(Vector2{}, 0, &b));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithStrokeStyle(Vector2{}, 0, strokeStyle.Get(), &b));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, strokeStyle.Get(), m, 0, &b));
+
+        ComPtr<ICanvasDevice> retrievedDevice;
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->get_Device(&retrievedDevice));
     }
 
     TEST_METHOD_EX(CanvasGeometry_DefaultFlatteningTolerance_CorrectValue)
@@ -969,6 +971,27 @@ public:
         auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->get_DefaultFlatteningTolerance(nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_get_Device)
+    {
+        Fixture f;
+
+        auto canvasGeometry = f.Manager->Create(f.Device.Get(), Rect{});
+
+        ComPtr<ICanvasDevice> device;
+        Assert::AreEqual(S_OK, canvasGeometry->get_Device(&device));
+
+        Assert::AreEqual(static_cast<ICanvasDevice*>(f.Device.Get()), device.Get());
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_get_Device_Null)
+    {
+        Fixture f;
+
+        auto canvasGeometry = f.Manager->Create(f.Device.Get(), Rect{});
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometry->get_Device(nullptr));
     }
 };
 

@@ -736,5 +736,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return pathGeometry;
     }
 
+    ComPtr<ID2D1GeometryRealization> CanvasDevice::CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1GeometryRealization> geometryRealization;
+        ThrowIfFailed(deviceContext->CreateFilledGeometryRealization(geometry, flatteningTolerance, &geometryRealization));
+
+        return geometryRealization;
+    }
+
+    ComPtr<ID2D1GeometryRealization> CanvasDevice::CreateStrokedGeometryRealization(
+        ID2D1Geometry* geometry,
+        float strokeWidth,
+        ID2D1StrokeStyle* strokeStyle,
+        float flatteningTolerance)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        ComPtr<ID2D1GeometryRealization> geometryRealization;
+        ThrowIfFailed(deviceContext->CreateStrokedGeometryRealization(
+            geometry,
+            flatteningTolerance,
+            strokeWidth,
+            strokeStyle,
+            &geometryRealization));
+
+        return geometryRealization;
+    }
+
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
 }}}}

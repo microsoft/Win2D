@@ -166,6 +166,9 @@ namespace canvas
         DONT_EXPECT(FillGeometryWithBrush, ICanvasGeometry*, ICanvasBrush*);
         DONT_EXPECT(FillGeometryWithColor, ICanvasGeometry*, Color);
 
+        DONT_EXPECT(DrawCachedGeometryWithBrush, ICanvasCachedGeometry*, ICanvasBrush*);
+        DONT_EXPECT(DrawCachedGeometryWithColor, ICanvasCachedGeometry*, Color);
+
         DONT_EXPECT(get_Antialiasing     , CanvasAntialiasing*);
         DONT_EXPECT(put_Antialiasing     , CanvasAntialiasing);
         DONT_EXPECT(get_Blend            , CanvasBlend*);

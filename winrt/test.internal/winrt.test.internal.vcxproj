@@ -69,6 +69,7 @@
     <ClInclude Include="mocks\MockD2DEffect.h" />
     <ClInclude Include="mocks\MockD2DFactory.h" />
     <ClInclude Include="mocks\MockD2DGeometrySink.h" />
+    <ClInclude Include="mocks\MockD2DGeometryRealization.h" />
     <ClInclude Include="mocks\MockD2DGradientStopCollection.h" />
     <ClInclude Include="mocks\MockD2DImageBrush.h" />
     <ClInclude Include="mocks\MockD2DLinearGradientBrush.h" />
@@ -116,6 +117,7 @@
     <ClCompile Include="xaml\ControlFixtures.cpp" />
     <ClCompile Include="xaml\RecreatableDeviceManagerTests.cpp" />
     <ClCompile Include="graphics\CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="graphics\CanvasCachedGeometryUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasCommandListUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasDeviceUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasDrawingSessionUnitTests.cpp" />

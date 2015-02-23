@@ -43,7 +43,13 @@ under the License.
                 Some primitives that can be created using static CanvasGeometry methods, such as Rectangle,
                 may also be drawn straightforwardly through CanvasDrawingSession's methods. In fact, for 
                 simple cases, CanvasDrawingSession's methods are recommended.
-                </p>                
+                </p>       
+
+                <p>
+                Complex geometries, sometimes those created through CanvasGeometry.CreatePath, can be
+                costly to draw. It may be worth paying a one-time, up-front performance cost for a less
+                expensive draw-time cost. To do this, consider using <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry"/>.
+                </p>       
         </remarks>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Dispose">
@@ -268,6 +274,10 @@ under the License.
       For more information, see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280327%28v=vs.85%29.aspx">ComputeFlatteningTolerance</a>.
       </p>
       </remarks>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.CanvasGeometry.Device">
+      <summary>Gets the device associated with this CanvasGeometry.</summary>
     </member>
     
   </members>

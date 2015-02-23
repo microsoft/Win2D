@@ -64,6 +64,9 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(CreatePathGeometryMethod, ComPtr<ID2D1PathGeometry1>());
 
+        CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float));
+        CALL_COUNTER_WITH_MOCK(CreateStrokedGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float, ID2D1StrokeStyle*, float));
+
         //
         // ICanvasDevice
         //
@@ -287,6 +290,20 @@ namespace canvas
         virtual ComPtr<ID2D1PathGeometry1> CreatePathGeometry() override
         {
             return CreatePathGeometryMethod.WasCalled();
+        }
+
+        virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) override
+        {
+            return CreateFilledGeometryRealizationMethod.WasCalled(geometry, flatteningTolerance);
+        }
+
+        virtual ComPtr<ID2D1GeometryRealization> CreateStrokedGeometryRealization(
+            ID2D1Geometry* geometry,
+            float strokeWidth,
+            ID2D1StrokeStyle* strokeStyle,
+            float flatteningTolerance) override
+        {
+            return CreateStrokedGeometryRealizationMethod.WasCalled(geometry, strokeWidth, strokeStyle, flatteningTolerance);
         }
     };
 }

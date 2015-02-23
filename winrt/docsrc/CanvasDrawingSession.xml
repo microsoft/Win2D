@@ -497,6 +497,21 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
       <summary>Fills a geometry with the specified color.</summary>
     </member>    
-   
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a cached geometry, using a brush to define the color.</summary>
+      <remarks>
+      	Whether this operation is a stroke or fill is determined by how whether the cached geometry was 
+      	created by <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Windows.UI.Color)">
+      <summary>Draws a cached geometry with the specified color.</summary>
+      <remarks>
+      	Whether this operation is a stroke or fill is determined by how whether the cached geometry was 
+      	created by <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
+    
   </members>
 </doc>

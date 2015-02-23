@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "CanvasStrokeStyle.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
@@ -34,7 +36,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasGeometry, BaseTrust);
 
-        ComPtr<ICanvasDevice> m_canvasDevice;
+        ClosablePtr<ICanvasDevice> m_canvasDevice;
 
     public:
         CanvasGeometry(
@@ -223,17 +225,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float flatteningTolerance,
             Vector2* tangent,
             Vector2* point);
-
-        ComPtr<ID2D1StrokeStyle> TryGetStrokeStyleResource(
-            ComPtr<ID2D1Geometry> const& thisResource, 
-            ICanvasStrokeStyle* strokeStyle);
     };
 
     class CanvasGeometryManager : public ResourceManager<CanvasGeometryTraits>
     {
     public:
-        virtual ~CanvasGeometryManager() = default;
-
         ComPtr<CanvasGeometry> CreateNew(
             ICanvasResourceCreator* device,
             Rect rect);
@@ -253,7 +249,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasGeometry> CreateNew(
             ICanvasPathBuilder* pathBuilder);
 
-        virtual ComPtr<CanvasGeometry> CreateWrapper(
+        ComPtr<CanvasGeometry> CreateWrapper(
             ICanvasDevice* device,
             ID2D1Geometry* resource);
 
@@ -334,4 +330,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_DefaultFlatteningTolerance)(float* value) override;
     };
+
+    inline ComPtr<ID2D1StrokeStyle> MaybeGetStrokeStyleResource(
+        ID2D1Resource* factoryOwner,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        ComPtr<ID2D1StrokeStyle> d2dStrokeStyle;
+        if (strokeStyle)
+        {
+            auto strokeStyleInternal = As<ICanvasStrokeStyleInternal>(strokeStyle);
+            ComPtr<ID2D1Factory> d2dFactory;
+            factoryOwner->GetFactory(&d2dFactory);
+            d2dStrokeStyle = strokeStyleInternal->GetRealizedD2DStrokeStyle(d2dFactory.Get());
+        }
+        return d2dStrokeStyle;
+    }
 }}}}

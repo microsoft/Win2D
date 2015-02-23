@@ -2267,7 +2267,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     GetColorBrush(color),
                     nullptr);
             });
-    }    
+    }
+
+    //
+    // DrawCachedGeometry
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryWithBrush(
+        ICanvasCachedGeometry* cachedGeometry,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(cachedGeometry);
+                CheckInPointer(brush);
+
+                deviceContext->DrawGeometryRealization(
+                    GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
+                    ToD2DBrush(brush).Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryWithColor(
+        ICanvasCachedGeometry* cachedGeometry,
+        Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(cachedGeometry);
+
+                deviceContext->DrawGeometryRealization(
+                    GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
+                    GetColorBrush(color));
+            });
+    }
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {

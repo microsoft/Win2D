@@ -122,6 +122,42 @@ public:
             });
     }
 
+    TEST_METHOD(CanvasCachedGeometry_NativeInterop)
+    {
+        ComPtr<ID2D1RectangleGeometry> rectangleGeometry;
+        ThrowIfFailed(GetD2DFactory()->CreateRectangleGeometry(D2D1::RectF(1, 2, 3, 4), &rectangleGeometry));
+
+        auto d2dDevice = GetWrappedResource<ID2D1Device1>(m_device);
+
+        ComPtr<ID2D1DeviceContext> d2dDeviceContext;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2dDeviceContext));
+
+        auto d2dDeviceContext1 = As<ID2D1DeviceContext1>(d2dDeviceContext);
+
+        ComPtr<ID2D1GeometryRealization> d2dGeometryRealization;
+        ThrowIfFailed(d2dDeviceContext1->CreateFilledGeometryRealization(
+            rectangleGeometry.Get(), 
+            D2D1_DEFAULT_FLATTENING_TOLERANCE, 
+            &d2dGeometryRealization));
+
+        auto canvasCachedGeometry = GetOrCreate<CanvasCachedGeometry>(m_device, d2dGeometryRealization.Get());
+
+        auto retrievedGeometryRealization = GetWrappedResource<ID2D1GeometryRealization>(canvasCachedGeometry);
+
+        Assert::AreEqual(d2dGeometryRealization.Get(), retrievedGeometryRealization.Get());
+    }
+
+    TEST_METHOD(CanvasCachedGeometry_NullStrokeStyle_ShouldFail)
+    {
+        auto canvasGeometry = CanvasGeometry::CreateRectangle(m_device, Rect{});
+
+        Assert::ExpectException< Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasCachedGeometry::CreateStroke(canvasGeometry, 5.0f, nullptr);
+            });
+    }
+
 private:
     ComPtr<ID2D1Factory> GetD2DFactory()
     {

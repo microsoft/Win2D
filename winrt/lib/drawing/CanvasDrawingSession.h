@@ -891,6 +891,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color color) override;
 
         //
+        // DrawCachedGeometry
+        //
+
+        IFACEMETHOD(DrawCachedGeometryWithBrush)(
+            ICanvasCachedGeometry* cachedGeometry,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawCachedGeometryWithColor)(
+            ICanvasCachedGeometry* cachedGeometry,
+            ABI::Windows::UI::Color color) override;
+
+        //
         // State properties
         //
 

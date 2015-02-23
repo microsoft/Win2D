@@ -1,0 +1,65 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+namespace Microsoft.Graphics.Canvas
+{
+    runtimeclass CanvasCachedGeometry;
+
+    [version(VERSION), uuid(BA6CB114-E1A1-448D-AB7C-8D2B92674119), exclusiveto(CanvasCachedGeometry)]
+    interface ICanvasCachedGeometry : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+    }
+
+    [version(VERSION), uuid(80BA1060-A9D7-41BA-9372-EC3FC1744E5D), exclusiveto(CanvasCachedGeometry)]
+    interface ICanvasCachedGeometryStatics : IInspectable
+    {
+        [overload("CreateFill")]
+        HRESULT CreateFill(
+            [in] CanvasGeometry* geometry,
+            [out, retval] CanvasCachedGeometry** cachedGeometry);
+
+        [overload("CreateFill"), default_overload]
+        HRESULT CreateFillWithFlatteningTolerance(
+            [in] CanvasGeometry* geometry,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasCachedGeometry** cachedGeometry);
+
+        [overload("CreateStroke")]
+        HRESULT CreateStroke(
+            [in] CanvasGeometry* geometry,
+            [in] float strokeWidth,
+            [out, retval] CanvasCachedGeometry** cachedGeometry);
+
+        [overload("CreateStroke")]
+        HRESULT CreateStrokeWithStrokeStyle(
+            [in] CanvasGeometry* geometry,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [out, retval] CanvasCachedGeometry** cachedGeometry);
+
+        [overload("CreateStroke"), default_overload]
+        HRESULT CreateStrokeWithStrokeStyleAndFlatteningTolerance(
+            [in] CanvasGeometry* geometry,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasCachedGeometry** cachedGeometry);
+    }
+
+    [version(VERSION), static(ICanvasCachedGeometryStatics, VERSION)]
+    runtimeclass CanvasCachedGeometry
+    {
+        [default] interface ICanvasCachedGeometry;
+    }
+}
