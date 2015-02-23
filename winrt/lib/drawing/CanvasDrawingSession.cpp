@@ -2130,8 +2130,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         if (!m_defaultTextFormat)
         {
-            m_defaultTextFormat = Make<CanvasTextFormat>();
-            CheckMakeResult(m_defaultTextFormat);
+            m_defaultTextFormat = CanvasTextFormatFactory::GetOrCreateManager()->Create();
         }
 
         return m_defaultTextFormat.Get();

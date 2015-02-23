@@ -16,13 +16,81 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
 
-    class CanvasTextFormatFactory : public ActivationFactory<
-        CloakedIid<ICanvasFactoryNative>>,
-        private LifespanTracker<CanvasTextFormatFactory>
+    //
+    // CanvasTextFormatAdapter
+    //
+
+    class ICanvasTextFormatAdapter
+    {
+    public:
+        virtual ~ICanvasTextFormatAdapter() = default;
+
+        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) = 0;
+        virtual IStorageFileStatics* GetStorageFileStatics() = 0;
+    };
+
+    class CanvasTextFormatAdapter : public ICanvasTextFormatAdapter
+    {
+        ComPtr<IStorageFileStatics> m_storageFileStatics;
+
+    public:
+        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override;
+        virtual IStorageFileStatics* GetStorageFileStatics() override;
+    };
+
+    class CanvasTextFormat;
+
+    //
+    // CanvasTextFormatManager
+    //
+    // This follows the pattern of CanvasTextFormatFactory /
+    // PerApplicationManager / CanvasTextFormatManager since it plays nicely
+    // with our established leak tracking code.  
+    //
+    // Note that CanvasTextFormatManager does not derive from ResourceManager,
+    // since CanvasTextFormat is not a wrapped resource and doesn't support
+    // idempotent interop.
+    //
+
+    class CanvasTextFormatManager 
+        : public std::enable_shared_from_this<CanvasTextFormatManager>
+        , public StoredInPropertyMap
+        , private LifespanTracker<CanvasTextFormatManager>
+    {
+        std::shared_ptr<ICanvasTextFormatAdapter> m_adapter;
+        ComPtr<IDWriteFactory> m_isolatedFactory;
+        ComPtr<IDWriteFontCollectionLoader> m_customLoader;
+        ComPtr<IUriRuntimeClassFactory> m_uriFactory;
+
+    public:
+        CanvasTextFormatManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter);
+
+        ComPtr<CanvasTextFormat> Create();
+        ComPtr<CanvasTextFormat> Create(IDWriteTextFormat* format);
+
+        ComPtr<IDWriteFontCollection> GetFontCollectionFromUri(WinString const& uri);        
+
+    private:
+        ComPtr<IDWriteFactory> const& GetIsolatedFactory();        
+
+        WinString GetAbsolutePathFromUri(WinString const& uri);
+    };
+
+
+    //
+    // CanvasTextFormatFactory
+    //
+
+    class CanvasTextFormatFactory 
+        : public ActivationFactory<
+            CloakedIid<ICanvasFactoryNative>>,
+          public PerApplicationManager<CanvasTextFormatFactory, CanvasTextFormatManager>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextFormat, BaseTrust);
 
     public:
+        CanvasTextFormatFactory();
+
         //
         // ActivationFactory
         //
@@ -36,8 +104,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(GetOrCreate)(
             IUnknown* resource,
             IInspectable** wrapper) override;
+
+        //
+        // Used by PerApplicationManager
+        //
+        static std::shared_ptr<CanvasTextFormatManager> CreateManager();
     };
 
+
+
+    //
+    // CanvasTextFormat
+    //
 
     [uuid(E295AC1E-B763-49D4-9AE3-6E75D0C429AA)]
     class ICanvasTextFormatInternal : public IUnknown
@@ -63,6 +141,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         private LifespanTracker<CanvasTextFormat>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextFormat, BaseTrust);
+
+        std::shared_ptr<CanvasTextFormatManager> m_manager;
         
         //
         // Has Close() been called?  It is tempting to use a null m_format to
@@ -108,8 +188,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IDWriteTextFormat> m_format;
 
     public:
-        CanvasTextFormat();
-        CanvasTextFormat(IDWriteTextFormat* format);
+        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> adapter);
+        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> adapter, IDWriteTextFormat* format);
 
         //
         // ICanvasTextFormat
@@ -213,4 +293,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         DWRITE_TRIMMING Options;
         ComPtr<IDWriteInlineObject> Sign;
     };
+
 }}}}

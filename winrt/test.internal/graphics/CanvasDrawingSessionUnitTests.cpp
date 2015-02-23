@@ -2379,7 +2379,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
         Fixture()
         {
-            Format = Make<CanvasTextFormat>();
+            Format = CanvasTextFormatFactory::GetOrCreateManager()->Create();
         }
 
         template<typename FORMAT_VALIDATOR>

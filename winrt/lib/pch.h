@@ -55,6 +55,7 @@
 // WinRT
 #include <windows.foundation.h>
 #include <windows.foundation.collections.h>
+#include <windows.storage.h>
 #include <windows.ui.h>
 #include <windows.ui.xaml.controls.h>
 #include <windows.ui.xaml.media.dxinterop.h>

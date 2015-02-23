@@ -458,19 +458,229 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return stringBuilder.Get();
     }
 
+
+    //
+    // CanvasTextFormatAdapter implementation
+    //
+    
+
+    ComPtr<IDWriteFactory> CanvasTextFormatAdapter::CreateDWriteFactory(DWRITE_FACTORY_TYPE type)
+    {
+        ComPtr<IDWriteFactory> factory;
+        ThrowIfFailed(DWriteCreateFactory(type, __uuidof(factory), &factory));
+        return factory;
+    }
+    
+
+    IStorageFileStatics* CanvasTextFormatAdapter::GetStorageFileStatics()
+    {
+        if (!m_storageFileStatics)
+        {
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(), 
+                &m_storageFileStatics));
+        }
+        
+        return m_storageFileStatics.Get();
+    }
+
+
+    //
+    // Custom font loading
+    //
+
+
+    class CustomFontFileEnumerator 
+        : public RuntimeClass<
+            RuntimeClassFlags<ClassicCom>,
+            IDWriteFontFileEnumerator>
+        , private LifespanTracker<CustomFontFileEnumerator>
+
+    {
+        ComPtr<IDWriteFactory> m_factory;
+        std::wstring m_filename;
+        ComPtr<IDWriteFontFile> m_theFile;
+
+    public:
+        CustomFontFileEnumerator(IDWriteFactory* factory, void const* collectionKey, uint32_t collectionKeySize)
+            : m_factory(factory)
+            , m_filename(static_cast<wchar_t const*>(collectionKey), collectionKeySize / 2)
+        {
+        }
+
+        IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
+        {
+            if (m_theFile)
+            {
+                *hasCurrentFile = FALSE;
+            }
+            else if (SUCCEEDED(m_factory->CreateFontFileReference(m_filename.c_str(), nullptr, &m_theFile)))
+            {
+                *hasCurrentFile = TRUE;
+            }
+            else
+            {
+                *hasCurrentFile = FALSE;
+            }
+            
+            return S_OK;
+        }
+
+        IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
+        {
+            return m_theFile.CopyTo(fontFile);
+        }
+    };
+
+    class CustomFontLoader 
+        : public RuntimeClass<
+            RuntimeClassFlags<ClassicCom>, 
+            IDWriteFontCollectionLoader>
+        , private LifespanTracker<CustomFontLoader>
+    {
+    public:
+        IFACEMETHODIMP CreateEnumeratorFromKey(
+            IDWriteFactory* factory,
+            void const* collectionKey,
+            uint32_t collectionKeySize,
+            IDWriteFontFileEnumerator** fontFileEnumerator) override
+        {
+            return ExceptionBoundary(
+                [=]
+                {
+                    auto enumerator = Make<CustomFontFileEnumerator>(factory, collectionKey, collectionKeySize);
+                    CheckMakeResult(enumerator);
+                    ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
+                });
+        }
+    };
+
+
+    //
+    // CanvasTextFormatManager implementation
+    //
+    
+    CanvasTextFormatManager::CanvasTextFormatManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter)
+        : m_adapter(adapter)
+    {
+        ThrowIfFailed(GetActivationFactory(
+            HStringReference(RuntimeClass_Windows_Foundation_Uri).Get(), 
+            &m_uriFactory));
+    }
+
+
+    ComPtr<CanvasTextFormat> CanvasTextFormatManager::Create()
+    {
+        return Make<CanvasTextFormat>(shared_from_this());
+    }
+
+
+    ComPtr<CanvasTextFormat> CanvasTextFormatManager::Create(IDWriteTextFormat* format)
+    {
+        return Make<CanvasTextFormat>(shared_from_this(), format);
+    }
+
+    WinString CanvasTextFormatManager::GetAbsolutePathFromUri(WinString const& uriString)
+    {
+        ComPtr<IUriRuntimeClass> uri;
+        ThrowIfFailed(m_uriFactory->CreateWithRelativeUri(WinString(L"ms-appx://"), uriString, &uri));
+
+        auto storageFileStatics = m_adapter->GetStorageFileStatics();
+        ComPtr<IAsyncOperation<StorageFile*>> operation;
+        ThrowIfFailed(storageFileStatics->GetFileFromApplicationUriAsync(uri.Get(), &operation));
+
+        Event operationCompleted(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
+        auto handler = Callback<IAsyncOperationCompletedHandler<StorageFile*>>(
+            [&] (IAsyncOperation<StorageFile*>*, AsyncStatus)
+            {
+                SetEvent(operationCompleted.Get());
+                return S_OK;
+            });
+        CheckMakeResult(handler);
+
+        ThrowIfFailed(operation->put_Completed(handler.Get()));
+
+        auto res = WaitForSingleObjectEx(operationCompleted.Get(), INFINITE, false);
+        if (res != WAIT_OBJECT_0)
+            ThrowHR(E_UNEXPECTED);
+
+        ComPtr<IStorageFile> storageFile;
+        ThrowIfFailed(operation->GetResults(&storageFile));
+
+        WinString path;
+        ThrowIfFailed(As<IStorageItem>(storageFile)->get_Path(path.GetAddressOf()));
+
+        return path;
+    }
+
+
+    ComPtr<IDWriteFontCollection> CanvasTextFormatManager::GetFontCollectionFromUri(WinString const& uri)
+    {
+        //
+        // No URI means no custom font collection - ie use the system font
+        // collection.
+        //
+        if (uri == WinString())
+        {
+            return nullptr;
+        }
+
+        auto path = GetAbsolutePathFromUri(uri);
+
+        auto pathBegin = begin(path);
+        auto pathEnd = end(path);
+
+        assert(pathBegin && pathEnd);
+
+        void const* key = pathBegin;
+        uint32_t keySize = std::distance(pathBegin, pathEnd) * sizeof(wchar_t);
+
+        ComPtr<IDWriteFontCollection> collection;
+
+        auto factory = GetIsolatedFactory();
+        ThrowIfFailed(factory->CreateCustomFontCollection(m_customLoader.Get(), key, keySize, &collection));
+        
+        return collection;
+    }
+
+
+    ComPtr<IDWriteFactory> const& CanvasTextFormatManager::GetIsolatedFactory()
+    {
+        if (!m_isolatedFactory)
+        {
+            m_isolatedFactory = m_adapter->CreateDWriteFactory(DWRITE_FACTORY_TYPE_ISOLATED);
+            m_customLoader = Make<CustomFontLoader>();
+            ThrowIfFailed(m_isolatedFactory->RegisterFontCollectionLoader(m_customLoader.Get()));
+        }
+        
+        return m_isolatedFactory;
+    }
+
+
+
     //
     // CanvasTextFormatFactory implementation
     //
 
 
+    CanvasTextFormatFactory::CanvasTextFormatFactory()
+    {
+    }
+
+
+    std::shared_ptr<CanvasTextFormatManager> CanvasTextFormatFactory::CreateManager()
+    {
+        return std::make_shared<CanvasTextFormatManager>(std::make_shared<CanvasTextFormatAdapter>());
+    }
+
+    
     IFACEMETHODIMP CanvasTextFormatFactory::ActivateInstance(IInspectable** object)
     {
         return ExceptionBoundary(
             [&]
             {
-                auto newCanvasTextFormat = Make<CanvasTextFormat>();
-                CheckMakeResult(newCanvasTextFormat);
-                ThrowIfFailed(newCanvasTextFormat.CopyTo(object));
+                auto format = GetOrCreateManager()->Create();
+                ThrowIfFailed(format.CopyTo(object));
             });
     }
 
@@ -482,12 +692,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ComPtr<IDWriteTextFormat> dwriteTextFormat;
-                ThrowIfFailed(resource->QueryInterface(dwriteTextFormat.GetAddressOf()));
-
-                auto newCanvasTextFormat = Make<CanvasTextFormat>(dwriteTextFormat.Get());
-                CheckMakeResult(newCanvasTextFormat);
-                ThrowIfFailed(newCanvasTextFormat.CopyTo(wrapper));
+                auto format = GetOrCreateManager()->Create(As<IDWriteTextFormat>(resource).Get());
+                ThrowIfFailed(format.CopyTo(wrapper));
             });
     }
 
@@ -497,8 +703,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
 
-    CanvasTextFormat::CanvasTextFormat()
-        : m_closed(false)
+    CanvasTextFormat::CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager)
+        : m_manager(manager)
+        , m_closed(false)
         , m_flowDirection(CanvasTextDirection::TopToBottom)
         , m_fontFamilyName(L"Segoe UI")
         , m_fontSize(20.0f)
@@ -520,8 +727,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    CanvasTextFormat::CanvasTextFormat(IDWriteTextFormat* format)
-        : m_closed(false)
+    CanvasTextFormat::CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager, IDWriteTextFormat* format)
+        : m_manager(manager)
+        , m_closed(false)
         , m_format(format)
     {
         SetShadowPropertiesFromDWrite();
@@ -553,6 +761,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+    static std::pair<WinString, WinString> GetUriAndFontFamily(WinString const& fontFamilyName)
+    {
+        auto beginIt = begin(fontFamilyName);
+        auto endIt = end(fontFamilyName);
+
+        auto hashPos = std::find(beginIt, endIt, L'#');
+
+        if (hashPos == endIt)
+            return std::make_pair(WinString(), fontFamilyName);
+        else
+            return std::make_pair(WinString(beginIt, hashPos), WinString(hashPos+1, endIt));
+    }
+
+
     ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
     {
         if (m_format)
@@ -564,9 +786,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             __uuidof(&factory),
             static_cast<IUnknown**>(&factory)));
 
+        auto uriAndFontFamily = GetUriAndFontFamily(m_fontFamilyName);
+        auto const& uri = uriAndFontFamily.first;
+        auto const& fontFamily = uriAndFontFamily.second;
+
+        ComPtr<IDWriteFontCollection> fontCollection = m_fontCollection;
+
+        if (!fontCollection)
+        {
+            fontCollection = m_manager->GetFontCollectionFromUri(uri);
+        }
+
         ThrowIfFailed(factory->CreateTextFormat(
-            static_cast<const wchar_t*>(m_fontFamilyName),
-            m_fontCollection.Get(),
+            static_cast<const wchar_t*>(fontFamily),
+            fontCollection.Get(),
             ToFontWeight(m_fontWeight),
             ToFontStyle(m_fontStyle),
             ToFontStretch(m_fontStretch),
@@ -794,17 +1027,48 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_fontFamilyName,
             [&]
             {
-                return GetFontFamilyName(m_format.Get());
+                //
+                // If this were any other simple property, this would get the
+                // font family name from the realized IDWriteTextFormat
+                // (m_format).
+                //
+                // We have no way of storing the full information required to
+                // reconstruct the CanvasTextFormat's font family name (ie
+                // including the URI from a "uri#family" style name).
+                //
+                // But, all is not lost, since the font family and the font
+                // collection are immutable in IDWriteTextFormat we can safely
+                // assume that the shadow property has not been modified since
+                // we realized it.
+                //
+                return m_fontFamilyName;
             });
     }
 
 
     IFACEMETHODIMP CanvasTextFormat::put_FontFamily(HSTRING value)
     {
-        return PropertyPut(
-            value,
-            &m_fontFamilyName);
+        //
+        // FontFamily not only needs to Unrealize (since the font family
+        // property of IDWriteTextFormat is immutable), but also needs to wipe
+        // the font collection (since the font collection is chosen based on the
+        // font family string).
+        //
+        return ExceptionBoundary(
+            [&]
+            {
+                ThrowIfClosed();
+                
+                if (IsSame(&m_fontFamilyName, value))
+                    return;
+                
+                Unrealize();
+                m_fontCollection.Reset();
+
+                SetFrom(&m_fontFamilyName, value);
+            });
     }
+
 
     //
     // CanvasTextFormat.FontSize
