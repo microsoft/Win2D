@@ -142,7 +142,8 @@ public:
 
         void ValidateGeometries(ID2D1Geometry** geometries, uint32_t geometryCount) const
         {
-            Assert::AreEqual(m_rawCanvasData.size(), geometryCount);
+            assert(m_rawCanvasData.size() < UINT_MAX);
+            Assert::AreEqual(static_cast<uint32_t>(m_rawCanvasData.size()), geometryCount);
 
             for (UINT i = 0; i < geometryCount; ++i)
             {
