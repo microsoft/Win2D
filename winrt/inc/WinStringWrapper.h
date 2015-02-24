@@ -46,7 +46,7 @@ public:
         ThrowIfFailed(WindowsDuplicateString(str, &m_value));
     }
 
-    explicit WinStringT(const wchar_t* str)
+    explicit WinStringT(wchar_t const* str)
     {
         auto length = wcslen(str);
         ThrowIfFailed(WindowsCreateString(str, static_cast<uint32_t>(length), &m_value));
@@ -55,6 +55,12 @@ public:
     explicit WinStringT(std::wstring const& str)
         : WinStringT(str.c_str())
     {}
+
+    WinStringT(wchar_t const* begin, wchar_t const* end)
+    {
+        auto length = std::distance(begin, end);
+        ThrowIfFailed(WindowsCreateString(begin, static_cast<uint32_t>(length), &m_value));
+    }
 
     WinStringT(WinStringT const& other)
         : m_value(nullptr)
@@ -73,7 +79,7 @@ public:
         Release();
     }
 
-    WinStringT& operator=(const wchar_t* str)
+    WinStringT& operator=(wchar_t const* str)
     {
         return operator=(WinString(str));
     }
@@ -117,7 +123,7 @@ public:
     }
 
 
-    explicit operator const wchar_t*() const
+    explicit operator wchar_t const*() const
     {
         return WindowsGetStringRawBuffer(m_value, nullptr);
     }
@@ -146,8 +152,21 @@ public:
     {
         // Recreate the string from the c-style string.  This will only copy
         // up to the first null character.
-        return WinStringT(static_cast<const wchar_t*>(*this));
+        return WinStringT(static_cast<wchar_t const*>(*this));
+    }
+
+    friend wchar_t const* begin(WinStringT const& s)
+    {
+        return static_cast<wchar_t const*>(s);
+    }
+
+    friend wchar_t const* end(WinStringT const& s)
+    {
+        uint32_t length = 0;
+        auto buf = WindowsGetStringRawBuffer(s.m_value, &length);
+        return buf + length;
     }
 };
 
 typedef WinStringT<> WinString;
+

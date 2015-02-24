@@ -256,5 +256,29 @@ TEST_CLASS(WinStringTests)
         Assert::IsFalse(s1.HasEmbeddedNull());
         Assert::IsTrue(s1.Equals(s2));
     }
+
+    TEST_METHOD_EX(WinString_BeginEnd)
+    {
+        std::wstring str(L"hello world");
+        WinString s(str);
+
+        auto b = begin(s);
+        auto e = end(s);
+
+        Assert::AreEqual(std::distance(str.begin(), str.end()), std::distance(b, e));
+        Assert::IsTrue(std::equal(b, e, str.begin()));        
+    }
+
+    TEST_METHOD_EX(WinString_ConstructFromIterators)
+    {
+        WinString str(L"hello world");
+        auto it = std::find(begin(str), end(str), L' ');
+
+        WinString s1(begin(str), it);
+        WinString s2(it, end(str));
+
+        Assert::AreEqual(L"hello", static_cast<wchar_t const*>(s1));
+        Assert::AreEqual(L" world", static_cast<wchar_t const*>(s2));
+    }
 };
 
