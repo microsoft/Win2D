@@ -1091,7 +1091,7 @@ public:
         auto rt = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DirectXPixelFormat::R8G8B8A8UIntNormalized, CanvasAlphaMode::Premultiplied, DEFAULT_DPI);
         Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
 
-        const wchar_t* expectedMessage = L"This method only supports resources with pixel format DirectXPixelFormat::B8G8R8A8UIntNormalized.";
+        const wchar_t* expectedMessage = L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.";
 
         ExpectCOMException(E_INVALIDARG, expectedMessage,
             [&]
