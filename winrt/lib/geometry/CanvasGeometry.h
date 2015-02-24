@@ -95,6 +95,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float flatteningTolerance,
             ICanvasGeometry** geometry) override;
 
+        IFACEMETHOD(Transform)(
+            Numerics::Matrix3x2 transform,
+            ICanvasGeometry** geometry) override;
+
         IFACEMETHOD(CompareWith)(
             ICanvasGeometry* otherGeometry,
             CanvasGeometryRelation* relation) override;
@@ -249,6 +253,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasGeometry> CreateNew(
             ICanvasPathBuilder* pathBuilder);
 
+        ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t geometryCount,
+            ICanvasGeometry** geometryElements,
+            CanvasFilledRegionDetermination filledRegionDetermination);
+
         ComPtr<CanvasGeometry> CreateWrapper(
             ICanvasDevice* device,
             ID2D1Geometry* resource);
@@ -326,6 +336,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(CreatePath)(
             ICanvasPathBuilder* pathBuilder,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreateGroup)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t geometryCount,
+            ICanvasGeometry** geometryElements,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreateGroupWithFilledRegionDetermination)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t geometryCount,
+            ICanvasGeometry** geometryElements,
+            CanvasFilledRegionDetermination filledRegionDetermination,
             ICanvasGeometry** geometry) override;
 
         IFACEMETHOD(get_DefaultFlatteningTolerance)(float* value) override;

@@ -92,9 +92,18 @@ public:
         Assert::AreEqual(originalPathGeometry.Get(), retrievedPathGeometry.Get());
     }
 
+    TEST_METHOD(CanvasGeometry_ZeroSizedGeometryGroup_InteropWorks)
+    {
+        auto canvasGeometry = CanvasGeometry::CreateGroup(m_device, nullptr);
+
+        auto d2dResource = GetWrappedResource<ID2D1GeometryGroup>(canvasGeometry);
+
+        Assert::IsNotNull(d2dResource.Get());
+    }
+
     TEST_METHOD(CanvasPathBuilder_NullDevice)
     {        
-        Assert::ExpectException< Platform::InvalidArgumentException^>(
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
             [=]
             {
                 ref new CanvasPathBuilder(nullptr);

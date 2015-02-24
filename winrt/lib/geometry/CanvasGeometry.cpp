@@ -143,6 +143,39 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         });
     }
 
+    IFACEMETHODIMP CanvasGeometryFactory::CreateGroup(
+        ICanvasResourceCreator* resourceCreator,
+        uint32_t geometryCount,
+        ICanvasGeometry** geometryElements,
+        ICanvasGeometry** geometry)
+    {
+        return CreateGroupWithFilledRegionDetermination(
+            resourceCreator,
+            geometryCount,
+            geometryElements,
+            CanvasFilledRegionDetermination::Alternate,
+            geometry);
+    }
+
+    IFACEMETHODIMP CanvasGeometryFactory::CreateGroupWithFilledRegionDetermination(
+        ICanvasResourceCreator* resourceCreator,
+        uint32_t geometryCount,
+        ICanvasGeometry** geometryElements,
+        CanvasFilledRegionDetermination filledRegionDetermination,
+        ICanvasGeometry** geometry)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator); 
+                CheckAndClearOutPointer(geometry);
+
+                auto newCanvasGeometry = GetManager()->Create(resourceCreator, geometryCount, geometryElements, filledRegionDetermination);
+
+                ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
+        });
+    }
+
     IFACEMETHODIMP CanvasGeometryFactory::get_DefaultFlatteningTolerance(float* value)
     {
         return ExceptionBoundary(
@@ -361,6 +394,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     targetPathBuilderInternal->GetGeometrySink().Get())); 
 
                 auto newGeometry = Manager()->Create(temporaryPathBuilder.Get());
+                ThrowIfFailed(newGeometry.CopyTo(geometry));
+            });
+    }
+
+    IFACEMETHODIMP CanvasGeometry::Transform(
+        Numerics::Matrix3x2 transform,
+        ICanvasGeometry** geometry)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(geometry);
+
+                auto& resource = GetResource();
+
+                auto& device = m_canvasDevice.EnsureNotClosed();
+
+                auto deviceInternal = As<ICanvasDeviceInternal>(device.Get());
+
+                auto d2dGeometry = deviceInternal->CreateTransformedGeometry(
+                    resource.Get(),
+                    ReinterpretAs<D2D1_MATRIX_3X2_F*>(&transform));
+
+                auto newGeometry = Manager()->GetOrCreate(device.Get(), static_cast<ID2D1Geometry*>(d2dGeometry.Get()));
+
                 ThrowIfFailed(newGeometry.CopyTo(geometry));
             });
     }
@@ -812,6 +870,51 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto device = pathBuilderInternal->GetDevice();
 
         auto d2dGeometry = pathBuilderInternal->CloseAndReturnPath();
+
+        auto canvasGeometry = Make<CanvasGeometry>(
+            shared_from_this(),
+            d2dGeometry.Get(),
+            device.Get());
+        CheckMakeResult(canvasGeometry);
+
+        return canvasGeometry;
+    }
+
+    ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+        ICanvasResourceCreator* resourceCreator,
+        uint32_t geometryCount,
+        ICanvasGeometry** geometryElements,
+        CanvasFilledRegionDetermination filledRegionDetermination)
+    {
+        ComPtr<ICanvasDevice> device;
+        ThrowIfFailed(resourceCreator->get_Device(&device));
+
+        auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+        std::vector<ID2D1Geometry*> d2dGeometriesRaw;
+        d2dGeometriesRaw.resize(geometryCount);
+
+        for (uint32_t i = 0; i < geometryCount; ++i)
+        {
+            CheckInPointer(geometryElements[i]);
+            auto d2dResource = GetWrappedResource<ID2D1Geometry>(geometryElements[i]);
+
+            //
+            // This takes advantage of the fact that the elements of geometryElements
+            // are alive for the duration of this method, and so are their D2D resources.
+            //
+            d2dGeometriesRaw[i] = d2dResource.Get();
+        }
+
+        if (geometryCount == 0)
+        {
+            d2dGeometriesRaw.push_back(nullptr);
+        }
+
+        auto d2dGeometry = deviceInternal->CreateGeometryGroup(
+            static_cast<D2D1_FILL_MODE>(filledRegionDetermination),
+            &d2dGeometriesRaw[0], 
+            geometryCount);
 
         auto canvasGeometry = Make<CanvasGeometry>(
             shared_from_this(),

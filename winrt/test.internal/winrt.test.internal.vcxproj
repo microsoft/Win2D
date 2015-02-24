@@ -69,6 +69,7 @@
     <ClInclude Include="mocks\MockD2DEffect.h" />
     <ClInclude Include="mocks\MockD2DFactory.h" />
     <ClInclude Include="mocks\MockD2DGeometrySink.h" />
+    <ClInclude Include="mocks\MockD2DGeometryGroup.h" />
     <ClInclude Include="mocks\MockD2DGeometryRealization.h" />
     <ClInclude Include="mocks\MockD2DGradientStopCollection.h" />
     <ClInclude Include="mocks\MockD2DImageBrush.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="mocks\MockD2DRadialGradientBrush.h" />
     <ClInclude Include="mocks\MockD2DSolidColorBrush.h" />
     <ClInclude Include="mocks\MockD2DStrokeStyle.h" />
+    <ClInclude Include="mocks\MockD2DTransformedGeometry.h" />
     <ClInclude Include="mocks\MockD3D11Device.h" />
     <ClInclude Include="mocks\MockDXGIAdapter.h" />
     <ClInclude Include="mocks\MockDXGIFactory.h" />
@@ -127,6 +129,7 @@
     <ClCompile Include="graphics\CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasImageUnitTests.cpp" />
+    <ClCompile Include="graphics\CanvasPathBuilderUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasRenderTargetUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="graphics\CanvasStrokeStyleTests.cpp" />

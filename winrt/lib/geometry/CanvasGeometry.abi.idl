@@ -79,6 +79,10 @@ namespace Microsoft.Graphics.Canvas
             [in] float flatteningTolerance,
             [out, retval] CanvasGeometry** geometry);
 
+        HRESULT Transform(
+            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [out, retval] CanvasGeometry** geometry);
+
         ///////////////////////////////////////////////////////////////////////
         // The methods below return primitive types.
 
@@ -261,7 +265,6 @@ namespace Microsoft.Graphics.Canvas
             [in] float radiusY,
             [out, retval] CanvasGeometry** geometry);
 
-        // Docs should specify that this interops to ID2D1EllipseGeometry.
         [overload("CreateCircle"), default_overload]
         HRESULT CreateCircle(
             [in] ICanvasResourceCreator* resourceCreator,
@@ -279,6 +282,21 @@ namespace Microsoft.Graphics.Canvas
 
         HRESULT CreatePath(
             [in] CanvasPathBuilder* pathBuilder,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateGroup")]
+        HRESULT CreateGroup(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 geometriesCount,
+            [in, size_is(geometriesCount)] CanvasGeometry** geometries,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateGroup"), default_overload]
+        HRESULT CreateGroupWithFilledRegionDetermination(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 geometriesCount,
+            [in, size_is(geometriesCount)] CanvasGeometry** geometries,
+            [in] CanvasFilledRegionDetermination filledRegionDetermination,
             [out, retval] CanvasGeometry** geometry);
 
         [propget] HRESULT DefaultFlatteningTolerance([out, retval] float* value);

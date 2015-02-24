@@ -736,6 +736,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return pathGeometry;
     }
 
+    ComPtr<ID2D1GeometryGroup> CanvasDevice::CreateGeometryGroup(D2D1_FILL_MODE fillMode, ID2D1Geometry** d2dGeometries, uint32_t geometryCount)
+    {
+        auto factory = GetD2DFactory();
+
+        ComPtr<ID2D1GeometryGroup> geometryGroup;
+        ThrowIfFailed(factory->CreateGeometryGroup(fillMode, d2dGeometries, geometryCount, &geometryGroup));
+
+        return geometryGroup;
+    }
+
+    ComPtr<ID2D1TransformedGeometry> CanvasDevice::CreateTransformedGeometry(ID2D1Geometry* d2dGeometry, D2D1_MATRIX_3X2_F* transform)
+    {
+        auto factory = GetD2DFactory();
+
+        ComPtr<ID2D1TransformedGeometry> transformedGeometry;
+        ThrowIfFailed(factory->CreateTransformedGeometry(d2dGeometry, transform, &transformedGeometry));
+
+        return transformedGeometry;
+    }
+
     ComPtr<ID2D1GeometryRealization> CanvasDevice::CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();

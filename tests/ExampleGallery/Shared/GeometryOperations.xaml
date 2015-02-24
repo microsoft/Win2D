@@ -46,6 +46,7 @@ under the License.
                       SelectedItem="{Binding RightGeometryType, ElementName=control, Mode=TwoWay}"
                       FontSize="15"
                       SelectionChanged="SettingsCombo_SelectionChanged"/>
+                <ToggleButton Content="Enable Transform" IsChecked="false" Checked="EnableTransform_Checked" Unchecked="EnableTransform_Unchecked"/>
                 <TextBlock>Fill Or Stroke:</TextBlock>
                 <ComboBox 
                       ItemsSource="{Binding ElementName=control, Path=FillOrStrokeOptions}"

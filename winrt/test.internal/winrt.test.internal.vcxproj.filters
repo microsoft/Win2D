@@ -73,6 +73,9 @@
     <ClCompile Include="graphics\CanvasImageUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\CanvasPathBuilderUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="graphics\CanvasRenderTargetUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -199,9 +202,10 @@
     <ClInclude Include="mocks\MockD2DGeometrySink.h">
       <Filter>mocks</Filter>
     </ClInclude>
-    <ClInclude Include="mocks\MockD2DGeometryRealization.h">
+    <ClInclude Include="mocks\MockD2DGeometryGroup.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\MockD2DGeometryRealization.h">
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="mocks\MockD2DGradientStopCollection.h">
@@ -229,6 +233,9 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="mocks\MockD2DStrokeStyle.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="mocks\MockD2DTransformedGeometry.h">
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="mocks\MockD3D11Device.h">

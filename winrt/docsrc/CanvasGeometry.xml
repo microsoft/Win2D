@@ -146,15 +146,15 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeArea">
       <summary>Returns the area of this geometry. </summary>
       <remarks>
-      	Uses default flattening tolerance and identity transform.
-        Area is a two-dimensional quantity.
+      	<p>Uses default flattening tolerance and identity transform.</p>
+        <p>Area is a two-dimensional quantity.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeArea(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the area of this geometry. </summary>
       <remarks>
-      	Uses the specified flattening tolerance and transform.
-      	Area is a two-dimensional quantity.
+      	<p>Uses the specified flattening tolerance and transform.</p>
+      	<p>Area is a two-dimensional quantity.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputePathLength">
@@ -256,8 +256,54 @@ under the License.
     <member name="F:Microsoft.Graphics.Canvas.CanvasGeometrySimplification.Lines">
       <summary>The output contains only line segments.</summary>
       <remarks>If there are any curves in the input geometry, the curves are output as roughly equivalent, very short lines.</remarks>
-    </member>
+    </member>    
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Transform(Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Returns a transformed version of this geometry.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGeometry[])">
+      <summary>Returns a geometry containing the specified geometries, grouped together.</summary>
+      <remarks>
+      	<p>
+      	The <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.CanvasFilledRegionDetermination"/> 
+      	describing the fill of intersecting geometries in the group is a default of Alternate.
+      	</p>
+      	<p>
+      	This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
+      	contains six overlapping rectangles, then the result, when streamed out (using interop) will
+      	still contain the six rectangles. 
+      	</p>
+      	<p>
+      	However, areas of self-intersection do <i>not</i> contribute to overdraw,
+      	and this is one of the advantages of using grouped geometry. For example, if the six overlapping rectangles from
+      	above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
+      	If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
+      	achieve this occurs at draw time.
+      	</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGeometry[],Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination)">
+      <summary>Returns a geometry containing the specified geometries, grouped together.</summary>
+      <remarks>
+        <p>
+        The specified <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.CanvasFilledRegionDetermination"/> 
+      	determines the fill of intersecting geometries in the group.
+      	</p>
+      	<p>
+      	This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
+      	contains six overlapping rectangles, then the result, when streamed out (using interop) will
+      	still contain the six rectangles. 
+      	</p>
+      	<p>
+      	However, areas of self-intersection do <i>not</i> contribute to overdraw,
+      	and this is one of the advantages of using grouped geometry. For example, if the six overlapping rectangles from
+      	above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
+      	If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
+      	achieve this occurs at draw time.
+      	</p>
+      </remarks>
+    </member>    
+    
     <member name="P:Microsoft.Graphics.Canvas.CanvasGeometry.DefaultFlatteningTolerance">
       <summary>A suitable flattening tolerance for most situations.</summary>
       <remarks>

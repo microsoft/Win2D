@@ -39,6 +39,7 @@ namespace ExampleGallery
         Microsoft.Graphics.Canvas.Numerics.Vector2 tangentOnContourPath;
 
         bool needsToRecreateResources;
+        bool enableTransform;
 
         public GeometryOperations()
         {
@@ -54,6 +55,8 @@ namespace ExampleGallery
 
             showSourceGeometry = false;
 
+            enableTransform = false;
+
             needsToRecreateResources = true;
         }
 
@@ -62,7 +65,8 @@ namespace ExampleGallery
             Rectangle,
             RoundedRectangle,
             Ellipse,
-            Star
+            Star,
+            Group
         }
 
         public enum FillOrStroke
@@ -110,6 +114,20 @@ namespace ExampleGallery
                         pathBuilder.AddLine(0, 200);
                         pathBuilder.EndFigure(CanvasFigureLoop.Closed);
                         return CanvasGeometry.CreatePath(pathBuilder);
+                    }
+                case GeometryType.Group:
+                    {
+                        CanvasGeometry geo0 = CanvasGeometry.CreateRectangle(resourceCreator, 100, 100, 100, 100);
+                        CanvasGeometry geo1 = CanvasGeometry.CreateRoundedRectangle(resourceCreator, 300, 100, 100, 100, 50, 50);
+
+                        CanvasPathBuilder pathBuilder = new CanvasPathBuilder(resourceCreator);
+                        pathBuilder.BeginFigure(new Vector2(200, 200));
+                        pathBuilder.AddLine(500, 200);
+                        pathBuilder.AddLine(200, 350);
+                        pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+                        CanvasGeometry geo2 = CanvasGeometry.CreatePath(pathBuilder);
+
+                        return CanvasGeometry.CreateGroup(resourceCreator, new CanvasGeometry[] { geo0, geo1, geo2 });
                     }
             }
             System.Diagnostics.Debug.Assert(false);
@@ -197,6 +215,20 @@ namespace ExampleGallery
             leftGeometry = CreateGeometry(resourceCreator, LeftGeometryType);
             rightGeometry = CreateGeometry(resourceCreator, RightGeometryType);
 
+            if (enableTransform)
+            {
+                Matrix3x2 placeNearOrigin = Matrix3x2.CreateTranslation(-200, -200);
+                Matrix3x2 undoPlaceNearOrigin = Matrix3x2.CreateTranslation(200, 200);
+
+                Matrix3x2 rotate0 = Matrix3x2.CreateRotation((float)Math.PI / 4.0f); // 45 degrees
+                Matrix3x2 scale0 = Matrix3x2.CreateScale(1.5f);
+
+                Matrix3x2 rotate1 = Matrix3x2.CreateRotation((float)Math.PI / 6.0f); // 30 degrees
+                Matrix3x2 scale1 = Matrix3x2.CreateScale(2.0f);
+
+                leftGeometry = leftGeometry.Transform(placeNearOrigin * rotate0 * scale0 * undoPlaceNearOrigin);
+                rightGeometry = rightGeometry.Transform(placeNearOrigin * rotate1 * scale1 * undoPlaceNearOrigin);
+            }
 
             combinedGeometry = leftGeometry.CombineWith(rightGeometry, interGeometryTransform, WhichCombineType);
 
@@ -219,16 +251,27 @@ namespace ExampleGallery
         {
             needsToRecreateResources = true;
         }
+
         void ShowSourceGeometry_Checked(object sender, RoutedEventArgs e)
         {
             showSourceGeometry = true;
         }
-
 
         void ShowSourceGeometry_Unchecked(object sender, RoutedEventArgs e)
         {
             showSourceGeometry = false;
         }
 
+        void EnableTransform_Checked(object sender, RoutedEventArgs e)
+        {
+            enableTransform = true;
+            needsToRecreateResources = true;
+        }
+
+        void EnableTransform_Unchecked(object sender, RoutedEventArgs e)
+        {
+            enableTransform = false;
+            needsToRecreateResources = true;
+        }
     }
 }
