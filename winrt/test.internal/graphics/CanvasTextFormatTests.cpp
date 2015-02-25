@@ -14,6 +14,7 @@
 
 #include "MockDWriteFactory.h"
 #include "MockDWriteFontCollection.h"
+#include "MockDWriteFontFile.h"
 #include "StubStorageFileStatics.h"
 
 namespace canvas
@@ -747,13 +748,49 @@ namespace canvas
             ComPtr<MockDWriteFontCollection> ExpectCreateCustomFontCollection(std::wstring expectedFilename)
             {
                 auto collection = Make<MockDWriteFontCollection>();
+                auto fontFile = Make<MockDWriteFontFile>();
 
                 Adapter->DWriteFactory->CreateCustomFontCollectionMethod.SetExpectedCalls(1,
                     [=] (IDWriteFontCollectionLoader* loader, void const* key, uint32_t keySize, IDWriteFontCollection** outCollection)
                     {
                         std::wstring actualFilename(static_cast<wchar_t const*>(key), keySize / 2);
                         Assert::AreEqual(expectedFilename, actualFilename);
+
+                        // DWriteFactory will call methods on the loader to try
+                        // and load the font.  We can validate here that they
+                        // behave as expected.
+
+                        ComPtr<IDWriteFontFileEnumerator> enumerator;
+                        ThrowIfFailed(loader->CreateEnumeratorFromKey(
+                            Adapter->DWriteFactory.Get(),
+                            key,
+                            keySize,
+                            &enumerator));
+
+                        // We only expect the enumerator to return one file
+                        BOOL hasFile = FALSE;
+                        ThrowIfFailed(enumerator->MoveNext(&hasFile));
+                        Assert::IsTrue(!!hasFile);
+
+                        ComPtr<IDWriteFontFile> currentFile;
+                        ThrowIfFailed(enumerator->GetCurrentFontFile(&currentFile));
+                        Assert::IsTrue(IsSameInstance(currentFile.Get(), fontFile.Get()));
+
+                        ThrowIfFailed(enumerator->MoveNext(&hasFile));
+                        Assert::IsFalse(!!hasFile);
+
                         return collection.CopyTo(outCollection);
+                    });
+
+                // We expect that when we use the font file enumerator above
+                // that it'll call CreateFontFileReference to reference the font
+                // file.
+                Adapter->DWriteFactory->CreateFontFileReferenceMethod.SetExpectedCalls(1,
+                    [=] (wchar_t const* filePath, FILETIME const* lastWriteTime, IDWriteFontFile** outFontFile)
+                    {
+                        Assert::AreEqual(expectedFilename.c_str(), filePath);
+                        Assert::IsNull(lastWriteTime);
+                        return fontFile.CopyTo(outFontFile);
                     });
 
                 return collection;
@@ -762,6 +799,7 @@ namespace canvas
             void DontExpectCreateCustomFontCollection()
             {
                 Adapter->DWriteFactory->CreateCustomFontCollectionMethod.SetExpectedCalls(0);
+                Adapter->DWriteFactory->CreateFontFileReferenceMethod.SetExpectedCalls(0);
             }
         };
         
