@@ -161,7 +161,7 @@ namespace ExampleGallery
         {
             new Entry(0xE018, "Scrollbar arrow"),
             new Entry(0xE019, "Scrollbar arrow"),
-            new Entry(0xE081, "Check box component"),
+            new Entry(0xE081, "Check box"),
             new Entry(0xE082, "Ratings star"),
             new Entry(0xE094, "Magnifier"),
             new Entry(0xE0B8, "Used by magnifier tool"),
@@ -218,7 +218,7 @@ namespace ExampleGallery
             new Entry(0xE114, "Camera"),
             new Entry(0xE182, "Options"),
             new Entry(0xE115, "Settings"),
-            new Entry(0xE183, "SkyDrive"),
+            new Entry(0xE183, "Upload"),
             new Entry(0xE116, "Video"),
             new Entry(0xE184, "Calendar"),
             new Entry(0xE117, "Sync"),
