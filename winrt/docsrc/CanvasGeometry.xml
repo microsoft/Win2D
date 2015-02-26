@@ -320,7 +320,24 @@ under the License.
       For more information, see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280327%28v=vs.85%29.aspx">ComputeFlatteningTolerance</a>.
       </p>
       </remarks>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single)">
+      <summary>Computes the correct flattening tolerance given the specified DPI, and maximum zoom level.</summary>
+      <remarks>
+        This computation guarantees that under any scaling up to the maximum zoom level, curves will have no loss of fidelity.
+        <i>Maximum zoom level</i> is the highest scale factor that the app anticipates applying to the geometry.
+        For more information, see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280327%28v=vs.85%29.aspx">ComputeFlatteningTolerance</a>.
+        </remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Computes the correct flattening tolerance given the specified DPI, maximum zoom level, and geometry transform.</summary>
+      <remarks>
+        This computation guarantees that under any scaling up to the maximum zoom level, curves will have no loss of fidelity.
+        <i>Maximum zoom level</i> is the highest scale factor that the app anticipates applying to the geometry, independent of the geometry transform. 
+        For more information, see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280327%28v=vs.85%29.aspx">ComputeFlatteningTolerance</a>.
+        </remarks>
+    </member>    
     
     <member name="P:Microsoft.Graphics.Canvas.CanvasGeometry.Device">
       <summary>Gets the device associated with this CanvasGeometry.</summary>

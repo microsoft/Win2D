@@ -176,6 +176,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         });
     }
 
+    IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningTolerance(
+        float dpi,
+        float maximumZoomFactor,
+        float* flatteningTolerance)
+    {
+        return ComputeFlatteningToleranceWithTransform(dpi, maximumZoomFactor, Identity3x2, flatteningTolerance);
+    }
+
+    IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningToleranceWithTransform(
+        float dpi,
+        float maximumZoomFactor,
+        Matrix3x2 expectedGeometryTransform,
+        float* flatteningTolerance)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(flatteningTolerance);
+                
+                *flatteningTolerance = D2D1::ComputeFlatteningTolerance(
+                    *(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&expectedGeometryTransform)),
+                    dpi,
+                    dpi,
+                    maximumZoomFactor);
+            });
+    }
+
     IFACEMETHODIMP CanvasGeometryFactory::get_DefaultFlatteningTolerance(float* value)
     {
         return ExceptionBoundary(

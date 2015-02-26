@@ -299,6 +299,19 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasFilledRegionDetermination filledRegionDetermination,
             [out, retval] CanvasGeometry** geometry);
 
+        [overload("ComputeFlatteningTolerance")]
+        HRESULT ComputeFlatteningTolerance(
+            [in] float dpi,
+            [in] float maximumZoomFactor,
+            [out, retval] float* flatteningTolerance);
+
+        [overload("ComputeFlatteningTolerance"), default_overload]
+        HRESULT ComputeFlatteningToleranceWithTransform(
+            [in] float dpi,
+            [in] float maximumZoomFactor,
+            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 expectedGeometryTransform,
+            [out, retval] float* flatteningTolerance);
+
         [propget] HRESULT DefaultFlatteningTolerance([out, retval] float* value);
     }
 

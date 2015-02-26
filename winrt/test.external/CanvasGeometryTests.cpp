@@ -101,6 +101,52 @@ public:
         Assert::IsNotNull(d2dResource.Get());
     }
 
+    TEST_METHOD(CanvasGeometry_ComputeFlatteningTolerance)
+    {
+        struct TestCase
+        {
+            float ZoomLevel;
+            float Dpi;
+            Matrix3x2 Transform;
+        } testCases[] {
+                {123.0f, 456.0f, Matrix3x2{ 1, 2, 3, 4, 5, 6 }},
+                { -1, -1, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
+                {1, 0, Matrix3x2{ 1, 0, 0, 1, 0, 0 } }
+        };
+
+        for (TestCase testCase : testCases)
+        {
+            const float d2dTolerance = D2D1::ComputeFlatteningTolerance(
+                *(reinterpret_cast<D2D1_MATRIX_3X2_F*>(&testCase.Transform)),
+                testCase.Dpi,
+                testCase.Dpi,
+                testCase.ZoomLevel);
+
+            const float canvasTolerance = CanvasGeometry::ComputeFlatteningTolerance(
+                testCase.Dpi,
+                testCase.ZoomLevel,
+                testCase.Transform);
+
+            Assert::AreEqual(d2dTolerance, canvasTolerance);
+        }
+
+        for (TestCase testCase : testCases)
+        {
+            const float d2dTolerance = D2D1::ComputeFlatteningTolerance(
+                D2D1::Matrix3x2F::Identity(),
+                testCase.Dpi,
+                testCase.Dpi,
+                testCase.ZoomLevel);
+
+            const float canvasTolerance = CanvasGeometry::ComputeFlatteningTolerance(
+                testCase.Dpi,
+                testCase.ZoomLevel);
+
+            Assert::AreEqual(d2dTolerance, canvasTolerance);
+        }
+
+    }
+
     TEST_METHOD(CanvasPathBuilder_NullDevice)
     {        
         Assert::ExpectException<Platform::InvalidArgumentException^>(

@@ -351,6 +351,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasFilledRegionDetermination filledRegionDetermination,
             ICanvasGeometry** geometry) override;
 
+        IFACEMETHOD(ComputeFlatteningTolerance)(
+            float dpi,
+            float maximumZoomFactor,
+            float* flatteningTolerance) override;
+
+        IFACEMETHOD(ComputeFlatteningToleranceWithTransform)(
+            float dpi,
+            float maximumZoomFactor,
+            Matrix3x2 expectedGeometryTransform,
+            float* flatteningTolerance) override;
+
         IFACEMETHOD(get_DefaultFlatteningTolerance)(float* value) override;
     };
 
