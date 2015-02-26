@@ -68,6 +68,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasTextFormat> Create();
         ComPtr<CanvasTextFormat> Create(IDWriteTextFormat* format);
 
+        void ValidateUri(WinString const& uri);
         ComPtr<IDWriteFontCollection> GetFontCollectionFromUri(WinString const& uri);        
 
     private:

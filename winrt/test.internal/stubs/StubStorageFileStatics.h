@@ -12,20 +12,14 @@
 
 #pragma once
 
+#include "MockStorageFileStatics.h"
 #include "StubStorageFile.h"
 
 namespace canvas
 {
-    class StubStorageFileStatics : public RuntimeClass<IStorageFileStatics>
+    class StubStorageFileStatics : public MockStorageFileStatics
     {
     public:
-        IFACEMETHODIMP GetFileFromPathAsync(
-            HSTRING, 
-            IAsyncOperation<StorageFile*>**) override
-        {
-            return E_NOTIMPL;
-        }
-
         static std::wstring GetFakePath(WinString const& uri)
         {
             std::wstring path(L"pathof(");
@@ -33,96 +27,62 @@ namespace canvas
             path += L")";
             return path;
         }
-                    
-        IFACEMETHODIMP GetFileFromApplicationUriAsync(
-            IUriRuntimeClass* uri, 
-            IAsyncOperation<StorageFile*>** operation) override
+
+        StubStorageFileStatics()
         {
-            return ExceptionBoundary(
-                [=]
+            GetFileFromApplicationUriAsyncMethod.AllowAnyCall(
+                [] (IUriRuntimeClass* uri, IAsyncOperation<StorageFile*>** operation)
                 {
-                    WinString canonicalUri;
-                    ThrowIfFailed(As<IUriRuntimeClassWithAbsoluteCanonicalUri>(uri)->get_AbsoluteCanonicalUri(canonicalUri.GetAddressOf()));
-
-                    auto path = GetFakePath(canonicalUri);
-
-                    class StorageFileOperation : public RuntimeClass<
-                        AsyncBase<IAsyncOperationCompletedHandler<StorageFile*>>,
-                        IAsyncOperation<StorageFile*>>
-                    {
-                        ComPtr<StubStorageFile> m_storageFile;
-
-                    public:
-                        StorageFileOperation(std::wstring const& path)
-                            : m_storageFile(Make<StubStorageFile>(path))
+                    return ExceptionBoundary(
+                        [=]
                         {
-                            ThrowIfFailed(Start());
-                        }
+                            WinString canonicalUri;
+                            ThrowIfFailed(As<IUriRuntimeClassWithAbsoluteCanonicalUri>(uri)->get_AbsoluteCanonicalUri(canonicalUri.GetAddressOf()));
 
-                        IFACEMETHODIMP GetResults(IStorageFile** value) override
-                        {
-                            HRESULT hr = CheckValidStateForResultsCall();
-                            if (FAILED(hr))
-                                return hr;
+                            auto path = GetFakePath(canonicalUri);
 
-                            return m_storageFile.CopyTo(value);
-                        }
+                            class StorageFileOperation : public RuntimeClass<
+                                AsyncBase<IAsyncOperationCompletedHandler<StorageFile*>>,
+                                IAsyncOperation<StorageFile*>>
+                                {
+                                    ComPtr<StubStorageFile> m_storageFile;
 
-                        IFACEMETHODIMP put_Completed(IAsyncOperationCompletedHandler<StorageFile*>* value) override
-                        {
-                            return PutOnComplete(value);
-                        }
+                                public:
+                                    StorageFileOperation(std::wstring const& path)
+                                        : m_storageFile(Make<StubStorageFile>(path))
+                                    {
+                                        ThrowIfFailed(Start());
+                                    }
 
-                        IFACEMETHODIMP get_Completed(IAsyncOperationCompletedHandler<StorageFile*>** value) override
-                        {
-                            return GetOnComplete(value);
-                        }
+                                    IFACEMETHODIMP GetResults(IStorageFile** value) override
+                                    {
+                                        HRESULT hr = CheckValidStateForResultsCall();
+                                        if (FAILED(hr))
+                                            return hr;
 
-                        virtual HRESULT OnStart() override { return S_OK; }
-                        virtual void OnClose() override {}
-                        virtual void OnCancel() override {}
-                    };
+                                        return m_storageFile.CopyTo(value);
+                                    }
 
-                    auto op = Make<StorageFileOperation>(path);
-                    ThrowIfFailed(op->FireCompletion());
-                    ThrowIfFailed(op.CopyTo(operation));
-                });
-        }
-                    
-        IFACEMETHODIMP CreateStreamedFileAsync(
-            HSTRING,
-            IStreamedFileDataRequestedHandler*,
-            IRandomAccessStreamReference*,
-            IAsyncOperation<StorageFile*>**) override
-        {
-            return E_NOTIMPL;
-        }
-                    
-        IFACEMETHODIMP ReplaceWithStreamedFileAsync( 
-            IStorageFile*,
-            IStreamedFileDataRequestedHandler*,
-            IRandomAccessStreamReference*,
-            IAsyncOperation<StorageFile*>**) override
-        {
-            return E_NOTIMPL;
-        }
-                    
-        IFACEMETHODIMP CreateStreamedFileFromUriAsync( 
-            HSTRING,
-            IUriRuntimeClass*,
-            IRandomAccessStreamReference*,
-            IAsyncOperation<StorageFile*>**) override
-        {
-            return E_NOTIMPL;
-        }
-                    
-        IFACEMETHODIMP ReplaceWithStreamedFileFromUriAsync( 
-            IStorageFile*,
-            IUriRuntimeClass*,
-            IRandomAccessStreamReference*,
-            IAsyncOperation<StorageFile*>**) override
-        {
-            return E_NOTIMPL;
+                                    IFACEMETHODIMP put_Completed(IAsyncOperationCompletedHandler<StorageFile*>* value) override
+                                    {
+                                        return PutOnComplete(value);
+                                    }
+
+                                    IFACEMETHODIMP get_Completed(IAsyncOperationCompletedHandler<StorageFile*>** value) override
+                                    {
+                                        return GetOnComplete(value);
+                                    }
+
+                                    virtual HRESULT OnStart() override { return S_OK; }
+                                    virtual void OnClose() override {}
+                                    virtual void OnCancel() override {}
+                                };
+
+                            auto op = Make<StorageFileOperation>(path);
+                            ThrowIfFailed(op->FireCompletion());
+                            ThrowIfFailed(op.CopyTo(operation));
+                        });
+                });                    
         }
     };
 }

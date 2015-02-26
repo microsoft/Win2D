@@ -580,6 +580,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return Make<CanvasTextFormat>(shared_from_this(), format);
     }
 
+    void CanvasTextFormatManager::ValidateUri(WinString const& uriString)
+    {
+        if (uriString == WinString())
+            return;
+
+        ComPtr<IUriRuntimeClass> uri;
+        ThrowIfFailed(m_uriFactory->CreateWithRelativeUri(WinString(L"ms-appx://"), uriString, &uri));
+        
+        WinString schemeName;
+        ThrowIfFailed(uri->get_SchemeName(schemeName.GetAddressOf()));
+
+        if (!schemeName.Equals(HStringReference(L"ms-appx").Get()) &&
+            !schemeName.Equals(HStringReference(L"ms-appdata").Get()))
+        {
+            ThrowHR(E_INVALIDARG, HStringReference(Strings::InvalidFontFamilyUriScheme).Get());
+        }
+    }
+
     WinString CanvasTextFormatManager::GetAbsolutePathFromUri(WinString const& uriString)
     {
         ComPtr<IUriRuntimeClass> uri;
@@ -587,7 +605,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto storageFileStatics = m_adapter->GetStorageFileStatics();
         ComPtr<IAsyncOperation<StorageFile*>> operation;
-        ThrowIfFailed(storageFileStatics->GetFileFromApplicationUriAsync(uri.Get(), &operation));
+
+        HRESULT hr = storageFileStatics->GetFileFromApplicationUriAsync(uri.Get(), &operation);
+        if (FAILED(hr))
+        {
+            ThrowHR(hr, HStringReference(Strings::InvalidFontFamilyUri).Get());
+        }
 
         Event operationCompleted(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
         auto handler = Callback<IAsyncOperationCompletedHandler<StorageFile*>>(
@@ -1061,6 +1084,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 
                 if (IsSame(&m_fontFamilyName, value))
                     return;
+
+                auto uriAndFontFamily = GetUriAndFontFamily(WinString(value));
+                auto const& uri = uriAndFontFamily.first;
+                m_manager->ValidateUri(uri);
                 
                 Unrealize();
                 m_fontCollection.Reset();

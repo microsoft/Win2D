@@ -802,6 +802,26 @@ namespace canvas
                 Adapter->DWriteFactory->CreateFontFileReferenceMethod.SetExpectedCalls(0);
             }
         };
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenFontFamilyNameDoesNotContainAUri_CustomFontCollectionIsNotUsed)
+        {
+            CustomFontFixture f;
+            f.DontExpectCreateCustomFontCollection();
+
+            auto cf = f.Manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(WinString(L"family with no uri")));
+            cf->GetRealizedTextFormat();
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenFontFamilyContainsABlankUri_CustomFontCollectionIsNotUsed)
+        {
+            CustomFontFixture f;
+            f.DontExpectCreateCustomFontCollection();
+
+            auto cf = f.Manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(WinString(L"#family with blank uri")));
+            cf->GetRealizedTextFormat();
+        }
         
 
         TEST_METHOD_EX(CanvasTextFormat_WhenFontFamilyNameContainsAUri_CustomFontCollectionIsUsed_And_UriStrippedFromRealizedName)
@@ -900,6 +920,59 @@ namespace canvas
 
             ThrowIfFailed(cf->get_FontFamily(actualFontFamily.GetAddressOf()));
             Assert::AreEqual(static_cast<wchar_t const*>(f.AnyFullFontFamilyName), static_cast<wchar_t const*>(actualFontFamily));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenGetFileFromApplicationUriFails_HelpfulErrorMessageIsThrown)
+        {
+            auto adapter = std::make_shared<StubCanvasTextFormatAdapter>();
+            auto manager = std::make_shared<CanvasTextFormatManager>(adapter);
+
+            adapter->StorageFileStatics->GetFileFromApplicationUriAsyncMethod.SetExpectedCalls(1, 
+                [] (IUriRuntimeClass*, IAsyncOperation<StorageFile*>**)
+                {
+                    return E_INVALIDARG;
+                });
+
+
+            auto cf = manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(WinString(L"uri#family the actual value doesn't matter as long as there is a #")));
+            ExpectHResultException(E_INVALIDARG, [&] { cf->GetRealizedTextFormat(); });
+            ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUri);
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_PutFontFamily_ValidatesUriSchema)
+        {
+            auto cf = CreateTestManager()->Create();
+
+            auto validFamilies = { L"", L"any family name with no uri", L"#family" };
+
+            for (auto family : validFamilies)
+            {
+                Assert::AreEqual(S_OK, cf->put_FontFamily(WinString(family)), family);
+            }
+
+            auto makeFamilyName = 
+                [] (wchar_t const* uri) 
+                { 
+                    return std::wstring(uri) + L"#anyfamily"; 
+                };
+
+            auto validUris = { L"foo/bar", L"foo", L"ms-appx:///foo", L"ms-appdata:///local/foo", L"filename with spaces" };
+
+            for (auto uri : validUris)
+            {
+                auto familyName = makeFamilyName(uri);
+                Assert::AreEqual(S_OK, cf->put_FontFamily(WinString(familyName)), familyName.c_str());
+            }
+
+            auto invalidUriSchemes = { L"http://foo", L"file://foo", L"anything:" };
+
+            for (auto uri : invalidUriSchemes)
+            {
+                auto familyName = makeFamilyName(uri);
+                Assert::AreEqual(E_INVALIDARG, cf->put_FontFamily(WinString(familyName)), familyName.c_str());
+                ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUriScheme);
+            }
         }
     };
 }
