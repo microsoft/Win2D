@@ -633,7 +633,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         assert(pathBegin && pathEnd);
 
         void const* key = pathBegin;
-        uint32_t keySize = std::distance(pathBegin, pathEnd) * sizeof(wchar_t);
+        uint32_t keySize = static_cast<uint32_t>(std::distance(pathBegin, pathEnd) * sizeof(wchar_t));
 
         ComPtr<IDWriteFontCollection> collection;
 
