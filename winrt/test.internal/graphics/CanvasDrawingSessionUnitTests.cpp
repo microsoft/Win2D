@@ -2907,6 +2907,15 @@ TEST_CLASS(CanvasDrawingSession_CreateLayerTests)
                     Assert::IsNull(layer);
                 });
         }
+
+        void ExpectOneGetTransform(D2D1_MATRIX_3X2_F returnValue)
+        {
+            DeviceContext->GetTransformMethod.SetExpectedCalls(1,
+                [=](D2D1_MATRIX_3X2_F* transform)
+                {
+                    *transform = returnValue;
+                });
+        }
     };
 
     TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacity)
@@ -3079,5 +3088,70 @@ TEST_CLASS(CanvasDrawingSession_CreateLayerTests)
 
         Assert::AreEqual(E_FAIL, As<IClosable>(f.DS)->Close());
         ValidateStoredErrorState(E_FAIL, Strings::DidNotPopLayer);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_WhenClipRectTransformIsScaleAndTranslate_UsesAxisAlignedClip)
+    {
+        Fixture f;
+
+        const Rect expectedRect{ 1, 2, 3, 4 };
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 2, 0, 0, 3, 4, 5 });
+
+        f.DeviceContext->PushAxisAlignedClipMethod.SetExpectedCalls(1,
+            [=](D2D1_RECT_F const* clipRect, D2D1_ANTIALIAS_MODE antialiasMode)
+            {
+                Assert::AreEqual(expectedRect, FromD2DRect(*clipRect));
+                Assert::AreEqual(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE, antialiasMode);
+            });
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, expectedRect, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_WhenClipRectTransformIsComplex_DoesNotUseAxisAlignedClip)
+    {
+        Fixture f;
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 2, 1, -1, 3, 4, 5 });
+
+        f.DeviceContext->PushLayerMethod.SetExpectedCalls(1);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, Rect{ 1, 2, 3, 4 }, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_AxisAlignedClip_UsesAntialiasModeFromDeviceContext)
+    {
+        Fixture f;
+        
+        const D2D1_ANTIALIAS_MODE expectedMode = D2D1_ANTIALIAS_MODE_ALIASED;
+
+        f.DeviceContext->GetAntialiasModeMethod.SetExpectedCalls(1, [=] { return expectedMode; });
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 1, 0, 0, 1, 0, 0 });
+
+        f.DeviceContext->PushAxisAlignedClipMethod.SetExpectedCalls(1,
+            [=](D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE antialiasMode)
+            {
+                Assert::AreEqual(expectedMode, antialiasMode);
+            });
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, Rect{ 1, 2, 3, 4 }, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_AxisAlignedClip_WhenActiveLayerClosed_PopAxisAlignedClipIsCalled)
+    {
+        Fixture f;
+        f.DeviceContext->PushAxisAlignedClipMethod.AllowAnyCall();
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 1, 0, 0, 1, 0, 0 });
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, Rect{ 1, 2, 3, 4 }, &activeLayer));
+
+        f.DeviceContext->PopAxisAlignedClipMethod.SetExpectedCalls(1);
+        ThrowIfFailed(As<IClosable>(activeLayer)->Close());
     }
 };

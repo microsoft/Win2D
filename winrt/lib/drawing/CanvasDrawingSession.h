@@ -1079,7 +1079,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasLayerOptions options,
             ICanvasActiveLayer** layer);
 
-        void PopLayer(int layerId);
+        void PopLayer(int layerId, bool isAxisAlignedClip);
     };
 
 

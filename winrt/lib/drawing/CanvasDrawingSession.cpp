@@ -2620,6 +2620,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return CreateLayerImpl(opacity, opacityBrush, &clipRectangle, clipGeometry, &geometryTransform, options, layer);
     }
 
+    // Returns true if the current transform matrix contains only scaling and translation, but no rotation or skew.
+    static bool TransformIsAxisPreserving(ID2D1DeviceContext* deviceContext)
+    {
+        D2D1_MATRIX_3X2_F transform;
+
+        deviceContext->GetTransform(&transform);
+
+        return transform._12 == 0.0f &&
+               transform._21 == 0.0f;
+    }
+
     HRESULT CanvasDrawingSession::CreateLayerImpl(
         float opacity,
         ICanvasBrush* opacityBrush,
@@ -2643,16 +2654,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto d2dMatrix = geometryTransform ? *ReinterpretAs<D2D1_MATRIX_3X2_F const*>(geometryTransform) : D2D1::Matrix3x2F::Identity();
                 auto d2dAntialiasMode = deviceContext->GetAntialiasMode();
 
-                D2D1_LAYER_PARAMETERS1 d2dParameters =
-                {
-                    d2dRect,
-                    d2dGeometry.Get(),
-                    d2dAntialiasMode,
-                    d2dMatrix,
-                    opacity,
-                    d2dBrush.Get(),
-                    static_cast<D2D1_LAYER_OPTIONS1>(options)
-                };
+                // Simple cases can be optimized to use PushAxisAlignedClip instead of PushLayer.
+                bool isAxisAlignedClip = clipRectangle &&
+                                         !d2dBrush &&
+                                         !d2dGeometry &&
+                                         opacity == 1.0f &&
+                                         options == CanvasLayerOptions::None &&
+                                         TransformIsAxisPreserving(deviceContext.Get());
 
                 // Store a unique ID, used for validation in PopLayer. This extra state 
                 // is needed because the D2D PopLayer method always just pops the topmost 
@@ -2674,25 +2682,44 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 WeakRef weakSelf = AsWeak(this);
 
                 auto activeLayer = Make<CanvasActiveLayer>(
-                    [weakSelf, layerId]() mutable
+                    [weakSelf, layerId, isAxisAlignedClip]() mutable
                     {
                         auto strongSelf = LockWeakRef<ICanvasDrawingSession>(weakSelf);
                         auto self = static_cast<CanvasDrawingSession*>(strongSelf.Get());
 
                         if (self)
-                            self->PopLayer(layerId);
+                            self->PopLayer(layerId, isAxisAlignedClip);
                     });
 
                 CheckMakeResult(activeLayer);
 
-                // Tell D2D to push the layer.
-                deviceContext->PushLayer(&d2dParameters, nullptr);
+                if (isAxisAlignedClip)
+                {
+                    // Tell D2D to push an axis aligned clip region.
+                    deviceContext->PushAxisAlignedClip(&d2dRect, d2dAntialiasMode);
+                }
+                else
+                {
+                    // Tell D2D to push the layer.
+                    D2D1_LAYER_PARAMETERS1 parameters =
+                    {
+                        d2dRect,
+                        d2dGeometry.Get(),
+                        d2dAntialiasMode,
+                        d2dMatrix,
+                        opacity,
+                        d2dBrush.Get(),
+                        static_cast<D2D1_LAYER_OPTIONS1>(options)
+                    };
+
+                    deviceContext->PushLayer(&parameters, nullptr);
+                }
 
                 ThrowIfFailed(activeLayer.CopyTo(layer));
             });
     }
 
-    void CanvasDrawingSession::PopLayer(int layerId)
+    void CanvasDrawingSession::PopLayer(int layerId, bool isAxisAlignedClip)
     {
         auto& deviceContext = GetResource();
 
@@ -2703,7 +2730,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         m_activeLayerIds.pop_back();
 
-        deviceContext->PopLayer();
+        if (isAxisAlignedClip)
+        {
+            deviceContext->PopAxisAlignedClip();
+        }
+        else
+        {
+            deviceContext->PopLayer();
+        }
     }
 
 

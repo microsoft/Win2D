@@ -66,6 +66,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(DrawGeometryRealizationMethod         , void(ID2D1GeometryRealization*, ID2D1Brush*));
         CALL_COUNTER_WITH_MOCK(PushLayerMethod                       , void(const D2D1_LAYER_PARAMETERS1*, ID2D1Layer*));
         CALL_COUNTER_WITH_MOCK(PopLayerMethod                        , void());
+        CALL_COUNTER_WITH_MOCK(PushAxisAlignedClipMethod             , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
+        CALL_COUNTER_WITH_MOCK(PopAxisAlignedClipMethod              , void());
 
         MockD2DDeviceContext()
         {
@@ -315,14 +317,14 @@ namespace canvas
             Assert::Fail(L"Unexpected call to RestoreDrawingState");
         }
 
-        IFACEMETHODIMP_(void) PushAxisAlignedClip(const D2D1_RECT_F *,D2D1_ANTIALIAS_MODE) override
+        IFACEMETHODIMP_(void) PushAxisAlignedClip(const D2D1_RECT_F* clipRect, D2D1_ANTIALIAS_MODE antialiasMode) override
         {
-            Assert::Fail(L"Unexpected call to PushAxisAlignedClip");
+            PushAxisAlignedClipMethod.WasCalled(clipRect, antialiasMode);
         }
 
         IFACEMETHODIMP_(void) PopAxisAlignedClip() override
         {
-            Assert::Fail(L"Unexpected call to PopAxisAlignedClip");
+            PopAxisAlignedClipMethod.WasCalled();
         }
 
         IFACEMETHODIMP_(void) Clear(const D2D1_COLOR_F* color) override
