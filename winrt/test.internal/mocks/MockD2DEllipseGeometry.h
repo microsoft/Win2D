@@ -10,6 +10,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// This file was automatically generated. Please do not edit it manually.
+
 #pragma once
 
 namespace canvas
@@ -42,7 +44,7 @@ namespace canvas
         //
 
         STDMETHOD_(void, GetEllipse)(
-            D2D1_ELLIPSE *ellipse) const override
+            D2D1_ELLIPSE* ellipse) const override
         {
             GetEllipseMethod.WasCalled(ellipse);
         }
@@ -52,18 +54,18 @@ namespace canvas
         //
 
         STDMETHOD(GetBounds)(
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
-            D2D1_RECT_F *bounds) const override
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
+            D2D1_RECT_F* bounds) const override
         {
             return GetBoundsMethod.WasCalled(worldTransform, bounds);
         }
 
         STDMETHOD(GetWidenedBounds)(
             FLOAT strokeWidth,
-            ID2D1StrokeStyle *strokeStyle,
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            ID2D1StrokeStyle* strokeStyle,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            D2D1_RECT_F *bounds) const override
+            D2D1_RECT_F* bounds) const override
         {
             return GetWidenedBoundsMethod.WasCalled(strokeWidth, strokeStyle, worldTransform, flatteningTolerance, bounds);
         }
@@ -71,99 +73,99 @@ namespace canvas
         STDMETHOD(StrokeContainsPoint)(
             D2D1_POINT_2F point,
             FLOAT strokeWidth,
-            ID2D1StrokeStyle *strokeStyle,
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            ID2D1StrokeStyle* strokeStyle,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            BOOL *contains) const override
+            BOOL* contains) const override
         {
             return StrokeContainsPointMethod.WasCalled(point, strokeWidth, strokeStyle, worldTransform, flatteningTolerance, contains);
         }
 
         STDMETHOD(FillContainsPoint)(
             D2D1_POINT_2F point,
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            BOOL *contains) const override
+            BOOL* contains) const override
         {
             return FillContainsPointMethod.WasCalled(point, worldTransform, flatteningTolerance, contains);
         }
 
         STDMETHOD(CompareWithGeometry)(
-            ID2D1Geometry *inputGeometry,
-            CONST D2D1_MATRIX_3X2_F *inputGeometryTransform,
+            ID2D1Geometry* inputGeometry,
+            CONST D2D1_MATRIX_3X2_F* inputGeometryTransform,
             FLOAT flatteningTolerance,
-            D2D1_GEOMETRY_RELATION *relation) const override
+            D2D1_GEOMETRY_RELATION* relation) const override
         {
             return CompareWithGeometryMethod.WasCalled(inputGeometry, inputGeometryTransform, flatteningTolerance, relation);
         }
 
         STDMETHOD(Simplify)(
             D2D1_GEOMETRY_SIMPLIFICATION_OPTION simplificationOption,
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            ID2D1SimplifiedGeometrySink *geometrySink) const override
+            ID2D1SimplifiedGeometrySink* geometrySink) const override
         {
             return SimplifyMethod.WasCalled(simplificationOption, worldTransform, flatteningTolerance, geometrySink);
         }
 
         STDMETHOD(Tessellate)(
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            ID2D1TessellationSink *tessellationSink) const override
+            ID2D1TessellationSink* tessellationSink) const override
         {
             return TessellateMethod.WasCalled(worldTransform, flatteningTolerance, tessellationSink);
         }
 
         STDMETHOD(CombineWithGeometry)(
-            ID2D1Geometry *inputGeometry,
+            ID2D1Geometry* inputGeometry,
             D2D1_COMBINE_MODE combineMode,
-            CONST D2D1_MATRIX_3X2_F *inputGeometryTransform,
+            CONST D2D1_MATRIX_3X2_F* inputGeometryTransform,
             FLOAT flatteningTolerance,
-            ID2D1SimplifiedGeometrySink *geometrySink) const override
+            ID2D1SimplifiedGeometrySink* geometrySink) const override
         {
             return CombineWithGeometryMethod.WasCalled(inputGeometry, combineMode, inputGeometryTransform, flatteningTolerance, geometrySink);
         }
 
         STDMETHOD(Outline)(
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            ID2D1SimplifiedGeometrySink *geometrySink) const override
+            ID2D1SimplifiedGeometrySink* geometrySink) const override
         {
             return OutlineMethod.WasCalled(worldTransform, flatteningTolerance, geometrySink);
         }
 
         STDMETHOD(ComputeArea)(
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            FLOAT *area) const override
+            FLOAT* area) const override
         {
             return ComputeAreaMethod.WasCalled(worldTransform, flatteningTolerance, area);
         }
 
         STDMETHOD(ComputeLength)(
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            FLOAT *length) const override
+            FLOAT* length) const override
         {
             return ComputeLengthMethod.WasCalled(worldTransform, flatteningTolerance, length);
         }
 
         STDMETHOD(ComputePointAtLength)(
             FLOAT length,
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            D2D1_POINT_2F *point,
-            D2D1_POINT_2F *unitTangentVector) const override
+            D2D1_POINT_2F* point,
+            D2D1_POINT_2F* unitTangentVector) const override
         {
             return ComputePointAtLengthMethod.WasCalled(length, worldTransform, flatteningTolerance, point, unitTangentVector);
         }
 
         STDMETHOD(Widen)(
             FLOAT strokeWidth,
-            ID2D1StrokeStyle *strokeStyle,
-            CONST D2D1_MATRIX_3X2_F *worldTransform,
+            ID2D1StrokeStyle* strokeStyle,
+            CONST D2D1_MATRIX_3X2_F* worldTransform,
             FLOAT flatteningTolerance,
-            ID2D1SimplifiedGeometrySink *geometrySink) const override
+            ID2D1SimplifiedGeometrySink* geometrySink) const override
         {
             return WidenMethod.WasCalled(strokeWidth, strokeStyle, worldTransform, flatteningTolerance, geometrySink);
         }
@@ -173,7 +175,7 @@ namespace canvas
         //
 
         STDMETHOD_(void, GetFactory)(
-            ID2D1Factory **factory) const override
+            ID2D1Factory** factory) const override
         {
             GetFactoryMethod.WasCalled(factory);
         }

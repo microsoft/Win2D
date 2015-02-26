@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30303.0
@@ -18,6 +18,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeIntellisense", "docs\MergeIntellisense\MergeIntellisense.csproj", "{81D2E651-F194-4FA8-A724-035D9A991DA9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocDiff", "docs\DocDiff\DocDiff.csproj", "{8FFF9905-A38A-477C-9097-FA5E6D9631D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mock.exe", "mock\exe\mock.exe.csproj", "{4864078E-BB10-4A7C-86F1-30D6FD4C1832}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mock", "mock", "{A1494431-90FA-43B4-B7AA-F98166B17912}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mock.test", "mock\test\mock.test.csproj", "{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +55,14 @@ Global
 		{8FFF9905-A38A-477C-9097-FA5E6D9631D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FFF9905-A38A-477C-9097-FA5E6D9631D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FFF9905-A38A-477C-9097-FA5E6D9631D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4864078E-BB10-4A7C-86F1-30D6FD4C1832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4864078E-BB10-4A7C-86F1-30D6FD4C1832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4864078E-BB10-4A7C-86F1-30D6FD4C1832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4864078E-BB10-4A7C-86F1-30D6FD4C1832}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,5 +73,7 @@ Global
 		{4E89E65B-B1DE-4FAF-9E51-E8E183A45FC4} = {EA3B56C6-8B15-4191-ACC4-44A78A99A84B}
 		{81D2E651-F194-4FA8-A724-035D9A991DA9} = {EA3B56C6-8B15-4191-ACC4-44A78A99A84B}
 		{8FFF9905-A38A-477C-9097-FA5E6D9631D4} = {EA3B56C6-8B15-4191-ACC4-44A78A99A84B}
+		{4864078E-BB10-4A7C-86F1-30D6FD4C1832} = {A1494431-90FA-43B4-B7AA-F98166B17912}
+		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50} = {A1494431-90FA-43B4-B7AA-F98166B17912}
 	EndGlobalSection
 EndGlobal

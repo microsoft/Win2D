@@ -10,6 +10,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// This file was automatically generated. Please do not edit it manually.
+
 #pragma once
 
 namespace canvas
@@ -43,12 +45,12 @@ namespace canvas
         // ID2D1GeometryGroup
         //
 
-        STDMETHOD_(D2D1_FILL_MODE, GetFillMode)() const
+        STDMETHOD_(D2D1_FILL_MODE, GetFillMode)() const override
         {
             return GetFillModeMethod.WasCalled();
         }
 
-        STDMETHOD_(UINT32, GetSourceGeometryCount)() const
+        STDMETHOD_(UINT32, GetSourceGeometryCount)() const override
         {
             return GetSourceGeometryCountMethod.WasCalled();
         }
