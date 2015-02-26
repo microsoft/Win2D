@@ -158,7 +158,20 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.UI.Color endColor,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
 
+        // Defaults to clamp edge behavior, premultiplied alpha, color interpolation sRGB-premultiplied.
+        HRESULT CreateWithStops(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+
+        //
         // Defaults to color interpolation sRGB-premultiplied.
+        //
+        // While it may also be convenient to have an overload that takese edge
+        // behavior but not alpha mode, the # of projected arguments in that
+        // would conflict with CreateSimple. 
+        //
         HRESULT CreateWithEdgeBehaviorAndAlphaMode(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
@@ -245,6 +258,13 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Windows.UI.Color startColor,
             [in] Windows.UI.Color endColor,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+
+        // Defaults to clamp edge behavior, premultiplied alpha, color interpolation sRGB-premultiplied.
+        HRESULT CreateWithStops(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
 
         // Defaults to color interpolation sRGB-premultiplied.

@@ -115,6 +115,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });    
      }
 
+    IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithStops(
+        ICanvasResourceCreator* resourceAllocator,
+        UINT32 gradientStopCount,
+        CanvasGradientStop* gradientStops,
+        ICanvasRadialGradientBrush** radialGradientBrush)
+    {
+        return CreateWithEdgeBehaviorAndInterpolationOptions(
+            resourceAllocator,
+            gradientStopCount,
+            gradientStops,
+            CanvasEdgeBehavior::Clamp,
+            CanvasAlphaMode::Premultiplied,
+            CanvasColorSpace::Srgb,
+            CanvasColorSpace::Srgb,
+            CanvasBufferPrecision::Precision8UIntNormalized,
+            radialGradientBrush);
+    }
+
     IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndAlphaMode(
         ICanvasResourceCreator* resourceAllocator,
         UINT32 gradientStopCount,

@@ -71,7 +71,7 @@ namespace ExampleGallery
                 new CanvasGradientStop { Position = 1,     Color = Colors.Transparent },
             };
 
-            gradientBrush = new CanvasRadialGradientBrush(sender, gradientStops, CanvasEdgeBehavior.Clamp, CanvasAlphaMode.Premultiplied);
+            gradientBrush = new CanvasRadialGradientBrush(sender, gradientStops);
 
             // Create a star shaped geometry, used for layer clipping.
             clipGeometry = Utils.CreateStarGeometry(sender, 1, Vector2.Zero);

@@ -172,6 +172,9 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[])">
+      <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
     </member>
@@ -230,6 +233,9 @@ under the License.
       <summary>A brush used to paint a radial gradient.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
+      <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[])">
       <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)">

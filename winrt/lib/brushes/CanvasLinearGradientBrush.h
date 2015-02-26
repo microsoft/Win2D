@@ -110,6 +110,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color endColor,
             ICanvasLinearGradientBrush** canvasLinearGradientBrush) override;
 
+        IFACEMETHOD(CreateWithStops)(
+            ICanvasResourceCreator* resourceAllocator,
+            UINT32 gradientStopCount,
+            CanvasGradientStop* gradientStops,
+            ICanvasLinearGradientBrush** linearGradientBrush) override;
+
         IFACEMETHOD(CreateWithEdgeBehaviorAndAlphaMode)(
             ICanvasResourceCreator* resourceAllocator,
             UINT32 gradientStopCount,
