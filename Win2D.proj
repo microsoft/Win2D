@@ -53,7 +53,7 @@
 
   <!-- Windows test projects -->
   <ItemGroup Condition="$(BuildWindows) and $(BuildTests)">
-    <WindowsProject Include="winrt\test.internal\winrt.test.internal.vcxproj">
+    <WindowsProject Include="winrt\test.internal\winrt.test.internal.Windows.vcxproj">
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests>desktop</AutomatedTests>
     </WindowsProject>
