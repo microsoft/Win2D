@@ -15,6 +15,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Numerics;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace ExampleGallery
@@ -36,6 +37,10 @@ namespace ExampleGallery
         public CustomFonts()
         {
             this.InitializeComponent();
+           
+            animatedControl.Input.PointerPressed += Input_PointerPressed;
+            animatedControl.Input.PointerReleased += Input_PointerReleased;
+            animatedControl.Input.PointerMoved += Input_PointerMoved;
         }
 
         static CanvasTextFormat labelText = new CanvasTextFormat()
@@ -82,24 +87,54 @@ namespace ExampleGallery
         }
 
         float offset = 0;
+        float velocity = 0;
+
+        float startOffset;
+        float lastDelta;
+        float startPoint;
+
+        private void Input_PointerPressed(object sender, PointerEventArgs args)
+        {
+            startPoint = (float)args.CurrentPoint.Position.Y;
+            startOffset = offset;
+            velocity = 0;
+        }
+
+        private void Input_PointerMoved(object sender, PointerEventArgs args)      
+        {
+            if (!args.CurrentPoint.IsInContact)
+                return;
+
+            float point = (float)args.CurrentPoint.Position.Y;
+            lastDelta = startPoint - point;
+            offset = startOffset + (float)lastDelta;
+            velocity = 0;
+        }
+
+        private void Input_PointerReleased(object sender, PointerEventArgs args)
+        {
+            velocity = lastDelta / 30.0f;
+        }
+
+
         int firstLine;
         int lastLine;
                 
         private void OnUpdate(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
             float height = (float)sender.Size.Height;
+            float totalHeight = characters.Length * lineHeight + height;
+
+            offset = (offset + velocity) % totalHeight;
+            while (offset < 0)
+                offset += totalHeight;
+
+            velocity = velocity * 0.90f + 2.0f * 0.10f;
+
             float top = height - offset;
             firstLine = Math.Max(0, (int)(-top / lineHeight));
             lastLine = Math.Min(characters.Length, (int)((height + lineHeight - top) / lineHeight));
-            
-            if (firstLine >= lastLine)
-            {
-                offset = 0;
-            }
-            else
-            {
-                offset = offset + 2.0f;
-            }
+
         }
 
         private CanvasCommandList GenerateTextDisplay(ICanvasResourceCreator resourceCreator, float width, float height)
