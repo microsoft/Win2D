@@ -265,10 +265,6 @@ under the License.
       <summary>Returns a geometry containing the specified geometries, grouped together.</summary>
       <remarks>
       	<p>
-      	The <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.CanvasFilledRegionDetermination"/> 
-      	describing the fill of intersecting geometries in the group is a default of Alternate.
-      	</p>
-      	<p>
       	This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
       	contains six overlapping rectangles, then the result, when streamed out (using interop) will
       	still contain the six rectangles. 
@@ -279,16 +275,16 @@ under the License.
       	above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
       	If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
       	achieve this occurs at draw time.
+      	</p>
+      	<p>
+      	This overload determines how to fill intersecting geometries in the group using a default
+        <see cref="T:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination"/> of Alternate.
       	</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGeometry[],Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination)">
       <summary>Returns a geometry containing the specified geometries, grouped together.</summary>
       <remarks>
-        <p>
-        The specified <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.CanvasFilledRegionDetermination"/> 
-      	determines the fill of intersecting geometries in the group.
-      	</p>
       	<p>
       	This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
       	contains six overlapping rectangles, then the result, when streamed out (using interop) will
@@ -300,6 +296,10 @@ under the License.
       	above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
       	If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
       	achieve this occurs at draw time.
+      	</p>
+        <p>
+      	This overload uses the specified <see cref="T:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination"/>
+        to determine how to fill intersecting geometries in the group.
       	</p>
       </remarks>
     </member>    
