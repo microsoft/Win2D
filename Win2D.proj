@@ -56,7 +56,7 @@
       <BinDir>Phone</BinDir>
     </PhoneProject>
     <UAPProject>
-      <Platforms>Win32;x64;ARM</Platforms>
+      <Platforms>Win32;x64</Platforms> <!-- TODO: once ARM UAP builds work again build for ARM again (MSFT:1577099) -->
       <BinDir>UAP</BinDir>
     </UAPProject>
     <AnyCPUProject>
