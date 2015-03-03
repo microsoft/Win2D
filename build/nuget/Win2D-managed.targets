@@ -21,7 +21,7 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(TargetPlatformIdentifier)' != 'UAP'">
       <Reference Include="Microsoft.Graphics.Canvas.Numerics">
         <HintPath>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform)\Microsoft.Graphics.Canvas.Numerics.dll</HintPath>
       </Reference>
