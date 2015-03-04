@@ -23,33 +23,31 @@ under the License.
       <summary>A bitmap is a 2D grid of pixels that form an image.</summary>
       <example>
         <p>To load and draw a bitmap, first add a <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/> to your XAML page.</p>
-        <p>Add the image file you want to display (png, jpeg, etc.) to your Visual Studio project,
-           and make sure its Build Action is set to Content.</p>
-        <p>In the page implementation class (eg. MainPage.xaml.cs), declare a field to hold the bitmap,
-           and another to indicate when the asynchronous load has completed:</p>
+        <p>Add the image files you want to display (png, jpeg, etc.) to your Visual Studio project,
+           and make sure their Build Action is set to Content.</p>
+        <p>In the page implementation class (eg. MainPage.xaml.cs), declare fields to hold the bitmaps:</p>
         <code>
-          CanvasBitmap cat;
-
-          bool isLoaded;
+          CanvasBitmap cat, mouse;
         </code>
-        <p>Use the CreateResources event to asynchronously load the bitmap:</p>
+        <p>Use the CreateResources event to asynchronously load the bitmaps:</p>
         <code>
-          async void myWidget_CreateResources(CanvasControl sender, object args)
+          void myWidget_CreateResources(CanvasControl sender, object args)
+          {
+              args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
+          }
+          
+          async Task CreateResourcesAsync(CanvasControl sender)
           {
               cat = await CanvasBitmap.LoadAsync(sender, "ShawnsCat.jpg");
-
-              isLoaded = true;
-              myWidget.Invalidate();
+              mouse = await CanvasBitmap.LoadAsync(sender, "Mouse.png");
           }
         </code>
-        <p>Use the Draw event to display it:</p>
+        <p>Use the Draw event to display them:</p>
         <code>
           void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
           {
-              if (isLoaded)
-              {
-                  args.DrawingSession.DrawImage(cat, new Point(42, 42));
-              }
+              args.DrawingSession.DrawImage(cat, 42, 42);
+              args.DrawingSession.DrawImage(mouse, 123, 45);
           }
         </code>
       </example>
