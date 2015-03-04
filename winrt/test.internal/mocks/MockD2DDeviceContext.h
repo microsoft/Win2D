@@ -24,51 +24,58 @@ namespace canvas
         ChainInterfaces<ID2D1DeviceContext1, ID2D1DeviceContext, ID2D1RenderTarget, ID2D1Resource>>
     {
     public:
-        CALL_COUNTER_WITH_MOCK(ClearMethod                 , void(D2D1_COLOR_F const*));
-        CALL_COUNTER_WITH_MOCK(GetTransformMethod          , void(D2D1_MATRIX_3X2_F*));
-        CALL_COUNTER_WITH_MOCK(SetTransformMethod          , void(D2D1_MATRIX_3X2_F const*));
-        CALL_COUNTER_WITH_MOCK(GetAntialiasModeMethod      , D2D1_ANTIALIAS_MODE());
-        CALL_COUNTER_WITH_MOCK(SetAntialiasModeMethod      , void(D2D1_ANTIALIAS_MODE));
-        CALL_COUNTER_WITH_MOCK(GetPrimitiveBlendMethod     , D2D1_PRIMITIVE_BLEND());
-        CALL_COUNTER_WITH_MOCK(SetPrimitiveBlendMethod     , void(D2D1_PRIMITIVE_BLEND));
-        CALL_COUNTER_WITH_MOCK(GetTextAntialiasModeMethod  , D2D1_TEXT_ANTIALIAS_MODE());
-        CALL_COUNTER_WITH_MOCK(SetTextAntialiasModeMethod  , void(D2D1_TEXT_ANTIALIAS_MODE));
-        CALL_COUNTER_WITH_MOCK(GetUnitModeMethod           , D2D1_UNIT_MODE());
-        CALL_COUNTER_WITH_MOCK(SetUnitModeMethod           , void(D2D1_UNIT_MODE));
-        CALL_COUNTER_WITH_MOCK(SetDpiMethod                , void(float dpiX, float dpiY));
-        CALL_COUNTER_WITH_MOCK(GetDpiMethod                , void(float* dpiX, float* dpiY));
-        CALL_COUNTER_WITH_MOCK(DrawLineMethod              , void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        CALL_COUNTER_WITH_MOCK(DrawRectangleMethod         , void(D2D1_RECT_F const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        CALL_COUNTER_WITH_MOCK(FillRectangleMethod         , void(D2D1_RECT_F const*,ID2D1Brush*));
-        CALL_COUNTER_WITH_MOCK(DrawRoundedRectangleMethod  , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        CALL_COUNTER_WITH_MOCK(FillRoundedRectangleMethod  , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*));
-        CALL_COUNTER_WITH_MOCK(DrawEllipseMethod           , void(D2D1_ELLIPSE const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        CALL_COUNTER_WITH_MOCK(FillEllipseMethod           , void(D2D1_ELLIPSE const*,ID2D1Brush*));
-        CALL_COUNTER_WITH_MOCK(DrawTextMethod              , void(wchar_t const*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F const*,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE));
-        CALL_COUNTER_WITH_MOCK(DrawImageMethod             , void(ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE));
-        CALL_COUNTER_WITH_MOCK(DrawBitmapMethod            , void(ID2D1Bitmap*, D2D1_RECT_F const*, FLOAT, D2D1_INTERPOLATION_MODE, D2D1_RECT_F const*, D2D1_MATRIX_4X4_F const*));
-        CALL_COUNTER_WITH_MOCK(GetDeviceMethod             , void(ID2D1Device**));
-        CALL_COUNTER_WITH_MOCK(CreateEffectMethod          , HRESULT(IID const&, ID2D1Effect **));
-        CALL_COUNTER_WITH_MOCK(CreateCommandListMethod     , HRESULT(ID2D1CommandList**));
-        CALL_COUNTER_WITH_MOCK(CreateSolidColorBrushMethod , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
-        CALL_COUNTER_WITH_MOCK(GetImageWorldBoundsMethod   , HRESULT(ID2D1Image*, D2D1_RECT_F*));
-        CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod  , UINT32());
-        CALL_COUNTER_WITH_MOCK(CreateBitmapMethod          , HRESULT(D2D1_SIZE_U, void const*, UINT32, D2D1_BITMAP_PROPERTIES1 const*, ID2D1Bitmap1**));
-        CALL_COUNTER_WITH_MOCK(CreateBitmapFromDxgiSurfaceMethod, HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
-        CALL_COUNTER_WITH_MOCK(SetTargetMethod             , void(ID2D1Image*));
-        CALL_COUNTER_WITH_MOCK(GetTargetMethod             , void(ID2D1Image**));
-        CALL_COUNTER_WITH_MOCK(BeginDrawMethod             , void());
-        CALL_COUNTER_WITH_MOCK(EndDrawMethod               , HRESULT(D2D1_TAG*, D2D1_TAG*));
-        CALL_COUNTER_WITH_MOCK(DrawGeometryMethod          , void(ID2D1Geometry*, ID2D1Brush*,float,ID2D1StrokeStyle*));
-        CALL_COUNTER_WITH_MOCK(FillGeometryMethod          , void(ID2D1Geometry*,ID2D1Brush*,ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(ClearMethod                           , void(D2D1_COLOR_F const*));
+        CALL_COUNTER_WITH_MOCK(GetTransformMethod                    , void(D2D1_MATRIX_3X2_F*));
+        CALL_COUNTER_WITH_MOCK(SetTransformMethod                    , void(D2D1_MATRIX_3X2_F const*));
+        CALL_COUNTER_WITH_MOCK(GetAntialiasModeMethod                , D2D1_ANTIALIAS_MODE());
+        CALL_COUNTER_WITH_MOCK(SetAntialiasModeMethod                , void(D2D1_ANTIALIAS_MODE));
+        CALL_COUNTER_WITH_MOCK(GetPrimitiveBlendMethod               , D2D1_PRIMITIVE_BLEND());
+        CALL_COUNTER_WITH_MOCK(SetPrimitiveBlendMethod               , void(D2D1_PRIMITIVE_BLEND));
+        CALL_COUNTER_WITH_MOCK(GetTextAntialiasModeMethod            , D2D1_TEXT_ANTIALIAS_MODE());
+        CALL_COUNTER_WITH_MOCK(SetTextAntialiasModeMethod            , void(D2D1_TEXT_ANTIALIAS_MODE));
+        CALL_COUNTER_WITH_MOCK(GetUnitModeMethod                     , D2D1_UNIT_MODE());
+        CALL_COUNTER_WITH_MOCK(SetUnitModeMethod                     , void(D2D1_UNIT_MODE));
+        CALL_COUNTER_WITH_MOCK(SetDpiMethod                          , void(float dpiX, float dpiY));
+        CALL_COUNTER_WITH_MOCK(GetDpiMethod                          , void(float* dpiX, float* dpiY));
+        CALL_COUNTER_WITH_MOCK(DrawLineMethod                        , void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        CALL_COUNTER_WITH_MOCK(DrawRectangleMethod                   , void(D2D1_RECT_F const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        CALL_COUNTER_WITH_MOCK(FillRectangleMethod                   , void(D2D1_RECT_F const*,ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(DrawRoundedRectangleMethod            , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        CALL_COUNTER_WITH_MOCK(FillRoundedRectangleMethod            , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(DrawEllipseMethod                     , void(D2D1_ELLIPSE const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        CALL_COUNTER_WITH_MOCK(FillEllipseMethod                     , void(D2D1_ELLIPSE const*,ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(DrawTextMethod                        , void(wchar_t const*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F const*,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE));
+        CALL_COUNTER_WITH_MOCK(DrawImageMethod                       , void(ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE));
+        CALL_COUNTER_WITH_MOCK(DrawBitmapMethod                      , void(ID2D1Bitmap*, D2D1_RECT_F const*, FLOAT, D2D1_INTERPOLATION_MODE, D2D1_RECT_F const*, D2D1_MATRIX_4X4_F const*));
+        CALL_COUNTER_WITH_MOCK(GetDeviceMethod                       , void(ID2D1Device**));
+        CALL_COUNTER_WITH_MOCK(CreateEffectMethod                    , HRESULT(IID const&, ID2D1Effect **));
+        CALL_COUNTER_WITH_MOCK(CreateCommandListMethod               , HRESULT(ID2D1CommandList**));
+        CALL_COUNTER_WITH_MOCK(CreateSolidColorBrushMethod           , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
+        CALL_COUNTER_WITH_MOCK(GetImageWorldBoundsMethod             , HRESULT(ID2D1Image*, D2D1_RECT_F*));
+        CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod            , UINT32());
+        CALL_COUNTER_WITH_MOCK(CreateBitmapMethod                    , HRESULT(D2D1_SIZE_U, void const*, UINT32, D2D1_BITMAP_PROPERTIES1 const*, ID2D1Bitmap1**));
+        CALL_COUNTER_WITH_MOCK(CreateBitmapFromDxgiSurfaceMethod     , HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
+        CALL_COUNTER_WITH_MOCK(SetTargetMethod                       , void(ID2D1Image*));
+        CALL_COUNTER_WITH_MOCK(GetTargetMethod                       , void(ID2D1Image**));
+        CALL_COUNTER_WITH_MOCK(BeginDrawMethod                       , void());
+        CALL_COUNTER_WITH_MOCK(EndDrawMethod                         , HRESULT(D2D1_TAG*, D2D1_TAG*));
+        CALL_COUNTER_WITH_MOCK(DrawGeometryMethod                    , void(ID2D1Geometry*, ID2D1Brush*,float,ID2D1StrokeStyle*));
+        CALL_COUNTER_WITH_MOCK(FillGeometryMethod                    , void(ID2D1Geometry*,ID2D1Brush*,ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod , HRESULT(ID2D1Geometry*, FLOAT, ID2D1GeometryRealization**));
+        CALL_COUNTER_WITH_MOCK(CreateStrokedGeometryRealizationMethod, HRESULT(ID2D1Geometry*, FLOAT, FLOAT, ID2D1StrokeStyle *, ID2D1GeometryRealization**));
+        CALL_COUNTER_WITH_MOCK(DrawGeometryRealizationMethod         , void(ID2D1GeometryRealization*, ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(PushLayerMethod                       , void(const D2D1_LAYER_PARAMETERS1*, ID2D1Layer*));
+        CALL_COUNTER_WITH_MOCK(PopLayerMethod                        , void());
+        CALL_COUNTER_WITH_MOCK(PushAxisAlignedClipMethod             , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
+        CALL_COUNTER_WITH_MOCK(PopAxisAlignedClipMethod              , void());
 
         MockD2DDeviceContext()
         {
             CreateSolidColorBrushMethod.AllowAnyCall(
-                [](D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush** value)
+                [](D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush** theValue)
                 {
                     ComPtr<MockD2DSolidColorBrush> brush = Make<MockD2DSolidColorBrush>();
-                    return brush.CopyTo(value);
+                    return brush.CopyTo(theValue);
                 });
         }
 
@@ -291,7 +298,7 @@ namespace canvas
 
         IFACEMETHODIMP_(void) PopLayer() override
         {
-            Assert::Fail(L"Unexpected call to PopLayer");
+            PopLayerMethod.WasCalled();
         }
 
         IFACEMETHODIMP Flush(D2D1_TAG *,D2D1_TAG *) override
@@ -310,14 +317,14 @@ namespace canvas
             Assert::Fail(L"Unexpected call to RestoreDrawingState");
         }
 
-        IFACEMETHODIMP_(void) PushAxisAlignedClip(const D2D1_RECT_F *,D2D1_ANTIALIAS_MODE) override
+        IFACEMETHODIMP_(void) PushAxisAlignedClip(const D2D1_RECT_F* clipRect, D2D1_ANTIALIAS_MODE antialiasMode) override
         {
-            Assert::Fail(L"Unexpected call to PushAxisAlignedClip");
+            PushAxisAlignedClipMethod.WasCalled(clipRect, antialiasMode);
         }
 
         IFACEMETHODIMP_(void) PopAxisAlignedClip() override
         {
-            Assert::Fail(L"Unexpected call to PopAxisAlignedClip");
+            PopAxisAlignedClipMethod.WasCalled();
         }
 
         IFACEMETHODIMP_(void) Clear(const D2D1_COLOR_F* color) override
@@ -438,9 +445,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateCommandList(ID2D1CommandList** value) override
+        IFACEMETHODIMP CreateCommandList(ID2D1CommandList** theValue) override
         {
-            return CreateCommandListMethod.WasCalled(value);
+            return CreateCommandListMethod.WasCalled(theValue);
         }
 
         IFACEMETHODIMP_(BOOL) IsDxgiFormatSupported(DXGI_FORMAT) const override
@@ -532,9 +539,9 @@ namespace canvas
             DrawBitmapMethod.WasCalled(bitmap, destRect, opacity, interpolationMode, sourceRect, perspective);
         }
 
-        IFACEMETHODIMP_(void) PushLayer(const D2D1_LAYER_PARAMETERS1 *,ID2D1Layer *) override
+        IFACEMETHODIMP_(void) PushLayer(const D2D1_LAYER_PARAMETERS1* parameters, ID2D1Layer* layer) override
         {
-            Assert::Fail(L"Unexpected call to PushLayer");
+            PushLayerMethod.WasCalled(parameters, layer);
         }
 
         IFACEMETHODIMP InvalidateEffectInputRectangle(ID2D1Effect *,UINT32,const D2D1_RECT_F *) override
@@ -568,21 +575,19 @@ namespace canvas
 
         // ID2D1DeviceContext1
 
-        IFACEMETHODIMP CreateFilledGeometryRealization(ID2D1Geometry *,FLOAT,ID2D1GeometryRealization **) override
+        IFACEMETHODIMP CreateFilledGeometryRealization(ID2D1Geometry* geometry, FLOAT tol, ID2D1GeometryRealization** geometryRealization) override
         {
-            Assert::Fail(L"Unexpected call to CreateFilledGeometryRealization");
-            return E_NOTIMPL;
+            return CreateFilledGeometryRealizationMethod.WasCalled(geometry, tol, geometryRealization);
         }
 
-        IFACEMETHODIMP CreateStrokedGeometryRealization(ID2D1Geometry *,FLOAT,FLOAT,ID2D1StrokeStyle *,ID2D1GeometryRealization **) override
+        IFACEMETHODIMP CreateStrokedGeometryRealization(ID2D1Geometry* geometry, FLOAT tol, FLOAT strokeWidth, ID2D1StrokeStyle* strokeStyle, ID2D1GeometryRealization** geometryRealization) override
         {
-            Assert::Fail(L"Unexpected call to CreateStrokedGeometryRealization");
-            return E_NOTIMPL;
+            return CreateStrokedGeometryRealizationMethod.WasCalled(geometry, tol, strokeWidth, strokeStyle, geometryRealization);
         }
 
-        IFACEMETHODIMP_(void) DrawGeometryRealization(ID2D1GeometryRealization *,ID2D1Brush *) override
+        IFACEMETHODIMP_(void) DrawGeometryRealization(ID2D1GeometryRealization* geometryRealization, ID2D1Brush* brush) override
         {
-            Assert::Fail(L"Unexpected call to DrawGeometryRealization");
+            return DrawGeometryRealizationMethod.WasCalled(geometryRealization, brush);
         }
     };
 }

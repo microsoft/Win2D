@@ -29,6 +29,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         ColorSourceEffect();
 
-        PROPERTY(Color, Color);
+        EFFECT_PROPERTY(Color, Color);
     };
 }}}}}

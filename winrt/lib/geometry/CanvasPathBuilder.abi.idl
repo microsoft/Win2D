@@ -13,6 +13,7 @@
 namespace Microsoft.Graphics.Canvas
 {
     runtimeclass CanvasPathBuilder;
+    runtimeclass CanvasGeometry;
 
     [version(VERSION), uuid(BCF5822F-8127-4E5C-96B8-29983B915541), exclusiveto(CanvasPathBuilder)]
     interface ICanvasPathBuilder : IInspectable
@@ -61,6 +62,9 @@ namespace Microsoft.Graphics.Canvas
 
         HRESULT EndFigure(
             [in] CanvasFigureLoop figureLoop);
+
+        HRESULT AddGeometry(
+            [in] CanvasGeometry* geometry);
     }
 
     [version(VERSION), uuid(AC2BEE14-EFD1-4343-8E53-BA62153D8966), exclusiveto(CanvasPathBuilder)]

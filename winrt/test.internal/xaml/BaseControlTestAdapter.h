@@ -15,7 +15,6 @@
 #include <RecreatableDeviceManager.impl.h>
 
 #include "MockCanvasDeviceActivationFactory.h"
-#include "MockHelpers.h"
 #include "MockWindow.h"
 #include "MockDispatcher.h"
 

@@ -12,12 +12,7 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-#include <RegisteredEvent.h>
-
-#include "RecreatableDeviceManager.h"
 #include "BaseControl.h"
-#include "CanvasImageSource.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -29,7 +24,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::UI::Xaml;
 
-    class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>
+    class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>,
+                                       private LifespanTracker<CanvasDrawEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawEventArgs, BaseTrust);
 
@@ -39,8 +35,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDrawEventArgs** drawEventArgs) override;
     };
 
-    class CanvasDrawEventArgs : public RuntimeClass<
-        ICanvasDrawEventArgs>
+    class CanvasDrawEventArgs : public RuntimeClass<ICanvasDrawEventArgs>,
+                                private LifespanTracker<CanvasDrawEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawEventArgs, BaseTrust);
 

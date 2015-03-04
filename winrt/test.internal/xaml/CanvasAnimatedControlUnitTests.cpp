@@ -12,12 +12,6 @@
 
 #include "pch.h"
 
-#include <CanvasAnimatedControl.h>
-
-#include "CanvasControlTestAdapter.h"
-#include "BasicControlFixture.h"
-#include "MockCanvasSwapChain.h"
-
 static Color const AnyColor                 {   1,   2,   3,   4 };
 static Color const AnyOtherColor            {   5,   6,   7,   8 };
 static Color const AnyOpaqueColor           { 255,   2,   3,   4 };
@@ -1670,11 +1664,10 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 
         Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
 
+        f.RaiseUnloadedEvent();
         f.Control.Reset();
 
         Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
-
-        f.RaiseUnloadedEvent();
 
         f.ClearCanceledActions();
 
@@ -1840,7 +1833,7 @@ TEST_CLASS(CanvasAnimatedControlAdapter_ChangedAction_UnitTests)
     struct Fixture
     {
         ComPtr<MockThreadPoolStatics> ThreadPoolStatics;
-        std::shared_ptr<ICanvasAnimatedControlAdapter> Adapter;
+        CanvasRenderLoop RenderLoop;
         ComPtr<MockWindow> Window;
 
         ComPtr<IDispatchedHandler> Handler;
@@ -1848,7 +1841,7 @@ TEST_CLASS(CanvasAnimatedControlAdapter_ChangedAction_UnitTests)
 
         Fixture()
             : ThreadPoolStatics(Make<MockThreadPoolStatics>())
-            , Adapter(CreateCanvasAnimatedControlAdapter(ThreadPoolStatics.Get()))
+            , RenderLoop(ThreadPoolStatics.Get())
             , Window(Make<MockWindow>())
         {
             Window->get_DispatcherMethod.SetExpectedCalls(1,
@@ -1884,7 +1877,7 @@ TEST_CLASS(CanvasAnimatedControlAdapter_ChangedAction_UnitTests)
                 changedCalled = true;
             };
 
-        f.Adapter->StartChangedAction(f.Window, fakeChangedFn);
+        f.RenderLoop.StartChangedAction(f.Window, fakeChangedFn);
         Assert::IsNotNull(f.Action.Get());
         Assert::IsNotNull(f.Handler.Get());
 
@@ -1898,14 +1891,14 @@ TEST_CLASS(CanvasAnimatedControlAdapter_StartUpdateRenderLoop_UnitTests)
     struct Fixture 
     {
         ComPtr<MockThreadPoolStatics> ThreadPoolStatics;
-        std::shared_ptr<ICanvasAnimatedControlAdapter> Adapter;
+        CanvasRenderLoop RenderLoop;
 
         ComPtr<IWorkItemHandler> Handler;
         ComPtr<IAsyncAction> Action;
 
         Fixture()
             : ThreadPoolStatics(Make<MockThreadPoolStatics>())
-            , Adapter(CreateCanvasAnimatedControlAdapter(ThreadPoolStatics.Get()))
+            , RenderLoop(ThreadPoolStatics.Get())
         {
             ThreadPoolStatics->RunWithPriorityAndOptionsAsyncMethod.SetExpectedCalls(1,
                 [=] (IWorkItemHandler* theHandler, WorkItemPriority priority, WorkItemOptions options, IAsyncAction** operation)
@@ -1938,7 +1931,7 @@ TEST_CLASS(CanvasAnimatedControlAdapter_StartUpdateRenderLoop_UnitTests)
 
         auto afterLoopFn = [&](){};
 
-        auto returnedAction = f.Adapter->StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
+        auto returnedAction = f.RenderLoop.StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
 
         Assert::IsTrue(IsSameInstance(f.Action.Get(), returnedAction.Get()));
         Assert::IsNotNull(f.Handler.Get());
@@ -1966,13 +1959,12 @@ TEST_CLASS(CanvasAnimatedControlAdapter_StartUpdateRenderLoop_UnitTests)
 
         auto afterLoopFn = [&](){};
 
-        f.Adapter->StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
+        f.RenderLoop.StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
 
         ThrowIfFailed(f.Handler->Invoke(f.Action.Get()));
         Assert::AreEqual(10, count);
     }
 };
-
 
 TEST_CLASS(CanvasAnimatedControl_Input)
 {

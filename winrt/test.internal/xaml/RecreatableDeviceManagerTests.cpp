@@ -14,7 +14,6 @@
 
 #include <RecreatableDeviceManager.impl.h>
 
-#include "MockAsyncAction.h"
 #include "MockCanvasDeviceActivationFactory.h"
 
 using Internal::AggregateType;

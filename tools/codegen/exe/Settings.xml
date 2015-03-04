@@ -85,6 +85,16 @@ under the License.
     <Enum Name="PATH_SEGMENT" ShouldProject="true" ProjectedNameOverride="FigureSegmentOptions"/>
     <Enum Name="ARC_SIZE" ShouldProject="true"/>
 
+    <Enum Name="COMBINE_MODE" ShouldProject="true" ProjectedNameOverride="GeometryCombine"/>
+    <Enum Name="GEOMETRY_RELATION" ShouldProject="true">
+      <Field Name="UNKNOWN" ShouldProject="false"/>
+      <Field Name="DISJOINT" ShouldProject="true" ProjectedValueOverride="0"/>
+      <Field Name="IS_CONTAINED" ShouldProject="true" ProjectedNameOverride="Contained" ProjectedValueOverride="1"/>
+      <Field Name="CONTAINS" ShouldProject="true" ProjectedValueOverride="2"/>
+      <Field Name="OVERLAP" ShouldProject="true" ProjectedValueOverride="3"/>
+    </Enum>
+    <Enum Name="GEOMETRY_SIMPLIFICATION_OPTION" ShouldProject="true" ProjectedNameOverride="GeometrySimplification"/>
+    <Enum Name="LAYER_OPTIONS1" ShouldProject="true" ProjectedNameOverride="LayerOptions"/>
   </Namespace>
   
   <Namespace Name="Effects">

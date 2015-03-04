@@ -14,7 +14,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    class CanvasCreateResourcesEventArgs : public RuntimeClass<ICanvasCreateResourcesEventArgs>
+    class CanvasCreateResourcesEventArgs : public RuntimeClass<ICanvasCreateResourcesEventArgs>,
+                                           private LifespanTracker<CanvasCreateResourcesEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCreateResourcesEventArgs, BaseTrust);
 

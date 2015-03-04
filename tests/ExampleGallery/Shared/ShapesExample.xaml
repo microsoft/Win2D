@@ -31,6 +31,6 @@ under the License.
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <ListBox x:Name="Shapes" Grid.Column="0" Margin="5" VerticalAlignment="Top" SelectionChanged="Shapes_SelectionChanged" />
-        <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"/>
+        <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5" Draw="Canvas_Draw"/>
     </Grid>
 </UserControl> 

@@ -12,8 +12,42 @@
 
 #include "pch.h"
 
+#include "MockDWriteFactory.h"
+#include "MockDWriteFontCollection.h"
+#include "MockDWriteFontFile.h"
+#include "StubStorageFileStatics.h"
+
 namespace canvas
 {
+    class StubCanvasTextFormatAdapter : public CanvasTextFormatAdapter
+    {
+    public:
+        ComPtr<StubStorageFileStatics> StorageFileStatics;
+        
+        StubCanvasTextFormatAdapter()
+            : StorageFileStatics(Make<StubStorageFileStatics>())
+        {
+        }
+
+        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override
+        {
+            ComPtr<IDWriteFactory> factory;
+            ThrowIfFailed(DWriteCreateFactory(type, __uuidof(factory), &factory));
+            return factory;
+        }
+
+        virtual IStorageFileStatics* GetStorageFileStatics() override
+        {
+            return StorageFileStatics.Get();
+        }
+    };
+
+    std::shared_ptr<CanvasTextFormatManager> CreateTestManager()
+    {
+        auto adapter = std::make_shared<StubCanvasTextFormatAdapter>();
+        return std::make_shared<CanvasTextFormatManager>(adapter);
+    }
+
     //
     // Function that tests a simple property on CanvasTextFormat.
     //
@@ -36,7 +70,8 @@ namespace canvas
         DW_TYPE setRealizedValue,
         CANVAS_TYPE expectedRealizedValue)
     {
-        auto ctf = Make<CanvasTextFormat>();
+        auto manager = CreateTestManager();
+        auto ctf = manager->Create();
 
         //
         // Test roundtripping on unrealized format
@@ -75,7 +110,7 @@ namespace canvas
         //
         // Check round-tripping on a realized format
         //
-        ctf = Make<CanvasTextFormat>();
+        ctf = manager->Create();
         dwf = ctf->GetRealizedTextFormat();
 
         canvasSetter(ctf.Get(), expectedValue);
@@ -169,7 +204,7 @@ namespace canvas
         std::function<void(CanvasTextFormat*, CANVAS_TYPE)>&& canvasSetter,
         std::vector<CANVAS_TYPE> values)
     {
-        auto ctf = Make<CanvasTextFormat>();
+        auto ctf = CreateTestManager()->Create();
 
         for (auto& value : values)
         {
@@ -211,16 +246,16 @@ namespace canvas
     TEST_CLASS(CanvasTextFormatTests)
     {
     public:
-        TEST_METHOD(CanvasTextFormat_Implements_Expected_Interfaces)
+        TEST_METHOD_EX(CanvasTextFormat_Implements_Expected_Interfaces)
         {
-            auto ctf = Make<CanvasTextFormat>();
+            auto ctf = CreateTestManager()->Create();
 
             ASSERT_IMPLEMENTS_INTERFACE(ctf, ICanvasTextFormat);
             ASSERT_IMPLEMENTS_INTERFACE(ctf, ABI::Windows::Foundation::IClosable);
             ASSERT_IMPLEMENTS_INTERFACE(ctf, ICanvasResourceWrapperNative);
         }
 
-        TEST_METHOD(CanvasTextFormat_FlowDirection)
+        TEST_METHOD_EX(CanvasTextFormat_FlowDirection)
         {
             TEST_SIMPLE_PROPERTY(
                 FlowDirection,
@@ -234,7 +269,15 @@ namespace canvas
                 static_cast<CanvasTextDirection>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_FontFamily)
+        static std::wstring GetFontFamilyName(IDWriteTextFormat* dwf)
+        {
+            auto length = dwf->GetFontFamilyNameLength() + 1; // + 1 for NULL terminator
+            std::vector<wchar_t> buf(length);
+            ThrowIfFailed(dwf->GetFontFamilyName(&buf.front(), length));
+            return std::wstring(buf.begin(), buf.end() - 1); // - 1 since we don't want NULL terminator in string
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_FontFamily)
         {
             auto canvasGetter =
                 [](CanvasTextFormat* ctf)
@@ -250,15 +293,7 @@ namespace canvas
                     ThrowIfFailed(ctf->put_FontFamily(WinString(value)));
                 };
 
-            auto dwriteGetter =
-                [](IDWriteTextFormat* dwf)
-                {
-                    auto length = dwf->GetFontFamilyNameLength() + 1; // + 1 for NULL terminator
-                    std::vector<wchar_t> buf(length);
-                    ThrowIfFailed(dwf->GetFontFamilyName(&buf.front(), length));
-                    return std::wstring(buf.begin(), buf.end() - 1); // - 1 since we don't want NULL terminator in string
-                };
-
+            auto dwriteGetter = GetFontFamilyName;
             auto dwriteSetter = nullptr; // FontFamily name can't be set from dwrite
 
             TestSimpleProperty<std::wstring, std::wstring>(
@@ -268,11 +303,21 @@ namespace canvas
                 dwriteSetter,
                 L"font family",
                 L"font family",
-                L"realized font family",
-                L"realized font family");
+                L"<<unused>>",
+                L"<<unused>>");
+
+            TestSimpleProperty<std::wstring, std::wstring>(
+                canvasGetter,
+                canvasSetter,
+                dwriteGetter,
+                dwriteSetter,
+                L"uri#family",
+                L"family",
+                L"<<unused>>",
+                L"<<unused>>");
         }
 
-        TEST_METHOD(CanvasTextFormat_FontSize)
+        TEST_METHOD_EX(CanvasTextFormat_FontSize)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontSize,
@@ -282,7 +327,7 @@ namespace canvas
             TEST_INVALID_PROPERTIES(FontSize, nanf(""), -1.0f);
         }
 
-        TEST_METHOD(CanvasTextFormat_FontStretch)
+        TEST_METHOD_EX(CanvasTextFormat_FontStretch)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontStretch,
@@ -292,7 +337,7 @@ namespace canvas
             TEST_INVALID_PROPERTIES(FontStretch, static_cast<ABI::Windows::UI::Text::FontStretch>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_FontStyle)
+        TEST_METHOD_EX(CanvasTextFormat_FontStyle)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontStyle,
@@ -302,7 +347,7 @@ namespace canvas
             TEST_INVALID_PROPERTIES(FontStyle, static_cast<ABI::Windows::UI::Text::FontStyle>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_FontWeight)
+        TEST_METHOD_EX(CanvasTextFormat_FontWeight)
         {
             TEST_SIMPLE_DWRITE_IMMUTABLE_PROPERTY(
                 FontWeight,
@@ -315,7 +360,7 @@ namespace canvas
                 ABI::Windows::UI::Text::FontWeight{ 1000 });
         }
 
-        TEST_METHOD(CanvasTextFormat_IncrementalTabStop)
+        TEST_METHOD_EX(CanvasTextFormat_IncrementalTabStop)
         {
             TEST_SIMPLE_PROPERTY(
                 IncrementalTabStop,
@@ -330,7 +375,7 @@ namespace canvas
                 nanf(""));
         }
 
-        TEST_METHOD(CanvasTextFormat_LineSpacingMethod)
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacingMethod)
         {
             auto dwriteSetLineSpacingMethod = 
                 [](IDWriteTextFormat* dwf, DWRITE_LINE_SPACING_METHOD value)
@@ -360,7 +405,7 @@ namespace canvas
                 static_cast<CanvasLineSpacingMethod>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_LineSpacing)
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacing)
         {
             auto dwriteSetLineSpacing = 
                 [](IDWriteTextFormat* dwf, float value)
@@ -391,7 +436,7 @@ namespace canvas
                 nanf(""));
         }
 
-        TEST_METHOD(CanvasTextFormat_LineSpacingBaseline)
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacingBaseline)
         {
             auto dwriteSetLineSpacingBaseline = 
                 [](IDWriteTextFormat* dwf, float value)
@@ -421,7 +466,7 @@ namespace canvas
                 nanf(""));
         }
 
-        TEST_METHOD(CanvasTextFormat_LocaleName)
+        TEST_METHOD_EX(CanvasTextFormat_LocaleName)
         {
             auto canvasGetter =
                 [](CanvasTextFormat* ctf)
@@ -459,7 +504,7 @@ namespace canvas
                 L"en-us");            
         }
 
-        TEST_METHOD(CanvasTextFormat_VerticalAlignment)
+        TEST_METHOD_EX(CanvasTextFormat_VerticalAlignment)
         {
             TEST_PROPERTY(
                 VerticalAlignment,
@@ -474,7 +519,7 @@ namespace canvas
                 static_cast<CanvasVerticalAlignment>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_ReadingDirection)
+        TEST_METHOD_EX(CanvasTextFormat_ReadingDirection)
         {
             TEST_SIMPLE_PROPERTY(
                 ReadingDirection,
@@ -488,7 +533,7 @@ namespace canvas
                 static_cast<CanvasTextDirection>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_ParagraphAlignment)
+        TEST_METHOD_EX(CanvasTextFormat_ParagraphAlignment)
         {
             TEST_PROPERTY(
                 ParagraphAlignment,
@@ -503,7 +548,7 @@ namespace canvas
                 static_cast<ABI::Windows::UI::Text::ParagraphAlignment>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_TrimmingGranularity)
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingGranularity)
         {
             auto dwriteGetter =
                 [](IDWriteTextFormat* dwf)
@@ -534,7 +579,7 @@ namespace canvas
                 static_cast<CanvasTextTrimmingGranularity>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_TrimmingDelimiter)
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingDelimiter)
         {
             auto canvasGetter =
                 [](CanvasTextFormat* ctf)
@@ -580,7 +625,7 @@ namespace canvas
         }
 
 
-        TEST_METHOD(CanvasTextFormat_TrimmingDelimiterCount)
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingDelimiterCount)
         {
             auto dwriteGetter =
                 [](IDWriteTextFormat* dwf)
@@ -611,7 +656,7 @@ namespace canvas
                 -1);
         }
 
-        TEST_METHOD(CanvasTextFormat_WordWrapping)
+        TEST_METHOD_EX(CanvasTextFormat_WordWrapping)
         {
             TEST_SIMPLE_PROPERTY(
                 WordWrapping,
@@ -625,12 +670,12 @@ namespace canvas
                 static_cast<CanvasWordWrapping>(999));
         }
 
-        TEST_METHOD(CanvasTextFormat_Options)
+        TEST_METHOD_EX(CanvasTextFormat_Options)
         {
             // 'Options' isn't part of IDWriteTextFormat, and so we can't use
             // TestSimpleProperty with it.
 
-            auto ctf = Make<CanvasTextFormat>();
+            auto ctf = CreateTestManager()->Create();
 
             // Check the default value
             CanvasDrawTextOptions actualDefault;
@@ -653,11 +698,281 @@ namespace canvas
                 Options,
                 static_cast<CanvasDrawTextOptions>(999));
         }
-    };
 
 #undef TEST_SIMPLE_PROPERTY
 #undef SIMPLE_DWRITE_SETTER
 #undef SIMPLE_DWRITE_GETTER
 #undef SIMPLE_CANVAS_SETTER
 #undef SIMPLE_CANVAS_GETTER
+
+        class StubCanvasTextFormatAdapterWithDWriteFactory : public StubCanvasTextFormatAdapter
+        {
+        public:
+            ComPtr<MockDWriteFactory> DWriteFactory;
+
+            StubCanvasTextFormatAdapterWithDWriteFactory()
+                : DWriteFactory(Make<MockDWriteFactory>())
+            {
+            }
+
+            virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override
+            {
+                return DWriteFactory;
+            }
+        };
+
+        struct CustomFontFixture
+        {
+            std::shared_ptr<StubCanvasTextFormatAdapterWithDWriteFactory> Adapter;
+            std::shared_ptr<CanvasTextFormatManager> Manager;
+
+            WinString AnyFullFontFamilyName;
+            std::wstring AnyPath;
+            WinString AnyFontFamily;
+
+            WinString AnyOtherFullFontFamilyName;
+            std::wstring AnyOtherPath;
+
+            CustomFontFixture()
+                : Adapter(std::make_shared<StubCanvasTextFormatAdapterWithDWriteFactory>())
+                , Manager(std::make_shared<CanvasTextFormatManager>(Adapter))
+                , AnyFullFontFamilyName(L"any_uri#any_font_family")
+                , AnyPath(StubStorageFileStatics::GetFakePath(WinString(L"ms-appx:///any_uri")))
+                , AnyFontFamily(L"any_font_family")
+                , AnyOtherFullFontFamilyName(L"any_other_uri#any_other_font_family")
+                , AnyOtherPath(StubStorageFileStatics::GetFakePath(WinString(L"ms-appx:///any_other_uri")))
+            {
+                Adapter->DWriteFactory->RegisterFontCollectionLoaderMethod.AllowAnyCall();
+            }
+
+            ComPtr<MockDWriteFontCollection> ExpectCreateCustomFontCollection(std::wstring expectedFilename)
+            {
+                auto collection = Make<MockDWriteFontCollection>();
+                auto fontFile = Make<MockDWriteFontFile>();
+
+                Adapter->DWriteFactory->CreateCustomFontCollectionMethod.SetExpectedCalls(1,
+                    [=] (IDWriteFontCollectionLoader* loader, void const* key, uint32_t keySize, IDWriteFontCollection** outCollection)
+                    {
+                        std::wstring actualFilename(static_cast<wchar_t const*>(key), keySize / 2);
+                        Assert::AreEqual(expectedFilename, actualFilename);
+
+                        // DWriteFactory will call methods on the loader to try
+                        // and load the font.  We can validate here that they
+                        // behave as expected.
+
+                        ComPtr<IDWriteFontFileEnumerator> enumerator;
+                        ThrowIfFailed(loader->CreateEnumeratorFromKey(
+                            Adapter->DWriteFactory.Get(),
+                            key,
+                            keySize,
+                            &enumerator));
+
+                        // We only expect the enumerator to return one file
+                        BOOL hasFile = FALSE;
+                        ThrowIfFailed(enumerator->MoveNext(&hasFile));
+                        Assert::IsTrue(!!hasFile);
+
+                        ComPtr<IDWriteFontFile> currentFile;
+                        ThrowIfFailed(enumerator->GetCurrentFontFile(&currentFile));
+                        Assert::IsTrue(IsSameInstance(currentFile.Get(), fontFile.Get()));
+
+                        ThrowIfFailed(enumerator->MoveNext(&hasFile));
+                        Assert::IsFalse(!!hasFile);
+
+                        return collection.CopyTo(outCollection);
+                    });
+
+                // We expect that when we use the font file enumerator above
+                // that it'll call CreateFontFileReference to reference the font
+                // file.
+                Adapter->DWriteFactory->CreateFontFileReferenceMethod.SetExpectedCalls(1,
+                    [=] (wchar_t const* filePath, FILETIME const* lastWriteTime, IDWriteFontFile** outFontFile)
+                    {
+                        Assert::AreEqual(expectedFilename.c_str(), filePath);
+                        Assert::IsNull(lastWriteTime);
+                        return fontFile.CopyTo(outFontFile);
+                    });
+
+                return collection;
+            }
+
+            void DontExpectCreateCustomFontCollection()
+            {
+                Adapter->DWriteFactory->CreateCustomFontCollectionMethod.SetExpectedCalls(0);
+                Adapter->DWriteFactory->CreateFontFileReferenceMethod.SetExpectedCalls(0);
+            }
+        };
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenFontFamilyNameDoesNotContainAUri_CustomFontCollectionIsNotUsed)
+        {
+            CustomFontFixture f;
+            f.DontExpectCreateCustomFontCollection();
+
+            auto cf = f.Manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(WinString(L"family with no uri")));
+            cf->GetRealizedTextFormat();
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenFontFamilyContainsABlankUri_CustomFontCollectionIsNotUsed)
+        {
+            CustomFontFixture f;
+            f.DontExpectCreateCustomFontCollection();
+
+            auto cf = f.Manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(WinString(L"#family with blank uri")));
+            cf->GetRealizedTextFormat();
+        }
+        
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenFontFamilyNameContainsAUri_CustomFontCollectionIsUsed_And_UriStrippedFromRealizedName)
+        {
+            CustomFontFixture f;
+
+            auto fontCollectionReturnedFromAdapter = f.ExpectCreateCustomFontCollection(f.AnyPath);
+
+            auto cf = f.Manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(f.AnyFullFontFamilyName));
+            auto df = cf->GetRealizedTextFormat();
+
+            ComPtr<IDWriteFontCollection> fontCollection;
+            ThrowIfFailed(df->GetFontCollection(&fontCollection));
+
+            Assert::IsTrue(IsSameInstance(fontCollectionReturnedFromAdapter.Get(), fontCollection.Get()));
+
+            auto realizedFontFamily = GetFontFamilyName(df.Get());
+            Assert::AreEqual(static_cast<wchar_t const*>(f.AnyFontFamily), realizedFontFamily.c_str());
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_FontCollectionIsPreservedIfFontFamilyNameUnchanged)
+        {
+            CustomFontFixture f;
+
+            f.ExpectCreateCustomFontCollection(f.AnyPath);
+
+            auto cf1 = f.Manager->Create();
+            ThrowIfFailed(cf1->put_FontFamily(f.AnyFullFontFamilyName));
+            ThrowIfFailed(cf1->put_FontSize(1));
+
+            auto df1 = cf1->GetRealizedTextFormat();
+
+            f.DontExpectCreateCustomFontCollection();
+
+            auto cf2 = f.Manager->Create(df1.Get());
+            ThrowIfFailed(cf2->put_FontSize(2));
+            
+            auto df2 = cf2->GetRealizedTextFormat();
+
+            // We have a new IDWriteTextFormat (since the font size changed)
+            Assert::IsFalse(IsSameInstance(df1.Get(), df2.Get()));
+
+            // ...but they should both refer to the same font collection
+            ComPtr<IDWriteFontCollection> fc1;
+            ThrowIfFailed(df1->GetFontCollection(&fc1));
+
+            ComPtr<IDWriteFontCollection> fc2;
+            ThrowIfFailed(df2->GetFontCollection(&fc2));
+
+            Assert::IsTrue(IsSameInstance(fc1.Get(), fc2.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_FontCollectionIsUpdatedIfFontFamilyNameChanged)
+        {
+            CustomFontFixture f;
+
+            auto cf1 = f.Manager->Create();
+            ThrowIfFailed(cf1->put_FontFamily(f.AnyFullFontFamilyName));
+
+            f.ExpectCreateCustomFontCollection(f.AnyPath);
+            auto df1 = cf1->GetRealizedTextFormat();
+
+            auto cf2 = f.Manager->Create(df1.Get());
+            ThrowIfFailed(cf2->put_FontFamily(f.AnyOtherFullFontFamilyName));
+                
+            f.ExpectCreateCustomFontCollection(f.AnyOtherPath);
+            auto df2 = cf2->GetRealizedTextFormat();
+
+            // We have a new IDWriteTextFormat (since the font family changed)
+            Assert::IsFalse(IsSameInstance(df1.Get(), df2.Get()));
+
+            // ...and they refer to different font collections
+            ComPtr<IDWriteFontCollection> fc1;
+            ThrowIfFailed(df1->GetFontCollection(&fc1));
+
+            ComPtr<IDWriteFontCollection> fc2;
+            ThrowIfFailed(df2->GetFontCollection(&fc2));
+
+            Assert::IsFalse(IsSameInstance(fc1.Get(), fc2.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenTextFormatRealized_FontFamilyNameIsUnmodified)
+        {
+            CustomFontFixture f;
+
+            auto cf = f.Manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(f.AnyFullFontFamilyName));
+            
+            WinString actualFontFamily;
+            ThrowIfFailed(cf->get_FontFamily(actualFontFamily.GetAddressOf()));
+            Assert::AreEqual(static_cast<wchar_t const*>(f.AnyFullFontFamilyName), static_cast<wchar_t const*>(actualFontFamily));
+
+            f.ExpectCreateCustomFontCollection(f.AnyPath);
+            cf->GetRealizedTextFormat();
+
+            ThrowIfFailed(cf->get_FontFamily(actualFontFamily.GetAddressOf()));
+            Assert::AreEqual(static_cast<wchar_t const*>(f.AnyFullFontFamilyName), static_cast<wchar_t const*>(actualFontFamily));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_WhenGetFileFromApplicationUriFails_HelpfulErrorMessageIsThrown)
+        {
+            auto adapter = std::make_shared<StubCanvasTextFormatAdapter>();
+            auto manager = std::make_shared<CanvasTextFormatManager>(adapter);
+
+            adapter->StorageFileStatics->GetFileFromApplicationUriAsyncMethod.SetExpectedCalls(1, 
+                [] (IUriRuntimeClass*, IAsyncOperation<StorageFile*>**)
+                {
+                    return E_INVALIDARG;
+                });
+
+
+            auto cf = manager->Create();
+            ThrowIfFailed(cf->put_FontFamily(WinString(L"uri#family the actual value doesn't matter as long as there is a #")));
+            ExpectHResultException(E_INVALIDARG, [&] { cf->GetRealizedTextFormat(); });
+            ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUri);
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_PutFontFamily_ValidatesUriSchema)
+        {
+            auto cf = CreateTestManager()->Create();
+
+            auto validFamilies = { L"", L"any family name with no uri", L"#family" };
+
+            for (auto family : validFamilies)
+            {
+                Assert::AreEqual(S_OK, cf->put_FontFamily(WinString(family)), family);
+            }
+
+            auto makeFamilyName = 
+                [] (wchar_t const* uri) 
+                { 
+                    return std::wstring(uri) + L"#anyfamily"; 
+                };
+
+            auto validUris = { L"foo/bar", L"foo", L"ms-appx:///foo", L"ms-appdata:///local/foo", L"filename with spaces" };
+
+            for (auto uri : validUris)
+            {
+                auto familyName = makeFamilyName(uri);
+                Assert::AreEqual(S_OK, cf->put_FontFamily(WinString(familyName)), familyName.c_str());
+            }
+
+            auto invalidUriSchemes = { L"http://foo", L"file://foo", L"anything:" };
+
+            for (auto uri : invalidUriSchemes)
+            {
+                auto familyName = makeFamilyName(uri);
+                Assert::AreEqual(E_INVALIDARG, cf->put_FontFamily(WinString(familyName)), familyName.c_str());
+                ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUriScheme);
+            }
+        }
+    };
 }

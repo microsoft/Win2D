@@ -14,6 +14,14 @@ namespace Microsoft.Graphics.Canvas
 {
     runtimeclass CanvasDrawingSession;
 
+    // Workaround MIDL bug with interfaces containing more than 128 methods (1790983).
+    // It outputs unwanted RPC proxy/stub prototypes, so we define dummy types to make those compile.
+    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CRect;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CNumerics_CMatrix3x2;")
+    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CNumerics_CMatrix3x2;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasLayerOptions;")
+        
+
     //
     // CanvasDrawingSession needs to be activatable in order to support interop
     // (so we can have a ICanvasFactoryNative on the activation factory).  An
@@ -976,6 +984,19 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.UI.Color color);
 
         //
+        // DrawCachedGeometry
+        //
+        [overload("DrawCachedGeometry"), default_overload]
+        HRESULT DrawCachedGeometryWithBrush(
+            [in] CanvasCachedGeometry* geometry,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawCachedGeometry")]
+        HRESULT DrawCachedGeometryWithColor(
+            [in] CanvasCachedGeometry* geometry,
+            [in] Windows.UI.Color color);
+
+        //
         // State properties
         //
 
@@ -993,6 +1014,68 @@ namespace Microsoft.Graphics.Canvas
 
         [propget] HRESULT Units([out, retval] CanvasUnits* value);
         [propput] HRESULT Units([in] CanvasUnits value);
+
+        //
+        // CreateLayer
+        //
+
+        [overload("CreateLayer")]
+        HRESULT CreateLayerWithOpacity(
+            [in] float opacity,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer"), default_overload]
+        HRESULT CreateLayerWithOpacityBrush(
+            [in] ICanvasBrush* opacityBrush,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer")]
+        HRESULT CreateLayerWithOpacityAndClipRectangle(
+            [in] float opacity,
+            [in] Windows.Foundation.Rect clipRectangle,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer")]
+        HRESULT CreateLayerWithOpacityBrushAndClipRectangle(
+            [in] ICanvasBrush* opacityBrush,
+            [in] Windows.Foundation.Rect clipRectangle,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer")]
+        HRESULT CreateLayerWithOpacityAndClipGeometry(
+            [in] float opacity,
+            [in] CanvasGeometry* clipGeometry,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer"), default_overload]
+        HRESULT CreateLayerWithOpacityBrushAndClipGeometry(
+            [in] ICanvasBrush* opacityBrush,
+            [in] CanvasGeometry* clipGeometry,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer")]
+        HRESULT CreateLayerWithOpacityAndClipGeometryAndTransform(
+            [in] float opacity,
+            [in] CanvasGeometry* clipGeometry,
+            [in] NUMERICS.Matrix3x2 geometryTransform,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer"), default_overload]
+        HRESULT CreateLayerWithOpacityBrushAndClipGeometryAndTransform(
+            [in] ICanvasBrush* opacityBrush,
+            [in] CanvasGeometry* clipGeometry,
+            [in] NUMERICS.Matrix3x2 geometryTransform,
+            [out, retval] CanvasActiveLayer** layer);
+
+        [overload("CreateLayer")]
+        HRESULT CreateLayerWithAllOptions(
+            [in] float opacity,
+            [in] ICanvasBrush* opacityBrush,
+            [in] Windows.Foundation.Rect clipRectangle,
+            [in] CanvasGeometry* clipGeometry,
+            [in] NUMERICS.Matrix3x2 geometryTransform,
+            [in] CanvasLayerOptions options,
+            [out, retval] CanvasActiveLayer** layer);
     };
 
     [version(VERSION), static(ICanvasDrawingSessionStatics, VERSION)]

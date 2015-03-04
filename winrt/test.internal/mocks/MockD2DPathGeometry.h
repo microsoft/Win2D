@@ -10,13 +10,15 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// This file was automatically generated. Please do not edit it manually.
+
 #pragma once
 
 namespace canvas
 {
     class MockD2DPathGeometry : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<ID2D1PathGeometry1, ID2D1PathGeometry, ID2D1Geometry, ID2D1Resource >>
+        ChainInterfaces<ID2D1PathGeometry1, ID2D1PathGeometry, ID2D1Geometry, ID2D1Resource>>
     {
     public:
         CALL_COUNTER_WITH_MOCK(ComputePointAndSegmentAtLengthMethod, HRESULT(FLOAT, UINT32, CONST D2D1_MATRIX_3X2_F*, FLOAT, D2D1_POINT_DESCRIPTION*));

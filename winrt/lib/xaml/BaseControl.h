@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include <RegisteredEvent.h>
-#include "RecreatableDeviceManager.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL::Wrappers;
@@ -36,6 +33,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class IBaseControlAdapter
     {
     public:
+        virtual ~IBaseControlAdapter() = default;
+
         virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) = 0;
         virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
@@ -78,7 +77,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : public Implements<
             typename TRAITS::controlInterface_t, 
             ICanvasResourceCreator, 
-            ICanvasResourceCreatorWithDpi>
+            ICanvasResourceCreatorWithDpi>,
+          private LifespanTracker<typename TRAITS::control_t>
     {
     public:
         typedef typename TRAITS::control_t                     control_t;
@@ -137,6 +137,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CreateBaseClass();
             RegisterEventHandlersOnSelf();
         }
+
+        virtual ~BaseControl() = default;
 
         IFACEMETHODIMP put_ClearColor(Color value) override
         {
@@ -213,6 +215,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     CheckIsOnUIThread();
                     *value = m_recreatableDeviceManager->IsReadyToDraw();
+                });
+        }
+
+        IFACEMETHODIMP get_Size(Size* value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(value);
+
+                    *value = GetCurrentSize();
                 });
         }
 

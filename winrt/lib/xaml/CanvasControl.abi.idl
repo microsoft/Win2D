@@ -129,6 +129,11 @@ namespace Microsoft.Graphics.Canvas
         // Marks the control to be redrawn on the next frame.
         //
         HRESULT Invalidate();
+
+        //
+        // Gets the current size of the control.
+        //
+        [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

@@ -29,10 +29,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         Transform2DEffect();
 
-        PROPERTY(InterpolationMode, CanvasImageInterpolation);
-        PROPERTY(BorderMode, EffectBorderMode);
-        PROPERTY(TransformMatrix, Numerics::Matrix3x2);
-        PROPERTY(Sharpness, float);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
+        EFFECT_PROPERTY(BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(TransformMatrix, Numerics::Matrix3x2);
+        EFFECT_PROPERTY(Sharpness, float);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

@@ -29,15 +29,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         TableTransferEffect();
 
-        ARRAY_PROPERTY(RedTable, float);
-        PROPERTY(RedDisable, boolean);
-        ARRAY_PROPERTY(GreenTable, float);
-        PROPERTY(GreenDisable, boolean);
-        ARRAY_PROPERTY(BlueTable, float);
-        PROPERTY(BlueDisable, boolean);
-        ARRAY_PROPERTY(AlphaTable, float);
-        PROPERTY(AlphaDisable, boolean);
-        PROPERTY(ClampOutput, boolean);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_ARRAY_PROPERTY(RedTable, float);
+        EFFECT_PROPERTY(RedDisable, boolean);
+        EFFECT_ARRAY_PROPERTY(GreenTable, float);
+        EFFECT_PROPERTY(GreenDisable, boolean);
+        EFFECT_ARRAY_PROPERTY(BlueTable, float);
+        EFFECT_PROPERTY(BlueDisable, boolean);
+        EFFECT_ARRAY_PROPERTY(AlphaTable, float);
+        EFFECT_PROPERTY(AlphaDisable, boolean);
+        EFFECT_PROPERTY(ClampOutput, boolean);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

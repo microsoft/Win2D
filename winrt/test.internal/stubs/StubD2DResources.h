@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "../test.external/MockDxgiSurface.h" // TODO #997/#1429: move this file
-
 // This device derives from MockCanvasDevice, but it allows creation of stroke styles.
 class StubD2DFactoryWithCreateStrokeStyle : public MockD2DFactory
 {

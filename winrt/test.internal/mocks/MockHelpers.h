@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <RegisteredEvent.h>
-
 //
 // Helpers for common mocking operations (eg counting how many times a method
 // was called, or an event was invoked).
@@ -28,13 +26,18 @@
 //    }
 //
 
-#define TEST_METHOD_EX(METHOD_NAME)             \
-    TEST_METHOD(METHOD_NAME)                    \
-    {                                           \
-        Expectations e;                         \
-        METHOD_NAME##_();                       \
-        e.Validate();                           \
-    }                                           \
+#define TEST_METHOD_EX(METHOD_NAME)                                             \
+    TEST_METHOD(METHOD_NAME)                                                    \
+    {                                                                           \
+        LifespanInfo::Reset();                                                  \
+                                                                                \
+        Expectations e;                                                         \
+        METHOD_NAME##_();                                                       \
+        e.Validate();                                                           \
+                                                                                \
+        auto liveObjectCount = LifespanInfo::ReportLiveObjects();               \
+        Assert::AreEqual<size_t>(0, liveObjectCount, L"LifespanTracker leak");  \
+    }                                                                           \
     void METHOD_NAME##_()
 
 //
@@ -103,6 +106,7 @@ class Expectation
 {
 public:
     Expectation() {}
+    virtual ~Expectation() = default;
 
     virtual void Validate() = 0;
     virtual bool TryValidate() = 0;

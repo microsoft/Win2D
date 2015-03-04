@@ -29,8 +29,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         BorderEffect();
 
-        PROPERTY(ExtendX, CanvasEdgeBehavior);
-        PROPERTY(ExtendY, CanvasEdgeBehavior);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(ExtendX, CanvasEdgeBehavior);
+        EFFECT_PROPERTY(ExtendY, CanvasEdgeBehavior);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

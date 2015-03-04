@@ -201,6 +201,10 @@ namespace Microsoft
             TO_STRING(ICanvasSwapChain);
             TO_STRING(ABI::Windows::UI::Core::ICoreCursor);
             TO_STRING(ID2D1Geometry);
+            TO_STRING(ID2D1PathGeometry);
+            TO_STRING(ID2D1SimplifiedGeometrySink);
+            TO_STRING(ID2D1GeometrySink);
+            TO_STRING(ID2D1GeometryRealization);
 
 #undef TO_STRING
 
@@ -379,6 +383,19 @@ namespace Microsoft
                     buf,
                     _countof(buf),
                     L"Point{X=%f,Y=%f}",
+                    value.X, value.Y));
+
+                return buf;
+            }
+
+            template<>
+            inline std::wstring ToString<Numerics::Vector2>(Numerics::Vector2 const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Vector2{X=%f,Y=%f}",
                     value.X, value.Y));
 
                 return buf;
@@ -835,6 +852,39 @@ namespace Microsoft
                 END_ENUM(ABI::Windows::UI::Core::CoreDispatcherPriority);
             }
 
+            ENUM_TO_STRING(D2D1_COMBINE_MODE)
+            {
+                ENUM_VALUE(D2D1_COMBINE_MODE_UNION);
+                ENUM_VALUE(D2D1_COMBINE_MODE_INTERSECT);
+                ENUM_VALUE(D2D1_COMBINE_MODE_XOR);
+                ENUM_VALUE(D2D1_COMBINE_MODE_EXCLUDE);
+                END_ENUM(D2D1_COMBINE_MODE_EXCLUDE);
+            }
+
+            ENUM_TO_STRING(D2D1_GEOMETRY_SIMPLIFICATION_OPTION)
+            {
+                ENUM_VALUE(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES);
+                ENUM_VALUE(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_LINES);
+                END_ENUM(D2D1_GEOMETRY_SIMPLIFICATION_OPTION);
+            }
+
+            ENUM_TO_STRING(CanvasGeometryRelation)
+            {
+                ENUM_VALUE(CanvasGeometryRelation::Disjoint);
+                ENUM_VALUE(CanvasGeometryRelation::Contained);
+                ENUM_VALUE(CanvasGeometryRelation::Contains);
+                ENUM_VALUE(CanvasGeometryRelation::Overlap);
+                END_ENUM(CanvasGeometryRelation);
+            }
+
+            ENUM_TO_STRING(CanvasLayerOptions)
+            {
+                ENUM_VALUE(CanvasLayerOptions::None);
+                ENUM_VALUE(CanvasLayerOptions::InitializeFromBackground);
+                ENUM_VALUE(CanvasLayerOptions::IgnoreAlpha);
+                END_ENUM(CanvasLayerOptions);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {
@@ -956,6 +1006,12 @@ namespace Microsoft
         inline bool operator==(D2D1_SIZE_F const& a, D2D1_SIZE_F const& b)
         {
             return a.width == b.width && a.height == b.height;
+        }
+
+        inline bool operator==(Numerics::Vector2 const& a, Numerics::Vector2 const& b)
+        {
+            return a.X == b.X &&
+                a.Y == b.Y;
         }
 
     }

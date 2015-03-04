@@ -18,6 +18,197 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasGeometry : IInspectable
         requires Windows.Foundation.IClosable
     {
+        ///////////////////////////////////////////////////////////////////////
+        // The methods below return geometries.
+        [overload("CombineWith")]
+        HRESULT CombineWith(
+            [in] CanvasGeometry* otherGeometry,
+            [in] NUMERICS.Matrix3x2 otherGeometryTransform,
+            [in] CanvasGeometryCombine combine,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CombineWith"), default_overload]
+        HRESULT CombineWithUsingFlatteningTolerance(
+            [in] CanvasGeometry* otherGeometry,
+            [in] NUMERICS.Matrix3x2 otherGeometryTransform,
+            [in] CanvasGeometryCombine combine,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasGeometry** geometry);
+
+        // Stroke
+        [overload("Stroke")]
+        HRESULT Stroke(
+            [in] float strokeWidth,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("Stroke"), default_overload]
+        HRESULT StrokeWithStrokeStyle(
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("Stroke"), default_overload]
+        HRESULT StrokeWithAllOptions(
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasGeometry** geometry);
+
+        // Outline
+        [overload("Outline")]
+        HRESULT Outline(
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("Outline"), default_overload]
+        HRESULT OutlineWithTransformAndFlatteningTolerance(
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasGeometry** geometry);
+
+        // Simplify
+        [overload("Simplify")]
+        HRESULT Simplify(
+            [in] CanvasGeometrySimplification simplification,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("Simplify"), default_overload]
+        HRESULT SimplifyWithTransformAndFlatteningTolerance(
+            [in] CanvasGeometrySimplification simplification,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasGeometry** geometry);
+
+        HRESULT Transform(
+            [in] NUMERICS.Matrix3x2 transform,
+            [out, retval] CanvasGeometry** geometry);
+
+        ///////////////////////////////////////////////////////////////////////
+        // The methods below return primitive types.
+
+        // CompareWith
+        // This method uses the default flattening tolerance.
+        [overload("CompareWith")]
+        HRESULT CompareWith(
+            [in] CanvasGeometry* otherGeometry,
+            [out, retval] CanvasGeometryRelation* relation);
+
+        [overload("CompareWith"), default_overload]
+        HRESULT CompareWithUsingTransformAndFlatteningTolerance(
+            [in] CanvasGeometry* otherGeometry,
+            [in] NUMERICS.Matrix3x2 otherGeometryTransform,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasGeometryRelation* relation);
+
+        // ComputeArea
+        [overload("ComputeArea")]
+        HRESULT ComputeArea(
+            [out, retval] float* area);
+
+        [overload("ComputeArea"), default_overload]
+        HRESULT ComputeAreaWithTransformAndFlatteningTolerance(
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] float* area);
+
+        // ComputePathLength
+        [overload("ComputePathLength")]
+        HRESULT ComputePathLength(
+            [out, retval] float* length);
+
+        [overload("ComputePathLength"), default_overload]
+        HRESULT ComputePathLengthWithTransformAndFlatteningTolerance(
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] float* length);
+
+        // ComputePointOnPath
+        [overload("ComputePointOnPath")]
+        HRESULT ComputePointOnPath(
+            [in] float distance,
+            [out, retval] NUMERICS.Vector2* point);
+
+        [overload("ComputePointOnPath"), default_overload]
+        HRESULT ComputePointOnPathWithTangent(
+            [in] float distance,
+            [out] NUMERICS.Vector2* tangent,
+            [out, retval] NUMERICS.Vector2* point);
+
+        [overload("ComputePointOnPath"), default_overload]
+        HRESULT ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent(
+            [in] float length,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out] NUMERICS.Vector2* tangent,
+            [out, retval] NUMERICS.Vector2* point);
+
+        // FillContainsPoint
+        [overload("FillContainsPoint")]
+        HRESULT FillContainsPoint(
+            [in] NUMERICS.Vector2 point,
+            [out, retval] boolean* containsPoint);
+
+        [overload("FillContainsPoint"), default_overload]
+        HRESULT FillContainsPointWithTransformAndFlatteningTolerance(
+            [in] NUMERICS.Vector2 point,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] boolean* containsPoint);
+
+        // ComputeBounds
+        [overload("ComputeBounds")]
+        HRESULT ComputeBounds(
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        [overload("ComputeBounds"), default_overload]
+        HRESULT ComputeBoundsWithTransform(
+            [in] NUMERICS.Matrix3x2 transform,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        // ComputeStrokeBounds
+        [overload("ComputeStrokeBounds")]
+        HRESULT ComputeStrokeBounds(
+            [in] float strokeWidth,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        [overload("ComputeStrokeBounds"), default_overload]
+        HRESULT ComputeStrokeBoundsWithStrokeStyle(
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        [overload("ComputeStrokeBounds"), default_overload]
+        HRESULT ComputeStrokeBoundsWithAllOptions(
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        // StrokeContainsPoint
+        [overload("StrokeContainsPoint")]
+        HRESULT StrokeContainsPoint(
+            [in] NUMERICS.Vector2 point,
+            [in] float strokeWidth,
+            [out, retval] boolean* containsPoint);
+
+        [overload("StrokeContainsPoint"), default_overload]
+        HRESULT StrokeContainsPointWithStrokeStyle(
+            [in] NUMERICS.Vector2 point,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [out, retval] boolean* containsPoint);
+
+        [overload("StrokeContainsPoint"), default_overload]
+        HRESULT StrokeContainsPointWithAllOptions(
+            [in] NUMERICS.Vector2 point,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] boolean* containsPoint);
+
+        [propget] HRESULT Device([out, retval] CanvasDevice** value);
     }
 
     [version(VERSION), uuid(D94E33CF-CD59-46F2-8DF4-55066AABFD56), exclusiveto(CanvasGeometry)]
@@ -74,7 +265,6 @@ namespace Microsoft.Graphics.Canvas
             [in] float radiusY,
             [out, retval] CanvasGeometry** geometry);
 
-        // Docs should specify that this interops to ID2D1EllipseGeometry.
         [overload("CreateCircle"), default_overload]
         HRESULT CreateCircle(
             [in] ICanvasResourceCreator* resourceCreator,
@@ -93,6 +283,36 @@ namespace Microsoft.Graphics.Canvas
         HRESULT CreatePath(
             [in] CanvasPathBuilder* pathBuilder,
             [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateGroup")]
+        HRESULT CreateGroup(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 geometriesCount,
+            [in, size_is(geometriesCount)] CanvasGeometry** geometries,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateGroup"), default_overload]
+        HRESULT CreateGroupWithFilledRegionDetermination(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 geometriesCount,
+            [in, size_is(geometriesCount)] CanvasGeometry** geometries,
+            [in] CanvasFilledRegionDetermination filledRegionDetermination,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("ComputeFlatteningTolerance")]
+        HRESULT ComputeFlatteningTolerance(
+            [in] float dpi,
+            [in] float maximumZoomFactor,
+            [out, retval] float* flatteningTolerance);
+
+        [overload("ComputeFlatteningTolerance"), default_overload]
+        HRESULT ComputeFlatteningToleranceWithTransform(
+            [in] float dpi,
+            [in] float maximumZoomFactor,
+            [in] NUMERICS.Matrix3x2 expectedGeometryTransform,
+            [out, retval] float* flatteningTolerance);
+
+        [propget] HRESULT DefaultFlatteningTolerance([out, retval] float* value);
     }
 
     [version(VERSION), static(ICanvasGeometryStatics, VERSION)]

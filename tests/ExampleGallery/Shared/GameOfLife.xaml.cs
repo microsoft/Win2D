@@ -85,7 +85,7 @@ namespace ExampleGallery
 
             // Display the current surface.
             invertEffect.Source = currentSurface;
-            transformEffect.TransformMatrix = GetDisplayTransform();
+            transformEffect.TransformMatrix = Utils.GetDisplayTransform(canvas.Size, canvas, simulationW, simulationH);
             args.DrawingSession.DrawImage(transformEffect);
 
             sender.Invalidate();
@@ -205,30 +205,6 @@ namespace ExampleGallery
             };
         }
 
-        Matrix3x2 GetDisplayTransform()
-        {
-            // Scale our simulation surface to fill the CanvasControl.
-            var canvasSize = new Vector2((float)canvas.ActualWidth, (float)canvas.ActualHeight);
-            var simulationSize = new Vector2(canvas.ConvertPixelsToDips(simulationW), canvas.ConvertPixelsToDips(simulationH));
-            var scale = canvasSize / simulationSize;
-            var offset = Vector2.Zero;
-
-            // Letterbox or pillarbox to preserve aspect ratio.
-            if (scale.X > scale.Y)
-            {
-                scale.X = scale.Y;
-                offset.X = (canvasSize.X - simulationSize.X * scale.X) / 2;
-            }
-            else
-            {
-                scale.Y = scale.X;
-                offset.Y = (canvasSize.Y - simulationSize.Y * scale.Y) / 2;
-            }
-
-            return Matrix3x2.CreateScale(scale) *
-                   Matrix3x2.CreateTranslation(offset);
-        }
-
         // Initializes the simulation to a random state.
         void RandomizeSimulation(object sender, RoutedEventArgs e)
         {
@@ -279,7 +255,7 @@ namespace ExampleGallery
 
             // Invert the display transform, to convert pointer positions into simulation rendertarget space.
             Matrix3x2 transform;
-            Matrix3x2.Invert(GetDisplayTransform(), out transform);
+            Matrix3x2.Invert(Utils.GetDisplayTransform(canvas.Size, canvas, simulationW, simulationH), out transform);
 
             foreach (var point in e.GetIntermediatePoints(canvas))
             {

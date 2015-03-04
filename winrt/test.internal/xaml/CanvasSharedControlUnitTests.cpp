@@ -12,11 +12,6 @@
 
 #include "pch.h"
 
-#include "BasicControlFixture.h"
-#include "CanvasControlTestAdapter.h"
-#include "ControlFixtures.h"
-#include "MockCanvasSwapChain.h"
-
 #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)          \
     TEST_METHOD_EX(CanvasControl_##NAME)            \
     {                                               \
@@ -431,5 +426,23 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
         f.Adapter->ResumingEventSource->RemoveMethod.SetExpectedCalls(1);
 
         f.RaiseUnloadedEvent();
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(SizeProperty)
+    {
+        BasicControlFixture<TRAITS> f;
+
+        f.CreateAdapter();
+        f.CreateControl();
+
+        Size size{ -1, -1 };
+        ThrowIfFailed(f.Control->get_Size(&size));
+        Assert::AreEqual(Size{ 0, 0 }, size);
+
+        Size newSize{ 123, 456 };
+        f.UserControl->Resize(newSize);
+
+        ThrowIfFailed(f.Control->get_Size(&size));
+        Assert::AreEqual(newSize, size);
     }
 };

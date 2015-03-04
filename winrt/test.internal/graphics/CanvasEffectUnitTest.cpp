@@ -13,10 +13,7 @@
 #include "pch.h"
 
 #include <CanvasCommandList.h>
-#include <effects\CanvasEffect.h>
 
-#include "MockD2DCommandList.h"
-#include "SwitchableTestBrushFixture.h"
 #include "TestEffect.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -35,7 +32,7 @@ public:
         m_testEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realInputSize, false);
     }
 
-    TEST_METHOD(CanvasEffect_Implements_Expected_Interfaces)
+    TEST_METHOD_EX(CanvasEffect_Implements_Expected_Interfaces)
     {
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IEffect);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IEffectInput);
@@ -45,7 +42,7 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IGaussianBlurEffect);
     }
 
-    TEST_METHOD(CanvasEffect_Properties)
+    TEST_METHOD_EX(CanvasEffect_Properties)
     {
         ComPtr<IVector<IInspectable*>> properties;
         ThrowIfFailed(m_testEffect->get_Properties(&properties));
@@ -98,7 +95,7 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
     }
 
-    TEST_METHOD(CanvasEffect_Inputs)
+    TEST_METHOD_EX(CanvasEffect_Inputs)
     {
         ComPtr<IVector<IEffectInput*>> inputs;
         ThrowIfFailed(m_testEffect->get_Inputs(&inputs));
@@ -336,6 +333,9 @@ public:
         testEffect->put_Source(testEffect.Get());
 
         Assert::AreEqual(D2DERR_CYCLIC_GRAPH, f.m_drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+
+        // Break the cycle so we don't leak memory.
+        testEffect->put_Source(nullptr);
     }
 
     TEST_METHOD_EX(CanvasEffect_GetBounds_NullArg)

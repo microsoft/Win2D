@@ -12,9 +12,7 @@
 
 #include "pch.h"
 
-#include "CanvasAnimatedControl.h"
 #include "BaseControlAdapter.h"
-#include "CanvasSwapChain.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -101,19 +99,77 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    ComPtr<IAsyncAction> CanvasRenderLoop::StartUpdateRenderLoop(
+        std::function<void()> const& beforeLoopFn,
+        std::function<bool()> const& tickFn,
+        std::function<void()> const& afterLoopFn)
+    {
+        auto handler = Callback<AddFtmBase<IWorkItemHandler>::Type>(
+            [beforeLoopFn, tickFn, afterLoopFn](IAsyncAction* action)
+            {
+                return ExceptionBoundary(
+                    [&]
+                    {
+                        auto asyncInfo = As<IAsyncInfo>(action);
+
+                        beforeLoopFn();
+
+                        auto afterLoopWarden = MakeScopeWarden([&] { afterLoopFn(); });
+
+                        for (;;)
+                        {
+                            AsyncStatus status;
+                            ThrowIfFailed(asyncInfo->get_Status(&status));
+
+                            if (status != AsyncStatus::Started)
+                                break;
+
+                            if (!tickFn())
+                                break;
+                        };
+                    });
+            });
+
+        ComPtr<IAsyncAction> action;
+        ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
+            handler.Get(),
+            WorkItemPriority_Normal,
+            WorkItemOptions_TimeSliced,
+            &action));
+
+        return action;
+    }
+
+    void CanvasRenderLoop::StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
+    {
+        ComPtr<ICoreDispatcher> dispatcher;
+        ThrowIfFailed(window->get_Dispatcher(&dispatcher));
+
+        auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+            [=]
+            {
+                return ExceptionBoundary(
+                    [&]
+                    {
+                        changedFn();
+                    });
+            });
+
+        ComPtr<IAsyncAction> asyncAction;
+        ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
+    }
 
     class CanvasAnimatedControlAdapter : public BaseControlAdapter<CanvasAnimatedControlTraits>,
         public std::enable_shared_from_this<CanvasAnimatedControlAdapter>
     {
-        ComPtr<IThreadPoolStatics> m_threadPoolStatics;
         ComPtr<ICanvasSwapChainFactory> m_canvasSwapChainFactory;
         std::shared_ptr<CanvasSwapChainPanelAdapter> m_canvasSwapChainPanelAdapter;
         ComPtr<IActivationFactory> m_canvasSwapChainPanelActivationFactory;
+        CanvasRenderLoop m_renderLoop;
 
     public:
-        CanvasAnimatedControlAdapter(
-            IThreadPoolStatics* threadPoolStatics)
-            : m_threadPoolStatics(threadPoolStatics)
+        CanvasAnimatedControlAdapter(IThreadPoolStatics* threadPoolStatics)
+            : m_renderLoop(threadPoolStatics)
             , m_canvasSwapChainPanelAdapter(std::make_shared<CanvasSwapChainPanelAdapter>())        
         {
             auto& module = Module<InProc>::GetModule();
@@ -168,26 +224,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             std::function<bool()> const& tickFn,
             std::function<void()> const& afterLoopFn)
         {
-            auto self = shared_from_this();
-
-            auto handler = Callback<AddFtmBase<IWorkItemHandler>::Type>(
-                [self, beforeLoopFn, tickFn, afterLoopFn](IAsyncAction* action)
-                {
-                    return ExceptionBoundary(
-                        [&]
-                        {
-                            self->UpdateRenderLoop(action, beforeLoopFn, tickFn, afterLoopFn);
-                        });
-                });
-
-            ComPtr<IAsyncAction> action;
-            ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
-                handler.Get(),
-                WorkItemPriority_Normal,
-                WorkItemOptions_TimeSliced,
-                &action));
-
-            return action;
+            return m_renderLoop.StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
         }
 
         virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
@@ -197,47 +234,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 return;
             }
 
-            ComPtr<ICoreDispatcher> dispatcher;
-            ThrowIfFailed(window->get_Dispatcher(&dispatcher));
-
-            auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-                [=]
-                {
-                    return ExceptionBoundary(
-                        [&]
-                        {
-                            changedFn();
-                        });
-                });
-
-            ComPtr<IAsyncAction> asyncAction;
-            ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
-        }
-
-        void UpdateRenderLoop(
-            IAsyncAction* action,
-            std::function<void()> const& beforeLoopFn,
-            std::function<bool()> const& tickFn,
-            std::function<void()> const& afterLoopFn)
-        {
-            auto asyncInfo = As<IAsyncInfo>(action);
-
-            beforeLoopFn();
-
-            auto afterLoopWarden = MakeScopeWarden([&] { afterLoopFn(); });
-
-            for (;;)
-            {
-                AsyncStatus status;
-                ThrowIfFailed(asyncInfo->get_Status(&status));
-
-                if (status != AsyncStatus::Started)
-                    break;
-
-                if (!tickFn())
-                    break;
-            };
-            
+            m_renderLoop.StartChangedAction(window, changedFn);
         }
 
         virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override
@@ -267,12 +264,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     };
 
-    std::shared_ptr<ICanvasAnimatedControlAdapter> CreateCanvasAnimatedControlAdapter(
-        IThreadPoolStatics* threadPoolStatics)
-    {
-        return std::make_shared<CanvasAnimatedControlAdapter>(threadPoolStatics);
-    }
-
     static std::shared_ptr<ICanvasAnimatedControlAdapter> CreateCanvasAnimatedControlAdapter()
     {
         ComPtr<IThreadPoolStatics> threadPoolStatics;
@@ -280,10 +271,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             HStringReference(RuntimeClass_Windows_System_Threading_ThreadPool).Get(),
             &threadPoolStatics));
 
-        return CreateCanvasAnimatedControlAdapter(threadPoolStatics.Get());
+        return std::make_shared<CanvasAnimatedControlAdapter>(threadPoolStatics.Get());
     }
 
-    class CanvasAnimatedControlFactory : public ActivationFactory<>
+    class CanvasAnimatedControlFactory : public ActivationFactory<>,
+                                         private LifespanTracker<CanvasAnimatedControlFactory>
     {
         std::weak_ptr<ICanvasAnimatedControlAdapter> m_adapter;
 
@@ -328,17 +320,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasAnimatedControl::~CanvasAnimatedControl()
     {
-        assert(!IsRenderLoopRunning());
-    }
-
-    bool CanvasAnimatedControl::IsRenderLoopRunning() const
-    {
-        if (!m_renderLoopAction)
-            return false;
-
-        AsyncStatus status;
-        ThrowIfFailed(As<IAsyncInfo>(m_renderLoopAction)->get_Status(&status));
-        return (status == AsyncStatus::Started);
     }
 
     //
@@ -450,17 +431,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto lock = GetLock();
 
                 *value = m_sharedState.IsPaused;
-            });
-    }
-
-    IFACEMETHODIMP CanvasAnimatedControl::get_Size(Size* value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
-
-                *value = GetCurrentSize();
             });
     }
 
@@ -632,12 +602,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // scheduled at a time.
         //
 
-        ComPtr<CanvasAnimatedControl> self = this;
+        WeakRef weakSelf = AsWeak(this);
 
         GetAdapter()->StartChangedAction(GetWindow(),
-            [self]
+            [weakSelf]() mutable
             {
-                self->ChangedImpl();
+                auto strongSelf = LockWeakRef<ICanvasAnimatedControl>(weakSelf);
+                auto self = static_cast<CanvasAnimatedControl*>(strongSelf.Get());
+
+                if (self)
+                    self->ChangedImpl();
             });
     }
 
@@ -774,35 +748,46 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     m_stepTimer.ResetElapsedTime();
 
                 ComPtr<CanvasSwapChain> target(rawTarget);
-                ComPtr<CanvasAnimatedControl> self(this);
-                
+                ComPtr<AnimatedControlInput> input = m_input;
+                WeakRef weakSelf = AsWeak(this);
+
                 auto beforeLoopFn = 
-                    [self]()
+                    [input]()
                     {
-                        self->m_input->SetSource();
+                        input->SetSource();
                     };
 
                 auto onEachTickFn = 
-                    [target, areResourcesCreated, self]
+                    [target, areResourcesCreated, weakSelf]() mutable
                     {
+                        auto strongSelf = LockWeakRef<ICanvasAnimatedControl>(weakSelf);
+                        auto self = static_cast<CanvasAnimatedControl*>(strongSelf.Get());
+
+                        if (!self)
+                            return false;
+
                         return self->Tick(target.Get(), areResourcesCreated);
                     };
 
                 auto afterLoopFn = 
-                    [self]()
+                    [input]()
                     {
-                        self->m_input->RemoveSource();
+                        input->RemoveSource();
                     };
 
                 m_renderLoopAction = GetAdapter()->StartUpdateRenderLoop(beforeLoopFn, onEachTickFn, afterLoopFn);
                 
                 auto completed = Callback<IAsyncActionCompletedHandler>(
-                    [self](IAsyncAction*, AsyncStatus)
+                    [weakSelf](IAsyncAction*, AsyncStatus) mutable
                     {
                         return ExceptionBoundary(
                             [&]
                             {
-                                self->Changed(self->GetLock());
+                                auto strongSelf = LockWeakRef<ICanvasAnimatedControl>(weakSelf);
+                                auto self = static_cast<CanvasAnimatedControl*>(strongSelf.Get());
+
+                                if (self)
+                                    self->Changed(self->GetLock());
                             });
                     });
 

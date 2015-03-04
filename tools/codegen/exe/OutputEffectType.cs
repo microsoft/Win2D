@@ -209,7 +209,7 @@ namespace CodeGen
                 if (property.Type == "string" || property.IsHidden)
                     continue;
 
-                var propertyMacro = property.IsArray ? "ARRAY_PROPERTY" : "PROPERTY";
+                var propertyMacro = property.IsArray ? "EFFECT_ARRAY_PROPERTY" : "EFFECT_PROPERTY";
 
                 output.WriteLine(propertyMacro + "(" + property.Name + ", " + property.TypeNameCpp + ");");
             }
@@ -219,7 +219,7 @@ namespace CodeGen
                 for (int i = 0; i < effect.Inputs.InputsList.Count; ++i)
                 {
                     var input = effect.Inputs.InputsList[i];
-                    output.WriteLine("PROPERTY(" + input.Name + ", IEffectInput*);");
+                    output.WriteLine("EFFECT_PROPERTY(" + input.Name + ", IEffectInput*);");
                 }
             }
             output.Unindent();
@@ -273,7 +273,7 @@ namespace CodeGen
                 for (int i = 0; i < effect.Inputs.InputsList.Count; ++i)
                 {
                     var input = effect.Inputs.InputsList[i];
-                    output.WriteLine("IMPLEMENT_INPUT_PROPERTY(" + effect.ClassName + ",");
+                    output.WriteLine("IMPLEMENT_EFFECT_INPUT_PROPERTY(" + effect.ClassName + ",");
                     output.Indent();
                     output.WriteLine(input.Name + ",");
                     output.WriteLine(i.ToString() + ")");
@@ -316,7 +316,7 @@ namespace CodeGen
 
             bool isValidation = ((min != null) || (max != null) || isWithUnsupported) && !property.ConvertRadiansToDegrees;
 
-            string implementMacro = property.IsArray ? "IMPLEMENT_ARRAY_PROPERTY" : "IMPLEMENT_PROPERTY";
+            string implementMacro = property.IsArray ? "IMPLEMENT_EFFECT_ARRAY_PROPERTY" : "IMPLEMENT_EFFECT_PROPERTY";
 
             if (isValidation)
             {

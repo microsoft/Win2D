@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.\xaml;.\utils;.\mocks;.\stubs;..\Inc;..\lib;..\lib\brushes;..\lib\xaml;..\lib\drawing;..\lib\geometry;..\lib\images;..\lib\text;..\lib\utils;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.\xaml;.\utils;.\mocks;.\stubs;..\Inc;..\lib;..\lib\brushes;..\lib\xaml;..\lib\drawing;..\lib\geometry;..\lib\images;..\lib\effects;..\lib\text;..\lib\utils;..\lib\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level4</WarningLevel>
@@ -48,6 +48,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometrySink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometryGroup.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometryRealization.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGradientStopCollection.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DLinearGradientBrush.h" />
@@ -55,6 +57,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DStrokeStyle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformedGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD3D11Device.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIFactory.h" />
@@ -95,6 +98,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\ControlFixtures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\RecreatableDeviceManagerTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCachedGeometryUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCommandListUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDeviceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDrawingSessionUnitTests.cpp" />
@@ -104,6 +108,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasPathBuilderUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasRenderTargetUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasStrokeStyleTests.cpp" />

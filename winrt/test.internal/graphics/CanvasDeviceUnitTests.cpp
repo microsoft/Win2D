@@ -12,9 +12,6 @@
 
 #include "pch.h"
 
-#include "MockD2DCommandList.h"
-#include "TestDeviceResourceCreationAdapter.h"
-
 TEST_CLASS(CanvasDeviceTests)
 {
 public:

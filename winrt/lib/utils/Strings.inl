@@ -28,7 +28,7 @@ STRING(WrongArrayLength, L"The array was expected to be of size %d; actual array
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
 STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. "
     L"Ensure that resources are created from a CreateResources or Draw event handler.");
-STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat::B8G8R8A8UIntNormalized.")
+STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.")
 STRING(MultipleAsyncCreateResourcesNotSupported, L"Only one asynchronous CreateResources action can be tracked at a time.")
 STRING(ResourceTrackerWrongDevice, L"Existing resource wrapper is associated with a different device.")
 STRING(ResourceTrackerWrongDpi, L"Existing resource wrapper has a different DPI.")
@@ -40,3 +40,8 @@ STRING(PathBuilderClosedMidFigure, L"There was an attempt to use a CanvasPathBui
 STRING(TwoBeginFigures, L"A call to CanvasPathBuilder.BeginFigure occurred, when the figure was already begun.")
 STRING(CanOnlyAddPathDataWhileInFigure, L"This operation is only allowed after a successful call to CanvasPathBuilder.BeginFigure.")
 STRING(SetFilledRegionDeterminationAfterBeginFigure, L"This operation is not allowed after the first call to CanvasPathBuilder.BeginFigure.")
+STRING(PathBuilderAddGeometryMidFigure, L"CanvasPathBuilder.AddGeometry may not be called in the middle of a figure.")
+STRING(PoppedWrongLayer, L"Attempting to close a CanvasActiveLayer that is not top of the stack. The most recently created layer must be closed first.")
+STRING(DidNotPopLayer, L"After calling CanvasDrawingSession.CreateLayer, you must close the resulting CanvasActiveLayer before ending the CanvasDrawingSession.")
+STRING(InvalidFontFamilyUri, L"The URI specified in the CanvasTextFormat's FontFamily is not a valid application URI that can be opened by StorageFile.GetFileFromApplicationUriAsync.")
+STRING(InvalidFontFamilyUriScheme, L"The URI specified in the CanvasTextFormat's FontFamily has an invalid scheme; the scheme may be omitted, or must be one of ms-appx:// or ms-appdata://.")

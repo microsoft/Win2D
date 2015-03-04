@@ -15,9 +15,6 @@
 #include <BaseControl.h>
 #include <BaseControlAdapter.h>
 
-#include "CanvasControlTestAdapter.h"
-#include "BasicControlFixture.h"
-
 //
 // These tests explicitly exercise BaseControl.  Generally we try and avoid
 // doing this and prefer to test via the derived classes.  However, in some

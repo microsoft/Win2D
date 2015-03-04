@@ -24,7 +24,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RuntimeClassFlags<WinRtClassicComMix>,
         ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDevice,
         ABI::Windows::Foundation::IClosable,
-        CloakedIid<IDirect3DDxgiInterfaceAccess>>
+        CloakedIid<IDirect3DDxgiInterfaceAccess>>,
+        private LifespanTracker<Direct3DDevice>
     {
         InspectableClass(L"Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice", BaseTrust);
 

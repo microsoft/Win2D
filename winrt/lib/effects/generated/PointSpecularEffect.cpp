@@ -30,53 +30,53 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_POINTSPECULAR_PROP_SCALE_MODE, D2D1_POINTSPECULAR_SCALE_MODE_LINEAR);
     }
 
-    IMPLEMENT_PROPERTY(PointSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(PointSpecularEffect,
         LightPosition,
         float[3],
         Numerics::Vector3,
         D2D1_POINTSPECULAR_PROP_LIGHT_POSITION)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
         SpecularExponent,
         float,
         float,
         D2D1_POINTSPECULAR_PROP_SPECULAR_EXPONENT,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
         SpecularAmount,
         float,
         float,
         D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT,
         (value >= 0.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
         HeightMapScale,
         float,
         float,
         D2D1_POINTSPECULAR_PROP_SURFACE_SCALE,
         (value >= -10000.0f) && (value <= 10000.0f))
 
-    IMPLEMENT_PROPERTY(PointSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(PointSpecularEffect,
         LightColor,
         float[3],
         Color,
         D2D1_POINTSPECULAR_PROP_COLOR)
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(PointSpecularEffect,
         HeightMapKernelSize,
         float[2],
         Numerics::Vector2,
         D2D1_POINTSPECULAR_PROP_KERNEL_UNIT_LENGTH,
         (value.X >= 0.01f) && (value.Y >= 0.01f) && (value.X <= 100.0f) && (value.Y <= 100.0f))
 
-    IMPLEMENT_PROPERTY(PointSpecularEffect,
+    IMPLEMENT_EFFECT_PROPERTY(PointSpecularEffect,
         HeightMapInterpolationMode,
         uint32_t,
         CanvasImageInterpolation,
         D2D1_POINTSPECULAR_PROP_SCALE_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(PointSpecularEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(PointSpecularEffect,
         Source,
         0)
 

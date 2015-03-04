@@ -206,6 +206,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.cpp">
       <Filter>geometry</Filter>
     </ClCompile>
@@ -425,6 +428,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.h">
       <Filter>geometry</Filter>
     </ClInclude>
@@ -473,6 +479,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.inl">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\StoredInPropertyMap.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -490,6 +502,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.abi.idl">
       <Filter>xaml</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.abi.idl">
+      <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl">
       <Filter>drawing</Filter>
@@ -625,6 +640,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl">
       <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl">
+      <Filter>geometry</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl">
       <Filter>geometry</Filter>

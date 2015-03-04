@@ -12,10 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasSwapChain.h"
-#include "CanvasDevice.h"
-#include "CanvasDrawingSession.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //
@@ -461,7 +457,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return swapChainDesc;
     }
 
-    class CanvasSwapChainDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
+    class CanvasSwapChainDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+                                                 private LifespanTracker<CanvasSwapChainDrawingSessionAdapter>
     {
         ComPtr<ID2D1DeviceContext1> m_deviceContext;
 

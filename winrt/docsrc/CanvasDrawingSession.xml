@@ -497,6 +497,90 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
       <summary>Fills a geometry with the specified color.</summary>
     </member>    
-   
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a cached geometry, using a brush to define the color.</summary>
+      <remarks>
+      	Whether this operation is a stroke or fill is determined by how whether the cached geometry was 
+      	created by <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Windows.UI.Color)">
+      <summary>Draws a cached geometry with the specified color.</summary>
+      <remarks>
+      	Whether this operation is a stroke or fill is determined by how whether the cached geometry was 
+      	created by <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single)">
+      <summary>Creates a layer that will blend its contents using the specified opacity.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Creates a layer that will blend its contents using opacity from the specified brush (which could contain a bitmap or gradient).</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Windows.Foundation.Rect)">
+      <summary>Creates a layer that will clip its contents to a rectangle, and blend using the specified opacity.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush,Windows.Foundation.Rect)">
+      <summary>Creates a layer that will clip its contents to a rectangle, and blend using opacity from the specified brush.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.CanvasGeometry)">
+      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using the specified opacity.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasGeometry)">
+      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using opacity from the specified brush.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using the specified opacity.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using opacity from the specified brush.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.CanvasLayerOptions)">
+      <summary>Creates a layer that will clip its contents to a rectangle and/or geometry region, and blend using the specified opacity and/or brush.</summary>
+      <remarks>
+        <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
+        <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
+        <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
+        </remarks>
+    </member>
+
   </members>
 </doc>

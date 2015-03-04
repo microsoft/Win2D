@@ -14,8 +14,6 @@
 
 #include <CanvasCommandList.h>
 
-#include "MockD2DCommandList.h"
-
 TEST_CLASS(CanvasCommandListTests)
 {
     struct Fixture

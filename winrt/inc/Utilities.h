@@ -65,6 +65,22 @@ inline Microsoft::WRL::ComPtr<T> MaybeAs(U* u)
         return nullptr;
 }
 
+template<typename T>
+inline Microsoft::WRL::WeakRef AsWeak(T* t)
+{
+    Microsoft::WRL::WeakRef weakRef;
+    ThrowIfFailed(AsWeak(t, &weakRef));
+    return weakRef;
+}
+
+template<typename T>
+inline Microsoft::WRL::ComPtr<T> LockWeakRef(Microsoft::WRL::WeakRef& weakRef)
+{
+    Microsoft::WRL::ComPtr<T> t;
+    ThrowIfFailed(weakRef.As(&t));
+    return t;
+}
+
 inline bool operator!=(ABI::Windows::Foundation::Size const& left, ABI::Windows::Foundation::Size const& right)
 {
     return (left.Width != right.Width) || (left.Height != right.Height);

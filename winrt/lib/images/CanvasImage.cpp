@@ -11,8 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasImage.h"
-#include "ScopeWarden.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

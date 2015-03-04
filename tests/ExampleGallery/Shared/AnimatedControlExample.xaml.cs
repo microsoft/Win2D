@@ -262,13 +262,18 @@ namespace ExampleGallery
                 builder.AddOneLineFigure(begin, center, begin + lineLength, center);
                 builder.AddOneLineFigure(end - lineLength, center, end, center);
 
-                clockFaceGeometry = CanvasGeometry.CreatePath(builder);
+                using (CanvasGeometry clockFaceGeometry = CanvasGeometry.CreatePath(builder))
+                {
+                    clockFaceCachedFill = CanvasCachedGeometry.CreateFill(clockFaceGeometry);
+                    clockFaceCachedStroke18 = CanvasCachedGeometry.CreateStroke(clockFaceGeometry, 18, timeCircleStrokeStyle);
+                    clockFaceCachedStroke16 = CanvasCachedGeometry.CreateStroke(clockFaceGeometry, 16, timeCircleStrokeStyle);
+                }
             }
         }
 
         public void Draw(double targetElapsedTimeInMs, long updateCount, CanvasDrawingSession ds)
         {
-            ds.FillGeometry(clockFaceGeometry, backgroundBrush);
+            ds.DrawCachedGeometry(clockFaceCachedFill, backgroundBrush);
 
             double updatesPerSecond = 1000.0 / targetElapsedTimeInMs;
             int seconds = (int)((updateCount / updatesPerSecond) % 10);
@@ -284,8 +289,8 @@ namespace ExampleGallery
                 ds.DrawGeometry(timeSegmentGeometry, Colors.White, 1, hairlineStrokeStyle);
             }
 
-            ds.DrawGeometry(clockFaceGeometry, Colors.White, 18, timeCircleStrokeStyle);
-            ds.DrawGeometry(clockFaceGeometry, Colors.Black, 16, timeCircleStrokeStyle);
+            ds.DrawCachedGeometry(clockFaceCachedStroke18, Colors.White);
+            ds.DrawCachedGeometry(clockFaceCachedStroke16, Colors.Black);
         }
 
         static CanvasGeometry CreateTimeSegmentGeometry(CanvasDrawingSession ds, long updateCount, double updatesPerSecond)
@@ -329,7 +334,9 @@ namespace ExampleGallery
             }
         }
 
-        CanvasGeometry clockFaceGeometry;
+        CanvasCachedGeometry clockFaceCachedFill;
+        CanvasCachedGeometry clockFaceCachedStroke18;
+        CanvasCachedGeometry clockFaceCachedStroke16;
         HueRotationEffect hueRotationEffect;
         CanvasImageBrush backgroundBrush;
         CanvasImageBrush foregroundBrush;

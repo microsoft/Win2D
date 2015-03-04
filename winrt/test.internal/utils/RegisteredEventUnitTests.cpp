@@ -12,18 +12,14 @@
 
 #include "pch.h"
 
-#include <RegisteredEvent.h>
-
-#include "MockHelpers.h"
-
 class TestEventSource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
 {
     EventSource<IEventHandler<IInspectable*>> m_eventSource;
 
 public:
-    IFACEMETHODIMP add_Event(IEventHandler<IInspectable*>* value, EventRegistrationToken* token)
+    IFACEMETHODIMP add_Event(IEventHandler<IInspectable*>* theValue, EventRegistrationToken* token)
     {
-        return m_eventSource.Add(value, token);
+        return m_eventSource.Add(theValue, token);
     }
 
     IFACEMETHODIMP remove_Event(EventRegistrationToken token)

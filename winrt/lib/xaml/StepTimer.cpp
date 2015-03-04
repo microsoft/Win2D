@@ -12,7 +12,6 @@
 
 #include "pch.h"
 #include "StepTimer.h"
-#include "CanvasAnimatedControl.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

@@ -12,9 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasBitmap.h"
-#include "CanvasDevice.h"
-#include "CanvasRenderTarget.h"
 #include "PolymorphicBitmapManager.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -142,7 +139,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(encoder->Commit());
     }
 
-    class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
+    class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter,
+                                                 private LifespanTracker<DefaultBitmapResourceCreationAdapter>
     {
         ComPtr<IWICImagingFactory2> m_wicFactory;
 

@@ -33,7 +33,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     template<typename TRAITS>
     class ResourceWrapper : public ABI::Windows::Foundation::IClosable, 
-                            public ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative
+                            public ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative,
+                            private LifespanTracker<typename TRAITS::wrapper_t>
     {
         std::shared_ptr<typename TRAITS::manager_t> m_manager;
         ClosablePtr<typename TRAITS::resource_t> m_resource;

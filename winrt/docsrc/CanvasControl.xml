@@ -93,6 +93,9 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasControl.Device">
       <summary>Gets the underlying device used by this control.</summary>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasControl.Size">
+      <summary>Gets the current size of the control.</summary>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasControl.Dpi">
       <summary>Gets the current dots-per-inch (DPI) of this control.</summary>
       <remarks>

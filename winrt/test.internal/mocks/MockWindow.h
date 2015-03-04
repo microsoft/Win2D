@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "MockHelpers.h"
-
 class MockWindow : public RuntimeClass<IWindow>
 {
     bool m_visible;

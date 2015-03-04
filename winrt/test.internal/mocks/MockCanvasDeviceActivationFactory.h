@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "MockHelpers.h"
-
 class MockCanvasDeviceActivationFactory : public RuntimeClass<IActivationFactory>
 {
 public:

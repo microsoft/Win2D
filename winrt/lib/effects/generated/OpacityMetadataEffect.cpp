@@ -24,13 +24,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float[4]>(D2D1_OPACITYMETADATA_PROP_INPUT_OPAQUE_RECT, Rect{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
     }
 
-    IMPLEMENT_PROPERTY(OpacityMetadataEffect,
+    IMPLEMENT_EFFECT_PROPERTY(OpacityMetadataEffect,
         OpaqueRectangle,
         float[4],
         Rect,
         D2D1_OPACITYMETADATA_PROP_INPUT_OPAQUE_RECT)
 
-    IMPLEMENT_INPUT_PROPERTY(OpacityMetadataEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(OpacityMetadataEffect,
         Source,
         0)
 

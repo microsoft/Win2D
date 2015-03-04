@@ -11,10 +11,8 @@
 // under the License.
 
 #include "pch.h"
-#include "TestDeviceResourceCreationAdapter.h"
-#include "MockD2DGradientStopCollection.h"
-#include "MockD2DLinearGradientBrush.h"
-#include "MockD2DRadialGradientBrush.h"
+#include <CanvasLinearGradientBrush.h>
+#include <CanvasRadialGradientBrush.h>
 
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
@@ -575,5 +573,48 @@ TEST_CLASS(CanvasGradientBrushTests)
         Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->get_Transform(&m));
         Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->put_Transform(m));
         Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->get_Device(&actualDevice));
+    }
+
+    TEST_METHOD_EX(CanvasGradientBrush_CreateStops_Overload)
+    {
+        auto device = Make<StubCanvasDevice>();
+
+        device->MockCreateGradientStopCollection =
+            [&](UINT gradientStopCount,
+            CanvasGradientStop const* gradientStops,
+            CanvasEdgeBehavior edgeBehavior,
+            CanvasColorSpace preInterpolationSpace,
+            CanvasColorSpace postInterpolationSpace,
+            CanvasBufferPrecision bufferPrecision,
+            CanvasAlphaMode alphaMode)
+            {
+                Assert::AreEqual(CanvasEdgeBehavior::Clamp, edgeBehavior);
+                Assert::AreEqual(CanvasAlphaMode::Premultiplied, alphaMode);
+
+                auto stopCollection = Make<MockD2DGradientStopCollection>();
+                return stopCollection;
+            };
+        
+        device->MockCreateLinearGradientBrush =
+            [&](ID2D1GradientStopCollection1* stopCollection)
+            {
+                return Make<MockD2DLinearGradientBrush>();
+            };
+        
+        device->MockCreateRadialGradientBrush =
+            [&](ID2D1GradientStopCollection1* stopCollection)
+            {
+                return Make<MockD2DRadialGradientBrush>();
+            };
+
+        CanvasGradientStop stop{};
+
+        auto linearGradientBrushFactory = Make<CanvasLinearGradientBrushFactory>();
+        ComPtr<ICanvasLinearGradientBrush> linearGradientBrush;
+        Assert::AreEqual(S_OK, linearGradientBrushFactory->CreateWithStops(device.Get(), 1, &stop, &linearGradientBrush));
+
+        auto radialGradientBrushFactory = Make<CanvasRadialGradientBrushFactory>();
+        ComPtr<ICanvasRadialGradientBrush> radialGradientBrush;
+        Assert::AreEqual(S_OK, radialGradientBrushFactory->CreateWithStops(device.Get(), 1, &stop, &radialGradientBrush));
     }
 };

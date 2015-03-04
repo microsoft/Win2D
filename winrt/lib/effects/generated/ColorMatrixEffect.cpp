@@ -26,19 +26,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_PROPERTY(ColorMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ColorMatrixEffect,
         ColorMatrix,
         float[20],
         Matrix5x4,
         D2D1_COLORMATRIX_PROP_COLOR_MATRIX)
 
-    IMPLEMENT_PROPERTY(ColorMatrixEffect,
+    IMPLEMENT_EFFECT_PROPERTY(ColorMatrixEffect,
         ClampOutput,
         boolean,
         boolean,
         D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_INPUT_PROPERTY(ColorMatrixEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(ColorMatrixEffect,
         Source,
         0)
 

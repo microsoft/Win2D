@@ -32,57 +32,57 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_TABLETRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_ARRAY_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(TableTransferEffect,
         RedTable,
         float,
         D2D1_TABLETRANSFER_PROP_RED_TABLE)
 
-    IMPLEMENT_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TableTransferEffect,
         RedDisable,
         boolean,
         boolean,
         D2D1_TABLETRANSFER_PROP_RED_DISABLE)
 
-    IMPLEMENT_ARRAY_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(TableTransferEffect,
         GreenTable,
         float,
         D2D1_TABLETRANSFER_PROP_GREEN_TABLE)
 
-    IMPLEMENT_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TableTransferEffect,
         GreenDisable,
         boolean,
         boolean,
         D2D1_TABLETRANSFER_PROP_GREEN_DISABLE)
 
-    IMPLEMENT_ARRAY_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(TableTransferEffect,
         BlueTable,
         float,
         D2D1_TABLETRANSFER_PROP_BLUE_TABLE)
 
-    IMPLEMENT_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TableTransferEffect,
         BlueDisable,
         boolean,
         boolean,
         D2D1_TABLETRANSFER_PROP_BLUE_DISABLE)
 
-    IMPLEMENT_ARRAY_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(TableTransferEffect,
         AlphaTable,
         float,
         D2D1_TABLETRANSFER_PROP_ALPHA_TABLE)
 
-    IMPLEMENT_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TableTransferEffect,
         AlphaDisable,
         boolean,
         boolean,
         D2D1_TABLETRANSFER_PROP_ALPHA_DISABLE)
 
-    IMPLEMENT_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(TableTransferEffect,
         ClampOutput,
         boolean,
         boolean,
         D2D1_TABLETRANSFER_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_INPUT_PROPERTY(TableTransferEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(TableTransferEffect,
         Source,
         0)
 

@@ -12,8 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasControlTestAdapter.h"
-
 TEST_CLASS(CanvasImageSourceUnitTests)
 {
 public:

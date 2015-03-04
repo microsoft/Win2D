@@ -34,8 +34,9 @@ TEST_CLASS(CanvasTextFormatTests)
         //
         // Create a dwriteTextFormat with non-default values set for all the
         // properties.  An explicit font collection is set, and this is expected
-        // to be preserved even if CanvasTextFormat recreates its underlying
-        // IDWriteTextFormat.
+        // to be thrown away if CanvasTextFormat recreates its underlying
+        // IDWriteTextFormat (since custom font collections can be configured using
+        // the uri#family syntax in font family.
         //
         auto fontCollection = Make<StubDWriteFontCollection>();
 
@@ -160,7 +161,7 @@ TEST_CLASS(CanvasTextFormatTests)
         ComPtr<IDWriteFontCollection> newFontCollection;
         ThrowIfFailed(newDWriteTextFormat->GetFontCollection(&newFontCollection));
         
-        Assert::AreEqual<void*>(fontCollection.Get(), newFontCollection.Get());
+        Assert::AreNotEqual<void*>(fontCollection.Get(), newFontCollection.Get());
 
 #undef CHECK
     }

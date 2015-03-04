@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "RegisteredEvent.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::UI::Core;
@@ -21,7 +19,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     typedef ITypedEventHandler<IInspectable*, PointerEventArgs*> EventHandlerWithPointerArgs;
 
-    class AnimatedControlInput : public RuntimeClass<ICorePointerInputSource>
+    class AnimatedControlInput : public RuntimeClass<ICorePointerInputSource>,
+                                 private LifespanTracker<AnimatedControlInput>
     {
         InspectableClass(InterfaceName_Windows_UI_Core_ICorePointerInputSource, BaseTrust);
 

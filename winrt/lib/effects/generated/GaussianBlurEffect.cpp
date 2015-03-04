@@ -26,26 +26,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(GaussianBlurEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(GaussianBlurEffect,
         BlurAmount,
         float,
         float,
         D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION,
         (value >= 0.0f) && (value <= 250.0f))
 
-    IMPLEMENT_PROPERTY(GaussianBlurEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GaussianBlurEffect,
         Optimization,
         uint32_t,
         EffectOptimization,
         D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION)
 
-    IMPLEMENT_PROPERTY(GaussianBlurEffect,
+    IMPLEMENT_EFFECT_PROPERTY(GaussianBlurEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_GAUSSIANBLUR_PROP_BORDER_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(GaussianBlurEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(GaussianBlurEffect,
         Source,
         0)
 

@@ -12,8 +12,6 @@
 
 #include "pch.h"
 
-#include "TestBitmapResourceCreationAdapter.h"
-
 TEST_CLASS(CanvasImageUnitTests)
 {
     struct Fixture

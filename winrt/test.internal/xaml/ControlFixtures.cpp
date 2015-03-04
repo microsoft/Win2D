@@ -11,8 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "ControlFixtures.h"
-#include "MockDxgiSwapChain.h"
 
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
     ComPtr<MockD2DDeviceContext> const& deviceContext)
@@ -88,10 +86,14 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
             return canvasDevice.CopyTo(value);
         });
 
+    // Capture the adapter by pointer, not shared_ptr, to avoid a refcount cycle
+    // when we assign the lambda to one of the adapter's own methods.
+    auto adapterPtr = adapter.get();
+
     adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
         [=](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
         {
-            auto swapChain = adapter->SwapChainManager->Create(
+            auto swapChain = adapterPtr->SwapChainManager->Create(
                 device,
                 1.0f,
                 1.0f,

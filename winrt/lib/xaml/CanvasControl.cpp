@@ -13,8 +13,6 @@
 #include "pch.h"
 
 #include "CanvasControl.h"
-#include "CanvasDevice.h"
-#include "CanvasImageSource.h"
 #include "RecreatableDeviceManager.impl.h"
 #include "BaseControlAdapter.h"
 
@@ -150,7 +148,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasControlFactory : public ActivationFactory<>
+    class CanvasControlFactory : public ActivationFactory<>,
+                                 private LifespanTracker<CanvasControlFactory>
     {
         std::weak_ptr<CanvasControlAdapter> m_adapter;
 

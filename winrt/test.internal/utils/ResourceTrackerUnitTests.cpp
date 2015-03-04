@@ -105,7 +105,7 @@ std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DummyWrappe
 
 TEST_CLASS(ResourceTrackerUnitTests)
 {
-    TEST_METHOD(ResourceTracker_Exercise)
+    TEST_METHOD_EX(ResourceTracker_Exercise)
     {
         auto manager = std::make_shared<DummyManager>();
 
@@ -140,7 +140,7 @@ TEST_CLASS(ResourceTrackerUnitTests)
         }
     }
 
-    TEST_METHOD(ResourceTracker_Close_Reused_Resource)
+    TEST_METHOD_EX(ResourceTracker_Close_Reused_Resource)
     {
         auto manager = std::make_shared<DummyManager>();
         
@@ -271,7 +271,7 @@ std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<MultipleInt
 
 TEST_CLASS(ResourceTrackerRequiresCOMIdentity)
 {
-    TEST_METHOD(ResourceTracker_UsesCOMIdentityRules)
+    TEST_METHOD_EX(ResourceTracker_UsesCOMIdentityRules)
     {
         auto manager = std::make_shared<MultipleInterfaceManager>();
         auto resource = Make<MultipleInterfaceResource>();

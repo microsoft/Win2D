@@ -25,21 +25,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<float[2]>(D2D1_BRIGHTNESS_PROP_BLACK_POINT, Numerics::Vector2{ 0.0f, 0.0f });
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(BrightnessEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(BrightnessEffect,
         WhitePoint,
         float[2],
         Numerics::Vector2,
         D2D1_BRIGHTNESS_PROP_WHITE_POINT,
         (value.X >= 0.0f) && (value.Y >= 0.0f) && (value.X <= 1.0f) && (value.Y <= 1.0f))
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(BrightnessEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(BrightnessEffect,
         BlackPoint,
         float[2],
         Numerics::Vector2,
         D2D1_BRIGHTNESS_PROP_BLACK_POINT,
         (value.X >= 0.0f) && (value.Y >= 0.0f) && (value.X <= 1.0f) && (value.Y <= 1.0f))
 
-    IMPLEMENT_INPUT_PROPERTY(BrightnessEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(BrightnessEffect,
         Source,
         0)
 

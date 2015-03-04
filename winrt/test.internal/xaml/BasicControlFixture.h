@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-#include "ControlFixtures.h"
+#pragma once
 
 template<typename TRAITS>
 struct BasicControlFixture
@@ -33,6 +33,8 @@ struct BasicControlFixture
 
     BasicControlFixture(BasicControlFixture const&) = delete;
     BasicControlFixture& operator=(BasicControlFixture const&) = delete;
+
+    virtual ~BasicControlFixture() = default;
 
     virtual void CreateAdapter()
     {

@@ -12,12 +12,11 @@
 
 #include "pch.h"
 
-#include "StubD2DResources.h"
-
+#include "StubCanvasBrush.h"
 #include "effects\generated\GaussianBlurEffect.h"
-#include "TestBitmapResourceCreationAdapter.h"
-#include "MockWICFormatConverter.h"
 #include "MockD2DRectangleGeometry.h"
+#include "CanvasCachedGeometry.h"
+#include "MockD2DGeometryRealization.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
@@ -124,6 +123,7 @@ public:
     ComPtr<CanvasDrawingSession> DS;
     ComPtr<StubCanvasBrush> Brush;
     ComPtr<CanvasGeometry> Geometry;
+    ComPtr<CanvasCachedGeometry> CachedGeometry;
 
     CanvasDrawingSessionFixture()
         : DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
@@ -131,14 +131,12 @@ public:
         , Brush(Make<StubCanvasBrush>())
     {
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
-        canvasDevice->CreateRectangleGeometryMethod.AllowAnyCall(
-            [](D2D1_RECT_F const&)
-            {
-                return Make<MockD2DRectangleGeometry>();
-            });
 
         auto geometryManager = std::make_shared<CanvasGeometryManager>();
         Geometry = geometryManager->Create(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
+
+        auto cachedGeometryManager = std::make_shared<CanvasCachedGeometryManager>();
+        CachedGeometry = cachedGeometryManager->Create(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
     }
 
 private:
@@ -2052,6 +2050,54 @@ public:
             });
     }
 
+    //
+    // DrawGeometryRealization
+    //    
+
+    template<typename TDraw>
+    void TestDrawGeometryRealization(bool isColorOverload, TDraw const& callDrawFunction)
+    {
+        CanvasDrawingSessionFixture f;
+        BrushValidator brushValidator(f, isColorOverload);
+
+        int expectedDrawGeometryRealizationCount = isColorOverload ? 2 : 1;
+
+        ComPtr<ID2D1GeometryRealization> nativeGeometryRealizationResource = f.CachedGeometry->GetResource();
+
+        f.DeviceContext->DrawGeometryRealizationMethod.SetExpectedCalls(expectedDrawGeometryRealizationCount,
+            [&](ID2D1GeometryRealization* geometryRealization, ID2D1Brush* brush)
+            {
+                Assert::AreEqual(nativeGeometryRealizationResource.Get(), geometryRealization);
+                brushValidator.Check(brush);
+            });
+
+        callDrawFunction(f, f.CachedGeometry.Get());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationWithBrush)
+    {
+        TestDrawGeometryRealization(false,
+            [](CanvasDrawingSessionFixture const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithBrush(cachedGeometry, f.Brush.Get()));
+            });
+
+        // Null brush or cached geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(f.CachedGeometry.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(nullptr, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationWithColor)
+    {
+        TestDrawGeometryRealization(true,
+            [](CanvasDrawingSessionFixture const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, ArbitraryMarkerColor2));
+            });
+    }
+
     TEST_METHOD_EX(CanvasDrawingSession_StateGettersWithNull)
     {
         CanvasDrawingSessionFixture f;
@@ -2171,8 +2217,7 @@ public:
 
     TEST_METHOD_EX(CanvasDrawingSession_SiSOffsetIsHiddenFromTransformProperty)
     {
-        ComPtr<StubD2DDeviceContextWithGetFactory> deviceContext = 
-            Make<StubD2DDeviceContextWithGetFactory>();
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
@@ -2334,7 +2379,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
         Fixture()
         {
-            Format = Make<CanvasTextFormat>();
+            Format = CanvasTextFormatFactory::GetOrCreateManager()->Create();
         }
 
         template<typename FORMAT_VALIDATOR>
@@ -2591,7 +2636,6 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
     }
 };
 
-
 TEST_CLASS(CanvasDrawingSession_CloseTests)
 {
     TEST_METHOD_EX(CanvasDrawingSession_Close_ReleasesDeviceContextAndOtherMethodsFail)
@@ -2819,5 +2863,295 @@ TEST_CLASS(CanvasDrawingSession_Interop)
         // Closing the drawing session should not result in any methods on the
         // deviceContext getting called.
         ThrowIfFailed(drawingSession->Close());
+    }
+};
+
+TEST_CLASS(CanvasDrawingSession_CreateLayerTests)
+{
+    struct Fixture : public CanvasDrawingSessionFixture
+    {
+        Fixture()
+        {
+            DeviceContext->GetAntialiasModeMethod.AllowAnyCall();
+        }
+
+        void ExpectOnePushLayer(float expectedOpacity, bool expectBrush, Rect const* expectedRect, bool expectGeometry, Matrix3x2 const* expectedTransform, CanvasLayerOptions expectedOptions)
+        {
+            DeviceContext->PushLayerMethod.SetExpectedCalls(1,
+                [=](D2D1_LAYER_PARAMETERS1 const* parameters, ID2D1Layer* layer)
+                {
+                    Assert::AreEqual(expectedOpacity, parameters->opacity);
+
+                    if (expectBrush)
+                        Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr).Get(), parameters->opacityBrush));
+                    else
+                        Assert::IsNull(parameters->opacityBrush);
+
+                    if (expectedRect)
+                        Assert::AreEqual(*expectedRect, FromD2DRect(parameters->contentBounds));
+                    else
+                        Assert::AreEqual(D2D1_RECT_F{ -FLT_MAX, -FLT_MAX, FLT_MAX, FLT_MAX }, parameters->contentBounds);
+
+                    if (expectGeometry)
+                        Assert::IsTrue(IsSameInstance(this->Geometry->GetResource().Get(), parameters->geometricMask));
+                    else
+                        Assert::IsNull(parameters->geometricMask);
+
+                    if (expectedTransform)
+                        Assert::AreEqual(*expectedTransform, *ReinterpretAs<Matrix3x2 const*>(&parameters->maskTransform));
+                    else
+                        Assert::AreEqual(D2D1_MATRIX_3X2_F{ 1, 0, 0, 1, 0, 0 }, parameters->maskTransform);
+
+                    Assert::AreEqual(expectedOptions, (CanvasLayerOptions)parameters->layerOptions);
+                    Assert::AreEqual(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE, parameters->maskAntialiasMode);
+                    Assert::IsNull(layer);
+                });
+        }
+
+        void ExpectOneGetTransform(D2D1_MATRIX_3X2_F returnValue)
+        {
+            DeviceContext->GetTransformMethod.SetExpectedCalls(1,
+                [=](D2D1_MATRIX_3X2_F* transform)
+                {
+                    *transform = returnValue;
+                });
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacity)
+    {
+        Fixture f;
+
+        const float expectedOpacity = 23;
+
+        f.ExpectOnePushLayer(expectedOpacity, false, nullptr, false, nullptr, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacity(expectedOpacity, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacityBrush)
+    {
+        Fixture f;
+
+        f.ExpectOnePushLayer(1.0f, true, nullptr, false, nullptr, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityBrush(f.Brush.Get(), &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacityAndClipRectangle)
+    {
+        Fixture f;
+
+        const float expectedOpacity = 23;
+        const Rect expectedRect{ 1, 2, 3, 4 };
+
+        f.ExpectOnePushLayer(expectedOpacity, false, &expectedRect, false, nullptr, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(expectedOpacity, expectedRect, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacityBrushAndClipRectangle)
+    {
+        Fixture f;
+
+        const Rect expectedRect{ 1, 2, 3, 4 };
+
+        f.ExpectOnePushLayer(1.0f, true, &expectedRect, false, nullptr, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityBrushAndClipRectangle(f.Brush.Get(), expectedRect, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacityAndClipGeometry)
+    {
+        Fixture f;
+
+        const float expectedOpacity = 23;
+
+        f.ExpectOnePushLayer(expectedOpacity, false, nullptr, true, nullptr, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipGeometry(expectedOpacity, f.Geometry.Get(), &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacityBrushAndClipGeometry)
+    {
+        Fixture f;
+
+        f.ExpectOnePushLayer(1.0f, true, nullptr, true, nullptr, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityBrushAndClipGeometry(f.Brush.Get(), f.Geometry.Get(), &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacityAndClipGeometryAndTransform)
+    {
+        Fixture f;
+
+        const float expectedOpacity = 23;
+        const Matrix3x2 expectedTransform{ 5, 6, 7, 8, 9, 10 };
+
+        f.ExpectOnePushLayer(expectedOpacity, false, nullptr, true, &expectedTransform, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipGeometryAndTransform(expectedOpacity, f.Geometry.Get(), expectedTransform, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithOpacityBrushAndClipGeometryAndTransform)
+    {
+        Fixture f;
+
+        const Matrix3x2 expectedTransform{ 5, 6, 7, 8, 9, 10 };
+
+        f.ExpectOnePushLayer(1.0f, true, nullptr, true, &expectedTransform, CanvasLayerOptions::None);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityBrushAndClipGeometryAndTransform(f.Brush.Get(), f.Geometry.Get(), expectedTransform, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayerWithAllOptions)
+    {
+        Fixture f;
+
+        const float expectedOpacity = 23;
+        const Rect expectedRect{ 1, 2, 3, 4 };
+        const Matrix3x2 expectedTransform{ 5, 6, 7, 8, 9, 10 };
+        const CanvasLayerOptions expectedOptions = CanvasLayerOptions::InitializeFromBackground;
+
+        f.ExpectOnePushLayer(expectedOpacity, true, &expectedRect, true, &expectedTransform, expectedOptions);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithAllOptions(expectedOpacity, f.Brush.Get(), expectedRect, f.Geometry.Get(), expectedTransform, expectedOptions, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_UsesAntialiasModeFromDeviceContext)
+    {
+        CanvasDrawingSessionFixture f;
+
+        const D2D1_ANTIALIAS_MODE expectedMode = D2D1_ANTIALIAS_MODE_ALIASED;
+
+        f.DeviceContext->GetAntialiasModeMethod.SetExpectedCalls(1, [=] { return expectedMode; });
+
+        f.DeviceContext->PushLayerMethod.SetExpectedCalls(1,
+            [=](D2D1_LAYER_PARAMETERS1 const* parameters, ID2D1Layer*)
+            {
+                Assert::AreEqual(expectedMode, parameters->maskAntialiasMode);
+            });
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacity(1.0f, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_WhenActiveLayerClosed_PopLayerIsCalled)
+    {
+        Fixture f;
+        f.DeviceContext->PushLayerMethod.AllowAnyCall();
+
+        ComPtr<ICanvasActiveLayer> activeLayer1;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacity(1.0f, &activeLayer1));
+
+        ComPtr<ICanvasActiveLayer> activeLayer2;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacity(1.0f, &activeLayer2));
+
+        f.DeviceContext->PopLayerMethod.SetExpectedCalls(1);
+        ThrowIfFailed(As<IClosable>(activeLayer2)->Close());
+        
+        f.DeviceContext->PopLayerMethod.SetExpectedCalls(1);
+        ThrowIfFailed(As<IClosable>(activeLayer1)->Close());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_WhenLayersClosedInWrongOrder_ExceptionIsThrown)
+    {
+        Fixture f;
+        f.DeviceContext->PushLayerMethod.AllowAnyCall();
+
+        ComPtr<ICanvasActiveLayer> activeLayer1;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacity(1.0f, &activeLayer1));
+
+        ComPtr<ICanvasActiveLayer> activeLayer2;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacity(1.0f, &activeLayer2));
+
+        Assert::AreEqual(E_FAIL, As<IClosable>(activeLayer1)->Close());
+        ValidateStoredErrorState(E_FAIL, Strings::PoppedWrongLayer);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_WhenLayerNotClosed_ExceptionIsThrown)
+    {
+        Fixture f;
+        f.DeviceContext->PushLayerMethod.AllowAnyCall();
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacity(1.0f, &activeLayer));
+
+        Assert::AreEqual(E_FAIL, As<IClosable>(f.DS)->Close());
+        ValidateStoredErrorState(E_FAIL, Strings::DidNotPopLayer);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_WhenClipRectTransformIsScaleAndTranslate_UsesAxisAlignedClip)
+    {
+        Fixture f;
+
+        const Rect expectedRect{ 1, 2, 3, 4 };
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 2, 0, 0, 3, 4, 5 });
+
+        f.DeviceContext->PushAxisAlignedClipMethod.SetExpectedCalls(1,
+            [=](D2D1_RECT_F const* clipRect, D2D1_ANTIALIAS_MODE antialiasMode)
+            {
+                Assert::AreEqual(expectedRect, FromD2DRect(*clipRect));
+                Assert::AreEqual(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE, antialiasMode);
+            });
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, expectedRect, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_WhenClipRectTransformIsComplex_DoesNotUseAxisAlignedClip)
+    {
+        Fixture f;
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 2, 1, -1, 3, 4, 5 });
+
+        f.DeviceContext->PushLayerMethod.SetExpectedCalls(1);
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, Rect{ 1, 2, 3, 4 }, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_AxisAlignedClip_UsesAntialiasModeFromDeviceContext)
+    {
+        Fixture f;
+        
+        const D2D1_ANTIALIAS_MODE expectedMode = D2D1_ANTIALIAS_MODE_ALIASED;
+
+        f.DeviceContext->GetAntialiasModeMethod.SetExpectedCalls(1, [=] { return expectedMode; });
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 1, 0, 0, 1, 0, 0 });
+
+        f.DeviceContext->PushAxisAlignedClipMethod.SetExpectedCalls(1,
+            [=](D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE antialiasMode)
+            {
+                Assert::AreEqual(expectedMode, antialiasMode);
+            });
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, Rect{ 1, 2, 3, 4 }, &activeLayer));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_CreateLayer_AxisAlignedClip_WhenActiveLayerClosed_PopAxisAlignedClipIsCalled)
+    {
+        Fixture f;
+        f.DeviceContext->PushAxisAlignedClipMethod.AllowAnyCall();
+
+        f.ExpectOneGetTransform(D2D1_MATRIX_3X2_F{ 1, 0, 0, 1, 0, 0 });
+
+        ComPtr<ICanvasActiveLayer> activeLayer;
+        ThrowIfFailed(f.DS->CreateLayerWithOpacityAndClipRectangle(1.0f, Rect{ 1, 2, 3, 4 }, &activeLayer));
+
+        f.DeviceContext->PopAxisAlignedClipMethod.SetExpectedCalls(1);
+        ThrowIfFailed(As<IClosable>(activeLayer)->Close());
     }
 };

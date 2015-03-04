@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-
 #include "RecreatableDeviceManager.impl.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -24,7 +22,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::UI::Xaml;
 
     template<typename TRAITS>
-    class BaseControlAdapter : public TRAITS::adapter_t
+    class BaseControlAdapter : public TRAITS::adapter_t,
+                               private LifespanTracker<typename TRAITS::adapter_t>
     {
         ComPtr<IActivationFactory> m_canvasDeviceFactory;
         ComPtr<IUserControlFactory> m_userControlFactory;
@@ -66,6 +65,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
                 &m_coreApplication));
         }
+
+        virtual ~BaseControlAdapter() = default;
 
         virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) override
         {

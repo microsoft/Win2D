@@ -25,19 +25,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_CROP_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
     }
 
-    IMPLEMENT_PROPERTY(CropEffect,
+    IMPLEMENT_EFFECT_PROPERTY(CropEffect,
         SourceRectangle,
         float[4],
         Rect,
         D2D1_CROP_PROP_RECT)
 
-    IMPLEMENT_PROPERTY(CropEffect,
+    IMPLEMENT_EFFECT_PROPERTY(CropEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_CROP_PROP_BORDER_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(CropEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(CropEffect,
         Source,
         0)
 

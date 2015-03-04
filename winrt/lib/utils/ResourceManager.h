@@ -12,10 +12,9 @@
 
 #pragma once
 
-#include <type_traits>
-
 #include "ResourceTracker.h"
 #include "ResourceWrapper.h"
+#include "StoredInPropertyMap.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -52,7 +51,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // auto w = MyManager.GetOrCreate(r); // calls CreateWrapper if wrapper needs to be created
     //
     template<typename TRAITS>
-    class ResourceManager : public std::enable_shared_from_this<typename TRAITS::manager_t>
+    class ResourceManager : public std::enable_shared_from_this<typename TRAITS::manager_t>,
+                            public StoredInPropertyMap,
+                            private LifespanTracker<typename TRAITS::manager_t>
     {
         ResourceTracker<typename TRAITS::wrapper_t> m_tracker;
     public:
@@ -121,7 +122,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // FACTORY is expected to derive from PerApplicationManager.
     //
     template<typename FACTORY, typename MANAGER>
-    class PerApplicationManager
+    class PerApplicationManager : private LifespanTracker<FACTORY>
     {
         std::shared_ptr<MANAGER> m_manager;
     public:
@@ -211,6 +212,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             boolean inserted = false;
             ThrowIfFailed(propertyMap->Insert(keyName.Get(), managerHolder.Get(), &inserted)); // Insert will replace an existing entry
 
+            manager->WhenDestroyedRemoveFromPropertyMap(propertyMap.Get(), keyName.Get());
+
             return manager;
         }
 
@@ -233,11 +236,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Wrapper about a weak_ptr<MANAGER> that can be stored in a PropertySet
         // (and therefore on CoreApplication.Properties).
         //
-        struct ManagerHolder : public RuntimeClass<IInspectable>
+        struct ManagerHolder : public RuntimeClass<IInspectable>,
+                               private LifespanTracker<ManagerHolder>
         {
             std::weak_ptr<MANAGER> Manager;
         };
-
 
         //
         // FACTORY can provide it's own implementation of this if it needs more

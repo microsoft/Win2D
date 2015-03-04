@@ -12,12 +12,8 @@
 
 #include "pch.h"
 
-#include "CanvasDrawingSession.h"
-#include "CanvasStrokeStyle.h"
+#include "CanvasActiveLayer.h"
 #include "CanvasTextFormat.h"
-#include "CanvasImage.h"
-#include "CanvasDevice.h"
-#include "CanvasBitmap.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -43,7 +39,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // ID2D1DeviceContext.  In this wrapper, interop, case we don't want
     // CanvasDrawingSession to call any additional methods in the device context.
     //
-    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
+    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+                                            private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
 
@@ -105,6 +102,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : ResourceWrapper(manager, deviceContext)
         , m_owner(owner)
         , m_adapter(adapter)
+        , m_nextLayerId(0)
     {
         CheckInPointer(adapter.get());
     }
@@ -128,6 +126,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                if (!m_activeLayerIds.empty())
+                    ThrowHR(E_FAIL, HStringReference(Strings::DidNotPopLayer).Get());
+
                 if (m_adapter)
                 {
                     // Arrange it so that m_adapter will always get
@@ -2129,8 +2130,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         if (!m_defaultTextFormat)
         {
-            m_defaultTextFormat = Make<CanvasTextFormat>();
-            CheckMakeResult(m_defaultTextFormat);
+            m_defaultTextFormat = CanvasTextFormatFactory::GetOrCreateManager()->Create();
         }
 
         return m_defaultTextFormat.Get();
@@ -2271,7 +2271,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     GetColorBrush(color),
                     nullptr);
             });
-    }    
+    }
+
+    //
+    // DrawCachedGeometry
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryWithBrush(
+        ICanvasCachedGeometry* cachedGeometry,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(cachedGeometry);
+                CheckInPointer(brush);
+
+                deviceContext->DrawGeometryRealization(
+                    GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
+                    ToD2DBrush(brush).Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryWithColor(
+        ICanvasCachedGeometry* cachedGeometry,
+        Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(cachedGeometry);
+
+                deviceContext->DrawGeometryRealization(
+                    GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
+                    GetColorBrush(color));
+            });
+    }
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {
@@ -2500,6 +2538,208 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 *pixels = DipsToPixels(dips, GetDpi(deviceContext));
             });
     }
+
+
+    //
+    // CreateLayer
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacity(
+        float opacity,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, nullptr, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrush(
+        ICanvasBrush* opacityBrush,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, nullptr, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityAndClipRectangle(
+        float opacity,
+        Rect clipRectangle,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, &clipRectangle, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrushAndClipRectangle(
+        ICanvasBrush* opacityBrush,
+        Rect clipRectangle,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, &clipRectangle, nullptr, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityAndClipGeometry(
+        float opacity,
+        ICanvasGeometry* clipGeometry,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, nullptr, clipGeometry, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrushAndClipGeometry(
+        ICanvasBrush* opacityBrush,
+        ICanvasGeometry* clipGeometry,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, nullptr, clipGeometry, nullptr, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityAndClipGeometryAndTransform(
+        float opacity,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 geometryTransform,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, nullptr, nullptr, clipGeometry, &geometryTransform, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithOpacityBrushAndClipGeometryAndTransform(
+        ICanvasBrush* opacityBrush,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 geometryTransform,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(1.0f, opacityBrush, nullptr, clipGeometry, &geometryTransform, CanvasLayerOptions::None, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateLayerWithAllOptions(
+        float opacity,
+        ICanvasBrush* opacityBrush,
+        Rect clipRectangle,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 geometryTransform,
+        CanvasLayerOptions options,
+        ICanvasActiveLayer** layer)
+    {
+        return CreateLayerImpl(opacity, opacityBrush, &clipRectangle, clipGeometry, &geometryTransform, options, layer);
+    }
+
+    // Returns true if the current transform matrix contains only scaling and translation, but no rotation or skew.
+    static bool TransformIsAxisPreserving(ID2D1DeviceContext* deviceContext)
+    {
+        D2D1_MATRIX_3X2_F transform;
+
+        deviceContext->GetTransform(&transform);
+
+        return transform._12 == 0.0f &&
+               transform._21 == 0.0f;
+    }
+
+    HRESULT CanvasDrawingSession::CreateLayerImpl(
+        float opacity,
+        ICanvasBrush* opacityBrush,
+        Rect const* clipRectangle,
+        ICanvasGeometry* clipGeometry,
+        Matrix3x2 const* geometryTransform,
+        CanvasLayerOptions options,
+        ICanvasActiveLayer** layer)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(layer);
+
+                auto& deviceContext = GetResource();
+
+                // Convert the layer parameters to D2D format.
+                auto d2dBrush = ToD2DBrush(opacityBrush);
+                auto d2dRect = clipRectangle ? ToD2DRect(*clipRectangle) : D2D1::InfiniteRect();
+                auto d2dGeometry = clipGeometry ? GetWrappedResource<ID2D1Geometry>(clipGeometry) : nullptr;
+                auto d2dMatrix = geometryTransform ? *ReinterpretAs<D2D1_MATRIX_3X2_F const*>(geometryTransform) : D2D1::Matrix3x2F::Identity();
+                auto d2dAntialiasMode = deviceContext->GetAntialiasMode();
+
+                // Simple cases can be optimized to use PushAxisAlignedClip instead of PushLayer.
+                bool isAxisAlignedClip = clipRectangle &&
+                                         !d2dBrush &&
+                                         !d2dGeometry &&
+                                         opacity == 1.0f &&
+                                         options == CanvasLayerOptions::None &&
+                                         TransformIsAxisPreserving(deviceContext.Get());
+
+                // Store a unique ID, used for validation in PopLayer. This extra state 
+                // is needed because the D2D PopLayer method always just pops the topmost 
+                // layer, but we want to make sure our CanvasActiveLayer objects are 
+                // closed in the right order if there is nesting.
+                //
+                // Unlike most places where we stash extra state in a resource wrapper 
+                // type, this does not break interop, because our IClosable based layer 
+                // API already prevents cross-API push and pop of layers. You can do 
+                // interop in code using layers, but cannot push from one side of the 
+                // interop boundary and then pop from the other, which is what would 
+                // break this tracking were it possible.
+
+                int layerId = ++m_nextLayerId;
+
+                m_activeLayerIds.push_back(layerId);
+
+                // Construct a scope object that will pop the layer when its Close method is called.
+                WeakRef weakSelf = AsWeak(this);
+
+                auto activeLayer = Make<CanvasActiveLayer>(
+                    [weakSelf, layerId, isAxisAlignedClip]() mutable
+                    {
+                        auto strongSelf = LockWeakRef<ICanvasDrawingSession>(weakSelf);
+                        auto self = static_cast<CanvasDrawingSession*>(strongSelf.Get());
+
+                        if (self)
+                            self->PopLayer(layerId, isAxisAlignedClip);
+                    });
+
+                CheckMakeResult(activeLayer);
+
+                if (isAxisAlignedClip)
+                {
+                    // Tell D2D to push an axis aligned clip region.
+                    deviceContext->PushAxisAlignedClip(&d2dRect, d2dAntialiasMode);
+                }
+                else
+                {
+                    // Tell D2D to push the layer.
+                    D2D1_LAYER_PARAMETERS1 parameters =
+                    {
+                        d2dRect,
+                        d2dGeometry.Get(),
+                        d2dAntialiasMode,
+                        d2dMatrix,
+                        opacity,
+                        d2dBrush.Get(),
+                        static_cast<D2D1_LAYER_OPTIONS1>(options)
+                    };
+
+                    deviceContext->PushLayer(&parameters, nullptr);
+                }
+
+                ThrowIfFailed(activeLayer.CopyTo(layer));
+            });
+    }
+
+    void CanvasDrawingSession::PopLayer(int layerId, bool isAxisAlignedClip)
+    {
+        auto& deviceContext = GetResource();
+
+        assert(!m_activeLayerIds.empty());
+
+        if (m_activeLayerIds.back() != layerId)
+            ThrowHR(E_FAIL, HStringReference(Strings::PoppedWrongLayer).Get());
+
+        m_activeLayerIds.pop_back();
+
+        if (isAxisAlignedClip)
+        {
+            deviceContext->PopAxisAlignedClip();
+        }
+        else
+        {
+            deviceContext->PopLayer();
+        }
+    }
+
 
     ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
 }}}}

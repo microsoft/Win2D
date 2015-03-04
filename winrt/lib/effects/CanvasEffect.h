@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "CanvasImage.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     using namespace ::Microsoft::WRL;
@@ -30,7 +28,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IEffectInput,
             ICanvasImageInternal,
             ICanvasImage,
-            ABI::Windows::Foundation::IClosable>
+            ABI::Windows::Foundation::IClosable>,
+          private LifespanTracker<CanvasEffect>
     {
 
     private:
@@ -92,6 +91,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     protected:
         // for effects with unknown number of inputs, inputs Size have to be set as zero
         CanvasEffect(IID m_effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed);
+
+        virtual ~CanvasEffect() = default;
 
         void GetInput(unsigned int index, IEffectInput** input);
         void SetInput(unsigned int index, IEffectInput* input);
@@ -362,16 +363,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Macros used by the generated strongly typed effect subclasses
         // 
 
-#define PROPERTY(NAME, TYPE)                             \
+#define EFFECT_PROPERTY(NAME, TYPE)                      \
         IFACEMETHOD(get_##NAME)(TYPE* value) override;   \
         IFACEMETHOD(put_##NAME)(TYPE value) override
 
-#define ARRAY_PROPERTY(NAME, TYPE)                                                      \
+#define EFFECT_ARRAY_PROPERTY(NAME, TYPE)                                               \
         IFACEMETHOD(get_##NAME)(UINT32 *valueCount, TYPE **valueElements) override;     \
         IFACEMETHOD(put_##NAME)(UINT32 valueCount, TYPE *valueElements) override
 
 
-#define IMPLEMENT_INPUT_PROPERTY(CLASS_NAME, INPUT_NAME, INPUT_INDEX)                   \
+#define IMPLEMENT_EFFECT_INPUT_PROPERTY(CLASS_NAME, INPUT_NAME, INPUT_INDEX)            \
                                                                                         \
         IFACEMETHODIMP CLASS_NAME::get_##INPUT_NAME(_Out_ IEffectInput** input)         \
         {                                                                               \
@@ -390,9 +391,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
 
-#define IMPLEMENT_PROPERTY(CLASS_NAME, PROPERTY_NAME,                                   \
-                           BOXED_TYPE, PUBLIC_TYPE,                                     \
-                           PROPERTY_INDEX)                                              \
+#define IMPLEMENT_EFFECT_PROPERTY(CLASS_NAME, PROPERTY_NAME,                            \
+                                  BOXED_TYPE, PUBLIC_TYPE,                              \
+                                  PROPERTY_INDEX)                                       \
                                                                                         \
         IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ PUBLIC_TYPE* value)        \
         {                                                                               \
@@ -411,9 +412,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
 
-#define IMPLEMENT_PROPERTY_WITH_VALIDATION(CLASS_NAME, PROPERTY_NAME,                   \
-                                           BOXED_TYPE, PUBLIC_TYPE,                     \
-                                           PROPERTY_INDEX, VALIDATOR)                   \
+#define IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(CLASS_NAME, PROPERTY_NAME,            \
+                                                  BOXED_TYPE, PUBLIC_TYPE,              \
+                                                  PROPERTY_INDEX, VALIDATOR)            \
                                                                                         \
         IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ PUBLIC_TYPE* value)        \
         {                                                                               \
@@ -438,7 +439,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
-#define IMPLEMENT_ARRAY_PROPERTY(CLASS_NAME, PROPERTY_NAME, TYPE, PROPERTY_INDEX)       \
+#define IMPLEMENT_EFFECT_ARRAY_PROPERTY(CLASS_NAME, PROPERTY_NAME,                      \
+                                        TYPE, PROPERTY_INDEX)                           \
                                                                                         \
         IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(UINT32 *valueCount,              \
                                                        TYPE **valueElements)            \

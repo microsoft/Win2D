@@ -27,32 +27,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_DIRECTIONALBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
     }
 
-    IMPLEMENT_PROPERTY_WITH_VALIDATION(DirectionalBlurEffect,
+    IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(DirectionalBlurEffect,
         BlurAmount,
         float,
         float,
         D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION,
         (value >= 0.0f) && (value <= 250.0f))
 
-    IMPLEMENT_PROPERTY(DirectionalBlurEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DirectionalBlurEffect,
         Angle,
         ConvertRadiansToDegrees,
         float,
         D2D1_DIRECTIONALBLUR_PROP_ANGLE)
 
-    IMPLEMENT_PROPERTY(DirectionalBlurEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DirectionalBlurEffect,
         Optimization,
         uint32_t,
         EffectOptimization,
         D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION)
 
-    IMPLEMENT_PROPERTY(DirectionalBlurEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DirectionalBlurEffect,
         BorderMode,
         uint32_t,
         EffectBorderMode,
         D2D1_DIRECTIONALBLUR_PROP_BORDER_MODE)
 
-    IMPLEMENT_INPUT_PROPERTY(DirectionalBlurEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(DirectionalBlurEffect,
         Source,
         0)
 

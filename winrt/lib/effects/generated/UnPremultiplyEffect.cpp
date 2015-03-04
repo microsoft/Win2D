@@ -23,7 +23,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Set default values
     }
 
-    IMPLEMENT_INPUT_PROPERTY(UnPremultiplyEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(UnPremultiplyEffect,
         Source,
         0)
 

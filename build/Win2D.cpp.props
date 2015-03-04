@@ -69,7 +69,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalIncludeDirectories>$(IdlHeaderDirectory);$(PublishedHeaderDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/bigobj /Zm230 /wd4503 /D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /Zm450 /wd4503 /D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1 %(AdditionalOptions)</AdditionalOptions>
       <!--
           /Zm999 - this value needs to be bumped occasionally when as our PCH grows
 

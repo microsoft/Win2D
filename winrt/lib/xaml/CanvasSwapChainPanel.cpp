@@ -40,7 +40,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return swapChainPanelInspectable;
     }
 
-    class CanvasSwapChainPanelFactory : public ActivationFactory<>
+    class CanvasSwapChainPanelFactory : public ActivationFactory<>,
+                                        private LifespanTracker<CanvasSwapChainPanelFactory>
     {
         //
         // While CanvasSwapChainPanel publically has only the default 

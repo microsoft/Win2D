@@ -37,19 +37,23 @@ namespace ExampleGallery
         {
             this.definitions = new List<ExampleDefinition>();
 
-            this.definitions.Add(new ExampleDefinition() { Name = "Shapes", Control = typeof(ShapesExample) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Stroke Styles", Control = typeof(StrokeStyles) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Effects", Control = typeof(EffectsExample) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Burning Text", Control = typeof(BurningTextExample) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Game of Life", Control = typeof(GameOfLife) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Canvas Control", Control = typeof(CanvasControlExample) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Image Source Update Region", Control = typeof(ImageSourceUpdateRegion) });
-            this.definitions.Add(new ExampleDefinition() { Name = "DPI", Control = typeof(DpiExample) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Animated Control", Control = typeof(AnimatedControlExample) });
-            this.definitions.Add(new ExampleDefinition() { Name = "Control Transforms", Control = typeof(ControlTransforms) });
 #if WINDOWS_UAP
             this.definitions.Add(new ExampleDefinition() { Name = "Video Effect", Control = typeof(BasicVideoEffectExample) });
 #endif
+            this.definitions.Add(new ExampleDefinition() { Name = "Effects", Control = typeof(EffectsExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Burning Text", Control = typeof(BurningTextExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Game of Life", Control = typeof(GameOfLife) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Geometry Operations", Control = typeof(GeometryOperations) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Layers", Control = typeof(LayersExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Shapes", Control = typeof(ShapesExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Stroke Styles", Control = typeof(StrokeStyles) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Custom Fonts", Control = typeof(CustomFonts) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Animated Control", Control = typeof(AnimatedControlExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Canvas Control", Control = typeof(CanvasControlExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Image Source Update Region", Control = typeof(ImageSourceUpdateRegion) });
+            this.definitions.Add(new ExampleDefinition() { Name = "DPI", Control = typeof(DpiExample) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Control Transforms", Control = typeof(ControlTransforms) });
+            this.definitions.Add(new ExampleDefinition() { Name = "Debugging Options", Control = typeof(DebuggingOptions) });
         }
     }
 }

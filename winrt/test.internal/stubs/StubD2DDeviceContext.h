@@ -51,14 +51,14 @@ namespace canvas
             return S_OK;
         }
 
-        IFACEMETHODIMP_(void) SetTarget(ID2D1Image* value) override
+        IFACEMETHODIMP_(void) SetTarget(ID2D1Image* theValue) override
         {
-            m_target = value;
+            m_target = theValue;
         }
 
-        IFACEMETHODIMP_(void) GetTarget(ID2D1Image** value) const override
+        IFACEMETHODIMP_(void) GetTarget(ID2D1Image** theValue) const override
         {
-            m_target.CopyTo(value);
+            m_target.CopyTo(theValue);
         }
 
         IFACEMETHODIMP CreateBitmapFromDxgiSurface(

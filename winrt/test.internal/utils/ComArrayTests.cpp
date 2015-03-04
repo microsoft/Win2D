@@ -62,7 +62,7 @@ TEST_CLASS(ComArrayTests)
         Tracker::Verify();
     }
 
-    TEST_METHOD(ComArray_ZeroSizedArray_HasNonNullData)
+    TEST_METHOD_EX(ComArray_ZeroSizedArray_HasNonNullData)
     {
         ComArray<float, Tracker> array(0);
 
@@ -70,14 +70,14 @@ TEST_CLASS(ComArrayTests)
         Assert::IsNotNull(array.GetData());
     }
 
-    TEST_METHOD(ComArray_SizedArray)
+    TEST_METHOD_EX(ComArray_SizedArray)
     {
         ComArray<float, Tracker> array(100);
         Assert::AreEqual(100U, array.GetSize());
         Assert::IsNotNull(array.GetData());
     }
 
-    TEST_METHOD(ComArray_ArraySubscriptOperator)
+    TEST_METHOD_EX(ComArray_ArraySubscriptOperator)
     {
         ComArray<float, Tracker> array(100);
 
@@ -85,7 +85,7 @@ TEST_CLASS(ComArrayTests)
         Assert::AreEqual(array.GetData() + 1, &array[1]);
     }
 
-    TEST_METHOD(ComArray_MoveConstructor)
+    TEST_METHOD_EX(ComArray_MoveConstructor)
     {
         ComArray<float, Tracker> sourceArray(100);
         auto originalData = sourceArray.GetData();
@@ -99,7 +99,7 @@ TEST_CLASS(ComArrayTests)
         Assert::AreEqual(originalData, destArray.GetData());
     }
 
-    TEST_METHOD(ComArray_MoveAssignment)
+    TEST_METHOD_EX(ComArray_MoveAssignment)
     {
         ComArray<float, Tracker> sourceArray(100);
         auto originalData = sourceArray.GetData();
@@ -114,7 +114,7 @@ TEST_CLASS(ComArrayTests)
         Assert::AreEqual(originalData, destArray.GetData());
     }
 
-    TEST_METHOD(ComArray_Detach)
+    TEST_METHOD_EX(ComArray_Detach)
     {
         ComArray<float, Tracker> array(100);
 
@@ -126,7 +126,7 @@ TEST_CLASS(ComArrayTests)
         Tracker::CoTaskMemFree(data);
     }
 
-    TEST_METHOD(ComArray_GetAddressOfData_ReleasesAndTracksNewValue)
+    TEST_METHOD_EX(ComArray_GetAddressOfData_ReleasesAndTracksNewValue)
     {
         ComArray<float, Tracker> array(100);
         *array.GetAddressOfData() = static_cast<float*>(Tracker::CoTaskMemAlloc(1));
@@ -136,7 +136,7 @@ TEST_CLASS(ComArrayTests)
         // have been freed.
     }
 
-    TEST_METHOD(ComArray_ConstructFromIterators_Empty)
+    TEST_METHOD_EX(ComArray_ConstructFromIterators_Empty)
     {
         std::vector<float> src;
         ComArray<float, Tracker> array(src.begin(), src.end());
@@ -144,7 +144,7 @@ TEST_CLASS(ComArrayTests)
         Assert::IsNotNull(array.GetData());
     }
 
-    TEST_METHOD(CopyToComArray_WithData)
+    TEST_METHOD_EX(CopyToComArray_WithData)
     {
         std::vector<float> src{ 1, 2, 3 };
 
@@ -157,7 +157,7 @@ TEST_CLASS(ComArrayTests)
         Assert::AreEqual(3.0f, d[2]);
     }
 
-    TEST_METHOD(TransformToComArray_Empty)
+    TEST_METHOD_EX(TransformToComArray_Empty)
     {
         auto transformFn = [](int v) { Assert::Fail(L"Don't expect transformFn to get called"); return 0.0; };
         std::vector<int> src;
@@ -168,7 +168,7 @@ TEST_CLASS(ComArrayTests)
         Assert::IsNotNull(array.GetData());
     }
 
-    TEST_METHOD(TransformToComArray_WithData)
+    TEST_METHOD_EX(TransformToComArray_WithData)
     {
         auto transformFn = [](int v) { return static_cast<double>(v+1.0); };
         std::vector<int> src{ 1, 2, 3 };

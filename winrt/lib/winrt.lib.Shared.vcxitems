@@ -21,7 +21,7 @@
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\Inc;.\brushes;.\xaml;.\drawing;.\geometry;.\images;.\text;.\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Inc;.\brushes;.\xaml;.\drawing;.\geometry;.\images;.\effects;.\text;.\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -43,6 +43,7 @@
     <!-- TODO: should pass '-v' to mdmerge once MS:1341138 is resolved -->
   </Target>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\StoredInPropertyMap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlInput.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControlAdapter.h" />
@@ -104,6 +106,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h" />
@@ -182,6 +185,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.cpp" />
@@ -203,6 +207,7 @@
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl" />
@@ -248,6 +253,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl" />

@@ -81,9 +81,64 @@ public:
         Assert::AreEqual(originalPathGeometry.Get(), retrievedPathGeometry.Get());
     }
 
+    TEST_METHOD(CanvasGeometry_ZeroSizedGeometryGroup_InteropWorks)
+    {
+        auto canvasGeometry = CanvasGeometry::CreateGroup(m_device, nullptr);
+
+        auto d2dResource = GetWrappedResource<ID2D1GeometryGroup>(canvasGeometry);
+
+        Assert::IsNotNull(d2dResource.Get());
+    }
+
+    TEST_METHOD(CanvasGeometry_ComputeFlatteningTolerance)
+    {
+        struct TestCase
+        {
+            float ZoomLevel;
+            float Dpi;
+            float3x2 Transform;
+        } testCases[] {
+                {123.0f, 456.0f, float3x2{ 1, 2, 3, 4, 5, 6 }},
+                { -1, -1, float3x2{ 1, 0, 0, 1, 0, 0 } },
+                {1, 0, float3x2{ 1, 0, 0, 1, 0, 0 } }
+        };
+
+        for (TestCase testCase : testCases)
+        {
+            const float d2dTolerance = D2D1::ComputeFlatteningTolerance(
+                *(reinterpret_cast<D2D1_MATRIX_3X2_F*>(&testCase.Transform)),
+                testCase.Dpi,
+                testCase.Dpi,
+                testCase.ZoomLevel);
+
+            const float canvasTolerance = CanvasGeometry::ComputeFlatteningTolerance(
+                testCase.Dpi,
+                testCase.ZoomLevel,
+                testCase.Transform);
+
+            Assert::AreEqual(d2dTolerance, canvasTolerance);
+        }
+
+        for (TestCase testCase : testCases)
+        {
+            const float d2dTolerance = D2D1::ComputeFlatteningTolerance(
+                D2D1::Matrix3x2F::Identity(),
+                testCase.Dpi,
+                testCase.Dpi,
+                testCase.ZoomLevel);
+
+            const float canvasTolerance = CanvasGeometry::ComputeFlatteningTolerance(
+                testCase.Dpi,
+                testCase.ZoomLevel);
+
+            Assert::AreEqual(d2dTolerance, canvasTolerance);
+        }
+
+    }
+
     TEST_METHOD(CanvasPathBuilder_NullDevice)
     {        
-        Assert::ExpectException< Platform::InvalidArgumentException^>(
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
             [=]
             {
                 ref new CanvasPathBuilder(nullptr);
@@ -108,6 +163,42 @@ public:
             [=]
             {
                 GetWrappedResource<ID2D1PathGeometry1>(canvasPathBuilder);
+            });
+    }
+
+    TEST_METHOD(CanvasCachedGeometry_NativeInterop)
+    {
+        ComPtr<ID2D1RectangleGeometry> rectangleGeometry;
+        ThrowIfFailed(GetD2DFactory()->CreateRectangleGeometry(D2D1::RectF(1, 2, 3, 4), &rectangleGeometry));
+
+        auto d2dDevice = GetWrappedResource<ID2D1Device1>(m_device);
+
+        ComPtr<ID2D1DeviceContext> d2dDeviceContext;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2dDeviceContext));
+
+        auto d2dDeviceContext1 = As<ID2D1DeviceContext1>(d2dDeviceContext);
+
+        ComPtr<ID2D1GeometryRealization> d2dGeometryRealization;
+        ThrowIfFailed(d2dDeviceContext1->CreateFilledGeometryRealization(
+            rectangleGeometry.Get(), 
+            D2D1_DEFAULT_FLATTENING_TOLERANCE, 
+            &d2dGeometryRealization));
+
+        auto canvasCachedGeometry = GetOrCreate<CanvasCachedGeometry>(m_device, d2dGeometryRealization.Get());
+
+        auto retrievedGeometryRealization = GetWrappedResource<ID2D1GeometryRealization>(canvasCachedGeometry);
+
+        Assert::AreEqual(d2dGeometryRealization.Get(), retrievedGeometryRealization.Get());
+    }
+
+    TEST_METHOD(CanvasCachedGeometry_NullStrokeStyle_ShouldFail)
+    {
+        auto canvasGeometry = CanvasGeometry::CreateRectangle(m_device, Rect{});
+
+        Assert::ExpectException< Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasCachedGeometry::CreateStroke(canvasGeometry, 5.0f, nullptr);
             });
     }
 

@@ -12,8 +12,6 @@
 
 #include "pch.h"
 #include "CanvasRadialGradientBrush.h"
-#include "CanvasDevice.h"
-#include "Gradients.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -116,6 +114,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(newRadialBrush.CopyTo(radialGradientBrush));
             });    
      }
+
+    IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithStops(
+        ICanvasResourceCreator* resourceAllocator,
+        UINT32 gradientStopCount,
+        CanvasGradientStop* gradientStops,
+        ICanvasRadialGradientBrush** radialGradientBrush)
+    {
+        return CreateWithEdgeBehaviorAndInterpolationOptions(
+            resourceAllocator,
+            gradientStopCount,
+            gradientStops,
+            CanvasEdgeBehavior::Clamp,
+            CanvasAlphaMode::Premultiplied,
+            CanvasColorSpace::Srgb,
+            CanvasColorSpace::Srgb,
+            CanvasBufferPrecision::Precision8UIntNormalized,
+            radialGradientBrush);
+    }
 
     IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndAlphaMode(
         ICanvasResourceCreator* resourceAllocator,

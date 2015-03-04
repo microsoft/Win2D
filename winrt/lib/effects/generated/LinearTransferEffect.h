@@ -29,19 +29,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         LinearTransferEffect();
 
-        PROPERTY(RedOffset, float);
-        PROPERTY(RedSlope, float);
-        PROPERTY(RedDisable, boolean);
-        PROPERTY(GreenOffset, float);
-        PROPERTY(GreenSlope, float);
-        PROPERTY(GreenDisable, boolean);
-        PROPERTY(BlueOffset, float);
-        PROPERTY(BlueSlope, float);
-        PROPERTY(BlueDisable, boolean);
-        PROPERTY(AlphaOffset, float);
-        PROPERTY(AlphaSlope, float);
-        PROPERTY(AlphaDisable, boolean);
-        PROPERTY(ClampOutput, boolean);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(RedOffset, float);
+        EFFECT_PROPERTY(RedSlope, float);
+        EFFECT_PROPERTY(RedDisable, boolean);
+        EFFECT_PROPERTY(GreenOffset, float);
+        EFFECT_PROPERTY(GreenSlope, float);
+        EFFECT_PROPERTY(GreenDisable, boolean);
+        EFFECT_PROPERTY(BlueOffset, float);
+        EFFECT_PROPERTY(BlueSlope, float);
+        EFFECT_PROPERTY(BlueDisable, boolean);
+        EFFECT_PROPERTY(AlphaOffset, float);
+        EFFECT_PROPERTY(AlphaSlope, float);
+        EFFECT_PROPERTY(AlphaDisable, boolean);
+        EFFECT_PROPERTY(ClampOutput, boolean);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

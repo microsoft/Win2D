@@ -82,20 +82,18 @@ namespace ExampleGallery
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
+            var size = sender.Size;
             var ds = args.DrawingSession;
-
-            float w = (float)sender.ActualWidth;
-            float h = (float)sender.ActualHeight;
 
             // Animate and then display the current image effect.
             animationFunction((float)timer.Elapsed.TotalSeconds);
 
-            ds.DrawImage(effect, (new Vector2(w, h) - currentEffectSize) / 2);
+            ds.DrawImage(effect, (size.ToVector2() - currentEffectSize) / 2);
 
             // Draw text showing which effects are in use, but only if the screen is large enough to fit it.
             const float minSizeToShowText = 550;
 
-            if (w > minSizeToShowText && h > minSizeToShowText)
+            if (size.Width > minSizeToShowText && size.Height > minSizeToShowText)
             {
                 string text = GetActiveEffectNames();
 

@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include "ResourceManager.h"
-#include "CanvasBrush.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;

@@ -29,9 +29,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         ShadowEffect();
 
-        PROPERTY(BlurAmount, float);
-        PROPERTY(ShadowColor, Color);
-        PROPERTY(Optimization, EffectOptimization);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(BlurAmount, float);
+        EFFECT_PROPERTY(ShadowColor, Color);
+        EFFECT_PROPERTY(Optimization, EffectOptimization);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

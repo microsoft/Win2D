@@ -36,6 +36,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             : m_device(device)
         { }
         
+        virtual ~CanvasBrush() = default;
+
         void Close();
 
     public:

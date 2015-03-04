@@ -11,8 +11,8 @@
 // under the License.
 
 #include "pch.h"
-
 #include <wrl/module.h>
+#include "../inc/LifespanTracker.h"
 
 STDAPI_(BOOL)
 DllMain(
@@ -22,8 +22,20 @@ DllMain(
     )
 {
     UNREFERENCED_PARAMETER(inst);
-    UNREFERENCED_PARAMETER(reason);
     UNREFERENCED_PARAMETER(pvreserved);
+
+    switch (reason)
+    {
+    case DLL_PROCESS_DETACH:
+        // WRL normally takes care of this immediately after DllMain returns,
+        // but we move it in front of LifespanInfo::ReportLiveObjects to
+        // avoid false positive complaints about leaked activation factories.
+        auto &module = ::Microsoft::WRL::Module< ::Microsoft::WRL::InProc >::GetModule();
+        module.Terminate(nullptr, true);
+
+        LifespanInfo::ReportLiveObjectsNoLock();
+        break;
+    }
 
     return TRUE;
 }

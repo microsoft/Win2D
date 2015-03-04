@@ -11,7 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "SwitchableTestBrushFixture.h"
 #include "TestEffect.h"
 
 using namespace ::Microsoft::WRL::Wrappers;

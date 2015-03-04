@@ -29,12 +29,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         TurbulenceEffect();
 
-        PROPERTY(Offset, Numerics::Vector2);
-        PROPERTY(Size, Numerics::Vector2);
-        PROPERTY(Frequency, Numerics::Vector2);
-        PROPERTY(Octaves, int32_t);
-        PROPERTY(Seed, int32_t);
-        PROPERTY(Noise, TurbulenceEffectNoise);
-        PROPERTY(Tileable, boolean);
+        EFFECT_PROPERTY(Offset, Numerics::Vector2);
+        EFFECT_PROPERTY(Size, Numerics::Vector2);
+        EFFECT_PROPERTY(Frequency, Numerics::Vector2);
+        EFFECT_PROPERTY(Octaves, int32_t);
+        EFFECT_PROPERTY(Seed, int32_t);
+        EFFECT_PROPERTY(Noise, TurbulenceEffectNoise);
+        EFFECT_PROPERTY(Tileable, boolean);
     };
 }}}}}

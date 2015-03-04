@@ -11,10 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasRenderTarget.h"
-#include "CanvasDevice.h"
-#include "CanvasDrawingSession.h"
-#include "CanvasBitmap.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

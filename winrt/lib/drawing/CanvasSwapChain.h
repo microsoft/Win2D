@@ -149,6 +149,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasSwapChainManager : public ResourceManager<CanvasSwapChainTraits>
     {
     public:
+        virtual ~CanvasSwapChainManager() = default;
+
         ComPtr<CanvasSwapChain> CreateNew(
             ICanvasDevice* device,
             float width,

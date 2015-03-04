@@ -12,8 +12,6 @@
 
 #include "pch.h"
 #include "CanvasLinearGradientBrush.h"
-#include "CanvasDevice.h"
-#include "Gradients.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -113,6 +111,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ThrowIfFailed(newLinearBrush.CopyTo(linearGradientBrush));
             });
+    }
+
+    IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithStops(
+        ICanvasResourceCreator* resourceAllocator,
+        UINT32 gradientStopCount,
+        CanvasGradientStop* gradientStops,
+        ICanvasLinearGradientBrush** linearGradientBrush)
+    {
+        return CreateWithEdgeBehaviorAndInterpolationOptions(
+            resourceAllocator,
+            gradientStopCount,
+            gradientStops,
+            CanvasEdgeBehavior::Clamp,
+            CanvasAlphaMode::Premultiplied,
+            CanvasColorSpace::Srgb,
+            CanvasColorSpace::Srgb,
+            CanvasBufferPrecision::Precision8UIntNormalized,
+            linearGradientBrush);
     }
 
     IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithEdgeBehaviorAndAlphaMode(

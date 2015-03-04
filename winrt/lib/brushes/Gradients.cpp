@@ -11,8 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "Gradients.h"
-#include "CanvasDevice.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

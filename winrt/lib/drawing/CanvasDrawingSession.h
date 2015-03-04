@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include "ClosablePtr.h"
-#include "ErrorHandling.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
@@ -50,6 +47,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
         ComPtr<ID2D1SolidColorBrush> m_solidColorBrush;
         ComPtr<ICanvasTextFormat> m_defaultTextFormat;
+
+        std::vector<int> m_activeLayerIds;
+        int m_nextLayerId;
 
         //
         // Contract:
@@ -894,6 +894,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color color) override;
 
         //
+        // DrawCachedGeometry
+        //
+
+        IFACEMETHOD(DrawCachedGeometryWithBrush)(
+            ICanvasCachedGeometry* cachedGeometry,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawCachedGeometryWithColor)(
+            ICanvasCachedGeometry* cachedGeometry,
+            ABI::Windows::UI::Color color) override;
+
+        //
         // State properties
         //
 
@@ -911,6 +923,59 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_Units)(CanvasUnits* value);
         IFACEMETHOD(put_Units)(CanvasUnits value);
+
+        //
+        // CreateLayer
+        //
+
+        IFACEMETHOD(CreateLayerWithOpacity)(
+            float opacity,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrush)(
+            ICanvasBrush* opacityBrush,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityAndClipRectangle)(
+            float opacity,
+            Rect clipRectangle,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrushAndClipRectangle)(
+            ICanvasBrush* opacityBrush,
+            Rect clipRectangle,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityAndClipGeometry)(
+            float opacity,
+            ICanvasGeometry* clipGeometry,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrushAndClipGeometry)(
+            ICanvasBrush* opacityBrush,
+            ICanvasGeometry* clipGeometry,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityAndClipGeometryAndTransform)(
+            float opacity,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 geometryTransform,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithOpacityBrushAndClipGeometryAndTransform)(
+            ICanvasBrush* opacityBrush,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 geometryTransform,
+            ICanvasActiveLayer** layer) override;
+
+        IFACEMETHOD(CreateLayerWithAllOptions)(
+            float opacity,
+            ICanvasBrush* opacityBrush,
+            Rect clipRectangle,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 geometryTransform,
+            CanvasLayerOptions options,
+            ICanvasActiveLayer** layer) override;
 
         //
         // ICanvasResourceCreator
@@ -1004,6 +1069,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float opacity,
             CanvasImageInterpolation interpolation,
             ABI::Microsoft::Graphics::Canvas::Numerics::Matrix4x4* perspective);
+
+        HRESULT CreateLayerImpl(
+            float opacity,
+            ICanvasBrush* opacityBrush,
+            Rect const* clipRectangle,
+            ICanvasGeometry* clipGeometry,
+            Matrix3x2 const* geometryTransform,
+            CanvasLayerOptions options,
+            ICanvasActiveLayer** layer);
+
+        void PopLayer(int layerId, bool isAxisAlignedClip);
     };
 
 
@@ -1043,7 +1119,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // A CanvasDrawingSessionAdapter that calls BeginDraw and EndDraw on the
     // device context.
     //
-    class SimpleCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter
+    class SimpleCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+                                              private LifespanTracker<SimpleCanvasDrawingSessionAdapter>
     {
         ComPtr<ID2D1DeviceContext1> m_d2dDeviceContext;
 

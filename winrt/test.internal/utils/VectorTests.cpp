@@ -114,7 +114,7 @@ TEST_CLASS(VectorTests)
     }
 
 
-    TEST_METHOD(VectorMethodsTest)
+    TEST_METHOD_EX(VectorMethodsTest)
     {
         auto v = Make<Vector<int>>();
 
@@ -281,7 +281,7 @@ TEST_CLASS(VectorTests)
     }
 
 
-    TEST_METHOD(VectorViewTest)
+    TEST_METHOD_EX(VectorViewTest)
     {
         auto v = Make<Vector<int>>();
         
@@ -368,7 +368,7 @@ TEST_CLASS(VectorTests)
     }
 
 
-    TEST_METHOD(VectorIteratorTest)
+    TEST_METHOD_EX(VectorIteratorTest)
     {
         auto v = Make<Vector<int>>();
 
@@ -445,7 +445,7 @@ TEST_CLASS(VectorTests)
     }
 
 
-    TEST_METHOD(VectorFixedSizeTest)
+    TEST_METHOD_EX(VectorFixedSizeTest)
     {
         auto v = Make<Vector<int>>(3, true);
 
@@ -481,7 +481,7 @@ TEST_CLASS(VectorTests)
     }
 
 
-    TEST_METHOD(VectorChangeTrackingTest)
+    TEST_METHOD_EX(VectorChangeTrackingTest)
     {
         auto v = Make<Vector<int>>();
 
@@ -547,7 +547,7 @@ TEST_CLASS(VectorTests)
     }
 
 
-    TEST_METHOD(VectorOfInterfacesTest)
+    TEST_METHOD_EX(VectorOfInterfacesTest)
     {
         MockInterface a, b, c;
 
@@ -633,7 +633,7 @@ TEST_CLASS(VectorTests)
     }
 
 
-    TEST_METHOD(VectorOfRuntimeClassesTest)
+    TEST_METHOD_EX(VectorOfRuntimeClassesTest)
     {
         auto v = Make<Vector<MockRuntimeClass*>>();
 

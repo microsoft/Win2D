@@ -25,19 +25,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_Y, D2D1_BORDER_EDGE_MODE_CLAMP);
     }
 
-    IMPLEMENT_PROPERTY(BorderEffect,
+    IMPLEMENT_EFFECT_PROPERTY(BorderEffect,
         ExtendX,
         uint32_t,
         CanvasEdgeBehavior,
         D2D1_BORDER_PROP_EDGE_MODE_X)
 
-    IMPLEMENT_PROPERTY(BorderEffect,
+    IMPLEMENT_EFFECT_PROPERTY(BorderEffect,
         ExtendY,
         uint32_t,
         CanvasEdgeBehavior,
         D2D1_BORDER_PROP_EDGE_MODE_Y)
 
-    IMPLEMENT_INPUT_PROPERTY(BorderEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(BorderEffect,
         Source,
         0)
 

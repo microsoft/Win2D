@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include "ClosablePtr.h"
-#include "ResourceManager.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
@@ -31,6 +28,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasDeviceResourceCreationAdapter
     {
     public:
+        virtual ~ICanvasDeviceResourceCreationAdapter() = default;
+
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) = 0;
 
         virtual bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device) = 0;
@@ -43,7 +42,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // Default implementation of the adapter that actually talks to D3D / D2D
     // that is used in production.
     //
-    class DefaultDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
+    class DefaultDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter,
+                                                 private LifespanTracker<DefaultDeviceResourceCreationAdapter>
     {
     public:
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) override;
@@ -113,6 +113,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1EllipseGeometry> CreateEllipseGeometry(D2D1_ELLIPSE const& ellipse) = 0;
         virtual ComPtr<ID2D1RoundedRectangleGeometry> CreateRoundedRectangleGeometry(D2D1_ROUNDED_RECT const& roundedRect) = 0;
         virtual ComPtr<ID2D1PathGeometry1> CreatePathGeometry() = 0;
+        virtual ComPtr<ID2D1GeometryGroup> CreateGeometryGroup(D2D1_FILL_MODE fillMode, ID2D1Geometry** d2dGeometries, uint32_t geometryCount) = 0;
+        virtual ComPtr<ID2D1TransformedGeometry> CreateTransformedGeometry(ID2D1Geometry* d2dGeometry, D2D1_MATRIX_3X2_F* transform) = 0;
+
+        virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) = 0;
+        virtual ComPtr<ID2D1GeometryRealization> CreateStrokedGeometryRealization(
+            ID2D1Geometry* geometry, 
+            float strokeWidth,
+            ID2D1StrokeStyle* strokeStyle,
+            float flatteningTolerance) = 0;
     };
 
 
@@ -223,6 +232,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1EllipseGeometry> CreateEllipseGeometry(D2D1_ELLIPSE const& ellipse) override;
         virtual ComPtr<ID2D1RoundedRectangleGeometry> CreateRoundedRectangleGeometry(D2D1_ROUNDED_RECT const& roundedRect) override;
         virtual ComPtr<ID2D1PathGeometry1> CreatePathGeometry() override;
+        virtual ComPtr<ID2D1GeometryGroup> CreateGeometryGroup(D2D1_FILL_MODE fillMode, ID2D1Geometry** d2dGeometries, uint32_t geometryCount) override;
+        virtual ComPtr<ID2D1TransformedGeometry> CreateTransformedGeometry(ID2D1Geometry* d2dGeometry, D2D1_MATRIX_3X2_F* transform) override;
+
+        virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) override;
+        virtual ComPtr<ID2D1GeometryRealization> CreateStrokedGeometryRealization(
+            ID2D1Geometry* geometry,
+            float strokeWidth,
+            ID2D1StrokeStyle* strokeStyle,
+            float flatteningTolerance) override;
 
         //
         // IDirect3DDevice

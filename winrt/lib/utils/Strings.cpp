@@ -11,7 +11,6 @@
 // under the License.
 
 #include "pch.h"
-#include "Strings.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

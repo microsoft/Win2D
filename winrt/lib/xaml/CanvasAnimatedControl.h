@@ -12,13 +12,9 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-#include <RegisteredEvent.h>
-
 #include "BaseControl.h"
 #include "AnimatedControlInput.h"
 #include "CanvasSwapChainPanel.h"
-#include "CanvasSwapChain.h"
 #include "StepTimer.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -29,8 +25,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::System::Threading;
 
-    class CanvasAnimatedUpdateEventArgs : public RuntimeClass<
-        ICanvasAnimatedUpdateEventArgs>
+    class CanvasAnimatedUpdateEventArgs : public RuntimeClass<ICanvasAnimatedUpdateEventArgs>,
+                                          private LifespanTracker<CanvasAnimatedUpdateEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs, BaseTrust);
         
@@ -42,7 +38,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP get_Timing(CanvasTimingInformation* value);
     };
 
-    class CanvasAnimatedUpdateEventArgsFactory : public ActivationFactory<ICanvasAnimatedUpdateEventArgsFactory>
+    class CanvasAnimatedUpdateEventArgsFactory : public ActivationFactory<ICanvasAnimatedUpdateEventArgsFactory>,
+                                                 private LifespanTracker<CanvasAnimatedUpdateEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs, BaseTrust);
 
@@ -52,7 +49,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasAnimatedUpdateEventArgs** updateEventArgs);
     };
 
-    class CanvasAnimatedDrawEventArgsFactory : public ActivationFactory<ICanvasAnimatedDrawEventArgsFactory>
+    class CanvasAnimatedDrawEventArgsFactory : public ActivationFactory<ICanvasAnimatedDrawEventArgsFactory>,
+                                               private LifespanTracker<CanvasAnimatedDrawEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs, BaseTrust);
 
@@ -63,8 +61,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasAnimatedDrawEventArgs** drawEventArgs) override;
     };
 
-    class CanvasAnimatedDrawEventArgs : public RuntimeClass<
-        ICanvasAnimatedDrawEventArgs>
+    class CanvasAnimatedDrawEventArgs : public RuntimeClass<ICanvasAnimatedDrawEventArgs>,
+                                        private LifespanTracker<CanvasAnimatedDrawEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs, BaseTrust);
 
@@ -121,9 +119,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
     };
 
+    class CanvasRenderLoop
+    {
+        ComPtr<IThreadPoolStatics> m_threadPoolStatics;
 
-    std::shared_ptr<ICanvasAnimatedControlAdapter> CreateCanvasAnimatedControlAdapter(
-        IThreadPoolStatics* threadPoolStatics);
+    public:
+        CanvasRenderLoop(IThreadPoolStatics* threadPoolStatics)
+            : m_threadPoolStatics(threadPoolStatics)
+        { }
+
+        ComPtr<IAsyncAction> StartUpdateRenderLoop(
+            std::function<void()> const& beforeLoopFn,
+            std::function<bool()> const& tickFn,
+            std::function<void()> const& afterLoopFn);
+
+        void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn);
+    };
 
     class CanvasAnimatedControl : public RuntimeClass<
         MixIn<CanvasAnimatedControl, BaseControl<CanvasAnimatedControlTraits>>,
@@ -190,8 +201,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHODIMP get_Paused(boolean* value) override;
 
-        IFACEMETHODIMP get_Size(Size* value) override;
-
         IFACEMETHODIMP ResetElapsedTime() override;
 
         IFACEMETHODIMP get_Input(ICorePointerInputSource** value) override;
@@ -217,8 +226,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void ApplicationResuming() override final;
 
     private:
-        bool IsRenderLoopRunning() const;
-
         void CreateSwapChainPanel();
 
         bool Tick(

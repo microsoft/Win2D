@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include "CanvasImage.h"
 #include "PolymorphicBitmapmanager.h"
 #include "TextureUtilities.h"
 
@@ -31,6 +30,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasBitmapResourceCreationAdapter
     {
     public:
+        virtual ~ICanvasBitmapResourceCreationAdapter() = default;
+
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName) = 0;
         virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream) = 0;
 
@@ -66,6 +67,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasBitmapAdapter
     {
     public:
+        virtual ~ICanvasBitmapAdapter() = default;
+
         virtual ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(IUriRuntimeClass* uri) = 0;
         virtual ComPtr<IAsyncOperation<StorageFile*>> GetFileFromPathAsync(HSTRING path) = 0;
     };

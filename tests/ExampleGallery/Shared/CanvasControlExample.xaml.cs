@@ -10,6 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+using System.Numerics;
 using Microsoft.Graphics.Canvas;
 using Windows.UI;
 using Windows.UI.Text;
@@ -33,10 +34,12 @@ namespace ExampleGallery
 
         private void DrawCanvasState(CanvasControl canvas, CanvasDrawingSession ds, int drawCount)
         {
-            ds.DrawLine(0, 0, (float)canvas.ActualWidth, (float)canvas.ActualHeight, Colors.Aqua);
-            ds.DrawLine(0, (float)canvas.ActualHeight, (float)canvas.ActualWidth, 0, Colors.Aqua);
+            Vector2 size = canvas.Size.ToVector2();
 
-            var text = string.Format("{0}x{1}\n{2} redraws", (int)canvas.ActualWidth, (int)canvas.ActualHeight, drawCount);
+            ds.DrawLine(Vector2.Zero, size, Colors.Aqua);
+            ds.DrawLine(0, size.Y, size.X, 0, Colors.Aqua);
+
+            var text = string.Format("{0}x{1}\n{2} redraws", size.X, size.Y, drawCount);
 
             ds.DrawText(
                 text,

@@ -32,57 +32,57 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
-    IMPLEMENT_ARRAY_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(DiscreteTransferEffect,
         RedTable,
         float,
         D2D1_DISCRETETRANSFER_PROP_RED_TABLE)
 
-    IMPLEMENT_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DiscreteTransferEffect,
         RedDisable,
         boolean,
         boolean,
         D2D1_DISCRETETRANSFER_PROP_RED_DISABLE)
 
-    IMPLEMENT_ARRAY_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(DiscreteTransferEffect,
         GreenTable,
         float,
         D2D1_DISCRETETRANSFER_PROP_GREEN_TABLE)
 
-    IMPLEMENT_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DiscreteTransferEffect,
         GreenDisable,
         boolean,
         boolean,
         D2D1_DISCRETETRANSFER_PROP_GREEN_DISABLE)
 
-    IMPLEMENT_ARRAY_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(DiscreteTransferEffect,
         BlueTable,
         float,
         D2D1_DISCRETETRANSFER_PROP_BLUE_TABLE)
 
-    IMPLEMENT_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DiscreteTransferEffect,
         BlueDisable,
         boolean,
         boolean,
         D2D1_DISCRETETRANSFER_PROP_BLUE_DISABLE)
 
-    IMPLEMENT_ARRAY_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_ARRAY_PROPERTY(DiscreteTransferEffect,
         AlphaTable,
         float,
         D2D1_DISCRETETRANSFER_PROP_ALPHA_TABLE)
 
-    IMPLEMENT_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DiscreteTransferEffect,
         AlphaDisable,
         boolean,
         boolean,
         D2D1_DISCRETETRANSFER_PROP_ALPHA_DISABLE)
 
-    IMPLEMENT_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_PROPERTY(DiscreteTransferEffect,
         ClampOutput,
         boolean,
         boolean,
         D2D1_DISCRETETRANSFER_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_INPUT_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_INPUT_PROPERTY(DiscreteTransferEffect,
         Source,
         0)
 

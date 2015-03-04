@@ -29,8 +29,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         BrightnessEffect();
 
-        PROPERTY(WhitePoint, Numerics::Vector2);
-        PROPERTY(BlackPoint, Numerics::Vector2);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(WhitePoint, Numerics::Vector2);
+        EFFECT_PROPERTY(BlackPoint, Numerics::Vector2);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

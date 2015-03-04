@@ -17,8 +17,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class ICanvasTimingAdapter
     {
     public:
-        virtual LARGE_INTEGER GetPerformanceCounter() = 0;
+        virtual ~ICanvasTimingAdapter() = default;
 
+        virtual LARGE_INTEGER GetPerformanceCounter() = 0;
         virtual LARGE_INTEGER GetPerformanceFrequency() = 0;
     };
 

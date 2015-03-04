@@ -10,6 +10,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+#pragma once
+
 // This device is used for creating mock devices which include some basic functionality, but do not call any actual D2D/D3D.
 class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
 {

@@ -12,8 +12,6 @@
 
 #include "pch.h"
 
-#include "TestBitmapResourceCreationAdapter.h"
-
 TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
 {
     struct Fixture

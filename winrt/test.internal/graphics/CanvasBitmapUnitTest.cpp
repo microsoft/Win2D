@@ -12,9 +12,6 @@
 
 #include "pch.h"
 
-#include "MockWICFormatConverter.h"
-#include "TestBitmapResourceCreationAdapter.h"
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 TEST_CLASS(CanvasBitmapUnitTest)

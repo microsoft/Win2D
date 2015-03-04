@@ -29,9 +29,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         MorphologyEffect();
 
-        PROPERTY(Mode, MorphologyEffectMode);
-        PROPERTY(Width, int32_t);
-        PROPERTY(Height, int32_t);
-        PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Mode, MorphologyEffectMode);
+        EFFECT_PROPERTY(Width, int32_t);
+        EFFECT_PROPERTY(Height, int32_t);
+        EFFECT_PROPERTY(Source, IEffectInput*);
     };
 }}}}}

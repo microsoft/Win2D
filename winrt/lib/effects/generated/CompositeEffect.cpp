@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SetProperty<uint32_t>(D2D1_COMPOSITE_PROP_MODE, D2D1_COMPOSITE_MODE_SOURCE_OVER);
     }
 
-    IMPLEMENT_PROPERTY(CompositeEffect,
+    IMPLEMENT_EFFECT_PROPERTY(CompositeEffect,
         Mode,
         uint32_t,
         CanvasComposite,

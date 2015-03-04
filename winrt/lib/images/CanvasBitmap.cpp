@@ -12,11 +12,6 @@
 
 #include "pch.h"
 
-#include "CanvasBitmap.h"
-#include "CanvasDevice.h"
-#include "CanvasDrawingSession.h"
-#include "CanvasRenderTarget.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Storage::Streams;
@@ -171,7 +166,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_adapter.get();
     }
 
-    class DefaultCanvasBitmapAdapter : public ICanvasBitmapAdapter
+    class DefaultCanvasBitmapAdapter : public ICanvasBitmapAdapter,
+                                       private LifespanTracker<DefaultCanvasBitmapAdapter>
     {
         ComPtr<IRandomAccessStreamReferenceStatics> m_randomAccessStreamReferenceStatics;
         ComPtr<IStorageFileStatics> m_storageFileStatics;

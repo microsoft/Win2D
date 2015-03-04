@@ -12,15 +12,14 @@
 
 #pragma once
 
-#include <Canvas.abi.h>
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 
     class CanvasPathBuilderFactory
-        : public ActivationFactory<ICanvasPathBuilderFactory>
+        : public ActivationFactory<ICanvasPathBuilderFactory>,
+          private LifespanTracker<CanvasPathBuilderFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasPathBuilder, BaseTrust);
 
@@ -36,6 +35,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<ICanvasDevice> GetDevice() = 0;
 
+        virtual ComPtr<ID2D1GeometrySink> GetGeometrySink() = 0;
+
         virtual ComPtr<ID2D1PathGeometry1> CloseAndReturnPath() = 0;
     };
 
@@ -43,7 +44,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasPathBuilder,
         IClosable,
-        CloakedIid<ICanvasPathBuilderInternal>>
+        CloakedIid<ICanvasPathBuilderInternal>>,
+        private LifespanTracker<CanvasPathBuilder>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasPathBuilder, BaseTrust);
 
@@ -90,6 +92,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Vector2 controlPoint,
             Vector2 endPoint) override;
 
+        IFACEMETHOD(AddGeometry)(
+            ICanvasGeometry* geometry) override;
+
         IFACEMETHOD(SetSegmentOptions)(
             CanvasFigureSegmentOptions figureSegmentOptions) override;
 
@@ -104,6 +109,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         virtual ComPtr<ICanvasDevice> GetDevice() override;
+
+        virtual ComPtr<ID2D1GeometrySink> GetGeometrySink() override;
 
         virtual ComPtr<ID2D1PathGeometry1> CloseAndReturnPath() override;
 

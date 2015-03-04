@@ -13,8 +13,6 @@
 #include "pch.h"
 
 #include "CanvasCommandList.h"
-#include "CanvasDevice.h"
-#include "CanvasDrawingSession.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
