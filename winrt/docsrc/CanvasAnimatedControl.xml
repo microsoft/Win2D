@@ -275,7 +275,7 @@ under the License.
     </member> 
     <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedControl">
       <summary>XAML control intended for displaying animating content.</summary>
-      <inheritdoc/>
+      <inheritdoc select="remarks"/>
     </member>   
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.#ctor">
