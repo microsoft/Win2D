@@ -34,7 +34,7 @@ under the License.
           <code>
             void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
             {
-                args.DrawingSession.DrawImage(compositeEffect, new Point(42, 42));
+                args.DrawingSession.DrawImage(compositeEffect, 42, 42);
             }
           </code>
         </example>

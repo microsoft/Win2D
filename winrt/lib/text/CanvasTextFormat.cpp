@@ -613,7 +613,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         Event operationCompleted(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
-        auto handler = Callback<IAsyncOperationCompletedHandler<StorageFile*>>(
+        auto handler = Callback<AddFtmBase<IAsyncOperationCompletedHandler<StorageFile*>>::Type>(
             [&] (IAsyncOperation<StorageFile*>*, AsyncStatus)
             {
                 SetEvent(operationCompleted.Get());

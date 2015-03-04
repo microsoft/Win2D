@@ -25,6 +25,6 @@ under the License.
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <canvas:CanvasControl x:Name="canvasControl" />
+        <canvas:CanvasControl x:Name="canvasControl" ClearColor="CornflowerBlue" Draw="canvasControl_Draw"/>
     </Grid>
 </Page>

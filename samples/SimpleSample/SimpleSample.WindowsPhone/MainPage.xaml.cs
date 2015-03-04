@@ -27,14 +27,10 @@ namespace SimpleSample
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
-
-            // Register our event handler that will draw onto the Canvas
-            canvasControl.Draw += canvasControl_Draw;
         }
 
         void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            args.DrawingSession.Clear(Colors.CornflowerBlue);
             args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
             args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
         }
