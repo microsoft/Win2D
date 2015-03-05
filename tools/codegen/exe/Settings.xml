@@ -32,7 +32,6 @@ under the License.
 
   <Namespace Name="D2D1">
     <!-- Enums and structs are not projected by default and need to be explicitly included here -->
-    <!-- Todo: Sanity check that the same element isn't specified twice for overrides. See backlog item #1140.-->
 
     <Enum Name="DEBUG_LEVEL" ShouldProject="true"/>
     <Enum Name="CAP_STYLE" ShouldProject="true"/>
