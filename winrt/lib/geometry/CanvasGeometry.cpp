@@ -13,6 +13,7 @@
 #include "pch.h"
 #include "CanvasGeometry.h"
 #include "CanvasPathBuilder.h"
+#include "TessellationSink.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -823,6 +824,43 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             &d2dContainsPoint));
 
         *containsPoint = !!d2dContainsPoint;
+    }
+
+    IFACEMETHODIMP CanvasGeometry::Tessellate(
+        UINT32* trianglesCount,
+        CanvasTriangleVertices** triangles)
+    {
+        return TessellateWithTransformAndFlatteningTolerance(
+            Identity3x2,
+            D2D1_DEFAULT_FLATTENING_TOLERANCE,
+            trianglesCount,
+            triangles);
+    }
+
+    IFACEMETHODIMP CanvasGeometry::TessellateWithTransformAndFlatteningTolerance(
+        Matrix3x2 transform,
+        float flatteningTolerance,
+        UINT32* trianglesCount,
+        CanvasTriangleVertices** triangles)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(trianglesCount);
+            CheckAndClearOutPointer(triangles);
+
+            auto& resource = GetResource();
+
+            auto tessellationSink = Make<TessellationSink>();
+            CheckMakeResult(tessellationSink);
+
+            ThrowIfFailed(resource->Tessellate(
+                ReinterpretAs<D2D1_MATRIX_3X2_F*>(&transform),
+                flatteningTolerance,
+                tessellationSink.Get()));
+
+            auto outputArray = tessellationSink->GetTriangles();
+            outputArray.Detach(trianglesCount, triangles);
+        });
     }
 
     ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(

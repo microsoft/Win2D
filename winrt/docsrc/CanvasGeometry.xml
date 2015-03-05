@@ -342,6 +342,27 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasGeometry.Device">
       <summary>Gets the device associated with this CanvasGeometry.</summary>
     </member>
-    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Tessellate">
+      <summary>Returns an array of clockwise-wound triangles that cover the geometry.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Tessellate(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+      <summary>Returns an array of clockwise-wound triangles that cover the geometry after it has
+               been transformed using the specified matrix and flattened using the specified tolerance.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasTriangleVertices">
+      <summary>Describes a 2D triangle, which consists of three vertices.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTriangleVertices.Vertex1">
+      <summary>First vertex of the triangle.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTriangleVertices.Vertex2">
+      <summary>Second vertex of the triangle.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTriangleVertices.Vertex3">
+      <summary>Third vertex of the triangle.</summary>
+    </member>
+
   </members>
 </doc>

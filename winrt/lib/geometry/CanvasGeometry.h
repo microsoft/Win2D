@@ -193,6 +193,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float flatteningTolerance,
             boolean* containsPoint) override;
 
+        IFACEMETHOD(Tessellate)(
+            UINT32* trianglesCount,
+            CanvasTriangleVertices** triangles) override;
+
+        IFACEMETHOD(TessellateWithTransformAndFlatteningTolerance)(
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            UINT32* trianglesCount,
+            CanvasTriangleVertices** triangles) override;
+
     private:
         void StrokeImpl(
             float strokeWidth,

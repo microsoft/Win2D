@@ -24,6 +24,10 @@ static const D2D1_MATRIX_3X2_F sc_someD2DTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_MATRIX_3X2_F sc_identityD2DTransform = { 1, 0, 0, 1, 0, 0 };
 static const Matrix3x2 sc_someTransform = { 1, 2, 3, 4, 5, 6 };
 
+static const D2D1_TRIANGLE sc_triangle1 = { { 1, 2 }, { 3, 4 }, { 5, 6 } };
+static const D2D1_TRIANGLE sc_triangle2 = { { 7, 8 }, { 9, 10 }, { 11, 12 } };
+static const D2D1_TRIANGLE sc_triangle3 = { { 13, 14 }, { 15, 16 }, { 17, 18 } };
+
 TEST_CLASS(CanvasGeometryTests)
 {
 public: 
@@ -1042,6 +1046,78 @@ public:
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, f.StrokeStyle.Get(), Matrix3x2{}, 0, nullptr));
     }
 
+    struct TessellateFixture : public GeometryOperationsFixture_DoesNotOutputToTempPathBuilder
+    {
+        void ExpectOneTessellateCall(D2D1_MATRIX_3X2_F expectedTransform, float expectedFlatteningTolerance)
+        {
+            D2DRectangleGeometry->TessellateMethod.SetExpectedCalls(1,
+                [=](D2D1_MATRIX_3X2_F const* transform, float flatteningTolerance, ID2D1TessellationSink* sink)
+                {
+                    Assert::AreEqual(expectedTransform, *transform);
+                    Assert::AreEqual(expectedFlatteningTolerance, flatteningTolerance);
+
+                    sink->AddTriangles(&sc_triangle1, 1);
+
+                    D2D1_TRIANGLE twoTriangles[] =
+                    {
+                        sc_triangle2,
+                        sc_triangle3,
+                    };
+
+                    sink->AddTriangles(twoTriangles, 2);
+
+                    return S_OK;
+                });
+        }
+
+        void ValidateTessellatedTriangles(ComArray<CanvasTriangleVertices>& triangles)
+        {
+            Assert::AreEqual(3u, triangles.GetSize());
+
+            Assert::AreEqual(sc_triangle1, *ReinterpretAs<D2D1_TRIANGLE const*>(&triangles[0]));
+            Assert::AreEqual(sc_triangle2, *ReinterpretAs<D2D1_TRIANGLE const*>(&triangles[1]));
+            Assert::AreEqual(sc_triangle3, *ReinterpretAs<D2D1_TRIANGLE const*>(&triangles[2]));
+        }
+    };
+
+    TEST_METHOD_EX(CanvasGeometry_Tessellate)
+    {
+        TessellateFixture f;
+        ComArray<CanvasTriangleVertices> triangles;
+
+        f.ExpectOneTessellateCall(sc_identityD2DTransform, D2D1_DEFAULT_FLATTENING_TOLERANCE);
+
+        ThrowIfFailed(f.RectangleGeometry->Tessellate(triangles.GetAddressOfSize(), triangles.GetAddressOfData()));
+
+        f.ValidateTessellatedTriangles(triangles);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_TessellateWithTransformAndFlatteningTolerance)
+    {
+        TessellateFixture f;
+        ComArray<CanvasTriangleVertices> triangles;
+
+        const float expectedTolerance = 23;
+
+        f.ExpectOneTessellateCall(sc_someD2DTransform, expectedTolerance);
+
+        ThrowIfFailed(f.RectangleGeometry->TessellateWithTransformAndFlatteningTolerance(sc_someTransform, expectedTolerance, triangles.GetAddressOfSize(), triangles.GetAddressOfData()));
+
+        f.ValidateTessellatedTriangles(triangles);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_Tessellate_NullArgs)
+    {
+        GeometryOperationsFixture_DoesNotOutputToTempPathBuilder f;
+        ComArray<CanvasTriangleVertices> t;
+
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->Tessellate(nullptr, t.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->Tessellate(t.GetAddressOfSize(), nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->TessellateWithTransformAndFlatteningTolerance(Matrix3x2{}, 0, nullptr, t.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->TessellateWithTransformAndFlatteningTolerance(Matrix3x2{}, 0, t.GetAddressOfSize(), nullptr));
+    }
+
     TEST_METHOD_EX(CanvasGeometry_Closure)
     {
         GeometryOperationsFixture_DoesNotOutputToTempPathBuilder f;
@@ -1054,6 +1130,7 @@ public:
         Matrix3x2 m{};
         ComPtr<ICanvasGeometry> g;
         CanvasGeometryRelation r;
+        ComArray<CanvasTriangleVertices> t;
         float fl;
         boolean b;
         Rect rect;
@@ -1102,6 +1179,9 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPoint(Vector2{}, 0, &b));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithStrokeStyle(Vector2{}, 0, strokeStyle.Get(), &b));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, strokeStyle.Get(), m, 0, &b));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->Tessellate(t.GetAddressOfSize(), t.GetAddressOfData()));
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->TessellateWithTransformAndFlatteningTolerance(m, 0, t.GetAddressOfSize(), t.GetAddressOfData()));
 
         ComPtr<ICanvasDevice> retrievedDevice;
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->get_Device(&retrievedDevice));

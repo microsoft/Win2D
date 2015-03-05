@@ -117,6 +117,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(DXGI_SAMPLE_DESC,  Quality)    == offsetof(DirectX::Direct3D11::Direct3DMultisampleDescription, Quality),                "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
     };
 
+    template<> struct ValidateReinterpretAs<D2D1_TRIANGLE*, CanvasTriangleVertices*> : std::true_type
+    {
+        static_assert(offsetof(D2D1_TRIANGLE, point1) == offsetof(CanvasTriangleVertices, Vertex1), "CanvasTriangleVertices layout must match D2D1_TRIANGLE");
+        static_assert(offsetof(D2D1_TRIANGLE, point2) == offsetof(CanvasTriangleVertices, Vertex2), "CanvasTriangleVertices layout must match D2D1_TRIANGLE");
+        static_assert(offsetof(D2D1_TRIANGLE, point3) == offsetof(CanvasTriangleVertices, Vertex3), "CanvasTriangleVertices layout must match D2D1_TRIANGLE");
+    };
+
     template<> struct ValidateStaticCastAs<CanvasEdgeBehavior, D2D1_EXTEND_MODE> : std::true_type
     {
         static_assert(static_cast<uint32_t>(D2D1_EXTEND_MODE_CLAMP)  == static_cast<uint32_t>(CanvasEdgeBehavior::Clamp),  "CanvasEdgeBehavior must match D2D1_EXTEND_MODE");

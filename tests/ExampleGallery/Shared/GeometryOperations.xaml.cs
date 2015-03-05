@@ -38,6 +38,9 @@ namespace ExampleGallery
         Vector2 pointOnContourPath;
         Microsoft.Graphics.Canvas.Numerics.Vector2 tangentOnContourPath;
 
+        bool showTessellation;
+        CanvasTriangleVertices[] tessellation;
+
         bool needsToRecreateResources;
         bool enableTransform;
 
@@ -54,7 +57,7 @@ namespace ExampleGallery
             CurrentContourTracingAnimation = ContourTracingAnimationOption.None;
 
             showSourceGeometry = false;
-
+            showTessellation = false;
             enableTransform = false;
 
             needsToRecreateResources = true;
@@ -136,6 +139,18 @@ namespace ExampleGallery
 
                 args.DrawingSession.Transform = interGeometryTransform * displayTransform;
                 args.DrawingSession.DrawGeometry(rightGeometry, Colors.Red, 5.0f);
+            }
+
+            if (showTessellation)
+            {
+                args.DrawingSession.Transform = displayTransform;
+
+                foreach (var triangle in tessellation)
+                {
+                    args.DrawingSession.DrawLine(triangle.Vertex1, triangle.Vertex2, Colors.Gray);
+                    args.DrawingSession.DrawLine(triangle.Vertex2, triangle.Vertex3, Colors.Gray);
+                    args.DrawingSession.DrawLine(triangle.Vertex3, triangle.Vertex1, Colors.Gray);
+                }
             }
 
             if (CurrentContourTracingAnimation != ContourTracingAnimationOption.None)
@@ -228,6 +243,11 @@ namespace ExampleGallery
             }
 
             totalDistanceOnContourPath = combinedGeometry.ComputePathLength();
+
+            if (showTessellation)
+            {
+                tessellation = combinedGeometry.Tessellate();
+            }
         }
 
         private void Canvas_CreateResources(CanvasAnimatedControl sender, object args)
@@ -248,6 +268,17 @@ namespace ExampleGallery
         void ShowSourceGeometry_Unchecked(object sender, RoutedEventArgs e)
         {
             showSourceGeometry = false;
+        }
+
+        void ShowTessellation_Checked(object sender, RoutedEventArgs e)
+        {
+            showTessellation = true;
+            needsToRecreateResources = true;
+        }
+
+        void ShowTessellation_Unchecked(object sender, RoutedEventArgs e)
+        {
+            showTessellation = false;
         }
 
         void EnableTransform_Checked(object sender, RoutedEventArgs e)

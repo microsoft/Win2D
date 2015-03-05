@@ -401,6 +401,21 @@ namespace Microsoft
                 return buf;
             }
 
+            template<>
+            static inline std::wstring ToString<D2D1_TRIANGLE>(D2D1_TRIANGLE const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_TRIANGLE{{%s},{%s},{%s}}",
+                    ToString(value.point1).c_str(),
+                    ToString(value.point2).c_str(),
+                    ToString(value.point3).c_str()));
+
+                return buf;
+            }
+
             ENUM_TO_STRING(CanvasCapStyle)
             {
                 ENUM_VALUE(CanvasCapStyle::Flat);
@@ -1014,6 +1029,12 @@ namespace Microsoft
                 a.Y == b.Y;
         }
 
+        inline bool operator==(D2D1_TRIANGLE const& a, D2D1_TRIANGLE const& b)
+        {
+            return a.point1 == b.point1 &&
+                   a.point2 == b.point2 &&
+                   a.point3 == b.point3;
+        }
     }
 }
 
