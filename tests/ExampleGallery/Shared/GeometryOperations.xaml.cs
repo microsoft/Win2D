@@ -109,7 +109,7 @@ namespace ExampleGallery
                         CanvasGeometry geo1 = CanvasGeometry.CreateRoundedRectangle(resourceCreator, 300, 100, 100, 100, 50, 50);
 
                         CanvasPathBuilder pathBuilder = new CanvasPathBuilder(resourceCreator);
-                        pathBuilder.BeginFigure(new Vector2(200, 200));
+                        pathBuilder.BeginFigure(200, 200);
                         pathBuilder.AddLine(500, 200);
                         pathBuilder.AddLine(200, 350);
                         pathBuilder.EndFigure(CanvasFigureLoop.Closed);

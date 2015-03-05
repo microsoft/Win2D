@@ -28,6 +28,17 @@ namespace Microsoft.Graphics.Canvas
         HRESULT BeginFigure(
             [in] Microsoft.Graphics.Canvas.Numerics.Vector2 startPoint);
 
+        [overload("BeginFigure"), default_overload]
+        HRESULT BeginFigureAtCoordsWithFigureFill(
+            [in] float startX,
+            [in] float startY,
+            [in] CanvasFigureFill figureFill);
+
+        [overload("BeginFigure")]
+        HRESULT BeginFigureAtCoords(
+            [in] float startX,
+            [in] float startY);
+
         HRESULT AddArc(
             [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint,
             [in] float xRadius,

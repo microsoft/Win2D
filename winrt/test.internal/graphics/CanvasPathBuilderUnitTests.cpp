@@ -62,6 +62,8 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
 
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->BeginFigure(Vector2{}));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->BeginFigureWithFigureFill(Vector2{}, CanvasFigureFill::DoesNotAffectFills));
+        Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->BeginFigureAtCoords(0, 0));
+        Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->BeginFigureAtCoordsWithFigureFill(0, 0, CanvasFigureFill::DoesNotAffectFills));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddArc(Vector2{}, 0, 0, 0, CanvasSweepDirection::Clockwise, CanvasArcSize::Small));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddCubicBezier(Vector2{}, Vector2{}, Vector2{}));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddLine(Vector2{}));
@@ -179,6 +181,32 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
             Assert::AreEqual(D2D1_FIGURE_BEGIN_HOLLOW, figureBegin);
         });
         ThrowIfFailed(f.PathBuilder->BeginFigureWithFigureFill(Vector2{ 1, 2 }, CanvasFigureFill::DoesNotAffectFills));
+    }
+
+    TEST_METHOD_EX(CanvasPathBuilder_BeginFigureAtCoords)
+    {
+        SinkAccessFixture f;
+
+        f.GeometrySink->BeginFigureMethod.SetExpectedCalls(1,
+            [](D2D1_POINT_2F point, D2D1_FIGURE_BEGIN figureBegin)
+        {
+            Assert::AreEqual(D2D1::Point2F(1, 2), point);
+            Assert::AreEqual(D2D1_FIGURE_BEGIN_FILLED, figureBegin);
+        });
+        ThrowIfFailed(f.PathBuilder->BeginFigureAtCoords(1, 2));
+    }
+
+    TEST_METHOD_EX(CanvasPathBuilder_BeginFigureAtCoordsWithFigureFill)
+    {
+        SinkAccessFixture f;
+
+        f.GeometrySink->BeginFigureMethod.SetExpectedCalls(1,
+            [](D2D1_POINT_2F point, D2D1_FIGURE_BEGIN figureBegin)
+        {
+            Assert::AreEqual(D2D1::Point2F(1, 2), point);
+            Assert::AreEqual(D2D1_FIGURE_BEGIN_HOLLOW, figureBegin);
+        });
+        ThrowIfFailed(f.PathBuilder->BeginFigureAtCoordsWithFigureFill(1, 2, CanvasFigureFill::DoesNotAffectFills));
     }
 
     TEST_METHOD_EX(CanvasPathBuilder_AddArc)

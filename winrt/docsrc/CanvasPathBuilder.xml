@@ -29,7 +29,7 @@ under the License.
                 <code>
 		    CanvasPathBuilder pathBuilder = new CanvasPathBuilder(device);
 		    
-		    pathBuilder.BeginFigure(new Vector2(1, 1));
+		    pathBuilder.BeginFigure(1, 1);
 		    pathBuilder.AddLine(300, 300);
 		    pathBuilder.AddLine(1, 300);
 		    pathBuilder.EndFigure(CanvasFigureLoop.Closed);
@@ -159,6 +159,12 @@ under the License.
         <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="P:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasFigureFill)">
+        <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>
+      </member>
+      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(System.Single,System.Single)">
         <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="P:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasSweepDirection,Microsoft.Graphics.Canvas.CanvasArcSize)">

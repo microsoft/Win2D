@@ -103,6 +103,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return BeginFigureWithFigureFill(startPoint, CanvasFigureFill::Default);
     }
 
+    IFACEMETHODIMP CanvasPathBuilder::BeginFigureAtCoordsWithFigureFill(
+        float startX,
+        float startY,
+        CanvasFigureFill figureFill)
+    {
+        return BeginFigureWithFigureFill(Vector2{ startX, startY }, figureFill);
+    }
+
+    IFACEMETHODIMP CanvasPathBuilder::BeginFigureAtCoords(
+        float startX,
+        float startY)
+    {
+        return BeginFigureWithFigureFill(Vector2{ startX, startY }, CanvasFigureFill::Default);
+    }
+
     IFACEMETHODIMP CanvasPathBuilder::AddArc(
         Vector2 endPoint,
         float xRadius,

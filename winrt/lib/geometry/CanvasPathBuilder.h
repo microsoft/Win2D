@@ -68,6 +68,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(BeginFigure)(
             Vector2 startPoint) override;
 
+        IFACEMETHOD(BeginFigureAtCoordsWithFigureFill)(
+            float startX,
+            float startY,
+            CanvasFigureFill figureFill) override;
+
+        IFACEMETHOD(BeginFigureAtCoords)(
+            float startX,
+            float startY) override;
+
         IFACEMETHOD(AddArc)(
             Vector2 endPoint,
             float xRadius,

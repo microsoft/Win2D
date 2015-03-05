@@ -304,8 +304,8 @@ namespace ExampleGallery
 
             using (var builder = new CanvasPathBuilder(ds))
             {
-                builder.BeginFigure(new Vector2(center, center));
-                builder.AddLine(new Vector2(center, center - radius));
+                builder.BeginFigure(center, center);
+                builder.AddLine(center, center - radius);
 
                 var endArcX = new Vector2(center + (float)Math.Sin(angle) * radius, center + (float)Math.Cos(angle) * radius);
 
@@ -521,7 +521,7 @@ namespace ExampleGallery
     {
         public static void AddOneLineFigure(this CanvasPathBuilder builder, float x1, float y1, float x2, float y2)
         {
-            builder.BeginFigure(new Vector2(x1, y1));
+            builder.BeginFigure(x1, y1);
             builder.AddLine(x2, y2);
             builder.EndFigure(CanvasFigureLoop.Open);
         }
