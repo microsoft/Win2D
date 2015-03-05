@@ -98,6 +98,49 @@ namespace DocDiff
             {
                 Console.WriteLine("{0}: warning: orphaned docs: {1}", Path.GetFullPath(orphaned.FileName), orphaned.ApiName);
             }
+
+            // Report any <see cref=""/> references to things that don't exist.
+            ValidateReferences(docSrc);
+        }
+
+
+        static void ValidateReferences(IEnumerable<ApiMember> docs)
+        {
+            // Find all <see cref=""/> elements in the documentation.
+            var references = from doc in docs
+                             from seeElement in doc.MemberElement.Descendants("see")
+                             select new
+                             {
+                                 Target = seeElement.Attribute("cref").Value,
+                                 FileName = doc.FileName,
+                             };
+
+            // Report any references with invalid targets.
+            var badReferences = from reference in references
+                                where !IsReferenceValid(reference.Target, docs)
+                                select reference;
+
+            foreach (var reference in badReferences)
+            {
+                Console.WriteLine("{0}: warning: bad cref target: {1}", Path.GetFullPath(reference.FileName), reference.Target);
+            }
+        }
+
+
+        static bool IsReferenceValid(string referenceTarget, IEnumerable<ApiMember> docs)
+        {
+            if (referenceTarget.StartsWith("O:"))
+            {
+                // If the reference target is an overload group, there should be more than one method of that name.
+                string methodName = 'M' + referenceTarget.Substring(1) + '(';
+                int methodCount = docs.Count(doc => doc.ApiName.StartsWith(methodName));
+                return methodCount > 1;
+            }
+            else
+            {
+                // Otherwise look for an exact match.
+                return docs.Any(doc => doc.ApiName == referenceTarget);
+            }
         }
 
 

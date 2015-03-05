@@ -109,7 +109,7 @@ under the License.
     </member>
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DMultisampleDescription">
-      <summary>Describes multi-sampling parameters for a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface"/>.</summary>
+      <summary>Describes multi-sampling parameters for a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface"/>.</summary>
       <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173072">DXGI_SAMPLE_DESC</a> structure.</remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DMultisampleDescription.Count">
@@ -173,7 +173,7 @@ under the License.
 
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription">
-      <summary>Describes a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurface"/>.</summary>
+      <summary>Describes a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface"/>.</summary>
       <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173074">DXGI_SURFACE_DESC</a> structure.</remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription.Width">

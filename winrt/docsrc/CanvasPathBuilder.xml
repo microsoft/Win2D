@@ -20,7 +20,7 @@ under the License.
   <members>
   
       <member name="T:Microsoft.Graphics.Canvas.CanvasPathBuilder">
-          <summary>A path builder is used for creating freeform <see cref="P:Microsoft.Graphics.Canvas.CanvasGeometry"/> objects.</summary>
+          <summary>A path builder is used for creating freeform <see cref="T:Microsoft.Graphics.Canvas.CanvasGeometry"/> objects.</summary>
         <remarks>
           Paths consist of zero or more figures, where a figure is made up of straight or curved segments. Figures can be opened or closed. 
         </remarks>
@@ -54,14 +54,14 @@ under the License.
         <summary>Specifies whether the interior of the figure is considered filled, for the purpose of drawing and geometry operations.</summary>
       </member>
       <member name="F:Microsoft.Graphics.Canvas.CanvasFigureFill.Default">
-        <summary>Specifies that the figure's interior may be filled using <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>,
+        <summary>Specifies that the figure's interior may be filled using <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>,
         and its interior is used by geometry operations that operate on fill.</summary>
       </member>
       <member name="F:Microsoft.Graphics.Canvas.CanvasFigureFill.DoesNotAffectFills">
         <summary>Specifies that the figure will not affect 
-        <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/> calls,
+        <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/> calls,
         and its fill will not affect any geometry operations. Of course, the figure may still cause visible drawing with 
-        <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/>.</summary>
+        <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/>.</summary>
       </member>
       <member name="T:Microsoft.Graphics.Canvas.CanvasFigureLoop">
         <summary>Specifies whether the figure is open or closed. This affects the appearance of fills and strokes, as well as geometry operations.</summary>
@@ -91,7 +91,7 @@ under the License.
       </member>
       <member name="F:Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions.ForceUnstroked">
         <summary>Specifies that the segments of the figure will not appear stroked, for example,
-        when drawn with <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/>.</summary>
+        when drawn with <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/>.</summary>
       </member>
       <member name="F:Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions.ForceRoundLineJoin">
         <summary>Forces the segment to apply a round line join, even if the operation on 
@@ -159,13 +159,13 @@ under the License.
         <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2)">
-        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="P:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
+        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasFigureFill)">
         <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(System.Single,System.Single)">
-        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="P:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
+        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasSweepDirection,Microsoft.Graphics.Canvas.CanvasArcSize)">
         <summary>Adds a single arc to the path, with the specified shape.</summary>
@@ -182,7 +182,7 @@ under the License.
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddQuadraticBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
         <summary>Adds a quadratic bezier to the path. The bezier starts where the path left off, and has the specified control point and end point.</summary>
-        <remarks>To add a bezier with two control points, see <see cref="P:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddCubicBezier"/></remarks>
+        <remarks>To add a bezier with two control points, see <see cref="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)"/></remarks>
       </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddGeometry(Microsoft.Graphics.Canvas.CanvasGeometry)">
       <summary>Adds all the figures of the specified geometry to the path.</summary>

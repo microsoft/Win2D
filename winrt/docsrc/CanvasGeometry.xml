@@ -30,8 +30,8 @@ under the License.
         
                 <p>
                 A geometry object can be drawn using CanvasDrawingSession's 
-                <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/> 
-                or <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>.
+                <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/> 
+                or <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>.
                 </p>
                  
                 <p>
@@ -48,7 +48,7 @@ under the License.
                 <p>
                 Complex geometries, sometimes those created through CanvasGeometry.CreatePath, can be
                 costly to draw. It may be worth paying a one-time, up-front performance cost for a less
-                expensive draw-time cost. To do this, consider using <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry"/>.
+                expensive draw-time cost. To do this, consider using <see cref="T:Microsoft.Graphics.Canvas.CanvasCachedGeometry"/>.
                 </p>       
         </remarks>
       </member>
