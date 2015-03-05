@@ -17,6 +17,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
     using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+    using namespace ABI::Windows::UI::Core;
 
     class CanvasDevice;
     class CanvasDeviceManager;
@@ -101,7 +102,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1RadialGradientBrush> CreateRadialGradientBrush(
             ID2D1GradientStopCollection1* stopCollection) = 0;
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChain(
+        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForComposition(
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) = 0;
+
+        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForCoreWindow(
+            ICoreWindow* coreWindow,
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
@@ -220,7 +229,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasBufferPrecision bufferPrecision,
             CanvasAlphaMode alphaMode) override;
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChain(
+        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForComposition(
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) override;
+
+        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForCoreWindow(
+            ICoreWindow* coreWindow,
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
@@ -256,6 +273,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(GetInterface)(IID const&, void**) override;
 
     private:
+        template<typename FN>
+        ComPtr<IDXGISwapChain2> CreateSwapChain(
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode,
+            FN&& createFn);
+
         ComPtr<ID2D1Factory2> GetD2DFactory();
     };
 

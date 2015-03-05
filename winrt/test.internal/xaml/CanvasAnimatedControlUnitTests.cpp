@@ -376,7 +376,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 {
                     StubCanvasDevice* stubDevice = static_cast<StubCanvasDevice*>(device); // Ensured by test construction
 
-                    stubDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+                    stubDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
                     {
                         return m_dxgiSwapChain;
                     });
