@@ -1,0 +1,175 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+using Microsoft.Graphics.Canvas;
+using System.Collections.Generic;
+using System.Numerics;
+using Windows.UI;
+using Windows.UI.Text;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+
+namespace ExampleGallery
+{
+    public sealed partial class ArcOptions : UserControl
+    {
+        // Current arc parameters.
+        Vector2[] arcPoints =
+        {
+            new Vector2(40, 40),
+            new Vector2(140, 240),
+        };
+
+        public float ArcRadiusX { get; set; }
+        public float ArcRadiusY { get; set; }
+
+        public int ArcRotation { get; set; }
+
+        public CanvasSweepDirection ArcSweepDirection { get; set; }
+        public CanvasArcSize ArcSize { get; set; }
+
+        // Enum metadata for XAML databinding.
+        public List<CanvasSweepDirection> SweepDirections { get { return Utils.GetEnumAsList<CanvasSweepDirection>(); } }
+        public List<CanvasArcSize> ArcSizes { get { return Utils.GetEnumAsList<CanvasArcSize>(); } }
+
+        // Pointer input state.
+        int? activeDrag;
+        Vector2 dragOffset;
+
+        const float hitTestRadius = 32;
+
+        // Rendering settings for drawing the arc.
+        const float strokeWidth = 12;
+
+        CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle()
+        {
+            StartCap = CanvasCapStyle.Round,
+            EndCap = CanvasCapStyle.Triangle,
+        };
+
+        CanvasTextFormat textFormat = new CanvasTextFormat()
+        {
+            ParagraphAlignment = ParagraphAlignment.Center,
+            VerticalAlignment = CanvasVerticalAlignment.Center,
+        };
+
+        public ArcOptions()
+        {
+            this.InitializeComponent();
+
+            ArcRadiusX = 200;
+            ArcRadiusY = 200;
+        }
+
+        void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            var ds = args.DrawingSession;
+
+            // Draw end point markers.
+            for (int i = 0; i < 2; i++)
+            {
+                ds.DrawCircle(arcPoints[i], hitTestRadius, (i == activeDrag) ? Colors.White : Colors.Gray);
+            }
+
+            // Display a warning if this is an invalid arc configuration.
+            bool isRadiusTooSmall = IsArcRadiusTooSmall();
+
+            if (isRadiusTooSmall)
+            {
+                ds.DrawText("Warning: arc radius is less\nthan the distance between\nthe start and end points",
+                            (arcPoints[0] + arcPoints[1]) / 2,
+                            Colors.Red, 
+                            textFormat);
+            }
+
+            // Draw the arc.
+            using (var builder = new CanvasPathBuilder(sender))
+            {
+                builder.BeginFigure(arcPoints[0]);
+                builder.AddArc(arcPoints[1], ArcRadiusX, ArcRadiusY, Utils.DegreesToRadians(ArcRotation), ArcSweepDirection, ArcSize);
+                builder.EndFigure(CanvasFigureLoop.Open);
+
+                using (var geometry = CanvasGeometry.CreatePath(builder))
+                {
+                    ds.DrawGeometry(geometry, isRadiusTooSmall ? Colors.Red : Colors.Yellow, strokeWidth, strokeStyle);
+                }
+            }
+        }
+
+        bool IsArcRadiusTooSmall()
+        {
+            // Get the distance between the arc start/end points.
+            Vector2 arc = arcPoints[1] - arcPoints[0];
+
+            // Compensate for any ellipse rotation.
+            arc = Vector2.Transform(arc, Matrix3x2.CreateRotation(-Utils.DegreesToRadians(ArcRotation)));
+
+            // Normalize to a unit circle.
+            arc /= new Vector2(ArcRadiusX, ArcRadiusY);
+
+            // If the length is greater than 2, there is no possible way to fit an arc of
+            // the specified radius between the specified endpoints. D2D will compensate
+            // by scaling up the radius, but the result may not be what was intended.
+            return arc.Length() > 2;
+        }
+
+        void canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var pointerPos = e.GetCurrentPoint(canvas).Position.ToVector2();
+
+            float[] targetDistances =
+            {
+                Vector2.Distance(pointerPos, arcPoints[0]),
+                Vector2.Distance(pointerPos, arcPoints[1]),
+            };
+
+            int closestTarget = (targetDistances[0] < targetDistances[1]) ? 0 : 1;
+
+            if (targetDistances[closestTarget] <= hitTestRadius)
+            {
+                activeDrag = closestTarget;
+                dragOffset = pointerPos - arcPoints[closestTarget];
+                canvas.Invalidate();
+            }
+        }
+
+        void canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            if (activeDrag.HasValue)
+            {
+                activeDrag = null;
+                canvas.Invalidate();
+            }
+        }
+
+        void canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (activeDrag.HasValue)
+            {
+                var pointerPos = e.GetCurrentPoint(canvas).Position.ToVector2();
+                arcPoints[activeDrag.Value] = pointerPos - dragOffset;
+                canvas.Invalidate();
+            }
+        }
+
+        void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            canvas.Invalidate();
+        }
+
+        void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            canvas.Invalidate();
+        }
+    }
+}

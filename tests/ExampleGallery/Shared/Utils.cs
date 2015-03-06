@@ -69,5 +69,10 @@ namespace ExampleGallery
 
             return CanvasGeometry.CreatePath(pathBuilder);
         }
+
+        public static float DegreesToRadians(int angle)
+        {
+            return angle * (float)Math.PI / 180;
+        }
     }
 }
