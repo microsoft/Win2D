@@ -55,8 +55,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(TrimMethod, HRESULT());
         CALL_COUNTER_WITH_MOCK(GetInterfaceMethod, HRESULT(REFIID,void**));
         CALL_COUNTER_WITH_MOCK(CreateDeviceContextMethod, ComPtr<ID2D1DeviceContext1>());
-        CALL_COUNTER_WITH_MOCK(CreateSwapChainForCompositionMethod, ComPtr<IDXGISwapChain2>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
-        CALL_COUNTER_WITH_MOCK(CreateSwapChainForCoreWindowMethod, ComPtr<IDXGISwapChain2>(ICoreWindow*, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
+        CALL_COUNTER_WITH_MOCK(CreateSwapChainForCompositionMethod, ComPtr<IDXGISwapChain1>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
+        CALL_COUNTER_WITH_MOCK(CreateSwapChainForCoreWindowMethod, ComPtr<IDXGISwapChain1>(ICoreWindow*, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
 
         CALL_COUNTER_WITH_MOCK(CreateRectangleGeometryMethod, ComPtr<ID2D1RectangleGeometry>(D2D1_RECT_F const&));
@@ -261,7 +261,7 @@ namespace canvas
             return MockCreateRadialGradientBrush(stopCollection);
         }
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForComposition(
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForComposition(
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
@@ -271,7 +271,7 @@ namespace canvas
             return CreateSwapChainForCompositionMethod.WasCalled(widthInPixels, heightInPixels, format, bufferCount, alphaMode);
         }
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForCoreWindow(
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForCoreWindow(
             ICoreWindow* coreWindow,
             int32_t widthInPixels,
             int32_t heightInPixels,

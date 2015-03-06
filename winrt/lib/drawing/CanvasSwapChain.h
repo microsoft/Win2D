@@ -102,10 +102,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     struct CanvasSwapChainTraits
     {
-        typedef IDXGISwapChain2 resource_t;
+        typedef IDXGISwapChain1 resource_t;
         typedef CanvasSwapChain wrapper_t;
         typedef ICanvasSwapChain wrapper_interface_t;
         typedef CanvasSwapChainManager manager_t;
+
+        // IDXGISwapChain1 is used here, rather than IDXGISwapChain2, since
+        // IDXGISwapChain2 is not supported on all platforms and swap chains (ie
+        // a CoreWindow swap chain on Phone doesn't implement IDXGISwapChain2).
     };
 
     class CanvasSwapChain : RESOURCE_WRAPPER_RUNTIME_CLASS(
@@ -126,7 +130,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasSwapChain(
             ICanvasDevice* device,
             std::shared_ptr<CanvasSwapChainManager> swapChainManager,
-            IDXGISwapChain2* dxgiSwapChain,
+            IDXGISwapChain1* dxgiSwapChain,
             float dpi);
 
         IFACEMETHOD(CreateDrawingSession)(
@@ -205,7 +209,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<CanvasSwapChain> CreateWrapper(
             ICanvasDevice* device,
-            IDXGISwapChain2* resource,
+            IDXGISwapChain1* resource,
             float dpi);
     };
 

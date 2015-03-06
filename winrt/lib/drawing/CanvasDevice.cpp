@@ -643,7 +643,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     template<typename FN>
-    ComPtr<IDXGISwapChain2> CanvasDevice::CreateSwapChain(
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChain(
         int32_t widthInPixels,
         int32_t heightInPixels,
         DirectXPixelFormat format,
@@ -678,11 +678,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IDXGISwapChain1> swapChain;
         ThrowIfFailed(createFn(dxgiFactory.Get(), dxgiDevice.Get(), &swapChainDesc, &swapChain));
 
-        return As<IDXGISwapChain2>(swapChain);
+        return swapChain;
     }
 
 
-    ComPtr<IDXGISwapChain2> CanvasDevice::CreateSwapChainForComposition(
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChainForComposition(
         int32_t widthInPixels,
         int32_t heightInPixels,
         DirectXPixelFormat format,
@@ -700,7 +700,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    ComPtr<IDXGISwapChain2> CanvasDevice::CreateSwapChainForCoreWindow(
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChainForCoreWindow(
         ICoreWindow* coreWindow,
         int32_t widthInPixels,
         int32_t heightInPixels,

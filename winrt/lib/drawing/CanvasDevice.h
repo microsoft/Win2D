@@ -102,14 +102,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1RadialGradientBrush> CreateRadialGradientBrush(
             ID2D1GradientStopCollection1* stopCollection) = 0;
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForComposition(
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForComposition(
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaMode alphaMode) = 0;
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForCoreWindow(
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForCoreWindow(
             ICoreWindow* coreWindow,
             int32_t widthInPixels,
             int32_t heightInPixels,
@@ -229,14 +229,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasBufferPrecision bufferPrecision,
             CanvasAlphaMode alphaMode) override;
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForComposition(
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForComposition(
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaMode alphaMode) override;
 
-        virtual ComPtr<IDXGISwapChain2> CreateSwapChainForCoreWindow(
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForCoreWindow(
             ICoreWindow* coreWindow,
             int32_t widthInPixels,
             int32_t heightInPixels,
@@ -274,7 +274,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     private:
         template<typename FN>
-        ComPtr<IDXGISwapChain2> CreateSwapChain(
+        ComPtr<IDXGISwapChain1> CreateSwapChain(
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
