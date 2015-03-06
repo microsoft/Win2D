@@ -114,6 +114,94 @@ public:
         f.Manager->Create(f.Device.Get(), expectedRect, expectedRadiusX, expectedRadiusY);
     }
 
+    class CreatePolygonFixture : public Fixture
+    {
+        int currentVertex;
+
+    public:
+        CreatePolygonFixture(int expectedVertexCount, Vector2 const* expectedVertices)
+            : currentVertex(0)
+        {
+            Device->CreatePathGeometryMethod.SetExpectedCalls(1,
+                [=]()
+                {
+                    auto pathGeometry = Make<MockD2DPathGeometry>();
+
+                    pathGeometry->OpenMethod.SetExpectedCalls(1,
+                        [=](ID2D1GeometrySink** out)
+                        {
+                            auto geometrySink = Make<MockD2DGeometrySink>();
+
+                            if (expectedVertexCount > 0)
+                            {
+                                geometrySink->BeginFigureMethod.SetExpectedCalls(1,
+                                    [=](D2D1_POINT_2F point, D2D1_FIGURE_BEGIN mode)
+                                    {
+                                        Assert::AreEqual(ToD2DPoint(expectedVertices[0]), point);
+                                        Assert::AreEqual(D2D1_FIGURE_BEGIN_FILLED, mode);
+                                    });
+
+                                geometrySink->AddLineMethod.SetExpectedCalls(expectedVertexCount - 1,
+                                    [=](D2D1_POINT_2F point)
+                                    {
+                                        Assert::IsTrue(++currentVertex < expectedVertexCount);
+                                        Assert::AreEqual(ToD2DPoint(expectedVertices[currentVertex]), point);
+                                    });
+
+                                geometrySink->EndFigureMethod.SetExpectedCalls(1,
+                                    [](D2D1_FIGURE_END mode)
+                                    {
+                                        Assert::AreEqual(D2D1_FIGURE_END_CLOSED, mode);
+                                    });
+                            }
+
+                            geometrySink->CloseMethod.SetExpectedCalls(1);
+
+                            return geometrySink.CopyTo(out);
+                        });
+
+                    return pathGeometry;
+                });
+        }
+    };
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_ThreeVertices)
+    {
+        Vector2 testVertices[] =
+        {
+            { 1, 2 },
+            { 3, 4 },
+            { 5, 6 },
+        };
+
+        CreatePolygonFixture f(3, testVertices);
+
+        f.Manager->Create(f.Device.Get(), 3, testVertices);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_OneVertex)
+    {
+        Vector2 testVertex{ 1, 2 };
+
+        CreatePolygonFixture f(1, &testVertex);
+
+        f.Manager->Create(f.Device.Get(), 1, &testVertex);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_ZeroVertices)
+    {
+        CreatePolygonFixture f(0, nullptr);
+
+        f.Manager->Create(f.Device.Get(), 0, nullptr);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_NullVertexArray)
+    {
+        Fixture f;
+
+        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->Create(f.Device.Get(), 1, nullptr); });
+    }
+
     class GeometryGroupFixture : public Fixture
     {
         struct Resource
@@ -189,9 +277,6 @@ public:
     {
         Fixture f;
 
-        auto d2dGeometry = Make<MockD2DRectangleGeometry>();
-        ComPtr<ICanvasGeometry> canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), d2dGeometry.Get()); 
-
         f.Device->CreateGeometryGroupMethod.SetExpectedCalls(1,
             [&f](D2D1_FILL_MODE fillMode, ID2D1Geometry** geometries, uint32_t geometryCount)
             {
@@ -204,6 +289,13 @@ public:
 
         auto geometryGroup = f.Manager->Create(f.Device.Get(), 0, nullptr, CanvasFilledRegionDetermination::Winding);
         Assert::IsNotNull(geometryGroup.Get());
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_NonZeroSizedGeometryGroup_NullInputArray)
+    {
+        Fixture f;
+
+        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->Create(f.Device.Get(), 1, nullptr, CanvasFilledRegionDetermination::Winding); });
     }
 
     TEST_METHOD_EX(CanvasGeometry_ZeroSizedGeometryGroup_NonNullInputArray)

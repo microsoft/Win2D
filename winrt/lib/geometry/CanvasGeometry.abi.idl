@@ -305,6 +305,12 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasPathBuilder* pathBuilder,
             [out, retval] CanvasGeometry** geometry);
 
+        HRESULT CreatePolygon(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 pointCount,
+            [in, size_is(pointCount)] Microsoft.Graphics.Canvas.Numerics.Vector2* points,
+            [out, retval] CanvasGeometry** geometry);
+
         [overload("CreateGroup")]
         HRESULT CreateGroup(
             [in] ICanvasResourceCreator* resourceCreator,

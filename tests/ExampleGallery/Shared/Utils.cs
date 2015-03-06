@@ -53,21 +53,30 @@ namespace ExampleGallery
 
         public static CanvasGeometry CreateStarGeometry(ICanvasResourceCreator resourceCreator, float scale, Vector2 center)
         {
-            var pathBuilder = new CanvasPathBuilder(resourceCreator);
+            Vector2[] points =
+            {
+                new Vector2(-0.24f, -0.24f),
+                new Vector2(0, -1),
+                new Vector2(0.24f, -0.24f),
+                new Vector2(1, -0.2f),
+                new Vector2(0.4f, 0.2f),
+                new Vector2(0.6f, 1),
+                new Vector2(0, 0.56f),
+                new Vector2(-0.6f, 1),
+                new Vector2(-0.4f, 0.2f),
+                new Vector2(-1, -0.2f),
+            };
 
-            pathBuilder.BeginFigure(new Vector2(-0.24f, -0.24f) * scale + center);
-            pathBuilder.AddLine(new Vector2(0, -1) * scale + center);
-            pathBuilder.AddLine(new Vector2(0.24f, -0.24f) * scale + center);
-            pathBuilder.AddLine(new Vector2(1, -0.2f) * scale + center);
-            pathBuilder.AddLine(new Vector2(0.4f, 0.2f) * scale + center);
-            pathBuilder.AddLine(new Vector2(0.6f, 1) * scale + center);
-            pathBuilder.AddLine(new Vector2(0, 0.56f) * scale + center);
-            pathBuilder.AddLine(new Vector2(-0.6f, 1) * scale + center);
-            pathBuilder.AddLine(new Vector2(-0.4f, 0.2f) * scale + center);
-            pathBuilder.AddLine(new Vector2(-1, -0.2f) * scale + center);
-            pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+            var transformedPoints = from point in points
+                                    select point * scale + center;
 
-            return CanvasGeometry.CreatePath(pathBuilder);
+            // Convert the System.Numerics.Vector2 type that we normally work with to the
+            // Microsoft.Graphics.Canvas.Numerics.Vector2 struct used by WinRT. These casts
+            // are usually inserted automatically, but auto conversion does not work for arrays.
+            var convertedPoints = from point in transformedPoints
+                                  select (Microsoft.Graphics.Canvas.Numerics.Vector2)point;
+
+            return CanvasGeometry.CreatePolygon(resourceCreator, convertedPoints.ToArray());
         }
 
         public static float DegreesToRadians(float angle)

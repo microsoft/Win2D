@@ -144,6 +144,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         });
     }
 
+    IFACEMETHODIMP CanvasGeometryFactory::CreatePolygon(
+        ICanvasResourceCreator* resourceCreator,
+        uint32_t pointCount,
+        Numerics::Vector2* points,
+        ICanvasGeometry** geometry)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator); 
+                CheckAndClearOutPointer(geometry);
+
+                auto newCanvasGeometry = GetManager()->Create(resourceCreator, pointCount, points);
+
+                ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
+            });
+    }
+
     IFACEMETHODIMP CanvasGeometryFactory::CreateGroup(
         ICanvasResourceCreator* resourceCreator,
         uint32_t geometryCount,
@@ -174,7 +192,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto newCanvasGeometry = GetManager()->Create(resourceCreator, geometryCount, geometryElements, filledRegionDetermination);
 
                 ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
-        });
+            });
     }
 
     IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningTolerance(
@@ -947,6 +965,44 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
         ICanvasResourceCreator* resourceCreator,
+        uint32_t pointCount,
+        Vector2* points)
+    {
+        if (pointCount > 0)
+        {
+            CheckInPointer(points);
+        }
+
+        ComPtr<ICanvasDevice> device;
+        ThrowIfFailed(resourceCreator->get_Device(&device));
+
+        auto pathGeometry = As<ICanvasDeviceInternal>(device)->CreatePathGeometry();
+
+        ComPtr<ID2D1GeometrySink> geometrySink;
+        ThrowIfFailed(pathGeometry->Open(&geometrySink));
+
+        if (pointCount > 0)
+        {
+            geometrySink->BeginFigure(ToD2DPoint(points[0]), D2D1_FIGURE_BEGIN_FILLED);
+        
+            for (uint32_t i = 1; i < pointCount; i++)
+            {
+                geometrySink->AddLine(ToD2DPoint(points[i]));
+            }
+
+            geometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
+        }
+
+        ThrowIfFailed(geometrySink->Close());
+
+        auto canvasGeometry = Make<CanvasGeometry>(shared_from_this(), pathGeometry.Get(), device.Get());
+        CheckMakeResult(canvasGeometry);
+
+        return canvasGeometry;
+    }
+
+    ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+        ICanvasResourceCreator* resourceCreator,
         uint32_t geometryCount,
         ICanvasGeometry** geometryElements,
         CanvasFilledRegionDetermination filledRegionDetermination)
@@ -958,6 +1014,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         std::vector<ID2D1Geometry*> d2dGeometriesRaw;
         d2dGeometriesRaw.resize(geometryCount);
+
+        if (geometryCount > 0)
+        {
+            CheckInPointer(geometryElements);
+        }
 
         for (uint32_t i = 0; i < geometryCount; ++i)
         {
