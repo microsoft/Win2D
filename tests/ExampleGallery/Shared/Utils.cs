@@ -70,7 +70,7 @@ namespace ExampleGallery
             return CanvasGeometry.CreatePath(pathBuilder);
         }
 
-        public static float DegreesToRadians(int angle)
+        public static float DegreesToRadians(float angle)
         {
             return angle * (float)Math.PI / 180;
         }

@@ -11,10 +11,13 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Text;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
@@ -23,22 +26,33 @@ namespace ExampleGallery
 {
     public sealed partial class ArcOptions : UserControl
     {
-        // Current arc parameters.
-        Vector2[] arcPoints =
+        // Which of the two CanvasPathBuilder.AddArc method overloads are we currently demonstrating?
+        public enum AddArcOverload
         {
-            new Vector2(40, 40),
-            new Vector2(140, 240),
+            AroundEllipse,
+            PointToPoint,
         };
 
+        public AddArcOverload CurrentOverload { get; set; }
+
+        // Parameters used by both AddArc overloads.
+        Vector2[] arcPoints = new Vector2[2];
+
+        // Parameters used by AddArcOverload.AroundEllipse.
+        public float ArcStartAngle { get; set; }
+        public float ArcSweepAngle { get; set; }
+
+        // Parameters used by AddArcOverload.PointToPoint.
         public float ArcRadiusX { get; set; }
         public float ArcRadiusY { get; set; }
 
-        public int ArcRotation { get; set; }
+        public float ArcRotation { get; set; }
 
         public CanvasSweepDirection ArcSweepDirection { get; set; }
         public CanvasArcSize ArcSize { get; set; }
 
         // Enum metadata for XAML databinding.
+        public List<AddArcOverload> AddArcOverloads { get { return Utils.GetEnumAsList<AddArcOverload>(); } }
         public List<CanvasSweepDirection> SweepDirections { get { return Utils.GetEnumAsList<CanvasSweepDirection>(); } }
         public List<CanvasArcSize> ArcSizes { get { return Utils.GetEnumAsList<CanvasArcSize>(); } }
 
@@ -48,7 +62,7 @@ namespace ExampleGallery
 
         const float hitTestRadius = 32;
 
-        // Rendering settings for drawing the arc.
+        // Rendering settings for displaying the arc.
         const float strokeWidth = 12;
 
         CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle()
@@ -66,43 +80,84 @@ namespace ExampleGallery
         public ArcOptions()
         {
             this.InitializeComponent();
+        }
 
-            ArcRadiusX = 200;
-            ArcRadiusY = 200;
+        void Canvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            arcPoints[0] = new Vector2(40);
+            arcPoints[1] = Vector2.Min(new Vector2(480, 320), canvas.Size.ToVector2() - new Vector2(40));
+
+            ArcStartAngle = 205;
+            ArcSweepAngle = -165;
+
+            ArcRadiusX = ArcRadiusY = Vector2.Distance(arcPoints[0], arcPoints[1]);
         }
 
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var ds = args.DrawingSession;
 
-            // Draw end point markers.
+            var centerPoint = (arcPoints[0] + arcPoints[1]) / 2;
+
+            // Draw the end point markers.
             for (int i = 0; i < 2; i++)
             {
                 ds.DrawCircle(arcPoints[i], hitTestRadius, (i == activeDrag) ? Colors.White : Colors.Gray);
             }
 
-            // Display a warning if this is an invalid arc configuration.
-            bool isRadiusTooSmall = IsArcRadiusTooSmall();
-
-            if (isRadiusTooSmall)
+            switch (CurrentOverload)
             {
-                ds.DrawText("Warning: arc radius is less\nthan the distance between\nthe start and end points",
-                            (arcPoints[0] + arcPoints[1]) / 2,
-                            Colors.Red, 
-                            textFormat);
-            }
+                case AddArcOverload.AroundEllipse:
+                    // Compute positions.
+                    var ellipseRadius = (arcPoints[1] - arcPoints[0]) / 2;
 
-            // Draw the arc.
-            using (var builder = new CanvasPathBuilder(sender))
-            {
-                builder.BeginFigure(arcPoints[0]);
-                builder.AddArc(arcPoints[1], ArcRadiusX, ArcRadiusY, Utils.DegreesToRadians(ArcRotation), ArcSweepDirection, ArcSize);
-                builder.EndFigure(CanvasFigureLoop.Open);
+                    ellipseRadius.X = Math.Abs(ellipseRadius.X);
+                    ellipseRadius.Y = Math.Abs(ellipseRadius.Y);
 
-                using (var geometry = CanvasGeometry.CreatePath(builder))
-                {
-                    ds.DrawGeometry(geometry, isRadiusTooSmall ? Colors.Red : Colors.Yellow, strokeWidth, strokeStyle);
-                }
+                    float startAngle = Utils.DegreesToRadians(ArcStartAngle);
+                    float sweepAngle = Utils.DegreesToRadians(ArcSweepAngle);
+
+                    var startPoint = centerPoint + Vector2.Transform(Vector2.UnitX, Matrix3x2.CreateRotation(startAngle)) * ellipseRadius;
+
+                    // Draw the ellipse bounding rectangle.
+                    ds.DrawRectangle(new Rect(arcPoints[0].ToPoint(), arcPoints[1].ToPoint()), Color.FromArgb(255, 64, 64, 64));
+
+                    // Draw the arc.
+                    using (var builder = new CanvasPathBuilder(sender))
+                    {
+                        builder.BeginFigure(startPoint);
+                        builder.AddArc(centerPoint, ellipseRadius.X, ellipseRadius.Y, startAngle, sweepAngle);
+                        builder.EndFigure(CanvasFigureLoop.Open);
+
+                        using (var geometry = CanvasGeometry.CreatePath(builder))
+                        {
+                            ds.DrawGeometry(geometry, Colors.Yellow, strokeWidth, strokeStyle);
+                        }
+                    }
+                    break;
+             
+                case AddArcOverload.PointToPoint:
+                    // Display a warning if this is an invalid arc configuration.
+                    bool isRadiusTooSmall = IsArcRadiusTooSmall();
+
+                    if (isRadiusTooSmall)
+                    {
+                        ds.DrawText("Radius is less than the\ndistance between the\nstart and end points", centerPoint, Colors.Red, textFormat);
+                    }
+
+                    // Draw the arc.
+                    using (var builder = new CanvasPathBuilder(sender))
+                    {
+                        builder.BeginFigure(arcPoints[0]);
+                        builder.AddArc(arcPoints[1], ArcRadiusX, ArcRadiusY, Utils.DegreesToRadians(ArcRotation), ArcSweepDirection, ArcSize);
+                        builder.EndFigure(CanvasFigureLoop.Open);
+
+                        using (var geometry = CanvasGeometry.CreatePath(builder))
+                        {
+                            ds.DrawGeometry(geometry, isRadiusTooSmall ? Colors.Red : Colors.Yellow, strokeWidth, strokeStyle);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -169,6 +224,14 @@ namespace ExampleGallery
 
         void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            canvas.Invalidate();
+        }
+
+        void Overload_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            aroundEllipseControls.Visibility = (CurrentOverload == AddArcOverload.AroundEllipse) ? Visibility.Visible : Visibility.Collapsed;
+            pointToPointControls.Visibility  = (CurrentOverload == AddArcOverload.PointToPoint)  ? Visibility.Visible : Visibility.Collapsed;
+
             canvas.Invalidate();
         }
     }

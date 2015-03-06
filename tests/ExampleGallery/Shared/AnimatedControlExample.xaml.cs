@@ -254,8 +254,8 @@ namespace ExampleGallery
                 // Since we have concentric circles that we want to remain filled we want to use Winding to determine the filled region.
                 builder.SetFilledRegionDetermination(CanvasFilledRegionDetermination.Winding);
 
-                builder.AddCircleFigure(center, center, radius);
-                builder.AddCircleFigure(center, center, radius * 0.6f);
+                builder.AddCircleFigure(new Vector2(center), radius);
+                builder.AddCircleFigure(new Vector2(center), radius * 0.6f);
 
                 builder.AddOneLineFigure(center, begin, center, begin + lineLength);
                 builder.AddOneLineFigure(center, end - lineLength, center, end);
@@ -298,19 +298,12 @@ namespace ExampleGallery
             double updates = (double)updateCount;
             double fractionSecond = (updates / updatesPerSecond) % 1.0;
             double fractionSecondAngle = 2 * Math.PI * fractionSecond;
-            fractionSecondAngle *= -1; // increasing fractionSecond = clockwise = decreasing angle
-            fractionSecondAngle += Math.PI; // we want fractionSecond = 0 to be up (not down)
             double angle = fractionSecondAngle % (2 * Math.PI);
 
             using (var builder = new CanvasPathBuilder(ds))
             {
                 builder.BeginFigure(center, center);
-                builder.AddLine(center, center - radius);
-
-                var endArcX = new Vector2(center + (float)Math.Sin(angle) * radius, center + (float)Math.Cos(angle) * radius);
-
-                var arcSize = angle > 0 ? CanvasArcSize.Small : CanvasArcSize.Large;
-                builder.AddArc(endArcX, radius, radius, 0, CanvasSweepDirection.Clockwise, arcSize);
+                builder.AddArc(new Vector2(center), radius, radius, (float)Math.PI * 3 / 2, (float)angle);
                 builder.EndFigure(CanvasFigureLoop.Closed);
 
                 return CanvasGeometry.CreatePath(builder);
@@ -526,11 +519,10 @@ namespace ExampleGallery
             builder.EndFigure(CanvasFigureLoop.Open);
         }
 
-        public static void AddCircleFigure(this CanvasPathBuilder builder, float centerX, float centerY, float radius)
+        public static void AddCircleFigure(this CanvasPathBuilder builder, Vector2 center, float radius)
         {
-            builder.BeginFigure(new Vector2(centerX, centerY - radius));
-            builder.AddArc(new Vector2(centerX, centerY + radius), radius, radius, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Large);
-            builder.AddArc(new Vector2(centerX, centerY - radius), radius, radius, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Large);
+            builder.BeginFigure(center + Vector2.UnitX * radius);
+            builder.AddArc(center, radius, radius, 0, (float)Math.PI * 2);
             builder.EndFigure(CanvasFigureLoop.Closed);
         }
     }

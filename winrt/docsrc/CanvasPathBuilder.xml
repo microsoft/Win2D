@@ -168,10 +168,51 @@ under the License.
         <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasSweepDirection,Microsoft.Graphics.Canvas.CanvasArcSize)">
-        <summary>Adds a single arc to the path, with the specified shape.</summary>
-        <remarks>The arc's rotation angle is in radians.</remarks>
+        <summary>Adds a single arc to the path, specified by start and end points through which an ellipse will be fitted.</summary>
+        <remarks>
+          <p>
+            This overload defines an arc by connecting the current path position to the specified end point.
+            It computes an ellipse with the specified radius and rotation angle, positions it such that the ellipse
+            passes through both points, and outputs the portion of the ellipse that lies between the two points.
+            The sweepDirection and arcSize parameters disambiguate which ellipse to choose in cases where there
+            is more than one possible solution.
+          </p>
+          <p>
+            See the <see cref="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)"/>
+            overload for an alternative (often easier) way to specify arcs.
+          </p>
+          <p>The ellipse rotation angle is in radians.</p>
+        </remarks>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Adds a single arc to the path, specified as a portion of an ellipse.</summary>
+      <remarks>
+        <p>
+          This overload defines an arc by first specifying an ellipse (center point and radius) and then
+          choosing which portion of the ellipse the arc should cover.
+        </p>
+        <p>
+          The startAngle parameter specifies where on the ellipse the arc should begin.
+          This is measured in radians, clockwise from the positive x axis.
+        </p>
+        <p>
+          The sweepAngle parameter specifies the size of the arc. This is measured in radians,
+          clockwise relative to the startAngle. Negative sweepAngle values produce a counterclockwise
+          arc. If sweepAngle is &lt;= -2&#960; or &gt;= 2&#960;, the arc becomes a complete ellipse.
+          Sweep values greater than this range are clamped to one full revolution.
+        </p>
+        <p>
+          If the current path position is not the same as the point on the ellipse where the arc
+          will begin, these will be automatically connected using a straight line.
+        </p>
+        <p>
+          See the <see cref="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasSweepDirection,Microsoft.Graphics.Canvas.CanvasArcSize)"/>
+          overload for an alternative way to specify arcs, which is more complicated but offers extra
+          abilities such as the option to rotate the ellipse.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
         <summary>Adds a cubic bezier to the path. The bezier starts where the path left off, and has the specified control points and end point.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddLine(Microsoft.Graphics.Canvas.Numerics.Vector2)">

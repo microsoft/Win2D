@@ -64,7 +64,8 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->BeginFigureWithFigureFill(Vector2{}, CanvasFigureFill::DoesNotAffectFills));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->BeginFigureAtCoords(0, 0));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->BeginFigureAtCoordsWithFigureFill(0, 0, CanvasFigureFill::DoesNotAffectFills));
-        Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddArc(Vector2{}, 0, 0, 0, CanvasSweepDirection::Clockwise, CanvasArcSize::Small));
+        Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddArcToPoint(Vector2{}, 0, 0, 0, CanvasSweepDirection::Clockwise, CanvasArcSize::Small));
+        Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddArcAroundEllipse(Vector2{}, 0, 0, 0, 0));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddCubicBezier(Vector2{}, Vector2{}, Vector2{}));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddLine(Vector2{}));
         Assert::AreEqual(RO_E_CLOSED, canvasPathBuilder->AddLineWithCoords(0, 0));
@@ -209,7 +210,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
         ThrowIfFailed(f.PathBuilder->BeginFigureAtCoordsWithFigureFill(1, 2, CanvasFigureFill::DoesNotAffectFills));
     }
 
-    TEST_METHOD_EX(CanvasPathBuilder_AddArc)
+    TEST_METHOD_EX(CanvasPathBuilder_AddArcToPoint)
     {
         SinkAccessFixture f;
 
@@ -224,10 +225,10 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
             Assert::AreEqual(D2D1_SWEEP_DIRECTION_CLOCKWISE, arc->sweepDirection);
             Assert::AreEqual(D2D1_ARC_SIZE_LARGE, arc->arcSize);
         });
-        ThrowIfFailed(f.PathBuilder->AddArc(Vector2{ 1, 2 }, 3.0f, 4.0f, 0.0f, CanvasSweepDirection::Clockwise, CanvasArcSize::Large));
+        ThrowIfFailed(f.PathBuilder->AddArcToPoint(Vector2{ 1, 2 }, 3.0f, 4.0f, 0.0f, CanvasSweepDirection::Clockwise, CanvasArcSize::Large));
     }
 
-    TEST_METHOD_EX(CanvasPathBuilder_AddArc_ExpectsRadians)
+    TEST_METHOD_EX(CanvasPathBuilder_AddArcToPoint_ExpectsRadians)
     {
         const float pi = 3.14159f;
         float angles[] = { 0, pi / 2, pi, 3 * pi / 2, 2 * pi };
@@ -245,15 +246,104 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
                 const float radians = d2dDegrees  * pi / 180.0f;
                 Assert::AreEqual(angle, radians, 0.0001f);
             });
-            ThrowIfFailed(f.PathBuilder->AddArc(Vector2{}, 0, 0, angle, CanvasSweepDirection::Clockwise, CanvasArcSize::Large));
+            ThrowIfFailed(f.PathBuilder->AddArcToPoint(Vector2{}, 0, 0, angle, CanvasSweepDirection::Clockwise, CanvasArcSize::Large));
         }
     }
 
-    TEST_METHOD_EX(CanvasPathBuilder_AddArc_InvalidState)
+    TEST_METHOD_EX(CanvasPathBuilder_AddArcAroundEllipse)
+    {
+        using namespace ::DirectX;
+
+        SinkAccessFixture f;
+
+        f.PathBuilder->BeginFigure(Vector2{});
+
+        const float cX = 23;
+        const float cY = 42;
+        const float rX = 3;
+        const float rY = 4;
+
+        struct
+        {
+            float StartAngle;
+            float SweepAngle;
+            D2D1_POINT_2F ExpectedStart;
+            D2D1_POINT_2F ExpectedEnd;
+            D2D1_SWEEP_DIRECTION ExpectedSweepDirection;
+            D2D1_ARC_SIZE ExpectedArcSize;
+            int ExpectedArcCalls;
+        }
+        testPasses[] =
+        {
+            // Zero size sweep.
+            { 0,          0,                 { cX + rX, cY      }, { cX + rX, cY      }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_SMALL, 1 },
+
+            // Positive sweep angles.
+            { 0,          XM_PIDIV2,         { cX + rX, cY      }, { cX,      cY + rY }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_SMALL, 1 },
+            { 0,          XM_PI,             { cX + rX, cY      }, { cX - rX, cY      }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_SMALL, 1 },
+            { 0,          XM_PI + XM_PIDIV2, { cX + rX, cY      }, { cX,      cY - rY }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_LARGE, 1 },
+
+            // Negative sweep angles.
+            { 0,         -XM_PIDIV2,         { cX + rX, cY      }, { cX,      cY - rY }, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL, 1 },
+            { 0,         -XM_PI,             { cX + rX, cY      }, { cX - rX, cY      }, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL, 1 },
+            { 0,         -XM_PI - XM_PIDIV2, { cX + rX, cY      }, { cX,      cY + rY }, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_LARGE, 1 },
+
+            // Changing the start angle.
+            { XM_PIDIV2,  XM_PIDIV2,         { cX,      cY + rY }, { cX - rX, cY      }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_SMALL, 1 },
+            { -XM_PI,     XM_PIDIV2,         { cX - rX, cY      }, { cX,      cY - rY }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_SMALL, 1 },
+            { XM_PI * 5, -XM_PI - XM_PIDIV2, { cX - rX, cY      }, { cX,      cY - rY }, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_LARGE, 1 },
+
+            // Full circles.
+            { 0,          XM_2PI,            { cX + rX, cY      }, { cX - rX, cY      }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_SMALL, 2 },
+            { XM_PIDIV2, -XM_2PI,            { cX,      cY + rY }, { cX,      cY - rY }, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL, 2 },
+            { 0,          XM_2PI * 99,       { cX + rX, cY      }, { cX - rX, cY      }, D2D1_SWEEP_DIRECTION_CLOCKWISE,         D2D1_ARC_SIZE_SMALL, 2 },
+            { XM_PIDIV2, -XM_2PI * 99,       { cX,      cY + rY }, { cX,      cY - rY }, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL, 2 },
+        };
+
+        const float epsilon = 0.00001f;
+
+        for (auto& testPass : testPasses)
+        {
+            f.GeometrySink->AddLineMethod.SetExpectedCalls(1, [&](D2D1_POINT_2F point)
+            {
+                Assert::AreEqual(testPass.ExpectedStart.x, point.x, epsilon);
+                Assert::AreEqual(testPass.ExpectedStart.y, point.y, epsilon);
+            });
+
+            int whichArcIsThis = 0;
+
+            f.GeometrySink->AddArcMethod.SetExpectedCalls(testPass.ExpectedArcCalls, [&](D2D1_ARC_SEGMENT const* arc)
+            {
+                // If this is a full circle, we'll get two AddArc calls, one half way, then another back to the start point.
+                auto expectedPoint = (whichArcIsThis++ == 0) ? testPass.ExpectedEnd : testPass.ExpectedStart;
+
+                Assert::AreEqual(expectedPoint.x, arc->point.x, epsilon);
+                Assert::AreEqual(expectedPoint.y, arc->point.y, epsilon);
+
+                Assert::AreEqual(D2D1_SIZE_F{ rX, rY }, arc->size);
+                Assert::AreEqual(0.0f, arc->rotationAngle);
+                Assert::AreEqual(testPass.ExpectedSweepDirection, arc->sweepDirection);
+                Assert::AreEqual(testPass.ExpectedArcSize, arc->arcSize);
+            });
+
+            ThrowIfFailed(f.PathBuilder->AddArcAroundEllipse(Vector2{ cX, cY }, rX, rY, testPass.StartAngle, testPass.SweepAngle));
+        }
+    }
+
+    TEST_METHOD_EX(CanvasPathBuilder_AddArcToPoint_InvalidState)
     {
         SinkAccessFixture f;
 
-        Assert::AreEqual(E_INVALIDARG, f.PathBuilder->AddArc(Vector2{}, 0, 0, 0, CanvasSweepDirection::Clockwise, CanvasArcSize::Large));
+        Assert::AreEqual(E_INVALIDARG, f.PathBuilder->AddArcToPoint(Vector2{}, 0, 0, 0, CanvasSweepDirection::Clockwise, CanvasArcSize::Large));
+
+        ValidateStoredErrorState(E_INVALIDARG, Strings::CanOnlyAddPathDataWhileInFigure);
+    }
+
+    TEST_METHOD_EX(CanvasPathBuilder_AddArcAroundEllipse_InvalidState)
+    {
+        SinkAccessFixture f;
+
+        Assert::AreEqual(E_INVALIDARG, f.PathBuilder->AddArcAroundEllipse(Vector2{}, 0, 0, 0, 0));
 
         ValidateStoredErrorState(E_INVALIDARG, Strings::CanOnlyAddPathDataWhileInFigure);
     }

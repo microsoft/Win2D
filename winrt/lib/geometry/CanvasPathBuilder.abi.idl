@@ -39,13 +39,22 @@ namespace Microsoft.Graphics.Canvas
             [in] float startX,
             [in] float startY);
 
-        HRESULT AddArc(
+        [overload("AddArc")]
+        HRESULT AddArcToPoint(
             [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint,
-            [in] float xRadius,
-            [in] float yRadius,
+            [in] float radiusX,
+            [in] float radiusY,
             [in] float rotationAngle,
             [in] CanvasSweepDirection sweepDirection,
             [in] CanvasArcSize arcSize);
+
+        [overload("AddArc")]
+        HRESULT AddArcAroundEllipse(
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
+            [in] float radiusX,
+            [in] float radiusY,
+            [in] float startAngle,
+            [in] float sweepAngle);
 
         HRESULT AddCubicBezier(
             [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint1,

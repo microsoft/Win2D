@@ -118,7 +118,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return BeginFigureWithFigureFill(Vector2{ startX, startY }, CanvasFigureFill::Default);
     }
 
-    IFACEMETHODIMP CanvasPathBuilder::AddArc(
+    IFACEMETHODIMP CanvasPathBuilder::AddArcToPoint(
         Vector2 endPoint,
         float xRadius,
         float yRadius,
@@ -140,6 +140,71 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         ::DirectX::XMConvertToDegrees(rotationAngle),
                         static_cast<D2D1_SWEEP_DIRECTION>(sweepDirection),
                         static_cast<D2D1_ARC_SIZE>(arcSize)));
+            });
+    }
+
+    IFACEMETHODIMP CanvasPathBuilder::AddArcAroundEllipse(
+        Vector2 centerPoint,
+        float radiusX,
+        float radiusY,
+        float startAngle,
+        float sweepAngle)
+    {
+        using namespace ::DirectX;
+
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+                ValidateIsInFigure();
+
+                // If the arc sweep covers a full 360, its start and end points will be the same. That
+                // does not provide enough info to fully specify an arc to D2D (there are an infinite
+                // number of possible ellipses passing through a single point!) so we must number of split
+                // up such requests into a pair of 180 degree arcs. Sweeps greater than 360 are clamped.
+                bool isFullCircle = fabs(sweepAngle) >= XM_2PI - FLT_EPSILON;
+
+                if (isFullCircle)
+                {
+                    sweepAngle = (sweepAngle < 0) ? -XM_PI : XM_PI;
+                }
+
+                // Compute the arc start and end positions.
+                D2D1_POINT_2F startPoint
+                {
+                    centerPoint.X + cosf(startAngle) * radiusX,
+                    centerPoint.Y + sinf(startAngle) * radiusY,
+                };
+
+                D2D1_POINT_2F endPoint
+                {
+                    centerPoint.X + cosf(startAngle + sweepAngle) * radiusX,
+                    centerPoint.Y + sinf(startAngle + sweepAngle) * radiusY,
+                };
+
+                // Convert the arc description to D2D format.
+                D2D1_ARC_SEGMENT arc
+                {
+                    endPoint,
+                    D2D1_SIZE_F{ radiusX, radiusY },
+                    0,
+                    (sweepAngle >= 0) ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE,
+                    (fabs(sweepAngle) > XM_PI) ? D2D1_ARC_SIZE_LARGE : D2D1_ARC_SIZE_SMALL,
+                };
+
+                // Insert a line to move the current path location to the arc start point.
+                d2dGeometrySink->AddLine(startPoint);
+
+                // Add the arc.
+                d2dGeometrySink->AddArc(arc);
+
+                // If necessary, add a second arc to complete a full circle.
+                if (isFullCircle)
+                {
+                    arc.point = startPoint;
+                    d2dGeometrySink->AddArc(arc);
+                }
             });
     }
 

@@ -34,37 +34,60 @@ under the License.
 
         <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel Orientation="Vertical" MinWidth="180" Margin="5">
-                <TextBlock>X Radius:</TextBlock>
-                <Slider Value="{Binding ArcRadiusX, ElementName=control, Mode=TwoWay}"
-                        Minimum="0"
-                        Maximum="1000"
-                        ValueChanged="Slider_ValueChanged"/>
+                <TextBlock>Which AddArc Overload:</TextBlock>
+                <ComboBox ItemsSource="{Binding ElementName=control, Path=AddArcOverloads}"
+                          SelectedItem="{Binding CurrentOverload, ElementName=control, Mode=TwoWay}"
+                          SelectionChanged="Overload_SelectionChanged"/>
+                <TextBlock/>
 
-                <TextBlock>Y Radius:</TextBlock>
-                <Slider Value="{Binding ArcRadiusY, ElementName=control, Mode=TwoWay}"
-                        Minimum="0"
-                        Maximum="1000"
-                        ValueChanged="Slider_ValueChanged"/>
+                <StackPanel x:Name="aroundEllipseControls">
+                    <TextBlock>Start Angle:</TextBlock>
+                    <Slider Value="{Binding ArcStartAngle, ElementName=control, Mode=TwoWay}"
+                            Minimum="0"
+                            Maximum="360"
+                            ValueChanged="Slider_ValueChanged"/>
+
+                    <TextBlock>Sweep Angle:</TextBlock>
+                    <Slider Value="{Binding ArcSweepAngle, ElementName=control, Mode=TwoWay}"
+                            Minimum="-361"
+                            Maximum="361"
+                            ValueChanged="Slider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel x:Name="pointToPointControls">
+                    <TextBlock>X Radius:</TextBlock>
+                    <Slider Value="{Binding ArcRadiusX, ElementName=control, Mode=TwoWay}"
+                            Minimum="0"
+                            Maximum="1000"
+                            ValueChanged="Slider_ValueChanged"/>
+
+                    <TextBlock>Y Radius:</TextBlock>
+                    <Slider Value="{Binding ArcRadiusY, ElementName=control, Mode=TwoWay}"
+                            Minimum="0"
+                            Maximum="1000"
+                            ValueChanged="Slider_ValueChanged"/>
                 
-                <TextBlock>Rotation:</TextBlock>
-                <Slider Value="{Binding ArcRotation, ElementName=control, Mode=TwoWay}"
-                        Minimum="0"
-                        Maximum="180"
-                        ValueChanged="Slider_ValueChanged"/>
+                    <TextBlock>Rotation:</TextBlock>
+                    <Slider Value="{Binding ArcRotation, ElementName=control, Mode=TwoWay}"
+                            Minimum="0"
+                            Maximum="180"
+                            ValueChanged="Slider_ValueChanged"/>
 
-                <TextBlock>Sweep Direction:</TextBlock>
-                <ComboBox ItemsSource="{Binding ElementName=control, Path=SweepDirections}"
-                          SelectedItem="{Binding ArcSweepDirection, ElementName=control, Mode=TwoWay}"
-                          SelectionChanged="ComboBox_SelectionChanged"/>
+                    <TextBlock>Sweep Direction:</TextBlock>
+                    <ComboBox ItemsSource="{Binding ElementName=control, Path=SweepDirections}"
+                              SelectedItem="{Binding ArcSweepDirection, ElementName=control, Mode=TwoWay}"
+                              SelectionChanged="ComboBox_SelectionChanged"/>
 
-                <TextBlock>Arc Size:</TextBlock>
-                <ComboBox ItemsSource="{Binding ElementName=control, Path=ArcSizes}"
-                          SelectedItem="{Binding ArcSize, ElementName=control, Mode=TwoWay}"
-                          SelectionChanged="ComboBox_SelectionChanged"/>
+                    <TextBlock>Arc Size:</TextBlock>
+                    <ComboBox ItemsSource="{Binding ElementName=control, Path=ArcSizes}"
+                              SelectedItem="{Binding ArcSize, ElementName=control, Mode=TwoWay}"
+                              SelectionChanged="ComboBox_SelectionChanged"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
         
         <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5" 
+                              Loaded="Canvas_Loaded"
                               Draw="Canvas_Draw"
                               PointerPressed="canvas_PointerPressed"
                               PointerReleased="canvas_PointerReleased"
