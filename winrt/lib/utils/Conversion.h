@@ -138,6 +138,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<uint32_t>(D2D1_COLOR_SPACE_SCRGB)  == static_cast<uint32_t>(CanvasColorSpace::ScRgb),  "CanvasColorSpace must match D2D1_COLOR_SPACE");
     };
 
+    template<> struct ValidateStaticCastAs<CanvasDrawTextOptions, D2D1_DRAW_TEXT_OPTIONS> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_NONE) == static_cast<uint32_t>(CanvasDrawTextOptions::Default), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_NO_SNAP) == static_cast<uint32_t>(CanvasDrawTextOptions::NoPixelSnap), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_CLIP) == static_cast<uint32_t>(CanvasDrawTextOptions::Clip), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT) == static_cast<uint32_t>(CanvasDrawTextOptions::EnableColorFont), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+    };
+
     inline float ToNormalizedFloat(uint8_t v)
     {
         return static_cast<float>(v) / 255.0f;

@@ -205,6 +205,7 @@ namespace Microsoft
             TO_STRING(ID2D1SimplifiedGeometrySink);
             TO_STRING(ID2D1GeometrySink);
             TO_STRING(ID2D1GeometryRealization);
+            TO_STRING(IDWriteTextLayout);
 
 #undef TO_STRING
 
@@ -898,6 +899,34 @@ namespace Microsoft
                 ENUM_VALUE(CanvasLayerOptions::InitializeFromBackground);
                 ENUM_VALUE(CanvasLayerOptions::IgnoreAlpha);
                 END_ENUM(CanvasLayerOptions);
+            }
+
+            ENUM_TO_STRING(CanvasVerticalGlyphOrientation)
+            {
+                ENUM_VALUE(CanvasVerticalGlyphOrientation::Default);
+                ENUM_VALUE(CanvasVerticalGlyphOrientation::Stacked);
+                END_ENUM(CanvasVerticalGlyphOrientation);
+            }
+
+            ENUM_TO_STRING(DWRITE_VERTICAL_GLYPH_ORIENTATION)
+            {
+                ENUM_VALUE(DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT);
+                ENUM_VALUE(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED);
+                END_ENUM(DWRITE_VERTICAL_GLYPH_ORIENTATION);
+            }
+
+            ENUM_TO_STRING(CanvasOpticalAlignment)
+            {
+                ENUM_VALUE(CanvasOpticalAlignment::Default);
+                ENUM_VALUE(CanvasOpticalAlignment::NoSideBearings);
+                END_ENUM(CanvasOpticalAlignment);
+            }
+
+            ENUM_TO_STRING(DWRITE_OPTICAL_ALIGNMENT)
+            {
+                ENUM_VALUE(DWRITE_OPTICAL_ALIGNMENT_NONE);
+                ENUM_VALUE(DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS);
+                END_ENUM(DWRITE_OPTICAL_ALIGNMENT);
             }
 
             template<typename T>

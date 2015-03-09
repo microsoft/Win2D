@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="xaml">
@@ -124,6 +124,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\WinStringTests.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextLayoutTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -232,6 +233,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD3D11Device.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFactory.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIAdapter.h">
       <Filter>mocks</Filter>
     </ClInclude>
@@ -266,6 +279,9 @@
       <Filter>stubs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDrawingSessionAdapter.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasTextLayoutAdapter.h">
       <Filter>stubs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DBrush.h">
@@ -313,6 +329,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasTextFormatAdapter.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />

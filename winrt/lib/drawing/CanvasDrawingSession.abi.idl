@@ -19,6 +19,9 @@ namespace Microsoft.Graphics.Canvas
     cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CRect;")
     cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CNumerics_CMatrix3x2;")
     cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasLayerOptions;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasBlend;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasTextAntialiasing;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasUnits;")
 
     //
     // CanvasDrawingSession needs to be activatable in order to support interop
@@ -992,6 +995,35 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawCachedGeometry")]
         HRESULT DrawCachedGeometryWithColor(
             [in] CanvasCachedGeometry* geometry,
+            [in] Windows.UI.Color color);
+
+        //
+        // DrawTextLayout
+        //
+        [overload("DrawTextLayout"), default_overload]
+        HRESULT DrawTextLayoutWithBrush(
+            [in] CanvasTextLayout* textLayout,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawTextLayout"), default_overload]
+        HRESULT DrawTextLayoutAtCoordsWithBrush(
+            [in] CanvasTextLayout* textLayout,
+            [in] float x,
+            [in] float y,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawTextLayout")]
+        HRESULT DrawTextLayoutWithColor(
+            [in] CanvasTextLayout* textLayout,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] Windows.UI.Color color);
+
+        [overload("DrawTextLayout")]
+        HRESULT DrawTextLayoutAtCoordsWithColor(
+            [in] CanvasTextLayout* textLayout,
+            [in] float x,
+            [in] float y,
             [in] Windows.UI.Color color);
 
         //

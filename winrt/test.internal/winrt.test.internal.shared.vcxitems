@@ -62,6 +62,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGISwapChain.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSourceFactory.h" />
@@ -71,6 +75,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDrawingSessionAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasTextFormatAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasTextLayoutAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DDeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.h" />
@@ -114,6 +120,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSwapChainUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextFormatTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextLayoutTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PolymorphicBitmapManagerUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\AsyncOperationTests.cpp" />

@@ -94,6 +94,10 @@ under the License.
     </Enum>
     <Enum Name="GEOMETRY_SIMPLIFICATION_OPTION" ShouldProject="true" ProjectedNameOverride="GeometrySimplification"/>
     <Enum Name="LAYER_OPTIONS1" ShouldProject="true" ProjectedNameOverride="LayerOptions"/>
+    <Enum Name="DRAW_TEXT_OPTIONS" ShouldProject="true">
+      <Field Name="NONE" ProjectedNameOverride="Default"/>
+      <Field Name="NO_SNAP" ProjectedNameOverride="NoPixelSnap"/>
+    </Enum>
   </Namespace>
   
   <Namespace Name="Effects">

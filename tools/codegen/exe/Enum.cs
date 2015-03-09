@@ -12,9 +12,11 @@
 
 using System.Diagnostics;
 using System.Xml.Serialization;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace CodeGen
 {
@@ -161,6 +163,28 @@ namespace CodeGen
 
     public class Enum : QualifiableType
     {
+        class EnumValueComparer : IComparer<EnumValue>  
+        {
+            private int ParseValueExpression(string valueExpression)
+            {
+                NumberStyles numberStyle = NumberStyles.Any;
+                if (valueExpression.StartsWith("0x"))
+                {
+                    valueExpression = valueExpression.Remove(0, 2);
+                    numberStyle = NumberStyles.HexNumber;
+                }
+                return int.Parse(valueExpression, numberStyle);
+            }
+
+            public int Compare(EnumValue x, EnumValue y)
+            {
+                int valueX = ParseValueExpression(x.ValueExpression);
+                int valueY = ParseValueExpression(y.ValueExpression);
+                if (valueX < valueY) return -1;
+                else if (valueX > valueY) return 1;
+                else return 0;
+            }
+        }
 
         public Enum(Namespace parentNamespace, XmlBindings.Enum xmlData, Overrides.XmlBindings.Enum overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {
@@ -203,6 +227,12 @@ namespace CodeGen
                     m_stylizedName = Formatter.Prefix + overrides.ProjectedNameOverride;
                 } 
 
+            }
+
+            // One of the XML files has a mistake where it doesn't properly order its enums.
+            if (m_isFlags)
+            {
+                m_enumValues.Sort(new EnumValueComparer());
             }
 
             // Enums in the global namespace are defined as aliases only. By convention, only enums in a namespace are output.

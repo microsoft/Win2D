@@ -511,8 +511,21 @@ under the License.
         Whether this operation is a stroke or fill is determined by whether the cached geometry was 
         created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a text layout, using a brush to define the color.</summary>
     </member>
-    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a text layout, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+      <summary>Draws a text layout with the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a text layout with the specified color.</summary>
+    </member>
+     
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single)">
       <summary>Creates a layer that will blend its contents using the specified opacity.</summary>
       <remarks>

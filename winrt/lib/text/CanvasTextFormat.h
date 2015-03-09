@@ -189,8 +189,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IDWriteTextFormat> m_format;
 
     public:
-        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> adapter);
-        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> adapter, IDWriteTextFormat* format);
+        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager);
+        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager, IDWriteTextFormat* format);
 
         //
         // ICanvasTextFormat

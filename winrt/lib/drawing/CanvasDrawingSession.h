@@ -839,6 +839,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float h,
             ABI::Windows::UI::Color color,
             ICanvasTextFormat* format) override;
+
+        //
+        // DrawTextLayout
+        //
+                        
+        IFACEMETHOD(DrawTextLayoutWithBrush)(
+            ICanvasTextLayout* textLayout,
+            Numerics::Vector2 point,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawTextLayoutAtCoordsWithBrush)(
+            ICanvasTextLayout* textLayout,
+            float x,
+            float y,
+            ICanvasBrush* brush) override;
+
+        IFACEMETHOD(DrawTextLayoutWithColor)(
+            ICanvasTextLayout* textLayout,
+            Numerics::Vector2 point,
+            ABI::Windows::UI::Color color) override;
+
+        IFACEMETHOD(DrawTextLayoutAtCoordsWithColor)(
+            ICanvasTextLayout* textLayout,
+            float x,
+            float y,
+            ABI::Windows::UI::Color color) override;
         
         //
         // DrawGeometry

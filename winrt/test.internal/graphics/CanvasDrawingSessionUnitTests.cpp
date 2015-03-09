@@ -17,6 +17,7 @@
 #include "MockD2DRectangleGeometry.h"
 #include "CanvasCachedGeometry.h"
 #include "MockD2DGeometryRealization.h"
+#include "StubCanvasTextLayoutAdapter.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
@@ -124,6 +125,7 @@ public:
     ComPtr<StubCanvasBrush> Brush;
     ComPtr<CanvasGeometry> Geometry;
     ComPtr<CanvasCachedGeometry> CachedGeometry;
+    ComPtr<CanvasTextLayout> TextLayout;
 
     CanvasDrawingSessionFixture()
         : DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
@@ -137,7 +139,11 @@ public:
 
         auto cachedGeometryManager = std::make_shared<CanvasCachedGeometryManager>();
         CachedGeometry = cachedGeometryManager->Create(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
-    }
+
+        auto textFormat = CanvasTextFormatFactory::GetOrCreateManager()->Create();
+        auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
+        auto textLayoutManager = std::make_shared<CanvasTextLayoutManager>(textlayoutAdapter);
+        TextLayout = textLayoutManager->Create(WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);    }
 
 private:
     static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext)
@@ -2108,6 +2114,101 @@ public:
         Assert::AreEqual(E_INVALIDARG, f.DS->get_Transform(nullptr));
         Assert::AreEqual(E_INVALIDARG, f.DS->get_Units(nullptr));
     }
+    
+    //
+    // DrawTextLayout
+    //  
+    template<typename TDraw>
+    void TestDrawTextLayoutImpl(bool isColorOverload, bool hasDrawTextOptions, TDraw const& callDrawFunction)
+    {
+        CanvasDrawingSessionFixture f;
+        BrushValidator brushValidator(f, isColorOverload);
+
+        int expectedDrawTextLayoutCount = isColorOverload ? 2 : 1;
+
+        ComPtr<IDWriteTextLayout> nativeTextLayoutResource = f.TextLayout->GetResource();
+
+        Vector2 expectedPoint{ 1.0f, 2.0f };
+
+        D2D1_DRAW_TEXT_OPTIONS expectedOptions = hasDrawTextOptions ? D2D1_DRAW_TEXT_OPTIONS_NO_SNAP : D2D1_DRAW_TEXT_OPTIONS_NONE;
+
+        f.DeviceContext->DrawTextLayoutMethod.SetExpectedCalls(expectedDrawTextLayoutCount,
+            [&](D2D1_POINT_2F point, IDWriteTextLayout* textLayout, ID2D1Brush* brush, D2D1_DRAW_TEXT_OPTIONS options)
+            {
+                Assert::AreEqual(expectedPoint.X, point.x);
+                Assert::AreEqual(expectedPoint.Y, point.y);
+
+                Assert::AreEqual(nativeTextLayoutResource.Get(), textLayout);
+
+                brushValidator.Check(brush);
+
+                Assert::AreEqual(expectedOptions, options);
+            });
+
+        ThrowIfFailed(f.TextLayout->put_Options(hasDrawTextOptions ? CanvasDrawTextOptions::NoPixelSnap : CanvasDrawTextOptions::Default));
+
+        callDrawFunction(f, f.TextLayout.Get());
+    }
+
+    template<typename TDraw>
+    void TestDrawTextLayout(bool isColorOverload, TDraw const& callDrawFunction)
+    {
+        TestDrawTextLayoutImpl(isColorOverload, false, callDrawFunction);
+        TestDrawTextLayoutImpl(isColorOverload, true, callDrawFunction);
+    }
+
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextLayoutWithBrush)
+    {
+        TestDrawTextLayout(false,
+            [](CanvasDrawingSessionFixture const& f, CanvasTextLayout* textLayout)
+            {
+                ThrowIfFailed(f.DS->DrawTextLayoutWithBrush(textLayout, Vector2{1, 2}, f.Brush.Get()));
+            });
+
+        // Null brush or text layout.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawTextLayoutWithBrush(f.TextLayout.Get(), Vector2{ 0, 0 }, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawTextLayoutWithBrush(nullptr, Vector2{ 0, 0 }, f.Brush.Get()));
+    }
+
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextLayoutWithColor)
+    {
+        TestDrawTextLayout(true,
+            [](CanvasDrawingSessionFixture const& f, CanvasTextLayout* textLayout)
+            {
+                ThrowIfFailed(f.DS->DrawTextLayoutWithColor(textLayout, Vector2{ 1, 2 }, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawTextLayoutWithColor(textLayout, Vector2{ 1, 2 }, ArbitraryMarkerColor2));
+            });
+    }
+    
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextLayoutAtCoordsWithBrush)
+    {
+        TestDrawTextLayout(false,
+            [](CanvasDrawingSessionFixture const& f, CanvasTextLayout* textLayout)
+            {
+                ThrowIfFailed(f.DS->DrawTextLayoutAtCoordsWithBrush(textLayout, 1, 2, f.Brush.Get()));
+            });
+
+        // Null brush or text layout.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawTextLayoutAtCoordsWithBrush(f.TextLayout.Get(), 0, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawTextLayoutAtCoordsWithBrush(nullptr, 0, 0, f.Brush.Get()));
+    }
+
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextLayoutAtCoordsWithColor)
+    {
+        TestDrawTextLayout(true,
+            [](CanvasDrawingSessionFixture const& f, CanvasTextLayout* textLayout)
+            {
+                ThrowIfFailed(f.DS->DrawTextLayoutAtCoordsWithColor(textLayout, 1, 2, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawTextLayoutAtCoordsWithColor(textLayout, 1, 2, ArbitraryMarkerColor2));
+            });
+    }
+
 
     TEST_METHOD_EX(CanvasDrawingSession_StateProperties)
     {

@@ -169,6 +169,11 @@ namespace canvas
         DONT_EXPECT(DrawCachedGeometryWithBrush, ICanvasCachedGeometry*, ICanvasBrush*);
         DONT_EXPECT(DrawCachedGeometryWithColor, ICanvasCachedGeometry*, Color);
 
+        DONT_EXPECT(DrawTextLayoutWithBrush, ICanvasTextLayout*, Vector2, ICanvasBrush*);
+        DONT_EXPECT(DrawTextLayoutAtCoordsWithBrush, ICanvasTextLayout*, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawTextLayoutWithColor, ICanvasTextLayout*, Vector2, Color);
+        DONT_EXPECT(DrawTextLayoutAtCoordsWithColor, ICanvasTextLayout*, float, float, Color);
+
         DONT_EXPECT(get_Antialiasing     , CanvasAntialiasing*);
         DONT_EXPECT(put_Antialiasing     , CanvasAntialiasing);
         DONT_EXPECT(get_Blend            , CanvasBlend*);
