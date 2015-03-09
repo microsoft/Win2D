@@ -14,7 +14,7 @@ under the License.
 -->
 
 <UserControl
-    x:Class="ExampleGallery.DebuggingOptions"
+    x:Class="ExampleGallery.DeveloperTools"
     x:Name="control"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -25,11 +25,12 @@ under the License.
     d:DesignHeight="500"
     d:DesignWidth="700">
 
-    <StackPanel Orientation="Vertical" Margin="5">
+    <StackPanel x:Name="panel" Orientation="Vertical" Margin="5">
+        <Button Content="Generate Thumbnail Bitmaps" Click="thumbnailsButton_Click"/>
         <ToggleButton x:Name="gcButton" Content="Call GC.Collect every 100 ms" Checked="gcButton_Checked" Unchecked="gcButton_Unchecked"/>
         <Button Content="Application.Exit" Click="exitButton_Click"/>
         <TextBlock Margin="16" FontSize="16" Foreground="Gray">
-            This page contains debugging tools for developers who are working on Win2D itself.<LineBreak/>
+            This page contains tools for developers who are working on Win2D itself.<LineBreak/>
             It is not intended to show how to use the Win2D API to create other applications.<LineBreak/>
             If you are trying to learn what Win2D can do or how to use it, seek elsewhere!
         </TextBlock>

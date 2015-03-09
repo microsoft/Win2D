@@ -13,18 +13,23 @@ License for the specific language governing permissions and limitations
 under the License.
 -->
 
-<Application
-    x:Class="ExampleGallery.App"
+<UserControl
+    x:Class="ExampleGallery.ThumbnailGenerator"
+    x:Name="thumbnailGenerator"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ExampleGallery"
-    RequestedTheme="Dark">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="PlatformResources.xaml"/>
-                <ResourceDictionary Source="Infrastructure/SharedResources.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
-</Application>
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="500"
+    d:DesignWidth="700"
+    Loaded="OnLoaded">
+
+    <StackPanel x:Name="panel" Orientation="Vertical" Margin="5">
+        <TextBlock Margin="16" FontSize="42" Foreground="Red">
+            Generating thumbnail bitmaps.<LineBreak/>
+            Please do not navigate away from this page.
+        </TextBlock>
+    </StackPanel>
+</UserControl>

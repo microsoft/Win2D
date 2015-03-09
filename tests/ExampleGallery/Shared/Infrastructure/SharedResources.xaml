@@ -20,10 +20,6 @@ under the License.
 
     <!-- Styles shared between all target platforms -->
 
-    <Style x:Key="ExampleListGridStyle" TargetType="Grid">
-        <Setter Property="Background" Value="DarkBlue"/>
-    </Style>
-    
     <Style x:Key="ExampleListTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="TextWrapping" Value="Wrap"/>

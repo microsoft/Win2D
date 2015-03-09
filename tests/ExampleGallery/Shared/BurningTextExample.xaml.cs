@@ -30,6 +30,11 @@ namespace ExampleGallery
         public BurningTextExample()
         {
             this.InitializeComponent();
+
+            if (ThumbnailGenerator.IsDrawingThumbnail)
+            {
+                textInput.Text = "Win2D";
+            }
         }
 
         // References to specific effects so we can dynamically update their properties.

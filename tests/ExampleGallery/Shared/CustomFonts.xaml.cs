@@ -58,7 +58,7 @@ namespace ExampleGallery
             VerticalAlignment = CanvasVerticalAlignment.Center
         };
 
-        static float lineHeight = symbolText.FontSize * 3f;
+        static float lineHeight = symbolText.FontSize * 1.5f;
 
         CanvasLinearGradientBrush textOpacityBrush;
         CanvasLinearGradientBrush blurOpacityBrush;

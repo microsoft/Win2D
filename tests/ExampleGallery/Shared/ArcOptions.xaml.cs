@@ -100,9 +100,12 @@ namespace ExampleGallery
             var centerPoint = (arcPoints[0] + arcPoints[1]) / 2;
 
             // Draw the end point markers.
-            for (int i = 0; i < 2; i++)
+            if (!ThumbnailGenerator.IsDrawingThumbnail)
             {
-                ds.DrawCircle(arcPoints[i], hitTestRadius, (i == activeDrag) ? Colors.White : Colors.Gray);
+                for (int i = 0; i < 2; i++)
+                {
+                    ds.DrawCircle(arcPoints[i], hitTestRadius, (i == activeDrag) ? Colors.White : Colors.Gray);
+                }
             }
 
             switch (CurrentOverload)
@@ -119,8 +122,11 @@ namespace ExampleGallery
 
                     var startPoint = centerPoint + Vector2.Transform(Vector2.UnitX, Matrix3x2.CreateRotation(startAngle)) * ellipseRadius;
 
-                    // Draw the ellipse bounding rectangle.
-                    ds.DrawRectangle(new Rect(arcPoints[0].ToPoint(), arcPoints[1].ToPoint()), Color.FromArgb(255, 64, 64, 64));
+                    // Draw the bounding rectangle.
+                    if (!ThumbnailGenerator.IsDrawingThumbnail)
+                    {
+                        ds.DrawRectangle(new Rect(arcPoints[0].ToPoint(), arcPoints[1].ToPoint()), Color.FromArgb(255, 64, 64, 64));
+                    }
 
                     // Draw the arc.
                     using (var builder = new CanvasPathBuilder(sender))

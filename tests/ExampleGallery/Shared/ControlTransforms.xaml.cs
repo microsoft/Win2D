@@ -42,14 +42,14 @@ namespace ExampleGallery
         // Draw to the CanvasControl.
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            DrawTextLabel(args.DrawingSession, "Canvas\nControl", sender.Size);
+            Draw(args.DrawingSession, "Canvas\nControl", sender.Size);
         }
 
 
         // Draw to the CanvasAnimatedControl.
         void Animated_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
-            DrawTextLabel(args.DrawingSession, "Canvas\nAnimated\nControl", sender.Size);
+            Draw(args.DrawingSession, "Canvas\nAnimated\nControl", sender.Size);
         }
         
         
@@ -64,9 +64,9 @@ namespace ExampleGallery
 
             imageSource = new CanvasImageSource(canvasControl, (float)size.Width, (float)size.Height);
 
-            using (var ds = imageSource.CreateDrawingSession(Colors.Yellow))
+            using (var ds = imageSource.CreateDrawingSession(Colors.Transparent))
             {
-                DrawTextLabel(ds, "Canvas\nImage\nSource", size);
+                Draw(ds, "Canvas\nImage\nSource", size);
             }
 
             imageControl.Source = imageSource;
@@ -92,17 +92,29 @@ namespace ExampleGallery
                 swapChain.ResizeBuffers((float)size.Width, (float)size.Height);
             }
 
-            using (var ds = swapChain.CreateDrawingSession(Colors.Yellow))
+            using (var ds = swapChain.CreateDrawingSession(Colors.Transparent))
             {
-                DrawTextLabel(ds, "Canvas\nSwap\nChain", size);
+                Draw(ds, "Canvas\nSwap\nChain", size);
             }
 
             swapChain.Present();
         }
 
 
-        void DrawTextLabel(CanvasDrawingSession drawingSession, string text, Size size)
+        void Draw(CanvasDrawingSession drawingSession, string text, Size size)
         {
+            // Background gradient.
+            using (var brush = CanvasRadialGradientBrush.CreateRainbow(drawingSession, 0))
+            {
+                brush.Center = size.ToVector2() / 2;
+
+                brush.RadiusX = (float)size.Width;
+                brush.RadiusY = (float)size.Height;
+
+                drawingSession.FillRectangle(0, 0, (float)size.Width, (float)size.Height, brush);
+            }
+
+            // Text label.
             var label = string.Format("{0}\n{1:0} x {2:0}", text, size.Width, size.Height);
 
             drawingSession.DrawText(label, size.ToVector2() / 2, Colors.Black, textLabelFormat);

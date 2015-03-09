@@ -44,7 +44,6 @@ namespace ExampleGallery
         public CanvasCapStyle DashCap { get; set; }
         public CanvasLineJoin LineJoin { get; set; }
 
-        CanvasSolidColorBrush brush;
         CanvasStrokeStyle strokeStyle = new CanvasStrokeStyle();
 
         CanvasStrokeStyle hairlineStrokeStyle = new CanvasStrokeStyle()
@@ -79,14 +78,12 @@ namespace ExampleGallery
             // Draw hairlines showing the start/end points of the line.  
             // This helps demonstrate the behavior of start/end cap.
             //
-            this.brush.Color = Colors.Aqua;
-
             ds.DrawLine(
                 col1Left,
                 row1Top,
                 col1Left,
                 row1Bottom,
-                this.brush,
+                Colors.Aqua,
                 1.0f,
                 this.hairlineStrokeStyle);
 
@@ -95,15 +92,13 @@ namespace ExampleGallery
                 row1Top,
                 col1Right,
                 row1Bottom,
-                this.brush,
+                Colors.Aqua,
                 1.0f,
                 this.hairlineStrokeStyle);
 
             //
             // Draw the demo shapes with the chosen stroke style
             //
-            this.brush.Color = Colors.AntiqueWhite;
-
             var strokeWidth = (float)Math.Max(5, Math.Min(30, width / 50));
 
             ds.DrawLine(
@@ -111,13 +106,13 @@ namespace ExampleGallery
                 (row1Top + row1Bottom) / 2,
                 col1Right,
                 (row1Top + row1Bottom) / 2,
-                this.brush,
+                Colors.Green,
                 strokeWidth,
                 this.strokeStyle);
 
             ds.DrawRectangle(
                 new Rect(new Point(col2Left, row1Top), new Point(col2Right, row1Bottom)),
-                this.brush,
+                Colors.Green,
                 strokeWidth,
                 this.strokeStyle);
 
@@ -125,7 +120,7 @@ namespace ExampleGallery
                 new Rect(new Point(col1Left, row2Top), new Point(col1Right, row2Bottom)),
                 width * 0.1f,
                 height * 0.1f,
-                this.brush,
+                Colors.Green,
                 strokeWidth,
                 this.strokeStyle);
 
@@ -134,7 +129,7 @@ namespace ExampleGallery
                 (row2Top + row2Bottom) / 2,
                 (col2Right - col2Left) / 2,
                 (row2Bottom - row2Top) / 2,
-                this.brush,
+                Colors.Green,
                 strokeWidth,
                 this.strokeStyle);
 
@@ -149,11 +144,6 @@ namespace ExampleGallery
             {
                 ds.DrawText("Dots have zero size when DashCap = CanvasCapStyle.Flat", col1Left, 0, Colors.White);
             }
-        }
-
-        private void Canvas_CreateResources(CanvasControl sender, object args)
-        {
-            this.brush = new CanvasSolidColorBrush(sender, Colors.AntiqueWhite);
         }
 
         private void SettingsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

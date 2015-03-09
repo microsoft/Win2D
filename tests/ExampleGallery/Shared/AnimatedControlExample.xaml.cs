@@ -109,11 +109,14 @@ namespace ExampleGallery
             ds.Transform = counterTransform;
             sweepRenderer.Draw(sender.TargetElapsedTime.TotalMilliseconds, args.Timing.UpdateCount, ds);
 
-            ds.Transform = Matrix3x2.CreateTranslation(graphTransform.Translation);
-            updatesPerDrawRenderer.Draw(args, ds, width * graphTransform.M11, height * graphTransform.M22);
+            if (!ThumbnailGenerator.IsDrawingThumbnail)
+            {
+                ds.Transform = Matrix3x2.CreateTranslation(graphTransform.Translation);
+                updatesPerDrawRenderer.Draw(args, ds, width * graphTransform.M11, height * graphTransform.M22);
 
-            ds.Transform = Matrix3x2.Identity;
-            touchPointsRenderer.Draw(ds);
+                ds.Transform = Matrix3x2.Identity;
+                touchPointsRenderer.Draw(ds);
+            }
         }
 
         private static void CalculateLayout(Size size, float width, float height, out Matrix3x2 counterTransform, out Matrix3x2 graphTransform)

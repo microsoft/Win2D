@@ -41,7 +41,6 @@ under the License.
             <canvas:CanvasControl x:Name="canvasControl" 
                                   Grid.Column="0" Grid.Row="0" 
                                   Width="96" Height="96" 
-                                  ClearColor="CornflowerBlue"
                                   CreateResources="Canvas_CreateResources" 
                                   Draw="Canvas_Draw">
 
@@ -53,7 +52,6 @@ under the License.
             <canvas:CanvasAnimatedControl x:Name="animatedControl" 
                                           Grid.Column="1" Grid.Row="0" 
                                           Width="96" Height="96" 
-                                          ClearColor="Green" 
                                           Draw="Animated_Draw">
 
                 <canvas:CanvasAnimatedControl.RenderTransform>

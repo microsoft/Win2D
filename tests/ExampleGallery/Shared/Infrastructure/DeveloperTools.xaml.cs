@@ -11,20 +11,43 @@
 // under the License.
 
 using System;
+using Windows.Storage.Pickers;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace ExampleGallery
 {
-    public sealed partial class DebuggingOptions : UserControl
+    public sealed partial class DeveloperTools : UserControl
     {
         static DispatcherTimer timer;
 
-        public DebuggingOptions()
+        public DeveloperTools()
         {
             this.InitializeComponent();
 
             gcButton.IsChecked = timer != null && timer.IsEnabled;
+        }
+
+        async void thumbnailsButton_Click(object sender, RoutedEventArgs e)
+        {
+#if WINDOWS_PHONE_APP
+            await new MessageDialog("Not supported on Windows Phone. Please run on a Windows PC instead.").ShowAsync();
+#else
+            var folderPicker = new FolderPicker
+            {
+                CommitButtonText = "Generate Thumbnails",
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                FileTypeFilter = { ".png" },
+            };
+
+            var outputFolder = await folderPicker.PickSingleFolderAsync();
+
+            if (outputFolder != null)
+            {
+                panel.Children.Add(new ThumbnailGenerator(outputFolder));
+            }
+#endif
         }
 
         void gcButton_Checked(object sender, RoutedEventArgs e)

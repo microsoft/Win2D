@@ -26,13 +26,15 @@ under the License.
 
     <Page.Resources>
         <DataTemplate x:Key="WideItemTemplate">
-            <Grid Style="{StaticResource ExampleListGridStyle}" Width="300" Height="150" Margin="10">
+            <Grid Width="300" Height="150" Margin="10">
+                <Image Source="{Binding ThumbnailWide}"/>
                 <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" Margin="20" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="NarrowItemTemplate">
-            <Grid Style="{StaticResource ExampleListGridStyle}"  Width="150" Height="150" Margin="5">
+            <Grid Width="150" Height="150" Margin="5">
+                <Image Source="{Binding ThumbnailNarrow}"/>
                 <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" Margin="10" />
             </Grid>
         </DataTemplate>

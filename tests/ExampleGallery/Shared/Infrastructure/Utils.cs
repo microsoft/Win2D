@@ -27,28 +27,33 @@ namespace ExampleGallery
             return Enum.GetValues(typeof(T)).Cast<T>().ToList();
         }
 
-        public static Matrix3x2 GetDisplayTransform(Size controlSize, ICanvasResourceCreatorWithDpi canvas, int designWidth, int designHeight)
+        public static Matrix3x2 GetDisplayTransform(Vector2 outputSize, Vector2 sourceSize)
         {
             // Scale the display to fill the control.
-            Vector2 canvasSize = controlSize.ToVector2();
-            var simulationSize = new Vector2(canvas.ConvertPixelsToDips(designWidth), canvas.ConvertPixelsToDips(designHeight));
-            var scale = canvasSize / simulationSize;
+            var scale = outputSize / sourceSize;
             var offset = Vector2.Zero;
 
             // Letterbox or pillarbox to preserve aspect ratio.
             if (scale.X > scale.Y)
             {
                 scale.X = scale.Y;
-                offset.X = (canvasSize.X - simulationSize.X * scale.X) / 2;
+                offset.X = (outputSize.X - sourceSize.X * scale.X) / 2;
             }
             else
             {
                 scale.Y = scale.X;
-                offset.Y = (canvasSize.Y - simulationSize.Y * scale.Y) / 2;
+                offset.Y = (outputSize.Y - sourceSize.Y * scale.Y) / 2;
             }
 
             return Matrix3x2.CreateScale(scale) *
                    Matrix3x2.CreateTranslation(offset);
+        }
+
+        public static Matrix3x2 GetDisplayTransform(Size controlSize, ICanvasResourceCreatorWithDpi canvas, int designWidth, int designHeight)
+        {
+            var sourceSize = new Vector2(canvas.ConvertPixelsToDips(designWidth), canvas.ConvertPixelsToDips(designHeight));
+
+            return GetDisplayTransform(controlSize.ToVector2(), sourceSize);
         }
 
         public static CanvasGeometry CreateStarGeometry(ICanvasResourceCreator resourceCreator, float scale, Vector2 center)
