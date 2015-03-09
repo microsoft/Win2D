@@ -103,6 +103,11 @@ under the License.
           property is not available when the CanvasSwapChain is created with
           this method.
         </p>
+        <p>
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers"/>
+          will fail for Windows Phone 8.1 apps.  Instead, applications should
+          dispose the old swap chain and create a new one of the required size.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,System.Single)">
@@ -116,6 +121,11 @@ under the License.
           cref="P:Microsoft.Graphics.Canvas.CanvasSwapChain.TransformMatrix"/>
           property is not available when the CanvasSwapChain is created with
           this method.
+        </p>
+        <p>
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers"/>
+          will fail for Windows Phone 8.1 apps.  Instead, applications should
+          dispose the old swap chain and create a new one of the required size.
         </p>
       </remarks>
     </member>
@@ -135,11 +145,29 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single)">
       <summary>Changes the CanvasSwapChain's back buffer size.</summary>
-      <remarks>Size is in device independent pixels (dips).</remarks>
+      <remarks>
+        <p>
+          Size is in device independent pixels (dips).
+        </p>
+        <p>
+          On Windows Phone 8.1, this method will fail for swap chains created
+          via <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32)">
       <summary>Changes the CanvasSwapChain's back buffer size, pixel format, and number of buffers.</summary>
-      <remarks>Size is in device independent pixels (dips).</remarks>
+      <remarks>
+        <p>
+          Size is in device independent pixels (dips).
+        </p>
+        <p>
+          On Windows Phone 8.1, this method will fail for swap chains created
+          via <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateDrawingSession(Windows.UI.Color)">
       <summary>Creates a drawing session that will draw onto this CanvasSwapChain.</summary>
