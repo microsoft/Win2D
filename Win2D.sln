@@ -124,6 +124,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.internal.shared"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.internal.Windows", "winrt\test.internal\winrt.test.internal.Windows.vcxproj", "{1FE831F7-6773-4445-B570-1F5570FAD88D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreWindowExample", "CoreWindowExample", "{D60A7E34-7B9D-43F2-A47F-1FE87EBB7404}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CoreWindowExample.Shared", "tests\CoreWindowExample\Shared\CoreWindowExample.Shared.shproj", "{FD83BF4B-D82C-463A-BE38-84F8B9374CCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreWindowExample.Windows", "tests\CoreWindowExample\Windows\CoreWindowExample.Windows.csproj", "{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreWindowExample.WindowsPhone", "tests\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj", "{6104A231-3DC0-4354-9210-468D8B9D0686}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		numerics\Cpp\tests\CppNumericsTests.Shared.vcxitems*{2d1259ac-e4c6-4345-af91-5962e0c5112d}*SharedItemsImports = 4
@@ -132,12 +140,14 @@ Global
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{6d29a10e-e538-47fc-9775-143df718a78d}*SharedItemsImports = 4
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
 		tests\CsConsumer\Shared\CsConsumer.Shared.projitems*{5e3a65be-ec00-4fe7-a3bc-129bf8afc7aa}*SharedItemsImports = 4
+		tests\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{fd83bf4b-d82c-463a-be38-84f8b9374ccf}*SharedItemsImports = 13
 		winrt\test.external\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
 		tests\CsConsumer\Shared\CsConsumer.Shared.projitems*{bed92440-609a-4a13-924c-75a7bafc3969}*SharedItemsImports = 13
 		winrt\lib\winrt.lib.Shared.vcxitems*{1574c4de-318f-4555-b72e-97532f720a13}*SharedItemsImports = 9
 		numerics\Cpp\tests\CppNumericsTests.Shared.vcxitems*{d125d087-f3a5-44c7-9bbf-952fb30b2d7e}*SharedItemsImports = 9
 		winrt\lib\winrt.lib.Shared.vcxitems*{8e9fef0d-edb6-4c76-9383-a070314e5ff4}*SharedItemsImports = 4
 		winrt\dll\winrt.dll.Shared.vcxitems*{d3d2a425-69d2-4f8c-98dc-760abc25e535}*SharedItemsImports = 9
+		tests\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{0837bda5-276b-44ee-9f24-e2d3bf7e6dfb}*SharedItemsImports = 4
 		winrt\dll\winrt.dll.Shared.vcxitems*{6eabd217-3fd8-4298-929d-857811d8f3fa}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{d5e0912c-636c-484b-a459-539a26da9cc2}*SharedItemsImports = 13
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{9f8a014c-478a-4ec2-8cc2-37ceb3ccfccf}*SharedItemsImports = 4
@@ -149,6 +159,7 @@ Global
 		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{5c9d7c27-14c6-44f7-8a1b-447cdb939cbc}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{198d676f-fed6-4501-a083-ea9d288db611}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{860ee6b2-f36c-448e-ba84-607266fb6fba}*SharedItemsImports = 4
+		tests\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{6104a231-3dc0-4354-9210-468d8b9d0686}*SharedItemsImports = 4
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{dd961f31-3142-4e3a-80a9-bc9da5d75816}*SharedItemsImports = 4
 		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{6f06c88d-b227-405b-a0d4-8e03dcba8191}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{1fe831f7-6773-4445-b570-1f5570fad88d}*SharedItemsImports = 4
@@ -467,6 +478,38 @@ Global
 		{1FE831F7-6773-4445-B570-1F5570FAD88D}.Release|Win32.Build.0 = Release|Win32
 		{1FE831F7-6773-4445-B570-1F5570FAD88D}.Release|x64.ActiveCfg = Release|x64
 		{1FE831F7-6773-4445-B570-1F5570FAD88D}.Release|x64.Build.0 = Release|x64
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|ARM.ActiveCfg = Debug|ARM
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|ARM.Build.0 = Debug|ARM
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|ARM.Deploy.0 = Debug|ARM
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|Win32.ActiveCfg = Debug|x86
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|Win32.Build.0 = Debug|x86
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|Win32.Deploy.0 = Debug|x86
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|x64.ActiveCfg = Debug|x64
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|x64.Build.0 = Debug|x64
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Debug|x64.Deploy.0 = Debug|x64
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|ARM.ActiveCfg = Release|ARM
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|ARM.Build.0 = Release|ARM
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|ARM.Deploy.0 = Release|ARM
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|Win32.ActiveCfg = Release|x86
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|Win32.Build.0 = Release|x86
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|Win32.Deploy.0 = Release|x86
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|x64.ActiveCfg = Release|x64
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|x64.Build.0 = Release|x64
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB}.Release|x64.Deploy.0 = Release|x64
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Debug|ARM.ActiveCfg = Debug|ARM
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Debug|ARM.Build.0 = Debug|ARM
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Debug|ARM.Deploy.0 = Debug|ARM
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Debug|Win32.ActiveCfg = Debug|x86
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Debug|Win32.Build.0 = Debug|x86
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Debug|Win32.Deploy.0 = Debug|x86
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Release|ARM.ActiveCfg = Release|ARM
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Release|ARM.Build.0 = Release|ARM
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Release|ARM.Deploy.0 = Release|ARM
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Release|Win32.ActiveCfg = Release|x86
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Release|Win32.Build.0 = Release|x86
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Release|Win32.Deploy.0 = Release|x86
+		{6104A231-3DC0-4354-9210-468D8B9D0686}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -518,5 +561,9 @@ Global
 		{9565E4DF-2A3F-4576-822E-6C24ACEAD48A} = {0F212400-0A8B-4E26-9BA8-CE7165FF8717}
 		{B038B2A3-0FF2-4313-A0DB-B7B59DC2DC4C} = {9565E4DF-2A3F-4576-822E-6C24ACEAD48A}
 		{1FE831F7-6773-4445-B570-1F5570FAD88D} = {9565E4DF-2A3F-4576-822E-6C24ACEAD48A}
+		{D60A7E34-7B9D-43F2-A47F-1FE87EBB7404} = {EC7BD4FF-9DAE-4698-9FDA-244478B0203B}
+		{FD83BF4B-D82C-463A-BE38-84F8B9374CCF} = {D60A7E34-7B9D-43F2-A47F-1FE87EBB7404}
+		{0837BDA5-276B-44EE-9F24-E2D3BF7E6DFB} = {D60A7E34-7B9D-43F2-A47F-1FE87EBB7404}
+		{6104A231-3DC0-4354-9210-468D8B9D0686} = {D60A7E34-7B9D-43F2-A47F-1FE87EBB7404}
 	EndGlobalSection
 EndGlobal
