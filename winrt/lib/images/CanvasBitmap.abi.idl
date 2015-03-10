@@ -19,6 +19,9 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasBitmap;
     runtimeclass CanvasDevice;
 
+#if (WINVER > 0x0603)
+    typedef Windows.Graphics.Imaging.BitmapSize BitmapSize;
+#else
     //
     // An integer based size struct, used to report SizeInPixels.
     //
@@ -28,6 +31,7 @@ namespace Microsoft.Graphics.Canvas
         UINT32 Width;
         UINT32 Height;
     } BitmapSize;
+#endif
 
     //
     // Projection of the encoders described here: 

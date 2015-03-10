@@ -21,6 +21,7 @@ using namespace WinRTDirectX;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation::Numerics;
 using namespace Windows::Foundation;
+using namespace Windows::Graphics::Imaging;
 using namespace Windows::UI::Core;
 
 namespace Microsoft
