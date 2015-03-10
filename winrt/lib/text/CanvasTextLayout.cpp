@@ -465,14 +465,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
 
                 const wchar_t* fontFamilyBuffer = WindowsGetStringRawBuffer(fontFamily, nullptr);
 
-                ThrowIfFailed(resource->SetFontFamilyName(fontFamilyBuffer, DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetFontFamilyName(fontFamilyBuffer, ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -484,12 +481,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontSize(fontSize, DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetFontSize(fontSize, ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -501,12 +495,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontStretch(ToFontStretch(fontStretch), DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetFontStretch(ToFontStretch(fontStretch), ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -518,12 +509,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontStyle(ToFontStyle(fontStyle), DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetFontStyle(ToFontStyle(fontStyle), ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -535,12 +523,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontWeight(ToFontWeight(fontWeight), DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetFontWeight(ToFontWeight(fontWeight), ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -552,14 +537,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
 
                 const wchar_t* localeNameBuffer = WindowsGetStringRawBuffer(name, nullptr);
 
-                ThrowIfFailed(resource->SetLocaleName(localeNameBuffer, DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetLocaleName(localeNameBuffer, ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -571,12 +553,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
 
-                ThrowIfFailed(resource->SetStrikethrough(hasStrikethrough, DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetStrikethrough(hasStrikethrough, ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -588,12 +567,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
 
-                ThrowIfFailed(resource->SetUnderline(hasUnderline, DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetUnderline(hasUnderline, ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -625,12 +601,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
 
-                ThrowIfFailed(resource->SetPairKerning(hasPairKerning, DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                ThrowIfFailed(resource->SetPairKerning(hasPairKerning, ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 
@@ -704,16 +677,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                ThrowIfNegative(positionInText);
-                ThrowIfNegative(characterCount);
-
                 auto& resource = GetResource();
 
                 ThrowIfFailed(resource->SetCharacterSpacing(
                     leadingSpacing, 
                     trailingSpacing, 
                     minimumAdvanceWidth,
-                    DWRITE_TEXT_RANGE{ positionInText, characterCount }));
+                    ToDWriteTextRange(positionInText, characterCount)));
             });
     }
 

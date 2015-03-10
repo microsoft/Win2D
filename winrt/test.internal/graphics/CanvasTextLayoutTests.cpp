@@ -239,7 +239,8 @@ namespace canvas
 
             auto textLayout = f.CreateSimpleTextLayout();
 
-            HSTRING str;
+            WinString stringIn(L"any_string");
+            HSTRING stringOut;
             float fl;
             FontStretch fontStretch;
             FontStyle fontStyle;
@@ -248,9 +249,9 @@ namespace canvas
 
             Assert::AreEqual(E_INVALIDARG, textLayout->put_TrimmingDelimiterCount(-1));
 
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetFontFamily(-1, &str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(-1, 0, str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(0, -1, str));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetFontFamily(-1, &stringOut));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(-1, 0, stringIn));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(0, -1, stringIn));
 
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFontSize(-1, &fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetFontSize(-1, 0, fl));
@@ -268,9 +269,9 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->SetFontWeight(-1, 0, fontWeight));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetFontWeight(0, -1, fontWeight));
 
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetLocaleName(-1, &str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(-1, 0, str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(0, -1, str));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetLocaleName(-1, &stringOut));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(-1, 0, stringIn));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(0, -1, stringIn));
 
             Assert::AreEqual(E_INVALIDARG, textLayout->GetStrikethrough(-1, &b));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetStrikethrough(-1, 0, b));
