@@ -503,6 +503,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

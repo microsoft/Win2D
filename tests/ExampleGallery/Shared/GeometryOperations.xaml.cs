@@ -128,23 +128,21 @@ namespace ExampleGallery
         private void Canvas_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             Matrix3x2 displayTransform = Utils.GetDisplayTransform(sender.Size, canvas, 1000, 1000);
-
             args.DrawingSession.Transform = displayTransform;
+
             args.DrawingSession.FillGeometry(combinedGeometry, Colors.Blue);
 
             if (showSourceGeometry)
             {
-                args.DrawingSession.Transform = displayTransform;
                 args.DrawingSession.DrawGeometry(leftGeometry, Colors.Red, 5.0f);
 
                 args.DrawingSession.Transform = interGeometryTransform * displayTransform;
                 args.DrawingSession.DrawGeometry(rightGeometry, Colors.Red, 5.0f);
+                args.DrawingSession.Transform = displayTransform;
             }
 
             if (showTessellation)
             {
-                args.DrawingSession.Transform = displayTransform;
-
                 foreach (var triangle in tessellation)
                 {
                     args.DrawingSession.DrawLine(triangle.Vertex1, triangle.Vertex2, Colors.Gray);
@@ -155,7 +153,6 @@ namespace ExampleGallery
 
             if (CurrentContourTracingAnimation != ContourTracingAnimationOption.None)
             {
-                args.DrawingSession.Transform = displayTransform;
                 args.DrawingSession.FillCircle(pointOnContourPath, 2, Colors.White);
 
                 const float arrowSize = 10.0f;
@@ -193,7 +190,6 @@ namespace ExampleGallery
                 args.DrawingSession.DrawLine(arrowheadFront, arrowheadLeft, Colors.White, strokeWidth);
                 args.DrawingSession.DrawLine(arrowheadFront, arrowheadRight, Colors.White, strokeWidth);
             }
-
         }
 
         private void Canvas_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
