@@ -65,7 +65,8 @@ under the License.
                       SelectedItem="{Binding CurrentContourTracingAnimation, ElementName=control, Mode=TwoWay}"
                       FontSize="15"/>
                 <ToggleButton Content="Show Source Geometry" IsChecked="false" Checked="ShowSourceGeometry_Checked" Unchecked="ShowSourceGeometry_Unchecked"/>
-              </StackPanel>
+                <ToggleButton Content="Show Tessellation" IsChecked="false" Checked="ShowTessellation_Checked" Unchecked="ShowTessellation_Unchecked"/>
+            </StackPanel>
         </ScrollViewer>
         <canvas:CanvasAnimatedControl x:Name="canvas" Grid.Column="1" Margin="5"
                               Draw="Canvas_Draw"

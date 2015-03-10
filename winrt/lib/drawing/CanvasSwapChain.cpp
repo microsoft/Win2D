@@ -33,9 +33,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator,
             width,
             height,
-            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-            2,
-            CanvasAlphaMode::Premultiplied,
+            CanvasSwapChain::DefaultPixelFormat,
+            CanvasSwapChain::DefaultBufferCount,
+            CanvasSwapChain::DefaultCompositionAlphaMode,
             swapChain);
     }
 
@@ -50,9 +50,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator, 
             width, 
             height, 
-            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-            2, 
-            CanvasAlphaMode::Premultiplied, 
+            CanvasSwapChain::DefaultPixelFormat,
+            CanvasSwapChain::DefaultBufferCount, 
+            CanvasSwapChain::DefaultCompositionAlphaMode, 
             dpi,
             swapChain);
     }
@@ -124,6 +124,67 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     //
+    // ICanvasSwapChainStatics
+    //
+
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateForCoreWindowWithDpi(
+        ICanvasResourceCreator* resourceCreator,
+        ICoreWindow* coreWindow,
+        float dpi,
+        ICanvasSwapChain** swapChain)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckAndClearOutPointer(swapChain);
+
+                ComPtr<ICanvasDevice> device;
+                ThrowIfFailed(resourceCreator->get_Device(&device));
+
+                auto newCanvasSwapChain = GetManager()->Create(
+                    device.Get(),
+                    coreWindow,
+                    dpi);
+
+                ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateForCoreWindowWithAllOptionsAndDpi(
+        ICanvasResourceCreator* resourceCreator,
+        ICoreWindow* coreWindow,
+        float width,
+        float height,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        float dpi,
+        ICanvasSwapChain** swapChain)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckAndClearOutPointer(swapChain);
+
+                ComPtr<ICanvasDevice> device;
+                ThrowIfFailed(resourceCreator->get_Device(&device));
+
+                auto newCanvasSwapChain = GetManager()->Create(
+                    device.Get(),
+                    coreWindow,
+                    width,
+                    height,
+                    format,
+                    bufferCount,
+                    dpi);
+
+                ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
+            });
+    }
+    
+
+    //
     // ICanvasDeviceResourceWithDpiFactoryNative
     //
 
@@ -140,7 +201,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(resource);
                 CheckAndClearOutPointer(wrapper);
 
-                ComPtr<IDXGISwapChain2> dxgiSwapChain;
+                ComPtr<IDXGISwapChain1> dxgiSwapChain;
                 ThrowIfFailed(resource->QueryInterface(dxgiSwapChain.GetAddressOf()));
 
                 auto newCanvasSwapChain = GetManager()->GetOrCreate(device, dxgiSwapChain.Get(), dpi);
@@ -152,7 +213,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasSwapChain::CanvasSwapChain(
         ICanvasDevice* device,
         std::shared_ptr<CanvasSwapChainManager> swapChainManager,
-        IDXGISwapChain2* dxgiSwapChain,
+        IDXGISwapChain1* dxgiSwapChain,
         float dpi)
         : ResourceWrapper(swapChainManager, dxgiSwapChain)
         , m_device(device)
@@ -265,12 +326,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                auto& resource = GetResource();
-
                 uint32_t width;
                 uint32_t height;
 
-                ThrowIfFailed(resource->GetSourceSize(&width, &height));
+                auto swapChain = As<IDXGISwapChain2>(GetResource());
+                ThrowIfFailed(swapChain->GetSourceSize(&width, &height));
 
                 *value = Size{ PixelsToDips(width, m_dpi),
                                PixelsToDips(height, m_dpi) };
@@ -282,12 +342,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& resource = GetResource();
-
                 uint32_t width = DipsToPixels(value.Width, m_dpi);
                 uint32_t height = DipsToPixels(value.Height, m_dpi);
 
-                ThrowIfFailed(resource->SetSourceSize(width, height));
+                auto swapChain = As<IDXGISwapChain2>(GetResource());
+                ThrowIfFailed(swapChain->SetSourceSize(width, height));
             });
     }
 
@@ -298,10 +357,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                auto& resource = GetResource();
 
                 DXGI_MATRIX_3X2_F matrix;
-                ThrowIfFailed(resource->GetMatrixTransform(&matrix));
+
+                auto swapChain = As<IDXGISwapChain2>(GetResource());
+                ThrowIfFailed(swapChain->GetMatrixTransform(&matrix));
 
                 // Remove our extra DPI scaling from the transform.
                 float dpiScale = m_dpi / DEFAULT_DPI;
@@ -322,8 +382,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& resource = GetResource();
-
                 // Insert additional scaling to account for display DPI.
                 float dpiScale = DEFAULT_DPI / m_dpi;
 
@@ -334,7 +392,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 value.M31 *= dpiScale;
                 value.M32 *= dpiScale;
 
-                ThrowIfFailed(resource->SetMatrixTransform(ReinterpretAs<DXGI_MATRIX_3X2_F*>(&value)));
+                auto swapChain = As<IDXGISwapChain2>(GetResource());
+                ThrowIfFailed(swapChain->SetMatrixTransform(ReinterpretAs<DXGI_MATRIX_3X2_F*>(&value)));
             });
     }
 
@@ -465,7 +524,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         static std::shared_ptr<CanvasSwapChainDrawingSessionAdapter> Create(
             ICanvasDevice* owner,
-            IDXGISwapChain2* swapChainResource,
+            IDXGISwapChain1* swapChainResource,
             D2D1_COLOR_F const& clearColor,
             float dpi,
             ID2D1DeviceContext1** outDeviceContext)
@@ -567,7 +626,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         int widthInPixels = DipsToPixels(width, dpi);
         int heightInPixels = DipsToPixels(height, dpi);
 
-        ComPtr<IDXGISwapChain2> dxgiSwapChain = deviceInternal->CreateSwapChain(
+        ComPtr<IDXGISwapChain1> dxgiSwapChain = deviceInternal->CreateSwapChainForComposition(
             widthInPixels,
             heightInPixels,
             format,
@@ -586,9 +645,60 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return canvasSwapChain;
     }
 
+    ComPtr<CanvasSwapChain> CanvasSwapChainManager::CreateNew(
+        ICanvasDevice* device,
+        ICoreWindow* coreWindow,
+        float dpi)
+    {
+        CheckInPointer(device);
+        CheckInPointer(coreWindow);
+
+        Rect bounds;
+        ThrowIfFailed(coreWindow->get_Bounds(&bounds));
+
+        return CreateNew(
+            device,
+            coreWindow,
+            bounds.Width,
+            bounds.Height,
+            CanvasSwapChain::DefaultPixelFormat,
+            CanvasSwapChain::DefaultBufferCount,
+            dpi);
+    }
+
+    ComPtr<CanvasSwapChain> CanvasSwapChainManager::CreateNew(
+        ICanvasDevice* device,
+        ICoreWindow* coreWindow,
+        float width,
+        float height,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        float dpi)
+    {
+        CheckInPointer(device);
+        CheckInPointer(coreWindow);
+
+        auto dxgiSwapChain = As<ICanvasDeviceInternal>(device)->CreateSwapChainForCoreWindow(
+            coreWindow,
+            DipsToPixels(width, dpi),
+            DipsToPixels(height, dpi),
+            format,
+            bufferCount,
+            CanvasAlphaMode::Ignore);
+
+        auto canvasSwapChain = Make<CanvasSwapChain>(
+            device,
+            shared_from_this(),
+            dxgiSwapChain.Get(),
+            dpi);
+        CheckMakeResult(canvasSwapChain);
+
+        return canvasSwapChain;
+    }
+
     ComPtr<CanvasSwapChain> CanvasSwapChainManager::CreateWrapper(
         ICanvasDevice* device,
-        IDXGISwapChain2* resource,
+        IDXGISwapChain1* resource,
         float dpi)
     {
         auto swapChain = Make<CanvasSwapChain>(

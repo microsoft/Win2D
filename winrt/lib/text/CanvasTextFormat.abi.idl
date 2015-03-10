@@ -101,16 +101,6 @@ namespace Microsoft.Graphics.Canvas
         Character
     } CanvasWordWrapping;
 
-
-    [version(VERSION), flags]
-    typedef enum CanvasDrawTextOptions
-    {
-        Default         = 0x0,
-        NoSnap          = 0x1,
-        Clip            = 0x2,
-        EnableColorFont = 0x4
-    } CanvasDrawTextOptions;
-
 #define PROPERTY(NAME, TYPE)                            \
     [propget] HRESULT NAME([out, retval] TYPE* value);  \
     [propput] HRESULT NAME([in] TYPE value)

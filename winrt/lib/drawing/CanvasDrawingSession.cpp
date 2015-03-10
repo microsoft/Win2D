@@ -2135,6 +2135,85 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         return m_defaultTextFormat.Get();
     }
+    
+
+    //
+    // Text layout
+    //
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextLayoutWithBrush(
+        ICanvasTextLayout* textLayout,
+        Numerics::Vector2 point,
+        ICanvasBrush* brush)
+    {
+        return DrawTextLayoutAtCoordsWithBrush(
+            textLayout,
+            point.X,
+            point.Y,
+            brush);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextLayoutAtCoordsWithBrush(
+        ICanvasTextLayout* textLayout,
+        float x,
+        float y,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(textLayout);
+                CheckInPointer(brush);
+
+                CanvasDrawTextOptions drawTextOptions;
+                ThrowIfFailed(textLayout->get_Options(&drawTextOptions));
+
+                deviceContext->DrawTextLayout(
+                    D2D1_POINT_2F{ x, y },
+                    GetWrappedResource<IDWriteTextLayout>(textLayout).Get(),
+                    ToD2DBrush(brush).Get(),
+                    StaticCastAs<D2D1_DRAW_TEXT_OPTIONS>(drawTextOptions));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextLayoutWithColor(
+        ICanvasTextLayout* textLayout,
+        Numerics::Vector2 point,
+        ABI::Windows::UI::Color color)
+    {
+        return DrawTextLayoutAtCoordsWithColor(
+            textLayout,
+            point.X,
+            point.Y,
+            color);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawTextLayoutAtCoordsWithColor(
+        ICanvasTextLayout* textLayout,
+        float x,
+        float y,
+        ABI::Windows::UI::Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(textLayout);
+
+                CanvasDrawTextOptions drawTextOptions;
+                ThrowIfFailed(textLayout->get_Options(&drawTextOptions));
+
+                deviceContext->DrawTextLayout(
+                    D2D1_POINT_2F{ x, y },
+                    GetWrappedResource<IDWriteTextLayout>(textLayout).Get(),
+                    GetColorBrush(color),
+                    StaticCastAs<D2D1_DRAW_TEXT_OPTIONS>(drawTextOptions));
+            });
+    }
 
     
     //

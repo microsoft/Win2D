@@ -18,6 +18,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ArcOptions.xaml.cs">
+      <DependentUpon>ArcOptions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BurningTextExample.xaml.cs">
       <DependentUpon>BurningTextExample.xaml</DependentUpon>
     </Compile>
@@ -30,8 +33,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)CustomFonts.xaml.cs">
       <DependentUpon>CustomFonts.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)DebuggingOptions.xaml.cs">
-      <DependentUpon>DebuggingOptions.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
+      <DependentUpon>DeveloperTools.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DpiExample.xaml.cs">
       <DependentUpon>DpiExample.xaml</DependentUpon>
@@ -39,8 +42,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)EffectsExample.xaml.cs">
       <DependentUpon>EffectsExample.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)ExampleDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExamplePage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ExampleDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ExamplePage.xaml.cs">
       <DependentUpon>ExamplePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GameOfLife.xaml.cs">
@@ -52,22 +55,25 @@
     <Compile Include="$(MSBuildThisFileDirectory)ImageSourceUpdateRegion.xaml.cs">
       <DependentUpon>ImageSourceUpdateRegion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ThumbnailGenerator.xaml.cs">
+      <DependentUpon>ThumbnailGenerator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)LayersExample.xaml.cs">
       <DependentUpon>LayersExample.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)NavigationHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RelayCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\NavigationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShapesExample.xaml.cs">
       <DependentUpon>ShapesExample.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)StrokeStyles.xaml.cs">
       <DependentUpon>StrokeStyles.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)SuspensionManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\SuspensionManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)AnimatedControlExample.xaml">
@@ -82,7 +88,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)DebuggingOptions.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Infrastructure\ThumbnailGenerator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -106,11 +116,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)ArcOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)EffectsExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)ExamplePage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Infrastructure\ExamplePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -122,7 +136,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Infrastructure\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -130,7 +144,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)SharedResources.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Infrastructure\SharedResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -138,5 +152,37 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BurningTextNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BurningTextWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CanvasControlNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CanvasControlWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ControlTransformsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ControlTransformsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomFontsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomFontsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DeveloperToolsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DeveloperToolsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DPINarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DPIWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GameofLifeNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GameofLifeWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesWide.png" />
   </ItemGroup>
 </Project>

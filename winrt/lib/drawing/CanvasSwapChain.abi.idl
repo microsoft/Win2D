@@ -22,11 +22,17 @@ namespace Microsoft.Graphics.Canvas
     } CanvasSwapChainRotation;
 
     // 
-    // CanvasSwapChain is a wrapper for a Direct3D swap chain. It may be used
-    // standalone, from inside CanvasAnimatedControl or CanvasSwapChainPanel.
+    // CanvasSwapChain is a wrapper for a Direct3D swap chain.  The activation
+    // factory will construct swap chains using CreateSwapChainForComposition
+    // (these are suitable for use with XAML) or CreateSwapChainForCoreWindow
+    // (for use in non-XAML apps).
+    //
+    // It may be used standalone, from inside CanvasAnimatedControl or
+    // CanvasSwapChainPanel.
     //
     // It is associated with a CanvasDevice because of the explicit association
-    // with a D3D device in CreateSwapChainForComposition.
+    // with a D3D device in CreateSwapChainForComposition /
+    // CreateSwapChainForCoreWindow.
     //
     // When used by a CanvasAnimatedControl, CanvasSwapChain's device is the
     // device of the control. For CanvasSwapChainPanel or CanvasSwapChain
@@ -85,6 +91,46 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasSwapChain** swapChain);
     };
 
+    [version(VERSION), uuid(05376D8F-3E8D-4A82-9838-691680D32A52), exclusiveto(CanvasSwapChain)]
+    interface ICanvasSwapChainStatics : IInspectable
+    {
+        //
+        // These allow creation of CoreWindow swap chains.  Example usage,
+        // creates a swapchain the same size as the window:
+        //
+        // void SetWindow(CoreWindow window)
+        // {
+        //     var dpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
+        //     var device = new CanvasDevice();
+        //     var swapChain = CanvasSwapChain.CreateForCoreWindow(device, coreWindow, dpi);
+        // }
+        //
+
+        // Creates a DXGI_FORMAT_B8G8R8A8_UNORM, 2-buffer, premultiplied swap
+        // chain that's the same size as the window
+        [overload("CreateForCoreWindow")]
+        HRESULT CreateForCoreWindowWithDpi(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.UI.Core.CoreWindow* coreWindow,
+            [in] float dpi,
+            [out, retval] CanvasSwapChain** swapChain);
+
+        [overload("CreateForCoreWindow")]
+        HRESULT CreateForCoreWindowWithAllOptionsAndDpi(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.UI.Core.CoreWindow* coreWindow,
+            [in] float width,
+            [in] float height,
+            [in] DIRECTX_PIXEL_FORMAT format,
+            [in] INT32 bufferCount,
+            [in] float dpi,
+            [out, retval] CanvasSwapChain** swapChain);
+
+        // Note: no alpha mode can be specified for CoreWindow swap chains,
+        // since CanvasAlphaMode::Ignore is the only valid value (in the absence
+        // of DXGI_SWAP_CHAIN_FLAG_FOREGROUND_LAYER support).
+    }
+
     [version(VERSION), uuid(882E3C3A-5725-409C-9E76-F80B3BACF1B4), exclusiveto(CanvasSwapChain)]
     interface ICanvasSwapChain : IInspectable
         requires Windows.Foundation.IClosable
@@ -134,7 +180,7 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasDrawingSession** drawingSession);
     };
 
-    [version(VERSION), activatable(ICanvasSwapChainFactory, VERSION), marshaling_behavior(agile), threading(both)]
+    [version(VERSION), activatable(ICanvasSwapChainFactory, VERSION), static(ICanvasSwapChainStatics, VERSION), marshaling_behavior(agile), threading(both)]
     runtimeclass CanvasSwapChain
     {
         [default] interface ICanvasSwapChain;

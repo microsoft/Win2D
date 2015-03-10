@@ -193,6 +193,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float flatteningTolerance,
             boolean* containsPoint) override;
 
+        IFACEMETHOD(Tessellate)(
+            UINT32* trianglesCount,
+            CanvasTriangleVertices** triangles) override;
+
+        IFACEMETHOD(TessellateWithTransformAndFlatteningTolerance)(
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            UINT32* trianglesCount,
+            CanvasTriangleVertices** triangles) override;
+
     private:
         void StrokeImpl(
             float strokeWidth,
@@ -255,6 +265,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<CanvasGeometry> CreateNew(
             ICanvasResourceCreator* resourceCreator,
+            uint32_t pointCount,
+            Vector2* points);
+
+        ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
             uint32_t geometryCount,
             ICanvasGeometry** geometryElements,
             CanvasFilledRegionDetermination filledRegionDetermination);
@@ -262,7 +277,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasGeometry> CreateWrapper(
             ICanvasDevice* device,
             ID2D1Geometry* resource);
-
     };
 
     class CanvasGeometryFactory
@@ -336,6 +350,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(CreatePath)(
             ICanvasPathBuilder* pathBuilder,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreatePolygon)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t pointCount,
+            Numerics::Vector2* points,
             ICanvasGeometry** geometry) override;
 
         IFACEMETHOD(CreateGroup)(

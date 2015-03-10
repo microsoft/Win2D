@@ -18,76 +18,79 @@ under the License.
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-      <member name="T:Microsoft.Graphics.Canvas.CanvasGeometry">
-        <summary>Geometry objects provide a means of drawing and manipulating geometric shapes.</summary>
-        <remarks>  
-                <p>
-                A geometry is an arbitrary 2-D area, and a means of representing geometric
-                shapes. It may consist of lines, polygons with multiple segments, bezier curves, or any number 
-                of open or closed figures comprised of these. And there aren't any limits on how complex a 
-                geometry can be. It can be zero-sized, consist of one point, or be arbitrarily complex.
-                </p>
-        
-                <p>
-                A geometry object can be drawn using CanvasDrawingSession's 
-                <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/> 
-                or <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>.
-                </p>
-                 
-                <p>
-                Geometry objects are useful while doing manipulations (available, currently, through 
-                native interop) such as Widen or CombineWithGeometry.
-                </p>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasGeometry">
+      <summary>Geometry objects provide a means of drawing and manipulating geometric shapes.</summary>
+      <remarks>
+        <p>
+          A geometry is an arbitrary 2-D area, and a means of representing geometric
+          shapes. It may consist of lines, polygons with multiple segments, bezier curves, or any number
+          of open or closed figures comprised of these. And there aren't any limits on how complex a
+          geometry can be. It can be zero-sized, consist of one point, or be arbitrarily complex.
+        </p>
 
-                <p>
-                Some primitives that can be created using static CanvasGeometry methods, such as Rectangle,
-                may also be drawn straightforwardly through CanvasDrawingSession's methods. In fact, for 
-                simple cases, CanvasDrawingSession's methods are recommended.
-                </p>       
+        <p>
+          A geometry object can be drawn using CanvasDrawingSession's
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/>
+          or <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>.
+        </p>
 
-                <p>
-                Complex geometries, sometimes those created through CanvasGeometry.CreatePath, can be
-                costly to draw. It may be worth paying a one-time, up-front performance cost for a less
-                expensive draw-time cost. To do this, consider using <see cref="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry"/>.
-                </p>       
-        </remarks>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Dispose">
-        <summary>Releases all resources used by the CanvasGeometry.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect)">
-        <summary>Creates a new rectangle geometry object with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
-        <summary>Creates a rectangular geometry primitive with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect,System.Single,System.Single)">
-        <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
-        <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single)">
-        <summary>Creates a new ellipse geometry object with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
-        <summary>Creates a new ellipse geometry object with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single)">
-        <summary>Creates a new circle geometry object with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
-        <summary>Creates a new circle geometry object with the specified extents.</summary>
-      </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreatePath(Microsoft.Graphics.Canvas.CanvasPathBuilder)">
-        <summary>Creates a new path geometry, populated with data from the specified path builder.</summary>
-        <remarks>
-        	Creating a new CanvasGeometry will close the CanvasPathBuilder object, and render it unavailable for further use. 
-        	To create another CanvasGeometry, create a new CanvasPathBuilder.
-        	If your app needs to create multiple paths, say, where one is a strict subset of the other, 
-        	consider using multiple CanvasPathBuilder objects.</remarks>
-      </member>
-      
+        <p>
+          Geometry objects are useful while doing manipulations (available, currently, through
+          native interop) such as Widen or CombineWithGeometry.
+        </p>
+
+        <p>
+          Some primitives that can be created using static CanvasGeometry methods, such as Rectangle,
+          may also be drawn straightforwardly through CanvasDrawingSession's methods. In fact, for
+          simple cases, CanvasDrawingSession's methods are recommended.
+        </p>
+
+        <p>
+          Complex geometries, sometimes those created through CanvasGeometry.CreatePath, can be
+          costly to draw. It may be worth paying a one-time, up-front performance cost for a less
+          expensive draw-time cost. To do this, consider using <see cref="T:Microsoft.Graphics.Canvas.CanvasCachedGeometry"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Dispose">
+      <summary>Releases all resources used by the CanvasGeometry.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect)">
+      <summary>Creates a new rectangle geometry object with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a rectangular geometry primitive with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect,System.Single,System.Single)">
+      <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single)">
+      <summary>Creates a new ellipse geometry object with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a new ellipse geometry object with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single)">
+      <summary>Creates a new circle geometry object with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
+      <summary>Creates a new circle geometry object with the specified extents.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreatePath(Microsoft.Graphics.Canvas.CanvasPathBuilder)">
+      <summary>Creates a new path geometry, populated with data from the specified path builder.</summary>
+      <remarks>
+        Creating a new CanvasGeometry will close the CanvasPathBuilder object, and render it unavailable for further use. 
+        To create another CanvasGeometry, create a new CanvasPathBuilder.
+        If your app needs to create multiple paths, say, where one is a strict subset of the other, 
+        consider using multiple CanvasPathBuilder objects.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreatePolygon(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2[])">
+      <summary>Creates a new polygon geometry (triangle, quadrilateral, etc.), connecting the specified points.</summary>
+      <remarks>The polygon will automatically be closed by connecting the last point back to the first one.</remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.CanvasGeometryCombine)">
       <summary>Returns the combination of this geometry and the specified geometry according to the specified combine operation, 
@@ -114,26 +117,26 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Outline">
       <summary>Returns a geometry with equivalent fill, but no self-intersections, and figures are all oriented counterclockwise. </summary>
       <remarks>
-      	Uses default flattening tolerance and identity transform. 
-      	The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination.</remarks>
+        Uses default flattening tolerance and identity transform. 
+        The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Outline(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a geometry with equivalent fill, but no self-intersections, and figures are all oriented counterclockwise. </summary>
       <remarks>
-      	Uses the specified flattening tolerance and transform.
-      	The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination. </remarks>
+        Uses the specified flattening tolerance and transform.
+        The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination. </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Simplify(Microsoft.Graphics.Canvas.CanvasGeometrySimplification)">
       <summary>Returns a version of the geometry that contains only lines, and, optionally, cubic Bezier curves. </summary>
       <remarks>
-      	Uses default flattening tolerance and identity transform.
-      	Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.</remarks>
+        Uses default flattening tolerance and identity transform.
+        Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Simplify(Microsoft.Graphics.Canvas.CanvasGeometrySimplification,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a version of the geometry that contains only lines, and, optionally, cubic Bezier curves. </summary>
       <remarks>
-      	Uses the specified flattening tolerance and transform.
-      	Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.</remarks>
+        Uses the specified flattening tolerance and transform.
+        Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CompareWith(Microsoft.Graphics.Canvas.CanvasGeometry)">
       <summary>Returns a value describing the intersection between this geometry and the specified geometry. </summary>
@@ -146,15 +149,15 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeArea">
       <summary>Returns the area of this geometry. </summary>
       <remarks>
-      	<p>Uses default flattening tolerance and identity transform.</p>
+        <p>Uses default flattening tolerance and identity transform.</p>
         <p>Area is a two-dimensional quantity.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputeArea(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the area of this geometry. </summary>
       <remarks>
-      	<p>Uses the specified flattening tolerance and transform.</p>
-      	<p>Area is a two-dimensional quantity.</p>
+        <p>Uses the specified flattening tolerance and transform.</p>
+        <p>Area is a two-dimensional quantity.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.ComputePathLength">
@@ -264,43 +267,43 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGeometry[])">
       <summary>Returns a geometry containing the specified geometries, grouped together.</summary>
       <remarks>
-      	<p>
-      	This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
-      	contains six overlapping rectangles, then the result, when streamed out (using interop) will
-      	still contain the six rectangles. 
-      	</p>
-      	<p>
-      	However, areas of self-intersection do <i>not</i> contribute to overdraw,
-      	and this is one of the advantages of using grouped geometry. For example, if the six overlapping rectangles from
-      	above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
-      	If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
-      	achieve this occurs at draw time.
-      	</p>
-      	<p>
-      	This overload determines how to fill intersecting geometries in the group using a default
+        <p>
+        This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
+        contains six overlapping rectangles, then the result, when streamed out (using interop) will
+        still contain the six rectangles. 
+        </p>
+        <p>
+        However, areas of self-intersection do <i>not</i> contribute to overdraw,
+        and this is one of the advantages of using grouped geometry. For example, if the six overlapping rectangles from
+        above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
+        If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
+        achieve this occurs at draw time.
+        </p>
+        <p>
+        This overload determines how to fill intersecting geometries in the group using a default
         <see cref="T:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination"/> of Alternate.
-      	</p>
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGeometry[],Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination)">
       <summary>Returns a geometry containing the specified geometries, grouped together.</summary>
       <remarks>
-      	<p>
-      	This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
-      	contains six overlapping rectangles, then the result, when streamed out (using interop) will
-      	still contain the six rectangles. 
-      	</p>
-      	<p>
-      	However, areas of self-intersection do <i>not</i> contribute to overdraw,
-      	and this is one of the advantages of using grouped geometry. For example, if the six overlapping rectangles from
-      	above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
-      	If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
-      	achieve this occurs at draw time.
-      	</p>
         <p>
-      	This overload uses the specified <see cref="T:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination"/>
+        This operation doesn't remove self-intersecting areas, like an Outline operation would. If the group
+        contains six overlapping rectangles, then the result, when streamed out (using interop) will
+        still contain the six rectangles. 
+        </p>
+        <p>
+        However, areas of self-intersection do <i>not</i> contribute to overdraw,
+        and this is one of the advantages of using grouped geometry. For example, if the six overlapping rectangles from
+        above were filled individually with FillGeometry with a semitransparent black brush, the overlapping parts would be darker.
+        If the rectangles were in a geometry group, the result would be of uniform color. The processing necessary to 
+        achieve this occurs at draw time.
+        </p>
+        <p>
+        This overload uses the specified <see cref="T:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination"/>
         to determine how to fill intersecting geometries in the group.
-      	</p>
+        </p>
       </remarks>
     </member>    
     
@@ -342,6 +345,27 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasGeometry.Device">
       <summary>Gets the device associated with this CanvasGeometry.</summary>
     </member>
-    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Tessellate">
+      <summary>Returns an array of clockwise-wound triangles that cover the geometry.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.Tessellate(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+      <summary>Returns an array of clockwise-wound triangles that cover the geometry after it has
+               been transformed using the specified matrix and flattened using the specified tolerance.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasTriangleVertices">
+      <summary>Describes a 2D triangle, which consists of three vertices.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTriangleVertices.Vertex1">
+      <summary>First vertex of the triangle.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTriangleVertices.Vertex2">
+      <summary>Second vertex of the triangle.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTriangleVertices.Vertex3">
+      <summary>Third vertex of the triangle.</summary>
+    </member>
+
   </members>
 </doc>

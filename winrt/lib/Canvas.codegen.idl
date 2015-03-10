@@ -56,6 +56,15 @@ namespace Microsoft.Graphics.Canvas
         Information = (int)3
     } CanvasDebugLevel;
 
+    [version(VERSION), flags]
+    typedef enum CanvasDrawTextOptions
+    {
+        Default = 0x00000000,
+        NoPixelSnap = 0x00000001,
+        Clip = 0x00000002,
+        EnableColorFont = 0x00000004
+    } CanvasDrawTextOptions;
+
     [version(VERSION)]
     typedef enum CanvasAntialiasing
     {

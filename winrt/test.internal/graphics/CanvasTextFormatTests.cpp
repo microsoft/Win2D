@@ -16,32 +16,10 @@
 #include "MockDWriteFontCollection.h"
 #include "MockDWriteFontFile.h"
 #include "StubStorageFileStatics.h"
+#include "StubCanvasTextFormatAdapter.h"
 
 namespace canvas
 {
-    class StubCanvasTextFormatAdapter : public CanvasTextFormatAdapter
-    {
-    public:
-        ComPtr<StubStorageFileStatics> StorageFileStatics;
-        
-        StubCanvasTextFormatAdapter()
-            : StorageFileStatics(Make<StubStorageFileStatics>())
-        {
-        }
-
-        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override
-        {
-            ComPtr<IDWriteFactory> factory;
-            ThrowIfFailed(DWriteCreateFactory(type, __uuidof(factory), &factory));
-            return factory;
-        }
-
-        virtual IStorageFileStatics* GetStorageFileStatics() override
-        {
-            return StorageFileStatics.Get();
-        }
-    };
-
     std::shared_ptr<CanvasTextFormatManager> CreateTestManager()
     {
         auto adapter = std::make_shared<StubCanvasTextFormatAdapter>();
@@ -683,7 +661,7 @@ namespace canvas
             Assert::AreEqual(CanvasDrawTextOptions::Default, actualDefault);
 
             // Check a round-trip
-            CanvasDrawTextOptions expected = CanvasDrawTextOptions::NoSnap;
+            CanvasDrawTextOptions expected = CanvasDrawTextOptions::NoPixelSnap;
             CanvasDrawTextOptions actual{};
             ThrowIfFailed(ctf->put_Options(expected));
             ThrowIfFailed(ctf->get_Options(&actual));

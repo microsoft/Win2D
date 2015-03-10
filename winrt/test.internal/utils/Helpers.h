@@ -205,6 +205,7 @@ namespace Microsoft
             TO_STRING(ID2D1SimplifiedGeometrySink);
             TO_STRING(ID2D1GeometrySink);
             TO_STRING(ID2D1GeometryRealization);
+            TO_STRING(IDWriteTextLayout);
 
 #undef TO_STRING
 
@@ -397,6 +398,21 @@ namespace Microsoft
                     _countof(buf),
                     L"Vector2{X=%f,Y=%f}",
                     value.X, value.Y));
+
+                return buf;
+            }
+
+            template<>
+            inline std::wstring ToString<D2D1_TRIANGLE>(D2D1_TRIANGLE const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_TRIANGLE{{%s},{%s},{%s}}",
+                    ToString(value.point1).c_str(),
+                    ToString(value.point2).c_str(),
+                    ToString(value.point3).c_str()));
 
                 return buf;
             }
@@ -885,6 +901,34 @@ namespace Microsoft
                 END_ENUM(CanvasLayerOptions);
             }
 
+            ENUM_TO_STRING(CanvasVerticalGlyphOrientation)
+            {
+                ENUM_VALUE(CanvasVerticalGlyphOrientation::Default);
+                ENUM_VALUE(CanvasVerticalGlyphOrientation::Stacked);
+                END_ENUM(CanvasVerticalGlyphOrientation);
+            }
+
+            ENUM_TO_STRING(DWRITE_VERTICAL_GLYPH_ORIENTATION)
+            {
+                ENUM_VALUE(DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT);
+                ENUM_VALUE(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED);
+                END_ENUM(DWRITE_VERTICAL_GLYPH_ORIENTATION);
+            }
+
+            ENUM_TO_STRING(CanvasOpticalAlignment)
+            {
+                ENUM_VALUE(CanvasOpticalAlignment::Default);
+                ENUM_VALUE(CanvasOpticalAlignment::NoSideBearings);
+                END_ENUM(CanvasOpticalAlignment);
+            }
+
+            ENUM_TO_STRING(DWRITE_OPTICAL_ALIGNMENT)
+            {
+                ENUM_VALUE(DWRITE_OPTICAL_ALIGNMENT_NONE);
+                ENUM_VALUE(DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS);
+                END_ENUM(DWRITE_OPTICAL_ALIGNMENT);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {
@@ -923,45 +967,45 @@ namespace Microsoft
         inline bool operator==(D2D1_POINT_2F const& a, D2D1_POINT_2F const& b)
         {
             return a.x == b.x &&
-                a.y == b.y;
+                   a.y == b.y;
         }
 
         inline bool operator==(D2D1_RECT_F const& a, D2D1_RECT_F const& b)
         {
             return a.left == b.left &&
-                a.top == b.top &&
-                a.right == b.right &&
-                a.bottom == b.bottom;
+                   a.top == b.top &&
+                   a.right == b.right &&
+                   a.bottom == b.bottom;
         }
 
         inline bool operator==(D2D1_ROUNDED_RECT const& a, D2D1_ROUNDED_RECT const& b)
         {
             return a.rect == b.rect &&
-                a.radiusX == b.radiusX &&
-                a.radiusY == b.radiusY;
+                   a.radiusX == b.radiusX &&
+                   a.radiusY == b.radiusY;
         }
 
         inline bool operator==(D2D1_ELLIPSE const& a, D2D1_ELLIPSE const& b)
         {
             return a.point == b.point &&
-                a.radiusX == b.radiusX &&
-                a.radiusY == b.radiusY;
+                   a.radiusX == b.radiusX &&
+                   a.radiusY == b.radiusY;
         }
 
         inline bool operator==(ABI::Windows::UI::Color const& a, ABI::Windows::UI::Color const& b)
         {
             return a.A == b.A &&
-                a.R == b.R &&
-                a.G == b.G &&
-                a.B == b.B;
+                   a.R == b.R &&
+                   a.G == b.G &&
+                   a.B == b.B;
         }
 
         inline bool operator==(D2D1_COLOR_F const& a, D2D1_COLOR_F const& b)
         {
             return a.a == b.a &&
-                a.r == b.r &&
-                a.g == b.g &&
-                a.b == b.b;
+                   a.r == b.r &&
+                   a.g == b.g &&
+                   a.b == b.b;
         }
 
         inline bool operator==(Numerics::Matrix3x2 const& a, Numerics::Matrix3x2 const& b)
@@ -980,9 +1024,9 @@ namespace Microsoft
         inline bool operator==(ABI::Windows::Foundation::Rect const& a, ABI::Windows::Foundation::Rect const& b)
         {
             return a.X == b.X &&
-                a.Y == b.Y &&
-                a.Width == b.Width &&
-                a.Height == b.Height;
+                   a.Y == b.Y &&
+                   a.Width == b.Width &&
+                   a.Height == b.Height;
         }
 
         inline bool operator==(ABI::Windows::Foundation::Size const& a, ABI::Windows::Foundation::Size const& b)
@@ -993,9 +1037,9 @@ namespace Microsoft
         inline bool operator==(CanvasTimingInformation const& a, CanvasTimingInformation const& b)
         {
             return a.UpdateCount == b.UpdateCount &&
-                a.TotalTime.Duration == b.TotalTime.Duration &&
-                a.ElapsedTime.Duration == b.ElapsedTime.Duration &&
-                a.IsRunningSlowly == b.IsRunningSlowly;
+                   a.TotalTime.Duration == b.TotalTime.Duration &&
+                   a.ElapsedTime.Duration == b.ElapsedTime.Duration &&
+                   a.IsRunningSlowly == b.IsRunningSlowly;
         }
 
         inline bool operator==(ABI::Windows::Foundation::Point const& a, ABI::Windows::Foundation::Point const& b)
@@ -1011,9 +1055,15 @@ namespace Microsoft
         inline bool operator==(Numerics::Vector2 const& a, Numerics::Vector2 const& b)
         {
             return a.X == b.X &&
-                a.Y == b.Y;
+                   a.Y == b.Y;
         }
 
+        inline bool operator==(D2D1_TRIANGLE const& a, D2D1_TRIANGLE const& b)
+        {
+            return a.point1 == b.point1 &&
+                   a.point2 == b.point2 &&
+                   a.point3 == b.point3;
+        }
     }
 }
 

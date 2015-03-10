@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -245,6 +245,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp">
       <Filter>directx</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -485,6 +488,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h">
       <Filter>drawing</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\TessellationSink.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h">
+      <Filter>text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -667,6 +679,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirectXCommon.idl">
       <Filter>directx</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl">
+      <Filter>text</Filter>
     </None>
   </ItemGroup>
 </Project>

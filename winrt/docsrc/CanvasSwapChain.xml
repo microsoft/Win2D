@@ -21,25 +21,58 @@ under the License.
   <members>
     <member name="T:Microsoft.Graphics.Canvas.CanvasSwapChain">
       <summary>A swap chain is a series of buffers that can be drawn to and presented to the screen.</summary>
-      <remarks>Like a bitmap, a swap chain has a fixed with and height, and stores 2D 
-      information. Underlying this, however, it may consist of multiple 
-      buffers. For more information about native swap chains, see the 
-      documentation on 
-      <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174569(v=vs.85).aspx">IDXGISwapChain</a>.</remarks>
+      <remarks>
+        <p>
+          Like a bitmap, a swap chain has a fixed with and height, and stores 2D
+          information. Underlying this, however, it may consist of multiple
+          buffers. For more information about native swap chains, see the
+          documentation on <a
+          href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174569(v=vs.85).aspx">IDXGISwapChain</a>.
+        </p>
+        <p>
+          Two types of CanvasSwapChain are supported: composition and CoreWindow.
+        </p>
+        <h4>Composition (XAML) Swap Chains</h4>
+        <p>
+          Composition swap chains are constructed via <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor"/> and are
+          suitable for use in XAML apps.  These swap chains can be displayed
+          using <see cref="T:Microsoft.Graphics.Canvas.CanvasSwapChainPanel"/>.
+          <see cref="T:Microsoft.Graphics.Canvas.CanvasAnimatedControl"/> uses a
+          composition swap chain internally.
+          <code>
+            var swapChain = new CanvasSwapChain(device, width, height, dpi);
+            swapChainPanel.SwapChain = swapChain;
+            // ... later ...
+            swapChain.Present();
+          </code>
+        </p>
+        <h4>CoreWindow Swap Chains</h4>
+        <p>
+          CoreWindow swap chains are constructed via <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/> and can only
+          be used in non-XAML apps (also known as "DirectX apps".)
+          <code>
+            var swapChain = CanvasSwapChain.CreateForCoreWindow(device, coreWindow, dpi);
+            // ... later ...
+            swapChain.Present();
+          </code>
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasSwapChain class, with the specified width and height.</summary>
       <remarks>
-        The swap chain's pixel format will default to DirectXPixelFormat::B8G8R8A8UIntNormalized,
-        its buffer count will be 2, and its alpha mode will be CanvasAlphaMode::Premultiplied.
+        The swap chain's pixel format will default to DirectXPixelFormat.B8G8R8A8UIntNormalized,
+        its buffer count will be 2, and its alpha mode will be CanvasAlphaMode.Premultiplied.
         Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasSwapChain class with the specified width, height, and dpi.</summary>
       <remarks>
-        The swap chain's pixel format will default to DirectXPixelFormat::B8G8R8A8UIntNormalized,
-        its buffer count will be 2, and its alpha mode will be CanvasAlphaMode::Premultiplied.
+        The swap chain's pixel format will default to DirectXPixelFormat.B8G8R8A8UIntNormalized,
+        its buffer count will be 2, and its alpha mode will be CanvasAlphaMode.Premultiplied.
         Size is in device independent pixels (dips).
       </remarks>
     </member>
@@ -50,6 +83,51 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
       <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
       <remarks>Size is in device independent pixels (dips).</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single)">
+      <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with CoreWindow.</summary>
+      <remarks>
+        <p>
+          The swap chain size matches the current size of the specified
+          CoreWindow.  The pixel size of the swap chain is calculated using the
+          provided dpi.
+        </p>
+        <p>
+          The swap chain's pixel format will default to
+          DirectXPixelFormat.B8G8R8A8UIntNormalized, its buffer count will be
+          2, and its alpha mode will be CanvasAlphaMode.Ignore.
+        </p>
+        <p>
+          The <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasSwapChain.TransformMatrix"/>
+          property is not available when the CanvasSwapChain is created with
+          this method.
+        </p>
+        <p>
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers"/>
+          will fail for Windows Phone 8.1 apps.  Instead, applications should
+          dispose the old swap chain and create a new one of the required size.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,System.Single)">
+      <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with CoreWindow.</summary>
+      <remarks>
+        <p>
+          The size is in device independent pixels (dips).
+        </p>
+        <p>
+          The <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasSwapChain.TransformMatrix"/>
+          property is not available when the CanvasSwapChain is created with
+          this method.
+        </p>
+        <p>
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers"/>
+          will fail for Windows Phone 8.1 apps.  Instead, applications should
+          dispose the old swap chain and create a new one of the required size.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.Present">
       <summary>Presents a rendered image.</summary>
@@ -67,11 +145,29 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single)">
       <summary>Changes the CanvasSwapChain's back buffer size.</summary>
-      <remarks>Size is in device independent pixels (dips).</remarks>
+      <remarks>
+        <p>
+          Size is in device independent pixels (dips).
+        </p>
+        <p>
+          On Windows Phone 8.1, this method will fail for swap chains created
+          via <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32)">
       <summary>Changes the CanvasSwapChain's back buffer size, pixel format, and number of buffers.</summary>
-      <remarks>Size is in device independent pixels (dips).</remarks>
+      <remarks>
+        <p>
+          Size is in device independent pixels (dips).
+        </p>
+        <p>
+          On Windows Phone 8.1, this method will fail for swap chains created
+          via <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateDrawingSession(Windows.UI.Color)">
       <summary>Creates a drawing session that will draw onto this CanvasSwapChain.</summary>
@@ -121,6 +217,9 @@ under the License.
            It defaults to identity, which maps swapchain pixels 1:1 with the output.</p>
         <p>Swapchain scaling may be used to render at a lower resolution than the physical screen.</p>
         <p>Only scale and translation components are allowed in the matrix (no rotation, skew, etc.)</p>
+        <p>This property is not supported on objects created via <see
+        cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>;
+        any attempt to access it will fail.</p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChain.SourceSize">

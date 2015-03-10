@@ -23,7 +23,7 @@ under the License.
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="PlatformResources.xaml"/>
-				<ResourceDictionary Source="SharedResources.xaml"/>
+                <ResourceDictionary Source="Infrastructure/SharedResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -642,12 +642,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    ComPtr<IDXGISwapChain2> CanvasDevice::CreateSwapChain(
+    template<typename FN>
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChain(
         int32_t widthInPixels,
         int32_t heightInPixels,
         DirectXPixelFormat format,
         int32_t bufferCount,
-        CanvasAlphaMode alphaMode)
+        CanvasAlphaMode alphaMode,
+        FN&& createFn)
     {
         auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
 
@@ -673,16 +675,49 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
         swapChainDesc.AlphaMode = ToDxgiAlphaMode(alphaMode);
 
-        ComPtr<IDXGISwapChain1> swapChainBase;
-        ThrowIfFailed(dxgiFactory->CreateSwapChainForComposition(
-            dxgiDevice.Get(), 
-            &swapChainDesc, 
-            nullptr, // restrictToOutput
-            &swapChainBase));
-
-        auto swapChain = As<IDXGISwapChain2>(swapChainBase);
+        ComPtr<IDXGISwapChain1> swapChain;
+        ThrowIfFailed(createFn(dxgiFactory.Get(), dxgiDevice.Get(), &swapChainDesc, &swapChain));
 
         return swapChain;
+    }
+
+
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChainForComposition(
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        CanvasAlphaMode alphaMode)
+    {
+        return CreateSwapChain(widthInPixels, heightInPixels, format, bufferCount, alphaMode,
+            [] (IDXGIFactory2* factory, IDXGIDevice3* device, DXGI_SWAP_CHAIN_DESC1* desc, IDXGISwapChain1** swapChain)
+            {
+                return factory->CreateSwapChainForComposition(
+                    device, 
+                    desc, 
+                    nullptr,  // restrictToOutput
+                    swapChain);
+            });
+    }
+
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChainForCoreWindow(
+        ICoreWindow* coreWindow,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        CanvasAlphaMode alphaMode)
+    {
+        return CreateSwapChain(widthInPixels, heightInPixels, format, bufferCount, alphaMode,
+            [coreWindow] (IDXGIFactory2* factory, IDXGIDevice3* device, DXGI_SWAP_CHAIN_DESC1* desc, IDXGISwapChain1** swapChain)
+            {
+                return factory->CreateSwapChainForCoreWindow(
+                    device,
+                    coreWindow,
+                    desc,
+                    nullptr,    // restrictToOutput
+                    swapChain);
+            });
     }
 
 

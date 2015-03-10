@@ -24,7 +24,7 @@ namespace canvas
         MockCanvasSwapChain(
             ICanvasDevice* device,
             std::shared_ptr<CanvasSwapChainManager> manager,
-            IDXGISwapChain2* dxgiSwapChain,
+            IDXGISwapChain1* dxgiSwapChain,
             float dpi)
             : CanvasSwapChain(device, manager, dxgiSwapChain, dpi)
         {
@@ -192,7 +192,7 @@ namespace canvas
 
         virtual ComPtr<CanvasSwapChain> CreateWrapper(
             ICanvasDevice* device,
-            IDXGISwapChain2* resource,
+            IDXGISwapChain1* resource,
             float dpi) override
         {
             return Make<MockCanvasSwapChain>(device, shared_from_this(), resource, dpi);

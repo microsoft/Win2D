@@ -24,7 +24,7 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
 
     auto canvasDevice = Make<StubCanvasDevice>(mockD2DDevice);
 
-    canvasDevice->CreateSwapChainMethod.AllowAnyCall(
+    canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall(
         [=](
         int32_t widthInPixels,
         int32_t heightInPixels,

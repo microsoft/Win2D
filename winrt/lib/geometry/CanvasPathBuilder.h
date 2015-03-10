@@ -68,13 +68,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(BeginFigure)(
             Vector2 startPoint) override;
 
-        IFACEMETHOD(AddArc)(
+        IFACEMETHOD(BeginFigureAtCoordsWithFigureFill)(
+            float startX,
+            float startY,
+            CanvasFigureFill figureFill) override;
+
+        IFACEMETHOD(BeginFigureAtCoords)(
+            float startX,
+            float startY) override;
+
+        IFACEMETHOD(AddArcToPoint)(
             Vector2 endPoint,
             float xRadius,
             float yRadius,
             float rotationAngle,
             CanvasSweepDirection sweepDirection,
             CanvasArcSize arcSize) override;
+
+        IFACEMETHOD(AddArcAroundEllipse)(
+            Vector2 centerPoint,
+            float radiusX,
+            float radiusY,
+            float startAngle,
+            float sweepAngle) override;
 
         IFACEMETHOD(AddCubicBezier)(
             Vector2 controlPoint1,

@@ -24,6 +24,10 @@ static const D2D1_MATRIX_3X2_F sc_someD2DTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_MATRIX_3X2_F sc_identityD2DTransform = { 1, 0, 0, 1, 0, 0 };
 static const Matrix3x2 sc_someTransform = { 1, 2, 3, 4, 5, 6 };
 
+static const D2D1_TRIANGLE sc_triangle1 = { { 1, 2 }, { 3, 4 }, { 5, 6 } };
+static const D2D1_TRIANGLE sc_triangle2 = { { 7, 8 }, { 9, 10 }, { 11, 12 } };
+static const D2D1_TRIANGLE sc_triangle3 = { { 13, 14 }, { 15, 16 }, { 17, 18 } };
+
 TEST_CLASS(CanvasGeometryTests)
 {
 public: 
@@ -110,6 +114,94 @@ public:
         f.Manager->Create(f.Device.Get(), expectedRect, expectedRadiusX, expectedRadiusY);
     }
 
+    class CreatePolygonFixture : public Fixture
+    {
+        int currentVertex;
+
+    public:
+        CreatePolygonFixture(int expectedVertexCount, Vector2 const* expectedVertices)
+            : currentVertex(0)
+        {
+            Device->CreatePathGeometryMethod.SetExpectedCalls(1,
+                [=]()
+                {
+                    auto pathGeometry = Make<MockD2DPathGeometry>();
+
+                    pathGeometry->OpenMethod.SetExpectedCalls(1,
+                        [=](ID2D1GeometrySink** out)
+                        {
+                            auto geometrySink = Make<MockD2DGeometrySink>();
+
+                            if (expectedVertexCount > 0)
+                            {
+                                geometrySink->BeginFigureMethod.SetExpectedCalls(1,
+                                    [=](D2D1_POINT_2F point, D2D1_FIGURE_BEGIN mode)
+                                    {
+                                        Assert::AreEqual(ToD2DPoint(expectedVertices[0]), point);
+                                        Assert::AreEqual(D2D1_FIGURE_BEGIN_FILLED, mode);
+                                    });
+
+                                geometrySink->AddLineMethod.SetExpectedCalls(expectedVertexCount - 1,
+                                    [=](D2D1_POINT_2F point)
+                                    {
+                                        Assert::IsTrue(++currentVertex < expectedVertexCount);
+                                        Assert::AreEqual(ToD2DPoint(expectedVertices[currentVertex]), point);
+                                    });
+
+                                geometrySink->EndFigureMethod.SetExpectedCalls(1,
+                                    [](D2D1_FIGURE_END mode)
+                                    {
+                                        Assert::AreEqual(D2D1_FIGURE_END_CLOSED, mode);
+                                    });
+                            }
+
+                            geometrySink->CloseMethod.SetExpectedCalls(1);
+
+                            return geometrySink.CopyTo(out);
+                        });
+
+                    return pathGeometry;
+                });
+        }
+    };
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_ThreeVertices)
+    {
+        Vector2 testVertices[] =
+        {
+            { 1, 2 },
+            { 3, 4 },
+            { 5, 6 },
+        };
+
+        CreatePolygonFixture f(3, testVertices);
+
+        f.Manager->Create(f.Device.Get(), 3, testVertices);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_OneVertex)
+    {
+        Vector2 testVertex{ 1, 2 };
+
+        CreatePolygonFixture f(1, &testVertex);
+
+        f.Manager->Create(f.Device.Get(), 1, &testVertex);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_ZeroVertices)
+    {
+        CreatePolygonFixture f(0, nullptr);
+
+        f.Manager->Create(f.Device.Get(), 0, nullptr);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreatePolygon_NullVertexArray)
+    {
+        Fixture f;
+
+        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->Create(f.Device.Get(), 1, nullptr); });
+    }
+
     class GeometryGroupFixture : public Fixture
     {
         struct Resource
@@ -185,9 +277,6 @@ public:
     {
         Fixture f;
 
-        auto d2dGeometry = Make<MockD2DRectangleGeometry>();
-        ComPtr<ICanvasGeometry> canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), d2dGeometry.Get()); 
-
         f.Device->CreateGeometryGroupMethod.SetExpectedCalls(1,
             [&f](D2D1_FILL_MODE fillMode, ID2D1Geometry** geometries, uint32_t geometryCount)
             {
@@ -200,6 +289,13 @@ public:
 
         auto geometryGroup = f.Manager->Create(f.Device.Get(), 0, nullptr, CanvasFilledRegionDetermination::Winding);
         Assert::IsNotNull(geometryGroup.Get());
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_NonZeroSizedGeometryGroup_NullInputArray)
+    {
+        Fixture f;
+
+        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->Create(f.Device.Get(), 1, nullptr, CanvasFilledRegionDetermination::Winding); });
     }
 
     TEST_METHOD_EX(CanvasGeometry_ZeroSizedGeometryGroup_NonNullInputArray)
@@ -1042,6 +1138,78 @@ public:
         Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, f.StrokeStyle.Get(), Matrix3x2{}, 0, nullptr));
     }
 
+    struct TessellateFixture : public GeometryOperationsFixture_DoesNotOutputToTempPathBuilder
+    {
+        void ExpectOneTessellateCall(D2D1_MATRIX_3X2_F expectedTransform, float expectedFlatteningTolerance)
+        {
+            D2DRectangleGeometry->TessellateMethod.SetExpectedCalls(1,
+                [=](D2D1_MATRIX_3X2_F const* transform, float flatteningTolerance, ID2D1TessellationSink* sink)
+                {
+                    Assert::AreEqual(expectedTransform, *transform);
+                    Assert::AreEqual(expectedFlatteningTolerance, flatteningTolerance);
+
+                    sink->AddTriangles(&sc_triangle1, 1);
+
+                    D2D1_TRIANGLE twoTriangles[] =
+                    {
+                        sc_triangle2,
+                        sc_triangle3,
+                    };
+
+                    sink->AddTriangles(twoTriangles, 2);
+
+                    return S_OK;
+                });
+        }
+
+        void ValidateTessellatedTriangles(ComArray<CanvasTriangleVertices>& triangles)
+        {
+            Assert::AreEqual(3u, triangles.GetSize());
+
+            Assert::AreEqual(sc_triangle1, *ReinterpretAs<D2D1_TRIANGLE const*>(&triangles[0]));
+            Assert::AreEqual(sc_triangle2, *ReinterpretAs<D2D1_TRIANGLE const*>(&triangles[1]));
+            Assert::AreEqual(sc_triangle3, *ReinterpretAs<D2D1_TRIANGLE const*>(&triangles[2]));
+        }
+    };
+
+    TEST_METHOD_EX(CanvasGeometry_Tessellate)
+    {
+        TessellateFixture f;
+        ComArray<CanvasTriangleVertices> triangles;
+
+        f.ExpectOneTessellateCall(sc_identityD2DTransform, D2D1_DEFAULT_FLATTENING_TOLERANCE);
+
+        ThrowIfFailed(f.RectangleGeometry->Tessellate(triangles.GetAddressOfSize(), triangles.GetAddressOfData()));
+
+        f.ValidateTessellatedTriangles(triangles);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_TessellateWithTransformAndFlatteningTolerance)
+    {
+        TessellateFixture f;
+        ComArray<CanvasTriangleVertices> triangles;
+
+        const float expectedTolerance = 23;
+
+        f.ExpectOneTessellateCall(sc_someD2DTransform, expectedTolerance);
+
+        ThrowIfFailed(f.RectangleGeometry->TessellateWithTransformAndFlatteningTolerance(sc_someTransform, expectedTolerance, triangles.GetAddressOfSize(), triangles.GetAddressOfData()));
+
+        f.ValidateTessellatedTriangles(triangles);
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_Tessellate_NullArgs)
+    {
+        GeometryOperationsFixture_DoesNotOutputToTempPathBuilder f;
+        ComArray<CanvasTriangleVertices> t;
+
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->Tessellate(nullptr, t.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->Tessellate(t.GetAddressOfSize(), nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->TessellateWithTransformAndFlatteningTolerance(Matrix3x2{}, 0, nullptr, t.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, f.RectangleGeometry->TessellateWithTransformAndFlatteningTolerance(Matrix3x2{}, 0, t.GetAddressOfSize(), nullptr));
+    }
+
     TEST_METHOD_EX(CanvasGeometry_Closure)
     {
         GeometryOperationsFixture_DoesNotOutputToTempPathBuilder f;
@@ -1054,6 +1222,7 @@ public:
         Matrix3x2 m{};
         ComPtr<ICanvasGeometry> g;
         CanvasGeometryRelation r;
+        ComArray<CanvasTriangleVertices> t;
         float fl;
         boolean b;
         Rect rect;
@@ -1102,6 +1271,9 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPoint(Vector2{}, 0, &b));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithStrokeStyle(Vector2{}, 0, strokeStyle.Get(), &b));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->StrokeContainsPointWithAllOptions(Vector2{}, 0, strokeStyle.Get(), m, 0, &b));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->Tessellate(t.GetAddressOfSize(), t.GetAddressOfData()));
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->TessellateWithTransformAndFlatteningTolerance(m, 0, t.GetAddressOfSize(), t.GetAddressOfData()));
 
         ComPtr<ICanvasDevice> retrievedDevice;
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->get_Device(&retrievedDevice));

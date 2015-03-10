@@ -39,18 +39,21 @@ namespace ExampleGallery
             ds.DrawLine(Vector2.Zero, size, Colors.Aqua);
             ds.DrawLine(0, size.Y, size.X, 0, Colors.Aqua);
 
-            var text = string.Format("{0}x{1}\n{2} redraws", size.X, size.Y, drawCount);
+            if (!ThumbnailGenerator.IsDrawingThumbnail)
+            {
+                var text = string.Format("{0}x{1}\n{2} redraws", size.X, size.Y, drawCount);
 
-            ds.DrawText(
-                text,
-                0, 0,
-                Colors.FloralWhite,
-                new CanvasTextFormat()
-                {
-                    VerticalAlignment = CanvasVerticalAlignment.Top,
-                    ParagraphAlignment = ParagraphAlignment.Left,
-                    FontSize = 10
-                });
+                ds.DrawText(
+                    text,
+                    0, 0,
+                    Colors.FloralWhite,
+                    new CanvasTextFormat()
+                    {
+                        VerticalAlignment = CanvasVerticalAlignment.Top,
+                        ParagraphAlignment = ParagraphAlignment.Left,
+                        FontSize = 10
+                    });
+            }
         }
 
         private void Canvas01_Draw(CanvasControl sender, CanvasDrawEventArgs args)

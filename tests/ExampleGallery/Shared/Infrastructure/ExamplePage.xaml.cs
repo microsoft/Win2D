@@ -29,7 +29,7 @@ namespace ExampleGallery
 
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
-                this.DataContext = new ExampleDefinition() { Name = "An Example" };
+                this.DataContext = new ExampleDefinition("An Example", null);
             }
 
             if (this.navigationHelper.HasHardwareButtons)

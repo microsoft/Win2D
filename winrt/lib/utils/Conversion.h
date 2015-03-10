@@ -118,6 +118,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(DXGI_SAMPLE_DESC,  Quality)    == offsetof(Direct3DMultisampleDescription, Quality),                "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
     };
 
+    template<> struct ValidateReinterpretAs<D2D1_TRIANGLE*, CanvasTriangleVertices*> : std::true_type
+    {
+        static_assert(offsetof(D2D1_TRIANGLE, point1) == offsetof(CanvasTriangleVertices, Vertex1), "CanvasTriangleVertices layout must match D2D1_TRIANGLE");
+        static_assert(offsetof(D2D1_TRIANGLE, point2) == offsetof(CanvasTriangleVertices, Vertex2), "CanvasTriangleVertices layout must match D2D1_TRIANGLE");
+        static_assert(offsetof(D2D1_TRIANGLE, point3) == offsetof(CanvasTriangleVertices, Vertex3), "CanvasTriangleVertices layout must match D2D1_TRIANGLE");
+    };
+
     template<> struct ValidateStaticCastAs<CanvasEdgeBehavior, D2D1_EXTEND_MODE> : std::true_type
     {
         static_assert(static_cast<uint32_t>(D2D1_EXTEND_MODE_CLAMP)  == static_cast<uint32_t>(CanvasEdgeBehavior::Clamp),  "CanvasEdgeBehavior must match D2D1_EXTEND_MODE");
@@ -130,6 +137,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<uint32_t>(D2D1_COLOR_SPACE_CUSTOM) == static_cast<uint32_t>(CanvasColorSpace::Custom), "CanvasColorSpace must match D2D1_COLOR_SPACE");
         static_assert(static_cast<uint32_t>(D2D1_COLOR_SPACE_SRGB)   == static_cast<uint32_t>(CanvasColorSpace::Srgb),   "CanvasColorSpace must match D2D1_COLOR_SPACE");
         static_assert(static_cast<uint32_t>(D2D1_COLOR_SPACE_SCRGB)  == static_cast<uint32_t>(CanvasColorSpace::ScRgb),  "CanvasColorSpace must match D2D1_COLOR_SPACE");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasDrawTextOptions, D2D1_DRAW_TEXT_OPTIONS> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_NONE) == static_cast<uint32_t>(CanvasDrawTextOptions::Default), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_NO_SNAP) == static_cast<uint32_t>(CanvasDrawTextOptions::NoPixelSnap), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_CLIP) == static_cast<uint32_t>(CanvasDrawTextOptions::Clip), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+
+        // TODO: replace 4 with D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT when the most recent VS2013 update has a d2d1.h for Windows Phone that includes it
+        static_assert(static_cast<uint32_t>(4U) == static_cast<uint32_t>(CanvasDrawTextOptions::EnableColorFont), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
     };
 
     inline float ToNormalizedFloat(uint8_t v)
@@ -410,6 +427,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             default: assert(false); return DXGI_MODE_ROTATION_IDENTITY;
         }
     }
+
+	inline DWRITE_TEXT_RANGE ToDWriteTextRange(int32_t position, int32_t characterCount)
+	{
+		assert(position >= 0);
+		assert(characterCount >= 0);
+		return DWRITE_TEXT_RANGE{ static_cast<uint32_t>(position), static_cast<uint32_t>(characterCount) };
+	}
 
     inline float PixelsToDips(int pixels, float dpi)
     {

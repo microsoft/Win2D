@@ -105,7 +105,7 @@ under the License.
     <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.Default">
       <summary>Text is vertically snapped to pixel boundaries and is not clipped to the layout rectangle.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.NoSnap">
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.NoPixelSnap">
       <summary>Text is not vertically snapped to pixel boundaries. This setting is recommended for text that is being animated.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.Clip">
@@ -167,8 +167,10 @@ under the License.
       <summary>A value that indicates how many occurrences of the delimiter to step back.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.TrimmingDelimiter">
-      <summary>A character code used as the delimiter that signals the beginning of the portion of text to be preserved.
-               Most useful for path ellipsis, where the delimiter would be a slash.</summary>
+      <summary>
+        A character code used as the delimiter that signals the beginning of the portion of text to be preserved.
+        Most useful for path ellipsis, where the delimiter would be a slash.
+       </summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.ReadingDirection">
       <summary>Specifies the direction in which the text is read.</summary>

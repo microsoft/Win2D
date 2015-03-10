@@ -67,7 +67,6 @@ under the License.
             </StackPanel>
         </ScrollViewer>
         <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"
-                              Draw="Canvas_Draw"
-                              CreateResources="Canvas_CreateResources"/>
+                              Draw="Canvas_Draw"/>
     </Grid>
 </UserControl>

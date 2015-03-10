@@ -14,6 +14,14 @@ namespace Microsoft.Graphics.Canvas
 {
     runtimeclass CanvasGeometry;
 
+    [version(VERSION)]
+    typedef struct CanvasTriangleVertices
+    {
+        NUMERICS.Vector2 Vertex1;
+        NUMERICS.Vector2 Vertex2;
+        NUMERICS.Vector2 Vertex3;
+    } CanvasTriangleVertices;
+
     [version(VERSION), uuid(74EA89FA-C87C-4D0D-9057-2743B8DB67EE), exclusiveto(CanvasGeometry)]
     interface ICanvasGeometry : IInspectable
         requires Windows.Foundation.IClosable
@@ -208,6 +216,19 @@ namespace Microsoft.Graphics.Canvas
             [in] float flatteningTolerance,
             [out, retval] boolean* containsPoint);
 
+        // Tessellate
+        [overload("Tessellate")]
+        HRESULT Tessellate(
+            [out] UINT32* trianglesCount,
+            [out, size_is(, *trianglesCount), retval] CanvasTriangleVertices** triangles);
+
+        [overload("Tessellate")]
+        HRESULT TessellateWithTransformAndFlatteningTolerance(
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out] UINT32* trianglesCount,
+            [out, size_is(, *trianglesCount), retval] CanvasTriangleVertices** triangles);
+
         [propget] HRESULT Device([out, retval] CanvasDevice** value);
     }
 
@@ -282,6 +303,12 @@ namespace Microsoft.Graphics.Canvas
 
         HRESULT CreatePath(
             [in] CanvasPathBuilder* pathBuilder,
+            [out, retval] CanvasGeometry** geometry);
+
+        HRESULT CreatePolygon(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 pointCount,
+            [in, size_is(pointCount)] NUMERICS.Vector2* points,
             [out, retval] CanvasGeometry** geometry);
 
         [overload("CreateGroup")]

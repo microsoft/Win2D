@@ -11,6 +11,7 @@
 // under the License.
 
 #include "pch.h"
+#include "MockCoreWindow.h"
 #include "MockDXGIAdapter.h"
 #include "MockDXGIFactory.h"
 
@@ -26,7 +27,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             m_canvasDevice = Make<StubCanvasDevice>();
             m_swapChainManager = std::make_shared<CanvasSwapChainManager>();
             
-            m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+            m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
             {
                 auto dxgiSwapChain = Make<MockDxgiSwapChain>();
                 dxgiSwapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
@@ -40,9 +41,9 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 m_canvasDevice.Get(),
                 1.0f,
                 1.0f,
-                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-                2,
-                CanvasAlphaMode::Premultiplied,
+                CanvasSwapChain::DefaultPixelFormat,
+                CanvasSwapChain::DefaultBufferCount,
+                CanvasSwapChain::DefaultCompositionAlphaMode,
                 dpi);
         }
     };
@@ -53,7 +54,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         const int dpiScale = 2;
 
-        f.m_canvasDevice->CreateSwapChainMethod.SetExpectedCalls(1, 
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.SetExpectedCalls(1, 
             [=](int32_t widthInPixels, int32_t heightInPixels, DirectXPixelFormat format, int32_t bufferCount, CanvasAlphaMode alphaMode)
             {
                 Assert::AreEqual(23 * dpiScale, widthInPixels);
@@ -93,59 +94,206 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         Assert::AreEqual(DEFAULT_DPI * dpiScale, dpi);
     }
 
-    struct FullDeviceFixture
+    struct MockDxgiFixture
     {
-    public:
-        ComPtr<CanvasDevice> m_canvasDevice;
-        std::shared_ptr<CanvasSwapChainManager> m_swapChainManager;
+        ComPtr<MockDxgiFactory> DxgiFactory;
+        ComPtr<MockDxgiDevice> DxgiDevice;
+        ComPtr<CanvasDevice> Device;
+        std::shared_ptr<CanvasSwapChainManager> SwapChainManager;
 
-        FullDeviceFixture()
+        MockDxgiFixture()
+            : DxgiFactory(Make<MockDxgiFactory>())
+            , DxgiDevice(Make<MockDxgiDevice>())
+            , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         {
-            // Validating certain parameters requires an actual CanvasDevice, not a 
-            // mock object.
+            auto dxgiAdapter = Make<MockDxgiAdapter>();
+            dxgiAdapter->GetParentMethod.AllowAnyCall(
+                [=] (IID const& iid, void** out)
+                {
+                    Assert::AreEqual(__uuidof(IDXGIFactory2), iid);
+                    return DxgiFactory.CopyTo(reinterpret_cast<IDXGIFactory2**>(out));
+                });
 
-            auto mockDxgiDevice = Make<MockDxgiDevice>();
-            mockDxgiDevice->MockGetParent = 
-                [&](IID const& iid, void** out)
+            DxgiDevice->MockGetParent =
+                [=] (IID const& iid, void** out)
                 {
                     Assert::AreEqual(__uuidof(IDXGIAdapter2), iid);
-                    auto mockAdapter = Make<MockDxgiAdapter>();
-
-                    mockAdapter->GetParentMethod.SetExpectedCalls(1, 
-                    [&](IID const& iid, void** out)
-                    {
-                        Assert::AreEqual(__uuidof(IDXGIFactory2), iid);
-                        auto mockFactory = Make<MockDxgiFactory>();
-                        mockFactory.CopyTo(reinterpret_cast<IDXGIFactory2**>(out));
-
-                        return S_OK;
-
-                    });
-
-                    mockAdapter.CopyTo(reinterpret_cast<IDXGIAdapter2**>(out));
-
-                    return S_OK;
+                    return dxgiAdapter.CopyTo(reinterpret_cast<IDXGIAdapter2**>(out));
                 };
 
-            auto d2dDevice = Make<MockD2DDevice>(mockDxgiDevice.Get());
+            auto d2dDevice = Make<MockD2DDevice>(DxgiDevice.Get());
 
             auto resourceCreationAdapter = std::make_shared<TestDeviceResourceCreationAdapter>();
             auto deviceManager = std::make_shared<CanvasDeviceManager>(resourceCreationAdapter);
 
-            m_canvasDevice = deviceManager->GetOrCreate(d2dDevice.Get());
-
-            m_swapChainManager = std::make_shared<CanvasSwapChainManager>();
+            Device = deviceManager->GetOrCreate(d2dDevice.Get());
         }
+    };
 
+    struct CoreWindowFixture : public MockDxgiFixture
+    {
+        ComPtr<MockCoreWindow> Window;
+        
+        CoreWindowFixture()
+            : Window(Make<MockCoreWindow>())
+        {
+        }
+    };
+
+    TEST_METHOD_EX(CanvasSwapChain_CreateForCoreWindowWithDpi)
+    {
+        CoreWindowFixture f;
+
+        auto anyWidthInDips = 100.0f;
+        auto anyHeightInDips = 200.0f;
+        auto anyDpi = 50.0f;
+
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+        f.Window->get_BoundsMethod.SetExpectedCalls(1,
+            [&] (Rect* bounds)
+            {
+                bounds->X = 123;
+                bounds->Y = 456;
+                bounds->Width = anyWidthInDips;
+                bounds->Height = anyHeightInDips;
+                return S_OK;
+            });
+
+        f.DxgiFactory->CreateSwapChainForCoreWindowMethod.SetExpectedCalls(1,
+            [&] (IUnknown* device, IUnknown* window, const DXGI_SWAP_CHAIN_DESC1* desc, IDXGIOutput* restrictToOutput, IDXGISwapChain1** swapChain)
+            {
+                Assert::IsTrue(IsSameInstance(f.DxgiDevice.Get(), device));
+                Assert::IsTrue(IsSameInstance(f.Window.Get(), window));
+                Assert::IsNull(restrictToOutput);
+                Assert::IsNotNull(swapChain);
+
+                Assert::AreEqual<int>(DipsToPixels(anyWidthInDips, anyDpi), desc->Width);
+                Assert::AreEqual<int>(DipsToPixels(anyHeightInDips, anyDpi), desc->Height);
+                Assert::AreEqual(static_cast<DXGI_FORMAT>(CanvasSwapChain::DefaultPixelFormat), desc->Format);
+                Assert::AreEqual(false, !!desc->Stereo);
+                Assert::AreEqual(1U, desc->SampleDesc.Count);
+                Assert::AreEqual(0U, desc->SampleDesc.Quality);
+                Assert::IsTrue(DXGI_USAGE_RENDER_TARGET_OUTPUT == desc->BufferUsage);
+                Assert::AreEqual<int>(CanvasSwapChain::DefaultBufferCount, desc->BufferCount);
+                Assert::IsTrue(DXGI_SCALING_STRETCH == desc->Scaling);
+                Assert::IsTrue(DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL == desc->SwapEffect);
+                Assert::IsTrue(ToDxgiAlphaMode(CanvasSwapChain::DefaultCoreWindowAlphaMode) == desc->AlphaMode);
+                Assert::AreEqual(0U, desc->Flags);
+                
+                return dxgiSwapChain.CopyTo(swapChain);
+            });
+
+        auto sc = f.SwapChainManager->Create(
+            f.Device.Get(),
+            f.Window.Get(),
+            anyDpi);
+
+        auto wrappedSc = GetWrappedResource<IDXGISwapChain1>(sc);
+        Assert::IsTrue(IsSameInstance(dxgiSwapChain.Get(), wrappedSc.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_CreateForCoreWindowWithDpi_ErrorCases)
+    {
+        CoreWindowFixture f;
+
+        auto anyDpi = 123.0f;
+
+        f.Window->get_BoundsMethod.AllowAnyCall(
+            [&] (Rect* bounds)
+            {
+                bounds->X = 123;
+                bounds->Y = 456;
+                bounds->Width = 789;
+                bounds->Height = 101112;
+                return S_OK;
+            });
+
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(nullptr, f.Window.Get(), anyDpi); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), nullptr, anyDpi); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), -1.0f); });
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_CreateForCoreWindowWithAllOptionsAndDpi)
+    {
+        CoreWindowFixture f;
+
+        auto anyWidthInDips = 100.0f;
+        auto anyHeightInDips = 200.0f;
+        auto anyPixelFormat = PIXEL_FORMAT(R8G8B8A8UIntNormalized);
+        auto anyBufferCount = 3;
+        auto anyDpi = 50.0f;
+
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+        f.DxgiFactory->CreateSwapChainForCoreWindowMethod.SetExpectedCalls(1,
+            [&] (IUnknown* device, IUnknown* window, const DXGI_SWAP_CHAIN_DESC1* desc, IDXGIOutput* restrictToOutput, IDXGISwapChain1** swapChain)
+            {
+                Assert::IsTrue(IsSameInstance(f.DxgiDevice.Get(), device));
+                Assert::IsTrue(IsSameInstance(f.Window.Get(), window));
+                Assert::IsNull(restrictToOutput);
+                Assert::IsNotNull(swapChain);
+
+                Assert::AreEqual<int>(DipsToPixels(anyWidthInDips, anyDpi), desc->Width);
+                Assert::AreEqual<int>(DipsToPixels(anyHeightInDips, anyDpi), desc->Height);
+                Assert::AreEqual(static_cast<DXGI_FORMAT>(anyPixelFormat), desc->Format);
+                Assert::AreEqual(false, !!desc->Stereo);
+                Assert::AreEqual(1U, desc->SampleDesc.Count);
+                Assert::AreEqual(0U, desc->SampleDesc.Quality);
+                Assert::IsTrue(DXGI_USAGE_RENDER_TARGET_OUTPUT == desc->BufferUsage);
+                Assert::AreEqual<int>(anyBufferCount, desc->BufferCount);
+                Assert::IsTrue(DXGI_SCALING_STRETCH == desc->Scaling);
+                Assert::IsTrue(DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL == desc->SwapEffect);
+                Assert::AreEqual(0U, desc->Flags);
+                
+                return dxgiSwapChain.CopyTo(swapChain);
+            });
+
+        auto sc = f.SwapChainManager->Create(
+            f.Device.Get(),
+            f.Window.Get(),
+            anyWidthInDips,
+            anyHeightInDips,
+            anyPixelFormat,
+            anyBufferCount,
+            anyDpi);
+
+        auto wrappedSc = GetWrappedResource<IDXGISwapChain1>(sc);
+        Assert::IsTrue(IsSameInstance(dxgiSwapChain.Get(), wrappedSc.Get()));
+    }
+
+
+    TEST_METHOD_EX(CanvasSwapChain_CreateForCoreWindowWithAllOptionsAndDpi_ErrorCases)
+    {
+        CoreWindowFixture f;
+
+        auto anyWidthInDips = 100.0f;
+        auto anyHeightInDips = 200.0f;
+        auto anyPixelFormat = PIXEL_FORMAT(R8G8B8A8UIntNormalized);
+        auto anyBufferCount = 3;
+        auto anyDpi = 50.0f;
+
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create((ICanvasDevice*)nullptr, f.Window.Get(), anyWidthInDips, anyHeightInDips, anyPixelFormat, anyBufferCount, anyDpi); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), (ICoreWindow*)nullptr, anyWidthInDips, anyHeightInDips, anyPixelFormat, anyBufferCount, anyDpi); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), -1.0f, anyHeightInDips, anyPixelFormat, anyBufferCount, anyDpi); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, -1.0f, anyPixelFormat, anyBufferCount, anyDpi); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, anyPixelFormat, -1, anyDpi); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, anyPixelFormat, anyBufferCount, -1.0f); });
+    }
+
+
+    struct FullDeviceFixture : public MockDxgiFixture
+    {
+    public:
         ComPtr<CanvasSwapChain> CreateTestSwapChain(float width, float height, int32_t bufferCount)
         {
-            return m_swapChainManager->Create(
-                m_canvasDevice.Get(),
+            return SwapChainManager->Create(
+                Device.Get(),
                 width,
                 height,
-                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
+                CanvasSwapChain::DefaultPixelFormat,
                 bufferCount,
-                CanvasAlphaMode::Premultiplied,
+                CanvasSwapChain::DefaultCompositionAlphaMode,
                 DEFAULT_DPI);
         }
     };
@@ -246,7 +394,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             return swapChain;
         });
@@ -298,7 +446,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto swapChain = Make<MockDxgiSwapChain>();
         swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             return swapChain;
         });
@@ -331,7 +479,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto swapChain = Make<MockDxgiSwapChain>();
         swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             return swapChain;
         });
@@ -366,7 +514,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto swapChain = Make<MockDxgiSwapChain>();
         swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             return swapChain;
         });
@@ -407,7 +555,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto swapChain = Make<MockDxgiSwapChain>();
         swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             return swapChain;
         });
@@ -445,7 +593,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto swapChain = Make<MockDxgiSwapChain>();
         swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             return swapChain;
         });
@@ -478,7 +626,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     {
         StubDeviceFixture f;
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             auto swapChain = Make<MockDxgiSwapChain>();
 
@@ -514,7 +662,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         const DirectXPixelFormat originalPixelFormat = PIXEL_FORMAT(R16G16B16A16Float);
         const int originalBufferCount = 7;
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             auto swapChain = Make<MockDxgiSwapChain>();
             
@@ -563,7 +711,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     {
         StubDeviceFixture f;
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             auto swapChain = Make<MockDxgiSwapChain>();
 
@@ -597,7 +745,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     {
         StubDeviceFixture f;
 
-        f.m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
             auto swapChain = Make<MockDxgiSwapChain>();
 
@@ -794,7 +942,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
             m_canvasDevice = Make<StubCanvasDevice>(d2dDevice);
             
-            m_canvasDevice->CreateSwapChainMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+            m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
             {
                 auto swapChain = Make<MockDxgiSwapChain>();
 
@@ -833,9 +981,9 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 m_canvasDevice.Get(),
                 1.0f,
                 1.0f,
-                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-                2,
-                CanvasAlphaMode::Premultiplied,
+                CanvasSwapChain::DefaultPixelFormat,
+                CanvasSwapChain::DefaultBufferCount,
+                CanvasSwapChain::DefaultCompositionAlphaMode,
                 DEFAULT_DPI);
         }
     };

@@ -64,6 +64,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod , HRESULT(ID2D1Geometry*, FLOAT, ID2D1GeometryRealization**));
         CALL_COUNTER_WITH_MOCK(CreateStrokedGeometryRealizationMethod, HRESULT(ID2D1Geometry*, FLOAT, FLOAT, ID2D1StrokeStyle *, ID2D1GeometryRealization**));
         CALL_COUNTER_WITH_MOCK(DrawGeometryRealizationMethod         , void(ID2D1GeometryRealization*, ID2D1Brush*));
+        CALL_COUNTER_WITH_MOCK(DrawTextLayoutMethod                  , void(D2D1_POINT_2F, IDWriteTextLayout*, ID2D1Brush*, D2D1_DRAW_TEXT_OPTIONS));
         CALL_COUNTER_WITH_MOCK(PushLayerMethod                       , void(const D2D1_LAYER_PARAMETERS1*, ID2D1Layer*));
         CALL_COUNTER_WITH_MOCK(PopLayerMethod                        , void());
         CALL_COUNTER_WITH_MOCK(PushAxisAlignedClipMethod             , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
@@ -225,9 +226,9 @@ namespace canvas
             DrawTextMethod.WasCalled(text, textLength, format, rect, brush, options, measuringMode);
         }
 
-        IFACEMETHODIMP_(void) DrawTextLayout(D2D1_POINT_2F,IDWriteTextLayout *,ID2D1Brush *,D2D1_DRAW_TEXT_OPTIONS) override
+        IFACEMETHODIMP_(void) DrawTextLayout(D2D1_POINT_2F point, IDWriteTextLayout* textLayout, ID2D1Brush* brush, D2D1_DRAW_TEXT_OPTIONS options) override
         {
-            Assert::Fail(L"Unexpected call to DrawTextLayout");
+            DrawTextLayoutMethod.WasCalled(point, textLayout, brush, options);
         }
 
         IFACEMETHODIMP_(void) DrawGlyphRun(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,ID2D1Brush *,DWRITE_MEASURING_MODE) override

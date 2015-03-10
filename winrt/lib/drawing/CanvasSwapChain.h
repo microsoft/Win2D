@@ -17,6 +17,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
+    using namespace ABI::Windows::UI::Core;
     using namespace ABI::Windows::UI;
     using namespace WinRTDirectX;
 
@@ -25,6 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasSwapChainFactory
         : public ActivationFactory<
         ICanvasSwapChainFactory,
+        ICanvasSwapChainStatics,
         CloakedIid<ICanvasDeviceResourceWithDpiFactoryNative>> ,
         public PerApplicationManager<CanvasSwapChainFactory, CanvasSwapChainManager>
     {
@@ -33,18 +35,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasSwapChainFactory();
 
+        //
+        // ICanvasSwapChainFactory
+        //
+
         IFACEMETHOD(CreateWithSize)(
             ICanvasResourceCreatorWithDpi* resourceCreator,
             float width,
             float height,
-            ICanvasSwapChain** SwapChain) override;
+            ICanvasSwapChain** swapChain) override;
 
         IFACEMETHOD(CreateWithSizeAndDpi)(
             ICanvasResourceCreator* resourceCreator,
             float width,
             float height,
             float dpi,
-            ICanvasSwapChain** SwapChain) override;
+            ICanvasSwapChain** swapChain) override;
 
         IFACEMETHOD(CreateWithAllOptions)(
             ICanvasResourceCreatorWithDpi* resourceCreator,
@@ -53,7 +59,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaMode alphaMode,
-            ICanvasSwapChain** SwapChain) override;
+            ICanvasSwapChain** swapChain) override;
 
         IFACEMETHOD(CreateWithAllOptionsAndDpi)(
             ICanvasResourceCreator* resourceCreator,
@@ -63,7 +69,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t bufferCount,
             CanvasAlphaMode alphaMode,
             float dpi,
-            ICanvasSwapChain** SwapChain) override;
+            ICanvasSwapChain** swapChain) override;
+
+        //
+        // ICanvasSwapChainStatics
+        //
+
+        IFACEMETHOD(CreateForCoreWindowWithDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            ICoreWindow* coreWindow,
+            float dpi,
+            ICanvasSwapChain** swapChain);
+
+        IFACEMETHOD(CreateForCoreWindowWithAllOptionsAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            ICoreWindow* coreWindow,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            float dpi,
+            ICanvasSwapChain** swapChain);
 
         //
         // ICanvasDeviceResourceWithDpiFactoryNative
@@ -78,10 +104,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     struct CanvasSwapChainTraits
     {
-        typedef IDXGISwapChain2 resource_t;
+        typedef IDXGISwapChain1 resource_t;
         typedef CanvasSwapChain wrapper_t;
         typedef ICanvasSwapChain wrapper_interface_t;
         typedef CanvasSwapChainManager manager_t;
+
+        // IDXGISwapChain1 is used here, rather than IDXGISwapChain2, since
+        // IDXGISwapChain2 is not supported on all platforms and swap chains (ie
+        // a CoreWindow swap chain on Phone doesn't implement IDXGISwapChain2).
     };
 
     class CanvasSwapChain : RESOURCE_WRAPPER_RUNTIME_CLASS(
@@ -94,10 +124,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float m_dpi;
 
     public:
+        static DirectXPixelFormat const DefaultPixelFormat = PIXEL_FORMAT(B8G8R8A8UIntNormalized);
+        static int32_t const DefaultBufferCount = 2;
+        static CanvasAlphaMode const DefaultCompositionAlphaMode = CanvasAlphaMode::Premultiplied;
+        static CanvasAlphaMode const DefaultCoreWindowAlphaMode = CanvasAlphaMode::Ignore;
+
         CanvasSwapChain(
             ICanvasDevice* device,
             std::shared_ptr<CanvasSwapChainManager> swapChainManager,
-            IDXGISwapChain2* dxgiSwapChain,
+            IDXGISwapChain1* dxgiSwapChain,
             float dpi);
 
         IFACEMETHOD(CreateDrawingSession)(
@@ -160,9 +195,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaMode alphaMode,
             float dpi);
 
+        ComPtr<CanvasSwapChain> CreateNew(
+            ICanvasDevice* device,
+            ICoreWindow* coreWindow,
+            float dpi);
+
+        ComPtr<CanvasSwapChain> CreateNew(
+            ICanvasDevice* device,
+            ICoreWindow* coreWindow,
+            float width,
+            float height,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            float dpi);
+
         virtual ComPtr<CanvasSwapChain> CreateWrapper(
             ICanvasDevice* device,
-            IDXGISwapChain2* resource,
+            IDXGISwapChain1* resource,
             float dpi);
     };
 
