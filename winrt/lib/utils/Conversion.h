@@ -143,7 +143,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_NONE) == static_cast<uint32_t>(CanvasDrawTextOptions::Default), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
         static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_NO_SNAP) == static_cast<uint32_t>(CanvasDrawTextOptions::NoPixelSnap), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
         static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_CLIP) == static_cast<uint32_t>(CanvasDrawTextOptions::Clip), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
-        static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT) == static_cast<uint32_t>(CanvasDrawTextOptions::EnableColorFont), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+
+        // TODO: replace 4 with D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT when the most recent VS2013 update has a d2d1.h for Windows Phone that includes it
+        static_assert(static_cast<uint32_t>(4U) == static_cast<uint32_t>(CanvasDrawTextOptions::EnableColorFont), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
     };
 
     inline float ToNormalizedFloat(uint8_t v)
