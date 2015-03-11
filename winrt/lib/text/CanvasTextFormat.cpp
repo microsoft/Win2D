@@ -21,42 +21,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // Parameter validation functions
     //
 
-    template<typename T>
-    static void ThrowIfInvalid(T)
-    {
-        static_assert(false, "Specialization required");
-    }
-
-    template<>
-    static void ThrowIfInvalid(CanvasTextDirection value)
-    {
-        switch (value)
-        {
-        case CanvasTextDirection::TopToBottom:
-        case CanvasTextDirection::BottomToTop:
-        case CanvasTextDirection::LeftToRight:
-        case CanvasTextDirection::RightToLeft:
-            return;
-
-        default:
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
-    template<>
-    static void ThrowIfInvalid(CanvasLineSpacingMethod value)
-    {
-        switch (value)
-        {
-        case CanvasLineSpacingMethod::Default:
-        case CanvasLineSpacingMethod::Uniform:
-            return;
-
-        default:
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
     template<>
     static void ThrowIfInvalid(ABI::Windows::UI::Text::FontStretch value)
     {
@@ -94,84 +58,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    template<>
-    static void ThrowIfInvalid(CanvasWordWrapping value)
-    {
-        switch (value)
-        {
-        case CanvasWordWrapping::Wrap:
-        case CanvasWordWrapping::NoWrap:
-        case CanvasWordWrapping::EmergencyBreak:
-        case CanvasWordWrapping::WholeWord:
-        case CanvasWordWrapping::Character:
-            return;
-
-        default:
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
-    template<>
-    static void ThrowIfInvalid(CanvasTextTrimmingGranularity value)
-    {
-        switch (value)
-        {
-        case CanvasTextTrimmingGranularity::None:
-        case CanvasTextTrimmingGranularity::Character:
-        case CanvasTextTrimmingGranularity::Word:
-            return;
-
-        default:
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
-    template<>
-    static void ThrowIfInvalid(ABI::Windows::UI::Text::ParagraphAlignment value)
-    {
-        switch (value)
-        {
-        case ABI::Windows::UI::Text::ParagraphAlignment_Undefined:
-        case ABI::Windows::UI::Text::ParagraphAlignment_Left:
-        case ABI::Windows::UI::Text::ParagraphAlignment_Center:
-        case ABI::Windows::UI::Text::ParagraphAlignment_Right:
-        case ABI::Windows::UI::Text::ParagraphAlignment_Justify:
-            return;
-
-        default:
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
-    template<>
-    static void ThrowIfInvalid(CanvasVerticalAlignment value)
-    {
-        switch (value)
-        {
-        case CanvasVerticalAlignment::Top:
-        case CanvasVerticalAlignment::Bottom:
-        case CanvasVerticalAlignment::Center:
-            return;
-
-        default:
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
     static void ThrowIfInvalidFontWeight(ABI::Windows::UI::Text::FontWeight value)
     {
         if (value.Weight >= 1 && value.Weight <= 999)
             return;
 
         ThrowHR(E_INVALIDARG);
-    }
-
-    static void ThrowIfInvalidTrimmingDelimiter(HSTRING value)
-    {
-        // The delimiter must be a single code point and so cannot be more than
-        // 2 UTF-16 code units long
-        if (WindowsGetStringLen(value) > 2)
-            ThrowHR(E_INVALIDARG);
     }
 
     static void ThrowIfNan(float value)
@@ -184,24 +76,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         if (value < 0 || isnan(value))
             ThrowHR(E_INVALIDARG);
-    }
-
-    static WinString GetFontFamilyName(IDWriteTextFormat* format)
-    {
-        WinStringBuilder stringBuilder;
-        auto length = format->GetFontFamilyNameLength() + 1;
-        auto buffer = stringBuilder.Allocate(length);
-        ThrowIfFailed(format->GetFontFamilyName(buffer, length));
-        return stringBuilder.Get();
-    }
-
-    static WinString GetLocaleName(IDWriteTextFormat* format)
-    {
-        WinStringBuilder stringBuilder;
-        auto length = format->GetLocaleNameLength() + 1;
-        auto buffer = stringBuilder.Allocate(length);
-        ThrowIfFailed(format->GetLocaleName(buffer, length));
-        return stringBuilder.Get();
     }
 
 
@@ -232,86 +106,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     //
-    // Custom font loading
-    //
-
-
-    class CustomFontFileEnumerator 
-        : public RuntimeClass<
-            RuntimeClassFlags<ClassicCom>,
-            IDWriteFontFileEnumerator>
-        , private LifespanTracker<CustomFontFileEnumerator>
-
-    {
-        ComPtr<IDWriteFactory> m_factory;
-        std::wstring m_filename;
-        ComPtr<IDWriteFontFile> m_theFile;
-
-    public:
-        CustomFontFileEnumerator(IDWriteFactory* factory, void const* collectionKey, uint32_t collectionKeySize)
-            : m_factory(factory)
-            , m_filename(static_cast<wchar_t const*>(collectionKey), collectionKeySize / 2)
-        {
-        }
-
-        IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
-        {
-            if (m_theFile)
-            {
-                *hasCurrentFile = FALSE;
-            }
-            else if (SUCCEEDED(m_factory->CreateFontFileReference(m_filename.c_str(), nullptr, &m_theFile)))
-            {
-                *hasCurrentFile = TRUE;
-            }
-            else
-            {
-                *hasCurrentFile = FALSE;
-            }
-            
-            return S_OK;
-        }
-
-        IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
-        {
-            return m_theFile.CopyTo(fontFile);
-        }
-    };
-
-    class CustomFontLoader 
-        : public RuntimeClass<
-            RuntimeClassFlags<ClassicCom>, 
-            IDWriteFontCollectionLoader>
-        , private LifespanTracker<CustomFontLoader>
-    {
-    public:
-        IFACEMETHODIMP CreateEnumeratorFromKey(
-            IDWriteFactory* factory,
-            void const* collectionKey,
-            uint32_t collectionKeySize,
-            IDWriteFontFileEnumerator** fontFileEnumerator) override
-        {
-            return ExceptionBoundary(
-                [=]
-                {
-                    auto enumerator = Make<CustomFontFileEnumerator>(factory, collectionKey, collectionKeySize);
-                    CheckMakeResult(enumerator);
-                    ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
-                });
-        }
-    };
-
-
-    //
     // CanvasTextFormatManager implementation
     //
     
     CanvasTextFormatManager::CanvasTextFormatManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter)
-        : m_adapter(adapter)
+        : CustomFontManager(adapter)
     {
-        ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_Foundation_Uri).Get(), 
-            &m_uriFactory));
     }
 
 
@@ -324,105 +124,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<CanvasTextFormat> CanvasTextFormatManager::Create(IDWriteTextFormat* format)
     {
         return Make<CanvasTextFormat>(shared_from_this(), format);
-    }
-
-    void CanvasTextFormatManager::ValidateUri(WinString const& uriString)
-    {
-        if (uriString == WinString())
-            return;
-
-        ComPtr<IUriRuntimeClass> uri;
-        ThrowIfFailed(m_uriFactory->CreateWithRelativeUri(WinString(L"ms-appx://"), uriString, &uri));
-        
-        WinString schemeName;
-        ThrowIfFailed(uri->get_SchemeName(schemeName.GetAddressOf()));
-
-        if (!schemeName.Equals(HStringReference(L"ms-appx").Get()) &&
-            !schemeName.Equals(HStringReference(L"ms-appdata").Get()))
-        {
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::InvalidFontFamilyUriScheme).Get());
-        }
-    }
-
-    WinString CanvasTextFormatManager::GetAbsolutePathFromUri(WinString const& uriString)
-    {
-        ComPtr<IUriRuntimeClass> uri;
-        ThrowIfFailed(m_uriFactory->CreateWithRelativeUri(WinString(L"ms-appx://"), uriString, &uri));
-
-        auto storageFileStatics = m_adapter->GetStorageFileStatics();
-        ComPtr<IAsyncOperation<StorageFile*>> operation;
-
-        HRESULT hr = storageFileStatics->GetFileFromApplicationUriAsync(uri.Get(), &operation);
-        if (FAILED(hr))
-        {
-            ThrowHR(hr, HStringReference(Strings::InvalidFontFamilyUri).Get());
-        }
-
-        Event operationCompleted(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
-        auto handler = Callback<AddFtmBase<IAsyncOperationCompletedHandler<StorageFile*>>::Type>(
-            [&] (IAsyncOperation<StorageFile*>*, AsyncStatus)
-            {
-                SetEvent(operationCompleted.Get());
-                return S_OK;
-            });
-        CheckMakeResult(handler);
-
-        ThrowIfFailed(operation->put_Completed(handler.Get()));
-
-        auto res = WaitForSingleObjectEx(operationCompleted.Get(), INFINITE, false);
-        if (res != WAIT_OBJECT_0)
-            ThrowHR(E_UNEXPECTED);
-
-        ComPtr<IStorageFile> storageFile;
-        ThrowIfFailed(operation->GetResults(&storageFile));
-
-        WinString path;
-        ThrowIfFailed(As<IStorageItem>(storageFile)->get_Path(path.GetAddressOf()));
-
-        return path;
-    }
-
-
-    ComPtr<IDWriteFontCollection> CanvasTextFormatManager::GetFontCollectionFromUri(WinString const& uri)
-    {
-        //
-        // No URI means no custom font collection - ie use the system font
-        // collection.
-        //
-        if (uri == WinString())
-        {
-            return nullptr;
-        }
-
-        auto path = GetAbsolutePathFromUri(uri);
-
-        auto pathBegin = begin(path);
-        auto pathEnd = end(path);
-
-        assert(pathBegin && pathEnd);
-
-        void const* key = pathBegin;
-        uint32_t keySize = static_cast<uint32_t>(std::distance(pathBegin, pathEnd) * sizeof(wchar_t));
-
-        ComPtr<IDWriteFontCollection> collection;
-
-        auto factory = GetIsolatedFactory();
-        ThrowIfFailed(factory->CreateCustomFontCollection(m_customLoader.Get(), key, keySize, &collection));
-        
-        return collection;
-    }
-
-
-    ComPtr<IDWriteFactory> const& CanvasTextFormatManager::GetIsolatedFactory()
-    {
-        if (!m_isolatedFactory)
-        {
-            m_isolatedFactory = m_adapter->CreateDWriteFactory(DWRITE_FACTORY_TYPE_ISOLATED);
-            m_customLoader = Make<CustomFontLoader>();
-            ThrowIfFailed(m_isolatedFactory->RegisterFontCollectionLoader(m_customLoader.Get()));
-        }
-        
-        return m_isolatedFactory;
     }
 
 
@@ -527,20 +228,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckAndClearOutPointer(value);
                 ThrowIfFailed(GetRealizedTextFormat().CopyTo(iid, value));
             });
-    }
-
-
-    static std::pair<WinString, WinString> GetUriAndFontFamily(WinString const& fontFamilyName)
-    {
-        auto beginIt = begin(fontFamilyName);
-        auto endIt = end(fontFamilyName);
-
-        auto hashPos = std::find(beginIt, endIt, L'#');
-
-        if (hashPos == endIt)
-            return std::make_pair(WinString(), fontFamilyName);
-        else
-            return std::make_pair(WinString(beginIt, hashPos), WinString(hashPos+1, endIt));
     }
 
 

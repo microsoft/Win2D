@@ -200,7 +200,7 @@ namespace ExampleGallery
             new Entry(0xE082, "Ratings star"),
             new Entry(0xE094, "Magnifier"),
             new Entry(0xE0B8, "Used by magnifier tool"),
-            new Entry(0xE0D5, "Back arow"),
+            new Entry(0xE0D5, "Back arrow"),
             new Entry(0xE0AE, "Mirrored version of U+E0D4"),
             new Entry(0xE0E2, "Arrow used in FlipView"),
             new Entry(0xE0E3, "Arrow used in FlipView"),
