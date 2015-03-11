@@ -131,23 +131,13 @@
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests>desktop</AutomatedTests>
     </UAPProject>
-    <!-- TODO: winrt.test.external.uap disabled since there's no cpp unit test framework for UAPs
     <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
       <AutomatedTests>store</AutomatedTests>
     </UAPProject>
-    -->
-    <!-- TODO: winrt.test.nativecomponent.uap needs to be added - this is only
-         useful for unit tests, and there's no UT framework for UAP.
-
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
-    -->
-    <!-- TODO: winrt.test.managed.uap needs to be added - there's no UT
-         framework for UAP
-
     <UAPProject Include="winrt\test.managed\UAP\winrt.test.managed.uap.csproj">
       <AutomatedTests>store</AutomatedTests>
     </UAPProject>
-    -->
     <UAPProject Include="tests\CsConsumer\UAP\CsConsumer.uap.csproj" />
     <UAPProject Include="tests\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
   </ItemGroup>
