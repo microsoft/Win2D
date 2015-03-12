@@ -2225,6 +2225,67 @@ public:
             });
     }
 
+    class FixtureExpectsTemporaryBrushTransform : public FixtureWithTemporaryTranslation
+    {
+        int getBrushTransformCount;
+        int setBrushTransformCount;
+
+    public:
+        FixtureExpectsTemporaryBrushTransform()
+            : getBrushTransformCount(0)
+            , setBrushTransformCount(0)
+        {
+            auto d2dBrush = Make<MockD2DBitmapBrush>();
+
+            d2dBrush->MockGetTransform = [=](D2D1_MATRIX_3X2_F* transform)
+            {
+                getBrushTransformCount++;
+                *transform = InitialTransform;
+            };
+
+            d2dBrush->MockSetTransform = [&](D2D1_MATRIX_3X2_F const* newTransform)
+            {
+                switch (setBrushTransformCount++)
+                {
+                case 0:
+                    // Setting the temporary transform.
+                    {
+                        auto expected = InitialTransform;
+
+                        expected._31 -= DrawOffset.X;
+                        expected._32 -= DrawOffset.Y;
+
+                        Assert::AreEqual(expected, *newTransform);
+                    }
+                    break;
+
+                case 1:
+                    // Restoring the original transform.
+                    Assert::AreEqual(InitialTransform, *newTransform);
+                    break;
+                }
+            };
+
+            Brush = Make<StubCanvasBrush>(d2dBrush);
+            ExpectTemporaryTranslation(1);
+        }
+
+        ~FixtureExpectsTemporaryBrushTransform()
+        {
+            Assert::AreEqual(1, getBrushTransformCount);
+            Assert::AreEqual(2, setBrushTransformCount);
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometry_AdjustsBrushTransform)
+    {
+        FixtureExpectsTemporaryBrushTransform f;
+
+        f.DeviceContext->DrawGeometryMethod.SetExpectedCalls(1);
+
+        ThrowIfFailed(f.DS->DrawGeometryWithBrush(f.Geometry.Get(), f.DrawOffset, f.Brush.Get()));
+    }
+
     //
     // FillGeometry
     //    
@@ -2333,6 +2394,15 @@ public:
             });
     }
 
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometry_AdjustsBrushTransform)
+    {
+        FixtureExpectsTemporaryBrushTransform f;
+
+        f.DeviceContext->FillGeometryMethod.SetExpectedCalls(1);
+
+        ThrowIfFailed(f.DS->FillGeometryWithBrush(f.Geometry.Get(), f.DrawOffset, f.Brush.Get()));
+    }
+
     //
     // DrawGeometryRealization
     //    
@@ -2437,6 +2507,15 @@ public:
                 ThrowIfFailed(f.DS->DrawCachedGeometryAtCoordsWithColor(cachedGeometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor1));
                 ThrowIfFailed(f.DS->DrawCachedGeometryAtCoordsWithColor(cachedGeometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor2));
             });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealization_AdjustsBrushTransform)
+    {
+        FixtureExpectsTemporaryBrushTransform f;
+
+        f.DeviceContext->DrawGeometryRealizationMethod.SetExpectedCalls(1);
+
+        ThrowIfFailed(f.DS->DrawCachedGeometryWithBrush(f.CachedGeometry.Get(), f.DrawOffset, f.Brush.Get()));
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_StateGettersWithNull)

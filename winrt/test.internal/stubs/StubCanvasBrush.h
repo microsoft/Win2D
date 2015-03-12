@@ -24,8 +24,8 @@ namespace canvas
         ComPtr<ID2D1Brush> m_brush;
 
     public:
-        StubCanvasBrush()
-            : m_brush(Make<StubD2DBrush>())
+        StubCanvasBrush(ComPtr<ID2D1Brush> d2dBrush = nullptr)
+            : m_brush(d2dBrush ? d2dBrush : Make<StubD2DBrush>())
         {
         }
 

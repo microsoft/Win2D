@@ -2401,11 +2401,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                CheckInPointer(brush);
+                auto d2dBrush = ToD2DBrush(brush);
+
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
+                TemporaryTransform<ID2D1Brush> brushTransform(d2dBrush.Get(), Vector2{ -offset.X, -offset.Y }, true);
 
                 DrawGeometryImpl(
                     geometry,
-                    ToD2DBrush(brush).Get(),
+                    d2dBrush.Get(),
                     strokeWidth,
                     strokeStyle);
             });
@@ -2422,7 +2426,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
 
                 DrawGeometryImpl(
                     geometry,
@@ -2476,6 +2480,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                CheckInPointer(brush);
+
                 DrawGeometryImpl(
                     geometry,
                     ToD2DBrush(brush).Get(),
@@ -2511,7 +2517,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto& deviceContext = GetResource();
         CheckInPointer(geometry);
-        CheckInPointer(brush);
 
         deviceContext->DrawGeometry(
             GetWrappedResource<ID2D1Geometry>(geometry).Get(),
@@ -2533,11 +2538,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                CheckInPointer(brush);
+                auto d2dBrush = ToD2DBrush(brush);
+
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
+                TemporaryTransform<ID2D1Brush> brushTransform(d2dBrush.Get(), Vector2{ -offset.X, -offset.Y }, true);
 
                 FillGeometryImpl(
                     geometry,
-                    ToD2DBrush(brush).Get());
+                    d2dBrush.Get()); 
             });
     }
 
@@ -2550,7 +2559,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
 
                 FillGeometryImpl(
                     geometry,
@@ -2592,6 +2601,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                CheckInPointer(brush);
+
                 FillGeometryImpl(
                     geometry,
                     ToD2DBrush(brush).Get());
@@ -2619,7 +2630,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto& deviceContext = GetResource();
         CheckInPointer(geometry);
-        CheckInPointer(brush);
 
         deviceContext->FillGeometry(
             GetWrappedResource<ID2D1Geometry>(geometry).Get(),
@@ -2640,11 +2650,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                CheckInPointer(brush);
+                auto d2dBrush = ToD2DBrush(brush);
+
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
+                TemporaryTransform<ID2D1Brush> brushTransform(d2dBrush.Get(), Vector2{ -offset.X, -offset.Y }, true);
 
                 DrawCachedGeometryImpl(
                     cachedGeometry,
-                    ToD2DBrush(brush).Get());
+                    d2dBrush.Get());
             });
     }
 
@@ -2657,7 +2671,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
 
                 DrawCachedGeometryImpl(
                     cachedGeometry,
@@ -2699,6 +2713,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                CheckInPointer(brush);
+
                 DrawCachedGeometryImpl(
                     cachedGeometry,
                     ToD2DBrush(brush).Get());
@@ -2726,7 +2742,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto& deviceContext = GetResource();
         CheckInPointer(cachedGeometry);
-        CheckInPointer(brush);
 
         deviceContext->DrawGeometryRealization(
             GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
