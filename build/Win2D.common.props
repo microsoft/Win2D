@@ -45,6 +45,13 @@
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\obj\$(MSBuildProjectName)\$(FullPlatform)\$(Configuration)\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <AssetDir>$(MSBuildThisFileDirectory)assets\</AssetDir>
+
+    <!-- Force all directories to lower case -->
+    <__OutputPath>$(__OutputPath.ToLower())</__OutputPath>
+    <BaseIntermediateOutputPath>$(BaseIntermediateOutputPath.ToLower())</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(IntermediateOutputPath.ToLower())</IntermediateOutputPath>
+    <AssetDir>$(AssetDir.ToLower())</AssetDir>
+
   </PropertyGroup>
 
 </Project>
