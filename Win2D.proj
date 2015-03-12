@@ -223,7 +223,10 @@
 
     <Message Importance="High" Text="Building documentation" />
 
-    <MSBuild Projects="tools\docs\BuildDocs.proj" />
+    <!-- Use <Exec> rather than <MSBuild> here, since we want BuildDocs.proj to
+         be isolated from the environment that's formed around running
+         Win2D.proj up to this point -->
+    <Exec Command="msbuild $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" />
   </Target>
 
 
