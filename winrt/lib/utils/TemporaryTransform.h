@@ -33,17 +33,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         TemporaryTransform(T* target, Vector2 const& offset, bool postMultiply = false)
             : m_target(target)
         {
-            auto translation = D2D1::Matrix3x2F::Translation(offset.X, offset.Y);
+            if (m_target)
+            {
+                auto translation = D2D1::Matrix3x2F::Translation(offset.X, offset.Y);
 
-            m_target->GetTransform(&m_previousTransform);
+                m_target->GetTransform(&m_previousTransform);
 
-            m_target->SetTransform(postMultiply ? m_previousTransform * translation
-                                                : translation * m_previousTransform);
+                m_target->SetTransform(postMultiply ? m_previousTransform * translation
+                                                    : translation * m_previousTransform);
+            }
         }
 
         ~TemporaryTransform()
         {
-            m_target->SetTransform(&m_previousTransform);
+            if (m_target)
+            {
+                m_target->SetTransform(&m_previousTransform);
+            }
         }
     };
 }}}}

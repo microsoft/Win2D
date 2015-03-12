@@ -375,6 +375,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float h,
             ABI::Windows::UI::Color color) override;
 
+        IFACEMETHOD(FillRectangleWithBrushAndOpacityBrush)(
+            ABI::Windows::Foundation::Rect rect,
+            ICanvasBrush* brush,
+            ICanvasBrush* opacityBrush) override;
+
+        IFACEMETHOD(FillRectangleAtCoordsWithBrushAndOpacityBrush)(
+            float x,
+            float y,
+            float w,
+            float h,
+            ICanvasBrush* brush,
+            ICanvasBrush* opacityBrush) override;
+
         //
         // DrawRoundedRectangle
         //
@@ -994,6 +1007,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Vector2 offset,
             ICanvasBrush* brush) override;
 
+        IFACEMETHOD(FillGeometryWithBrushAndOpacityBrush)(
+            ICanvasGeometry* geometry,
+            Vector2 offset,
+            ICanvasBrush* brush,
+            ICanvasBrush* opacityBrush) override;
+
         IFACEMETHOD(FillGeometryWithColor)(
             ICanvasGeometry* geometry,
             Vector2 offset,
@@ -1005,6 +1024,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float y,
             ICanvasBrush* brush) override;
 
+        IFACEMETHOD(FillGeometryAtCoordsWithBrushAndOpacityBrush)(
+            ICanvasGeometry* geometry,
+            float x,
+            float y,
+            ICanvasBrush* brush,
+            ICanvasBrush* opacityBrush) override;
+
         IFACEMETHOD(FillGeometryAtCoordsWithColor)(
             ICanvasGeometry* geometry,
             float x,
@@ -1014,6 +1040,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(FillGeometryAtOriginWithBrush)(
             ICanvasGeometry* geometry,
             ICanvasBrush* brush) override;
+
+        IFACEMETHOD(FillGeometryAtOriginWithBrushAndOpacityBrush)(
+            ICanvasGeometry* geometry,
+            ICanvasBrush* brush,
+            ICanvasBrush* opacityBrush) override;
 
         IFACEMETHOD(FillGeometryAtOriginWithColor)(
             ICanvasGeometry* geometry,
@@ -1208,7 +1239,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void FillGeometryImpl(
             ICanvasGeometry* geometry,
-            ID2D1Brush* brush);
+            ID2D1Brush* brush,
+            ID2D1Brush* opacityBrush);
 
         void DrawCachedGeometryImpl(
             ICanvasCachedGeometry* cachedGeometry,

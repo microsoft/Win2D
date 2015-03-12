@@ -1212,6 +1212,284 @@ public:
         });
     }
 
+    class FillOpacityMaskFixture : public CanvasDrawingSessionFixture
+    {
+    public:
+        D2D1_SIZE_F BitmapSize;
+        Rect DestRect;
+
+        ComPtr<MockD2DBitmap> D2DBitmap;
+        ComPtr<MockD2DBitmapBrush> D2DBrush;
+        ComPtr<MockD2DBitmapBrush> D2DOpacityBrush;
+        ComPtr<StubCanvasBrush> OpacityBrush;
+
+        FillOpacityMaskFixture()
+        {
+            D2DBitmap = Make<MockD2DBitmap>();
+            D2DBrush = Make<MockD2DBitmapBrush>();
+            D2DOpacityBrush = Make<MockD2DBitmapBrush>();
+            Brush = Make<StubCanvasBrush>(D2DBrush);
+            OpacityBrush = Make<StubCanvasBrush>(D2DOpacityBrush);
+
+            BitmapSize = D2D1_SIZE_F{ 6, 16 };
+            DestRect = Rect{ 23, 42, 3, 4 };
+
+            D2DBitmap->GetSizeMethod.AllowAnyCall([=] { return BitmapSize; });
+
+            D2DOpacityBrush->MockGetBitmap = [=](ID2D1Bitmap **bitmap)
+            {
+                ThrowIfFailed(D2DBitmap.CopyTo(bitmap));
+            };
+
+            SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+            SetUnitMode(D2D1_UNIT_MODE_DIPS);
+            SetOpacityBrushOpacity(1.0f);
+            SetOpacityBrushInterpolationMode(D2D1_INTERPOLATION_MODE_LINEAR);
+
+            SetOpacityBrushTransform(
+                D2D1_MATRIX_3X2_F
+                { 
+                    DestRect.Width / BitmapSize.width, 0,
+                    0, DestRect.Height / BitmapSize.height,
+                    DestRect.X, DestRect.Y,
+                });
+        }
+
+        void SetAntialiasMode(D2D1_ANTIALIAS_MODE mode)
+        {
+            DeviceContext->GetAntialiasModeMethod.AllowAnyCall([=] { return mode; });
+        }
+
+        void SetUnitMode(D2D1_UNIT_MODE mode)
+        {
+            DeviceContext->GetUnitModeMethod.AllowAnyCall([=] { return mode; });
+        }
+
+        void SetOpacityBrushOpacity(float opacity)
+        {
+            D2DOpacityBrush->MockGetOpacity = [=] { return opacity; };
+        }
+
+        void SetOpacityBrushInterpolationMode(D2D1_INTERPOLATION_MODE mode)
+        {
+            D2DOpacityBrush->MockGetInterpolationMode1 = [=] { return mode; };
+        }
+
+        void SetOpacityBrushTransform(D2D1_MATRIX_3X2_F opacityBrushTransform)
+        {
+            D2DOpacityBrush->MockGetTransform = [=](D2D1_MATRIX_3X2_F *transform)
+            {
+                *transform = opacityBrushTransform;
+            };
+        }
+
+        void ExpectFillOpacityMask(D2D1_RECT_F expectedSourceRect)
+        {
+            DeviceContext->FillOpacityMaskMethod.SetExpectedCalls(1, [=](ID2D1Bitmap* opacityMask, ID2D1Brush* brush, D2D1_RECT_F const* destinationRectangle, D2D1_RECT_F const* sourceRectangle)
+            {
+                Assert::IsTrue(IsSameInstance(D2DBitmap.Get(), opacityMask));
+                Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr).Get(), brush));
+                Assert::AreEqual(ToD2DRect(DestRect), *destinationRectangle);
+                Assert::AreEqual(expectedSourceRect, *sourceRectangle);
+            });
+        }
+
+        void ExpectLayerAndFillRectangle()
+        {
+            DeviceContext->PushLayerMethod.SetExpectedCalls(1, [=](const D2D1_LAYER_PARAMETERS1* params, ID2D1Layer*)
+            {
+                Assert::IsTrue(IsSameInstance(OpacityBrush->GetD2DBrush(nullptr).Get(), params->opacityBrush));
+            });
+
+            DeviceContext->FillRectangleMethod.SetExpectedCalls(1, [=](D2D1_RECT_F const* rect, ID2D1Brush* brush)
+            {
+                Assert::AreEqual(ToD2DRect(DestRect), *rect);
+                Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr).Get(), brush));
+            });
+
+            DeviceContext->PopLayerMethod.SetExpectedCalls(1);
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenDrawingWholeBitmap_UsesFillOpacityMask)
+    {
+        FillOpacityMaskFixture f;
+        
+        f.ExpectFillOpacityMask(D2D1_RECT_F{ 0, 0, f.BitmapSize.width, f.BitmapSize.height });
+
+        ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenDrawingPartOfBitmap_UsesFillOpacityMask)
+    {
+        FillOpacityMaskFixture f;
+
+        f.SetOpacityBrushTransform(
+            D2D1_MATRIX_3X2_F
+            { 
+                1, 0,
+                0, 1,
+                f.DestRect.X - 1, f.DestRect.Y - 2,
+            });
+
+        f.ExpectFillOpacityMask(D2D1_RECT_F{ 1, 2, 1 + f.DestRect.Width, 2 + f.DestRect.Height });
+
+        ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenBrushExtendsOutsideBitmap_UsesLayerAndDrawRectangle)
+    {
+        FillOpacityMaskFixture f;
+
+        Vector2 offsets[] =
+        {
+            Vector2{ -1,  0 },
+            Vector2{  1,  0 },
+            Vector2{  0, -1 },
+            Vector2{  0,  1 },
+        };
+
+        for (auto offset : offsets)
+        {
+            f.SetOpacityBrushTransform(
+                D2D1_MATRIX_3X2_F
+                { 
+                    f.DestRect.Width / f.BitmapSize.width, 0,
+                    0, f.DestRect.Height / f.BitmapSize.height,
+                    f.DestRect.X + offset.X, f.DestRect.Y + offset.Y,
+                });
+
+            f.ExpectLayerAndFillRectangle();
+
+            ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenUnitsArePixels_BoundsCheckUsesSizeInPixels)
+    {
+        FillOpacityMaskFixture f;
+
+        auto sizeU = D2D1_SIZE_U
+        {
+            static_cast<unsigned>(f.BitmapSize.width),
+            static_cast<unsigned>(f.BitmapSize.height)
+        };
+
+        f.SetUnitMode(D2D1_UNIT_MODE_PIXELS);
+        f.D2DBitmap->GetSizeMethod.SetExpectedCalls(0);
+        f.D2DBitmap->GetPixelSizeMethod.AllowAnyCall([=] { return sizeU; });
+
+        Vector2 offsets[] =
+        {
+            Vector2{  0,  0 },
+            Vector2{ -1,  0 },
+            Vector2{  1,  0 },
+            Vector2{  0, -1 },
+            Vector2{  0,  1 },
+        };
+
+        for (auto offset : offsets)
+        {
+            f.SetOpacityBrushTransform(
+                D2D1_MATRIX_3X2_F
+                { 
+                    f.DestRect.Width / f.BitmapSize.width, 0,
+                    0, f.DestRect.Height / f.BitmapSize.height,
+                    f.DestRect.X + offset.X, f.DestRect.Y + offset.Y,
+                });
+
+            if (offset.X == 0 && offset.Y == 0)
+            {
+                f.ExpectFillOpacityMask(D2D1_RECT_F{ 0, 0, f.BitmapSize.width, f.BitmapSize.height });
+            }
+            else
+            {
+                f.ExpectLayerAndFillRectangle();
+            }
+
+            ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenBrushNotBitmap_UsesLayerAndDrawRectangle)
+    {
+        FillOpacityMaskFixture f;
+
+        f.OpacityBrush = Make<StubCanvasBrush>();
+
+        f.ExpectLayerAndFillRectangle();
+
+        ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenBrushTransformIsComplex_UsesLayerAndDrawRectangle)
+    {
+        FillOpacityMaskFixture f;
+
+        f.SetOpacityBrushTransform(
+            D2D1_MATRIX_3X2_F
+            { 
+                0, 1,
+                -1, 0,
+                0, 0,
+            });
+
+        f.ExpectLayerAndFillRectangle();
+
+        ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenBrushOpacityNotOne_UsesLayerAndDrawRectangle)
+    {
+        FillOpacityMaskFixture f;
+
+        f.SetOpacityBrushOpacity(0.5f);
+
+        f.ExpectLayerAndFillRectangle();
+
+        ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenBrushInterpolationNotLinear_UsesLayerAndDrawRectangle)
+    {
+        FillOpacityMaskFixture f;
+
+        f.SetOpacityBrushInterpolationMode(D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
+
+        f.ExpectLayerAndFillRectangle();
+
+        ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenAntialiasEnabled_UsesLayerAndDrawRectangle)
+    {
+        FillOpacityMaskFixture f;
+
+        f.SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+
+        f.ExpectLayerAndFillRectangle();
+
+        ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(f.DestRect, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleWithBrushAndOpacityBrush_WhenOpacityNull_UsesDrawRectangle)
+    {
+        TestFillRectangle(false,
+            [](CanvasDrawingSessionFixture const& f, Rect rect)
+        {
+            ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(rect, f.Brush.Get(), nullptr));
+        });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillRectangleAtCoordsWithBrushAndOpacityBrush)
+    {
+        FillOpacityMaskFixture f;
+
+        f.ExpectFillOpacityMask(D2D1_RECT_F{ 0, 0, f.BitmapSize.width, f.BitmapSize.height });
+
+        ThrowIfFailed(f.DS->FillRectangleAtCoordsWithBrushAndOpacityBrush(f.DestRect.X, f.DestRect.Y, f.DestRect.Width, f.DestRect.Height, f.Brush.Get(), f.OpacityBrush.Get()));
+    }
+
 
     //
     // DrawRoundedRectangle
@@ -2290,10 +2568,10 @@ public:
     // FillGeometry
     //    
 
-    template<typename TDraw>
+    template<typename TFixture = FixtureWithTemporaryTranslation, typename TDraw>
     void TestFillGeometry(bool isColorOverload, bool expectTranslation, TDraw const& callDrawFunction)
     {
-        FixtureWithTemporaryTranslation f;
+        TFixture f;
         BrushValidator brushValidator(f, isColorOverload);
 
         int expectedFillGeometryCount = isColorOverload ? 2 : 1;
@@ -2316,10 +2594,15 @@ public:
                 Assert::AreEqual(nativeGeometryResource.Get(), geometry);
                 brushValidator.Check(brush);
 
-                Assert::IsNull(opacityBrush);
-            });
+                ValidateFillGeometryOpacityBrush(f, opacityBrush);
+        });
 
         callDrawFunction(f, f.Geometry.Get());
+    }
+
+    static void ValidateFillGeometryOpacityBrush(FixtureWithTemporaryTranslation const& f, ID2D1Brush* opacityBrush)
+    {
+        Assert::IsNull(opacityBrush);
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_FillGeometryAtOriginWithBrush)
@@ -2401,6 +2684,144 @@ public:
         f.DeviceContext->FillGeometryMethod.SetExpectedCalls(1);
 
         ThrowIfFailed(f.DS->FillGeometryWithBrush(f.Geometry.Get(), f.DrawOffset, f.Brush.Get()));
+    }
+
+    class FillGeometryWithOpacityBrushFixture : public FixtureWithTemporaryTranslation
+    {
+    public:
+        ComPtr<MockD2DBitmapBrush> D2DBitmapBrush;
+        ComPtr<StubCanvasBrush> OpacityBrush;
+        ComPtr<StubCanvasBrush> ExpectedDrawCallOpacityBrush;
+
+        FillGeometryWithOpacityBrushFixture()
+        {
+            // In order for FillGeometry to use an opacity mask, the main color brush must be a bitmap using clamp extend mode.
+            D2DBitmapBrush = Make<MockD2DBitmapBrush>();
+
+            D2DBitmapBrush->MockGetExtendModeX = [] { return D2D1_EXTEND_MODE_CLAMP; };
+            D2DBitmapBrush->MockGetExtendModeY = [] { return D2D1_EXTEND_MODE_CLAMP; };
+
+            D2DBitmapBrush->MockGetTransform = [](D2D1_MATRIX_3X2_F* transform) { *transform = D2D1_MATRIX_3X2_F{}; };
+            D2DBitmapBrush->MockSetTransform = [](D2D1_MATRIX_3X2_F const*) { };
+
+            Brush = Make<StubCanvasBrush>(D2DBitmapBrush);
+            OpacityBrush = Make<StubCanvasBrush>();
+            ExpectedDrawCallOpacityBrush = OpacityBrush;
+        }
+    };
+
+    static void ValidateFillGeometryOpacityBrush(FillGeometryWithOpacityBrushFixture const& f, ID2D1Brush* opacityBrush)
+    {
+        if (f.ExpectedDrawCallOpacityBrush)
+        {
+            Assert::IsTrue(IsSameInstance(f.ExpectedDrawCallOpacityBrush->GetD2DBrush(nullptr).Get(), opacityBrush));
+        }
+        else
+        {
+            Assert::IsNull(opacityBrush);
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryAtOriginWithBrushAndOpacityBrush)
+    {
+        TestFillGeometry<FillGeometryWithOpacityBrushFixture>(false, false,
+            [&](FillGeometryWithOpacityBrushFixture const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryAtOriginWithBrushAndOpacityBrush(geometry, f.Brush.Get(), f.OpacityBrush.Get()));
+            });
+
+        // Null opacity brush.
+        TestFillGeometry(false, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryAtOriginWithBrushAndOpacityBrush(geometry, f.Brush.Get(), nullptr));
+            });
+
+        // Null brush or geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtOriginWithBrushAndOpacityBrush(f.Geometry.Get(), nullptr, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtOriginWithBrushAndOpacityBrush(nullptr, f.Brush.Get(), f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithBrushAndOpacityBrush)
+    {
+        TestFillGeometry<FillGeometryWithOpacityBrushFixture>(false, true,
+            [&](FillGeometryWithOpacityBrushFixture const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryWithBrushAndOpacityBrush(geometry, f.DrawOffset, f.Brush.Get(), f.OpacityBrush.Get()));
+            });
+
+        // Null opacity brush.
+        TestFillGeometry(false, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryWithBrushAndOpacityBrush(geometry, f.DrawOffset, f.Brush.Get(), nullptr));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrushAndOpacityBrush(f.Geometry.Get(), Vector2{}, nullptr, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrushAndOpacityBrush(nullptr, Vector2{}, f.Brush.Get(), f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryAtCoordsWithBrushAndOpacityBrush)
+    {
+        TestFillGeometry<FillGeometryWithOpacityBrushFixture>(false, true,
+            [&](FillGeometryWithOpacityBrushFixture const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryAtCoordsWithBrushAndOpacityBrush(geometry, f.DrawOffset.X, f.DrawOffset.Y, f.Brush.Get(), f.OpacityBrush.Get()));
+            });
+
+        // Null opacity brush.
+        TestFillGeometry(false, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryAtCoordsWithBrushAndOpacityBrush(geometry, f.DrawOffset.X, f.DrawOffset.Y, f.Brush.Get(), nullptr));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtCoordsWithBrushAndOpacityBrush(f.Geometry.Get(), 0, 0, nullptr, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtCoordsWithBrushAndOpacityBrush(nullptr, 0, 0, f.Brush.Get(), f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithBrushAndOpacityBrush_WhenBrushNotBitmap_UsesLayer)
+    {
+        auto opacityBrush = Make<StubCanvasBrush>();
+
+        TestFillGeometry(false, true,
+            [&](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry)
+            {
+                f.DeviceContext->PushLayerMethod.SetExpectedCalls(1, [&](const D2D1_LAYER_PARAMETERS1* params, ID2D1Layer*)
+                {
+                    Assert::IsTrue(IsSameInstance(opacityBrush->GetD2DBrush(nullptr).Get(), params->opacityBrush));
+                });
+
+                f.DeviceContext->PopLayerMethod.SetExpectedCalls(1);
+
+                ThrowIfFailed(f.DS->FillGeometryWithBrushAndOpacityBrush(geometry, f.DrawOffset, f.Brush.Get(), opacityBrush.Get()));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithBrushAndOpacityBrush_WhenExtendModeNotClamp_UsesLayer)
+    {
+        TestFillGeometry<FillGeometryWithOpacityBrushFixture>(false, true,
+            [&](FillGeometryWithOpacityBrushFixture& f, CanvasGeometry* geometry)
+            {
+                f.D2DBitmapBrush->MockGetExtendModeX = [] { return D2D1_EXTEND_MODE_WRAP; };
+                f.D2DBitmapBrush->MockGetExtendModeY = [] { return D2D1_EXTEND_MODE_WRAP; };
+
+                f.DeviceContext->PushLayerMethod.SetExpectedCalls(1, [&](const D2D1_LAYER_PARAMETERS1* params, ID2D1Layer*)
+                {
+                    Assert::IsTrue(IsSameInstance(f.OpacityBrush->GetD2DBrush(nullptr).Get(), params->opacityBrush));
+                });
+
+                f.DeviceContext->PopLayerMethod.SetExpectedCalls(1);
+
+                f.ExpectedDrawCallOpacityBrush = nullptr;
+
+                ThrowIfFailed(f.DS->FillGeometryWithBrushAndOpacityBrush(geometry, f.DrawOffset, f.Brush.Get(), f.OpacityBrush.Get()));
+            });
     }
 
     //

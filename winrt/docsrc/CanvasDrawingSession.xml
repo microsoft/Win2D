@@ -176,6 +176,34 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Windows.UI.Color)">
       <summary>Fills the interior of a rectangle with the specified color.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <remarks>
+        <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
+        <ul>
+          <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Transform"/> contains only positive scaling and translation (no rotation or other transforms), and is positioned so the rectangle being drawn will not extend past the edge of the opacity bitmap</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Opacity"/> is set to 1.0 (the default)</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
+          <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <remarks>
+        <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
+        <ul>
+          <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Transform"/> contains only positive scaling and translation (no rotation or other transforms), and is positioned so the rectangle being drawn will not extend past the edge of the opacity bitmap</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Opacity"/> is set to 1.0 (the default)</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
+          <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
+        </ul>
+      </remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
       <summary>Draws a rounded rectangle of single unit stroke width, using a brush to define the color.</summary>
@@ -545,6 +573,39 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills a geometry relative to the specified position with the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <remarks>
+        <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
+        <ul>
+          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <remarks>
+        <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
+        <ul>
+          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills a geometry relative to the origin, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <remarks>
+        <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
+        <ul>
+          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
+        </ul>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
