@@ -198,10 +198,10 @@
       </ProjectsPerConfig>
 
       <!-- Move platform and configuration into the AdditionalProperties metadata, and generate a
-           platform independent name that will be the same for Windows and Phone project variants -->
+           platform independent name that will be the same for Windows, Phone and UAP project variants -->
       <ProjectsToBuild Include="@(ProjectsPerConfig)">
         <AdditionalProperties>Platform=%(ProjectsPerConfig.Platform);Configuration=%(ProjectsPerConfig.Configuration)</AdditionalProperties>
-        <PlatformIndependentName>$([System.String]::new('%(ProjectsPerConfig.Filename)').Replace('Windows', '').Replace('Phone', '').TrimEnd('.'))</PlatformIndependentName>
+        <PlatformIndependentName>$([System.String]::new('%(ProjectsPerConfig.Filename)').Replace('Windows', '').Replace('Phone', '').Replace('uap', '').TrimEnd('.'))</PlatformIndependentName>
       </ProjectsToBuild>
     </ItemGroup>
   </Target>
