@@ -142,6 +142,12 @@
     <UAPProject Include="tests\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
   </ItemGroup>
 
+  <!-- Restore NuGet packages for all projects -->
+  <ItemGroup Condition="$(BuildTests)">
+    <PackagesConfig Include="tests\**\packages.config" />
+    <PackagesConfig Include="winrt\**\packages.config" />
+  </ItemGroup>
+
   <!-- Tools projects -->
   <ItemGroup Condition="$(BuildTools)">
     <AnyCPUProject Include="tools\copyright\copyright.csproj" />
@@ -166,7 +172,7 @@
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ListSkippedTargets"
+          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ListSkippedTargets; RestoreNuGetPackages"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -344,5 +350,7 @@
     <Warning Condition="'$(SkippedBuildUAP)' == 'true'"
              Text="Skipped building for Windows 10 UAP since Windows 10 SDK is not installed." />
   </Target>
+
+  <Import Project="$(MsBuildThisFileDirectory)build\nuget-restore.targets" />
 
 </Project>

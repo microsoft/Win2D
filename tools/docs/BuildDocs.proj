@@ -89,6 +89,10 @@
   </Target>
 
 
+  <ItemGroup>
+    <PackagesConfig Include="$(MSBuildThisFileDirectory)..\.nuget\packages.config" />
+  </ItemGroup>
+
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
   <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
     <MSBuild Projects="BuildDocs.shfbproj" />
