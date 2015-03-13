@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "CustomFontManager.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
@@ -53,28 +55,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     class CanvasTextFormatManager 
-        : public std::enable_shared_from_this<CanvasTextFormatManager>
+        : public CustomFontManager
+        , public std::enable_shared_from_this<CanvasTextFormatManager>
         , public StoredInPropertyMap
         , private LifespanTracker<CanvasTextFormatManager>
     {
-        std::shared_ptr<ICanvasTextFormatAdapter> m_adapter;
-        ComPtr<IDWriteFactory> m_isolatedFactory;
-        ComPtr<IDWriteFontCollectionLoader> m_customLoader;
-        ComPtr<IUriRuntimeClassFactory> m_uriFactory;
-
     public:
         CanvasTextFormatManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter);
 
         ComPtr<CanvasTextFormat> Create();
         ComPtr<CanvasTextFormat> Create(IDWriteTextFormat* format);
-
-        void ValidateUri(WinString const& uri);
-        ComPtr<IDWriteFontCollection> GetFontCollectionFromUri(WinString const& uri);        
-
-    private:
-        ComPtr<IDWriteFactory> const& GetIsolatedFactory();        
-
-        WinString GetAbsolutePathFromUri(WinString const& uri);
     };
 
 

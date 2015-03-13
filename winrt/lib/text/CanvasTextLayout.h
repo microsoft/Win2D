@@ -12,23 +12,11 @@
 
 #pragma once
 
+#include "CustomFontManager.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
-
-    class ICanvasTextLayoutAdapter
-    {
-    public:
-        virtual ~ICanvasTextLayoutAdapter() = default;
-
-        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) = 0;
-    };
-
-    class CanvasTextLayoutAdapter : public ICanvasTextLayoutAdapter
-    {
-    public:
-        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override;
-    };
 
     class CanvasTextLayout;
     class CanvasTextLayoutManager;
@@ -83,7 +71,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextLayout, BaseTrust);
 
-        ClosablePtr<ICanvasTextFormat> m_format;
+        CanvasDrawTextOptions m_drawTextOptions;
 
     public:
         CanvasTextLayout(std::shared_ptr<CanvasTextLayoutManager> manager, IDWriteTextLayout2* layout);
@@ -322,13 +310,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Close)() override;
     };
 
-    class CanvasTextLayoutManager : public ResourceManager<CanvasTextLayoutTraits>
+    class CanvasTextLayoutManager 
+        : public ResourceManager<CanvasTextLayoutTraits>
+        , public CustomFontManager
     {
-        std::shared_ptr<ICanvasTextLayoutAdapter> m_adapter;
-        ComPtr<IDWriteFactory> m_sharedFactory;
-
     public:
-        CanvasTextLayoutManager(std::shared_ptr<ICanvasTextLayoutAdapter> adapter);
+        CanvasTextLayoutManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter);
 
         virtual ~CanvasTextLayoutManager() = default;
 
@@ -340,8 +327,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<CanvasTextLayout> CreateWrapper(
             IDWriteTextLayout2* resource);
-
-    private:
-        ComPtr<IDWriteFactory> const& GetSharedFactory();
     };
 }}}}

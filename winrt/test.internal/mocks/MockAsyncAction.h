@@ -14,7 +14,7 @@
 
 //
 // This implements IAsyncAction enough that it can be passed to something that
-// requires an IAsyncAction.  However, it does provide any functionality itself
+// requires an IAsyncAction.  However, it does not provide any functionality itself
 // and expects the caller (ie the test code) to poke directly at it to notify
 // when it has completed or failed.
 //

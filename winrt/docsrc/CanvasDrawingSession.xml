@@ -474,44 +474,121 @@ under the License.
     </member>
   
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
-      <summary>Draws a geometry with a single unit stroke width and the specified color.</summary>
+      <summary>Draws a geometry relative to the origin, with a single unit stroke width and the specified color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a geometry with a single unit stroke width, and using a brush to define the color.</summary>
+      <summary>Draws a geometry relative to the origin, with a single unit stroke width, and using a brush to define the color.</summary>
     </member>    
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
-      <summary>Draws a geometry with the specified stroke width, and using a brush to define the color.</summary>
+      <summary>Draws a geometry relative to the origin, with the specified stroke width, and using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color,System.Single)">
-      <summary>Draws a geometry with the specified stroke width and color.</summary>
+      <summary>Draws a geometry relative to the origin, with the specified stroke width and color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-      <summary>Draws a geometry with the specified stroke width and stroke style, and using a brush to define the color.</summary>
+      <summary>Draws a geometry relative to the origin, with the specified stroke width and stroke style, and using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
-      <summary>Draws a geometry with the specified stroke width, stroke style, and color.</summary>
+      <summary>Draws a geometry relative to the origin, with the specified stroke width, stroke style, and color.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a geometry relative to the specified position, with a single unit stroke width, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a geometry relative to the specified position, with a single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color,System.Single)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width and stroke style, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width, stroke style, and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a geometry relative to the specified position, with a single unit stroke width, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+      <summary>Draws a geometry relative to the specified position, with a single unit stroke width and the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width and color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width and stroke style, and using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+      <summary>Draws a geometry relative to the specified position, with the specified stroke width, stroke style, and color.</summary>
+    </member>
+
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Fills a geometry, using a brush to define the color.</summary>
+      <summary>Fills a geometry relative to the origin, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
-      <summary>Fills a geometry with the specified color.</summary>
-    </member>    
+      <summary>Fills a geometry relative to the origin with the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills a geometry relative to the specified position, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+      <summary>Fills a geometry relative to the specified position with the specified color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Fills a geometry relative to the specified position, using a brush to define the color.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Fills a geometry relative to the specified position with the specified color.</summary>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
-      <summary>Draws a cached geometry, using a brush to define the color.</summary>
+      <summary>Draws a cached geometry relative to the origin, using a brush to define the color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was 
         created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Windows.UI.Color)">
-      <summary>Draws a cached geometry with the specified color.</summary>
+      <summary>Draws a cached geometry relative to the origin and with the specified color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was 
         created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
-    </member>    
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a cached geometry relative to the specified position, using a brush to define the color.</summary>
+      <remarks>
+        Whether this operation is a stroke or fill is determined by whether the cached geometry was 
+        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+      <summary>Draws a cached geometry relative to the specified position and with the specified color.</summary>
+      <remarks>
+        Whether this operation is a stroke or fill is determined by whether the cached geometry was
+        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Draws a cached geometry relative to the specified position, using a brush to define the color.</summary>
+      <remarks>
+        Whether this operation is a stroke or fill is determined by whether the cached geometry was
+        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,System.Single,System.Single,Windows.UI.Color)">
+      <summary>Draws a cached geometry relative to the specified position and with the specified color.</summary>
+      <remarks>
+        Whether this operation is a stroke or fill is determined by whether the cached geometry was
+        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+      </remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
       <summary>Draws a text layout, using a brush to define the color.</summary>

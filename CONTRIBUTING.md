@@ -120,9 +120,6 @@ command prompt. This will:
 - Generate updated reference documentation
 - Make sure all source files include the correct Apache copyright header
 
-The documentation generation step requires you to have installed the
-Sandcastle tools from https://shfb.codeplex.com.
-
 To run Store unit tests, you must have a Windows Store development license
 installed on your computer, and must install a test package certificate as
 described in the Remarks section of http://msdn.microsoft.com/en-us/library/windows/desktop/jj835836%28v=vs.85%29.aspx

@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<int>(DWRITE) == static_cast<int>(CANVAS), #CANVAS " is assumed to match " #DWRITE)
 
 
-    static DWRITE_FLOW_DIRECTION ToFlowDirection(CanvasTextDirection value)
+    inline DWRITE_FLOW_DIRECTION ToFlowDirection(CanvasTextDirection value)
     {
         CHECK_ENUM_MEMBER(DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM, CanvasTextDirection::TopToBottom);
         CHECK_ENUM_MEMBER(DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection::BottomToTop);
@@ -35,14 +35,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasTextDirection ToCanvasTextDirection(DWRITE_FLOW_DIRECTION value)
+    inline CanvasTextDirection ToCanvasTextDirection(DWRITE_FLOW_DIRECTION value)
     {
         // static_asserts in ToFlowDirection validate that this cast is ok.
         return static_cast<CanvasTextDirection>(value);
     }
 
 
-    static DWRITE_LINE_SPACING_METHOD ToLineSpacingMethod(CanvasLineSpacingMethod value)
+    inline DWRITE_LINE_SPACING_METHOD ToLineSpacingMethod(CanvasLineSpacingMethod value)
     {
         CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_DEFAULT, CanvasLineSpacingMethod::Default);
         CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_UNIFORM, CanvasLineSpacingMethod::Uniform);
@@ -51,14 +51,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasLineSpacingMethod ToCanvasLineSpacingMethod(DWRITE_LINE_SPACING_METHOD value)
+    inline CanvasLineSpacingMethod ToCanvasLineSpacingMethod(DWRITE_LINE_SPACING_METHOD value)
     {
         // static_asserts in ToLineSpacingMethod validate that this cast is ok
         return static_cast<CanvasLineSpacingMethod>(value);
     }
 
 
-    static DWRITE_FONT_STRETCH ToFontStretch(ABI::Windows::UI::Text::FontStretch value)
+    inline DWRITE_FONT_STRETCH ToFontStretch(ABI::Windows::UI::Text::FontStretch value)
     {
         CHECK_ENUM_MEMBER(DWRITE_FONT_STRETCH_UNDEFINED, ABI::Windows::UI::Text::FontStretch_Undefined);
         CHECK_ENUM_MEMBER(DWRITE_FONT_STRETCH_ULTRA_CONDENSED, ABI::Windows::UI::Text::FontStretch_UltraCondensed);
@@ -76,14 +76,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static ABI::Windows::UI::Text::FontStretch ToWindowsFontStretch(DWRITE_FONT_STRETCH value)
+    inline ABI::Windows::UI::Text::FontStretch ToWindowsFontStretch(DWRITE_FONT_STRETCH value)
     {
         // static_asserts in ToFontStretch validate that this cast is ok
         return static_cast<ABI::Windows::UI::Text::FontStretch>(value);
     }
 
 
-    static DWRITE_FONT_STYLE ToFontStyle(ABI::Windows::UI::Text::FontStyle value)
+    inline DWRITE_FONT_STYLE ToFontStyle(ABI::Windows::UI::Text::FontStyle value)
     {
         CHECK_ENUM_MEMBER(DWRITE_FONT_STYLE_NORMAL, ABI::Windows::UI::Text::FontStyle_Normal);
         CHECK_ENUM_MEMBER(DWRITE_FONT_STYLE_OBLIQUE, ABI::Windows::UI::Text::FontStyle_Oblique);
@@ -93,26 +93,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static ABI::Windows::UI::Text::FontStyle ToWindowsFontStyle(DWRITE_FONT_STYLE value)
+    inline ABI::Windows::UI::Text::FontStyle ToWindowsFontStyle(DWRITE_FONT_STYLE value)
     {
         // static_asserts in ToFontStyle validate that this cast is ok
         return static_cast<ABI::Windows::UI::Text::FontStyle>(value);
     }
 
 
-    static DWRITE_FONT_WEIGHT ToFontWeight(ABI::Windows::UI::Text::FontWeight value)
+    inline DWRITE_FONT_WEIGHT ToFontWeight(ABI::Windows::UI::Text::FontWeight value)
     {
         return static_cast<DWRITE_FONT_WEIGHT>(value.Weight);
     }
 
 
-    static ABI::Windows::UI::Text::FontWeight ToWindowsFontWeight(DWRITE_FONT_WEIGHT value)
+    inline ABI::Windows::UI::Text::FontWeight ToWindowsFontWeight(DWRITE_FONT_WEIGHT value)
     {
         return ABI::Windows::UI::Text::FontWeight{ static_cast<uint16_t>(value) };
     }
 
 
-    static DWRITE_PARAGRAPH_ALIGNMENT ToParagraphAlignment(CanvasVerticalAlignment value)
+    inline DWRITE_PARAGRAPH_ALIGNMENT ToParagraphAlignment(CanvasVerticalAlignment value)
     {
         CHECK_ENUM_MEMBER(DWRITE_PARAGRAPH_ALIGNMENT_NEAR, CanvasVerticalAlignment::Top);
         CHECK_ENUM_MEMBER(DWRITE_PARAGRAPH_ALIGNMENT_FAR, CanvasVerticalAlignment::Bottom);
@@ -122,14 +122,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasVerticalAlignment ToCanvasVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT value)
+    inline CanvasVerticalAlignment ToCanvasVerticalAlignment(DWRITE_PARAGRAPH_ALIGNMENT value)
     {
         // static_asserts in ToParagraphAlignment validate that this cast is ok
         return static_cast<CanvasVerticalAlignment>(value);
     }
 
 
-    static DWRITE_READING_DIRECTION ToReadingDirection(CanvasTextDirection value)
+    inline DWRITE_READING_DIRECTION ToReadingDirection(CanvasTextDirection value)
     {
         switch (value)
         {
@@ -142,7 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasTextDirection ToCanvasTextDirection(DWRITE_READING_DIRECTION value)
+    inline CanvasTextDirection ToCanvasTextDirection(DWRITE_READING_DIRECTION value)
     {
         switch (value)
         {
@@ -155,7 +155,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static DWRITE_TEXT_ALIGNMENT ToTextAlignment(ABI::Windows::UI::Text::ParagraphAlignment value)
+    inline DWRITE_TEXT_ALIGNMENT ToTextAlignment(ABI::Windows::UI::Text::ParagraphAlignment value)
     {
         switch (value)
         {
@@ -168,7 +168,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static ABI::Windows::UI::Text::ParagraphAlignment ToWindowsParagraphAlignment(DWRITE_TEXT_ALIGNMENT value)
+    inline ABI::Windows::UI::Text::ParagraphAlignment ToWindowsParagraphAlignment(DWRITE_TEXT_ALIGNMENT value)
     {
         switch (value)
         {
@@ -181,7 +181,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static DWRITE_TRIMMING_GRANULARITY ToTrimmingGranularity(CanvasTextTrimmingGranularity value)
+    inline DWRITE_TRIMMING_GRANULARITY ToTrimmingGranularity(CanvasTextTrimmingGranularity value)
     {
         CHECK_ENUM_MEMBER(DWRITE_TRIMMING_GRANULARITY_NONE, CanvasTextTrimmingGranularity::None);
         CHECK_ENUM_MEMBER(DWRITE_TRIMMING_GRANULARITY_CHARACTER, CanvasTextTrimmingGranularity::Character);
@@ -191,14 +191,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasTextTrimmingGranularity ToCanvasTextTrimmingGranularity(DWRITE_TRIMMING_GRANULARITY value)
+    inline CanvasTextTrimmingGranularity ToCanvasTextTrimmingGranularity(DWRITE_TRIMMING_GRANULARITY value)
     {
         // static_asserts in ToTrimmingGranularity validate that this case is ok
         return static_cast<CanvasTextTrimmingGranularity>(value);
     }
 
 
-    static DWRITE_VERTICAL_GLYPH_ORIENTATION ToVerticalGlyphOrientation(CanvasVerticalGlyphOrientation value)
+    inline DWRITE_VERTICAL_GLYPH_ORIENTATION ToVerticalGlyphOrientation(CanvasVerticalGlyphOrientation value)
     {
         CHECK_ENUM_MEMBER(DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT, CanvasVerticalGlyphOrientation::Default);
         CHECK_ENUM_MEMBER(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, CanvasVerticalGlyphOrientation::Stacked);
@@ -207,14 +207,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasVerticalGlyphOrientation ToCanvasVerticalGlyphOrientation(DWRITE_VERTICAL_GLYPH_ORIENTATION value)
+    inline CanvasVerticalGlyphOrientation ToCanvasVerticalGlyphOrientation(DWRITE_VERTICAL_GLYPH_ORIENTATION value)
     {
         // static_asserts in ToVerticalGlyphOrientation validate that this case is ok
         return static_cast<CanvasVerticalGlyphOrientation>(value);
     }
 
 
-    static DWRITE_OPTICAL_ALIGNMENT ToOpticalAlignment(CanvasOpticalAlignment value)
+    inline DWRITE_OPTICAL_ALIGNMENT ToOpticalAlignment(CanvasOpticalAlignment value)
     {
         CHECK_ENUM_MEMBER(DWRITE_OPTICAL_ALIGNMENT_NONE, CanvasOpticalAlignment::Default);
         CHECK_ENUM_MEMBER(DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS, CanvasOpticalAlignment::NoSideBearings);
@@ -223,14 +223,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasOpticalAlignment ToCanvasOpticalAlignment(DWRITE_OPTICAL_ALIGNMENT value)
+    inline CanvasOpticalAlignment ToCanvasOpticalAlignment(DWRITE_OPTICAL_ALIGNMENT value)
     {
         // static_asserts in ToOpticalAlignment validate that this case is ok
         return static_cast<CanvasOpticalAlignment>(value);
     }
 
 
-    static WinString ToCanvasTrimmingDelimiter(uint32_t value)
+    inline WinString ToCanvasTrimmingDelimiter(uint32_t value)
     {
         // TODO #1658: Do the unicode conversion properly.
         // http://www.unicode.org/faq/utf_bom.html#utf16-3.  This code needs its
@@ -257,7 +257,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static uint32_t ToTrimmingDelimiter(WinString const& value)
+    inline uint32_t ToTrimmingDelimiter(WinString const& value)
     {
         // TODO #1658: Do the unicode conversion properly.
         // http://www.unicode.org/faq/utf_bom.html#utf16-3.  This code needs its
@@ -281,7 +281,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static DWRITE_WORD_WRAPPING ToWordWrapping(CanvasWordWrapping value)
+    inline DWRITE_WORD_WRAPPING ToWordWrapping(CanvasWordWrapping value)
     {
         CHECK_ENUM_MEMBER(DWRITE_WORD_WRAPPING_WRAP, CanvasWordWrapping::Wrap);
         CHECK_ENUM_MEMBER(DWRITE_WORD_WRAPPING_NO_WRAP, CanvasWordWrapping::NoWrap);
@@ -293,10 +293,166 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    static CanvasWordWrapping ToCanvasWordWrapping(DWRITE_WORD_WRAPPING value)
+    inline CanvasWordWrapping ToCanvasWordWrapping(DWRITE_WORD_WRAPPING value)
     {
         // static_asserts in ToWordWrapping validate that this cast is ok
         return static_cast<CanvasWordWrapping>(value);
+    }
+
+    //
+    // Parameter validation functions
+    //
+
+    template<typename T>
+    inline void ThrowIfInvalid(T)
+    {
+        static_assert(false, "Specialization required");
+    }
+
+    template<>
+    inline void ThrowIfInvalid(CanvasTextDirection value)
+    {
+        switch (value)
+        {
+        case CanvasTextDirection::TopToBottom:
+        case CanvasTextDirection::BottomToTop:
+        case CanvasTextDirection::LeftToRight:
+        case CanvasTextDirection::RightToLeft:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    template<>
+    inline void ThrowIfInvalid(CanvasLineSpacingMethod value)
+    {
+        switch (value)
+        {
+        case CanvasLineSpacingMethod::Default:
+        case CanvasLineSpacingMethod::Uniform:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    template<>
+    inline void ThrowIfInvalid(CanvasVerticalAlignment value)
+    {
+        switch (value)
+        {
+        case CanvasVerticalAlignment::Top:
+        case CanvasVerticalAlignment::Bottom:
+        case CanvasVerticalAlignment::Center:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    template<>
+    inline void ThrowIfInvalid(ABI::Windows::UI::Text::ParagraphAlignment value)
+    {
+        switch (value)
+        {
+        case ABI::Windows::UI::Text::ParagraphAlignment_Undefined:
+        case ABI::Windows::UI::Text::ParagraphAlignment_Left:
+        case ABI::Windows::UI::Text::ParagraphAlignment_Center:
+        case ABI::Windows::UI::Text::ParagraphAlignment_Right:
+        case ABI::Windows::UI::Text::ParagraphAlignment_Justify:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    template<>
+    inline void ThrowIfInvalid(CanvasWordWrapping value)
+    {
+        switch (value)
+        {
+        case CanvasWordWrapping::Wrap:
+        case CanvasWordWrapping::NoWrap:
+        case CanvasWordWrapping::EmergencyBreak:
+        case CanvasWordWrapping::WholeWord:
+        case CanvasWordWrapping::Character:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    template<>
+    inline void ThrowIfInvalid(CanvasTextTrimmingGranularity value)
+    {
+        switch (value)
+        {
+        case CanvasTextTrimmingGranularity::None:
+        case CanvasTextTrimmingGranularity::Character:
+        case CanvasTextTrimmingGranularity::Word:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    inline void ThrowIfInvalidTrimmingDelimiter(HSTRING value)
+    {
+        // The delimiter must be a single code point and so cannot be more than
+        // 2 UTF-16 code units long
+        if (WindowsGetStringLen(value) > 2)
+            ThrowHR(E_INVALIDARG);
+    }
+    
+    template <class GET_ATTRIBUTE_LENGTH_METHOD, class GET_ATTRIBUTE_METHOD>
+    inline WinString GetStringAttributeFromTextFormat(
+        GET_ATTRIBUTE_LENGTH_METHOD fnGetLength,
+        GET_ATTRIBUTE_METHOD fnGet,
+        IDWriteTextFormat* format)
+    {
+        WinStringBuilder stringBuilder;
+        uint32_t attributeLength = (format->*fnGetLength)();
+        attributeLength++; // Account for null terminator
+
+        auto buffer = stringBuilder.Allocate(attributeLength);
+        ThrowIfFailed((format->*fnGet)(buffer, attributeLength));
+        return stringBuilder.Get();
+    }
+
+    inline WinString GetFontFamilyName(IDWriteTextFormat* format)
+    {
+        return GetStringAttributeFromTextFormat(
+            &IDWriteTextFormat::GetFontFamilyNameLength,
+            &IDWriteTextFormat::GetFontFamilyName,
+            format);
+    }
+
+    inline WinString GetLocaleName(IDWriteTextFormat* format)
+    {
+        return GetStringAttributeFromTextFormat(
+            &IDWriteTextFormat::GetLocaleNameLength,
+            &IDWriteTextFormat::GetLocaleName,
+            format);
+    }
+
+    inline std::pair<WinString, WinString> GetUriAndFontFamily(WinString const& fontFamilyName)
+    {
+        auto beginIt = begin(fontFamilyName);
+        auto endIt = end(fontFamilyName);
+
+        auto hashPos = std::find(beginIt, endIt, L'#');
+
+        if (hashPos == endIt)
+            return std::make_pair(WinString(), fontFamilyName);
+        else
+            return std::make_pair(WinString(beginIt, hashPos), WinString(hashPos + 1, endIt));
     }
    
 }}}}

@@ -150,6 +150,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreWindowExample.Windows",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreWindowExample.WindowsPhone", "tests\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj", "{6104A231-3DC0-4354-9210-468D8B9D0686}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E9607C0D-3EAD-475D-B9F7-063FC21B8231}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{70fb7b71-d56c-4bf1-9282-27aa58043cc0}*SharedItemsImports = 4

@@ -156,18 +156,38 @@ namespace canvas
         DONT_EXPECT(DrawTextAtPointCoordsWithColorAndFormat , HSTRING, float, float, Color, ICanvasTextFormat*);
         DONT_EXPECT(DrawTextAtRectCoordsWithColorAndFormat  , HSTRING, float, float, float, float, Color, ICanvasTextFormat*);
 
-        DONT_EXPECT(DrawGeometryWithBrush                            , ICanvasGeometry*, ICanvasBrush*);
-        DONT_EXPECT(DrawGeometryWithColor                            , ICanvasGeometry*, Color);
-        DONT_EXPECT(DrawGeometryWithBrushAndStrokeWidth              , ICanvasGeometry*, ICanvasBrush*, float);
-        DONT_EXPECT(DrawGeometryWithColorAndStrokeWidth              , ICanvasGeometry*, Color, float);
-        DONT_EXPECT(DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, ICanvasBrush*, float, ICanvasStrokeStyle*);
-        DONT_EXPECT(DrawGeometryWithColorAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawGeometryWithBrush                                    , ICanvasGeometry*, Vector2, ICanvasBrush*);
+        DONT_EXPECT(DrawGeometryWithColor                                    , ICanvasGeometry*, Vector2, Color);
+        DONT_EXPECT(DrawGeometryAtCoordsWithBrush                            , ICanvasGeometry*, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawGeometryAtCoordsWithColor                            , ICanvasGeometry*, float, float, Color);
+        DONT_EXPECT(DrawGeometryAtOriginWithBrush                            , ICanvasGeometry*, ICanvasBrush*);
+        DONT_EXPECT(DrawGeometryAtOriginWithColor                            , ICanvasGeometry*, Color);
+        DONT_EXPECT(DrawGeometryWithBrushAndStrokeWidth                      , ICanvasGeometry*, Vector2, ICanvasBrush*, float);
+        DONT_EXPECT(DrawGeometryWithColorAndStrokeWidth                      , ICanvasGeometry*, Vector2, Color, float);
+        DONT_EXPECT(DrawGeometryAtCoordsWithBrushAndStrokeWidth              , ICanvasGeometry*, float, float, ICanvasBrush*, float);
+        DONT_EXPECT(DrawGeometryAtCoordsWithColorAndStrokeWidth              , ICanvasGeometry*, float, float, Color, float);
+        DONT_EXPECT(DrawGeometryAtOriginWithBrushAndStrokeWidth              , ICanvasGeometry*, ICanvasBrush*, float);
+        DONT_EXPECT(DrawGeometryAtOriginWithColorAndStrokeWidth              , ICanvasGeometry*, Color, float);
+        DONT_EXPECT(DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle        , ICanvasGeometry*, Vector2, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawGeometryWithColorAndStrokeWidthAndStrokeStyle        , ICanvasGeometry*, Vector2, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, float, float, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawGeometryAtCoordsWithColorAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, float, float, Color, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, ICanvasBrush*, float, ICanvasStrokeStyle*);
+        DONT_EXPECT(DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle, ICanvasGeometry*, Color, float, ICanvasStrokeStyle*);
 
-        DONT_EXPECT(FillGeometryWithBrush, ICanvasGeometry*, ICanvasBrush*);
-        DONT_EXPECT(FillGeometryWithColor, ICanvasGeometry*, Color);
+        DONT_EXPECT(FillGeometryWithBrush        , ICanvasGeometry*, Vector2, ICanvasBrush*);
+        DONT_EXPECT(FillGeometryWithColor        , ICanvasGeometry*, Vector2, Color);
+        DONT_EXPECT(FillGeometryAtCoordsWithBrush, ICanvasGeometry*, float, float, ICanvasBrush*);
+        DONT_EXPECT(FillGeometryAtCoordsWithColor, ICanvasGeometry*, float, float, Color);
+        DONT_EXPECT(FillGeometryAtOriginWithBrush, ICanvasGeometry*, ICanvasBrush*);
+        DONT_EXPECT(FillGeometryAtOriginWithColor, ICanvasGeometry*, Color);
 
-        DONT_EXPECT(DrawCachedGeometryWithBrush, ICanvasCachedGeometry*, ICanvasBrush*);
-        DONT_EXPECT(DrawCachedGeometryWithColor, ICanvasCachedGeometry*, Color);
+        DONT_EXPECT(DrawCachedGeometryWithBrush        , ICanvasCachedGeometry*, Vector2, ICanvasBrush*);
+        DONT_EXPECT(DrawCachedGeometryWithColor        , ICanvasCachedGeometry*, Vector2, Color);
+        DONT_EXPECT(DrawCachedGeometryAtCoordsWithBrush, ICanvasCachedGeometry*, float, float, ICanvasBrush*);
+        DONT_EXPECT(DrawCachedGeometryAtCoordsWithColor, ICanvasCachedGeometry*, float, float, Color);
+        DONT_EXPECT(DrawCachedGeometryAtOriginWithBrush, ICanvasCachedGeometry*, ICanvasBrush*);
+        DONT_EXPECT(DrawCachedGeometryAtOriginWithColor, ICanvasCachedGeometry*, Color);
 
         DONT_EXPECT(DrawTextLayoutWithBrush, ICanvasTextLayout*, Vector2, ICanvasBrush*);
         DONT_EXPECT(DrawTextLayoutAtCoordsWithBrush, ICanvasTextLayout*, float, float, ICanvasBrush*);

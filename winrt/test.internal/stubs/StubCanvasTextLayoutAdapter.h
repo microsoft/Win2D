@@ -13,23 +13,27 @@
 #pragma once
 
 #include "CanvasTextLayout.h"
+#include "CanvasTextFormat.h"
 #include "MockDWriteFactory.h"
 #include "MockDWriteTextLayout.h"
 #include "MockDWriteFontCollection.h"
+#include "StubStorageFileStatics.h"
 
 namespace canvas
 {
-    class StubCanvasTextLayoutAdapter : public CanvasTextLayoutAdapter
+    class StubCanvasTextLayoutAdapter : public CanvasTextFormatAdapter
     {
         ComPtr<MockDWriteFactory> m_mockDwritefactory;
 
     public:
 
         ComPtr<MockDWriteTextLayout> MockTextLayout;
+        ComPtr<StubStorageFileStatics> StorageFileStatics;
 
         StubCanvasTextLayoutAdapter()
             : m_mockDwritefactory(Make<MockDWriteFactory>())
             , MockTextLayout(Make<MockDWriteTextLayout>())
+            , StorageFileStatics(Make<StubStorageFileStatics>())
         {
             MockTextLayout->GetFontCollection_BaseFormat_Method.AllowAnyCall(
                 [](IDWriteFontCollection** fontCollection)
@@ -103,9 +107,21 @@ namespace canvas
                 MockTextLayout.CopyTo(textLayout);
                 return S_OK;
             });
+
+            m_mockDwritefactory->RegisterFontCollectionLoaderMethod.AllowAnyCall();
+        }
+
+        virtual IStorageFileStatics* GetStorageFileStatics() override
+        {
+            return StorageFileStatics.Get();
         }
 
         virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override
+        {
+            return m_mockDwritefactory;
+        }
+
+        virtual ComPtr<MockDWriteFactory> GetMockDWriteFactory()
         {
             return m_mockDwritefactory;
         }

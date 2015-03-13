@@ -90,8 +90,7 @@
 
 
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
-  <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)">
-    <Error Condition="'$(SHFBROOT)' == ''" Text="Sandcastle not found. Get it at http://shfb.codeplex.com." />
+  <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
     <MSBuild Projects="BuildDocs.shfbproj" />
   </Target>
 
@@ -112,5 +111,7 @@
 
     <Exec Command="&quot;$(MergeIntellisenseTool)&quot; &quot;$(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml&quot; @(DocSrc, ' ')" />
   </Target>
+
+  <Import Project="$(MsBuildThisFileDirectory)..\..\build\nuget-restore.targets" />
 
 </Project>

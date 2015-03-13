@@ -16,13 +16,17 @@ namespace Microsoft.Graphics.Canvas
 
     // Workaround MIDL bug with interfaces containing more than 128 methods (1790983).
     // It outputs unwanted RPC proxy/stub prototypes, so we define dummy types to make those compile.
-    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CRect;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CNumerics_CMatrix3x2;")
-    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CNumerics_CMatrix3x2;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasLayerOptions;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasAntialiasing;")
     cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasBlend;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasLayerOptions;")
     cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasTextAntialiasing;")
     cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasUnits;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CNumerics_CMatrix3x2;")
+    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CNumerics_CVector2;")
+    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CNumerics_CMatrix3x2;")
+    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CNumerics_CVector2;")
+    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CRect;")
+    cpp_quote("typedef int __x_ABI_CWindows_CUI_CColor;")
 
     //
     // CanvasDrawingSession needs to be activatable in order to support interop
@@ -935,10 +939,36 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryWithBrush(
             [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
             [in] ICanvasBrush* brush);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryWithColor(
+            [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
+            [in] Windows.UI.Color color);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtCoordsWithBrush(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtCoordsWithColor(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] Windows.UI.Color color);
+
+        [overload("DrawGeometry"), default_overload]
+        HRESULT DrawGeometryAtOriginWithBrush(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtOriginWithColor(
             [in] CanvasGeometry* geometry,
             [in] Windows.UI.Color color);
 
@@ -947,11 +977,41 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryWithBrushAndStrokeWidth(
             [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryWithColorAndStrokeWidth(
+            [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
+            [in] Windows.UI.Color color,
+            [in] float strokeWidth);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtCoordsWithBrushAndStrokeWidth(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtCoordsWithColorAndStrokeWidth(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] Windows.UI.Color color,
+            [in] float strokeWidth);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtOriginWithBrushAndStrokeWidth(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtOriginWithColorAndStrokeWidth(
             [in] CanvasGeometry* geometry,
             [in] Windows.UI.Color color,
             [in] float strokeWidth);
@@ -961,12 +1021,46 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
             [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
             [in] ICanvasBrush* brush,
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
+            [in] Windows.UI.Color color,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
+        [overload("DrawGeometry"), default_overload]
+        HRESULT DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] Windows.UI.Color color,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush,
+            [in] float strokeWidth,
+            [in] CanvasStrokeStyle* strokeStyle);
+
+        [overload("DrawGeometry")]
+        HRESULT DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle(
             [in] CanvasGeometry* geometry,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
@@ -978,10 +1072,36 @@ namespace Microsoft.Graphics.Canvas
         [overload("FillGeometry"), default_overload]
         HRESULT FillGeometryWithBrush(
             [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
             [in] ICanvasBrush* brush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryWithColor(
+            [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
+            [in] Windows.UI.Color color);
+
+        [overload("FillGeometry"), default_overload]
+        HRESULT FillGeometryAtCoordsWithBrush(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] ICanvasBrush* brush);
+
+        [overload("FillGeometry")]
+        HRESULT FillGeometryAtCoordsWithColor(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] Windows.UI.Color color);
+
+        [overload("FillGeometry"), default_overload]
+        HRESULT FillGeometryAtOriginWithBrush(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush);
+
+        [overload("FillGeometry")]
+        HRESULT FillGeometryAtOriginWithColor(
             [in] CanvasGeometry* geometry,
             [in] Windows.UI.Color color);
 
@@ -991,10 +1111,36 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawCachedGeometry"), default_overload]
         HRESULT DrawCachedGeometryWithBrush(
             [in] CanvasCachedGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
             [in] ICanvasBrush* brush);
 
         [overload("DrawCachedGeometry")]
         HRESULT DrawCachedGeometryWithColor(
+            [in] CanvasCachedGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
+            [in] Windows.UI.Color color);
+
+        [overload("DrawCachedGeometry"), default_overload]
+        HRESULT DrawCachedGeometryAtCoordsWithBrush(
+            [in] CanvasCachedGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawCachedGeometry")]
+        HRESULT DrawCachedGeometryAtCoordsWithColor(
+            [in] CanvasCachedGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] Windows.UI.Color color);
+
+        [overload("DrawCachedGeometry"), default_overload]
+        HRESULT DrawCachedGeometryAtOriginWithBrush(
+            [in] CanvasCachedGeometry* geometry,
+            [in] ICanvasBrush* brush);
+
+        [overload("DrawCachedGeometry")]
+        HRESULT DrawCachedGeometryAtOriginWithColor(
             [in] CanvasCachedGeometry* geometry,
             [in] Windows.UI.Color color);
 

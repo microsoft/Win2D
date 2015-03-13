@@ -14,6 +14,7 @@
 
 #include "CanvasActiveLayer.h"
 #include "CanvasTextFormat.h"
+#include "TemporaryTransform.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -2222,10 +2223,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrush(
         ICanvasGeometry* geometry,
+        Vector2 offset,
         ICanvasBrush* brush)
     {
         return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
-            geometry,
+            geometry, 
+            offset, 
             brush, 
             1.0f, 
             nullptr);
@@ -2234,9 +2237,65 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColor(
         ICanvasGeometry* geometry,
-        Color color)
+        Vector2 offset,
+        ABI::Windows::UI::Color color)
     {
         return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            offset,
+            color,
+            1.0f,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtCoordsWithBrush(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ICanvasBrush* brush)
+    {
+        return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            Vector2{ x, y },
+            brush,
+            1.0f,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtCoordsWithColor(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ABI::Windows::UI::Color color)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            Vector2{ x, y },
+            color,
+            1.0f,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtOriginWithBrush(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush)
+    {
+        return DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            brush, 
+            1.0f, 
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtOriginWithColor(
+        ICanvasGeometry* geometry,
+        Color color)
+    {
+        return DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle(
             geometry,
             color, 
             1.0f, 
@@ -2246,10 +2305,72 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrushAndStrokeWidth(
         ICanvasGeometry* geometry,
+        Vector2 offset,
         ICanvasBrush* brush,
         float strokeWidth)
     {
         return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            offset,
+            brush,
+            strokeWidth,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        Vector2 offset,
+        ABI::Windows::UI::Color color,
+        float strokeWidth)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            offset,
+            color,
+            strokeWidth,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtCoordsWithBrushAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            Vector2{ x, y },
+            brush,
+            strokeWidth,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtCoordsWithColorAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ABI::Windows::UI::Color color,
+        float strokeWidth)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            Vector2{ x, y },
+            color,
+            strokeWidth,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtOriginWithBrushAndStrokeWidth(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush,
+        float strokeWidth)
+    {
+        return DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(
             geometry,
             brush, 
             strokeWidth, 
@@ -2257,19 +2378,96 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidth(
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtOriginWithColorAndStrokeWidth(
         ICanvasGeometry* geometry,
         Color color,
         float strokeWidth)
     {
-        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+        return DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle(
             geometry,
             color, 
             strokeWidth, 
             nullptr);
     }
 
+
     IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* geometry,
+        Vector2 offset,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                TemporaryTransform transform(GetResource(), offset);
+
+                DrawGeometryImpl(
+                    geometry,
+                    ToD2DBrush(brush).Get(),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* geometry,
+        Vector2 offset,
+        ABI::Windows::UI::Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                TemporaryTransform transform(GetResource(), offset);
+
+                DrawGeometryImpl(
+                    geometry,
+                    GetColorBrush(color),
+                    strokeWidth,
+                    strokeStyle);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ICanvasBrush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
+            geometry,
+            Vector2{ x, y },
+            brush,
+            strokeWidth,
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ABI::Windows::UI::Color color,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        return DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+            geometry,
+            Vector2{ x, y },
+            color,
+            strokeWidth,
+            strokeStyle);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(
         ICanvasGeometry* geometry,
         ICanvasBrush* brush,
         float strokeWidth,
@@ -2278,20 +2476,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
-                CheckInPointer(geometry);
-                CheckInPointer(brush);
-
-                deviceContext->DrawGeometry(
-                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                DrawGeometryImpl(
+                    geometry,
                     ToD2DBrush(brush).Get(),
                     strokeWidth,
-                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
+                    strokeStyle);
             });
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
+    IFACEMETHODIMP CanvasDrawingSession::DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle(
         ICanvasGeometry* geometry,
         Color color,
         float strokeWidth,
@@ -2300,15 +2494,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
-                CheckInPointer(geometry);
-
-                deviceContext->DrawGeometry(
-                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+                DrawGeometryImpl(
+                    geometry,
                     GetColorBrush(color),
                     strokeWidth,
-                    ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());  
+                    strokeStyle);
             });
+    }
+
+
+    void CanvasDrawingSession::DrawGeometryImpl(
+        ICanvasGeometry* geometry,
+        ID2D1Brush* brush,
+        float strokeWidth,
+        ICanvasStrokeStyle* strokeStyle)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(geometry);
+        CheckInPointer(brush);
+
+        deviceContext->DrawGeometry(
+            GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+            brush,
+            strokeWidth,
+            ToD2DStrokeStyle(strokeStyle, deviceContext.Get()).Get());
     }
 
 
@@ -2318,39 +2527,106 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithBrush(
         ICanvasGeometry* geometry,
+        Vector2 offset,
         ICanvasBrush* brush)
     {
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
-                CheckInPointer(geometry);
-                CheckInPointer(brush);
+                TemporaryTransform transform(GetResource(), offset);
 
-                deviceContext->FillGeometry(
-                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
-                    ToD2DBrush(brush).Get(),
-                    nullptr);
+                FillGeometryImpl(
+                    geometry,
+                    ToD2DBrush(brush).Get());
             });
     }
 
 
     IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithColor(
         ICanvasGeometry* geometry,
+        Vector2 offset,
+        ABI::Windows::UI::Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                TemporaryTransform transform(GetResource(), offset);
+
+                FillGeometryImpl(
+                    geometry,
+                    GetColorBrush(color));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryAtCoordsWithBrush(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ICanvasBrush* brush)
+    {
+        return FillGeometryWithBrush(
+            geometry,
+            Vector2{ x, y },
+            brush);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryAtCoordsWithColor(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ABI::Windows::UI::Color color)
+    {
+        return FillGeometryWithColor(
+            geometry,
+            Vector2{ x, y },
+            color);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryAtOriginWithBrush(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                FillGeometryImpl(
+                    geometry,
+                    ToD2DBrush(brush).Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryAtOriginWithColor(
+        ICanvasGeometry* geometry,
         Color color)
     {
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
-                CheckInPointer(geometry);
-
-                deviceContext->FillGeometry(
-                    GetWrappedResource<ID2D1Geometry>(geometry).Get(),
-                    GetColorBrush(color),
-                    nullptr);
+                FillGeometryImpl(
+                    geometry,
+                    GetColorBrush(color));
             });
     }
+
+
+    void CanvasDrawingSession::FillGeometryImpl(
+        ICanvasGeometry* geometry,
+        ID2D1Brush* brush)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(geometry);
+        CheckInPointer(brush);
+
+        deviceContext->FillGeometry(
+            GetWrappedResource<ID2D1Geometry>(geometry).Get(),
+            brush,
+            nullptr);
+    }
+
 
     //
     // DrawCachedGeometry
@@ -2358,17 +2634,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryWithBrush(
         ICanvasCachedGeometry* cachedGeometry,
+        Vector2 offset,
         ICanvasBrush* brush)
     {
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
-                CheckInPointer(cachedGeometry);
-                CheckInPointer(brush);
+                TemporaryTransform transform(GetResource(), offset);
 
-                deviceContext->DrawGeometryRealization(
-                    GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
+                DrawCachedGeometryImpl(
+                    cachedGeometry,
                     ToD2DBrush(brush).Get());
             });
     }
@@ -2376,19 +2651,88 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryWithColor(
         ICanvasCachedGeometry* cachedGeometry,
+        Vector2 offset,
+        ABI::Windows::UI::Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                TemporaryTransform transform(GetResource(), offset);
+
+                DrawCachedGeometryImpl(
+                    cachedGeometry,
+                    GetColorBrush(color));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryAtCoordsWithBrush(
+        ICanvasCachedGeometry* cachedGeometry,
+        float x,
+        float y,
+        ICanvasBrush* brush)
+    {
+        return DrawCachedGeometryWithBrush(
+            cachedGeometry,
+            Vector2{ x, y },
+            brush);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryAtCoordsWithColor(
+        ICanvasCachedGeometry* cachedGeometry,
+        float x,
+        float y,
+        ABI::Windows::UI::Color color)
+    {
+        return DrawCachedGeometryWithColor(
+            cachedGeometry,
+            Vector2{ x, y },
+            color);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryAtOriginWithBrush(
+        ICanvasCachedGeometry* cachedGeometry,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                DrawCachedGeometryImpl(
+                    cachedGeometry,
+                    ToD2DBrush(brush).Get());
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawCachedGeometryAtOriginWithColor(
+        ICanvasCachedGeometry* cachedGeometry,
         Color color)
     {
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
-                CheckInPointer(cachedGeometry);
-
-                deviceContext->DrawGeometryRealization(
-                    GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
+                DrawCachedGeometryImpl(
+                    cachedGeometry,
                     GetColorBrush(color));
             });
     }
+
+
+    void CanvasDrawingSession::DrawCachedGeometryImpl(
+        ICanvasCachedGeometry* cachedGeometry,
+        ID2D1Brush* brush)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(cachedGeometry);
+        CheckInPointer(brush);
+
+        deviceContext->DrawGeometryRealization(
+            GetWrappedResource<ID2D1GeometryRealization>(cachedGeometry).Get(),
+            brush);
+    }
+
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {

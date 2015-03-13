@@ -407,11 +407,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         switch (rotation)
         {
-			case DXGI_MODE_ROTATION_UNSPECIFIED:
-			case DXGI_MODE_ROTATION_IDENTITY: return CanvasSwapChainRotation::None;
-			case DXGI_MODE_ROTATION_ROTATE90: return CanvasSwapChainRotation::Rotate90;
-			case DXGI_MODE_ROTATION_ROTATE180: return CanvasSwapChainRotation::Rotate180;
-			case DXGI_MODE_ROTATION_ROTATE270: return CanvasSwapChainRotation::Rotate270;
+            case DXGI_MODE_ROTATION_UNSPECIFIED:
+            case DXGI_MODE_ROTATION_IDENTITY: return CanvasSwapChainRotation::None;
+            case DXGI_MODE_ROTATION_ROTATE90: return CanvasSwapChainRotation::Rotate90;
+            case DXGI_MODE_ROTATION_ROTATE180: return CanvasSwapChainRotation::Rotate180;
+            case DXGI_MODE_ROTATION_ROTATE270: return CanvasSwapChainRotation::Rotate270;
             default: assert(false); return CanvasSwapChainRotation::None;
         }
     }
@@ -420,20 +420,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         switch (rotation)
         {
-			case CanvasSwapChainRotation::None: return DXGI_MODE_ROTATION_IDENTITY;
-			case CanvasSwapChainRotation::Rotate90: return DXGI_MODE_ROTATION_ROTATE90;
-			case CanvasSwapChainRotation::Rotate180: return DXGI_MODE_ROTATION_ROTATE180;
-			case CanvasSwapChainRotation::Rotate270: return DXGI_MODE_ROTATION_ROTATE270;
+            case CanvasSwapChainRotation::None: return DXGI_MODE_ROTATION_IDENTITY;
+            case CanvasSwapChainRotation::Rotate90: return DXGI_MODE_ROTATION_ROTATE90;
+            case CanvasSwapChainRotation::Rotate180: return DXGI_MODE_ROTATION_ROTATE180;
+            case CanvasSwapChainRotation::Rotate270: return DXGI_MODE_ROTATION_ROTATE270;
             default: assert(false); return DXGI_MODE_ROTATION_IDENTITY;
         }
     }
 
-	inline DWRITE_TEXT_RANGE ToDWriteTextRange(int32_t position, int32_t characterCount)
-	{
-		assert(position >= 0);
-		assert(characterCount >= 0);
-		return DWRITE_TEXT_RANGE{ static_cast<uint32_t>(position), static_cast<uint32_t>(characterCount) };
-	}
+    inline DWRITE_TEXT_RANGE ToDWriteTextRange(int32_t position, int32_t characterCount)
+    {
+        ThrowIfNegative(position);
+        ThrowIfNegative(characterCount);
+
+        return DWRITE_TEXT_RANGE{ static_cast<uint32_t>(position), static_cast<uint32_t>(characterCount) };
+    }
 
     inline float PixelsToDips(int pixels, float dpi)
     {

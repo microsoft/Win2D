@@ -1900,10 +1900,75 @@ public:
     // DrawGeometry
     //
 
-    template<typename TDraw>
-    void TestDrawGeometry(bool isColorOverload, float expectedStrokeWidth, bool expectStrokeStyle, TDraw const& callDrawFunction)
+    class FixtureWithTemporaryTranslation : public CanvasDrawingSessionFixture
     {
-        CanvasDrawingSessionFixture f;
+    public:
+        Vector2 DrawOffset;
+        D2D1_MATRIX_3X2_F InitialTransform;
+        D2D1_MATRIX_3X2_F ExpectedTransform;
+        bool IsTemporaryTransformSet;
+
+        FixtureWithTemporaryTranslation()
+            : IsTemporaryTransformSet(false)
+        {
+            DrawOffset = Vector2{ 23, 42 };
+
+            InitialTransform = D2D1_MATRIX_3X2_F
+            {
+                0,  2,
+                -3, 0,
+                0,  0,
+            };
+
+            ExpectedTransform = D2D1_MATRIX_3X2_F
+            {
+                0,  2,
+                -3, 0,
+                42 * -3, 23 * 2,
+            };
+        }
+
+        void ExpectTemporaryTranslation(int expectedDrawCount)
+        {
+            DeviceContext->GetTransformMethod.SetExpectedCalls(expectedDrawCount,
+                [&](D2D1_MATRIX_3X2_F* transform)
+                {
+                    *transform = InitialTransform;
+                });
+
+            DeviceContext->SetTransformMethod.SetExpectedCalls(expectedDrawCount * 2,
+                [&](D2D1_MATRIX_3X2_F const* newTransform)
+                {
+                    IsTemporaryTransformSet = !IsTemporaryTransformSet;
+
+                    if (IsTemporaryTransformSet)
+                    {
+                        // Setting the temporary transform.
+                        Assert::AreEqual(ExpectedTransform, *newTransform);
+                    }
+                    else
+                    {
+                        // Restoring the original transform.
+                        Assert::AreEqual(InitialTransform, *newTransform);
+                    }
+                });
+        }
+    };
+
+    class FixtureIgnoresTransformChanges : public CanvasDrawingSessionFixture
+    {
+    public:
+        FixtureIgnoresTransformChanges()
+        {
+            DeviceContext->GetTransformMethod.AllowAnyCall();
+            DeviceContext->SetTransformMethod.AllowAnyCall();
+        }
+    };
+
+    template<typename TDraw>
+    void TestDrawGeometry(bool isColorOverload, bool expectTranslation, float expectedStrokeWidth, bool expectStrokeStyle, TDraw const& callDrawFunction)
+    {
+        FixtureWithTemporaryTranslation f;
         BrushValidator brushValidator(f, isColorOverload);
 
         int expectedDrawGeometryCalls = isColorOverload ? 2 : 1;
@@ -1912,10 +1977,20 @@ public:
 
         auto canvasStrokeStyle = Make<CanvasStrokeStyle>();
         canvasStrokeStyle->put_LineJoin(CanvasLineJoin::MiterOrBevel);
-        
+
+        if (expectTranslation)
+        {
+            f.ExpectTemporaryTranslation(expectedDrawGeometryCalls);
+        }
+
         f.DeviceContext->DrawGeometryMethod.SetExpectedCalls(expectedDrawGeometryCalls,
             [&](ID2D1Geometry* geometry, ID2D1Brush* brush, float strokeWidth, ID2D1StrokeStyle* strokeStyle)
             {
+                if (expectTranslation)
+                {
+                    Assert::IsTrue(f.IsTemporaryTransformSet);
+                }
+
                 Assert::AreEqual(nativeGeometryResource.Get(), geometry);
 
                 brushValidator.Check(brush);
@@ -1934,95 +2009,249 @@ public:
         callDrawFunction(f, f.Geometry.Get(), canvasStrokeStyle.Get());
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtOriginWithBrush)
     {
-        TestDrawGeometry(false, 1, false,
+        TestDrawGeometry(false, false, 1, false,
             [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
             {
-                ThrowIfFailed(f.DS->DrawGeometryWithBrush(geometry, f.Brush.Get()));
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithBrush(geometry, f.Brush.Get()));
             });
 
         // Null brush or geometry.
         CanvasDrawingSessionFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrush(f.Geometry.Get(), nullptr));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrush(nullptr, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtOriginWithBrush(f.Geometry.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtOriginWithBrush(nullptr, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtOriginWithColor)
+    {
+        TestDrawGeometry(true, false, 1, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithColor(geometry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithColor(geometry, ArbitraryMarkerColor2));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtOriginWithBrushAndStrokeWidth)
+    {        
+        TestDrawGeometry(false, false, 123, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithBrushAndStrokeWidth(geometry, f.Brush.Get(), 123));
+            });
+
+        // Null brush or geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtOriginWithBrushAndStrokeWidth(f.Geometry.Get(), nullptr, 0));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtOriginWithBrushAndStrokeWidth(nullptr, f.Brush.Get(), 0));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtOriginWithColorAndStrokeWidth)
+    {        
+        TestDrawGeometry(true, false, 123, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithColorAndStrokeWidth(geometry, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithColorAndStrokeWidth(geometry, ArbitraryMarkerColor2, 123));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle)
+    {
+        TestDrawGeometry(false, false, 123, true,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(geometry, f.Brush.Get(), 123, strokeStyle));
+            });
+
+        // Null brush or geometry.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(f.Geometry.Get(), nullptr, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(nullptr, f.Brush.Get(), 0, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle)
+    {
+        TestDrawGeometry(true, false, 123, true,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle(geometry, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle(geometry, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithBrush)
+    {
+        TestDrawGeometry(false, true, 1, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryWithBrush(geometry, f.DrawOffset, f.Brush.Get()));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrush(f.Geometry.Get(), Vector2{}, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrush(nullptr, Vector2{}, f.Brush.Get()));
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithColor)
     {
-        TestDrawGeometry(true, 1, false,
-            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+        TestDrawGeometry(true, true, 1, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
             {
-                ThrowIfFailed(f.DS->DrawGeometryWithColor(geometry, ArbitraryMarkerColor1));
-                ThrowIfFailed(f.DS->DrawGeometryWithColor(geometry, ArbitraryMarkerColor2));
+                ThrowIfFailed(f.DS->DrawGeometryWithColor(geometry, f.DrawOffset, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawGeometryWithColor(geometry, f.DrawOffset, ArbitraryMarkerColor2));
             });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithBrushAndStrokeWidth)
     {        
-        TestDrawGeometry(false, 123, false,
-            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+        TestDrawGeometry(false, true, 123, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
             {
-                ThrowIfFailed(f.DS->DrawGeometryWithBrushAndStrokeWidth(geometry, f.Brush.Get(), 123));
+                ThrowIfFailed(f.DS->DrawGeometryWithBrushAndStrokeWidth(geometry, f.DrawOffset, f.Brush.Get(), 123));
             });
 
         // Null brush or geometry.
-        CanvasDrawingSessionFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidth(f.Geometry.Get(), nullptr, 0));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidth(nullptr, f.Brush.Get(), 0));
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidth(f.Geometry.Get(), Vector2{}, nullptr, 0));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidth(nullptr, Vector2{}, f.Brush.Get(), 0));
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithColorAndStrokeWidth)
     {        
-        TestDrawGeometry(true, 123, false,
-            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+        TestDrawGeometry(true, true, 123, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
             {
-                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidth(geometry, ArbitraryMarkerColor1, 123));
-                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidth(geometry, ArbitraryMarkerColor2, 123));
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidth(geometry, f.DrawOffset, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidth(geometry, f.DrawOffset, ArbitraryMarkerColor2, 123));
             });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle)
     {
-        TestDrawGeometry(false, 123, true,
-            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+        TestDrawGeometry(false, true, 123, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
             {
-                ThrowIfFailed(f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(geometry, f.Brush.Get(), 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(geometry, f.DrawOffset, f.Brush.Get(), 123, strokeStyle));
             });
 
         // Null brush or geometry.
-        CanvasDrawingSessionFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(f.Geometry.Get(), nullptr, 0, nullptr));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(nullptr, f.Brush.Get(), 0, nullptr));
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(f.Geometry.Get(), Vector2{}, nullptr, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(nullptr, Vector2{}, f.Brush.Get(), 0, nullptr));
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryWithColorAndStrokeWidthAndStrokeStyle)
     {
-        TestDrawGeometry(true, 123, true,
-            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+        TestDrawGeometry(true, true, 123, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
             {
-                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(geometry, ArbitraryMarkerColor1, 123, strokeStyle));
-                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(geometry, ArbitraryMarkerColor2, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(geometry, f.DrawOffset, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(geometry, f.DrawOffset, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtCoordsWithBrush)
+    {
+        TestDrawGeometry(false, true, 1, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithBrush(geometry, f.DrawOffset.X, f.DrawOffset.Y, f.Brush.Get()));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtCoordsWithBrush(f.Geometry.Get(), 0, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtCoordsWithBrush(nullptr, 0, 0, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtCoordsWithColor)
+    {
+        TestDrawGeometry(true, true, 1, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithColor(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithColor(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor2));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtCoordsWithBrushAndStrokeWidth)
+    {        
+        TestDrawGeometry(false, true, 123, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithBrushAndStrokeWidth(geometry, f.DrawOffset.X, f.DrawOffset.Y, f.Brush.Get(), 123));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtCoordsWithBrushAndStrokeWidth(f.Geometry.Get(), 0, 0, nullptr, 0));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtCoordsWithBrushAndStrokeWidth(nullptr, 0, 0, f.Brush.Get(), 0));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtCoordsWithColorAndStrokeWidth)
+    {        
+        TestDrawGeometry(true, true, 123, false,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithColorAndStrokeWidth(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithColorAndStrokeWidth(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor2, 123));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle)
+    {
+        TestDrawGeometry(false, true, 123, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(geometry, f.DrawOffset.X, f.DrawOffset.Y, f.Brush.Get(), 123, strokeStyle));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(f.Geometry.Get(), 0, 0, nullptr, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(nullptr, 0, 0, f.Brush.Get(), 0, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
+    {
+        TestDrawGeometry(true, true, 123, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry, CanvasStrokeStyle* strokeStyle)
+            {
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithColorAndStrokeWidthAndStrokeStyle(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawGeometryAtCoordsWithColorAndStrokeWidthAndStrokeStyle(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor2, 123, strokeStyle));
             });
     }
 
     //
     // FillGeometry
     //    
-    
+
     template<typename TDraw>
-    void TestFillGeometry(bool isColorOverload, TDraw const& callDrawFunction)
+    void TestFillGeometry(bool isColorOverload, bool expectTranslation, TDraw const& callDrawFunction)
     {
-        CanvasDrawingSessionFixture f;
+        FixtureWithTemporaryTranslation f;
         BrushValidator brushValidator(f, isColorOverload);
 
         int expectedFillGeometryCount = isColorOverload ? 2 : 1;
 
         ComPtr<ID2D1Geometry> nativeGeometryResource = f.Geometry->GetResource();
 
+        if (expectTranslation)
+        {
+            f.ExpectTemporaryTranslation(expectedFillGeometryCount);
+        }
+
         f.DeviceContext->FillGeometryMethod.SetExpectedCalls(expectedFillGeometryCount,
             [&](ID2D1Geometry* geometry, ID2D1Brush* brush, ID2D1Brush* opacityBrush)
             {
+                if (expectTranslation)
+                {
+                    Assert::IsTrue(f.IsTemporaryTransformSet);
+                }
+
                 Assert::AreEqual(nativeGeometryResource.Get(), geometry);
                 brushValidator.Check(brush);
 
@@ -2032,27 +2261,75 @@ public:
         callDrawFunction(f, f.Geometry.Get());
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryAtOriginWithBrush)
     {        
-        TestFillGeometry(false,
+        TestFillGeometry(false, false,
             [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry)
             {
-                ThrowIfFailed(f.DS->FillGeometryWithBrush(geometry, f.Brush.Get()));
+                ThrowIfFailed(f.DS->FillGeometryAtOriginWithBrush(geometry, f.Brush.Get()));
             });
 
         // Null brush or geometry.
         CanvasDrawingSessionFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrush(f.Geometry.Get(), nullptr));
-        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrush(nullptr, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtOriginWithBrush(f.Geometry.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtOriginWithBrush(nullptr, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryAtOriginWithColor)
+    {
+        TestFillGeometry(true, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryAtOriginWithColor(geometry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillGeometryAtOriginWithColor(geometry, ArbitraryMarkerColor2));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithBrush)
+    {
+        TestFillGeometry(false, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryWithBrush(geometry, f.DrawOffset, f.Brush.Get()));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrush(f.Geometry.Get(), Vector2{}, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryWithBrush(nullptr, Vector2{}, f.Brush.Get()));
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_FillGeometryWithColor)
     {
-        TestFillGeometry(true,
-            [](CanvasDrawingSessionFixture const& f, CanvasGeometry* geometry)
+        TestFillGeometry(true, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry)
             {
-                ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, ArbitraryMarkerColor1));
-                ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, ArbitraryMarkerColor2));
+                ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, f.DrawOffset, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillGeometryWithColor(geometry, f.DrawOffset, ArbitraryMarkerColor2));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryAtCoordsWithBrush)
+    {
+        TestFillGeometry(false, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryAtCoordsWithBrush(geometry, f.DrawOffset.X, f.DrawOffset.Y, f.Brush.Get()));
+            });
+
+        // Null brush or geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtCoordsWithBrush(f.Geometry.Get(), 0, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->FillGeometryAtCoordsWithBrush(nullptr, 0, 0, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_FillGeometryAtCoordsWithColor)
+    {
+        TestFillGeometry(true, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGeometry* geometry)
+            {
+                ThrowIfFailed(f.DS->FillGeometryAtCoordsWithColor(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillGeometryAtCoordsWithColor(geometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor2));
             });
     }
 
@@ -2061,18 +2338,28 @@ public:
     //    
 
     template<typename TDraw>
-    void TestDrawGeometryRealization(bool isColorOverload, TDraw const& callDrawFunction)
+    void TestDrawGeometryRealization(bool isColorOverload, bool expectTranslation, TDraw const& callDrawFunction)
     {
-        CanvasDrawingSessionFixture f;
+        FixtureWithTemporaryTranslation f;
         BrushValidator brushValidator(f, isColorOverload);
 
         int expectedDrawGeometryRealizationCount = isColorOverload ? 2 : 1;
 
         ComPtr<ID2D1GeometryRealization> nativeGeometryRealizationResource = f.CachedGeometry->GetResource();
 
+        if (expectTranslation)
+        {
+            f.ExpectTemporaryTranslation(expectedDrawGeometryRealizationCount);
+        }
+        
         f.DeviceContext->DrawGeometryRealizationMethod.SetExpectedCalls(expectedDrawGeometryRealizationCount,
             [&](ID2D1GeometryRealization* geometryRealization, ID2D1Brush* brush)
             {
+                if (expectTranslation)
+                {
+                    Assert::IsTrue(f.IsTemporaryTransformSet);
+                }
+
                 Assert::AreEqual(nativeGeometryRealizationResource.Get(), geometryRealization);
                 brushValidator.Check(brush);
             });
@@ -2080,27 +2367,75 @@ public:
         callDrawFunction(f, f.CachedGeometry.Get());
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationWithBrush)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationAtOriginWithBrush)
     {
-        TestDrawGeometryRealization(false,
+        TestDrawGeometryRealization(false, false,
             [](CanvasDrawingSessionFixture const& f, CanvasCachedGeometry* cachedGeometry)
             {
-                ThrowIfFailed(f.DS->DrawCachedGeometryWithBrush(cachedGeometry, f.Brush.Get()));
+                ThrowIfFailed(f.DS->DrawCachedGeometryAtOriginWithBrush(cachedGeometry, f.Brush.Get()));
             });
 
         // Null brush or cached geometry.
         CanvasDrawingSessionFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(f.CachedGeometry.Get(), nullptr));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(nullptr, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryAtOriginWithBrush(f.CachedGeometry.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryAtOriginWithBrush(nullptr, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationAtOriginWithColor)
+    {
+        TestDrawGeometryRealization(true, false,
+            [](CanvasDrawingSessionFixture const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryAtOriginWithColor(cachedGeometry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawCachedGeometryAtOriginWithColor(cachedGeometry, ArbitraryMarkerColor2));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationWithBrush)
+    {
+        TestDrawGeometryRealization(false, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithBrush(cachedGeometry, f.DrawOffset, f.Brush.Get()));
+            });
+
+        // Null brush or cached geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(f.CachedGeometry.Get(), Vector2{}, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryWithBrush(nullptr, Vector2{}, f.Brush.Get()));
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationWithColor)
     {
-        TestDrawGeometryRealization(true,
-            [](CanvasDrawingSessionFixture const& f, CanvasCachedGeometry* cachedGeometry)
+        TestDrawGeometryRealization(true, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasCachedGeometry* cachedGeometry)
             {
-                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, ArbitraryMarkerColor1));
-                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, ArbitraryMarkerColor2));
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, f.DrawOffset, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawCachedGeometryWithColor(cachedGeometry, f.DrawOffset, ArbitraryMarkerColor2));
+            });
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationAtCoordsWithBrush)
+    {
+        TestDrawGeometryRealization(false, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryAtCoordsWithBrush(cachedGeometry, f.DrawOffset.X, f.DrawOffset.Y, f.Brush.Get()));
+            });
+
+        // Null brush or cached geometry.
+        FixtureIgnoresTransformChanges f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryAtCoordsWithBrush(f.CachedGeometry.Get(), 0, 0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawCachedGeometryAtCoordsWithBrush(nullptr, 0, 0, f.Brush.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGeometryRealizationAtCoordsWithColor)
+    {
+        TestDrawGeometryRealization(true, true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasCachedGeometry* cachedGeometry)
+            {
+                ThrowIfFailed(f.DS->DrawCachedGeometryAtCoordsWithColor(cachedGeometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawCachedGeometryAtCoordsWithColor(cachedGeometry, f.DrawOffset.X, f.DrawOffset.Y, ArbitraryMarkerColor2));
             });
     }
 

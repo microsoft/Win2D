@@ -68,25 +68,25 @@ namespace canvas
             
             Assert::AreEqual(S_OK, textLayout->Close());
 
-            CanvasTextDirection textDirection;
-            HSTRING str;
-            float fl;
-            FontStretch fontStretch;
-            FontStyle fontStyle;
-            FontWeight fontWeight;
-            CanvasLineSpacingMethod lineSpacingMethod;
-            CanvasVerticalAlignment verticalAlignment;
-            ParagraphAlignment paragraphAlignment;
-            CanvasTextTrimmingGranularity trimmingGranularity;
-            INT32 i;
-            INT32* arr;
-            UINT32 u;
-            CanvasWordWrapping wordWrapping;
-            CanvasDrawTextOptions drawTextOptions;
-            Size size;
-            boolean b;
-            CanvasVerticalGlyphOrientation verticalGlyphOrientation;
-            CanvasOpticalAlignment opticalAlignment;
+            CanvasTextDirection textDirection{};
+            HSTRING str{};
+            float fl{};
+            FontStretch fontStretch{};
+            FontStyle fontStyle{};
+            FontWeight fontWeight{};
+            CanvasLineSpacingMethod lineSpacingMethod{};
+            CanvasVerticalAlignment verticalAlignment{};
+            ParagraphAlignment paragraphAlignment{};
+            CanvasTextTrimmingGranularity trimmingGranularity{};
+            INT32 i{};
+            INT32* arr{};
+            UINT32 u{};
+            CanvasWordWrapping wordWrapping{};
+            CanvasDrawTextOptions drawTextOptions{};
+            Size size{};
+            boolean b{};
+            CanvasVerticalGlyphOrientation verticalGlyphOrientation{};
+            CanvasOpticalAlignment opticalAlignment{};
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangePositions(&u, &arr));
 
@@ -239,7 +239,8 @@ namespace canvas
 
             auto textLayout = f.CreateSimpleTextLayout();
 
-            HSTRING str;
+            WinString stringIn(L"any_string");
+            HSTRING stringOut;
             float fl;
             FontStretch fontStretch;
             FontStyle fontStyle;
@@ -248,9 +249,9 @@ namespace canvas
 
             Assert::AreEqual(E_INVALIDARG, textLayout->put_TrimmingDelimiterCount(-1));
 
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetFontFamily(-1, &str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(-1, 0, str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(0, -1, str));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetFontFamily(-1, &stringOut));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(-1, 0, stringIn));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetFontFamily(0, -1, stringIn));
 
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFontSize(-1, &fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetFontSize(-1, 0, fl));
@@ -268,9 +269,9 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->SetFontWeight(-1, 0, fontWeight));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetFontWeight(0, -1, fontWeight));
 
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetLocaleName(-1, &str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(-1, 0, str));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(0, -1, str));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetLocaleName(-1, &stringOut));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(-1, 0, stringIn));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetLocaleName(0, -1, stringIn));
 
             Assert::AreEqual(E_INVALIDARG, textLayout->GetStrikethrough(-1, &b));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetStrikethrough(-1, 0, b));
@@ -630,6 +631,7 @@ namespace canvas
             Fixture f;
             auto textLayout = f.CreateSimpleTextLayout();
 
+            InitializeGetTrimmingMethod(f.Adapter->MockTextLayout->GetTrimmingMethod, DWRITE_TRIMMING_GRANULARITY_NONE, 0, 0);
             InitializeSetTrimmingMethod(f.Adapter->MockTextLayout->SetTrimmingMethod, DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0);
             Assert::AreEqual(S_OK, textLayout->put_TrimmingGranularity(CanvasTextTrimmingGranularity::Character));
         }
@@ -639,6 +641,7 @@ namespace canvas
             Fixture f;
             auto textLayout = f.CreateSimpleTextLayout();
 
+            InitializeGetTrimmingMethod(f.Adapter->MockTextLayout->GetTrimmingMethod, DWRITE_TRIMMING_GRANULARITY_NONE, 0, 0);
             InitializeSetTrimmingMethod(f.Adapter->MockTextLayout->SetTrimmingMethod, DWRITE_TRIMMING_GRANULARITY_NONE, L'@', 0);
             Assert::AreEqual(S_OK, textLayout->put_TrimmingDelimiter(WinString(L"@")));
         }
@@ -648,6 +651,7 @@ namespace canvas
             Fixture f;
             auto textLayout = f.CreateSimpleTextLayout();
 
+            InitializeGetTrimmingMethod(f.Adapter->MockTextLayout->GetTrimmingMethod, DWRITE_TRIMMING_GRANULARITY_NONE, 0, 0);
             InitializeSetTrimmingMethod(f.Adapter->MockTextLayout->SetTrimmingMethod, DWRITE_TRIMMING_GRANULARITY_NONE, 0, 123);
             Assert::AreEqual(S_OK, textLayout->put_TrimmingDelimiterCount(123));
         }
@@ -765,11 +769,27 @@ namespace canvas
             Assert::AreEqual(locale.c_str(), WindowsGetStringRawBuffer(value, nullptr));
         }
 
-        TEST_METHOD_EX(CanvasTextLayoutTests_SetFontFamily)
+        //
+        // The logic for URI manipulation and loading custom fonts is shared
+        // between CanvasTextFormat and CanvasTextLayout. There are tests 
+        // exercising the custom font loading in the text format
+        // unit tests, and so they are not exhaustively duplicated here.
+        // 
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetFontFamily_EmptyUri)
         {
             Fixture f;
 
             std::wstring fontFamily = L"SomeFontFamily";
+
+            f.Adapter->MockTextLayout->SetFontCollectionMethod.SetExpectedCalls(1,
+                [&](IDWriteFontCollection* fontCollection, DWRITE_TEXT_RANGE textRange)
+                {
+                    Assert::IsNull(fontCollection); // System font collection should be used
+                    Assert::AreEqual(123u, textRange.startPosition);
+                    Assert::AreEqual(456u, textRange.length);
+                    return S_OK;
+                });
 
             f.Adapter->MockTextLayout->SetFontFamilyNameMethod.SetExpectedCalls(1,
                 [&](WCHAR const* fontFamilyName, DWRITE_TEXT_RANGE textRange)
@@ -783,6 +803,56 @@ namespace canvas
             auto textLayout = f.CreateSimpleTextLayout();
 
             Assert::AreEqual(S_OK, textLayout->SetFontFamily(123, 456, WinString(fontFamily)));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetFontFamily_NonEmptyUri)
+        {
+            Fixture f;
+
+            std::wstring uri = L"SomeUri";
+            std::wstring fontFamily = L"SomeFontFamily";
+            std::wstring fullName = uri + L"#" + fontFamily;
+
+            auto mockFontCollection = Make<MockDWriteFontCollection>();
+
+            f.Adapter->GetMockDWriteFactory()->CreateCustomFontCollectionMethod.SetExpectedCalls(1,
+                [&](
+                IDWriteFontCollectionLoader*,
+                void const* key,
+                UINT32 keySize,
+                IDWriteFontCollection** out)
+                {
+                    std::wstring keyString(static_cast<const wchar_t*>(key));
+                    std::wstring expectedKey = L"pathof(ms-appx:///" + uri + L")";
+                    Assert::AreEqual(expectedKey, keyString);
+                    Assert::AreEqual(static_cast<uint32_t>(expectedKey.length() * sizeof(wchar_t)), keySize);
+
+                    return mockFontCollection.CopyTo(out);
+                });
+
+
+            f.Adapter->MockTextLayout->SetFontCollectionMethod.SetExpectedCalls(1,
+                [&](IDWriteFontCollection* fontCollection, DWRITE_TEXT_RANGE textRange)
+                {
+                    Assert::IsNotNull(fontCollection);
+                    Assert::IsTrue(IsSameInstance(mockFontCollection.Get(), fontCollection));
+                    Assert::AreEqual(123u, textRange.startPosition);
+                    Assert::AreEqual(456u, textRange.length);
+                    return S_OK;
+                });
+
+            f.Adapter->MockTextLayout->SetFontFamilyNameMethod.SetExpectedCalls(1,
+                [&](WCHAR const* fontFamilyName, DWRITE_TEXT_RANGE textRange)
+                {
+                    Assert::AreEqual(fontFamily.c_str(), fontFamilyName);
+                    Assert::AreEqual(123u, textRange.startPosition);
+                    Assert::AreEqual(456u, textRange.length);
+                    return S_OK;
+                });
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            Assert::AreEqual(S_OK, textLayout->SetFontFamily(123, 456, WinString(fullName)));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_SetLocaleName)
@@ -879,6 +949,30 @@ namespace canvas
             auto textLayout = f.CreateSimpleTextLayout();
 
             Assert::AreEqual(S_OK, textLayout->SetCharacterSpacing(12.0f, 34.0f, 56.0f, 78, 90));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_DefaultOptions)
+        {
+            Fixture f;
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            CanvasDrawTextOptions drawTextOptions;
+            Assert::AreEqual(S_OK, textLayout->get_Options(&drawTextOptions));
+            Assert::AreEqual(CanvasDrawTextOptions::Default, drawTextOptions);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_OptionsSetAndGet)
+        {
+            Fixture f;
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            Assert::AreEqual(S_OK, textLayout->put_Options(CanvasDrawTextOptions::NoPixelSnap));
+
+            CanvasDrawTextOptions drawTextOptions;
+            Assert::AreEqual(S_OK, textLayout->get_Options(&drawTextOptions));
+            Assert::AreEqual(CanvasDrawTextOptions::NoPixelSnap, drawTextOptions);
         }
     };
 }

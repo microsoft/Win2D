@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -236,6 +236,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp">
       <Filter>utils</Filter>
     </ClCompile>
@@ -244,9 +250,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp">
       <Filter>directx</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp">
-      <Filter>text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -461,6 +464,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h">
+      <Filter>text</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -491,11 +500,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\TessellationSink.h">
       <Filter>geometry</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h">
-      <Filter>text</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h">
       <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
