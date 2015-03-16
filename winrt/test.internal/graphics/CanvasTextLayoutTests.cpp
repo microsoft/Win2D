@@ -80,15 +80,19 @@ namespace canvas
             CanvasTextTrimmingGranularity trimmingGranularity{};
             INT32 i{};
             INT32* arr{};
-            UINT32 u{};
+            uint32_t u{};
             CanvasWordWrapping wordWrapping{};
             CanvasDrawTextOptions drawTextOptions{};
             Size size{};
             boolean b{};
             CanvasVerticalGlyphOrientation verticalGlyphOrientation{};
             CanvasOpticalAlignment opticalAlignment{};
+            Rect rect{};
+            CanvasTextLayoutRegion hitTestDesc{};
+            Vector2 pt{};
+            CanvasTextLayoutRegion* hitTestDescArr{};
 
-            Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangePositions(&u, &arr));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_FlowDirection(&textDirection));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_FlowDirection(textDirection));
@@ -186,6 +190,17 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LastLineWrapping(&b));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_LastLineWrapping(b));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_LayoutBounds(&rect));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_LineCount(&i));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_DrawBounds(&rect));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->HitTest(Vector2{}, &b));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->HitTestWithCoords(0, 0, &b));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->HitTestWithDescription(Vector2{}, &hitTestDesc, &b));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->HitTestWithDescriptionAndCoords(0, 0, &hitTestDesc, &b));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetCaretPosition(0, b, &pt));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetCaretPositionWithDescription(0, b, &hitTestDesc, &pt));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetCharacterRegions(0, 0, &u, &hitTestDescArr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -195,7 +210,10 @@ namespace canvas
             auto textLayout = f.CreateSimpleTextLayout();
 
             INT32* arr;
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetFormatChangePositions(nullptr, &arr));
+            CanvasTextLayoutRegion hitTestDesc{};
+            CanvasTextLayoutRegion* hitTestDescArr{};
+            boolean b{};
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetFormatChangeIndices(nullptr, &arr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_FlowDirection(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontFamily(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontSize(nullptr));
@@ -231,6 +249,16 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_VerticalGlyphOrientation(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_OpticalAlignment(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LastLineWrapping(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_LayoutBounds(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_LineCount(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_DrawBounds(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->HitTest(Vector2{}, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->HitTestWithCoords(0, 0, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->HitTestWithDescription(Vector2{}, &hitTestDesc, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->HitTestWithDescriptionAndCoords(0, 0, &hitTestDesc, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPosition(0, b, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPositionWithDescription(0, b, &hitTestDesc, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(0, 0, nullptr, &hitTestDescArr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -246,6 +274,10 @@ namespace canvas
             FontStyle fontStyle;
             FontWeight fontWeight;
             boolean b;
+            CanvasTextLayoutRegion hitTestDesc{};
+            Vector2 pt{};
+            CanvasTextLayoutRegion* hitTestDescArr{};
+            uint32_t u{};
 
             Assert::AreEqual(E_INVALIDARG, textLayout->put_TrimmingDelimiterCount(-1));
 
@@ -290,6 +322,11 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumCharacterAdvanceWidth(-1, &fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(fl, fl, fl, -1, 0));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(fl, fl, fl, 0, -1));
+
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPosition(-1, false, &pt));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPositionWithDescription(-1, false, &hitTestDesc, &pt));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(-1, 0, &u, &hitTestDescArr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(0, -1, &u, &hitTestDescArr));
         }
 
         //
@@ -973,6 +1010,283 @@ namespace canvas
             CanvasDrawTextOptions drawTextOptions;
             Assert::AreEqual(S_OK, textLayout->get_Options(&drawTextOptions));
             Assert::AreEqual(CanvasDrawTextOptions::NoPixelSnap, drawTextOptions);
+        }
+
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_LayoutBounds)
+        {
+            Fixture f;
+
+            f.Adapter->MockTextLayout->GetMetricsMethod.SetExpectedCalls(1,
+                [&](DWRITE_TEXT_METRICS1* out)
+                {
+                    Assert::IsNotNull(out);
+                    DWRITE_TEXT_METRICS1 metrics{};
+                    metrics.left = 1;
+                    metrics.top = 2;
+                    metrics.width = 3;
+                    metrics.height = 4;
+                    *out = metrics;
+                    return S_OK;
+                });
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            Rect bounds;
+            Assert::AreEqual(S_OK, textLayout->get_LayoutBounds(&bounds));
+            Assert::AreEqual(Rect{ 1, 2, 3, 4 }, bounds);
+        }
+        
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_LineCount)
+        {
+            Fixture f;
+
+            f.Adapter->MockTextLayout->GetMetricsMethod.SetExpectedCalls(1,
+                [&](DWRITE_TEXT_METRICS1* out)
+                {
+                    Assert::IsNotNull(out);
+                    DWRITE_TEXT_METRICS1 metrics{};
+                    metrics.lineCount = 1234;
+                    *out = metrics;
+                    return S_OK;
+                });
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            int32_t lineCount;
+            Assert::AreEqual(S_OK, textLayout->get_LineCount(&lineCount));
+            Assert::AreEqual(1234, lineCount);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_DrawBounds)
+        {
+            Fixture f;
+
+            f.Adapter->MockTextLayout->GetMaxWidthMethod.SetExpectedCalls(1,
+                [&](){ return 10.0f;  });
+
+            f.Adapter->MockTextLayout->GetMaxHeightMethod.SetExpectedCalls(1,
+                [&](){ return 20.0f;  });
+
+            f.Adapter->MockTextLayout->GetOverhangMetricsMethod.SetExpectedCalls(1,
+                [&](DWRITE_OVERHANG_METRICS* out)
+                {
+                    Assert::IsNotNull(out);
+                    DWRITE_OVERHANG_METRICS metrics{};
+                    // Choose an overhang rect that extends out of the left-top edges,
+                    // but inside the right-bottom edges.
+                    metrics.left = 1;
+                    metrics.top = 2;
+                    metrics.right = -3;
+                    metrics.bottom = -4;
+                    *out = metrics;
+                    return S_OK;
+                });
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            Rect bounds;
+            Assert::AreEqual(S_OK, textLayout->get_DrawBounds(&bounds));
+
+            // The result rect is computed based on the layout size and overhang metrics.
+            Assert::AreEqual(Rect{ -1, -2, 10 + 1 + -3, 20 + 2 + -4 }, bounds);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_HitTest)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                Fixture f;
+
+                f.Adapter->MockTextLayout->HitTestPointMethod.SetExpectedCalls(1,
+                    [&](FLOAT x, FLOAT y, BOOL* isTrailingHit, BOOL* isInside, DWRITE_HIT_TEST_METRICS* hitTestMetrics)
+                {
+                    Assert::AreEqual(1.0f, x);
+                    Assert::AreEqual(2.0f, y);
+                    *isTrailingHit = FALSE;
+                    *isInside = TRUE;
+                    *hitTestMetrics = DWRITE_HIT_TEST_METRICS{};
+                    return S_OK;
+                });
+
+                auto textLayout = f.CreateSimpleTextLayout();
+
+                boolean isHit;
+                if (i==0)
+                    Assert::AreEqual(S_OK, textLayout->HitTest(Vector2{ 1, 2 }, &isHit));
+                else
+                    Assert::AreEqual(S_OK, textLayout->HitTestWithCoords(1, 2, &isHit));
+
+                Assert::IsTrue(!!isHit);
+            }
+        }
+
+        void WriteHitTestDescription(DWRITE_HIT_TEST_METRICS* textLayoutRegion, uint32_t increment = 0)
+        {
+            textLayoutRegion->textPosition = 1 + increment;
+            textLayoutRegion->length = 2 + increment;
+            const float floatIncrement = static_cast<float>(increment);
+            textLayoutRegion->left = 3 + floatIncrement;
+            textLayoutRegion->top = 4 + floatIncrement;
+            textLayoutRegion->width = 5 + floatIncrement;
+            textLayoutRegion->height = 6 + floatIncrement;
+        }
+
+        void VerifyHitTestDescription(CanvasTextLayoutRegion const& textLayoutRegion, uint32_t increment = 0)
+        {
+            Assert::AreEqual(1 + static_cast<int>(increment), textLayoutRegion.CharacterIndex);
+            Assert::AreEqual(2 + static_cast<int>(increment), textLayoutRegion.CharacterCount);
+            const float floatIncrement = static_cast<float>(increment);
+            Assert::AreEqual(Rect{ 
+                3 + floatIncrement,
+                4 + floatIncrement,
+                5 + floatIncrement,
+                6 + floatIncrement }, textLayoutRegion.LayoutBounds);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_HitTestWithDescription)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                Fixture f;
+
+                f.Adapter->MockTextLayout->HitTestPointMethod.SetExpectedCalls(1,
+                    [&](FLOAT x, FLOAT y, BOOL* isTrailingHit, BOOL* isInside, DWRITE_HIT_TEST_METRICS* hitTestMetrics)
+                    {
+                        Assert::AreEqual(1.0f, x);
+                        Assert::AreEqual(2.0f, y);
+                        *isTrailingHit = FALSE;
+                        *isInside = FALSE;
+                        *hitTestMetrics = DWRITE_HIT_TEST_METRICS{};
+                        WriteHitTestDescription(hitTestMetrics);
+                        return S_OK;
+                    });
+
+                auto textLayout = f.CreateSimpleTextLayout();
+
+                boolean isHit;
+                CanvasTextLayoutRegion description;
+                if (i == 0)
+                    Assert::AreEqual(S_OK, textLayout->HitTestWithDescription(Vector2{ 1, 2 }, &description, &isHit));
+                else
+                    Assert::AreEqual(S_OK, textLayout->HitTestWithDescriptionAndCoords(1, 2, &description, &isHit));
+
+                VerifyHitTestDescription(description);
+                Assert::IsFalse(!!isHit);
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_HitTestWithDescriptionAndTrailingSide)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                Fixture f;
+
+                f.Adapter->MockTextLayout->HitTestPointMethod.SetExpectedCalls(1,
+                    [&](FLOAT x, FLOAT y, BOOL* isTrailingHit, BOOL* isInside, DWRITE_HIT_TEST_METRICS* hitTestMetrics)
+                    {
+                        Assert::AreEqual(1.0f, x);
+                        Assert::AreEqual(2.0f, y);
+                        *isTrailingHit = TRUE;
+                        *isInside = TRUE;
+                        *hitTestMetrics = DWRITE_HIT_TEST_METRICS{};
+                        WriteHitTestDescription(hitTestMetrics);
+                        return S_OK;
+                    });
+
+                auto textLayout = f.CreateSimpleTextLayout();
+
+                boolean isHit;
+                CanvasTextLayoutRegion description;
+                boolean trailingSideOfCharacter;
+                if (i == 0)
+                    Assert::AreEqual(S_OK, textLayout->HitTestWithDescriptionAndTrailingSide(Vector2{ 1, 2 }, &description, &trailingSideOfCharacter, &isHit));
+                else
+                    Assert::AreEqual(S_OK, textLayout->HitTestWithDescriptionAndCoordsAndTrailingSide(1, 2, &description, &trailingSideOfCharacter, &isHit));
+
+                VerifyHitTestDescription(description);
+                Assert::IsTrue(!!isHit);
+                Assert::IsTrue(!!trailingSideOfCharacter);
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetCaretPosition)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                Fixture f;
+
+                f.Adapter->MockTextLayout->HitTestTextPositionMethod.SetExpectedCalls(1,
+                    [&](UINT32 textPosition, BOOL isTrailingHit, FLOAT* pointX, FLOAT* pointY, DWRITE_HIT_TEST_METRICS* hitTestMetrics)
+                    {
+                        Assert::AreEqual(1u, textPosition);
+                        Assert::IsTrue(!!isTrailingHit);
+                        *pointX = 2.0f;
+                        *pointY = 3.0f;
+                        if(i==1)
+                            WriteHitTestDescription(hitTestMetrics);
+                        return S_OK;
+                    });
+
+                auto textLayout = f.CreateSimpleTextLayout();
+
+                Vector2 caretLocation;
+                CanvasTextLayoutRegion textLayoutRegion;
+                if (i == 0)
+                    Assert::AreEqual(S_OK, textLayout->GetCaretPosition(1, true, &caretLocation));
+                else
+                {
+                    Assert::AreEqual(S_OK, textLayout->GetCaretPositionWithDescription(1, true, &textLayoutRegion, &caretLocation));
+                    VerifyHitTestDescription(textLayoutRegion);
+                }
+
+                Assert::AreEqual(Vector2{ 2, 3 }, caretLocation);
+            }
+        }               
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetCharacterRegions)
+        {
+            Fixture f;
+
+            int callCount = 0;
+
+            f.Adapter->MockTextLayout->HitTestTextRangeMethod.SetExpectedCalls(2,
+                [&](UINT32 textPosition, UINT32 textLength, FLOAT originX, FLOAT originY, DWRITE_HIT_TEST_METRICS* hitTestMetrics, UINT32 maxCount, UINT32* actualCount)
+                {
+                    Assert::AreEqual(1u, textPosition);
+                    Assert::AreEqual(2u, textLength);
+                    Assert::AreEqual(0.0f, originX);
+                    Assert::AreEqual(0.0f, originY);
+
+                    *actualCount = 3;
+                    if (callCount == 0)
+                    {
+                        Assert::AreEqual(0u, maxCount);
+                        callCount++;
+                        return E_NOT_SUFFICIENT_BUFFER;
+                    }
+                    else
+                    {
+                        Assert::AreEqual(3u, maxCount);
+
+                        for (int i = 0; i < 3; i++)
+                            WriteHitTestDescription(&hitTestMetrics[i], i);
+
+                        callCount++;
+                        return S_OK;
+                    }
+                });
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            uint32_t descriptionCount;
+            CanvasTextLayoutRegion* hitTestDescriptionArray;
+            Assert::AreEqual(S_OK, textLayout->GetCharacterRegions(1, 2, &descriptionCount, &hitTestDescriptionArray));
+            Assert::AreEqual(3u, descriptionCount);
+
+            for (int i = 0; i < 3; i++)
+                VerifyHitTestDescription(hitTestDescriptionArray[i], i);
         }
     };
 }
