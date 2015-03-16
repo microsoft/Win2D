@@ -443,6 +443,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.h">
       <Filter>geometry</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\GeometrySink.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\TessellationSink.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h">
       <Filter>images</Filter>
     </ClInclude>
@@ -496,9 +502,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h">
       <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\TessellationSink.h">
-      <Filter>geometry</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h">
       <Filter>text</Filter>

@@ -365,7 +365,44 @@ under the License.
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasTriangleVertices.Vertex3">
       <summary>Third vertex of the triangle.</summary>
-    </member>
+    </member>    
+    
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasGeometry.SendPathTo(Microsoft.Graphics.Canvas.ICanvasPathReceiver)">
+      <summary>Sends all of this geometry's path data to an application-implemented interface.</summary>
+      <remarks>
+      	<p>The path data is sent to the ICanvasPathReceiver, in order, following along its contours. Retriving path data can be used for reconstruction of shapes or for serialization.</p>
+      	<p>If this geometry was created using CanvasGeometry.CreatePath, this is a straightforward, lossless operation.</p>
+      	<p>Otherwise, the geometry will be passed through a CanvasGeometry.Simplify operation.</p></remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.ICanvasPathReceiver">
+      <summary>Applications implement this interface in order to read back geometry path data.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasFigureFill)">
+      <summary>Signals the beginning of a figure to the app.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasSweepDirection,Microsoft.Graphics.Canvas.CanvasArcSize)">
+      <summary>Signals an arc to the app.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <summary>Signals a cubic bezier to the app.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.AddLine(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <summary>Signals a line to the app.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.AddQuadraticBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <summary>Signals a quadratic bezier to the app.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.SetFilledRegionDetermination(Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination)">
+      <summary>Indicates, to the app, the method by which content is determined to lie inside the geometry, as opposed to outside.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.SetSegmentOptions(Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions)">
+      <summary>Indicates, to the app, the segment and join options which are applied to subsequent segments.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasPathReceiver.EndFigure(Microsoft.Graphics.Canvas.CanvasFigureLoop)">
+      <summary>Signals the end of a figure to the app.</summary>
+    </member>
+    
+    
   </members>
 </doc>

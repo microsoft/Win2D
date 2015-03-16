@@ -22,6 +22,56 @@ namespace Microsoft.Graphics.Canvas
         Microsoft.Graphics.Canvas.Numerics.Vector2 Vertex3;
     } CanvasTriangleVertices;
 
+    //
+    // Applications implement this interface to recieve back the contents of
+    // geometry.
+    // If the geometry was created using CanvasGeometry.CreatePath, this 
+    // is a straightforward operation.
+    // Otherwise, a CanvasGeometry.Simplify may occur, and the results
+    // are sent to the ICanvasPathReceiver.
+    //
+    // If the underlying path data contains calls to a method which is
+    // a simple overload- for example, AddLines instead of AddLine,
+    // apps need only implement AddLine, and that function will be
+    // called repeatedly as necessary.
+    //
+    [version(VERSION), uuid(70E65373-7FB3-4645-8B6D-F616D1B9A9D7)]
+    interface ICanvasPathReceiver : IInspectable
+    {
+        HRESULT BeginFigure(
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 startPoint,
+            [in] CanvasFigureFill figureFill);
+
+        HRESULT AddArc(
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint,
+            [in] float radiusX,
+            [in] float radiusY,
+            [in] float rotationAngle,
+            [in] CanvasSweepDirection sweepDirection,
+            [in] CanvasArcSize arcSize);
+
+        HRESULT AddCubicBezier(
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint1,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint2,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+
+        HRESULT AddLine(
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+
+        HRESULT AddQuadraticBezier(
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint,
+            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+
+        HRESULT SetFilledRegionDetermination(
+            [in] CanvasFilledRegionDetermination filledRegionDetermination);
+
+        HRESULT SetSegmentOptions(
+            [in] CanvasFigureSegmentOptions figureSegmentOptions);
+
+        HRESULT EndFigure(
+            [in] CanvasFigureLoop figureLoop);
+    };
+
     [version(VERSION), uuid(74EA89FA-C87C-4D0D-9057-2743B8DB67EE), exclusiveto(CanvasGeometry)]
     interface ICanvasGeometry : IInspectable
         requires Windows.Foundation.IClosable
@@ -228,6 +278,8 @@ namespace Microsoft.Graphics.Canvas
             [in] float flatteningTolerance,
             [out] UINT32* trianglesCount,
             [out, size_is(, *trianglesCount), retval] CanvasTriangleVertices** triangles);
+
+        HRESULT SendPathTo(ICanvasPathReceiver* streamReader);
 
         [propget] HRESULT Device([out, retval] CanvasDevice** value);
     }

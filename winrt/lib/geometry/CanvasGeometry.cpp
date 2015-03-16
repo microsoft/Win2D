@@ -13,6 +13,7 @@
 #include "pch.h"
 #include "CanvasGeometry.h"
 #include "CanvasPathBuilder.h"
+#include "GeometrySink.h"
 #include "TessellationSink.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -878,6 +879,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             auto outputArray = tessellationSink->GetTriangles();
             outputArray.Detach(trianglesCount, triangles);
+        });
+    }
+
+    IFACEMETHODIMP CanvasGeometry::SendPathTo(
+        ICanvasPathReceiver* streamReader)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(streamReader);
+
+            auto& resource = GetResource();
+
+            auto pathGeometry = MaybeAs<ID2D1PathGeometry>(resource);
+
+            auto geometrySink = Make<GeometrySink>(streamReader);
+            CheckMakeResult(geometrySink);
+
+            if (pathGeometry)
+            {
+                ThrowIfFailed(pathGeometry->Stream(geometrySink.Get()));
+            }
+            else
+            {
+                ThrowIfFailed(resource->Simplify(
+                    D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES,
+                    nullptr,
+                    geometrySink.Get()));
+            }
+            ThrowIfFailed(geometrySink->Close());
         });
     }
 
