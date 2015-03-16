@@ -63,6 +63,7 @@ namespace ExampleGallery
             new ExampleDefinition("Stroke Styles", typeof(StrokeStyles)),
             new ExampleDefinition("Arc Options", typeof(ArcOptions)),
             new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
+            new ExampleDefinition("Text Layouts", typeof(TextLayouts)),
             new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
             new ExampleDefinition("Canvas Control", typeof(CanvasControlExample)),
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),

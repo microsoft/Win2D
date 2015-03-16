@@ -97,10 +97,28 @@ public:
             float ZoomLevel;
             float Dpi;
             float3x2 Transform;
-        } testCases[] {
-                {123.0f, 456.0f, float3x2{ 1, 2, 3, 4, 5, 6 }},
-                { -1, -1, float3x2{ 1, 0, 0, 1, 0, 0 } },
-                {1, 0, float3x2{ 1, 0, 0, 1, 0, 0 } }
+        } testCases[]
+        {
+            { 1, 96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, 96, float3x2{ 0, 0, 0, 0, 0, 0 } },
+            { 1, 96, float3x2{ 1, 0, 0, 0, 0, 0 } },
+            { 1, 96, float3x2{ 0, 1, 0, 0, 0, 0 } },
+            { 1, 96, float3x2{ 0, 0, 1, 0, 0, 0 } },
+            { 1, 96, float3x2{ 0, 0, 0, 1, 0, 0 } },
+            { 1, 96, float3x2{ -1, 0, 0, -1, 0, 0 } },
+            { 1, 96, float3x2{ 0, 1, -1, 0, 0, 0 } },
+            { 1, 96, float3x2{ 2, 0, 0, 3, 0, 0 } },
+            { 1, 96, float3x2{ 3, 0, 0, 2, 0, 0 } },
+            { 1, 96, float3x2{ -2, 0, 0, -3, 0, 0 } },
+            { 1, 96, float3x2{ -3, 0, 0, -2, 0, 0 } },
+            { 1, 96, float3x2{ 1, 1, 1, 1, 0, 0 } },
+            { -1, 96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, -96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 2, 96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, 123, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 123.0f, 456.0f, float3x2{ 1, 2, 3, 4, 5, 6 } },
+            { -1, -1, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, 0, float3x2{ 1, 0, 0, 1, 0, 0 } },
         };
 
         for (TestCase testCase : testCases)
@@ -133,7 +151,6 @@ public:
 
             Assert::AreEqual(d2dTolerance, canvasTolerance);
         }
-
     }
 
     TEST_METHOD(CanvasPathBuilder_NullDevice)

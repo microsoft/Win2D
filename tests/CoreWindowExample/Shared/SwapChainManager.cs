@@ -42,7 +42,7 @@ namespace CoreWindowExample
                 SwapChain.Dispose();
                 SwapChain = CanvasSwapChain.CreateForCoreWindow(device, window, dpi);
             }
-            else if (!SizeEqualsWithTolerance(windowSize, SwapChain.Size, 0.1f))
+            else if (!SizeEqualsWithTolerance(windowSize, SwapChain.Size))
             {
                 // Note: swapchain size & window size may not be exactly equal since they are represented with
                 // floating point numbers and are calculated via different code paths.
@@ -85,8 +85,10 @@ namespace CoreWindowExample
 #endif
         }
 
-        private bool SizeEqualsWithTolerance(Size sizeA, Size sizeB, float tolerance)
+        static public bool SizeEqualsWithTolerance(Size sizeA, Size sizeB)
         {
+            const float tolerance = 0.1f;
+
             if (Math.Abs(sizeA.Width - sizeB.Width) > tolerance)
                 return false;
 

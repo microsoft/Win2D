@@ -13,6 +13,7 @@
 #include "pch.h"
 #include "CanvasGeometry.h"
 #include "CanvasPathBuilder.h"
+#include "GeometrySink.h"
 #include "TessellationSink.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -203,6 +204,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ComputeFlatteningToleranceWithTransform(dpi, maximumZoomFactor, Identity3x2, flatteningTolerance);
     }
 
+    // Ideally we would just call D2D1::ComputeFlatteningTolerance here, which internally uses
+    // D2D1ComputeMaximumScaleFactor, but unfortunately that DLL entrypoint is not marked as
+    // valid for Windows Phone 8.1 apps (an oversight). Using it would make Win2D Phone apps
+    // fail certification, so instead we must do the calculation directly here ourselves.
+    static float ComputeMaximumScaleFactor(D2D1_MATRIX_3X2_F const& m)
+    {
+        if (m._12 == 0.0f && m._21 == 0.0f)
+        {
+            // Simple scale matrix.
+            return std::max(fabs(m._11), fabs(m._22));
+        }
+        else
+        {
+            // Solve a quadratic.
+            float a = m._11 * m._11 + m._12 * m._12;
+            float b = m._11 * m._21 + m._12 * m._22;
+            float c = m._21 * m._21 + m._22 * m._22;
+
+            float d = a - c;
+
+            float r = sqrtf(d * d + b * b * 4);
+
+            return sqrtf((a + c + r) * 0.5f);
+        }
+    }
+
     IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningToleranceWithTransform(
         float dpi,
         float maximumZoomFactor,
@@ -214,11 +241,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(flatteningTolerance);
                 
-                *flatteningTolerance = D2D1::ComputeFlatteningTolerance(
-                    *(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&expectedGeometryTransform)),
-                    dpi,
-                    dpi,
-                    maximumZoomFactor);
+                float dpiScale = dpi / DEFAULT_DPI;
+
+                D2D1_MATRIX_3X2_F dpiDependentTransform = *ReinterpretAs<D2D1_MATRIX_3X2_F*>(&expectedGeometryTransform) *
+                                                          D2D1::Matrix3x2F::Scale(dpiScale, dpiScale);
+
+                float scaleFactor = fabs(maximumZoomFactor) * ComputeMaximumScaleFactor(dpiDependentTransform);
+
+                *flatteningTolerance = D2D1_DEFAULT_FLATTENING_TOLERANCE / scaleFactor;
             });
     }
 
@@ -878,6 +908,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             auto outputArray = tessellationSink->GetTriangles();
             outputArray.Detach(trianglesCount, triangles);
+        });
+    }
+
+    IFACEMETHODIMP CanvasGeometry::SendPathTo(
+        ICanvasPathReceiver* streamReader)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(streamReader);
+
+            auto& resource = GetResource();
+
+            auto pathGeometry = MaybeAs<ID2D1PathGeometry>(resource);
+
+            auto geometrySink = Make<GeometrySink>(streamReader);
+            CheckMakeResult(geometrySink);
+
+            if (pathGeometry)
+            {
+                ThrowIfFailed(pathGeometry->Stream(geometrySink.Get()));
+            }
+            else
+            {
+                ThrowIfFailed(resource->Simplify(
+                    D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES,
+                    nullptr,
+                    geometrySink.Get()));
+            }
+            ThrowIfFailed(geometrySink->Close());
         });
     }
 

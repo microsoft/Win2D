@@ -69,6 +69,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(PopLayerMethod                        , void());
         CALL_COUNTER_WITH_MOCK(PushAxisAlignedClipMethod             , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
         CALL_COUNTER_WITH_MOCK(PopAxisAlignedClipMethod              , void());
+        CALL_COUNTER_WITH_MOCK(FillOpacityMaskMethod                 , void(ID2D1Bitmap*, ID2D1Brush*, D2D1_RECT_F const*, D2D1_RECT_F const*));
 
         MockD2DDeviceContext()
         {
@@ -569,9 +570,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP_(void) FillOpacityMask(ID2D1Bitmap *,ID2D1Brush *,const D2D1_RECT_F *,const D2D1_RECT_F *) override
+        IFACEMETHODIMP_(void) FillOpacityMask(ID2D1Bitmap* opacityMask, ID2D1Brush* brush, D2D1_RECT_F const* destinationRectangle, D2D1_RECT_F const* sourceRectangle) override
         {
-            Assert::Fail(L"Unexpected call to FillOpacityMask");
+            FillOpacityMaskMethod.WasCalled(opacityMask, brush, destinationRectangle, sourceRectangle);
         }
 
         // ID2D1DeviceContext1

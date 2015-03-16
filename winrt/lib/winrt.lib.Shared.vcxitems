@@ -44,7 +44,6 @@
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\TessellationSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.h" />
@@ -111,6 +110,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\GeometrySink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\TessellationSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />

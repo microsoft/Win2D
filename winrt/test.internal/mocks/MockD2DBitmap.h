@@ -16,7 +16,7 @@ namespace canvas
 {
     class MockD2DBitmap : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<ID2D1Bitmap1, ID2D1Image, ID2D1Resource >>
+        ChainInterfaces<ID2D1Bitmap1, ID2D1Bitmap, ID2D1Image, ID2D1Resource >>
     {
     public:
         CALL_COUNTER_WITH_MOCK(GetPixelSizeMethod, D2D1_SIZE_U());

@@ -409,6 +409,21 @@ namespace Microsoft.Graphics.Canvas
             [in] float h,
             [in] Windows.UI.Color color);
 
+        [overload("FillRectangle")]
+        HRESULT FillRectangleWithBrushAndOpacityBrush(
+            [in] Windows.Foundation.Rect rect,
+            [in] ICanvasBrush* brush,
+            [in] ICanvasBrush* opacityBrush);
+
+        [overload("FillRectangle")]
+        HRESULT FillRectangleAtCoordsWithBrushAndOpacityBrush(
+            [in] float x,
+            [in] float y,
+            [in] float w,
+            [in] float h,
+            [in] ICanvasBrush* brush,
+            [in] ICanvasBrush* opacityBrush);
+
         //
         // DrawRoundedRectangle
         //
@@ -1076,6 +1091,13 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasBrush* brush);
 
         [overload("FillGeometry")]
+        HRESULT FillGeometryWithBrushAndOpacityBrush(
+            [in] CanvasGeometry* geometry,
+            [in] NUMERICS.Vector2 offset,
+            [in] ICanvasBrush* brush,
+            [in] ICanvasBrush* opacityBrush);
+
+        [overload("FillGeometry")]
         HRESULT FillGeometryWithColor(
             [in] CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
@@ -1089,6 +1111,14 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasBrush* brush);
 
         [overload("FillGeometry")]
+        HRESULT FillGeometryAtCoordsWithBrushAndOpacityBrush(
+            [in] CanvasGeometry* geometry,
+            [in] float x,
+            [in] float y,
+            [in] ICanvasBrush* brush,
+            [in] ICanvasBrush* opacityBrush);
+
+        [overload("FillGeometry")]
         HRESULT FillGeometryAtCoordsWithColor(
             [in] CanvasGeometry* geometry,
             [in] float x,
@@ -1099,6 +1129,12 @@ namespace Microsoft.Graphics.Canvas
         HRESULT FillGeometryAtOriginWithBrush(
             [in] CanvasGeometry* geometry,
             [in] ICanvasBrush* brush);
+
+        [overload("FillGeometry")]
+        HRESULT FillGeometryAtOriginWithBrushAndOpacityBrush(
+            [in] CanvasGeometry* geometry,
+            [in] ICanvasBrush* brush,
+            [in] ICanvasBrush* opacityBrush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryAtOriginWithColor(

@@ -957,6 +957,159 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+    static bool ArePointsInsideBitmap(ID2D1Bitmap* bitmap, D2D1_POINT_2F const& point1, D2D1_POINT_2F const& point2, D2D1_UNIT_MODE unitMode)
+    {
+        D2D1_SIZE_F bitmapSize;
+
+        switch (unitMode)
+        {
+        case D2D1_UNIT_MODE_DIPS:
+            bitmapSize = bitmap->GetSize();
+            break;
+
+        case D2D1_UNIT_MODE_PIXELS:
+        {
+            auto pixelSize = bitmap->GetPixelSize();
+
+            bitmapSize.width  = static_cast<float>(pixelSize.width);
+            bitmapSize.height = static_cast<float>(pixelSize.height);
+        }
+        break;
+
+        default:
+            assert(false);
+            return true;
+        }
+
+        const float epsilon = 0.001f;
+
+        return point1.x >= -epsilon &&
+               point1.y >= -epsilon &&
+               point2.x >= -epsilon &&
+               point2.y >= -epsilon &&
+               point1.x <= bitmapSize.width  + epsilon &&
+               point1.y <= bitmapSize.height + epsilon &&
+               point2.x <= bitmapSize.width  + epsilon &&
+               point2.y <= bitmapSize.height + epsilon;
+    }
+
+
+    static bool TryGetFillOpacityMaskParameters(ID2D1Brush* opacityBrush, ID2D1DeviceContext1* deviceContext, D2D1_RECT_F const& destRect, ID2D1Bitmap** opacityBitmap, D2D1_RECT_F* opacitySourceRect)
+    {
+        // Is this a bitmap brush?
+        auto bitmapBrush = MaybeAs<ID2D1BitmapBrush1>(opacityBrush);
+
+        if (!bitmapBrush)
+            return false;
+
+        bitmapBrush->GetBitmap(opacityBitmap);
+        
+        if (!*opacityBitmap)
+            return false;
+
+        // Make sure the brush transform contains only positive scaling and translation, as other
+        // transforms cannot be represented in FillOpacityMask sourceRect/destRect format.
+        D2D1::Matrix3x2F brushTransform;
+        bitmapBrush->GetTransform(&brushTransform);
+
+        if (brushTransform._11 <= 0 ||
+            brushTransform._22 <= 0 ||
+            brushTransform._12 != 0 ||
+            brushTransform._21 != 0)
+        {
+            return false;
+        }
+
+        // Transform the dest rect by the inverse of the brush transform, yielding a FillOpacityMask source rect.
+        if (!D2D1InvertMatrix(&brushTransform))
+            return false;
+
+        auto tl = D2D1_POINT_2F{ destRect.left,  destRect.top    } * brushTransform;
+        auto br = D2D1_POINT_2F{ destRect.right, destRect.bottom } * brushTransform;
+
+        // Can't use FillOpacityMask if the source rect goes outside the bounds of the bitmap.
+        if (!ArePointsInsideBitmap(*opacityBitmap, tl, br, deviceContext->GetUnitMode()))
+            return false;
+
+        // FillOpacityMask always uses default alpha and interpolation mode.
+        if (bitmapBrush->GetOpacity() != 1.0f)
+            return false;
+
+        if (bitmapBrush->GetInterpolationMode1() != D2D1_BITMAP_INTERPOLATION_MODE_LINEAR)
+            return false;
+
+        // FillOpacityMask requires that antialiasing be disabled.
+        if (deviceContext->GetAntialiasMode() != D2D1_ANTIALIAS_MODE_ALIASED)
+            return false;
+
+        // Ok then! FillOpacityMask is a go.
+        *opacitySourceRect = D2D1_RECT_F{ tl.x, tl.y, br.x, br.y };
+
+        return true;
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRectangleWithBrushAndOpacityBrush(
+        Rect rect,
+        ICanvasBrush* brush,
+        ICanvasBrush* opacityBrush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(brush);
+
+                auto d2dRect = ToD2DRect(rect);
+                auto d2dBrush = ToD2DBrush(brush);
+                auto d2dOpacityBrush = ToD2DBrush(opacityBrush);
+
+                ComPtr<ID2D1Bitmap> opacityBitmap;
+                D2D1_RECT_F opacitySourceRect;
+
+                if (TryGetFillOpacityMaskParameters(d2dOpacityBrush.Get(), deviceContext.Get(), d2dRect, &opacityBitmap, &opacitySourceRect))
+                {
+                    // Fast path: we can use FillOpacityMask.
+                    deviceContext->FillOpacityMask(opacityBitmap.Get(), d2dBrush.Get(), &d2dRect, &opacitySourceRect);
+                }
+                else
+                {
+                    // Slow path: if FillOpacityMask does not support the requested operation, we use
+                    // a layer to apply the opacity brush (if any) and then draw a regular rectangle.
+                    if (d2dOpacityBrush)
+                    {
+                        auto layerParameters = D2D1::LayerParameters1();
+                        layerParameters.opacityBrush = d2dOpacityBrush.Get();
+
+                        deviceContext->PushLayer(&layerParameters, nullptr);
+                    }
+
+                    deviceContext->FillRectangle(&d2dRect, d2dBrush.Get());
+
+                    if (d2dOpacityBrush)
+                    {
+                        deviceContext->PopLayer();
+                    }
+                }
+        });
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillRectangleAtCoordsWithBrushAndOpacityBrush(
+        float x,
+        float y,
+        float w,
+        float h,
+        ICanvasBrush* brush,
+        ICanvasBrush* opacityBrush)
+    {
+        return FillRectangleWithBrushAndOpacityBrush(
+            Rect{ x, y, w, h },
+            brush,
+            opacityBrush);
+    }
+
+
     //
     // DrawRoundedRectangle
     //
@@ -2401,11 +2554,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                auto d2dBrush = ToD2DBrush(brush);
+
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
+                TemporaryTransform<ID2D1Brush> brushTransform(d2dBrush.Get(), Vector2{ -offset.X, -offset.Y }, true);
 
                 DrawGeometryImpl(
                     geometry,
-                    ToD2DBrush(brush).Get(),
+                    d2dBrush.Get(),
                     strokeWidth,
                     strokeStyle);
             });
@@ -2422,7 +2578,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
 
                 DrawGeometryImpl(
                     geometry,
@@ -2530,14 +2686,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Vector2 offset,
         ICanvasBrush* brush)
     {
+        return FillGeometryWithBrushAndOpacityBrush(
+            geometry,
+            offset,
+            brush,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryWithBrushAndOpacityBrush(
+        ICanvasGeometry* geometry,
+        Vector2 offset,
+        ICanvasBrush* brush,
+        ICanvasBrush* opacityBrush)
+    {
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                auto d2dBrush = ToD2DBrush(brush);
+                auto d2dOpacityBrush = ToD2DBrush(opacityBrush);
+
+                Vector2 inverseOffset{ -offset.X, -offset.Y };
+
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
+                TemporaryTransform<ID2D1Brush> brushTransform(d2dBrush.Get(), inverseOffset, true);
+                TemporaryTransform<ID2D1Brush> opacityBrushTransform(d2dOpacityBrush.Get(), inverseOffset, true);
 
                 FillGeometryImpl(
                     geometry,
-                    ToD2DBrush(brush).Get());
+                    d2dBrush.Get(),
+                    d2dOpacityBrush.Get());
             });
     }
 
@@ -2550,11 +2728,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
 
                 FillGeometryImpl(
                     geometry,
-                    GetColorBrush(color));
+                    GetColorBrush(color),
+                    nullptr);
             });
     }
 
@@ -2565,10 +2744,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float y,
         ICanvasBrush* brush)
     {
-        return FillGeometryWithBrush(
+        return FillGeometryWithBrushAndOpacityBrush(
             geometry,
             Vector2{ x, y },
-            brush);
+            brush,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryAtCoordsWithBrushAndOpacityBrush(
+        ICanvasGeometry* geometry,
+        float x,
+        float y,
+        ICanvasBrush* brush,
+        ICanvasBrush* opacityBrush)
+    {
+        return FillGeometryWithBrushAndOpacityBrush(
+            geometry,
+            Vector2{ x, y },
+            brush,
+            opacityBrush);
     }
 
 
@@ -2589,12 +2784,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasGeometry* geometry,
         ICanvasBrush* brush)
     {
+        return FillGeometryAtOriginWithBrushAndOpacityBrush(
+            geometry,
+            brush,
+            nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::FillGeometryAtOriginWithBrushAndOpacityBrush(
+        ICanvasGeometry* geometry,
+        ICanvasBrush* brush,
+        ICanvasBrush* opacityBrush)
+    {
         return ExceptionBoundary(
             [&]
             {
                 FillGeometryImpl(
                     geometry,
-                    ToD2DBrush(brush).Get());
+                    ToD2DBrush(brush).Get(),
+                    ToD2DBrush(opacityBrush).Get());
             });
     }
 
@@ -2608,23 +2816,58 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 FillGeometryImpl(
                     geometry,
-                    GetColorBrush(color));
+                    GetColorBrush(color),
+                    nullptr);
             });
+    }
+
+
+    static bool IsBitmapBrushWithClampExtendMode(ID2D1Brush* brush)
+    {
+        auto bitmapBrush = MaybeAs<ID2D1BitmapBrush1>(brush);
+
+        return bitmapBrush &&
+               bitmapBrush->GetExtendModeX() == D2D1_EXTEND_MODE_CLAMP &&
+               bitmapBrush->GetExtendModeY() == D2D1_EXTEND_MODE_CLAMP;
     }
 
 
     void CanvasDrawingSession::FillGeometryImpl(
         ICanvasGeometry* geometry,
-        ID2D1Brush* brush)
+        ID2D1Brush* brush,
+        ID2D1Brush* opacityBrush)
     {
         auto& deviceContext = GetResource();
         CheckInPointer(geometry);
         CheckInPointer(brush);
 
-        deviceContext->FillGeometry(
-            GetWrappedResource<ID2D1Geometry>(geometry).Get(),
-            brush,
-            nullptr);
+        auto d2dGeometry = GetWrappedResource<ID2D1Geometry>(geometry);
+
+        if (!opacityBrush || IsBitmapBrushWithClampExtendMode(brush))
+        {
+            // Fast path: if there is no opacity brush, or if our color brush is
+            // a clamped bitmap, D2D can fill the geometry directly in a single call.
+            deviceContext->FillGeometry(
+                d2dGeometry.Get(),
+                brush,
+                opacityBrush);
+        }
+        else
+        {
+            // Slow path: if FillGeometry does not directly support the requested
+            // operation, use a layer to apply the opacity brush instead.
+            auto layerParameters = D2D1::LayerParameters1();
+            layerParameters.opacityBrush = opacityBrush;
+
+            deviceContext->PushLayer(&layerParameters, nullptr);
+
+            deviceContext->FillGeometry(
+                d2dGeometry.Get(),
+                brush,
+                nullptr);
+
+            deviceContext->PopLayer();
+        }
     }
 
 
@@ -2640,11 +2883,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                auto d2dBrush = ToD2DBrush(brush);
+
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
+                TemporaryTransform<ID2D1Brush> brushTransform(d2dBrush.Get(), Vector2{ -offset.X, -offset.Y }, true);
 
                 DrawCachedGeometryImpl(
                     cachedGeometry,
-                    ToD2DBrush(brush).Get());
+                    d2dBrush.Get());
             });
     }
 
@@ -2657,7 +2903,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                TemporaryTransform transform(GetResource(), offset);
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), offset);
 
                 DrawCachedGeometryImpl(
                     cachedGeometry,

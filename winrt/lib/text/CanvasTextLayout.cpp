@@ -20,17 +20,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     static WinString GetTextFromLayoutResource(
         GET_ATTRIBUTE_LENGTH_METHOD fnGetLength,
         GET_ATTRIBUTE_METHOD fnGet,
-        int32_t positionInText, 
+        int32_t characterIndex, 
         IDWriteTextLayout2* layout)
     {
         WinStringBuilder stringBuilder;
         uint32_t attributeLength;
-        ThrowIfFailed((layout->*fnGetLength)(positionInText, &attributeLength, nullptr));
+        ThrowIfFailed((layout->*fnGetLength)(characterIndex, &attributeLength, nullptr));
         attributeLength++; // Account for null terminator
 
         auto buffer = stringBuilder.Allocate(attributeLength);
-        ThrowIfFailed((*layout.*fnGet)(positionInText, buffer, attributeLength, nullptr));
+        ThrowIfFailed((*layout.*fnGet)(characterIndex, buffer, attributeLength, nullptr));
         return stringBuilder.Get();
+    }
+
+    CanvasTextLayoutRegion ToHitTestDescription(DWRITE_HIT_TEST_METRICS const& hitTestMetrics)
+    {
+        CanvasTextLayoutRegion description;
+        description.CharacterIndex = hitTestMetrics.textPosition;
+        description.CharacterCount = hitTestMetrics.length;
+        description.LayoutBounds.X = hitTestMetrics.left;
+        description.LayoutBounds.Y = hitTestMetrics.top;
+        description.LayoutBounds.Width = hitTestMetrics.width;
+        description.LayoutBounds.Height = hitTestMetrics.height;
+        return description;
     }
 
     //
@@ -144,7 +156,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    IFACEMETHODIMP CanvasTextLayout::GetFormatChangePositions(
+    IFACEMETHODIMP CanvasTextLayout::GetFormatChangeIndices(
         uint32_t* positionCount,
         int32_t** positions)
     {
@@ -158,7 +170,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto& resource = GetResource();
 
-                uint32_t currentPositionInText = 0;
+                uint32_t currentCharacterIndex = 0;
                 BOOL unused;
                 DWRITE_TEXT_RANGE formatRange;
 
@@ -169,14 +181,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // is chosen here arbitrarily.
                 //
 
-                while (currentPositionInText < UINT_MAX)
+                while (currentCharacterIndex < UINT_MAX)
                 {
-                    ThrowIfFailed(resource->GetUnderline(currentPositionInText, &unused, &formatRange));
+                    ThrowIfFailed(resource->GetUnderline(currentCharacterIndex, &unused, &formatRange));
 
-                    assert(formatRange.startPosition == currentPositionInText);
+                    assert(formatRange.startPosition == currentCharacterIndex);
                     positionVector.push_back(formatRange.startPosition);
 
-                    currentPositionInText += formatRange.length;
+                    currentCharacterIndex += formatRange.length;
                 }
 
                 ComArray<int32_t> array(positionVector.begin(), positionVector.end());
@@ -541,7 +553,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetFontFamily(
-        int32_t positionInText,
+        int32_t characterIndex,
         HSTRING* fontFamily)
     {
         return ExceptionBoundary(
@@ -549,14 +561,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(fontFamily);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 auto fontFamilyName = GetTextFromLayoutResource(
                     &IDWriteTextLayout::GetFontFamilyNameLength,
                     &IDWriteTextLayout::GetFontFamilyName,
-                    positionInText,
+                    characterIndex,
                     resource.Get());
 
                 fontFamilyName.CopyTo(fontFamily);
@@ -564,7 +576,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetFontSize(
-        int32_t positionInText,
+        int32_t characterIndex,
         float* fontSize)
     {
         return ExceptionBoundary(
@@ -572,16 +584,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(fontSize);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
-                ThrowIfFailed(resource->GetFontSize(positionInText, fontSize));
+                ThrowIfFailed(resource->GetFontSize(characterIndex, fontSize));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetFontStretch(
-        int32_t positionInText,
+        int32_t characterIndex,
         ABI::Windows::UI::Text::FontStretch* fontStretch)
     {
         return ExceptionBoundary(
@@ -589,19 +601,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(fontStretch);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 DWRITE_FONT_STRETCH dwriteFontStretch;
-                ThrowIfFailed(resource->GetFontStretch(positionInText, &dwriteFontStretch));
+                ThrowIfFailed(resource->GetFontStretch(characterIndex, &dwriteFontStretch));
 
                 *fontStretch = ToWindowsFontStretch(dwriteFontStretch);
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetFontStyle(
-        int32_t positionInText,
+        int32_t characterIndex,
         ABI::Windows::UI::Text::FontStyle* fontStyle)
     {
         return ExceptionBoundary(
@@ -609,19 +621,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(fontStyle);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 DWRITE_FONT_STYLE dwriteFontStyle;
-                ThrowIfFailed(resource->GetFontStyle(positionInText, &dwriteFontStyle));
+                ThrowIfFailed(resource->GetFontStyle(characterIndex, &dwriteFontStyle));
 
                 *fontStyle = ToWindowsFontStyle(dwriteFontStyle);
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetFontWeight(
-        int32_t positionInText,
+        int32_t characterIndex,
         ABI::Windows::UI::Text::FontWeight* fontWeight)
     {
         return ExceptionBoundary(
@@ -629,19 +641,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(fontWeight);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 DWRITE_FONT_WEIGHT dwriteFontWeight;
-                ThrowIfFailed(resource->GetFontWeight(positionInText, &dwriteFontWeight));
+                ThrowIfFailed(resource->GetFontWeight(characterIndex, &dwriteFontWeight));
 
                 *fontWeight = ToWindowsFontWeight(dwriteFontWeight);
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetLocaleName(
-        int32_t positionInText,
+        int32_t characterIndex,
         HSTRING* localeName)
     {
         return ExceptionBoundary(
@@ -649,14 +661,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(localeName);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 auto name = GetTextFromLayoutResource(
                     &IDWriteTextLayout::GetLocaleNameLength,
                     &IDWriteTextLayout::GetLocaleName,
-                    positionInText,
+                    characterIndex,
                     resource.Get());
 
                 name.CopyTo(localeName);
@@ -664,7 +676,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetStrikethrough(
-        int32_t positionInText,
+        int32_t characterIndex,
         boolean* hasStrikethrough)
     {
         return ExceptionBoundary(
@@ -672,19 +684,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(hasStrikethrough);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 BOOL dwriteHasStrikethrough;
-                ThrowIfFailed(resource->GetStrikethrough(positionInText, &dwriteHasStrikethrough));
+                ThrowIfFailed(resource->GetStrikethrough(characterIndex, &dwriteHasStrikethrough));
 
                 *hasStrikethrough = !!dwriteHasStrikethrough;
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetUnderline(
-        int32_t positionInText,
+        int32_t characterIndex,
         boolean* hasUnderline)
     {
         return ExceptionBoundary(
@@ -692,19 +704,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(hasUnderline);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 BOOL dwriteHasUnderline;
-                ThrowIfFailed(resource->GetUnderline(positionInText, &dwriteHasUnderline));
+                ThrowIfFailed(resource->GetUnderline(characterIndex, &dwriteHasUnderline));
 
                 *hasUnderline = !!dwriteHasUnderline;
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetFontFamily(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         HSTRING fontFamilyName)
     {
@@ -719,7 +731,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ComPtr<IDWriteFontCollection> fontCollection = Manager()->GetFontCollectionFromUri(uri);
 
-                auto textRange = ToDWriteTextRange(positionInText, characterCount);
+                auto textRange = ToDWriteTextRange(characterIndex, characterCount);
 
                 ThrowIfFailed(resource->SetFontCollection(fontCollection.Get(), textRange));
                 ThrowIfFailed(resource->SetFontFamilyName(static_cast<const wchar_t*>(fontFamily), textRange));
@@ -727,7 +739,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetFontSize(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         float fontSize)
     {
@@ -736,12 +748,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontSize(fontSize, ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetFontSize(fontSize, ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetFontStretch(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         ABI::Windows::UI::Text::FontStretch fontStretch)
     {
@@ -750,12 +762,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontStretch(ToFontStretch(fontStretch), ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetFontStretch(ToFontStretch(fontStretch), ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetFontStyle(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         ABI::Windows::UI::Text::FontStyle fontStyle)
     {
@@ -764,12 +776,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontStyle(ToFontStyle(fontStyle), ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetFontStyle(ToFontStyle(fontStyle), ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetFontWeight(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         ABI::Windows::UI::Text::FontWeight fontWeight)
     {
@@ -778,12 +790,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
                 
-                ThrowIfFailed(resource->SetFontWeight(ToFontWeight(fontWeight), ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetFontWeight(ToFontWeight(fontWeight), ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetLocaleName(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         HSTRING name)
     {
@@ -794,12 +806,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 const wchar_t* localeNameBuffer = WindowsGetStringRawBuffer(name, nullptr);
 
-                ThrowIfFailed(resource->SetLocaleName(localeNameBuffer, ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetLocaleName(localeNameBuffer, ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetStrikethrough(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         boolean hasStrikethrough)
     {
@@ -808,12 +820,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
 
-                ThrowIfFailed(resource->SetStrikethrough(hasStrikethrough, ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetStrikethrough(hasStrikethrough, ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetUnderline(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         boolean hasUnderline)
     {
@@ -822,12 +834,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
 
-                ThrowIfFailed(resource->SetUnderline(hasUnderline, ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetUnderline(hasUnderline, ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetPairKerning(
-        int32_t positionInText,
+        int32_t characterIndex,
         boolean* hasPairKerning)
     {
         return ExceptionBoundary(
@@ -835,19 +847,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(hasPairKerning);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 BOOL dwriteHasPairKerning;
-                ThrowIfFailed(resource->GetPairKerning(positionInText, &dwriteHasPairKerning));
+                ThrowIfFailed(resource->GetPairKerning(characterIndex, &dwriteHasPairKerning));
 
                 *hasPairKerning = !!dwriteHasPairKerning;
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetPairKerning(
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount,
         boolean hasPairKerning)
     {
@@ -856,12 +868,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
 
-                ThrowIfFailed(resource->SetPairKerning(hasPairKerning, ToDWriteTextRange(positionInText, characterCount)));
+                ThrowIfFailed(resource->SetPairKerning(hasPairKerning, ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetLeadingCharacterSpacing(
-        int32_t positionInText,
+        int32_t characterIndex,
         float* value)
     {
         return ExceptionBoundary(
@@ -869,19 +881,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvanceWidth;
-                ThrowIfFailed(resource->GetCharacterSpacing(positionInText, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
+                ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
 
                 *value = leadingSpacing;
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetTrailingCharacterSpacing(
-        int32_t positionInText,
+        int32_t characterIndex,
         float* value)
     {
         return ExceptionBoundary(
@@ -889,19 +901,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvanceWidth;
-                ThrowIfFailed(resource->GetCharacterSpacing(positionInText, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
+                ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
 
                 *value = trailingSpacing;
             });
     }
 
     IFACEMETHODIMP CanvasTextLayout::GetMinimumCharacterAdvanceWidth(
-        int32_t positionInText,
+        int32_t characterIndex,
         float* value)
     {
         return ExceptionBoundary(
@@ -909,12 +921,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                ThrowIfNegative(positionInText);
+                ThrowIfNegative(characterIndex);
 
                 auto& resource = GetResource();
 
                 FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvanceWidth;
-                ThrowIfFailed(resource->GetCharacterSpacing(positionInText, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
+                ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
 
                 *value = minimumCharacterAdvanceWidth;
             });
@@ -924,7 +936,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float leadingSpacing,
         float trailingSpacing,
         float minimumAdvanceWidth,
-        int32_t positionInText,
+        int32_t characterIndex,
         int32_t characterCount)
     {
         return ExceptionBoundary(
@@ -936,7 +948,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     leadingSpacing, 
                     trailingSpacing, 
                     minimumAdvanceWidth,
-                    ToDWriteTextRange(positionInText, characterCount)));
+                    ToDWriteTextRange(characterIndex, characterCount)));
             });
     }
 
@@ -999,6 +1011,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckInPointer(value);
+                CheckInPointer(value);
 
                 auto& resource = GetResource();
 
@@ -1015,6 +1028,228 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& resource = GetResource();
 
                 ThrowIfFailed(resource->SetLastLineWrapping(value));
+            });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::get_LayoutBounds(Rect* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                auto& resource = GetResource();
+
+                DWRITE_TEXT_METRICS1 dwriteMetrics;
+                ThrowIfFailed(resource->GetMetrics(&dwriteMetrics));
+
+                Rect rect{ dwriteMetrics.left, dwriteMetrics.top, dwriteMetrics.width, dwriteMetrics.height };
+
+                *value = rect;
+            });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::get_LineCount(int32_t* lineCount)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(lineCount);
+                auto& resource = GetResource();
+
+                DWRITE_TEXT_METRICS1 dwriteMetrics;
+                ThrowIfFailed(resource->GetMetrics(&dwriteMetrics));
+
+                *lineCount = dwriteMetrics.lineCount;
+            });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::get_DrawBounds(Rect* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                auto& resource = GetResource();
+
+                DWRITE_OVERHANG_METRICS dwriteOverhangMetrics;
+                ThrowIfFailed(resource->GetOverhangMetrics(&dwriteOverhangMetrics));      
+
+                const float left = -dwriteOverhangMetrics.left;
+                const float right = dwriteOverhangMetrics.right + resource->GetMaxWidth();
+                const float width = right - left;
+
+                const float top = -dwriteOverhangMetrics.top;
+                const float bottom = dwriteOverhangMetrics.bottom + resource->GetMaxHeight();
+                const float height = bottom - top;
+
+                Rect rect{ left, top, width, height };
+
+                *value = rect;
+            });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::HitTest(
+        Vector2 point,
+        boolean* isHit)
+    {
+        return HitTestWithDescriptionAndCoordsAndTrailingSide(point.X, point.Y, nullptr, nullptr, isHit);
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::HitTestWithCoords(
+        float x,
+        float y,
+        boolean* isHit)
+    {
+        return HitTestWithDescriptionAndCoordsAndTrailingSide(x, y, nullptr, nullptr, isHit);
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::HitTestWithDescription(
+        Vector2 point,
+        CanvasTextLayoutRegion* description,
+        boolean* isHit)
+    {
+        return HitTestWithDescriptionAndCoordsAndTrailingSide(point.X, point.Y, description, nullptr, isHit);
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::HitTestWithDescriptionAndTrailingSide(
+        Vector2 point,
+        CanvasTextLayoutRegion* description,
+        boolean* isTrailingSide,
+        boolean* isHit)
+    {
+        return HitTestWithDescriptionAndCoordsAndTrailingSide(point.X, point.Y, description, isTrailingSide, isHit);
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::HitTestWithDescriptionAndCoords(
+        float x,
+        float y,
+        CanvasTextLayoutRegion* description,
+        boolean* isHit)
+    {
+        return HitTestWithDescriptionAndCoordsAndTrailingSide(
+            x,
+            y,
+            description,
+            nullptr,
+            isHit);
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::HitTestWithDescriptionAndCoordsAndTrailingSide(
+        float x,
+        float y,
+        CanvasTextLayoutRegion* description,
+        boolean* isTrailingSide,
+        boolean* isHit)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(isHit);
+                auto& resource = GetResource();
+
+                BOOL isTrailingHit;
+                BOOL isInside;
+                DWRITE_HIT_TEST_METRICS hitTestMetrics;
+                ThrowIfFailed(resource->HitTestPoint(x, y, &isTrailingHit, &isInside, &hitTestMetrics));
+
+                *isHit = !!isInside;
+
+                if (description)
+                {
+                    *description = ToHitTestDescription(hitTestMetrics);
+                }
+                if (isTrailingSide)
+                {
+                    *isTrailingSide = !!isTrailingHit;
+                }
+            });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::GetCaretPosition(
+        int32_t characterIndex,
+        boolean trailingSideOfCharacter,
+        Vector2* location)
+    {
+        return GetCaretPositionWithDescription(characterIndex, trailingSideOfCharacter, nullptr, location);
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::GetCaretPositionWithDescription(
+        int32_t characterIndex,
+        boolean trailingSideOfCharacter,
+        CanvasTextLayoutRegion* description,
+        Vector2* location)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(location);
+                ThrowIfNegative(characterIndex);
+
+                auto& resource = GetResource();
+
+                DWRITE_HIT_TEST_METRICS hitTestMetrics;
+                ThrowIfFailed(resource->HitTestTextPosition(
+                    characterIndex, 
+                    trailingSideOfCharacter, 
+                    &location->X, 
+                    &location->Y, 
+                    &hitTestMetrics));
+
+                if (description)
+                {
+                    *description = ToHitTestDescription(hitTestMetrics);
+                }
+            });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::GetCharacterRegions(
+        int32_t characterIndex,
+        int32_t characterCount,
+        uint32_t* descriptionCount,
+        CanvasTextLayoutRegion** descriptions)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(descriptionCount);
+                CheckAndClearOutPointer(descriptions);
+                ThrowIfNegative(characterIndex);
+                ThrowIfNegative(characterCount);
+
+                auto& resource = GetResource();
+
+                uint32_t hitTestMetricsCount;
+                HRESULT hitTestHr = resource->HitTestTextRange(characterIndex, characterCount, 0, 0, nullptr, 0, &hitTestMetricsCount);
+                if (hitTestHr != E_NOT_SUFFICIENT_BUFFER)
+                {
+                    assert(hitTestHr != S_OK);
+                    ThrowHR(hitTestHr);
+                }
+
+                std::vector<DWRITE_HIT_TEST_METRICS> dwriteHitTestMetrics;
+                dwriteHitTestMetrics.resize(hitTestMetricsCount);
+
+                ThrowIfFailed(resource->HitTestTextRange(
+                    characterIndex, 
+                    characterCount, 
+                    0, 
+                    0, 
+                    &dwriteHitTestMetrics[0], 
+                    hitTestMetricsCount, 
+                    &hitTestMetricsCount));
+                assert(dwriteHitTestMetrics.size() == hitTestMetricsCount);
+
+                std::vector<CanvasTextLayoutRegion> hitDescriptions;
+                hitDescriptions.resize(hitTestMetricsCount);
+
+                for (uint32_t i = 0; i < hitTestMetricsCount; ++i)
+                {
+                    hitDescriptions[i] = ToHitTestDescription(dwriteHitTestMetrics[i]);
+                }
+
+                ComArray<CanvasTextLayoutRegion> array(hitDescriptions.begin(), hitDescriptions.end());
+                array.Detach(descriptionCount, descriptions);
+
             });
     }
 

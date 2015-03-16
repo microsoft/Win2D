@@ -203,6 +203,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             UINT32* trianglesCount,
             CanvasTriangleVertices** triangles) override;
 
+        IFACEMETHOD(SendPathTo)(
+            ICanvasPathReceiver* streamReader) override;
+
     private:
         void StrokeImpl(
             float strokeWidth,

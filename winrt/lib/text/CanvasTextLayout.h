@@ -76,7 +76,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasTextLayout(std::shared_ptr<CanvasTextLayoutManager> manager, IDWriteTextLayout2* layout);
 
-        IFACEMETHOD(GetFormatChangePositions)(
+        IFACEMETHOD(GetFormatChangeIndices)(
             uint32_t* positionCount,
             int32_t** positions) override;
 
@@ -186,103 +186,103 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float* value) override;
 
         IFACEMETHOD(GetFontFamily)(
-            int32_t positionInText,
+            int32_t characterIndex,
             HSTRING *fontFamily) override;
 
         IFACEMETHOD(GetFontSize)(
-            int32_t positionInText,
+            int32_t characterIndex,
             float *fontSize) override;
 
         IFACEMETHOD(GetFontStretch)(
-            int32_t positionInText,
+            int32_t characterIndex,
             ABI::Windows::UI::Text::FontStretch *fontStretch) override;
 
         IFACEMETHOD(GetFontStyle)(
-            int32_t positionInText,
+            int32_t characterIndex,
             ABI::Windows::UI::Text::FontStyle *fontStyle) override;
 
         IFACEMETHOD(GetFontWeight)(
-            int32_t positionInText,
+            int32_t characterIndex,
             ABI::Windows::UI::Text::FontWeight *fontWeight) override;
 
         IFACEMETHOD(GetLocaleName)(
-            int32_t positionInText,
+            int32_t characterIndex,
             HSTRING *localeName) override;
 
         IFACEMETHOD(GetStrikethrough)(
-            int32_t positionInText,
+            int32_t characterIndex,
             boolean *hasStrikethrough) override;
 
         IFACEMETHOD(GetUnderline)(
-            int32_t positionInText,
+            int32_t characterIndex,
             boolean *hasUnderline) override;
 
         IFACEMETHOD(SetFontFamily)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             HSTRING fontFamily) override;
 
         IFACEMETHOD(SetFontSize)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             float fontSize) override;
 
         IFACEMETHOD(SetFontStretch)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             ABI::Windows::UI::Text::FontStretch fontStretch) override;
 
         IFACEMETHOD(SetFontStyle)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             ABI::Windows::UI::Text::FontStyle fontStyle) override;
 
         IFACEMETHOD(SetFontWeight)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             ABI::Windows::UI::Text::FontWeight fontWeight) override;
 
         IFACEMETHOD(SetLocaleName)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             HSTRING name) override;
 
         IFACEMETHOD(SetStrikethrough)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             boolean hasStrikethrough) override;
 
         IFACEMETHOD(SetUnderline)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             boolean hasUnderline) override;
 
         IFACEMETHOD(GetPairKerning)(
-            int32_t positionInText,
+            int32_t characterIndex,
             boolean *hasPairKerning) override;
 
         IFACEMETHOD(SetPairKerning)(
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount,
             boolean hasPairKerning) override;
 
         IFACEMETHOD(GetLeadingCharacterSpacing)(
-            int32_t positionInText,
+            int32_t characterIndex,
             float *leadingSpacing) override;
 
         IFACEMETHOD(GetTrailingCharacterSpacing)(
-            int32_t positionInText,
+            int32_t characterIndex,
             float *trailingSpacing) override;
 
         IFACEMETHOD(GetMinimumCharacterAdvanceWidth)(
-            int32_t positionInText,
+            int32_t characterIndex,
             float *minimumAdvanceWidth) override;
 
         IFACEMETHOD(SetCharacterSpacing)(
             float leadingSpacing,
             float trailingSpacing,
             float minimumAdvanceWidth,
-            int32_t positionInText,
+            int32_t characterIndex,
             int32_t characterCount) override;
 
         IFACEMETHOD(get_VerticalGlyphOrientation)(
@@ -302,6 +302,65 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(put_LastLineWrapping)(
             boolean value) override;
+
+        //
+        // Hit-testing and metrics-related methods
+        //
+        IFACEMETHOD(get_LayoutBounds)(Rect* rect);
+
+        IFACEMETHOD(get_LineCount)(int32_t* lineCount);
+
+        IFACEMETHOD(get_DrawBounds)(Rect* rect);
+
+        IFACEMETHOD(HitTest)(
+            Vector2 point,
+            boolean* isHit);
+
+        IFACEMETHOD(HitTestWithCoords)(
+            float x,
+            float y,
+            boolean* isHit);
+
+        IFACEMETHOD(HitTestWithDescription)(
+            Vector2 point,
+            CanvasTextLayoutRegion* description,
+            boolean* isHit);
+
+        IFACEMETHOD(HitTestWithDescriptionAndTrailingSide)(
+            Vector2 point,
+            CanvasTextLayoutRegion* description,
+            boolean* isTrailingSide,
+            boolean* isHit);
+
+        IFACEMETHOD(HitTestWithDescriptionAndCoords)(
+            float x,
+            float y,
+            CanvasTextLayoutRegion* description,
+            boolean* isHit);
+
+        IFACEMETHOD(HitTestWithDescriptionAndCoordsAndTrailingSide)(
+            float x,
+            float y,
+            CanvasTextLayoutRegion* description,
+            boolean* isTrailingSide,
+            boolean* isHit);
+
+        IFACEMETHOD(GetCaretPosition(
+            int32_t characterIndex,
+            boolean trailingSideOfCharacter,
+            Vector2* location));
+
+        IFACEMETHOD(GetCaretPositionWithDescription(
+            int32_t characterIndex,
+            boolean trailingSideOfCharacter,
+            CanvasTextLayoutRegion* description,
+            Vector2* location));
+
+        IFACEMETHOD(GetCharacterRegions(
+            int32_t characterIndex,
+            int32_t characterCount,
+            uint32_t* descriptionCount,
+            CanvasTextLayoutRegion** descriptions));
 
         //
         // IClosable

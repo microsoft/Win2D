@@ -111,7 +111,7 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.Dispose">
       <summary>Releases all resources used by the CanvasTextLayout.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFormatChangePositions">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFormatChangeIndices">
       <summary>Gets an array of position indices at which the text format changes.</summary>
       <remarks>By convention, an empty string will yield an array containing only {0}. </remarks>
     </member>
@@ -276,6 +276,135 @@ under the License.
 
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.Options">
       <summary>Specifies text drawing options.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion">
+      <summary>A struct describing the result of a hit test operation.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion.CharacterIndex">
+      <summary>The position index within a piece of text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion.CharacterCount">
+      <summary>A number of characters, counted from the PositionInText, used for describing a range of characters.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion.LayoutBounds">
+      <summary>A rectangle describing the bounds of a piece of text.</summary>
+      <remarks>The bounds are relative to the text's layout box. 
+      These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <summary>Gets whether the point overlaps with any text in the text layout.</summary>
+      <remarks>
+      	<p>Any whitespace before the end of the text, also counts as text.</p>
+      	<p>
+      	  Hit tests are always performed using layout bounds, not draw bounds. See 
+      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(System.Single,System.Single)">
+      <summary>Gets whether the point overlaps with any text in the text layout.</summary>
+      <remarks>
+      	<p>Any whitespace before the end of the text, also counts as text.</p>
+      	<p>
+      	  Hit tests are always performed using layout bounds, not draw bounds. See 
+      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@)">
+      <summary>Gets whether the point overlaps with any text in the text layout.</summary>
+      <remarks>
+      	<p>Any whitespace before the end of the text, also counts as text.</p>
+      	<p>
+      	  Hit tests are always performed using layout bounds, not draw bounds. See 
+      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@)">
+      <summary>Gets whether the point overlaps with any text in the text layout.</summary>
+      <remarks>
+      	<p>Any whitespace before the end of the text, also counts as text.</p>
+      	<p>
+      	  Hit tests are always performed using layout bounds, not draw bounds. See 
+      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@,System.Boolean@)">
+      <summary>Gets whether the point overlaps with any text in the text layout.</summary>
+      <remarks>
+      	<p>Any whitespace before the end of the text, also counts as text.</p>
+      	<p>
+      	  Hit tests are always performed using layout bounds, not draw bounds. See 
+      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@,System.Boolean@)">
+      <summary>Gets whether the point overlaps with any text in the text layout.</summary>
+      <remarks>
+      	<p>Any whitespace before the end of the text, also counts as text.</p>
+      	<p>
+      	  Hit tests are always performed using layout bounds, not draw bounds. See 
+      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetCaretPosition(System.Int32,System.Boolean)">
+      <summary>Gets position where the caret (text cursor) would be, given the current text position and caret direction.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetCaretPosition(System.Int32,System.Boolean,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@)">
+      <summary>Gets position where the caret (text cursor) would be, given the current text position and caret direction.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetCharacterRegions(System.Int32,System.Int32)">
+      <summary>Gets an array of descriptions of the range of text.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DrawBounds">
+      <summary>Gets the bounds of the parts of the text that would get drawn.</summary>
+      <remarks>
+      	<p>
+      	Draw bounds are different from layout bounds. Below, the draw bounds are outlined in green. Layout bounds are outlined in blue. 
+      	</p>
+        <img src="../images/Blend.png" alt="CanvasBlend diagram" />   
+      	<p>
+      	The draw bounds are the area that is covered when you draw the text. 
+      	Notice how the rectangles don't necessarily align along the top or bottom edge.
+      	And how, in some cases, the bounds may overlap each other.
+      	</p>
+      	<p>
+      	The layout bounds align along the top and bottom edges, and are guaranteed never to overlap each other.
+      	</p>      	
+      	<p>
+      	Both types of bounds are useful for different purposes. Layout bounds are useful for positioning text,
+      	aligned against an edge. Draw bounds are useful for clipping behavior.
+      	</p>
+      	</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds">
+      <summary>Gets the bounds of the parts of the text that align to the layout.</summary>
+      <remarks>
+      	<p>
+      	Draw bounds are different from layout bounds. Below, the draw bounds are outlined in green. Layout bounds are outlined in blue. 
+      	</p>
+        <img src="../images/Blend.png" alt="CanvasBlend diagram" />   
+      	<p>
+      	The draw bounds are the area that is covered when you draw the text. 
+      	Notice how the rectangles don't necessarily align along the top or bottom edge.
+      	And how, in some cases, the bounds may overlap each other.
+      	</p>
+      	<p>
+      	The layout bounds align along the top and bottom edges, and are guaranteed never to overlap each other.
+      	</p>      	
+      	<p>
+      	Both types of bounds are useful for different purposes. Layout bounds are useful for positioning text,
+      	aligned against an edge. Draw bounds are useful for clipping behavior.
+      	</p>
+      	</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LineCount">
+      <summary>Gets the number of lines in the text layout.</summary>
     </member>
     
   </members>

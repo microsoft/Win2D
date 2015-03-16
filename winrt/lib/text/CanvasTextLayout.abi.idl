@@ -27,6 +27,14 @@ namespace Microsoft.Graphics.Canvas
         Default,
         Stacked
     } CanvasVerticalGlyphOrientation;
+    
+    [version(VERSION)]
+    typedef struct CanvasTextLayoutRegion
+    {
+        int CharacterIndex; // First character index within the hit region.
+        int CharacterCount; // Number of characters within the hit region.
+        Windows.Foundation.Rect LayoutBounds; // Layout bounds of characters in the hit region.
+    } CanvasTextLayoutRegion;
 
 #define PROPERTY(NAME, TYPE)                            \
     [propget] HRESULT NAME([out, retval] TYPE* value);  \
@@ -36,7 +44,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasTextLayout : IInspectable
         requires Windows.Foundation.IClosable
     {
-        HRESULT GetFormatChangePositions(
+        HRESULT GetFormatChangeIndices(
             [out] UINT32* stopCount,
             [out, size_is(, *stopCount), retval] INT32** stops);
 
@@ -78,131 +86,198 @@ namespace Microsoft.Graphics.Canvas
         HRESULT GetMinimumLayoutWidth([out, retval] float* value); // Corresponds to DetermineMinWidth.
 
         HRESULT GetFontFamily(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] HSTRING* fontFamily);
 
         HRESULT GetFontSize(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] float* fontSize);
 
         HRESULT GetFontStretch(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] Windows.UI.Text.FontStretch* fontStretch);
 
         HRESULT GetFontStyle(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] Windows.UI.Text.FontStyle* fontStyle);
 
         HRESULT GetFontWeight(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] Windows.UI.Text.FontWeight* fontWeight);
 
         HRESULT GetLocaleName(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] HSTRING* localeName);
 
         HRESULT GetStrikethrough(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] boolean* hasStrikethrough);
 
         HRESULT GetUnderline(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] boolean* hasUnderline);
 
         HRESULT SetFontFamily(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] HSTRING fontFamily);
 
         HRESULT SetFontSize(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] float fontSize);
 
         HRESULT SetFontStretch(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] Windows.UI.Text.FontStretch fontStretch);
 
         HRESULT SetFontStyle(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] Windows.UI.Text.FontStyle fontStyle);
 
         HRESULT SetFontWeight(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] Windows.UI.Text.FontWeight fontWeight);
 
         HRESULT SetLocaleName(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] HSTRING name);
 
         HRESULT SetStrikethrough(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] boolean hasStrikethrough);
 
         HRESULT SetUnderline(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] boolean hasUnderline);
 
         // Not exposed:                             Reason
         //---------------                           -------
         // Draw                                     Used primarily, by custom renderers, out of scope. Part of DWrite completeness
-        // GetClusterMetrics                        Text metrics is backlog #820
+        // GetClusterMetrics                        Advanced usage, out of scope.
         // Get/Set DrawingEffect                    Advanced usage, out of scope.
         // Get/Set FontCollection                   Relies on IDWriteFontCollection. Separate design issue on how to expose this.
         // Get/Set InlineObject                     Advanced usage, out of scope.
-        // GetLineMetrics                           Text metrics is backlog #820
-        // GetMetrics                               Text metrics is backlog #820
-        // GetOverhangMetrics                       Text metrics is backlog #820
+        // GetLineMetrics                           Advanced usage, out of scope.
         // Get/Set Typography                       Relies on IDWriteTypography. Advanced usage. Separate design issue on how to expose this.
 
-        // HitTestPoint                             Needs design. Out of scope.
-        // HitTestTextPosition
-        // HitTestTextRange
+        // Exposed through IDWriteTextLayout::GetMetrics.
+        [propget] HRESULT LayoutBounds(
+            [out, retval] Windows.Foundation.Rect* bounds);
 
+        // Exposed through IDWriteTextLayout::GetMetrics.
+        [propget] HRESULT LineCount(
+            [out, retval] INT32* lineCount);
+
+        // Exposed through IDWriteTextLayout::GetOverhangMetrics.
+        [propget] HRESULT DrawBounds(
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        // Exposed through IDWriteTextLayout::HitTestPoint.
+        [overload("HitTest")]
+        HRESULT HitTest(
+            [in] NUMERICS.Vector2 point,
+            [out, retval] boolean* isHit);
+
+        [overload("HitTest"), default_overload]
+        HRESULT HitTestWithCoords(
+            [in] float x,
+            [in] float y,
+            [out, retval] boolean* isHit);
+
+        [overload("HitTest")]
+        HRESULT HitTestWithDescription(
+            [in] NUMERICS.Vector2 point,
+            [out] CanvasTextLayoutRegion* textLayoutRegion,
+            [out, retval] boolean* isHit);
+
+        [overload("HitTest")]
+        HRESULT HitTestWithDescriptionAndCoords(
+            [in] float x,
+            [in] float y,
+            [out] CanvasTextLayoutRegion* textLayoutRegion,
+            [out, retval] boolean* isHit);
+
+        [overload("HitTest"), default_overload]
+        HRESULT HitTestWithDescriptionAndTrailingSide(
+            [in] NUMERICS.Vector2 point,
+            [out] CanvasTextLayoutRegion* textLayoutRegion,
+            [out] boolean* trailingSideOfCharacter,
+            [out, retval] boolean* isHit);
+
+        [overload("HitTest")]
+        HRESULT HitTestWithDescriptionAndCoordsAndTrailingSide(
+            [in] float x,
+            [in] float y,
+            [out] CanvasTextLayoutRegion* textLayoutRegion,
+            [out] boolean* trailingSideOfCharacter,
+            [out, retval] boolean* isHit);
+
+        // Exposed through IDWriteTextLayout::HitTestTextPosition.
+        [overload("GetCaretPosition")]
+        HRESULT GetCaretPosition(
+            [in] INT32 characterIndex,
+            [in] boolean trailingSideOfCharacter,
+            [out, retval] NUMERICS.Vector2* location);
+
+        [overload("GetCaretPosition"), default_overload]
+        HRESULT GetCaretPositionWithDescription(
+            [in] INT32 characterIndex,
+            [in] boolean trailingSideOfCharacter,
+            [out] CanvasTextLayoutRegion* textLayoutRegion,
+            [out, retval] NUMERICS.Vector2* location);
+
+        // Exposed through IDWriteTextLayout::HitTestTextRange.
+        [overload("GetCharacterRegions"), default_overload]
+        HRESULT GetCharacterRegions(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
+            [out] UINT32* hitTestDescriptionCount,
+            [out, size_is(, *hitTestDescriptionCount), retval] CanvasTextLayoutRegion** hitTestDescriptions);
 
         ///////////////////////////////////////////////////////////////////////
         //
         // IDWriteTextLayout1
 
         //
-        // Most apps will want pair-kerning disabled, because non-pair-kerning tends to be
-        // more well-defined, and correct. However, for the purposes of legacy rendering,
-        // pair kerning is an option.
+        // Most apps will want pair-kerning disabled, because non-pair-kerning tends
+        // to be more well-defined, and correct. However, for the purposes of legacy
+        // rendering, pair kerning is an option.
         //
         // Pair kerning will only actually be used when rendering, if the font face supports it.
         //
         HRESULT GetPairKerning(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] boolean* hasPairKerning);
 
         HRESULT SetPairKerning(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] boolean hasPairKerning);
 
         HRESULT GetLeadingCharacterSpacing(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] float* leadingSpacing);
 
         HRESULT GetTrailingCharacterSpacing(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] float* trailingSpacing);
 
         HRESULT GetMinimumCharacterAdvanceWidth(
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [out, retval] float* minimumAdvanceWidth);
 
         HRESULT SetCharacterSpacing(
             [in] float leadingSpacing,
             [in] float trailingSpacing,
             [in] float minimumAdvanceWidth,
-            [in] INT32 positionInText,
+            [in] INT32 characterIndex,
             [in] INT32 characterCount);
 
         ///////////////////////////////////////////////////////////////////////

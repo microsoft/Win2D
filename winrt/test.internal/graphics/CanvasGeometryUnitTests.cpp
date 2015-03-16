@@ -19,6 +19,7 @@
 #include "MockD2DGeometrySink.h"
 #include "MockD2DTransformedGeometry.h"
 #include "MockD2DGeometryGroup.h"
+#include "StubGeometrySink.h"
 
 static const D2D1_MATRIX_3X2_F sc_someD2DTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_MATRIX_3X2_F sc_identityD2DTransform = { 1, 0, 0, 1, 0, 0 };
@@ -27,6 +28,7 @@ static const Matrix3x2 sc_someTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_TRIANGLE sc_triangle1 = { { 1, 2 }, { 3, 4 }, { 5, 6 } };
 static const D2D1_TRIANGLE sc_triangle2 = { { 7, 8 }, { 9, 10 }, { 11, 12 } };
 static const D2D1_TRIANGLE sc_triangle3 = { { 13, 14 }, { 15, 16 }, { 17, 18 } };
+
 
 TEST_CLASS(CanvasGeometryTests)
 {
@@ -1275,6 +1277,9 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->Tessellate(t.GetAddressOfSize(), t.GetAddressOfData()));
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->TessellateWithTransformAndFlatteningTolerance(m, 0, t.GetAddressOfSize(), t.GetAddressOfData()));
 
+        auto geometrySink = Make<StubGeometrySink>();
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->SendPathTo(geometrySink.Get()));
+
         ComPtr<ICanvasDevice> retrievedDevice;
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->get_Device(&retrievedDevice));
     }
@@ -1314,5 +1319,703 @@ public:
         auto canvasGeometry = f.Manager->Create(f.Device.Get(), Rect{});
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometry->get_Device(nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_StreamNullArgs)
+    {
+        Fixture f;
+
+        auto canvasGeometry = f.Manager->Create(f.Device.Get(), Rect{});
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometry->SendPathTo(nullptr));
+
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_BeginFigure)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->BeginFigure(D2D1_POINT_2F{ 1, 2 }, D2D1_FIGURE_BEGIN_HOLLOW);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->BeginFigureMethod.SetExpectedCalls(1,
+            [&](Vector2 pt, CanvasFigureFill fill)
+            {
+                Assert::AreEqual(Vector2{ 1, 2 }, pt);
+                Assert::AreEqual(CanvasFigureFill::DoesNotAffectFills, fill);
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_Stream_BeginFigure_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->BeginFigure(D2D1_POINT_2F{}, D2D1_FIGURE_BEGIN_FILLED);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->BeginFigureMethod.SetExpectedCalls(1,
+            [&](Vector2 pt, CanvasFigureFill fill)
+            {
+                return E_FAIL;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddArc)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                const D2D1_ARC_SEGMENT argSegment{ 1, 2, 3, 4, 90, D2D1_SWEEP_DIRECTION_CLOCKWISE, D2D1_ARC_SIZE_LARGE };
+                internalSink->AddArc(&argSegment);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddArcMethod.SetExpectedCalls(1,
+            [&](Vector2 endPoint,
+                float radiusX,
+                float radiusY,
+                float rotationAngle,
+                CanvasSweepDirection sweepDirection,
+                CanvasArcSize arcSize)
+        {
+                    Assert::AreEqual(Vector2{ 1, 2 }, endPoint);
+                    Assert::AreEqual(3.0f, radiusX);
+                    Assert::AreEqual(4.0f, radiusY);
+                    Assert::AreEqual(3.14159f / 2.0f, rotationAngle, 0.001f);
+                    Assert::AreEqual(CanvasSweepDirection::Clockwise, sweepDirection);
+                    Assert::AreEqual(CanvasArcSize::Large, arcSize);
+                    return S_OK;
+                });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddArc_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                const D2D1_ARC_SEGMENT argSegment{};
+                internalSink->AddArc(&argSegment);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddArcMethod.SetExpectedCalls(1,
+            [&](Vector2 endPoint,
+                float radiusX,
+                float radiusY,
+                float rotationAngle,
+                CanvasSweepDirection sweepDirection,
+                CanvasArcSize arcSize)
+                {
+                    return E_FAIL;
+                });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddCubicBezier)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                const D2D1_BEZIER_SEGMENT bezier{ 
+                    D2D1_POINT_2F{ 1, 2 },
+                    D2D1_POINT_2F{ 3, 4 },
+                    D2D1_POINT_2F{ 5, 6 },
+                };
+                internalSink->AddBezier(&bezier);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddCubicBezierMethod.SetExpectedCalls(1,
+            [&](
+            Vector2 controlPoint1,
+            Vector2 controlPoint2,
+            Vector2 endPoint)
+            {
+                Assert::AreEqual(Vector2{ 1, 2 }, controlPoint1);
+                Assert::AreEqual(Vector2{ 3, 4 }, controlPoint2);
+                Assert::AreEqual(Vector2{ 5, 6 }, endPoint);
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddCubicBezier_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                const D2D1_BEZIER_SEGMENT bezier{};
+                internalSink->AddBezier(&bezier);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddCubicBezierMethod.SetExpectedCalls(1,
+            [&](
+            Vector2 controlPoint1,
+            Vector2 controlPoint2,
+            Vector2 endPoint)
+            {
+                return E_FAIL;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddCubicBeziers)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                D2D1_BEZIER_SEGMENT beziers[3];
+                for (int i = 0; i < 3; ++i)
+                {
+                    const float inc = static_cast<float>(i);
+                    beziers[i] = D2D1_BEZIER_SEGMENT{
+                        D2D1_POINT_2F{ 10 + inc, 20 + inc },
+                        D2D1_POINT_2F{ 30 + inc, 40 + inc },
+                        D2D1_POINT_2F{ 50 + inc, 60 + inc }
+                    };
+                }
+                internalSink->AddBeziers(beziers, 3);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        int callIndex = 0;
+        geometrySink->AddCubicBezierMethod.SetExpectedCalls(3,
+            [&](
+            Vector2 controlPoint1,
+            Vector2 controlPoint2,
+            Vector2 endPoint)
+            {
+                const float inc = static_cast<float>(callIndex);
+                Assert::AreEqual(Vector2{ 10 + inc, 20 + inc }, controlPoint1);
+                Assert::AreEqual(Vector2{ 30 + inc, 40 + inc }, controlPoint2);
+                Assert::AreEqual(Vector2{ 50 + inc, 60 + inc }, endPoint);
+                callIndex++;
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }    
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddCubicBeziers_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                D2D1_BEZIER_SEGMENT beziers[3]{};
+                internalSink->AddBeziers(beziers, 3);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        int callIndex = 0;
+        geometrySink->AddCubicBezierMethod.SetExpectedCalls(2,
+            [&](
+            Vector2 controlPoint1,
+            Vector2 controlPoint2,
+            Vector2 endPoint)
+            {
+                callIndex++;
+                return callIndex == 2? E_FAIL : S_OK;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddLine)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->AddLine(D2D1_POINT_2F{ 1, 2 });
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddLineMethod.SetExpectedCalls(1,
+            [&](
+            Vector2 endPoint)
+            {
+                Assert::AreEqual(Vector2{ 1, 2 }, endPoint);
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddLine_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->AddLine(D2D1_POINT_2F{});
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddLineMethod.SetExpectedCalls(1,
+            [&](
+            Vector2 endPoint)
+            {
+                return E_FAIL;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddLines)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                D2D1_POINT_2F linePoints[] = { 
+                    D2D1_POINT_2F{ 1, 2 },
+                    D2D1_POINT_2F{ 3, 4 },
+                    D2D1_POINT_2F{ 5, 6 }
+                };
+                internalSink->AddLines(linePoints, 3);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        int callIndex = 0;
+        geometrySink->AddLineMethod.SetExpectedCalls(3,
+            [&](
+            Vector2 endPoint)
+            {
+                const float inc = static_cast<float>(callIndex);
+                Assert::AreEqual(Vector2{ 1 + (inc * 2), 2  + (inc * 2) }, endPoint);
+                callIndex++;
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddLines_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                D2D1_POINT_2F linePoints[3] { };
+                internalSink->AddLines(linePoints, 3);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        int callIndex = 0;
+        geometrySink->AddLineMethod.SetExpectedCalls(2,
+            [&](
+            Vector2 endPoint)
+            {
+                callIndex++;
+                return callIndex == 2? E_FAIL : S_OK;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddQuadraticBezier)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                const D2D1_QUADRATIC_BEZIER_SEGMENT bezier{ 
+                    D2D1_POINT_2F{ 1, 2 },
+                    D2D1_POINT_2F{ 3, 4 },
+                };
+                internalSink->AddQuadraticBezier(&bezier);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddQuadraticBezierMethod.SetExpectedCalls(1,
+            [&](
+            Vector2 controlPoint,
+            Vector2 endPoint)
+            {
+                Assert::AreEqual(Vector2{ 1, 2 }, controlPoint);
+                Assert::AreEqual(Vector2{ 3, 4 }, endPoint);
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddQuadraticBezier_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                const D2D1_QUADRATIC_BEZIER_SEGMENT bezier{};
+                internalSink->AddQuadraticBezier(&bezier);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->AddQuadraticBezierMethod.SetExpectedCalls(1,
+            [&](
+            Vector2 controlPoint,
+            Vector2 endPoint)
+            {
+                return E_FAIL;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddQuadraticBeziers)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                D2D1_QUADRATIC_BEZIER_SEGMENT beziers[3];
+                for (int i = 0; i < 3; ++i)
+                {
+                    const float inc = static_cast<float>(i);
+                    beziers[i] = D2D1_QUADRATIC_BEZIER_SEGMENT{
+                        D2D1_POINT_2F{ 10 + inc, 20 + inc },
+                        D2D1_POINT_2F{ 30 + inc, 40 + inc }
+                    };
+                }
+                internalSink->AddQuadraticBeziers(beziers, 3);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        int callIndex = 0;
+        geometrySink->AddQuadraticBezierMethod.SetExpectedCalls(3,
+            [&](
+            Vector2 controlPoint,
+            Vector2 endPoint)
+            {
+                const float inc = static_cast<float>(callIndex);
+                Assert::AreEqual(Vector2{ 10 + inc, 20 + inc }, controlPoint);
+                Assert::AreEqual(Vector2{ 30 + inc, 40 + inc }, endPoint);
+                callIndex++;
+                return S_OK;                
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_AddQuadraticBeziers_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                D2D1_QUADRATIC_BEZIER_SEGMENT beziers[3] {};
+                internalSink->AddQuadraticBeziers(beziers, 3);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        int callIndex = 0;
+        geometrySink->AddQuadraticBezierMethod.SetExpectedCalls(2,
+            [&](
+            Vector2 controlPoint,
+            Vector2 endPoint)
+            {
+                callIndex++;
+                return callIndex == 2? E_FAIL : S_OK;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_SetFilledRegionDetermination)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->SetFilledRegionDeterminationMethod.SetExpectedCalls(1,
+            [&](CanvasFilledRegionDetermination filledRegionDetermination)
+            {
+                Assert::AreEqual(CanvasFilledRegionDetermination::Winding, filledRegionDetermination);
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_SetFilledRegionDetermination_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->SetFilledRegionDeterminationMethod.SetExpectedCalls(1,
+            [&](CanvasFilledRegionDetermination filledRegionDetermination)
+            {
+                return E_FAIL;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_SetSegmentOptions)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->SetSegmentFlags(D2D1_PATH_SEGMENT_FORCE_UNSTROKED);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->SetSegmentOptionsMethod.SetExpectedCalls(1,
+            [&](CanvasFigureSegmentOptions options)
+            {
+                Assert::AreEqual(CanvasFigureSegmentOptions::ForceUnstroked, options);
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_SetSegmentOptions_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->SetSegmentFlags(D2D1_PATH_SEGMENT_FORCE_UNSTROKED);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->SetSegmentOptionsMethod.SetExpectedCalls(1,
+            [&](CanvasFigureSegmentOptions options)
+            {
+                return E_FAIL;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_EndFigure)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->EndFigure(D2D1_FIGURE_END_OPEN);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->EndFigureMethod.SetExpectedCalls(1,
+            [&](CanvasFigureLoop figureLoop)
+            {
+                Assert::AreEqual(CanvasFigureLoop::Open, figureLoop);
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_SendPathTo_EndFigure_ErrorIsPropagated)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->EndFigure(D2D1_FIGURE_END_OPEN);
+                return S_OK;
+            });
+
+        auto geometrySink = Make<StubGeometrySink>();
+        geometrySink->EndFigureMethod.SetExpectedCalls(1,
+            [&](CanvasFigureLoop figureLoop)
+            {
+                return E_FAIL;
+            });
+
+        Assert::AreEqual(E_FAIL, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_Stream_MultipleStreamedElements)
+    {
+        Fixture f;
+
+        auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
+        auto canvasGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+
+        mockD2DPathGeometry->StreamMethod.SetExpectedCalls(1,
+            [&](ID2D1GeometrySink* internalSink)
+            {
+                internalSink->BeginFigure(D2D1_POINT_2F{ 1, 2 }, D2D1_FIGURE_BEGIN_FILLED);
+                internalSink->AddLine(D2D1_POINT_2F{ 3, 4 });
+                internalSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+                return S_OK;
+            });
+        
+        auto geometrySink = Make<StubGeometrySink>();
+        int callIndex = 0;
+        geometrySink->BeginFigureMethod.SetExpectedCalls(1,
+            [&](Vector2 pt, CanvasFigureFill fill)
+            {
+                Assert::AreEqual(0, callIndex);
+                Assert::AreEqual(Vector2{ 1, 2 }, pt);
+                Assert::AreEqual(CanvasFigureFill::Default, fill);
+                callIndex++;
+                return S_OK;
+            });
+        geometrySink->AddLineMethod.SetExpectedCalls(1,
+            [&](
+            Vector2 endPoint)
+            {
+                Assert::AreEqual(1, callIndex);
+                Assert::AreEqual(Vector2{ 3, 4 }, endPoint);
+                callIndex++;
+                return S_OK;
+            });
+        geometrySink->EndFigureMethod.SetExpectedCalls(1,
+            [&](CanvasFigureLoop figureLoop)
+            {
+                Assert::AreEqual(2, callIndex);
+                Assert::AreEqual(CanvasFigureLoop::Closed, figureLoop);
+                callIndex++;
+                return S_OK;
+            });
+
+        Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
     }
 };

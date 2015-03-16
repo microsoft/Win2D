@@ -14,33 +14,42 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    // Helper object whose job is to apply a temporary transform to a
-    // D2D device context, then undo it at the end of a drawing operation.
+    // Helper object whose job is to apply a temporary transform to a D2D
+    // device context or brush, then undo it at the end of a drawing operation.
+    template<typename T>
     class TemporaryTransform
     {
         // Make ourselves non-copyable.
         TemporaryTransform(TemporaryTransform const&) = delete;
         TemporaryTransform& operator=(TemporaryTransform const&) = delete;
 
-        // Capture by reference because we should only exist on the stack within a single
+        // Not a ComPtr because we should only exist on the stack within a single
         // CanvasDrawingSession method, so there's no need to be messing with AddRef.
-        ComPtr<ID2D1DeviceContext1> const& m_deviceContext;
+        T* m_target;
 
         D2D1::Matrix3x2F m_previousTransform;
 
     public:
-        TemporaryTransform(ComPtr<ID2D1DeviceContext1> const& deviceContext, Vector2 const& offset)
-            : m_deviceContext(deviceContext)
+        TemporaryTransform(T* target, Vector2 const& offset, bool postMultiply = false)
+            : m_target(target)
         {
-            auto translation = D2D1::Matrix3x2F::Translation(offset.X, offset.Y);
+            if (m_target)
+            {
+                auto translation = D2D1::Matrix3x2F::Translation(offset.X, offset.Y);
 
-            m_deviceContext->GetTransform(&m_previousTransform);
-            m_deviceContext->SetTransform(translation * m_previousTransform);
+                m_target->GetTransform(&m_previousTransform);
+
+                m_target->SetTransform(postMultiply ? m_previousTransform * translation
+                                                    : translation * m_previousTransform);
+            }
         }
 
         ~TemporaryTransform()
         {
-            m_deviceContext->SetTransform(&m_previousTransform);
+            if (m_target)
+            {
+                m_target->SetTransform(&m_previousTransform);
+            }
         }
     };
 }}}}

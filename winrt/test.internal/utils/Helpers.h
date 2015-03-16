@@ -929,6 +929,49 @@ namespace Microsoft
                 END_ENUM(DWRITE_OPTICAL_ALIGNMENT);
             }
 
+            ENUM_TO_STRING(CanvasFigureFill)
+            {
+                ENUM_VALUE(CanvasFigureFill::Default);
+                ENUM_VALUE(CanvasFigureFill::DoesNotAffectFills);
+                END_ENUM(CanvasFigureFill);
+            }
+
+            ENUM_TO_STRING(CanvasSweepDirection)
+            {
+                ENUM_VALUE(CanvasSweepDirection::CounterClockwise);
+                ENUM_VALUE(CanvasSweepDirection::Clockwise);
+                END_ENUM(CanvasSweepDirection);
+            }
+
+            ENUM_TO_STRING(CanvasArcSize)
+            {
+                ENUM_VALUE(CanvasArcSize::Small);
+                ENUM_VALUE(CanvasArcSize::Large);
+                END_ENUM(CanvasArcSize);
+            }
+
+            ENUM_TO_STRING(CanvasFilledRegionDetermination)
+            {
+                ENUM_VALUE(CanvasFilledRegionDetermination::Alternate);
+                ENUM_VALUE(CanvasFilledRegionDetermination::Winding);
+                END_ENUM(CanvasFilledRegionDetermination);
+            }
+
+            ENUM_TO_STRING(CanvasFigureSegmentOptions)
+            {
+                ENUM_VALUE(CanvasFigureSegmentOptions::None);
+                ENUM_VALUE(CanvasFigureSegmentOptions::ForceUnstroked);
+                ENUM_VALUE(CanvasFigureSegmentOptions::ForceRoundLineJoin);
+                END_ENUM(CanvasFigureSegmentOptions);
+            }
+
+            ENUM_TO_STRING(CanvasFigureLoop)
+            {
+                ENUM_VALUE(CanvasFigureLoop::Open);
+                ENUM_VALUE(CanvasFigureLoop::Closed);
+                END_ENUM(CanvasFigureLoop);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {
