@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CustomFonts.xaml.cs">
       <DependentUpon>CustomFonts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\AppIconGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
       <DependentUpon>DeveloperTools.xaml</DependentUpon>
     </Compile>

@@ -75,7 +75,7 @@ namespace ExampleGallery
             {
                 text = newText;
                 fontSize = newFontSize;
-                SetupText();
+                SetupText(sender);
             };
 
             ConfigureEffect(args.Timing);
@@ -100,9 +100,9 @@ namespace ExampleGallery
         /// Renders text into an intermediate bitmap and sets this bitmap as the input to the flame
         /// effect graph. The effect graph must already be created before calling this method.
         /// </summary>
-        private void SetupText()
+        private void SetupText(ICanvasResourceCreator resourceCreator)
         {
-            textCommandList = new CanvasCommandList(this.canvas);
+            textCommandList = new CanvasCommandList(resourceCreator);
 
             using (var ds = textCommandList.CreateDrawingSession())
             {
@@ -214,6 +214,20 @@ namespace ExampleGallery
         private void textInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             newText = textInput.Text;
+        }
+
+        // Alternative entrypoint for use by AppIconGenerator.
+        internal void DrawIcon(CanvasDrawingSession drawingSession, string text)
+        {
+            this.text = text;
+            this.fontSize = 64;
+
+            CreateFlameEffect();
+            SetupText(drawingSession);
+            ConfigureEffect(new CanvasTimingInformation());
+
+            drawingSession.DrawImage(flamePosition);
+            drawingSession.DrawImage(textCommandList);
         }
     }
 }

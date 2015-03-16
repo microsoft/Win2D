@@ -11,6 +11,8 @@
 // under the License.
 
 using System;
+using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -31,22 +33,41 @@ namespace ExampleGallery
 
         async void thumbnailsButton_Click(object sender, RoutedEventArgs e)
         {
-#if WINDOWS_PHONE_APP
-            await new MessageDialog("Not supported on Windows Phone. Please run on a Windows PC instead.").ShowAsync();
-#else
-            var folderPicker = new FolderPicker
-            {
-                CommitButtonText = "Generate Thumbnails",
-                SuggestedStartLocation = PickerLocationId.Desktop,
-                FileTypeFilter = { ".png" },
-            };
-
-            var outputFolder = await folderPicker.PickSingleFolderAsync();
+            var outputFolder = await PickOutputFolder("Generate Thumbnails");
 
             if (outputFolder != null)
             {
                 panel.Children.Add(new ThumbnailGenerator(outputFolder));
             }
+        }
+
+        async void iconsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var outputFolder = await PickOutputFolder("Generate App Icons");
+
+            if (outputFolder != null)
+            {
+                var generator = new AppIconGenerator(outputFolder);
+
+                await generator.GenerateIcons();
+            }
+        }
+
+        async Task<StorageFolder> PickOutputFolder(string title)
+        {
+#if WINDOWS_PHONE_APP
+            await new MessageDialog("Not supported on Windows Phone. Please run on a Windows PC instead.").ShowAsync();
+
+            return null;
+#else
+            var folderPicker = new FolderPicker
+            {
+                CommitButtonText = title,
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                FileTypeFilter = { ".png" },
+            };
+
+            return await folderPicker.PickSingleFolderAsync();
 #endif
         }
 

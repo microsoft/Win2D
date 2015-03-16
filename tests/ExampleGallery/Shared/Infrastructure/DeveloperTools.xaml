@@ -28,6 +28,7 @@ under the License.
     <ScrollViewer VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
         <StackPanel x:Name="panel" Orientation="Vertical" Margin="5">
             <Button Content="Generate Thumbnail Bitmaps" Click="thumbnailsButton_Click"/>
+            <Button Content="Generate App Icons" Click="iconsButton_Click"/>
             <ToggleButton x:Name="gcButton" Content="Call GC.Collect every 100 ms" Checked="gcButton_Checked" Unchecked="gcButton_Unchecked"/>
             <Button Content="Application.Exit" Click="exitButton_Click"/>
             <TextBlock Margin="16" FontSize="16" Foreground="Gray" HorizontalAlignment="Left" MaxWidth="512" TextWrapping="Wrap">
