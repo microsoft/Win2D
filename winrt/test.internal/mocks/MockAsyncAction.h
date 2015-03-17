@@ -18,10 +18,18 @@
 // and expects the caller (ie the test code) to poke directly at it to notify
 // when it has completed or failed.
 //
-class MockAsyncAction : public RuntimeClass<AsyncBase<IAsyncActionCompletedHandler>, IAsyncAction>
+typedef AsyncBase<IAsyncActionCompletedHandler,
+                  Microsoft::WRL::Details::Nil,
+                  SingleResult,
+                  AsyncOptions<ErrorPropagationPolicy::PropagateDelegateError>> MockAsyncBase;
+
+class MockAsyncAction : public RuntimeClass<MockAsyncBase, IAsyncAction>
 {
+    bool m_fireCompletionOnCancel;;
+
 public:
     MockAsyncAction()
+        : m_fireCompletionOnCancel(false)
     {
         Start();
     }
@@ -29,7 +37,7 @@ public:
     void SetResult(HRESULT hr, const wchar_t* errorText = nullptr)
     {
         SetResultWithoutFireCompletion(hr, errorText);
-        FireCompletion();
+        ThrowIfFailed(FireCompletion());
     }
 
     void SetResultWithoutFireCompletion(HRESULT hr, const wchar_t* errorText = nullptr)
@@ -41,6 +49,11 @@ public:
             (void)TryTransitionToCompleted();
         else
             (void)TryTransitionToError(hr);
+    }
+
+    void FireCompletionOnCancel()
+    {
+        m_fireCompletionOnCancel = true;
     }
 
     // Inherited: HRESULT FireCompletion();
@@ -72,5 +85,9 @@ protected:
 
     virtual void OnCancel() override
     {
+        if (m_fireCompletionOnCancel)
+        {
+            ThrowIfFailed(FireCompletion());
+        }
     }
 };

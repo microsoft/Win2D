@@ -1674,6 +1674,25 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileThreadPoolWaitingToScheduleRenderLoop)
+    {
+        Fixture f;
+
+        f.Load();
+        f.Adapter->DoChanged();
+
+        // Normally, Cancel signals the update/render thread to spin down, and then the async completed
+        // handler runs after the thread has stopped. But if the update/render loop has been created but
+        // not started yet (i.e. is sitting waiting for the thread pool to schedule it) the completion
+        // handler will run synchronously inside the Cancel call. This test simulates that case.
+
+        f.Adapter->UpdateRenderLoopFireCompletionOnCancel();
+
+        f.RaiseUnloadedEvent();
+
+        Assert::IsFalse(f.Adapter->HasPendingChangedActions());
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race0)
     {
         WhenBackgroundModeChanges(0);

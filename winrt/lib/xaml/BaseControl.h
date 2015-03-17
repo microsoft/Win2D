@@ -593,6 +593,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto lock = GetLock();
                     m_isLoaded = false;
+                    lock.unlock();
+
                     Unloaded();
                     UnregisterEventHandlers();
                 });
