@@ -2301,6 +2301,25 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
         f.Adapter->DoChanged();
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlUnloadedDuringSuspendProcessing_TrimIsStillCalled)
+    {
+        Fixture f;
+
+        Assert::IsTrue(f.IsRenderActionRunning());
+
+        // Send the suspending notification.
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+
+        // Unload the control while it is holding a suspension deferral.
+        f.RaiseUnloadedEvent();
+
+        // Trim should still happen.
+        f.Adapter->Tick();
+
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenResumingEventRaised_RenderThreadRestarts)
     {
         Fixture f;

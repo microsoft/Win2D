@@ -573,7 +573,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         MustOwnLock(lock);
 
-        if (!IsLoaded())
+        //
+        // Early out if we are in an inactive state where there is no possible work to be done.
+        //
+        if (!IsLoaded() && !m_suspendingDeferral)
             return;
 
         switch (reason)
@@ -592,7 +595,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // nothing
             break;
         }
-
 
         //
         // The remaining work must be done on the UI thread.  There's a chance
@@ -624,9 +626,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         // This method, as an action, is always run on the UI thread.
         //
-
-        if (!IsLoaded())
-            return;
 
         auto lock = GetLock();
 
@@ -681,6 +680,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             return;
         }
+
+        //
+        // Changed already checked IsLoaded before queueing this call to ChangedImpl,
+        // but we could have become unloaded between then and now, so must check again.
+        //
+        if (!IsLoaded())
+            return;
 
         //
         // Figure out if we should try and start the render loop.
