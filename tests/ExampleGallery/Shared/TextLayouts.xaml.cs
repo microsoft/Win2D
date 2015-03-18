@@ -29,7 +29,7 @@ namespace ExampleGallery
     {
         CanvasTextLayout textLayout;
         string testString;
-        bool showLayoutBounds;
+        bool showPerCharacterLayoutBounds;
         bool showDrawBounds;
         bool needsResourceRecreation;
         Size resourceRealizationSize;
@@ -58,7 +58,7 @@ namespace ExampleGallery
 
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
 
-            showLayoutBounds = true;
+            showPerCharacterLayoutBounds = true;
         }
 
         Rect InflateRect(Rect r)
@@ -125,7 +125,7 @@ namespace ExampleGallery
 
                     textFormat = new CanvasTextFormat()
                     {
-                        FontSize = sizeDim * 0.03f,
+                        FontSize = sizeDim * 0.025f,
                         ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Left,
                         VerticalAlignment = CanvasVerticalAlignment.Top
                     };
@@ -137,7 +137,7 @@ namespace ExampleGallery
 
                     textFormat = new CanvasTextFormat()
                     {
-                        FontSize = sizeDim * 0.06f,
+                        FontSize = sizeDim * 0.04f,
                         ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
                         VerticalAlignment = CanvasVerticalAlignment.Center,
                         ReadingDirection = CanvasTextDirection.TopToBottom,
@@ -188,14 +188,12 @@ namespace ExampleGallery
                 }
             }
 
-            if (showLayoutBounds)
+            if (showPerCharacterLayoutBounds)
             {
                 for (int i = 0; i < testString.Length; i++)
                 {
                     CanvasTextLayoutRegion textLayoutRegion;
                     textLayout.GetCaretPosition(i, false, out textLayoutRegion);
-
-                    float cellWidth = (float)textLayoutRegion.LayoutBounds.Width;
 
                     Windows.Foundation.Rect r = textLayoutRegion.LayoutBounds;
                     args.DrawingSession.DrawRectangle(r, Colors.Blue, 2);
@@ -222,14 +220,14 @@ namespace ExampleGallery
             needsResourceRecreation = true;
         }
 
-        void ShowLayoutBounds_Checked(object sender, RoutedEventArgs e)
+        void ShowPerCharacterLayoutBounds_Checked(object sender, RoutedEventArgs e)
         {
-            showLayoutBounds = true;
+            showPerCharacterLayoutBounds = true;
         }
 
-        void ShowLayoutBounds_Unchecked(object sender, RoutedEventArgs e)
+        void ShowPerCharacterLayoutBounds_Unchecked(object sender, RoutedEventArgs e)
         {
-            showLayoutBounds = false;
+            showPerCharacterLayoutBounds = false;
         }
 
         void ShowDrawBounds_Checked(object sender, RoutedEventArgs e)

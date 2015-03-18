@@ -39,8 +39,9 @@ under the License.
                       ItemsSource="{Binding ElementName=control, Path=TextSampleOptions}"
                       SelectedItem="{Binding CurrentTextSampleOption, ElementName=control, Mode=TwoWay}"
                       SelectionChanged="TextSampleOptions_SelectionChanged"/>
-                <ToggleButton Content="Show per-character layout bounds" IsChecked="true" Checked="ShowLayoutBounds_Checked" Unchecked="ShowLayoutBounds_Unchecked"/>
-                <ToggleButton Content="Show global draw bounds" Checked="ShowDrawBounds_Checked" Unchecked="ShowDrawBounds_Unchecked"/>
+                <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>
+                <ToggleButton Content="Per-character layout" IsChecked="true" Checked="ShowPerCharacterLayoutBounds_Checked" Unchecked="ShowPerCharacterLayoutBounds_Unchecked"/>
+                <ToggleButton Content="DrawBounds" Checked="ShowDrawBounds_Checked" Unchecked="ShowDrawBounds_Unchecked"/>
             </StackPanel>
         </ScrollViewer>
         <canvas:CanvasAnimatedControl x:Name="canvas" Grid.Column="1" Margin="5"

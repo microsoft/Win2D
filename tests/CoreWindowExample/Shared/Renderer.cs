@@ -129,7 +129,7 @@ namespace CoreWindowExample
                     DrawFaceInCenterOfGeometry(ds, geom);
                     DrawContactPoints(ds);
                     DrawInfo(ds);
-                    DrawTitle(ds);
+                    DrawTitle(ds, swapChain.Size);
                 }
 
                 swapChain.Present();
@@ -358,12 +358,12 @@ namespace CoreWindowExample
             }
         }
 
-        static void DrawTitle(CanvasDrawingSession ds)
+        static void DrawTitle(CanvasDrawingSession ds, Size size)
         {
-            ds.DrawText("Win2D CoreWindow\nSample", 0, 0, Colors.White,
+            ds.DrawText("Win2D CoreWindow Example", new Rect(new Point(0, 0), size), Colors.White,
                 new CanvasTextFormat()
                 {
-                    FontSize = 36
+                    FontSize = 28
                 });
         }
 
