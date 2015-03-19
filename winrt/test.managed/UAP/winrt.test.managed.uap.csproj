@@ -22,6 +22,7 @@
   <PropertyGroup>
     <AppXPackage>True</AppXPackage>
     <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+    <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cs.props" />
   <PropertyGroup>

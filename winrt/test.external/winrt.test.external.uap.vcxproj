@@ -8,6 +8,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackage>True</AppxPackage>
     <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+    <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
     <AppContainerApplication>true</AppContainerApplication>
     <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
     <TestApplication>True</TestApplication>

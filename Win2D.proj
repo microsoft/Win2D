@@ -132,10 +132,12 @@
       <AutomatedTests>desktop</AutomatedTests>
     </UAPProject>
     <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
+      <Platforms>Win32</Platforms> <!-- TODO: remove this line when x64 UAP tests are fixed (DevDiv:1138788) -->
       <AutomatedTests>store</AutomatedTests>
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\UAP\winrt.test.managed.uap.csproj">
+      <Platforms>Win32</Platforms> <!-- TODO: remove this line when x64 UAP tests are fixed (DevDiv:1138788) -->
       <AutomatedTests>store</AutomatedTests>
     </UAPProject>
     <UAPProject Include="tests\CsConsumer\UAP\CsConsumer.uap.csproj" />
