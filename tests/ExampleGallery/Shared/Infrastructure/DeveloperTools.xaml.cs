@@ -11,10 +11,11 @@
 // under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -23,10 +24,14 @@ namespace ExampleGallery
     public sealed partial class DeveloperTools : UserControl
     {
         static DispatcherTimer timer;
+        static List<KeyValuePair<string, WeakReference<UserControl>>> exampleControls = new List<KeyValuePair<string,WeakReference<UserControl>>>();
+        static WeakReference<DeveloperTools> activePage;
 
         public DeveloperTools()
         {
             this.InitializeComponent();
+
+            activePage = new WeakReference<DeveloperTools>(this);
 
             gcButton.IsChecked = timer != null && timer.IsEnabled;
         }
@@ -83,6 +88,7 @@ namespace ExampleGallery
             timer.Start();
         }
 
+
         void gcButton_Unchecked(object sender, RoutedEventArgs e)
         {
             timer.Stop();
@@ -91,11 +97,71 @@ namespace ExampleGallery
         static void timer_Tick(object sender, object e)
         {
             GC.Collect();
+
+            DeveloperTools thePage;
+            if (activePage.TryGetTarget(out thePage))
+            {
+                thePage.GenerateLeakReport();
+            }
         }
 
         void exitButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Exit();
         }
+
+        static public void ExampleControlCreated(string name, UserControl control)
+        {
+            if (control.GetType() == typeof(DeveloperTools))
+                return;
+
+            exampleControls.Add(new KeyValuePair<string, WeakReference<UserControl>>(name, new WeakReference<UserControl>(control)));
+        }
+
+        private void control_Loaded(object sender, RoutedEventArgs e)
+        {
+            GenerateLeakReport();
+        }
+
+        private void GenerateLeakReport()
+        {
+            var leakString = new StringBuilder();
+            foreach (var entry in exampleControls)
+            {
+                UserControl theControl = null;
+
+                bool referenceExists = entry.Value.TryGetTarget(out theControl);
+
+                leakString.AppendFormat("{1}\t{0}\n", entry.Key, referenceExists ? "leaked" : "ok    ");
+            }
+            leakText.Text = leakString.ToString();
+        }
+
+        private void resetLeakTracking_Click(object sender, RoutedEventArgs e)
+        {
+            exampleControls.Clear();
+            GenerateLeakReport();
+        }
+
+        private async void checkLeaks_Click(object sender, RoutedEventArgs e)
+        {
+            leakCheckFrame.Visibility = Visibility.Visible;
+            checkLeaksButton.IsEnabled = false;
+
+            foreach (var example in ExampleDefinitions.Definitions)
+            {
+                if (example.Control == this.GetType())
+                    continue;
+                
+                leakCheckFrame.Navigate(typeof(ExamplePage), example);
+                await Task.Delay(1000);
+                leakCheckFrame.Content = null;
+                GenerateLeakReport();
+            }
+
+            leakCheckFrame.Visibility = Visibility.Collapsed;
+            checkLeaksButton.IsEnabled = true;
+        }
+
     }
 }
