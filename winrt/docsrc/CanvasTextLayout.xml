@@ -209,6 +209,9 @@ under the License.
       	<see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)"/>
       	It overrides the brush or color passed to DrawTextLayout.
       	</p>
+      	<p>
+      	The brush is allowed to be null. Setting a group of characters' brush to null causes the default behavior, where the brush passed to DrawTextLayout determines the color of the text.
+      	</p>
       </remarks>
     </member>
       

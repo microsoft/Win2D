@@ -366,7 +366,6 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPositionWithDescription(0, b, &hitTestDesc, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(0, 0, nullptr, &hitTestDescArr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetBrush(0, nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetBrush(0, 0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_Device(nullptr));
         }
 
@@ -1433,6 +1432,21 @@ namespace canvas
                 });
 
             Assert::AreEqual(S_OK, textLayout->SetBrush(123, 456, stubCanvasBrush.Get()));                    
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetBrush_NullBrushIsOk)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            f.Adapter->MockTextLayout->SetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](IUnknown* drawingEffectObject, DWRITE_TEXT_RANGE)
+                {
+                    Assert::IsNull(drawingEffectObject);
+                    return S_OK;
+                });
+
+            Assert::AreEqual(S_OK, textLayout->SetBrush(0, 0, nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_SetColor)

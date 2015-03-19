@@ -26,6 +26,8 @@ namespace ExampleGallery
     public sealed partial class TextLayouts : UserControl
     {
         CanvasTextLayout textLayout;
+        CanvasLinearGradientBrush textBrush;
+        CanvasLinearGradientBrush selectionTextBrush;
         string testString;
         bool showPerCharacterLayoutBounds;
         bool showDrawBounds;
@@ -35,7 +37,6 @@ namespace ExampleGallery
         bool hasSelection;
         int selectionStartIndex = 0;
         int selectionEndIndex = 0;
-        CanvasCommandList textCommandList;
 
         public enum TextSampleOption
         {
@@ -80,18 +81,13 @@ namespace ExampleGallery
 
             Rect layoutBounds = textLayout.LayoutBounds;
 
-            var textBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Blue, Colors.Yellow);
+            textBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Blue, Colors.Yellow);
             textBrush.StartPoint = new System.Numerics.Vector2((float)(layoutBounds.Left + layoutBounds.Right) / 2, (float)layoutBounds.Top);
             textBrush.EndPoint = new System.Numerics.Vector2((float)(layoutBounds.Left + layoutBounds.Right) / 2, (float)layoutBounds.Bottom);
 
-            if(textCommandList != null) 
-                textCommandList.Dispose();
-            textCommandList = new CanvasCommandList(resourceCreator);
-            using (CanvasDrawingSession textTargetDrawingSession = textCommandList.CreateDrawingSession())
-            {
-                textTargetDrawingSession.Clear(Colors.Transparent);
-                textTargetDrawingSession.DrawTextLayout(textLayout, 0, 0, textBrush);
-            }
+            selectionTextBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Yellow, Colors.Blue);
+            selectionTextBrush.StartPoint = textBrush.StartPoint;
+            selectionTextBrush.EndPoint = textBrush.EndPoint;
 
             needsResourceRecreation = false;
             resourceRealizationSize = targetSize;
@@ -151,40 +147,20 @@ namespace ExampleGallery
         {
             EnsureResources(sender, sender.Size);
 
-            args.DrawingSession.DrawImage(textCommandList);
-
+            textLayout.SetBrush(0, testString.Length, null);
             if (hasSelection)
             {
-                var colorMatrixEffect = new ColorMatrixEffect()
-                {
-                    Source = textCommandList
-                };
-
-                var negativeColors = new Matrix5x4();
-                negativeColors.M11 = -1; // Invert red
-                negativeColors.M51 = 1;
-
-                negativeColors.M22 = -1; // Invert blue
-                negativeColors.M52 = 1;
-
-                negativeColors.M33 = -1; // Invert green
-                negativeColors.M53 = 1;
-
-                negativeColors.M54 = 1; // Hardcode alpha at 1
-
-                colorMatrixEffect.ColorMatrix = negativeColors;
-
-                var imageBrush = new CanvasImageBrush(sender, colorMatrixEffect);
-                imageBrush.SourceRectangle = new Rect(0, 0, (float)sender.Size.Width, (float)sender.Size.Height);
-
                 int firstIndex = Math.Min(selectionStartIndex, selectionEndIndex);
                 int length = Math.Abs(selectionEndIndex - selectionStartIndex) + 1;
                 CanvasTextLayoutRegion[] descriptions = textLayout.GetCharacterRegions(firstIndex, length);
                 foreach (CanvasTextLayoutRegion description in descriptions)
                 {
-                    args.DrawingSession.FillRectangle(InflateRect(description.LayoutBounds), imageBrush);
+                    args.DrawingSession.FillRectangle(InflateRect(description.LayoutBounds), Colors.White);
                 }
+                textLayout.SetBrush(firstIndex, length, selectionTextBrush);
             }
+
+            args.DrawingSession.DrawTextLayout(textLayout, 0, 0, textBrush);
 
             if (showPerCharacterLayoutBounds)
             {

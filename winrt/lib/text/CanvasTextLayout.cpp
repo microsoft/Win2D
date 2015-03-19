@@ -836,25 +836,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(brush);
-
                 auto& resource = GetResource();
 
-                auto brushInternal = As<ICanvasBrushInternal>(brush);
-
                 //
-                // The device context passed to GetD2DBrush is *not* used to key off of DPI.
-                // It is used to construct the appropriate DPI compensation effect, if necessary.
+                // The brush parameter is allowed to be null. This will reset 
+                // that part of the layout back to its default brush behavior.
                 //
-                // The DPI compensation effect will be inserted into the effect graph and the resulting
-                // d2dbrush will be committed to the text layout.
-                //
-                const bool alwaysInsertDpiCompensationEffect = true;
+                ComPtr<ID2D1Brush> d2dBrush;
 
-                auto& device = m_device.EnsureNotClosed();
-                auto deviceInternal = As<ICanvasDeviceInternal>(device);
+                if (brush)
+                {
+                    auto brushInternal = As<ICanvasBrushInternal>(brush);
 
-                auto d2dBrush = brushInternal->GetD2DBrush(deviceInternal->GetResourceCreationDeviceContext().Get(), alwaysInsertDpiCompensationEffect);
+                    //
+                    // The device context passed to GetD2DBrush is *not* used to key off of DPI.
+                    // It is used to construct the appropriate DPI compensation effect, if necessary.
+                    //
+                    // The DPI compensation effect will be inserted into the effect graph and the resulting
+                    // d2dbrush will be committed to the text layout.
+                    //
+                    const bool alwaysInsertDpiCompensationEffect = true;
+
+                    auto& device = m_device.EnsureNotClosed();
+                    auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+                    d2dBrush = brushInternal->GetD2DBrush(deviceInternal->GetResourceCreationDeviceContext().Get(), alwaysInsertDpiCompensationEffect);
+                }
 
                 auto textRange = ToDWriteTextRange(characterIndex, characterCount);
 
