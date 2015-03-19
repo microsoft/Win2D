@@ -87,6 +87,15 @@ namespace ExampleGallery
             new IconInfo("WindowsPhone", "Square71x71Logo.scale-240.png", 170,  170),
             new IconInfo("WindowsPhone", "SplashScreen.scale-240.png",    1152, 1920) { TransparentBackground = true},
             new IconInfo("WindowsPhone", "StoreLogo.scale-240.png",       120,  120),
+
+            new IconInfo("Store",        "300x300.png",                   300,  300),
+            new IconInfo("Store",        "358x173.png",                   358,  173),
+            new IconInfo("Store",        "358x358.png",                   358,  358),
+            new IconInfo("Store",        "414x180.png",                   414,  180),
+            new IconInfo("Store",        "414x468.png",                   414,  468),
+            new IconInfo("Store",        "558x558.png",                   558,  558),
+            new IconInfo("Store",        "558x756.png",                   558,  756),
+            new IconInfo("Store",        "846x468.png",                   846,  468),
         };
 
 
