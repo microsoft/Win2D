@@ -192,8 +192,19 @@ namespace ExampleGallery
 
         private void clearColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var color = (Color)((PropertyInfo)clearColor.SelectedItem).GetValue(null);
-            animatedControl.ClearColor = color;
+            var selectedItem = clearColor.SelectedItem as PropertyInfo;
+            if (selectedItem != null)
+            {
+                var color = (Color)selectedItem.GetValue(null);
+                animatedControl.ClearColor = color;
+            }
+        }
+
+        private void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            animatedControl.RemoveFromVisualTree();
+            animatedControl = null;
         }
     }
 

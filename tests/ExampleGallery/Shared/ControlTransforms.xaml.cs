@@ -174,5 +174,18 @@ namespace ExampleGallery
             transformAnimation.Stop();
             sizeAnimation.Stop();
         }
+
+        private void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvasControl.RemoveFromVisualTree();
+            canvasControl = null;
+
+            animatedControl.RemoveFromVisualTree();
+            animatedControl = null;
+
+            swapChainPanel.RemoveFromVisualTree();
+            swapChainPanel = null;
+        }
     }
 }

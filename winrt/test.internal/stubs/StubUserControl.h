@@ -20,11 +20,14 @@ namespace canvas
     class StubUserControl : public RuntimeClass<IUserControl, IFrameworkElement>
     {
         Size m_actualSize;
+        ComPtr<IUIElement> m_content;
 
     public:
         ComPtr<MockEventSource<IRoutedEventHandler>> LoadedEventSource;
         ComPtr<MockEventSource<IRoutedEventHandler>> UnloadedEventSource;
         ComPtr<MockEventSource<ISizeChangedEventHandler>> SizeChangedEventSource;
+
+        CALL_COUNTER_WITH_MOCK(get_ParentMethod, HRESULT(IDependencyObject**));
 
         StubUserControl()
             : m_actualSize(Size{128.0f, 128.0f})
@@ -32,6 +35,7 @@ namespace canvas
             , UnloadedEventSource(Make<MockEventSource<IRoutedEventHandler>>(L"Unloaded"))
             , SizeChangedEventSource(Make<MockEventSource<ISizeChangedEventHandler>>(L"SizeChanged"))
         {
+            get_ParentMethod.AllowAnyCall();                
         }
 
         void Resize(Size newSize)
@@ -67,14 +71,14 @@ namespace canvas
             SizeChangedEventSource->InvokeAll(nullptr, args.Get());
         }
 
-        IFACEMETHODIMP get_Content(IUIElement **) override
+        IFACEMETHODIMP get_Content(IUIElement** value) override
         {
-            Assert::Fail(L"Unexpected call to get_Content");
-            return E_NOTIMPL;
+            return m_content.CopyTo(value);
         }
 
-        IFACEMETHODIMP put_Content(IUIElement *) override
+        IFACEMETHODIMP put_Content(IUIElement* value) override
         {
+            m_content = value;
             return S_OK;
         }
 
@@ -282,10 +286,9 @@ namespace canvas
             return E_NOTIMPL; 
         }
 
-        IFACEMETHODIMP get_Parent(IDependencyObject **) override 
+        IFACEMETHODIMP get_Parent(IDependencyObject** parent) override 
         {
-            Assert::Fail(L"Unexpected call to get_Parent");
-            return E_NOTIMPL; 
+            return get_ParentMethod.WasCalled(parent);
         }
 
         IFACEMETHODIMP get_FlowDirection(FlowDirection *) override 

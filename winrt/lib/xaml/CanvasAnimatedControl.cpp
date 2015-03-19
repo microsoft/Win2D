@@ -457,6 +457,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+
+    IFACEMETHODIMP CanvasAnimatedControl::RemoveFromVisualTree()
+    {
+        HRESULT hr = ExceptionBoundary(
+            [&]
+            {
+                ThrowIfFailed(m_canvasSwapChainPanel->RemoveFromVisualTree());
+                m_canvasSwapChainPanel.Reset();
+            });
+
+        if (FAILED(hr))
+            return hr;
+
+        return BaseControl::RemoveFromVisualTree();
+    }
+
+
     void CanvasAnimatedControl::CreateOrUpdateRenderTarget(
         ICanvasDevice* device,
         CanvasBackground newBackgroundMode,

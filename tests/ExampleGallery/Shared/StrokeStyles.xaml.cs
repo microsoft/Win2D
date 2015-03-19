@@ -13,7 +13,6 @@
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -149,6 +148,13 @@ namespace ExampleGallery
         private void SettingsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.canvas.Invalidate();
+        }
+
+        private void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
         }
     }
 }

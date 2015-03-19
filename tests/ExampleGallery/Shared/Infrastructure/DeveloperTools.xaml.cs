@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -87,8 +88,7 @@ namespace ExampleGallery
 
             timer.Start();
         }
-
-
+        
         void gcButton_Unchecked(object sender, RoutedEventArgs e)
         {
             timer.Stop();

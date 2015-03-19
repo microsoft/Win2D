@@ -44,5 +44,26 @@ under the License.
       <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChainPanel.SwapChain">
         <summary>Gets or sets the associated swap chain object.</summary>
       </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChainPanel.RemoveFromVisualTree">
+      <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
+      <remarks>
+        <p>
+          When using this control from managed code it is necessary to ensure
+          that all references to it are released, otherwise it will not get
+          garbage collected correctly.  To do this, call RemoveFromVisualTree
+          from the Unloaded event handler of the page that the control was on
+          and then release any explicit references to it.
+        </p>
+        <example>
+          <code>
+        void page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.canvasSwapChainPanel.RemoveFromVisualTree();
+            this.canvasSwapChainPanel = null;
+        }
+          </code>
+        </example>
+      </remarks>
+    </member>
   </members>
 </doc>

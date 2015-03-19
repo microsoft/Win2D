@@ -25,6 +25,11 @@ namespace Microsoft.Graphics.Canvas
     {
         [propput] HRESULT SwapChain([in] CanvasSwapChain* value);
         [propget] HRESULT SwapChain([out, retval] CanvasSwapChain** value);
+
+        //
+        // Removes the control from the visual tree.
+        //
+        HRESULT RemoveFromVisualTree();
     };
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

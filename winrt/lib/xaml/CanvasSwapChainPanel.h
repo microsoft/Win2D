@@ -44,12 +44,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChainPanel, BaseTrust);
 
-        ComPtr<ICanvasSwapChain> m_canvasSwapChain;
-
         std::shared_ptr<ICanvasSwapChainPanelAdapter> m_adapter;
+
+        ComPtr<ICanvasSwapChain> m_canvasSwapChain;
+        ComPtr<IDependencyObject> m_lastSeenParent;
 
     public:
         CanvasSwapChainPanel(std::shared_ptr<ICanvasSwapChainPanelAdapter> adapter);
+        ~CanvasSwapChainPanel();
 
         // ICanvasSwapChainPanel
 
@@ -57,6 +59,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(put_SwapChain)(ICanvasSwapChain* value) override;
 
+        IFACEMETHOD(RemoveFromVisualTree)() override;
+
+    private:
+        HRESULT OnLoaded(IInspectable*, IRoutedEventArgs*);
     };
 
 }}}}

@@ -134,6 +134,11 @@ namespace Microsoft.Graphics.Canvas
         // Gets the current size of the control.
         //
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
+
+        //
+        // Removes the control from the visual tree.
+        //
+        HRESULT RemoveFromVisualTree();
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

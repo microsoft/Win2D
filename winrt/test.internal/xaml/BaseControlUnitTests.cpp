@@ -53,6 +53,8 @@ namespace
         IFACEMETHOD(add_Draw)(AnyTraits::drawEventHandler_t*, EventRegistrationToken*) = 0;
         IFACEMETHOD(remove_Draw)(EventRegistrationToken) = 0;
         IFACEMETHOD(get_ReadyToDraw)(boolean*) = 0;
+        IFACEMETHOD(get_Size)(Size*) = 0;
+        IFACEMETHOD(RemoveFromVisualTree)() = 0;
     };
 
     class IAnyAdapter : public IBaseControlAdapter<AnyTraits>

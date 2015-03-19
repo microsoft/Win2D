@@ -14,14 +14,12 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using System.Numerics;
-using System.Threading;
 
 namespace ExampleGallery
 {
@@ -289,6 +287,13 @@ namespace ExampleGallery
         {
             ClearSelection();
             needsResourceRecreation = true;
+        }
+
+        private void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
         }
     }
 }

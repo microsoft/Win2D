@@ -10,13 +10,13 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Numerics;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
@@ -160,6 +160,18 @@ namespace ExampleGallery
         void control_Unloaded(object sender, RoutedEventArgs e)
         {
             cycleTimer.Stop();
+
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvasControl.RemoveFromVisualTree();
+            canvasControl = null;
+            mainDeviceResources = null;
+
+            animatedControl.RemoveFromVisualTree();
+            animatedControl = null;
+            animatedDeviceResources = null;
+
+            swapChainPanel.RemoveFromVisualTree();
+            swapChainPanel = null;
         }
 
 
@@ -442,6 +454,9 @@ namespace ExampleGallery
 
         void cycleTimer_Tick(object sender, object e)
         {
+            if (!cycleTimer.IsEnabled)
+                return;
+
             // Increment the source mode.
             CurrentSource++;
 
