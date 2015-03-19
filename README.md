@@ -3,7 +3,7 @@
 Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics 
 rendering with GPU acceleration. It is available to C# and C++ developers writing 
 Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of 
-Direct2D, and integrates seamlessly with XAML and ICoreWindow.
+Direct2D, and integrates seamlessly with XAML and CoreWindow.
 
 Win2D is work in progress and evolving rapidly. The goal of releasing this code 
 in an early, incomplete state is to solicit early developer feedback.
