@@ -147,9 +147,16 @@ namespace Microsoft.Graphics.Canvas
             [in] float newHeight);
 
         [overload("ResizeBuffers")]
+        HRESULT ResizeBuffersWithSizeAndDpi(
+            [in] float newWidth,
+            [in] float newHeight,
+            [in] float newDpi);
+
+        [overload("ResizeBuffers")]
         HRESULT ResizeBuffersWithAllOptions(
             [in] float newWidth,
             [in] float newHeight,
+            [in] float newDpi,
             [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat newFormat,
             [in] INT32 bufferCount);
 
