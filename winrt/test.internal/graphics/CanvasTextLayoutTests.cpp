@@ -11,17 +11,19 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasTextLayout.h"
-#include "CanvasSolidColorBrush.h"
-#include "CanvasLinearGradientBrush.h"
-#include "StubCanvasTextFormatAdapter.h"
-#include "MockDWriteFactory.h"
-#include "MockDWriteTextLayout.h"
-#include "MockDWriteFontCollection.h"
-#include "StubCanvasTextLayoutAdapter.h"
-#include "StubCanvasBrush.h"
-#include "TestBitmapResourceCreationAdapter.h"
-#include "TestEffect.h"
+
+#include <lib/brushes/CanvasSolidColorBrush.h>
+#include <lib/brushes/CanvasLinearGradientBrush.h>
+#include <lib/text/CanvasTextLayout.h>
+
+#include "mocks/MockDWriteFactory.h"
+#include "mocks/MockDWriteFontCollection.h"
+#include "mocks/MockDWriteTextLayout.h"
+#include "stubs/StubCanvasBrush.h"
+#include "stubs/StubCanvasTextFormatAdapter.h"
+#include "stubs/StubCanvasTextLayoutAdapter.h"
+#include "stubs/TestBitmapResourceCreationAdapter.h"
+#include "stubs/TestEffect.h"
 
 namespace canvas
 {

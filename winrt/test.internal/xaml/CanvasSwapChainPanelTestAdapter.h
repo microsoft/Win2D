@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "StubSwapChainPanel.h"
+#include "stubs/StubSwapChainPanel.h"
 
 class CanvasSwapChainPanelTestAdapter : public ICanvasSwapChainPanelAdapter
 {

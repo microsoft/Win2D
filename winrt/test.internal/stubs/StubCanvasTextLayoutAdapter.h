@@ -12,12 +12,12 @@
 
 #pragma once
 
-#include "CanvasTextLayout.h"
-#include "CanvasTextFormat.h"
-#include "MockDWriteFactory.h"
-#include "MockDWriteTextLayout.h"
-#include "MockDWriteFontCollection.h"
-#include "StubStorageFileStatics.h"
+#include <lib/text/CanvasTextLayout.h>
+#include <lib/text/CanvasTextFormat.h>
+#include "mocks/MockDWriteFactory.h"
+#include "mocks/MockDWriteTextLayout.h"
+#include "mocks/MockDWriteFontCollection.h"
+#include "stubs/StubStorageFileStatics.h"
 
 namespace canvas
 {

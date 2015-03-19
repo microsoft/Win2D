@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "MockD2DRectangleGeometry.h"
-#include "MockD2DGeometryRealization.h"
+#include "mocks/MockD2DRectangleGeometry.h"
+#include "mocks/MockD2DGeometryRealization.h"
 
 namespace canvas
 {

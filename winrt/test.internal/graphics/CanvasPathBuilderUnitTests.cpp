@@ -11,10 +11,10 @@
 // under the License.
 
 #include "pch.h"
-#include <CanvasPathBuilder.h>
-#include "MockD2DRectangleGeometry.h"
-#include "MockD2DPathGeometry.h"
-#include "MockD2DGeometrySink.h"
+#include <lib/geometry/CanvasPathBuilder.h>
+#include "mocks/MockD2DRectangleGeometry.h"
+#include "mocks/MockD2DPathGeometry.h"
+#include "mocks/MockD2DGeometrySink.h"
 
 TEST_CLASS(CanvasPathBuilderUnitTests)
 {

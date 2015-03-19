@@ -11,9 +11,9 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasCachedGeometry.h"
-#include "MockD2DGeometryRealization.h"
-#include "MockD2DRectangleGeometry.h"
+#include <lib/geometry/CanvasCachedGeometry.h>
+#include "mocks/MockD2DGeometryRealization.h"
+#include "mocks/MockD2DRectangleGeometry.h"
 
 TEST_CLASS(CanvasCachedGeometryTests)
 {

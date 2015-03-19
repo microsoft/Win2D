@@ -11,7 +11,7 @@
 // under the License.
 
 #include "pch.h"
-#include <CanvasSolidColorBrush.h>
+#include <lib/brushes/CanvasSolidColorBrush.h>
 
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;

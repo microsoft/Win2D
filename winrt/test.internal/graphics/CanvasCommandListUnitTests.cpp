@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-#include <CanvasCommandList.h>
+#include <lib/images/CanvasCommandList.h>
 
 TEST_CLASS(CanvasCommandListTests)
 {

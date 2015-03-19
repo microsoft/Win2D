@@ -11,9 +11,9 @@
 // under the License.
 
 #include "pch.h"
-#include "MockCoreWindow.h"
-#include "MockDXGIAdapter.h"
-#include "MockDXGIFactory.h"
+#include "mocks/MockCoreWindow.h"
+#include "mocks/MockDXGIAdapter.h"
+#include "mocks/MockDXGIFactory.h"
 
 TEST_CLASS(CanvasSwapChainUnitTests)
 {

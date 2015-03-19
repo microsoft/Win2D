@@ -12,8 +12,8 @@
 
 #include "pch.h"
 
-#include <BaseControl.h>
-#include <BaseControlAdapter.h>
+#include <lib/xaml/BaseControl.h>
+#include <lib/xaml/BaseControlAdapter.h>
 
 //
 // These tests explicitly exercise BaseControl.  Generally we try and avoid

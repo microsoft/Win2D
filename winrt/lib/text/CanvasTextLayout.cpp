@@ -11,12 +11,14 @@
 // under the License.
 
 #include "pch.h"
+
+#include "brushes/CanvasSolidColorBrush.h"
+#include "brushes/CanvasLinearGradientBrush.h"
+#include "brushes/CanvasRadialGradientBrush.h"
+#include "brushes/CanvasImageBrush.h"
+
 #include "CanvasTextLayout.h"
 #include "TextUtilities.h"
-#include "CanvasSolidColorBrush.h"
-#include "CanvasLinearGradientBrush.h"
-#include "CanvasRadialGradientBrush.h"
-#include "CanvasImageBrush.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

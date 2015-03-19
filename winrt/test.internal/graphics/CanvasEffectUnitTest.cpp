@@ -12,9 +12,9 @@
 
 #include "pch.h"
 
-#include <CanvasCommandList.h>
+#include <lib/images/CanvasCommandList.h>
 
-#include "TestEffect.h"
+#include "stubs/TestEffect.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

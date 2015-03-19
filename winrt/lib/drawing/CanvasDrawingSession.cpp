@@ -13,8 +13,8 @@
 #include "pch.h"
 
 #include "CanvasActiveLayer.h"
-#include "CanvasTextFormat.h"
-#include "TemporaryTransform.h"
+#include "text/CanvasTextFormat.h"
+#include "utils/TemporaryTransform.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

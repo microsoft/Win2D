@@ -11,7 +11,7 @@
 // under the License.
 
 #include "pch.h"
-#include "TestEffect.h"
+#include "stubs/TestEffect.h"
 
 using namespace ::Microsoft::WRL::Wrappers;
 

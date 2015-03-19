@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-#include <CanvasSwapChainPanel.h>
+#include <lib/xaml/CanvasSwapChainPanel.h>
 
 #include "CanvasSwapChainPanelTestAdapter.h"
 

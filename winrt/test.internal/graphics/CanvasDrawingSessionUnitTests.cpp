@@ -12,12 +12,12 @@
 
 #include "pch.h"
 
-#include "StubCanvasBrush.h"
-#include "effects\generated\GaussianBlurEffect.h"
-#include "MockD2DRectangleGeometry.h"
-#include "CanvasCachedGeometry.h"
-#include "MockD2DGeometryRealization.h"
-#include "StubCanvasTextLayoutAdapter.h"
+#include "stubs/StubCanvasBrush.h"
+#include <lib/effects/generated/GaussianBlurEffect.h>
+#include "mocks/MockD2DRectangleGeometry.h"
+#include <lib/geometry/CanvasCachedGeometry.h>
+#include "mocks/MockD2DGeometryRealization.h"
+#include "stubs/StubCanvasTextLayoutAdapter.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
