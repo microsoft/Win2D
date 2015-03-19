@@ -56,6 +56,14 @@ namespace canvas
                 {
                     return Make<MockD2DGeometryRealization>();
                 });
+
+            GetResourceCreationDeviceContextMethod.AllowAnyCall(
+                [=]
+                {
+                    ComPtr<ID2D1DeviceContext1> dc;
+                    ThrowIfFailed(m_d2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
+                    return dc;
+                });
         }
 
         void MarkAsLost()

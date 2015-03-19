@@ -3004,7 +3004,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto& deviceContext = GetResource();
 
-        return As<ICanvasBrushInternal>(brush)->GetD2DBrush(deviceContext.Get());
+        return As<ICanvasBrushInternal>(brush)->GetD2DBrush(deviceContext.Get(), false);
     }
 
 

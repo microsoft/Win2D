@@ -13,6 +13,10 @@
 #include "pch.h"
 #include "CanvasTextLayout.h"
 #include "TextUtilities.h"
+#include "CanvasSolidColorBrush.h"
+#include "CanvasLinearGradientBrush.h"
+#include "CanvasRadialGradientBrush.h"
+#include "CanvasImageBrush.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -55,6 +59,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateNew(
+        ICanvasResourceCreator* resourceCreator,
         HSTRING text,
         ICanvasTextFormat* textFormat,
         float maximumLayoutWidth,
@@ -75,20 +80,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             maximumLayoutHeight,
             &dwriteTextLayout));
 
+        ComPtr<ICanvasDevice> device;
+        ThrowIfFailed(resourceCreator->get_Device(&device));
+
         auto textLayout = Make<CanvasTextLayout>(
             shared_from_this(),
-            As<IDWriteTextLayout2>(dwriteTextLayout).Get());
+            As<IDWriteTextLayout2>(dwriteTextLayout).Get(),
+            device.Get());
         CheckMakeResult(textLayout);
 
         return textLayout;
     }
 
     ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateWrapper(
+        ICanvasDevice* device,
         IDWriteTextLayout2* resource)
     {
         auto canvasTextLayout = Make<CanvasTextLayout>(
             shared_from_this(),
-            resource);
+            resource,
+            device);
         CheckMakeResult(canvasTextLayout);
 
         return canvasTextLayout;
@@ -110,6 +121,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasTextLayoutFactory::Create(
+        ICanvasResourceCreator* resourceCreator,
         HSTRING textString,
         ICanvasTextFormat* textFormat,
         float maximumLayoutWidth,
@@ -123,6 +135,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckAndClearOutPointer(textLayout);
 
                 auto newTextLayout = GetManager()->Create(
+                    resourceCreator,
                     textString,
                     textFormat,
                     maximumLayoutWidth,
@@ -132,26 +145,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasTextLayoutFactory::GetOrCreate(
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                auto layout = GetManager()->GetOrCreate(As<IDWriteTextLayout2>(resource).Get());
-                ThrowIfFailed(layout.CopyTo(wrapper));
-            });
-    }
-
     CanvasTextLayout::CanvasTextLayout(
         std::shared_ptr<CanvasTextLayoutManager> manager, 
-        IDWriteTextLayout2* layout)
+        IDWriteTextLayout2* layout,
+        ICanvasDevice* device)
         : ResourceWrapper(manager, layout)
         , m_drawTextOptions(CanvasDrawTextOptions::Default)
+        , m_device(device)
     {
     }
 
@@ -552,6 +552,97 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    ComPtr<ICanvasBrush> CanvasTextLayout::PolymorphicGetOrCreateBrush(
+        ComPtr<IUnknown> const& resource)
+    {
+        auto& device = m_device.EnsureNotClosed();
+
+        if (!resource)
+        {
+            return nullptr;
+        }
+
+        auto solidColorBrush = MaybeAs<ID2D1SolidColorBrush>(resource);
+        if (solidColorBrush)
+        {
+            auto canvasSolidColorBrushManager = CanvasSolidColorBrushFactory::GetOrCreateManager();
+
+            return canvasSolidColorBrushManager->GetOrCreate(
+                device.Get(),
+                solidColorBrush.Get());
+        }
+
+        auto linearGradientBrush = MaybeAs<ID2D1LinearGradientBrush>(resource);
+        if (linearGradientBrush)
+        {
+            auto canvasLinearGradientBrushManager = CanvasLinearGradientBrushFactory::GetOrCreateManager();
+
+            return canvasLinearGradientBrushManager->GetOrCreate(
+                device.Get(),
+                linearGradientBrush.Get());
+        }
+
+        auto radialGradientBrush = MaybeAs<ID2D1RadialGradientBrush>(resource);
+        if (radialGradientBrush)
+        {
+            auto canvasRadialGradientBrushManager = CanvasRadialGradientBrushFactory::GetOrCreateManager();
+
+            return canvasRadialGradientBrushManager->GetOrCreate(
+                device.Get(),
+                radialGradientBrush.Get());
+        }
+
+        auto bitmapBrush = MaybeAs<ID2D1BitmapBrush>(resource);
+        auto imageBrush = MaybeAs<ID2D1ImageBrush>(resource);
+        if (bitmapBrush || imageBrush)
+        {
+            //
+            // TODO #4047 - Use a resource manager shared across all image
+            // brushes, rather than creating a new factory here. This works
+            // because there isn't any state stored in the factory.
+            //
+            auto imageBrushFactory = Make<CanvasImageBrushFactory>();
+            CheckMakeResult(imageBrushFactory);
+
+            ComPtr<ICanvasBrush> wrappedBrush;
+
+            if (bitmapBrush)
+                ThrowIfFailed(imageBrushFactory->GetOrCreate(device.Get(), bitmapBrush.Get(), &wrappedBrush));
+            else
+                ThrowIfFailed(imageBrushFactory->GetOrCreate(device.Get(), imageBrush.Get(), &wrappedBrush));
+
+            return wrappedBrush;
+        }
+        
+        //
+        // It's possible to reach here in the case of interop, where a non-brush drawing effect has
+        // been set to the text layout. It's not possible to return this as a brush, so we throw.
+        //
+        ThrowHR(E_NOINTERFACE);
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::GetBrush(
+        int32_t characterIndex,
+        ICanvasBrush** brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(brush);
+
+                ThrowIfNegative(characterIndex);
+
+                auto& resource = GetResource();
+
+                ComPtr<IUnknown> drawingEffect;
+                ThrowIfFailed(resource->GetDrawingEffect(characterIndex, &drawingEffect, nullptr));
+
+                auto wrappedBrush = PolymorphicGetOrCreateBrush(drawingEffect);
+
+                ThrowIfFailed(wrappedBrush.CopyTo(brush));
+            });
+    }
+
     IFACEMETHODIMP CanvasTextLayout::GetFontFamily(
         int32_t characterIndex,
         HSTRING* fontFamily)
@@ -712,6 +803,62 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(resource->GetUnderline(characterIndex, &dwriteHasUnderline));
 
                 *hasUnderline = !!dwriteHasUnderline;
+            });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::SetColor(
+        int32_t characterIndex,
+        int32_t characterCount,
+        Color color)
+    {
+        return ExceptionBoundary(
+            [&]
+        {
+            auto& resource = GetResource();
+
+            auto textRange = ToDWriteTextRange(characterIndex, characterCount);
+
+            auto& device = m_device.EnsureNotClosed();
+
+            auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+            auto d2dBrush = deviceInternal->CreateSolidColorBrush(ToD2DColor(color));
+
+            ThrowIfFailed(resource->SetDrawingEffect(d2dBrush.Get(), textRange));
+        });
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::SetBrush(
+        int32_t characterIndex,
+        int32_t characterCount,
+        ICanvasBrush* brush)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(brush);
+
+                auto& resource = GetResource();
+
+                auto brushInternal = As<ICanvasBrushInternal>(brush);
+
+                //
+                // The device context passed to GetD2DBrush is *not* used to key off of DPI.
+                // It is used to construct the appropriate DPI compensation effect, if necessary.
+                //
+                // The DPI compensation effect will be inserted into the effect graph and the resulting
+                // d2dbrush will be committed to the text layout.
+                //
+                const bool alwaysInsertDpiCompensationEffect = true;
+
+                auto& device = m_device.EnsureNotClosed();
+                auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+                auto d2dBrush = brushInternal->GetD2DBrush(deviceInternal->GetResourceCreationDeviceContext().Get(), alwaysInsertDpiCompensationEffect);
+
+                auto textRange = ToDWriteTextRange(characterIndex, characterCount);
+
+                ThrowIfFailed(resource->SetDrawingEffect(d2dBrush.Get(), textRange));
             });
     }
 
@@ -934,11 +1081,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasTextLayout::SetCharacterSpacing(
+        int32_t characterIndex,
+        int32_t characterCount,
         float leadingSpacing,
         float trailingSpacing,
-        float minimumAdvanceWidth,
-        int32_t characterIndex,
-        int32_t characterCount)
+        float minimumAdvanceWidth)
     {
         return ExceptionBoundary(
             [&]
@@ -1256,7 +1403,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasTextLayout::Close()
     {
+        m_device.Close();
+
         return ResourceWrapper::Close();
+    }
+
+    IFACEMETHODIMP CanvasTextLayout::get_Device(ICanvasDevice** device)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(device);
+
+                ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(device));
+            });
     }
 
     ActivatableClassWithFactory(CanvasTextLayout, CanvasTextLayoutFactory);

@@ -19,7 +19,8 @@ namespace canvas
     class StubCanvasBrush : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasBrush,
-        ICanvasBrushInternal>
+        ICanvasBrushInternal,
+        CloakedIid<ICanvasResourceWrapperNative>>
     {
         ComPtr<ID2D1Brush> m_brush;
 
@@ -33,7 +34,7 @@ namespace canvas
         // ICanvasBrushInternal
         //
 
-        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext) override
+        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, bool alwaysInsertDpiCompensation) override
         {
             return m_brush;
         }
@@ -66,6 +67,15 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to get_Device");
             return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(GetResource)(REFIID iid, void** resource) override
+        {
+            Assert::IsTrue(
+                iid == __uuidof(ID2D1Brush) ||
+                iid == __uuidof(ID2D1Resource));
+
+            return m_brush.CopyTo(iid, resource);
         }
     };
 }

@@ -14,8 +14,6 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
-    auto MAGIC_FORCE_DPI_COMPENSATION_VALUE = -1.0f;
-
     CanvasEffect::CanvasEffect(IID effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed)
         : m_effectId(effectId)
         , m_realizationId(0)

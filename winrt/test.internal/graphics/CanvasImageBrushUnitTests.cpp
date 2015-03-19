@@ -307,7 +307,7 @@ public:
         ComPtr<ICanvasBrushInternal> const& brushInternal,
         ComPtr<ID2D1Image>* outTarget = nullptr) // Optionally retrieve the target bitmap
     {
-        auto d2dBrush = brushInternal->GetD2DBrush(nullptr);
+        auto d2dBrush = brushInternal->GetD2DBrush(nullptr, false);
         ComPtr<ID2D1BitmapBrush1> bitmapBrush;
         ThrowIfFailed(d2dBrush.As(&bitmapBrush));
         if (outTarget)

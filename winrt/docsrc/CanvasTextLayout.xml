@@ -52,7 +52,7 @@ under the License.
         
       </example>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.#ctor(System.String,Microsoft.Graphics.Canvas.CanvasTextFormat,System.Single,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasTextFormat,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasTextLayout class.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetPairKerning(System.Int32)">
@@ -99,7 +99,7 @@ under the License.
           to the next, to prevent characters from becoming too thin or zero-width. This must be zero or greater.</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetCharacterSpacing(System.Single,System.Single,System.Single,System.Int32,System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetCharacterSpacing(System.Int32,System.Int32,System.Single,System.Single,System.Single)">
       <summary>Sets the spacing between characters.</summary>
       <remarks>
         <p>Leading spacing is the spacing before each character, in reading order.</p>
@@ -144,7 +144,21 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetUnderline(System.Int32)">
       <summary>Gets whether the character at the specified position is underlined.</summary>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetBrush(System.Int32)">
+      <summary>Gets the brush associated with a character index in the text layout.</summary>
+      <remarks>
+      	<p>
+      	If the color was set using <see cref="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)"/> for this index, this method returns a 
+      	<see cref="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush"/> with the appropriate color.
+      	</p>
+      	<p>
+      	If there isn't an associated brush or color, null is returned.
+      	</p>
+      	</remarks>
     </member>
+    
     <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetFontFamily(System.Int32,System.Int32,System.String)">
       <summary>Sets the font family of the specified group of characters.</summary>
     </member>
@@ -171,7 +185,33 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetUnderline(System.Int32,System.Int32,System.Boolean)">
       <summary>Applies underline formatting to the specified group of characters.</summary>
+    </member>  
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)">
+      <summary>Sets the color associated with a group of characters in the text layout.</summary>
+      <remarks>
+      	<p>
+      	This color takes effect while calling 
+      	<see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)"/>
+      	It overrides the brush or color passed to DrawTextLayout.
+      	</p>
+      	<p>
+      	Calling <see cref="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetBrush(System.Int32)"/> for this same index, after calling this method, will yield a 
+      	<see cref="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush"/> with the appropriate color.
+      	</p>
+      </remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.ICanvasBrush)">
+      <summary>Sets the brush associated with a group of characters in the text layout.</summary>
+      <remarks>
+      	<p>
+      	This brush takes effect while calling 
+      	<see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)"/>
+      	It overrides the brush or color passed to DrawTextLayout.
+      	</p>
+      </remarks>
+    </member>
+      
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.WordWrapping">
       <summary>Specifies word wrapping behavior.</summary>
     </member>
@@ -405,6 +445,10 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LineCount">
       <summary>Gets the number of lines in the text layout.</summary>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.Device">
+      <summary>Gets the device associated with this text layout.</summary>
     </member>
     
   </members>

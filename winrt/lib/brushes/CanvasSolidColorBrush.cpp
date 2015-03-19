@@ -19,61 +19,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ::Microsoft::WRL::Wrappers;
 
-    IFACEMETHODIMP CanvasBrush::get_Opacity(_Out_ float *value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckInPointer(value);
-                *value = GetD2DBrush(nullptr)->GetOpacity();
-            });
-    }
-
-    IFACEMETHODIMP CanvasBrush::put_Opacity(_In_ float value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                GetD2DBrush(nullptr)->SetOpacity(value);
-            });
-    }
-
-
-    IFACEMETHODIMP CanvasBrush::get_Transform(_Out_ Numerics::Matrix3x2 *value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckInPointer(value);
-
-                GetD2DBrush(nullptr)->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
-            });
-    }
-
-    IFACEMETHODIMP CanvasBrush::put_Transform(_In_ Numerics::Matrix3x2 value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                GetD2DBrush(nullptr)->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
-            });
-    }
-
-    IFACEMETHODIMP CanvasBrush::get_Device(ICanvasDevice** value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
-                ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(value));
-            });
-    }
-
-    void CanvasBrush::Close()
-    {
-        m_device.Close();
-    }
-
     ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
         ICanvasResourceCreator* resourceCreator,
         Color color)
@@ -163,7 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ResourceWrapper::Close();
     }
 
-    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush(ID2D1DeviceContext*)
+    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush(ID2D1DeviceContext*, bool)
     {
         return GetResource();
     }

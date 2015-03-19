@@ -76,7 +76,7 @@ namespace ExampleGallery
 
             if(textLayout != null) 
                 textLayout.Dispose();
-            textLayout = CreateTextLayout(canvasWidth, canvasHeight);
+            textLayout = CreateTextLayout(resourceCreator, canvasWidth, canvasHeight);
 
             Rect layoutBounds = textLayout.LayoutBounds;
 
@@ -97,7 +97,7 @@ namespace ExampleGallery
             resourceRealizationSize = targetSize;
         }
 
-        private CanvasTextLayout CreateTextLayout(float canvasWidth, float canvasHeight)
+        private CanvasTextLayout CreateTextLayout(ICanvasResourceCreator resourceCreator, float canvasWidth, float canvasHeight)
         {
             float sizeDim = Math.Min(canvasWidth, canvasHeight);
 
@@ -144,7 +144,7 @@ namespace ExampleGallery
                     break;
             }
 
-            return new CanvasTextLayout(testString, textFormat, canvasWidth, canvasHeight);
+            return new CanvasTextLayout(resourceCreator, testString, textFormat, canvasWidth, canvasHeight);
         }
 
         private void Canvas_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
