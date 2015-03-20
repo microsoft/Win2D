@@ -29,11 +29,11 @@ under the License.
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="*" MinHeight="100" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="25">
+        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Margin="16">
             Win2D can use custom fonts, such as TTF files shipped with the application, by
             specifying a URI in the font family name.  For example:<LineBreak />            
             <Span FontFamily="Courier New" xml:space="preserve">
@@ -47,7 +47,7 @@ under the License.
 
         <TextBlock Grid.Row="2" Margin="5" Style="{ThemeResource BaseTextBlockStyle}">
             This example uses Symbols.ttf, available from:<LineBreak />
-            https://github.com/winjs/winjs/tree/master/src/fonts
+            <Hyperlink NavigateUri="https://github.com/winjs/winjs/tree/master/src/fonts">https://github.com/winjs/winjs/tree/master/src/fonts</Hyperlink>
         </TextBlock>
     </Grid>
 </UserControl>
