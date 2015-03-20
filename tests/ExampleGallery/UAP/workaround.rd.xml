@@ -23,5 +23,6 @@ under the License.
 <Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
   <Application>
     <Namespace Name="Microsoft.Graphics.Canvas" Dynamic="Required All" />
+    <Namespace Name="ExampleGallery" Dynamic="Required All" />
   </Application>
 </Directives>

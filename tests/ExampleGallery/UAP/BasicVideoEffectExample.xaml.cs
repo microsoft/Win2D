@@ -21,8 +21,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace ExampleGallery
 {
-    public sealed partial class BasicVideoEffectExample : UserControl
+    public sealed partial class BasicVideoEffectExample : UserControl, ICustomThumbnailSource
     {
+        IRandomAccessStream m_thumbnail;
+
         public BasicVideoEffectExample()
         {
             this.InitializeComponent();
@@ -50,13 +52,23 @@ namespace ExampleGallery
 
             var composition = new MediaComposition();
             composition.Clips.Add(clip);
-           
+
+            if (ThumbnailGenerator.IsDrawingThumbnail)
+            {
+                m_thumbnail = await composition.GetThumbnailAsync(TimeSpan.FromSeconds(10), 1280, 720, VideoFramePrecision.NearestFrame);
+            }
+
             mediaElement.SetMediaStreamSource(composition.GenerateMediaStreamSource());
             mediaElement.IsLooping = true;
         
             this.mediaElement.Visibility = Visibility.Visible;
             this.progressInfo.Visibility = Visibility.Collapsed;
             this.progressRing.IsActive = false;
+        }
+
+        IRandomAccessStream ICustomThumbnailSource.Thumbnail
+        {
+            get { return m_thumbnail; }
         }
     }
 }
