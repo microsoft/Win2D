@@ -219,7 +219,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             RenderTarget* renderTarget) override final;
 
         virtual ComPtr<CanvasAnimatedDrawEventArgs> CreateDrawEventArgs(
-            ICanvasDrawingSession* drawingSession) override final;
+            ICanvasDrawingSession* drawingSession,
+            bool isRunningSlowly) override final;
 
         virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
         virtual void Loaded() override final;
@@ -234,7 +235,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasSwapChain* target, 
             bool areResourcesCreated);
 
-        bool Update(bool forceUpdate);
+        struct UpdateResult
+        {
+            bool Updated;
+            bool IsRunningSlowly;
+        };
+
+        UpdateResult Update(bool forceUpdate);
 
         void ChangedImpl();
 

@@ -258,7 +258,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         if (!target)
                             return;
                         
-                        Draw(target, clearColor, callDrawHandlers);
+                        Draw(target, clearColor, callDrawHandlers, false);
                     });
             });
     }
@@ -302,7 +302,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    ComPtr<CanvasDrawEventArgs> CanvasControl::CreateDrawEventArgs(ICanvasDrawingSession* drawingSession)
+    ComPtr<CanvasDrawEventArgs> CanvasControl::CreateDrawEventArgs(ICanvasDrawingSession* drawingSession, bool)
     {
         auto drawEventArgs = Make<CanvasDrawEventArgs>(drawingSession);
         CheckMakeResult(drawEventArgs);

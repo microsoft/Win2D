@@ -83,7 +83,7 @@ namespace
         }
 
         CALL_COUNTER_WITH_MOCK(CreateOrUpdateRenderTargetMethod, void(ICanvasDevice*, CanvasBackground, float, Size, RenderTarget*));
-        CALL_COUNTER_WITH_MOCK(CreateDrawEventArgsMethod, ComPtr<drawEventArgs_t>(ICanvasDrawingSession*));
+        CALL_COUNTER_WITH_MOCK(CreateDrawEventArgsMethod, ComPtr<drawEventArgs_t>(ICanvasDrawingSession*, bool));
         CALL_COUNTER_WITH_MOCK(ChangedMethod, void());
         CALL_COUNTER_WITH_MOCK(LoadedMethod, void());
         CALL_COUNTER_WITH_MOCK(UnloadedMethod, void());
@@ -101,9 +101,10 @@ namespace
         }
 
         virtual ComPtr<drawEventArgs_t> CreateDrawEventArgs(
-            ICanvasDrawingSession* drawingSession) override final
+            ICanvasDrawingSession* drawingSession,
+            bool isRunningSlowly) override final
         {
-            return CreateDrawEventArgsMethod.WasCalled(drawingSession);
+            return CreateDrawEventArgsMethod.WasCalled(drawingSession, isRunningSlowly);
         }
 
         virtual void Changed(Lock const&, ChangeReason) override final

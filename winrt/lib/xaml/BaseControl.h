@@ -299,7 +299,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             RenderTarget* renderTarget) = 0;
 
         virtual ComPtr<drawEventArgs_t> CreateDrawEventArgs(
-            ICanvasDrawingSession* drawingSession) = 0;
+            ICanvasDrawingSession* drawingSession,
+            bool isRunningSlowly) = 0;
 
         typedef std::unique_lock<std::mutex> Lock;
 
@@ -400,13 +401,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Creates a drawing session, optionally calls the draw handlers and
         // finally closes the drawing session.
         //
-        void Draw(renderTarget_t* target, Color const& clearColor, bool callDrawHandlers)
+        void Draw(renderTarget_t* target, Color const& clearColor, bool callDrawHandlers, bool isRunningSlowly)
         {
             ComPtr<ICanvasDrawingSession> drawingSession;
             ThrowIfFailed(target->CreateDrawingSession(clearColor, &drawingSession));
             if (callDrawHandlers)
             {
-                auto drawEventArgs = GetControl()->CreateDrawEventArgs(drawingSession.Get());
+                auto drawEventArgs = GetControl()->CreateDrawEventArgs(drawingSession.Get(), isRunningSlowly);
                 ThrowIfFailed(m_drawEventList.InvokeAll(GetControl(), drawEventArgs.Get()));
             }
 

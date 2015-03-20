@@ -157,6 +157,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             uint32_t lastFrameCount = m_frameCount;
 
+            bool isRunningSlowly = false;
+
             if (m_isFixedTimeStep)
             {
                 // Fixed timestep update logic
@@ -178,6 +180,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 m_leftOverTicks += timeDelta;
 
+                //
+                // If there would be at least one additional update fired, this
+                // indicates the game loop is running slowly.
+                //
+                isRunningSlowly = m_leftOverTicks >= m_targetElapsedTicks * 2;
+
                 while (m_leftOverTicks >= m_targetElapsedTicks)
                 {
                     forceUpdate = false;
@@ -186,14 +194,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     m_leftOverTicks -= m_targetElapsedTicks;
                     m_frameCount++;
 
-                    bool isRunningSlowly = m_leftOverTicks >= m_targetElapsedTicks;
-
                     fn(isRunningSlowly);
                 }
 
                 if (forceUpdate)
                 {
                     m_frameCount++;
+                    assert(!isRunningSlowly);
                     fn(false);
                 }
             }

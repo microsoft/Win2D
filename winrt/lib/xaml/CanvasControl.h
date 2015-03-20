@@ -158,7 +158,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             RenderTarget* renderTarget) override final;
 
         virtual ComPtr<CanvasDrawEventArgs> CreateDrawEventArgs(
-            ICanvasDrawingSession* drawingSession) override final;
+            ICanvasDrawingSession* drawingSession,
+            bool isRunningSlowly) override final;
 
         virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
         virtual void Loaded() override final;

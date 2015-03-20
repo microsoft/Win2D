@@ -1344,23 +1344,22 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 const INT64 delta = targetTime - m_totalTime;
                 const INT64 numUpdates = delta / TicksPerFrame;
 
+                bool isRunningSlowly = numUpdates > 1;
+
                 for (INT64 i = 0; i < numUpdates; ++i)
                 {
                     m_updateCount++;
 
-                    bool isRunningSlowly;
                     INT64 timeSinceLastUpdate;
                     if (i < numUpdates - 1)
                     {
                         timeSinceLastUpdate = TicksPerFrame;
                         m_totalTime += TicksPerFrame;
-                        isRunningSlowly = true;
                     }
                     else
                     {
                         timeSinceLastUpdate = targetTime - m_totalTime;
                         m_totalTime = targetTime;
-                        isRunningSlowly = false;
                     }
 
                     ExpectedTiming expected{ m_updateCount, m_totalTime, timeSinceLastUpdate, isRunningSlowly };

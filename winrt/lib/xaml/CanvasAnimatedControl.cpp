@@ -526,9 +526,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(ICanvasDrawingSession* drawingSession)
+    ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(
+        ICanvasDrawingSession* drawingSession,
+        bool isRunningSlowly)
     {
         auto timing = GetTimingInformationFromTimer();
+        timing.IsRunningSlowly = isRunningSlowly;
 
         auto drawEventArgs = Make<CanvasAnimatedDrawEventArgs>(drawingSession, timing);
         CheckMakeResult(drawEventArgs);
@@ -898,12 +901,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Now do the update/render for this tick
         //
 
-        bool updatedThisTick = false;
+        UpdateResult updateResult{};
+
         if (areResourcesCreated && !isPaused)
         {
             bool forceUpdate = (firstTickAfterWasPaused || !m_hasUpdated);
-            updatedThisTick = Update(forceUpdate);
-            m_hasUpdated |= updatedThisTick;
+
+            updateResult = Update(forceUpdate);
+
+            m_hasUpdated |= updateResult.Updated;
         }
 
         //
@@ -912,7 +918,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // This is desireable since using Present to wait for the vsync can
         // result in missed frames.
         //
-        if (updatedThisTick || forceDraw)
+        if (updateResult.Updated || forceDraw)
         {
             //
             // If the control's size has changed then the swapchain's buffers
@@ -947,7 +953,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 bool invokeDrawHandlers = (areResourcesCreated && m_hasUpdated);
 
-                Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers);
+                Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers, updateResult.IsRunningSlowly);
                 ThrowIfFailed(renderTarget->Target->Present());
             }
         }
@@ -955,12 +961,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return areResourcesCreated && !isPaused;
     }
 
-    bool CanvasAnimatedControl::Update(bool forceUpdate)
+    CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate)
     {
-        bool updated = false;
-        
+        UpdateResult result{};
+
         m_stepTimer.Tick(forceUpdate, 
-            [this, &updated](bool isRunningSlowly)
+            [this, &result](bool isRunningSlowly)
             {
                 auto timing = GetTimingInformationFromTimer();
                 timing.IsRunningSlowly = isRunningSlowly;
@@ -968,10 +974,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto updateEventArgs = Make<CanvasAnimatedUpdateEventArgs>(timing);
                 ThrowIfFailed(m_updateEventList.InvokeAll(this, updateEventArgs.Get()));
 
-                updated = true;
+                result.IsRunningSlowly = isRunningSlowly;
+                result.Updated = true;
             });
 
-        return updated;
+        return result;
     }
 
     CanvasTimingInformation CanvasAnimatedControl::GetTimingInformationFromTimer()
