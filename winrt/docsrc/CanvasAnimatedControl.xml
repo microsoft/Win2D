@@ -240,7 +240,16 @@ under the License.
           Note that, since the input processing happens in the game loop, no
           input events will be raised while the Paused property is set to true.
         </p>
-
+        
+        <p>
+        While using pointer functionality through Input, do not call 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.setpointercapture.aspx">SetPointerCapture</a>, 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.releasepointercapture.aspx">ReleasePointerCapture</a>, 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.hascapture.aspx">HasCapture</a>, or use the event
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.pointercapturelost.aspx">PointerCaptureLost</a>,
+        as these are not supported through CanvasAnimatedControl.
+        </p>
+        
         <h4>Threading Considerations</h4>
 
         <p>
@@ -548,6 +557,16 @@ under the License.
         <p>
           This property may be accessed from any thread.
         </p>
+        
+        <p>
+        While using pointer functionality through this property, do not call 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.setpointercapture.aspx">SetPointerCapture</a>, 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.releasepointercapture.aspx">ReleasePointerCapture</a>, 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.hascapture.aspx">HasCapture</a>, or use the event
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.pointercapturelost.aspx">PointerCaptureLost</a>,
+        as these are not supported through CanvasAnimatedControl.
+        </p>
+        
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Input">

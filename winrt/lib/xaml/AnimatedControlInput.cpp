@@ -23,35 +23,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP AnimatedControlInput::ReleasePointerCapture()
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckHasSource();
-
-                ThrowIfFailed(m_source->ReleasePointerCapture());
-            });
+        // 
+        // Capture-related methods are not available for this control.
+        return E_NOTIMPL;
     }
 
     IFACEMETHODIMP AnimatedControlInput::SetPointerCapture()
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckHasSource();
-
-                ThrowIfFailed(m_source->SetPointerCapture());
-            });
+        return E_NOTIMPL;
     }
 
-    IFACEMETHODIMP AnimatedControlInput::get_HasCapture(boolean* value)
+    IFACEMETHODIMP AnimatedControlInput::get_HasCapture(boolean*)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckHasSource();
-
-                ThrowIfFailed(m_source->get_HasCapture(value));
-            });
+        return E_NOTIMPL;
     }
 
     IFACEMETHODIMP AnimatedControlInput::get_PointerPosition(Point* value)
@@ -92,16 +76,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP AnimatedControlInput::add_PointerCaptureLost(
-        EventHandlerWithPointerArgs* value,
-        EventRegistrationToken* token)
+        EventHandlerWithPointerArgs*,
+        EventRegistrationToken*)
     {
-        return m_pointerCaptureLostEventList.Add(value, token);
+        return E_NOTIMPL;
     }
 
     IFACEMETHODIMP AnimatedControlInput::remove_PointerCaptureLost(
-        EventRegistrationToken token)
+        EventRegistrationToken)
     {
-        return m_pointerCaptureLostEventList.Remove(token);
+        return E_NOTIMPL;
     }
 
     IFACEMETHODIMP AnimatedControlInput::add_PointerEntered(
@@ -181,12 +165,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_pointerWheelChangedEventList.Remove(token);
     }
 
-
-    HRESULT AnimatedControlInput::OnPointerCaptureLost(IInspectable* sender, IPointerEventArgs* args)
-    {
-        return m_pointerCaptureLostEventList.InvokeAll(sender, args);
-    }
-
     HRESULT AnimatedControlInput::OnPointerEntered(IInspectable* sender, IPointerEventArgs* args)
     {
         return m_pointerEnteredEventList.InvokeAll(sender, args);
@@ -239,7 +217,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             &ICorePointerInputSource::remove_Pointer##NAME##,\
             Callback<EventHandlerWithPointerArgs>(this, &AnimatedControlInput::OnPointer##NAME##).Get());
 
-        DECLARE_REGISTERED_EVENT(CaptureLost);
         DECLARE_REGISTERED_EVENT(Entered);
         DECLARE_REGISTERED_EVENT(Exited);
         DECLARE_REGISTERED_EVENT(Moved);
@@ -254,7 +231,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         assert(m_source);
 
-        m_pointerCaptureLostEvent.Release();
         m_pointerEnteredEvent.Release();
         m_pointerExitedEvent.Release();
         m_pointerMovedEvent.Release();

@@ -2013,13 +2013,9 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         {
             auto inputSource = GetInputSource();
 
-            boolean b;
             Point p;
             ComPtr<ICoreCursor> cursor;
 
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->ReleasePointerCapture());
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->SetPointerCapture());
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_HasCapture(&b));
             Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerPosition(&p));
             Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerCursor(&cursor));
             Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->put_PointerCursor(nullptr));
@@ -2065,22 +2061,6 @@ TEST_CLASS(CanvasAnimatedControl_Input)
 
         ComPtr<ICorePointerInputSource> inputSource;
         ThrowIfFailed(f.Control->get_Input(&inputSource));
-
-        coreIndependentInputSource->ReleasePointerCaptureMethod.SetExpectedCalls(1);
-        ThrowIfFailed(inputSource->ReleasePointerCapture());
-
-        coreIndependentInputSource->SetPointerCaptureMethod.SetExpectedCalls(1);
-        ThrowIfFailed(inputSource->SetPointerCapture());
-
-        coreIndependentInputSource->get_HasCaptureMethod.SetExpectedCalls(1,
-            [=](boolean* value)
-            {
-                *value = true;
-                return S_OK;
-            });
-        boolean b;
-        ThrowIfFailed(inputSource->get_HasCapture(&b)),
-        Assert::IsTrue(!!b);
 
         Point testPoint = { 11, 22 };
         Point retrievedPoint;
@@ -2142,13 +2122,28 @@ TEST_CLASS(CanvasAnimatedControl_Input)
 
         EventRegistrationToken token;
 
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerCaptureLost(nullptr, &token));
         Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerEntered(nullptr, &token));
         Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerExited(nullptr, &token));
         Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerMoved(nullptr, &token));
         Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerPressed(nullptr, &token));
         Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerReleased(nullptr, &token));
         Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerWheelChanged(nullptr, &token));
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_Input_CaptureMethodsAreNotAvailable)
+    {
+        InputFixture f;
+        auto inputSource = f.GetInputSource();
+        boolean b;
+
+        Assert::AreEqual(E_NOTIMPL, inputSource->ReleasePointerCapture());
+        Assert::AreEqual(E_NOTIMPL, inputSource->SetPointerCapture());
+        Assert::AreEqual(E_NOTIMPL, inputSource->get_HasCapture(&b));
+
+        auto eventHandler = MockEventHandler<EventHandlerWithPointerArgs>(L"PointerCapture");
+        EventRegistrationToken token;
+        Assert::AreEqual(E_NOTIMPL, inputSource->add_PointerCaptureLost(eventHandler.Get(), &token));
+        Assert::AreEqual(E_NOTIMPL, inputSource->remove_PointerCaptureLost(token));        
     }
 
     class InputFixture_EventTest
@@ -2209,7 +2204,6 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         // of EventSource, but verifes that events are passed through as expected.
         //
         InputFixture_EventTest f;
-        f.TestEvent(L"PointerCaptureLost", f.CoreIndependentInputSource->add_PointerCaptureLostMethod, &ICorePointerInputSource::add_PointerCaptureLost);
 
         f.TestEvent(L"PointerEntered", f.CoreIndependentInputSource->add_PointerEnteredMethod, &ICorePointerInputSource::add_PointerEntered);
 

@@ -27,7 +27,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICorePointerInputSource> m_source;
         WeakRef m_weakSwapChainPanel;
 
-        EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerCaptureLostEventList;
         EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerEnteredEventList;
         EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerExitedEventList;
         EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerMovedEventList;
@@ -35,7 +34,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerReleasedEventList;
         EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerWheelChangedEventList;
 
-        RegisteredEvent m_pointerCaptureLostEvent;
         RegisteredEvent m_pointerEnteredEvent;
         RegisteredEvent m_pointerExitedEvent;
         RegisteredEvent m_pointerMovedEvent;
