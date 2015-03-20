@@ -25,7 +25,7 @@ under the License.
     d:DesignHeight="500"
     d:DesignWidth="700">
 
-    <TextBlock x:Name="textBlock" FontSize="16" Foreground="Gray" HorizontalAlignment="Left" MaxWidth="768" TextWrapping="Wrap">
+    <TextBlock x:Name="textBlock" FontSize="16" Foreground="Gray" HorizontalAlignment="Left" MaxWidth="768" TextWrapping="Wrap" Margin="16">
         This app demonstrates the capabilities of the Win2D graphics API.
         <LineBreak/>
         <LineBreak/>

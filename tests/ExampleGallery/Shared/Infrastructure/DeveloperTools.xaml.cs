@@ -132,7 +132,7 @@ namespace ExampleGallery
 
                 bool referenceExists = entry.Value.TryGetTarget(out theControl);
 
-                leakString.AppendFormat("{1}\t{0}\n", entry.Key, referenceExists ? "leaked" : "ok    ");
+                leakString.AppendFormat("{1}\t{0}\n", entry.Key, referenceExists ? "live    " : "collected");
             }
             leakText.Text = leakString.ToString();
         }
