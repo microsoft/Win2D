@@ -24,7 +24,7 @@
              TODO: this shouldn't be necessary - the default value should set
              the correct path. DevDev# 1105910 tracks the fix for this 
         -->
-        <AdditionalMetadataDirectories Condition="'$(ApplicationTypeRevision)' == '8.2'">$(TargetPlatformWinMDLocation)\..\UnionMetadata;%(Midl.AdditionalMetadataDirectories)</AdditionalMetadataDirectories>
+        <AdditionalMetadataDirectories Condition="'$(ApplicationTypeRevision)' == '8.2'">$(TargetPlatformWinMDLocation)\Windows.Foundation.FoundationContract\1.0.0.0;%(Midl.AdditionalMetadataDirectories)</AdditionalMetadataDirectories>
 
         <!-- 
              TODO: works around a bug in Platform.Common.props on x64.  This has
