@@ -86,86 +86,132 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // DrawImage
         // 
 
-        IFACEMETHOD(DrawImage)(
-            ICanvasImage* image,
-            Vector2 offset) override;
-
-        IFACEMETHOD(DrawImageAtCoords)(
-            ICanvasImage* image,
-            float x,
-            float y) override;
+        static float DefaultDrawImageOpacity() { return 1.0f; }
+        static CanvasImageInterpolation DefaultDrawImageInterpolation() { return CanvasImageInterpolation::Linear; }
+        // Default value for Composite comes from GetCompositeModeFromPrimitiveBlend
 
         IFACEMETHOD(DrawImageAtOrigin)(
             ICanvasImage* image) override;
 
-        IFACEMETHOD(DrawImageWithSourceRect)(
-            ICanvasImage* image,
-            Vector2 offset,
-            Rect sourceRect) override;
+        IFACEMETHOD(DrawImageAtOffset)(
+            ICanvasImage* image, 
+            Vector2 offset) override;
 
-        IFACEMETHOD(DrawImageWithSourceRectAndInterpolation)(
-            ICanvasImage* image,
-            Vector2 offset,
-            Rect sourceRect,
-            CanvasImageInterpolation interpolation) override;
+        IFACEMETHOD(DrawImageAtCoords)(
+            ICanvasImage* image, 
+            float x,
+            float y) override;
 
-        IFACEMETHOD(DrawImageWithSourceRectAndInterpolationAndComposite)(
-            ICanvasImage* image,
+        IFACEMETHOD(DrawImageToRect)(
+            ICanvasBitmap* bitmap, 
+            Rect destinationRectangle) override;
+
+        IFACEMETHOD(DrawImageAtOffsetWithSourceRect)(
+            ICanvasImage* image, 
             Vector2 offset,
-            Rect sourceRect,
-            CanvasImageInterpolation interpolation,
-            CanvasComposite composite) override;
+            Rect sourceRectangle) override;
 
         IFACEMETHOD(DrawImageAtCoordsWithSourceRect)(
-            ICanvasImage* image,
+            ICanvasImage* image, 
             float x,
             float y,
-            Rect sourceRect) override;
+            Rect sourceRectangle) override;
 
-        IFACEMETHOD(DrawImageAtCoordsWithSourceRectAndInterpolation)(
+        IFACEMETHOD(DrawImageToRectWithSourceRect)(
             ICanvasImage* image,
+            Rect destinationRectangle,
+            Rect sourceRectangle) override;
+
+        IFACEMETHOD(DrawImageAtOffsetWithSourceRectAndOpacity)(
+            ICanvasImage* image, 
+            Vector2 offset,
+            Rect sourceRectangle,
+            float opacity) override;
+
+        IFACEMETHOD(DrawImageAtCoordsWithSourceRectAndOpacity)(
+            ICanvasImage* image, 
             float x,
             float y,
-            Rect sourceRect,
+            Rect sourceRectangle,
+            float opacity) override;
+
+        IFACEMETHOD(DrawImageToRectWithSourceRectAndOpacity)(
+            ICanvasImage* image,
+            Rect destinationRectangle,
+            Rect sourceRectangle,
+            float opacity) override;
+
+        IFACEMETHOD(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolation)(
+            ICanvasImage* image, 
+            Vector2 offset,
+            Rect sourceRectangle,
+            float opacity,
             CanvasImageInterpolation interpolation) override;
 
-        IFACEMETHOD(DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite)(
-            ICanvasImage* image,
+        IFACEMETHOD(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolation)(
+            ICanvasImage* image, 
             float x,
             float y,
-            Rect sourceRect,
+            Rect sourceRectangle,
+            float opacity,
+            CanvasImageInterpolation interpolation) override;
+
+        IFACEMETHOD(DrawImageToRectWithSourceRectAndOpacityAndInterpolation)(
+            ICanvasImage* image,
+            Rect destinationRectangle,
+            Rect sourceRectangle,
+            float opacity,
+            CanvasImageInterpolation interpolation) override;
+
+        IFACEMETHOD(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndComposite)(
+            ICanvasImage* image, 
+            Vector2 offset,
+            Rect sourceRectangle,
+            float opacity,
             CanvasImageInterpolation interpolation,
             CanvasComposite composite) override;
 
-        IFACEMETHOD(DrawBitmapWithDestRect)(
-            ICanvasBitmap* bitmap,
-            Rect destinationRect) override;
-
-        IFACEMETHOD(DrawBitmapWithDestRectAndSourceRect)(
-            ICanvasBitmap* bitmap,
-            Rect destinationRect,
-            Rect sourceRect) override;
-
-        IFACEMETHOD(DrawBitmapWithDestRectAndSourceRectAndOpacity)(
-            ICanvasBitmap* bitmap,
-            Rect destinationRect,
-            Rect sourceRect,
-            float opacity) override;
-
-        IFACEMETHOD(DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation)(
-            ICanvasBitmap* bitmap,
-            Rect destinationRect,
-            Rect sourceRect,
-            float opacity,
-            CanvasImageInterpolation interpolation) override;
-
-        IFACEMETHOD(DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective)(
-            ICanvasBitmap* bitmap,
-            Rect destinationRect,
-            Rect sourceRect,
+        IFACEMETHOD(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndComposite)(
+            ICanvasImage* image, 
+            float x,
+            float y,
+            Rect sourceRectangle,
             float opacity,
             CanvasImageInterpolation interpolation,
-            ABI::Microsoft::Graphics::Canvas::Numerics::Matrix4x4 perspective) override;
+            CanvasComposite composite) override;
+
+        IFACEMETHOD(DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndComposite)(
+            ICanvasImage* image,
+            Rect destinationRectangle,
+            Rect sourceRectangle,
+            float opacity,
+            CanvasImageInterpolation interpolation,
+            CanvasComposite composite) override;
+
+        IFACEMETHOD(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndPerspective)(
+            ICanvasBitmap* bitmap, 
+            Vector2 offset,
+            Rect sourceRectangle,
+            float opacity,
+            CanvasImageInterpolation interpolation,
+            Matrix4x4 perspective) override;
+
+        IFACEMETHOD(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndPerspective)(
+            ICanvasBitmap* bitmap, 
+            float x,
+            float y,
+            Rect sourceRectangle,
+            float opacity,
+            CanvasImageInterpolation interpolation,
+            Matrix4x4 perspective) override;
+
+        IFACEMETHOD(DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndPerspective)(
+            ICanvasBitmap* bitmap,
+            Rect destinationRectangle,
+            Rect sourceRectangle,
+            float opacity,
+            CanvasImageInterpolation interpolation,
+            Matrix4x4 perspective) override;
 
         //
         // DrawLine
@@ -1251,14 +1297,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         HRESULT DrawImageImpl(
             ICanvasImage* image,
-            Vector2 offset,
+            Vector2* offset,
+            Rect* destinationRect,
             Rect* sourceRect,
+            float opacity,
             CanvasImageInterpolation interpolation,
             CanvasComposite const* composite);
 
-        HRESULT DrawBitmapWithDestRectAndSourceRectImpl(
+        HRESULT DrawBitmapImpl(
             ICanvasBitmap* bitmap,
-            Rect destinationRect,
+            Vector2* offset,
+            Rect* destinationRect,
             Rect* sourceRect,
             float opacity,
             CanvasImageInterpolation interpolation,

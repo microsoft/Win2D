@@ -12,12 +12,15 @@
 
 #include "pch.h"
 
-#include "stubs/StubCanvasBrush.h"
 #include <lib/effects/generated/GaussianBlurEffect.h>
-#include "mocks/MockD2DRectangleGeometry.h"
 #include <lib/geometry/CanvasCachedGeometry.h>
+#include <lib/images/CanvasCommandList.h>
+
 #include "mocks/MockD2DGeometryRealization.h"
+#include "mocks/MockD2DRectangleGeometry.h"
+#include "stubs/StubCanvasBrush.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
+#include "stubs/StubD2DEffect.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
@@ -281,59 +284,425 @@ public:
     // DrawImage
     //
 
-    class BitmapFixture : public CanvasDrawingSessionFixture
+    struct DrawImageFixture : public CanvasDrawingSessionFixture
     {
-    public:
-        ComPtr<ID2D1Image> Image;
-        ComPtr<CanvasBitmap> Bitmap;
-        ComPtr<StubD2DBitmap> StubBitmap;
+        ComPtr<ICanvasImage> Image;
+        ComPtr<ICanvasBitmap> Bitmap;
+        Vector2 Offset;
+        Rect DestinationRectangle;
+        Rect SourceRectangle;
+        float Opacity;
+        CanvasImageInterpolation Interpolation;
+        CanvasComposite CompositeMode;
+        Matrix4x4 Perspective;
+        
+#define OVERLOAD(name, ...) void name() { Validate(DS->name(__VA_ARGS__)); }
+        
+        OVERLOAD(DrawImageAtOrigin, Image.Get());
+        
+        OVERLOAD(DrawImageAtOffset, Image.Get(),  Offset);
+        OVERLOAD(DrawImageAtCoords, Image.Get(),  Offset.X, Offset.Y);
+        OVERLOAD(DrawImageToRect,   Bitmap.Get(), DestinationRectangle);
+        
+        OVERLOAD(DrawImageAtOffsetWithSourceRect, Image.Get(), Offset,               SourceRectangle);
+        OVERLOAD(DrawImageAtCoordsWithSourceRect, Image.Get(), Offset.X, Offset.Y,   SourceRectangle);
+        OVERLOAD(DrawImageToRectWithSourceRect,   Image.Get(), DestinationRectangle, SourceRectangle);
+        
+        OVERLOAD(DrawImageAtOffsetWithSourceRectAndOpacity, Image.Get(), Offset,               SourceRectangle, Opacity);
+        OVERLOAD(DrawImageAtCoordsWithSourceRectAndOpacity, Image.Get(), Offset.X, Offset.Y,   SourceRectangle, Opacity);
+        OVERLOAD(DrawImageToRectWithSourceRectAndOpacity,   Image.Get(), DestinationRectangle, SourceRectangle, Opacity);
+        
+        OVERLOAD(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolation, Image.Get(), Offset,               SourceRectangle, Opacity, Interpolation);
+        OVERLOAD(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolation, Image.Get(), Offset.X, Offset.Y,   SourceRectangle, Opacity, Interpolation);
+        OVERLOAD(DrawImageToRectWithSourceRectAndOpacityAndInterpolation,   Image.Get(), DestinationRectangle, SourceRectangle, Opacity, Interpolation);
+        
+        OVERLOAD(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndComposite, Image.Get(), Offset,               SourceRectangle, Opacity, Interpolation, CompositeMode);
+        OVERLOAD(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndComposite, Image.Get(), Offset.X, Offset.Y,   SourceRectangle, Opacity, Interpolation, CompositeMode);
+        OVERLOAD(DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndComposite,   Image.Get(), DestinationRectangle, SourceRectangle, Opacity, Interpolation, CompositeMode);
+        
+        OVERLOAD(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndPerspective, Bitmap.Get(), Offset,               SourceRectangle, Opacity, Interpolation, Perspective);
+        OVERLOAD(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndPerspective, Bitmap.Get(), Offset.X, Offset.Y,   SourceRectangle, Opacity, Interpolation, Perspective);
+        OVERLOAD(DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndPerspective,   Bitmap.Get(), DestinationRectangle, SourceRectangle, Opacity, Interpolation, Perspective);
+        
+#undef OVERLOAD
 
-        BitmapFixture()
+        D2D1::Matrix3x2F InitialTransform;
+        D2D1::Matrix3x2F CurrentTransform;
+        
+        DrawImageFixture()
+            : Offset(Vector2{ 1, 2 })
+            , DestinationRectangle(Rect{ 3, 4, 5, 6 })
+            , SourceRectangle(Rect{ 7, 8, 9, 10 })
+            , Opacity(CanvasDrawingSession::DefaultDrawImageOpacity())
+            , Interpolation(CanvasDrawingSession::DefaultDrawImageInterpolation())
+            , CompositeMode()
+            , Perspective(Matrix4x4{ 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 })
         {
-            StubBitmap = Make<StubD2DBitmap>();
-            Image = As<ID2D1Image>(StubBitmap);
-            Bitmap = MakeBitmapManager()->GetOrCreate(nullptr, StubBitmap.Get());
+            DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([] { return D2D1_PRIMITIVE_BLEND_SOURCE_OVER; });
+            DeviceContext->GetUnitModeMethod.AllowAnyCall([] { return D2D1_UNIT_MODE_DIPS; });
+        }
+            
+        virtual ~DrawImageFixture()
+        {
+        }
+        
+        virtual void Validate(HRESULT hr)
+        {
+            Assert::AreEqual(S_OK, hr);
         }
 
-    private:
-        static std::shared_ptr<CanvasBitmapManager> MakeBitmapManager()
+        void EnableGetSetTransform(D2D1::Matrix3x2F initialTransform)
         {
+            CurrentTransform = InitialTransform = D2D1::Matrix3x2F(0, 2, -3, 0, -4, 5);
+
+            DeviceContext->SetTransformMethod.AllowAnyCall(
+                [=](const D2D1_MATRIX_3X2_F* m)
+                {
+                    CurrentTransform = *D2D1::Matrix3x2F::ReinterpretBaseType(m);
+                });
+            DeviceContext->GetTransformMethod.AllowAnyCall(
+                [=](D2D1_MATRIX_3X2_F* m)
+                {
+                    *m = CurrentTransform;
+                });
+        }
+            
+        ComPtr<CanvasCommandList> MakeCommandList()
+        {
+            auto commandListManager = std::make_shared<CanvasCommandListManager>();
+
+            auto d2dCommandList = Make<MockD2DCommandList>();
+            d2dCommandList->CloseMethod.AllowAnyCall();
+
+            return commandListManager->GetOrCreate(Make<StubCanvasDevice>().Get(), d2dCommandList.Get());
+        }
+
+        ComPtr<CanvasBitmap> MakeBitmap()
+        {
+            auto d2dBitmap = Make<StubD2DBitmap>();
+            d2dBitmap->GetSizeMethod.AllowAnyCall([] { return D2D1_SIZE_F{ 23, 45 }; });
+            d2dBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 67, 89 }; });
+
             auto converter = Make<MockWICFormatConverter>();
             auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-            return std::make_shared<CanvasBitmapManager>(adapter);
+            auto bitmapManager = std::make_shared<CanvasBitmapManager>(adapter);
+
+            return bitmapManager->GetOrCreate(Make<StubCanvasDevice>().Get(), d2dBitmap.Get());
         }
     };
 
-
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_NullImage)
+    class OverloadFilter
     {
-        BitmapFixture f;
+        uint32_t m_allOf;
+        uint32_t m_noneOf;
+        uint32_t m_anyOf;
 
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtOrigin(nullptr));
+    public:
+        OverloadFilter()
+            : m_allOf(0)
+            , m_noneOf(0)
+            , m_anyOf(0)
+        {}
 
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageWithSourceRect(nullptr, Vector2{}, Rect{}));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageWithSourceRectAndInterpolation(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageWithSourceRectAndInterpolationAndComposite(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
+        OverloadFilter All()
+        {
+            auto result = *this;
+            result.m_anyOf = 0xFFFF;
+            return result;
+        }
 
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtCoordsWithSourceRect(nullptr, 0, 0, Rect{}));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
+        OverloadFilter Matches(uint32_t flags)
+        {
+            auto result = *this;
+            result.m_allOf = flags;
+            return result;
+        }
+
+        OverloadFilter Exact(uint32_t flags)
+        {
+            auto result = *this;
+            result.m_allOf = flags;
+            result.m_noneOf = ~flags;
+            return result;
+        }
+
+        OverloadFilter Except(uint32_t flags)
+        {
+            auto result = *this;
+            result.m_noneOf = flags;
+            return result;
+        }
+
+        bool Accepts(uint32_t flags)
+        {
+            if (flags & m_anyOf)
+                return true;
+                
+            if (flags & m_noneOf)
+                return false;
+
+            if ((flags & m_allOf) == m_allOf)
+                return true;
+
+            return false;
+        }
+    };
+
+    enum DrawImageOverload
+    {
+        TAKES_IMAGE  = 1 << 0,
+        TAKES_BITMAP = 1 << 1,
+
+        TAKES_OFFSET = 1 << 2,
+        TAKES_DRECT  = 1 << 3,
+
+        TAKES_SOURCE_RECT   = (1 << 4),
+        TAKES_OPACITY       = (1 << 5),
+        TAKES_INTERPOLATION = (1 << 6),
+        TAKES_COMPOSITE     = (1 << 7),
+        TAKES_PERSPECTIVE   = (1 << 8),
+
+        ALSO_TAKES_OPACITY       = TAKES_OPACITY        | TAKES_SOURCE_RECT,
+        ALSO_TAKES_INTERPOLATION = TAKES_INTERPOLATION  | ALSO_TAKES_OPACITY,
+        ALSO_TAKES_COMPOSITE     = TAKES_COMPOSITE      | ALSO_TAKES_INTERPOLATION,
+        ALSO_TAKES_PERSPECTIVE   = TAKES_PERSPECTIVE    | ALSO_TAKES_INTERPOLATION,
+    };
+
+    template<typename FIXTURE, typename... ARGS>
+    static void CallDrawImageOverloads(OverloadFilter filter, int expectedCalls, ARGS... fixtureArgs)
+    {
+        // We track how many overloads were actually called as a sanity check to
+        // ensure that methods are really being called
+        CallCounter<> counter(L"OverloadsCalled");
+        counter.SetExpectedCalls(expectedCalls);
+
+#define CALL(method, flags)                     \
+        if (filter.Accepts(flags))              \
+        {                                       \
+            FIXTURE f(fixtureArgs...);          \
+            f.method();                         \
+            counter.WasCalled();                \
+        }
+
+        CALL(DrawImageAtOrigin,                                                       TAKES_IMAGE);
+        CALL(DrawImageAtOffset,                                                       TAKES_IMAGE  | TAKES_OFFSET);
+        CALL(DrawImageAtCoords,                                                       TAKES_IMAGE  | TAKES_OFFSET);
+        CALL(DrawImageToRect,                                                         TAKES_BITMAP | TAKES_DRECT);
+        CALL(DrawImageAtOffsetWithSourceRect,                                         TAKES_IMAGE  | TAKES_OFFSET | TAKES_SOURCE_RECT);
+        CALL(DrawImageAtCoordsWithSourceRect,                                         TAKES_IMAGE  | TAKES_OFFSET | TAKES_SOURCE_RECT);
+        CALL(DrawImageToRectWithSourceRect,                                           TAKES_IMAGE  | TAKES_DRECT  | TAKES_SOURCE_RECT);
+        CALL(DrawImageAtOffsetWithSourceRectAndOpacity,                               TAKES_IMAGE  | TAKES_OFFSET | ALSO_TAKES_OPACITY);
+        CALL(DrawImageAtCoordsWithSourceRectAndOpacity,                               TAKES_IMAGE  | TAKES_OFFSET | ALSO_TAKES_OPACITY);
+        CALL(DrawImageToRectWithSourceRectAndOpacity,                                 TAKES_IMAGE  | TAKES_DRECT  | ALSO_TAKES_OPACITY);
+        CALL(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolation,               TAKES_IMAGE  | TAKES_OFFSET | ALSO_TAKES_INTERPOLATION);
+        CALL(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolation,               TAKES_IMAGE  | TAKES_OFFSET | ALSO_TAKES_INTERPOLATION);
+        CALL(DrawImageToRectWithSourceRectAndOpacityAndInterpolation,                 TAKES_IMAGE  | TAKES_DRECT  | ALSO_TAKES_INTERPOLATION);
+        CALL(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndComposite,   TAKES_IMAGE  | TAKES_OFFSET | ALSO_TAKES_COMPOSITE);
+        CALL(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndComposite,   TAKES_IMAGE  | TAKES_OFFSET | ALSO_TAKES_COMPOSITE);
+        CALL(DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndComposite,     TAKES_IMAGE  | TAKES_DRECT  | ALSO_TAKES_COMPOSITE);
+        CALL(DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndPerspective, TAKES_BITMAP | TAKES_OFFSET | ALSO_TAKES_PERSPECTIVE);
+        CALL(DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndPerspective, TAKES_BITMAP | TAKES_OFFSET | ALSO_TAKES_PERSPECTIVE);
+        CALL(DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndPerspective,   TAKES_BITMAP | TAKES_DRECT  | ALSO_TAKES_PERSPECTIVE);
+
+#undef CALL
     }
 
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_NullBitmapImage)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenDrawingSessionIsClosed_DrawImageFails)
     {
-        BitmapFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRect(nullptr, Rect{}));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRect(nullptr, Rect{}, Rect{}));
+        struct Fixture : public DrawImageFixture
+        {
+            Fixture()
+            {
+                ThrowIfFailed(DS->Close());
+            }
+            
+            virtual void Validate(HRESULT hr) override
+            {
+                Assert::AreEqual(RO_E_CLOSED, hr, L"calling DrawImage after drawing session is closed should return RO_E_CLOSED");
+            }
+        };
 
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacity(nullptr, Rect{}, Rect{}, 0));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor));
-        Assert::AreEqual(E_INVALIDARG, f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor, Matrix4x4{}));
+        CallDrawImageOverloads<Fixture>(OverloadFilter().All(), 19);
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_BitmapInterpolationModes)
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedNullImage_ReturnsInvalidArg)
     {
+        struct Fixture : public DrawImageFixture
+        {
+            Fixture()
+            {
+                Image = nullptr;
+                Bitmap = nullptr;
+            }
+
+            virtual void Validate(HRESULT hr) override
+            {
+                Assert::AreEqual(E_INVALIDARG, hr, L"null Image/Bitmap should return E_INVALIDARG");
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().All(), 19);
+    }
+
+    struct DrawImageBitmapFixture : public DrawImageFixture
+    {
+        ComPtr<ID2D1Bitmap> D2DBitmap;
+        D2D1_SIZE_F BitmapSize;
+        D2D1_SIZE_U BitmapPixelSize;
+
+        DrawImageBitmapFixture()
+        {
+            Image = MakeBitmap();
+            Bitmap = As<ICanvasBitmap>(Image);
+            
+            D2DBitmap = GetWrappedResource<ID2D1Bitmap>(Image);
+            BitmapSize = D2DBitmap->GetSize();
+            BitmapPixelSize = D2DBitmap->GetPixelSize();
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_CallsDrawBitmap_WithCorrectRequiredParams)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture()
+            {
+                Offset = Vector2{ 0, 0 };
+                DestinationRectangle = Rect{ 0, 0, BitmapSize.width, BitmapSize.height };
+                SourceRectangle = DestinationRectangle;                    
+
+                D2D1_RECT_F expectedDestRect{ 0, 0, BitmapSize.width, BitmapSize.height };
+
+                DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                    [=](ID2D1Bitmap* actualBitmap, const D2D1_RECT_F* actualDestRect, FLOAT actualOpacity, D2D1_INTERPOLATION_MODE actualInterpolationMode, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
+                    {
+                        Assert::IsTrue(IsSameInstance(D2DBitmap.Get(), actualBitmap), L"ID2D1Bitmap passed to DrawBitmap was retrieved from ICanvasImage or CanvasBitmap parameter");
+                        Assert::AreEqual(expectedDestRect, *actualDestRect, L"destination rectangle");
+                        Assert::AreEqual(CanvasDrawingSession::DefaultDrawImageOpacity(), actualOpacity, L"opacity");
+                        Assert::AreEqual(static_cast<D2D1_INTERPOLATION_MODE>(CanvasDrawingSession::DefaultDrawImageInterpolation()), actualInterpolationMode, L"interpolation");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().All(), 19);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedOffset_CallsDrawBitmapWithCorrectDestRect)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture(D2D1_UNIT_MODE unitMode)
+            {
+                Offset = Vector2{ 1, 2 };
+
+                D2D1_RECT_F expectedDestRect;
+
+                switch (unitMode)
+                {
+                case D2D1_UNIT_MODE_DIPS:
+                    expectedDestRect = D2D1_RECT_F{ Offset.X, Offset.Y, Offset.X + BitmapSize.width, Offset.Y + BitmapSize.height };
+                    break;
+
+                case D2D1_UNIT_MODE_PIXELS:
+                    expectedDestRect = D2D1_RECT_F{ Offset.X, Offset.Y, Offset.X + BitmapPixelSize.width, Offset.Y + BitmapPixelSize.height };
+                    break;
+
+                default:
+                    assert(false);
+                }
+
+                DeviceContext->GetUnitModeMethod.AllowAnyCall([=] { return unitMode; });
+
+                DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                    [=](ID2D1Bitmap*, const D2D1_RECT_F* actualDestRect, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
+                    {
+                        Assert::AreEqual(expectedDestRect, *actualDestRect, L"destination rectangle");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Exact(TAKES_IMAGE | TAKES_OFFSET), 2, D2D1_UNIT_MODE_DIPS);
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Exact(TAKES_IMAGE | TAKES_OFFSET), 2, D2D1_UNIT_MODE_PIXELS);
+    }
+
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedOffsetAndSourceRect_CallsDrawBitmapWithCorrectDestRect)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture()
+            {
+                Offset = Vector2{ 1, 2 };
+
+                float width = BitmapSize.width / 2;
+                float height = BitmapSize.height / 2;
+
+                SourceRectangle = Rect{ 21, 22, width, height };
+
+                D2D1_RECT_F expectedDestRect{ Offset.X, Offset.Y, Offset.X + width, Offset.Y + height };
+
+                DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                    [=](ID2D1Bitmap*, const D2D1_RECT_F* actualDestRect, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
+                    {
+                        Assert::AreEqual(expectedDestRect, *actualDestRect, L"destination rectangle");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_OFFSET | TAKES_SOURCE_RECT), 10);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedOpacity_CallsDrawBitmapWithCorrectOpacity)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture()
+            {
+                Opacity = 0.5f;
+
+                DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                    [=](ID2D1Bitmap*, const D2D1_RECT_F*, FLOAT actualOpacity, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
+                    {
+                        Assert::AreEqual(Opacity, actualOpacity, L"opacity");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_OPACITY), 12);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedBitmapAndInterpolation_BitmapFastPathUsedWhenAppropriate)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture(CanvasImageInterpolation interpolation, bool expectBitmap)
+            {
+                Interpolation = interpolation;
+
+                if (expectBitmap)
+                {
+                    DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                        [=](ID2D1Bitmap*, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE actualInterpolation, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
+                        {
+                            Assert::AreEqual(static_cast<D2D1_INTERPOLATION_MODE>(Interpolation), actualInterpolation, L"interpolation mode");
+                        });
+                }
+                else
+                {                    
+                    DeviceContext->GetTransformMethod.AllowAnyCall();
+                    DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                    DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                        [=](ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE actualInterpolation, D2D1_COMPOSITE_MODE)
+                        {
+                            Assert::AreEqual(static_cast<D2D1_INTERPOLATION_MODE>(Interpolation), actualInterpolation, L"interpolation mode");
+                        });
+                }
+            }
+        };
+
         struct
         {
             CanvasImageInterpolation InterpolationMode;
@@ -351,42 +720,57 @@ public:
 
         for (auto& testPass : testPasses)
         {
-            BitmapFixture f;
+            //
+            // Generally we avoid calling DrawBitmap with any interpolation
+            // modes other than NearestNeighbor or Linear since these
+            // implementations don't currently match the DrawImage ones.
+            //
+            CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | ALSO_TAKES_INTERPOLATION), 6, testPass.InterpolationMode, testPass.ExpectDrawBitmapFastPath);
 
-            f.DeviceContext->GetPrimitiveBlendMethod.SetExpectedCalls(1, [] { return D2D1_PRIMITIVE_BLEND_SOURCE_OVER; });
-
-            if (testPass.ExpectDrawBitmapFastPath)
-            {
-                f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
-                    [&](ID2D1Bitmap* bitmap, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE interpolationMode, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
-                    {
-                        Assert::IsTrue(IsSameInstance(f.Image.Get(), bitmap));
-                        Assert::AreEqual(testPass.InterpolationMode, (CanvasImageInterpolation)interpolationMode);
-                    });
-            }
-            else
-            {
-                f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
-                    [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE)
-                    {
-                        Assert::AreEqual(f.Image.Get(), image);
-                        Assert::AreEqual(testPass.InterpolationMode, (CanvasImageInterpolation)interpolationMode);
-                    });
-            }
-
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), 0, 0, Rect{}, testPass.InterpolationMode, CanvasComposite::SourceOver));
+            //
+            // However, in the cases where the first parameter is explicitly a
+            // CanvasBitmap we have no choice but to call through to DrawBitmap.
+            //
+            CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_BITMAP | ALSO_TAKES_INTERPOLATION), 3, testPass.InterpolationMode, true);
         }
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_BitmapCompositeModes)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedBitmapAndComposite_BitmapFastPathUsedWhenAppropriate)
     {
-        struct
+        struct TestPass
         {
             CanvasComposite CompositeMode;
             D2D1_PRIMITIVE_BLEND PrimitiveBlend;
             bool ExpectDrawBitmapFastPath;
-        }
-        testPasses[] =
+        };
+
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture(TestPass params)
+            {
+                CompositeMode = params.CompositeMode;
+
+                DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([=] { return params.PrimitiveBlend; });
+
+                if (params.ExpectDrawBitmapFastPath)
+                {
+                    DeviceContext->DrawBitmapMethod.SetExpectedCalls(1);
+                }
+                else
+                {
+                    DeviceContext->GetTransformMethod.AllowAnyCall();
+                    DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                    DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                        [=](ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE actualCompositeMode)
+                        {
+                            Assert::AreEqual(static_cast<D2D1_COMPOSITE_MODE>(CompositeMode), actualCompositeMode, L"composite mode");
+                        });
+                }
+            }
+        };
+
+        TestPass testPasses[] =
         {
             { CanvasComposite::SourceOver,      D2D1_PRIMITIVE_BLEND_SOURCE_OVER, true  },
             { CanvasComposite::SourceOver,      D2D1_PRIMITIVE_BLEND_COPY,        false },
@@ -456,40 +840,279 @@ public:
 
         for (auto& testPass : testPasses)
         {
-            BitmapFixture f;
-
-            f.DeviceContext->GetPrimitiveBlendMethod.SetExpectedCalls(1, [&] { return testPass.PrimitiveBlend; });
-
-            if (testPass.ExpectDrawBitmapFastPath)
-            {
-                f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
-                    [&](ID2D1Bitmap* bitmap, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F*)
-                    {
-                        Assert::IsTrue(IsSameInstance(f.Image.Get(), bitmap));
-                    });
-            }
-            else
-            {
-                f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
-                    [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE compositeMode)
-                    {
-                        Assert::AreEqual(f.Image.Get(), image);
-                        Assert::AreEqual((D2D1_COMPOSITE_MODE)testPass.CompositeMode, compositeMode);
-                    });
-            }
-
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), 0, 0, Rect{}, CanvasImageInterpolation::Linear, testPass.CompositeMode));
+            CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(ALSO_TAKES_COMPOSITE), 3, testPass);
         }
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_InheritsCompositeModeFromPrimitiveBlend)
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedPerspective_DrawBitmapCalledWithCorrectPerspective)
     {
-        struct
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture()
+            {
+                DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
+                    [=](ID2D1Bitmap*, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F* perspective)
+                    {
+                        Assert::IsNotNull(perspective, L"perspective is not null");
+                        Assert::AreEqual(*ReinterpretAs<D2D1_MATRIX_4X4_F*>(&Perspective), *perspective, L"perspective");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(ALSO_TAKES_PERSPECTIVE), 3);
+    }
+
+    
+    struct DrawImageNonBitmapFixture : public DrawImageFixture
+    {
+        ComPtr<ID2D1CommandList> D2DCommandList;
+
+        DrawImageNonBitmapFixture()
+        {
+            Image = MakeCommandList();
+            Bitmap = nullptr;
+            
+            D2DCommandList = GetWrappedResource<ID2D1CommandList>(Image);
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_CallsDrawImage_WithCorrectRequiredParams)
+    {
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture()
+            {
+                Offset = Vector2{ 0, 0 };
+                DestinationRectangle = Rect{ 0, 0, 3, 4 };
+                Interpolation = CanvasDrawingSession::DefaultDrawImageInterpolation();
+
+                DeviceContext->GetTransformMethod.AllowAnyCall();
+                DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image* actualImage, D2D1_POINT_2F const* actualOffset, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE actualInterpolation, D2D1_COMPOSITE_MODE)
+                    {
+                        Assert::IsTrue(IsSameInstance(D2DCommandList.Get(), actualImage), L"ID2D1Image passed to DrawImage was retrieved from ICanvasImage parameter");
+                        Assert::AreEqual(ToD2DPoint(Offset), *actualOffset, L"offset");
+                        Assert::AreEqual(static_cast<D2D1_INTERPOLATION_MODE>(Interpolation), actualInterpolation, L"Interpolation");
+                        // Note: other tests validate the composite mode parameter
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE), 15);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedOffset_CallsDrawImageWithCorrectOffset)
+    {
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture()
+            {
+                Offset = Vector2{ 1, 2 };
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image*, D2D1_POINT_2F const* actualOffset, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+                    {
+                        Assert::AreEqual(ToD2DPoint(Offset), *actualOffset, L"offset");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | TAKES_OFFSET), 10);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedDestinationAndSourceRectangle_CallsDrawImageWithCorrectTransform)
+    {
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture()
+            {
+                DestinationRectangle = Rect{ 1, 2, 3, 4 };
+                SourceRectangle = Rect{ 5, 6, 7, 8 };
+
+                EnableGetSetTransform(D2D1::Matrix3x2F(0, 2, -3, 0, -4, 5));
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image* image, D2D1_POINT_2F const* actualOffset, D2D1_RECT_F const* sourceRectangle, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+                    {
+                        // The image is actually positioned and sized by
+                        // manipulating the transform, so the image itself is
+                        // drawn at the origin.
+
+                        Assert::AreEqual(D2D1_POINT_2F{ 0, 0 }, *actualOffset, L"offset");
+                        Assert::AreEqual(ToD2DRect(SourceRectangle), *sourceRectangle, L"SourceRectangle is passed through");
+
+                        using D2D1::Matrix3x2F;
+                        auto scaleMatrix = Matrix3x2F::Scale(
+                            DestinationRectangle.Width / SourceRectangle.Width,
+                            DestinationRectangle.Height / SourceRectangle.Height);
+                        auto offsetMatrix = Matrix3x2F::Translation(
+                            DestinationRectangle.X,
+                            DestinationRectangle.Y);
+                        auto expectedMatrix = scaleMatrix * offsetMatrix * InitialTransform;
+
+                        Assert::AreEqual((D2D1_MATRIX_3X2_F)expectedMatrix, (D2D1_MATRIX_3X2_F)CurrentTransform);
+                    });
+            }
+
+            virtual void Validate(HRESULT hr)
+            {
+                __super::Validate(hr);
+                Assert::AreEqual((D2D1_MATRIX_3X2_F)InitialTransform, (D2D1_MATRIX_3X2_F)CurrentTransform, L"Transform has been restored to initial value");
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | TAKES_DRECT), 4);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedDestinationAndZeroSizedSourceRectangle_DoesNotCallDrawImage)
+    {
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture()
+            {
+                DestinationRectangle = Rect{ 1, 2, 3, 4 };
+                SourceRectangle = Rect{ 5, 6, 0, 0 };
+
+                EnableGetSetTransform(D2D1::Matrix3x2F(0, 2, -3, 0, -4, 5));
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(0);
+            }
+
+            virtual void Validate(HRESULT hr)
+            {
+                __super::Validate(hr);
+                Assert::AreEqual((D2D1_MATRIX_3X2_F)InitialTransform, (D2D1_MATRIX_3X2_F)CurrentTransform, L"Transform has been restored to initial value");
+
+                // Although a zero sized source rectangle is arguably invalid,
+                // DrawBitmap will also quietly not draw anything in this case.
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | TAKES_DRECT), 4);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedBitmapAndDestinationAndSourceRectangle_WithSourceRectangleLargerThanImage_CallsDrawImageWithCorrectTransform)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture(D2D1_UNIT_MODE unitMode)
+            {
+                DeviceContext->GetUnitModeMethod.AllowAnyCall([=] { return unitMode; });
+
+                float width, height;
+                switch (unitMode)
+                {
+                case D2D1_UNIT_MODE_DIPS:
+                    width = BitmapSize.width;
+                    height = BitmapSize.height;
+                    break;
+                    
+                case D2D1_UNIT_MODE_PIXELS:
+                    width = static_cast<float>(BitmapPixelSize.width);
+                    height = static_cast<float>(BitmapPixelSize.height);
+                    break;
+                    
+                default:
+                    assert(false);
+                    ThrowHR(E_FAIL);
+                }
+                
+                DestinationRectangle = Rect{ 1, 2, 3, 4 };
+
+                SourceRectangle = Rect{ -width, -width, width * 2, height * 2 };
+                Interpolation = CanvasImageInterpolation::Anisotropic; // this will force DrawImage rather than DrawBitmap
+
+                EnableGetSetTransform(D2D1::Matrix3x2F(0, 2, -3, 0, -4, 5));
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image* image, D2D1_POINT_2F const* actualOffset, D2D1_RECT_F const* sourceRectangle, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+                    {
+                        // The image is actually positioned and sized by
+                        // manipulating the transform, so the image itself is
+                        // drawn at the origin.
+
+                        Assert::AreEqual(D2D1_POINT_2F{ 0, 0 }, *actualOffset, L"offset");
+                        Assert::AreEqual(D2D1_RECT_F{ 0, 0, width, height }, *sourceRectangle, L"SourceRectangle is clipped to bitmap size");
+
+                        using D2D1::Matrix3x2F;
+                        auto scaleMatrix = Matrix3x2F::Scale(
+                            DestinationRectangle.Width / width,
+                            DestinationRectangle.Height / height);
+                        auto offsetMatrix = Matrix3x2F::Translation(
+                            DestinationRectangle.X,
+                            DestinationRectangle.Y);
+                        auto expectedMatrix = scaleMatrix * offsetMatrix * InitialTransform;
+
+                        Assert::AreEqual((D2D1_MATRIX_3X2_F)expectedMatrix, (D2D1_MATRIX_3X2_F)CurrentTransform);
+                    });
+            }
+
+            virtual void Validate(HRESULT hr)
+            {
+                __super::Validate(hr);
+                Assert::AreEqual((D2D1_MATRIX_3X2_F)InitialTransform, (D2D1_MATRIX_3X2_F)CurrentTransform, L"Transform has been restored to initial value");
+            }
+        };
+
+        auto overloads = OverloadFilter().Matches(TAKES_IMAGE | TAKES_DRECT | ALSO_TAKES_INTERPOLATION);
+        auto expectedOverloads = 2;
+
+        CallDrawImageOverloads<Fixture>(overloads, expectedOverloads, D2D1_UNIT_MODE_DIPS);
+        CallDrawImageOverloads<Fixture>(overloads, expectedOverloads, D2D1_UNIT_MODE_PIXELS);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_CallsDrawImage_WithSpecifiedCompositeMode)
+    {
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture()
+            {
+                CompositeMode = CanvasComposite::MaskInvert;
+
+                DeviceContext->GetTransformMethod.AllowAnyCall();
+                DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE actualComposite)
+                    {
+                        Assert::AreEqual(static_cast<D2D1_COMPOSITE_MODE>(CompositeMode), actualComposite, L"Explicit composite mode parameter is passed through");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | ALSO_TAKES_COMPOSITE), 3);
+    }
+
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_CallsDrawImageWithCompositeModeDerivedFromPrimitiveBlend)
+    {
+        struct TestPass
         {
             D2D1_PRIMITIVE_BLEND PrimitiveBlend;
             D2D1_COMPOSITE_MODE ExpectedCompositeMode;
-        }
-        testPasses[] =
+        };
+
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture(TestPass params)
+            {
+                DeviceContext->GetTransformMethod.AllowAnyCall();
+                DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([=] { return params.PrimitiveBlend; });
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE compositeMode)
+                    {
+                        Assert::AreEqual(params.ExpectedCompositeMode, compositeMode);
+                    });
+            }
+        };
+
+        TestPass testPasses[] =
         {
             { D2D1_PRIMITIVE_BLEND_SOURCE_OVER, D2D1_COMPOSITE_MODE_SOURCE_OVER },
             { D2D1_PRIMITIVE_BLEND_COPY,        D2D1_COMPOSITE_MODE_SOURCE_COPY },
@@ -498,233 +1121,180 @@ public:
 
         for (auto& testPass : testPasses)
         {
-            BitmapFixture f;
-
-            f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([&] { return testPass.PrimitiveBlend; });
-
-            f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
-                [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE compositeMode)
-                {
-                    Assert::AreEqual(testPass.ExpectedCompositeMode, compositeMode);
-                });
-
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 0, 0, Rect{}, CanvasImageInterpolation::Cubic));
+            CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE).Except(TAKES_COMPOSITE), 12, testPass);
         }
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawImage_ErrorForPrimitiveBlendMin)
     {
-        BitmapFixture f;
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture()
+            {
+                DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([&] { return D2D1_PRIMITIVE_BLEND_MIN; });
+            }
 
-        f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([&] { return D2D1_PRIMITIVE_BLEND_MIN; });
+            virtual void Validate(HRESULT hr) override
+            {
+                Assert::AreEqual(E_FAIL, hr, L"Call to DrawImage expected to fail");
+                ValidateStoredErrorState(E_FAIL, Strings::DrawImageMinBlendNotSupported);
+            }
+        };
 
-        Assert::AreEqual(E_FAIL, f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 0, 0, Rect{}, CanvasImageInterpolation::Cubic));
-        ValidateStoredErrorState(E_FAIL, Strings::DrawImageMinBlendNotSupported);
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE).Except(TAKES_COMPOSITE), 12);
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_BitmapComputesCorrectDestinationSize)
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassedOpacity1_CallsDrawImageWithOriginalImage)
     {
-        BitmapFixture f;
-
-        const float x = 23;
-        const float y = 42;
-        const float w = 12;
-        const float h = 34;
-
-        f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
-
-        // When passing an explicit source size to DrawImage, that should be used to compute the DrawBitmap destination rect.
-        Rect sourceRect{ 1, 2, 3, 4 };
-
-        f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
-            [&](ID2D1Bitmap*, const D2D1_RECT_F* dest, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F* source, const D2D1_MATRIX_4X4_F*)
+        struct Fixture : public DrawImageNonBitmapFixture
+        {
+            Fixture()
             {
-                Assert::AreEqual(ToD2DRect(sourceRect), *source);
+                Opacity = 1;
 
-                Assert::AreEqual(x, dest->left);
-                Assert::AreEqual(y, dest->top);
-                Assert::AreEqual(x + sourceRect.Width, dest->right);
-                Assert::AreEqual(y + sourceRect.Height, dest->bottom);
-            });
+                DeviceContext->GetTransformMethod.AllowAnyCall();
+                DeviceContext->SetTransformMethod.AllowAnyCall();
 
-        ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(), x, y, sourceRect));
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image* actualImage, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+                    {
+                        Assert::IsTrue(IsSameInstance(D2DCommandList.Get(), actualImage), L"ID2D1Image passed to DrawImage was retrieved from ICanvasImage parameter");
+                    });
+            }
+        };
 
-        // When drawing with unit mode = dips, the bitmap size in dips should be used.
-        f.DeviceContext->GetUnitModeMethod.SetExpectedCalls(1, [] { return D2D1_UNIT_MODE_DIPS; });
-        f.StubBitmap->GetSizeMethod.SetExpectedCalls(1, [&] { return D2D1_SIZE_F{ w, h }; });
-
-        f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
-            [&](ID2D1Bitmap*, const D2D1_RECT_F* dest, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F* source, const D2D1_MATRIX_4X4_F*)
-            {
-                Assert::IsNull(source);
-
-                Assert::AreEqual(x, dest->left);
-                Assert::AreEqual(y, dest->top);
-                Assert::AreEqual(x + w, dest->right);
-                Assert::AreEqual(y + h, dest->bottom);
-            });
-
-        ThrowIfFailed(f.DS->DrawImageAtCoords(f.Bitmap.Get(), x, y));
-
-        // Or when drawing with unit mode = pixels, the bitmap size should be queried in pixel format instead.
-        f.DeviceContext->GetUnitModeMethod.SetExpectedCalls(1, [] { return D2D1_UNIT_MODE_PIXELS; });
-        f.StubBitmap->GetPixelSizeMethod.SetExpectedCalls(1, [&] { return D2D1_SIZE_U{ static_cast<uint32_t>(w), static_cast<uint32_t>(h) }; });
-
-        f.DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
-            [&](ID2D1Bitmap*, const D2D1_RECT_F* dest, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F* source, const D2D1_MATRIX_4X4_F*)
-            {
-                Assert::IsNull(source);
-
-                Assert::AreEqual(x, dest->left);
-                Assert::AreEqual(y, dest->top);
-                Assert::AreEqual(x + w, dest->right);
-                Assert::AreEqual(y + h, dest->bottom);
-            });
-
-        ThrowIfFailed(f.DS->DrawImageAtCoords(f.Bitmap.Get(), x, y));
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | TAKES_OPACITY), 9);
     }
 
-    class BitmapFixtureWithDrawImageVerification : public BitmapFixture
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenPassesOpacityLessThan1_CallsDrawImageWithEffect)
     {
-    public:
-        BitmapFixtureWithDrawImageVerification(
-            Rect const& sourceRect,
-            CanvasImageInterpolation interpolation = CanvasImageInterpolation::Linear,
-            CanvasComposite composite = CanvasComposite::Copy)
+        struct Fixture : public DrawImageNonBitmapFixture
         {
-            D2D1_RECT_F expectedSourceRect = ToD2DRect(sourceRect);
-            D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
-            D2D1_COMPOSITE_MODE expectedComposite = static_cast<D2D1_COMPOSITE_MODE>(composite);
-            
-            DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([] { return D2D1_PRIMITIVE_BLEND_COPY; });
+            Fixture()
+            {
+                Opacity = 0.5f;
 
-            DeviceContext->DrawImageMethod.SetExpectedCalls(1,
-                [=](ID2D1Image* image, CONST D2D1_POINT_2F *targetOffset, CONST D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
-                {
-                    Assert::IsNotNull(image);
-                    Assert::AreEqual(Image.Get(), image);
-                    Assert::AreEqual(expectedSourceRect, *imageRectangle);
-                    Assert::AreEqual(expectedInterpolation, interpolationMode);
-                    Assert::AreEqual(expectedComposite, compositeMode);
-                });
-        }
-    };
-
-    class BitmapFixtureWithDrawBitmapVerification : public BitmapFixture
-    {
-    public:
-        BitmapFixtureWithDrawBitmapVerification(
-            Rect const& destRect,
-            Rect* sourceRect = nullptr,
-            float opacity = 1.0f,
-            CanvasImageInterpolation interpolation = CanvasImageInterpolation::Linear,
-            Matrix4x4* perspective = nullptr)
-        {
-            D2D1_RECT_F expectedDestRect = ToD2DRect(destRect);
-
-            D2D1_RECT_F expectedSourceRect;
-            if (sourceRect) expectedSourceRect = ToD2DRect(*sourceRect);
-            bool expectSourceRect = sourceRect != nullptr;
-
-            D2D1_INTERPOLATION_MODE expectedInterpolation = static_cast<D2D1_INTERPOLATION_MODE>(interpolation);
-
-            D2D1_MATRIX_4X4_F expectedPerspective;
-            if (perspective) expectedPerspective = *(ReinterpretAs<D2D1_MATRIX_4X4_F*>(perspective));
-            bool expectPerspective = perspective != nullptr;
-
-            DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
-
-            DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
-                [=](ID2D1Bitmap* bitmap, const D2D1_RECT_F* destRect, FLOAT opacity, D2D1_INTERPOLATION_MODE interpolation, const D2D1_RECT_F* sourceRect, const D2D1_MATRIX_4X4_F* perspective)
-                {
-                    Assert::IsNotNull(bitmap);
-                    auto image = As<ID2D1Image>(bitmap);
-                    Assert::AreEqual(Image.Get(), image.Get());
-                    Assert::AreEqual(expectedDestRect, *destRect);
-
-                    if (expectSourceRect)
+                DeviceContext->GetTransformMethod.AllowAnyCall();
+                DeviceContext->SetTransformMethod.AllowAnyCall();
+                
+                DeviceContext->CreateEffectMethod.SetExpectedCalls(1,
+                    [=] (IID const& iid, ID2D1Effect** effect)
                     {
-                        Assert::IsNotNull(sourceRect);
-                        Assert::AreEqual(expectedSourceRect, *sourceRect);
-                    }
-                    else
+                        return Make<StubD2DEffect>(iid).CopyTo(effect);
+                    });
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image* actualImage, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
                     {
-                        Assert::IsNull(sourceRect);
-                    }
+                        auto colorMatrixEffect = MaybeAs<ID2D1Effect>(actualImage);
+                        Assert::IsNotNull(colorMatrixEffect.Get(), L"DrawImage was called with an effect");
+                        Assert::AreEqual(1U, colorMatrixEffect->GetInputCount());
 
-                    Assert::AreEqual(expectedInterpolation, interpolation);
+                        ComPtr<ID2D1Image> actualInput;
+                        colorMatrixEffect->GetInput(0, &actualInput);
 
-                    if (expectPerspective)
-                    {
-                        Assert::IsNotNull(perspective);
-                        Assert::AreEqual(expectedPerspective, *perspective);
-                    }
-                    else
-                    {
-                        Assert::IsNull(perspective);
-                    }
-                });
-        }
-    };
+                        Assert::IsTrue(IsSameInstance(D2DCommandList.Get(), actualInput.Get()), L"ID2D1Image passed to DrawImage is the input to the effect");
 
-    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_Overloads)
-    {
-        Rect destRect{ 33, 12, 4, 2 };
-        Rect sourceRect{ 3, 4, 7, 9 };
-        CanvasImageInterpolation interpolation = CanvasImageInterpolation::MultiSampleLinear;
-        CanvasComposite composite = CanvasComposite::Add;
-        const float opacity = 0.45f;
-        Matrix4x4 perspective = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+                        CLSID clsId;
+                        colorMatrixEffect->GetValue(D2D1_PROPERTY_CLSID, &clsId);
+                        Assert::AreEqual(CLSID_D2D1ColorMatrix, clsId, L"Effect is a ColorMatrix effect");
 
-        {
-            BitmapFixtureWithDrawBitmapVerification f(Rect{ 123, 456, sourceRect.Width, sourceRect.Height }, &sourceRect);
-            ThrowIfFailed(f.DS->DrawImageWithSourceRect(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect));
-        }
-        {
-            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
-            ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolation(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation));
-        }
-        {
-            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
-            ThrowIfFailed(f.DS->DrawImageWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), Vector2{ 123, 456 }, sourceRect, interpolation, composite));
-        }
-        {
-            BitmapFixtureWithDrawBitmapVerification f(Rect{ 123, 456, sourceRect.Width, sourceRect.Height }, &sourceRect);
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRect(f.Bitmap.Get(), 123, 456, sourceRect));
-        }
-        {
-            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation);
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolation(f.Bitmap.Get(), 123, 456, sourceRect, interpolation));
-        }
-        {
-            BitmapFixtureWithDrawImageVerification f(sourceRect, interpolation, composite);
-            ThrowIfFailed(f.DS->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(f.Bitmap.Get(), 123, 456, sourceRect, interpolation, composite));
-        }
-        {
-            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity);
-            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacity(f.Bitmap.Get(), destRect, sourceRect, opacity));
-        }
-        {
-            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation);
-            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation));
-        }
-        {
-            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect, opacity, interpolation, &perspective);
-            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(f.Bitmap.Get(), destRect, sourceRect, opacity, interpolation, perspective));
-        }
-        {
-            BitmapFixtureWithDrawBitmapVerification f(destRect, &sourceRect);
-            ThrowIfFailed(f.DS->DrawBitmapWithDestRectAndSourceRect(f.Bitmap.Get(), destRect, sourceRect));
-        }
-        {
-            BitmapFixtureWithDrawBitmapVerification f(destRect);
-            ThrowIfFailed(f.DS->DrawBitmapWithDestRect(f.Bitmap.Get(), destRect));
-        }
+                        D2D1_MATRIX_5X4_F expectedMatrix = D2D1::Matrix5x4F(
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, Opacity,
+                            0, 0, 0, 0);
+
+                        D2D1_MATRIX_5X4_F actualMatrix;
+                        colorMatrixEffect->GetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, &actualMatrix);
+
+                        Assert::AreEqual(expectedMatrix, actualMatrix, L"ColorMatrix is identity apart from alpha multiply to give opacity");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | TAKES_OPACITY), 9);
     }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenUsingOpacityEffectAndPassedBitmap_InsertsDpiCompensationEffect)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture()
+            {
+                Opacity = 0.5f;
+
+                //
+                // Force DrawImage to be used rather than DrawBitmap by picking
+                // an interpolation value that isn't supported by DrawBitmap.
+                //
+                // When the source is a bitmap we need to ensure that a suitable
+                // DPI compenstion effect has been added between the opacity
+                // effect and the bitmap.
+                //
+                Interpolation = CanvasImageInterpolation::Cubic;
+
+                DeviceContext->GetTransformMethod.AllowAnyCall();
+                DeviceContext->SetTransformMethod.AllowAnyCall();
+                
+                DeviceContext->CreateEffectMethod.SetExpectedCalls(2,
+                    [=] (IID const& iid, ID2D1Effect** effect)
+                    {
+                        return Make<StubD2DEffect>(iid).CopyTo(effect);
+                    });
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image* actualImage, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+                    {
+                        auto colorMatrixEffect = MaybeAs<ID2D1Effect>(actualImage);
+                        Assert::IsNotNull(colorMatrixEffect.Get(), L"DrawImage was called with an effect");
+
+                        CLSID clsId;
+                        colorMatrixEffect->GetValue(D2D1_PROPERTY_CLSID, &clsId);
+                        Assert::AreEqual(CLSID_D2D1ColorMatrix, clsId, L"Effect is a ColorMatrix effect");
+
+                        D2D1_MATRIX_5X4_F expectedMatrix = D2D1::Matrix5x4F(
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, Opacity,
+                            0, 0, 0, 0);
+
+                        D2D1_MATRIX_5X4_F actualMatrix;
+                        colorMatrixEffect->GetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, &actualMatrix);
+
+                        Assert::AreEqual(expectedMatrix, actualMatrix, L"ColorMatrix is identity apart from alpha multiply to give opacity");
+
+                        // The input to the color matrix should be a dpi compensation effect
+                        Assert::AreEqual(1U, colorMatrixEffect->GetInputCount());
+
+                        ComPtr<ID2D1Image> colorMatrixInput;
+                        colorMatrixEffect->GetInput(0, &colorMatrixInput);
+
+                        auto dpiEffect = MaybeAs<ID2D1Effect>(colorMatrixInput);
+                        Assert::IsNotNull(dpiEffect.Get(), L"The input to the ColorMatrix should also be an effect");
+
+                        dpiEffect->GetValue(D2D1_PROPERTY_CLSID, &clsId);
+                        Assert::AreEqual(CLSID_D2D1DpiCompensation, clsId, L"Effect is a DpiCompensation effect");
+
+                        Assert::AreEqual(1U, dpiEffect->GetInputCount());
+
+                        ComPtr<ID2D1Image> dpiCompensationInput;
+                        dpiEffect->GetInput(0, &dpiCompensationInput);
+                        
+                        Assert::IsTrue(IsSameInstance(D2DBitmap.Get(), dpiCompensationInput.Get()), L"ID2D1Image passed to DrawImage is the input to the DPI compensation effect");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | TAKES_INTERPOLATION), 6);
+    }
+
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawImage_GaussianBlurEffect)
     {
-        BitmapFixture f;
+        DrawImageBitmapFixture f;
 
         ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
         
@@ -754,7 +1324,7 @@ public:
 
         ComPtr<Effects::GaussianBlurEffect> blurEffect = Make<Effects::GaussianBlurEffect>();
         
-        ThrowIfFailed(blurEffect->put_Source(f.Bitmap.Get()));
+        ThrowIfFailed(blurEffect->put_Source(As<IGraphicsEffectSource>(f.Bitmap).Get()));
 
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
 
@@ -3634,21 +4204,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->Clear(Color{}));
 
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImage(nullptr, Vector2{}));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoords(nullptr, 0, 0));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtOrigin(nullptr));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageWithSourceRect(nullptr, Vector2{}, Rect{}));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageWithSourceRectAndInterpolation(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageWithSourceRectAndInterpolationAndComposite(nullptr, Vector2{}, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoordsWithSourceRect(nullptr, 0, 0, Rect{}));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoordsWithSourceRectAndInterpolation(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(nullptr, 0, 0, Rect{}, CanvasImageInterpolation::NearestNeighbor, CanvasComposite::SourceOver));
-
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRect(nullptr, Rect{}));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRect(nullptr, Rect{}, Rect{}));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRectAndOpacity(nullptr, Rect{}, Rect{}, 0));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(nullptr, Rect{}, Rect{}, 0, CanvasImageInterpolation::NearestNeighbor, Numerics::Matrix4x4{}));
+        // See also CanvasDrawingSession_DrawImage_WhenDrawingSessionisClosed_DrawImageFails 
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawLineWithBrush(Vector2{}, Vector2{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawLineAtCoordsWithBrush(0, 0, 0, 0, nullptr));

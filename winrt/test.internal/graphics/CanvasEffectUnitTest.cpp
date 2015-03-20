@@ -58,7 +58,7 @@ public:
         m_testEffect->MockSetProperty =
             [&]
             {
-            Assert::IsFalse(isSetPropertyCalled);
+                Assert::IsFalse(isSetPropertyCalled);
                 isSetPropertyCalled = true;
             };
 
@@ -66,7 +66,7 @@ public:
         m_testEffect->MockGetProperty =
             [&]
             {
-            Assert::IsFalse(isGetPropertyCalled);
+                Assert::IsFalse(isGetPropertyCalled);
                 isGetPropertyCalled = true;
             };
 
@@ -231,8 +231,7 @@ public:
 
         f.m_drawingSession = drawingSessionManager->Create(f.m_deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
 
-        Vector2 position = { 0, 0 };
-        f.m_drawingSession->DrawImage(testEffect, position);
+        f.m_drawingSession->DrawImageAtOrigin(testEffect);
 
         Assert::IsTrue(setInputCalled);
         Assert::IsTrue(setInputCountCalled);
@@ -246,7 +245,7 @@ public:
 
         auto drawingSession2 = drawingSessionManager->Create(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
 
-        drawingSession2->DrawImage(testEffect, position);
+        drawingSession2->DrawImageAtOrigin(testEffect);
     }
 
     TEST_METHOD_EX(CanvasEffect_Rerealize)
@@ -291,14 +290,14 @@ public:
         auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1, false);
 
         // Validate drawing with a null source.
-        Assert::AreEqual(E_POINTER, f.m_drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+        Assert::AreEqual(E_POINTER, f.m_drawingSession->DrawImageAtOrigin(testEffect.Get()));
         
         // Validate drawing with a source that is not the right type.
         auto invalidSource = Make<InvalidEffectSourceType>();
 
         testEffect->SetSource(0, invalidSource.Get());
 
-        Assert::AreEqual(E_NOINTERFACE, f.m_drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+        Assert::AreEqual(E_NOINTERFACE, f.m_drawingSession->DrawImageAtOrigin(testEffect.Get()));
 
         ValidateStoredErrorState(E_NOINTERFACE, L"Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.");
     }
@@ -326,7 +325,7 @@ public:
 
         testEffect->put_Source(testEffect.Get());
 
-        Assert::AreEqual(D2DERR_CYCLIC_GRAPH, f.m_drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
+        Assert::AreEqual(D2DERR_CYCLIC_GRAPH, f.m_drawingSession->DrawImageAtOrigin(testEffect.Get()));
 
         // Break the cycle so we don't leak memory.
         testEffect->put_Source(nullptr);
@@ -380,49 +379,49 @@ public:
         testEffects[2]->put_BlurAmount(0);
 
         // Drawing the first time should set properties and sources on all three effects.
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 1, 1, 1 }, { 1, 1, 1 });
 
         // Drawing again with no configuration changes should not re-set any state through to D2D.
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 1, 1, 1 }, { 1, 1, 1 });
 
         // Draw after changing a source of the root effect.
         testEffects[0]->put_Source(testEffects[1].Get());
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 2, 1, 1 }, { 1, 1, 1 });
 
         // Draw after changing a source of the second level effect.
         testEffects[1]->put_Source(testEffects[2].Get());
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 2, 2, 1 }, { 1, 1, 1 });
 
         // Draw after changing a source of the third level effect.
         testEffects[2]->put_Source(stubBitmap.Get());
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 1, 1, 1 });
 
         // Draw after changing a property of the root effect.
         testEffects[0]->put_BlurAmount(1);
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 1, 1 });
 
         // Draw after changing a property of the second level effect.
         testEffects[1]->put_BlurAmount(1);
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 1 });
 
         // Draw after changing a property of the third level effect.
         testEffects[2]->put_BlurAmount(1);
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 2 });
 
         // Draw starting at the second level of the graph should not re-set anything.
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[1].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[1].Get()));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 2 });
 
         // Draw starting at the third level of the graph should not re-set anything.
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[2].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[2].Get()));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 2, 2, 2 });
 
         // Drawing the third level effect on a second device should re-realize just that effect.
@@ -434,11 +433,11 @@ public:
         deviceContext2->CreateEffectMethod.AllowAnyCall(createCountingEffect);
         deviceContext2->DrawImageMethod.AllowAnyCall();
 
-        ThrowIfFailed(drawingSession2->DrawImage(testEffects[2].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(drawingSession2->DrawImageAtOrigin(testEffects[2].Get()));
         CheckCallCount(mockEffects, 4, { 2, 2, 2, 1 }, { 2, 2, 2, 1 });
 
         // Drawing the root effect back on the original device should notice that the third level effect needs to be re-realized.
-        ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
+        ThrowIfFailed(f.m_drawingSession->DrawImageAtOrigin(testEffects[0].Get()));
         CheckCallCount(mockEffects, 5, { 2, 3, 2, 1, 1 }, { 2, 2, 2, 1, 1 });
     }
 

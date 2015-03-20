@@ -33,6 +33,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         return internal->GetRealizedD2DStrokeStyle(d2dFactory.Get());
     }
+
+
+    static D2D1_SIZE_F GetBitmapSize(D2D1_UNIT_MODE unitMode, ID2D1Bitmap* bitmap)
+    {
+        switch (unitMode)
+        {
+        case D2D1_UNIT_MODE_DIPS:
+            return bitmap->GetSize();
+            
+        case D2D1_UNIT_MODE_PIXELS:
+        {
+            auto pixelSize = bitmap->GetPixelSize();
+            return D2D1_SIZE_F{ static_cast<float>(pixelSize.width), static_cast<float>(pixelSize.height) };
+        }
+
+        default:
+            assert(false);
+            return D2D1_SIZE_F{};
+        }
+    }
     
 
     //
@@ -161,11 +181,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // DrawImage
     //  
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawImage(
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOrigin(
+        ICanvasImage* image)
+    {
+        auto offset = Vector2{ 0, 0 };
+        return DrawImageImpl(image, &offset, nullptr, nullptr, DefaultDrawImageOpacity(), DefaultDrawImageInterpolation(), nullptr);
+    }
+
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOffset(
         ICanvasImage* image,
         Vector2 offset)
     {
-        return DrawImageImpl(image, offset, nullptr, CanvasImageInterpolation::Linear, nullptr);
+        return DrawImageImpl(image, &offset, nullptr, nullptr, DefaultDrawImageOpacity(), DefaultDrawImageInterpolation(), nullptr);
     }
 
 
@@ -174,42 +202,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float x,
         float y)
     {
-        return DrawImageImpl(image, Vector2{ x, y }, nullptr, CanvasImageInterpolation::Linear, nullptr);
+        auto offset = Vector2{ x, y };
+        return DrawImageImpl(image, &offset, nullptr, nullptr, DefaultDrawImageOpacity(), DefaultDrawImageInterpolation(), nullptr);
     }
 
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOrigin(
-        ICanvasImage* image)
-    {
-        return DrawImageImpl(image, Vector2{ 0, 0 }, nullptr, CanvasImageInterpolation::Linear, nullptr);
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageToRect(
+        ICanvasBitmap* bitmap,
+        Rect destinationRect)
+    {   
+        return DrawBitmapImpl(bitmap, nullptr, &destinationRect, nullptr, DefaultDrawImageOpacity(), DefaultDrawImageInterpolation(), nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRect(
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOffsetWithSourceRect(
         ICanvasImage* image,
         Vector2 offset,
         Rect sourceRect)
     {
-        return DrawImageImpl(image, offset, &sourceRect, CanvasImageInterpolation::Linear, nullptr);
+        return DrawImageImpl(image, &offset, nullptr, &sourceRect, DefaultDrawImageOpacity(), DefaultDrawImageInterpolation(), nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRectAndInterpolation(
-        ICanvasImage* image,
-        Vector2 offset,
-        Rect sourceRect,
-        CanvasImageInterpolation interpolation)
-    {
-        return DrawImageImpl(image, offset, &sourceRect, interpolation, nullptr);
-    }
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawImageWithSourceRectAndInterpolationAndComposite(
-        ICanvasImage* image,
-        Vector2 offset,
-        Rect sourceRect,
-        CanvasImageInterpolation interpolation,
-        CanvasComposite composite)
-    {
-        return DrawImageImpl(image, offset, &sourceRect, interpolation, &composite);
-    }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRect(
         ICanvasImage* image,
@@ -217,242 +230,468 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float y,
         Rect sourceRect)
     {
-        return DrawImageImpl(image, Vector2{ x, y }, &sourceRect, CanvasImageInterpolation::Linear, nullptr);
+        auto offset = Vector2{ x, y };
+        return DrawImageImpl(image, &offset, nullptr, &sourceRect, DefaultDrawImageOpacity(), DefaultDrawImageInterpolation(), nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndInterpolation(
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageToRectWithSourceRect(
         ICanvasImage* image,
-        float x,
-        float y,
-        Rect sourceRect,
-        CanvasImageInterpolation interpolation)
-    {
-        return DrawImageImpl(image, Vector2{ x, y }, &sourceRect, interpolation, nullptr);
-    }
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndInterpolationAndComposite(
-        ICanvasImage* image,
-        float x,
-        float y,
-        Rect sourceRect,
-        CanvasImageInterpolation interpolation,
-        CanvasComposite composite)
-    {
-        return DrawImageImpl(image, Vector2{ x, y }, &sourceRect, interpolation, &composite);
-    }
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRect(
-        ICanvasBitmap* bitmap,
-        Rect destinationRect)
-    {   
-        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, nullptr, 1.0f, CanvasImageInterpolation::Linear, nullptr);
-    }
-
-
-    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRect(
-        ICanvasBitmap* bitmap,
         Rect destinationRect,
         Rect sourceRect)
     {
-        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, 1.0f, CanvasImageInterpolation::Linear, nullptr);
+        return DrawImageImpl(image, nullptr, &destinationRect, &sourceRect, DefaultDrawImageOpacity(), DefaultDrawImageInterpolation(), nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectAndOpacity(
-        ICanvasBitmap* bitmap,
-        Rect destinationRect,
-        Rect sourceRect,
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOffsetWithSourceRectAndOpacity(
+        ICanvasImage* image, 
+        Vector2 offset,
+        Rect sourceRectangle,
         float opacity)
     {
-        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, opacity, CanvasImageInterpolation::Linear, nullptr);
+        return DrawImageImpl(image, &offset, nullptr, &sourceRectangle, opacity, DefaultDrawImageInterpolation(), nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolation(
-        ICanvasBitmap* bitmap,
-        Rect destinationRect,
-        Rect sourceRect,
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndOpacity(
+        ICanvasImage* image, 
+        float x,
+        float y,
+        Rect sourceRectangle,
+        float opacity)
+    {
+        auto offset = Vector2{ x, y };
+        return DrawImageImpl(image, &offset, nullptr, &sourceRectangle, opacity, DefaultDrawImageInterpolation(), nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageToRectWithSourceRectAndOpacity(
+        ICanvasImage* image,
+        Rect destinationRectangle,
+        Rect sourceRectangle,
+        float opacity)
+    {
+        return DrawImageImpl(image, nullptr, &destinationRectangle, &sourceRectangle, opacity, DefaultDrawImageInterpolation(), nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolation(
+        ICanvasImage* image, 
+        Vector2 offset,
+        Rect sourceRectangle,
         float opacity,
         CanvasImageInterpolation interpolation)
     {
-        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, opacity, interpolation, nullptr);
+        return DrawImageImpl(image, &offset, nullptr, &sourceRectangle, opacity, interpolation, nullptr);
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectAndOpacityAndInterpolationAndPerspective(
-        ICanvasBitmap* bitmap,
-        Rect destinationRect,
-        Rect sourceRect,
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolation(
+        ICanvasImage* image, 
+        float x,
+        float y,
+        Rect sourceRectangle,
+        float opacity,
+        CanvasImageInterpolation interpolation)
+    {
+        auto offset = Vector2{ x, y };
+        return DrawImageImpl(image, &offset, nullptr, &sourceRectangle, opacity, interpolation, nullptr);
+    }
+    
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageToRectWithSourceRectAndOpacityAndInterpolation(
+        ICanvasImage* image,
+        Rect destinationRectangle,
+        Rect sourceRectangle,
+        float opacity,
+        CanvasImageInterpolation interpolation)
+    {
+        return DrawImageImpl(image, nullptr, &destinationRectangle, &sourceRectangle, opacity, interpolation, nullptr);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndComposite(
+        ICanvasImage* image, 
+        Vector2 offset,
+        Rect sourceRectangle,
         float opacity,
         CanvasImageInterpolation interpolation,
-        ABI::Microsoft::Graphics::Canvas::Numerics::Matrix4x4 perspective)
+        CanvasComposite composite)
     {
-        return DrawBitmapWithDestRectAndSourceRectImpl(bitmap, destinationRect, &sourceRect, opacity, interpolation, &perspective);
+        return DrawImageImpl(image, &offset, nullptr, &sourceRectangle, opacity, interpolation, &composite);
     }
 
-    // DrawBitmap uses the current primitive blend setting, but DrawImage takes an explicit
-    // composite mode parameter. We can only substitute the former for the latter if these match.
-    //
-    // In some cases where they do not match, we could change the primitive blend, use DrawBitmap,
-    // then change it back again. But that would be more intrusive, so this implementation plays
-    // it safe and only optimizes the simple case where the modes match exactly.
-    //
-    // If the composite parameter is null, the caller did not explicitly specify a composite mode.
-    // In that case we will use GetCompositeModeFromPrimitiveBlend, so any primitive blend that
-    // has a matching composite mode is valid.
-    static bool IsValidDrawBitmapCompositeMode(CanvasComposite const* composite, ID2D1DeviceContext1* deviceContext)
-    {
-        switch (deviceContext->GetPrimitiveBlend())
-        {
-        case D2D1_PRIMITIVE_BLEND_SOURCE_OVER:
-            return !composite || *composite == CanvasComposite::SourceOver;
-
-        case D2D1_PRIMITIVE_BLEND_COPY:
-            return !composite || *composite == CanvasComposite::Copy;
-
-        case D2D1_PRIMITIVE_BLEND_ADD:
-            return !composite || *composite == CanvasComposite::Add;
-
-        default:
-            return false;
-        }
-    }
-
-    // When using a DrawImage overload that does not take an explicit composite mode parameter,
-    // we try to match the current device context primitive blend setting.
-    static D2D1_COMPOSITE_MODE GetCompositeModeFromPrimitiveBlend(ID2D1DeviceContext1* deviceContext)
-    {
-        switch (deviceContext->GetPrimitiveBlend())
-        {
-        case D2D1_PRIMITIVE_BLEND_SOURCE_OVER:
-            return D2D1_COMPOSITE_MODE_SOURCE_OVER;
-
-        case D2D1_PRIMITIVE_BLEND_COPY:
-            return D2D1_COMPOSITE_MODE_SOURCE_COPY;
-
-        case D2D1_PRIMITIVE_BLEND_ADD:
-            return D2D1_COMPOSITE_MODE_PLUS;
-
-        case D2D1_PRIMITIVE_BLEND_MIN:
-            ThrowHR(E_FAIL, HStringReference(Strings::DrawImageMinBlendNotSupported).Get());
-
-        default:
-            ThrowHR(E_UNEXPECTED);
-        }
-    }
-
-    static bool IsValidDrawBitmapInterpolationMode(CanvasImageInterpolation interpolation)
-    {
-        return interpolation == CanvasImageInterpolation::Linear ||
-               interpolation == CanvasImageInterpolation::NearestNeighbor;
-    }
-
-    HRESULT CanvasDrawingSession::DrawImageImpl(
-        ICanvasImage* image,
-        Vector2 offset,
-        Rect* sourceRect,
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndComposite(
+        ICanvasImage* image, 
+        float x,
+        float y,
+        Rect sourceRectangle,
+        float opacity,
         CanvasImageInterpolation interpolation,
-        CanvasComposite const* composite)
+        CanvasComposite composite)
     {
-        return ExceptionBoundary(
-            [&]
+        auto offset = Vector2{ x, y };
+        return DrawImageImpl(image, &offset, nullptr, &sourceRectangle, opacity, interpolation, &composite);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndComposite(
+        ICanvasImage* image,
+        Rect destinationRectangle,
+        Rect sourceRectangle,
+        float opacity,
+        CanvasImageInterpolation interpolation,
+        CanvasComposite composite)
+    {
+        return DrawImageImpl(image, nullptr, &destinationRectangle, &sourceRectangle, opacity, interpolation, &composite);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtOffsetWithSourceRectAndOpacityAndInterpolationAndPerspective(
+        ICanvasBitmap* bitmap, 
+        Vector2 offset,
+        Rect sourceRectangle,
+        float opacity,
+        CanvasImageInterpolation interpolation,
+        Matrix4x4 perspective)
+    {
+        return DrawBitmapImpl(bitmap, &offset, nullptr, &sourceRectangle, opacity, interpolation, &perspective);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageAtCoordsWithSourceRectAndOpacityAndInterpolationAndPerspective(
+        ICanvasBitmap* bitmap, 
+        float x,
+        float y,
+        Rect sourceRectangle,
+        float opacity,
+        CanvasImageInterpolation interpolation,
+        Matrix4x4 perspective)
+    {
+        auto offset = Vector2{ x, y };
+        return DrawBitmapImpl(bitmap, &offset, nullptr, &sourceRectangle, opacity, interpolation, &perspective);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawImageToRectWithSourceRectAndOpacityAndInterpolationAndPerspective(
+        ICanvasBitmap* bitmap,
+        Rect destinationRectangle,
+        Rect sourceRectangle,
+        float opacity,
+        CanvasImageInterpolation interpolation,
+        Matrix4x4 perspective)
+    {
+        return DrawBitmapImpl(bitmap, nullptr, &destinationRectangle, &sourceRectangle, opacity, interpolation, &perspective);
+    }
+
+
+    class DrawImageWorker
+    {
+        ID2D1DeviceContext1* m_deviceContext;
+        Vector2* m_offset;
+        Rect* m_destinationRect;
+        Rect* m_sourceRect;
+        float m_opacity;
+        CanvasImageInterpolation m_interpolation;
+
+        D2D1_RECT_F m_d2dSourceRect;
+        ComPtr<ID2D1Image> m_opacityEffectOutput;
+
+    public:
+        DrawImageWorker(ID2D1DeviceContext1* deviceContext, Vector2* offset, Rect* destinationRect, Rect* sourceRect, float opacity, CanvasImageInterpolation interpolation)
+            : m_deviceContext(deviceContext)
+            , m_offset(offset)
+            , m_destinationRect(destinationRect)
+            , m_sourceRect(sourceRect)
+            , m_opacity(opacity)
+            , m_interpolation(interpolation)
         {
-            auto& deviceContext = GetResource();
-            CheckInPointer(image);
+            assert(m_offset || m_destinationRect);
 
-            D2D1_RECT_F d2dSourceRect;
-            if (sourceRect) d2dSourceRect = ToD2DRect(*sourceRect);
+            if (m_sourceRect)
+                m_d2dSourceRect = ToD2DRect(*sourceRect);
+        }
 
+        void DrawBitmap(ICanvasBitmap* bitmap, Numerics::Matrix4x4* perspective)
+        {
+            DrawBitmap(As<ICanvasBitmapInternal>(bitmap).Get(), perspective);
+        }
+
+        void DrawImage(ICanvasImage* image, CanvasComposite const* composite)
+        {
             // If this is a bitmap being drawn with sufficiently simple options, we can take the DrawBitmap fast path.
             auto internalBitmap = MaybeAs<ICanvasBitmapInternal>(image);
             
             if (internalBitmap &&
-                IsValidDrawBitmapCompositeMode(composite, deviceContext.Get()) &&
-                IsValidDrawBitmapInterpolationMode(interpolation))
+                IsValidDrawBitmapCompositeMode(composite) &&
+                IsValidDrawBitmapInterpolationMode())
             {
-                auto& d2dBitmap = internalBitmap->GetD2DBitmap();
-
-                // DrawImage infers output size from the source image, but DrawBitmap takes an explicit dest rect.
-                // So to use DrawBitmap, we must duplicate the same size logic that DrawImage would normally apply for us.
-                D2D1_SIZE_F destSize;
-                
-                if (sourceRect)
-                {
-                    // If there is an explicit source rectangle, that determines the destination size too.
-                    destSize = D2D1_SIZE_F{ sourceRect->Width, sourceRect->Height };
-                }
-                else if (deviceContext->GetUnitMode() == D2D1_UNIT_MODE_DIPS)
-                {
-                    // Use the size of the bitmap, in dips.
-                    destSize = d2dBitmap->GetSize();
-                }
-                else
-                {
-                    // Use the size of the bitmap, in pixels.
-                    auto pixelSize = d2dBitmap->GetPixelSize();
-                    destSize = D2D1_SIZE_F{ static_cast<float>(pixelSize.width), static_cast<float>(pixelSize.height) };
-                }
-
-                D2D1_RECT_F d2dDestRect
-                {
-                    offset.X,
-                    offset.Y,
-                    offset.X + destSize.width,
-                    offset.Y + destSize.height
-                };
-                
-                deviceContext->DrawBitmap(
-                    d2dBitmap.Get(),
-                    &d2dDestRect,
-                    1,
-                    static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
-                    sourceRect ? &d2dSourceRect : nullptr,
-                    nullptr);
+                DrawBitmap(internalBitmap.Get(), nullptr);
             }
             else
             {
                 // If DrawBitmap cannot handle this request, we must use the DrawImage slow path.
-                D2D1_POINT_2F d2dOffset = ToD2DPoint(offset);
 
-                D2D1_COMPOSITE_MODE compositeMode = composite ? static_cast<D2D1_COMPOSITE_MODE>(*composite)
-                                                              : GetCompositeModeFromPrimitiveBlend(deviceContext.Get());
+                auto internalImage = As<ICanvasImageInternal>(image);
+                auto d2dImage = internalImage->GetD2DImage(m_deviceContext);
 
-                deviceContext->DrawImage(
-                    As<ICanvasImageInternal>(image)->GetD2DImage(deviceContext.Get()).Get(),
-                    &d2dOffset,
-                    sourceRect ? &d2dSourceRect : nullptr,
-                    static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
-                    compositeMode);
+                auto d2dInterpolationMode = static_cast<D2D1_INTERPOLATION_MODE>(m_interpolation);
+                auto d2dCompositeMode = composite ? static_cast<D2D1_COMPOSITE_MODE>(*composite)
+                                                  : GetCompositeModeFromPrimitiveBlend();
+
+                if (m_offset)
+                    DrawImageAtOffset(d2dImage.Get(), *m_offset, d2dInterpolationMode, d2dCompositeMode);
+                else
+                    DrawImageToRect(d2dImage.Get(), *m_destinationRect, d2dInterpolationMode, d2dCompositeMode);
             }
+        }
+
+    private:
+        void DrawBitmap(ICanvasBitmapInternal* internalBitmap, Numerics::Matrix4x4* perspective)
+        {
+            auto& d2dBitmap = internalBitmap->GetD2DBitmap();
+
+            auto d2dDestRect = CalculateDestRect(d2dBitmap.Get());
+
+            m_deviceContext->DrawBitmap(
+                d2dBitmap.Get(),
+                &d2dDestRect,
+                m_opacity,
+                static_cast<D2D1_INTERPOLATION_MODE>(m_interpolation),
+                GetD2DSourceRect(),
+                ReinterpretAs<D2D1_MATRIX_4X4_F*>(perspective));
+        }
+
+        void DrawImageAtOffset(
+            ID2D1Image* d2dImage,
+            Vector2 offset,
+            D2D1_INTERPOLATION_MODE d2dInterpolationMode,
+            D2D1_COMPOSITE_MODE d2dCompositeMode)
+        {
+            auto d2dOffset = ToD2DPoint(offset);
+
+            d2dImage = MaybeApplyOpacityEffect(d2dImage);
+
+            m_deviceContext->DrawImage(d2dImage, &d2dOffset, GetD2DSourceRect(), d2dInterpolationMode, d2dCompositeMode);
+        }
+
+        void DrawImageToRect(
+            ID2D1Image* d2dImage,
+            Rect const& destinationRect,
+            D2D1_INTERPOLATION_MODE d2dInterpolationMode,
+            D2D1_COMPOSITE_MODE d2dCompositeMode)
+        {
+            assert(m_sourceRect);
+
+            AdjustD2DSourceRect(d2dImage);
+            d2dImage = MaybeApplyOpacityEffect(d2dImage);
+
+            float sourceWidth  = m_d2dSourceRect.right - m_d2dSourceRect.left;
+            float sourceHeight = m_d2dSourceRect.bottom - m_d2dSourceRect.top;
+
+            if (sourceWidth == 0.0f || sourceHeight == 0.0f)
+            {
+                // There's no useful scale factor for scaling from something
+                // that is zero sized. Consistent with oberved DrawBitmap
+                // behavior, we don't attempt to draw anything in this case.
+                return;
+            }
+
+            auto offset = Vector2{ destinationRect.X, destinationRect.Y };
+            auto scale = Vector2{ destinationRect.Width / sourceWidth, destinationRect.Height / sourceHeight };
+
+            TemporaryTransform<ID2D1DeviceContext1> transform(m_deviceContext, offset, scale);
+
+            auto d2dOffset = D2D1_POINT_2F{ 0, 0 };
+            m_deviceContext->DrawImage(d2dImage, &d2dOffset, &m_d2dSourceRect, d2dInterpolationMode, d2dCompositeMode);
+        }
+
+        ID2D1Image* MaybeApplyOpacityEffect(ID2D1Image* d2dImage)
+        {
+            if (m_opacity >= 1.0f)
+                return d2dImage;
+
+            ComPtr<ID2D1Effect> opacityEffect;
+
+            ThrowIfFailed(m_deviceContext->CreateEffect(CLSID_D2D1ColorMatrix, &opacityEffect));
+
+            if (auto bitmap = MaybeAs<ID2D1Bitmap>(d2dImage))
+            {
+                //
+                // When drawing a bitmap we need to explicitly compensate for
+                // the bitmap's DPI before passing it to the color matrix effect
+                // (since effects by default ignore a bitmap's DPI).
+                //
+                ThrowIfFailed(D2D1::SetDpiCompensatedEffectInput(m_deviceContext, opacityEffect.Get(), 0, bitmap.Get()));
+            }
+            else
+            {
+                opacityEffect->SetInput(0, d2dImage);
+            }
+
+            D2D1_MATRIX_5X4_F opacityMatrix = D2D1::Matrix5x4F(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, m_opacity,
+                0, 0, 0, 0);
+
+            opacityEffect->SetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, opacityMatrix);
+            
+            opacityEffect->GetOutput(&m_opacityEffectOutput);
+            return m_opacityEffectOutput.Get();
+        }
+
+        // DrawBitmap uses the current primitive blend setting, but DrawImage
+        // takes an explicit composite mode parameter. We can only substitute
+        // the former for the latter if these match.
+        //
+        // In some cases where they do not match, we could change the primitive
+        // blend, use DrawBitmap, then change it back again. But that would be
+        // more intrusive, so this implementation plays it safe and only
+        // optimizes the simple case where the modes match exactly.
+        //
+        // If the composite parameter is null, the caller did not explicitly
+        // specify a composite mode.  In that case we will use
+        // GetCompositeModeFromPrimitiveBlend, so any primitive blend that has a
+        // matching composite mode is valid.
+        bool IsValidDrawBitmapCompositeMode(CanvasComposite const* composite)
+        {
+            switch (m_deviceContext->GetPrimitiveBlend())
+            {
+            case D2D1_PRIMITIVE_BLEND_SOURCE_OVER:
+                return !composite || *composite == CanvasComposite::SourceOver;
+                
+            case D2D1_PRIMITIVE_BLEND_COPY:
+                return !composite || *composite == CanvasComposite::Copy;
+                
+            case D2D1_PRIMITIVE_BLEND_ADD:
+                return !composite || *composite == CanvasComposite::Add;
+                
+            default:
+                return false;
+            }
+        }
+
+        // When using a DrawImage overload that does not take an explicit
+        // composite mode parameter, we try to match the current device context
+        // primitive blend setting.
+        D2D1_COMPOSITE_MODE GetCompositeModeFromPrimitiveBlend()
+        {
+            switch (m_deviceContext->GetPrimitiveBlend())
+            {
+            case D2D1_PRIMITIVE_BLEND_SOURCE_OVER:
+                return D2D1_COMPOSITE_MODE_SOURCE_OVER;
+                
+            case D2D1_PRIMITIVE_BLEND_COPY:
+                return D2D1_COMPOSITE_MODE_SOURCE_COPY;
+                
+            case D2D1_PRIMITIVE_BLEND_ADD:
+                return D2D1_COMPOSITE_MODE_PLUS;
+                
+            case D2D1_PRIMITIVE_BLEND_MIN:
+                ThrowHR(E_FAIL, HStringReference(Strings::DrawImageMinBlendNotSupported).Get());
+                
+            default:
+                ThrowHR(E_UNEXPECTED);
+            }
+        }
+    
+        // Although there are some ID2D1DeviceContext::DrawBitmap methods that
+        // appear to take a full set of interpolation modes, it turns out that
+        // the implementation of these do not all fully match the behavior of
+        // their DrawImage equivalents.  Therefore, we will only use DrawBitmap
+        // for this limited set of interpolation modes.
+        bool IsValidDrawBitmapInterpolationMode()
+        {
+            return m_interpolation == CanvasImageInterpolation::Linear ||
+                   m_interpolation == CanvasImageInterpolation::NearestNeighbor;
+        }
+
+        // DrawImage infers output size from the source image, but DrawBitmap
+        // takes an explicit dest rect.  So to use DrawBitmap, we must duplicate
+        // the same size logic that DrawImage would normally apply for us.
+        D2D1_RECT_F CalculateDestRect(ID2D1Bitmap* d2dBitmap)
+        {
+            if (m_destinationRect)
+                return ToD2DRect(*m_destinationRect);
+            
+            D2D1_SIZE_F destSize;
+            
+            if (m_sourceRect)
+            {
+                // If there is an explicit source rectangle, that determines the destination size too.
+                destSize = D2D1_SIZE_F{ m_sourceRect->Width, m_sourceRect->Height };
+            }
+            else
+            {
+                destSize = GetBitmapSize(m_deviceContext->GetUnitMode(), d2dBitmap);
+            }
+            
+            return D2D1_RECT_F
+            {
+                m_offset->X,
+                m_offset->Y,
+                m_offset->X + destSize.width,
+                m_offset->Y + destSize.height
+            };
+        }
+
+        void AdjustD2DSourceRect(ID2D1Image* d2dImage)
+        {
+            auto d2dBitmap = MaybeAs<ID2D1Bitmap>(d2dImage);
+            if (!d2dBitmap)
+                return;
+
+            // If this is actually a bitmap, then sourceRect needs to be
+            // adjusted so that it doesn't go beyond the bounds of the image.
+            // This is in keeping with DrawBitmap's behavior.  We don't attempt
+            // to do this with more generic image types since this is
+            // prohibitively expensive.
+
+            m_d2dSourceRect.left = std::max(m_d2dSourceRect.left, 0.0f); 
+            m_d2dSourceRect.top  = std::max(m_d2dSourceRect.top,  0.0f);
+
+            D2D1_SIZE_F size = GetBitmapSize(m_deviceContext->GetUnitMode(), d2dBitmap.Get());
+
+            m_d2dSourceRect.right  = std::min(m_d2dSourceRect.right,  size.width);
+            m_d2dSourceRect.bottom = std::min(m_d2dSourceRect.bottom, size.height);
+        }
+
+        D2D1_RECT_F* GetD2DSourceRect()
+        {
+            if (m_sourceRect)
+                return &m_d2dSourceRect;
+            else
+                return nullptr;
+        }
+    };
+
+    HRESULT CanvasDrawingSession::DrawImageImpl(
+        ICanvasImage* image,
+        Vector2* offset,
+        Rect* destinationRect,
+        Rect* sourceRect,
+        float opacity,
+        CanvasImageInterpolation interpolation,
+        CanvasComposite const* composite)
+    {
+        return ExceptionBoundary([&]
+        {
+            auto& deviceContext = GetResource();
+            CheckInPointer(image);
+
+            DrawImageWorker(deviceContext.Get(), offset, destinationRect, sourceRect, opacity, interpolation).DrawImage(image, composite);
         });
 
     }
 
-    HRESULT CanvasDrawingSession::DrawBitmapWithDestRectAndSourceRectImpl(
+    HRESULT CanvasDrawingSession::DrawBitmapImpl(
         ICanvasBitmap* bitmap,
-        Rect destinationRect,
+        Vector2* offset,
+        Rect* destinationRect,
         Rect* sourceRect,
         float opacity,
         CanvasImageInterpolation interpolation,
         Numerics::Matrix4x4* perspective)
-    {
-        return ExceptionBoundary(
-            [&]
+    {        
+        return ExceptionBoundary([&]
         {
             auto& deviceContext = GetResource();
             CheckInPointer(bitmap);
 
-            ComPtr<ICanvasBitmapInternal> internal;
-            ThrowIfFailed(bitmap->QueryInterface(IID_PPV_ARGS(&internal)));
-
-            D2D1_RECT_F d2dDestRect = ToD2DRect(destinationRect);
-            D2D1_RECT_F d2dSourceRect;
-            if (sourceRect) d2dSourceRect = ToD2DRect(*sourceRect);
-
-            deviceContext->DrawBitmap(
-                internal->GetD2DBitmap().Get(),
-                &d2dDestRect,
-                opacity,
-                static_cast<D2D1_INTERPOLATION_MODE>(interpolation),
-                sourceRect ? &d2dSourceRect : nullptr,
-                ReinterpretAs<D2D1_MATRIX_4X4_F*>(perspective));
+            DrawImageWorker(deviceContext.Get(), offset, destinationRect, sourceRect, opacity, interpolation).DrawBitmap(bitmap, perspective);
         });
     }
 
@@ -959,27 +1198,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     static bool ArePointsInsideBitmap(ID2D1Bitmap* bitmap, D2D1_POINT_2F const& point1, D2D1_POINT_2F const& point2, D2D1_UNIT_MODE unitMode)
     {
-        D2D1_SIZE_F bitmapSize;
-
-        switch (unitMode)
-        {
-        case D2D1_UNIT_MODE_DIPS:
-            bitmapSize = bitmap->GetSize();
-            break;
-
-        case D2D1_UNIT_MODE_PIXELS:
-        {
-            auto pixelSize = bitmap->GetPixelSize();
-
-            bitmapSize.width  = static_cast<float>(pixelSize.width);
-            bitmapSize.height = static_cast<float>(pixelSize.height);
-        }
-        break;
-
-        default:
-            assert(false);
-            return true;
-        }
+        D2D1_SIZE_F bitmapSize = GetBitmapSize(unitMode, bitmap);
 
         const float epsilon = 0.001f;
 

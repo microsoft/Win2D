@@ -51,6 +51,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateEffectMethod                    , HRESULT(IID const&, ID2D1Effect **));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod               , HRESULT(ID2D1CommandList**));
         CALL_COUNTER_WITH_MOCK(CreateSolidColorBrushMethod           , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
+        CALL_COUNTER_WITH_MOCK(GetImageLocalBoundsMethod             , HRESULT(ID2D1Image*, D2D1_RECT_F*));
         CALL_COUNTER_WITH_MOCK(GetImageWorldBoundsMethod             , HRESULT(ID2D1Image*, D2D1_RECT_F*));
         CALL_COUNTER_WITH_MOCK(GetMaximumBitmapSizeMethod            , UINT32());
         CALL_COUNTER_WITH_MOCK(CreateBitmapMethod                    , HRESULT(D2D1_SIZE_U, void const*, UINT32, D2D1_BITMAP_PROPERTIES1 const*, ID2D1Bitmap1**));
@@ -464,10 +465,9 @@ namespace canvas
             return FALSE;
         }
 
-        IFACEMETHODIMP GetImageLocalBounds(ID2D1Image *,D2D1_RECT_F *) const override
+        IFACEMETHODIMP GetImageLocalBounds(ID2D1Image* image, D2D1_RECT_F* bounds) const override
         {
-            Assert::Fail(L"Unexpected call to GetImageLocalBounds");
-            return E_NOTIMPL;
+            return GetImageLocalBoundsMethod.WasCalled(image, bounds);
         }
 
         IFACEMETHODIMP GetImageWorldBounds(ID2D1Image* image, D2D1_RECT_F* bounds) const override

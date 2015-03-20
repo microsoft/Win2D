@@ -337,7 +337,7 @@ namespace ExampleGallery
                 Rect textBounds = cl.GetBounds(ds);
                 var offset = new Vector2((float)textBounds.Left, (float)textBounds.Top);
 
-                ds.DrawImage(cl, pos + offset, cl.GetBounds(ds), CanvasImageInterpolation.NearestNeighbor, CanvasComposite.MaskInvert);
+                ds.DrawImage(cl, pos + offset, cl.GetBounds(ds), 1, CanvasImageInterpolation.NearestNeighbor, CanvasComposite.MaskInvert);
             }
         }
 
