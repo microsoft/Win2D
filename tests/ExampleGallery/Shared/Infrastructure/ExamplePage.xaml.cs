@@ -55,7 +55,8 @@ namespace ExampleGallery
                 {
                     var control = Activator.CreateInstance(example.Control);
                     this.exampleContent.Children.Add((UIElement)control);
-                }
+                    DeveloperTools.ExampleControlCreated(example.Name, (UserControl)control);
+                }                
             }
         }
 

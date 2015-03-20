@@ -11,9 +11,9 @@
 // under the License.
 
 #include "pch.h"
-#include "MockCoreWindow.h"
-#include "MockDXGIAdapter.h"
-#include "MockDXGIFactory.h"
+#include "mocks/MockCoreWindow.h"
+#include "mocks/MockDXGIAdapter.h"
+#include "mocks/MockDXGIFactory.h"
 
 TEST_CLASS(CanvasSwapChainUnitTests)
 {
@@ -347,7 +347,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->put_Rotation(CanvasSwapChainRotation::None));
 
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithSize(2, 2));
-        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithAllOptions(2, 2, PIXEL_FORMAT(B8G8R8A8UIntNormalized), 2));
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->ResizeBuffersWithAllOptions(2, 2, DEFAULT_DPI, PIXEL_FORMAT(B8G8R8A8UIntNormalized), 2));
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Device(&device));
@@ -652,7 +652,69 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         auto canvasSwapChain = f.CreateTestSwapChain();
 
-        ThrowIfFailed(canvasSwapChain->ResizeBuffersWithAllOptions(555, 666, PIXEL_FORMAT(R8G8B8A8UIntNormalized), 3));
+        ThrowIfFailed(canvasSwapChain->ResizeBuffersWithAllOptions(555, 666, DEFAULT_DPI, PIXEL_FORMAT(R8G8B8A8UIntNormalized), 3));
+    }
+
+    void VerifyResizeBuffersDpiTestCase(int overloadIndex, float dpiScaling)
+    {
+        StubDeviceFixture f;
+
+        const float newDpi = DEFAULT_DPI * dpiScaling;
+
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([&](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        {
+            auto swapChain = Make<MockDxgiSwapChain>();
+
+            swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
+
+            swapChain->ResizeBuffersMethod.SetExpectedCalls(1,
+                [&](UINT bufferCount,
+                UINT width,
+                UINT height,
+                DXGI_FORMAT newFormat,
+                UINT swapChainFlags)
+                {
+                    Assert::AreEqual(100 * dpiScaling, static_cast<float>(width));
+                    Assert::AreEqual(200 * dpiScaling, static_cast<float>(height));
+                    return S_OK;
+                });
+
+            if (overloadIndex == 0)
+            {
+                swapChain->GetDesc1Method.SetExpectedCalls(1,
+                    [=](DXGI_SWAP_CHAIN_DESC1* desc)
+                    {
+                        desc->Width = 1;
+                        desc->Height = 1;
+                        desc->Format = static_cast<DXGI_FORMAT>(CanvasSwapChain::DefaultPixelFormat);
+                        desc->BufferCount = CanvasSwapChain::DefaultBufferCount;
+                        desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+                        return S_OK;
+                    });
+            }
+
+            return swapChain;
+        });
+
+        auto canvasSwapChain = f.CreateTestSwapChain();
+
+        if (overloadIndex == 0)
+            ThrowIfFailed(canvasSwapChain->ResizeBuffersWithSizeAndDpi(100, 200, newDpi));
+        else
+            ThrowIfFailed(canvasSwapChain->ResizeBuffersWithAllOptions(100, 200, newDpi, CanvasSwapChain::DefaultPixelFormat, CanvasSwapChain::DefaultBufferCount));
+
+        float retrievedDpi;
+        ThrowIfFailed(canvasSwapChain->get_Dpi(&retrievedDpi));
+        Assert::AreEqual(newDpi, retrievedDpi);
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_ResizeBuffers_ChangesDpi)
+    {
+        VerifyResizeBuffersDpiTestCase(0, 0.5f);
+        VerifyResizeBuffersDpiTestCase(0, 2.0f);
+
+        VerifyResizeBuffersDpiTestCase(1, 0.5f);
+        VerifyResizeBuffersDpiTestCase(1, 2.0f);
     }
 
     TEST_METHOD_EX(CanvasSwapChain_ResizeBuffersSizeOnly)

@@ -12,10 +12,10 @@
 
 #pragma once
 
-#include <RecreatableDeviceManager.impl.h>
+#include <lib/xaml/RecreatableDeviceManager.impl.h>
 
-#include "MockCanvasDeviceActivationFactory.h"
-#include "MockWindow.h"
+#include "mocks/MockCanvasDeviceActivationFactory.h"
+#include "mocks/MockWindow.h"
 #include "MockDispatcher.h"
 
 template<typename TRAITS>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -23,16 +23,24 @@ under the License.
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="500"
-    d:DesignWidth="700">
+    d:DesignWidth="700"
+    Loaded="control_Loaded">
 
-    <StackPanel x:Name="panel" Orientation="Vertical" Margin="5">
-        <Button Content="Generate Thumbnail Bitmaps" Click="thumbnailsButton_Click"/>
-        <ToggleButton x:Name="gcButton" Content="Call GC.Collect every 100 ms" Checked="gcButton_Checked" Unchecked="gcButton_Unchecked"/>
-        <Button Content="Application.Exit" Click="exitButton_Click"/>
-        <TextBlock Margin="16" FontSize="16" Foreground="Gray">
-            This page contains tools for developers who are working on Win2D itself.<LineBreak/>
-            It is not intended to show how to use the Win2D API to create other applications.<LineBreak/>
-            If you are trying to learn what Win2D can do or how to use it, seek elsewhere!
-        </TextBlock>
-    </StackPanel>
+    <ScrollViewer VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
+        <StackPanel x:Name="panel" Orientation="Vertical" Margin="5">
+            <Button Content="Generate Thumbnail Bitmaps" Click="thumbnailsButton_Click"/>
+            <Button Content="Generate App Icons" Click="iconsButton_Click"/>
+            <ToggleButton x:Name="gcButton" Content="Call GC.Collect every 100 ms" Checked="gcButton_Checked" Unchecked="gcButton_Unchecked"/>
+            <Button Content="Application.Exit" Click="exitButton_Click"/>
+            <Button Content="Reset leak tracking" Click="resetLeakTracking_Click"/>
+            <Button x:Name="checkLeaksButton" Content="Check for leaks" Click="checkLeaks_Click"/>
+            <TextBlock x:Name="leakText" Margin="16" FontSize="16" FontFamily="Consolas"/>
+            <Frame x:Name="leakCheckFrame" HorizontalContentAlignment="Stretch" Height="500" Visibility="Collapsed" />
+            <TextBlock Margin="16" FontSize="16" Foreground="Gray" HorizontalAlignment="Left" MaxWidth="512" TextWrapping="Wrap">
+                This page contains tools for developers who are working on Win2D itself.
+                It is not intended to show how to use the Win2D API to create other applications.
+                If you are trying to learn what Win2D can do or how to use it, seek elsewhere!
+            </TextBlock>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

@@ -820,5 +820,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return geometryRealization;
     }
 
+    ComPtr<ID2D1DeviceContext1> CanvasDevice::GetResourceCreationDeviceContext()
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        return deviceContext;
+    }
+
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);
 }}}}

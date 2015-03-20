@@ -131,6 +131,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth,
             ID2D1StrokeStyle* strokeStyle,
             float flatteningTolerance) = 0;
+
+        virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() = 0;
     };
 
 
@@ -258,6 +260,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth,
             ID2D1StrokeStyle* strokeStyle,
             float flatteningTolerance) override;
+
+        virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() override;
 
         //
         // IDirect3DDevice

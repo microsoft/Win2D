@@ -10,12 +10,11 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Diagnostics;
 using System.Numerics;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -287,6 +286,13 @@ namespace ExampleGallery
                     lastPointerY = y;
                 }
             }
+        }
+
+        private void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
         }
     }
 }

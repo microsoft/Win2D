@@ -69,6 +69,7 @@ namespace ExampleGallery
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),
             new ExampleDefinition("DPI", typeof(DpiExample)),
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
+            new ExampleDefinition("About", typeof(About)),
             new ExampleDefinition("Developer Tools", typeof(DeveloperTools)),
         };
 

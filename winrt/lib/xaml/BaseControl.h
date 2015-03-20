@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "RemoveFromVisualTree.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL::Wrappers;
@@ -122,6 +124,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         RenderTarget m_currentRenderTarget;
 
+        ComPtr<IDependencyObject> m_lastSeenParent;
+
     public:
         BaseControl(std::shared_ptr<adapter_t> adapter)
             : m_adapter(adapter)
@@ -218,7 +222,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
-        IFACEMETHODIMP get_Size(Size* value)
+        IFACEMETHODIMP get_Size(Size* value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -226,6 +230,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     CheckInPointer(value);
 
                     *value = GetCurrentSize();
+                });
+        }
+
+        IFACEMETHODIMP RemoveFromVisualTree() override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    RemoveFromVisualTreeImpl(m_lastSeenParent.Get(), As<IUIElement>(GetControl()).Get());
                 });
         }
 
@@ -583,9 +596,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto lock = GetLock();
                     m_isLoaded = true;
                     RegisterEventHandlers();
+                    UpdateLastSeenParent();
                     Loaded();
                     Changed(lock);
                 });
+        }
+
+        void UpdateLastSeenParent()
+        {
+            As<IFrameworkElement>(GetControl()->GetComposableBase())->get_Parent(&m_lastSeenParent);
         }
 
         HRESULT OnUnloaded(IInspectable*, IRoutedEventArgs*)
@@ -595,6 +614,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     auto lock = GetLock();
                     m_isLoaded = false;
+                    lock.unlock();
+
                     Unloaded();
                     UnregisterEventHandlers();
                 });

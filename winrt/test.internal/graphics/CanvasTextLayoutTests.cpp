@@ -11,12 +11,19 @@
 // under the License.
 
 #include "pch.h"
-#include "CanvasTextLayout.h"
-#include "StubCanvasTextFormatAdapter.h"
-#include "MockDWriteFactory.h"
-#include "MockDWriteTextLayout.h"
-#include "MockDWriteFontCollection.h"
-#include "StubCanvasTextLayoutAdapter.h"
+
+#include <lib/brushes/CanvasSolidColorBrush.h>
+#include <lib/brushes/CanvasLinearGradientBrush.h>
+#include <lib/text/CanvasTextLayout.h>
+
+#include "mocks/MockDWriteFactory.h"
+#include "mocks/MockDWriteFontCollection.h"
+#include "mocks/MockDWriteTextLayout.h"
+#include "stubs/StubCanvasBrush.h"
+#include "stubs/StubCanvasTextFormatAdapter.h"
+#include "stubs/StubCanvasTextLayoutAdapter.h"
+#include "stubs/TestBitmapResourceCreationAdapter.h"
+#include "stubs/TestEffect.h"
 
 namespace canvas
 {
@@ -31,9 +38,14 @@ namespace canvas
             ComPtr<ICanvasTextFormat> Format;
             std::shared_ptr<CanvasTextLayoutManager> LayoutManager;
             std::shared_ptr<StubCanvasTextLayoutAdapter> Adapter;
+            ComPtr<MockD2DDeviceContext> DeviceContext;
+            ComPtr<StubCanvasDevice> Device;
+            std::vector<ComPtr<MockD2DEffectThatCountsCalls>> MockEffects;
 
             Fixture()
                 : Adapter(std::make_shared<StubCanvasTextLayoutAdapter>())
+                , Device(Make<StubCanvasDevice>())
+                , DeviceContext(Make<MockD2DDeviceContext>())
             {
                 auto formatAdapter = std::make_shared<StubCanvasTextFormatAdapter>();
                 auto formatManager = std::make_shared<CanvasTextFormatManager>(formatAdapter);
@@ -41,11 +53,99 @@ namespace canvas
                 Format = formatManager->Create();
 
                 LayoutManager = std::make_shared<CanvasTextLayoutManager>(Adapter);
+
+                Device->CreateDeviceContextMethod.AllowAnyCall(
+                    [=]
+                    {
+                        return DeviceContext;
+                    });
+
+                Device->GetResourceCreationDeviceContextMethod.AllowAnyCall(
+                    [=]
+                    {
+                        return DeviceContext; 
+                    });
+
+                Device->MockCreateBitmapBrush =
+                    [&](ID2D1Bitmap1*)
+                    {
+                        auto bitmapBrush = Make<MockD2DBitmapBrush>();
+                        bitmapBrush->MockGetBitmap = [&](ID2D1Bitmap** bitmap){  *bitmap = nullptr; };
+                        bitmapBrush->MockSetBitmap = [&](ID2D1Bitmap* bitmap){};
+                        bitmapBrush->MockGetExtendModeX = [&]() { return D2D1_EXTEND_MODE_MIRROR; };
+                        bitmapBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
+                        bitmapBrush->MockGetInterpolationMode1 = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
+                        bitmapBrush->MockGetOpacity = [&]() { return 0.1f; };
+                        bitmapBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = D2D1_MATRIX_3X2_F{}; };
+                        bitmapBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) {};
+                        bitmapBrush->MockSetExtendModeY = [&](D2D1_EXTEND_MODE extend) {};
+                        bitmapBrush->MockSetInterpolationMode1 = [&](D2D1_INTERPOLATION_MODE mode) {};
+                        bitmapBrush->MockSetOpacity = [&](float opacity) {};
+                        bitmapBrush->MockSetTransform = [&](const D2D1_MATRIX_3X2_F* transform) {};
+                        return bitmapBrush;
+                    };
+
+                Device->MockCreateImageBrush =
+                    [&](ID2D1Image*)
+                    {
+                        auto imageBrush = Make<MockD2DImageBrush>();
+                        imageBrush->MockGetImage = [&](ID2D1Image** image) {*image = nullptr;  };
+                        imageBrush->MockSetImage = [&](ID2D1Image* image) {};
+                        imageBrush->MockGetExtendModeX = [&]() { return D2D1_EXTEND_MODE_MIRROR; };
+                        imageBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
+                        imageBrush->MockGetInterpolationMode = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
+                        imageBrush->MockGetOpacity = [&]() { return 0.1f; };
+                        imageBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = D2D1_MATRIX_3X2_F{}; };
+                        imageBrush->MockGetSourceRectangle = [&](D2D1_RECT_F* rect) { *rect = D2D1::RectF(0, 0, 10, 10); };
+                        imageBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) {};
+                        imageBrush->MockSetExtendModeY = [&](D2D1_EXTEND_MODE extend) {};
+                        imageBrush->MockSetInterpolationMode = [&](D2D1_INTERPOLATION_MODE mode) {};
+                        imageBrush->MockSetOpacity = [&](float opacity) {};
+                        imageBrush->MockSetTransform = [&](const D2D1_MATRIX_3X2_F* transform) {};
+                        imageBrush->MockSetSourceRectangle = [&](const D2D1_RECT_F* rect) {};
+                        return imageBrush;
+                    };                
+
+                    Device->MockGetD2DImage =
+                        [&](ICanvasImage* canvasImage) -> ComPtr<ID2D1Image>
+                        {
+                            ComPtr<IEffect> effect;
+                            ComPtr<ICanvasBitmap> bitmap;
+                            if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&effect))))
+                            {
+                                return Make<MockD2DEffect>();
+                            }
+                            else if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&bitmap))))
+                            {
+                                return Make<MockD2DBitmap>();
+                            }
+                            else
+                            {
+                                Assert::Fail(); // command list: notimpl
+                                return nullptr;
+                            }
+                        };
+                
+                DeviceContext->CreateEffectMethod.AllowAnyCall(
+                    [=](IID const& effectId, ID2D1Effect** effect)
+                    {
+                        MockEffects.push_back(Make<MockD2DEffectThatCountsCalls>(effectId));
+                        return MockEffects.back().CopyTo(effect);
+                    });
+
+                DeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(Device->GetD2DDevice());
+
+                DeviceContext->GetDpiMethod.AllowAnyCall(
+                    [&](float* dpiX, float* dpiY)
+                    {
+                        *dpiX = DEFAULT_DPI;
+                        *dpiY = DEFAULT_DPI;
+                    });
             }
 
             ComPtr<CanvasTextLayout> CreateSimpleTextLayout()
             {
-                return LayoutManager->Create(WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
+                return LayoutManager->Create(Device.Get(), WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
             }
         };
 
@@ -91,6 +191,8 @@ namespace canvas
             CanvasTextLayoutRegion hitTestDesc{};
             Vector2 pt{};
             CanvasTextLayoutRegion* hitTestDescArr{};
+            ComPtr<ICanvasBrush> canvasBrush;
+            ComPtr<ICanvasDevice> canvasDevice;
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
@@ -180,7 +282,7 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetLeadingCharacterSpacing(0, &fl));
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetTrailingCharacterSpacing(0, &fl));
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetMinimumCharacterAdvanceWidth(0, &fl));
-            Assert::AreEqual(RO_E_CLOSED, textLayout->SetCharacterSpacing(fl, fl, fl, 0, 0));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->SetCharacterSpacing(0, 0, fl, fl, fl));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_VerticalGlyphOrientation(&verticalGlyphOrientation));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_VerticalGlyphOrientation(verticalGlyphOrientation));
@@ -201,6 +303,12 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetCaretPosition(0, b, &pt));
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetCaretPositionWithDescription(0, b, &hitTestDesc, &pt));
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetCharacterRegions(0, 0, &u, &hitTestDescArr));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetBrush(0, &canvasBrush));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->SetBrush(0, 0, Make<StubCanvasBrush>().Get()));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->SetColor(0, 0, Color{}));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_Device(&canvasDevice));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -259,6 +367,8 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPosition(0, b, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPositionWithDescription(0, b, &hitTestDesc, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(0, 0, nullptr, &hitTestDescArr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetBrush(0, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_Device(nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -320,13 +430,20 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetLeadingCharacterSpacing(-1, &fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetTrailingCharacterSpacing(-1, &fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumCharacterAdvanceWidth(-1, &fl));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(fl, fl, fl, -1, 0));
-            Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(fl, fl, fl, 0, -1));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(-1, 0, fl, fl, fl));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(0, -1, fl, fl, fl));
 
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPosition(-1, false, &pt));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCaretPositionWithDescription(-1, false, &hitTestDesc, &pt));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(-1, 0, &u, &hitTestDescArr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(0, -1, &u, &hitTestDescArr));
+
+            ComPtr<ICanvasBrush> stubBrush = Make<StubCanvasBrush>();
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetBrush(-1, &stubBrush));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetBrush(-1, 0, stubBrush.Get()));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetBrush(0, -1, stubBrush.Get()));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetColor(-1, 0, Color{}));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetColor(0, -1, Color{}));
         }
 
         //
@@ -985,7 +1102,7 @@ namespace canvas
 
             auto textLayout = f.CreateSimpleTextLayout();
 
-            Assert::AreEqual(S_OK, textLayout->SetCharacterSpacing(12.0f, 34.0f, 56.0f, 78, 90));
+            Assert::AreEqual(S_OK, textLayout->SetCharacterSpacing(78, 90, 12.0f, 34.0f, 56.0f));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_DefaultOptions)
@@ -1287,6 +1404,201 @@ namespace canvas
 
             for (int i = 0; i < 3; i++)
                 VerifyHitTestDescription(hitTestDescriptionArray[i], i);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_Device)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            ComPtr<ICanvasDevice> retrievedDevice;
+            Assert::AreEqual(S_OK, textLayout->get_Device(&retrievedDevice));
+
+            Assert::IsTrue(IsSameInstance(f.Device.Get(), retrievedDevice.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetBrush)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto stubCanvasBrush = Make<StubCanvasBrush>();
+
+            f.Adapter->MockTextLayout->SetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](IUnknown* drawingEffectObject, DWRITE_TEXT_RANGE textRange)
+                {
+                    Assert::AreEqual(static_cast<IUnknown*>(stubCanvasBrush->GetD2DBrush(nullptr, false).Get()), drawingEffectObject);
+                    Assert::AreEqual(123u, textRange.startPosition);
+                    Assert::AreEqual(456u, textRange.length);
+                    return S_OK;
+                });
+
+            Assert::AreEqual(S_OK, textLayout->SetBrush(123, 456, stubCanvasBrush.Get()));                    
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetBrush_NullBrushIsOk)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            f.Adapter->MockTextLayout->SetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](IUnknown* drawingEffectObject, DWRITE_TEXT_RANGE)
+                {
+                    Assert::IsNull(drawingEffectObject);
+                    return S_OK;
+                });
+
+            Assert::AreEqual(S_OK, textLayout->SetBrush(0, 0, nullptr));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetColor)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            bool createSolidColorBrushCalled = false;
+            auto d2dSolidColorBrush = Make<MockD2DSolidColorBrush>();
+            
+            f.Device->MockCreateSolidColorBrush =
+                [&](D2D1_COLOR_F const& color)
+                {
+                    Assert::AreEqual(D2D1_COLOR_F{ 1, 0, 0, 1 }, color);
+                    Assert::IsFalse(createSolidColorBrushCalled);
+                    createSolidColorBrushCalled = true;
+                    return d2dSolidColorBrush;
+                };
+
+            f.Adapter->MockTextLayout->SetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](IUnknown* drawingEffectObject, DWRITE_TEXT_RANGE textRange)
+                {
+                    Assert::IsTrue(IsSameInstance(d2dSolidColorBrush.Get(), drawingEffectObject));
+                    Assert::AreEqual(123u, textRange.startPosition);
+                    Assert::AreEqual(456u, textRange.length);
+                    return S_OK;
+                });
+
+            Color testColor{ 255, 255, 0, 0 };
+            Assert::AreEqual(S_OK, textLayout->SetColor(123, 456, testColor));
+
+            Assert::IsTrue(createSolidColorBrushCalled);
+        }
+
+        template<class D2D_MOCK_BRUSH_TYPE>
+        void VerifyGetDrawingEffect_WithBrushType()
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto d2dBrush = Make<D2D_MOCK_BRUSH_TYPE>();
+
+            f.Adapter->MockTextLayout->GetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](UINT32 characterIndex, IUnknown** drawingEffectObject, DWRITE_TEXT_RANGE* textRange)
+                {
+                    Assert::AreEqual(123u, characterIndex);
+                    Assert::IsNull(textRange);
+
+                    d2dBrush.CopyTo(drawingEffectObject);
+
+                    return S_OK;
+                });
+
+            ComPtr<ICanvasBrush> retrievedBrush;
+            Assert::AreEqual(S_OK, textLayout->GetBrush(123, &retrievedBrush));
+
+            auto retrievedBrushInternal = As<ICanvasBrushInternal>(retrievedBrush);
+
+            auto retrievedD2DResource = retrievedBrushInternal->GetD2DBrush(nullptr, false);
+
+            Assert::AreEqual(
+                static_cast<ID2D1Brush*>(d2dBrush.Get()),
+                retrievedD2DResource.Get());
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetBrush_BrushTypes)
+        {
+            VerifyGetDrawingEffect_WithBrushType<MockD2DSolidColorBrush>();
+
+            VerifyGetDrawingEffect_WithBrushType<MockD2DLinearGradientBrush>();
+
+            VerifyGetDrawingEffect_WithBrushType<MockD2DRadialGradientBrush>();
+
+            VerifyGetDrawingEffect_WithBrushType<MockD2DBitmapBrush>();
+
+            VerifyGetDrawingEffect_WithBrushType<MockD2DImageBrush>();
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetBrush_NullDrawingEffect)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            f.Adapter->MockTextLayout->GetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](UINT32 characterIndex, IUnknown** drawingEffectObject, DWRITE_TEXT_RANGE* textRange)
+                {
+                    ComPtr<IUnknown> noDrawingEffect;
+                    noDrawingEffect.CopyTo(drawingEffectObject);
+
+                    return S_OK;
+                });
+
+            ComPtr<ICanvasBrush> retrievedBrush;
+            Assert::AreEqual(S_OK, textLayout->GetBrush(123, &retrievedBrush));
+
+            Assert::IsNull(retrievedBrush.Get());
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetBrush_NonBrushDrawingEffect)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            f.Adapter->MockTextLayout->GetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](UINT32 characterIndex, IUnknown** drawingEffectObject, DWRITE_TEXT_RANGE* textRange)
+                {
+                    auto notABrush = Make<MockDWriteFontCollection>();
+                    notABrush.CopyTo(drawingEffectObject);
+                    return S_OK;
+                });
+
+            ComPtr<ICanvasBrush> retrievedBrush;
+            Assert::AreEqual(E_NOINTERFACE, textLayout->GetBrush(123, &retrievedBrush));
+
+            Assert::IsNull(retrievedBrush.Get());
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_When_BitmapSource_DrawnIntoCommandList_DpiCompensationAlwaysAdded)
+        {
+            for (auto dpi : { DEFAULT_DPI / 2, DEFAULT_DPI, DEFAULT_DPI * 2 })
+            {
+                Check_BitmapSource_SetAsImageBrushImage_DpiCompensationAdded(dpi);
+            }
+        }
+
+        void Check_BitmapSource_SetAsImageBrushImage_DpiCompensationAdded(float dpi)
+        {
+            Fixture f;
+
+            auto testBitmap = CreateStubCanvasBitmap(dpi);
+            auto testEffect = Make<TestEffect>(CLSID_D2D1GaussianBlur, 0, 1, true);
+            ThrowIfFailed(testEffect->put_Source(testBitmap.Get()));
+
+            auto imageBrush = Make<CanvasImageBrush>(f.Device.Get());
+            ThrowIfFailed(imageBrush->put_Image(testEffect.Get()));
+            auto sourceRectangle = Make<Nullable<Rect>>(Rect{ 0, 0, 1, 1 });
+            Assert::AreEqual(S_OK, imageBrush->put_SourceRectangle(sourceRectangle.Get()));
+
+            auto textLayout = f.CreateSimpleTextLayout();
+            f.Adapter->MockTextLayout->SetDrawingEffectMethod.SetExpectedCalls(1,
+                [&](IUnknown* drawingEffectObject, DWRITE_TEXT_RANGE textRange)
+                {
+                    Assert::IsNotNull(drawingEffectObject);
+                    return S_OK;
+                });
+            Assert::AreEqual(S_OK, textLayout->SetBrush(0, 1, imageBrush.Get()));
+
+            Assert::AreEqual<size_t>(2, f.MockEffects.size());
+            CheckEffectTypeAndInput(f.MockEffects[0].Get(), CLSID_D2D1GaussianBlur, f.MockEffects[1].Get());
+            CheckEffectTypeAndInput(f.MockEffects[1].Get(), CLSID_D2D1DpiCompensation, testBitmap.Get(), f.DeviceContext.Get(), dpi);
         }
     };
 }

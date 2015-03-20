@@ -12,9 +12,9 @@
 
 #include "pch.h"
 
-#include <RecreatableDeviceManager.impl.h>
+#include <lib/xaml/RecreatableDeviceManager.impl.h>
 
-#include "MockCanvasDeviceActivationFactory.h"
+#include "mocks/MockCanvasDeviceActivationFactory.h"
 
 using Internal::AggregateType;
 

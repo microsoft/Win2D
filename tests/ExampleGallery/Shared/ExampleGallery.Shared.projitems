@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -33,8 +33,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)CustomFonts.xaml.cs">
       <DependentUpon>CustomFonts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\AppIconGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
       <DependentUpon>DeveloperTools.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DpiExample.xaml.cs">
       <DependentUpon>DpiExample.xaml</DependentUpon>
@@ -92,6 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Infrastructure\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -189,6 +197,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsNarrow.png" />

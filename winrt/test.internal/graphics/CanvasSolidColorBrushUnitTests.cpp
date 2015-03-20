@@ -11,7 +11,7 @@
 // under the License.
 
 #include "pch.h"
-#include <CanvasSolidColorBrush.h>
+#include <lib/brushes/CanvasSolidColorBrush.h>
 
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
@@ -318,7 +318,7 @@ public:
         Assert::IsTrue(createSolidColorBrushCalled);
         ComPtr<ICanvasBrushInternal> createdBrushInternal;
         ThrowIfFailed(createdBrush.As(&createdBrushInternal));
-        ComPtr<ID2D1Brush> createdD2DBrush = createdBrushInternal->GetD2DBrush(nullptr);
+        ComPtr<ID2D1Brush> createdD2DBrush = createdBrushInternal->GetD2DBrush(nullptr, false);
         Assert::AreEqual(static_cast<ID2D1Brush*>(expectedBrush.Get()), createdD2DBrush.Get());
     }
 };

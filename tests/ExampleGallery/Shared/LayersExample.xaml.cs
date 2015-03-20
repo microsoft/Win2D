@@ -10,6 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -17,7 +18,6 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
-using Microsoft.Graphics.Canvas;
 
 namespace ExampleGallery
 {
@@ -244,6 +244,13 @@ namespace ExampleGallery
 
                 return color;
             }
+        }
+
+        private void control_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
         }
     }
 }

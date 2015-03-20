@@ -12,11 +12,11 @@
 
 #include "pch.h"
 
-#include "MockDWriteFactory.h"
-#include "MockDWriteFontCollection.h"
-#include "MockDWriteFontFile.h"
-#include "StubStorageFileStatics.h"
-#include "StubCanvasTextFormatAdapter.h"
+#include "mocks/MockDWriteFactory.h"
+#include "mocks/MockDWriteFontCollection.h"
+#include "mocks/MockDWriteFontFile.h"
+#include "stubs/StubStorageFileStatics.h"
+#include "stubs/StubCanvasTextFormatAdapter.h"
 
 namespace canvas
 {

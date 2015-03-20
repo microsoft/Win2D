@@ -21,7 +21,7 @@
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\Inc;.\brushes;.\xaml;.\drawing;.\geometry;.\images;.\effects;.\text;.\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -135,6 +135,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasLinearGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.cpp" />

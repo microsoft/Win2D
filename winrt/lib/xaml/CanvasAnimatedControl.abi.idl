@@ -173,6 +173,13 @@ namespace Microsoft.Graphics.Canvas
         // This method can be called from any thread.
         //
         [propget] HRESULT Input([out, retval] Windows.UI.Core.ICorePointerInputSource** value);
+
+        //
+        // Removes the control from the visual tree.
+        //
+        // This method may only be called from the UI thread.
+        //
+        HRESULT RemoveFromVisualTree();
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

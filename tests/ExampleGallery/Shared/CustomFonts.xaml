@@ -23,7 +23,8 @@ under the License.
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="400"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Unloaded="UserControl_Unloaded">
 
     <Grid>
         <Grid.RowDefinitions>

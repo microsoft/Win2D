@@ -95,3 +95,32 @@ public:
         CanvasEffect::SetProperty<TBoxed>(index, value);
     }
 };
+
+inline void CheckEffectTypeAndInput(MockD2DEffectThatCountsCalls* mockEffect, IID const& expectedId, ID2D1Image* expectedInput, float expectedDpi = 0)
+{
+    Assert::IsTrue(!!IsEqualGUID(expectedId, mockEffect->m_effectId));
+
+    Assert::IsTrue(IsSameInstance(expectedInput, mockEffect->m_inputs[0].Get()));
+
+    // If this is a DPI compensation effect, also validate that its DPI got set to what we expect.
+    if (expectedDpi != 0)
+    {
+        Assert::IsTrue(mockEffect->m_properties.size() > D2D1_DPICOMPENSATION_PROP_INPUT_DPI);
+        Assert::AreEqual(sizeof(D2D1_VECTOR_2F), mockEffect->m_properties[D2D1_DPICOMPENSATION_PROP_INPUT_DPI].size());
+
+        D2D1_VECTOR_2F dpi = *reinterpret_cast<D2D1_VECTOR_2F*>(&mockEffect->m_properties[D2D1_DPICOMPENSATION_PROP_INPUT_DPI].front());
+
+        Assert::AreEqual(expectedDpi, dpi.x);
+        Assert::AreEqual(expectedDpi, dpi.y);
+    }
+}
+
+inline void CheckEffectTypeAndInput(
+    MockD2DEffectThatCountsCalls* mockEffect,
+    IID const& expectedId,
+    ICanvasImage* expectedInput,
+    ID2D1DeviceContext* deviceContext,
+    float expectedDpi = 0)
+{
+    CheckEffectTypeAndInput(mockEffect, expectedId, As<ICanvasImageInternal>(expectedInput)->GetD2DImage(deviceContext).Get(), expectedDpi);
+}

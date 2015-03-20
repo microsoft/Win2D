@@ -25,7 +25,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(InterfaceName_Windows_UI_Core_ICorePointerInputSource, BaseTrust);
 
         ComPtr<ICorePointerInputSource> m_source;
-        ComPtr<ISwapChainPanel> m_swapChainPanel;
+        WeakRef m_weakSwapChainPanel;
 
         EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerCaptureLostEventList;
         EventSource<EventHandlerWithPointerArgs, InvokeModeOptions<StopOnFirstError>> m_pointerEnteredEventList;

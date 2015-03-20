@@ -11,8 +11,8 @@
 // under the License.
 
 #include "pch.h"
-#include <CanvasLinearGradientBrush.h>
-#include <CanvasRadialGradientBrush.h>
+#include <lib/brushes/CanvasLinearGradientBrush.h>
+#include <lib/brushes/CanvasRadialGradientBrush.h>
 
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;

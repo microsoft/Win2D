@@ -27,9 +27,10 @@ under the License.
         CanvasDrawEventArgs.DrawingSession to draw your immediate mode 2D graphics.
       </remarks>
       <example>
-        <p>Starting with the "Blank App" XAML project template, edit MainPage.xaml and add the namespace:</p>
+        <p>Starting with the "Blank App" XAML project template, edit MainPage.xaml and add the namespace and unloaded handler:</p>
         <code>
           xmlns:canvas="using:Microsoft.Graphics.Canvas"
+          Unloaded="Page_Unloaded"
         </code>
         <p>Add a CanvasControl to the page:</p>
         <code>
@@ -66,6 +67,12 @@ under the License.
               {
                   args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
                   args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
+              }
+
+              void Page_Unloaded(object sender, RoutedEventArgs e)
+              {
+                  this.myWidget.RemoveFromVisualTree();
+                  this.myWidget = null;
               }
           }
         </code>
@@ -143,6 +150,28 @@ under the License.
       <remarks>
         This control is ready to draw when a device has been created and all
         CreateResources event handlers have completed successfully.
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasControl.RemoveFromVisualTree">
+      <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
+      <remarks>
+        <p>
+          When using this control from managed code it is necessary to ensure
+          that all references to it are released, otherwise it will not get
+          garbage collected correctly.  To do this, call RemoveFromVisualTree
+          from the Unloaded event handler of the page that the control was on
+          and then release any explicit references to it.
+        </p>
+        <example>
+          <code>
+        void page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.canvas.RemoveFromVisualTree();
+            this.canvas = null;
+        }
+          </code>
+        </example>
       </remarks>
     </member>
 

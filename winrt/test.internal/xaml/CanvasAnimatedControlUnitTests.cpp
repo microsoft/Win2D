@@ -1674,6 +1674,25 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileThreadPoolWaitingToScheduleRenderLoop)
+    {
+        Fixture f;
+
+        f.Load();
+        f.Adapter->DoChanged();
+
+        // Normally, Cancel signals the update/render thread to spin down, and then the async completed
+        // handler runs after the thread has stopped. But if the update/render loop has been created but
+        // not started yet (i.e. is sitting waiting for the thread pool to schedule it) the completion
+        // handler will run synchronously inside the Cancel call. This test simulates that case.
+
+        f.Adapter->UpdateRenderLoopFireCompletionOnCancel();
+
+        f.RaiseUnloadedEvent();
+
+        Assert::IsFalse(f.Adapter->HasPendingChangedActions());
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race0)
     {
         WhenBackgroundModeChanges(0);
@@ -2276,6 +2295,25 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
         Assert::IsFalse(f.IsRenderActionRunning());
 
         ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+        f.Adapter->Tick();
+
+        f.GetDevice()->TrimMethod.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlUnloadedDuringSuspendProcessing_TrimIsStillCalled)
+    {
+        Fixture f;
+
+        Assert::IsTrue(f.IsRenderActionRunning());
+
+        // Send the suspending notification.
+        ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
+
+        // Unload the control while it is holding a suspension deferral.
+        f.RaiseUnloadedEvent();
+
+        // Trim should still happen.
         f.Adapter->Tick();
 
         f.GetDevice()->TrimMethod.SetExpectedCalls(1);

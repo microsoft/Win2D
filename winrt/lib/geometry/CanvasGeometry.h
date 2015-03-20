@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "CanvasStrokeStyle.h"
+#include "drawing/CanvasStrokeStyle.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {

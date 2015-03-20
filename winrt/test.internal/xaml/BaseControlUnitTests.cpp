@@ -12,8 +12,8 @@
 
 #include "pch.h"
 
-#include <BaseControl.h>
-#include <BaseControlAdapter.h>
+#include <lib/xaml/BaseControl.h>
+#include <lib/xaml/BaseControlAdapter.h>
 
 //
 // These tests explicitly exercise BaseControl.  Generally we try and avoid
@@ -53,6 +53,8 @@ namespace
         IFACEMETHOD(add_Draw)(AnyTraits::drawEventHandler_t*, EventRegistrationToken*) = 0;
         IFACEMETHOD(remove_Draw)(EventRegistrationToken) = 0;
         IFACEMETHOD(get_ReadyToDraw)(boolean*) = 0;
+        IFACEMETHOD(get_Size)(Size*) = 0;
+        IFACEMETHOD(RemoveFromVisualTree)() = 0;
     };
 
     class IAnyAdapter : public IBaseControlAdapter<AnyTraits>

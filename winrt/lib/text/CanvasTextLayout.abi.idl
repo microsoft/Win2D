@@ -85,6 +85,14 @@ namespace Microsoft.Graphics.Canvas
 
         HRESULT GetMinimumLayoutWidth([out, retval] float* value); // Corresponds to DetermineMinWidth.
 
+        //
+        // Exposed through IDWriteTextLayout::GetDrawingEffect.
+        // This method fails if the color source, through interop, was set to something other than an ID2D1Brush.
+        //
+        HRESULT GetBrush(
+            [in] INT32 characterIndex,
+            [out, retval] ICanvasBrush** brush); 
+
         HRESULT GetFontFamily(
             [in] INT32 characterIndex,
             [out, retval] HSTRING* fontFamily);
@@ -116,6 +124,17 @@ namespace Microsoft.Graphics.Canvas
         HRESULT GetUnderline(
             [in] INT32 characterIndex,
             [out, retval] boolean* hasUnderline);
+
+        // SetColor and SetBrush are exposed through IDWriteTextLayout::SetDrawingEffect.
+        HRESULT SetColor(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount, 
+            [in] Windows.UI.Color color); 
+
+        HRESULT SetBrush(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
+            [in] ICanvasBrush* brush);
 
         HRESULT SetFontFamily(
             [in] INT32 characterIndex,
@@ -161,7 +180,6 @@ namespace Microsoft.Graphics.Canvas
         //---------------                           -------
         // Draw                                     Used primarily, by custom renderers, out of scope. Part of DWrite completeness
         // GetClusterMetrics                        Advanced usage, out of scope.
-        // Get/Set DrawingEffect                    Advanced usage, out of scope.
         // Get/Set FontCollection                   Relies on IDWriteFontCollection. Separate design issue on how to expose this.
         // Get/Set InlineObject                     Advanced usage, out of scope.
         // GetLineMetrics                           Advanced usage, out of scope.
@@ -274,11 +292,11 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] float* minimumAdvanceWidth);
 
         HRESULT SetCharacterSpacing(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
             [in] float leadingSpacing,
             [in] float trailingSpacing,
-            [in] float minimumAdvanceWidth,
-            [in] INT32 characterIndex,
-            [in] INT32 characterCount);
+            [in] float minimumAdvanceWidth);
 
         ///////////////////////////////////////////////////////////////////////
         //
@@ -292,12 +310,15 @@ namespace Microsoft.Graphics.Canvas
         // Get/SetFontFallback                      Relies on IDWriteFontFallback. Separate design issue on how to expose this.
         // GetMetrics                               Out of scope for this item. Backlog #820 for getting text metrics
 
+        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+
     }
 
     [version(VERSION), uuid(9C1F7179-ACD0-4680-93D5-95A6247E8F6B), exclusiveto(CanvasTextLayout)]
     interface ICanvasTextLayoutFactory : IInspectable
     {
         HRESULT Create(
+            [in] ICanvasResourceCreator* resourceCreator,
             [in] HSTRING textString,
             [in] CanvasTextFormat* textFormat,
             [in] float maximumLayoutWidth,

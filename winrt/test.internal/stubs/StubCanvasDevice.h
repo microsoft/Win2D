@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "MockD2DRectangleGeometry.h"
-#include "MockD2DGeometryRealization.h"
+#include "mocks/MockD2DRectangleGeometry.h"
+#include "mocks/MockD2DGeometryRealization.h"
 
 namespace canvas
 {
@@ -55,6 +55,14 @@ namespace canvas
                 [=](ID2D1Geometry*, FLOAT, ID2D1StrokeStyle*, FLOAT)
                 {
                     return Make<MockD2DGeometryRealization>();
+                });
+
+            GetResourceCreationDeviceContextMethod.AllowAnyCall(
+                [=]
+                {
+                    ComPtr<ID2D1DeviceContext1> dc;
+                    ThrowIfFailed(m_d2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
+                    return dc;
                 });
         }
 

@@ -38,6 +38,9 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.cpp">
+      <Filter>brushes</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.cpp">
       <Filter>brushes</Filter>
     </ClCompile>

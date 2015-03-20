@@ -71,6 +71,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float));
         CALL_COUNTER_WITH_MOCK(CreateStrokedGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float, ID2D1StrokeStyle*, float));
 
+        CALL_COUNTER_WITH_MOCK(GetResourceCreationDeviceContextMethod, ComPtr<ID2D1DeviceContext1>());
+
         //
         // ICanvasDevice
         //
@@ -329,6 +331,11 @@ namespace canvas
             float flatteningTolerance) override
         {
             return CreateStrokedGeometryRealizationMethod.WasCalled(geometry, strokeWidth, strokeStyle, flatteningTolerance);
+        }
+
+        virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext()
+        {
+            return GetResourceCreationDeviceContextMethod.WasCalled();
         }
     };
 }

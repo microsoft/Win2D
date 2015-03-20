@@ -34,15 +34,7 @@ namespace CoreWindowExample
             Size windowSize = new Size(bounds.Width, bounds.Height);
             float dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
 
-            if (dpi != SwapChain.Dpi)
-            {
-                // If the DPI changes then we need to recreate the swapchain 
-                // TODO: #3905 should ResizeBuffers change the DPI as well as the size?
-                var device = SwapChain.Device;
-                SwapChain.Dispose();
-                SwapChain = CanvasSwapChain.CreateForCoreWindow(device, window, dpi);
-            }
-            else if (!SizeEqualsWithTolerance(windowSize, SwapChain.Size))
+            if (!SizeEqualsWithTolerance(windowSize, SwapChain.Size) || dpi != SwapChain.Dpi)
             {
                 // Note: swapchain size & window size may not be exactly equal since they are represented with
                 // floating point numbers and are calculated via different code paths.
@@ -53,7 +45,7 @@ namespace CoreWindowExample
                 SwapChain.Dispose();
                 SwapChain = CanvasSwapChain.CreateForCoreWindow(device, window, dpi);
 #else
-                SwapChain.ResizeBuffers((float)windowSize.Width, (float)windowSize.Height);
+                SwapChain.ResizeBuffers((float)windowSize.Width, (float)windowSize.Height, dpi);
 #endif
             }
 

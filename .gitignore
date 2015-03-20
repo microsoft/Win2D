@@ -79,3 +79,6 @@ $RECYCLE.BIN/
 
 # Ignore installed nuget packages
 /packages/
+
+# Windows Store packages
+AppPackages/

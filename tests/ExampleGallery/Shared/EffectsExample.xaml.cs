@@ -936,5 +936,12 @@ namespace ExampleGallery
                 }
             }
         }
+
+        private void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
+        }
     }
 }

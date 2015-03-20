@@ -98,6 +98,10 @@ public:
         return bool(m_currentTickFn);
     }
 
+    void UpdateRenderLoopFireCompletionOnCancel()
+    {
+        m_outstandingWorkItemAsyncAction->FireCompletionOnCancel();
+    }
 
     typedef std::queue<std::function<void()>> ActionQueue;
 

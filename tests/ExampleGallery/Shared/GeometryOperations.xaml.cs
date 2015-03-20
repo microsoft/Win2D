@@ -13,13 +13,10 @@
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Windows.Foundation;
+using System.Numerics;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using System.Numerics;
-using System.Threading;
 
 namespace ExampleGallery
 {
@@ -293,6 +290,13 @@ namespace ExampleGallery
         {
             enableTransform = false;
             needsToRecreateResources = true;
+        }
+
+        private void control_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
         }
     }
 }

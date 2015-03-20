@@ -145,9 +145,18 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHOD(ResizeBuffersWithSizeAndDpi)(
+            float newWidth,
+            float newHeight,
+            float newDpi) override
+        {
+            return E_NOTIMPL;
+        }
+
         IFACEMETHOD(ResizeBuffersWithAllOptions)(
             float newWidth,
             float newHeight,
+            float newDpi,
             DirectXPixelFormat newFormat,
             int32_t bufferCount) override
         {

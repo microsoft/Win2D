@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "MockStorageFileStatics.h"
-#include "StubStorageFile.h"
+#include "mocks/MockStorageFileStatics.h"
+#include "stubs/StubStorageFile.h"
 
 namespace canvas
 {

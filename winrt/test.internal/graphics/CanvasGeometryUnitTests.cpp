@@ -11,15 +11,15 @@
 // under the License.
 
 #include "pch.h"
-#include <CanvasPathBuilder.h>
-#include "MockD2DRectangleGeometry.h"
-#include "MockD2DEllipseGeometry.h"
-#include "MockD2DRoundedRectangleGeometry.h"
-#include "MockD2DPathGeometry.h"
-#include "MockD2DGeometrySink.h"
-#include "MockD2DTransformedGeometry.h"
-#include "MockD2DGeometryGroup.h"
-#include "StubGeometrySink.h"
+#include <lib/geometry/CanvasPathBuilder.h>
+#include "mocks/MockD2DRectangleGeometry.h"
+#include "mocks/MockD2DEllipseGeometry.h"
+#include "mocks/MockD2DRoundedRectangleGeometry.h"
+#include "mocks/MockD2DPathGeometry.h"
+#include "mocks/MockD2DGeometrySink.h"
+#include "mocks/MockD2DTransformedGeometry.h"
+#include "mocks/MockD2DGeometryGroup.h"
+#include "stubs/StubGeometrySink.h"
 
 static const D2D1_MATRIX_3X2_F sc_someD2DTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_MATRIX_3X2_F sc_identityD2DTransform = { 1, 0, 0, 1, 0, 0 };

@@ -108,7 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Close)() override;
 
         // ICanvasBrushInternal
-        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext) override;
+        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, bool alwaysInsertDpiCompensation) override;
 
         // ICanvasImageBrushInternal
         virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() override;

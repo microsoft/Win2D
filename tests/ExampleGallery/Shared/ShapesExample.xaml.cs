@@ -12,8 +12,8 @@
 
 using Microsoft.Graphics.Canvas;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -192,6 +192,13 @@ namespace ExampleGallery
             byte c = (byte)((Math.Sin(mu * Math.PI * 2) + 1) * 127.5);
             
             return Color.FromArgb(255, 90, 128, c);
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
         }
     }
 }

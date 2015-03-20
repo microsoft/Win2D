@@ -31,6 +31,13 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(get_CompositionScaleYMethod, HRESULT(FLOAT*));
         CALL_COUNTER_WITH_MOCK(CreateCoreIndependentInputSourceMethod, HRESULT(CoreInputDeviceTypes, ICoreInputSourceBase**));
 
+        ComPtr<MockEventSource<IRoutedEventHandler>> LoadedEventSource;
+
+        StubSwapChainPanel()
+            : LoadedEventSource(Make<MockEventSource<IRoutedEventHandler>>(L"Loaded"))
+        {
+        }
+
         // ISwapChainPanelNative
         IFACEMETHODIMP SetSwapChain(IDXGISwapChain* swapChain) override
         {
@@ -292,8 +299,7 @@ namespace canvas
 
         IFACEMETHODIMP add_Loaded(IRoutedEventHandler* handler, EventRegistrationToken* token) override 
         {
-            Assert::Fail(L"Unexpected call to add_Loaded");
-            return E_NOTIMPL;
+            return LoadedEventSource->add_Event(handler, token);
         }
 
         IFACEMETHODIMP remove_Loaded(EventRegistrationToken token) override 

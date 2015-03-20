@@ -18,7 +18,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::UI::Xaml::Controls;
 
     AnimatedControlInput::AnimatedControlInput(ComPtr<ISwapChainPanel> const& swapChainPanel)
-        : m_swapChainPanel(swapChainPanel)
+        : m_weakSwapChainPanel(AsWeak(swapChainPanel.Get()))
     {}
 
     IFACEMETHODIMP AnimatedControlInput::ReleasePointerCapture()
@@ -222,7 +222,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ICoreInputSourceBase> inputSourceBase;
 
-        ThrowIfFailed(m_swapChainPanel->CreateCoreIndependentInputSource(
+        auto swapChainPanel = LockWeakRef<ISwapChainPanel>(m_weakSwapChainPanel);
+        if (!swapChainPanel)
+            return;
+
+        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
             CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse, 
             &inputSourceBase));
 

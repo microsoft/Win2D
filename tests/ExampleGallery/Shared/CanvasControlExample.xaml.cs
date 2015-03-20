@@ -10,8 +10,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using System.Numerics;
 using Microsoft.Graphics.Canvas;
+using System.Numerics;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -94,6 +94,22 @@ namespace ExampleGallery
         private void Canvas12_Tapped(object sender, TappedRoutedEventArgs e)
         {
             this.storyboardD.Begin();
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas01.RemoveFromVisualTree();
+            canvas01 = null;
+
+            canvas02.RemoveFromVisualTree();
+            canvas02 = null;
+
+            canvas11.RemoveFromVisualTree();
+            canvas11 = null;
+
+            canvas12.RemoveFromVisualTree();
+            canvas12 = null;
         }
     }
 }

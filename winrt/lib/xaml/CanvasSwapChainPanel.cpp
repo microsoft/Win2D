@@ -13,6 +13,7 @@
 #include "pch.h"
 
 #include "CanvasSwapChainPanel.h"
+#include "RemoveFromVisualTree.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -77,9 +78,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto base = m_adapter->CreateSwapChainPanel(static_cast<ICanvasSwapChainPanel*>(this));
         ThrowIfFailed(SetComposableBasePointers(base.Get(), nullptr));
+
+        auto frameworkElement = As<IFrameworkElement>(this);
+
+        EventRegistrationToken tokenThatIsThrownAway{};
+        auto callback = Callback<IRoutedEventHandler>(this, &CanvasSwapChainPanel::OnLoaded);
+        CheckMakeResult(callback);
+
+        ThrowIfFailed(frameworkElement->add_Loaded(callback.Get(), &tokenThatIsThrownAway));
     }
 
-    STDMETHODIMP CanvasSwapChainPanel::get_SwapChain(ICanvasSwapChain** value)
+    CanvasSwapChainPanel::~CanvasSwapChainPanel()
+    {
+    }
+
+    HRESULT CanvasSwapChainPanel::OnLoaded(IInspectable*, IRoutedEventArgs*)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                As<IFrameworkElement>(GetComposableBase())->get_Parent(&m_lastSeenParent);
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChainPanel::get_SwapChain(ICanvasSwapChain** value)
     {
         return ExceptionBoundary(
             [&]
@@ -90,7 +112,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    STDMETHODIMP CanvasSwapChainPanel::put_SwapChain(ICanvasSwapChain* value)
+    IFACEMETHODIMP CanvasSwapChainPanel::put_SwapChain(ICanvasSwapChain* value)
     {
         return ExceptionBoundary(
             [&]
@@ -109,6 +131,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(swapChainPanelNative->SetSwapChain(dxgiSwapChain.Get()));
 
                 m_canvasSwapChain = value;
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChainPanel::RemoveFromVisualTree()
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                RemoveFromVisualTreeImpl(m_lastSeenParent.Get(), As<IUIElement>(this).Get());
             });
     }
 

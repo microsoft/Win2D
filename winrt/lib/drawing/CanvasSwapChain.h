@@ -167,9 +167,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float newWidth,
             float newHeight) override;
 
+        IFACEMETHOD(ResizeBuffersWithSizeAndDpi)(
+            float newWidth,
+            float newHeight,
+            float newDpi) override;
+
         IFACEMETHOD(ResizeBuffersWithAllOptions)(
             float newWidth,
             float newHeight,
+            float newDpi,
             DirectXPixelFormat newFormat,
             int32_t bufferCount) override;
 

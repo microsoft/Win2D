@@ -29,42 +29,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef CanvasTextLayoutManager manager_t;
     };
 
-    //
-    // CanvasTextLayoutFactory
-    //
-
-    class CanvasTextLayoutFactory
-        : public ActivationFactory<
-        ICanvasTextLayoutFactory,
-        CloakedIid<ICanvasFactoryNative>> ,
-        public PerApplicationManager<CanvasTextLayoutFactory, CanvasTextLayoutManager>
-    {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextLayout, BaseTrust);
-
-    public:
-        CanvasTextLayoutFactory();
-
-        IFACEMETHOD(Create)(
-            HSTRING textString,
-            ICanvasTextFormat* textFormat,
-            float maximumLayoutWidth,
-            float maximumLayoutHeight,
-            ICanvasTextLayout** textLayout);
-
-        //
-        // ICanvasFactoryNative
-        //
-
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;
-
-        //
-        // Used by PerApplicationManager
-        //
-        static std::shared_ptr<CanvasTextLayoutManager> CreateManager();
-    };
-
     class CanvasTextLayout : RESOURCE_WRAPPER_RUNTIME_CLASS(
         CanvasTextLayoutTraits,
         IClosable)
@@ -73,8 +37,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         CanvasDrawTextOptions m_drawTextOptions;
 
+        ClosablePtr<ICanvasDevice> m_device;
+
     public:
-        CanvasTextLayout(std::shared_ptr<CanvasTextLayoutManager> manager, IDWriteTextLayout2* layout);
+        CanvasTextLayout(
+            std::shared_ptr<CanvasTextLayoutManager> manager, 
+            IDWriteTextLayout2* layout, 
+            ICanvasDevice* device);
 
         IFACEMETHOD(GetFormatChangeIndices)(
             uint32_t* positionCount,
@@ -185,6 +154,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(GetMinimumLayoutWidth)(
             float* value) override;
 
+        IFACEMETHOD(GetBrush)(
+            int32_t characterIndex,
+            ICanvasBrush** brush) override;
+
         IFACEMETHOD(GetFontFamily)(
             int32_t characterIndex,
             HSTRING *fontFamily) override;
@@ -216,6 +189,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(GetUnderline)(
             int32_t characterIndex,
             boolean *hasUnderline) override;
+
+        IFACEMETHOD(SetColor)(
+            int32_t characterIndex,
+            int32_t characterCount,
+            Color color) override;
+
+        IFACEMETHOD(SetBrush)(
+            int32_t characterIndex,
+            int32_t characterCount,
+            ICanvasBrush* brush) override;
 
         IFACEMETHOD(SetFontFamily)(
             int32_t characterIndex,
@@ -279,11 +262,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float *minimumAdvanceWidth) override;
 
         IFACEMETHOD(SetCharacterSpacing)(
+            int32_t characterIndex,
+            int32_t characterCount,
             float leadingSpacing,
             float trailingSpacing,
-            float minimumAdvanceWidth,
-            int32_t characterIndex,
-            int32_t characterCount) override;
+            float minimumAdvanceWidth) override;
 
         IFACEMETHOD(get_VerticalGlyphOrientation)(
             CanvasVerticalGlyphOrientation* value) override;
@@ -367,9 +350,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         IFACEMETHOD(Close)() override;
+
+        //
+        // Required by ResourceTracker
+        //
+
+        IFACEMETHOD(get_Device)(ICanvasDevice** device);
+
+    private:
+        ComPtr<ICanvasBrush> PolymorphicGetOrCreateBrush(
+            ComPtr<IUnknown> const& resource);
     };
 
-    class CanvasTextLayoutManager 
+    class CanvasTextLayoutManager
         : public ResourceManager<CanvasTextLayoutTraits>
         , public CustomFontManager
     {
@@ -379,12 +372,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ~CanvasTextLayoutManager() = default;
 
         ComPtr<CanvasTextLayout> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
             HSTRING textString,
             ICanvasTextFormat* textFormat,
             float maximumLayoutWidth,
             float maximumLayoutHeight);
 
         virtual ComPtr<CanvasTextLayout> CreateWrapper(
+            ICanvasDevice* device,
             IDWriteTextLayout2* resource);
+    };
+
+    //
+    // CanvasTextLayoutFactory
+    //
+
+    class CanvasTextLayoutFactory
+        : public ActivationFactory<
+        ICanvasTextLayoutFactory,
+        CloakedIid<ICanvasDeviceResourceFactoryNative >> ,
+        public PerApplicationManager<CanvasTextLayoutFactory, CanvasTextLayoutManager>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextLayout, BaseTrust);
+
+    public:
+        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+
+        CanvasTextLayoutFactory();
+
+        IFACEMETHOD(Create)(
+            ICanvasResourceCreator* resourceCreator,
+            HSTRING textString,
+            ICanvasTextFormat* textFormat,
+            float maximumLayoutWidth,
+            float maximumLayoutHeight,
+            ICanvasTextLayout** textLayout);
+
+        //
+        // Used by PerApplicationManager
+        //
+        static std::shared_ptr<CanvasTextLayoutManager> CreateManager();
     };
 }}}}

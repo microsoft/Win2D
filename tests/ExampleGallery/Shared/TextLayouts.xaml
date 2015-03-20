@@ -24,7 +24,8 @@ under the License.
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Unloaded="control_Unloaded">
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -34,12 +35,19 @@ under the License.
 
         <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
-                <ToggleButton Content="Show layout bounds" IsChecked="false" Checked="ShowLayoutBounds_Checked" Unchecked="ShowLayoutBounds_Unchecked"/>
-                <ToggleButton Content="Show draw bounds" IsChecked="false" Checked="ShowDrawBounds_Checked" Unchecked="ShowDrawBounds_Unchecked"/>
+                <TextBlock>Text sample:</TextBlock>
+                <ComboBox 
+                      ItemsSource="{Binding ElementName=control, Path=TextSampleOptions}"
+                      SelectedItem="{Binding CurrentTextSampleOption, ElementName=control, Mode=TwoWay}"
+                      SelectionChanged="TextSampleOptions_SelectionChanged"/>
+                <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>
+                <ToggleButton Content="Per-character layout" IsChecked="true" Checked="ShowPerCharacterLayoutBounds_Checked" Unchecked="ShowPerCharacterLayoutBounds_Unchecked"/>
+                <ToggleButton Content="DrawBounds" Checked="ShowDrawBounds_Checked" Unchecked="ShowDrawBounds_Unchecked"/>
             </StackPanel>
         </ScrollViewer>
         <canvas:CanvasAnimatedControl x:Name="canvas" Grid.Column="1" Margin="5"
                               Draw="Canvas_Draw"
-                              ClearColor="Black"/>
+                              CreateResources="Canvas_CreateResources"
+                              Update="Canvas_Update"/>
     </Grid>
 </UserControl>

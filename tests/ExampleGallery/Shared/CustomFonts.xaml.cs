@@ -191,6 +191,13 @@ namespace ExampleGallery
             }
         }
 
+        private void UserControl_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get
+            // garbage collected
+            animatedControl.RemoveFromVisualTree();
+            animatedControl = null;
+        }
 
         static Entry[] characters = new Entry[]
         {

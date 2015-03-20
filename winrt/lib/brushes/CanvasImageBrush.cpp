@@ -396,7 +396,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return S_OK;
     }
 
-    ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext)
+    ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext, bool alwaysInsertDpiCompensation)
     {
         ThrowIfClosed();
 
@@ -414,7 +414,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // If our input image is an effect graph, make sure it is fully configured to match the target DPI.
             if (m_effectNeedingDpiFixup && deviceContext)
             {
-                float targetDpi = GetDpi(deviceContext);
+                float targetDpi = alwaysInsertDpiCompensation ? MAGIC_FORCE_DPI_COMPENSATION_VALUE : GetDpi(deviceContext);
 
                 m_effectNeedingDpiFixup->GetRealizedEffectNode(deviceContext, targetDpi);
             }

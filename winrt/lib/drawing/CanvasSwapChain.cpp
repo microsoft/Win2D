@@ -448,6 +448,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(ResizeBuffersWithAllOptions(
                     newWidth,
                     newHeight,
+                    m_dpi,
+                    static_cast<DirectXPixelFormat>(desc.Format),
+                    desc.BufferCount));
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithSizeAndDpi(
+        float newWidth,
+        float newHeight,
+        float newDpi)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto desc = GetResourceDescription();
+
+                ThrowIfFailed(ResizeBuffersWithAllOptions(
+                    newWidth,
+                    newHeight,
+                    newDpi,
                     static_cast<DirectXPixelFormat>(desc.Format),
                     desc.BufferCount));
             });
@@ -456,6 +476,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithAllOptions(
         float newWidth,
         float newHeight,
+        float newDpi,
         DirectXPixelFormat newFormat,
         int32_t bufferCount)
     {
@@ -463,6 +484,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 auto& resource = GetResource();
+
+                m_dpi = newDpi;
 
                 int widthInPixels = DipsToPixels(newWidth, m_dpi);
                 int heightInPixels = DipsToPixels(newHeight, m_dpi);

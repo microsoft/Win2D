@@ -12,12 +12,12 @@
 
 #include "pch.h"
 
-#include "StubCanvasBrush.h"
-#include "effects\generated\GaussianBlurEffect.h"
-#include "MockD2DRectangleGeometry.h"
-#include "CanvasCachedGeometry.h"
-#include "MockD2DGeometryRealization.h"
-#include "StubCanvasTextLayoutAdapter.h"
+#include "stubs/StubCanvasBrush.h"
+#include <lib/effects/generated/GaussianBlurEffect.h>
+#include "mocks/MockD2DRectangleGeometry.h"
+#include <lib/geometry/CanvasCachedGeometry.h>
+#include "mocks/MockD2DGeometryRealization.h"
+#include "stubs/StubCanvasTextLayoutAdapter.h"
 
 TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 {
@@ -143,7 +143,8 @@ public:
         auto textFormat = CanvasTextFormatFactory::GetOrCreateManager()->Create();
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
         auto textLayoutManager = std::make_shared<CanvasTextLayoutManager>(textlayoutAdapter);
-        TextLayout = textLayoutManager->Create(WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);    }
+        TextLayout = textLayoutManager->Create(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
+    }
 
 private:
     static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext)
@@ -218,7 +219,7 @@ public:
         else
         {
             // When testing a WithBrush overload, we expect to see the stub brush provided by CanvasDrawingSessionFixture.
-            m_expectedBrush = f.Brush->GetD2DBrush(nullptr).Get();
+            m_expectedBrush = f.Brush->GetD2DBrush(nullptr, false).Get();
         }
     }
 
@@ -1288,7 +1289,7 @@ public:
             DeviceContext->FillOpacityMaskMethod.SetExpectedCalls(1, [=](ID2D1Bitmap* opacityMask, ID2D1Brush* brush, D2D1_RECT_F const* destinationRectangle, D2D1_RECT_F const* sourceRectangle)
             {
                 Assert::IsTrue(IsSameInstance(D2DBitmap.Get(), opacityMask));
-                Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr).Get(), brush));
+                Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr, false).Get(), brush));
                 Assert::AreEqual(ToD2DRect(DestRect), *destinationRectangle);
                 Assert::AreEqual(expectedSourceRect, *sourceRectangle);
             });
@@ -1298,13 +1299,13 @@ public:
         {
             DeviceContext->PushLayerMethod.SetExpectedCalls(1, [=](const D2D1_LAYER_PARAMETERS1* params, ID2D1Layer*)
             {
-                Assert::IsTrue(IsSameInstance(OpacityBrush->GetD2DBrush(nullptr).Get(), params->opacityBrush));
+                Assert::IsTrue(IsSameInstance(OpacityBrush->GetD2DBrush(nullptr, false).Get(), params->opacityBrush));
             });
 
             DeviceContext->FillRectangleMethod.SetExpectedCalls(1, [=](D2D1_RECT_F const* rect, ID2D1Brush* brush)
             {
                 Assert::AreEqual(ToD2DRect(DestRect), *rect);
-                Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr).Get(), brush));
+                Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr, false).Get(), brush));
             });
 
             DeviceContext->PopLayerMethod.SetExpectedCalls(1);
@@ -2714,7 +2715,7 @@ public:
     {
         if (f.ExpectedDrawCallOpacityBrush)
         {
-            Assert::IsTrue(IsSameInstance(f.ExpectedDrawCallOpacityBrush->GetD2DBrush(nullptr).Get(), opacityBrush));
+            Assert::IsTrue(IsSameInstance(f.ExpectedDrawCallOpacityBrush->GetD2DBrush(nullptr, false).Get(), opacityBrush));
         }
         else
         {
@@ -2794,7 +2795,7 @@ public:
             {
                 f.DeviceContext->PushLayerMethod.SetExpectedCalls(1, [&](const D2D1_LAYER_PARAMETERS1* params, ID2D1Layer*)
                 {
-                    Assert::IsTrue(IsSameInstance(opacityBrush->GetD2DBrush(nullptr).Get(), params->opacityBrush));
+                    Assert::IsTrue(IsSameInstance(opacityBrush->GetD2DBrush(nullptr, false).Get(), params->opacityBrush));
                 });
 
                 f.DeviceContext->PopLayerMethod.SetExpectedCalls(1);
@@ -2813,7 +2814,7 @@ public:
 
                 f.DeviceContext->PushLayerMethod.SetExpectedCalls(1, [&](const D2D1_LAYER_PARAMETERS1* params, ID2D1Layer*)
                 {
-                    Assert::IsTrue(IsSameInstance(f.OpacityBrush->GetD2DBrush(nullptr).Get(), params->opacityBrush));
+                    Assert::IsTrue(IsSameInstance(f.OpacityBrush->GetD2DBrush(nullptr, false).Get(), params->opacityBrush));
                 });
 
                 f.DeviceContext->PopLayerMethod.SetExpectedCalls(1);
@@ -3819,7 +3820,7 @@ TEST_CLASS(CanvasDrawingSession_CreateLayerTests)
                     Assert::AreEqual(expectedOpacity, parameters->opacity);
 
                     if (expectBrush)
-                        Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr).Get(), parameters->opacityBrush));
+                        Assert::IsTrue(IsSameInstance(Brush->GetD2DBrush(nullptr, false).Get(), parameters->opacityBrush));
                     else
                         Assert::IsNull(parameters->opacityBrush);
 

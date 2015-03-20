@@ -245,9 +245,10 @@ namespace ExampleGallery
                 // Wait a while for any animations to settle into a good looking state.
                 await Task.Delay(TimeSpan.FromSeconds(animationDelay));
 
-                // Which UI element should we capture? We currently just grab the first Image control.
-                // This works for the ImageSourceUpdateRegion example, but may need extending in future.
-                UIElement elementToCapture = GetDescendantsOfType<Image>(exampleControl).First();
+                // Which UI element should we capture?
+                // If there is an Image control, we grab that.
+                // Otherwise capture the entire example.
+                var elementToCapture = (UIElement)GetDescendantsOfType<Image>(exampleControl).FirstOrDefault() ?? exampleControl;
 
                 // Tell XAML to render into a WriteableBitmap.
                 var bitmap = new RenderTargetBitmap();
