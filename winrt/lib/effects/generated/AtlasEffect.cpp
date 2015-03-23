@@ -21,8 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Atlas, 2, 1, true)
     {
         // Set default values
-        SetProperty<float[4]>(D2D1_ATLAS_PROP_INPUT_RECT, Rect{ 0, 0, std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
-        SetProperty<float[4]>(D2D1_ATLAS_PROP_INPUT_PADDING_RECT, Rect{ 0, 0, std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
+        SetBoxedProperty<float[4]>(D2D1_ATLAS_PROP_INPUT_RECT, Rect{ 0, 0, std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
+        SetBoxedProperty<float[4]>(D2D1_ATLAS_PROP_INPUT_PADDING_RECT, Rect{ 0, 0, std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
     }
 
     IMPLEMENT_EFFECT_PROPERTY(AtlasEffect,
@@ -37,7 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Rect,
         D2D1_ATLAS_PROP_INPUT_PADDING_RECT)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(AtlasEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(AtlasEffect,
         Source,
         0)
 

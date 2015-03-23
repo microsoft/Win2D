@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -551,12 +551,6 @@
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.abi.idl">
       <Filter>drawing</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\IEffect.abi.idl">
-      <Filter>effects</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\IEffectInput.abi.idl">
-      <Filter>effects</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)effects\Matrix5x4.abi.idl">
       <Filter>effects</Filter>
     </None>
@@ -703,6 +697,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl">
       <Filter>text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\IGraphicsEffect.abi.idl">
+      <Filter>effects</Filter>
     </None>
   </ItemGroup>
 </Project>

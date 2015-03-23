@@ -63,22 +63,6 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.Effects.BlendEffect.Background">
       <summary>Background image input for blend effect.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.BlendEffect.EffectId">
-      <summary>Gets the unique identifier for the effect.</summary>
-      <remarks>
-        <p>Generic way to query the type of an effect. EffectId is equal to the 
-           CLSID_D2D1Blend GUID specified in the SDK header d2d1effects.h.</p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.BlendEffect.Inputs">
-      <summary>Gets a collection of inputs attached to the effect.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.BlendEffect.Properties">
-      <summary>Gets the collection of properties specific to the current effect.</summary>
-      <inheritdoc/>
-    </member>
-  
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.BlendEffectMode">
       <summary>The blend mode used for the effect.</summary>
@@ -171,6 +155,10 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.BlendEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.BlendEffect.Name">
+      <summary>Attaches a user-defined name string to the effect.</summary>
+      <inheritdoc/>
     </member>
     
   </members>

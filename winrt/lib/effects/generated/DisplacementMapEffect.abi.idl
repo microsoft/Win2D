@@ -39,16 +39,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT YChannelSelect([in] EffectChannelSelect value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
         [propget]
-        HRESULT Displacement([out, retval] IEffectInput** input);
+        HRESULT Displacement([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Displacement([in] IEffectInput* input);
+        HRESULT Displacement([in] IGraphicsEffectSource* source);
 
     };
 
@@ -56,6 +56,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass DisplacementMapEffect
     {
         [default] interface IDisplacementMapEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

@@ -30,5 +30,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CompositeEffect();
 
         EFFECT_PROPERTY(Mode, CanvasComposite);
+        EFFECT_SOURCES_PROPERTY();
     };
 }}}}}

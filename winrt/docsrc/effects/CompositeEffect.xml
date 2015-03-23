@@ -27,8 +27,8 @@ under the License.
           <code>
             CompositeEffect compositeEffect = new CompositeEffect();
             compositeEffect.Mode = CompositeEffectMode.Add;
-            compositeEffect.Inputs.Add(cat);
-            compositeEffect.Inputs.Add(flower);
+            compositeEffect.Sources.Add(cat);
+            compositeEffect.Sources.Add(flower);
           </code>
           <p>Use the Draw event to display it:</p>
           <code>
@@ -48,22 +48,11 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Dispose">
       <summary>Releases all resources used by the CompositeEffect.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.EffectId">
-      <summary>Gets the unique identifier for the effect.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Sources">
+      <summary>Gets a collection of the input sources attached to the effect.</summary>
       <remarks>
-        <p>Generic way to query the type of an effect. EffectId is equal to the 
-           CLSID_D2D1Composite GUID specified in the SDK header d2d1effects.h.</p>
+        <p>Composite effect can accept multiple inputs. Use the returned vector to add, remove or change attached sources.</p>
       </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Inputs">
-      <summary>Gets a collection of inputs attached to the effect.</summary>
-      <remarks>
-        <p>Composite effect can accept multiply inputs. Use return vector to add, remove or change attached sources.</p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Properties">
-      <summary>Gets the collection of properties specific to the current effect.</summary>
-      <inheritdoc/>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Mode">
       <summary>Gets and sets composite mode for effect processing.</summary>
@@ -77,6 +66,10 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.CompositeEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CompositeEffect.Name">
+      <summary>Attaches a user-defined name string to the effect.</summary>
+      <inheritdoc/>
     </member>
     
   </members>

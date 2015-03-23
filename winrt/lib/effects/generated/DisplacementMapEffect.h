@@ -32,7 +32,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Amount, float);
         EFFECT_PROPERTY(XChannelSelect, EffectChannelSelect);
         EFFECT_PROPERTY(YChannelSelect, EffectChannelSelect);
-        EFFECT_PROPERTY(Source, IEffectInput*);
-        EFFECT_PROPERTY(Displacement, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
+        EFFECT_PROPERTY(Displacement, IGraphicsEffectSource*);
     };
 }}}}}

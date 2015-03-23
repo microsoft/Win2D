@@ -50,22 +50,6 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Height">
       <summary>Height of the morphology filter kernel. Default value 1.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.EffectId">
-      <summary>Gets the unique identifier for the effect.</summary>
-      <remarks>
-        <p>Generic way to query the type of an effect. EffectId is equal to the 
-           CLSID_D2D1Morphology GUID specified in the SDK header d2d1effects.h.</p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Inputs">
-      <summary>Gets a collection of inputs attached to the effect.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Properties">
-      <summary>Gets the collection of properties specific to the current effect.</summary>
-      <inheritdoc/>
-    </member>
-
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.MorphologyEffectMode">
       <summary>Configures behavior of the morphology filter kernel.</summary>
@@ -82,6 +66,10 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.MorphologyEffect.Name">
+      <summary>Attaches a user-defined name string to the effect.</summary>
+      <inheritdoc/>
     </member>
 
   </members>

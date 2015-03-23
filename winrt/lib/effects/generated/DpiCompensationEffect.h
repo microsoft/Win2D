@@ -32,6 +32,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
         EFFECT_PROPERTY(BorderMode, EffectBorderMode);
         EFFECT_PROPERTY(SourceDpi, Numerics::Vector2);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

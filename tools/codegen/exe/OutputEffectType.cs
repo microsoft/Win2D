@@ -141,19 +141,24 @@ namespace CodeGen
                 output.WriteLine();
             }
 
-            // Check if inputs specify maximum attribute in xml and if it is marked as unlimited
-            if (!(effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF"))
+            if (EffectHasVariableNumberOfInputs(effect))
+            {
+                output.WriteLine("[propget]");
+                output.WriteLine("HRESULT Sources([out, retval] Windows.Foundation.Collections.IVector<IGraphicsEffectSource*>** value);");
+                output.WriteLine();
+            }
+            else
             {
                 for (int i = 0; i < effect.Inputs.InputsList.Count; ++i)
                 {
                     var input = effect.Inputs.InputsList[i];
 
                     output.WriteLine("[propget]");
-                    output.WriteLine("HRESULT " + input.Name + "([out, retval] IEffectInput** input);");
+                    output.WriteLine("HRESULT " + input.Name + "([out, retval] IGraphicsEffectSource** source);");
                     output.WriteLine();
 
                     output.WriteLine("[propput]");
-                    output.WriteLine("HRESULT " + input.Name + "([in] IEffectInput* input);");
+                    output.WriteLine("HRESULT " + input.Name + "([in] IGraphicsEffectSource* source);");
                     output.WriteLine();
                 }
             }
@@ -167,7 +172,7 @@ namespace CodeGen
             output.WriteLine("{");
             output.Indent();
             output.WriteLine("[default] interface " + effect.InterfaceName + ";");
-            output.WriteLine("interface IEffect;");
+            output.WriteLine("interface IGraphicsEffect;");
             output.Unindent();
             output.WriteLine("}");
             output.Unindent();
@@ -214,12 +219,16 @@ namespace CodeGen
                 output.WriteLine(propertyMacro + "(" + property.Name + ", " + property.TypeNameCpp + ");");
             }
 
-            if (!(effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF"))
+            if (EffectHasVariableNumberOfInputs(effect))
+            {
+                output.WriteLine("EFFECT_SOURCES_PROPERTY();");
+            }
+            else
             {
                 for (int i = 0; i < effect.Inputs.InputsList.Count; ++i)
                 {
                     var input = effect.Inputs.InputsList[i];
-                    output.WriteLine("EFFECT_PROPERTY(" + input.Name + ", IEffectInput*);");
+                    output.WriteLine("EFFECT_PROPERTY(" + input.Name + ", IGraphicsEffectSource*);");
                 }
             }
             output.Unindent();
@@ -232,9 +241,8 @@ namespace CodeGen
         {
             OutputDataTypes.OutputLeadingComment(output);
 
-            bool isInputSizeFixed = true;
-            if (effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF")
-                isInputSizeFixed = false;
+            bool isInputSizeFixed = !EffectHasVariableNumberOfInputs(effect);
+            int inputsCount = isInputSizeFixed ? effect.Inputs.InputsList.Count : 0;
 
             output.WriteLine("#include \"pch.h\"");
             output.WriteLine("#include \"" + effect.ClassName + ".h\"");
@@ -244,9 +252,6 @@ namespace CodeGen
             output.Indent();
             output.WriteLine(effect.ClassName + "::" + effect.ClassName + "()");
             output.WriteIndent();
-            int inputsCount = effect.Inputs.InputsList.Count;
-            if (effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF")
-                inputsCount = 0;
             output.WriteLine(": CanvasEffect(CLSID_D2D1"
                              + EffectGenerator.FormatClassName(effect.Properties[0].Value) + ", "
                              + (effect.Properties.Count(p => !p.IsHandCoded) - 4) + ", "
@@ -268,12 +273,17 @@ namespace CodeGen
                 WritePropertyImplementation(effect, output, property);
             }
 
-            if (!(effect.Inputs.Maximum != null && effect.Inputs.Maximum == "0xFFFFFFFF"))
+            if (EffectHasVariableNumberOfInputs(effect))
+            {
+                output.WriteLine("IMPLEMENT_EFFECT_SOURCES_PROPERTY(" + effect.ClassName + ")");
+                output.WriteLine();
+            }
+            else
             {
                 for (int i = 0; i < effect.Inputs.InputsList.Count; ++i)
                 {
                     var input = effect.Inputs.InputsList[i];
-                    output.WriteLine("IMPLEMENT_EFFECT_INPUT_PROPERTY(" + effect.ClassName + ",");
+                    output.WriteLine("IMPLEMENT_EFFECT_SOURCE_PROPERTY(" + effect.ClassName + ",");
                     output.Indent();
                     output.WriteLine(input.Name + ",");
                     output.WriteLine(i.ToString() + ")");
@@ -297,7 +307,7 @@ namespace CodeGen
 
             string defaultValue = property.Properties.Find(internalProperty => internalProperty.Name == "Default").Value;
 
-            string setFunction = property.IsArray ? "SetArrayProperty" : "SetProperty";
+            string setFunction = property.IsArray ? "SetArrayProperty" : "SetBoxedProperty";
 
             output.WriteLine(setFunction + "<" + property.TypeNameBoxed + ">(" + property.NativePropertyName + ", " + FormatPropertyValue(property, defaultValue) + ");");
         }
@@ -518,6 +528,11 @@ namespace CodeGen
             {
                 return float.Parse(value.Replace("f", ""));
             }
+        }
+
+        static bool EffectHasVariableNumberOfInputs(Effects.Effect effect)
+        {
+            return effect.Inputs.Maximum == "0xFFFFFFFF";
         }
     }
 }

@@ -24,18 +24,18 @@ public:
 
     ComPtr<TestEffect> m_testEffect;
     unsigned int m_realPropertiesSize = 4;
-    unsigned int m_realInputSize = 8;
+    unsigned int m_realSourcesSize = 8;
     GUID m_blurGuid = CLSID_D2D1GaussianBlur;
 
     TEST_METHOD_INITIALIZE(Reset)
     {
-        m_testEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realInputSize, false);
+        m_testEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realSourcesSize, false);
     }
 
     TEST_METHOD_EX(CanvasEffect_Implements_Expected_Interfaces)
     {
-        ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IEffect);
-        ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IEffectInput);
+        ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IGraphicsEffect);
+        ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IGraphicsEffectSource);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImage);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImageInternal);
@@ -44,16 +44,13 @@ public:
 
     TEST_METHOD_EX(CanvasEffect_Properties)
     {
-        ComPtr<IVector<IInspectable*>> properties;
-        ThrowIfFailed(m_testEffect->get_Properties(&properties));
-
         unsigned int propertiesSize;
-        ThrowIfFailed(properties->get_Size(&propertiesSize));
+        ThrowIfFailed(m_testEffect->GetPropertyCount(&propertiesSize));
         Assert::AreEqual(m_realPropertiesSize, propertiesSize);
-        for (unsigned int i = 0; i < m_realInputSize; ++i)
+        for (unsigned int i = 0; i < m_realPropertiesSize; ++i)
         {
             ComPtr<IPropertyValue> propertyValue;
-            properties->GetAt(i, &propertyValue);
+            ThrowIfFailed(m_testEffect->GetProperty(i, &propertyValue));
             Assert::IsNull(propertyValue.Get());
         }
 
@@ -86,7 +83,7 @@ public:
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = { 0 };
 
-        auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realInputSize, false);
+        auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realSourcesSize, false);
         auto drawingSession = CreateStubDrawingSession();
 
         Assert::AreEqual(S_OK, canvasEffect->Close());
@@ -95,57 +92,54 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
     }
 
-    TEST_METHOD_EX(CanvasEffect_Inputs)
+    TEST_METHOD_EX(CanvasEffect_Sources)
     {
-        ComPtr<IVector<IEffectInput*>> inputs;
-        ThrowIfFailed(m_testEffect->get_Inputs(&inputs));
-
-        unsigned int inputSize;
-        ThrowIfFailed(inputs->get_Size(&inputSize));
-        Assert::AreEqual(m_realInputSize, inputSize);
-        for (unsigned int i = 0; i < m_realInputSize; ++i)
+        unsigned int sourceSize;
+        ThrowIfFailed(m_testEffect->GetSourceCount(&sourceSize));
+        Assert::AreEqual(m_realSourcesSize, sourceSize);
+        for (unsigned int i = 0; i < m_realSourcesSize; ++i)
         {
-            ComPtr<IEffectInput> input;
-            inputs->GetAt(i, &input);
-            Assert::IsNull(input.Get());
+            ComPtr<IGraphicsEffectSource> source;
+            ThrowIfFailed(m_testEffect->GetSource(i, &source));
+            Assert::IsNull(source.Get());
         }
 
-        bool isSetInputCalled = false;
-        m_testEffect->MockSetInput =
+        bool isSetSourceCalled = false;
+        m_testEffect->MockSetSource =
             [&]
             {
-                Assert::IsFalse(isSetInputCalled);
-                isSetInputCalled = true;
+                Assert::IsFalse(isSetSourceCalled);
+                isSetSourceCalled = true;
             };
 
-        bool isGetInputCalled = false;
-        m_testEffect->MockGetInput =
+        bool isGetSourceCalled = false;
+        m_testEffect->MockGetSource =
             [&]
             {
-                Assert::IsFalse(isGetInputCalled);
-                isGetInputCalled = true;
+                Assert::IsFalse(isGetSourceCalled);
+                isGetSourceCalled = true;
             };
 
-        // set same effect as input
+        // set same effect as source
         ThrowIfFailed(m_testEffect->put_Source(m_testEffect.Get()));
-        ComPtr<IEffectInput> sourceInput;
-        ThrowIfFailed(m_testEffect->get_Source(&sourceInput));
+        ComPtr<IGraphicsEffectSource> source;
+        ThrowIfFailed(m_testEffect->get_Source(&source));
 
-        Assert::IsTrue(isSetInputCalled);
-        Assert::IsTrue(isGetInputCalled);
+        Assert::IsTrue(isSetSourceCalled);
+        Assert::IsTrue(isGetSourceCalled);
 
-        Assert::AreEqual(As<IUnknown>(sourceInput).Get(), As<IUnknown>(m_testEffect).Get());
+        Assert::AreEqual(As<IUnknown>(source).Get(), As<IUnknown>(m_testEffect).Get());
 
-        // set null input
-        isSetInputCalled = isGetInputCalled = false;
+        // set null source
+        isSetSourceCalled = isGetSourceCalled = false;
 
         ThrowIfFailed(m_testEffect->put_Source(nullptr));
-        ThrowIfFailed(m_testEffect->get_Source(&sourceInput));
+        ThrowIfFailed(m_testEffect->get_Source(&source));
 
-        Assert::IsTrue(isSetInputCalled);
-        Assert::IsTrue(isGetInputCalled);
+        Assert::IsTrue(isSetSourceCalled);
+        Assert::IsTrue(isGetSourceCalled);
 
-        Assert::IsNull(sourceInput.Get());
+        Assert::IsNull(source.Get());
     }
 
     struct Fixture
@@ -191,7 +185,7 @@ public:
         }
     };
 
-    void VerifyEffectRealizationInputs(
+    void VerifyEffectRealizationSources(
         std::shared_ptr<CanvasDrawingSessionManager> const& drawingSessionManager,
         TestEffect* testEffect)
     {
@@ -264,22 +258,22 @@ public:
         
         // This test realizes m_testEffect twice, each time with different 
         // devices. Verifies that the D2D effect is re-created, and 
-        // its inputs and properties are set.
+        // its sources and properties are set.
         
         // Set a source and non-default value.
-        ThrowIfFailed(testEffect->put_Source(As<IEffectInput>(CreateStubCanvasBitmap()).Get()));
+        ThrowIfFailed(testEffect->put_Source(As<IGraphicsEffectSource>(CreateStubCanvasBitmap()).Get()));
         ThrowIfFailed(testEffect->put_BlurAmount(99));
 
-        VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
-        VerifyEffectRealizationInputs(drawingSessionManager, testEffect.Get());
+        VerifyEffectRealizationSources(drawingSessionManager, testEffect.Get());
+        VerifyEffectRealizationSources(drawingSessionManager, testEffect.Get());
     }
 
-    class InvalidEffectInputType : public RuntimeClass<IEffectInput>
+    class InvalidEffectSourceType : public RuntimeClass<IGraphicsEffectSource>
     {
-        InspectableClass(L"InvalidEffectInputType", BaseTrust);
+        InspectableClass(L"InvalidEffectSourceType", BaseTrust);
     };
 
-    TEST_METHOD_EX(CanvasEffect_WrongInputType)
+    TEST_METHOD_EX(CanvasEffect_WrongSourceType)
     {
         Fixture f;
 
@@ -296,17 +290,17 @@ public:
 
         auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1, false);
 
-        // Validate drawing with a null input.
+        // Validate drawing with a null source.
         Assert::AreEqual(E_POINTER, f.m_drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
         
-        // Validate drawing with an input that is not the right type.
-        auto invalidInput = Make<InvalidEffectInputType>();
+        // Validate drawing with a source that is not the right type.
+        auto invalidSource = Make<InvalidEffectSourceType>();
 
-        testEffect->SetInput(0, invalidInput.Get());
+        testEffect->SetSource(0, invalidSource.Get());
 
         Assert::AreEqual(E_NOINTERFACE, f.m_drawingSession->DrawImage(testEffect.Get(), Vector2{ 0, 0 }));
 
-        ValidateStoredErrorState(E_NOINTERFACE, L"Effect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.");
+        ValidateStoredErrorState(E_NOINTERFACE, L"Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.");
     }
 
     TEST_METHOD_EX(CanvasEffect_CyclicGraph)
@@ -343,7 +337,7 @@ public:
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = { 0 };
 
-        auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realInputSize, false);
+        auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realSourcesSize, false);
         auto drawingSession = CreateStubDrawingSession();
 
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(nullptr, &bounds));
@@ -371,7 +365,7 @@ public:
         f.m_deviceContext->CreateEffectMethod.AllowAnyCall(createCountingEffect);        
         f.m_deviceContext->DrawImageMethod.AllowAnyCall();
 
-        // Create three effects, connected as each other's inputs.
+        // Create three effects, connected as each other's sources.
         for (int i = 0; i < 3; i++)
         {
             testEffects.push_back(Make<TestEffect>(m_blurGuid, 1, 1, false));
@@ -385,7 +379,7 @@ public:
         testEffects[1]->put_BlurAmount(0);
         testEffects[2]->put_BlurAmount(0);
 
-        // Drawing the first time should set properties and inputs on all three effects.
+        // Drawing the first time should set properties and sources on all three effects.
         ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 1, 1, 1 }, { 1, 1, 1 });
 
@@ -393,17 +387,17 @@ public:
         ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 1, 1, 1 }, { 1, 1, 1 });
 
-        // Draw after changing an input of the root effect.
+        // Draw after changing a source of the root effect.
         testEffects[0]->put_Source(testEffects[1].Get());
         ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 2, 1, 1 }, { 1, 1, 1 });
 
-        // Draw after changing an input of the second level effect.
+        // Draw after changing a source of the second level effect.
         testEffects[1]->put_Source(testEffects[2].Get());
         ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 2, 2, 1 }, { 1, 1, 1 });
 
-        // Draw after changing an input of the third level effect.
+        // Draw after changing a source of the third level effect.
         testEffects[2]->put_Source(stubBitmap.Get());
         ThrowIfFailed(f.m_drawingSession->DrawImage(testEffects[0].Get(), Vector2{ 0, 0 }));
         CheckCallCount(mockEffects, 3, { 2, 2, 2 }, { 1, 1, 1 });
@@ -649,9 +643,9 @@ public:
     {
         CommandListFixture f;
 
-        auto commandListUsedAsEffectInput = f.CreateCommandList();
+        auto commandListUsedAsEffectSource = f.CreateCommandList();
         auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1, true);
-        ThrowIfFailed(testEffect->put_Source(As<IEffectInput>(commandListUsedAsEffectInput).Get()));
+        ThrowIfFailed(testEffect->put_Source(As<IGraphicsEffectSource>(commandListUsedAsEffectSource).Get()));
 
         f.DrawEffectToCommandList(testEffect);
 

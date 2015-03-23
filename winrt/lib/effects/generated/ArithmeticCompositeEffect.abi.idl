@@ -51,16 +51,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Offset([in] float value);
 
         [propget]
-        HRESULT Source1([out, retval] IEffectInput** input);
+        HRESULT Source1([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source1([in] IEffectInput* input);
+        HRESULT Source1([in] IGraphicsEffectSource* source);
 
         [propget]
-        HRESULT Source2([out, retval] IEffectInput** input);
+        HRESULT Source2([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source2([in] IEffectInput* input);
+        HRESULT Source2([in] IGraphicsEffectSource* source);
 
     };
 
@@ -68,6 +68,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ArithmeticCompositeEffect
     {
         [default] interface IArithmeticCompositeEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

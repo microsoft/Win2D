@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1OpacityMetadata, 1, 1, true)
     {
         // Set default values
-        SetProperty<float[4]>(D2D1_OPACITYMETADATA_PROP_INPUT_OPAQUE_RECT, Rect{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
+        SetBoxedProperty<float[4]>(D2D1_OPACITYMETADATA_PROP_INPUT_OPAQUE_RECT, Rect{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
     }
 
     IMPLEMENT_EFFECT_PROPERTY(OpacityMetadataEffect,
@@ -30,7 +30,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Rect,
         D2D1_OPACITYMETADATA_PROP_INPUT_OPAQUE_RECT)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(OpacityMetadataEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(OpacityMetadataEffect,
         Source,
         0)
 

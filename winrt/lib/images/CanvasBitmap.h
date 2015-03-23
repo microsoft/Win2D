@@ -275,7 +275,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasBitmap,
         ICanvasImage,
-        IEffectInput,
+        IGraphicsEffectSource,
         IDirect3DSurface,
         CloakedIid<ICanvasImageInternal>,
         CloakedIid<ICanvasBitmapInternal>,

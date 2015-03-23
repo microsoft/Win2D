@@ -330,24 +330,24 @@ namespace ExampleGallery
                 // Create the final thumbnail image.
                 var finalImage = new CompositeEffect
                 {
-                    Inputs = 
-                { 
-                    // Blurred shadow.
-                    new ShadowEffect
+                    Sources =
                     {
-                        Source = new MorphologyEffect
+                        // Blurred shadow.
+                        new ShadowEffect
                         {
-                            Source = scaledImage,
-                            Mode = MorphologyEffectMode.Dilate,
-                            Width = dilateAmount,
-                            Height = dilateAmount,
+                            Source = new MorphologyEffect
+                            {
+                                Source = scaledImage,
+                                Mode = MorphologyEffectMode.Dilate,
+                                Width = dilateAmount,
+                                Height = dilateAmount,
+                            },
+                            BlurAmount = blurAmount,
                         },
-                        BlurAmount = blurAmount,
-                    },
 
-                    // Overlay the image itself.
-                    scaledImage 
-                }
+                        // Overlay the image itself.
+                        scaledImage
+                    }
                 };
 
                 // Rasterize the effect into a rendertarget.

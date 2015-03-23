@@ -75,10 +75,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT HeightMapInterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
     };
 
@@ -86,6 +86,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass SpotDiffuseEffect
     {
         [default] interface ISpotDiffuseEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

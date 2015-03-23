@@ -31,6 +31,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         EFFECT_PROPERTY(ExtendX, CanvasEdgeBehavior);
         EFFECT_PROPERTY(ExtendY, CanvasEdgeBehavior);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

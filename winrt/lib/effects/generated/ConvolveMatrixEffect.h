@@ -40,6 +40,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(PreserveAlpha, boolean);
         EFFECT_PROPERTY(BorderMode, EffectBorderMode);
         EFFECT_PROPERTY(ClampOutput, boolean);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

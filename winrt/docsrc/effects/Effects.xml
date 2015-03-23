@@ -19,47 +19,32 @@ under the License.
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.IEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect">
       <summary>Abstract interface representing an effect used for image processing.</summary>
       <remarks>
-        <p>IEffect is defined in such a way that it is possible to convert it to a D2D effect.</p>
+        C++ developers can QI an IGraphicsEffect for the IGraphicsEffectD2D1Interop interface,
+        which exposes all the information needed to construct a matching D2D effect.
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.EffectId">
-      <summary>Gets a unique identifier for the effect.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect.Name">
+      <summary>Attaches a user-defined name string to the effect.</summary>
       <remarks>
-        <p>Canvas built in effects return an EffectId that corresponds to the 
-           equivalent <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh404566(v=vs.85).aspx">ID2D1Effect</a> GUID on the platform.</p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.Inputs">
-      <summary>Gets a collection of inputs attached to the effect.</summary>
-      <remarks>
-        <p>Generic way to configure the inputs of an effect. In most cases, the 
-           properties of strongly typed IEffect subclasses (eg. GaussianBlurEffect) should be used instead.</p>
-        <p>It is possible to add, remove, or modify the Inputs.</p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.IEffect.Properties">
-      <summary>Gets the collection of properties specific to the current effect.</summary>
-      <remarks>
-        <p>Generic way to configure the properties of an effect. In most cases, the 
-           properties of strongly typed IEffect subclasses (eg. GaussianBlurEffect) should be used instead.</p>
-        <p>New effects have all default properties set in advance. Size of vector corresponds to number 
-           of properties for current effect. The index values of the properties found on an effect 
-           match the D2D equivalent effect index values.</p>
+        The name string is not used directly by Win2D.
+        Applications can use this to store arbitrary information of their choosing,
+        for instance it could be used as an id to locate a particular effect in a graph.
       </remarks>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.IEffectInput">
-      <summary>Represents a type that can be accepted as input for IEffect object.</summary>
+    <member name="T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource">
+      <summary>Represents a type that can be accepted as input for an IGraphicsEffect.</summary>
       <remarks>
-        <p>Although IEffect object require inputs to implement just IEffectInput, 
+        <p>Although IGraphicsEffect objects will accept any IGraphicsEffectSource as their source,
            <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/> can draw only objects
-           which implement <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> such as 
-           <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, command list, 
-           or image processing effect.</p>
+           which implement <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> such as
+           <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>,
+           <see cref="T:Microsoft.Graphics.Canvas.CanvasCommandList"/>,
+           or an image processing effect.</p>
       </remarks>
     </member>
 

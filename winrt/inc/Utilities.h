@@ -19,8 +19,8 @@
 template<typename T, typename U>
 inline bool IsSameInstance(T* value1, U* value2)
 {
-    ComPtr<IUnknown> identity1;
-    ComPtr<IUnknown> identity2;
+    Microsoft::WRL::ComPtr<IUnknown> identity1;
+    Microsoft::WRL::ComPtr<IUnknown> identity2;
 
     ThrowIfFailed(value1->QueryInterface(IID_PPV_ARGS(identity1.GetAddressOf())));
     ThrowIfFailed(value2->QueryInterface(IID_PPV_ARGS(identity2.GetAddressOf())));
@@ -32,7 +32,9 @@ inline bool IsSameInstance(T* value1, U* value2)
 template<typename T, typename U>
 inline Microsoft::WRL::ComPtr<T> As(Microsoft::WRL::ComPtr<U> const& u)
 {
-    ComPtr<T> t;
+    static_assert(!std::is_same<T, U>::value, "types should differ");
+
+    Microsoft::WRL::ComPtr<T> t;
     ThrowIfFailed(u.As(&t));
     return t;
 }
@@ -40,7 +42,9 @@ inline Microsoft::WRL::ComPtr<T> As(Microsoft::WRL::ComPtr<U> const& u)
 template<typename T, typename U>
 inline Microsoft::WRL::ComPtr<T> As(U* u)
 {
-    ComPtr<T> t;
+    static_assert(!std::is_same<T, U>::value, "types should differ");
+
+    Microsoft::WRL::ComPtr<T> t;
     ThrowIfFailed(u->QueryInterface(IID_PPV_ARGS(t.ReleaseAndGetAddressOf())));
     return t;
 }
@@ -48,7 +52,9 @@ inline Microsoft::WRL::ComPtr<T> As(U* u)
 template<typename T, typename U>
 inline Microsoft::WRL::ComPtr<T> MaybeAs(Microsoft::WRL::ComPtr<U> const& u)
 {
-    ComPtr<T> t;
+    static_assert(!std::is_same<T, U>::value, "types should differ");
+
+    Microsoft::WRL::ComPtr<T> t;
     if (u && SUCCEEDED(u.As(&t)))
         return t;
     else
@@ -58,7 +64,9 @@ inline Microsoft::WRL::ComPtr<T> MaybeAs(Microsoft::WRL::ComPtr<U> const& u)
 template<typename T, typename U>
 inline Microsoft::WRL::ComPtr<T> MaybeAs(U* u)
 {
-    ComPtr<T> t;
+    static_assert(!std::is_same<T, U>::value, "types should differ");
+
+    Microsoft::WRL::ComPtr<T> t;
     if (u && SUCCEEDED(u->QueryInterface(IID_PPV_ARGS(t.ReleaseAndGetAddressOf()))))
         return t;
     else
@@ -68,7 +76,7 @@ inline Microsoft::WRL::ComPtr<T> MaybeAs(U* u)
 template<typename T>
 inline Microsoft::WRL::WeakRef AsWeak(T* t)
 {
-    WeakRef weakRef;
+    Microsoft::WRL::WeakRef weakRef;
     ThrowIfFailed(AsWeak(t, &weakRef));
     return weakRef;
 }
@@ -76,7 +84,7 @@ inline Microsoft::WRL::WeakRef AsWeak(T* t)
 template<typename T>
 inline Microsoft::WRL::ComPtr<T> LockWeakRef(Microsoft::WRL::WeakRef& weakRef)
 {
-    ComPtr<T> t;
+    Microsoft::WRL::ComPtr<T> t;
     ThrowIfFailed(weakRef.As(&t));
     return t;
 }

@@ -21,8 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1ArithmeticComposite, 2, 2, true)
     {
         // Set default values
-        SetProperty<float[4]>(D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, Numerics::Vector4{ 1.0f, 0.0f, 0.0f, 0.0f });
-        SetProperty<boolean>(D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        SetBoxedProperty<float[4]>(D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, Numerics::Vector4{ 1.0f, 0.0f, 0.0f, 0.0f });
+        SetBoxedProperty<boolean>(D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
     IMPLEMENT_EFFECT_PROPERTY(ArithmeticCompositeEffect,
@@ -31,11 +31,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         boolean,
         D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(ArithmeticCompositeEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(ArithmeticCompositeEffect,
         Source1,
         0)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(ArithmeticCompositeEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(ArithmeticCompositeEffect,
         Source2,
         1)
 

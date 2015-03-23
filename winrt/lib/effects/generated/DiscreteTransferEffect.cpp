@@ -22,14 +22,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         // Set default values
         SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_RED_TABLE, { 0.0, 1.0 });
-        SetProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
         SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_GREEN_TABLE, { 0.0, 1.0 });
-        SetProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
         SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_BLUE_TABLE, { 0.0, 1.0 });
-        SetProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
         SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_ALPHA_TABLE, { 0.0, 1.0 });
-        SetProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
-        SetProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
     IMPLEMENT_EFFECT_ARRAY_PROPERTY(DiscreteTransferEffect,
@@ -82,7 +82,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         boolean,
         D2D1_DISCRETETRANSFER_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(DiscreteTransferEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(DiscreteTransferEffect,
         Source,
         0)
 

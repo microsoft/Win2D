@@ -21,9 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D13DTransform, 3, 1, true)
     {
         // Set default values
-        SetProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE, D2D1_3DTRANSFORM_INTERPOLATION_MODE_LINEAR);
-        SetProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
-        SetProperty<float[16]>(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix4x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
+        SetBoxedProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE, D2D1_3DTRANSFORM_INTERPOLATION_MODE_LINEAR);
+        SetBoxedProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        SetBoxedProperty<float[16]>(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix4x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(Transform3DEffect,
@@ -45,7 +45,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Numerics::Matrix4x4,
         D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(Transform3DEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(Transform3DEffect,
         Source,
         0)
 

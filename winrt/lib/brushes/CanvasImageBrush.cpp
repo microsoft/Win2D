@@ -148,7 +148,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // Effects need to be reconfigured depending on the DPI of the device context they
             // are drawn onto. We don't know target DPI at this point, so if the image is an
             // effect, we store that away for use by a later fixup inside GetD2DBrush.
-            ComPtr<IEffect> effect;
+            ComPtr<IGraphicsEffect> effect;
             if (SUCCEEDED(image->QueryInterface(effect.GetAddressOf())))
             {
                 m_effectNeedingDpiFixup = As<ICanvasImageInternal>(effect);

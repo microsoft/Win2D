@@ -21,11 +21,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Scale, 5, 1, true)
     {
         // Set default values
-        SetProperty<float[2]>(D2D1_SCALE_PROP_SCALE, Numerics::Vector2{ 1, 1 });
-        SetProperty<float[2]>(D2D1_SCALE_PROP_CENTER_POINT, Numerics::Vector2{ 0, 0 });
-        SetProperty<uint32_t>(D2D1_SCALE_PROP_INTERPOLATION_MODE, D2D1_CONVOLVEMATRIX_SCALE_MODE_LINEAR);
-        SetProperty<uint32_t>(D2D1_SCALE_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
-        SetProperty<float>(D2D1_SCALE_PROP_SHARPNESS, 0.0f);
+        SetBoxedProperty<float[2]>(D2D1_SCALE_PROP_SCALE, Numerics::Vector2{ 1, 1 });
+        SetBoxedProperty<float[2]>(D2D1_SCALE_PROP_CENTER_POINT, Numerics::Vector2{ 0, 0 });
+        SetBoxedProperty<uint32_t>(D2D1_SCALE_PROP_INTERPOLATION_MODE, D2D1_CONVOLVEMATRIX_SCALE_MODE_LINEAR);
+        SetBoxedProperty<uint32_t>(D2D1_SCALE_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        SetBoxedProperty<float>(D2D1_SCALE_PROP_SHARPNESS, 0.0f);
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ScaleEffect,
@@ -60,7 +60,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_SCALE_PROP_SHARPNESS,
         (value >= 0.0f) && (value <= 1.0f))
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(ScaleEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(ScaleEffect,
         Source,
         0)
 

@@ -33,10 +33,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT BlackPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
     };
 
@@ -44,6 +44,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass BrightnessEffect
     {
         [default] interface IBrightnessEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

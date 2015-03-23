@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1HueRotation, 1, 1, true)
     {
         // Set default values
-        SetProperty<float>(D2D1_HUEROTATION_PROP_ANGLE, 0.0f);
+        SetBoxedProperty<float>(D2D1_HUEROTATION_PROP_ANGLE, 0.0f);
     }
 
     IMPLEMENT_EFFECT_PROPERTY(HueRotationEffect,
@@ -30,7 +30,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         float,
         D2D1_HUEROTATION_PROP_ANGLE)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(HueRotationEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(HueRotationEffect,
         Source,
         0)
 

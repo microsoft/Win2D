@@ -29,7 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasCommandListTraits,
         ICanvasImage,
         CloakedIid<ICanvasImageInternal>,
-        Effects::IEffectInput)
+        Effects::IGraphicsEffectSource)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCommandList, BaseTrust);
 

@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using System.Reflection;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -65,6 +66,7 @@ namespace ExampleGallery
         CanvasBitmap bitmapTiger;
         ICanvasImage effect;
         Vector2 currentEffectSize;
+        string activeEffectNames;
         string textLabel;
         Action<float> animationFunction;
         Stopwatch timer;
@@ -77,7 +79,8 @@ namespace ExampleGallery
         async Task Canvas_CreateResourcesAsync(CanvasControl sender)
         {
             bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
-            effect = CreateEffect();
+
+            CreateEffect();
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -95,7 +98,7 @@ namespace ExampleGallery
 
             if (size.Width > minSizeToShowText && size.Height > minSizeToShowText)
             {
-                string text = GetActiveEffectNames();
+                string text = activeEffectNames;
 
                 if (textLabel != null)
                 {
@@ -112,7 +115,7 @@ namespace ExampleGallery
         {
             if (canvas.ReadyToDraw)
             {
-                effect = CreateEffect();
+                CreateEffect();
             }
         }
 
@@ -124,11 +127,11 @@ namespace ExampleGallery
 
             if (reallyChanged && canvas.ReadyToDraw)
             {
-                effect = CreateEffect();
+                CreateEffect();
             }
         }
 
-        private ICanvasImage CreateEffect()
+        private void CreateEffect()
         {
             timer = Stopwatch.StartNew();
             currentEffectSize = bitmapTiger.Size.ToVector2();
@@ -137,68 +140,90 @@ namespace ExampleGallery
             switch (CurrentEffect)
             {
                 case EffectType.ArithmeticComposite:
-                    return CreateArithmeticComposite();
+                    effect = CreateArithmeticComposite();
+                    break;
 
                 case EffectType.Blend:
-                    return CreateBlend();
+                    effect = CreateBlend();
+                    break;
 
                 case EffectType.Border:
-                    return CreateBorder();
+                    effect = CreateBorder();
+                    break;
 
                 case EffectType.Brightness:
-                    return CreateBrightness();
+                    effect = CreateBrightness();
+                    break;
 
                 case EffectType.ColorMatrix:
-                    return CreateColorMatrix();
+                    effect = CreateColorMatrix();
+                    break;
 
                 case EffectType.Composite:
-                    return CreateComposite();
+                    effect = CreateComposite();
+                    break;
 
                 case EffectType.ConvolveMatrix:
-                    return CreateConvolveMatrix();
+                    effect = CreateConvolveMatrix();
+                    break;
 
                 case EffectType.Crop:
-                    return CreateCrop();
+                    effect = CreateCrop();
+                    break;
 
                 case EffectType.DirectionalBlur:
-                    return CreateDirectionalBlur();
+                    effect = CreateDirectionalBlur();
+                    break;
 
                 case EffectType.DiscreteTransfer:
-                    return CreateDiscreteTransfer();
+                    effect = CreateDiscreteTransfer();
+                    break;
 
                 case EffectType.DisplacementMap:
-                    return CreateDisplacementMap();
+                    effect = CreateDisplacementMap();
+                    break;
 
                 case EffectType.GaussianBlur:
-                    return CreateGaussianBlur();
+                    effect = CreateGaussianBlur();
+                    break;
 
                 case EffectType.HueRotation:
-                    return CreateHueRotation();
+                    effect = CreateHueRotation();
+                    break;
 
                 case EffectType.Lighting:
-                    return CreateLighting();
+                    effect = CreateLighting();
+                    break;
 
                 case EffectType.LuminanceToAlpha:
-                    return CreateLuminanceToAlpha();
+                    effect = CreateLuminanceToAlpha();
+                    break;
 
                 case EffectType.Morphology:
-                    return CreateMorphology();
+                    effect = CreateMorphology();
+                    break;
 
                 case EffectType.Saturation:
-                    return CreateSaturation();
+                    effect = CreateSaturation();
+                    break;
 
                 case EffectType.Shadow:
-                    return CreateShadow();
+                    effect = CreateShadow();
+                    break;
 
                 case EffectType.Tile:
-                    return CreateTile();
+                    effect = CreateTile();
+                    break;
 
                 case EffectType.Transform3D:
-                    return CreateTransform3D();
+                    effect = CreateTransform3D();
+                    break;
 
                 default:
                     throw new NotSupportedException();
             }
+
+            activeEffectNames = GetActiveEffectNames();
         }
 
         private ICanvasImage CreateArithmeticComposite()
@@ -345,7 +370,7 @@ namespace ExampleGallery
                     Source = bitmapTiger
                 };
 
-                compositeEffect.Inputs.Add(transformEffect);
+                compositeEffect.Sources.Add(transformEffect);
                 transformEffects.Add(transformEffect);
             }
 
@@ -602,7 +627,7 @@ namespace ExampleGallery
 
             var compositeEffect = new CompositeEffect
             {
-                Inputs =
+                Sources =
                 {
                     AddTextOverlay(distantDiffuseEffect,  -xgap, -ygap),
                     AddTextOverlay(distantSpecularEffect, -xgap,  0),
@@ -823,7 +848,7 @@ namespace ExampleGallery
 
             var compositeEffect = new CompositeEffect
             {
-                Inputs = { whiteBackground, shadowEffect, renderTarget }
+                Sources = { whiteBackground, shadowEffect, renderTarget }
             };
 
             animationFunction = elapsedTime => { };
@@ -882,7 +907,7 @@ namespace ExampleGallery
 
             return new CompositeEffect
             {
-                Inputs = { softEdge, effect },
+                Sources = { softEdge, effect },
                 Mode = CanvasComposite.SourceIn 
             };
         }
@@ -922,17 +947,34 @@ namespace ExampleGallery
             return "Effects used:\n    " + string.Join("\n    ", names.Distinct());
         }
 
-        private static void GetActiveEffects(IEffectInput effectInput, List<Type> typesSeen)
+        private static void GetActiveEffects(IGraphicsEffectSource effectSource, List<Type> typesSeen)
         {
-            IEffect effect = effectInput as IEffect;
+            // Record this node if it is an IGraphicsEffect.
+            IGraphicsEffect effect = effectSource as IGraphicsEffect;
 
             if (effect != null)
             {
                 typesSeen.Add(effect.GetType());
 
-                foreach (var input in effect.Inputs)
+                foreach (var property in effect.GetType().GetRuntimeProperties())
                 {
-                    GetActiveEffects(input, typesSeen);
+                    if (property.PropertyType == typeof(IGraphicsEffectSource))
+                    {
+                        // Recurse into any source properties that could themselves be effects.
+                        var source = (IGraphicsEffectSource)property.GetValue(effect);
+
+                        GetActiveEffects(source, typesSeen);
+                    }
+                    else if (property.PropertyType == typeof(IList<IGraphicsEffectSource>))
+                    {
+                        // Recurse into any array source properties.
+                        var sources = (IList<IGraphicsEffectSource>)property.GetValue(effect);
+
+                        foreach (var source in sources)
+                        {
+                            GetActiveEffects(source, typesSeen);
+                        }
+                    }
                 }
             }
         }

@@ -22,4 +22,4 @@
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 
 #include <ErrorHandling.h>
-
+#include <Utilities.h>

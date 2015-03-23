@@ -5,6 +5,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SurfaceCreator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VectorCreator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EffectAccessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

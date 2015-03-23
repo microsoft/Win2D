@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Tile, 1, 1, true)
     {
         // Set default values
-        SetProperty<float[4]>(D2D1_TILE_PROP_RECT, Rect{ 0, 0, 100, 100 });
+        SetBoxedProperty<float[4]>(D2D1_TILE_PROP_RECT, Rect{ 0, 0, 100, 100 });
     }
 
     IMPLEMENT_EFFECT_PROPERTY(TileEffect,
@@ -30,7 +30,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Rect,
         D2D1_TILE_PROP_RECT)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(TileEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(TileEffect,
         Source,
         0)
 

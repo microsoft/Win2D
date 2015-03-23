@@ -27,10 +27,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Saturation([in] float value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
     };
 
@@ -38,6 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass SaturationEffect
     {
         [default] interface ISaturationEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

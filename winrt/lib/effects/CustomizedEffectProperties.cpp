@@ -19,29 +19,29 @@
 // value into just one component of a Vector4. This allows us to expand properties 
 // which D2D defines as a single Vector4, exposing them to WinRT as 4 separate floats.
 
-#define IMPLEMENT_PACKED_VECTOR_PROPERTY(CLASS_NAME, PROPERTY_NAME,                     \
-                                         PROPERTY_INDEX, VECTOR_COMPONENT)              \
-                                                                                        \
-    IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ float* value)                  \
-    {                                                                                   \
-        return ExceptionBoundary([&]                                                    \
-        {                                                                               \
-            CheckInPointer(value);                                                      \
-            Numerics::Vector4 packedValue;                                              \
-            GetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue);     \
-            *value = packedValue.VECTOR_COMPONENT;                                      \
-        });                                                                             \
-    }                                                                                   \
-                                                                                        \
-    IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(_In_ float value)                    \
-    {                                                                                   \
-        return ExceptionBoundary([&]                                                    \
-        {                                                                               \
-            Numerics::Vector4 packedValue;                                              \
-            GetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue);     \
-            packedValue.VECTOR_COMPONENT = value;                                       \
-            SetProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, packedValue);      \
-        });                                                                             \
+#define IMPLEMENT_PACKED_VECTOR_PROPERTY(CLASS_NAME, PROPERTY_NAME,                         \
+                                         PROPERTY_INDEX, VECTOR_COMPONENT)                  \
+                                                                                            \
+    IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ float* value)                      \
+    {                                                                                       \
+        return ExceptionBoundary([&]                                                        \
+        {                                                                                   \
+            CheckInPointer(value);                                                          \
+            Numerics::Vector4 packedValue;                                                  \
+            GetBoxedProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue);    \
+            *value = packedValue.VECTOR_COMPONENT;                                          \
+        });                                                                                 \
+    }                                                                                       \
+                                                                                            \
+    IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(_In_ float value)                        \
+    {                                                                                       \
+        return ExceptionBoundary([&]                                                        \
+        {                                                                                   \
+            Numerics::Vector4 packedValue;                                                  \
+            GetBoxedProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, &packedValue);    \
+            packedValue.VECTOR_COMPONENT = value;                                           \
+            SetBoxedProperty<float[4], Numerics::Vector4>(PROPERTY_INDEX, packedValue);     \
+        });                                                                                 \
     }
 
 
@@ -80,7 +80,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return ExceptionBoundary([&]
         {
             D2D1_COLORMATRIX_ALPHA_MODE d2dValue;
-            GetProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, &d2dValue);
+            GetBoxedProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, &d2dValue);
             *value = FromD2DColorMatrixAlphaMode(d2dValue);
         });
     }
@@ -94,7 +94,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return ExceptionBoundary([&]
         {
-            SetProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, ToD2DColorMatrixAlphaMode(value));
+            SetBoxedProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, ToD2DColorMatrixAlphaMode(value));
         });
     }
 

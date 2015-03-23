@@ -21,9 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Shadow, 3, 1, true)
     {
         // Set default values
-        SetProperty<float>(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, 3.0f);
-        SetProperty<float[4]>(D2D1_SHADOW_PROP_COLOR, Color{ 255, 0, 0, 0 });
-        SetProperty<uint32_t>(D2D1_SHADOW_PROP_OPTIMIZATION, D2D1_SHADOW_OPTIMIZATION_BALANCED);
+        SetBoxedProperty<float>(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, 3.0f);
+        SetBoxedProperty<float[4]>(D2D1_SHADOW_PROP_COLOR, Color{ 255, 0, 0, 0 });
+        SetBoxedProperty<uint32_t>(D2D1_SHADOW_PROP_OPTIMIZATION, D2D1_SHADOW_OPTIMIZATION_BALANCED);
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ShadowEffect,
@@ -45,7 +45,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EffectOptimization,
         D2D1_SHADOW_PROP_OPTIMIZATION)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(ShadowEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(ShadowEffect,
         Source,
         0)
 

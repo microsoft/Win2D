@@ -30,6 +30,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SaturationEffect();
 
         EFFECT_PROPERTY(Saturation, float);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

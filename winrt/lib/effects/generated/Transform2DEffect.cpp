@@ -21,10 +21,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D12DAffineTransform, 4, 1, true)
     {
         // Set default values
-        SetProperty<uint32_t>(D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE, D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR);
-        SetProperty<uint32_t>(D2D1_2DAFFINETRANSFORM_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
-        SetProperty<float[6]>(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix3x2{ 1, 0, 0, 1, 0, 0 });
-        SetProperty<float>(D2D1_2DAFFINETRANSFORM_PROP_SHARPNESS, 0.0f);
+        SetBoxedProperty<uint32_t>(D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE, D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR);
+        SetBoxedProperty<uint32_t>(D2D1_2DAFFINETRANSFORM_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        SetBoxedProperty<float[6]>(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix3x2{ 1, 0, 0, 1, 0, 0 });
+        SetBoxedProperty<float>(D2D1_2DAFFINETRANSFORM_PROP_SHARPNESS, 0.0f);
     }
 
     IMPLEMENT_EFFECT_PROPERTY(Transform2DEffect,
@@ -52,7 +52,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_2DAFFINETRANSFORM_PROP_SHARPNESS,
         (value >= 0.0f) && (value <= 1.0f))
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(Transform2DEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(Transform2DEffect,
         Source,
         0)
 

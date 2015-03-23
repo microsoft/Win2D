@@ -34,8 +34,8 @@ class TestEffect : public RuntimeClass <
     InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect, BaseTrust);
 
 public:
-    TestEffect(GUID effectId, int propertiesSize, int inputsSize, bool isInputSizeFixed)
-        : CanvasEffect(effectId, propertiesSize, inputsSize, isInputSizeFixed)
+    TestEffect(GUID effectId, int propertiesSize, int sourcesSize, bool isSourcesSizeFixed)
+        : CanvasEffect(effectId, propertiesSize, sourcesSize, isSourcesSizeFixed)
     {
     }
 
@@ -53,10 +53,10 @@ public:
     IMPLEMENT_MOCK_PROPERTY(Optimization, EffectOptimization)
     IMPLEMENT_MOCK_PROPERTY(BorderMode, EffectBorderMode)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(TestEffect, Source, 0)
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(TestEffect, Source, 0)
 
-    std::function<void()> MockGetInput;
-    std::function<void()> MockSetInput;
+    std::function<void()> MockGetSource;
+    std::function<void()> MockSetSource;
 
     std::function<void()> MockGetProperty;
     std::function<void()> MockSetProperty;
@@ -65,34 +65,34 @@ public:
     // Forwarding base protected methods in order to inspect calls
     //
 
-    void GetInput(unsigned int index, IEffectInput** input)
+    STDMETHOD(GetSource)(unsigned int index, IGraphicsEffectSource** source)
     {
-        if (MockGetInput)
-            MockGetInput();
-        CanvasEffect::GetInput(index, input);
+        if (MockGetSource)
+            MockGetSource();
+        return CanvasEffect::GetSource(index, source);
     }
 
-    void SetInput(unsigned int index, IEffectInput* input)
+    STDMETHOD(SetSource)(unsigned int index, IGraphicsEffectSource* source)
     {
-        if (MockSetInput)
-            MockSetInput();
-        CanvasEffect::SetInput(index, input);
+        if (MockSetSource)
+            MockSetSource();
+        return CanvasEffect::SetSource(index, source);
     }
 
     template<typename TBoxed, typename TPublic>
-    void GetProperty(unsigned int index, TPublic* value)
+    void GetBoxedProperty(unsigned int index, TPublic* value)
     {
         if (MockGetProperty)
             MockGetProperty();
-        CanvasEffect::GetProperty<TBoxed>(index, value);
+        CanvasEffect::GetBoxedProperty<TBoxed>(index, value);
     }
 
     template<typename TBoxed, typename TPublic>
-    void SetProperty(unsigned int index, TPublic const& value)
+    void SetBoxedProperty(unsigned int index, TPublic const& value)
     {
         if (MockSetProperty)
             MockSetProperty();
-        CanvasEffect::SetProperty<TBoxed>(index, value);
+        CanvasEffect::SetBoxedProperty<TBoxed>(index, value);
     }
 };
 

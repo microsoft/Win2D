@@ -19,7 +19,7 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(794966D3-6A64-47E9-8DA8-B46AAA24D53B)]
     interface ICanvasImage : IInspectable
-        requires Microsoft.Graphics.Canvas.Effects.IEffectInput, Windows.Foundation.IClosable
+        requires Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource, Windows.Foundation.IClosable
     {
         // The returned bounds reflect the DPI and UnitMode of the drawing session.
         [overload("GetBounds")]

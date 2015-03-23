@@ -58,16 +58,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Mode([in] BlendEffectMode value);
 
         [propget]
-        HRESULT Background([out, retval] IEffectInput** input);
+        HRESULT Background([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Background([in] IEffectInput* input);
+        HRESULT Background([in] IGraphicsEffectSource* source);
 
         [propget]
-        HRESULT Foreground([out, retval] IEffectInput** input);
+        HRESULT Foreground([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Foreground([in] IEffectInput* input);
+        HRESULT Foreground([in] IGraphicsEffectSource* source);
 
     };
 
@@ -75,6 +75,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass BlendEffect
     {
         [default] interface IBlendEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

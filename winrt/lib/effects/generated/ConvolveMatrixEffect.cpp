@@ -21,17 +21,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1ConvolveMatrix, 11, 1, true)
     {
         // Set default values
-        SetProperty<float[2]>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
-        SetProperty<uint32_t>(D2D1_CONVOLVEMATRIX_PROP_SCALE_MODE, D2D1_CONVOLVEMATRIX_SCALE_MODE_LINEAR);
-        SetProperty<int32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_X, 3);
-        SetProperty<int32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_Y, 3);
+        SetBoxedProperty<float[2]>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
+        SetBoxedProperty<uint32_t>(D2D1_CONVOLVEMATRIX_PROP_SCALE_MODE, D2D1_CONVOLVEMATRIX_SCALE_MODE_LINEAR);
+        SetBoxedProperty<int32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_X, 3);
+        SetBoxedProperty<int32_t>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_SIZE_Y, 3);
         SetArrayProperty<float>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_MATRIX, { 0, 0, 0, 0, 1, 0, 0, 0, 0 });
-        SetProperty<float>(D2D1_CONVOLVEMATRIX_PROP_DIVISOR, 1.0f);
-        SetProperty<float>(D2D1_CONVOLVEMATRIX_PROP_BIAS, 0.0f);
-        SetProperty<float[2]>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_OFFSET, Numerics::Vector2{ 0.0f, 0.0f });
-        SetProperty<boolean>(D2D1_CONVOLVEMATRIX_PROP_PRESERVE_ALPHA, static_cast<boolean>(false));
-        SetProperty<uint32_t>(D2D1_CONVOLVEMATRIX_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
-        SetProperty<boolean>(D2D1_CONVOLVEMATRIX_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        SetBoxedProperty<float>(D2D1_CONVOLVEMATRIX_PROP_DIVISOR, 1.0f);
+        SetBoxedProperty<float>(D2D1_CONVOLVEMATRIX_PROP_BIAS, 0.0f);
+        SetBoxedProperty<float[2]>(D2D1_CONVOLVEMATRIX_PROP_KERNEL_OFFSET, Numerics::Vector2{ 0.0f, 0.0f });
+        SetBoxedProperty<boolean>(D2D1_CONVOLVEMATRIX_PROP_PRESERVE_ALPHA, static_cast<boolean>(false));
+        SetBoxedProperty<uint32_t>(D2D1_CONVOLVEMATRIX_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        SetBoxedProperty<boolean>(D2D1_CONVOLVEMATRIX_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ConvolveMatrixEffect,
@@ -103,7 +103,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         boolean,
         D2D1_CONVOLVEMATRIX_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(ConvolveMatrixEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(ConvolveMatrixEffect,
         Source,
         0)
 

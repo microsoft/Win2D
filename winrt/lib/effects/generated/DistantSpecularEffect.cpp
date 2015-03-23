@@ -21,14 +21,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1DistantSpecular, 8, 1, true)
     {
         // Set default values
-        SetProperty<float>(D2D1_DISTANTSPECULAR_PROP_AZIMUTH, 0.0f);
-        SetProperty<float>(D2D1_DISTANTSPECULAR_PROP_ELEVATION, 0.0f);
-        SetProperty<float>(D2D1_DISTANTSPECULAR_PROP_SPECULAR_EXPONENT, 1.0f);
-        SetProperty<float>(D2D1_DISTANTSPECULAR_PROP_SPECULAR_CONSTANT, 1.0f);
-        SetProperty<float>(D2D1_DISTANTSPECULAR_PROP_SURFACE_SCALE, 1.0f);
-        SetProperty<float[3]>(D2D1_DISTANTSPECULAR_PROP_COLOR, Color{ 255, 255, 255, 255 });
-        SetProperty<float[2]>(D2D1_DISTANTSPECULAR_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
-        SetProperty<uint32_t>(D2D1_DISTANTSPECULAR_PROP_SCALE_MODE, D2D1_DISTANTSPECULAR_SCALE_MODE_LINEAR);
+        SetBoxedProperty<float>(D2D1_DISTANTSPECULAR_PROP_AZIMUTH, 0.0f);
+        SetBoxedProperty<float>(D2D1_DISTANTSPECULAR_PROP_ELEVATION, 0.0f);
+        SetBoxedProperty<float>(D2D1_DISTANTSPECULAR_PROP_SPECULAR_EXPONENT, 1.0f);
+        SetBoxedProperty<float>(D2D1_DISTANTSPECULAR_PROP_SPECULAR_CONSTANT, 1.0f);
+        SetBoxedProperty<float>(D2D1_DISTANTSPECULAR_PROP_SURFACE_SCALE, 1.0f);
+        SetBoxedProperty<float[3]>(D2D1_DISTANTSPECULAR_PROP_COLOR, Color{ 255, 255, 255, 255 });
+        SetBoxedProperty<float[2]>(D2D1_DISTANTSPECULAR_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
+        SetBoxedProperty<uint32_t>(D2D1_DISTANTSPECULAR_PROP_SCALE_MODE, D2D1_DISTANTSPECULAR_SCALE_MODE_LINEAR);
     }
 
     IMPLEMENT_EFFECT_PROPERTY(DistantSpecularEffect,
@@ -83,7 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasImageInterpolation,
         D2D1_DISTANTSPECULAR_PROP_SCALE_MODE)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(DistantSpecularEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(DistantSpecularEffect,
         Source,
         0)
 

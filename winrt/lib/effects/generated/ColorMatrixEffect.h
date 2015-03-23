@@ -32,6 +32,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(ColorMatrix, Matrix5x4);
         EFFECT_PROPERTY(ClampOutput, boolean);
         EFFECT_PROPERTY(AlphaMode, CanvasAlphaMode);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

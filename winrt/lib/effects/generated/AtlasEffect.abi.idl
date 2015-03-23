@@ -33,10 +33,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT PaddingRectangle([in] Windows.Foundation.Rect value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
     };
 
@@ -44,6 +44,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass AtlasEffect
     {
         [default] interface IAtlasEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

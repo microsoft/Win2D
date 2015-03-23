@@ -21,13 +21,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Turbulence, 7, 0, true)
     {
         // Set default values
-        SetProperty<float[2]>(D2D1_TURBULENCE_PROP_OFFSET, Numerics::Vector2{ 0, 0 });
-        SetProperty<float[2]>(D2D1_TURBULENCE_PROP_SIZE, Numerics::Vector2{ 512, 512 });
-        SetProperty<float[2]>(D2D1_TURBULENCE_PROP_BASE_FREQUENCY, Numerics::Vector2{ 0.01f, 0.01f });
-        SetProperty<int32_t>(D2D1_TURBULENCE_PROP_NUM_OCTAVES, 1);
-        SetProperty<int32_t>(D2D1_TURBULENCE_PROP_SEED, 0);
-        SetProperty<uint32_t>(D2D1_TURBULENCE_PROP_NOISE, D2D1_TURBULENCE_NOISE_FRACTAL_SUM);
-        SetProperty<boolean>(D2D1_TURBULENCE_PROP_STITCHABLE, static_cast<boolean>(false));
+        SetBoxedProperty<float[2]>(D2D1_TURBULENCE_PROP_OFFSET, Numerics::Vector2{ 0, 0 });
+        SetBoxedProperty<float[2]>(D2D1_TURBULENCE_PROP_SIZE, Numerics::Vector2{ 512, 512 });
+        SetBoxedProperty<float[2]>(D2D1_TURBULENCE_PROP_BASE_FREQUENCY, Numerics::Vector2{ 0.01f, 0.01f });
+        SetBoxedProperty<int32_t>(D2D1_TURBULENCE_PROP_NUM_OCTAVES, 1);
+        SetBoxedProperty<int32_t>(D2D1_TURBULENCE_PROP_SEED, 0);
+        SetBoxedProperty<uint32_t>(D2D1_TURBULENCE_PROP_NOISE, D2D1_TURBULENCE_NOISE_FRACTAL_SUM);
+        SetBoxedProperty<boolean>(D2D1_TURBULENCE_PROP_STITCHABLE, static_cast<boolean>(false));
     }
 
     IMPLEMENT_EFFECT_PROPERTY(TurbulenceEffect,

@@ -30,6 +30,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         HueRotationEffect();
 
         EFFECT_PROPERTY(Angle, float);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

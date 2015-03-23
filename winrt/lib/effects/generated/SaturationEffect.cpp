@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Saturation, 1, 1, true)
     {
         // Set default values
-        SetProperty<float>(D2D1_SATURATION_PROP_SATURATION, 0.5f);
+        SetBoxedProperty<float>(D2D1_SATURATION_PROP_SATURATION, 0.5f);
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SaturationEffect,
@@ -31,7 +31,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_SATURATION_PROP_SATURATION,
         (value >= 0.0f) && (value <= 2.0f))
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(SaturationEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(SaturationEffect,
         Source,
         0)
 

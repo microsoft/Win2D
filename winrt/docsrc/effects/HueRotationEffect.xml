@@ -38,27 +38,16 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.Angle">
       <summary>Angle to rotate the hue, in radians. Default value 0, range 0 to 2*pi.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.EffectId">
-      <summary>Gets the unique identifier for the effect.</summary>
-      <remarks>
-        <p>Generic way to query the type of an effect. EffectId is equal to the 
-           CLSID_D2D1HueRotation GUID specified in the SDK header d2d1effects.h.</p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.Inputs">
-      <summary>Gets a collection of inputs attached to the effect.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.Properties">
-      <summary>Gets the collection of properties specific to the current effect.</summary>
-      <inheritdoc/>
-    </member>
     
     <member name="M:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
       <summary>Retrieves the bounds of this CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0), and identity transform on the specified drawing session.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.HueRotationEffect.Name">
+      <summary>Attaches a user-defined name string to the effect.</summary>
+      <inheritdoc/>
     </member>
 
   </members>

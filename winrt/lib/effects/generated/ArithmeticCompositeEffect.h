@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Source1Amount, float);
         EFFECT_PROPERTY(Source2Amount, float);
         EFFECT_PROPERTY(Offset, float);
-        EFFECT_PROPERTY(Source1, IEffectInput*);
-        EFFECT_PROPERTY(Source2, IEffectInput*);
+        EFFECT_PROPERTY(Source1, IGraphicsEffectSource*);
+        EFFECT_PROPERTY(Source2, IGraphicsEffectSource*);
     };
 }}}}}

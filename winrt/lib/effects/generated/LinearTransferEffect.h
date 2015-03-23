@@ -42,6 +42,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(AlphaSlope, float);
         EFFECT_PROPERTY(AlphaDisable, boolean);
         EFFECT_PROPERTY(ClampOutput, boolean);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

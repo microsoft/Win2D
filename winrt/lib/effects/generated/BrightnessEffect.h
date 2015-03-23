@@ -31,6 +31,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         EFFECT_PROPERTY(WhitePoint, Numerics::Vector2);
         EFFECT_PROPERTY(BlackPoint, Numerics::Vector2);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

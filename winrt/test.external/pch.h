@@ -32,8 +32,10 @@
 #include <ErrorHandling.h>
 #include <Utilities.h>
 #include <Constants.h>
+#include <ComArray.h>
 
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#include <Microsoft.Graphics.Canvas.Effects.interop.h>
 #include <windowsnumerics.h>
 
 #include <Microsoft.Graphics.Canvas.native.h>

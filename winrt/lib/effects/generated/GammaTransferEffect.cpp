@@ -21,23 +21,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1GammaTransfer, 17, 1, true)
     {
         // Set default values
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_RED_AMPLITUDE, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_RED_EXPONENT, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_RED_OFFSET, 0.0f);
-        SetProperty<boolean>(D2D1_GAMMATRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_GREEN_AMPLITUDE, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_GREEN_EXPONENT, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_GREEN_OFFSET, 0.0f);
-        SetProperty<boolean>(D2D1_GAMMATRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_BLUE_AMPLITUDE, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_BLUE_EXPONENT, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_BLUE_OFFSET, 0.0f);
-        SetProperty<boolean>(D2D1_GAMMATRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_ALPHA_AMPLITUDE, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_ALPHA_EXPONENT, 1.0f);
-        SetProperty<float>(D2D1_GAMMATRANSFER_PROP_ALPHA_OFFSET, 0.0f);
-        SetProperty<boolean>(D2D1_GAMMATRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
-        SetProperty<boolean>(D2D1_GAMMATRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_RED_AMPLITUDE, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_RED_EXPONENT, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_RED_OFFSET, 0.0f);
+        SetBoxedProperty<boolean>(D2D1_GAMMATRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_GREEN_AMPLITUDE, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_GREEN_EXPONENT, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_GREEN_OFFSET, 0.0f);
+        SetBoxedProperty<boolean>(D2D1_GAMMATRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_BLUE_AMPLITUDE, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_BLUE_EXPONENT, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_BLUE_OFFSET, 0.0f);
+        SetBoxedProperty<boolean>(D2D1_GAMMATRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_ALPHA_AMPLITUDE, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_ALPHA_EXPONENT, 1.0f);
+        SetBoxedProperty<float>(D2D1_GAMMATRANSFER_PROP_ALPHA_OFFSET, 0.0f);
+        SetBoxedProperty<boolean>(D2D1_GAMMATRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
+        SetBoxedProperty<boolean>(D2D1_GAMMATRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
     }
 
     IMPLEMENT_EFFECT_PROPERTY(GammaTransferEffect,
@@ -142,7 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         boolean,
         D2D1_GAMMATRANSFER_PROP_CLAMP_OUTPUT)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(GammaTransferEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(GammaTransferEffect,
         Source,
         0)
 

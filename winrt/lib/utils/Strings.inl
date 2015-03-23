@@ -18,9 +18,9 @@
 // English, this data should be moved out to a proper resources file. But for 
 // now, simple C++ constants are "good enough"(tm).
 
-STRING(EffectNullInput, L"Effect input #%d is null.")
+STRING(EffectNullSource, L"Effect source #%d is null.")
 STRING(EffectNullProperty, L"Effect property #%d is null.")
-STRING(EffectWrongInputType, L"Effect input #%d is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.")
+STRING(EffectWrongSourceType, L"Effect source #%d is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.")
 STRING(EffectWrongPropertyType, L"Effect property #%d is the wrong type for this effect.")
 STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than CanvasBitmap, CanvasImageBrush.SourceRectangle must not be null.")
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");

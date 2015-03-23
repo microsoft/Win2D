@@ -39,10 +39,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT AlphaMode([in] Microsoft.Graphics.Canvas.CanvasAlphaMode value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
     };
 
@@ -50,6 +50,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ColorMatrixEffect
     {
         [default] interface IColorMatrixEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

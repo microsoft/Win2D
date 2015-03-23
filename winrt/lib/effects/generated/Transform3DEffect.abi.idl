@@ -39,10 +39,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT TransformMatrix([in] Microsoft.Graphics.Canvas.Numerics.Matrix4x4 value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
     };
 
@@ -50,6 +50,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass Transform3DEffect
     {
         [default] interface ITransform3DEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

@@ -33,6 +33,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Angle, float);
         EFFECT_PROPERTY(Optimization, EffectOptimization);
         EFFECT_PROPERTY(BorderMode, EffectBorderMode);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

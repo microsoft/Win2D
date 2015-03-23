@@ -24,8 +24,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class CanvasEffect 
         : public Implements<
             RuntimeClassFlags<WinRtClassicComMix>,
-            IEffect,
-            IEffectInput,
+            IGraphicsEffect,
+            IGraphicsEffectSource,
+            IGraphicsEffectD2D1Interop,
             ICanvasImageInternal,
             ICanvasImage,
             ABI::Windows::Foundation::IClosable>,
@@ -34,24 +35,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     private:
         ComPtr<ID2D1Effect> m_resource;
+
         // Unlike other objects, !m_resource does not necessarily indicate
         // that the object was closed.
         bool m_closed; 
 
         IID m_effectId;
 
-        ComPtr<Vector<IInspectable*>> m_properties;
-        ComPtr<Vector<IEffectInput*>> m_inputs;
+        std::vector<ComPtr<IPropertyValue>> m_properties;
+        bool m_propertiesChanged;
+
+        ComPtr<Vector<IGraphicsEffectSource*>> m_sources;
 
         ComPtr<IPropertyValueStatics> m_propertyValueFactory;
 
         ComPtr<IUnknown> m_previousDeviceIdentity;
-        std::vector<uint64_t> m_previousInputRealizationIds;
+        std::vector<uint64_t> m_previousSourceRealizationIds;
         uint64_t m_realizationId;
         
         std::vector<ComPtr<ID2D1Effect>> m_dpiCompensators;
 
         bool m_insideGetImage;
+
+        WinString m_name;
 
     public:
         //
@@ -61,12 +67,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(Close)() override;
 
         //
-        // IEffect
+        // IGraphicsEffect
         //
 
-        IFACEMETHOD(get_EffectId)(GUID* effectId) override;
-        IFACEMETHOD(get_Inputs)(_Out_ IVector<IEffectInput*>** inputs) override;
-        IFACEMETHOD(get_Properties)(_Out_ IVector<IInspectable*>** properties) override;
+        IFACEMETHOD(get_Name)(HSTRING* name) override;
+        IFACEMETHOD(put_Name)(HSTRING name) override;
+
+        //
+        // IGraphicsEffectD2D1Interop
+        //
+
+        IFACEMETHOD(GetEffectId)(GUID* id) override;
+        IFACEMETHOD(GetSourceCount)(UINT* count) override;
+        IFACEMETHOD(GetSource)(UINT index, IGraphicsEffectSource** source) override;
+        IFACEMETHOD(GetPropertyCount)(UINT* count) override;
+        IFACEMETHOD(GetProperty)(UINT index, IPropertyValue** value) override;
+        IFACEMETHOD(GetNamedPropertyMapping)(LPCWSTR name, UINT* index, GRAPHICS_EFFECT_PROPERTY_MAPPING* mapping) override;
+
+        //
+        // Not part of IGraphicsEffectD2D1Interop, but same semantics as if it was a peer to GetSource.
+        //
+
+        STDMETHOD(SetSource)(UINT index, IGraphicsEffectSource* source);
 
         //
         // ICanvasImage
@@ -89,13 +111,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) override;
 
     protected:
-        // for effects with unknown number of inputs, inputs Size have to be set as zero
-        CanvasEffect(IID m_effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed);
+        // for effects with unknown number of sources, sourcesSize has to be zero
+        CanvasEffect(IID m_effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed);
 
         virtual ~CanvasEffect() = default;
 
-        void GetInput(unsigned int index, IEffectInput** input);
-        void SetInput(unsigned int index, IEffectInput* input);
+        ComPtr<Vector<IGraphicsEffectSource*>> const& Sources() { return m_sources; }
 
 
         //
@@ -106,30 +127,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
 
         template<typename TBoxed, typename TPublic>
-        void SetProperty(unsigned int index, TPublic const& value)
+        void SetBoxedProperty(unsigned int index, TPublic const& value)
         {
-            auto propertyValue = PropertyTypeConverter<TBoxed, TPublic>::Box(m_propertyValueFactory.Get(), value);
+            assert(index < m_properties.size());
 
-            ThrowIfFailed(m_properties->SetAt(index, propertyValue.Get()));
+            m_properties[index] = PropertyTypeConverter<TBoxed, TPublic>::Box(m_propertyValueFactory.Get(), value);
+            m_propertiesChanged = true;
         }
 
         template<typename TBoxed, typename TPublic>
-        void GetProperty(unsigned int index, TPublic* value)
+        void GetBoxedProperty(unsigned int index, TPublic* value)
         {
+            assert(index < m_properties.size());
+
             CheckInPointer(value);
 
-            ComPtr<IInspectable> propertyValue;
-            ThrowIfFailed(m_properties->GetAt(index, &propertyValue));
-
-            PropertyTypeConverter<TBoxed, TPublic>::Unbox(As<IPropertyValue>(propertyValue).Get(), value);
+            PropertyTypeConverter<TBoxed, TPublic>::Unbox(m_properties[index].Get(), value);
         }
 
         template<typename T>
         void SetArrayProperty(unsigned int index, uint32_t valueCount, T const* value)
         {
-            auto propertyValue = CreateProperty(m_propertyValueFactory.Get(), valueCount, value);
+            assert(index < m_properties.size());
 
-            ThrowIfFailed(m_properties->SetAt(index, propertyValue.Get()));
+            m_properties[index] = CreateProperty(m_propertyValueFactory.Get(), valueCount, value);
+            m_propertiesChanged = true;
         }
 
         template<typename T>
@@ -141,13 +163,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         template<typename T>
         void GetArrayProperty(unsigned int index, uint32_t* valueCount, T** value)
         {
+            assert(index < m_properties.size());
+
             CheckInPointer(valueCount);
             CheckAndClearOutPointer(value);
 
-            ComPtr<IInspectable> propertyValue;
-            ThrowIfFailed(m_properties->GetAt(index, &propertyValue));
-
-            GetPropertyValue(As<IPropertyValue>(propertyValue).Get(), valueCount, value);
+            GetValueOfProperty(m_properties[index].Get(), valueCount, value);
         }
 
 
@@ -179,7 +200,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             static void Unbox(IPropertyValue* propertyValue, TPublic* result)
             {
-                GetPropertyValue(propertyValue, result);
+                GetValueOfProperty(propertyValue, result);
             }
         };
 
@@ -197,7 +218,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             static void Unbox(IPropertyValue* propertyValue, TPublic* result)
             {
                 uint32_t value;
-                GetPropertyValue(propertyValue, &value);
+                GetValueOfProperty(propertyValue, &value);
                 *result = static_cast<TPublic>(value);
             }
         };
@@ -311,7 +332,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             static void Unbox(IPropertyValue* propertyValue, float* result)
             {
                 float degrees;
-                GetPropertyValue(propertyValue, &degrees);
+                GetValueOfProperty(propertyValue, &degrees);
                 *result = ::DirectX::XMConvertToRadians(degrees);
             }
         };
@@ -330,7 +351,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return propertyValue;                                                                       \
         }                                                                                               \
                                                                                                         \
-        static void GetPropertyValue(IPropertyValue* propertyValue, TYPE* result)                       \
+        static void GetValueOfProperty(IPropertyValue* propertyValue, TYPE* result)                     \
         {                                                                                               \
             ThrowIfFailed(propertyValue->Get##WINRT_NAME(result));                                      \
         }
@@ -343,7 +364,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return propertyValue;                                                                                               \
         }                                                                                                                       \
                                                                                                                                 \
-        static void GetPropertyValue(IPropertyValue* propertyValue, uint32_t* valueCount, TYPE** value)                         \
+        static void GetValueOfProperty(IPropertyValue* propertyValue, uint32_t* valueCount, TYPE** value)                       \
         {                                                                                                                       \
             ThrowIfFailed(propertyValue->Get##WINRT_NAME##Array(valueCount, value));                                            \
         }
@@ -363,68 +384,49 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Macros used by the generated strongly typed effect subclasses
         // 
 
-#define EFFECT_PROPERTY(NAME, TYPE)                      \
-        IFACEMETHOD(get_##NAME)(TYPE* value) override;   \
+#define EFFECT_PROPERTY(NAME, TYPE)                                                     \
+        IFACEMETHOD(get_##NAME)(TYPE* value) override;                                  \
         IFACEMETHOD(put_##NAME)(TYPE value) override
 
 #define EFFECT_ARRAY_PROPERTY(NAME, TYPE)                                               \
         IFACEMETHOD(get_##NAME)(UINT32 *valueCount, TYPE **valueElements) override;     \
         IFACEMETHOD(put_##NAME)(UINT32 valueCount, TYPE *valueElements) override
 
+#define EFFECT_SOURCES_PROPERTY()                                                       \
+        IFACEMETHOD(get_Sources)(IVector<IGraphicsEffectSource*>** value) override;
 
-#define IMPLEMENT_EFFECT_INPUT_PROPERTY(CLASS_NAME, INPUT_NAME, INPUT_INDEX)            \
+
+#define IMPLEMENT_EFFECT_PROPERTY(CLASS, PROPERTY, BOXED_TYPE, PUBLIC_TYPE, INDEX)      \
                                                                                         \
-        IFACEMETHODIMP CLASS_NAME::get_##INPUT_NAME(_Out_ IEffectInput** input)         \
+        IFACEMETHODIMP CLASS::get_##PROPERTY(_Out_ PUBLIC_TYPE* value)                  \
         {                                                                               \
             return ExceptionBoundary([&]                                                \
             {                                                                           \
-                GetInput(INPUT_INDEX, input);                                           \
+                GetBoxedProperty<BOXED_TYPE, PUBLIC_TYPE>(INDEX, value);                \
             });                                                                         \
         }                                                                               \
                                                                                         \
-        IFACEMETHODIMP CLASS_NAME::put_##INPUT_NAME(_In_ IEffectInput* input)           \
+        IFACEMETHODIMP CLASS::put_##PROPERTY(_In_ PUBLIC_TYPE value)                    \
         {                                                                               \
             return ExceptionBoundary([&]                                                \
             {                                                                           \
-                SetInput(INPUT_INDEX, input);                                           \
+                SetBoxedProperty<BOXED_TYPE, PUBLIC_TYPE>(INDEX, value);                \
             });                                                                         \
         }
 
 
-#define IMPLEMENT_EFFECT_PROPERTY(CLASS_NAME, PROPERTY_NAME,                            \
-                                  BOXED_TYPE, PUBLIC_TYPE,                              \
-                                  PROPERTY_INDEX)                                       \
+#define IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(CLASS, PROPERTY, BOXED_TYPE,          \
+                                                  PUBLIC_TYPE, INDEX, VALIDATOR)        \
                                                                                         \
-        IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ PUBLIC_TYPE* value)        \
+        IFACEMETHODIMP CLASS::get_##PROPERTY(_Out_ PUBLIC_TYPE* value)                  \
         {                                                                               \
             return ExceptionBoundary([&]                                                \
             {                                                                           \
-                GetProperty<BOXED_TYPE, PUBLIC_TYPE>(PROPERTY_INDEX, value);            \
+                GetBoxedProperty<BOXED_TYPE, PUBLIC_TYPE>(INDEX, value);                \
             });                                                                         \
         }                                                                               \
                                                                                         \
-        IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(_In_ PUBLIC_TYPE value)          \
-        {                                                                               \
-            return ExceptionBoundary([&]                                                \
-            {                                                                           \
-                SetProperty<BOXED_TYPE, PUBLIC_TYPE>(PROPERTY_INDEX, value);            \
-            });                                                                         \
-        }
-
-
-#define IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(CLASS_NAME, PROPERTY_NAME,            \
-                                                  BOXED_TYPE, PUBLIC_TYPE,              \
-                                                  PROPERTY_INDEX, VALIDATOR)            \
-                                                                                        \
-        IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(_Out_ PUBLIC_TYPE* value)        \
-        {                                                                               \
-            return ExceptionBoundary([&]                                                \
-            {                                                                           \
-                GetProperty<BOXED_TYPE, PUBLIC_TYPE>(PROPERTY_INDEX, value);            \
-            });                                                                         \
-        }                                                                               \
-                                                                                        \
-        IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(_In_ PUBLIC_TYPE value)          \
+        IFACEMETHODIMP CLASS::put_##PROPERTY(_In_ PUBLIC_TYPE value)                    \
         {                                                                               \
             if (!(VALIDATOR))                                                           \
             {                                                                           \
@@ -433,30 +435,52 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                                                                                         \
             return ExceptionBoundary([&]                                                \
             {                                                                           \
-                SetProperty<BOXED_TYPE, PUBLIC_TYPE>(PROPERTY_INDEX, value);            \
+                SetBoxedProperty<BOXED_TYPE, PUBLIC_TYPE>(INDEX, value);                \
             });                                                                         \
         }
     };
 
 
-#define IMPLEMENT_EFFECT_ARRAY_PROPERTY(CLASS_NAME, PROPERTY_NAME,                      \
-                                        TYPE, PROPERTY_INDEX)                           \
+#define IMPLEMENT_EFFECT_ARRAY_PROPERTY(CLASS, PROPERTY, TYPE, INDEX)                   \
                                                                                         \
-        IFACEMETHODIMP CLASS_NAME::get_##PROPERTY_NAME(UINT32 *valueCount,              \
-                                                       TYPE **valueElements)            \
+        IFACEMETHODIMP CLASS::get_##PROPERTY(UINT32 *valueCount, TYPE **valueElements)  \
         {                                                                               \
             return ExceptionBoundary([&]                                                \
             {                                                                           \
-                GetArrayProperty<TYPE>(PROPERTY_INDEX, valueCount, valueElements);      \
+                GetArrayProperty<TYPE>(INDEX, valueCount, valueElements);               \
             });                                                                         \
         }                                                                               \
                                                                                         \
-        IFACEMETHODIMP CLASS_NAME::put_##PROPERTY_NAME(UINT32 valueCount,               \
-                                                       TYPE *valueElements)             \
+        IFACEMETHODIMP CLASS::put_##PROPERTY(UINT32 valueCount, TYPE *valueElements)    \
         {                                                                               \
             return ExceptionBoundary([&]                                                \
             {                                                                           \
-                SetArrayProperty<TYPE>(PROPERTY_INDEX, valueCount, valueElements);      \
+                SetArrayProperty<TYPE>(INDEX, valueCount, valueElements);               \
+            });                                                                         \
+        }
+
+
+#define IMPLEMENT_EFFECT_SOURCE_PROPERTY(CLASS, SOURCE_NAME, SOURCE_INDEX)              \
+                                                                                        \
+        IFACEMETHODIMP CLASS::get_##SOURCE_NAME(_Out_ IGraphicsEffectSource** source)   \
+        {                                                                               \
+            return GetSource(SOURCE_INDEX, source);                                     \
+        }                                                                               \
+                                                                                        \
+        IFACEMETHODIMP CLASS::put_##SOURCE_NAME(_In_ IGraphicsEffectSource* source)     \
+        {                                                                               \
+            return SetSource(SOURCE_INDEX, source);                                     \
+        }
+
+
+#define IMPLEMENT_EFFECT_SOURCES_PROPERTY(CLASS)                                        \
+                                                                                        \
+        IFACEMETHODIMP CLASS::get_Sources(_Out_ IVector<IGraphicsEffectSource*>** value)\
+        {                                                                               \
+            return ExceptionBoundary([&]                                                \
+            {                                                                           \
+                CheckAndClearOutPointer(value);                                         \
+                ThrowIfFailed(Sources().CopyTo(value));                                 \
             });                                                                         \
         }
 

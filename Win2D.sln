@@ -75,6 +75,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Published", "Published", "{5FE06651-5284-42B5-AEC4-280FBA034126}"
 	ProjectSection(SolutionItems) = preProject
 		winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h = winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
+		winrt\published\Microsoft.Graphics.Canvas.Effects.interop.h = winrt\published\Microsoft.Graphics.Canvas.Effects.interop.h
 		winrt\published\Microsoft.Graphics.Canvas.native.h = winrt\published\Microsoft.Graphics.Canvas.native.h
 	EndProjectSection
 EndProject

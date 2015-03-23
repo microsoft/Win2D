@@ -21,6 +21,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.DirectX;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Numerics;
+using NativeComponent;
 
 namespace test.managed
 {
@@ -33,33 +34,33 @@ namespace test.managed
             var assembly = typeof(GaussianBlurEffect).GetTypeInfo().Assembly;
 
             var effectTypes = from type in assembly.DefinedTypes
-                              where type.ImplementedInterfaces.Contains(typeof(IEffect))
+                              where type.ImplementedInterfaces.Contains(typeof(IGraphicsEffect))
                               select type;
 
             foreach (var effectType in effectTypes)
             {
-                IEffect effect = (IEffect)Activator.CreateInstance(effectType.AsType());
+                IGraphicsEffect effect = (IGraphicsEffect)Activator.CreateInstance(effectType.AsType());
 
-                TestEffectInputs(effectType, effect);
+                TestEffectSources(effectType, effect);
                 TestEffectProperties(effectType, effect);
             }
         }
 
         
-        static void TestEffectInputs(TypeInfo effectType, IEffect effect)
+        static void TestEffectSources(TypeInfo effectType, IGraphicsEffect effect)
         {
-            var inputProperties = (from property in effectType.DeclaredProperties
-                                   where property.PropertyType == typeof(IEffectInput)
-                                   select property).ToList();
+            var sourceProperties = (from property in effectType.DeclaredProperties
+                                    where property.PropertyType == typeof(IGraphicsEffectSource)
+                                    select property).ToList();
 
-            // Should have the same number of strongly typed properties as elements in the inputs collection.
-            Assert.AreEqual(inputProperties.Count, effect.Inputs.Count);
+            // Should have the same number of strongly typed properties as the effect has sources.
+            Assert.AreEqual(sourceProperties.Count, EffectAccessor.GetSourceCount(effect));
 
-            // Initial input values should all be null.
-            for (int i = 0; i < effect.Inputs.Count; i++)
+            // Initial source values should all be null.
+            for (int i = 0; i < EffectAccessor.GetSourceCount(effect); i++)
             {
-                Assert.IsNull(effect.Inputs[i]);
-                Assert.IsNull(inputProperties[i].GetValue(effect));
+                Assert.IsNull(EffectAccessor.GetSource(effect, i));
+                Assert.IsNull(sourceProperties[i].GetValue(effect));
             }
 
             var testValue1 = new GaussianBlurEffect();
@@ -67,52 +68,45 @@ namespace test.managed
 
             var whichIndexIsProperty = new List<int>();
 
-            // Changing strongly typed properties should change the inputs collection.
-            for (int i = 0; i < effect.Inputs.Count; i++)
+            // Changing strongly typed properties should change the sources reported by IGraphicsEffectD2D1Interop.
+            for (int i = 0; i < EffectAccessor.GetSourceCount(effect); i++)
             {
-                // Change a property value, and see which input changes.
-                inputProperties[i].SetValue(effect, testValue1);
-                int whichIndexIsThis = effect.Inputs.IndexOf(testValue1);
-                Assert.IsTrue(whichIndexIsThis >= 0);
+                // Change a property value, and see which source changes.
+                sourceProperties[i].SetValue(effect, testValue1);
+
+                int whichIndexIsThis = 0;
+                
+                while (EffectAccessor.GetSource(effect, whichIndexIsThis) != testValue1)
+                {
+                    whichIndexIsThis++;
+                    Assert.IsTrue(whichIndexIsThis < EffectAccessor.GetSourceCount(effect));
+                }
+
                 whichIndexIsProperty.Add(whichIndexIsThis);
 
-                // Change the same property value again, and make sure the same input changes.
-                inputProperties[i].SetValue(effect, testValue2);
-                Assert.AreSame(testValue2, effect.Inputs[whichIndexIsThis]);
+                // Change the same property value again, and make sure the same source changes.
+                sourceProperties[i].SetValue(effect, testValue2);
+                Assert.AreSame(testValue2, EffectAccessor.GetSource(effect, whichIndexIsThis));
 
                 // Change the property value to null.
-                inputProperties[i].SetValue(effect, null);
-                Assert.IsNull(effect.Inputs[whichIndexIsThis]);
+                sourceProperties[i].SetValue(effect, null);
+                Assert.IsNull(EffectAccessor.GetSource(effect, whichIndexIsThis));
             }
 
             // Should not have any duplicate property mappings.
             Assert.AreEqual(whichIndexIsProperty.Count, whichIndexIsProperty.Distinct().Count());
-
-            // In reverse, changing the inputs collection should change strongly typed properties.
-            for (int i = 0; i < effect.Inputs.Count; i++)
-            {
-                effect.Inputs[whichIndexIsProperty[i]] = testValue1;
-                Assert.AreSame(testValue1, inputProperties[i].GetValue(effect));
-
-                effect.Inputs[whichIndexIsProperty[i]] = testValue2;
-                Assert.AreSame(testValue2, inputProperties[i].GetValue(effect));
-
-                effect.Inputs[whichIndexIsProperty[i]] = null;
-                Assert.IsNull(inputProperties[i].GetValue(effect));
-            }
         }
 
-
-        static void TestEffectProperties(TypeInfo effectType, IEffect effect)
+        static void TestEffectProperties(TypeInfo effectType, IGraphicsEffect effect)
         {
             var properties = (from property in effectType.DeclaredProperties
-                              where property.Name != "EffectId"
-                              where property.Name != "Inputs"
-                              where property.Name != "Properties"
-                              where property.PropertyType != typeof(IEffectInput)
+                              where property.Name != "Name"
+                              where property.Name != "Sources"
+                              where property.PropertyType != typeof(IGraphicsEffectSource)
                               select property).ToList();
-            
-            var effectProperties = effect.Properties;
+
+            IList<object> effectProperties = new ViewIndexerAsList<object>(() => EffectAccessor.GetPropertyCount(effect),
+                                                                           i => EffectAccessor.GetProperty(effect, i));
 
             FilterOutCustomizedEffectProperties(effectType.AsType(), ref properties, ref effectProperties);
 
@@ -159,29 +153,6 @@ namespace test.managed
 
             // Should not have any duplicate property mappings.
             Assert.AreEqual(whichIndexIsProperty.Count, whichIndexIsProperty.Distinct().Count());
-
-            // In reverse, changing the inputs collection should change strongly typed properties.
-            for (int i = 0; i < effectProperties.Count; i++)
-            {
-                object testValue1 = GetArbitraryTestValue(properties[i].PropertyType, true);
-                object testValue2 = GetArbitraryTestValue(properties[i].PropertyType, false);
-
-                object boxed1 = Box(testValue1, properties[i]);
-                object boxed2 = Box(testValue2, properties[i]);
-
-                // Fixup for color properties that don't include alpha.
-                if (properties[i].PropertyType == typeof(Color) && ((float[])initialValues[whichIndexIsProperty[i]]).Length == 3)
-                {
-                    boxed1 = ConvertRgbaToRgb((float[])boxed1);
-                    boxed2 = ConvertRgbaToRgb((float[])boxed2);
-                }
-
-                effectProperties[whichIndexIsProperty[i]] = boxed1;
-                AssertPropertyValuesAreEqual(testValue1, properties[i].GetValue(effect));
-
-                effectProperties[whichIndexIsProperty[i]] = boxed2;
-                AssertPropertyValuesAreEqual(testValue2, properties[i].GetValue(effect));
-            }
         }
 
 
@@ -692,6 +663,49 @@ namespace test.managed
         }
 
 
+        class ViewIndexerAsList<T> : IList<T>
+        {
+            Func<int> getCount;
+            Func<int, T> getItem;
+
+            public ViewIndexerAsList(Func<int> getCount, Func<int, T> getItem)
+            {
+                this.getCount = getCount;
+                this.getItem = getItem;
+            }
+
+            public int Count
+            {
+                get { return getCount(); }
+            }
+
+            public T this[int index]
+            {
+                get { return getItem(index); }
+                set { throw new NotImplementedException(); }
+            }
+
+            public void CopyTo(T[] array, int arrayIndex)
+            {
+                for (int i = 0; i < Count; i++)
+                {
+                    array[arrayIndex + i] = getItem(i);
+                }
+            }
+
+            public void Add(T item) { throw new NotImplementedException(); }
+            public void Clear() { throw new NotImplementedException(); }
+            public bool Contains(T item) { throw new NotImplementedException(); }
+            public int IndexOf(T item) { throw new NotImplementedException(); }
+            public void Insert(int index, T item) { throw new NotImplementedException(); }
+            public bool IsReadOnly { get { throw new NotImplementedException(); } }
+            public bool Remove(T item) { throw new NotImplementedException(); }
+            public void RemoveAt(int index) { throw new NotImplementedException(); }
+            public IEnumerator<T> GetEnumerator() { throw new NotImplementedException(); }
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw new NotImplementedException(); }
+        }
+
+        
         [TestMethod]
         public void ArithmeticCompositeEffectCustomizations()
         {
@@ -703,28 +717,20 @@ namespace test.managed
             Assert.AreEqual(0.0f, effect.Source2Amount);
             Assert.AreEqual(0.0f, effect.Offset);
 
-            Assert.IsTrue(((float[])effect.Properties[0]).SequenceEqual(new float[] { 1, 0, 0, 0 }));
-
-            // Changing the boxed value should change all the associated properties.
-            effect.Properties[0] = new float[] { 2, 3, 4, 5 };
-
-            Assert.AreEqual(2.0f, effect.MultiplyAmount);
-            Assert.AreEqual(3.0f, effect.Source1Amount);
-            Assert.AreEqual(4.0f, effect.Source2Amount);
-            Assert.AreEqual(5.0f, effect.Offset);
+            Assert.IsTrue(((float[])EffectAccessor.GetProperty(effect, 0)).SequenceEqual(new float[] { 1, 0, 0, 0 }));
 
             // Change properties one at a time, and verify that the boxed value changes to match.
             effect.MultiplyAmount = 23;
-            Assert.IsTrue(((float[])effect.Properties[0]).SequenceEqual(new float[] { 23, 3, 4, 5 }));
+            Assert.IsTrue(((float[])EffectAccessor.GetProperty(effect, 0)).SequenceEqual(new float[] { 23, 0, 0, 0 }));
 
             effect.Source1Amount = 42;
-            Assert.IsTrue(((float[])effect.Properties[0]).SequenceEqual(new float[] { 23, 42, 4, 5 }));
+            Assert.IsTrue(((float[])EffectAccessor.GetProperty(effect, 0)).SequenceEqual(new float[] { 23, 42, 0, 0 }));
 
             effect.Source2Amount = -1;
-            Assert.IsTrue(((float[])effect.Properties[0]).SequenceEqual(new float[] { 23, 42, -1, 5 }));
+            Assert.IsTrue(((float[])EffectAccessor.GetProperty(effect, 0)).SequenceEqual(new float[] { 23, 42, -1, 0 }));
 
             effect.Offset = 100;
-            Assert.IsTrue(((float[])effect.Properties[0]).SequenceEqual(new float[] { 23, 42, -1, 100 }));
+            Assert.IsTrue(((float[])EffectAccessor.GetProperty(effect, 0)).SequenceEqual(new float[] { 23, 42, -1, 100 }));
         }
 
 
@@ -738,21 +744,14 @@ namespace test.managed
 
             // Verify defaults.
             Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
-            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, effect.Properties[1]);
-
-            // Changing the boxed value should change the associated property.
-            effect.Properties[1] = D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT;
-            Assert.AreEqual(CanvasAlphaMode.Straight, effect.AlphaMode);
-
-            effect.Properties[1] = D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED;
-            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
+            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
 
             // Change the property, and verify that the boxed value changes to match.
             effect.AlphaMode = CanvasAlphaMode.Straight;
-            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT, effect.Properties[1]);
+            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 1));
 
             effect.AlphaMode = CanvasAlphaMode.Premultiplied;
-            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, effect.Properties[1]);
+            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
 
             // Verify unsupported value throws.
             Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
@@ -760,12 +759,12 @@ namespace test.managed
         }
 
 
-        class NotACanvasImage : IEffectInput { }
+        class NotACanvasImage : IGraphicsEffectSource { }
 
         void VerifyExceptionMessage(string expected, string sourceMessage)
         {
             // Exception messages contain something like 
-            // "Invalid pointer\r\n\r\nEffect input #0 is null",
+            // "Invalid pointer\r\n\r\nEffect source #0 is null",
             // The 'invalid pointer' part is locale 
             // dependent and is stripped out.
 
@@ -792,7 +791,7 @@ namespace test.managed
                 }
                 catch (NullReferenceException e)
                 {
-                    VerifyExceptionMessage("Effect input #0 is null.", e.Message);
+                    VerifyExceptionMessage("Effect source #0 is null.", e.Message);
                 }
 
                 // Invalid source type.
@@ -805,34 +804,7 @@ namespace test.managed
                 }
                 catch (InvalidCastException e)
                 {
-                    VerifyExceptionMessage("Effect input #0 is an unsupported type. To draw an effect using Win2D, all its inputs must be Win2D ICanvasImage objects.", e.Message);
-                }
-
-                // Null property.
-                effect.Source = new ColorSourceEffect();
-                effect.Properties[0] = null;
-
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (NullReferenceException e)
-                {
-                    VerifyExceptionMessage("Effect property #0 is null.", e.Message);
-                }
-
-                // Invalid property type.
-                effect.Properties[0] = "string is not the right type";
-
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (ArgumentException e)
-                {
-                    VerifyExceptionMessage("Effect property #0 is the wrong type for this effect.", e.Message);
+                    VerifyExceptionMessage("Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.", e.Message);
                 }
             }
         }
@@ -847,6 +819,25 @@ namespace test.managed
             // Other effects should still have the standard D2D default value.
             Assert.AreEqual(EffectBorderMode.Soft, new GaussianBlurEffect().BorderMode);
             Assert.AreEqual(EffectBorderMode.Soft, new Transform3DEffect().BorderMode);
+        }
+
+
+        [TestMethod]
+        public void EffectName()
+        {
+            var effect = new GaussianBlurEffect();
+            Assert.AreEqual(string.Empty, effect.Name);
+
+            effect.Name = "hello";
+            Assert.AreEqual("hello", effect.Name);
+
+            effect.Name = "world";
+            Assert.AreEqual("world", effect.Name);
+
+            effect.Name = string.Empty;
+            Assert.AreEqual(string.Empty, effect.Name);
+
+            Assert.ThrowsException<ArgumentNullException>(() => { effect.Name = null; });
         }
     }
 }

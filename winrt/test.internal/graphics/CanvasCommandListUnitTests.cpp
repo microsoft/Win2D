@@ -48,7 +48,7 @@ TEST_CLASS(CanvasCommandListTests)
         ASSERT_IMPLEMENTS_INTERFACE(f.CommandList, ICanvasCommandList);
         ASSERT_IMPLEMENTS_INTERFACE(f.CommandList, ICanvasImage);
         ASSERT_IMPLEMENTS_INTERFACE(f.CommandList, IClosable);
-        ASSERT_IMPLEMENTS_INTERFACE(f.CommandList, Effects::IEffectInput);
+        ASSERT_IMPLEMENTS_INTERFACE(f.CommandList, Effects::IGraphicsEffectSource);
     }
 
     TEST_METHOD_EX(CanvasCommandList_GetDevice_FailsWhenCalledWithNullParameter)

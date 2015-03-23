@@ -21,10 +21,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1DirectionalBlur, 4, 1, true)
     {
         // Set default values
-        SetProperty<float>(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, 3.0f);
-        SetProperty<float>(D2D1_DIRECTIONALBLUR_PROP_ANGLE, 0.0f);
-        SetProperty<uint32_t>(D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION, D2D1_DIRECTIONALBLUR_OPTIMIZATION_BALANCED);
-        SetProperty<uint32_t>(D2D1_DIRECTIONALBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        SetBoxedProperty<float>(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, 3.0f);
+        SetBoxedProperty<float>(D2D1_DIRECTIONALBLUR_PROP_ANGLE, 0.0f);
+        SetBoxedProperty<uint32_t>(D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION, D2D1_DIRECTIONALBLUR_OPTIMIZATION_BALANCED);
+        SetBoxedProperty<uint32_t>(D2D1_DIRECTIONALBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(DirectionalBlurEffect,
@@ -52,7 +52,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EffectBorderMode,
         D2D1_DIRECTIONALBLUR_PROP_BORDER_MODE)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(DirectionalBlurEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(DirectionalBlurEffect,
         Source,
         0)
 

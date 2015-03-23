@@ -14,18 +14,18 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
-    CanvasEffect::CanvasEffect(IID effectId, unsigned int propertiesSize, unsigned int inputSize, bool isInputSizeFixed)
+    CanvasEffect::CanvasEffect(IID effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed)
         : m_effectId(effectId)
+        , m_propertiesChanged(false)
         , m_realizationId(0)
         , m_insideGetImage(false)
         , m_closed(false)
     {
-        m_properties = Make<Vector<IInspectable*>>(propertiesSize, true);
-        CheckMakeResult(m_properties);
+        m_properties.resize(propertiesSize);
 
-        m_inputs = Make<Vector<IEffectInput*>>(inputSize, isInputSizeFixed);
-        CheckMakeResult(m_inputs);
-        m_inputs->SetChanged(true);
+        m_sources = Make<Vector<IGraphicsEffectSource*>>(sourcesSize, isSourcesSizeFixed);
+        CheckMakeResult(m_sources);
+        m_sources->SetChanged(true);
 
         // Create propertyValueFactory
         HSTRING stringActivableClassId = Wrappers::HStringReference(RuntimeClass_Windows_Foundation_PropertyValue).Get();
@@ -123,7 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         auto clearFlagWarden = MakeScopeWarden([&] { m_insideGetImage = false; });
 
         // Update ID2D1Image with the latest property values if a change is detected
-        if (wasRecreated || m_properties->IsChanged())
+        if (wasRecreated || m_propertiesChanged)
         {
             SetD2DProperties();
         }
@@ -145,15 +145,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         m_previousDeviceIdentity.Reset();
         m_dpiCompensators.clear();
         
-        auto& inputs = m_inputs->InternalVector();
+        auto& sources = m_sources->InternalVector();
 
-        if (m_inputs->IsFixedSize())
+        if (m_sources->IsFixedSize())
         {
-            inputs.assign(inputs.size(), nullptr);
+            sources.assign(sources.size(), nullptr);
         }
         else
         {
-            inputs.clear();
+            sources.clear();
         }
 
         m_closed = true;
@@ -162,47 +162,89 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
     //
-    // IEffect
+    // IGraphicsEffect
     //
 
-    IFACEMETHODIMP CanvasEffect::get_EffectId(GUID* effectId)
-    {
-        CheckInPointer(effectId);
-
-        *effectId = m_effectId;
-        return S_OK;
-    }
-
-    IFACEMETHODIMP CanvasEffect::get_Inputs(_Out_ IVector<IEffectInput*>** inputs)
+    IFACEMETHODIMP CanvasEffect::get_Name(HSTRING* name)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckAndClearOutPointer(inputs);
-                ThrowIfFailed(m_inputs.CopyTo(inputs));
+                CheckAndClearOutPointer(name);
+                m_name.CopyTo(name);
             });
     }
 
-    IFACEMETHODIMP CanvasEffect::get_Properties(_Out_ IVector<IInspectable*>** properties)
+    IFACEMETHODIMP CanvasEffect::put_Name(HSTRING name)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckAndClearOutPointer(properties);
-                ThrowIfFailed(m_properties.CopyTo(properties));
+                m_name = name;
             });
     }
 
-    void CanvasEffect::GetInput(unsigned int index, IEffectInput** input)
-    {
-        CheckAndClearOutPointer(input);
+    //
+    // IGraphicsEffectD2D1Interop
+    //
 
-        ThrowIfFailed(m_inputs->GetAt(index, input));
+    IFACEMETHODIMP CanvasEffect::GetEffectId(GUID* id)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(id);
+                *id = m_effectId;
+            });
     }
 
-    void CanvasEffect::SetInput(unsigned int index, IEffectInput* input)
+    IFACEMETHODIMP CanvasEffect::GetSourceCount(UINT* count)
     {
-        ThrowIfFailed(m_inputs->SetAt(index, input));
+        return m_sources->get_Size(count);
+    }
+
+    IFACEMETHODIMP CanvasEffect::GetSource(UINT index, IGraphicsEffectSource** source)
+    {
+        return m_sources->GetAt(index, source);
+    }
+
+    IFACEMETHODIMP CanvasEffect::GetPropertyCount(UINT* count)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(count);
+                *count = static_cast<UINT>(m_properties.size());
+            });
+    }
+
+    IFACEMETHODIMP CanvasEffect::GetProperty(UINT index, IPropertyValue** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(value);
+        
+                if (index >= m_properties.size())
+                    ThrowHR(E_BOUNDS);
+
+                ThrowIfFailed(m_properties[index].CopyTo(value));
+            });
+    }
+
+    IFACEMETHODIMP CanvasEffect::GetNamedPropertyMapping(LPCWSTR name, UINT* index, GRAPHICS_EFFECT_PROPERTY_MAPPING* mapping)
+    {
+        UNREFERENCED_PARAMETER(name);
+        UNREFERENCED_PARAMETER(index);
+        UNREFERENCED_PARAMETER(mapping);
+
+        // TODO
+        return E_NOTIMPL;
+    }
+
+    STDMETHODIMP CanvasEffect::SetSource(UINT index, IGraphicsEffectSource* source)
+    {
+        return m_sources->SetAt(index, source);
     }
 
     static ComPtr<ID2D1Effect> InsertDpiCompensationEffect(ID2D1DeviceContext* deviceContext, ID2D1Image* inputImage, float inputDpi, ID2D1Effect* reuseExistingCompensator)
@@ -229,38 +271,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::SetD2DInputs(ID2D1DeviceContext* deviceContext, float targetDpi, bool wasRecreated)
     {
-        auto& inputs = m_inputs->InternalVector();
-        auto inputsSize = (unsigned int)inputs.size();
+        auto& sources = m_sources->InternalVector();
+        auto sourcesSize = (unsigned int)sources.size();
 
-        bool inputsChanged = wasRecreated || m_inputs->IsChanged();
+        bool sourcesChanged = wasRecreated || m_sources->IsChanged();
 
-        // Resize input array?
-        if (inputsChanged)
+        // Resize sources array?
+        if (sourcesChanged)
         {
-            m_resource->SetInputCount(inputsSize);
-            m_previousInputRealizationIds.resize(inputsSize);
-            m_dpiCompensators.resize(inputsSize);
+            m_resource->SetInputCount(sourcesSize);
+            m_previousSourceRealizationIds.resize(sourcesSize);
+            m_dpiCompensators.resize(sourcesSize);
         }
 
-        for (unsigned int i = 0; i < inputsSize; ++i)
+        for (unsigned int i = 0; i < sourcesSize; ++i)
         {
             // Look up the WinRT interface representing this input
-            if (!inputs[i])
+            if (!sources[i])
             {
                 WinStringBuilder message;
-                message.Format(Strings::EffectNullInput, i);
+                message.Format(Strings::EffectNullSource, i);
                 ThrowHR(E_POINTER, message.Get());
             }
 
-            ComPtr<ICanvasImageInternal> internalInput;
-            HRESULT hr = inputs[i].As(&internalInput);
+            ComPtr<ICanvasImageInternal> internalSource;
+            HRESULT hr = sources[i].As(&internalSource);
 
             if (FAILED(hr))
             {
                 if (hr == E_NOINTERFACE)
                 {
                     WinStringBuilder message;
-                    message.Format(Strings::EffectWrongInputType, i);
+                    message.Format(Strings::EffectWrongSourceType, i);
                     ThrowHR(hr, message.Get());
                 }
                 else
@@ -270,49 +312,46 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
 
             // Get the underlying D2D interface (this call recurses through the effect graph)
-            auto realizedInput = internalInput->GetRealizedEffectNode(deviceContext, targetDpi);
+            auto realizedSource = internalSource->GetRealizedEffectNode(deviceContext, targetDpi);
 
-            bool needsDpiCompensation = (realizedInput.Dpi != targetDpi) && (realizedInput.Dpi != 0) && (targetDpi != 0);
+            bool needsDpiCompensation = (realizedSource.Dpi != targetDpi) && (realizedSource.Dpi != 0) && (targetDpi != 0);
             bool hasDpiCompensation = m_dpiCompensators[i] != nullptr;
 
-            // If the input value has changed, update the D2D effect graph
-            if (inputsChanged || 
-                realizedInput.RealizationId != m_previousInputRealizationIds[i] ||
+            // If the source value has changed, update the D2D effect graph
+            if (sourcesChanged || 
+                realizedSource.RealizationId != m_previousSourceRealizationIds[i] ||
                 needsDpiCompensation != hasDpiCompensation)
             {
                 if (needsDpiCompensation)
                 {
-                    m_dpiCompensators[i] = InsertDpiCompensationEffect(deviceContext, realizedInput.Image.Get(), realizedInput.Dpi, m_dpiCompensators[i].Get());
-                    realizedInput.Image = As<ID2D1Image>(m_dpiCompensators[i]);
+                    m_dpiCompensators[i] = InsertDpiCompensationEffect(deviceContext, realizedSource.Image.Get(), realizedSource.Dpi, m_dpiCompensators[i].Get());
+                    realizedSource.Image = As<ID2D1Image>(m_dpiCompensators[i]);
                 }
                 else
                 {
                     m_dpiCompensators[i].Reset();
                 }
 
-                m_resource->SetInput(i, realizedInput.Image.Get());
-                m_previousInputRealizationIds[i] = realizedInput.RealizationId;
+                m_resource->SetInput(i, realizedSource.Image.Get());
+                m_previousSourceRealizationIds[i] = realizedSource.RealizationId;
             }
         }
 
-        m_inputs->SetChanged(false);
+        m_sources->SetChanged(false);
     }
 
     void CanvasEffect::SetD2DProperties()
     {
-        auto& properties = m_properties->InternalVector();
-        auto propertiesSize = (unsigned int) properties.size();
-
-        for (unsigned int i = 0; i < propertiesSize; ++i)
+        for (unsigned i = 0; i < m_properties.size(); ++i)
         {
-            if (!properties[i])
+            auto& propertyValue = m_properties[i];
+
+            if (!propertyValue)
             {
                 WinStringBuilder message;
                 message.Format(Strings::EffectNullProperty, i);
                 ThrowHR(E_POINTER, message.Get());
             }
-
-            auto propertyValue = As<IPropertyValue>(properties[i]);
 
             PropertyType propertyType;
             ThrowIfFailed(propertyValue->get_Type(&propertyType));
@@ -376,7 +415,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
         }
 
-        m_properties->SetChanged(false);
+        m_propertiesChanged = false;
     }
 
     void CanvasEffect::ThrowIfClosed()

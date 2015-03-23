@@ -30,7 +30,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         BlendEffect();
 
         EFFECT_PROPERTY(Mode, BlendEffectMode);
-        EFFECT_PROPERTY(Background, IEffectInput*);
-        EFFECT_PROPERTY(Foreground, IEffectInput*);
+        EFFECT_PROPERTY(Background, IGraphicsEffectSource*);
+        EFFECT_PROPERTY(Foreground, IGraphicsEffectSource*);
     };
 }}}}}

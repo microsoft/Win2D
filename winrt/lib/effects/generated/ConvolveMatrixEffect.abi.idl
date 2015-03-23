@@ -87,10 +87,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT ClampOutput([in] boolean value);
 
         [propget]
-        HRESULT Source([out, retval] IEffectInput** input);
+        HRESULT Source([out, retval] IGraphicsEffectSource** source);
 
         [propput]
-        HRESULT Source([in] IEffectInput* input);
+        HRESULT Source([in] IGraphicsEffectSource* source);
 
     };
 
@@ -98,6 +98,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ConvolveMatrixEffect
     {
         [default] interface IConvolveMatrixEffect;
-        interface IEffect;
+        interface IGraphicsEffect;
     }
 }

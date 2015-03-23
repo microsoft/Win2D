@@ -30,6 +30,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         OpacityMetadataEffect();
 
         EFFECT_PROPERTY(OpaqueRectangle, Rect);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

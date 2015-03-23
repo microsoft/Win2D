@@ -21,8 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Brightness, 2, 1, true)
     {
         // Set default values
-        SetProperty<float[2]>(D2D1_BRIGHTNESS_PROP_WHITE_POINT, Numerics::Vector2{ 1.0f, 1.0f });
-        SetProperty<float[2]>(D2D1_BRIGHTNESS_PROP_BLACK_POINT, Numerics::Vector2{ 0.0f, 0.0f });
+        SetBoxedProperty<float[2]>(D2D1_BRIGHTNESS_PROP_WHITE_POINT, Numerics::Vector2{ 1.0f, 1.0f });
+        SetBoxedProperty<float[2]>(D2D1_BRIGHTNESS_PROP_BLACK_POINT, Numerics::Vector2{ 0.0f, 0.0f });
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(BrightnessEffect,
@@ -39,7 +39,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_BRIGHTNESS_PROP_BLACK_POINT,
         (value.X >= 0.0f) && (value.Y >= 0.0f) && (value.X <= 1.0f) && (value.Y <= 1.0f))
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(BrightnessEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(BrightnessEffect,
         Source,
         0)
 

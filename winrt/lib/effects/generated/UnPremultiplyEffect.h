@@ -29,6 +29,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         UnPremultiplyEffect();
 
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

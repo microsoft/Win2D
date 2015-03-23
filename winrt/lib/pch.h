@@ -65,6 +65,7 @@
 
 // Public
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#include <Microsoft.Graphics.Canvas.Effects.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // Inc

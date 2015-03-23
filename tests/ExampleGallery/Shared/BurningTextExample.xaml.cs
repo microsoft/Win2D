@@ -120,7 +120,7 @@ namespace ExampleGallery
 
             // Hook up the command list to the inputs of the flame effect graph.
             morphology.Source = textCommandList;
-            composite.Inputs[1] = textCommandList;
+            composite.Sources[1] = textCommandList;
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace ExampleGallery
             // Composite the text over the flames.
             composite = new CompositeEffect()
             {
-                Inputs = { flamePosition, null }
+                Sources = { flamePosition, null }
                 // Replace null with the text command list when it is created.
             };
         }

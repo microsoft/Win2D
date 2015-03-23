@@ -30,6 +30,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         TileEffect();
 
         EFFECT_PROPERTY(SourceRectangle, Rect);
-        EFFECT_PROPERTY(Source, IEffectInput*);
+        EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}

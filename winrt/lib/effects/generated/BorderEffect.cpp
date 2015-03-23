@@ -21,8 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Border, 2, 1, true)
     {
         // Set default values
-        SetProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_X, D2D1_BORDER_EDGE_MODE_CLAMP);
-        SetProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_Y, D2D1_BORDER_EDGE_MODE_CLAMP);
+        SetBoxedProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_X, D2D1_BORDER_EDGE_MODE_CLAMP);
+        SetBoxedProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_Y, D2D1_BORDER_EDGE_MODE_CLAMP);
     }
 
     IMPLEMENT_EFFECT_PROPERTY(BorderEffect,
@@ -37,7 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasEdgeBehavior,
         D2D1_BORDER_PROP_EDGE_MODE_Y)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(BorderEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(BorderEffect,
         Source,
         0)
 

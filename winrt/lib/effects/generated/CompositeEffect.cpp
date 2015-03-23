@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1Composite, 1, 0, false)
     {
         // Set default values
-        SetProperty<uint32_t>(D2D1_COMPOSITE_PROP_MODE, D2D1_COMPOSITE_MODE_SOURCE_OVER);
+        SetBoxedProperty<uint32_t>(D2D1_COMPOSITE_PROP_MODE, D2D1_COMPOSITE_MODE_SOURCE_OVER);
     }
 
     IMPLEMENT_EFFECT_PROPERTY(CompositeEffect,
@@ -29,6 +29,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         uint32_t,
         CanvasComposite,
         D2D1_COMPOSITE_PROP_MODE)
+
+    IMPLEMENT_EFFECT_SOURCES_PROPERTY(CompositeEffect)
 
     ActivatableClass(CompositeEffect);
 }}}}}

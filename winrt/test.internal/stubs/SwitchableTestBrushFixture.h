@@ -36,7 +36,7 @@ namespace canvas
             m_canvasDevice->MockGetD2DImage =
                 [&](ICanvasImage* canvasImage) -> ComPtr<ID2D1Image>
                 {
-                    ComPtr<IEffect> effect;
+                    ComPtr<IGraphicsEffect> effect;
                     ComPtr<ICanvasBitmap> bitmap;
                     if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&effect))))
                     {

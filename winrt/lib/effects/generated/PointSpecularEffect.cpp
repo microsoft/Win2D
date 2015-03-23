@@ -21,13 +21,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : CanvasEffect(CLSID_D2D1PointSpecular, 7, 1, true)
     {
         // Set default values
-        SetProperty<float[3]>(D2D1_POINTSPECULAR_PROP_LIGHT_POSITION, Numerics::Vector3{ 0.0f, 0.0f, 0.0f });
-        SetProperty<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_EXPONENT, 1.0f);
-        SetProperty<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT, 1.0f);
-        SetProperty<float>(D2D1_POINTSPECULAR_PROP_SURFACE_SCALE, 1.0f);
-        SetProperty<float[3]>(D2D1_POINTSPECULAR_PROP_COLOR, Color{ 255, 255, 255, 255 });
-        SetProperty<float[2]>(D2D1_POINTSPECULAR_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
-        SetProperty<uint32_t>(D2D1_POINTSPECULAR_PROP_SCALE_MODE, D2D1_POINTSPECULAR_SCALE_MODE_LINEAR);
+        SetBoxedProperty<float[3]>(D2D1_POINTSPECULAR_PROP_LIGHT_POSITION, Numerics::Vector3{ 0.0f, 0.0f, 0.0f });
+        SetBoxedProperty<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_EXPONENT, 1.0f);
+        SetBoxedProperty<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT, 1.0f);
+        SetBoxedProperty<float>(D2D1_POINTSPECULAR_PROP_SURFACE_SCALE, 1.0f);
+        SetBoxedProperty<float[3]>(D2D1_POINTSPECULAR_PROP_COLOR, Color{ 255, 255, 255, 255 });
+        SetBoxedProperty<float[2]>(D2D1_POINTSPECULAR_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
+        SetBoxedProperty<uint32_t>(D2D1_POINTSPECULAR_PROP_SCALE_MODE, D2D1_POINTSPECULAR_SCALE_MODE_LINEAR);
     }
 
     IMPLEMENT_EFFECT_PROPERTY(PointSpecularEffect,
@@ -76,7 +76,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasImageInterpolation,
         D2D1_POINTSPECULAR_PROP_SCALE_MODE)
 
-    IMPLEMENT_EFFECT_INPUT_PROPERTY(PointSpecularEffect,
+    IMPLEMENT_EFFECT_SOURCE_PROPERTY(PointSpecularEffect,
         Source,
         0)
 
