@@ -53,7 +53,6 @@ namespace ExampleGallery
 
             canvas.Input.PointerPressed += OnPointerPressed;
             canvas.Input.PointerMoved += OnPointerMoved;
-            canvas.Input.PointerReleased += OnPointerReleased;
 
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
 
@@ -169,8 +168,7 @@ namespace ExampleGallery
                     CanvasTextLayoutRegion textLayoutRegion;
                     textLayout.GetCaretPosition(i, false, out textLayoutRegion);
 
-                    Windows.Foundation.Rect r = textLayoutRegion.LayoutBounds;
-                    args.DrawingSession.DrawRectangle(r, Colors.Blue, 2);
+                    args.DrawingSession.DrawRectangle(textLayoutRegion.LayoutBounds, Colors.Blue, 2);
                 }
             }
 
@@ -237,17 +235,6 @@ namespace ExampleGallery
                 if (point.IsInContact)
                 {
                     selectionEndIndex = GetHitIndex(point.Position);
-                }
-            }
-        }
-
-        private void OnPointerReleased(object sender, PointerEventArgs args)
-        {
-            if(!hasSelection)
-            {
-                if (!textLayout.HitTest(args.CurrentPoint.Position.ToVector2()))
-                {
-                    hasSelection = false;
                 }
             }
         }
