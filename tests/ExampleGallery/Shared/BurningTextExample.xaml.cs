@@ -93,7 +93,7 @@ namespace ExampleGallery
         }
 
         /// <summary>
-        /// Renders text into an intermediate bitmap and sets this bitmap as the input to the flame
+        /// Renders text into a command list and sets this as the input to the flame
         /// effect graph. The effect graph must already be created before calling this method.
         /// </summary>
         private void SetupText(ICanvasResourceCreator resourceCreator)
@@ -118,7 +118,7 @@ namespace ExampleGallery
                     });
             }
 
-            // Hook up the bitmap to the inputs of the flame effect graph.
+            // Hook up the command list to the inputs of the flame effect graph.
             morphology.Source = textCommandList;
             composite.Inputs[1] = textCommandList;
         }
@@ -135,15 +135,15 @@ namespace ExampleGallery
         }
 
         /// <summary>
-        /// Generate the flame effect graph. This method is called before the text bitmap (input)
-        /// is created.
+        /// Generate the flame effect graph. This method is called before the text command list
+        /// (input) is created.
         /// </summary>
         private void CreateFlameEffect()
         {
-            // Thicken the text bitmap.
+            // Thicken the text.
             morphology = new MorphologyEffect
             {
-                // Set the text bitmap as the source when it is created.
+                // The Source property is set by SetupText().
                 Mode = MorphologyEffectMode.Dilate,
                 Width = 7,
                 Height = 1
@@ -228,7 +228,7 @@ namespace ExampleGallery
 
         private void control_Unloaded(object sender, RoutedEventArgs e)
         {
-            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            // Explicitly remove references to allow the Win2D controls to get garbage collected.
             canvas.RemoveFromVisualTree();
             canvas = null;
         }
