@@ -98,7 +98,7 @@ namespace Microsoft.Graphics.Canvas
 
         [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);
 
-        // Draw and Update events are issued on the AnimatedControl's worker 
+        // Draw and Update events are issued on the AnimatedControl's game loop 
         // thread, if the control's state is not Paused.
         //
         // Since the event collections are implemented with EventSource, add_Update/remove_Update
@@ -180,6 +180,22 @@ namespace Microsoft.Graphics.Canvas
         // This method may only be called from the UI thread.
         //
         HRESULT RemoveFromVisualTree();
+
+        //
+        // This returns true if the game loop thread exists, and it is the 
+        // current thread.
+        //
+        [propget] HRESULT HasGameLoopThreadAccess([out, retval] boolean* value);
+
+        //
+        // Allows apps to schedule work on the game loop thread.
+        // If the game loop thread doesn't exist, or the control was paused,
+        // the work will be run once the game loop is running again.
+        //
+
+        HRESULT RunOnGameLoopThreadAsync(
+            [in] Windows.UI.Core.DispatchedHandler* agileCallback,
+            [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

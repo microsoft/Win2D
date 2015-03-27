@@ -275,6 +275,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h">
       <Filter>brushes</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h" />
+      <Filter>xaml</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlInput.h">
       <Filter>xaml</Filter>
     </ClInclude>
@@ -483,6 +486,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceManager.h">

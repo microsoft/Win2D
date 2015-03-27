@@ -206,6 +206,8 @@ namespace Microsoft
             TO_STRING(ID2D1GeometrySink);
             TO_STRING(ID2D1GeometryRealization);
             TO_STRING(IDWriteTextLayout);
+            TO_STRING(IDispatchedHandler);
+            TO_STRING(IAsyncAction);
 
 #undef TO_STRING
 
@@ -256,6 +258,15 @@ namespace Microsoft
                 ENUM_VALUE(ChangeReason::ClearColor);
                 ENUM_VALUE(ChangeReason::DeviceLost);
                 END_ENUM(ChangeReason);
+            }
+
+            ENUM_TO_STRING(CoreProcessEventsOption)
+            {
+                ENUM_VALUE(CoreProcessEventsOption_ProcessOneAndAllPending);
+                ENUM_VALUE(CoreProcessEventsOption_ProcessOneIfPresent);
+                ENUM_VALUE(CoreProcessEventsOption_ProcessUntilQuit);
+                ENUM_VALUE(CoreProcessEventsOption_ProcessAllIfPresent);
+                END_ENUM(CoreProcessEventsOption);
             }
 
             template<>

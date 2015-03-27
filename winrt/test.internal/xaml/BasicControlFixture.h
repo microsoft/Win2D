@@ -175,21 +175,6 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
         Assert::IsFalse(IsChangedActionRunning());
     }
 
-    void ExpectAChangeThatRestartsRenderThread()
-    {
-        Assert::IsTrue(IsChangedActionRunning());
-        Assert::IsTrue(IsRenderActionRunning());
-
-        Adapter->DoChanged();
-        Assert::IsFalse(IsChangedActionRunning());
-
-        Adapter->Tick(); // Allows the render thread to stop.
-        Assert::IsFalse(IsRenderActionRunning());
-
-        Adapter->DoChanged();
-        Assert::IsFalse(IsChangedActionRunning());
-    }
-
     void ExpectStableState()
     {
         Assert::IsFalse(IsChangedActionRunning());

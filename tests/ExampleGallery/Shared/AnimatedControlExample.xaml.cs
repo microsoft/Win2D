@@ -184,7 +184,7 @@ namespace ExampleGallery
             this.stepButton.IsEnabled = false;
         }
 
-        private void Step_Checked(object sender, RoutedEventArgs e)
+        private void Step_Clicked(object sender, RoutedEventArgs e)
         {
             step = true;
             this.animatedControl.Paused = false;

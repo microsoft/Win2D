@@ -23,7 +23,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                                  private LifespanTracker<AnimatedControlInput>
     {
         InspectableClass(InterfaceName_Windows_UI_Core_ICorePointerInputSource, BaseTrust);
-
+                
+        std::mutex m_mutex; // This protects access to m_source.
         ComPtr<ICorePointerInputSource> m_source;
         WeakRef m_weakSwapChainPanel;
 
@@ -119,6 +120,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void ProcessEvents();
 
+        boolean GetHasThreadAccess();
+
     private:
 
         HRESULT OnPointerCaptureLost(IInspectable*, IPointerEventArgs*);
@@ -136,6 +139,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         HRESULT OnPointerWheelChanged(IInspectable*, IPointerEventArgs*);
 
         void CheckHasSource();
+
+        ComPtr<ICoreDispatcher> GetDispatcher();
     };
 
 }}}}

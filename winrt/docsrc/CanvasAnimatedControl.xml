@@ -599,6 +599,25 @@ under the License.
       <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
       <inheritdoc/>
     </member>
+    
 
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
+      <summary>Does some work, specified using a DispatchedHandler, on the game loop thread.</summary>
+      <remarks>
+      	If the control is paused, the work won't be performed until the control is unpaused.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.HasGameLoopThreadAccess">
+      <summary>Gets whether the current thread is the game loop thread.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
+      <summary>Does some work, specified using a DispatchedHandler, on the game loop thread.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.HasGameLoopThreadAccess">
+      <summary>Gets whether the current thread is the game loop thread.</summary>
+    </member>
+    
+    
   </members>
 </doc>

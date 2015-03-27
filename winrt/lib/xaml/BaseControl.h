@@ -13,6 +13,7 @@
 #pragma once
 
 #include "RemoveFromVisualTree.h"
+#include "utils/LockUtilities.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -302,8 +303,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDrawingSession* drawingSession,
             bool isRunningSlowly) = 0;
 
-        typedef std::unique_lock<std::mutex> Lock;
-
         virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) = 0;
 
         virtual void Loaded() = 0;
@@ -437,12 +436,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Lock GetLock()
         {
             return Lock(m_mutex);
-        }
-
-        void MustOwnLock(Lock const& lock)
-        {
-            assert(lock.owns_lock());
-            UNREFERENCED_PARAMETER(lock);
         }
 
         static CanvasBackground GetBackgroundModeFromClearColor(Color const& clearColor)

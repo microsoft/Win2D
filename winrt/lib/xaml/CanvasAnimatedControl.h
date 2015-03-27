@@ -16,6 +16,7 @@
 #include "AnimatedControlInput.h"
 #include "CanvasSwapChainPanel.h"
 #include "StepTimer.h"
+#include "AnimatedControlAsyncAction.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -162,12 +163,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         struct SharedState
         {
+            SharedState()
+                : IsPaused(false)
+                , FirstTickAfterWasPaused(true)
+                , IsStepTimerFixedStep(false)
+                , TargetElapsedTime(0)
+                , ShouldResetElapsedTime(false)
+                , NeedsDraw(true)
+            {}
+
             bool IsPaused;
             bool FirstTickAfterWasPaused;
             bool IsStepTimerFixedStep;
             uint64_t TargetElapsedTime;
             bool ShouldResetElapsedTime;
             bool NeedsDraw;
+            std::vector<ComPtr<AnimatedControlAsyncAction>> PendingAsyncActions;
         };
 
         SharedState m_sharedState;
@@ -206,6 +217,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP get_Input(ICorePointerInputSource** value) override;
 
         IFACEMETHODIMP RemoveFromVisualTree() override;
+
+        IFACEMETHODIMP get_HasGameLoopThreadAccess(boolean* value) override;
+
+        IFACEMETHODIMP RunOnGameLoopThreadAsync(
+            IDispatchedHandler* callback,
+            IAsyncAction** asyncAction) override;
 
         //
         // BaseControl
@@ -246,6 +263,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void ChangedImpl();
 
         CanvasTimingInformation GetTimingInformationFromTimer();
+
+        void CanvasAnimatedControl::IssueAsyncActions(
+            std::vector<ComPtr<AnimatedControlAsyncAction>> const& pendingActions);
     };
 
 }}}}

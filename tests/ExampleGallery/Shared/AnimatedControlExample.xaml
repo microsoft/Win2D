@@ -61,7 +61,7 @@ under the License.
             </ComboBox>
 
             <ToggleButton Content="Pause" Checked="Pause_Checked" Unchecked="Pause_Unchecked" Margin="5" />
-            <Button x:Name="stepButton" Content="Step" Click="Step_Checked" IsEnabled="false" Margin="5" />
+            <Button x:Name="stepButton" Content="Step" Click="Step_Clicked" IsEnabled="false" Margin="5" />
             <ComboBox x:Name="clearColor" Width="200" Height="40" SelectionChanged="clearColor_SelectionChanged" Margin="5">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>

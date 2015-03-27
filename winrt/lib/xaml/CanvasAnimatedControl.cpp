@@ -304,7 +304,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : BaseControl<CanvasAnimatedControlTraits>(adapter)
         , m_stepTimer(adapter)
         , m_hasUpdated(false)
-        , m_sharedState{}
     {
         CreateSwapChainPanel();
 
@@ -314,8 +313,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         m_sharedState.IsStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
         m_sharedState.TargetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
-        m_sharedState.NeedsDraw = true;
-        m_sharedState.FirstTickAfterWasPaused = true;
     }
 
     CanvasAnimatedControl::~CanvasAnimatedControl()
@@ -471,6 +468,47 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return hr;
 
         return BaseControl::RemoveFromVisualTree();
+    }
+
+    IFACEMETHODIMP CanvasAnimatedControl::get_HasGameLoopThreadAccess(boolean* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                //
+                // This control's input objects are always created for the
+                // render thread, and they have their own dispatcher object
+                // created for them. This simply routes to that dispatcher.
+                //
+                // The AnimatedControlInput object's own lock protects against 
+                // hazards where the input object is created or destroyed 
+                // before this method completes.
+                //
+
+                *value = m_input->GetHasThreadAccess();
+            });
+    }
+
+    IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
+        IDispatchedHandler* callback,
+        IAsyncAction** asyncAction)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(callback);
+                CheckAndClearOutPointer(asyncAction);
+
+                auto lock = GetLock();
+
+                auto newAsyncAction = Make<AnimatedControlAsyncAction>(callback);
+                CheckMakeResult(newAsyncAction);
+                m_sharedState.PendingAsyncActions.push_back(newAsyncAction);
+
+                ThrowIfFailed(newAsyncAction.CopyTo(asyncAction));
+            });
     }
 
 
@@ -834,6 +872,54 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(thisAsUserControl->put_Content(swapChainPanelAsUIElement.Get()));
     }
 
+    void CanvasAnimatedControl::IssueAsyncActions(
+        std::vector<ComPtr<AnimatedControlAsyncAction>> const& pendingActions)
+    {
+        //
+        // Fire all the async actions.
+        //
+        for (auto actionIter = pendingActions.begin(); actionIter != pendingActions.end(); ++actionIter)
+        {
+            HRESULT actionsResult = S_OK;
+
+            auto invocationResult = (*actionIter)->InvokeAndFireCompletion();
+
+            if (DeviceLostException::IsDeviceLostHResult(invocationResult.ActionResult))
+            {
+                // Expected to be rethrown.
+                actionsResult = invocationResult.ActionResult;
+            }            
+            else if (FAILED(invocationResult.CompletedHandlerResult))
+            {
+                // Expected to be rethrown, regardless of whether it's device lost.
+                //
+                // Note that device lost from the handler, above, is taking precedence 
+                // over any errors reported out of the completed handler. This is by design.
+                //
+                // Reporting device lost out of here plus an error out of a completed
+                // handler requires some extra infrastructure, which is arguably not
+                // worth implementing.
+                //
+                actionsResult = invocationResult.CompletedHandlerResult;
+            }
+
+            // 
+            // If this async action failed to run, the remaining async actions
+            // cannot run, and need to be re-queued.
+            //
+            if (FAILED(actionsResult))
+            {
+                auto lock = GetLock();
+
+                m_sharedState.PendingAsyncActions.insert(m_sharedState.PendingAsyncActions.begin(), actionIter+1, pendingActions.end());
+
+                lock.unlock();
+
+                ThrowHR(actionsResult);
+            }
+        }
+    }
+
     bool CanvasAnimatedControl::Tick(
         CanvasSwapChain*, 
         bool areResourcesCreated)
@@ -894,8 +980,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // relevant for the ClearColor, since this indicates that we've
         // 'consumed' that color.
         m_sharedState.NeedsDraw = false;
+
+        //
+        // Copy out the list of async actions, to avoid retaining the lock while
+        // they are being fired.
+        //
+        std::vector<ComPtr<AnimatedControlAsyncAction>> pendingActions;
+        std::swap(pendingActions, m_sharedState.PendingAsyncActions);
         
         lock.unlock();
+
+        IssueAsyncActions(pendingActions);
 
         //
         // Now do the update/render for this tick

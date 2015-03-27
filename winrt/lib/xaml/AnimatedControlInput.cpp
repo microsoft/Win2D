@@ -43,6 +43,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                Lock lock(m_mutex);
+
                 CheckHasSource();
 
                 ThrowIfFailed(m_source->get_PointerPosition(value));
@@ -54,6 +56,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                Lock lock(m_mutex);
+
                 CheckHasSource();
 
                 ThrowIfFailed(m_source->get_PointerCursor(value));
@@ -68,6 +72,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 //
                 // There is no null check here, because null is a valid argument.
                 //
+                Lock lock(m_mutex);
 
                 CheckHasSource();
 
@@ -196,6 +201,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
     void AnimatedControlInput::SetSource()
     {
+        Lock lock(m_mutex);
+
         assert(!m_source);
 
         ComPtr<ICoreInputSourceBase> inputSourceBase;
@@ -229,6 +236,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void AnimatedControlInput::RemoveSource()
     {
+        Lock lock(m_mutex);
+
         assert(m_source);
 
         m_pointerEnteredEvent.Release();
@@ -244,15 +253,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     void AnimatedControlInput::ProcessEvents()
     {
         //
-        // This may only be called on the render thread.
+        // Because this may only be called on the render thread,
+        // and m_source is only ever set up or torn down on the
+        // render thread, it is not necessary to take out the lock
+        // for this.
         //
 
-        auto baseSource = As<ICoreInputSourceBase>(m_source);
-
-        ComPtr<ICoreDispatcher> dispatcher;
-        ThrowIfFailed(baseSource->get_Dispatcher(&dispatcher));
-
-        ThrowIfFailed(dispatcher->ProcessEvents(CoreProcessEventsOption_ProcessAllIfPresent));
+        ThrowIfFailed(GetDispatcher()->ProcessEvents(CoreProcessEventsOption_ProcessAllIfPresent));
     }
 
     void AnimatedControlInput::CheckHasSource()
@@ -272,5 +279,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             ThrowHR(RPC_E_WRONG_THREAD);
         }
+    }
+
+    boolean AnimatedControlInput::GetHasThreadAccess()
+    {
+        Lock lock(m_mutex);
+
+        if (!m_source)
+        {
+            return false;
+        }
+        else
+        {
+            auto dispatcher = GetDispatcher();
+
+            boolean hasAccess;
+            ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasAccess));
+            return hasAccess;
+        }
+    }
+
+    ComPtr<ICoreDispatcher> AnimatedControlInput::GetDispatcher()
+    {
+        assert(m_source);
+
+        auto baseSource = As<ICoreInputSourceBase>(m_source);
+
+        ComPtr<ICoreDispatcher> dispatcher;
+        ThrowIfFailed(baseSource->get_Dispatcher(&dispatcher));
+
+        return dispatcher;
     }
 }}}}
