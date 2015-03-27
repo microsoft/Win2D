@@ -28,6 +28,9 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel,Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)">
       <summary>Initializes a new instance of the CanvasDevice class.</summary>
+      <remarks>
+      	If <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On"/> was specified, but GPU hardware acceleration was not available, an exception will be thrown.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor">
       <summary>Initializes a new instance of the CanvasDevice class.</summary>
@@ -40,6 +43,12 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.HardwareAcceleration">
       <summary>Gets whether this device is using GPU hardware acceleration.</summary>
+      <remarks>
+      If the CanvasDevice was created with <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Auto"/>,
+      this property will be either <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On"/> or
+      <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Off"/>, depending on which whether hardware
+      acceleration was actually available.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.Device">
       <summary>Implements the ICanvasResourceCreator interface by returning 'this'.</summary>
@@ -56,13 +65,18 @@ under the License.
       <summary>Use GPU hardware acceleration if possible, otherwise fall back to software rendering.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On">
-      <summary>Use GPU hardware acceleration. Throw an exception if that is not available.</summary>
+      <summary>Use GPU hardware acceleration.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Off">
       <summary>Use the WARP software renderer.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown">
       <summary>Indicates that it is not known whether this device uses hardware or software rendering.</summary>
+      <remarks>
+         This option exists for CanvasDevice objects created through C++ interop. On such objects, 
+         it may be returned by <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.HardwareAcceleration"/>.
+         Win2D does not try to ascertain whether the device's original creation flags specified hardware or software.
+      </remarks>
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumBitmapSizeInPixels">
