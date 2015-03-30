@@ -275,7 +275,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h">
       <Filter>brushes</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h">
       <Filter>xaml</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlInput.h">
