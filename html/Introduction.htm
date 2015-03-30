@@ -2,13 +2,21 @@
         Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
         rendering with GPU acceleration. It is available to C# and C++ developers writing
         Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of
-        Direct2D, and integrates seamlessly with XAML and ICoreWindow.
+        Direct2D, and integrates seamlessly with XAML and CoreWindow.
       </p><p>
         Win2D is work in progress and evolving rapidly. The goal of releasing this
         code in an early, incomplete state is to solicit early developer feedback.
       </p><ul><li><a href="http://github.com/Microsoft/Win2D" target="_blank">Source code and issue tracking</a></li><li><a href="http://www.nuget.org/packages/Win2D" target="_blank">NuGet packages</a></li><li><a href="http://github.com/Microsoft/Win2D/wiki/Features" target="_blank">Features</a>
           - <em>what's implemented so far</em></li><li><a href="http://github.com/Microsoft/Win2D/wiki/Backlog" target="_blank">Backlog</a>
-          - <em>what we plan to add next</em></li><li><a href="http://blogs.msdn.com/b/win2d" target="_blank">Team blog</a></li></ul></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID0RB')" onkeypress="SectionExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Getting set up</span></div><div id="ID0RBSection" class="collapsibleSection"><p>
+          - <em>what we plan to add next</em></li><li><a href="http://blogs.msdn.com/b/win2d" target="_blank">Team blog</a></li><li>
+          Example Gallery for
+          <a href="http://apps.microsoft.com/windows/en-us/app/win2d-example-gallery/b668cfe1-e280-4c1e-adc1-09b7981ab084" target="_blank">Windows</a>
+          and
+          <a href="http://www.windowsphone.com/en-us/store/app/win2d-example-gallery/8797b9cb-1443-475f-9a43-dd959de6fcc1" target="_blank">Phone</a>
+          -
+          <em>
+            source code
+            <a href="https://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared" target="_blank">here</a></em></li></ul></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID0RB')" onkeypress="SectionExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Getting set up</span></div><div id="ID0RBSection" class="collapsibleSection"><p>
           Install Visual Studio:
         </p><ul><li>
             Download <a href="http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx" target="_blank">here</a></li><li>Recommended version: Visual Studio Community 2013 with Update 4</li><li>Minimum version: Visual Studio 2013 Update 2</li><li>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</li></ul><p>Create your project:</p><ul><li>Go to 'File' -&gt; 'New' -&gt; 'Project...'</li><li>Select 'Visual C#' -&gt; 'Store Apps' -&gt; 'Universal Apps'</li><li>Create a 'Blank App (Universal Apps)'</li><li>Enter a project name of your choosing</li><li>Click 'OK'</li></ul><p>Add the Win2D NuGet package:</p><ul><li>Go to 'Tools' -&gt; 'NuGet Package Manager' -&gt; 'Manage NuGet Packages for Solution...'</li><li>Type 'Win2D' into the 'Search Online' box, and hit Enter</li><li>Select the 'Win2D' package and click 'Install', then 'OK'</li><li>Accept the license agreement</li><li>Click 'Close'</li><li>Change Solution Platform from 'Any CPU' to 'x86'</li></ul></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID2RB')" onkeypress="SectionExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Write some code</span></div><div id="ID2RBSection" class="collapsibleSection"><p>Add a <a href="T_Microsoft_Graphics_Canvas_CanvasControl.htm">CanvasControl</a> to your XAML page:</p><ul><li>Double click on MainPage.xaml in Solution Explorer to open the XAML editor</li><li>
