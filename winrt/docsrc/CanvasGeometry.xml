@@ -24,7 +24,7 @@ under the License.
         <p>
           A geometry is an arbitrary 2-D area, and a means of representing geometric
           shapes. It may consist of lines, polygons with multiple segments, bezier curves, or any number
-          of open or closed figures comprised of these. And there aren't any limits on how complex a
+          of open or closed figures comprised of these. There aren't any limits on how complex a
           geometry can be. It can be zero-sized, consist of one point, or be arbitrarily complex.
         </p>
 
@@ -35,8 +35,9 @@ under the License.
         </p>
 
         <p>
-          Geometry objects are useful while doing manipulations (available, currently, through
-          native interop) such as Widen or CombineWithGeometry.
+          Geometry objects can be manipulated using methods like
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasGeometry.CombineWith"/>
+          or <see cref="O:Microsoft.Graphics.Canvas.CanvasGeometry.Stroke"/>.
         </p>
 
         <p>
