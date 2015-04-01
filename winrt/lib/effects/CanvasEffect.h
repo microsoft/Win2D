@@ -21,7 +21,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ::collections;
 
-    class CanvasEffect 
+    struct EffectPropertyMapping
+    {
+        LPCWSTR Name;
+        UINT Index;
+        GRAPHICS_EFFECT_PROPERTY_MAPPING Mapping;
+    };
+
+    struct EffectPropertyMappingTable
+    {
+        EffectPropertyMapping const* Mappings;
+        size_t Count;
+    };
+
+    class CanvasEffect
         : public Implements<
             RuntimeClassFlags<WinRtClassicComMix>,
             IGraphicsEffect,
@@ -117,6 +130,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ~CanvasEffect() = default;
 
         ComPtr<Vector<IGraphicsEffectSource*>> const& Sources() { return m_sources; }
+
+        virtual EffectPropertyMappingTable GetPropertyMapping()          { return EffectPropertyMappingTable{ nullptr, 0 }; }
+        virtual EffectPropertyMappingTable GetPropertyMappingHandCoded() { return EffectPropertyMappingTable{ nullptr, 0 }; }
 
 
         //
@@ -393,7 +409,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(put_##NAME)(UINT32 valueCount, TYPE *valueElements) override
 
 #define EFFECT_SOURCES_PROPERTY()                                                       \
-        IFACEMETHOD(get_Sources)(IVector<IGraphicsEffectSource*>** value) override;
+        IFACEMETHOD(get_Sources)(IVector<IGraphicsEffectSource*>** value) override
 
 
 #define IMPLEMENT_EFFECT_PROPERTY(CLASS, PROPERTY, BOXED_TYPE, PUBLIC_TYPE, INDEX)      \
@@ -483,5 +499,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 ThrowIfFailed(Sources().CopyTo(value));                                 \
             });                                                                         \
         }
+
+
+#define EFFECT_PROPERTY_MAPPING()                                                       \
+    EffectPropertyMappingTable GetPropertyMapping() override
+
+#define EFFECT_PROPERTY_MAPPING_HANDCODED()                                             \
+    EffectPropertyMappingTable GetPropertyMappingHandCoded() override
+
+
+#define IMPLEMENT_EFFECT_PROPERTY_MAPPING(CLASS, ...)                                   \
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING_WORKER(CLASS, PropertyMapping, __VA_ARGS__)
+
+#define IMPLEMENT_EFFECT_PROPERTY_MAPPING_HANDCODED(CLASS, ...)                         \
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING_WORKER(CLASS, PropertyMappingHandCoded, __VA_ARGS__)
+
+
+#define IMPLEMENT_EFFECT_PROPERTY_MAPPING_WORKER(CLASS, SUFFIX, ...)                    \
+    static const EffectPropertyMapping CLASS##SUFFIX[] =                                \
+    {                                                                                   \
+        __VA_ARGS__                                                                     \
+    };                                                                                  \
+                                                                                        \
+    EffectPropertyMappingTable CLASS::Get##SUFFIX()                                     \
+    {                                                                                   \
+        auto count = sizeof(CLASS##SUFFIX) / sizeof(EffectPropertyMapping);             \
+        return EffectPropertyMappingTable{ CLASS##SUFFIX, count };                      \
+    }
 
 }}}}}

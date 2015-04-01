@@ -34,5 +34,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(HueRotationEffect,
+        { L"Angle", D2D1_HUEROTATION_PROP_ANGLE, GRAPHICS_EFFECT_PROPERTY_MAPPING_RADIANS_TO_DEGREES })
+
     ActivatableClass(HueRotationEffect);
 }}}}}

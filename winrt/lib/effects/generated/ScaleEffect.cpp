@@ -64,5 +64,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(ScaleEffect,
+        { L"Scale",             D2D1_SCALE_PROP_SCALE,              GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"CenterPoint",       D2D1_SCALE_PROP_CENTER_POINT,       GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"InterpolationMode", D2D1_SCALE_PROP_INTERPOLATION_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"BorderMode",        D2D1_SCALE_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"Sharpness",         D2D1_SCALE_PROP_SHARPNESS,          GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(ScaleEffect);
 }}}}}

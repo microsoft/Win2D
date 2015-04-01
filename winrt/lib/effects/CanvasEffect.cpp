@@ -232,14 +232,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             });
     }
 
+    static bool FindNamedProperty(EffectPropertyMappingTable const& table, LPCWSTR name, UINT* index, GRAPHICS_EFFECT_PROPERTY_MAPPING* mapping)
+    {
+        for (size_t i = 0; i < table.Count; i++)
+        {
+            if (CompareStringOrdinal(name, -1, table.Mappings[i].Name, -1, true) == CSTR_EQUAL)
+            {
+                *index = table.Mappings[i].Index;
+                *mapping = table.Mappings[i].Mapping;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     IFACEMETHODIMP CanvasEffect::GetNamedPropertyMapping(LPCWSTR name, UINT* index, GRAPHICS_EFFECT_PROPERTY_MAPPING* mapping)
     {
-        UNREFERENCED_PARAMETER(name);
-        UNREFERENCED_PARAMETER(index);
-        UNREFERENCED_PARAMETER(mapping);
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(name);
+                CheckInPointer(index);
+                CheckInPointer(mapping);
 
-        // TODO
-        return E_NOTIMPL;
+                // Search the codegened property mapping table.
+                auto table = GetPropertyMapping();
+
+                if (!FindNamedProperty(table, name, index, mapping))
+                {
+                    // If not in the main table, could this be one of the special cases defined in a separate hand-coded table?
+                    table = GetPropertyMappingHandCoded();
+
+                    if (!FindNamedProperty(table, name, index, mapping))
+                    {
+                        ThrowHR(E_INVALIDARG);
+                    }
+                }
+            });
     }
 
     STDMETHODIMP CanvasEffect::SetSource(UINT index, IGraphicsEffectSource* source)

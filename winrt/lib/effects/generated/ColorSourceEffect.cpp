@@ -30,5 +30,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Color,
         D2D1_FLOOD_PROP_COLOR)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(ColorSourceEffect,
+        { L"Color", D2D1_FLOOD_PROP_COLOR, GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR4 })
+
     ActivatableClass(ColorSourceEffect);
 }}}}}

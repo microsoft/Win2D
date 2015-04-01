@@ -49,5 +49,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(ShadowEffect,
+        { L"BlurAmount",   D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"ShadowColor",  D2D1_SHADOW_PROP_COLOR,                   GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR4 },
+        { L"Optimization", D2D1_SHADOW_PROP_OPTIMIZATION,            GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           })
+
     ActivatableClass(ShadowEffect);
 }}}}}

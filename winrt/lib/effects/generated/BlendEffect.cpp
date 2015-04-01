@@ -38,5 +38,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Foreground,
         1)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(BlendEffect,
+        { L"Mode", D2D1_BLEND_PROP_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(BlendEffect);
 }}}}}

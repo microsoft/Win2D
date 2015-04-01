@@ -40,5 +40,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(HeightMapKernelSize, Numerics::Vector2);
         EFFECT_PROPERTY(HeightMapInterpolationMode, CanvasImageInterpolation);
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
+
+        EFFECT_PROPERTY_MAPPING();
     };
 }}}}}

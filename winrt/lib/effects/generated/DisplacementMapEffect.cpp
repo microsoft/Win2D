@@ -52,5 +52,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Displacement,
         1)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(DisplacementMapEffect,
+        { L"Amount",         D2D1_DISPLACEMENTMAP_PROP_SCALE,            GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"XChannelSelect", D2D1_DISPLACEMENTMAP_PROP_X_CHANNEL_SELECT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"YChannelSelect", D2D1_DISPLACEMENTMAP_PROP_Y_CHANNEL_SELECT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(DisplacementMapEffect);
 }}}}}

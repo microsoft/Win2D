@@ -41,5 +41,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(BorderEffect,
+        { L"ExtendX", D2D1_BORDER_PROP_EDGE_MODE_X, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"ExtendY", D2D1_BORDER_PROP_EDGE_MODE_Y, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(BorderEffect);
 }}}}}

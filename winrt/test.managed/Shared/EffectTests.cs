@@ -104,6 +104,7 @@ namespace test.managed
             Assert.AreEqual(whichIndexIsProperty.Count, whichIndexIsProperty.Distinct().Count());
         }
 
+
         static void TestEffectProperties(TypeInfo effectType, IGraphicsEffect effect)
         {
             var properties = (from property in effectType.DeclaredProperties
@@ -156,6 +157,22 @@ namespace test.managed
                 // Change the property value back to its initial state.
                 properties[i].SetValue(effect, Unbox(initialValues[whichIndexIsThis], properties[i]));
                 Assert.IsTrue(BoxedValuesAreEqual(initialValues[whichIndexIsThis], effectProperties[whichIndexIsThis], properties[i]));
+
+                // Validate that IGraphicsEffectD2D1Interop agrees with what we think the type and index of this property is.
+                int mappingIndex;
+                EffectPropertyMapping mapping;
+
+                EffectAccessor.GetNamedPropertyMapping(effect, properties[i].Name, out mappingIndex, out mapping);
+
+                int expectedMappingIndex = whichIndexIsThis;
+
+                if (effectProperties is FilteredViewOfList<object>)
+                    expectedMappingIndex = ((FilteredViewOfList<object>)effectProperties).GetOriginalIndex(expectedMappingIndex);
+
+                Assert.AreEqual(expectedMappingIndex, mappingIndex);
+
+                var expectedMapping = GetExpectedPropertyMapping(properties[i], effectProperties[whichIndexIsThis]);
+                Assert.AreEqual(expectedMapping, mapping);
             }
 
             // Should not have any duplicate property mappings.
@@ -483,6 +500,28 @@ namespace test.managed
         }
 
 
+        static EffectPropertyMapping GetExpectedPropertyMapping(PropertyInfo property, object propertyValue)
+        {
+            if (NeedsRadianToDegreeConversion(property))
+            {
+                return EffectPropertyMapping.RadiansToDegrees;
+            }
+            else if (property.PropertyType == typeof(Rect))
+            {
+                return EffectPropertyMapping.RectToVector4;
+            }
+            else if (property.PropertyType == typeof(Color))
+            {
+                return ((float[])propertyValue).Length == 3 ? EffectPropertyMapping.ColorToVector3 : 
+                                                              EffectPropertyMapping.ColorToVector4;
+            }
+            else
+            {
+                return EffectPropertyMapping.Direct;
+            }
+        }
+
+
         static object GetArbitraryTestValue(Type type, bool whichOne)
         {
             if (type == typeof(int))
@@ -657,6 +696,11 @@ namespace test.managed
                 }
             }
 
+            public int GetOriginalIndex(int index)
+            {
+                return indexMapping[index];
+            }
+
             public void Add(T item) { throw new NotImplementedException(); }
             public void Clear() { throw new NotImplementedException(); }
             public bool Contains(T item) { throw new NotImplementedException(); }
@@ -738,6 +782,26 @@ namespace test.managed
 
             effect.Offset = 100;
             Assert.IsTrue(((float[])EffectAccessor.GetProperty(effect, 0)).SequenceEqual(new float[] { 23, 42, -1, 100 }));
+
+            // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
+            int index;
+            EffectPropertyMapping mapping;
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "MultiplyAmount", out index, out mapping);
+            Assert.AreEqual(0, index);
+            Assert.AreEqual(EffectPropertyMapping.VectorX, mapping);
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "Source1Amount", out index, out mapping);
+            Assert.AreEqual(0, index);
+            Assert.AreEqual(EffectPropertyMapping.VectorY, mapping);
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "Source2Amount", out index, out mapping);
+            Assert.AreEqual(0, index);
+            Assert.AreEqual(EffectPropertyMapping.VectorZ, mapping);
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "Offset", out index, out mapping);
+            Assert.AreEqual(0, index);
+            Assert.AreEqual(EffectPropertyMapping.VectorW, mapping);
         }
 
 
@@ -763,6 +827,14 @@ namespace test.managed
             // Verify unsupported value throws.
             Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
             Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
+
+            // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
+            int index;
+            EffectPropertyMapping mapping;
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "AlphaMode", out index, out mapping);
+            Assert.AreEqual(1, index);
+            Assert.AreEqual(EffectPropertyMapping.ColorMatrixAlphaMode, mapping);
         }
 
 

@@ -39,7 +39,9 @@ typedef enum GRAPHICS_EFFECT_PROPERTY_MAPPING
     GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORW,
     GRAPHICS_EFFECT_PROPERTY_MAPPING_RECT_TO_VECTOR4,
     GRAPHICS_EFFECT_PROPERTY_MAPPING_RADIANS_TO_DEGREES,
-    GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE
+    GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE,
+    GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR3, 
+    GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR4
 } GRAPHICS_EFFECT_PROPERTY_MAPPING;
 
 //+-----------------------------------------------------------------------------
@@ -48,7 +50,7 @@ typedef enum GRAPHICS_EFFECT_PROPERTY_MAPPING
 //      IGraphicsEffectD2D1Interop
 //
 //  Synopsis:
-//      An interface providing a native counterpart to IGraphicsEffect
+//      An interface providing a Interop counterpart to IGraphicsEffect
 //      and allowing for metadata queries.
 //
 //------------------------------------------------------------------------------
@@ -61,13 +63,10 @@ DECLARE_INTERFACE_IID_(IGraphicsEffectD2D1Interop, IUnknown, "0D033AFF-4809-4E13
         _Out_ GUID * id
         ) PURE;
 
-    STDMETHOD(GetSourceCount)(
-        _Out_ UINT * count
-        ) PURE;
-
-    STDMETHOD(GetSource)(
-        UINT index,
-        _Outptr_ IGraphicsEffectSource ** source
+    STDMETHOD(GetNamedPropertyMapping)(
+        LPCWSTR name,
+        _Out_ UINT * index,
+        _Out_ GRAPHICS_EFFECT_PROPERTY_MAPPING * mapping
         ) PURE;
 
     STDMETHOD(GetPropertyCount)(
@@ -79,10 +78,13 @@ DECLARE_INTERFACE_IID_(IGraphicsEffectD2D1Interop, IUnknown, "0D033AFF-4809-4E13
         _Outptr_ Windows::Foundation::IPropertyValue ** value
         ) PURE;
 
-    STDMETHOD(GetNamedPropertyMapping)(
-        LPCWSTR name,
-        _Out_ UINT * index,
-        _Out_ GRAPHICS_EFFECT_PROPERTY_MAPPING * mapping
+    STDMETHOD(GetSource)(
+        UINT index,
+        _Outptr_ IGraphicsEffectSource ** source
+        ) PURE;
+
+    STDMETHOD(GetSourceCount)(
+        _Out_ UINT * count
         ) PURE;
 };
 

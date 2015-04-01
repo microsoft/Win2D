@@ -48,5 +48,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(DpiCompensationEffect,
+        { L"InterpolationMode", D2D1_DPICOMPENSATION_PROP_INTERPOLATION_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"BorderMode",        D2D1_DPICOMPENSATION_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"SourceDpi",         D2D1_DPICOMPENSATION_PROP_INPUT_DPI,          GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(DpiCompensationEffect);
 }}}}}

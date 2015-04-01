@@ -31,5 +31,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         EFFECT_PROPERTY(Saturation, float);
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
+
+        EFFECT_PROPERTY_MAPPING();
     };
 }}}}}

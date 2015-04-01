@@ -39,5 +39,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source2,
         1)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(ArithmeticCompositeEffect,
+        { L"ClampOutput", D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(ArithmeticCompositeEffect);
 }}}}}

@@ -80,5 +80,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(PointSpecularEffect,
+        { L"LightPosition",              D2D1_POINTSPECULAR_PROP_LIGHT_POSITION,     GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"SpecularExponent",           D2D1_POINTSPECULAR_PROP_SPECULAR_EXPONENT,  GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"SpecularAmount",             D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT,  GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"HeightMapScale",             D2D1_POINTSPECULAR_PROP_SURFACE_SCALE,      GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"LightColor",                 D2D1_POINTSPECULAR_PROP_COLOR,              GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR3 },
+        { L"HeightMapKernelSize",        D2D1_POINTSPECULAR_PROP_KERNEL_UNIT_LENGTH, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"HeightMapInterpolationMode", D2D1_POINTSPECULAR_PROP_SCALE_MODE,         GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           })
+
     ActivatableClass(PointSpecularEffect);
 }}}}}

@@ -36,5 +36,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Seed, int32_t);
         EFFECT_PROPERTY(Noise, TurbulenceEffectNoise);
         EFFECT_PROPERTY(Tileable, boolean);
+
+        EFFECT_PROPERTY_MAPPING();
     };
 }}}}}

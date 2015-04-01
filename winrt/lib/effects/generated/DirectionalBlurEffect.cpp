@@ -56,5 +56,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(DirectionalBlurEffect,
+        { L"BlurAmount",   D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             },
+        { L"Angle",        D2D1_DIRECTIONALBLUR_PROP_ANGLE,              GRAPHICS_EFFECT_PROPERTY_MAPPING_RADIANS_TO_DEGREES },
+        { L"Optimization", D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION,       GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             },
+        { L"BorderMode",   D2D1_DIRECTIONALBLUR_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             })
+
     ActivatableClass(DirectionalBlurEffect);
 }}}}}

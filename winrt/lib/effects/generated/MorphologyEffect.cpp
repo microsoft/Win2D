@@ -50,5 +50,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(MorphologyEffect,
+        { L"Mode",   D2D1_MORPHOLOGY_PROP_MODE,   GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"Width",  D2D1_MORPHOLOGY_PROP_WIDTH,  GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"Height", D2D1_MORPHOLOGY_PROP_HEIGHT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(MorphologyEffect);
 }}}}}

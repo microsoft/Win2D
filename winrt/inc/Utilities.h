@@ -49,6 +49,16 @@ inline Microsoft::WRL::ComPtr<T> As(U* u)
     return t;
 }
 
+#ifdef __cplusplus_winrt
+
+template<typename T, typename U>
+inline Microsoft::WRL::ComPtr<T> As(U^ u)
+{
+    return As<T>(reinterpret_cast<IInspectable*>(u));
+}
+
+#endif
+
 template<typename T, typename U>
 inline Microsoft::WRL::ComPtr<T> MaybeAs(Microsoft::WRL::ComPtr<U> const& u)
 {

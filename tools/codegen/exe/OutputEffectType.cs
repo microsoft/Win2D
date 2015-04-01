@@ -231,6 +231,21 @@ namespace CodeGen
                     output.WriteLine("EFFECT_PROPERTY(" + input.Name + ", IGraphicsEffectSource*);");
                 }
             }
+
+            bool hasPropertyMapping = effect.Properties.Any(IsGeneratablePropertyMapping);
+            bool hasHandCodedPropertyMapping = effect.Properties.Any(p => p.IsHandCoded);
+
+            if (hasPropertyMapping || hasHandCodedPropertyMapping)
+            {
+                output.WriteLine();
+
+                if (hasPropertyMapping)
+                    output.WriteLine("EFFECT_PROPERTY_MAPPING();");
+
+                if (hasHandCodedPropertyMapping)
+                    output.WriteLine("EFFECT_PROPERTY_MAPPING_HANDCODED();");
+            }
+
             output.Unindent();
             output.WriteLine("};");
             output.Unindent();
@@ -291,6 +306,8 @@ namespace CodeGen
                     output.WriteLine();
                 }
             }
+
+            WritePropertyMapping(effect, output);
 
             output.WriteLine("ActivatableClass(" + effect.ClassName + ");");
 
@@ -528,6 +545,71 @@ namespace CodeGen
             {
                 return float.Parse(value.Replace("f", ""));
             }
+        }
+
+        private static void WritePropertyMapping(Effects.Effect effect, Formatter output)
+        {
+            var query = from property in effect.Properties
+                        where IsGeneratablePropertyMapping(property)
+                        select new
+                        {
+                            Name = property.Name,
+                            Index = property.NativePropertyName,
+                            Mapping = GetPropertyMapping(property)
+                        };
+
+            var properties = query.ToList();
+
+            if (properties.Any())
+            {
+                output.WriteLine("IMPLEMENT_EFFECT_PROPERTY_MAPPING(" + effect.ClassName + ",");
+                output.Indent();
+
+                int maxNameLength = properties.Select(property => property.Name.Length).Max();
+                int maxIndexLength = properties.Select(property => property.Index.Length).Max();
+                int maxMappingLength = properties.Select(property => property.Mapping.Length).Max();
+
+                foreach (var property in properties)
+                {
+                    string nameAlignment = new string(' ', maxNameLength - property.Name.Length);
+                    string indexAlignment = new string(' ', maxIndexLength - property.Index.Length);
+                    string mappingAlignment = new string(' ', maxMappingLength - property.Mapping.Length);
+
+                    string suffix = property.Equals(properties.Last()) ? ")" : ",";
+
+                    output.WriteLine("{ L\"" + property.Name + "\", " + nameAlignment + 
+                                     property.Index + ", " + indexAlignment + 
+                                     property.Mapping + mappingAlignment + " }" + suffix);
+                }
+
+                output.Unindent();
+                output.WriteLine();
+            }
+        }
+
+        private static string GetPropertyMapping(Effects.Property property)
+        {
+            if (property.ConvertRadiansToDegrees)
+            {
+                return "GRAPHICS_EFFECT_PROPERTY_MAPPING_RADIANS_TO_DEGREES";
+            }
+            else if (property.TypeNameCpp == "Color")
+            {
+                return "GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR" + property.Type.Single(char.IsDigit);
+            }
+            else if (property.TypeNameCpp == "Rect")
+            {
+                return "GRAPHICS_EFFECT_PROPERTY_MAPPING_RECT_TO_VECTOR4";
+            }
+            else
+            {
+                return "GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT";
+            }
+        }
+
+        private static bool IsGeneratablePropertyMapping(Effects.Property property)
+        {
+            return property.Type != "string" && !property.IsHidden && !property.IsHandCoded;
         }
 
         static bool EffectHasVariableNumberOfInputs(Effects.Effect effect)

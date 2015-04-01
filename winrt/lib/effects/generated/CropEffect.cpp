@@ -41,5 +41,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(CropEffect,
+        { L"SourceRectangle", D2D1_CROP_PROP_RECT,        GRAPHICS_EFFECT_PROPERTY_MAPPING_RECT_TO_VECTOR4 },
+        { L"BorderMode",      D2D1_CROP_PROP_BORDER_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT          })
+
     ActivatableClass(CropEffect);
 }}}}}

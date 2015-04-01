@@ -71,6 +71,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, 
         W)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING_HANDCODED(ArithmeticCompositeEffect,
+        { L"MultiplyAmount", D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORX },
+        { L"Source1Amount",  D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORY },
+        { L"Source2Amount",  D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORZ },
+        { L"Offset",         D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORW })
+
 
     // ColorMatrixEffect.AlphaMode property needs special enum value conversion, because our
     // CanvasAlphaMode enum doesn't match the numeric values of D2D1_COLORMATRIX_ALPHA_MODE.
@@ -97,5 +103,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             SetBoxedProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, ToD2DColorMatrixAlphaMode(value));
         });
     }
+
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING_HANDCODED(ColorMatrixEffect,
+        { L"AlphaMode", D2D1_COLORMATRIX_PROP_ALPHA_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE })
 
 }}}}}

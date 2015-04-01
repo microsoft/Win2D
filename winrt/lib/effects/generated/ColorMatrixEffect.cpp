@@ -42,5 +42,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING(ColorMatrixEffect,
+        { L"ColorMatrix", D2D1_COLORMATRIX_PROP_COLOR_MATRIX, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
+        { L"ClampOutput", D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+
     ActivatableClass(ColorMatrixEffect);
 }}}}}
