@@ -37,57 +37,233 @@ under the License.
       <summary>Clears to the specified color.</summary>
     </member>
 
+
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)">
-      <summary>Draws an image positioned at the origin.</summary>
-      <remarks>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single)">
-      <summary>Draws an image at the specified position.</summary>
-      <remarks>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</remarks>
+      <summary>Draws an image.</summary>
+      <remarks>
+        <ul>
+          <li>The image is drawn at the origin (0,0).</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2)">
-      <summary>Draws an image at the specified position.</summary>
-      <remarks>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</remarks>
-    </member>    
+      <summary>Draws an image.</summary>
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single)">
+      <summary>Draws an image.</summary>
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect)">
+      <summary>Draws a bitmap.</summary>
+      <remarks>
+        <ul>
+          <li>The bitmap is scaled to fill the specified destination rectangle.</li>
+          <li>This overload only accepts bitmaps since non-bitmap images
+          (command lists or effects) need a source rectangle to be specified as
+          they may be have infinite size.</li>
+        </ul>
+      </remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect)">
-      <summary>Draw an image at the specified position, with the specified source rect and linear image interpolation.</summary>
-      <remarks>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
-      <summary>Draw an image at the specified position, with the specified source rect and image interpolation.</summary>
-      <remarks>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasComposite)">
-      <summary>Draw an image at the specified position, with the specified source rect, the specified image interpolation and composite mode.</summary>
-      <remarks>Because the composite mode is explicitly specified, this overload ignores the current <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> setting.</remarks>
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect)">
-      <summary>Draw an image at the specified position, with the specified source rect and linear image interpolation.</summary>
-      <remarks>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</remarks>
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
-      <summary>Draw an image at the specified position, with the specified source rect and image interpolation.</summary>
-      <remarks>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</remarks>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,Windows.Foundation.Rect)">
+      <summary>Draws an image.</summary>
+      <remarks>
+        <ul>
+          <li>The area of the image specified by the source rectangle is scaled to fill the destination rectangle.</li>
+          <li>The source rectangle is specified in the image's coordinate system</li>
+          <li>If the source image is a bitmap then the source rectangle is clipped to the bounds of the bitmap.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasComposite)">
-      <summary>Draw an image at the specified position, with the specified source rect, the specified image interpolation and composite mode.</summary>
-      <remarks>Because the composite mode is explicitly specified, this overload ignores the current <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> setting.</remarks>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,System.Single)">
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
     </member>
-
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single)">
-      <summary>Draw a the specified source rectangle of a bitmap, scaled to fit the specified destination rectangle, with the specified opacity, linear image interpolation and no perspective transform.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect,System.Single)">
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
-      <summary>Draw a the specified source rectangle of a bitmap, scaled to fit the specified destination rectangle, with the specified opacity, the specified image interpolation and no perspective transform.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single)">
+      <summary>Draws an image.</summary>
+      <remarks>
+        <ul>
+          <li>The area of the image specified by the source rectangle is scaled to fill the destination rectangle.</li>
+          <li>The source rectangle is specified in the image's coordinate system</li>
+          <li>If the source image is a bitmap then the source rectangle is clipped to the bounds of the bitmap.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation)">
+      <summary>Draws an image.</summary>
+      <remarks>
+        <ul>
+          <li>The area of the image specified by the source rectangle is scaled to fill the destination rectangle.</li>
+          <li>The source rectangle is specified in the image's coordinate system</li>
+          <li>If the source image is a bitmap then the source rectangle is clipped to the bounds of the bitmap.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>This overload is not valid when <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasBlend.Min"/>.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasComposite)">
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>The composite mode parameters defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOver"/>.</li>
+          <li>Because the composite mode is explicitly specified, this overload ignores the current <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> setting.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,System.Single,System.Single,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasComposite)">
+      <summary>Draws an image.</summary>      
+      <remarks>
+        <ul>
+          <li>The image is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the image's coordinate system,
+          the area within the image that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>The composite mode parameters defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOver"/>.</li>
+          <li>Because the composite mode is explicitly specified, this overload ignores the current <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> setting.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasComposite)">
+      <summary>Draws an image.</summary>
+      <remarks>
+        <ul>
+          <li>The area of the image specified by the source rectangle is scaled to fill the destination rectangle.</li>
+          <li>The source rectangle is specified in the image's coordinate system</li>
+          <li>If the source image is a bitmap then the source rectangle is clipped to the bounds of the bitmap.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>The composite mode parameters defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOver"/>.</li>
+          <li>Because the composite mode is explicitly specified, this overload ignores the current <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend"/> setting.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.Numerics.Matrix4x4)">
+      <summary>Draws a bitmap.</summary>      
+      <remarks>
+        <ul>
+          <li>The bitmap is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the bitmap's coordinate system,
+          the area within the bitmap that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>The perspective parameter applies an additional transform to that specified by <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Transform"/>.</li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,System.Single,System.Single,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.Numerics.Matrix4x4)">
+      <summary>Draws a bitmap.</summary>      
+      <remarks>
+        <ul>
+          <li>The bitmap is drawn at the specified offset.</li>
+          <li>The source rectangle specifies, in the bitmap's coordinate system,
+          the area within the bitmap that will be drawn.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>The perspective parameter applies an additional transform to that specified by <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Transform"/>.</li>
+        </ul>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.Numerics.Matrix4x4)">
-      <summary>Draw a the specified source rectangle of a bitmap, scaled to fit the specified destination rectangle, with the specified opacity, the specified image interpolation and perspective transform.</summary>
-    </member>  
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect)">
-      <summary>Draw a bitmap, scaled to fill the specified destination rectangle.</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect)">
-      <summary>Draw the specified source region of a bitmap, scaled to fill the specified destination rectangle.</summary>
+      <summary>Draws a bitmap.</summary>
+      <remarks>
+        <ul>
+          <li>The area of the bitmap specified by the source rectangle is scaled to fill the destination rectangle.</li>
+          <li>The source rectangle is specified in the bitmap's coordinate system</li>
+          <li>If the source bitmap is a bitmap then the source rectangle is clipped to the bounds of the bitmap.</li>
+          <li>The opacity parameter is a float between 0.0f and 1.0f.  1.0f is the default.</li>
+          <li>The interpolation parameter defaults to <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</li>
+          <li>The perspective parameter applies an additional transform to that specified by <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Transform"/>.</li>
+        </ul>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
