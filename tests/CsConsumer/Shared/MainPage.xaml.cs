@@ -20,7 +20,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Text;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using System.Linq;
+
+#if UAP
+using Windows.Graphics.DirectX;
+#else
+using Microsoft.Graphics.Canvas.DirectX;
+#endif
 
 namespace CsConsumer
 {
@@ -429,7 +434,7 @@ namespace CsConsumer
                 imageBytes,
                 4,
                 2,
-                Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized,
+                DirectXPixelFormat.B8G8R8A8UIntNormalized,
                 CanvasAlphaMode.Premultiplied);
 
             Color[] imageColors = new Color[]

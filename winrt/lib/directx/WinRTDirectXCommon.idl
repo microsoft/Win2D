@@ -15,6 +15,20 @@
 // common between Direct3D 11 and Direct3D 12.
 //
 
+#if (WINVER > 0x0603)
+
+#define DIRECTX_PIXEL_FORMAT Windows.Graphics.DirectX.DirectXPixelFormat
+
+// Windows headers don't use enum classes, while headers built by Win2D do.  The
+// PIXEL_FORMAT macro allows us to pick at compile type which type of enum we're
+// consuming.
+cpp_quote("#define PIXEL_FORMAT(x) ::ABI::Windows::Graphics::DirectX::DirectXPixelFormat_##x")
+
+#else
+
+#define DIRECTX_PIXEL_FORMAT Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat
+cpp_quote("#define PIXEL_FORMAT(x) ::ABI::Microsoft::Graphics::Canvas::DirectX::DirectXPixelFormat::##x")
+
 namespace Microsoft.Graphics.Canvas.DirectX
 {
     //
@@ -141,3 +155,5 @@ namespace Microsoft.Graphics.Canvas.DirectX
         B4G4R4A4UIntNormalized          = 115,
     } DirectXPixelFormat;
 }
+
+#endif

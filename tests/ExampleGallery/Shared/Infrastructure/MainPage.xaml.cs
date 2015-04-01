@@ -20,9 +20,22 @@ namespace ExampleGallery
     {
         private NavigationHelper navigationHelper;
 
+        // We track the last visual state we set to avoid redundant GoToState calls
+        // (these cause flickering on 8.1 apps running on Win10).
+        private enum VisualState { Unknown, Big, Small };
+        private VisualState currentVisualState = VisualState.Unknown;
+
         public MainPage()
         {
             this.InitializeComponent();
+
+#if WINDOWS_UAP
+            //
+            // TODO: remove this once 1584010 is resolved "Infinite layout cycle with unconstrained ScrollViewer
+            //
+            this.scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+#endif
+
             this.navigationHelper = new NavigationHelper(this);
         }
 
@@ -55,12 +68,24 @@ namespace ExampleGallery
 
             // How much do we allow for each item?
             const double itemWidth = 330;
-            
+
             // We want at least 3 across
-            if (itemWidth* 3 <= gridWidth)
-                VisualStateManager.GoToState(this, "BigScreen", false);
+            if (itemWidth * 3 <= gridWidth)
+            {
+                if (currentVisualState != VisualState.Big)
+                {
+                    VisualStateManager.GoToState(this, "BigScreen", false);
+                    currentVisualState = VisualState.Big;
+                }
+            }
             else
-                VisualStateManager.GoToState(this, "SmallScreen", false);
+            {
+                if (currentVisualState != VisualState.Small)
+                {
+                    VisualStateManager.GoToState(this, "SmallScreen", false);
+                    currentVisualState = VisualState.Small;
+                }
+            }
         }
     }
 }

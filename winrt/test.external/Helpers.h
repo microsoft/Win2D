@@ -17,12 +17,12 @@
 
 using namespace concurrency;
 using namespace Microsoft::Graphics::Canvas;
-using namespace Windows::UI::Core;
+using namespace WinRTDirectX;
 using namespace Windows::ApplicationModel::Core;
-using namespace Windows::Foundation;
 using namespace Windows::Foundation::Numerics;
-using namespace Microsoft::Graphics::Canvas::DirectX;
-using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+using namespace Windows::Foundation;
+using namespace Windows::Graphics::Imaging;
+using namespace Windows::UI::Core;
 
 namespace Microsoft
 {
@@ -42,16 +42,16 @@ namespace Microsoft
                 return std::wstring(buf);
             }
 
-#define TO_STRING(T)                                            \
-            template<>                                          \
-            static inline std::wstring ToString<T>(T* value)    \
-            {                                                   \
-                return PointerToString(L#T, value);             \
+#define TO_STRING(T)                                    \
+            template<>                                  \
+            inline std::wstring ToString<T>(T* value)   \
+            {                                           \
+                return PointerToString(L#T, value);     \
             }
 
 #define TO_STRING_CX(T)                                                 \
             template<>                                                  \
-            static inline std::wstring ToString<T^>(T^ const& value)    \
+            inline std::wstring ToString<T^>(T^ const& value)           \
             {                                                           \
                 return PointerToString(L#T, reinterpret_cast<IInspectable*>(value)); \
             }
@@ -84,19 +84,19 @@ namespace Microsoft
 #undef TO_STRING_CX
 
             template<>
-            static inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color* value)
+            inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color* value)
             {
                 return value->ToString()->Data();
             }
 
             template<>
-            static inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color const& value)
+            inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color const& value)
             {
                 return L"Color";
             }
 
             template<>
-            static inline std::wstring ToString<Windows::Foundation::Size>(Windows::Foundation::Size const& value)
+            inline std::wstring ToString<Windows::Foundation::Size>(Windows::Foundation::Size const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -107,7 +107,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<BitmapSize>(BitmapSize const& value)
+            inline std::wstring ToString<BitmapSize>(BitmapSize const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -118,7 +118,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Windows::Foundation::Rect>(Windows::Foundation::Rect const& value)
+            inline std::wstring ToString<Windows::Foundation::Rect>(Windows::Foundation::Rect const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -133,7 +133,7 @@ namespace Microsoft
             // them.
 
             template<>
-            static inline std::wstring ToString<D2D1_RECT_F>(D2D1_RECT_F const& value)
+            inline std::wstring ToString<D2D1_RECT_F>(D2D1_RECT_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -148,7 +148,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<float3x2>(float3x2 const& value)
+            inline std::wstring ToString<float3x2>(float3x2 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -164,7 +164,7 @@ namespace Microsoft
 
 #define CX_VALUE_TO_STRING(T)                                       \
             template<>                                              \
-            static inline std::wstring ToString<T>(T const& value)  \
+            inline std::wstring ToString<T>(T const& value)  \
             {                                                       \
                 return value.ToString()->Data();                    \
             }
@@ -182,7 +182,7 @@ namespace Microsoft
 #undef CX_VALUE_TO_STRING
 
             template<>
-            static inline std::wstring ToString<D2D1_ANTIALIAS_MODE>(D2D1_ANTIALIAS_MODE const& value)
+            inline std::wstring ToString<D2D1_ANTIALIAS_MODE>(D2D1_ANTIALIAS_MODE const& value)
             {
                 switch (value)
                 {
@@ -193,7 +193,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_PRIMITIVE_BLEND>(D2D1_PRIMITIVE_BLEND const& value)
+            inline std::wstring ToString<D2D1_PRIMITIVE_BLEND>(D2D1_PRIMITIVE_BLEND const& value)
             {
                 switch (value)
                 {
@@ -206,7 +206,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_TEXT_ANTIALIAS_MODE>(D2D1_TEXT_ANTIALIAS_MODE const& value)
+            inline std::wstring ToString<D2D1_TEXT_ANTIALIAS_MODE>(D2D1_TEXT_ANTIALIAS_MODE const& value)
             {
                 switch (value)
                 {
@@ -219,7 +219,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_UNIT_MODE>(D2D1_UNIT_MODE const& value)
+            inline std::wstring ToString<D2D1_UNIT_MODE>(D2D1_UNIT_MODE const& value)
             {
                 switch (value)
                 {
@@ -230,7 +230,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_ALPHA_MODE>(D2D1_ALPHA_MODE const& value)
+            inline std::wstring ToString<D2D1_ALPHA_MODE>(D2D1_ALPHA_MODE const& value)
             {
                 switch (value)
                 {
@@ -243,7 +243,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<CanvasSwapChainRotation>(CanvasSwapChainRotation const& value)
+            inline std::wstring ToString<CanvasSwapChainRotation>(CanvasSwapChainRotation const& value)
             {
                 switch (value)
                 {
@@ -256,7 +256,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)
+            inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)
             {
                 Platform::Guid copy = value;
                 return copy.ToString()->Data();
@@ -275,7 +275,6 @@ namespace Microsoft
                 return a.Width == b.Width &&
                        a.Height == b.Height;
             }
-
 
             inline bool operator==(Windows::UI::Text::FontWeight const& a, Windows::UI::Text::FontWeight const& b)
             {

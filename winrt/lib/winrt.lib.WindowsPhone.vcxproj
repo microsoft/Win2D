@@ -8,6 +8,7 @@
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Phone</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
+    <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
   
   <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />

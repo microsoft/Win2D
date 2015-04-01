@@ -12,15 +12,15 @@
 
 #include "pch.h"
 
+using Platform::String;
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::WRL::Wrappers;
-using namespace Windows::Foundation;
+using namespace WinRTDirectX;
 using namespace Windows::Devices::Enumeration;
-using namespace Microsoft::Graphics::Canvas::DirectX;
+using namespace Windows::Foundation;
 using namespace Windows::Graphics::Imaging;
-using namespace Windows::UI;
 using namespace Windows::Storage::Streams;
-using Platform::String;
+using namespace Windows::UI;
 
 const int c_subresourceSliceCount = 3;
 

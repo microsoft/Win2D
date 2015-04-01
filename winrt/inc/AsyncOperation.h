@@ -19,6 +19,10 @@
 #include "ErrorHandling.h"
 #include "LifespanTracker.h"
 
+// TODO #3318 - this started using std::function to workaround DevDev# 1104728.
+// This has been reported as fixed, so we should be able to roll this back once
+// we pick up a build with the fix.
+
 
 // Helper for marking our callback delegates as agile, by mixing in FtmBase.
 // Without this WinRT would marshal everything back to the UI thread.
@@ -59,8 +63,7 @@ protected:
 
 
     // Runs an async operation on the threadpool.
-    template<typename TFunction>
-    void RunOnThreadPool(TFunction&& workerFunction)
+    void RunOnThreadPool(std::function<void()> const& workerFunction)
     {
         auto threadPoolDelegate = MakeThreadPoolDelegate(std::move(workerFunction));
 
@@ -70,9 +73,11 @@ protected:
 
     // Runs one async operation as a continuation of another. The specified
     // worker function will execute after the previous operation has completed.
-    template<typename TPrevious, typename TFunction>
-    void RunAsContinuation(Microsoft::WRL::ComPtr<TPrevious> const& previousOperation, TFunction&& workerFunction)
+    template<typename TPrevious>
+    void RunAsContinuation(Microsoft::WRL::ComPtr<TPrevious> const& previousOperation, std::function<void()> const& workerFunction)
     {
+        using namespace Microsoft::WRL;
+
         // We aren't ready to run this yet, but go ahead and create a callback which will 
         // later be executed on the threadpool. This captures and hangs onto necessary 
         // state such as workerFunction and a keepalive reference to 'this'.
@@ -135,11 +140,11 @@ protected:
 
 private:
     // Creates a callback delegate which will later execute the specified worker function.
-    template<typename TFunction>
-    Microsoft::WRL::ComPtr<ABI::Windows::System::Threading::IWorkItemHandler> MakeThreadPoolDelegate(TFunction&& workerFunction)
+    Microsoft::WRL::ComPtr<ABI::Windows::System::Threading::IWorkItemHandler> MakeThreadPoolDelegate(std::function<void()> const& workerFunction)
     {
         using namespace ABI::Windows::Foundation;
         using namespace ABI::Windows::System::Threading;
+        using namespace Microsoft::WRL;
 
         ComPtr<AsyncCommon> keepThisAliveUntilTaskCompletion(this);
 
@@ -180,6 +185,7 @@ private:
     {
         using namespace ABI::Windows::Foundation;
         using namespace ABI::Windows::System::Threading;
+        using namespace Microsoft::WRL;
 
         ComPtr<IThreadPoolStatics> threadPool;
         ThrowIfFailed(GetActivationFactory(Wrappers::HStringReference(RuntimeClass_Windows_System_Threading_ThreadPool).Get(), &threadPool));

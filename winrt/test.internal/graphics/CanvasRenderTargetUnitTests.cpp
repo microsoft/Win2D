@@ -68,7 +68,7 @@ TEST_CLASS(CanvasRenderTargetTests)
                 m_canvasDevice.Get(), 
                 size.Width, 
                 size.Height, 
-                DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
                 CanvasAlphaMode::Premultiplied,
                 DEFAULT_DPI);
 

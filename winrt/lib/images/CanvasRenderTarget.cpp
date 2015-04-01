@@ -81,7 +81,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator,
             width,
             height,
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             CanvasAlphaMode::Premultiplied,
             renderTarget);
     }
@@ -97,7 +97,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             resourceCreator,
             width,
             height,
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             CanvasAlphaMode::Premultiplied,
             dpi,
             renderTarget);

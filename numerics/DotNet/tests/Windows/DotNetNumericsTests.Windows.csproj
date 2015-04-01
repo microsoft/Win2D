@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -12,6 +12,7 @@
     <RootNamespace>NumericsTests</RootNamespace>
     <AssemblyName>DotNetNumericsTests</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -103,10 +104,14 @@
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
       <Name>winrt.dll.Windows</Name>
     </ProjectReference>
-    <SDKReference Include="MSTestFramework, Version=11.0" />
-    <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="MSTestFramework, Version=11.0">
+      <Name>MSTest for Managed Projects</Name>
+    </SDKReference>
+    <SDKReference Include="TestPlatform, Version=11.0">
+      <Name>Microsoft Visual Studio Test Core</Name>
+    </SDKReference>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="DotNetNumericsTests.Windows.appxmanifest">

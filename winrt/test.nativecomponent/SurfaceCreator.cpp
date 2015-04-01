@@ -15,9 +15,8 @@
 namespace NativeComponent
 {
     using namespace Microsoft::Graphics::Canvas;
-    using namespace Microsoft::Graphics::Canvas::DirectX;
-    using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
     using namespace Microsoft::WRL;
+    using namespace WinRTDirectX;
 
     public ref class SurfaceCreator sealed
     {

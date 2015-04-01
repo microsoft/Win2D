@@ -12,8 +12,8 @@
 
 #include "pch.h"
 
-using namespace Microsoft::Graphics::Canvas::DirectX;
 using namespace Microsoft::Graphics::Canvas::Effects;
+using namespace WinRTDirectX;
 
 TEST_CLASS(CanvasImageTests)
 {

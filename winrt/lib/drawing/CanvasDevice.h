@@ -15,8 +15,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+    using namespace WinRTDirectX;
     using namespace ABI::Windows::UI::Core;
 
     class CanvasDevice;

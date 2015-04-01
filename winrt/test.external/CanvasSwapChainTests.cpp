@@ -12,16 +12,15 @@
 
 #include "pch.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::DirectX;
-using namespace Microsoft::Graphics::Canvas::Numerics;
-using namespace Microsoft::WRL::Wrappers;
-using namespace Windows::Foundation;
-using namespace Windows::Devices::Enumeration;
-using namespace Windows::Graphics::Imaging;
-using namespace Windows::UI;
-using namespace Windows::Storage::Streams;
 using Platform::String;
+using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::WRL::Wrappers;
+using namespace WinRTDirectX;
+using namespace Windows::Devices::Enumeration;
+using namespace Windows::Foundation;
+using namespace Windows::Graphics::Imaging;
+using namespace Windows::Storage::Streams;
+using namespace Windows::UI;
 
 TEST_CLASS(CanvasSwapChainTests)
 {
@@ -53,7 +52,7 @@ TEST_CLASS(CanvasSwapChainTests)
 
     TEST_METHOD(CanvasSwapChain_DrawOperation)
     {
-        auto canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
+        auto canvasDevice = ref new CanvasDevice(); // TODO TH: CanvasDebugLevel::Information);
 
         auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 1, DEFAULT_DPI);
 

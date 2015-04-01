@@ -1,9 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7ED91C61-4EB4-4008-B027-48BFCBDA8A7F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CppNumericsPerfTest</RootNamespace>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

@@ -75,10 +75,10 @@ namespace canvas
         MockD2DDeviceContext()
         {
             CreateSolidColorBrushMethod.AllowAnyCall(
-                [](D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush** value)
+                [](D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush** theValue)
                 {
                     ComPtr<MockD2DSolidColorBrush> brush = Make<MockD2DSolidColorBrush>();
-                    return brush.CopyTo(value);
+                    return brush.CopyTo(theValue);
                 });
         }
 
@@ -448,9 +448,9 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP CreateCommandList(ID2D1CommandList** value) override
+        IFACEMETHODIMP CreateCommandList(ID2D1CommandList** theValue) override
         {
-            return CreateCommandListMethod.WasCalled(value);
+            return CreateCommandListMethod.WasCalled(theValue);
         }
 
         IFACEMETHODIMP_(BOOL) IsDxgiFormatSupported(DXGI_FORMAT) const override

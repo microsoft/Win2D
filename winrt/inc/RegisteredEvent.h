@@ -27,7 +27,7 @@ public:
         EventRegistrationToken token;
         ThrowIfFailed((eventSource->*addMethod)(handler, &token));
 
-        ComPtr<SOURCE> source(eventSource);
+        Microsoft::WRL::ComPtr<SOURCE> source(eventSource);
         m_unregisterFunction = 
             [source, removeMethod, token]()
             {

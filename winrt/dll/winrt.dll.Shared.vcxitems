@@ -10,27 +10,11 @@
     <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
 
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
 
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
-    <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <PropertyGroup>
-    <IgnoreImportLibrary>false</IgnoreImportLibrary>
-  </PropertyGroup>
 
   <ItemDefinitionGroup>
     <ClCompile>
@@ -61,9 +45,5 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)module.cpp" />
     <None Include="$(MSBuildThisFileDirectory)module.def" />
   </ItemGroup>
-
-
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
 
 </Project>

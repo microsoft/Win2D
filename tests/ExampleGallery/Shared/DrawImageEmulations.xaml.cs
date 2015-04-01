@@ -11,7 +11,6 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.DirectX;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
@@ -25,6 +24,12 @@ using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+
+#if WINDOWS_UAP
+using Windows.Graphics.DirectX;
+#else
+using Microsoft.Graphics.Canvas.DirectX;
+#endif
 
 namespace ExampleGallery
 {

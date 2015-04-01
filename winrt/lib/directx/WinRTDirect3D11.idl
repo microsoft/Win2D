@@ -14,6 +14,16 @@
 // Types that are bound to Direct3D 11.
 //
 
+#if (WINVER > 0x0603)
+
+#define IDIRECT3DDEVICE Windows.Graphics.DirectX.Direct3D11.IDirect3DDevice
+#define IDIRECT3DSURFACE Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface
+
+#else
+
+#define IDIRECT3DDEVICE Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice
+#define IDIRECT3DSURFACE Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface
+
 namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
 {
     //
@@ -37,7 +47,7 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
     {
         INT32 Width;
         INT32 Height;
-        Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat Format;
+        DIRECTX_PIXEL_FORMAT Format;
         Direct3DMultisampleDescription MultisampleDescription;
     } Direct3DSurfaceDescription;
 
@@ -52,7 +62,7 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
         Immutable = 1,          // D3D11_USAGE_IMMUTABLE
         Dynamic = 2,            // D3D11_USAGE_DYNAMIC
         Staging = 3             // D3D11_USAGE_STAGING
-    } Direct3DUsage;
+    } xDirect3DUsage;
 
 
     //
@@ -73,7 +83,7 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
         UnorderedAccess = 0x080, // D3D11_BIND_UNORDERED_ACCESS
         Decoder         = 0x200, // D3D11_BIND_DECODER
         VideoEncoder    = 0x400  // D3D11_BIND_VIDEO_ENCODER
-    } Direct3DBindings;
+    } xDirect3DBindings;
 
 
     //
@@ -112,3 +122,5 @@ namespace Microsoft.Graphics.Canvas.DirectX.Direct3D11
             [out, retval] Direct3DSurfaceDescription* value);
     }
 }
+
+#endif

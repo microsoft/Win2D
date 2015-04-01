@@ -23,13 +23,19 @@ namespace ExampleGallery
 
         public ExamplePage()
         {
-            this.InitializeComponent();
-            this.navigationHelper = new NavigationHelper(this);            
+            this.InitializeComponent();         
+
+            this.navigationHelper = new NavigationHelper(this);
 
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
             {
                 this.DataContext = new ExampleDefinition("An Example", null);
-            }            
+            }
+
+            if (this.navigationHelper.HasHardwareButtons)
+            {
+                this.backButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         public NavigationHelper NavigationHelper

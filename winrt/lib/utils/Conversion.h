@@ -15,6 +15,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
+    using namespace WinRTDirectX;
 
     template<typename TOutput, typename TInput> TOutput ReinterpretAs(TInput value)
     {
@@ -107,14 +108,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(D2D1_RECT_F, bottom) == offsetof(Numerics::Vector4, W), "Vector4 layout must match D2D1_RECT_F");
     };
 
-    template<> struct ValidateReinterpretAs<DXGI_SURFACE_DESC*, DirectX::Direct3D11::Direct3DSurfaceDescription*> : std::true_type
+    template<> struct ValidateReinterpretAs<DXGI_SURFACE_DESC*, Direct3DSurfaceDescription*> : std::true_type
     {
-        static_assert(offsetof(DXGI_SURFACE_DESC, Width)      == offsetof(DirectX::Direct3D11::Direct3DSurfaceDescription,     Width),                  "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-        static_assert(offsetof(DXGI_SURFACE_DESC, Height)     == offsetof(DirectX::Direct3D11::Direct3DSurfaceDescription,     Height),                 "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-        static_assert(offsetof(DXGI_SURFACE_DESC, Format)     == offsetof(DirectX::Direct3D11::Direct3DSurfaceDescription,     Format),                 "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-        static_assert(offsetof(DXGI_SURFACE_DESC, SampleDesc) == offsetof(DirectX::Direct3D11::Direct3DSurfaceDescription,     MultisampleDescription), "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
-        static_assert(offsetof(DXGI_SAMPLE_DESC,  Count)      == offsetof(DirectX::Direct3D11::Direct3DMultisampleDescription, Count),                  "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
-        static_assert(offsetof(DXGI_SAMPLE_DESC,  Quality)    == offsetof(DirectX::Direct3D11::Direct3DMultisampleDescription, Quality),                "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
+        static_assert(offsetof(DXGI_SURFACE_DESC, Width)      == offsetof(Direct3DSurfaceDescription,     Width),                  "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+        static_assert(offsetof(DXGI_SURFACE_DESC, Height)     == offsetof(Direct3DSurfaceDescription,     Height),                 "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+        static_assert(offsetof(DXGI_SURFACE_DESC, Format)     == offsetof(Direct3DSurfaceDescription,     Format),                 "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+        static_assert(offsetof(DXGI_SURFACE_DESC, SampleDesc) == offsetof(Direct3DSurfaceDescription,     MultisampleDescription), "Direct3DSurfaceDescription layout must match DXGI_SURFACE_DESC layout");
+        static_assert(offsetof(DXGI_SAMPLE_DESC,  Count)      == offsetof(Direct3DMultisampleDescription, Count),                  "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
+        static_assert(offsetof(DXGI_SAMPLE_DESC,  Quality)    == offsetof(Direct3DMultisampleDescription, Quality),                "GraphicsMultisampleDescription layout must match DXGI_SAMPLE_DESC layout");
     };
 
     template<> struct ValidateReinterpretAs<D2D1_TRIANGLE*, CanvasTriangleVertices*> : std::true_type

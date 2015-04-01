@@ -17,14 +17,13 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace WinRTDirectX;
+
     using namespace ::Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
     using namespace ABI::Microsoft::Graphics::Canvas::Effects;
-    using namespace ABI::Windows::Storage;
-    using namespace ABI::Windows::Storage::Streams;
     using namespace ABI::Windows::Foundation;
-    using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
+    using namespace ABI::Windows::Storage::Streams;
+    using namespace ABI::Windows::Storage;
 
     class CanvasBitmapManager;
 

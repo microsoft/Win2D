@@ -17,9 +17,9 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION)]
     typedef struct CanvasTriangleVertices
     {
-        Microsoft.Graphics.Canvas.Numerics.Vector2 Vertex1;
-        Microsoft.Graphics.Canvas.Numerics.Vector2 Vertex2;
-        Microsoft.Graphics.Canvas.Numerics.Vector2 Vertex3;
+        NUMERICS.Vector2 Vertex1;
+        NUMERICS.Vector2 Vertex2;
+        NUMERICS.Vector2 Vertex3;
     } CanvasTriangleVertices;
 
     //
@@ -39,11 +39,11 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasPathReceiver : IInspectable
     {
         HRESULT BeginFigure(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 startPoint,
+            [in] NUMERICS.Vector2 startPoint,
             [in] CanvasFigureFill figureFill);
 
         HRESULT AddArc(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint,
+            [in] NUMERICS.Vector2 endPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] float rotationAngle,
@@ -51,16 +51,16 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasArcSize arcSize);
 
         HRESULT AddCubicBezier(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint1,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint2,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+            [in] NUMERICS.Vector2 controlPoint1,
+            [in] NUMERICS.Vector2 controlPoint2,
+            [in] NUMERICS.Vector2 endPoint);
 
         HRESULT AddLine(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+            [in] NUMERICS.Vector2 endPoint);
 
         HRESULT AddQuadraticBezier(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+            [in] NUMERICS.Vector2 controlPoint,
+            [in] NUMERICS.Vector2 endPoint);
 
         HRESULT SetFilledRegionDetermination(
             [in] CanvasFilledRegionDetermination filledRegionDetermination);
@@ -81,14 +81,14 @@ namespace Microsoft.Graphics.Canvas
         [overload("CombineWith")]
         HRESULT CombineWith(
             [in] CanvasGeometry* otherGeometry,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 otherGeometryTransform,
+            [in] NUMERICS.Matrix3x2 otherGeometryTransform,
             [in] CanvasGeometryCombine combine,
             [out, retval] CanvasGeometry** geometry);
 
         [overload("CombineWith"), default_overload]
         HRESULT CombineWithUsingFlatteningTolerance(
             [in] CanvasGeometry* otherGeometry,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 otherGeometryTransform,
+            [in] NUMERICS.Matrix3x2 otherGeometryTransform,
             [in] CanvasGeometryCombine combine,
             [in] float flatteningTolerance,
             [out, retval] CanvasGeometry** geometry);
@@ -109,7 +109,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT StrokeWithAllOptions(
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] CanvasGeometry** geometry);
 
@@ -120,7 +120,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("Outline"), default_overload]
         HRESULT OutlineWithTransformAndFlatteningTolerance(
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] CanvasGeometry** geometry);
 
@@ -133,12 +133,12 @@ namespace Microsoft.Graphics.Canvas
         [overload("Simplify"), default_overload]
         HRESULT SimplifyWithTransformAndFlatteningTolerance(
             [in] CanvasGeometrySimplification simplification,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] CanvasGeometry** geometry);
 
         HRESULT Transform(
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [out, retval] CanvasGeometry** geometry);
 
         ///////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("CompareWith"), default_overload]
         HRESULT CompareWithUsingTransformAndFlatteningTolerance(
             [in] CanvasGeometry* otherGeometry,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 otherGeometryTransform,
+            [in] NUMERICS.Matrix3x2 otherGeometryTransform,
             [in] float flatteningTolerance,
             [out, retval] CanvasGeometryRelation* relation);
 
@@ -165,7 +165,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("ComputeArea"), default_overload]
         HRESULT ComputeAreaWithTransformAndFlatteningTolerance(
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] float* area);
 
@@ -176,7 +176,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("ComputePathLength"), default_overload]
         HRESULT ComputePathLengthWithTransformAndFlatteningTolerance(
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] float* length);
 
@@ -184,32 +184,32 @@ namespace Microsoft.Graphics.Canvas
         [overload("ComputePointOnPath")]
         HRESULT ComputePointOnPath(
             [in] float distance,
-            [out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* point);
+            [out, retval] NUMERICS.Vector2* point);
 
         [overload("ComputePointOnPath"), default_overload]
         HRESULT ComputePointOnPathWithTangent(
             [in] float distance,
-            [out] Microsoft.Graphics.Canvas.Numerics.Vector2* tangent,
-            [out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* point);
+            [out] NUMERICS.Vector2* tangent,
+            [out, retval] NUMERICS.Vector2* point);
 
         [overload("ComputePointOnPath"), default_overload]
         HRESULT ComputePointOnPathWithTransformAndFlatteningToleranceAndTangent(
             [in] float length,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
-            [out] Microsoft.Graphics.Canvas.Numerics.Vector2* tangent,
-            [out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* point);
+            [out] NUMERICS.Vector2* tangent,
+            [out, retval] NUMERICS.Vector2* point);
 
         // FillContainsPoint
         [overload("FillContainsPoint")]
         HRESULT FillContainsPoint(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] NUMERICS.Vector2 point,
             [out, retval] boolean* containsPoint);
 
         [overload("FillContainsPoint"), default_overload]
         HRESULT FillContainsPointWithTransformAndFlatteningTolerance(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Vector2 point,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] boolean* containsPoint);
 
@@ -220,7 +220,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("ComputeBounds"), default_overload]
         HRESULT ComputeBoundsWithTransform(
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [out, retval] Windows.Foundation.Rect* bounds);
 
         // ComputeStrokeBounds
@@ -239,30 +239,30 @@ namespace Microsoft.Graphics.Canvas
         HRESULT ComputeStrokeBoundsWithAllOptions(
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] Windows.Foundation.Rect* bounds);
 
         // StrokeContainsPoint
         [overload("StrokeContainsPoint")]
         HRESULT StrokeContainsPoint(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] NUMERICS.Vector2 point,
             [in] float strokeWidth,
             [out, retval] boolean* containsPoint);
 
         [overload("StrokeContainsPoint"), default_overload]
         HRESULT StrokeContainsPointWithStrokeStyle(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] NUMERICS.Vector2 point,
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle,
             [out, retval] boolean* containsPoint);
 
         [overload("StrokeContainsPoint"), default_overload]
         HRESULT StrokeContainsPointWithAllOptions(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] NUMERICS.Vector2 point,
             [in] float strokeWidth,
             [in] CanvasStrokeStyle* strokeStyle,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] boolean* containsPoint);
 
@@ -274,7 +274,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("Tessellate")]
         HRESULT TessellateWithTransformAndFlatteningTolerance(
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out] UINT32* trianglesCount,
             [out, size_is(, *trianglesCount), retval] CanvasTriangleVertices** triangles);
@@ -324,7 +324,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("CreateEllipse"), default_overload]
         HRESULT CreateEllipse(
             [in] ICanvasResourceCreator* resourceCreator,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
+            [in] NUMERICS.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [out, retval] CanvasGeometry** geometry);
@@ -341,7 +341,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("CreateCircle"), default_overload]
         HRESULT CreateCircle(
             [in] ICanvasResourceCreator* resourceCreator,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
+            [in] NUMERICS.Vector2 centerPoint,
             [in] float radius,
             [out, retval] CanvasGeometry** geometry);
 
@@ -360,7 +360,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT CreatePolygon(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 pointCount,
-            [in, size_is(pointCount)] Microsoft.Graphics.Canvas.Numerics.Vector2* points,
+            [in, size_is(pointCount)] NUMERICS.Vector2* points,
             [out, retval] CanvasGeometry** geometry);
 
         [overload("CreateGroup")]
@@ -388,7 +388,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT ComputeFlatteningToleranceWithTransform(
             [in] float dpi,
             [in] float maximumZoomFactor,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 expectedGeometryTransform,
+            [in] NUMERICS.Matrix3x2 expectedGeometryTransform,
             [out, retval] float* flatteningTolerance);
 
         [propget] HRESULT DefaultFlatteningTolerance([out, retval] float* value);

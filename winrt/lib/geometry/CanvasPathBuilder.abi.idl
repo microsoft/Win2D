@@ -21,12 +21,12 @@ namespace Microsoft.Graphics.Canvas
     {
         [overload("BeginFigure"), default_overload]
         HRESULT BeginFigureWithFigureFill(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 startPoint,
+            [in] NUMERICS.Vector2 startPoint,
             [in] CanvasFigureFill figureFill);
 
         [overload("BeginFigure"), default_overload]
         HRESULT BeginFigure(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 startPoint);
+            [in] NUMERICS.Vector2 startPoint);
 
         [overload("BeginFigure"), default_overload]
         HRESULT BeginFigureAtCoordsWithFigureFill(
@@ -41,7 +41,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("AddArc")]
         HRESULT AddArcToPoint(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint,
+            [in] NUMERICS.Vector2 endPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] float rotationAngle,
@@ -50,20 +50,20 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("AddArc")]
         HRESULT AddArcAroundEllipse(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 centerPoint,
+            [in] NUMERICS.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
             [in] float startAngle,
             [in] float sweepAngle);
 
         HRESULT AddCubicBezier(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint1,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint2,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+            [in] NUMERICS.Vector2 controlPoint1,
+            [in] NUMERICS.Vector2 controlPoint2,
+            [in] NUMERICS.Vector2 endPoint);
 
         [overload("AddLine"), default_overload]
         HRESULT AddLine(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+            [in] NUMERICS.Vector2 endPoint);
 
         [overload("AddLine")]
         HRESULT AddLineWithCoords(
@@ -71,8 +71,8 @@ namespace Microsoft.Graphics.Canvas
             [in] float y);
 
         HRESULT AddQuadraticBezier(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 controlPoint,
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 endPoint);
+            [in] NUMERICS.Vector2 controlPoint,
+            [in] NUMERICS.Vector2 endPoint);
 
         HRESULT SetFilledRegionDetermination(
             [in] CanvasFilledRegionDetermination filledRegionDetermination);

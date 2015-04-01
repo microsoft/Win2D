@@ -328,6 +328,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Helpers.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometrySink.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DPathGeometry.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h">
       <Filter>mocks</Filter>
     </ClInclude>

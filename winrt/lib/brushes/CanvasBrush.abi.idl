@@ -26,10 +26,10 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Opacity([in] float value);
 
         [propget]
-        HRESULT Transform([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix3x2* value);
+        HRESULT Transform([out, retval] NUMERICS.Matrix3x2* value);
 
         [propput]
-        HRESULT Transform([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
+        HRESULT Transform([in] NUMERICS.Matrix3x2 value);
 
         [propget]
         HRESULT Device([out, retval] CanvasDevice** value);
@@ -198,16 +198,16 @@ namespace Microsoft.Graphics.Canvas
         requires ICanvasBrush
     {
         [propget]
-        HRESULT StartPoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT StartPoint([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT StartPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT StartPoint([in] NUMERICS.Vector2 value);
 
         [propget]
-        HRESULT EndPoint([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT EndPoint([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT EndPoint([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT EndPoint([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT Stops(
@@ -294,16 +294,16 @@ namespace Microsoft.Graphics.Canvas
         requires ICanvasBrush
     {
         [propget]
-        HRESULT Center([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT Center([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT Center([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT Center([in] NUMERICS.Vector2 value);
 
         [propget]
-        HRESULT OriginOffset([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT OriginOffset([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT OriginOffset([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT OriginOffset([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT RadiusX([out, retval] float* value);

@@ -13,8 +13,8 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
 using namespace Microsoft::WRL::Wrappers;
+using namespace WinRTDirectX;
 
 TEST_CLASS(Direct3DSurfaceInteropTests)
 {

@@ -47,8 +47,11 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 - Add the Win2D repository URL (https://github.com/Microsoft/Win2D.git) and hit 'Clone'
 
 ##### Build NuGet Packages
-- In Windows search, type 'Visual Studio Tools', and select that folder to open it
-- Launch 'Developer Command Prompt for VS2013'
+- If using Visual Studio 2013:
+  - In Windows search, type 'Visual Studio Tools', and select that folder to open it
+  - Launch 'Developer Command Prompt for VS2013' 
+- If using Visual Studio 2015:
+  - Launch 'MSBuild Command Prompt for VS2015'
 - Change directory to your cloned Win2D repository and run 'build'
 
 ##### Point Visual Studio at the resulting 'bin' directory

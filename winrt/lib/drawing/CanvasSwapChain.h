@@ -14,10 +14,12 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::UI::Core;
-    using namespace ::Microsoft::WRL;
+    using namespace ABI::Windows::UI;
+    using namespace WinRTDirectX;
 
     class CanvasSwapChainManager;
 
@@ -122,7 +124,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float m_dpi;
 
     public:
-        static DirectXPixelFormat const DefaultPixelFormat = DirectXPixelFormat::B8G8R8A8UIntNormalized;
+        static DirectXPixelFormat const DefaultPixelFormat = PIXEL_FORMAT(B8G8R8A8UIntNormalized);
         static int32_t const DefaultBufferCount = 2;
         static CanvasAlphaMode const DefaultCompositionAlphaMode = CanvasAlphaMode::Premultiplied;
         static CanvasAlphaMode const DefaultCoreWindowAlphaMode = CanvasAlphaMode::Ignore;

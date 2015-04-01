@@ -11,7 +11,6 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.DirectX;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Collections.Generic;
@@ -30,13 +29,22 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage.Streams;
+
+#if WINDOWS_UAP
+using Windows.Graphics.DirectX;
+#else
+using Microsoft.Graphics.Canvas.DirectX;
+#endif
+
 
 namespace ExampleGallery
 {
     // How this works:
     //  - Instantiate each example in turn
     //  - Wait for it to initialize
-    //  - Search the XAML visual tree for a CanvasControl or CanvasAnimatedControl
+    //  - If the example implements ICustomThumbnailSource, use that to read the thumbnail
+    //  - Otherwise, search the XAML visual tree for a CanvasControl or CanvasAnimatedControl
     //  - If found:
     //      - Use reflection to find the method that handles the Draw event
     //      - We guess which method this is by matching parameter signatures (a hack, but it works)
@@ -174,7 +182,15 @@ namespace ExampleGallery
                 ICanvasAnimatedControl animatedControl;
                 MethodInfo drawMethod;
 
-                if (FindControlAndDrawMethod<CanvasControl, CanvasDrawEventArgs>(exampleControl, out canvasControl, out drawMethod))
+                // If there are any ProgressRing indicators in the UI, wait for them to finish whatever they are doing.
+                await WaitForProgressRings(exampleControl);
+
+                if (exampleControl is ICustomThumbnailSource)
+                {
+                    // This example explicitly tells us what thumbnail to use.
+                    await CaptureThumbnailFromCustomSource((ICustomThumbnailSource)exampleControl);
+                }
+                else if (FindControlAndDrawMethod<CanvasControl, CanvasDrawEventArgs>(exampleControl, out canvasControl, out drawMethod))
                 {
                     // It's a CanvasControl!
                     await CaptureThumbnailFromCanvasControl(canvasControl, drawMethod);
@@ -189,6 +205,14 @@ namespace ExampleGallery
                     // This example does not use either of the Win2D controls, but we can still capture it via a XAML RenderTargetBitmap.
                     await CaptureThumbnailFromXaml();
                 }
+            }
+
+
+            async Task CaptureThumbnailFromCustomSource(ICustomThumbnailSource customSource)
+            {
+                var bitmap = await CanvasBitmap.LoadAsync(new CanvasDevice(), customSource.Thumbnail);
+
+                await SaveThumbnails(bitmap);
             }
 
 
@@ -455,6 +479,19 @@ namespace ExampleGallery
             }
 
 
+            // Waits until there are no active ProgressRing indicators in the UI.
+            static async Task WaitForProgressRings(UserControl exampleControl)
+            {
+                foreach (var progressRing in GetDescendantsOfType<ProgressRing>(exampleControl))
+                {
+                    while (progressRing.IsActive)
+                    {
+                        await Task.Delay(1);
+                    }
+                }
+            }
+
+
             // Looks for a control of the specified type, plus the method that handles its Draw event.
             static bool FindControlAndDrawMethod<TControl, TDrawEventArgs>(UserControl parent, out TControl control, out MethodInfo drawMethod)
                 where TControl : class
@@ -502,5 +539,11 @@ namespace ExampleGallery
                 }
             }
         }
+    }
+
+
+    interface ICustomThumbnailSource
+    {
+        IRandomAccessStream Thumbnail { get; }
     }
 }

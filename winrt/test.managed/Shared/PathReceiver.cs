@@ -13,7 +13,12 @@
 using System;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.Graphics.Canvas;
+
+#if WINDOWS_UAP
+using System.Numerics;
+#else
 using Microsoft.Graphics.Canvas.Numerics;
+#endif
 
 namespace test.managed
 {

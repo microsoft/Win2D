@@ -17,8 +17,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.Graphics.Canvas;
+
+#if WINDOWS_UAP
+using Windows.Graphics.DirectX;
+using Windows.Graphics.DirectX.Direct3D11;
+#else
 using Microsoft.Graphics.Canvas.DirectX;
 using Microsoft.Graphics.Canvas.DirectX.Direct3D11;
+#endif
 
 namespace test.managed
 {

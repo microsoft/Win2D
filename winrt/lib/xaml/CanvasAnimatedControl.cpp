@@ -210,7 +210,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 As<ICanvasResourceCreator>(device).Get(),
                 width, 
                 height, 
-                DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                PIXEL_FORMAT(B8G8R8A8UIntNormalized),
                 2, 
                 alphaMode,
                 dpi,

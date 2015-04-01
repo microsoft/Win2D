@@ -199,7 +199,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(float)
+    void ThrowIfInvalid(float)
     {
     }
 
@@ -890,7 +890,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto textRange = ToDWriteTextRange(characterIndex, characterCount);
 
                 ThrowIfFailed(resource->SetFontCollection(fontCollection.Get(), textRange));
-
                 ThrowIfFailed(resource->SetFontFamilyName(static_cast<const wchar_t*>(fontFamily), textRange));
             });
     }

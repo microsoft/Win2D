@@ -14,10 +14,9 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    using namespace DirectX::Direct3D11;
     using namespace ::Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
     using namespace ABI::Windows::UI;
+    using namespace WinRTDirectX;
 
     class CanvasBitmapManager;
     class CanvasRenderTargetManager;

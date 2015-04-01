@@ -20,7 +20,7 @@ namespace Microsoft
         {
 
 #define ENUM_TO_STRING(TYPE)                                                        \
-            template<> static inline std::wstring ToString<TYPE>(TYPE const& value) \
+            template<> inline std::wstring ToString<TYPE>(TYPE const& value) \
             {                                                                       \
                 switch (value)
 
@@ -41,7 +41,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<RECT>(RECT const& value)
+            inline std::wstring ToString<RECT>(RECT const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -56,7 +56,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_POINT_2F>(D2D1_POINT_2F const& value)
+            inline std::wstring ToString<D2D1_POINT_2F>(D2D1_POINT_2F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -69,7 +69,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_RECT_F>(D2D1_RECT_F const& value)
+            inline std::wstring ToString<D2D1_RECT_F>(D2D1_RECT_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -84,7 +84,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_ROUNDED_RECT>(D2D1_ROUNDED_RECT const& roundedRect)
+            inline std::wstring ToString<D2D1_ROUNDED_RECT>(D2D1_ROUNDED_RECT const& roundedRect)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -98,7 +98,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_ELLIPSE>(D2D1_ELLIPSE const& ellipse)
+            inline std::wstring ToString<D2D1_ELLIPSE>(D2D1_ELLIPSE const& ellipse)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -112,7 +112,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_SIZE_F>(D2D1_SIZE_F const& value)
+            inline std::wstring ToString<D2D1_SIZE_F>(D2D1_SIZE_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -125,7 +125,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::Foundation::Size>(ABI::Windows::Foundation::Size const& s)
+            inline std::wstring ToString<ABI::Windows::Foundation::Size>(ABI::Windows::Foundation::Size const& s)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -138,7 +138,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<IID>(IID const& iid)
+            inline std::wstring ToString<IID>(IID const& iid)
             {
                 wchar_t* iidString = nullptr;
                 ThrowIfFailed(StringFromIID(iid, &iidString));
@@ -148,7 +148,7 @@ namespace Microsoft
             }            
 
             template<>
-            static inline std::wstring ToString<CanvasTimingInformation>(CanvasTimingInformation const& value)
+            inline std::wstring ToString<CanvasTimingInformation>(CanvasTimingInformation const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -160,7 +160,7 @@ namespace Microsoft
                 return buf;
             }
 
-            static inline std::wstring PointerToString(const wchar_t* name, void* value)
+            inline std::wstring PointerToString(const wchar_t* name, void* value)
             {
                 wchar_t buf[64];
                 ThrowIfFailed(StringCchPrintf(
@@ -174,7 +174,7 @@ namespace Microsoft
 
 #define TO_STRING(T)                                            \
             template<>                                          \
-            static inline std::wstring ToString<T>(T* value)    \
+            inline std::wstring ToString<T>(T* value)    \
             {                                                   \
                 return PointerToString(L#T, value);             \
             }
@@ -270,7 +270,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::UI::Color>(ABI::Windows::UI::Color const& value)
+            inline std::wstring ToString<ABI::Windows::UI::Color>(ABI::Windows::UI::Color const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -286,7 +286,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_COLOR_F>(D2D1_COLOR_F const& value)
+            inline std::wstring ToString<D2D1_COLOR_F>(D2D1_COLOR_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -302,7 +302,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Numerics::Matrix3x2>(Numerics::Matrix3x2 const& value)
+            inline std::wstring ToString<Numerics::Matrix3x2>(Numerics::Matrix3x2 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -317,7 +317,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_MATRIX_3X2_F>(D2D1_MATRIX_3X2_F const& value)
+            inline std::wstring ToString<D2D1_MATRIX_3X2_F>(D2D1_MATRIX_3X2_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -332,7 +332,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_MATRIX_4X4_F>(D2D1_MATRIX_4X4_F const& value)
+            inline std::wstring ToString<D2D1_MATRIX_4X4_F>(D2D1_MATRIX_4X4_F const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -348,7 +348,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_MATRIX_5X4_F>(D2D1_MATRIX_5X4_F const& value)
+            inline std::wstring ToString<D2D1_MATRIX_5X4_F>(D2D1_MATRIX_5X4_F const& value)
             {
                 wchar_t buf[512];
                 ThrowIfFailed(StringCchPrintf(
@@ -365,7 +365,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::Foundation::Rect>(ABI::Windows::Foundation::Rect const& value)
+            inline std::wstring ToString<ABI::Windows::Foundation::Rect>(ABI::Windows::Foundation::Rect const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -379,7 +379,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_POINT_2U>(D2D1_POINT_2U const& value)
+            inline std::wstring ToString<D2D1_POINT_2U>(D2D1_POINT_2U const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -392,7 +392,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_RECT_U>(D2D1_RECT_U const& value)
+            inline std::wstring ToString<D2D1_RECT_U>(D2D1_RECT_U const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -405,7 +405,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::Foundation::Point>(ABI::Windows::Foundation::Point const& value)
+            inline std::wstring ToString<ABI::Windows::Foundation::Point>(ABI::Windows::Foundation::Point const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -418,7 +418,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<Numerics::Vector2>(Numerics::Vector2 const& value)
+            inline std::wstring ToString<Numerics::Vector2>(Numerics::Vector2 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -431,7 +431,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<D2D1_TRIANGLE>(D2D1_TRIANGLE const& value)
+            inline std::wstring ToString<D2D1_TRIANGLE>(D2D1_TRIANGLE const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -571,7 +571,7 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<__int64>(__int64 const& value)
+            inline std::wstring ToString<__int64>(__int64 const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -1001,7 +1001,7 @@ namespace Microsoft
             }
 
             template<typename T>
-            static inline std::wstring ToStringAsInt(T value)
+            inline std::wstring ToStringAsInt(T value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -1013,14 +1013,14 @@ namespace Microsoft
             }
 
             template<>
-            static inline std::wstring ToString<ABI::Windows::UI::Text::FontWeight>(ABI::Windows::UI::Text::FontWeight const& value)
+            inline std::wstring ToString<ABI::Windows::UI::Text::FontWeight>(ABI::Windows::UI::Text::FontWeight const& value)
             {
                 return ToStringAsInt(value.Weight);
             }
 
 #define TO_STRING_AS_INT(TYPE)                                          \
             template<>                                                  \
-            static inline std::wstring ToString<TYPE>(TYPE const& value) \
+            inline std::wstring ToString<TYPE>(TYPE const& value) \
             {                                                           \
                 return ToStringAsInt(value);                            \
             }

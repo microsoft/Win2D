@@ -22,7 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     template<>
-    static void ThrowIfInvalid(ABI::Windows::UI::Text::FontStretch value)
+    void ThrowIfInvalid(ABI::Windows::UI::Text::FontStretch value)
     {
         switch (value)
         {
@@ -44,7 +44,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void ThrowIfInvalid(ABI::Windows::UI::Text::FontStyle value)
+    void ThrowIfInvalid(ABI::Windows::UI::Text::FontStyle value)
     {
         switch (value)
         {
@@ -344,7 +344,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static bool IsSame(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
+    bool IsSame(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
     {
         return IsSame(&outputValue->Weight, value.Weight);
     }
@@ -369,7 +369,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<>
-    static void SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
+    void SetFrom(ABI::Windows::UI::Text::FontWeight* outputValue, ABI::Windows::UI::Text::FontWeight const& value)
     {
         SetFrom(&outputValue->Weight, value.Weight);
     }

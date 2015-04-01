@@ -41,6 +41,7 @@ x64/
 
 # Visual C++ cache files
 ipch/
+.vs/
 *.aps
 *.ncb
 *.opensdf
@@ -76,8 +77,8 @@ $RECYCLE.BIN/
 # These are useful for debugging, not so useful to keep in source control.
 *.sln.metaproj
 
-# nuget packages
-packages/
+# Ignore installed nuget packages
+/packages/
 
 # Windows Store packages
 AppPackages/

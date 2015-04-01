@@ -12,6 +12,10 @@
 
 #include "pch.h"
 
+#ifndef USE_LOCAL_WINRT_DIRECTX
+#error This file should only be built when using local WinRT DirectX 
+#endif
+
 using namespace Microsoft::WRL;
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11

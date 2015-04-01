@@ -10,6 +10,18 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+#if (WINVER > 0x0603)
+
+#define NUMERICS Windows.Foundation.Numerics
+
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Numerics = ::ABI::Windows::Foundation::Numerics; } } } }")
+cpp_quote("#endif")
+
+#else
+
+#define NUMERICS Microsoft.Graphics.Canvas.Numerics
+
 namespace Microsoft.Graphics.Canvas.Numerics
 {
     [version(VERSION)]
@@ -75,3 +87,5 @@ namespace Microsoft.Graphics.Canvas.Numerics
         float W;
     } Quaternion;
 }
+
+#endif

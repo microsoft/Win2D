@@ -12,17 +12,6 @@
 
 #include "pch.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::DirectX;
-using namespace Microsoft::Graphics::Canvas::Numerics;
-using namespace Microsoft::WRL::Wrappers;
-using namespace Windows::Foundation;
-using namespace Windows::Devices::Enumeration;
-using namespace Windows::Graphics::Imaging;
-using namespace Windows::UI;
-using namespace Windows::Storage::Streams;
-using Platform::String;
-
 TEST_CLASS(CanvasGeometryTests)
 {
     CanvasDevice^ m_device;
@@ -107,29 +96,29 @@ public:
         {
             float ZoomLevel;
             float Dpi;
-            Matrix3x2 Transform;
+            float3x2 Transform;
         } testCases[]
         {
-            { 1, 96, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
-            { 1, 96, Matrix3x2{ 0, 0, 0, 0, 0, 0 } },
-            { 1, 96, Matrix3x2{ 1, 0, 0, 0, 0, 0 } },
-            { 1, 96, Matrix3x2{ 0, 1, 0, 0, 0, 0 } },
-            { 1, 96, Matrix3x2{ 0, 0, 1, 0, 0, 0 } },
-            { 1, 96, Matrix3x2{ 0, 0, 0, 1, 0, 0 } },
-            { 1, 96, Matrix3x2{ -1, 0, 0, -1, 0, 0 } },
-            { 1, 96, Matrix3x2{ 0, 1, -1, 0, 0, 0 } },
-            { 1, 96, Matrix3x2{ 2, 0, 0, 3, 0, 0 } },
-            { 1, 96, Matrix3x2{ 3, 0, 0, 2, 0, 0 } },
-            { 1, 96, Matrix3x2{ -2, 0, 0, -3, 0, 0 } },
-            { 1, 96, Matrix3x2{ -3, 0, 0, -2, 0, 0 } },
-            { 1, 96, Matrix3x2{ 1, 1, 1, 1, 0, 0 } },
-            { -1, 96, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
-            { 1, -96, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
-            { 2, 96, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
-            { 1, 123, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
-            { 123.0f, 456.0f, Matrix3x2{ 1, 2, 3, 4, 5, 6 } },
-            { -1, -1, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
-            { 1, 0, Matrix3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, 96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, 96, float3x2{ 0, 0, 0, 0, 0, 0 } },
+            { 1, 96, float3x2{ 1, 0, 0, 0, 0, 0 } },
+            { 1, 96, float3x2{ 0, 1, 0, 0, 0, 0 } },
+            { 1, 96, float3x2{ 0, 0, 1, 0, 0, 0 } },
+            { 1, 96, float3x2{ 0, 0, 0, 1, 0, 0 } },
+            { 1, 96, float3x2{ -1, 0, 0, -1, 0, 0 } },
+            { 1, 96, float3x2{ 0, 1, -1, 0, 0, 0 } },
+            { 1, 96, float3x2{ 2, 0, 0, 3, 0, 0 } },
+            { 1, 96, float3x2{ 3, 0, 0, 2, 0, 0 } },
+            { 1, 96, float3x2{ -2, 0, 0, -3, 0, 0 } },
+            { 1, 96, float3x2{ -3, 0, 0, -2, 0, 0 } },
+            { 1, 96, float3x2{ 1, 1, 1, 1, 0, 0 } },
+            { -1, 96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, -96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 2, 96, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, 123, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 123.0f, 456.0f, float3x2{ 1, 2, 3, 4, 5, 6 } },
+            { -1, -1, float3x2{ 1, 0, 0, 1, 0, 0 } },
+            { 1, 0, float3x2{ 1, 0, 0, 1, 0, 0 } },
         };
 
         for (TestCase testCase : testCases)

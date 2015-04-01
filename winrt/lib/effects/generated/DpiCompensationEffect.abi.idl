@@ -33,10 +33,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT BorderMode([in] EffectBorderMode value);
 
         [propget]
-        HRESULT SourceDpi([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT SourceDpi([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT SourceDpi([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT SourceDpi([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT Source([out, retval] IGraphicsEffectSource** source);

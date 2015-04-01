@@ -21,8 +21,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::Graphics::Display;
     using namespace ABI::Windows::UI::Core;
-    using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Controls;
+    using namespace ABI::Windows::UI::Xaml;
+    using namespace ABI::Windows::UI;
+    using namespace WinRTDirectX;
 
     //
     // See CanvasControl.h / CanvasAnimatedControl.h for the shape of TRAITS.

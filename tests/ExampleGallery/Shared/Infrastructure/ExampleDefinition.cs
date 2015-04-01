@@ -54,6 +54,9 @@ namespace ExampleGallery
             new ExampleDefinition("Effects", typeof(EffectsExample)),
             new ExampleDefinition("Burning Text", typeof(BurningTextExample)),
             new ExampleDefinition("Game of Life", typeof(GameOfLife)),
+#if WINDOWS_UAP
+            new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
+#endif
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
             new ExampleDefinition("Layers", typeof(LayersExample)),
             new ExampleDefinition("Shapes", typeof(ShapesExample)),

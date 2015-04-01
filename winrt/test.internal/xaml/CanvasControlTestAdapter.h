@@ -75,9 +75,11 @@ public:
         float dpi,
         CanvasBackground backgroundMode) override
     {
-        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, dpi, backgroundMode);
-        if (result)
-            return result;
+        {
+            auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, dpi, backgroundMode);
+            if (result)
+                return result;
+        }
 
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =

@@ -13,6 +13,7 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <AppxBundle>Never</AppxBundle>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

@@ -13,7 +13,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::DirectX;
+using namespace WinRTDirectX;
 
 TEST_CLASS(CanvasControlTests)
 {

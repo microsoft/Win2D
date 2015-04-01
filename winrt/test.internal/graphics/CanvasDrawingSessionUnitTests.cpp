@@ -4386,7 +4386,7 @@ TEST_CLASS(CanvasDrawingSession_CreateLayerTests)
                         Assert::AreEqual(D2D1_RECT_F{ -FLT_MAX, -FLT_MAX, FLT_MAX, FLT_MAX }, parameters->contentBounds);
 
                     if (expectGeometry)
-                        Assert::IsTrue(IsSameInstance(Geometry->GetResource().Get(), parameters->geometricMask));
+                        Assert::IsTrue(IsSameInstance(this->Geometry->GetResource().Get(), parameters->geometricMask));
                     else
                         Assert::IsNull(parameters->geometricMask);
 

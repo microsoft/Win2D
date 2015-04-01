@@ -64,7 +64,7 @@ namespace Microsoft.Graphics.Canvas
             [in] ICanvasResourceCreatorWithDpi* resourceCreator,
             [in] float width,
             [in] float height,
-            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            [in] DIRECTX_PIXEL_FORMAT format,
             [in] INT32 bufferCount,
             [in] CanvasAlphaMode alphaMode,
             [out, retval] CanvasSwapChain** swapChain);
@@ -75,7 +75,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float height,
 
             // Must be one of R16G16B16A16_FLOAT, DXGI_FORMAT_B8G8R8A8_UNORM, or DXGI_FORMAT_R8G8B8A8_UNORM
-            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            [in] DIRECTX_PIXEL_FORMAT format,
             
             // Must be a number from 2 to 16
             [in] INT32 bufferCount, 
@@ -121,7 +121,7 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.UI.Core.CoreWindow* coreWindow,
             [in] float width,
             [in] float height,
-            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat format,
+            [in] DIRECTX_PIXEL_FORMAT format,
             [in] INT32 bufferCount,
             [in] float dpi,
             [out, retval] CanvasSwapChain** swapChain);
@@ -157,7 +157,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float newWidth,
             [in] float newHeight,
             [in] float newDpi,
-            [in] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat newFormat,
+            [in] DIRECTX_PIXEL_FORMAT newFormat,
             [in] INT32 bufferCount);
 
         // Returns the properties used to create this swap chain object.
@@ -165,7 +165,7 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
         [propget] HRESULT SizeInPixels([out, retval] BitmapSize* size);
         [propget] HRESULT Dpi([out, retval] float* dpi);
-        [propget] HRESULT Format([out, retval] Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat* value);
+        [propget] HRESULT Format([out, retval] DIRECTX_PIXEL_FORMAT* value);
         [propget] HRESULT BufferCount([out, retval] INT32* value);
         [propget] HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
         
@@ -175,8 +175,8 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT SourceSize([out, retval] Windows.Foundation.Size* value);
         [propput] HRESULT SourceSize([in] Windows.Foundation.Size value);
 
-        [propget] HRESULT TransformMatrix([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix3x2* value);
-        [propput] HRESULT TransformMatrix([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
+        [propget] HRESULT TransformMatrix([out, retval] NUMERICS.Matrix3x2* value);
+        [propput] HRESULT TransformMatrix([in] NUMERICS.Matrix3x2 value);
 
         HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
         HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);

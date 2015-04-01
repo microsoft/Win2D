@@ -6,6 +6,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
+    <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
     <ApplicationType>Windows Phone</ApplicationType>
     <ApplicationTypeRevision>8.1</ApplicationTypeRevision>
     <TestApplication>true</TestApplication>

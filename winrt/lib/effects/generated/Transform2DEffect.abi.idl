@@ -33,10 +33,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT BorderMode([in] EffectBorderMode value);
 
         [propget]
-        HRESULT TransformMatrix([out, retval] Microsoft.Graphics.Canvas.Numerics.Matrix3x2* value);
+        HRESULT TransformMatrix([out, retval] NUMERICS.Matrix3x2* value);
 
         [propput]
-        HRESULT TransformMatrix([in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 value);
+        HRESULT TransformMatrix([in] NUMERICS.Matrix3x2 value);
 
         [propget]
         HRESULT Sharpness([out, retval] float* value);

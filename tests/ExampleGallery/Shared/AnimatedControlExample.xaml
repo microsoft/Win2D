@@ -71,7 +71,7 @@ under the License.
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Rectangle Width="35" Height="20" Fill="{Binding Name}" Margin="5,0"/>
-                            <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding Name}" Foreground="Black"/>
+                            <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding Name}" />
                         </Grid>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -79,7 +79,7 @@ under the License.
         </StackPanel>
 
         <canvas:CanvasAnimatedControl x:Name="animatedControl" Grid.Row="0" Grid.Column="1"
-			CreateResources="OnCreateResources" Draw="OnDraw" Update="OnUpdate"/>
+            CreateResources="OnCreateResources" Draw="OnDraw" Update="OnUpdate"/>
 
     </Grid>
 </UserControl>

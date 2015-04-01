@@ -385,7 +385,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Matrix3x2 expectedGeometryTransform,
             float* flatteningTolerance) override;
 
-        IFACEMETHOD(get_DefaultFlatteningTolerance)(float* value) override;
+        IFACEMETHOD(get_DefaultFlatteningTolerance)(float* theValue) override;
     };
 
     inline ComPtr<ID2D1StrokeStyle> MaybeGetStrokeStyleResource(

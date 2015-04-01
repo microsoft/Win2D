@@ -12,8 +12,9 @@
 
 #include "pch.h"
 
-using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
-using namespace Microsoft::WRL;
+#ifndef USE_LOCAL_WINRT_DIRECTX
+#error This file should only be built when using local WinRT DirectX 
+#endif
 
 TEST_CLASS(DeviceTests)
 {

@@ -43,7 +43,7 @@ namespace Microsoft {
     namespace VisualStudio {
         namespace CppUnitTestFramework
         {
-            template<> static inline std::wstring ToString<MockInterface>(MockInterface* value)
+            template<> inline std::wstring ToString<MockInterface>(MockInterface* value)
             {
                 return PointerToString(L"MockInterface", value);
             }
@@ -59,10 +59,12 @@ namespace ABI {
         namespace Foundation {
             namespace Collections
             {
+#if (WINVER <= 0x0603)
                 template<> struct __declspec(uuid("b939af5b-b45d-5489-9149-61442c1905fe")) IVector    <int> : IVector_impl    <int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
                 template<> struct __declspec(uuid("8d720cdf-3934-5d3f-9a55-40e8063b086a")) IVectorView<int> : IVectorView_impl<int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
                 template<> struct __declspec(uuid("81a643fb-f51c-5565-83c4-f96425777b66")) IIterable  <int> : IIterable_impl  <int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
                 template<> struct __declspec(uuid("bfea7f78-50c2-5f1d-a6ea-9e978d2699ff")) IIterator  <int> : IIterator_impl  <int> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
+#endif
 
                 template<> struct __declspec(uuid("b6a5841a-795a-4579-bd7c-94f160faf3fd")) IVector    <MockInterface*> : IVector_impl    <MockInterface*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };
                 template<> struct __declspec(uuid("85f9e708-40a5-452e-949a-0caab9bf2e7c")) IVectorView<MockInterface*> : IVectorView_impl<MockInterface*> { static const wchar_t* z_get_rc_name_impl() { return L""; } };

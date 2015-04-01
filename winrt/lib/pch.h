@@ -43,14 +43,18 @@
 #include <wrl.h>
 #include <wrl\async.h>
 #include <strsafe.h>
+
+#pragma warning(push)
+#pragma warning(disable: 4458)  // TODO: Disable "hides class member" warning until we pick up fix to MS.601961
 #include <d2d1_2.h>
+#pragma warning(pop)
+
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
-#include <corerror.h>
 
 // WinRT
 #include <windows.foundation.h>
@@ -64,7 +68,6 @@
 #pragma warning(default: 4265)  // "class has virtual functions, but destructor is not virtual"
 
 // Public
-#include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #include <Microsoft.Graphics.Canvas.Effects.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
@@ -85,6 +88,9 @@
 
 // Generated from local IDLs
 #include <Canvas.abi.h>
+
+// Pick up the inbox or local WinRT DirectX types as appropriate
+#include "WinRTDirectX.h"
 
 // local
 #include "utils/Conversion.h"

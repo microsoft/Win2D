@@ -10,6 +10,7 @@
     <RootNamespace>NumericsTests</RootNamespace>
     <AssemblyName>DotNetNumericsTests.WindowsPhone</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -21,9 +22,6 @@
   <PropertyGroup>
     <AppXPackage>True</AppXPackage>
     <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetPlatformIdentifier)' == '' ">
-    <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\..\..\build\Win2D.cs.props" />
   <PropertyGroup>

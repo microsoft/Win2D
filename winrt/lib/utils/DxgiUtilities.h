@@ -15,9 +15,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX;
-    using namespace ABI::Microsoft::Graphics::Canvas::DirectX::Direct3D11;
-    using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
+    using namespace WinRTDirectX;
 
     template<typename U>
     inline ComPtr<ICanvasDevice> GetCanvasDevice(U* resourceCreator)

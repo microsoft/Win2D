@@ -200,7 +200,7 @@ namespace Microsoft.Graphics.Canvas
         // Exposed through IDWriteTextLayout::HitTestPoint.
         [overload("HitTest")]
         HRESULT HitTest(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] NUMERICS.Vector2 point,
             [out, retval] boolean* isHit);
 
         [overload("HitTest"), default_overload]
@@ -211,7 +211,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("HitTest")]
         HRESULT HitTestWithDescription(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] NUMERICS.Vector2 point,
             [out] CanvasTextLayoutRegion* textLayoutRegion,
             [out, retval] boolean* isHit);
 
@@ -224,7 +224,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("HitTest"), default_overload]
         HRESULT HitTestWithDescriptionAndTrailingSide(
-            [in] Microsoft.Graphics.Canvas.Numerics.Vector2 point,
+            [in] NUMERICS.Vector2 point,
             [out] CanvasTextLayoutRegion* textLayoutRegion,
             [out] boolean* trailingSideOfCharacter,
             [out, retval] boolean* isHit);
@@ -242,14 +242,14 @@ namespace Microsoft.Graphics.Canvas
         HRESULT GetCaretPosition(
             [in] INT32 characterIndex,
             [in] boolean trailingSideOfCharacter,
-            [out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* location);
+            [out, retval] NUMERICS.Vector2* location);
 
         [overload("GetCaretPosition"), default_overload]
         HRESULT GetCaretPositionWithDescription(
             [in] INT32 characterIndex,
             [in] boolean trailingSideOfCharacter,
             [out] CanvasTextLayoutRegion* textLayoutRegion,
-            [out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* location);
+            [out, retval] NUMERICS.Vector2* location);
 
         // Exposed through IDWriteTextLayout::HitTestTextRange.
         [overload("GetCharacterRegions"), default_overload]

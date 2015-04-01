@@ -32,7 +32,15 @@
     </Link>
   </ItemDefinitionGroup>
   <Target Name="mdmerge" AfterTargets="Midl" Inputs="@(Midl -> '%(MetadataFileName)')" Outputs="$(MergedWinmdDirectory)\$(RootNamespace).winmd">
-    <Exec Command="mdmerge -metadata_dir &quot;$(WindowsSDK_MetadataPath)&quot; -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -v -partial -n:Microsoft.Graphics.Canvas:3" />
+    <PropertyGroup>
+      <MdMergeExe>"$(WindowsSdkDir)\bin\$(PreferredToolArchitecture)\mdmerge.exe"</MdMergeExe>
+      
+      <!-- TODO: this shouldn't be necessary - $(WindowsSDK_MetadataPath) should be the correct path -->
+      <MetaDataPath Condition="'$(ApplicationTypeRevision)' == '8.1'">"$(WindowsSDK_MetadataPath)"</MetaDataPath>
+      <MetaDataPath Condition="'$(ApplicationTypeRevision)' == '8.2'">"$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\1.0.0.0" -metadata_dir "$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\1.0.0.0"</MetaDataPath>
+    </PropertyGroup>
+    <Exec Command="$(MdMergeExe) -metadata_dir $(MetadataPath) -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
+    <!-- TODO: should pass '-v' to mdmerge once MS:1341138 is resolved -->
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
@@ -199,8 +207,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
+    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />

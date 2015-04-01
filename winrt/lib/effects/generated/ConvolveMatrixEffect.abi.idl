@@ -21,10 +21,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         requires Microsoft.Graphics.Canvas.ICanvasImage
     {
         [propget]
-        HRESULT KernelScale([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT KernelScale([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT KernelScale([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT KernelScale([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
@@ -63,10 +63,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Offset([in] float value);
 
         [propget]
-        HRESULT KernelOffset([out, retval] Microsoft.Graphics.Canvas.Numerics.Vector2* value);
+        HRESULT KernelOffset([out, retval] NUMERICS.Vector2* value);
 
         [propput]
-        HRESULT KernelOffset([in] Microsoft.Graphics.Canvas.Numerics.Vector2 value);
+        HRESULT KernelOffset([in] NUMERICS.Vector2 value);
 
         [propget]
         HRESULT PreserveAlpha([out, retval] boolean* value);

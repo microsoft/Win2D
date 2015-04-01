@@ -91,14 +91,14 @@ public:
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP GetEvictionPriority(UINT* value)
+    STDMETHODIMP GetEvictionPriority(UINT* val)
     {
         if (MockGetEvictionPriority)
         {
             return ExceptionBoundary(
                 [&]()
                 {
-                    *value = MockGetEvictionPriority();
+                    *val = MockGetEvictionPriority();
                 });
         }
         else
@@ -120,14 +120,14 @@ public:
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP SetEvictionPriority(UINT value)
+    STDMETHODIMP SetEvictionPriority(UINT val)
     {
         if (MockSetEvictionPriority)
         {
             return ExceptionBoundary(
                 [&]()
                 {
-                    MockSetEvictionPriority(value);
+                    MockSetEvictionPriority(val);
                 });
         }
         else

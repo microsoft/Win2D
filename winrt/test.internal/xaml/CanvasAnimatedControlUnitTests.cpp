@@ -1362,7 +1362,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
                         m_totalTime = targetTime;
                     }
 
-                    ExpectedTiming expected{ m_updateCount, m_totalTime, timeSinceLastUpdate, isRunningSlowly };
+                    ExpectedTiming expected{ m_updateCount, m_totalTime, timeSinceLastUpdate, static_cast<boolean>(isRunningSlowly) };
 
                     m_expectedOnUpdate.push(expected);
 

@@ -138,6 +138,6 @@
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectCapability Include="$(MSBuildThisFileDirectory)SourceItemsFromImports" />
+    <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
 </Project>

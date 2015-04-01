@@ -33,7 +33,7 @@ namespace ExampleGallery
         float currentDistanceOnContourPath;
         float totalDistanceOnContourPath;
         Vector2 pointOnContourPath;
-        Microsoft.Graphics.Canvas.Numerics.Vector2 tangentOnContourPath;
+        Vector2 tangentOnContourPath;
 
         bool showTessellation;
         CanvasTriangleVertices[] tessellation;
@@ -202,7 +202,13 @@ namespace ExampleGallery
                 float animationDistanceThisFrame = CurrentContourTracingAnimation == ContourTracingAnimationOption.Slow ? 1.0f : 20.0f;
                 currentDistanceOnContourPath = (currentDistanceOnContourPath + animationDistanceThisFrame) % totalDistanceOnContourPath;
 
-                pointOnContourPath = combinedGeometry.ComputePointOnPath(currentDistanceOnContourPath, out tangentOnContourPath);
+#if WINDOWS_UAP
+                Vector2 outTangent;
+#else
+                Microsoft.Graphics.Canvas.Numerics.Vector2 outTangent;
+#endif
+                pointOnContourPath = combinedGeometry.ComputePointOnPath(currentDistanceOnContourPath, out outTangent);
+                tangentOnContourPath = outTangent;
             }
         }
 

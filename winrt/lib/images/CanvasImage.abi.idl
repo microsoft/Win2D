@@ -30,7 +30,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("GetBounds")]
         HRESULT GetBoundsWithTransform(
             [in] CanvasDrawingSession* drawingSession,
-            [in] Microsoft.Graphics.Canvas.Numerics.Matrix3x2 transform,
+            [in] NUMERICS.Matrix3x2 transform,
             [out, retval] Windows.Foundation.Rect* bounds);
     }
 }

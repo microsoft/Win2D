@@ -9,10 +9,8 @@
   -->
 
   <PropertyGroup>
-    <DeviceType Condition="'$(ApplicationType)' == 'Windows Store'">Windows</DeviceType>
-    <DeviceType Condition="'$(ApplicationType)' == 'Windows Phone'">Phone</DeviceType>
-    <DeviceType Condition="'$(ApplicationType)' == ''">Windows</DeviceType>
     <DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</DeviceType>
+    <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -43,7 +41,10 @@
 
     <__OutputPath>$(BinariesDirectory)\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\obj\$(MSBuildProjectName)\$(FullPlatform)\$(Configuration)\</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+
+    <!-- TODO: MakeRelative shouldn't be necessary, but the .NET native build tools assume IntermediateOutputPath is relative to MSBuildProjectDirectory -->
+    <IntermediateOutputPath>$([MSBuild]::MakeRelative($(MSBuildProjectDirectory), $(BaseIntermediateOutputPath)))</IntermediateOutputPath>
+
     <AssetDir>$(MSBuildThisFileDirectory)assets\</AssetDir>
 
     <!-- Force all directories to lower case -->
@@ -53,5 +54,41 @@
     <AssetDir>$(AssetDir.ToLower())</AssetDir>
 
   </PropertyGroup>
+
+  <!-- 
+       This does some work that should be done in c:/Program Files
+       (x86)/MSBuild/14.0/Microsoft.Common.Targets/ImportBefore/Windows.8.1.UT_SDKReference.props.
+       While we're waiting for this, we can do it ourselves. 
+       
+       TODO: WorkaroundModifyUnitTestPlatformVersion can be removed when the workaround is added to VS2015.
+  -->
+
+  <Target Name="WorkaroundModifyUnitTestPlatformVersion" BeforeTargets="ResolveSDKReferences" AfterTargets="ModifyUnitTestPlatformVersion" Condition="'$(UnitTestPlatformVersion)' != ''">
+    <ItemGroup>
+
+      <SDKReference Include="CppUnitTestFramework, Version=$(UnitTestPlatformVersion)" Condition="'$(PlatformToolset)' != '' and '%(SDKReference.Identity)' == 'CppUnitTestFramework, Version=11.0'" />
+      <SDKReference Include="MSTestFramework, Version=$(UnitTestPlatformVersion)"  Condition="'$(PlatformToolset)' == '' and '%(SDKReference.Identity)' == 'MSTestFramework, Version=11.0'" />
+      <SDKReference Include="TestPlatform, Version=$(UnitTestPlatformVersion)" Condition="'%(SDKReference.Identity)' == 'TestPlatform, Version=11.0'" />
+      
+      <SDKReference Remove="CppUnitTestFramework, Version=11.0"/>
+      <SDKReference Remove="MSTestFramework, Version=11.0"/>
+      <SDKReference Remove="TestPlatform, Version=11.0" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+       TODO: remove this workaround once DEVDIV:1122911 is fixed
+  -->
+  <PropertyGroup>
+    <!-- The SDKExtensionDirectoryRoot that we're fixing here is conditioned on
+         SDKTargetReferenceDirectoryRoot being not-empty.  That is the only
+         reference to SDKTargetReferenceDirectoryRoot I can find, so just
+         setting it to a random value is enough to allow us to override
+         SDKExtensionDirectoryRoot.
+    -->
+    <SDKTargetReferenceDirectoryRoot>Please let me override SDKExtensionDirectoryRoot, thank you.</SDKTargetReferenceDirectoryRoot>
+    <SDKExtensionDirectoryRoot>$(MSBuildProgramFiles32)\Windows Kits\10;$(LocalAppData)\$(SDKIdentifier)\$(SDKVersion);$(MSBuildProgramFiles32)\$(SDKIdentifier)\$(SDKVersion)</SDKExtensionDirectoryRoot>
+  </PropertyGroup>
+      
 
 </Project>

@@ -16,4 +16,9 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
+    <TargetPlatformVersion>10.0.10030.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10030.0</TargetPlatformMinVersion>
+  </PropertyGroup>
 </Project>

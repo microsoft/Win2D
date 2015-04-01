@@ -438,7 +438,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             std::unique_lock<std::recursive_mutex> lock(m_currentOperationMutex);
 
             if (m_currentOperation)
-                ThrowHR(COR_E_NOTSUPPORTED, HStringReference(Strings::MultipleAsyncCreateResourcesNotSupported).Get());
+                ThrowHR(E_FAIL, HStringReference(Strings::MultipleAsyncCreateResourcesNotSupported).Get());
 
             auto onCompleted = Callback<IAsyncActionCompletedHandler>(this, &RecreatableDeviceManager::OnAsynchronousCreateResourcesCompleted);
             CheckMakeResult(onCompleted);

@@ -84,6 +84,17 @@ namespace ExampleGallery
         {
             this.Page = page;
 
+#if WINDOWS_PHONE_APP
+            this.HasHardwareButtons = true;
+#elif WINDOWS_UAP
+            this.HasHardwareButtons = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons");
+#else
+            this.HasHardwareButtons = false;
+#endif
+
+
+
+
             // When this page is part of the visual tree make two changes:
             // 1) Map application view state to visual state for the page
             // 2) Handle hardware navigation requests
@@ -91,16 +102,28 @@ namespace ExampleGallery
             {
 #if WINDOWS_PHONE_APP
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-#else
-                // Keyboard and mouse navigation only apply when occupying the entire window
-                if (this.Page.ActualHeight == Window.Current.Bounds.Height &&
-                    this.Page.ActualWidth == Window.Current.Bounds.Width)
+#endif
+
+#if WINDOWS_UAP
+                if (this.HasHardwareButtons)
                 {
-                    // Listen to the window directly so focus isn't required
-                    Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
-                        CoreDispatcher_AcceleratorKeyActivated;
-                    Window.Current.CoreWindow.PointerPressed +=
-                        this.CoreWindow_PointerPressed;
+                    Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+                }
+                else
+#endif
+#if !WINDOWS_PHONE_APP
+                {
+
+                    // Keyboard and mouse navigation only apply when occupying the entire window
+                    if (this.Page.ActualHeight == Window.Current.Bounds.Height &&
+                        this.Page.ActualWidth == Window.Current.Bounds.Width)
+                    {
+                        // Listen to the window directly so focus isn't required
+                        Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
+                            CoreDispatcher_AcceleratorKeyActivated;
+                        Window.Current.CoreWindow.PointerPressed +=
+                            this.CoreWindow_PointerPressed;
+                    }
                 }
 #endif
             };
@@ -110,11 +133,22 @@ namespace ExampleGallery
             {
 #if WINDOWS_PHONE_APP
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
-#else
-                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
+#endif
+
+#if WINDOWS_UAP
+                if (this.HasHardwareButtons)
+                {
+                    Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
+                }
+                else
+#endif
+#if !WINDOWS_PHONE_APP
+                {
+                    Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
                     CoreDispatcher_AcceleratorKeyActivated;
-                Window.Current.CoreWindow.PointerPressed -=
-                    this.CoreWindow_PointerPressed;
+                    Window.Current.CoreWindow.PointerPressed -=
+                        this.CoreWindow_PointerPressed;
+                }
 #endif
             };
         }
@@ -170,6 +204,9 @@ namespace ExampleGallery
             }
         }
 
+        public bool HasHardwareButtons { get; internal set; }
+
+
         /// <summary>
         /// Virtual method used by the <see cref="GoBackCommand"/> property
         /// to determine if the <see cref="Frame"/> can go back.
@@ -212,7 +249,7 @@ namespace ExampleGallery
             if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
         }
 
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
         /// <summary>
         /// Invoked when the hardware back button is pressed. For Windows Phone only.
         /// </summary>
@@ -226,7 +263,9 @@ namespace ExampleGallery
                 this.GoBackCommand.Execute(null);
             }
         }
-#else
+#endif
+
+#if !WINDOWS_PHONE_APP
         /// <summary>
         /// Invoked on every keystroke, including system keys such as Alt key combinations, when
         /// this page is active and occupies the entire window.  Used to detect keyboard navigation
@@ -285,7 +324,8 @@ namespace ExampleGallery
 
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
-                properties.IsMiddleButtonPressed) return;
+                properties.IsMiddleButtonPressed)
+                return;
 
             // If back or foward are pressed (but not both) navigate appropriately
             bool backPressed = properties.IsXButton1Pressed;

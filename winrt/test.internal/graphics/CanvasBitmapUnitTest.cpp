@@ -23,8 +23,8 @@ TEST_CLASS(CanvasBitmapUnitTest)
         std::shared_ptr<CanvasBitmapManager> m_bitmapManager;
         
         WinString m_testFileName;
-        int m_testImageWidth;
-        int m_testImageHeight;
+        uint32_t m_testImageWidth;
+        uint32_t m_testImageHeight;
         float m_testImageWidthDip;
         float m_testImageHeightDip;
         ComPtr<StubCanvasDevice> m_canvasDevice;
@@ -162,17 +162,14 @@ TEST_CLASS(CanvasBitmapUnitTest)
             return D2D1_PIXEL_FORMAT{ DXGI_FORMAT_BC3_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED };
         });
 
-        DirectXPixelFormat format = DirectXPixelFormat::Unknown;
+        DirectXPixelFormat format = PIXEL_FORMAT(Unknown);
         bitmap->get_Format(&format);
-        Assert::AreEqual(DirectXPixelFormat::BC3UIntNormalized, format);
+        Assert::AreEqual(PIXEL_FORMAT(BC3UIntNormalized), format);
     }
 
     TEST_METHOD_EX(CanvasBitmap_Get_Size)
     {
         Fixture f;
-
-        ABI::Windows::Foundation::Size size;
-        BitmapSize bitmapSize;
 
         bool isConverterCreated = false;
         f.m_adapter->MockCreateWICFormatConverter =
@@ -186,11 +183,13 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
         Assert::AreEqual(true, isConverterCreated);
 
+        BitmapSize bitmapSize;
         HRESULT result = canvasBitmap->get_SizeInPixels(&bitmapSize);
         Assert::AreEqual(S_OK, result);
-        Assert::AreEqual(f.m_testImageWidth, (int)bitmapSize.Width);
-        Assert::AreEqual(f.m_testImageHeight, (int)bitmapSize.Height);
+        Assert::AreEqual(f.m_testImageWidth, static_cast<uint32_t>(bitmapSize.Width));
+        Assert::AreEqual(f.m_testImageHeight, static_cast<uint32_t>(bitmapSize.Height));
 
+        ABI::Windows::Foundation::Size size;
         result = canvasBitmap->get_Size(&size);
         Assert::AreEqual(S_OK, result);
         Assert::AreEqual(f.m_testImageWidthDip, size.Width);

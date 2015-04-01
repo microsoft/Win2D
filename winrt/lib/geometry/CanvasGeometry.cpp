@@ -252,14 +252,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasGeometryFactory::get_DefaultFlatteningTolerance(float* value)
+    IFACEMETHODIMP CanvasGeometryFactory::get_DefaultFlatteningTolerance(float* theValue)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
+                CheckInPointer(theValue);
                 
-                *value = D2D1_DEFAULT_FLATTENING_TOLERANCE;
+                *theValue = D2D1_DEFAULT_FLATTENING_TOLERANCE;
             });
     }
 

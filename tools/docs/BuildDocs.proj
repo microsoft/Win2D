@@ -27,7 +27,7 @@
 
   <!-- Other files that are not part of the API, but which define types used by it -->
   <ItemGroup>
-    <ReferenceAssembly Include="$(WindowsSdkDir)References\CommonConfiguration\Neutral\Windows.winmd" />
+    <ReferenceAssembly Include="$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot81)References\CommonConfiguration\Neutral\Windows.winmd" />
   </ItemGroup>
 
 
@@ -88,6 +88,10 @@
     <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; @(DocSrc->'/DocSrc:&quot;%(Identity)&quot;', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ')" />
   </Target>
 
+
+  <ItemGroup>
+    <PackagesConfig Include="$(MSBuildThisFileDirectory)..\..\.nuget\packages.config" />
+  </ItemGroup>
 
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
   <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">

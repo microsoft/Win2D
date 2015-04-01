@@ -75,11 +75,15 @@ namespace ExampleGallery
             var transformedPoints = from point in points
                                     select point * scale + center;
 
+#if WINDOWS_UAP
+            var convertedPoints = transformedPoints;
+#else
             // Convert the System.Numerics.Vector2 type that we normally work with to the
             // Microsoft.Graphics.Canvas.Numerics.Vector2 struct used by WinRT. These casts
             // are usually inserted automatically, but auto conversion does not work for arrays.
             var convertedPoints = from point in transformedPoints
                                   select (Microsoft.Graphics.Canvas.Numerics.Vector2)point;
+#endif
 
             return CanvasGeometry.CreatePolygon(resourceCreator, convertedPoints.ToArray());
         }

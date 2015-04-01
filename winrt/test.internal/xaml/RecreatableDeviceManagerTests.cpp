@@ -994,9 +994,9 @@ public:
 
                         auto action2 = Make<MockAsyncAction>();
                         HRESULT hr = args->TrackAsyncAction(action2.Get());
-                        Assert::AreEqual(hr, COR_E_NOTSUPPORTED);
+                        Assert::AreEqual(hr, E_FAIL);
 
-                        ValidateStoredErrorState(COR_E_NOTSUPPORTED, Strings::MultipleAsyncCreateResourcesNotSupported);
+                        ValidateStoredErrorState(E_FAIL, Strings::MultipleAsyncCreateResourcesNotSupported);
 
                         called = true;
 
@@ -1008,7 +1008,7 @@ public:
 
         f.DeviceFactory->ExpectToActivateOne();
 
-        ExpectHResultException(COR_E_NOTSUPPORTED,
+        ExpectHResultException(E_FAIL,
             [&] { f.CallRunWithDeviceDontExpectFunctionToBeCalled(); });
 
         Assert::IsTrue(called);

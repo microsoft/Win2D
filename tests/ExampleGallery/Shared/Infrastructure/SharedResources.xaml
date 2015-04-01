@@ -24,6 +24,8 @@ under the License.
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="LineHeight" Value="30" />
     </Style>
 
 </ResourceDictionary>

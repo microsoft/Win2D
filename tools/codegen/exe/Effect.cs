@@ -381,7 +381,7 @@ namespace CodeGen
                             // Matrix5x4 is defined locally as part of Effects, but other math types live in the Numerics namespace.
                             if (!xmlName.Contains("5x4"))
                             {
-                                property.TypeNameIdl = "Microsoft.Graphics.Canvas.Numerics." + property.TypeNameIdl;
+                                property.TypeNameIdl = "NUMERICS." + property.TypeNameIdl;
                                 property.TypeNameCpp = "Numerics::" + property.TypeNameCpp;
                             }
                         }

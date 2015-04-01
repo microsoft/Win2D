@@ -30,7 +30,8 @@ under the License.
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
-            <Button Command="{Binding NavigationHelper.GoBackCommand, ElementName=page}" 
+            <Button x:Name="backButton" 
+                    Command="{Binding NavigationHelper.GoBackCommand, ElementName=page}" 
                     Margin="39,59,39,59" VerticalAlignment="Center" 
                     Style="{StaticResource NavigationBackButtonNormalStyle}"/>
             <TextBlock Style="{StaticResource HeaderTextBlockStyle}" VerticalAlignment="Center" Text="{Binding Name}"></TextBlock>

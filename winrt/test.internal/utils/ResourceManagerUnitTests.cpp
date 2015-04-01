@@ -29,7 +29,7 @@ namespace
 }
 
 template<>
-static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DummyResourceManager>(DummyResourceManager* value)
+std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DummyResourceManager>(DummyResourceManager* value)
 {
     return PointerToString(L"DummyResourceManager", value);
 }
