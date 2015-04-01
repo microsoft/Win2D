@@ -33,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CustomFonts.xaml.cs">
       <DependentUpon>CustomFonts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DrawImageEmulations.xaml.cs">
+      <DependentUpon>DrawImageEmulations.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\AppIconGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
       <DependentUpon>DeveloperTools.xaml</DependentUpon>
@@ -92,6 +95,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)CustomFonts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)DrawImageEmulations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -185,6 +192,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DeveloperToolsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DPINarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DPIWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DrawImageEmulationsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DrawImageEmulationsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GameofLifeNarrow.png" />
