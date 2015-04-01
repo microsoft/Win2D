@@ -410,7 +410,7 @@ under the License.
       	<p>
       	Draw bounds are different from layout bounds. Below, the draw bounds are outlined in green. Layout bounds are outlined in blue. 
       	</p>
-        <img src="../images/Blend.png" alt="CanvasBlend diagram" />   
+        <img src="../images/TextMetrics.png" alt="CanvasTextLayout diagram" />   
       	<p>
       	The draw bounds are the area that is covered when you draw the text. 
       	Notice how the rectangles don't necessarily align along the top or bottom edge.
@@ -431,7 +431,7 @@ under the License.
       	<p>
       	Draw bounds are different from layout bounds. Below, the draw bounds are outlined in green. Layout bounds are outlined in blue. 
       	</p>
-        <img src="../images/Blend.png" alt="CanvasBlend diagram" />   
+        <img src="../images/TextMetrics.png" alt="CanvasTextLayout diagram" />   
       	<p>
       	The draw bounds are the area that is covered when you draw the text. 
       	Notice how the rectangles don't necessarily align along the top or bottom edge.
