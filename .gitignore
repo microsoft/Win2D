@@ -38,6 +38,7 @@ x64/
 *.pidb
 *.log
 *.scc
+UpgradeLog*.htm
 
 # Visual C++ cache files
 ipch/
