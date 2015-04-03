@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Win2D-UAP-debug</id>
+        <version>0.0.0-SpecifyVersionOnCommandline</version>
+        <title>Preview of Win2D with UAP support (debug)</title>
+        <authors>Microsoft</authors>
+        <owners>win2d,microsoft</owners>
+        <description>Win2D debug build. Suitable for debugging Win2D itself.</description>
+        <projectUrl>http://go.microsoft.com/fwlink/?LinkID=519078</projectUrl>
+        <licenseUrl>$LicenseUrl$</licenseUrl>
+        <requireLicenseAcceptance>$RequireLicenseAcceptance$</requireLicenseAcceptance>
+        <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing C# C++ Windows</tags>
+
+        <dependencies>
+          <dependency id="Win2D-UAP"/>
+        </dependencies>
+   </metadata>
+
+    <files>
+      <!-- 
+           These generate warnings about the files being outside of the lib
+           directory.  We want it that way because we don't want to reference
+           the DLL files as they're not necessarly .NET assemblies.
+
+           Running with -NoPackageAnalysis suppresses the warnings.
+      -->
+
+      <!-- Windows -->
+
+      <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x86" />
+      <file src="$bin$\windowsx86\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x86" />
+      <file src="bin\windowsx86\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x86" />
+
+      <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\arm" />
+      <file src="$bin$\windowsarm\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\arm" />
+      <file src="bin\windowsarm\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\arm" />
+
+      <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" target="bin\Windows\x64" />
+      <file src="$bin$\windowsx64\debug\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Windows\x64" />
+      <file src="bin\windowsx64\debug\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" target="bin\Windows\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Windows\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Windows\x64" />
+
+      <!-- Windows Phone -->
+
+      <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\x86" />
+      <file src="$bin$\phonex86\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\x86" />
+      <file src="bin\phonex86\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\x86" />
+
+      <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" target="bin\Phone\arm" />
+      <file src="$bin$\phonearm\debug\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" target="bin\Phone\arm" />
+      <file src="bin\phonearm\debug\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" target="bin\Phone\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
+
+      <!-- UAP -->
+
+      <file src="$bin$\UAPx86\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\x86" />
+      <file src="$bin$\UAPx86\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\x86" />
+      <file src="bin\UAPx86\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\x86" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x86" />
+
+      <file src="$bin$\UAParm\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\arm" />
+      <file src="$bin$\UAParm\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\arm" />
+      <file src="bin\UAParm\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\arm" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\arm" />
+
+      <file src="$bin$\UAPx64\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\x64" />
+      <file src="$bin$\UAPx64\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\x64" />
+      <file src="bin\UAPx64\debug\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\x64" />
+      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x64" />
+
+      <file src="build\nuget\Win2D-debug.props" target="build" />
+
+      <!-- SHA-1 hash of the git HEAD this package was built from -->
+      <file src="obj\Win2d.githash.txt" target="Win2d-debug.githash.txt" />
+    </files>
+</package>

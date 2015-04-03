@@ -45,6 +45,13 @@ IF "%1" == "signed" (
     SET REQUIRE_LICENSE_ACCEPTANCE=false
 )
 
+if "%OVERRIDE_NUGET_PACKAGE%"  == "" (
+    SET NUGET_PACKAGE=Win2D
+) else (
+    ECHO Using OVERRIDE_NUGET_PACKAGE: %OVERRIDE_NUGET_PACKAGE%
+    SET NUGET_PACKAGE=%OVERRIDE_NUGET_PACKAGE%
+)
+
 SET NUGET_ARGS=^
     -nopackageanalysis ^
     -basepath ..\.. ^
@@ -52,11 +59,11 @@ SET NUGET_ARGS=^
     -version %VERSION% ^
     -properties bin=%BIN%;LicenseUrl=%LICENSE_URL%;RequireLicenseAcceptance=%REQUIRE_LICENSE_ACCEPTANCE%
 
-nuget pack Win2D.nuspec %NUGET_ARGS%
+nuget pack %NUGET_PACKAGE%.nuspec %NUGET_ARGS%
 IF %ERRORLEVEL% NEQ 0 GOTO END
 
 IF NOT "%1" == "signed" (
-    nuget pack Win2D-debug.nuspec %NUGET_ARGS%
+    nuget pack %NUGET_PACKAGE%-debug.nuspec %NUGET_ARGS%
     IF %ERRORLEVEL% NEQ 0 GOTO END
 )
 

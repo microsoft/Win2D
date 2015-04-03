@@ -13,7 +13,7 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END
 )
 
-msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false
+msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false /p:BuildUAP=false
 
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Build failed; aborting.
@@ -28,6 +28,9 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 ECHO.
+
+SETLOCAL
+SET OVERRIDE_NUGET_PACKAGE=
 
 CALL "%~dp0build\nuget\build-nupkg.cmd" local
 

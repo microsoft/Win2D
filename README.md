@@ -65,3 +65,50 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 
 Locally built versions of Win2D are marked as prerelease, so you must change the 'Stable 
 Only' setting to 'Include Prerelease' when adding them to your project.
+
+
+## Preview of Windows universal app platform support
+
+A preview of Win2D's support for the universal app platform is available through
+source builds only.
+
+### Building the Win2D-UAP NuGet package
+
+Follow these steps to build a NuGet package that can be consumed by a Windows
+universal app:
+
+- Install the [Windows 10 developer tooling
+  preview](http://blogs.windows.com/buildingapps/2015/03/23/windows-10-developer-tooling-preview-now-available-to-windows-insiders/)
+- Launch "MSBuild Command Prompt for VS2015" (not "Developer Command Prompt")
+- Change directory to your cloned Win2D repository and execute the following commands:
+
+```console
+> build
+> msbuild win2d.proj /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false /p:BuildWindows=false /p:BuildPhone=false
+> cd build\nuget
+> set OVERRIDE_NUGET_PACKAGE=Win2D-UAP
+> build-nupkg local
+```
+
+- This will generate a NuGet package called Win2D-UAP.
+
+
+### Using the Win2D-UAP NuGet package
+
+- Install the Win2D-UAP package as usual.
+
+As various parts of the platform, SDK and development tools are still under
+development, there are some rough edges:
+
+- Currently, C# apps will also need to install the System.Numerics.Vectors package.
+
+- Currently, C# apps will need to enable the "Compile with .NET Native tool
+  chain" option available through the "Build" tab of the app properties.
+
+- The template for C# UAP apps includes the following line in App.xaml.cs, which
+  needs to be removed or commented out as it is incompatible with the .NET
+  native tool chain:
+
+```C#
+public TelemetryClient TelemetryClient = new TelemetryClient();
+```
