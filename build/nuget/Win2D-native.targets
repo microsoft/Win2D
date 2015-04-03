@@ -24,4 +24,10 @@
     </Link>
   </ItemDefinitionGroup>
 
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Include\$(win2d-DeviceType);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
 </Project>

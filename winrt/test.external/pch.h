@@ -46,7 +46,7 @@
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <Microsoft.Graphics.Canvas.Effects.interop.h>
 
-#include <Canvas.abi.h>
+#include <Microsoft.Graphics.Canvas.h>
 
 // Pick up the inbox or local WinRT DirectX types as appropriate
 #include <WinRTDirectX.h>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -211,7 +211,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
   </ItemGroup>
   <ItemGroup>
-    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
+    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl">
+      <RenameHeaderTo>Microsoft.Graphics.Canvas.h</RenameHeaderTo>
+    </MidlRT>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
     <None Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.abi.idl" />

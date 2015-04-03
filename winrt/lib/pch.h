@@ -87,7 +87,7 @@
 #include <WinStringBuilder.h>
 
 // Generated from local IDLs
-#include <Canvas.abi.h>
+#include <Microsoft.Graphics.Canvas.h>
 
 // Pick up the inbox or local WinRT DirectX types as appropriate
 #include "WinRTDirectX.h"

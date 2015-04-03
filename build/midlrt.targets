@@ -16,7 +16,8 @@
         <MetadataFileName>$(UnmergedWinmdDirectory)\%(Filename).winmd</MetadataFileName>
         <DllDataFileName>$(IntDir)dlldata.c</DllDataFileName>
         <GenerateTypeLibrary>false</GenerateTypeLibrary>
-        <HeaderFileName>$(IdlHeaderDirectory)\%(Filename).h</HeaderFileName>
+        <HeaderFileName Condition="'%(MidlRT.RenameHeaderTo)' == ''">$(IdlHeaderDirectory)\%(Filename).h</HeaderFileName>
+        <HeaderFileName Condition="'%(MidlRT.RenameHeaderTo)' != ''">$(IdlHeaderDirectory)\%(MidlRT.RenameHeaderTo)</HeaderFileName>
         <ProxyFileName>$(IntDir)%(Filename)_p.c</ProxyFileName>
         <InterfaceIdentifierFileName>$(IntDir)%(Filename)_i.c</InterfaceIdentifierFileName>
 

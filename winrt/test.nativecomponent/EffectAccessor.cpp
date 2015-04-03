@@ -13,7 +13,7 @@
 #include "pch.h"
 
 #include <Microsoft.Graphics.Canvas.Effects.interop.h>
-#include <Canvas.abi.h>
+#include <Microsoft.Graphics.Canvas.h>
 
 namespace NativeComponent
 {

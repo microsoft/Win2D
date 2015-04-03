@@ -11,9 +11,4 @@
     <win2d-BinDir Condition="'$(win2d-BinDir)' == ''">$(MSBuildThisFileDirectory)..\..\bin\</win2d-BinDir>
   </PropertyGroup>
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
 </Project>

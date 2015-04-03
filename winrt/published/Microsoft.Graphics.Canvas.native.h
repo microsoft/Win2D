@@ -15,6 +15,8 @@
 #include <inspectable.h>
 #include <wrl.h>
 
+interface ID2D1Device1;
+
 namespace ABI
 {
     namespace Microsoft
