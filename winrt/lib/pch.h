@@ -68,7 +68,6 @@
 #pragma warning(default: 4265)  // "class has virtual functions, but destructor is not virtual"
 
 // Public
-#include <Microsoft.Graphics.Canvas.Effects.interop.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 
 // Inc

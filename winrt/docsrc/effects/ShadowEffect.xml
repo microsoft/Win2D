@@ -20,9 +20,14 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.ShadowEffect">
-      <summary>Generates a shadow from the alpha channel of an image. The shadow is more
-               opaque for higher alpha values and more transparent for lower alpha
-               values. You can set the amount of blur and the color of the shadow.</summary>
+      <summary>
+        <p>
+          Generates a shadow from the alpha channel of an image. The shadow is more
+          opaque for higher alpha values and more transparent for lower alpha
+          values. You can set the amount of blur and the color of the shadow.
+        </p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>
           To add a drop shadow to an image, use the shadow effect, translate it by the

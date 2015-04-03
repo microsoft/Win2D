@@ -27,10 +27,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Angle([in] float value);
 
         [propget]
-        HRESULT Source([out, retval] IGraphicsEffectSource** source);
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]
-        HRESULT Source([in] IGraphicsEffectSource* source);
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
 
     };
 
@@ -38,6 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass HueRotationEffect
     {
         [default] interface IHueRotationEffect;
-        interface IGraphicsEffect;
+        interface IGRAPHICSEFFECT;
     }
 }

@@ -20,7 +20,9 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.BlendEffect">
-      <summary>Creates a blend effect that combines two images.</summary>
+      <summary>
+        Creates a blend effect that combines two images.
+      </summary>
       <remarks>
         <p>The output bitmap for this effect is always the size of the union of the two input images.</p>
         <example>
@@ -84,7 +86,10 @@ under the License.
       <summary>Lighten blend mode. <img src="../images/BlendEffectMode_Lighten.png"/></summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Dissolve">
-      <summary>Dissolve blend mode. <img src="../images/BlendEffectMode_Dissolve.png"/></summary>
+      <summary>
+        <p>Dissolve blend mode. <img src="../images/BlendEffectMode_Dissolve.png"/></p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.ColorBurn">
       <summary>Color burn blend mode. <img src="../images/BlendEffectMode_ColorBurn.png"/></summary>
@@ -132,16 +137,28 @@ under the License.
       <summary>Exclusion blend mode. <img src="../images/BlendEffectMode_Exclusion.png"/></summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Hue">
-      <summary>Hue blend mode. <img src="../images/BlendEffectMode_Hue.png"/></summary>
+      <summary>
+        <p>Hue blend mode. <img src="../images/BlendEffectMode_Hue.png"/></p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Saturation">
-      <summary>Saturation blend mode. <img src="../images/BlendEffectMode_Saturation.png"/></summary>
+      <summary>
+        <p>Saturation blend mode. <img src="../images/BlendEffectMode_Saturation.png"/></p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Color">
-      <summary>Color blend mode. <img src="../images/BlendEffectMode_Color.png"/></summary>
+      <summary>
+        <p>Color blend mode. <img src="../images/BlendEffectMode_Color.png"/></p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Luminosity">
-      <summary>Luminosity blend mode. <img src="../images/BlendEffectMode_Luminosity.png"/></summary>
+      <summary>
+        <p>Luminosity blend mode. <img src="../images/BlendEffectMode_Luminosity.png"/></p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Subtract">
       <summary>Subtract blend mode. <img src="../images/BlendEffectMode_Subtract.png"/></summary>

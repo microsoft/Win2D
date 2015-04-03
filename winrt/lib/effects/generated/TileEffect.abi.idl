@@ -27,10 +27,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT SourceRectangle([in] Windows.Foundation.Rect value);
 
         [propget]
-        HRESULT Source([out, retval] IGraphicsEffectSource** source);
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]
-        HRESULT Source([in] IGraphicsEffectSource* source);
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
 
     };
 
@@ -38,6 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass TileEffect
     {
         [default] interface ITileEffect;
-        interface IGraphicsEffect;
+        interface IGRAPHICSEFFECT;
     }
 }

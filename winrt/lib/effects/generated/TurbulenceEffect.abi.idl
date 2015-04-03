@@ -75,6 +75,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass TurbulenceEffect
     {
         [default] interface ITurbulenceEffect;
-        interface IGraphicsEffect;
+        interface IGRAPHICSEFFECT;
     }
 }

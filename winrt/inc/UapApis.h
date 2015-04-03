@@ -25,9 +25,11 @@
 
 #ifdef USE_LOCALLY_EMULATED_UAP_APIS
 # include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+# include <Microsoft.Graphics.Canvas.Effects.interop.h>
 #else
 # include <windows.graphics.directx.h>
 # include <windows.graphics.directx.direct3d11.interop.h>
+# include <windows.graphics.effects.interop.h>
 #endif
 
 
@@ -44,12 +46,14 @@ namespace WinRTDirectX
     using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
     using namespace WINRT_PREFIX Microsoft::Graphics::Canvas::DirectX::Direct3D11;
     using namespace WINRT_PREFIX Microsoft::Graphics::Canvas::DirectX;
+    using namespace WINRT_PREFIX Microsoft::Graphics::Canvas::Effects;
 
 #else
 
     using ::Windows::Graphics::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
     using namespace WINRT_PREFIX Windows::Graphics::DirectX;
     using namespace WINRT_PREFIX Windows::Graphics::DirectX::Direct3D11;
+    using namespace WINRT_PREFIX Windows::Graphics::Effects;
 
 #endif
 }

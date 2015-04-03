@@ -20,8 +20,13 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect">
-      <summary>Scales an input bitmap to match a different DPI. This is useful for situations 
-               where a bitmap is created or loaded at a different DPI than the screen.</summary>
+      <summary>
+        <p>
+          Scales an input bitmap to match a different DPI. This is useful for situations 
+          where a bitmap is created or loaded at a different DPI than the screen.
+        </p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh780341.aspx">D2D DPI compensation effect</a>.</p>

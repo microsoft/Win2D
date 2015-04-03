@@ -26,6 +26,10 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
+#if WINDOWS_UAP
+using Windows.Graphics.Effects;
+#endif
+
 namespace ExampleGallery
 {
     public sealed partial class EffectsExample : UserControl

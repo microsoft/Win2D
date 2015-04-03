@@ -20,8 +20,10 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.OpacityMetadataEffect">
-      <summary>Marks an area of an input image as opaque,
-               which can enable internal rendering optimizations.</summary>
+      <summary>
+        <p>Marks an area of an input image as opaque, which can enable internal rendering optimizations.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>Note: this effect doesn't modify the image itself to be opaque. 
            It modifies data associated with the image so the renderer 

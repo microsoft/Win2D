@@ -12,18 +12,26 @@
 
 #include "pch.h"
 
-#include <Microsoft.Graphics.Canvas.Effects.interop.h>
-#include <Microsoft.Graphics.Canvas.h>
+using namespace Microsoft::WRL;
+
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
+
+	#include <Microsoft.Graphics.Canvas.h>
+
+	using namespace Microsoft::Graphics::Canvas::Effects;
+	namespace EffectsAbi = ABI::Microsoft::Graphics::Canvas::Effects;
+
+#else
+
+	using namespace Windows::Graphics::Effects;
+	namespace EffectsAbi = ABI::Windows::Graphics::Effects;
+
+#endif
+
+using EffectsAbi::IGraphicsEffectD2D1Interop;
 
 namespace NativeComponent
 {
-    using namespace Microsoft::WRL;
-    using namespace Microsoft::Graphics::Canvas::Effects;
-
-    namespace EffectsAbi = ABI::Microsoft::Graphics::Canvas::Effects;
-
-    using EffectsAbi::IGraphicsEffectD2D1Interop;
-
     public enum class EffectPropertyMapping
     {
         Unknown              = EffectsAbi::GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN,
@@ -40,6 +48,7 @@ namespace NativeComponent
     };
 
     // Exposes features of IGraphicsEffectD2D1Interop for use by test.managed.EffectTests.
+	[Windows::Foundation::Metadata::WebHostHidden]
     public ref class EffectAccessor sealed
     {
     public:

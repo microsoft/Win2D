@@ -20,7 +20,10 @@ under the License.
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect">
-      <summary>Creates a blur effect based on the Gaussian function over the entire input image.</summary>
+      <summary>
+        <p>Creates a blur effect based on the Gaussian function over the entire input image.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <example>
           <p>Suppose, we have a cat image loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, </p>

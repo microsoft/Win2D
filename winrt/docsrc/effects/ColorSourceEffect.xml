@@ -20,8 +20,10 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.ColorSourceEffect">
-      <summary>Generates an image containing a solid color, which can be used as input 
-               to other effects (for instance to specify a background color).</summary>
+      <summary>
+        Generates an image containing a solid color, which can be used as input 
+        to other effects (for instance to specify a background color).
+      </summary>
       <remarks>
         <p>
           This effect generates an infinite expanse of solid color. If you want only a 

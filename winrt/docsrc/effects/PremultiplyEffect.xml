@@ -20,7 +20,10 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.PremultiplyEffect">
-      <summary>Converts an image from unpremultiplied to premultiplied alpha format.</summary>
+      <summary>
+        <p>Converts an image from unpremultiplied to premultiplied alpha format.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh780395.aspx">D2D Premultiply effect</a>.</p>

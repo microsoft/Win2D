@@ -45,10 +45,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT BorderMode([in] EffectBorderMode value);
 
         [propget]
-        HRESULT Source([out, retval] IGraphicsEffectSource** source);
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]
-        HRESULT Source([in] IGraphicsEffectSource* source);
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
 
     };
 
@@ -56,6 +56,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass DirectionalBlurEffect
     {
         [default] interface IDirectionalBlurEffect;
-        interface IGraphicsEffect;
+        interface IGRAPHICSEFFECT;
     }
 }

@@ -20,9 +20,11 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.ArithmeticCompositeEffect">
-      <summary>Combines two images using a flexible equation that can 
-               be configured to perform computations such as addition, 
-               subtraction, multiplication, or interpolation.</summary>
+      <summary>
+        Combines two images using a flexible equation that can 
+        be configured to perform computations such as addition, 
+        subtraction, multiplication, or interpolation.
+      </summary>
       <remarks>
         <p>This effect combines two images using a weighted sum:</p>
         <p>result =  (Source1 * Source1Amount) +

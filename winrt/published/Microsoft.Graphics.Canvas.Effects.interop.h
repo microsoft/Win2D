@@ -10,6 +10,10 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+#if (WINVER > 0x0603)
+#error Include Windows.Graphics.Effects.interop.h when building for Windows 10
+#endif
+
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
 #endif

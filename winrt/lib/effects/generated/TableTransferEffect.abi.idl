@@ -75,10 +75,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT ClampOutput([in] boolean value);
 
         [propget]
-        HRESULT Source([out, retval] IGraphicsEffectSource** source);
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]
-        HRESULT Source([in] IGraphicsEffectSource* source);
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
 
     };
 
@@ -86,6 +86,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass TableTransferEffect
     {
         [default] interface ITableTransferEffect;
-        interface IGraphicsEffect;
+        interface IGRAPHICSEFFECT;
     }
 }

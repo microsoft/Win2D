@@ -21,9 +21,12 @@ under the License.
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.BorderEffect">
       <summary>
-        Extends an image to infinite size, specifying whether areas beyond its original 
-        extents are filled by repeating pixels from the edges of the image, 
-        wrapping pixels from the opposite edge of the image, or mirroring the image.
+        <p>
+          Extends an image to infinite size, specifying whether areas beyond its original 
+          extents are filled by repeating pixels from the edges of the image, 
+          wrapping pixels from the opposite edge of the image, or mirroring the image.
+        </p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

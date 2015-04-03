@@ -18,7 +18,11 @@ using namespace Windows::Foundation::Collections;
 using namespace Windows::Devices::Enumeration;
 using namespace Platform;
 
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
 namespace EffectsAbi = ABI::Microsoft::Graphics::Canvas::Effects;
+#else
+namespace EffectsAbi = ABI::Windows::Graphics::Effects;
+#endif
 
 using EffectsAbi::IGraphicsEffectD2D1Interop;
 

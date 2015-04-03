@@ -21,10 +21,13 @@ under the License.
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.SpotDiffuseEffect">
       <summary>
-        Lighting effect creates an image that appears to be an illuminated non-reflective 
-        surface where the light source is limited to a directed cone of light. This 
-        effect uses the alpha channel as a height map, and lights it with a point light 
-        source.
+        <p>
+          Lighting effect creates an image that appears to be an illuminated non-reflective 
+          surface where the light source is limited to a directed cone of light. This 
+          effect uses the alpha channel as a height map, and lights it with a point light 
+          source.
+        </p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

@@ -20,7 +20,10 @@ under the License.
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect">
-      <summary>Alters the colors of an image using a quantized transfer function defined by an arbitrary lookup table.</summary>
+      <summary>
+        <p>Alters the colors of an image using a quantized transfer function defined by an arbitrary lookup table.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>
           DiscreteTransferEffect effect is similar to <see cref="T:Microsoft.Graphics.Canvas.Effects.TableTransferEffect"/>.

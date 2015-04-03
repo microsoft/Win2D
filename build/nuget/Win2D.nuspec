@@ -128,7 +128,6 @@
       <file src="bin\phonex86\release\IdlHeader\Microsoft.Graphics.Canvas.h" target="Include\Phone"/>
       <file src="numerics\cpp\WindowsNumerics.*" target="Include\Phone"/>
 
-      <file src="winrt\published\Microsoft.Graphics.Canvas.Effects.interop.h" target="Include\UAP"/> <!-- TODO: remove this when it is no longer required -->
       <file src="winrt\published\Microsoft.Graphics.Canvas.native.h" target="Include\UAP"/>
       <file src="bin\UAPx86\release\IdlHeader\Microsoft.Graphics.Canvas.h" target="Include\UAP"/>
 

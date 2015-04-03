@@ -27,7 +27,7 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Mode([in] Microsoft.Graphics.Canvas.CanvasComposite value);
 
         [propget]
-        HRESULT Sources([out, retval] Windows.Foundation.Collections.IVector<IGraphicsEffectSource*>** value);
+        HRESULT Sources([out, retval] Windows.Foundation.Collections.IVector<IGRAPHICSEFFECTSOURCE*>** value);
 
     };
 
@@ -35,6 +35,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass CompositeEffect
     {
         [default] interface ICompositeEffect;
-        interface IGraphicsEffect;
+        interface IGRAPHICSEFFECT;
     }
 }

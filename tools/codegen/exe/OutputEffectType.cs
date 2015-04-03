@@ -144,7 +144,7 @@ namespace CodeGen
             if (EffectHasVariableNumberOfInputs(effect))
             {
                 output.WriteLine("[propget]");
-                output.WriteLine("HRESULT Sources([out, retval] Windows.Foundation.Collections.IVector<IGraphicsEffectSource*>** value);");
+                output.WriteLine("HRESULT Sources([out, retval] Windows.Foundation.Collections.IVector<IGRAPHICSEFFECTSOURCE*>** value);");
                 output.WriteLine();
             }
             else
@@ -154,11 +154,11 @@ namespace CodeGen
                     var input = effect.Inputs.InputsList[i];
 
                     output.WriteLine("[propget]");
-                    output.WriteLine("HRESULT " + input.Name + "([out, retval] IGraphicsEffectSource** source);");
+                    output.WriteLine("HRESULT " + input.Name + "([out, retval] IGRAPHICSEFFECTSOURCE** source);");
                     output.WriteLine();
 
                     output.WriteLine("[propput]");
-                    output.WriteLine("HRESULT " + input.Name + "([in] IGraphicsEffectSource* source);");
+                    output.WriteLine("HRESULT " + input.Name + "([in] IGRAPHICSEFFECTSOURCE* source);");
                     output.WriteLine();
                 }
             }
@@ -172,7 +172,7 @@ namespace CodeGen
             output.WriteLine("{");
             output.Indent();
             output.WriteLine("[default] interface " + effect.InterfaceName + ";");
-            output.WriteLine("interface IGraphicsEffect;");
+            output.WriteLine("interface IGRAPHICSEFFECT;");
             output.Unindent();
             output.WriteLine("}");
             output.Unindent();

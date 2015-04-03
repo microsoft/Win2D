@@ -20,7 +20,10 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.CropEffect">
-      <summary>Crops an image, outputting only a specified region.</summary>
+      <summary>
+        <p>Crops an image, outputting only a specified region.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>
           Note that cropping changes the bounds of the image, but does not move it. If 

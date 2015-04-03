@@ -32,6 +32,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ColorSourceEffect
     {
         [default] interface IColorSourceEffect;
-        interface IGraphicsEffect;
+        interface IGRAPHICSEFFECT;
     }
 }

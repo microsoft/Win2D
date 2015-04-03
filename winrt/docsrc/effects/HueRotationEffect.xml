@@ -20,7 +20,10 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.HueRotationEffect">
-      <summary>Alters the color of an image by rotating its hue values.</summary>
+      <summary>
+        <p>Alters the color of an image by rotating its hue values.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706342.aspx">D2D Hue rotate effect</a>.</p>

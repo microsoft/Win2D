@@ -22,6 +22,7 @@ using Microsoft.Graphics.Canvas.Effects;
 
 #if WINDOWS_UAP
 using Windows.Graphics.DirectX;
+using Windows.Graphics.Effects;
 using System.Numerics;
 #else
 using Microsoft.Graphics.Canvas.DirectX;

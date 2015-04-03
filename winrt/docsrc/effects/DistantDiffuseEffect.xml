@@ -21,9 +21,12 @@ under the License.
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect">
       <summary>
-        Lighting effect creates an image that appears to be an illuminated non-reflective 
-        surface. This effect uses the alpha channel as a height map, and lights it with 
-        an infinitely distant light source (such as the sun).
+        <p>
+          Lighting effect creates an image that appears to be an illuminated non-reflective 
+          surface. This effect uses the alpha channel as a height map, and lights it with 
+          an infinitely distant light source (such as the sun).
+        </p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

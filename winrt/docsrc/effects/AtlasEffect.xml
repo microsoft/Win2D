@@ -20,7 +20,10 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.AtlasEffect">
-      <summary>Outputs a specified region from an atlas bitmap.</summary>
+      <summary>
+        <p>Outputs a specified region from an atlas bitmap.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>
           The atlas effect is useful if you want to load a large image made up of many 

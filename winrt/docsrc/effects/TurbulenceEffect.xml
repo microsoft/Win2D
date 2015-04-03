@@ -20,7 +20,10 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect">
-      <summary>Generates an image using the Perlin noise function.</summary>
+      <summary>
+        <p>Generates an image using the Perlin noise function.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <p>
           The Turbulence effect computes the sum of one or more octaves of the Perlin 

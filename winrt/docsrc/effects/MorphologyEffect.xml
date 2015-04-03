@@ -21,10 +21,13 @@ under the License.
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.MorphologyEffect">
       <summary>
-        Thins or thickens edge boundaries in an image. This effect uses a filter kernel 
-        that is 2 times the size you specify. The kernel is centered on the pixel being 
-        calculated, and returns the maximum value in the kernel (if dilating) or minimum 
-        value (if eroding).
+        <p>
+          Thins or thickens edge boundaries in an image. This effect uses a filter kernel 
+          that is 2 times the size you specify. The kernel is centered on the pixel being 
+          calculated, and returns the maximum value in the kernel (if dilating) or minimum 
+          value (if eroding).
+        </p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

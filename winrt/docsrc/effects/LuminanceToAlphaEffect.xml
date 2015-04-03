@@ -21,9 +21,12 @@ under the License.
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect">
       <summary>
-        Generates an image with alpha channel set to the luminance of the source image, and 
-        color channels set to 0. Use it to make a semitransparent overlay based on the 
-        brightness of the source image.
+        <p>
+          Generates an image with alpha channel set to the luminance of the source image, and 
+          color channels set to 0. Use it to make a semitransparent overlay based on the 
+          brightness of the source image.
+        </p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
       </summary>
       <remarks>
         <p>

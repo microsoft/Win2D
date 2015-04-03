@@ -20,7 +20,9 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.Transform2DEffect">
-      <summary>Applies a 2D affine transform matrix to an image.</summary>
+      <summary>
+        Applies a 2D affine transform matrix to an image.
+      </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706309.aspx">D2D 2D Affine transform effect</a>.</p>

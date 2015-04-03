@@ -20,7 +20,9 @@ under the License.
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.SaturationEffect">
-      <summary>Alters the saturation of an image.</summary>
+      <summary>
+        Alters the saturation of an image.
+      </summary>
       <remarks>
         <example>
           <p>Suppose, we have a cat image loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, </p>

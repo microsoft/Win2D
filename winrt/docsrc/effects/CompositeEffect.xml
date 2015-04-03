@@ -20,7 +20,9 @@ under the License.
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.CompositeEffect">
-      <summary>Combines two or more images.</summary>
+      <summary>
+        Combines two or more images.
+      </summary>
       <remarks>
         <example>
           <p>Suppose, we have a cat and flower images loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, </p>

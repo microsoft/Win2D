@@ -20,7 +20,10 @@ under the License.
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.Transform3DEffect">
-      <summary>Applies an arbitrary 4x4 transform matrix to an image.</summary>
+      <summary>
+        <p>Applies an arbitrary 4x4 transform matrix to an image.</p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
       <remarks>
         <example>
           <p>Suppose, we have a cat image loaded as <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>.</p>
