@@ -49,7 +49,7 @@
 #include <Microsoft.Graphics.Canvas.h>
 
 // Pick up the inbox or local WinRT DirectX types as appropriate
-#include <WinRTDirectX.h>
+#include <UapApis.h>
 
 #pragma warning(disable: 4100)  // "unreferenced formal parameter"
 #pragma warning(disable: 4351)  // "elements of {array} will be default initialized"

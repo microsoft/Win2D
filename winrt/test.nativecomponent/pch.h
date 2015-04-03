@@ -20,7 +20,7 @@
 
 #include <d3d11.h>
 
-#include <WinRTDirectX.h>
+#include <UapApis.h>
 
 #include <ErrorHandling.h>
 #include <Utilities.h>

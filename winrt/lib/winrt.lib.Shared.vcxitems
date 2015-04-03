@@ -207,8 +207,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" Condition="$(TargetPlatformIdentifier) != UAP"/>
+    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl">

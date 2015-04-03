@@ -42,10 +42,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)EnumTests.cpp" Condition="$(TargetPlatformIdentifier) != UAP" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)DeviceTests.cpp" Condition="$(TargetPlatformIdentifier) != UAP" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EnumTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)DeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PolymorphicBitmapTests.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SurfaceTests.cpp" Condition="$(TargetPlatformIdentifier) != UAP" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SurfaceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

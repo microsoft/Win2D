@@ -16,7 +16,12 @@ import "Windows.UI.idl";
 import "Windows.UI.Xaml.Media.Imaging.idl";
 
 #include <sdkddkver.h>
+
+#if (WINVER > 0x0603)
+#define VERSION NTDDI_WINTHRESHOLD
+#else
 #define VERSION NTDDI_WINBLUE
+#endif
 
 #include "..\..\numerics\WinRT\WinRTNumerics.idl"
 #include "Canvas.codegen.idl"

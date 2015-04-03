@@ -12,9 +12,7 @@
 
 #include "pch.h"
 
-#ifndef USE_LOCAL_WINRT_DIRECTX
-#error This file should only be built when using local WinRT DirectX 
-#endif
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
 
 using namespace Microsoft::WRL;
 
@@ -93,3 +91,5 @@ STDAPI CreateDirect3D11DeviceFromDXGIDevice(
             ThrowIfFailed(direct3DDevice.CopyTo(inspectableDirect3DDevice));
         });
 }
+
+#endif  // USE_LOCALLY_EMULATED_UAP_APIS

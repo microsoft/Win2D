@@ -14,12 +14,16 @@
 
 #include <sdkddkver.h>
 
+// When building for Windows 8.1, new APIs that were added in Win10 (such as IDirect3DDevice)
+// will not be defined by the platform. To support 8.1, Win2D provides its own local definition
+// of these interfaces in the Microsoft.Graphics.Canvas namespace. This header arranges to use
+// the local versions when building for 8.1, or the official versions when building for UAP.
 #if WINVER <= 0x0603
-# define USE_LOCAL_WINRT_DIRECTX
+# define USE_LOCALLY_EMULATED_UAP_APIS
 #endif
 
 
-#ifdef USE_LOCAL_WINRT_DIRECTX
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
 # include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
 #else
 # include <windows.graphics.directx.h>
@@ -35,7 +39,7 @@
 
 namespace WinRTDirectX
 {
-#ifdef USE_LOCAL_WINRT_DIRECTX
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
 
     using ::Microsoft::Graphics::Canvas::DirectX::Direct3D11::IDirect3DDxgiInterfaceAccess;
     using namespace WINRT_PREFIX Microsoft::Graphics::Canvas::DirectX::Direct3D11;

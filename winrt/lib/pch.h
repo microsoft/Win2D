@@ -90,7 +90,7 @@
 #include <Microsoft.Graphics.Canvas.h>
 
 // Pick up the inbox or local WinRT DirectX types as appropriate
-#include "WinRTDirectX.h"
+#include "UapApis.h"
 
 // local
 #include "utils/Conversion.h"

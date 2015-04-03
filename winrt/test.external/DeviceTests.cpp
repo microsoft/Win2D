@@ -12,9 +12,7 @@
 
 #include "pch.h"
 
-#ifndef USE_LOCAL_WINRT_DIRECTX
-#error This file should only be built when using local WinRT DirectX 
-#endif
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
 
 TEST_CLASS(DeviceTests)
 {
@@ -151,3 +149,5 @@ public:
         Assert::IsTrue(trimCalled);
     }
 };
+
+#endif  // USE_LOCALLY_EMULATED_UAP_APIS
