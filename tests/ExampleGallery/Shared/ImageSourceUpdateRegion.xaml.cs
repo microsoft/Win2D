@@ -83,7 +83,7 @@ namespace ExampleGallery
                     CanvasTextFormat format = new CanvasTextFormat
                     {
                         FontSize = 16,
-                        ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Center,
                         VerticalAlignment = CanvasVerticalAlignment.Center
                     };
 

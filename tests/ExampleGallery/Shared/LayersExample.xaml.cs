@@ -49,7 +49,7 @@ namespace ExampleGallery
 
         static CanvasTextFormat textFormat = new CanvasTextFormat
         {
-            ParagraphAlignment = ParagraphAlignment.Center,
+            HorizontalAlignment = CanvasHorizontalAlignment.Center,
             VerticalAlignment = CanvasVerticalAlignment.Center,
         };
 

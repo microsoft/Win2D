@@ -113,7 +113,7 @@ namespace ExampleGallery
                     {
                         FontFamily = "Segoe UI",
                         FontSize = fontSize,
-                        ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Center,
                         VerticalAlignment = CanvasVerticalAlignment.Top
                     });
             }

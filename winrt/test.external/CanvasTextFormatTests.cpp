@@ -51,11 +51,11 @@ TEST_CLASS(CanvasTextFormatTests)
             L"locale",
             &dwriteTextFormat));
 
+        ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_TOP_TO_BOTTOM));
         ThrowIfFailed(dwriteTextFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT));
         ThrowIfFailed(dwriteTextFormat->SetIncrementalTabStop(12.0f));
         ThrowIfFailed(dwriteTextFormat->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM, 2.0f, 4.0f));
         ThrowIfFailed(dwriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR));
-        ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_TOP_TO_BOTTOM));
         ThrowIfFailed(dwriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING));
         ThrowIfFailed(dwriteTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK));
 
@@ -77,7 +77,7 @@ TEST_CLASS(CanvasTextFormatTests)
 #define CHECK(PROPERTY, EXPECTED) \
         Assert::IsTrue(canvasTextFormat->PROPERTY == EXPECTED)
 
-        CHECK(FlowDirection,          CanvasTextDirection::RightToLeft);
+        CHECK(Direction,              CanvasTextDirection::TopToBottomThenRightToLeft);
         CHECK(FontFamily,             L"Arial");
         CHECK(FontSize,               12.0f);
         CHECK(FontStretch,            Windows::UI::Text::FontStretch::UltraExpanded);
@@ -89,8 +89,7 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(LineSpacingBaseline,    4.0f);
         CHECK(LocaleName,             L"locale");
         CHECK(VerticalAlignment,      CanvasVerticalAlignment::Bottom);
-        CHECK(ReadingDirection,       CanvasTextDirection::TopToBottom);
-        CHECK(ParagraphAlignment,     Windows::UI::Text::ParagraphAlignment::Right);
+        CHECK(HorizontalAlignment,    CanvasHorizontalAlignment::Right);
         CHECK(TrimmingGranularity,    CanvasTextTrimmingGranularity::Word);
         CHECK(TrimmingDelimiter,      L"/");
         CHECK(TrimmingDelimiterCount, 1); 
@@ -107,11 +106,11 @@ TEST_CLASS(CanvasTextFormatTests)
         // object?
         //
 
-        ThrowIfFailed(dwriteTextFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP));
+        ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP));
+        ThrowIfFailed(dwriteTextFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT));
         ThrowIfFailed(dwriteTextFormat->SetIncrementalTabStop(16.0f));
         ThrowIfFailed(dwriteTextFormat->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 5.0f, 7.0f));
         ThrowIfFailed(dwriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER));
-        ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP));
         ThrowIfFailed(dwriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER));
         ThrowIfFailed(dwriteTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP));
 
@@ -129,7 +128,7 @@ TEST_CLASS(CanvasTextFormatTests)
         // shadow values will be being used.
         //
 
-        CHECK(FlowDirection,          CanvasTextDirection::BottomToTop);
+        CHECK(Direction,              CanvasTextDirection::BottomToTopThenRightToLeft);
         CHECK(FontFamily,             L"Comic Sans MS");
         CHECK(FontSize,               12.0f);
         CHECK(FontStretch,            Windows::UI::Text::FontStretch::UltraExpanded);
@@ -141,8 +140,7 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(LineSpacingBaseline,    7.0f);
         CHECK(LocaleName,             L"locale");
         CHECK(VerticalAlignment,      CanvasVerticalAlignment::Center);
-        CHECK(ReadingDirection,       CanvasTextDirection::BottomToTop);
-        CHECK(ParagraphAlignment,     Windows::UI::Text::ParagraphAlignment::Center);
+        CHECK(HorizontalAlignment,    CanvasHorizontalAlignment::Center);
         CHECK(TrimmingGranularity,    CanvasTextTrimmingGranularity::Character);
         CHECK(TrimmingDelimiter,      L"!");
         CHECK(TrimmingDelimiterCount, 2); 
@@ -164,6 +162,53 @@ TEST_CLASS(CanvasTextFormatTests)
         Assert::AreNotEqual<void*>(fontCollection.Get(), newFontCollection.Get());
 
 #undef CHECK
+    }
+
+    TEST_METHOD(CanvasTextFormat_InteropWithInvalidReadingAndFlowDirectionFails)
+    {
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT, DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT);
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT);
+
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_RIGHT_TO_LEFT, DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT);
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_RIGHT_TO_LEFT, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT);
+
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_TOP_TO_BOTTOM, DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM);
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_TOP_TO_BOTTOM, DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP);
+
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM);
+        AssertIsInvalidCombination(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP);
+    }
+
+    void AssertIsInvalidCombination(DWRITE_READING_DIRECTION readingDirection, DWRITE_FLOW_DIRECTION flowDirection)
+    {
+        ComPtr<IDWriteFactory2> factory;
+        ThrowIfFailed(DWriteCreateFactory(
+            DWRITE_FACTORY_TYPE_SHARED,
+            __uuidof(&factory),
+            static_cast<IUnknown**>(&factory)));
+
+        ComPtr<IDWriteTextFormat> invalidDWriteTextFormat;
+        ThrowIfFailed(factory->CreateTextFormat(
+            L"Arial",
+            nullptr,
+            DWRITE_FONT_WEIGHT_THIN,
+            DWRITE_FONT_STYLE_OBLIQUE,
+            DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
+            12.0,
+            L"locale",
+            &invalidDWriteTextFormat));
+
+        ThrowIfFailed(invalidDWriteTextFormat->SetReadingDirection(readingDirection));            
+        ThrowIfFailed(invalidDWriteTextFormat->SetFlowDirection(flowDirection));
+
+        try
+        {
+            GetOrCreate<CanvasTextFormat>(invalidDWriteTextFormat.Get());
+        }
+        catch (Platform::Exception^ e)
+        {
+            Assert::AreEqual(DWRITE_E_FLOWDIRECTIONCONFLICTS, static_cast<HRESULT>(e->HResult));
+        }
     }
 };
 

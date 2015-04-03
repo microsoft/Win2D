@@ -49,10 +49,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             uint32_t* positionCount,
             int32_t** positions) override;
 
-        IFACEMETHOD(get_FlowDirection)(
+        IFACEMETHOD(get_Direction)(
             CanvasTextDirection* value) override;
 
-        IFACEMETHOD(put_FlowDirection)(
+        IFACEMETHOD(put_Direction)(
             CanvasTextDirection value) override;
 
         IFACEMETHOD(get_DefaultFontFamily)(
@@ -103,17 +103,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(put_VerticalAlignment)(
             CanvasVerticalAlignment value) override;
 
-        IFACEMETHOD(get_ReadingDirection)(
-            CanvasTextDirection* value) override;
+        IFACEMETHOD(get_HorizontalAlignment)(
+            CanvasHorizontalAlignment* value) override;
 
-        IFACEMETHOD(put_ReadingDirection)(
-            CanvasTextDirection value) override;
-
-        IFACEMETHOD(get_ParagraphAlignment)(
-            ABI::Windows::UI::Text::ParagraphAlignment* value) override;
-
-        IFACEMETHOD(put_ParagraphAlignment)(
-            ABI::Windows::UI::Text::ParagraphAlignment value) override;
+        IFACEMETHOD(put_HorizontalAlignment)(
+            CanvasHorizontalAlignment value) override;
 
         IFACEMETHOD(get_TrimmingGranularity)(
             CanvasTextTrimmingGranularity* value) override;

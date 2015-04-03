@@ -233,18 +233,73 @@ namespace canvas
             ASSERT_IMPLEMENTS_INTERFACE(ctf, ICanvasResourceWrapperNative);
         }
 
-        TEST_METHOD_EX(CanvasTextFormat_FlowDirection)
+        TEST_METHOD_EX(CanvasTextFormat_Direction_DefaultValue)
         {
-            TEST_SIMPLE_PROPERTY(
-                FlowDirection,
-                CanvasTextDirection::BottomToTop,
-                DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP,
-                DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT,
-                CanvasTextDirection::LeftToRight);
+            auto ctf = CreateTestManager()->Create();
+            CanvasTextDirection actualDirection;
+            ThrowIfFailed(ctf->get_Direction(&actualDirection));
+            Assert::AreEqual(CanvasTextDirection::LeftToRightThenTopToBottom, actualDirection);
+        }
 
-            TEST_INVALID_PROPERTIES(
-                FlowDirection,
-                static_cast<CanvasTextDirection>(999));
+        TEST_METHOD_EX(CanvasTextFormat_Direction_ValidValues)
+        {
+            struct Case
+            {
+                DWRITE_READING_DIRECTION DReading;
+                DWRITE_FLOW_DIRECTION DFlow;
+                CanvasTextDirection CDirection;
+            };
+
+            Case cases[] = 
+                { 
+                    { DWRITE_READING_DIRECTION_LEFT_TO_RIGHT, DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM, CanvasTextDirection::LeftToRightThenTopToBottom },
+                    { DWRITE_READING_DIRECTION_RIGHT_TO_LEFT, DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM, CanvasTextDirection::RightToLeftThenTopToBottom },
+                    { DWRITE_READING_DIRECTION_LEFT_TO_RIGHT, DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection::LeftToRightThenBottomToTop },
+                    { DWRITE_READING_DIRECTION_RIGHT_TO_LEFT, DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection::RightToLeftThenBottomToTop },
+                    { DWRITE_READING_DIRECTION_TOP_TO_BOTTOM, DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT, CanvasTextDirection::TopToBottomThenLeftToRight },
+                    { DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT, CanvasTextDirection::BottomToTopThenLeftToRight },
+                    { DWRITE_READING_DIRECTION_TOP_TO_BOTTOM, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, CanvasTextDirection::TopToBottomThenRightToLeft },
+                    { DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, CanvasTextDirection::BottomToTopThenRightToLeft },
+                };
+
+            for (int i = 0; i < _countof(cases); ++i)
+            {
+                auto const& testCase = cases[i];
+                auto const& otherTestCase = cases[(i+1) % _countof(cases)];
+
+                auto ctf = CreateTestManager()->Create();
+
+                // Setting CanvasTextFormat.Direction and then getting the
+                // DWrite object should set the correct values
+                ThrowIfFailed(ctf->put_Direction(testCase.CDirection));
+
+                auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+
+                auto actualReadingDirection = dtf->GetReadingDirection();
+                auto actualFlowDirection = dtf->GetFlowDirection();
+
+                Assert::AreEqual(testCase.DReading, actualReadingDirection);
+                Assert::AreEqual(testCase.DFlow, actualFlowDirection);
+
+
+                // Setting the DWrite properties should update the
+                // CanvasTextFormat property
+                dtf->SetReadingDirection(testCase.DReading);
+                dtf->SetFlowDirection(testCase.DFlow);
+
+                CanvasTextDirection actualTextDirection;
+                ThrowIfFailed(ctf->get_Direction(&actualTextDirection));
+                Assert::AreEqual(testCase.CDirection, actualTextDirection);
+
+                // Test writing to CanvasTextFormat should be reflected in the
+                // DWrite properties.  
+                ThrowIfFailed(ctf->put_Direction(otherTestCase.CDirection));
+                actualReadingDirection = dtf->GetReadingDirection();
+                actualFlowDirection = dtf->GetFlowDirection();
+
+                Assert::AreEqual(otherTestCase.DReading, actualReadingDirection);
+                Assert::AreEqual(otherTestCase.DFlow, actualFlowDirection);
+            }
         }
 
         static std::wstring GetFontFamilyName(IDWriteTextFormat* dwf)
@@ -497,33 +552,19 @@ namespace canvas
                 static_cast<CanvasVerticalAlignment>(999));
         }
 
-        TEST_METHOD_EX(CanvasTextFormat_ReadingDirection)
-        {
-            TEST_SIMPLE_PROPERTY(
-                ReadingDirection,
-                CanvasTextDirection::RightToLeft,
-                DWRITE_READING_DIRECTION_RIGHT_TO_LEFT,
-                DWRITE_READING_DIRECTION_TOP_TO_BOTTOM,
-                CanvasTextDirection::TopToBottom);
-
-            TEST_INVALID_PROPERTIES(
-                ReadingDirection,
-                static_cast<CanvasTextDirection>(999));
-        }
-
-        TEST_METHOD_EX(CanvasTextFormat_ParagraphAlignment)
+        TEST_METHOD_EX(CanvasTextFormat_HorizontalAlignment)
         {
             TEST_PROPERTY(
-                ParagraphAlignment,
+                HorizontalAlignment,
                 TextAlignment,
-                ABI::Windows::UI::Text::ParagraphAlignment_Center,
+                CanvasHorizontalAlignment::Center,
                 DWRITE_TEXT_ALIGNMENT_CENTER,
                 DWRITE_TEXT_ALIGNMENT_JUSTIFIED,
-                ABI::Windows::UI::Text::ParagraphAlignment_Justify);
+                CanvasHorizontalAlignment::Justified);
 
             TEST_INVALID_PROPERTIES(
-                ParagraphAlignment,
-                static_cast<ABI::Windows::UI::Text::ParagraphAlignment>(999));
+                HorizontalAlignment,
+                static_cast<CanvasHorizontalAlignment>(999));
         }
 
         TEST_METHOD_EX(CanvasTextFormat_TrimmingGranularity)

@@ -168,7 +168,7 @@ namespace canvas
             
             Assert::AreEqual(S_OK, textLayout->Close());
 
-            CanvasTextDirection textDirection{};
+            CanvasTextDirection direction{};
             HSTRING str{};
             float fl{};
             FontStretch fontStretch{};
@@ -176,7 +176,7 @@ namespace canvas
             FontWeight fontWeight{};
             CanvasLineSpacingMethod lineSpacingMethod{};
             CanvasVerticalAlignment verticalAlignment{};
-            ParagraphAlignment paragraphAlignment{};
+            CanvasHorizontalAlignment horizontalAlignment{};
             CanvasTextTrimmingGranularity trimmingGranularity{};
             INT32 i{};
             INT32* arr{};
@@ -196,8 +196,8 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
-            Assert::AreEqual(RO_E_CLOSED, textLayout->get_FlowDirection(&textDirection));
-            Assert::AreEqual(RO_E_CLOSED, textLayout->put_FlowDirection(textDirection));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_Direction(&direction));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->put_Direction(direction));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_DefaultFontFamily(&str));
 
@@ -226,11 +226,8 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_VerticalAlignment(&verticalAlignment));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_VerticalAlignment(verticalAlignment));
 
-            Assert::AreEqual(RO_E_CLOSED, textLayout->get_ReadingDirection(&textDirection));
-            Assert::AreEqual(RO_E_CLOSED, textLayout->put_ReadingDirection(textDirection));
-
-            Assert::AreEqual(RO_E_CLOSED, textLayout->get_ParagraphAlignment(&paragraphAlignment));
-            Assert::AreEqual(RO_E_CLOSED, textLayout->put_ParagraphAlignment(paragraphAlignment));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_HorizontalAlignment(&horizontalAlignment));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->put_HorizontalAlignment(horizontalAlignment));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_TrimmingGranularity(&trimmingGranularity));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_TrimmingGranularity(trimmingGranularity));
@@ -322,7 +319,7 @@ namespace canvas
             CanvasTextLayoutRegion* hitTestDescArr{};
             boolean b{};
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFormatChangeIndices(nullptr, &arr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->get_FlowDirection(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_Direction(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontFamily(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontSize(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontStretch(nullptr));
@@ -334,8 +331,7 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LineSpacingBaseline(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultLocaleName(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_VerticalAlignment(nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->get_ReadingDirection(nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->get_ParagraphAlignment(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_HorizontalAlignment(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingGranularity(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingDelimiter(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingDelimiterCount(nullptr));
@@ -447,29 +443,70 @@ namespace canvas
         }
 
         //
+        // CanvasTextLayout.Direction is special since it actually sets two
+        // IDWriteTextLayout properties.
+        //
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_Direction)
+        {
+            Fixture f;
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            f.Adapter->MockTextLayout->GetReadingDirectionMethod.SetExpectedCalls(1, []{ return DWRITE_READING_DIRECTION_BOTTOM_TO_TOP; });
+            f.Adapter->MockTextLayout->GetFlowDirectionMethod.SetExpectedCalls(1, []{ return DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT; });
+
+            CanvasTextDirection actualDirection;
+            Assert::AreEqual(S_OK, textLayout->get_Direction(&actualDirection));
+            Assert::AreEqual(CanvasTextDirection::BottomToTopThenRightToLeft, actualDirection);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_put_Direction)
+        {
+            Fixture f;
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            f.Adapter->MockTextLayout->SetReadingDirectionMethod.SetExpectedCalls(1,
+                [] (DWRITE_READING_DIRECTION readingDirection)
+                {
+                    Assert::AreEqual(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, readingDirection);
+                    return S_OK;
+                });
+
+            f.Adapter->MockTextLayout->SetFlowDirectionMethod.SetExpectedCalls(1,
+                [] (DWRITE_FLOW_DIRECTION flowDirection)
+                {
+                    Assert::AreEqual(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, flowDirection);
+                    return S_OK;
+                });
+
+            Assert::AreEqual(S_OK, textLayout->put_Direction(CanvasTextDirection::BottomToTopThenRightToLeft));
+        }
+
+        //
         // All of the 'simple' properties which don't operate on a string range of text layout are
         // grouped together and tested using the macros below.
         //
 
-#define TEST_METHOD_GLOBAL_GETTER(name, mockName, dwriteValue, canvasValueType, canvasValue) \
-        TEST_METHOD_EX(CanvasTextLayoutTests_get_##name)                    \
-        {                                                                                  \
-            Fixture f;                                                                     \
-                                                                                           \
-            auto textLayout = f.CreateSimpleTextLayout();                                  \
-                                                                                           \
-            f.Adapter->MockTextLayout->##mockName##.SetExpectedCalls(1,                    \
-                [&]()                                                                      \
-            {                                                                              \
-                return dwriteValue;                                                        \
-            });                                                                            \
-                                                                                           \
-            canvasValueType value;                                                         \
-            Assert::AreEqual(S_OK, textLayout->get_##name##(&value));       \
-            Assert::AreEqual(canvasValue, value);                                          \
+#define TEST_METHOD_GLOBAL_GETTER(name, mockName, dwriteValue, canvasValue) \
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_##name)                \
+        {                                                               \
+            Fixture f;                                                  \
+                                                                        \
+            auto textLayout = f.CreateSimpleTextLayout();               \
+                                                                        \
+            f.Adapter->MockTextLayout->##mockName##.SetExpectedCalls(1, \
+                [&]()                                                   \
+            {                                                           \
+                return dwriteValue;                                     \
+            });                                                         \
+                                                                        \
+            decltype(canvasValue) value;                                \
+            Assert::AreEqual(S_OK, textLayout->get_##name##(&value));   \
+            Assert::AreEqual(canvasValue, value);                       \
         }  
 
-#define TEST_METHOD_GLOBAL_SETTER(name, mockName, dwriteValueType, dwriteValue, canvasValue)      \
+#define TEST_METHOD_GLOBAL_SETTER(name, mockName, dwriteValue, canvasValue)                       \
         TEST_METHOD_EX(CanvasTextLayoutTests_put_##name)                                          \
         {                                                                                         \
             Fixture f;                                                                            \
@@ -477,7 +514,7 @@ namespace canvas
             auto textLayout = f.CreateSimpleTextLayout();                                         \
                                                                                                   \
             f.Adapter->MockTextLayout->##mockName##.SetExpectedCalls(1,                           \
-                [&](dwriteValueType value)                                                        \
+                [&](decltype(dwriteValue) value)                                                  \
                 {                                                                                 \
                     Assert::AreEqual(dwriteValue, value);                                         \
                     return S_OK;                                                                  \
@@ -485,49 +522,44 @@ namespace canvas
             Assert::AreEqual(S_OK, textLayout->put_##name##(canvasValue));                        \
         }
 
-        TEST_METHOD_GLOBAL_GETTER(FlowDirection, GetFlowDirectionMethod, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, CanvasTextDirection, CanvasTextDirection::RightToLeft);
-        TEST_METHOD_GLOBAL_SETTER(FlowDirection, SetFlowDirectionMethod, DWRITE_FLOW_DIRECTION, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, CanvasTextDirection::RightToLeft);
-        TEST_METHOD_GLOBAL_GETTER(DefaultFontSize, GetFontSize_BaseFormat_Method, 99.0f, float, 99.0f);
-        TEST_METHOD_GLOBAL_GETTER(DefaultFontStretch, GetFontStretch_BaseFormat_Method, DWRITE_FONT_STRETCH_SEMI_EXPANDED, FontStretch, FontStretch_SemiExpanded);
-        TEST_METHOD_GLOBAL_GETTER(DefaultFontStyle, GetFontStyle_BaseFormat_Method, DWRITE_FONT_STYLE_ITALIC, FontStyle, FontStyle_Italic);
-        TEST_METHOD_GLOBAL_GETTER(DefaultFontWeight, GetFontWeight_BaseFormat_Method, DWRITE_FONT_WEIGHT_DEMI_BOLD, FontWeight, FontWeight{ 600 });
+        TEST_METHOD_GLOBAL_GETTER(DefaultFontSize, GetFontSize_BaseFormat_Method, 99.0f, 99.0f);
+        TEST_METHOD_GLOBAL_GETTER(DefaultFontStretch, GetFontStretch_BaseFormat_Method, DWRITE_FONT_STRETCH_SEMI_EXPANDED, FontStretch_SemiExpanded);
+        TEST_METHOD_GLOBAL_GETTER(DefaultFontStyle, GetFontStyle_BaseFormat_Method, DWRITE_FONT_STYLE_ITALIC, FontStyle_Italic);
+        TEST_METHOD_GLOBAL_GETTER(DefaultFontWeight, GetFontWeight_BaseFormat_Method, DWRITE_FONT_WEIGHT_DEMI_BOLD, FontWeight{ 600 });
 
-        TEST_METHOD_GLOBAL_GETTER(IncrementalTabStop, GetIncrementalTabStopMethod, 99.0f, float, 99.0f);
-        TEST_METHOD_GLOBAL_SETTER(IncrementalTabStop, SetIncrementalTabStopMethod, float, 99.0f, 99.0f);
+        TEST_METHOD_GLOBAL_GETTER(IncrementalTabStop, GetIncrementalTabStopMethod, 99.0f, 99.0f);
+        TEST_METHOD_GLOBAL_SETTER(IncrementalTabStop, SetIncrementalTabStopMethod, 99.0f, 99.0f);
 
-        TEST_METHOD_GLOBAL_GETTER(VerticalAlignment, GetParagraphAlignmentMethod, DWRITE_PARAGRAPH_ALIGNMENT_FAR, CanvasVerticalAlignment, CanvasVerticalAlignment::Bottom);
-        TEST_METHOD_GLOBAL_SETTER(VerticalAlignment, SetParagraphAlignmentMethod, DWRITE_PARAGRAPH_ALIGNMENT, DWRITE_PARAGRAPH_ALIGNMENT_FAR, CanvasVerticalAlignment::Bottom);
+        TEST_METHOD_GLOBAL_GETTER(VerticalAlignment, GetParagraphAlignmentMethod, DWRITE_PARAGRAPH_ALIGNMENT_FAR, CanvasVerticalAlignment::Bottom);
+        TEST_METHOD_GLOBAL_SETTER(VerticalAlignment, SetParagraphAlignmentMethod, DWRITE_PARAGRAPH_ALIGNMENT_FAR, CanvasVerticalAlignment::Bottom);
 
-        TEST_METHOD_GLOBAL_GETTER(ReadingDirection, GetReadingDirectionMethod, DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection, CanvasTextDirection::BottomToTop);
-        TEST_METHOD_GLOBAL_SETTER(ReadingDirection, SetReadingDirectionMethod, DWRITE_READING_DIRECTION, DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection::BottomToTop);
+        TEST_METHOD_GLOBAL_GETTER(HorizontalAlignment, GetTextAlignmentMethod, DWRITE_TEXT_ALIGNMENT_TRAILING, CanvasHorizontalAlignment::Right);
+        TEST_METHOD_GLOBAL_SETTER(HorizontalAlignment, SetTextAlignmentMethod, DWRITE_TEXT_ALIGNMENT_TRAILING, CanvasHorizontalAlignment::Right);
 
-        TEST_METHOD_GLOBAL_GETTER(ParagraphAlignment, GetTextAlignmentMethod, DWRITE_TEXT_ALIGNMENT_TRAILING, ParagraphAlignment, ParagraphAlignment_Right);
-        TEST_METHOD_GLOBAL_SETTER(ParagraphAlignment, SetTextAlignmentMethod, DWRITE_TEXT_ALIGNMENT, DWRITE_TEXT_ALIGNMENT_TRAILING, ParagraphAlignment_Right);
+        TEST_METHOD_GLOBAL_GETTER(WordWrapping, GetWordWrappingMethod, DWRITE_WORD_WRAPPING_EMERGENCY_BREAK, CanvasWordWrapping::EmergencyBreak);
+        TEST_METHOD_GLOBAL_SETTER(WordWrapping, SetWordWrappingMethod, DWRITE_WORD_WRAPPING_EMERGENCY_BREAK, CanvasWordWrapping::EmergencyBreak);
 
-        TEST_METHOD_GLOBAL_GETTER(WordWrapping, GetWordWrappingMethod, DWRITE_WORD_WRAPPING_EMERGENCY_BREAK, CanvasWordWrapping, CanvasWordWrapping::EmergencyBreak);
-        TEST_METHOD_GLOBAL_SETTER(WordWrapping, SetWordWrappingMethod, DWRITE_WORD_WRAPPING, DWRITE_WORD_WRAPPING_EMERGENCY_BREAK, CanvasWordWrapping::EmergencyBreak);
+        TEST_METHOD_GLOBAL_GETTER(VerticalGlyphOrientation, GetVerticalGlyphOrientationMethod, DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, CanvasVerticalGlyphOrientation::Stacked);
+        TEST_METHOD_GLOBAL_SETTER(VerticalGlyphOrientation, SetVerticalGlyphOrientationMethod, DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, CanvasVerticalGlyphOrientation::Stacked);
 
-        TEST_METHOD_GLOBAL_GETTER(VerticalGlyphOrientation, GetVerticalGlyphOrientationMethod, DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, CanvasVerticalGlyphOrientation, CanvasVerticalGlyphOrientation::Stacked);
-        TEST_METHOD_GLOBAL_SETTER(VerticalGlyphOrientation, SetVerticalGlyphOrientationMethod, DWRITE_VERTICAL_GLYPH_ORIENTATION, DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, CanvasVerticalGlyphOrientation::Stacked);
+        TEST_METHOD_GLOBAL_GETTER(OpticalAlignment, GetOpticalAlignmentMethod, DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS, CanvasOpticalAlignment::NoSideBearings);
+        TEST_METHOD_GLOBAL_SETTER(OpticalAlignment, SetOpticalAlignmentMethod, DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS, CanvasOpticalAlignment::NoSideBearings);
 
-        TEST_METHOD_GLOBAL_GETTER(OpticalAlignment, GetOpticalAlignmentMethod, DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS, CanvasOpticalAlignment, CanvasOpticalAlignment::NoSideBearings);
-        TEST_METHOD_GLOBAL_SETTER(OpticalAlignment, SetOpticalAlignmentMethod, DWRITE_OPTICAL_ALIGNMENT, DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS, CanvasOpticalAlignment::NoSideBearings);
-
-        TEST_METHOD_GLOBAL_GETTER(LastLineWrapping, GetLastLineWrappingMethod, true, boolean, static_cast<boolean>(true));
-        TEST_METHOD_GLOBAL_SETTER(LastLineWrapping, SetLastLineWrappingMethod, BOOL, static_cast<BOOL>(true), static_cast<boolean>(true));
+        TEST_METHOD_GLOBAL_GETTER(LastLineWrapping, GetLastLineWrappingMethod, true, static_cast<boolean>(true));
+        TEST_METHOD_GLOBAL_SETTER(LastLineWrapping, SetLastLineWrappingMethod, static_cast<BOOL>(true), static_cast<boolean>(true));
 
 
         //
         // The simple properties which operate on a string range are grouped together, and tested below.
         //        
 
-#define TEST_METHOD_RANGE_GETTER(name, mockName, dwriteType, dwriteValue, canvasType, canvasValue)  \
+#define TEST_METHOD_RANGE_GETTER(name, mockName, dwriteValue, canvasValue)                          \
         TEST_METHOD_EX(CanvasTextLayoutTests_Get##name##)                                           \
         {                                                                                           \
             Fixture f;                                                                              \
                                                                                                     \
             f.Adapter->MockTextLayout->##mockName##.SetExpectedCalls(1,                             \
-                [&](UINT32 currentPosition, dwriteType* out, DWRITE_TEXT_RANGE* textRange)          \
+                [&](UINT32 currentPosition, decltype(dwriteValue)* out, DWRITE_TEXT_RANGE* textRange) \
                 {                                                                                   \
                     Assert::AreEqual(12345u, currentPosition);                                      \
                     Assert::IsNull(textRange);                                                      \
@@ -537,18 +569,18 @@ namespace canvas
                                                                                                     \
             auto textLayout = f.CreateSimpleTextLayout();                                           \
                                                                                                     \
-            canvasType value;                                                                       \
+            decltype(canvasValue) value;                                                            \
             Assert::AreEqual(S_OK, textLayout->Get##name##(12345, &value));                         \
             Assert::AreEqual(canvasValue, value);                                                   \
         }
 
-#define TEST_METHOD_RANGE_SETTER(name, mockName, dwriteType, dwriteValue, canvasValue)              \
+#define TEST_METHOD_RANGE_SETTER(name, mockName, dwriteValue, canvasValue)                          \
         TEST_METHOD_EX(CanvasTextLayoutTests_Set##name##)                                           \
         {                                                                                           \
             Fixture f;                                                                              \
                                                                                                     \
             f.Adapter->MockTextLayout->##mockName##.SetExpectedCalls(1,                             \
-                [&](dwriteType value, DWRITE_TEXT_RANGE textRange)                                  \
+                [&](decltype(dwriteValue) value, DWRITE_TEXT_RANGE textRange)                       \
                 {                                                                                   \
                     Assert::AreEqual(123u, textRange.startPosition);                                \
                     Assert::AreEqual(456u, textRange.length);                                       \
@@ -561,25 +593,25 @@ namespace canvas
             Assert::AreEqual(S_OK, textLayout->Set##name##(123, 456, canvasValue));                 \
         }
 
-        TEST_METHOD_RANGE_GETTER(FontSize, GetFontSizeMethod, FLOAT, 16.0f, FLOAT, 16.0f);
-        TEST_METHOD_RANGE_GETTER(FontStretch, GetFontStretchMethod, DWRITE_FONT_STRETCH, DWRITE_FONT_STRETCH_SEMI_EXPANDED, FontStretch, FontStretch_SemiExpanded);
-        TEST_METHOD_RANGE_GETTER(FontStyle, GetFontStyleMethod, DWRITE_FONT_STYLE, DWRITE_FONT_STYLE_ITALIC, FontStyle, FontStyle_Italic);
-        TEST_METHOD_RANGE_GETTER(FontWeight, GetFontWeightMethod, DWRITE_FONT_WEIGHT, DWRITE_FONT_WEIGHT_DEMI_BOLD, FontWeight, FontWeight{ 600 });
+        TEST_METHOD_RANGE_GETTER(FontSize, GetFontSizeMethod, 16.0f, 16.0f);
+        TEST_METHOD_RANGE_GETTER(FontStretch, GetFontStretchMethod, DWRITE_FONT_STRETCH_SEMI_EXPANDED, FontStretch_SemiExpanded);
+        TEST_METHOD_RANGE_GETTER(FontStyle, GetFontStyleMethod, DWRITE_FONT_STYLE_ITALIC, FontStyle_Italic);
+        TEST_METHOD_RANGE_GETTER(FontWeight, GetFontWeightMethod, DWRITE_FONT_WEIGHT_DEMI_BOLD, FontWeight{ 600 });
 
-        TEST_METHOD_RANGE_GETTER(Strikethrough, GetStrikethroughMethod, BOOL, TRUE, boolean, static_cast<boolean>(true));
-        TEST_METHOD_RANGE_GETTER(Underline, GetUnderlineMethod, BOOL, TRUE, boolean, static_cast<boolean>(true));
+        TEST_METHOD_RANGE_GETTER(Strikethrough, GetStrikethroughMethod, TRUE, static_cast<boolean>(true));
+        TEST_METHOD_RANGE_GETTER(Underline, GetUnderlineMethod, TRUE, static_cast<boolean>(true));
 
-        TEST_METHOD_RANGE_SETTER(FontSize, SetFontSizeMethod, float, 99.0f, 99.0f);
-        TEST_METHOD_RANGE_SETTER(FontStretch, SetFontStretchMethod, DWRITE_FONT_STRETCH, DWRITE_FONT_STRETCH_SEMI_EXPANDED, FontStretch_SemiExpanded);
+        TEST_METHOD_RANGE_SETTER(FontSize, SetFontSizeMethod, 99.0f, 99.0f);
+        TEST_METHOD_RANGE_SETTER(FontStretch, SetFontStretchMethod, DWRITE_FONT_STRETCH_SEMI_EXPANDED, FontStretch_SemiExpanded);
 
-        TEST_METHOD_RANGE_SETTER(FontStyle, SetFontStyleMethod, DWRITE_FONT_STYLE, DWRITE_FONT_STYLE_ITALIC, FontStyle_Italic);
-        TEST_METHOD_RANGE_SETTER(FontWeight, SetFontWeightMethod, DWRITE_FONT_WEIGHT, DWRITE_FONT_WEIGHT_DEMI_BOLD, FontWeight{ 600 });
+        TEST_METHOD_RANGE_SETTER(FontStyle, SetFontStyleMethod, DWRITE_FONT_STYLE_ITALIC, FontStyle_Italic);
+        TEST_METHOD_RANGE_SETTER(FontWeight, SetFontWeightMethod, DWRITE_FONT_WEIGHT_DEMI_BOLD, FontWeight{ 600 });
 
-        TEST_METHOD_RANGE_SETTER(Strikethrough, SetStrikethroughMethod, BOOL, TRUE, static_cast<boolean>(true));
-        TEST_METHOD_RANGE_SETTER(Underline, SetUnderlineMethod, BOOL, TRUE, static_cast<boolean>(true));
+        TEST_METHOD_RANGE_SETTER(Strikethrough, SetStrikethroughMethod, TRUE, static_cast<boolean>(true));
+        TEST_METHOD_RANGE_SETTER(Underline, SetUnderlineMethod, TRUE, static_cast<boolean>(true));
 
-        TEST_METHOD_RANGE_GETTER(PairKerning, GetPairKerningMethod, BOOL, TRUE, boolean, static_cast<boolean>(true));
-        TEST_METHOD_RANGE_SETTER(PairKerning, SetPairKerningMethod, BOOL, TRUE, static_cast<boolean>(true));
+        TEST_METHOD_RANGE_GETTER(PairKerning, GetPairKerningMethod, TRUE, static_cast<boolean>(true));
+        TEST_METHOD_RANGE_SETTER(PairKerning, SetPairKerningMethod, TRUE, static_cast<boolean>(true));
 
         //
         // The properties which don't follow common patterns are tested below.

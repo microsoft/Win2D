@@ -307,7 +307,7 @@ namespace CoreWindowExample
                 new CanvasTextFormat()
                 {
                     FontSize = 36,
-                    ParagraphAlignment = ParagraphAlignment.Center,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Center,
                     VerticalAlignment = CanvasVerticalAlignment.Center
                 });
         }
@@ -334,7 +334,7 @@ namespace CoreWindowExample
                 new CanvasTextFormat()
                 {
                     FontSize = 12,
-                    ParagraphAlignment = ParagraphAlignment.Right,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Right,
                     VerticalAlignment = CanvasVerticalAlignment.Bottom
                 });
 
@@ -347,7 +347,7 @@ namespace CoreWindowExample
                         new CanvasTextFormat()
                         {
                             FontSize = 24,
-                            ParagraphAlignment = ParagraphAlignment.Center,
+                            HorizontalAlignment = CanvasHorizontalAlignment.Center,
                             VerticalAlignment = CanvasVerticalAlignment.Center
                         });
                 }

@@ -124,7 +124,7 @@ namespace ExampleGallery
         readonly CanvasTextFormat textLabelFormat = new CanvasTextFormat
         {
             FontSize = 16,
-            ParagraphAlignment = ParagraphAlignment.Center,
+            HorizontalAlignment = CanvasHorizontalAlignment.Center,
             VerticalAlignment = CanvasVerticalAlignment.Center,
         };
 

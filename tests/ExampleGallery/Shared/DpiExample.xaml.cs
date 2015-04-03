@@ -92,7 +92,7 @@ namespace ExampleGallery
             public readonly CanvasTextFormat TextFormat = new CanvasTextFormat
             {
                 VerticalAlignment = CanvasVerticalAlignment.Center,
-                ParagraphAlignment = ParagraphAlignment.Center,
+                HorizontalAlignment = CanvasHorizontalAlignment.Center,
             };
 
             string message;

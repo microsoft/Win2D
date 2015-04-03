@@ -22,17 +22,29 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.CanvasTextDirection">
       <summary>Specifies the direction in which text is formatted and read.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.TopToBottom">
-      <summary>Reading progresses from top to bottom.</summary>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.LeftToRightThenTopToBottom">
+      <summary>Text is read from left to right and lines flow from top to bottom.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.BottomToTop">
-      <summary>Reading progresses from bottom to top.</summary>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.RightToLeftThenTopToBottom">
+      <summary>Text is read from right to left and lines flow from top to bottom.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.LeftToRight">
-      <summary>Reading progresses from left to right.</summary>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.LeftToRightThenBottomToTop">
+      <summary>Text is read from left to right and lines flow from bottom to top.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.RightToLeft">
-      <summary>Reading progresses from right to left.</summary>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.RightToLeftThenBottomToTop">
+      <summary>Text is read from right to left and lines flow from bottom to top.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.TopToBottomThenLeftToRight">
+      <summary>Text is read from top to bottom and lines flow from left to right.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.BottomToTopThenLeftToRight">
+      <summary>Text is read from bottom to top and lines flow from left to right.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.TopToBottomThenRightToLeft">
+      <summary>Text is read from top to bottom and lines flow from right to left.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.BottomToTopThenRightToLeft">
+      <summary>Text is read from bottom to top and lines flow from right to left.</summary>
     </member>
 
 
@@ -47,6 +59,22 @@ under the License.
                This can be useful to avoid the uneven appearance that can occur from font fallback.</summary>
     </member>
 
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment">
+      <summary>Specifies the horizontal alignment of paragraph text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Left">
+      <summary>The left edge of the text is aligned to the left edge of the layout box.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Right">
+      <summary>The right edge of the text is aligned to the right edge of the layout box.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Center">
+      <summary>The center of the text is aligned to the center of the layout box.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Justified">
+      <summary>The left edge of the text is aligned to the left edge of the layout box and broken lines are aligned to the right edge.</summary>
+    </member>
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasVerticalAlignment">
       <summary>Specifies the vertical alignment of paragraph text.</summary>
@@ -172,10 +200,10 @@ under the License.
         Most useful for path ellipsis, where the delimiter would be a slash.
        </summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.ReadingDirection">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.Direction">
       <summary>Specifies the direction in which the text is read.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.ParagraphAlignment">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.HorizontalAlignment">
       <summary>Specifies the horizontal paragraph alignment.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.Options">
@@ -235,9 +263,6 @@ under the License.
           </dl>
         </p>
       </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FlowDirection">
-      <summary>Specifies the direction in which the text lines are flowed.</summary>
     </member>
     
   </members>

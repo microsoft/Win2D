@@ -203,54 +203,48 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-#define SIMPLE_GLOBAL_GETTER(name, valueType, dwriteMethod, conversionFunc)                             \
-    IFACEMETHODIMP CanvasTextLayout::##name(                                                            \
-        valueType* value)                                                                               \
-        {                                                                                               \
-            return ExceptionBoundary(                                                                   \
-            [&]                                                                                         \
-            {                                                                                           \
-                CheckInPointer(value);                                                                  \
-                                                                                                        \
-                auto& resource = GetResource();                                                         \
-                                                                                                        \
-                auto nativeValue =                                                                      \
-                    conversionFunc(static_cast<IDWriteTextFormat*>(resource.Get())->dwriteMethod());    \
-                *value = nativeValue;                                                                   \
-            });                                                                                         \
-        }
-
-#define SIMPLE_GLOBAL_SETTER(name, valueType, dwriteMethod, conversionFunc)     \
-    IFACEMETHODIMP CanvasTextLayout::##name(                                    \
-        valueType value)                                                        \
-        {                                                                       \
-        return ExceptionBoundary(                                               \
-        [&]                                                                     \
-            {                                                                   \
-                auto& resource = GetResource();                                 \
-                                                                                \
-                ThrowIfInvalid(value);                                          \
-                resource->dwriteMethod(conversionFunc(value));                  \
-        });                                                                     \
+#define SIMPLE_GLOBAL_GETTER(name, valueType, dwriteMethod, conversionFunc) \
+    IFACEMETHODIMP CanvasTextLayout::##name(valueType* value)           \
+    {                                                                   \
+        return ExceptionBoundary(                                       \
+            [&]                                                         \
+            {                                                           \
+                CheckInPointer(value);                                  \
+                                                                        \
+                auto& resource = GetResource();                         \
+                                                                        \
+                auto nativeValue =                                      \
+                    conversionFunc(static_cast<IDWriteTextFormat*>(resource.Get())->dwriteMethod()); \
+                *value = nativeValue;                                   \
+            });                                                         \
     }
 
-#define SIMPLE_STRING_GETTER(name, stringGetFn)                                 \
-    IFACEMETHODIMP CanvasTextLayout::##name(                                    \
-        HSTRING* value)                                                         \
-        {                                                                       \
-            return ExceptionBoundary(                                           \
-            [&]                                                                 \
-            {                                                                   \
-                CheckInPointer(value);                                          \
-                auto& resource = GetResource();                                 \
-                WinString winStr = stringGetFn(resource.Get());                 \
-                winStr.CopyTo(value);                                           \
-            });                                                                 \
-        }
+#define SIMPLE_GLOBAL_SETTER(name, valueType, dwriteMethod, conversionFunc) \
+    IFACEMETHODIMP CanvasTextLayout::##name(valueType value)            \
+    {                                                                   \
+        return ExceptionBoundary(                                       \
+            [&]                                                         \
+            {                                                           \
+                auto& resource = GetResource();                         \
+                                                                        \
+                ThrowIfInvalid(value);                                  \
+                resource->dwriteMethod(conversionFunc(value));          \
+            });                                                         \
+    }
 
-    SIMPLE_GLOBAL_GETTER(get_FlowDirection, CanvasTextDirection, GetFlowDirection, ToCanvasTextDirection);
-    SIMPLE_GLOBAL_SETTER(put_FlowDirection, CanvasTextDirection, SetFlowDirection, ToFlowDirection);
-
+#define SIMPLE_STRING_GETTER(name, stringGetFn)                         \
+    IFACEMETHODIMP CanvasTextLayout::##name(HSTRING* value)             \
+    {                                                                   \
+        return ExceptionBoundary(                                       \
+            [&]                                                         \
+            {                                                           \
+                CheckInPointer(value);                                  \
+                auto& resource = GetResource();                         \
+                WinString winStr = stringGetFn(resource.Get());         \
+                winStr.CopyTo(value);                                   \
+            });                                                         \
+    }
+    
     SIMPLE_STRING_GETTER(get_DefaultFontFamily, GetFontFamilyName);
 
     SIMPLE_GLOBAL_GETTER(get_DefaultFontSize, float, GetFontSize, );
@@ -266,14 +260,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     SIMPLE_GLOBAL_GETTER(get_VerticalAlignment, CanvasVerticalAlignment, GetParagraphAlignment, ToCanvasVerticalAlignment);
     SIMPLE_GLOBAL_SETTER(put_VerticalAlignment, CanvasVerticalAlignment, SetParagraphAlignment, ToParagraphAlignment);
 
-    SIMPLE_GLOBAL_GETTER(get_ReadingDirection, CanvasTextDirection, GetReadingDirection, ToCanvasTextDirection);
-    SIMPLE_GLOBAL_SETTER(put_ReadingDirection, CanvasTextDirection, SetReadingDirection, ToReadingDirection);
-
-    SIMPLE_GLOBAL_GETTER(get_ParagraphAlignment, ABI::Windows::UI::Text::ParagraphAlignment, GetTextAlignment, ToWindowsParagraphAlignment);
-    SIMPLE_GLOBAL_SETTER(put_ParagraphAlignment, ABI::Windows::UI::Text::ParagraphAlignment, SetTextAlignment, ToTextAlignment);
+    SIMPLE_GLOBAL_GETTER(get_HorizontalAlignment, CanvasHorizontalAlignment, GetTextAlignment, ToCanvasHorizontalAlignment);
+    SIMPLE_GLOBAL_SETTER(put_HorizontalAlignment, CanvasHorizontalAlignment, SetTextAlignment, ToTextAlignment);
 
     SIMPLE_GLOBAL_GETTER(get_WordWrapping, CanvasWordWrapping, GetWordWrapping, ToCanvasWordWrapping);
     SIMPLE_GLOBAL_SETTER(put_WordWrapping, CanvasWordWrapping, SetWordWrapping, ToWordWrapping);
+
+
+    IFACEMETHODIMP CanvasTextLayout::get_Direction(CanvasTextDirection* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                auto& resource = GetResource();
+
+                *value = DWriteToCanvasTextDirection::Lookup(resource->GetReadingDirection(), resource->GetFlowDirection())->TextDirection;
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasTextLayout::put_Direction(CanvasTextDirection value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& resource = GetResource();
+                auto entry = DWriteToCanvasTextDirection::Lookup(value);
+                ThrowIfFailed(resource->SetReadingDirection(entry->ReadingDirection));
+                ThrowIfFailed(resource->SetFlowDirection(entry->FlowDirection));
+            });
+    }
 
 
     IFACEMETHODIMP CanvasTextLayout::GetMinimumLayoutWidth(

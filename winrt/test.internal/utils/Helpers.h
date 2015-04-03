@@ -456,10 +456,14 @@ namespace Microsoft
 
             ENUM_TO_STRING(CanvasTextDirection)
             {
-                ENUM_VALUE(CanvasTextDirection::TopToBottom);
-                ENUM_VALUE(CanvasTextDirection::BottomToTop);
-                ENUM_VALUE(CanvasTextDirection::LeftToRight);
-                ENUM_VALUE(CanvasTextDirection::RightToLeft);
+                ENUM_VALUE(CanvasTextDirection::LeftToRightThenTopToBottom);
+                ENUM_VALUE(CanvasTextDirection::RightToLeftThenTopToBottom);
+                ENUM_VALUE(CanvasTextDirection::LeftToRightThenBottomToTop);
+                ENUM_VALUE(CanvasTextDirection::RightToLeftThenBottomToTop);
+                ENUM_VALUE(CanvasTextDirection::TopToBottomThenLeftToRight);
+                ENUM_VALUE(CanvasTextDirection::BottomToTopThenLeftToRight);
+                ENUM_VALUE(CanvasTextDirection::TopToBottomThenRightToLeft);
+                ENUM_VALUE(CanvasTextDirection::BottomToTopThenRightToLeft);
                 END_ENUM(CanvasTextDirection);
             }
 
@@ -658,6 +662,15 @@ namespace Microsoft
                 ENUM_VALUE(CanvasVerticalAlignment::Bottom);
                 ENUM_VALUE(CanvasVerticalAlignment::Center);
                 END_ENUM(CanvasVerticalAlignment);
+            }
+
+            ENUM_TO_STRING(CanvasHorizontalAlignment)
+            {
+                ENUM_VALUE(CanvasHorizontalAlignment::Left);
+                ENUM_VALUE(CanvasHorizontalAlignment::Right);
+                ENUM_VALUE(CanvasHorizontalAlignment::Center);
+                ENUM_VALUE(CanvasHorizontalAlignment::Justified);
+                END_ENUM(CanvasHorizontalAlignment);
             }
             
             ENUM_TO_STRING(DWRITE_PARAGRAPH_ALIGNMENT)

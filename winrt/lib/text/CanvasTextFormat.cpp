@@ -176,7 +176,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasTextFormat::CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager)
         : m_manager(manager)
         , m_closed(false)
-        , m_flowDirection(CanvasTextDirection::TopToBottom)
+        , m_direction(CanvasTextDirection::LeftToRightThenTopToBottom)
         , m_fontFamilyName(L"Segoe UI")
         , m_fontSize(20.0f)
         , m_fontStretch(ABI::Windows::UI::Text::FontStretch_Normal)
@@ -187,8 +187,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_lineSpacing(0.0f)
         , m_lineSpacingBaseline(0.0f)
         , m_verticalAlignment(CanvasVerticalAlignment::Top)
-        , m_paragraphAlignment(ABI::Windows::UI::Text::ParagraphAlignment_Left)
-        , m_readingDirection(CanvasTextDirection::LeftToRight)
+        , m_horizontalAlignment(CanvasHorizontalAlignment::Left)
         , m_trimmingGranularity(CanvasTextTrimmingGranularity::None)
         , m_trimmingDelimiterCount(0)
         , m_wordWrapping(CanvasWordWrapping::Wrap)
@@ -262,12 +261,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_fontSize,
             static_cast<const wchar_t*>(m_localeName),
             &m_format));
-
-        RealizeFlowDirection();
+        
+        RealizeDirection();
         RealizeIncrementalTabStop();
         RealizeLineSpacing();
         RealizeParagraphAlignment();
-        RealizeReadingDirection();
         RealizeTextAlignment();
         RealizeTrimming();
         RealizeWordWrapping();
@@ -301,7 +299,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ThrowIfFailed(m_format->GetFontCollection(&m_fontCollection));
 
-        m_flowDirection      = ToCanvasTextDirection(m_format->GetFlowDirection());
+        m_direction          = DWriteToCanvasTextDirection::Lookup(m_format->GetReadingDirection(), m_format->GetFlowDirection())->TextDirection;
         m_fontFamilyName     = GetFontFamilyName(m_format.Get());
         m_fontSize           = m_format->GetFontSize();
         m_fontStretch        = ToWindowsFontStretch(m_format->GetFontStretch());
@@ -310,8 +308,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_incrementalTabStop = m_format->GetIncrementalTabStop();
         m_localeName         = GetLocaleName(m_format.Get());
         m_verticalAlignment  = ToCanvasVerticalAlignment(m_format->GetParagraphAlignment());
-        m_paragraphAlignment = ToWindowsParagraphAlignment(m_format->GetTextAlignment());
-        m_readingDirection   = ToCanvasTextDirection(m_format->GetReadingDirection());
+        m_horizontalAlignment = ToCanvasHorizontalAlignment(m_format->GetTextAlignment());
         m_wordWrapping       = ToCanvasWordWrapping(m_format->GetWordWrapping());
         m_drawTextOptions    = CanvasDrawTextOptions::Default;
 
@@ -445,31 +442,75 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     //
-    // CanvasTextFormat.FlowDirection
+    // CanvasTextFormat.Direction
     //
-    
-    IFACEMETHODIMP CanvasTextFormat::get_FlowDirection(CanvasTextDirection* value)
+
+    static DWriteToCanvasTextDirection gDWriteToCanvasTextDirectionMappingTable[] =
+    { 
+        { DWRITE_READING_DIRECTION_LEFT_TO_RIGHT, DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM, CanvasTextDirection::LeftToRightThenTopToBottom },
+        { DWRITE_READING_DIRECTION_RIGHT_TO_LEFT, DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM, CanvasTextDirection::RightToLeftThenTopToBottom },
+        { DWRITE_READING_DIRECTION_LEFT_TO_RIGHT, DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection::LeftToRightThenBottomToTop },
+        { DWRITE_READING_DIRECTION_RIGHT_TO_LEFT, DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection::RightToLeftThenBottomToTop },
+        { DWRITE_READING_DIRECTION_TOP_TO_BOTTOM, DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT, CanvasTextDirection::TopToBottomThenLeftToRight },
+        { DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT, CanvasTextDirection::BottomToTopThenLeftToRight },
+        { DWRITE_READING_DIRECTION_TOP_TO_BOTTOM, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, CanvasTextDirection::TopToBottomThenRightToLeft },
+        { DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, CanvasTextDirection::BottomToTopThenRightToLeft },
+    };
+
+    /* static */
+    DWriteToCanvasTextDirection const* DWriteToCanvasTextDirection::Lookup(DWRITE_READING_DIRECTION readingDirection, DWRITE_FLOW_DIRECTION flowDirection)
+    {
+        for (auto const& entry : gDWriteToCanvasTextDirectionMappingTable)
+        {
+            if (entry.ReadingDirection == readingDirection && entry.FlowDirection == flowDirection)
+                return &entry;
+        }
+
+        ThrowHR(DWRITE_E_FLOWDIRECTIONCONFLICTS);
+    }
+
+    /* static */
+    DWriteToCanvasTextDirection const* DWriteToCanvasTextDirection::Lookup(CanvasTextDirection textDirection)
+    {
+        for (auto const& entry : gDWriteToCanvasTextDirectionMappingTable)
+        {
+            if (entry.TextDirection == textDirection)
+                return &entry;
+        }
+
+        ThrowHR(E_INVALIDARG);
+    }
+
+
+    void CanvasTextFormat::RealizeDirection()
+    {
+        auto entry = DWriteToCanvasTextDirection::Lookup(m_direction);
+        assert(entry);          // m_direction should always be set to a valid value
+
+        ThrowIfFailed(m_format->SetReadingDirection(entry->ReadingDirection));
+        ThrowIfFailed(m_format->SetFlowDirection(entry->FlowDirection));
+    }
+
+
+    IFACEMETHODIMP CanvasTextFormat::get_Direction(CanvasTextDirection* value)
     {
         return PropertyGet(
             value,
-            m_flowDirection,
-            [&] { return ToCanvasTextDirection(m_format->GetFlowDirection()); });
+            m_direction,
+            [=]
+            {
+                return DWriteToCanvasTextDirection::Lookup(m_format->GetReadingDirection(), m_format->GetFlowDirection())->TextDirection;
+            });
     }
 
 
-    IFACEMETHODIMP CanvasTextFormat::put_FlowDirection(CanvasTextDirection value)
+    IFACEMETHODIMP CanvasTextFormat::put_Direction(CanvasTextDirection value)
     {
         return PropertyPut(
-            value, 
-            &m_flowDirection, 
+            value,
+            &m_direction,
             ThrowIfInvalid<CanvasTextDirection>,
-            &CanvasTextFormat::RealizeFlowDirection);
-    }
-
-
-    void CanvasTextFormat::RealizeFlowDirection()
-    {
-        ThrowIfFailed(m_format->SetFlowDirection(ToFlowDirection(m_flowDirection)));        
+            &CanvasTextFormat::RealizeDirection);
     }
 
     //
@@ -774,59 +815,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     //
-    // CanvasTextFormat.ReadingDirection
+    // CanvasTextFormat.HorizontalAlignment
     //
 
-    IFACEMETHODIMP CanvasTextFormat::get_ReadingDirection(CanvasTextDirection* value)
+    IFACEMETHODIMP CanvasTextFormat::get_HorizontalAlignment(CanvasHorizontalAlignment* value)
     {
+        // Canvas calls it "HorizontalAlignment", but DWrite calls it "TextAlignment"
         return PropertyGet(
             value,
-            m_readingDirection,
-            [&] { return ToCanvasTextDirection(m_format->GetReadingDirection()); });
+            m_horizontalAlignment,
+            [&] { return ToCanvasHorizontalAlignment(m_format->GetTextAlignment()); });
     }
 
 
-    IFACEMETHODIMP CanvasTextFormat::put_ReadingDirection(CanvasTextDirection value)
+    IFACEMETHODIMP CanvasTextFormat::put_HorizontalAlignment(CanvasHorizontalAlignment value)
     {
         return PropertyPut(
             value, 
-            &m_readingDirection,
-            ThrowIfInvalid<CanvasTextDirection>,
-            &CanvasTextFormat::RealizeReadingDirection);
-    }
-
-
-    void CanvasTextFormat::RealizeReadingDirection()
-    {
-        ThrowIfFailed(m_format->SetReadingDirection(ToReadingDirection(m_readingDirection)));
-    }
-
-    //
-    // CanvasTextFormat.ParagraphAlignment
-    //
-
-    IFACEMETHODIMP CanvasTextFormat::get_ParagraphAlignment(ABI::Windows::UI::Text::ParagraphAlignment* value)
-    {
-        // Canvas calls is "ParagraphAlignment", but DWrite calls it "TextAlignment"
-        return PropertyGet(
-            value,
-            m_paragraphAlignment,
-            [&] { return ToWindowsParagraphAlignment(m_format->GetTextAlignment()); });
-    }
-
-
-    IFACEMETHODIMP CanvasTextFormat::put_ParagraphAlignment(ABI::Windows::UI::Text::ParagraphAlignment value)
-    {
-        return PropertyPut(
-            value, 
-            &m_paragraphAlignment,
-            ThrowIfInvalid<ABI::Windows::UI::Text::ParagraphAlignment>,
+            &m_horizontalAlignment,
+            ThrowIfInvalid<CanvasHorizontalAlignment>,
             &CanvasTextFormat::RealizeTextAlignment);
     }
 
     void CanvasTextFormat::RealizeTextAlignment()
     {
-        ThrowIfFailed(m_format->SetTextAlignment(ToTextAlignment(m_paragraphAlignment)));        
+        ThrowIfFailed(m_format->SetTextAlignment(ToTextAlignment(m_horizontalAlignment)));        
     }
 
     //

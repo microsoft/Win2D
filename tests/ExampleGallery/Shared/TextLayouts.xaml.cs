@@ -104,7 +104,7 @@ namespace ExampleGallery
                     textFormat = new CanvasTextFormat()
                     {
                         FontSize = sizeDim * 0.1f,
-                        ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Center,
                         VerticalAlignment = CanvasVerticalAlignment.Center
                     };
                     break;
@@ -119,7 +119,7 @@ namespace ExampleGallery
                     textFormat = new CanvasTextFormat()
                     {
                         FontSize = sizeDim * 0.025f,
-                        ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Left,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Left,
                         VerticalAlignment = CanvasVerticalAlignment.Top
                     };
                     break;
@@ -131,10 +131,9 @@ namespace ExampleGallery
                     textFormat = new CanvasTextFormat()
                     {
                         FontSize = sizeDim * 0.04f,
-                        ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Center,
                         VerticalAlignment = CanvasVerticalAlignment.Center,
-                        ReadingDirection = CanvasTextDirection.TopToBottom,
-                        FlowDirection = CanvasTextDirection.RightToLeft
+                        Direction = CanvasTextDirection.TopToBottomThenRightToLeft
                     };
                     break;
             }

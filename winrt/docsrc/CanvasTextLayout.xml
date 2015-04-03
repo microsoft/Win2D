@@ -236,10 +236,10 @@ under the License.
         Most useful for path ellipsis, where the delimiter would be a slash.
        </summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.ReadingDirection">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.Direction">
       <summary>Specifies the direction in which the text is read.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.ParagraphAlignment">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.HorizontalAlignment">
       <summary>Specifies the horizontal paragraph alignment.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.OpticalAlignment">
@@ -275,9 +275,6 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.IncrementalTabStop">
       <summary>Specifies the incremental tab stop position.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.FlowDirection">
-      <summary>Specifies the direction in which the text lines are flowed.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DefaultFontFamily">
       <summary>Specifies the font family name for ranges of the layout that don't have an explicitly specified font family name.</summary>

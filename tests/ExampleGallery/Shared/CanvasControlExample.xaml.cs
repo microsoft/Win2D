@@ -50,7 +50,7 @@ namespace ExampleGallery
                     new CanvasTextFormat()
                     {
                         VerticalAlignment = CanvasVerticalAlignment.Top,
-                        ParagraphAlignment = ParagraphAlignment.Left,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Left,
                         FontSize = 10
                     });
             }

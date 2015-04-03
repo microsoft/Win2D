@@ -24,24 +24,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<int>(DWRITE) == static_cast<int>(CANVAS), #CANVAS " is assumed to match " #DWRITE)
 
 
-    inline DWRITE_FLOW_DIRECTION ToFlowDirection(CanvasTextDirection value)
-    {
-        CHECK_ENUM_MEMBER(DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM, CanvasTextDirection::TopToBottom);
-        CHECK_ENUM_MEMBER(DWRITE_FLOW_DIRECTION_BOTTOM_TO_TOP, CanvasTextDirection::BottomToTop);
-        CHECK_ENUM_MEMBER(DWRITE_FLOW_DIRECTION_LEFT_TO_RIGHT, CanvasTextDirection::LeftToRight);
-        CHECK_ENUM_MEMBER(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT, CanvasTextDirection::RightToLeft);
-
-        return static_cast<DWRITE_FLOW_DIRECTION>(value);
-    }
-
-
-    inline CanvasTextDirection ToCanvasTextDirection(DWRITE_FLOW_DIRECTION value)
-    {
-        // static_asserts in ToFlowDirection validate that this cast is ok.
-        return static_cast<CanvasTextDirection>(value);
-    }
-
-
     inline DWRITE_LINE_SPACING_METHOD ToLineSpacingMethod(CanvasLineSpacingMethod value)
     {
         CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_DEFAULT, CanvasLineSpacingMethod::Default);
@@ -129,55 +111,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    inline DWRITE_READING_DIRECTION ToReadingDirection(CanvasTextDirection value)
+    inline DWRITE_TEXT_ALIGNMENT ToTextAlignment(CanvasHorizontalAlignment value)
     {
-        switch (value)
-        {
-        case CanvasTextDirection::LeftToRight: return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
-        case CanvasTextDirection::RightToLeft: return DWRITE_READING_DIRECTION_RIGHT_TO_LEFT;
-        case CanvasTextDirection::TopToBottom: return DWRITE_READING_DIRECTION_TOP_TO_BOTTOM;
-        case CanvasTextDirection::BottomToTop: return DWRITE_READING_DIRECTION_BOTTOM_TO_TOP;
-        default: ThrowHR(E_INVALIDARG);
-        }
+        CHECK_ENUM_MEMBER(DWRITE_TEXT_ALIGNMENT_LEADING, CanvasHorizontalAlignment::Left);
+        CHECK_ENUM_MEMBER(DWRITE_TEXT_ALIGNMENT_TRAILING, CanvasHorizontalAlignment::Right);
+        CHECK_ENUM_MEMBER(DWRITE_TEXT_ALIGNMENT_CENTER, CanvasHorizontalAlignment::Center);
+        CHECK_ENUM_MEMBER(DWRITE_TEXT_ALIGNMENT_JUSTIFIED, CanvasHorizontalAlignment::Justified);
+
+        return static_cast<DWRITE_TEXT_ALIGNMENT>(value);
     }
 
 
-    inline CanvasTextDirection ToCanvasTextDirection(DWRITE_READING_DIRECTION value)
+    inline CanvasHorizontalAlignment ToCanvasHorizontalAlignment(DWRITE_TEXT_ALIGNMENT value)
     {
-        switch (value)
-        {
-        case DWRITE_READING_DIRECTION_LEFT_TO_RIGHT: return CanvasTextDirection::LeftToRight;
-        case DWRITE_READING_DIRECTION_RIGHT_TO_LEFT: return CanvasTextDirection::RightToLeft;
-        case DWRITE_READING_DIRECTION_TOP_TO_BOTTOM: return CanvasTextDirection::TopToBottom;
-        case DWRITE_READING_DIRECTION_BOTTOM_TO_TOP: return CanvasTextDirection::BottomToTop;
-        default: ThrowHR(E_INVALIDARG);
-        }
-    }
-
-
-    inline DWRITE_TEXT_ALIGNMENT ToTextAlignment(ABI::Windows::UI::Text::ParagraphAlignment value)
-    {
-        switch (value)
-        {
-        case ABI::Windows::UI::Text::ParagraphAlignment_Left: return DWRITE_TEXT_ALIGNMENT_LEADING;
-        case ABI::Windows::UI::Text::ParagraphAlignment_Center: return DWRITE_TEXT_ALIGNMENT_CENTER;
-        case ABI::Windows::UI::Text::ParagraphAlignment_Right: return DWRITE_TEXT_ALIGNMENT_TRAILING;
-        case ABI::Windows::UI::Text::ParagraphAlignment_Justify: return DWRITE_TEXT_ALIGNMENT_JUSTIFIED;
-        default: ThrowHR(E_INVALIDARG);
-        }
-    }
-
-
-    inline ABI::Windows::UI::Text::ParagraphAlignment ToWindowsParagraphAlignment(DWRITE_TEXT_ALIGNMENT value)
-    {
-        switch (value)
-        {
-        case DWRITE_TEXT_ALIGNMENT_LEADING: return ABI::Windows::UI::Text::ParagraphAlignment_Left;
-        case DWRITE_TEXT_ALIGNMENT_CENTER: return ABI::Windows::UI::Text::ParagraphAlignment_Center;
-        case DWRITE_TEXT_ALIGNMENT_TRAILING: return ABI::Windows::UI::Text::ParagraphAlignment_Right;
-        case DWRITE_TEXT_ALIGNMENT_JUSTIFIED: return ABI::Windows::UI::Text::ParagraphAlignment_Justify;
-        default: ThrowHR(E_INVALIDARG);
-        }
+        // static_asserts in ToTextAlignment validate that this case is ok
+        return static_cast<CanvasHorizontalAlignment>(value);
     }
 
 
@@ -314,12 +262,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         switch (value)
         {
-        case CanvasTextDirection::TopToBottom:
-        case CanvasTextDirection::BottomToTop:
-        case CanvasTextDirection::LeftToRight:
-        case CanvasTextDirection::RightToLeft:
+        case CanvasTextDirection::LeftToRightThenTopToBottom:
+        case CanvasTextDirection::RightToLeftThenTopToBottom:
+        case CanvasTextDirection::LeftToRightThenBottomToTop:
+        case CanvasTextDirection::RightToLeftThenBottomToTop:
+        case CanvasTextDirection::TopToBottomThenLeftToRight:
+        case CanvasTextDirection::BottomToTopThenLeftToRight:
+        case CanvasTextDirection::TopToBottomThenRightToLeft:
+        case CanvasTextDirection::BottomToTopThenRightToLeft:
             return;
-
         default:
             ThrowHR(E_INVALIDARG);
         }
@@ -347,6 +298,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         case CanvasVerticalAlignment::Top:
         case CanvasVerticalAlignment::Bottom:
         case CanvasVerticalAlignment::Center:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    template<>
+    inline void ThrowIfInvalid(CanvasHorizontalAlignment value)
+    {
+        switch (value)
+        {
+        case CanvasHorizontalAlignment::Left:
+        case CanvasHorizontalAlignment::Right:
+        case CanvasHorizontalAlignment::Center:
+        case CanvasHorizontalAlignment::Justified:
             return;
 
         default:

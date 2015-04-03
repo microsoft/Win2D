@@ -51,7 +51,7 @@ namespace Microsoft.Graphics.Canvas
         //
         // IDWriteTextFormat
         //
-        PROPERTY(FlowDirection, CanvasTextDirection);
+        PROPERTY(Direction, CanvasTextDirection);
         [propget] HRESULT DefaultFontFamily([out, retval] HSTRING* value);
         [propget] HRESULT DefaultFontSize([out, retval] float* value);
         [propget] HRESULT DefaultFontStretch([out, retval] Windows.UI.Text.FontStretch* value);
@@ -63,8 +63,7 @@ namespace Microsoft.Graphics.Canvas
         PROPERTY(LineSpacingBaseline, float);
         [propget] HRESULT DefaultLocaleName([out, retval] HSTRING* value);
         PROPERTY(VerticalAlignment, CanvasVerticalAlignment);
-        PROPERTY(ReadingDirection, CanvasTextDirection);
-        PROPERTY(ParagraphAlignment, Windows.UI.Text.ParagraphAlignment);
+        PROPERTY(HorizontalAlignment, CanvasHorizontalAlignment);
         PROPERTY(TrimmingGranularity, CanvasTextTrimmingGranularity);
         PROPERTY(TrimmingDelimiter, HSTRING);
         PROPERTY(TrimmingDelimiterCount, INT32);

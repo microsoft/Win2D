@@ -219,7 +219,7 @@ namespace ExampleGallery
                 var format = new CanvasTextFormat()
                 {
                     FontSize = 14,
-                    ParagraphAlignment = ParagraphAlignment.Right,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Right,
                     VerticalAlignment = CanvasVerticalAlignment.Center,
                     WordWrapping = CanvasWordWrapping.Wrap
                 };
@@ -328,7 +328,7 @@ namespace ExampleGallery
                 var format = new CanvasTextFormat()
                 {
                     FontSize = 14,
-                    ParagraphAlignment = ParagraphAlignment.Right,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Right,
                     VerticalAlignment = CanvasVerticalAlignment.Center
                 };
 
@@ -502,7 +502,7 @@ namespace ExampleGallery
                 var format = new CanvasTextFormat()
                 {
                     FontSize = 14,
-                    ParagraphAlignment = ParagraphAlignment.Right,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Right,
                     VerticalAlignment = CanvasVerticalAlignment.Center
                 };
 
@@ -514,7 +514,7 @@ namespace ExampleGallery
                 var textFormat = new CanvasTextFormat()
                 {
                     FontSize = 16,
-                    ParagraphAlignment = ParagraphAlignment.Center,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Center,
                     VerticalAlignment = CanvasVerticalAlignment.Bottom
                 };
 

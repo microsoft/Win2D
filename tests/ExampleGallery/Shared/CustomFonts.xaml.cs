@@ -46,7 +46,7 @@ namespace ExampleGallery
         static CanvasTextFormat labelText = new CanvasTextFormat()
         {
             FontSize = 24,
-            ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Left,
+            HorizontalAlignment = CanvasHorizontalAlignment.Left,
             VerticalAlignment = CanvasVerticalAlignment.Center
         };
 
@@ -54,7 +54,7 @@ namespace ExampleGallery
         {
             FontSize = 24,
             FontFamily = "Symbols.ttf#Symbols",
-            ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Right,
+            HorizontalAlignment = CanvasHorizontalAlignment.Right,
             VerticalAlignment = CanvasVerticalAlignment.Center
         };
 

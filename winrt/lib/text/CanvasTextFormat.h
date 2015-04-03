@@ -147,7 +147,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // it is required.
         //
         ComPtr<IDWriteFontCollection> m_fontCollection;
-        CanvasTextDirection m_flowDirection;
+        CanvasTextDirection m_direction;
         WinString m_fontFamilyName;
         float m_fontSize;
         ABI::Windows::UI::Text::FontStretch m_fontStretch;
@@ -159,8 +159,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float m_lineSpacingBaseline;
         WinString m_localeName;
         CanvasVerticalAlignment m_verticalAlignment;
-        CanvasTextDirection m_readingDirection;
-        ABI::Windows::UI::Text::ParagraphAlignment m_paragraphAlignment;
+        CanvasHorizontalAlignment m_horizontalAlignment;
         CanvasTextTrimmingGranularity m_trimmingGranularity;
         WinString m_trimmingDelimiter;
         int32_t m_trimmingDelimiterCount;
@@ -189,7 +188,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_##NAME)(TYPE* value) override;   \
         IFACEMETHOD(put_##NAME)(TYPE value) override
 
-        PROPERTY(FlowDirection,          CanvasTextDirection);
+        PROPERTY(Direction,              CanvasTextDirection);
         PROPERTY(FontFamily,             HSTRING);
         PROPERTY(FontSize,               float);
         PROPERTY(FontStretch,            ABI::Windows::UI::Text::FontStretch);
@@ -201,8 +200,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         PROPERTY(LineSpacingBaseline,    float);
         PROPERTY(LocaleName,             HSTRING);
         PROPERTY(VerticalAlignment,      CanvasVerticalAlignment);
-        PROPERTY(ReadingDirection,       CanvasTextDirection);
-        PROPERTY(ParagraphAlignment,     ABI::Windows::UI::Text::ParagraphAlignment);
+        PROPERTY(HorizontalAlignment,    CanvasHorizontalAlignment);
         PROPERTY(TrimmingGranularity,    CanvasTextTrimmingGranularity);
         PROPERTY(TrimmingDelimiter,      HSTRING);
         PROPERTY(TrimmingDelimiterCount, int32_t);
@@ -246,11 +244,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SetShadowPropertiesFromDWrite();
 
         void Unrealize();
-        void RealizeFlowDirection();
+        void RealizeDirection();
         void RealizeIncrementalTabStop();
         void RealizeLineSpacing();
         void RealizeParagraphAlignment();
-        void RealizeReadingDirection();
         void RealizeTextAlignment();
         void RealizeTrimming();
         void RealizeWordWrapping();
@@ -285,4 +282,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IDWriteInlineObject> Sign;
     };
 
+    // Struct that maps CanvasTextDirection to DWRITE_READING|FLOW_DIRECTION
+    struct DWriteToCanvasTextDirection
+    {
+        DWRITE_READING_DIRECTION ReadingDirection;
+        DWRITE_FLOW_DIRECTION FlowDirection;
+        CanvasTextDirection TextDirection;
+
+        static DWriteToCanvasTextDirection const* Lookup(DWRITE_READING_DIRECTION readingDirection, DWRITE_FLOW_DIRECTION flowDirection);
+        static DWriteToCanvasTextDirection const* Lookup(CanvasTextDirection textDirection);
+    };
+    
 }}}}

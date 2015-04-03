@@ -74,7 +74,7 @@ namespace ExampleGallery.Effects
                         {
                             FontSize = (float)inputBitmap.Size.Width / 5,
                             FontWeight = new FontWeight() { Weight = 999 },
-                            ParagraphAlignment = ParagraphAlignment.Center,
+                            HorizontalAlignment = CanvasHorizontalAlignment.Center,
                             VerticalAlignment = CanvasVerticalAlignment.Center
                         });
                 }

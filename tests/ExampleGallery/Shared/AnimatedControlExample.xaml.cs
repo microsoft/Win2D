@@ -368,7 +368,7 @@ namespace ExampleGallery
         {
             FontFamily = "Consolas",
             FontSize = size / 3,
-            ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Center,
+            HorizontalAlignment = CanvasHorizontalAlignment.Center,
             VerticalAlignment = CanvasVerticalAlignment.Center
         };
     }
@@ -441,7 +441,7 @@ namespace ExampleGallery
                     new CanvasTextFormat()
                     {
                         FontSize = heightPerUpdate * 2,
-                        ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Left,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Left,
                         VerticalAlignment = CanvasVerticalAlignment.Bottom
                     });
             }
@@ -449,7 +449,7 @@ namespace ExampleGallery
             using (var textFormat = new CanvasTextFormat()
             {
                 FontSize = width * 0.05f,
-                ParagraphAlignment = Windows.UI.Text.ParagraphAlignment.Left,
+                HorizontalAlignment = CanvasHorizontalAlignment.Left,
                 VerticalAlignment = CanvasVerticalAlignment.Top
             })
             {

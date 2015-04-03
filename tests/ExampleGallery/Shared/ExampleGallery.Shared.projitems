@@ -81,6 +81,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\Utils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextDirectionsExample.xaml.cs">
+      <DependentUpon>TextDirectionsExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TextLayouts.xaml.cs">
       <DependentUpon>TextLayouts.xaml</DependentUpon>
     </Compile>
@@ -170,6 +173,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)TextDirectionsExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)TextLayouts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -210,6 +217,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsWide.png" />
   </ItemGroup>

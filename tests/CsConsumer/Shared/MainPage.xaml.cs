@@ -239,7 +239,7 @@ namespace CsConsumer
                         {
                             FontSize = 18,
                             VerticalAlignment = CanvasVerticalAlignment.Center,
-                            ParagraphAlignment = ParagraphAlignment.Center
+                            HorizontalAlignment = CanvasHorizontalAlignment.Center
                         });
 
                     var r = NextRandomRect(horizontalLimit, verticalLimit);
@@ -252,7 +252,7 @@ namespace CsConsumer
                         {
                             FontFamily = "Comic Sans MS",
                             FontSize = 18,
-                            ParagraphAlignment = ParagraphAlignment.Justify,
+                            HorizontalAlignment = CanvasHorizontalAlignment.Justified,
                             Options = CanvasDrawTextOptions.Clip
                         });
                     break;
@@ -405,7 +405,7 @@ namespace CsConsumer
                 {
                     FontSize = 24,
                     VerticalAlignment = CanvasVerticalAlignment.Center,
-                    ParagraphAlignment = ParagraphAlignment.Center
+                    HorizontalAlignment = CanvasHorizontalAlignment.Center
                 });
         }
 
