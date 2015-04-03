@@ -14,20 +14,6 @@ namespace Microsoft.Graphics.Canvas
 {
     runtimeclass CanvasDrawingSession;
 
-    // Workaround MIDL bug with interfaces containing more than 128 methods (1790983).
-    // It outputs unwanted RPC proxy/stub prototypes, so we define dummy types to make those compile.
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasAntialiasing;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasBlend;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasLayerOptions;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasTextAntialiasing;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CCanvasUnits;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CNumerics_CMatrix3x2;")
-    cpp_quote("typedef int __x_ABI_CMicrosoft_CGraphics_CCanvas_CNumerics_CVector2;")
-    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CNumerics_CMatrix3x2;")
-    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CNumerics_CVector2;")
-    cpp_quote("typedef int __x_ABI_CWindows_CFoundation_CRect;")
-    cpp_quote("typedef int __x_ABI_CWindows_CUI_CColor;")
-
     //
     // CanvasDrawingSession needs to be activatable in order to support interop
     // (so we can have a ICanvasFactoryNative on the activation factory).  An

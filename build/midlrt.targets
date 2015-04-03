@@ -32,6 +32,7 @@
              that build.
         -->
         <TargetEnvironment Condition="'$(Platform)' == 'x64'">X64</TargetEnvironment> 
+        <AdditionalOptions>/target NT62</AdditionalOptions>
       </Midl>
     </ItemGroup>
   </Target>
