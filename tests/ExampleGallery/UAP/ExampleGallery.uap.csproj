@@ -142,11 +142,14 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Numerics.Vectors">
-      <HintPath>..\..\..\packages\System.Numerics.Vectors.1.1.6-beta\lib\win8\System.Numerics.Vectors.dll</HintPath>
+    <Reference Include="System.Numerics.Vectors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Numerics.Vectors.4.0.0\lib\win8\System.Numerics.Vectors.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Numerics.Vectors.WindowsRuntime">
-      <HintPath>..\..\..\packages\System.Numerics.Vectors.1.1.6-beta\lib\win8\System.Numerics.Vectors.WindowsRuntime.dll</HintPath>
+    <Reference Include="System.Numerics.Vectors.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Numerics.Vectors.4.0.0\lib\win8\System.Numerics.Vectors.WindowsRuntime.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
