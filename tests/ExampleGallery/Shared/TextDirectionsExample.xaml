@@ -26,46 +26,48 @@ under the License.
     d:DesignWidth="872"
     d:DataContext="{d:DesignInstance local:TextDirectionsExample, IsDesignTimeCreatable=True}">
 
-    <Grid>
-        <Grid.Resources>
-            <local:HumanReadableDirection x:Key="HumanReadableDirection"/>
-        </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
                
 
-        <StackPanel Grid.Row="0">
-            <TextBlock FontSize="14" TextWrapping="Wrap" MaxWidth="400" HorizontalAlignment="Left" Margin="10">
-                Win2D specifies text alignment and directions similarly to how XAML specifies them.
-                This example demonstrates how text alignment is affected by text direction.
-            </TextBlock>
-            <ComboBox HorizontalAlignment="Left" Margin="10" ItemsSource="{Binding Directions}" SelectedItem="{Binding CurrentDirection, Mode=TwoWay}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource HumanReadableDirection}}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-                      
-        </StackPanel>
-
-        <Border Grid.Row="1" BorderThickness="2" BorderBrush="Yellow" Margin="10"/>
-        <Grid Grid.Row="1" Margin="20">
-            <TextBlock TextAlignment="Left" FlowDirection="{Binding XamlFlowDirection}" VerticalAlignment="Center" FontSize="24">Left<LineBreak/>Aligned</TextBlock>
-            <TextBlock TextAlignment="Right" FlowDirection="{Binding XamlFlowDirection}" VerticalAlignment="Center" FontSize="24">Right<LineBreak/>Aligned</TextBlock>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" FontSize="14">XAML TextBlock</TextBlock>
-            <Grid Background="Black" Visibility="{Binding UnsupportedVisibility}">
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" TextWrapping="Wrap">
-                    TextBlock only supports CanvasTextDirections LeftToRightThenTopToBottom and RightToLeftThenTopToBottom.  These are specified in XAML with FlowDirections LeftToRight and RightToLeft.
+            <StackPanel Grid.Row="0">
+                <TextBlock FontSize="14" TextWrapping="Wrap" MaxWidth="400" HorizontalAlignment="Left" Margin="10">
+                    Win2D specifies text alignment and directions similarly to how XAML specifies them.
+                    This example demonstrates how text alignment is affected by text direction.
                 </TextBlock>
-            </Grid>            
+                <ComboBox HorizontalAlignment="Left" Margin="10" ItemsSource="{Binding Directions}" SelectedIndex="{Binding CurrentDirectionIndex, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Width="64" Height="64" Source="{Binding ImageSource}"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                      
+            </StackPanel>
+
+            <Border Grid.Row="1" BorderThickness="2" BorderBrush="Yellow" Margin="10"/>
+            <Grid Grid.Row="1" Margin="20" MinHeight="64">
+                <TextBlock TextAlignment="Left" FlowDirection="{Binding XamlFlowDirection}" VerticalAlignment="Center" FontSize="24">Left<LineBreak/>Aligned</TextBlock>
+                <TextBlock TextAlignment="Right" FlowDirection="{Binding XamlFlowDirection}" VerticalAlignment="Center" FontSize="24">Right<LineBreak/>Aligned</TextBlock>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" FontSize="14">XAML TextBlock</TextBlock>
+                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding UnsupportedVisibility}">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" TextWrapping="Wrap">
+                        TextBlock only supports CanvasTextDirections LeftToRightThenTopToBottom and RightToLeftThenTopToBottom.  These are specified in XAML with FlowDirections LeftToRight and RightToLeft.
+                    </TextBlock>
+                </Grid>            
+            </Grid>
+
+            <Border Grid.Row="2" BorderThickness="2" BorderBrush="Yellow" Margin="10" />
+            <canvas:CanvasControl x:Name="canvas" Grid.Row="2" Margin="20" MinHeight="256" Draw="canvas_Draw" CreateResources="canvas_CreateResources" />
+
         </Grid>
-
-        <Border Grid.Row="2" BorderThickness="2" BorderBrush="Yellow" Margin="10"/>
-        <canvas:CanvasControl x:Name="canvas" Grid.Row="3" Margin="20" Draw="CanvasControl_Draw" />
-
-    </Grid>
+    </ScrollViewer>
 </UserControl>
