@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="UAP" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        Win2D can now be built to support the Windows universal app platform.
+        As this a preview, we are not shipping binaries in the NuGet package at
+        this time.  In order to use Win2D with the universal app platform you'll
+        need to build it from source.  This is early work in progress, and some
+        workarounds are required.  Further instructions can be found here:
+        <externalLink>
+          <linkText>README.md</linkText>
+          <linkUri>https://github.com/Microsoft/Win2D/blob/master/README.md#preview-of-windows-universal-app-platform-support</linkUri>
+        </externalLink>
+      </para>
+      <para>
+        If you want to learn Win2D using something that's more stable and well
+        tested then it may be better to stick with Windows 8.1 / Windows Phone
+        8.1 version shipped via the NuGet package.
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Substituted Types</title>
+      <content>
+        <para>
+          Some types that were previously provided by Win2D are now included as
+          part of the Windows universal app platform.  This allows Win2D to
+          interoperate with other universal app platform APIs.  As an
+          application developer you may need to update your application to use
+          the updated type names.
+        </para>
+
+        <table>
+          <title>New universal app platform types used by Win2D</title>
+          <tableHeader>
+            <row>
+              <entry><para>Win2D for Windows 8.1 / Windows Phone 8.1</para></entry>
+              <entry><para>Win2D for universal app platform</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><codeEntityReference qualifyHint="true">T:Microsoft.Graphics.Canvas.BitmapSize</codeEntityReference></entry>
+            <entry><codeInline>Windows.Graphics.Imaging.BitmapSize</codeInline></entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>N:Microsoft.Graphics.Canvas.DirectX.Direct3D11</codeEntityReference>.*</entry>
+            <entry><codeInline>Windows.Graphics.DirectX.Direct3D11.*</codeInline></entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>N:Microsoft.Graphics.Canvas.DirectX</codeEntityReference>.*</entry>
+            <entry><codeInline>Windows.Graphics.DirectX.*</codeInline></entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>N:Microsoft.Graphics.Canvas.Numerics</codeEntityReference>.*</entry>
+            <entry><codeInline>Windows.Foundation.Numerics.*</codeInline></entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Numerics Types</title>
+      <content>
+        <para>
+          The <codeEntityReference> N:System.Numerics </codeEntityReference>
+          namespace was previously implemented by the
+          Microsoft.Graphics.Canvas.Numerics.dll assembly. For the universal app
+          platform it is implemented by the CLR assembly
+          System.Numerics.Vectors.  The CLR assembly is able to provide more
+          efficient interop with WinRT APIs.  In addition, the runtime is able
+          to perform SIMD optimizations on code using these types.
+        </para>
+
+        <para>
+          In order to use this new implementation you must install the
+          System.Numerics.Vectors nuget package into your project.
+        </para>
+
+        <para>
+          As a general rule, if you code against System.Numerics then the same
+          code will build with all flavors of Win2D.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>DirectX Types</title>
+      <content>
+        <para>
+          <codeEntityReference>
+          T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface
+          </codeEntityReference> and <codeEntityReference>
+          T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice
+          </codeEntityReference> are now built into the universal app platform.
+          This allows other universal app platform APIs to interoperate with
+          Win2D.  For example, the Video Effect example in ExampleGallery uses
+          the Win2D and the new media effects API (via IBasicVideoEffect) by
+          exchanging IDirect3DDevice and IDirect3DSurface objects.
+        </para>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

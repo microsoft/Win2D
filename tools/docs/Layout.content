@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Topics>
   <Topic id="Introduction" title="Introduction" isDefault="true" apiParentMode="InsertAfter" />
   <Topic id="WindowsNumerics" title="Windows.Foundation.Numerics Namespace" tocTitle="Windows.Foundation.Numerics">
@@ -12,4 +12,5 @@
     <Topic id="WindowsNumerics_Interop" title="Interop with DirectXMath" />
   </Topic>
   <Topic id="Interop" title="Interop with Direct2D" />
+  <Topic id="UAP" title="Windows 10 support" />
 </Topics>

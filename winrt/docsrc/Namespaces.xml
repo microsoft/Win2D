@@ -47,6 +47,9 @@ under the License.
                for data exchange, and do not include any methods for doing math with the values.
                For more complete functionality, see the .NET <see cref="N:System.Numerics"/> and
                C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</summary>
+      <remarks>
+        See also <conceptualLink target="UAP"/> for information about the numerics types on Windows 10.
+      </remarks>
     </member>
 
   </members>
