@@ -2051,6 +2051,26 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         f.VerifyPropertiesAreInaccessibleToThisThread();
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_Input_WhenRenderThreadStops_CoreIndependentInputSourceIsRemoved)
+    {
+        InputFixture f;
+        f.AllowWorkerThreadToStart();
+
+        f.Adapter->GetSwapChainPanel()->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
+            [=](CoreInputDeviceTypes type, ICoreInputSourceBase** out)
+            {
+                Assert::IsTrue(CoreInputDeviceTypes_None == type);
+                *out = nullptr;
+                return S_OK;
+            });
+
+        f.Control->put_ClearColor(AnyOpaqueColor);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        Assert::IsFalse(f.IsRenderActionRunning());
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_Input_PropertiesPassThruAfterRenderThreadIsStarted)
     {
         InputFixture f;

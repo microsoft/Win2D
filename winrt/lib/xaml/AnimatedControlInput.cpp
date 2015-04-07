@@ -248,6 +248,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_pointerWheelChangedEvent.Release();
 
         m_source.Reset();
+
+        //
+        // Let the swap chain panel know that we're really done with the input
+        // source we just released.  We do this by creating a new input source
+        // that's associated with no CoreInputDeviceTypes.  This disassociates
+        // the previous input.
+        //
+        // This is a workaround for MS:2294504.
+        //
+        auto swapChainPanel = LockWeakRef<ISwapChainPanel>(m_weakSwapChainPanel);
+        if (!swapChainPanel)
+            return;
+        
+        ComPtr<ICoreInputSourceBase> dummyIgnored;
+        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(CoreInputDeviceTypes_None, &dummyIgnored));
     }
 
     void AnimatedControlInput::ProcessEvents()
