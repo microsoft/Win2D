@@ -83,6 +83,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Published", "Published", "{
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "numerics", "numerics", "{2C61CE25-E156-4ED4-86B2-E0B2D2F219F4}"
+	ProjectSection(SolutionItems) = preProject
+		numerics\WinRT\WinRTNumerics.idl = numerics\WinRT\WinRTNumerics.idl
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CppNumerics", "CppNumerics", "{E0DF9FEB-E64D-420D-8A91-BFA4E6C9BB34}"
 	ProjectSection(SolutionItems) = preProject

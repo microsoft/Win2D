@@ -14,7 +14,7 @@
 // Types that are bound to Direct3D 11.
 //
 
-#if (WINVER > 0x0603)
+#ifndef USE_LOCALLY_EMULATED_UAP_APIS
 
 #define IDIRECT3DDEVICE Windows.Graphics.DirectX.Direct3D11.IDirect3DDevice
 #define IDIRECT3DSURFACE Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface

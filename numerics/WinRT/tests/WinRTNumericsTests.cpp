@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-#if (WINVER== 0x0603)
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
 
 using namespace Microsoft::Graphics::Canvas::Numerics;
 

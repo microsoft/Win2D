@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-#if (WINVER > 0x0603)
+#ifndef USE_LOCALLY_EMULATED_UAP_APIS
 
 #define NUMERICS Windows.Foundation.Numerics
 

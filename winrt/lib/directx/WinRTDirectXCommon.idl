@@ -15,7 +15,7 @@
 // common between Direct3D 11 and Direct3D 12.
 //
 
-#if (WINVER > 0x0603)
+#ifndef USE_LOCALLY_EMULATED_UAP_APIS
 
 #define DIRECTX_PIXEL_FORMAT Windows.Graphics.DirectX.DirectXPixelFormat
 

@@ -21,6 +21,7 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 #define VERSION NTDDI_WINTHRESHOLD
 #else
 #define VERSION NTDDI_WINBLUE
+#define USE_LOCALLY_EMULATED_UAP_APIS
 #endif
 
 #include "..\..\numerics\WinRT\WinRTNumerics.idl"

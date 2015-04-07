@@ -13,7 +13,7 @@
 #include "pch.h"
 #include <Vector.h>
 
-#if (WINVER <= 0x0603)
+#ifndef DEF___FIVector_1_int_USE
 namespace ABI {
     namespace Windows {
         namespace Foundation {
