@@ -10,6 +10,7 @@
     <RootNamespace>CoreWindowExample</RootNamespace>
     <AssemblyName>CoreWindowExample.Windows</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
