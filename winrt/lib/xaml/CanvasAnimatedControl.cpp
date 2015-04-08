@@ -514,16 +514,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasAnimatedControl::CreateOrUpdateRenderTarget(
         ICanvasDevice* device,
-        CanvasBackground newBackgroundMode,
+        CanvasAlphaMode newAlphaMode,
         float newDpi,
         Size newSize,
         RenderTarget* renderTarget)
     {
         bool needsTarget = (renderTarget->Target == nullptr);
-        bool backgroundModeChanged = (renderTarget->BackgroundMode != newBackgroundMode);
+        bool alphaModeChanged = (renderTarget->AlphaMode != newAlphaMode);
         bool dpiChanged = (renderTarget->Dpi != newDpi);
         bool sizeChanged = (renderTarget->Size != newSize);
-        bool needsCreate = needsTarget || backgroundModeChanged || dpiChanged;
+        bool needsCreate = needsTarget || alphaModeChanged || dpiChanged;
 
         if (!needsCreate && !sizeChanged)
             return;
@@ -542,21 +542,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
         else
         {
-            CanvasAlphaMode alphaMode = CanvasAlphaMode::Premultiplied;
-
-            if (newBackgroundMode == CanvasBackground::Opaque)
-            {
-                alphaMode = CanvasAlphaMode::Ignore;
-            }
-
             renderTarget->Target = GetAdapter()->CreateCanvasSwapChain(
                 device,
                 newSize.Width,
                 newSize.Height,
                 newDpi,
-                alphaMode);
+                newAlphaMode);
                 
-            renderTarget->BackgroundMode = newBackgroundMode;
+            renderTarget->AlphaMode = newAlphaMode;
             renderTarget->Dpi = newDpi;
             renderTarget->Size = newSize;
                 
@@ -966,7 +959,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // recreated before we can draw.
 
         if (renderTarget->Target &&
-            GetBackgroundModeFromClearColor(clearColor) != renderTarget->BackgroundMode)
+            GetAlphaModeFromClearColor(clearColor) != renderTarget->AlphaMode)
         {
             // This will cause the update/render thread to stop, giving the UI
             // thread an opportunity to recreate the swap chain.

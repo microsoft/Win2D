@@ -230,7 +230,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
-            CanvasBackground newBackgroundMode,
+            CanvasAlphaMode newAlphaMode,
             float newDpi,
             Size newSize,
             RenderTarget* renderTarget) override final;

@@ -32,9 +32,9 @@ public:
         float width, 
         float height, 
         float dpi,
-        CanvasBackground backgroundMode) override
+        CanvasAlphaMode alphaMode) override
     {
-        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, dpi, backgroundMode);
+        auto result = CreateCanvasImageSourceMethod.WasCalled(device, width, height, dpi, alphaMode);
         if (result)
             return result;
 
@@ -66,7 +66,7 @@ public:
             width,
             height,
             dpi,
-            backgroundMode,
+            alphaMode,
             sisFactory.Get(),
             dsFactory);
     }

@@ -38,22 +38,6 @@ namespace Microsoft.Graphics.Canvas
     
     runtimeclass CanvasImageSource;
 
-    [version(VERSION)]
-    typedef enum CanvasBackground
-    {
-        //
-        // Transparent background is likely to be what most users want by
-        // default.
-        //
-        Transparent,
-        
-        //
-        // Manually specifying opaque allows for increased efficiency.
-        //
-        Opaque
-    } CanvasBackground;
-
-
     [version(VERSION), 
      uuid(8596BEDD-D7F7-4C6B-B1AD-41949035E084), 
      exclusiveto(CanvasImageSource)]
@@ -72,12 +56,12 @@ namespace Microsoft.Graphics.Canvas
             [in]          float dpi,
             [out, retval] CanvasImageSource** imageSource);
 
-        HRESULT CreateWithDpiAndBackground(
+        HRESULT CreateWithDpiAndAlphaMode(
             [in]          ICanvasResourceCreator* resourceCreator,
             [in]          float width,
             [in]          float height,
             [in]          float dpi,
-            [in]          CanvasBackground background,
+            [in]          CanvasAlphaMode alphaMode,
             [out, retval] CanvasImageSource** imageSource);
     };
 
@@ -142,10 +126,10 @@ namespace Microsoft.Graphics.Canvas
         HRESULT SizeInPixels([out, retval] BitmapSize* size);
 
         //
-        // Gets the image source background mode.
+        // Gets the image source alpha mode.
         //
         [propget]
-        HRESULT Background([out, retval] CanvasBackground* value);
+        HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
     };
 
     [version(VERSION), 

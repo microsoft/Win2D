@@ -30,7 +30,7 @@ public:
 
         int expectedHeight = 123;
         int expectedWidth = 456;
-        CanvasBackground expectedBackground = CanvasBackground::Opaque;
+        CanvasAlphaMode expectedAlphaMode = CanvasAlphaMode::Ignore;
 
         auto mockD2DDevice = Make<MockD2DDevice>();
         auto mockCanvasDevice = Make<MockCanvasDevice>();
@@ -56,8 +56,8 @@ public:
             Assert::AreEqual(expectedWidth, actualWidth);
             Assert::AreEqual(expectedHeight, actualHeight);
 
-            auto actualBackground = isOpaque ? CanvasBackground::Opaque : CanvasBackground::Transparent;
-            Assert::AreEqual(expectedBackground, actualBackground);
+            auto actualAlphaMode = isOpaque ? CanvasAlphaMode::Ignore : CanvasAlphaMode::Premultiplied;
+            Assert::AreEqual(expectedAlphaMode, actualAlphaMode);
 
             actualOuter = outer;
 
@@ -101,7 +101,7 @@ public:
             (float)expectedWidth,
             (float)expectedHeight,
             DEFAULT_DPI,
-            expectedBackground,
+            expectedAlphaMode,
             mockSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
         
@@ -119,9 +119,66 @@ public:
         ThrowIfFailed(mockSurfaceImageSource.As(&expectedComposableBase));
         Assert::AreEqual(canvasImageSource->GetComposableBase().Get(), expectedComposableBase.Get());
 
-        CanvasBackground actualBackground;
-        ThrowIfFailed(canvasImageSource->get_Background(&actualBackground));
-        Assert::AreEqual(CanvasBackground::Opaque, actualBackground);
+        CanvasAlphaMode actualAlphaMode;
+        ThrowIfFailed(canvasImageSource->get_AlphaMode(&actualAlphaMode));
+        Assert::AreEqual(CanvasAlphaMode::Ignore, actualAlphaMode);
+    }
+
+    struct AlphaModeFixture
+    {
+        bool ExpectedIsOpaque;
+        
+        AlphaModeFixture()
+            : ExpectedIsOpaque(false)
+        {}
+
+        void CreateImageSource(CanvasAlphaMode alphaMode)
+        {
+            auto factory = Make<MockSurfaceImageSourceFactory>();
+
+            bool createWasCalled = false;
+            factory->MockCreateInstanceWithDimensionsAndOpacity =
+                [&] (int32_t,int32_t,bool opaque,IInspectable*)
+                {
+                    createWasCalled = true;
+                    Assert::AreEqual(ExpectedIsOpaque, opaque);
+                    return Make<StubSurfaceImageSource>();
+                };
+
+            Make<CanvasImageSource>(
+                As<ICanvasResourceCreator>(Make<StubCanvasDevice>()).Get(),
+                1.0f,
+                1.0f,
+                DEFAULT_DPI,
+                alphaMode,
+                factory.Get(),
+                std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
+
+            Assert::IsTrue(createWasCalled, L"SurfaceImageSourceFactory::Create was called");
+        }
+    };
+
+    TEST_METHOD_EX(CanvasImageSource_WhenConstructedWithAlphaModeIgnore_ThenUnderlyingImageSourceIsOpaque)
+    {
+        AlphaModeFixture f;
+
+        f.ExpectedIsOpaque = true;
+        f.CreateImageSource(CanvasAlphaMode::Ignore);
+    }
+
+    TEST_METHOD_EX(CanvasImageSource_WhenConstructedWithAlphaModePremultiplied_ThenUnderlyingImageSourceIsTransparent)
+    {
+        AlphaModeFixture f;
+
+        f.ExpectedIsOpaque = false;
+        f.CreateImageSource(CanvasAlphaMode::Premultiplied);
+    }
+
+    TEST_METHOD_EX(CanvasImageSource_WhenConstructedWithAlphaModeStraight_ThenFailsWithInvalidArg)
+    {
+        AlphaModeFixture f;
+        ExpectHResultException(E_INVALIDARG, [&] { f.CreateImageSource(CanvasAlphaMode::Straight); });
+        ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidAlphaModeForImageSource);
     }
 
     TEST_METHOD_EX(CanvasImageSourceGetDevice)
@@ -134,7 +191,7 @@ public:
             1.0f,
             1.0f,
             DEFAULT_DPI,
-            CanvasBackground::Transparent,
+            CanvasAlphaMode::Premultiplied,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
 
@@ -162,7 +219,7 @@ public:
             1.0f,
             1.0f,
             DEFAULT_DPI,
-            CanvasBackground::Transparent,
+            CanvasAlphaMode::Premultiplied,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
 
@@ -236,7 +293,7 @@ public:
             123.0f,
             456.0f,
             DEFAULT_DPI,
-            CanvasBackground::Opaque,
+            CanvasAlphaMode::Ignore,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
 
@@ -272,7 +329,7 @@ public:
             5.0f,
             10.0f,
             DEFAULT_DPI,
-            CanvasBackground::Opaque,
+            CanvasAlphaMode::Ignore,
             stubSurfaceImageSourceFactory.Get(),
             std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
 
@@ -295,7 +352,7 @@ public:
         auto resourceCreator = manager->Create(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
         auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
-        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, dpi, CanvasBackground::Opaque, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
+        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, dpi, CanvasAlphaMode::Ignore, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
 
         float actualDpi = 0;
         ThrowIfFailed(canvasImageSource->get_Dpi(&actualDpi));
@@ -322,7 +379,7 @@ public:
         auto resourceCreator = manager->Create(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
         auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
-        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, expectedDpi, CanvasBackground::Opaque, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
+        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, expectedDpi, CanvasAlphaMode::Ignore, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
 
         mockDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const&, float dpi)
         {
@@ -346,7 +403,7 @@ public:
         auto resourceCreator = manager->Create(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
         auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
-        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), width, height, dpi, CanvasBackground::Opaque, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
+        auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), width, height, dpi, CanvasAlphaMode::Ignore, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
 
         Size size = { 0, 0 };
         ThrowIfFailed(canvasImageSource->get_Size(&size));
@@ -390,7 +447,7 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
                 (float)m_imageWidth,
                 (float)m_imageHeight,
                 dpi,
-                CanvasBackground::Transparent,
+                CanvasAlphaMode::Premultiplied,
                 m_surfaceImageSourceFactory.Get(),
                 m_canvasImageSourceDrawingSessionFactory);
             

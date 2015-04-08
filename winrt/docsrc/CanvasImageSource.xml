@@ -19,17 +19,6 @@ under the License.
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasBackground">
-      <summary>Specifies whether the background of a canvas is transparent or opaque.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasBackground.Transparent">
-      <summary>Transparent background, likely to be what most users want by default.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasBackground.Opaque">
-      <summary>Opaque background, can allow for increased efficiency.</summary>
-    </member>
-    
-    
     <member name="T:Microsoft.Graphics.Canvas.CanvasImageSource">
       <summary>Derives from Windows.UI.Xaml.Media.Imaging.SurfaceImageSource and extends it to know about Canvas types.
                Most apps should use CanvasControl instead of directly managing their own CanvasImageSource.</summary>
@@ -53,9 +42,21 @@ under the License.
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
       <remarks>Size is in device independent pixels (dips), using the specified DPI.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasBackground)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
-      <remarks>Size is in device independent pixels (dips), using the specified DPI.</remarks>
+      <remarks>
+        <p>
+          Size is in device independent pixels (dips), using the specified DPI.
+        </p>
+        <p>
+          The alphaMode parameter determines whether the background of the image
+          source is opaque or not.  An opaque image source is slightly more
+          efficient than a transparent image source.  CanvasAlphaMode.Ignore
+          indicates an opaque background, while CanvasAlphaMode.Premultiplied
+          indicates a transparent background.  Passing CanvasAlphaMode.Straight
+          to this parameter will result in an error.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasImageSource.CreateDrawingSession(Windows.UI.Color)">
       <summary>Returns a new drawing session for redrawing the entire image source.</summary>
@@ -94,8 +95,9 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.SizeInPixels">
       <summary>Gets the size of the image source, in pixels.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.Background">
-      <summary>Queries whether the background of this image source is transparent or opaque.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasImageSource.AlphaMode">
+      <summary>Returns the alpha mode for this image source that was passed in
+      to the constructor.</summary>
     </member>
 
   </members>

@@ -69,12 +69,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 float dpi;
                 ThrowIfFailed(resourceCreator->get_Dpi(&dpi));
 
-                ThrowIfFailed(CreateWithDpiAndBackground(
+                ThrowIfFailed(CreateWithDpiAndAlphaMode(
                     As<ICanvasResourceCreator>(resourceCreator).Get(),
                     width,
                     height,
                     dpi,
-                    CanvasBackground::Transparent,
+                    CanvasAlphaMode::Premultiplied,
                     imageSource));
             });
     }
@@ -88,23 +88,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpi,
         ICanvasImageSource** imageSource)
     {
-        return CreateWithDpiAndBackground(
+        return CreateWithDpiAndAlphaMode(
             resourceCreator,
             width,
             height,
             dpi,
-            CanvasBackground::Transparent,
+            CanvasAlphaMode::Premultiplied,
             imageSource);
     }
 
 
     _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpiAndBackground(
+    IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpiAndAlphaMode(
         ICanvasResourceCreator* resourceCreator,
         float width,
         float height,
         float dpi,
-        CanvasBackground background,
+        CanvasAlphaMode alphaMode,
         ICanvasImageSource** imageSource)
     {
         return ExceptionBoundary(
@@ -134,7 +134,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     width,
                     height,
                     dpi,
-                    background,
+                    alphaMode,
                     baseFactory.Get(),
                     m_drawingSessionFactory);
 
@@ -154,16 +154,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float width,
         float height,
         float dpi,
-        CanvasBackground background,
+        CanvasAlphaMode alphaMode,
         ISurfaceImageSourceFactory* surfaceImageSourceFactory,
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
         : m_drawingSessionFactory(drawingSessionFactory)
         , m_width(width)
         , m_height(height)
         , m_dpi(dpi)
-        , m_background(background)
+        , m_alphaMode(alphaMode)
     {
-        bool isOpaque = (background == CanvasBackground::Opaque);
+        using ::Microsoft::WRL::Wrappers::HStringReference;
+
+        bool isOpaque;
+
+        switch (alphaMode)
+        {
+        case CanvasAlphaMode::Ignore:
+            isOpaque = true;
+            break;
+
+        case CanvasAlphaMode::Premultiplied:
+            isOpaque = false;
+            break;
+
+        default:
+            ThrowHR(E_INVALIDARG, HStringReference(Strings::InvalidAlphaModeForImageSource).Get());
+        }
 
         CreateBaseClass(surfaceImageSourceFactory, isOpaque);
         SetResourceCreator(resourceCreator);
@@ -371,14 +387,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::get_Background(
-        CanvasBackground* value)
+    IFACEMETHODIMP CanvasImageSource::get_AlphaMode(
+        CanvasAlphaMode* value)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(value);
-                *value = m_background;
+                *value = m_alphaMode;
             });
     }
 

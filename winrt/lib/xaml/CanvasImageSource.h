@@ -56,12 +56,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             _In_         float dpi,
             _COM_Outptr_ ICanvasImageSource** imageSource) override;
 
-        IFACEMETHOD(CreateWithDpiAndBackground)(
+        IFACEMETHOD(CreateWithDpiAndAlphaMode)(
             _In_         ICanvasResourceCreator* resourceCreator,
             _In_         float width,
             _In_         float height,
             _In_         float dpi,
-            _In_         CanvasBackground background,
+            _In_         CanvasAlphaMode alphaMode,
             _COM_Outptr_ ICanvasImageSource** imageSource) override;
     };
 
@@ -76,7 +76,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         const float m_width;
         const float m_height;
         const float m_dpi;
-        const CanvasBackground m_background;
+        const CanvasAlphaMode m_alphaMode;
 
     public:
         CanvasImageSource(
@@ -84,7 +84,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             _In_ float width,
             _In_ float height,
             _In_ float dpi,
-            _In_ CanvasBackground background,
+            _In_ CanvasAlphaMode alphaMode,
             _In_ ISurfaceImageSourceFactory* surfaceImageSourceFactory,
             _In_ std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory);
 
@@ -120,8 +120,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_Size)(
             _Out_ ABI::Windows::Foundation::Size* size) override;
 
-        IFACEMETHOD(get_Background)(
-            _Out_ CanvasBackground* value) override;
+        IFACEMETHOD(get_AlphaMode)(
+            _Out_ CanvasAlphaMode* value) override;
 
     private:
         void CreateBaseClass(

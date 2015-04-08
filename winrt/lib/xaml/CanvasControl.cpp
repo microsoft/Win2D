@@ -115,18 +115,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 handler);
         }
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) override 
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode) override 
         {
             ComPtr<ICanvasResourceCreator> resourceCreator;
             ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
 
             ComPtr<ICanvasImageSource> imageSource;
-            ThrowIfFailed(m_canvasImageSourceFactory->CreateWithDpiAndBackground(
+            ThrowIfFailed(m_canvasImageSourceFactory->CreateWithDpiAndAlphaMode(
                 resourceCreator.Get(),
                 width, 
                 height,
                 dpi,
-                backgroundMode,
+                alphaMode,
                 &imageSource));
 
             // Since we know that CanvasImageSourceFactory will only ever return
@@ -265,13 +265,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasControl::CreateOrUpdateRenderTarget(
         ICanvasDevice* device,
-        CanvasBackground newBackgroundMode,
+        CanvasAlphaMode newAlphaMode,
         float newDpi,
         Size newSize,
         RenderTarget* renderTarget)
     {
         bool needsCreate = (renderTarget->Target == nullptr);
-        needsCreate |= (renderTarget->BackgroundMode != newBackgroundMode);
+        needsCreate |= (renderTarget->AlphaMode != newAlphaMode);
         needsCreate |= (renderTarget->Dpi != newDpi);
         needsCreate |= (renderTarget->Size != newSize);
 
@@ -291,9 +291,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 newSize.Width,
                 newSize.Height,
                 newDpi,
-                newBackgroundMode);
+                newAlphaMode);
                 
-            renderTarget->BackgroundMode = newBackgroundMode;
+            renderTarget->AlphaMode = newAlphaMode;
             renderTarget->Dpi = newDpi;
             renderTarget->Size = newSize;
                 
