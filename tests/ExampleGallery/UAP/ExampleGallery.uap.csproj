@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -97,7 +97,7 @@
       <Project>{2b157b97-cbf7-4014-8655-1456f2807f43}</Project>
       <Name>ExampleGallery.Effects</Name>
     </ProjectReference>
-    <SDKReference Include="Windows Mobile, Version=10.0.0.1" />
+    <SDKReference Include="WindowsMobile, Version=10.0.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicVideoEffectExample.xaml.cs">
