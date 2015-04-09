@@ -75,16 +75,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         
-#define CB_HELPER(NAME)                                                 \
+#define CB_HELPER(NAME, DELEGATE)                                       \
         template<typename T, typename METHOD, typename... EXTRA_ARGS>   \
         RegisteredEvent NAME(T* obj, METHOD method, EXTRA_ARGS... extraArgs) \
-                {                                                               \
-            return AddCallback(&ICanvasControlAdapter::NAME, obj, method, extraArgs...); \
-                }
+        {                                                               \
+            return AddCallback<DELEGATE>(&ICanvasControlAdapter::NAME, obj, method, extraArgs...); \
+        }
 
-        CB_HELPER(AddCompositionRenderingCallback);
-        CB_HELPER(AddVisibilityChangedCallback);
-        CB_HELPER(AddSurfaceContentsLostCallback);
+        CB_HELPER(AddCompositionRenderingCallback, IEventHandler<IInspectable*>);
+        CB_HELPER(AddVisibilityChangedCallback, IWindowVisibilityChangedEventHandler);
+        CB_HELPER(AddSurfaceContentsLostCallback, IEventHandler<IInspectable*>);
 
 #undef CB_HELPER
 
