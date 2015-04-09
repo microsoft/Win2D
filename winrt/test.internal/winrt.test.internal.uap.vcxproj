@@ -5,21 +5,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>winrt_test</RootNamespace>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-
-    <!-- 
-         For most of our projects we specify a
-         TargetPlatformIdentifier. However, the internal tests are a little
-         unique in that we want them to build and pick up intermediates from the
-         UAP directory, but not have TargetPlatformIdentifier to UAP since it's
-         actually a Win32 DLL.
-
-         TargetPlatformIdentifier is used by Visual Studio, and so we need this
-         set to Windows.
-
-         DeviceType is used by the Win2D build scripts so we set this to UAP.
-    -->
-    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <DeviceType>UAP</DeviceType>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
