@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>Win2D-UAP</id>
+        <id>Win2D-DP7</id>
         <version>0.0.0-SpecifyVersionOnCommandline</version>
-        <title>Preview of Win2D with UAP support</title>
+        <title>Preview of Win2D with UAP support for DP7</title>
         <authors>Microsoft</authors>
         <owners>win2d,microsoft</owners>
         <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.</description>
@@ -104,16 +104,16 @@
 
 
       <!-- Build scripts used by managed Windows Store Apps and UAP apps -->
-      <file src="build\nuget\Win2D.props" target="build\win\Win2D-UAP.props" />
-      <file src="build\nuget\Win2D-managed.targets" target="build\win\Win2D-UAP.targets" />
+      <file src="build\nuget\Win2D.props" target="build\win\Win2D-DP7.props" />
+      <file src="build\nuget\Win2D-managed.targets" target="build\win\Win2D-DP7.targets" />
 
       <!-- Build scripts used by managed Windows Phone Apps -->
-      <file src="build\nuget\Win2D.props" target="build\wpa\Win2D-UAP.props" />
-      <file src="build\nuget\Win2D-managed.targets" target="build\wpa\Win2D-UAP.targets" />
+      <file src="build\nuget\Win2D.props" target="build\wpa\Win2D-DP7.props" />
+      <file src="build\nuget\Win2D-managed.targets" target="build\wpa\Win2D-DP7.targets" />
 
       <!-- Build scripts used by native apps (Windows Store, Windows Phone and UAP) -->
-      <file src="build\nuget\Win2D-native.targets" target="build\native\Win2D-UAP.targets" />
-      <file src="build\nuget\Win2D.props" target="build\native\Win2D-UAP.props" />
+      <file src="build\nuget\Win2D-native.targets" target="build\native\Win2D-DP7.targets" />
+      <file src="build\nuget\Win2D.props" target="build\native\Win2D-DP7.props" />
 
       <!-- Header files used by native apps -->
       <file src="winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h" target="Include\Windows"/>
