@@ -73,6 +73,14 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\NavigationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\RelayCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Particles\ExplosionParticleSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Particles\ExplosionSmokeParticleSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Particles\Particle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Particles\ParticleExample.xaml.cs">
+      <DependentUpon>ParticleExample.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Particles\ParticleSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Particles\SmokePlumeParticleSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShapesExample.xaml.cs">
       <DependentUpon>ShapesExample.xaml</DependentUpon>
     </Compile>
@@ -161,6 +169,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Particles\ParticleExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)ShapesExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -183,6 +195,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Particles\explosion.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Particles\smoke.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsNarrow.png" />
@@ -211,6 +225,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ParticleSystemNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ParticleSystemWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutNarrow.png" />
