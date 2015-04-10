@@ -29,7 +29,7 @@ under the License.
       <example>
         <p>Starting with the "Blank App" XAML project template, edit MainPage.xaml and add the namespace and unloaded handler:</p>
         <code>
-          xmlns:canvas="using:Microsoft.Graphics.Canvas"
+          xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
           Unloaded="Page_Unloaded"
         </code>
         <p>Add a CanvasControl to the page:</p>

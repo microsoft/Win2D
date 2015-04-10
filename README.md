@@ -20,7 +20,7 @@ in an early, incomplete state is to solicit early developer feedback.
 ## Code Example
 To give you a flavor of what the code looks like, here is a snippet of XAML:
 ```xml
-xmlns:canvas="using:Microsoft.Graphics.Canvas"
+xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
 
 <Grid>
     <canvas:CanvasControl Draw="canvasControl_Draw" ClearColor="CornflowerBlue" />

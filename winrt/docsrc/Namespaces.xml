@@ -36,11 +36,11 @@ under the License.
     </member>
 
     <member name="N:Microsoft.Graphics.Canvas.UI">
-      <summary>This namespace defines common types used when using Win2D with UI frameworks.</summary>
+      <summary>This namespace defines common types for using Win2D with UI frameworks.</summary>
     </member>
 
     <member name="N:Microsoft.Graphics.Canvas.UI.Xaml">
-      <summary>This namespace provides Win2D-enabled XAML controls</summary>
+      <summary>This namespace provides Win2D-enabled XAML controls.</summary>
     </member>
 
     <member name="N:Microsoft.Graphics.Canvas.Effects">
