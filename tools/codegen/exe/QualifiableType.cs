@@ -34,4 +34,11 @@ namespace CodeGen
         // Some struct overrides require a namespace qualifier in IDL, such as "Windows.Foundation."
         // This string follows the IDL style, where '.' is used as the qualifying operator.
     }
+
+    public abstract class OutputtableType : QualifiableType
+    {
+        public string Namespace { get; set; }
+
+        public abstract void OutputCode(Dictionary<string, QualifiableType> typeDictionary, Formatter idlFile);
+    }
 }

@@ -11,108 +11,106 @@
 // under the License.
 
 #include "pch.h"
+
 #include "CanvasSolidColorBrush.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
+using namespace ABI::Microsoft::Graphics::Canvas;
+using namespace ABI::Windows::Foundation;
+using namespace ABI::Windows::UI;
+
+ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
+    ICanvasResourceCreator* resourceCreator,
+    Color color)
 {
-    using ABI::Windows::UI::Color;
-    using namespace ABI::Windows::Foundation;
-    using namespace ::Microsoft::WRL::Wrappers;
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(resourceCreator->get_Device(&device));
 
-    ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
-        ICanvasResourceCreator* resourceCreator,
-        Color color)
-    {
-        ComPtr<ICanvasDevice> device;
-        ThrowIfFailed(resourceCreator->get_Device(&device));
+    ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
+    ThrowIfFailed(device.As(&canvasDeviceInternal));
 
-        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
-        ThrowIfFailed(device.As(&canvasDeviceInternal));
+    auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
 
-        auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
+    auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
+        shared_from_this(),
+        d2dBrush.Get(),
+        device.Get());
+    CheckMakeResult(canvasSolidColorBrush);
 
-        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-            shared_from_this(),
-            d2dBrush.Get(),
-            device.Get());
-        CheckMakeResult(canvasSolidColorBrush);
-        
-        return canvasSolidColorBrush;
-    };
+    return canvasSolidColorBrush;
+};
 
 
-    ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateWrapper(
-        ICanvasDevice* device,
-        ID2D1SolidColorBrush* brush)
-    {
-        auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-            shared_from_this(),
-            brush,
-            device);
-        CheckMakeResult(canvasSolidColorBrush);
+ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateWrapper(
+    ICanvasDevice* device,
+    ID2D1SolidColorBrush* brush)
+{
+    auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
+        shared_from_this(),
+        brush,
+        device);
+    CheckMakeResult(canvasSolidColorBrush);
 
-        return canvasSolidColorBrush;
-    }
+    return canvasSolidColorBrush;
+}
 
-    IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
-        ICanvasResourceCreator* resourceCreator,
-        ABI::Windows::UI::Color color,
-        ICanvasSolidColorBrush** canvasSolidColorBrush)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resourceCreator);
-                CheckAndClearOutPointer(canvasSolidColorBrush);
+IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
+    ICanvasResourceCreator* resourceCreator,
+    ABI::Windows::UI::Color color,
+    ICanvasSolidColorBrush** canvasSolidColorBrush)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(canvasSolidColorBrush);
 
-                auto newSolidColorBrush = GetManager()->Create(
-                    resourceCreator,
-                    color);
+            auto newSolidColorBrush = GetManager()->Create(
+                resourceCreator,
+                color);
 
-                ThrowIfFailed(newSolidColorBrush.CopyTo(canvasSolidColorBrush));
-            });
-    }
+            ThrowIfFailed(newSolidColorBrush.CopyTo(canvasSolidColorBrush));
+        });
+}
 
 
-    CanvasSolidColorBrush::CanvasSolidColorBrush(
-        std::shared_ptr<CanvasSolidColorBrushManager> manager,
-        ID2D1SolidColorBrush* brush,
-        ICanvasDevice *device)
-        : CanvasBrush(device)
-        , ResourceWrapper(manager, brush)
-    {
-    }
+CanvasSolidColorBrush::CanvasSolidColorBrush(
+    std::shared_ptr<CanvasSolidColorBrushManager> manager,
+    ID2D1SolidColorBrush* brush,
+    ICanvasDevice *device)
+    : CanvasBrush(device)
+    , ResourceWrapper(manager, brush)
+{
+}
 
-    IFACEMETHODIMP CanvasSolidColorBrush::get_Color(_Out_ Color *value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
-                *value = ToWindowsColor(GetResource()->GetColor());
-            });
-    }
+IFACEMETHODIMP CanvasSolidColorBrush::get_Color(_Out_ Color *value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+            *value = ToWindowsColor(GetResource()->GetColor());
+        });
+}
 
-    IFACEMETHODIMP CanvasSolidColorBrush::put_Color(_In_ Color value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {                
-                GetResource()->SetColor(ToD2DColor(value));
-            });
-    }
+IFACEMETHODIMP CanvasSolidColorBrush::put_Color(_In_ Color value)
+{
+    return ExceptionBoundary(
+        [&]
+        {                
+            GetResource()->SetColor(ToD2DColor(value));
+        });
+}
 
-    IFACEMETHODIMP CanvasSolidColorBrush::Close()
-    {
-        CanvasBrush::Close();
-        return ResourceWrapper::Close();
-    }
+IFACEMETHODIMP CanvasSolidColorBrush::Close()
+{
+    CanvasBrush::Close();
+    return ResourceWrapper::Close();
+}
 
-    ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush(ID2D1DeviceContext*, bool)
-    {
-        return GetResource();
-    }
+ComPtr<ID2D1Brush> CanvasSolidColorBrush::GetD2DBrush(ID2D1DeviceContext*, bool)
+{
+    return GetResource();
+}
 
-    ActivatableClassWithFactory(CanvasSolidColorBrush, CanvasSolidColorBrushFactory);
-
-} } } }
+ActivatableClassWithFactory(CanvasSolidColorBrush, CanvasSolidColorBrushFactory);

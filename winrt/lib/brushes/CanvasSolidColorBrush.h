@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Brushes
 {
     using namespace ::Microsoft::WRL;
 
@@ -32,7 +32,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         MixIn<CanvasSolidColorBrush, CanvasBrush>),
         public CanvasBrush
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush, BaseTrust);
 
     public:
         CanvasSolidColorBrush(
@@ -69,7 +69,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CloakedIid<ICanvasDeviceResourceFactoryNative>>,
           public PerApplicationManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSolidColorBrush, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush, BaseTrust);
 
     public:
         IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
@@ -83,4 +83,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color color,
             ICanvasSolidColorBrush** canvasSolidColorBrush) override;
     };
-}}}}
+}}}}}

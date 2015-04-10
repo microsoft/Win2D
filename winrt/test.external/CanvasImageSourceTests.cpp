@@ -12,7 +12,6 @@
 
 #include "pch.h"
 
-using namespace Microsoft::Graphics::Canvas;
 using namespace Windows::UI;
 
 TEST_CLASS(CanvasImageSourceTests)

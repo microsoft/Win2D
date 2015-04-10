@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     using namespace ::Microsoft::WRL;
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : public ActivationFactory<ICanvasPathBuilderFactory>,
           private LifespanTracker<CanvasPathBuilderFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasPathBuilder, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasPathBuilder, BaseTrust);
 
     public:
         IFACEMETHOD(Create)(
@@ -47,7 +47,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CloakedIid<ICanvasPathBuilderInternal>>,
         private LifespanTracker<CanvasPathBuilder>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasPathBuilder, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasPathBuilder, BaseTrust);
 
         ClosablePtr<ICanvasDevice> m_canvasDevice;
         ClosablePtr<ID2D1GeometrySink> m_d2dGeometrySink;
@@ -133,4 +133,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     private:
         void ValidateIsInFigure();
     };
-}}}}
+}}}}}

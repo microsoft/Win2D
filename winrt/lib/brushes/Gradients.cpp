@@ -12,7 +12,7 @@
 
 #include "pch.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Brushes
 {
     ComPtr<ID2D1GradientStopCollection1> CreateSimpleGradientStopCollection(
         ICanvasDevice* canvasDevice,
@@ -124,4 +124,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-} } } }
+} } } } }

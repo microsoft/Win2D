@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.Geometry
 {
     runtimeclass CanvasCachedGeometry;
 
@@ -18,7 +18,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasCachedGeometry : IInspectable
         requires Windows.Foundation.IClosable
     {
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
     }
 
     [version(VERSION), uuid(80BA1060-A9D7-41BA-9372-EC3FC1744E5D), exclusiveto(CanvasCachedGeometry)]

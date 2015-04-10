@@ -100,7 +100,6 @@ namespace CodeGen.Test
         }
 
         [TestMethod]
-        [DeploymentItem("Deployed Files/Canvas.codegen.cpp", "codegen/expected")]
         [DeploymentItem("Deployed Files/Canvas.codegen.idl", "codegen/expected")]
         [DeploymentItem("Deployed Files/D2DEffectAuthor.xml", "codegen/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/in/apiref")]
@@ -139,7 +138,7 @@ namespace CodeGen.Test
             FileInfo[] actualGeneratedFiles = actualDirectoryInfo.GetFiles(); // Used for .Length only
 
             // Ensure the correct number of files was generated.
-            Assert.AreEqual(2, expectedGeneratedFiles.Length);
+            Assert.AreEqual(1, expectedGeneratedFiles.Length);
             Assert.AreEqual(expectedGeneratedFiles.Length, actualGeneratedFiles.Length);
 
             // For each codegenned file in the tree, ensure it was output to the test folder.
@@ -174,7 +173,6 @@ namespace CodeGen.Test
 
             Overrides.XmlBindings.Settings overridesXmlData = XmlBindings.Utilities.LoadXmlData<Overrides.XmlBindings.Settings>(inputDir, "Settings.xml");
             Formatter.Prefix = overridesXmlData.Prefix.Value;
-            Formatter.Subnamespace = overridesXmlData.Subnamespace.Value;
 
             List<D2DTypes> typeDocuments = new List<D2DTypes>();
             Dictionary<string, QualifiableType> typeDictionary = new Dictionary<string, QualifiableType>();

@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.Brushes
 {
     //
     // ICanvasBrush
@@ -32,7 +32,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Transform([in] NUMERICS.Matrix3x2 value);
 
         [propget]
-        HRESULT Device([out, retval] CanvasDevice** value);
+        HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
     };
 
     //
@@ -45,7 +45,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasSolidColorBrushFactory : IInspectable
     {
         HRESULT Create(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] Windows.UI.Color color,
             [out, retval] CanvasSolidColorBrush** canvasSolidColorBrush
             );
@@ -81,13 +81,13 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasImageBrushFactory : IInspectable
     {
         HRESULT Create(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [out, retval] CanvasImageBrush** canvasImageBrush
             );
 
         HRESULT CreateWithImage(
-            [in] ICanvasResourceCreator* resourceCreator,
-            [in] ICanvasImage* image,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasImage* image,
             [out, retval] CanvasImageBrush** canvasImageBrush
             );
     };
@@ -97,22 +97,22 @@ namespace Microsoft.Graphics.Canvas
         requires ICanvasBrush
     {
         [propget]
-        HRESULT Image([out, retval] ICanvasImage** value);
+        HRESULT Image([out, retval] Microsoft.Graphics.Canvas.ICanvasImage** value);
 
         [propput]
-        HRESULT Image([in] ICanvasImage* value);
+        HRESULT Image([in] Microsoft.Graphics.Canvas.ICanvasImage* value);
 
         [propget]
-        HRESULT ExtendX([out, retval] CanvasEdgeBehavior* value);
+        HRESULT ExtendX([out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* value);
 
         [propput]
-        HRESULT ExtendX([in] CanvasEdgeBehavior value);
+        HRESULT ExtendX([in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior value);
 
         [propget]
-        HRESULT ExtendY([out, retval] CanvasEdgeBehavior* value);
+        HRESULT ExtendY([out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* value);
 
         [propput]
-        HRESULT ExtendY([in] CanvasEdgeBehavior value);
+        HRESULT ExtendY([in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior value);
 
         [propget]
         HRESULT SourceRectangle([out, retval] Windows.Foundation.IReference<Windows.Foundation.Rect>** value);
@@ -121,10 +121,10 @@ namespace Microsoft.Graphics.Canvas
         HRESULT SourceRectangle([in] Windows.Foundation.IReference<Windows.Foundation.Rect>* value);
 
         [propget]
-        HRESULT Interpolation([out, retval] CanvasImageInterpolation* value);
+        HRESULT Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
 
         [propput]
-        HRESULT Interpolation([in] CanvasImageInterpolation value);
+        HRESULT Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
     };
 
     [version(VERSION), activatable(ICanvasImageBrushFactory, VERSION)]
@@ -153,14 +153,14 @@ namespace Microsoft.Graphics.Canvas
     {
         // Defaults to color interpolation sRGB-premultiplied, and CLAMP extend mode.
         HRESULT CreateSimple(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] Windows.UI.Color startColor,
             [in] Windows.UI.Color endColor,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
 
         // Defaults to clamp edge behavior, premultiplied alpha, color interpolation sRGB-premultiplied.
         HRESULT CreateWithStops(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
@@ -173,23 +173,23 @@ namespace Microsoft.Graphics.Canvas
         // would conflict with CreateSimple. 
         //
         HRESULT CreateWithEdgeBehaviorAndAlphaMode(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
-            [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaMode alphaMode,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
 
         // Exposes all creation options.
         HRESULT CreateWithEdgeBehaviorAndInterpolationOptions(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
-            [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaMode alphaMode,
-            [in] CanvasColorSpace preInterpolationSpace,
-            [in] CanvasColorSpace postInterpolationSpace,
-            [in] CanvasBufferPrecision bufferPrecision,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace preInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace postInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasBufferPrecision bufferPrecision,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
      }
 
@@ -215,26 +215,26 @@ namespace Microsoft.Graphics.Canvas
             [out, size_is(, *valueCount), retval] CanvasGradientStop** valueElements);
 
         [propget]
-        HRESULT EdgeBehavior([out, retval] CanvasEdgeBehavior* value);
+        HRESULT EdgeBehavior([out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* value);
 
         [propget]
-        HRESULT PreInterpolationSpace([out, retval] CanvasColorSpace* value);
+        HRESULT PreInterpolationSpace([out, retval] Microsoft.Graphics.Canvas.CanvasColorSpace* value);
 
         [propget]
-        HRESULT PostInterpolationSpace([out, retval] CanvasColorSpace* value);
+        HRESULT PostInterpolationSpace([out, retval] Microsoft.Graphics.Canvas.CanvasColorSpace* value);
 
         [propget]
-        HRESULT BufferPrecision([out, retval] CanvasBufferPrecision* value);
+        HRESULT BufferPrecision([out, retval] Microsoft.Graphics.Canvas.CanvasBufferPrecision* value);
 
         [propget]
-        HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
+        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
     };
 
     [version(VERSION), uuid(E9DE3392-8FBF-478C-8E6A-D0A0EA753B37), exclusiveto(CanvasLinearGradientBrush)]
     interface ICanvasLinearGradientBrushStatics : IInspectable
     {
         HRESULT CreateRainbow(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] float eldritchness,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
     };
@@ -255,37 +255,37 @@ namespace Microsoft.Graphics.Canvas
     {
         // Defaults to color interpolation sRGB-premultiplied, and CLAMP extend mode.
         HRESULT CreateSimple(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] Windows.UI.Color startColor,
             [in] Windows.UI.Color endColor,
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
 
         // Defaults to clamp edge behavior, premultiplied alpha, color interpolation sRGB-premultiplied.
         HRESULT CreateWithStops(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
 
         // Defaults to color interpolation sRGB-premultiplied.
         HRESULT CreateWithEdgeBehaviorAndAlphaMode(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
-            [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaMode alphaMode,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
 
         // Exposes all creation options.
         HRESULT CreateWithEdgeBehaviorAndInterpolationOptions(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 gradientStopCount,
             [in, size_is(gradientStopCount)] CanvasGradientStop* gradientStops,
-            [in] CanvasEdgeBehavior edgeBehavior,
-            [in] CanvasAlphaMode alphaMode,
-            [in] CanvasColorSpace preInterpolationSpace,
-            [in] CanvasColorSpace postInterpolationSpace,
-            [in] CanvasBufferPrecision bufferPrecision,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace preInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace postInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasBufferPrecision bufferPrecision,
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
     }
 
@@ -323,26 +323,26 @@ namespace Microsoft.Graphics.Canvas
             [out, size_is(, *valueCount), retval] CanvasGradientStop** valueElements);
 
         [propget]
-        HRESULT EdgeBehavior([out, retval] CanvasEdgeBehavior* value);
+        HRESULT EdgeBehavior([out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* value);
 
         [propget]
-        HRESULT PreInterpolationSpace([out, retval] CanvasColorSpace* value);
+        HRESULT PreInterpolationSpace([out, retval] Microsoft.Graphics.Canvas.CanvasColorSpace* value);
 
         [propget]
-        HRESULT PostInterpolationSpace([out, retval] CanvasColorSpace* value);
+        HRESULT PostInterpolationSpace([out, retval] Microsoft.Graphics.Canvas.CanvasColorSpace* value);
 
         [propget]
-        HRESULT BufferPrecision([out, retval] CanvasBufferPrecision* value);
+        HRESULT BufferPrecision([out, retval] Microsoft.Graphics.Canvas.CanvasBufferPrecision* value);
 
         [propget]
-        HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
+        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
     };
 
     [version(VERSION), uuid(3B0D4DAE-3E21-4818-99B4-779ACAAF18BE), exclusiveto(CanvasRadialGradientBrush)]
     interface ICanvasRadialGradientBrushStatics : IInspectable
     {
         HRESULT CreateRainbow(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] float eldritchness,
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
     };

@@ -136,7 +136,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Canvas.codegen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasLinearGradientBrush.cpp" />

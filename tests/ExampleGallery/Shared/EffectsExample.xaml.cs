@@ -12,13 +12,15 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 using System.Reflection;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;

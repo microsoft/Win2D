@@ -11,7 +11,10 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +23,6 @@ using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Text;
 
 namespace CoreWindowExample
 {

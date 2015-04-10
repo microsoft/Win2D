@@ -13,65 +13,62 @@
 #include "pch.h"
 #include "CanvasBrush.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
+using namespace ABI::Microsoft::Graphics::Canvas;
+using namespace ABI::Windows::Foundation;
+using namespace ABI::Windows::UI;
+
+IFACEMETHODIMP CanvasBrush::get_Opacity(float *value)
 {
-    using ABI::Windows::UI::Color;
-    using namespace ABI::Windows::Foundation;
-    using namespace ::Microsoft::WRL::Wrappers;
+    return ExceptionBoundary(
+        [&]()
+        {
+            CheckInPointer(value);
+            *value = GetD2DBrush(nullptr, false)->GetOpacity();
+        });
+}
 
-    IFACEMETHODIMP CanvasBrush::get_Opacity(float *value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckInPointer(value);
-                *value = GetD2DBrush(nullptr, false)->GetOpacity();
-            });
-    }
-
-    IFACEMETHODIMP CanvasBrush::put_Opacity(float value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                GetD2DBrush(nullptr, false)->SetOpacity(value);
-            });
-    }
+IFACEMETHODIMP CanvasBrush::put_Opacity(float value)
+{
+    return ExceptionBoundary(
+        [&]()
+        {
+            GetD2DBrush(nullptr, false)->SetOpacity(value);
+        });
+}
 
 
-    IFACEMETHODIMP CanvasBrush::get_Transform(Numerics::Matrix3x2 *value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                CheckInPointer(value);
+IFACEMETHODIMP CanvasBrush::get_Transform(Numerics::Matrix3x2 *value)
+{
+    return ExceptionBoundary(
+        [&]()
+        {
+            CheckInPointer(value);
 
-                GetD2DBrush(nullptr, false)->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
-            });
-    }
+            GetD2DBrush(nullptr, false)->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
+        });
+}
 
-    IFACEMETHODIMP CanvasBrush::put_Transform(Numerics::Matrix3x2 value)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                GetD2DBrush(nullptr, false)->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
-            });
-    }
+IFACEMETHODIMP CanvasBrush::put_Transform(Numerics::Matrix3x2 value)
+{
+    return ExceptionBoundary(
+        [&]()
+        {
+            GetD2DBrush(nullptr, false)->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
+        });
+}
 
-    IFACEMETHODIMP CanvasBrush::get_Device(ICanvasDevice** value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
-                ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(value));
-            });
-    }
+IFACEMETHODIMP CanvasBrush::get_Device(ICanvasDevice** value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+            ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(value));
+        });
+}
 
-    void CanvasBrush::Close()
-    {
-        m_device.Close();
-    }
-
-} } } }
+void CanvasBrush::Close()
+{
+    m_device.Close();
+}

@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     using namespace ::Microsoft::WRL;
 
@@ -29,7 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasStrokeStyleFactory : public ActivationFactory<CloakedIid<ICanvasFactoryNative>>,
                                      private LifespanTracker<CanvasStrokeStyleFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasStrokeStyle, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasStrokeStyle, BaseTrust);
 
     public:
 
@@ -55,7 +55,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CloakedIid<ICanvasStrokeStyleInternal>>,
         private LifespanTracker<CanvasStrokeStyle>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasStrokeStyle, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasStrokeStyle, BaseTrust);
 
         CanvasCapStyle m_startCap;
         CanvasCapStyle m_endCap;
@@ -129,4 +129,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     private:
         void ThrowIfClosed();
     };
-}}}}
+}}}}}

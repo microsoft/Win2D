@@ -16,6 +16,11 @@
 #include <ppltasks.h>
 
 using namespace concurrency;
+using namespace Microsoft::Graphics::Canvas::Brushes;
+using namespace Microsoft::Graphics::Canvas::Geometry;
+using namespace Microsoft::Graphics::Canvas::Text;
+using namespace Microsoft::Graphics::Canvas::UI::Xaml;
+using namespace Microsoft::Graphics::Canvas::UI;
 using namespace Microsoft::Graphics::Canvas;
 using namespace WinRTDirectX;
 using namespace Windows::ApplicationModel::Core;
@@ -170,13 +175,13 @@ namespace Microsoft
             }
             
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasHardwareAcceleration);
-            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasCapStyle);
-            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasLineJoin);
-            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasDashStyle);
-            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasStrokeTransformBehavior);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasCapStyle);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasLineJoin);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasDashStyle);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasStrokeTransformBehavior);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasAntialiasing);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasBlend);
-            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasTextAntialiasing);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextAntialiasing);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasUnits);
 
 #undef CX_VALUE_TO_STRING

@@ -126,9 +126,6 @@ namespace CodeGen
         }
 
         public static string Prefix;
-
-        public static string Subnamespace;
-
     }
 
 }

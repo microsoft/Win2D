@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.UI.Xaml
 {
     //
     // This control is only useful once it has a CanvasSwapChain associated with it.
@@ -23,8 +23,8 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION), uuid(DBDCCB96-147E-4A82-AF3A-C91C7800DAA7), exclusiveto(CanvasSwapChainPanel)]
     interface ICanvasSwapChainPanel : IInspectable
     {
-        [propput] HRESULT SwapChain([in] CanvasSwapChain* value);
-        [propget] HRESULT SwapChain([out, retval] CanvasSwapChain** value);
+        [propput] HRESULT SwapChain([in] Microsoft.Graphics.Canvas.CanvasSwapChain* value);
+        [propget] HRESULT SwapChain([out, retval] Microsoft.Graphics.Canvas.CanvasSwapChain** value);
 
         //
         // Removes the control from the visual tree.
@@ -33,7 +33,7 @@ namespace Microsoft.Graphics.Canvas
     };
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
-    runtimeclass CanvasSwapChainPanel : Windows.UI.Xaml.Controls.SwapChainPanel
+   runtimeclass CanvasSwapChainPanel : Windows.UI.Xaml.Controls.SwapChainPanel
     {
         [default] interface ICanvasSwapChainPanel;
     }

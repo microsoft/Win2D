@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     enum class RunWithDeviceFlags
     {
@@ -56,4 +56,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual EventRegistrationToken AddCreateResources(Sender* sender, CreateResourcesHandler* value) = 0;
         virtual void RemoveCreateResources(EventRegistrationToken token) = 0;
     };
-} } } }
+
+} } } } } }

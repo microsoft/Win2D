@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     using namespace ::Microsoft::WRL;
 
@@ -31,7 +31,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasCachedGeometryTraits,
         IClosable)
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCachedGeometry, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry, BaseTrust);
 
         ClosablePtr<ICanvasDevice> m_canvasDevice;
 
@@ -76,7 +76,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CloakedIid<ICanvasDeviceResourceFactoryNative>> ,
             public PerApplicationManager<CanvasCachedGeometryFactory, CanvasCachedGeometryManager>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCachedGeometry, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry, BaseTrust);
 
     public:
         IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
@@ -116,4 +116,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float flatteningTolerance,
             ICanvasCachedGeometry** cachedGeometry);
     };
-}}}}
+}}}}}

@@ -14,7 +14,7 @@
 
 #include "CustomFontManager.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     using namespace ::Microsoft::WRL;
 
@@ -77,7 +77,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CloakedIid<ICanvasFactoryNative>>,
           public PerApplicationManager<CanvasTextFormatFactory, CanvasTextFormatManager>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextFormat, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);
 
     public:
         CanvasTextFormatFactory();
@@ -131,7 +131,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CloakedIid<ICanvasResourceWrapperNative>>,
         private LifespanTracker<CanvasTextFormat>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasTextFormat, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);
 
         std::shared_ptr<CanvasTextFormatManager> m_manager;
         
@@ -293,4 +293,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static DWriteToCanvasTextDirection const* Lookup(CanvasTextDirection textDirection);
     };
     
-}}}}
+}}}}}

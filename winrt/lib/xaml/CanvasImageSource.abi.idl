@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.UI.Xaml
 {
     //
     // CanvasImageSource - this derives from
@@ -44,24 +44,24 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasImageSourceFactory : IInspectable
     {
         HRESULT Create(
-            [in]          ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
             [in]          float width,
             [in]          float height, 
             [out, retval] CanvasImageSource** imageSource);
 
         HRESULT CreateWithDpi(
-            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in]          float width,
             [in]          float height,
             [in]          float dpi,
             [out, retval] CanvasImageSource** imageSource);
 
         HRESULT CreateWithDpiAndAlphaMode(
-            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in]          float width,
             [in]          float height,
             [in]          float dpi,
-            [in]          CanvasAlphaMode alphaMode,
+            [in]          Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
             [out, retval] CanvasImageSource** imageSource);
     };
 
@@ -77,7 +77,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSession(
             [in]          Windows.UI.Color clearColor,
-            [out, retval] CanvasDrawingSession** drawingSession);
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
 
         //
         // Returns a new drawing session for updating a region of the image
@@ -87,14 +87,14 @@ namespace Microsoft.Graphics.Canvas
         HRESULT CreateDrawingSessionWithUpdateRectangle(
             [in]          Windows.UI.Color clearColor,
             [in]          Windows.Foundation.Rect updateRectangle,
-            [out, retval] CanvasDrawingSession** drawingSession);
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
 
         //
         // Returns the device used to create this image source
         //
         [propget]
         HRESULT Device(
-            [out, retval] CanvasDevice** value);
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
 
         //
         // Binds this image source to a different device.  This is used after a
@@ -102,7 +102,7 @@ namespace Microsoft.Graphics.Canvas
         //
         [propput]
         HRESULT Device(
-            [in] CanvasDevice* value);
+            [in] Microsoft.Graphics.Canvas.CanvasDevice* value);
 
         //
         // Gets the DPI of the image source.
@@ -123,13 +123,13 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Size([out, retval] Windows.Foundation.Size* size);
 
         [propget]
-        HRESULT SizeInPixels([out, retval] BitmapSize* size);
+        HRESULT SizeInPixels([out, retval] Microsoft.Graphics.Canvas.BitmapSize* size);
 
         //
         // Gets the image source alpha mode.
         //
         [propget]
-        HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
+        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
     };
 
     [version(VERSION), 

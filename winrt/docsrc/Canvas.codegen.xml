@@ -51,7 +51,7 @@ under the License.
     </member>
 
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasCapStyle">
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle">
       <summary>Describes the shape at the end of a line or segment.</summary>
       <remarks>
         <p>This illustration shows the available cap styles.
@@ -59,41 +59,41 @@ under the License.
         <img src="../images/CapStyle.png" alt="CanvasCapStyle diagram" />
       </remarks>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Flat">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle.Flat">
       <summary>A cap that does not extend past the last point of the line.
                If CanvasStrokeStyle.DashCap is set to Flat, dots will have zero size so only dashes are visible.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Square">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle.Square">
       <summary>Half of a square that has a length equal to the line thickness.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Round">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle.Round">
       <summary>A semicircle that has a diameter equal to the line thickness.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasCapStyle.Triangle">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle.Triangle">
       <summary>An isosceles right triangle whose hypotenuse is equal in length to the thickness of the line.</summary>
     </member>
 
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasDashStyle">
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle">
       <summary>Describes the sequence of dashes, dots, and gaps in a stroke style.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.Solid">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle.Solid">
       <summary>A solid line with no breaks.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.Dash">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle.Dash">
       <summary>A dash followed by a gap of equal length.
                The dash and the gap are each twice as long as the stroke thickness.
                The equivalent custom dash style is { 2, 2 }.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.Dot">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle.Dot">
       <summary>A dot followed by a longer gap.
                The equivalent custom dash style is { 0, 2 }.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.DashDot">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle.DashDot">
       <summary>A dash, followed by a gap, followed by a dot, followed by another gap.
                The equivalent custom dash style is { 2, 2, 0, 2 }.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDashStyle.DashDotDot">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle.DashDotDot">
       <summary>A dash, followed by a gap, followed by a dot, followed by another gap, followed by another dot, followed by another gap.
                The equivalent custom dash style is { 2, 2, 0, 2, 0, 2 }.</summary>
     </member>
@@ -116,7 +116,7 @@ under the License.
     </member>
 
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasLineJoin">
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin">
       <summary>Describes the shape that joins two lines or segments.</summary>
       <remarks>
         <p>A miter limit affects how sharp miter joins are allowed to be. If the line join style is
@@ -127,47 +127,47 @@ under the License.
         <img src="../images/LineJoin.png" alt="CanvasLineJoin diagram" />
       </remarks>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.Miter">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin.Miter">
       <summary>Regular angular vertices.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.Bevel">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin.Bevel">
       <summary>Beveled vertices.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.Round">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin.Round">
       <summary>Rounded vertices.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasLineJoin.MiterOrBevel">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin.MiterOrBevel">
       <summary>Regular angular vertices unless the join would extend beyond the miter limit; otherwise, beveled vertices.</summary>
     </member>
 
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior">
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeTransformBehavior">
       <summary>Defines how the world transform, dots per inch (DPI), and stroke width affect the shape of the pen used to stroke a primitive.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior.Normal">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeTransformBehavior.Normal">
       <summary>The stroke respects the currently set world transform, the DPI, and the stroke width.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior.Fixed">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeTransformBehavior.Fixed">
       <summary>The stroke does not respect the world transform but it does respect the DPI and stroke width.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasStrokeTransformBehavior.Hairline">
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeTransformBehavior.Hairline">
       <summary>The stroke is forced to 1 pixel wide (in device space) and does not respect the world transform, the DPI, or the stroke width.</summary>
     </member>
 
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasTextAntialiasing">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing">
       <summary>Specifies the antialiasing mode for drawing text.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.Default">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.Default">
       <summary>Use the system default.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.ClearType">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.ClearType">
       <summary>Use ClearType antialiasing.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.Grayscale">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.Grayscale">
       <summary>Use grayscale antialiasing.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextAntialiasing.Aliased">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.Aliased">
       <summary>Do not use antialiasing.</summary>
     </member>
 

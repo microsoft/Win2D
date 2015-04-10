@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::UI::Xaml::Controls;
@@ -52,4 +52,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }                    
     }
 
-}}}}
+}}}}}}

@@ -101,11 +101,11 @@ namespace CodeGen
             }
         }
 
-        public void OutputCode(bool isLast, bool isFlags, OutputFiles outputFiles)
+        public void OutputCode(bool isLast, bool isFlags, Formatter idlFile)
         {
             if (!m_shouldProject) return;
 
-            outputFiles.IdlFile.WriteIndent();
+            idlFile.WriteIndent();
 
             //
             // The (int) cast is necessary for values such as "0x80000000" which
@@ -113,19 +113,19 @@ namespace CodeGen
             // MIDL code generation/C++ compilation process is to treat enum
             // values as signed ints.
             //
-            outputFiles.IdlFile.Write(m_stylizedName);
-            outputFiles.IdlFile.Write(" = ");
+            idlFile.Write(m_stylizedName);
+            idlFile.Write(" = ");
 
             if(!isFlags)
             {
-                outputFiles.IdlFile.Write("(int)");
+                idlFile.Write("(int)");
             }
 
-            outputFiles.IdlFile.Write(m_valueExpression);
+            idlFile.Write(m_valueExpression);
 
             string suffix = isLast ? "" : ",";
-            outputFiles.IdlFile.Write(suffix);
-            outputFiles.IdlFile.WriteLine();
+            idlFile.Write(suffix);
+            idlFile.WriteLine();
         }
 
         public string RawNameComponent { get { return m_rawNameComponent; } }
@@ -161,7 +161,7 @@ namespace CodeGen
         }
     }
 
-    public class Enum : QualifiableType
+    public class Enum : OutputtableType
     {
         class EnumValueComparer : IComparer<EnumValue>  
         {
@@ -186,7 +186,7 @@ namespace CodeGen
             }
         }
 
-        public Enum(Namespace parentNamespace, XmlBindings.Enum xmlData, Overrides.XmlBindings.Enum overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
+        public Enum(Namespace parentNamespace, string rootProjectedNamespace, XmlBindings.Enum xmlData, Overrides.XmlBindings.Enum overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {
             m_stylizedName = Formatter.Prefix + Formatter.StylizeNameFromUnderscoreSeparators(xmlData.Name);
 
@@ -216,6 +216,8 @@ namespace CodeGen
 
                 m_enumValues.Add(new EnumValue(valueXml, m_rawName, overridesEnumValue));
             }
+
+            Namespace = rootProjectedNamespace;
             
             bool shouldProject = false;
             if(overrides != null)
@@ -226,6 +228,11 @@ namespace CodeGen
                 {
                     m_stylizedName = Formatter.Prefix + overrides.ProjectedNameOverride;
                 } 
+
+                if (overrides.Namespace != null)
+                {
+                    Namespace = Namespace + "." + overrides.Namespace;
+                }
 
             }
 
@@ -273,30 +280,30 @@ namespace CodeGen
         }
 
         // Used for code generation.
-        public void OutputCode(OutputFiles outputFiles)
+        public override void OutputCode(Dictionary<string, QualifiableType> typeDictionary, Formatter idlFile)
         {
-            outputFiles.IdlFile.WriteIndent();
-            outputFiles.IdlFile.Write("[version(VERSION)");
+            idlFile.WriteIndent();
+            idlFile.Write("[version(VERSION)");
             if (m_isFlags)
             {
-                outputFiles.IdlFile.Write(", flags");
+                idlFile.Write(", flags");
             }
-            outputFiles.IdlFile.Write("]");
-            outputFiles.IdlFile.WriteLine();
+            idlFile.Write("]");
+            idlFile.WriteLine();
             
-            outputFiles.IdlFile.WriteLine("typedef enum " + m_stylizedName);
-            outputFiles.IdlFile.WriteLine("{");
-            outputFiles.IdlFile.Indent();
+            idlFile.WriteLine("typedef enum " + m_stylizedName);
+            idlFile.WriteLine("{");
+            idlFile.Indent();
 
             for (int i = 0; i < m_enumValues.Count; i++)
             {
                 bool isLast = i == m_enumValues.Count - 1;
-                m_enumValues[i].OutputCode(isLast, m_isFlags, outputFiles);
+                m_enumValues[i].OutputCode(isLast, m_isFlags, idlFile);
 
             }
-            outputFiles.IdlFile.Unindent();
-            outputFiles.IdlFile.WriteLine("} " + m_stylizedName + ";");
-            outputFiles.IdlFile.WriteLine();
+            idlFile.Unindent();
+            idlFile.WriteLine("} " + m_stylizedName + ";");
+            idlFile.WriteLine();
         }
 
         private string m_rawName;

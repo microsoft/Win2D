@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Brushes
 {
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ::Microsoft::WRL;    
@@ -32,7 +32,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         MixIn<CanvasLinearGradientBrush, CanvasBrush>),
         public CanvasBrush
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasLinearGradientBrush, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush, BaseTrust);
 
     public:
         CanvasLinearGradientBrush(
@@ -99,7 +99,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasLinearGradientBrushStatics>,
         public PerApplicationManager<CanvasLinearGradientBrushFactory, CanvasLinearGradientBrushManager>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasLinearGradientBrush, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush, BaseTrust);
 
     public:
         IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
@@ -144,4 +144,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasLinearGradientBrush** canvasLinearGradientBrush);
     };
 
-}}}}
+}}}}}

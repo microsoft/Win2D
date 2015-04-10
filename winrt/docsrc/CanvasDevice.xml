@@ -85,7 +85,7 @@ under the License.
         This size limit is reported in pixels. The limit applies to both the width and height of bitmaps.
         It will vary depending on the Direct3D feature level of the device, and whether the device
         has hardware acceleration enabled. To convert the size limit from pixels to dips, use the
-        ConvertPixelsToDips method found on <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/>,
+        ConvertPixelsToDips method found on <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/>,
         <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/>, or
         <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/>.
       </remarks>

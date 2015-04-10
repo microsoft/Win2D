@@ -22,7 +22,7 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.CanvasBitmap">
       <summary>A bitmap is a 2D grid of pixels that form an image.</summary>
       <example>
-        <p>To load and draw a bitmap, first add a <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/> to your XAML page.</p>
+        <p>To load and draw a bitmap, first add a <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/> to your XAML page.</p>
         <p>Add the image files you want to display (png, jpeg, etc.) to your Visual Studio project,
            and make sure their Build Action is set to Content.</p>
         <p>In the page implementation class (eg. MainPage.xaml.cs), declare fields to hold the bitmaps:</p>

@@ -19,14 +19,14 @@ under the License.
   </assembly>
   <members>
     
-    <member name="T:Microsoft.Graphics.Canvas.ICanvasBrush">
+    <member name="T:Microsoft.Graphics.Canvas.Brushes.ICanvasBrush">
       <summary>A brush defines the color of things being drawn. It can be a solid color, or a bitmap pattern, or a gradient.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Opacity">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.ICanvasBrush.Opacity">
       <summary>Gets or sets the opacity of the brush.</summary>
       <remarks>1 is fully opaque, 0 fully transparent.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Transform">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.ICanvasBrush.Transform">
       <summary>Gets or sets the brush transform matrix.</summary>
 
       <remarks>
@@ -39,70 +39,70 @@ under the License.
            only affects the brush; it does not affect any other content drawn by the render target.</p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasBrush.Device">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.ICanvasBrush.Device">
       <summary>The device associated with this brush.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush">
+    <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush">
       <summary>The simplest kind of brush. Paints things a solid color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasSolidColorBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Dispose">
       <summary>Releases all resources used by the CanvasSolidColorBrush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Transform">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Transform">
       <summary>Gets or sets the brush transform matrix.</summary>
       <inheritdoc/>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Opacity">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Opacity">
       <summary>Gets or sets the opacity of the brush.</summary>
       <inheritdoc/>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Color">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Color">
       <summary>Gets or sets the color of the solid brush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasSolidColorBrush.Device">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Device">
       <summary>The device associated with this brush.</summary>
     </member>
 
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasImageBrush">
+    <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush">
       <summary>A brush which paints using image content, such as a bitmap. Useful for producing tiled backgrounds, or filling geometry with a pattern.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
       <summary>Initializes a new instance of the CanvasImageBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.ICanvasImage)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.ICanvasImage)">
       <summary>Initializes a new instance of the CanvasImageBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasImageBrush.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Dispose">
       <summary>Releases all resources used by the CanvasImageBrush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.SourceRectangle">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.SourceRectangle">
       <summary>Optional field which specifies the source rectangle of the brush. If no source rectangle is specified, the entire source image is used.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Interpolation">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Interpolation">
       <summary>Specifies the image quality used for resizing and transforms.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image">
       <summary>Specifies an image used for the brush. Required, for the brush to be used for drawing.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY">
       <summary>Specifies how content is tiled vertically when it extends beyond the Image.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX">
       <summary>Specifies how content is tiled horizontally when it extends beyond the Image.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Transform">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Transform">
       <summary>Specifies a transform used for this brush. The default transform is identity.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Opacity">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Opacity">
       <summary>Specifies an opacity level used for this brush. The default is fully opaque.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Device">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Device">
       <summary>The device associated with this brush.</summary>
     </member>
 
@@ -155,36 +155,36 @@ under the License.
     </member>
     
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasGradientStop">
+    <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop">
       <summary>Used to describe one gradient stop in a gradient brush.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasGradientStop.Position">
+    <member name="F:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop.Position">
       <summary>The position of the gradient stop. Expected to be between 0 and 1, inclusive.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasGradientStop.Color">
+    <member name="F:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop.Color">
       <summary>The color at the gradient stop.</summary>
     </member>
     
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush">
+    <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush">
       <summary>A brush used to paint a linear gradient.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[])">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[])">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Dispose">
       <summary>Releases all resources used by the CanvasLinearGradientBrush.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.CreateRainbow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.CreateRainbow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single)">
       <summary>A convenience for producing a rainbow-colored gradient.</summary>
       <param name="eldritchness">
         <i>Zero for a unicorny rainbow of gladness,<br/>
@@ -194,60 +194,60 @@ under the License.
         sheens inbetween.</i>
       </param>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.Transform">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Transform">
       <summary>The transform affecting the brush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.Opacity">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Opacity">
       <summary>The opacity affecting the brush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.StartPoint">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.StartPoint">
       <summary>The point on the canvas on which the gradient starts.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.EndPoint">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.EndPoint">
       <summary>The point on the canvas on which the gradient stops.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.AlphaMode">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.AlphaMode">
       <summary>Specifies the treatment of alpha.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.BufferPrecision">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.BufferPrecision">
       <summary>Specifies the precision used for computation.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.EdgeBehavior">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.EdgeBehavior">
       <summary>Specifies the behavior for pixels which fall outside of the gradient's typical rendering area.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.PostInterpolationSpace">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.PostInterpolationSpace">
       <summary>Specifies the color space to be used before interpolation.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.PreInterpolationSpace">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.PreInterpolationSpace">
       <summary>Specifies the color space to be used after interpolation.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.Stops">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Stops">
       <summary>Used to retrieve the gradient stops that comprise the brush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasLinearGradientBrush.Device">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Device">
       <summary>The device associated with this brush.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush">
+    <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush">
       <summary>A brush used to paint a radial gradient.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[])">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[])">
       <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
       <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Dispose">
       <summary>Releases all resources used by the CanvasRadialGradientBrush.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.CreateRainbow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.CreateRainbow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single)">
       <summary>A convenience for producing a rainbow-colored gradient.</summary>
       <param name="eldritchness">
         <i>Zero for a unicorny rainbow of gladness,<br/>
@@ -257,43 +257,43 @@ under the License.
         sheens inbetween.</i>
       </param>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.RadiusY">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.RadiusY">
       <summary>Specifies the vertical radius of the brush's radial gradient.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.RadiusX">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.RadiusX">
       <summary>Specifies the horizontal radius of the brush's radial gradient.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.OriginOffset">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.OriginOffset">
       <summary>Specifies a displacement from Center, used to form the brush's radial gradient.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.Center">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Center">
       <summary>Specifies the center of the brush's radial gradient</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.AlphaMode">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.AlphaMode">
       <summary>Specifies the treatment of alpha.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.BufferPrecision">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.BufferPrecision">
       <summary>Specifies the precision used for computation.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.EdgeBehavior">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.EdgeBehavior">
       <summary>Specifies the behavior for pixels which fall outside of the gradient's typical rendering area.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.PostInterpolationSpace">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.PostInterpolationSpace">
       <summary>Specifies the color space to be used before interpolation.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.PreInterpolationSpace">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.PreInterpolationSpace">
       <summary>Specifies the color space to be used after interpolation.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.Stops">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Stops">
       <summary>Used to retrieve the gradient stops that comprise the brush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.Transform">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Transform">
       <summary>The transform affecting the brush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.Opacity">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Opacity">
       <summary>The opacity affecting the brush.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasRadialGradientBrush.Device">
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Device">
       <summary>The device associated with this brush.</summary>
     </member>
 

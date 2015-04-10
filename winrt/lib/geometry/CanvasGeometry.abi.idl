@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.Geometry
 {
     runtimeclass CanvasGeometry;
 
@@ -281,7 +281,7 @@ namespace Microsoft.Graphics.Canvas
 
         HRESULT SendPathTo(ICanvasPathReceiver* streamReader);
 
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
     }
 
     [version(VERSION), uuid(D94E33CF-CD59-46F2-8DF4-55066AABFD56), exclusiveto(CanvasGeometry)]
@@ -289,13 +289,13 @@ namespace Microsoft.Graphics.Canvas
     {
         [overload("CreateRectangle"), default_overload]
         HRESULT CreateRectangle(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] Windows.Foundation.Rect rect,
             [out, retval] CanvasGeometry** geometry);
 
         [overload("CreateRectangle")]
         HRESULT CreateRectangleAtCoords(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] float x,
             [in] float y,
             [in] float w,
@@ -304,7 +304,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("CreateRoundedRectangle"), default_overload]
         HRESULT CreateRoundedRectangle(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] Windows.Foundation.Rect rect,
             [in] float radiusX,
             [in] float radiusY,
@@ -312,7 +312,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("CreateRoundedRectangle")]
         HRESULT CreateRoundedRectangleAtCoords(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] float x,
             [in] float y,
             [in] float w,
@@ -323,7 +323,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("CreateEllipse"), default_overload]
         HRESULT CreateEllipse(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
@@ -331,7 +331,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("CreateEllipse")]
         HRESULT CreateEllipseAtCoords(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] float x,
             [in] float y,
             [in] float radiusX,
@@ -340,14 +340,14 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("CreateCircle"), default_overload]
         HRESULT CreateCircle(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radius,
             [out, retval] CanvasGeometry** geometry);
 
         [overload("CreateCircle")]
         HRESULT CreateCircleAtCoords(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] float x,
             [in] float y,
             [in] float radius,
@@ -358,21 +358,21 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasGeometry** geometry);
 
         HRESULT CreatePolygon(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 pointCount,
             [in, size_is(pointCount)] NUMERICS.Vector2* points,
             [out, retval] CanvasGeometry** geometry);
 
         [overload("CreateGroup")]
         HRESULT CreateGroup(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 geometriesCount,
             [in, size_is(geometriesCount)] CanvasGeometry** geometries,
             [out, retval] CanvasGeometry** geometry);
 
         [overload("CreateGroup"), default_overload]
         HRESULT CreateGroupWithFilledRegionDetermination(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] UINT32 geometriesCount,
             [in, size_is(geometriesCount)] CanvasGeometry** geometries,
             [in] CanvasFilledRegionDetermination filledRegionDetermination,

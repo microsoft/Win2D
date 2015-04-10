@@ -10,9 +10,9 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using System;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
 
 #if WINDOWS_UAP
 using System.Numerics;

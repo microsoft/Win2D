@@ -16,6 +16,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
     using namespace WinRTDirectX;
+    using namespace Brushes;
+    using namespace Text;
+    using namespace UI;
+    using namespace UI::Xaml;
+    using namespace Geometry;
 
     template<typename TOutput, typename TInput> TOutput ReinterpretAs(TInput value)
     {

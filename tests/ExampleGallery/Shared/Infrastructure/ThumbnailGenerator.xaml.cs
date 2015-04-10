@@ -10,6 +10,12 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+#if WINDOWS_UAP
+using Windows.Graphics.DirectX;
+#else
+using Microsoft.Graphics.Canvas.DirectX;
+#endif
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
@@ -30,12 +36,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
-
-#if WINDOWS_UAP
-using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.Graphics.Canvas.UI;
 
 
 namespace ExampleGallery

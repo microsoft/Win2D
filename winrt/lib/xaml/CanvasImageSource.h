@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::UI;
     using namespace ABI::Windows::Foundation;
@@ -36,7 +36,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasImageSourceFactory : public ActivationFactory<ICanvasImageSourceFactory>,
                                      private LifespanTracker<CanvasImageSourceFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource, BaseTrust);
 
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
 
@@ -69,7 +69,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasImageSource : public RuntimeClass<ICanvasImageSource, ComposableBase<>>,
                               private LifespanTracker<CanvasImageSource>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource, BaseTrust);
 
         ComPtr<ICanvasDevice> m_device;
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
@@ -136,8 +136,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // Drawing session factory
     //
 
-    class CanvasDrawingSessionManager;
-
     class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory,
                                                    private LifespanTracker<CanvasImageSourceDrawingSessionFactory>
     {
@@ -153,4 +151,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             RECT const& updateRectangle,
             float dpi) const override;
     };
-}}}}
+}}}}}}

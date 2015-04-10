@@ -77,7 +77,7 @@ namespace CodeGen
                 Overrides.XmlBindings.Namespace overrideNamespace = null;
                 if (overrides != null) overrideNamespace = overrides.Namespaces.Find(x => x.Name == n.Name);
 
-                m_namespaceList.Add(new Namespace(n, overrideNamespace, typeDictionary, outputDataTypes));
+                m_namespaceList.Add(new Namespace(n, overrideNamespace, overrides.RootNamespace.Value, typeDictionary, outputDataTypes));
             }
         }
 

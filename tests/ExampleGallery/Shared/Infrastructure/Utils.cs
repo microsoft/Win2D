@@ -10,11 +10,11 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
-using Windows.UI.Xaml;
+using Microsoft.Graphics.Canvas.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Windows.Foundation;
 

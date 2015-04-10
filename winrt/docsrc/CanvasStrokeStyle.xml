@@ -19,44 +19,44 @@ under the License.
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasStrokeStyle">
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle">
       <summary>Defines a stroke style for drawing lines. Dashes, dots, how to join segments, how to cap the ends, etc.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasStrokeStyle.#ctor">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.#ctor">
       <summary>Initializes a new instance of the CanvasStrokeStyle class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasStrokeStyle.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.Dispose">
       <summary>Releases all resources used by the CanvasStrokeStyle.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.TransformBehavior">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.TransformBehavior">
       <summary>Gets or sets how the world transform, dots per inch (DPI), and stroke width affect the shape of the pen.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.StartCap">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.StartCap">
       <summary>Gets or sets the type of shape used at the beginning of a stroke. Defaults to Flat.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.MiterLimit">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.MiterLimit">
       <summary>Gets or sets the limit on the ratio of the miter length to half the stroke's thickness.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.LineJoin">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.LineJoin">
       <summary>Gets or sets the type of joint used at the vertices of a shape's outline.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.EndCap">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.EndCap">
       <summary>Gets or sets the type of shape used at the end of a stroke. Defaults to Flat.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashStyle">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.DashStyle">
       <summary>Gets or sets the stroke's dash pattern.
-               This is ignored if <see cref="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.CustomDashStyle"/> has been set.</summary>
+               This is ignored if <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.CustomDashStyle"/> has been set.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashOffset">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.DashOffset">
       <summary>Gets or sets how far into the dash sequence the stroke will start.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashCap">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.DashCap">
       <summary>Gets or sets how the ends of each dash are drawn. Defaults to Square.
                If this is set to Flat, dots will have zero size so only dashes are visible.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.CustomDashStyle">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.CustomDashStyle">
       <summary>Gets or sets an array describing a custom dash pattern.
-               This overrides the <see cref="P:Microsoft.Graphics.Canvas.CanvasStrokeStyle.DashStyle"/>
+               This overrides the <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.DashStyle"/>
                property, which is only used when CustomDashStyle is set to null.</summary>
 
       <remarks>

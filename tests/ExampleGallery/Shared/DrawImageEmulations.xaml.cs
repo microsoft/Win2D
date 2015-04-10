@@ -10,6 +10,12 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+#if WINDOWS_UAP
+using Windows.Graphics.DirectX;
+#else
+using Microsoft.Graphics.Canvas.DirectX;
+#endif
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
@@ -21,15 +27,14 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
 
-#if WINDOWS_UAP
-using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
 
 namespace ExampleGallery
 {

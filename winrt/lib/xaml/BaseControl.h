@@ -15,7 +15,7 @@
 #include "RemoveFromVisualTree.h"
 #include "utils/LockUtilities.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ::Microsoft::WRL::Wrappers;
     using namespace ABI::Windows::ApplicationModel;
@@ -674,4 +674,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     };
 
-}}}}
+}}}}}}

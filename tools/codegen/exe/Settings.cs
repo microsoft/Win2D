@@ -182,7 +182,7 @@ namespace CodeGen
                 public string Value;
             }
 
-            public class SubnamespaceNode
+            public class RootNamespaceNode
             {
                 [XmlAttributeAttribute]
                 public string Value;
@@ -206,8 +206,8 @@ namespace CodeGen
                 [XmlElement("FilenameBase")]
                 public FilenameBaseNode FilenameBase;
 
-                [XmlElement("Subnamespace")]
-                public SubnamespaceNode Subnamespace;
+                [XmlElement("RootNamespace")]
+                public RootNamespaceNode RootNamespace;
             }
         }
     }

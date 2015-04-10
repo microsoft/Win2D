@@ -128,13 +128,13 @@ under the License.
     <section>
       <title>Write some code</title>
       <content>
-        <para>Add a <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasControl</codeEntityReference> to your XAML page:</para>
+        <para>Add a <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> to your XAML page:</para>
         <list class="bullet">
           <listItem>Double click on MainPage.xaml in Solution Explorer to open the XAML editor</listItem>
           <listItem>
-            Add the <codeEntityReference>N:Microsoft.Graphics.Canvas</codeEntityReference> namespace next to the existing xmlns statements:
+            Add the <codeEntityReference>N:Microsoft.Graphics.Canvas.UI.Xaml</codeEntityReference> namespace next to the existing xmlns statements:
             <code>
-              xmlns:canvas="using:Microsoft.Graphics.Canvas"
+              xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
             </code>
           </listItem>
           <listItem>
@@ -151,7 +151,7 @@ under the License.
         <code>
           using Windows.UI;
           using Windows.UI.Xaml.Controls;
-          using Microsoft.Graphics.Canvas;
+          using Microsoft.Graphics.Canvas.UI.Xaml;
 
           public sealed partial class MainPage : Page
           {

@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     class AnimatedControlAsyncAction : public RuntimeClass<
         AsyncBase<IAsyncActionCompletedHandler, ::Microsoft::WRL::Details::Nil, SingleResult, AsyncOptions<PropagateDelegateError>>, IAsyncAction>,
@@ -96,4 +96,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
         }
     };
-}}}}
+}}}}}}

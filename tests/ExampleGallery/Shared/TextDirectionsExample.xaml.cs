@@ -11,6 +11,10 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,7 +24,6 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
