@@ -24,7 +24,8 @@ under the License.
     mc:Ignorable="d"
     d:DesignHeight="437"
     d:DesignWidth="872"
-    d:DataContext="{d:DesignInstance local:TextDirectionsExample, IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance local:TextDirectionsExample, IsDesignTimeCreatable=True}"
+    Unloaded="UserControl_Unloaded">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
