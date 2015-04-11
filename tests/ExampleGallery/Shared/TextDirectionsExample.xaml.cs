@@ -148,7 +148,7 @@ namespace ExampleGallery
             var bounds = arrow.ComputeStrokeBounds(3);
             var outline = arrow.Stroke(2).Outline();
 
-            var foregroundBrush = (SolidColorBrush)Application.Current.Resources["ComboBoxForegroundThemeBrush"];
+            var foregroundBrush = (SolidColorBrush)directionsCombo.Foreground;
             var color = foregroundBrush.Color;
 
             Directions = new List<DirectionInfo>();

@@ -41,7 +41,7 @@ under the License.
                     Win2D specifies text alignment and directions similarly to how XAML specifies them.
                     This example demonstrates how text alignment is affected by text direction.
                 </TextBlock>
-                <ComboBox HorizontalAlignment="Left" Margin="10" ItemsSource="{Binding Directions}" SelectedIndex="{Binding CurrentDirectionIndex, Mode=TwoWay}">
+                <ComboBox x:Name="directionsCombo" HorizontalAlignment="Left" Margin="10" ItemsSource="{Binding Directions}" SelectedIndex="{Binding CurrentDirectionIndex, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
