@@ -116,4 +116,9 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
         });
 }
 
-#endif  // USE_LOCALLY_EMULATED_UAP_APIS
+#else   // USE_LOCALLY_EMULATED_UAP_APIS
+
+ // suppress warning about file not defining any symbols
+namespace { char suppressLnk4221; }
+
+#endif  // !USE_LOCALLY_EMULATED_UAP_APIS
