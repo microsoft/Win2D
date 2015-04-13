@@ -104,6 +104,7 @@
     </WindowsProject>
     <WindowsProject Include="tests\CoreWindowExample\Windows\CoreWindowExample.Windows.csproj" />
     <WindowsProject Include="tests\CsConsumer\Windows\CsConsumer.Windows.csproj" />
+    <WindowsProject Include="tests\ExampleGallery\Direct3DInterop\Windows\ExampleGallery.Direct3DInterop.Windows.vcxproj" />
     <WindowsProject Include="tests\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
     <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj">
       <AutomatedTests>store</AutomatedTests>
@@ -123,6 +124,7 @@
     <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
     <PhoneProject Include="tests\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj" />
     <PhoneProject Include="tests\CsConsumer\WindowsPhone\CsConsumer.WindowsPhone.csproj" />
+    <PhoneProject Include="tests\ExampleGallery\Direct3DInterop\WindowsPhone\ExampleGallery.Direct3DInterop.WindowsPhone.vcxproj" />
     <PhoneProject Include="tests\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj"/>
     <PhoneProject Include="numerics\Cpp\tests\CppNumericsTests.WindowsPhone.vcxproj" />
     <PhoneProject Include="numerics\DotNet\tests\WindowsPhone\DotNetNumericsTests.WindowsPhone.csproj" />

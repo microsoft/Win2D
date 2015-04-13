@@ -33,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CustomFonts.xaml.cs">
       <DependentUpon>CustomFonts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Direct3DInteropExample.xaml.cs">
+      <DependentUpon>Direct3DInteropExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DrawImageEmulations.xaml.cs">
       <DependentUpon>DrawImageEmulations.xaml</DependentUpon>
     </Compile>
@@ -106,6 +109,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)CustomFonts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Direct3DInteropExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -211,6 +218,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomFontsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DeveloperToolsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DeveloperToolsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\Direct3DInteropNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\Direct3DInteropWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DPINarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DPIWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DrawImageEmulationsNarrow.png" />

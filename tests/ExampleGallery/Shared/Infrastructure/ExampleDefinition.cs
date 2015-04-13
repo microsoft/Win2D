@@ -68,6 +68,7 @@ namespace ExampleGallery
             new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
             new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
             new ExampleDefinition("Canvas Control", typeof(CanvasControlExample)),
+            new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),
             new ExampleDefinition("DPI", typeof(DpiExample)),
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
