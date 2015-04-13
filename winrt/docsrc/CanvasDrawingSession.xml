@@ -266,13 +266,13 @@ under the License.
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a line of single unit width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a line of the specified width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a line of the specified width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
@@ -281,16 +281,16 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>Draws a line of the specified width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a line of the specified width and color, with a custom stroke style.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a line of single unit width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a line of the specified width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a line of the specified width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
@@ -299,17 +299,17 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single)">
       <summary>Draws a line of the specified width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawLine(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a line of the specified width and color, with a custom stroke style.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a rectangle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a rectangle of the specified stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
@@ -318,16 +318,16 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>Draws a rectangle of the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rectangle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a rectangle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a rectangle of the specified stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color)">
@@ -336,58 +336,58 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color,System.Single)">
       <summary>Draws a rectangle of the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rectangle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a rectangle, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills the interior of a rectangle with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a rectangle, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Windows.UI.Color)">
       <summary>Fills the interior of a rectangle with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify its opacity.</summary>
       <remarks>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
-          <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Transform"/> contains only positive scaling and translation (no rotation or other transforms), and is positioned so the rectangle being drawn will not extend past the edge of the opacity bitmap</li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Opacity"/> is set to 1.0 (the default)</li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
+          <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Transform"/> contains only positive scaling and translation (no rotation or other transforms), and is positioned so the rectangle being drawn will not extend past the edge of the opacity bitmap</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Opacity"/> is set to 1.0 (the default)</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
           <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
         </ul>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify its opacity.</summary>
       <remarks>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
-          <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Transform"/> contains only positive scaling and translation (no rotation or other transforms), and is positioned so the rectangle being drawn will not extend past the edge of the opacity bitmap</li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Opacity"/> is set to 1.0 (the default)</li>
-          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
+          <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Transform"/> contains only positive scaling and translation (no rotation or other transforms), and is positioned so the rectangle being drawn will not extend past the edge of the opacity bitmap</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Opacity"/> is set to 1.0 (the default)</li>
+          <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
           <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
         </ul>
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a rounded rectangle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
@@ -396,16 +396,16 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>Draws a rounded rectangle of the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rounded rectangle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a rounded rectangle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rounded rectangle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color)">
@@ -414,30 +414,30 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>Draws a rounded rectangle of the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a rounded rectangle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a rounded rectangle, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills the interior of a rounded rectangle with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a rounded rectangle, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRoundedRectangle(Windows.Foundation.Rect,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills the interior of a rounded rectangle with the specified color.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>It's like a circle, but squashed. Using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
@@ -446,16 +446,16 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>It's like a circle, but squashed.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>It's like a circle, but squashed.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>It's like a circle, but squashed. Using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>It's like a circle, but squashed. Using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Windows.UI.Color)">
@@ -464,30 +464,30 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>It's like a circle, but squashed.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>It's like a circle, but squashed.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of an ellipse, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(System.Single,System.Single,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills the interior of a ellipse with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of an ellipse, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillEllipse(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills the interior of a ellipse with the specified color.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a circle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a circle of the specified stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a circle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Windows.UI.Color)">
@@ -496,16 +496,16 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>Draws a circle of the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(System.Single,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a circle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a circle of single unit stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a circle of the specified stroke width, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a circle of the specified stroke width, using a brush to define the color and with a custom stroke style.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Windows.UI.Color)">
@@ -514,17 +514,17 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Windows.UI.Color,System.Single)">
       <summary>Draws a circle of the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a circle of the specified stroke width and color, with a custom stroke style.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a circle, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(System.Single,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills the interior of a circle with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills the interior of a circle, using a brush to define the color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillCircle(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Windows.UI.Color)">
@@ -537,28 +537,28 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
       <summary>Draws text using a default font.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Windows.UI.Color,Microsoft.Graphics.Canvas.CanvasTextFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle.</summary>
     </member>
 
@@ -610,8 +610,8 @@ under the License.
           The identity DPI value is 96, which means dips and pixels are the same.
         </p>
         <p>
-          Drawing sessions inherit their DPI from the <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/>,
-          <see cref="T:Microsoft.Graphics.Canvas.CanvasImageSource"/> or
+          Drawing sessions inherit their DPI from the <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/>,
+          <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource"/> or
           <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/> they were created from.
         </p>
       </remarks>
@@ -677,166 +677,166 @@ under the License.
                Equation: O = (1 - D) * S + (1 - SA) * D.</summary>
     </member>
   
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Windows.UI.Color)">
       <summary>Draws a geometry relative to the origin, with a single unit stroke width and the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a geometry relative to the origin, with a single unit stroke width, and using a brush to define the color.</summary>
     </member>    
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a geometry relative to the origin, with the specified stroke width, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Windows.UI.Color,System.Single)">
       <summary>Draws a geometry relative to the origin, with the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a geometry relative to the origin, with the specified stroke width and stroke style, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a geometry relative to the origin, with the specified stroke width, stroke style, and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a geometry relative to the specified position, with a single unit stroke width, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Windows.UI.Color)">
       <summary>Draws a geometry relative to the specified position, with a single unit stroke width and the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Windows.UI.Color,System.Single)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width and stroke style, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width, stroke style, and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a geometry relative to the specified position, with a single unit stroke width, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
       <summary>Draws a geometry relative to the specified position, with a single unit stroke width and the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width and color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width and stroke style, and using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Draws a geometry relative to the specified position, with the specified stroke width, stroke style, and color.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills a geometry relative to the origin, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Windows.UI.Color)">
       <summary>Fills a geometry relative to the origin with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills a geometry relative to the specified position, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
       <summary>Fills a geometry relative to the specified position with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills a geometry relative to the specified position, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Windows.UI.Color)">
       <summary>Fills a geometry relative to the specified position with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify its opacity.</summary>
       <remarks>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
-          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
-          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
-          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
+          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify its opacity.</summary>
       <remarks>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
-          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
-          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
-          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
+          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Fills a geometry relative to the origin, using a brush to define the color and a second brush to specify its opacity.</summary>
       <remarks>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
-          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/></li>
-          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
-          <li>Its <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
+          <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
+          <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a cached geometry relative to the origin, using a brush to define the color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was 
-        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+        created by <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry,Windows.UI.Color)">
       <summary>Draws a cached geometry relative to the origin and with the specified color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was 
-        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+        created by <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a cached geometry relative to the specified position, using a brush to define the color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was 
-        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+        created by <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
       <summary>Draws a cached geometry relative to the specified position and with the specified color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was
-        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+        created by <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a cached geometry relative to the specified position, using a brush to define the color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was
-        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+        created by <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.CanvasCachedGeometry,System.Single,System.Single,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry,System.Single,System.Single,Windows.UI.Color)">
       <summary>Draws a cached geometry relative to the specified position and with the specified color.</summary>
       <remarks>
         Whether this operation is a stroke or fill is determined by whether the cached geometry was
-        created by <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill"/>.
+        created by <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke"/> or <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill"/>.
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.Text.CanvasTextLayout,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a text layout, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.Text.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Draws a text layout, using a brush to define the color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.Text.CanvasTextLayout,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color)">
       <summary>Draws a text layout with the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.Text.CanvasTextLayout,System.Single,System.Single,Windows.UI.Color)">
       <summary>Draws a text layout with the specified color.</summary>
     </member>
      
@@ -847,7 +847,7 @@ under the License.
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Creates a layer that will blend its contents using opacity from the specified brush (which could contain a bitmap or gradient).</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
@@ -861,14 +861,14 @@ under the License.
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush,Windows.Foundation.Rect)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Windows.Foundation.Rect)">
       <summary>Creates a layer that will clip its contents to a rectangle, and blend using opacity from the specified brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.CanvasGeometry)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
       <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using the specified opacity.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
@@ -876,7 +876,7 @@ under the License.
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasGeometry)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
       <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using opacity from the specified brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
@@ -884,7 +884,7 @@ under the License.
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using the specified opacity.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
@@ -892,7 +892,7 @@ under the License.
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.ICanvasBrush,Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using opacity from the specified brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
@@ -900,7 +900,7 @@ under the License.
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.ICanvasBrush,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.CanvasLayerOptions)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.CanvasLayerOptions)">
       <summary>Creates a layer that will clip its contents to a rectangle and/or geometry region, and blend using the specified opacity and/or brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>

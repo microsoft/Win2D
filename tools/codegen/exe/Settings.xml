@@ -19,9 +19,9 @@ under the License.
 
   <Prefix Value="Canvas"/>
 
-  <Subnamespace Value="Canvas"/>
-
   <FilenameBase Value="Canvas"/>
+  
+  <RootNamespace Value="Microsoft.Graphics.Canvas" />
   
   <Primitive Name="FLOAT" ProjectedNameOverride="float"/>
   
@@ -34,17 +34,17 @@ under the License.
     <!-- Enums and structs are not projected by default and need to be explicitly included here -->
 
     <Enum Name="DEBUG_LEVEL" ShouldProject="true"/>
-    <Enum Name="CAP_STYLE" ShouldProject="true"/>
-    <Enum Name="DASH_STYLE" ShouldProject="true">
+    <Enum Name="CAP_STYLE" ShouldProject="true" Namespace="Geometry" />
+    <Enum Name="DASH_STYLE" ShouldProject="true" Namespace="Geometry">
         <Field Name="CUSTOM" ShouldProject="false" />
     </Enum>
-    <Enum Name="LINE_JOIN" ShouldProject="true"/>
-    <Enum Name="STROKE_TRANSFORM_TYPE" ShouldProject="true" ProjectedNameOverride="StrokeTransformBehavior"/>"
+    <Enum Name="LINE_JOIN" ShouldProject="true" Namespace="Geometry" />
+    <Enum Name="STROKE_TRANSFORM_TYPE" ShouldProject="true" ProjectedNameOverride="StrokeTransformBehavior" Namespace="Geometry" />
     <Enum Name="ANTIALIAS_MODE" ShouldProject="true" ProjectedNameOverride="Antialiasing">
         <Field Name="PER_PRIMITIVE" ProjectedNameOverride="Antialiased"/>
     </Enum>
     <Enum Name="PRIMITIVE_BLEND" ShouldProject="true" ProjectedNameOverride="Blend"/>
-    <Enum Name="TEXT_ANTIALIAS_MODE" ShouldProject="true" ProjectedNameOverride="TextAntialiasing">
+    <Enum Name="TEXT_ANTIALIAS_MODE" ShouldProject="true" ProjectedNameOverride="TextAntialiasing" Namespace="Text">
         <Field Name="CLEARTYPE" ProjectedNameOverride="ClearType"/>
     </Enum>
     <Enum Name="UNIT_MODE" ShouldProject="true" ProjectedNameOverride="Units"/>
@@ -74,27 +74,27 @@ under the License.
         <Field Name="SOURCE_COPY" ProjectedNameOverride="Copy"/>
         <Field Name="BOUNDED_SOURCE_COPY" ProjectedNameOverride="BoundedCopy"/>
     </Enum>
-    <Enum Name="SWEEP_DIRECTION" ShouldProject="true"/>
-    <Enum Name="FIGURE_BEGIN" ShouldProject="true" ProjectedNameOverride="FigureFill">
+    <Enum Name="SWEEP_DIRECTION" ShouldProject="true" Namespace="Geometry" />
+    <Enum Name="FIGURE_BEGIN" ShouldProject="true" ProjectedNameOverride="FigureFill" Namespace="Geometry">
       <Field Name="HOLLOW" ShouldProject="true" ProjectedNameOverride="DoesNotAffectFills"/>
       <Field Name="FILLED" ShouldProject="true" ProjectedNameOverride="Default"/>
     </Enum>
-    <Enum Name="FIGURE_END" ShouldProject="true" ProjectedNameOverride="FigureLoop"/>
-    <Enum Name="FILL_MODE" ShouldProject="true" ProjectedNameOverride="FilledRegionDetermination"/>
-    <Enum Name="PATH_SEGMENT" ShouldProject="true" ProjectedNameOverride="FigureSegmentOptions"/>
-    <Enum Name="ARC_SIZE" ShouldProject="true"/>
+    <Enum Name="FIGURE_END" ShouldProject="true" ProjectedNameOverride="FigureLoop" Namespace="Geometry" />
+    <Enum Name="FILL_MODE" ShouldProject="true" ProjectedNameOverride="FilledRegionDetermination" Namespace="Geometry" />
+    <Enum Name="PATH_SEGMENT" ShouldProject="true" ProjectedNameOverride="FigureSegmentOptions" Namespace="Geometry" />
+    <Enum Name="ARC_SIZE" ShouldProject="true" Namespace="Geometry" />
 
-    <Enum Name="COMBINE_MODE" ShouldProject="true" ProjectedNameOverride="GeometryCombine"/>
-    <Enum Name="GEOMETRY_RELATION" ShouldProject="true">
+    <Enum Name="COMBINE_MODE" ShouldProject="true" ProjectedNameOverride="GeometryCombine" Namespace="Geometry" />
+    <Enum Name="GEOMETRY_RELATION" ShouldProject="true" Namespace="Geometry">
       <Field Name="UNKNOWN" ShouldProject="false"/>
       <Field Name="DISJOINT" ShouldProject="true" ProjectedValueOverride="0"/>
       <Field Name="IS_CONTAINED" ShouldProject="true" ProjectedNameOverride="Contained" ProjectedValueOverride="1"/>
       <Field Name="CONTAINS" ShouldProject="true" ProjectedValueOverride="2"/>
       <Field Name="OVERLAP" ShouldProject="true" ProjectedValueOverride="3"/>
     </Enum>
-    <Enum Name="GEOMETRY_SIMPLIFICATION_OPTION" ShouldProject="true" ProjectedNameOverride="GeometrySimplification"/>
+    <Enum Name="GEOMETRY_SIMPLIFICATION_OPTION" ShouldProject="true" ProjectedNameOverride="GeometrySimplification" Namespace="Geometry" />
     <Enum Name="LAYER_OPTIONS1" ShouldProject="true" ProjectedNameOverride="LayerOptions"/>
-    <Enum Name="DRAW_TEXT_OPTIONS" ShouldProject="true">
+    <Enum Name="DRAW_TEXT_OPTIONS" ShouldProject="true" Namespace="Text">
       <Field Name="NONE" ProjectedNameOverride="Default"/>
       <Field Name="NO_SNAP" ProjectedNameOverride="NoPixelSnap"/>
     </Enum>

@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
 
     //
@@ -422,4 +422,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return std::make_pair(WinString(beginIt, hashPos), WinString(hashPos + 1, endIt));
     }
    
-}}}}
+}}}}}

@@ -15,55 +15,12 @@
 namespace Microsoft.Graphics.Canvas
 {
     [version(VERSION)]
-    typedef enum CanvasArcSize
+    typedef enum CanvasAlphaMode
     {
-        Small = (int)0,
-        Large = (int)1
-    } CanvasArcSize;
-
-    [version(VERSION)]
-    typedef enum CanvasGeometrySimplification
-    {
-        CubicsAndLines = (int)0,
-        Lines = (int)1
-    } CanvasGeometrySimplification;
-
-    [version(VERSION)]
-    typedef enum CanvasGeometryCombine
-    {
-        Union = (int)0,
-        Intersect = (int)1,
-        Xor = (int)2,
-        Exclude = (int)3
-    } CanvasGeometryCombine;
-
-    [version(VERSION)]
-    typedef enum CanvasDashStyle
-    {
-        Solid = (int)0,
-        Dash = (int)1,
-        Dot = (int)2,
-        DashDot = (int)3,
-        DashDotDot = (int)4,
-    } CanvasDashStyle;
-
-    [version(VERSION)]
-    typedef enum CanvasDebugLevel
-    {
-        None = (int)0,
-        Error = (int)1,
-        Warning = (int)2,
-        Information = (int)3
-    } CanvasDebugLevel;
-
-    [version(VERSION), flags]
-    typedef enum CanvasDrawTextOptions
-    {
-        Default = 0x00000000,
-        NoPixelSnap = 0x00000001,
-        Clip = 0x00000002,
-        EnableColorFont = 0x00000004
-    } CanvasDrawTextOptions;
+        Premultiplied = (int)0,
+        Straight = (int)1,
+        Ignore = (int)2
+    } CanvasAlphaMode;
 
     [version(VERSION)]
     typedef enum CanvasAntialiasing
@@ -73,92 +30,31 @@ namespace Microsoft.Graphics.Canvas
     } CanvasAntialiasing;
 
     [version(VERSION)]
-    typedef enum CanvasAlphaMode
+    typedef enum CanvasBlend
     {
-        Premultiplied = (int)0,
-        Straight = (int)1,
-        Ignore = (int)2
-    } CanvasAlphaMode;
+        SourceOver = (int)0,
+        Copy = (int)1,
+        Min = (int)2,
+        Add = (int)3
+    } CanvasBlend;
 
     [version(VERSION)]
-    typedef enum CanvasEdgeBehavior
+    typedef enum CanvasBufferPrecision
     {
-        Clamp = (int)0,
-        Wrap = (int)1,
-        Mirror = (int)2
-    } CanvasEdgeBehavior;
+        Precision8UIntNormalized = (int)0,
+        Precision8UIntNormalizedSrgb = (int)1,
+        Precision16UIntNormalized = (int)2,
+        Precision16Float = (int)3,
+        Precision32Float = (int)4
+    } CanvasBufferPrecision;
 
     [version(VERSION)]
-    typedef enum CanvasFigureFill
+    typedef enum CanvasColorSpace
     {
-        Default = (int)0,
-        DoesNotAffectFills = (int)1
-    } CanvasFigureFill;
-
-    [version(VERSION)]
-    typedef enum CanvasFigureLoop
-    {
-        Open = (int)0,
-        Closed = (int)1
-    } CanvasFigureLoop;
-
-    [version(VERSION)]
-    typedef enum CanvasGeometryRelation
-    {
-        Disjoint = (int)0,
-        Contained = (int)1,
-        Contains = (int)2,
-        Overlap = (int)3
-    } CanvasGeometryRelation;
-
-    [version(VERSION), flags]
-    typedef enum CanvasFigureSegmentOptions
-    {
-        None = 0x00000000,
-        ForceUnstroked = 0x00000001,
-        ForceRoundLineJoin = 0x00000002
-    } CanvasFigureSegmentOptions;
-
-    [version(VERSION)]
-    typedef enum CanvasCapStyle
-    {
-        Flat = (int)0,
-        Square = (int)1,
-        Round = (int)2,
-        Triangle = (int)3
-    } CanvasCapStyle;
-
-    [version(VERSION)]
-    typedef enum CanvasLineJoin
-    {
-        Miter = (int)0,
-        Bevel = (int)1,
-        Round = (int)2,
-        MiterOrBevel = (int)3
-    } CanvasLineJoin;
-
-    [version(VERSION)]
-    typedef enum CanvasSweepDirection
-    {
-        CounterClockwise = (int)0,
-        Clockwise = (int)1
-    } CanvasSweepDirection;
-
-    [version(VERSION)]
-    typedef enum CanvasTextAntialiasing
-    {
-        Default = (int)0,
-        ClearType = (int)1,
-        Grayscale = (int)2,
-        Aliased = (int)3
-    } CanvasTextAntialiasing;
-
-    [version(VERSION)]
-    typedef enum CanvasFilledRegionDetermination
-    {
-        Alternate = (int)0,
-        Winding = (int)1
-    } CanvasFilledRegionDetermination;
+        Custom = (int)0,
+        Srgb = (int)1,
+        ScRgb = (int)2
+    } CanvasColorSpace;
 
     [version(VERSION)]
     typedef enum CanvasComposite
@@ -179,14 +75,21 @@ namespace Microsoft.Graphics.Canvas
     } CanvasComposite;
 
     [version(VERSION)]
-    typedef enum CanvasBufferPrecision
+    typedef enum CanvasDebugLevel
     {
-        Precision8UIntNormalized = (int)0,
-        Precision8UIntNormalizedSrgb = (int)1,
-        Precision16UIntNormalized = (int)2,
-        Precision16Float = (int)3,
-        Precision32Float = (int)4
-    } CanvasBufferPrecision;
+        None = (int)0,
+        Error = (int)1,
+        Warning = (int)2,
+        Information = (int)3
+    } CanvasDebugLevel;
+
+    [version(VERSION)]
+    typedef enum CanvasEdgeBehavior
+    {
+        Clamp = (int)0,
+        Wrap = (int)1,
+        Mirror = (int)2
+    } CanvasEdgeBehavior;
 
     [version(VERSION)]
     typedef enum CanvasImageInterpolation
@@ -199,6 +102,14 @@ namespace Microsoft.Graphics.Canvas
         HighQualityCubic = (int)5
     } CanvasImageInterpolation;
 
+    [version(VERSION), flags]
+    typedef enum CanvasLayerOptions
+    {
+        None = 0,
+        InitializeFromBackground = 1,
+        IgnoreAlpha = 2
+    } CanvasLayerOptions;
+
     [version(VERSION)]
     typedef enum CanvasUnits
     {
@@ -206,13 +117,98 @@ namespace Microsoft.Graphics.Canvas
         Pixels = (int)1
     } CanvasUnits;
 
+} // Microsoft.Graphics.Canvas
+
+namespace Microsoft.Graphics.Canvas.Geometry
+{
     [version(VERSION)]
-    typedef enum CanvasColorSpace
+    typedef enum CanvasArcSize
     {
-        Custom = (int)0,
-        Srgb = (int)1,
-        ScRgb = (int)2
-    } CanvasColorSpace;
+        Small = (int)0,
+        Large = (int)1
+    } CanvasArcSize;
+
+    [version(VERSION)]
+    typedef enum CanvasCapStyle
+    {
+        Flat = (int)0,
+        Square = (int)1,
+        Round = (int)2,
+        Triangle = (int)3
+    } CanvasCapStyle;
+
+    [version(VERSION)]
+    typedef enum CanvasDashStyle
+    {
+        Solid = (int)0,
+        Dash = (int)1,
+        Dot = (int)2,
+        DashDot = (int)3,
+        DashDotDot = (int)4,
+    } CanvasDashStyle;
+
+    [version(VERSION)]
+    typedef enum CanvasFigureFill
+    {
+        Default = (int)0,
+        DoesNotAffectFills = (int)1
+    } CanvasFigureFill;
+
+    [version(VERSION)]
+    typedef enum CanvasFigureLoop
+    {
+        Open = (int)0,
+        Closed = (int)1
+    } CanvasFigureLoop;
+
+    [version(VERSION), flags]
+    typedef enum CanvasFigureSegmentOptions
+    {
+        None = 0x00000000,
+        ForceUnstroked = 0x00000001,
+        ForceRoundLineJoin = 0x00000002
+    } CanvasFigureSegmentOptions;
+
+    [version(VERSION)]
+    typedef enum CanvasFilledRegionDetermination
+    {
+        Alternate = (int)0,
+        Winding = (int)1
+    } CanvasFilledRegionDetermination;
+
+    [version(VERSION)]
+    typedef enum CanvasGeometryCombine
+    {
+        Union = (int)0,
+        Intersect = (int)1,
+        Xor = (int)2,
+        Exclude = (int)3
+    } CanvasGeometryCombine;
+
+    [version(VERSION)]
+    typedef enum CanvasGeometryRelation
+    {
+        Disjoint = (int)0,
+        Contained = (int)1,
+        Contains = (int)2,
+        Overlap = (int)3
+    } CanvasGeometryRelation;
+
+    [version(VERSION)]
+    typedef enum CanvasGeometrySimplification
+    {
+        CubicsAndLines = (int)0,
+        Lines = (int)1
+    } CanvasGeometrySimplification;
+
+    [version(VERSION)]
+    typedef enum CanvasLineJoin
+    {
+        Miter = (int)0,
+        Bevel = (int)1,
+        Round = (int)2,
+        MiterOrBevel = (int)3
+    } CanvasLineJoin;
 
     [version(VERSION)]
     typedef enum CanvasStrokeTransformBehavior
@@ -223,20 +219,33 @@ namespace Microsoft.Graphics.Canvas
     } CanvasStrokeTransformBehavior;
 
     [version(VERSION)]
-    typedef enum CanvasBlend
+    typedef enum CanvasSweepDirection
     {
-        SourceOver = (int)0,
-        Copy = (int)1,
-        Min = (int)2,
-        Add = (int)3
-    } CanvasBlend;
+        CounterClockwise = (int)0,
+        Clockwise = (int)1
+    } CanvasSweepDirection;
 
+} // Microsoft.Graphics.Canvas.Geometry
+
+namespace Microsoft.Graphics.Canvas.Text
+{
     [version(VERSION), flags]
-    typedef enum CanvasLayerOptions
+    typedef enum CanvasDrawTextOptions
     {
-        None = 0,
-        InitializeFromBackground = 1,
-        IgnoreAlpha = 2
-    } CanvasLayerOptions;
+        Default = 0x00000000,
+        NoPixelSnap = 0x00000001,
+        Clip = 0x00000002,
+        EnableColorFont = 0x00000004
+    } CanvasDrawTextOptions;
 
-}
+    [version(VERSION)]
+    typedef enum CanvasTextAntialiasing
+    {
+        Default = (int)0,
+        ClearType = (int)1,
+        Grayscale = (int)2,
+        Aliased = (int)3
+    } CanvasTextAntialiasing;
+
+} // Microsoft.Graphics.Canvas.Text
+

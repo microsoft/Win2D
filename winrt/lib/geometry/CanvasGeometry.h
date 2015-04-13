@@ -14,7 +14,7 @@
 
 #include "drawing/CanvasStrokeStyle.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     using namespace ::Microsoft::WRL;
     using namespace Numerics;
@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasGeometryTraits,
         IClosable)
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasGeometry, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
 
         ClosablePtr<ICanvasDevice> m_canvasDevice;
 
@@ -288,7 +288,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CloakedIid<ICanvasDeviceResourceFactoryNative>> ,
             public PerApplicationManager<CanvasGeometryFactory, CanvasGeometryManager>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasGeometry, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
 
     public:
         IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
@@ -402,4 +402,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
         return d2dStrokeStyle;
     }
-}}}}
+}}}}}

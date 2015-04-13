@@ -15,7 +15,7 @@
 #include "RemoveFromVisualTree.h"
 #include "utils/LockUtilities.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ::Microsoft::WRL::Wrappers;
     using namespace ABI::Windows::ApplicationModel;
@@ -95,7 +95,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         struct RenderTarget
         {
             ComPtr<renderTarget_t> Target;
-            CanvasBackground BackgroundMode;
+            CanvasAlphaMode AlphaMode;
             float Dpi;
             Size Size;
         };
@@ -296,7 +296,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     protected:
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
-            CanvasBackground newBackgroundMode,
+            CanvasAlphaMode newAlphaMode,
             float newDpi,
             Size newSize,
             RenderTarget* renderTarget) = 0;
@@ -440,9 +440,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return Lock(m_mutex);
         }
 
-        static CanvasBackground GetBackgroundModeFromClearColor(Color const& clearColor)
+        static CanvasAlphaMode GetAlphaModeFromClearColor(Color const& clearColor)
         {
-            return clearColor.A == 255 ? CanvasBackground::Opaque : CanvasBackground::Transparent;
+            return clearColor.A == 255 ? CanvasAlphaMode::Ignore : CanvasAlphaMode::Premultiplied;
         }
 
         void Trim()
@@ -488,7 +488,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             if (IsSet(flags, RunWithDeviceFlags::NewlyCreatedDevice))
                 m_currentRenderTarget = RenderTarget{};
 
-            auto backgroundMode = GetBackgroundModeFromClearColor(clearColor);
+            auto alphaMode = GetAlphaModeFromClearColor(clearColor);
 
             // CanvasControl will recreate its CanvasImageSource if any of these
             // properties are different.  CanvasAnimatedControl is able to
@@ -496,7 +496,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // recreating.
             GetControl()->CreateOrUpdateRenderTarget(
                 device,
-                backgroundMode,
+                alphaMode,
                 m_dpi,
                 renderTargetSize,
                 &m_currentRenderTarget);
@@ -674,4 +674,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     };
 
-}}}}
+}}}}}}

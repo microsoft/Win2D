@@ -82,7 +82,7 @@ namespace
         {
         }
 
-        CALL_COUNTER_WITH_MOCK(CreateOrUpdateRenderTargetMethod, void(ICanvasDevice*, CanvasBackground, float, Size, RenderTarget*));
+        CALL_COUNTER_WITH_MOCK(CreateOrUpdateRenderTargetMethod, void(ICanvasDevice*, CanvasAlphaMode, float, Size, RenderTarget*));
         CALL_COUNTER_WITH_MOCK(CreateDrawEventArgsMethod, ComPtr<drawEventArgs_t>(ICanvasDrawingSession*, bool));
         CALL_COUNTER_WITH_MOCK(ChangedMethod, void());
         CALL_COUNTER_WITH_MOCK(LoadedMethod, void());
@@ -92,12 +92,12 @@ namespace
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
-            CanvasBackground newBackgroundMode,
+            CanvasAlphaMode newAlphaModeMode,
             float newDpi,
             Size newSize,
             RenderTarget* renderTarget) override final
         {
-            return CreateOrUpdateRenderTargetMethod.WasCalled(device, newBackgroundMode, newDpi, newSize, renderTarget);
+            return CreateOrUpdateRenderTargetMethod.WasCalled(device, newAlphaModeMode, newDpi, newSize, renderTarget);
         }
 
         virtual ComPtr<drawEventArgs_t> CreateDrawEventArgs(
@@ -230,7 +230,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::NewlyCreatedDevice, 1);
 
         f.Control->CreateOrUpdateRenderTargetMethod.SetExpectedCalls(1,
-            [&] (ICanvasDevice* device, CanvasBackground background, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
+            [&] (ICanvasDevice* device, CanvasAlphaMode alphaMode, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
             {
                 Assert::IsTrue(IsSameInstance(firstDevice.Get(), device));
                 Assert::AreEqual(anySize, size);
@@ -249,7 +249,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::NewlyCreatedDevice, 1);
 
         f.Control->CreateOrUpdateRenderTargetMethod.SetExpectedCalls(1,
-            [&] (ICanvasDevice* device, CanvasBackground background, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
+            [&] (ICanvasDevice* device, CanvasAlphaMode alphaMode, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
             {
                 Assert::IsTrue(IsSameInstance(secondDevice.Get(), device));
                 Assert::AreEqual(anySize, size);
@@ -279,7 +279,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::NewlyCreatedDevice, 1);
 
         f.Control->CreateOrUpdateRenderTargetMethod.SetExpectedCalls(1,
-            [&] (ICanvasDevice* device, CanvasBackground background, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
+            [&] (ICanvasDevice* device, CanvasAlphaMode alphaMode, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
             {
                 Assert::IsNull(renderTarget->Target.Get());
                 renderTarget->Target = target;
@@ -295,7 +295,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
         f.DeviceManager->SetRunWithDeviceFlags(RunWithDeviceFlags::None, 1);
 
         f.Control->CreateOrUpdateRenderTargetMethod.SetExpectedCalls(1,
-            [&] (ICanvasDevice* device, CanvasBackground background, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
+            [&] (ICanvasDevice* device, CanvasAlphaMode alphaMode, float, Size size, AnyDerivedControl::RenderTarget* renderTarget)
             {
                 Assert::IsTrue(IsSameInstance(target.Get(), renderTarget->Target.Get()));
             });

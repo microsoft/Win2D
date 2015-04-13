@@ -15,7 +15,7 @@
 #include "CanvasCreateResourcesEventArgs.h"
 #include "CanvasControl.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     class CommittedDevice : LifespanTracker<CommittedDevice>
     {
@@ -461,4 +461,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
     };
-} } } }
+
+ } } } } } }

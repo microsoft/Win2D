@@ -12,11 +12,9 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Brushes 
 {
     using namespace ::Microsoft::WRL;
-
-    class ICanvasDeviceInternal;
 
     [uuid(DAA42776-D012-4A3D-A7A3-2A061B00CE4D)]
     class ICanvasImageBrushInternal : public ICanvasBrushInternal
@@ -31,7 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CloakedIid<ICanvasDeviceResourceFactoryNative>>,
           private LifespanTracker<CanvasImageBrushFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageBrush, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush, BaseTrust);
 
     public:
         IFACEMETHOD(Create)(
@@ -59,7 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         public CanvasBrush,
         private LifespanTracker<CanvasImageBrush>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageBrush, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush, BaseTrust);
 
         // This class wraps both an image brush and a bitmap brush, and uses one at a time.
         // It uses the bitmap brush whenever possible, because it is more performant.
@@ -127,4 +125,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static D2D1_RECT_F GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value);
     };
 
-}}}}
+}}}}}

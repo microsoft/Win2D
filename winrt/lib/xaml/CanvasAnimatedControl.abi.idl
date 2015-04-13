@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.UI
 {
     [version(VERSION)]
     typedef struct CanvasTimingInformation
@@ -28,13 +28,18 @@ namespace Microsoft.Graphics.Canvas
         boolean IsRunningSlowly;
     } CanvasTimingInformation;
 
+    runtimeclass CanvasCreateResourcesEventArgs;
+}
+
+namespace Microsoft.Graphics.Canvas.UI.Xaml
+{
     runtimeclass CanvasAnimatedUpdateEventArgs;
 
     [version(VERSION), uuid(766F4867-B22A-464B-89B1-0DA6AB62BE68), exclusiveto(CanvasAnimatedUpdateEventArgs)]
     interface ICanvasAnimatedUpdateEventArgsFactory : IInspectable
     {
         HRESULT Create(
-            [in] CanvasTimingInformation timingInformation,
+            [in] Microsoft.Graphics.Canvas.UI.CanvasTimingInformation timingInformation,
             [out, retval] CanvasAnimatedUpdateEventArgs** updateEventArgs);
     };
 
@@ -42,7 +47,7 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION), uuid(A96B2B2A-0C6E-4AA8-925B-7137263B4E44), exclusiveto(CanvasAnimatedUpdateEventArgs)]
     interface ICanvasAnimatedUpdateEventArgs : IInspectable
     {
-        [propget] HRESULT Timing([out, retval] CanvasTimingInformation* value);
+        [propget] HRESULT Timing([out, retval] Microsoft.Graphics.Canvas.UI.CanvasTimingInformation* value);
     }
 
     [version(VERSION), activatable(ICanvasAnimatedUpdateEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
@@ -57,8 +62,8 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasAnimatedDrawEventArgsFactory : IInspectable
     {
         HRESULT Create(
-            [in] CanvasDrawingSession* canvasDrawingSession,
-            [in] CanvasTimingInformation timingInformation,
+            [in] Microsoft.Graphics.Canvas.CanvasDrawingSession* canvasDrawingSession,
+            [in] Microsoft.Graphics.Canvas.UI.CanvasTimingInformation timingInformation,
             [out, retval] CanvasAnimatedDrawEventArgs** animatedControlDrawEventArgs
             );
     };
@@ -66,9 +71,9 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION), uuid(BC01FF4D-FF6C-4D4D-A9E9-8EEB2139F23F), exclusiveto(CanvasAnimatedDrawEventArgs)]
     interface ICanvasAnimatedDrawEventArgs : IInspectable
     {
-        [propget] HRESULT DrawingSession([out, retval] CanvasDrawingSession** value);
+        [propget] HRESULT DrawingSession([out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** value);
 
-        [propget] HRESULT Timing([out, retval] CanvasTimingInformation* value);
+        [propget] HRESULT Timing([out, retval] Microsoft.Graphics.Canvas.UI.CanvasTimingInformation* value);
     }
 
     [version(VERSION), activatable(ICanvasAnimatedDrawEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
@@ -79,11 +84,9 @@ namespace Microsoft.Graphics.Canvas
 
     runtimeclass CanvasAnimatedControl;
 
-    runtimeclass CanvasCreateResourcesEventArgs;
-
     [version(VERSION), uuid(9BD47D0D-D57D-43B7-82CB-489CC566E887)]
     interface ICanvasAnimatedControl : IInspectable
-        requires ICanvasResourceCreatorWithDpi
+        requires Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi
     {
         //
         // Similarly to CanvasControl, CreateResources is issued on the default (UI) thread.
@@ -93,7 +96,7 @@ namespace Microsoft.Graphics.Canvas
         //
 
         [eventadd] HRESULT CreateResources(
-            [in] Windows.Foundation.TypedEventHandler<CanvasAnimatedControl*, CanvasCreateResourcesEventArgs*>* value,
+            [in] Windows.Foundation.TypedEventHandler<CanvasAnimatedControl*, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs*>* value,
             [out, retval] EventRegistrationToken* token);
 
         [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);

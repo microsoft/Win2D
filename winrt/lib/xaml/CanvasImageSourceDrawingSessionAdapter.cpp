@@ -14,108 +14,107 @@
 
 #include "CanvasImageSourceDrawingSessionAdapter.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
+
+// static
+std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawingSessionAdapter::Create(
+    ISurfaceImageSourceNativeWithD2D* sisNative,
+    D2D1_COLOR_F const& clearColor,
+    RECT const& updateRect,
+    float dpi,
+    ID2D1DeviceContext1** outDeviceContext)
 {
-    // static
-    std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawingSessionAdapter::Create(
-        ISurfaceImageSourceNativeWithD2D* sisNative,
-        D2D1_COLOR_F const& clearColor,
-        RECT const& updateRect,
-        float dpi,
-        ID2D1DeviceContext1** outDeviceContext)
-    {
-        if (dpi <= 0)
-            ThrowHR(E_INVALIDARG);
+    if (dpi <= 0)
+        ThrowHR(E_INVALIDARG);
 
-        //
-        // ISurfaceImageSourceNativeWithD2D needs exactly the right IID passed
-        // in, so we first ask for a ID2D1DeviceContext and we'll then take the
-        // resulting interface and QI for ID2D1DeviceContext1.
-        //
-        ComPtr<ID2D1DeviceContext> deviceContext;
-        POINT offset;
-        ThrowIfFailed(sisNative->BeginDraw(
-            updateRect,
-            IID_PPV_ARGS(&deviceContext),
-            &offset));
+    //
+    // ISurfaceImageSourceNativeWithD2D needs exactly the right IID passed
+    // in, so we first ask for a ID2D1DeviceContext and we'll then take the
+    // resulting interface and QI for ID2D1DeviceContext1.
+    //
+    ComPtr<ID2D1DeviceContext> deviceContext;
+    POINT offset;
+    ThrowIfFailed(sisNative->BeginDraw(
+        updateRect,
+        IID_PPV_ARGS(&deviceContext),
+        &offset));
 
-        //
-        // If this function fails then we need to call EndDraw
-        //
-        auto endDrawWarden = MakeScopeWarden([&] { sisNative->EndDraw(); });
+    //
+    // If this function fails then we need to call EndDraw
+    //
+    auto endDrawWarden = MakeScopeWarden([&] { sisNative->EndDraw(); });
 
-        ThrowIfFailed(deviceContext.CopyTo(outDeviceContext));
+    ThrowIfFailed(deviceContext.CopyTo(outDeviceContext));
 
-        //
-        // ISurfaceImageSourceNativeWithD2D is operating in batched mode.  This
-        // means that BeginDraw() has returned a device context set up to render
-        // to an atlased surface (ie a surface containing multiple images).  The
-        // image that we wish to render to appears at some offset in this
-        // surface -- and this is what has been given to us in offset.  This
-        // call sets the transform on the device context to compensate for this,
-        // so when we ask to render to (0,0) we actually render to the
-        // appropriate location in the atlased surface.
-        //
-        const float dpiScalingFactor = dpi / DEFAULT_DPI;
+    //
+    // ISurfaceImageSourceNativeWithD2D is operating in batched mode.  This
+    // means that BeginDraw() has returned a device context set up to render
+    // to an atlased surface (ie a surface containing multiple images).  The
+    // image that we wish to render to appears at some offset in this
+    // surface -- and this is what has been given to us in offset.  This
+    // call sets the transform on the device context to compensate for this,
+    // so when we ask to render to (0,0) we actually render to the
+    // appropriate location in the atlased surface.
+    //
+    const float dpiScalingFactor = dpi / DEFAULT_DPI;
 
-        // Update the offset to account for the updateRect (so the resulting
-        // drawing session has the same coordinate system relative to the entire
-        // image, rather than relative to the updateRect).
-        offset.x -= updateRect.left;
-        offset.y -= updateRect.top;
+    // Update the offset to account for the updateRect (so the resulting
+    // drawing session has the same coordinate system relative to the entire
+    // image, rather than relative to the updateRect).
+    offset.x -= updateRect.left;
+    offset.y -= updateRect.top;
 
-        const D2D1_POINT_2F renderingSurfaceOffset = D2D1::Point2F(
-            static_cast<float>(offset.x / dpiScalingFactor),
-            static_cast<float>(offset.y / dpiScalingFactor));
+    const D2D1_POINT_2F renderingSurfaceOffset = D2D1::Point2F(
+        static_cast<float>(offset.x / dpiScalingFactor),
+        static_cast<float>(offset.y / dpiScalingFactor));
 
-        auto adapter = std::make_shared<CanvasImageSourceDrawingSessionAdapter>(
-            sisNative,
-            renderingSurfaceOffset);
+    auto adapter = std::make_shared<CanvasImageSourceDrawingSessionAdapter>(
+        sisNative,
+        renderingSurfaceOffset);
 
-        //
-        // XAML has given us a surface to render to, but it doesn't make any
-        // guarantees about what's currently on this surface.  So the only safe
-        // thing to do here is to clear it.
-        //
-        deviceContext->Clear(&clearColor);
+    //
+    // XAML has given us a surface to render to, but it doesn't make any
+    // guarantees about what's currently on this surface.  So the only safe
+    // thing to do here is to clear it.
+    //
+    deviceContext->Clear(&clearColor);
 
-        //
-        // TODO #2140 Use a separate code path, responsible for resetting
-        // transforms for non-SiS drawing sessions.  As part of #2140, also add
-        // tests verifying that the offset is scaled by the DPI appropriately.
-        //
-        deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
-            renderingSurfaceOffset.x,
-            renderingSurfaceOffset.y));
+    //
+    // TODO #2140 Use a separate code path, responsible for resetting
+    // transforms for non-SiS drawing sessions.  As part of #2140, also add
+    // tests verifying that the offset is scaled by the DPI appropriately.
+    //
+    deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
+        renderingSurfaceOffset.x,
+        renderingSurfaceOffset.y));
 
-        deviceContext->SetDpi(dpi, dpi);
+    deviceContext->SetDpi(dpi, dpi);
 
-        //
-        // This function can't fail now, so we can dismiss the end draw warden.
-        //
-        endDrawWarden.Dismiss();
+    //
+    // This function can't fail now, so we can dismiss the end draw warden.
+    //
+    endDrawWarden.Dismiss();
 
-        return adapter;
-    }
+    return adapter;
+}
 
 
-    CanvasImageSourceDrawingSessionAdapter::CanvasImageSourceDrawingSessionAdapter(
-        ISurfaceImageSourceNativeWithD2D* sisNative,
-        D2D1_POINT_2F const& renderingSurfaceOffset)
-        : m_sisNative(sisNative)
-        , m_renderingSurfaceOffset(renderingSurfaceOffset)
-    {
-        CheckInPointer(sisNative);
-    }
+CanvasImageSourceDrawingSessionAdapter::CanvasImageSourceDrawingSessionAdapter(
+    ISurfaceImageSourceNativeWithD2D* sisNative,
+    D2D1_POINT_2F const& renderingSurfaceOffset)
+    : m_sisNative(sisNative)
+    , m_renderingSurfaceOffset(renderingSurfaceOffset)
+{
+    CheckInPointer(sisNative);
+}
 
 
-    void CanvasImageSourceDrawingSessionAdapter::EndDraw()
-    {
-        ThrowIfFailed(m_sisNative->EndDraw());
-    }
+void CanvasImageSourceDrawingSessionAdapter::EndDraw()
+{
+    ThrowIfFailed(m_sisNative->EndDraw());
+}
 
-    D2D1_POINT_2F CanvasImageSourceDrawingSessionAdapter::GetRenderingSurfaceOffset()
-    {
-        return m_renderingSurfaceOffset;
-    }
-}}}}
+D2D1_POINT_2F CanvasImageSourceDrawingSessionAdapter::GetRenderingSurfaceOffset()
+{
+    return m_renderingSurfaceOffset;
+}

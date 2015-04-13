@@ -22,67 +22,62 @@ using System.Diagnostics;
 
 namespace CodeGen
 {
-    public struct OutputFiles
-    {
-        public Formatter CppFile;
-        public Formatter IdlFile;
-    }
-
     public class OutputDataTypes
     {
         public OutputDataTypes()
         {
-            m_enums = new List<Enum>();
-            m_structs = new List<Struct>();
+            m_types = new List<OutputtableType>();
         }
 
         public void AddEnum(Enum e)
         {
-            m_enums.Add(e);
+            m_types.Add(e);
         }
 
         public void AddStruct(Struct s)
         {
-            m_structs.Add(s);
+            m_types.Add(s);
         }
 
-        public void OutputCode(Dictionary<string, QualifiableType> typeDictionary, OutputFiles outputFiles)
+        public void OutputCode(Dictionary<string, QualifiableType> typeDictionary, Formatter idlFile)
         {
-            OutputLeadingCppCode(outputFiles);
+            OutputLeadingComment(idlFile);
 
-            foreach(Enum e in m_enums)
+            var sortedTypes = m_types.OrderBy(x => x.Namespace).ThenBy(x => x.GetType()).ThenBy(x => x.ProjectedName);
+
+            string currentNamespace = null;
+
+            foreach (var type in sortedTypes)
             {
-                e.OutputCode(outputFiles);
+                UpdateNamespace(idlFile, ref currentNamespace, type.Namespace);
+                type.OutputCode(typeDictionary, idlFile);
             }
 
-            foreach(Struct s in m_structs)
-            {
-                s.OutputCode(typeDictionary, outputFiles);
-            }
-
-            OutputEndingCppCode(outputFiles);
+            UpdateNamespace(idlFile, ref currentNamespace, null);
         }
 
-        public static void OutputLeadingCppCode(OutputFiles outputFiles)
+        public void UpdateNamespace(Formatter idlFile, ref string currentNamespace, string newNamespace)
         {
-            OutputLeadingComment(outputFiles.CppFile);
+            if (currentNamespace != newNamespace)
+            {
+                if (currentNamespace != null)
+                {
+                    // end the previous namespace
+                    idlFile.Unindent();
+                    idlFile.WriteLine("} // " + currentNamespace);
+                    idlFile.WriteLine("");
+                }
 
-            outputFiles.CppFile.WriteLine("#include \"pch.h\"");
-            outputFiles.CppFile.WriteLine("#include <wrl.h>");
-            outputFiles.CppFile.WriteLine("using namespace Microsoft::WRL;");
-            outputFiles.CppFile.WriteLine("using namespace ABI::Microsoft::Graphics::Canvas::Numerics;");
-            outputFiles.CppFile.WriteLine("using namespace ABI::Windows::Foundation;");
-            outputFiles.CppFile.WriteLine("using namespace ABI::Windows::UI;");
-            outputFiles.CppFile.WriteLine();
-            outputFiles.CppFile.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas");
-            outputFiles.CppFile.WriteLine("{");
-            outputFiles.CppFile.Indent();
+                currentNamespace = newNamespace;
 
-            OutputLeadingComment(outputFiles.IdlFile);
+                if (newNamespace != null)
+                {
+                    idlFile.WriteLine("namespace " + newNamespace);
+                    idlFile.WriteLine("{");
+                    idlFile.Indent();
+                }
+            }
 
-            outputFiles.IdlFile.WriteLine("namespace Microsoft.Graphics.Canvas");
-            outputFiles.IdlFile.WriteLine("{");
-            outputFiles.IdlFile.Indent();
         }
 
         public static void OutputLeadingComment(Formatter output)
@@ -104,17 +99,7 @@ namespace CodeGen
             output.WriteLine();
         }
 
-        public static void OutputEndingCppCode(OutputFiles outputFiles)
-        {
-            outputFiles.CppFile.Unindent();
-            outputFiles.CppFile.WriteLine("}}}}");
-
-            outputFiles.IdlFile.Unindent();
-            outputFiles.IdlFile.WriteLine("}");
-        }
-
-        List<Enum> m_enums;
-        List<Struct> m_structs;
+        List<OutputtableType> m_types;
     }
     
     public class Program
@@ -170,7 +155,6 @@ namespace CodeGen
 
             Overrides.XmlBindings.Settings overridesXmlData = XmlBindings.Utilities.LoadXmlData<Overrides.XmlBindings.Settings>(inputDir, "Settings.xml");
             Formatter.Prefix = overridesXmlData.Prefix.Value;
-            Formatter.Subnamespace = overridesXmlData.Subnamespace.Value;
 
             result.FilenameBase = overridesXmlData.FilenameBase.Value;
 
@@ -190,14 +174,9 @@ namespace CodeGen
         {
 
             Directory.CreateDirectory(outputDir);
-            OutputFiles outputFiles = new OutputFiles();
-            using (Formatter cppStreamWriter = new Formatter(Path.Combine(outputDir, inputFiles.FilenameBase + ".codegen.cpp")),
-                             idlStreamWriter = new Formatter(Path.Combine(outputDir, inputFiles.FilenameBase + ".codegen.idl")))
+            using (Formatter idlStreamWriter = new Formatter(Path.Combine(outputDir, inputFiles.FilenameBase + ".codegen.idl")))
             {
-                outputFiles.CppFile = cppStreamWriter;
-                outputFiles.IdlFile = idlStreamWriter;
-
-                inputFiles.OutputDataTypes.OutputCode(inputFiles.TypeDictionary, outputFiles);
+                inputFiles.OutputDataTypes.OutputCode(inputFiles.TypeDictionary, idlStreamWriter);
             }
         }
 

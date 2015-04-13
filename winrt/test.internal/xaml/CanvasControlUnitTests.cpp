@@ -352,13 +352,13 @@ TEST_CLASS(CanvasControlTests_SizeTests)
             return m_imageControl;
         }
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode) override
         {
             Assert::AreEqual(m_expectedImageSourceWidth, width, L"ExpectedImageSourceWidth");
             Assert::AreEqual(m_expectedImageSourceHeight, height, L"ExpectedImageSourceHeight");
             Assert::AreEqual(m_expectedImageSourceDpi, dpi, L"ExpectedImageSourceDpi");
 
-            return __super::CreateCanvasImageSource(device, width, height, dpi, backgroundMode);
+            return __super::CreateCanvasImageSource(device, width, height, dpi, alphaMode);
         }
     };
 
@@ -441,13 +441,13 @@ TEST_CLASS(CanvasControlTests_Dpi)
             , m_imageSourceCount(0) 
         {}
 
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) override
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode) override
         {
             m_lastImageSourceWidth = width;
             m_lastImageSourceHeight = height;
             m_imageSourceCount++;
             
-            return __super::CreateCanvasImageSource(device, width, height, dpi, backgroundMode);
+            return __super::CreateCanvasImageSource(device, width, height, dpi, alphaMode);
         }
 
         virtual float GetLogicalDpi() override
@@ -796,7 +796,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         f.RenderAnyNumberOfFrames();
     }
 
-    TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesOpaque_SurfaceImageSourceIsCreatedWithOpaqueBackgroundMode)
+    TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesOpaque_SurfaceImageSourceIsCreatedWithAlphaModeIgnore)
     {
         ClearColorFixture<CanvasControlTraits> f;
 
@@ -811,9 +811,9 @@ TEST_CLASS(CanvasControl_ClearColor)
         ThrowIfFailed(f.Control->put_ClearColor(anyOpaqueColor));
 
         f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
-            [&](ICanvasDevice*, float, float, float, CanvasBackground backgroundMode)
+            [&](ICanvasDevice*, float, float, float, CanvasAlphaMode alphaMode)
             {
-                Assert::AreEqual(CanvasBackground::Opaque, backgroundMode);
+                Assert::AreEqual(CanvasAlphaMode::Ignore, alphaMode);
                 return nullptr;
             });
 
@@ -821,7 +821,7 @@ TEST_CLASS(CanvasControl_ClearColor)
         f.RenderAnyNumberOfFrames();
     }
 
-    TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesTransparent_SurfaceImageSourceIsCreatedWithTransparentBackgroundMode)
+    TEST_METHOD_EX(CanvasControl_WhenClearColorBecomesTransparent_SurfaceImageSourceIsCreatedWithAlphaModePremultiplied)
     {
         ClearColorFixture<CanvasControlTraits> f;
 
@@ -839,9 +839,9 @@ TEST_CLASS(CanvasControl_ClearColor)
         ThrowIfFailed(f.Control->put_ClearColor(anyTransparentColor));
 
         f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
-            [&](ICanvasDevice*, float, float, float, CanvasBackground backgroundMode)
+            [&](ICanvasDevice*, float, float, float, CanvasAlphaMode alphaMode)
             {
-                Assert::AreEqual(CanvasBackground::Transparent, backgroundMode);
+                Assert::AreEqual(CanvasAlphaMode::Premultiplied, alphaMode);
                 return nullptr;
             });
 

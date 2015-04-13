@@ -19,8 +19,8 @@ under the License.
   </assembly>
   <members>
   
-      <member name="T:Microsoft.Graphics.Canvas.CanvasPathBuilder">
-          <summary>A path builder is used for creating freeform <see cref="T:Microsoft.Graphics.Canvas.CanvasGeometry"/> objects.</summary>
+      <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder">
+          <summary>A path builder is used for creating freeform <see cref="T:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry"/> objects.</summary>
         <remarks>
           Paths consist of zero or more figures, where a figure is made up of straight or curved segments. Figures can be opened or closed. 
         </remarks>
@@ -39,31 +39,31 @@ under the License.
         </example>
       </member>
   
-      <member name="T:Microsoft.Graphics.Canvas.CanvasArcSize">
+      <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasArcSize">
         <summary>Specifies whether an arc should take the longer, or shorter way, around the ellipse to join its start and end points.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasArcSize.Small">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasArcSize.Small">
         <summary>Denotes that the angle of an arc's sweep should be &#960; or less.</summary>
         <remarks>This causes arcs to take the "short" way around an ellipse, to join its start and end points.</remarks>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasArcSize.Large">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasArcSize.Large">
         <summary>Denotes that the angle of an arc's sweep should be &#960; or greater.</summary>
         <remarks>This causes arcs to take the "long" way around an ellipse, to join its start and end points.</remarks>
       </member>
-      <member name="T:Microsoft.Graphics.Canvas.CanvasFigureFill">
+      <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill">
         <summary>Specifies whether the interior of the figure is considered filled, for the purpose of drawing and geometry operations.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFigureFill.Default">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill.Default">
         <summary>Specifies that the figure's interior may be filled using <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/>,
         and its interior is used by geometry operations that operate on fill.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFigureFill.DoesNotAffectFills">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill.DoesNotAffectFills">
         <summary>Specifies that the figure will not affect 
         <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry"/> calls,
         and its fill will not affect any geometry operations. Of course, the figure may still cause visible drawing with 
         <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/>.</summary>
       </member>
-      <member name="T:Microsoft.Graphics.Canvas.CanvasFigureLoop">
+      <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasFigureLoop">
         <summary>Specifies whether the figure is open or closed. This affects the appearance of fills and strokes, as well as geometry operations.</summary>
         <remarks><p>
                  A closed figure, when drawn with a thick line, can appear differently from an 
@@ -76,34 +76,34 @@ under the License.
                  </p>
         </remarks>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFigureLoop.Open">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureLoop.Open">
         <summary>Specifies that the figure may not necessarily begin and end with the same point.</summary>
         <remarks>Only open figures have start or end caps when drawn.</remarks>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFigureLoop.Closed">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureLoop.Closed">
         <summary>Specifies that the figure will be automatically closed, by connecting its end point back to its start point.</summary>
       </member>
-      <member name="T:Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions">
+      <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasFigureSegmentOptions">
         <summary>Specifies some advanced properties that may be specified when defining a figure.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions.None">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureSegmentOptions.None">
         <summary>Specifies the default behavior.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions.ForceUnstroked">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureSegmentOptions.ForceUnstroked">
         <summary>Specifies that the segments of the figure will not appear stroked, for example,
         when drawn with <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGeometry"/>.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions.ForceRoundLineJoin">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureSegmentOptions.ForceRoundLineJoin">
         <summary>Forces the segment to apply a round line join, even if the operation on 
         the geometry was set to use some other, non-round line join.</summary>
       </member>
-      <member name="T:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination">
+      <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination">
         <summary>Specifies how to determine which parts of a path are considered filled or unfilled.</summary>
         <remarks>The effects of this option are observable on self-intersecting geometry. 
         See <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd368110%28v=vs.85%29.aspx">D2D1_FILL_MODE</a>
         for more information.</remarks>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination.Alternate">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination.Alternate">
         <summary>Specifies that self-intersecting regions are considered 'filled' based on the Alternate fill rule.</summary>
         <remarks>
         <p>
@@ -123,7 +123,7 @@ under the License.
         </p>
         </remarks>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination.Winding">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination.Winding">
         <summary>Specifies that self-intersecting regions are considered 'filled' based on the Winding fill rule.</summary>
         <remarks>
         <p>
@@ -142,32 +142,32 @@ under the License.
         </remarks>
       </member>
 
-      <member name="T:Microsoft.Graphics.Canvas.CanvasSweepDirection">
+      <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection">
         <summary>Defines the direction that an elliptical arc is drawn.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasSweepDirection.CounterClockwise">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection.CounterClockwise">
         <summary>Arcs are drawn in a counterclockwise (negative-angle) direction.</summary>
       </member>
-      <member name="F:Microsoft.Graphics.Canvas.CanvasSweepDirection.Clockwise">
+      <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection.Clockwise">
         <summary>Arcs are drawn in a clockwise (positive-angle) direction.</summary>
     </member>      
       
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
         <summary>Initializes a new instance of the CanvasPathBuilder class.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasFigureFill)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
         <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2)">
-        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill.Default"/>.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasFigureFill)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
         <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.BeginFigure(System.Single,System.Single)">
-        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.CanvasFigureFill.Default"/>.</summary>
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(System.Single,System.Single)">
+        <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill.Default"/>.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasSweepDirection,Microsoft.Graphics.Canvas.CanvasArcSize)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)">
         <summary>Adds a single arc to the path, specified by start and end points through which an ellipse will be fitted.</summary>
         <remarks>
           <p>
@@ -178,13 +178,13 @@ under the License.
             is more than one possible solution.
           </p>
           <p>
-            See the <see cref="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)"/>
+            See the <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)"/>
             overload for an alternative (often easier) way to specify arcs.
           </p>
           <p>The ellipse rotation angle is in radians.</p>
         </remarks>
       </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)">
       <summary>Adds a single arc to the path, specified as a portion of an ellipse.</summary>
       <remarks>
         <p>
@@ -206,26 +206,26 @@ under the License.
           will begin, these will be automatically connected using a straight line.
         </p>
         <p>
-          See the <see cref="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasSweepDirection,Microsoft.Graphics.Canvas.CanvasArcSize)"/>
+          See the <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)"/>
           overload for an alternative way to specify arcs, which is more complicated but offers extra
           abilities such as the option to rotate the ellipse.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
         <summary>Adds a cubic bezier to the path. The bezier starts where the path left off, and has the specified control points and end point.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddLine(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddLine(Microsoft.Graphics.Canvas.Numerics.Vector2)">
         <summary>Adds a line segment to the path, with the specified end point.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddLine(System.Single,System.Single)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddLine(System.Single,System.Single)">
         <summary>Adds a line segment to the path, with the specified end point.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddQuadraticBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddQuadraticBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
         <summary>Adds a quadratic bezier to the path. The bezier starts where the path left off, and has the specified control point and end point.</summary>
-        <remarks>To add a bezier with two control points, see <see cref="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)"/></remarks>
+        <remarks>To add a bezier with two control points, see <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)"/></remarks>
       </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.AddGeometry(Microsoft.Graphics.Canvas.CanvasGeometry)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
       <summary>Adds all the figures of the specified geometry to the path.</summary>
       <remarks>
       	<p>This method will fail if BeginFigure was called without a subsequent call to EndFigure.</p>
@@ -234,16 +234,16 @@ under the License.
       	geometry being processed through CanvasGeometry.Simplify.</p>
       </remarks>
     </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.SetFilledRegionDetermination(Microsoft.Graphics.Canvas.CanvasFilledRegionDetermination)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.SetFilledRegionDetermination(Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination)">
         <summary>Specifies the method used to determine which points are inside the geometry described by this path builder, and which points are outside.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.SetSegmentOptions(Microsoft.Graphics.Canvas.CanvasFigureSegmentOptions)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.SetSegmentOptions(Microsoft.Graphics.Canvas.Geometry.CanvasFigureSegmentOptions)">
         <summary>Specifies stroke and join options to be applied to new segments added to the path builder.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.EndFigure(Microsoft.Graphics.Canvas.CanvasFigureLoop)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.EndFigure(Microsoft.Graphics.Canvas.Geometry.CanvasFigureLoop)">
         <summary>Ends the current figure; optionally, closes it.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasPathBuilder.Dispose">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.Dispose">
         <summary>Releases all resources used by the CanvasPathBuilder.</summary>
       </member>
 

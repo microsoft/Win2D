@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     class TessellationSink : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1TessellationSink>,
                             private LifespanTracker<TessellationSink>
@@ -50,4 +50,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ComArray<CanvasTriangleVertices>(m_triangles.begin(), m_triangles.end());
         }
     };
-}}}}
+}}}}}

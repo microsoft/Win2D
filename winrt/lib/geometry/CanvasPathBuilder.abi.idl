@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.Geometry
 {
     runtimeclass CanvasPathBuilder;
     runtimeclass CanvasGeometry;
@@ -91,7 +91,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasPathBuilderFactory : IInspectable
     {
         HRESULT Create(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [out, retval] CanvasPathBuilder** canvasPathBuilder);
     };
 

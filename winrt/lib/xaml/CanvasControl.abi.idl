@@ -10,36 +10,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.UI
 {
-    runtimeclass CanvasControl;
-
-    //
-    // CanvasDrawEventArgs
-    //
-    runtimeclass CanvasDrawEventArgs;
-
-    [version(VERSION), uuid(7299D72C-F8E4-4A2F-9E30-7CDFCCF31C44), exclusiveto(CanvasDrawEventArgs)]
-    interface ICanvasDrawEventArgsFactory : IInspectable
-    {
-        HRESULT Create(
-            [in] CanvasDrawingSession* canvasDrawingSession,
-            [out, retval] CanvasDrawEventArgs** drawEventArgs
-            );
-    };
-
-    [version(VERSION), uuid(FB86169F-25D4-4551-BD8F-214BEAF0AC24), exclusiveto(CanvasDrawEventArgs)]
-    interface ICanvasDrawEventArgs : IInspectable
-    {
-        [propget] HRESULT DrawingSession([out, retval] CanvasDrawingSession** value);
-    }
-
-    [version(VERSION), activatable(ICanvasDrawEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
-    runtimeclass CanvasDrawEventArgs
-    {
-        [default] interface ICanvasDrawEventArgs;
-    }
-
     //
     // CanvasCreateResourcesEventArgs
     //
@@ -79,13 +51,45 @@ namespace Microsoft.Graphics.Canvas
         // TODO #3046: this class should be activatable
     }
 
+}
+
+namespace Microsoft.Graphics.Canvas.UI.Xaml
+{
+    runtimeclass CanvasControl;
+
+    //
+    // CanvasDrawEventArgs
+    //
+    runtimeclass CanvasDrawEventArgs;
+
+    [version(VERSION), uuid(7299D72C-F8E4-4A2F-9E30-7CDFCCF31C44), exclusiveto(CanvasDrawEventArgs)]
+    interface ICanvasDrawEventArgsFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] Microsoft.Graphics.Canvas.CanvasDrawingSession* canvasDrawingSession,
+            [out, retval] CanvasDrawEventArgs** drawEventArgs
+            );
+    };
+
+    [version(VERSION), uuid(FB86169F-25D4-4551-BD8F-214BEAF0AC24), exclusiveto(CanvasDrawEventArgs)]
+    interface ICanvasDrawEventArgs : IInspectable
+    {
+        [propget] HRESULT DrawingSession([out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** value);
+    }
+
+    [version(VERSION), activatable(ICanvasDrawEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasDrawEventArgs
+    {
+        [default] interface ICanvasDrawEventArgs;
+    }
+
     // 
     // CanvasControl
     //
 
     [version(VERSION), uuid(F006E06D-79DB-484F-B898-479CF069C0F5), exclusiveto(CanvasControl)]
     interface ICanvasControl : IInspectable
-        requires ICanvasResourceCreatorWithDpi
+        requires Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi
     {
         //
         // event CreateResources - this is the synchronous CreateResources
@@ -94,7 +98,7 @@ namespace Microsoft.Graphics.Canvas
         // dependent resources.
         //
         [eventadd] HRESULT CreateResources(
-            [in]          Windows.Foundation.TypedEventHandler<CanvasControl*, CanvasCreateResourcesEventArgs*>* value,
+            [in]          Windows.Foundation.TypedEventHandler<CanvasControl*, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs*>* value,
             [out, retval] EventRegistrationToken* token);
 
         [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);

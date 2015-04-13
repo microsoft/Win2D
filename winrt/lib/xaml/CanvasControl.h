@@ -14,7 +14,7 @@
 
 #include "BaseControl.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::Foundation;
@@ -27,7 +27,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>,
                                        private LifespanTracker<CanvasDrawEventArgsFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawEventArgs, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasDrawEventArgs, BaseTrust);
 
     public:
         IFACEMETHOD(Create)(
@@ -38,7 +38,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasDrawEventArgs : public RuntimeClass<ICanvasDrawEventArgs>,
                                 private LifespanTracker<CanvasDrawEventArgs>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawEventArgs, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasDrawEventArgs, BaseTrust);
 
         ClosablePtr<ICanvasDrawingSession> m_drawingSession;
 
@@ -72,7 +72,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
         virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler*, IWindow*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
-        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasBackground backgroundMode) = 0;
+        virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
         
 #define CB_HELPER(NAME, DELEGATE)                                       \
@@ -104,7 +104,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComposableBase<>>,
         public BaseControl<CanvasControlTraits>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasControl, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl, BaseTrust);
 
         RegisteredEvent m_renderingEventRegistration; // protected by BaseControl's mutex
         bool m_needToHookCompositionRendering;        // protected by BaseControl's mutex
@@ -152,7 +152,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
-            CanvasBackground newBackgroundMode,
+            CanvasAlphaMode newAlphaMode,
             float newDpi,
             Size newSize,
             RenderTarget* renderTarget) override final;
@@ -181,4 +181,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void ChangedImpl();
     };
 
-}}}}
+}}}}}}

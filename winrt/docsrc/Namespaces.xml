@@ -23,12 +23,32 @@ under the License.
       <summary>This namespace defines the main Win2D API for drawing 2D graphics.</summary>
     </member>
 
+    <member name="N:Microsoft.Graphics.Canvas.Brushes">
+      <summary>This namespace defines the various brushes that can be used with Win2D.</summary>
+    </member>
+
+    <member name="N:Microsoft.Graphics.Canvas.Geometry">
+      <summary>This namespace defines the API for drawing geometry (lines, filled shapes etc.) with Win2D.</summary>
+    </member>
+
+    <member name="N:Microsoft.Graphics.Canvas.Text">
+      <summary>This namespace defines the API for drawing text with Win2D.</summary>
+    </member>
+
+    <member name="N:Microsoft.Graphics.Canvas.UI">
+      <summary>This namespace defines common types for using Win2D with UI frameworks.</summary>
+    </member>
+
+    <member name="N:Microsoft.Graphics.Canvas.UI.Xaml">
+      <summary>This namespace provides Win2D-enabled XAML controls.</summary>
+    </member>
+
     <member name="N:Microsoft.Graphics.Canvas.Effects">
       <summary>
         <p>This namespace provides image manipulation effects such as blur and saturation.</p>
         <p>Effects are a type of <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/>, so they can be displayed 
            using <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage"/> or 
-           <see cref="T:Microsoft.Graphics.Canvas.CanvasImageBrush"/>. The source data fed into an effect 
+           <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/>. The source data fed into an effect 
            is also of type ICanvasImage, which allows you to connect either a bitmap or another effect. 
            Complex image processing graphs can be constructed by chaining many effects together.</p>
       </summary>

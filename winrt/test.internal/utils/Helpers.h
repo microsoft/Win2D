@@ -33,13 +33,6 @@ namespace Microsoft
                     return L"<<invalid " WIDEN(#TYPE) L">>";                        \
                 }
 
-            ENUM_TO_STRING(CanvasBackground)
-            {
-                ENUM_VALUE(CanvasBackground::Transparent);
-                ENUM_VALUE(CanvasBackground::Opaque);
-                END_ENUM(CanvasBackground);
-            }
-
             template<>
             inline std::wstring ToString<RECT>(RECT const& value)
             {

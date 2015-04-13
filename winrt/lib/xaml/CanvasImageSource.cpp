@@ -14,246 +14,263 @@
 
 #include "CanvasImageSourceDrawingSessionAdapter.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+using namespace ABI::Microsoft::Graphics::Canvas;
+using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
+
+CanvasImageSourceDrawingSessionFactory::CanvasImageSourceDrawingSessionFactory()
+    : m_drawingSessionManager(CanvasDrawingSessionFactory::GetOrCreateManager())
 {
-    CanvasImageSourceDrawingSessionFactory::CanvasImageSourceDrawingSessionFactory()
-        : m_drawingSessionManager(CanvasDrawingSessionFactory::GetOrCreateManager())
-    {
-    }
+}
 
-    ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
-        ICanvasDevice* owner,
-        ISurfaceImageSourceNativeWithD2D* sisNative,
-        Color const& clearColor,
-        RECT const& updateRectangle,
-        float dpi) const
-    {
-        CheckInPointer(sisNative);
+ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
+    ICanvasDevice* owner,
+    ISurfaceImageSourceNativeWithD2D* sisNative,
+    Color const& clearColor,
+    RECT const& updateRectangle,
+    float dpi) const
+{
+    CheckInPointer(sisNative);
 
-        ComPtr<ID2D1DeviceContext1> deviceContext;
-        auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
-            sisNative,
-            ToD2DColor(clearColor),
-            updateRectangle,
-            dpi,
-            &deviceContext);
+    ComPtr<ID2D1DeviceContext1> deviceContext;
+    auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
+        sisNative,
+        ToD2DColor(clearColor),
+        updateRectangle,
+        dpi,
+        &deviceContext);
 
-        return m_drawingSessionManager->Create(
-            owner,
-            deviceContext.Get(),
-            std::move(adapter));
-    }
+    return m_drawingSessionManager->Create(
+        owner,
+        deviceContext.Get(),
+        std::move(adapter));
+}
 
-    //
-    // CanvasImageSourceFactory implementation
-    //
+//
+// CanvasImageSourceFactory implementation
+//
 
-    CanvasImageSourceFactory::CanvasImageSourceFactory()
-        : m_drawingSessionFactory(std::make_shared<CanvasImageSourceDrawingSessionFactory>())
-    {
-    }
-    
+CanvasImageSourceFactory::CanvasImageSourceFactory()
+    : m_drawingSessionFactory(std::make_shared<CanvasImageSourceDrawingSessionFactory>())
+{
+}
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSourceFactory::Create(
+
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSourceFactory::Create(
     ICanvasResourceCreatorWithDpi* resourceCreator,
-        float width,
-        float height,
-        ICanvasImageSource** imageSource)
+    float width,
+    float height,
+    ICanvasImageSource** imageSource)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+
+            float dpi;
+            ThrowIfFailed(resourceCreator->get_Dpi(&dpi));
+
+            ThrowIfFailed(CreateWithDpiAndAlphaMode(
+                As<ICanvasResourceCreator>(resourceCreator).Get(),
+                width,
+                height,
+                dpi,
+                CanvasAlphaMode::Premultiplied,
+                imageSource));
+        });
+}
+
+
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpi(
+    ICanvasResourceCreator* resourceCreator,
+    float width,
+    float height,
+    float dpi,
+    ICanvasImageSource** imageSource)
+{
+    return CreateWithDpiAndAlphaMode(
+        resourceCreator,
+        width,
+        height,
+        dpi,
+        CanvasAlphaMode::Premultiplied,
+        imageSource);
+}
+
+
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpiAndAlphaMode(
+    ICanvasResourceCreator* resourceCreator,
+    float width,
+    float height,
+    float dpi,
+    CanvasAlphaMode alphaMode,
+    ICanvasImageSource** imageSource)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            using ::Microsoft::WRL::Wrappers::HStringReference;
+
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(imageSource);
+
+            //
+            // Get the factory for CanvasImageSource's base class.  We pass
+            // this in to the CanvasImageSource constructor in order to
+            // allow test code to inject its own ISurfaceImageSourceFactory
+            // implementation.
+            //
+            ComPtr<ISurfaceImageSourceFactory> baseFactory;
+            ThrowIfFailed(GetActivationFactory(
+                HStringReference(RuntimeClass_Windows_UI_Xaml_Media_Imaging_SurfaceImageSource).Get(),
+                &baseFactory));
+
+            //
+            // Now create the object
+            //
+            auto newCanvasImageSource = Make<CanvasImageSource>(
+                resourceCreator,
+                width,
+                height,
+                dpi,
+                alphaMode,
+                baseFactory.Get(),
+                m_drawingSessionFactory);
+
+            CheckMakeResult(newCanvasImageSource);
+
+            ThrowIfFailed(newCanvasImageSource.CopyTo(imageSource));
+        });
+}
+
+//
+// CanvasImageSource implementation
+//
+    
+_Use_decl_annotations_
+CanvasImageSource::CanvasImageSource(
+    ICanvasResourceCreator* resourceCreator,
+    float width,
+    float height,
+    float dpi,
+    CanvasAlphaMode alphaMode,
+    ISurfaceImageSourceFactory* surfaceImageSourceFactory,
+    std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
+    : m_drawingSessionFactory(drawingSessionFactory)
+    , m_width(width)
+    , m_height(height)
+    , m_dpi(dpi)
+    , m_alphaMode(alphaMode)
+{
+    using ::Microsoft::WRL::Wrappers::HStringReference;
+
+    bool isOpaque;
+
+    switch (alphaMode)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resourceCreator);
+    case CanvasAlphaMode::Ignore:
+        isOpaque = true;
+        break;
 
-                float dpi;
-                ThrowIfFailed(resourceCreator->get_Dpi(&dpi));
+    case CanvasAlphaMode::Premultiplied:
+        isOpaque = false;
+        break;
 
-                ThrowIfFailed(CreateWithDpiAndBackground(
-                    As<ICanvasResourceCreator>(resourceCreator).Get(),
-                    width,
-                    height,
-                    dpi,
-                    CanvasBackground::Transparent,
-                    imageSource));
-            });
+    default:
+        ThrowHR(E_INVALIDARG, HStringReference(Strings::InvalidAlphaModeForImageSource).Get());
     }
 
-
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpi(
-        ICanvasResourceCreator* resourceCreator,
-        float width,
-        float height,
-        float dpi,
-        ICanvasImageSource** imageSource)
-    {
-        return CreateWithDpiAndBackground(
-            resourceCreator,
-            width,
-            height,
-            dpi,
-            CanvasBackground::Transparent,
-            imageSource);
-    }
+    CreateBaseClass(surfaceImageSourceFactory, isOpaque);
+    SetResourceCreator(resourceCreator);
+}
 
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpiAndBackground(
-        ICanvasResourceCreator* resourceCreator,
-        float width,
-        float height,
-        float dpi,
-        CanvasBackground background,
-        ICanvasImageSource** imageSource)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                using ::Microsoft::WRL::Wrappers::HStringReference;
+void CanvasImageSource::CreateBaseClass(
+    ISurfaceImageSourceFactory* surfaceImageSourceFactory,
+    bool isOpaque)
+{
+    ComPtr<ISurfaceImageSource> base;
+    ComPtr<IInspectable> baseInspectable;
 
-                CheckInPointer(resourceCreator);
-                CheckAndClearOutPointer(imageSource);
+    ThrowIfFailed(surfaceImageSourceFactory->CreateInstanceWithDimensionsAndOpacity(
+        DipsToPixels(m_width, m_dpi),
+        DipsToPixels(m_height, m_dpi),
+        isOpaque,
+        this,
+        &baseInspectable,
+        &base));
 
-                //
-                // Get the factory for CanvasImageSource's base class.  We pass
-                // this in to the CanvasImageSource constructor in order to
-                // allow test code to inject its own ISurfaceImageSourceFactory
-                // implementation.
-                //
-                ComPtr<ISurfaceImageSourceFactory> baseFactory;
-                ThrowIfFailed(GetActivationFactory(
-                    HStringReference(RuntimeClass_Windows_UI_Xaml_Media_Imaging_SurfaceImageSource).Get(),
-                    &baseFactory));
+    ThrowIfFailed(SetComposableBasePointers(
+        baseInspectable.Get(),
+        nullptr));
+}
 
-                //
-                // Now create the object
-                //
-                auto newCanvasImageSource = Make<CanvasImageSource>(
-                    resourceCreator,
-                    width,
-                    height,
-                    dpi,
-                    background,
-                    baseFactory.Get(),
-                    m_drawingSessionFactory);
 
-                CheckMakeResult(newCanvasImageSource);
+void CanvasImageSource::SetResourceCreator(ICanvasResourceCreator* resourceCreator)
+{
+    CheckInPointer(resourceCreator);
 
-                ThrowIfFailed(newCanvasImageSource.CopyTo(imageSource));
-            });
-    }
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(resourceCreator->get_Device(&device));
 
     //
-    // CanvasImageSource implementation
+    // Get the D2D device and pass this to the underlying surface image
+    // source.
     //
-    
-    _Use_decl_annotations_
-    CanvasImageSource::CanvasImageSource(
-        ICanvasResourceCreator* resourceCreator,
-        float width,
-        float height,
-        float dpi,
-        CanvasBackground background,
-        ISurfaceImageSourceFactory* surfaceImageSourceFactory,
-        std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
-        : m_drawingSessionFactory(drawingSessionFactory)
-        , m_width(width)
-        , m_height(height)
-        , m_dpi(dpi)
-        , m_background(background)
-    {
-        bool isOpaque = (background == CanvasBackground::Opaque);
+    ComPtr<ICanvasDeviceInternal> deviceInternal;
+    ThrowIfFailed(device.As(&deviceInternal));
+    ComPtr<ID2D1Device1> d2dDevice = deviceInternal->GetD2DDevice();
 
-        CreateBaseClass(surfaceImageSourceFactory, isOpaque);
-        SetResourceCreator(resourceCreator);
-    }
+    ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
+    ThrowIfFailed(GetComposableBase().As(&sisNative));
 
+    //
+    // Set the device.  SiS does some validation here - for example, if the
+    // width/height are 0 then this will fail with E_INVALIDARG.  We don't
+    // add additional validation around this since CanvasImageSource derives
+    // from SurfaceImageSource and we want to be consistent with the
+    // existing XAML behavior.
+    //
+    ThrowIfFailed(sisNative->SetDevice(d2dDevice.Get()));
 
-    void CanvasImageSource::CreateBaseClass(
-        ISurfaceImageSourceFactory* surfaceImageSourceFactory,
-        bool isOpaque)
-    {
-        ComPtr<ISurfaceImageSource> base;
-        ComPtr<IInspectable> baseInspectable;
-
-        ThrowIfFailed(surfaceImageSourceFactory->CreateInstanceWithDimensionsAndOpacity(
-            DipsToPixels(m_width, m_dpi),
-            DipsToPixels(m_height, m_dpi),
-            isOpaque,
-            this,
-            &baseInspectable,
-            &base));
-
-        ThrowIfFailed(SetComposableBasePointers(
-            baseInspectable.Get(),
-            nullptr));
-    }
-
-
-    void CanvasImageSource::SetResourceCreator(ICanvasResourceCreator* resourceCreator)
-    {
-        CheckInPointer(resourceCreator);
-
-        ComPtr<ICanvasDevice> device;
-        ThrowIfFailed(resourceCreator->get_Device(&device));
-
-        //
-        // Get the D2D device and pass this to the underlying surface image
-        // source.
-        //
-        ComPtr<ICanvasDeviceInternal> deviceInternal;
-        ThrowIfFailed(device.As(&deviceInternal));
-        ComPtr<ID2D1Device1> d2dDevice = deviceInternal->GetD2DDevice();
-
-        ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
-        ThrowIfFailed(GetComposableBase().As(&sisNative));
-
-        //
-        // Set the device.  SiS does some validation here - for example, if the
-        // width/height are 0 then this will fail with E_INVALIDARG.  We don't
-        // add additional validation around this since CanvasImageSource derives
-        // from SurfaceImageSource and we want to be consistent with the
-        // existing XAML behavior.
-        //
-        ThrowIfFailed(sisNative->SetDevice(d2dDevice.Get()));
-
-        //
-        // Remember the canvas device we're now using.  We do this after we're
-        // certain that all the previous steps succeeded (so we don't end up
-        // with m_device referencing a device that we failed to set).
-        //
-        m_device = device;
-    }
+    //
+    // Remember the canvas device we're now using.  We do this after we're
+    // certain that all the previous steps succeeded (so we don't end up
+    // with m_device referencing a device that we failed to set).
+    //
+    m_device = device;
+}
     
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::CreateDrawingSession(
-        Color clearColor,
-        ICanvasDrawingSession** drawingSession)
-    {
-        Rect updateRectangle{ 0, 0, m_width, m_height };
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::CreateDrawingSession(
+    Color clearColor,
+    ICanvasDrawingSession** drawingSession)
+{
+    Rect updateRectangle{ 0, 0, m_width, m_height };
 
-        return CreateDrawingSessionWithUpdateRectangle(
-            clearColor,
-            updateRectangle,
-            drawingSession);
-    }
+    return CreateDrawingSessionWithUpdateRectangle(
+        clearColor,
+        updateRectangle,
+        drawingSession);
+}
 
     
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
-        Color clearColor,
-        Rect updateRectangle,
-        ICanvasDrawingSession** drawingSession)
-    {
-        return ExceptionBoundary(
-            [&]()
-            {
-                ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
-                ThrowIfFailed(GetComposableBase().As(&sisNative));
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
+    Color clearColor,
+    Rect updateRectangle,
+    ICanvasDrawingSession** drawingSession)
+{
+    return ExceptionBoundary(
+        [&]()
+        {
+            ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
+            ThrowIfFailed(GetComposableBase().As(&sisNative));
 
-                RECT rectInPixels =
+            RECT rectInPixels =
                 {
                     DipsToPixels(updateRectangle.X, m_dpi),
                     DipsToPixels(updateRectangle.Y, m_dpi),
@@ -261,131 +278,131 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     DipsToPixels(updateRectangle.Y + updateRectangle.Height, m_dpi),
                 };
 
-                auto ds = m_drawingSessionFactory->Create(
-                    m_device.Get(),
-                    sisNative.Get(),
-                    clearColor,
-                    rectInPixels,
-                    m_dpi);
+            auto ds = m_drawingSessionFactory->Create(
+                m_device.Get(),
+                sisNative.Get(),
+                clearColor,
+                rectInPixels,
+                m_dpi);
             
-                ThrowIfFailed(ds.CopyTo(drawingSession));
-            });
-    }
+            ThrowIfFailed(ds.CopyTo(drawingSession));
+        });
+}
 
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::get_Device(
-        ICanvasDevice** value) 
-    {
-        if (!value)
-            return E_INVALIDARG;
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::get_Device(
+    ICanvasDevice** value) 
+{
+    if (!value)
+        return E_INVALIDARG;
 
-        return m_device.CopyTo(value);
-    }
+    return m_device.CopyTo(value);
+}
     
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::put_Device(
-        ICanvasDevice* value) 
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::put_Device(
+    ICanvasDevice* value) 
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
 
-                ComPtr<ICanvasResourceCreator> resourceCreator;
-                ThrowIfFailed(value->QueryInterface(resourceCreator.GetAddressOf()));
+            ComPtr<ICanvasResourceCreator> resourceCreator;
+            ThrowIfFailed(value->QueryInterface(resourceCreator.GetAddressOf()));
 
-                SetResourceCreator(resourceCreator.Get());
-            });
-    }
-
-
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::get_Dpi(
-        float* dpi)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(dpi);
-                *dpi = m_dpi;
-            });
-    }
+            SetResourceCreator(resourceCreator.Get());
+        });
+}
 
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::ConvertPixelsToDips(
-        int pixels, 
-        float* dips)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(dips);
-                *dips = PixelsToDips(pixels, m_dpi);
-            });
-    }
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::get_Dpi(
+    float* dpi)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(dpi);
+            *dpi = m_dpi;
+        });
+}
 
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::ConvertDipsToPixels(
-        float dips, 
-        int* pixels)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(pixels);
-                *pixels = DipsToPixels(dips, m_dpi);
-            });
-    }
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::ConvertPixelsToDips(
+    int pixels, 
+    float* dips)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(dips);
+            *dips = PixelsToDips(pixels, m_dpi);
+        });
+}
 
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::get_SizeInPixels(
-        BitmapSize* size)
-    {
-        return ExceptionBoundary(
-            [&]
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::ConvertDipsToPixels(
+    float dips, 
+    int* pixels)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(pixels);
+            *pixels = DipsToPixels(dips, m_dpi);
+        });
+}
+
+
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::get_SizeInPixels(
+    BitmapSize* size)
+{
+    return ExceptionBoundary(
+        [&]
         {
             CheckInPointer(size);
             size->Width = DipsToPixels(m_width, m_dpi);
             size->Height = DipsToPixels(m_height, m_dpi);
         });
-    }
+}
 
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::get_Size(
-        ABI::Windows::Foundation::Size* size)
-    {
-        return ExceptionBoundary(
-            [&]
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::get_Size(
+    ABI::Windows::Foundation::Size* size)
+{
+    return ExceptionBoundary(
+        [&]
         {
             CheckInPointer(size);
             size->Width = m_width;
             size->Height = m_height;
         });
-    }
+}
 
 
-    _Use_decl_annotations_
-    IFACEMETHODIMP CanvasImageSource::get_Background(
-        CanvasBackground* value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(value);
-                *value = m_background;
-            });
-    }
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSource::get_AlphaMode(
+    CanvasAlphaMode* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+            *value = m_alphaMode;
+        });
+}
 
 
-    //
-    // Register the class
-    //
+//
+// Register the class
+//
 
-    ActivatableClassWithFactory(CanvasImageSource, CanvasImageSourceFactory);
-}}}}
+ActivatableClassWithFactory(CanvasImageSource, CanvasImageSourceFactory);
+

@@ -11,6 +11,10 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,7 +24,6 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -145,7 +148,7 @@ namespace ExampleGallery
             var bounds = arrow.ComputeStrokeBounds(3);
             var outline = arrow.Stroke(2).Outline();
 
-            var foregroundBrush = (SolidColorBrush)Application.Current.Resources["ComboBoxForegroundThemeBrush"];
+            var foregroundBrush = (SolidColorBrush)directionsCombo.Foreground;
             var color = foregroundBrush.Color;
 
             Directions = new List<DirectionInfo>();
@@ -305,5 +308,12 @@ namespace ExampleGallery
 
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            canvas.RemoveFromVisualTree();
+            canvas = null;
+        }
     }
 }

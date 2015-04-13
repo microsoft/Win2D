@@ -15,133 +15,131 @@
 #include "CanvasSwapChainPanel.h"
 #include "RemoveFromVisualTree.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
+using namespace ABI::Microsoft::Graphics::Canvas;
+using namespace ABI::Windows::UI::Xaml::Controls;
+
+CanvasSwapChainPanelAdapter::CanvasSwapChainPanelAdapter()
 {
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace ::Microsoft::WRL::Wrappers;
+    ThrowIfFailed(GetActivationFactory(
+        HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_SwapChainPanel).Get(),
+        &m_swapChainPanelFactory));
+}
 
-    CanvasSwapChainPanelAdapter::CanvasSwapChainPanelAdapter()
+ComPtr<IInspectable> CanvasSwapChainPanelAdapter::CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
+{
+    ComPtr<IInspectable> swapChainPanelInspectable;
+    ComPtr<ISwapChainPanel> swapChainPanel;
+
+    // Instantiates the SwapChainPanel XAML object.
+    ThrowIfFailed(m_swapChainPanelFactory->CreateInstance(
+        canvasSwapChainPanel,
+        &swapChainPanelInspectable,
+        &swapChainPanel));
+
+    return swapChainPanelInspectable;
+}
+
+class CanvasSwapChainPanelFactory : public ActivationFactory<>,
+                                    private LifespanTracker<CanvasSwapChainPanelFactory>
+{
+    //
+    // While CanvasSwapChainPanel publically has only the default 
+    // constructor, its implementing class has only a non-default
+    // constructor, and so this activation factory is used to
+    // pass in the adapter.
+    //
+    std::weak_ptr<CanvasSwapChainPanelAdapter> m_adapter;
+
+public:
+    IFACEMETHODIMP ActivateInstance(IInspectable** obj) override
     {
-        ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_SwapChainPanel).Get(),
-            &m_swapChainPanelFactory));
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(obj);
+
+                auto adapter = m_adapter.lock();
+
+                if (!adapter)
+                    m_adapter = adapter = std::make_shared<CanvasSwapChainPanelAdapter>();
+
+                auto swapChainPanel = Make<CanvasSwapChainPanel>(adapter);
+                CheckMakeResult(swapChainPanel);
+
+                ThrowIfFailed(swapChainPanel.CopyTo(obj));
+            });
     }
+};
 
-    ComPtr<IInspectable> CanvasSwapChainPanelAdapter::CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
-    {
-        ComPtr<IInspectable> swapChainPanelInspectable;
-        ComPtr<ISwapChainPanel> swapChainPanel;
+CanvasSwapChainPanel::CanvasSwapChainPanel(std::shared_ptr<ICanvasSwapChainPanelAdapter> adapter)
+    : m_adapter(adapter)
+{
+    auto base = m_adapter->CreateSwapChainPanel(static_cast<ICanvasSwapChainPanel*>(this));
+    ThrowIfFailed(SetComposableBasePointers(base.Get(), nullptr));
 
-        // Instantiates the SwapChainPanel XAML object.
-        ThrowIfFailed(m_swapChainPanelFactory->CreateInstance(
-            canvasSwapChainPanel,
-            &swapChainPanelInspectable,
-            &swapChainPanel));
+    auto frameworkElement = As<IFrameworkElement>(this);
 
-        return swapChainPanelInspectable;
-    }
+    EventRegistrationToken tokenThatIsThrownAway{};
+    auto callback = Callback<IRoutedEventHandler>(this, &CanvasSwapChainPanel::OnLoaded);
+    CheckMakeResult(callback);
 
-    class CanvasSwapChainPanelFactory : public ActivationFactory<>,
-                                        private LifespanTracker<CanvasSwapChainPanelFactory>
-    {
-        //
-        // While CanvasSwapChainPanel publically has only the default 
-        // constructor, its implementing class has only a non-default
-        // constructor, and so this activation factory is used to
-        // pass in the adapter.
-        //
-        std::weak_ptr<CanvasSwapChainPanelAdapter> m_adapter;
+    ThrowIfFailed(frameworkElement->add_Loaded(callback.Get(), &tokenThatIsThrownAway));
+}
 
-    public:
-        IFACEMETHODIMP ActivateInstance(IInspectable** obj) override
+CanvasSwapChainPanel::~CanvasSwapChainPanel()
+{
+}
+
+HRESULT CanvasSwapChainPanel::OnLoaded(IInspectable*, IRoutedEventArgs*)
+{
+    return ExceptionBoundary(
+        [&]
         {
-            return ExceptionBoundary(
-                [&]
-                {
-                    CheckAndClearOutPointer(obj);
+            As<IFrameworkElement>(GetComposableBase())->get_Parent(&m_lastSeenParent);
+        });
+}
 
-                    auto adapter = m_adapter.lock();
+IFACEMETHODIMP CanvasSwapChainPanel::get_SwapChain(ICanvasSwapChain** value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(value);
 
-                    if (!adapter)
-                        m_adapter = adapter = std::make_shared<CanvasSwapChainPanelAdapter>();
+            ThrowIfFailed(m_canvasSwapChain.CopyTo(value));
+        });
+}
 
-                    auto swapChainPanel = Make<CanvasSwapChainPanel>(adapter);
-                    CheckMakeResult(swapChainPanel);
+IFACEMETHODIMP CanvasSwapChainPanel::put_SwapChain(ICanvasSwapChain* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ComPtr<ISwapChainPanelNative> swapChainPanelNative = As<ISwapChainPanelNative>(this);
 
-                    ThrowIfFailed(swapChainPanel.CopyTo(obj));
-                });
-        }
-    };
+            ComPtr<IDXGISwapChain2> dxgiSwapChain;
 
-    CanvasSwapChainPanel::CanvasSwapChainPanel(std::shared_ptr<ICanvasSwapChainPanelAdapter> adapter)
-        : m_adapter(adapter)
-    {
-        auto base = m_adapter->CreateSwapChainPanel(static_cast<ICanvasSwapChainPanel*>(this));
-        ThrowIfFailed(SetComposableBasePointers(base.Get(), nullptr));
-
-        auto frameworkElement = As<IFrameworkElement>(this);
-
-        EventRegistrationToken tokenThatIsThrownAway{};
-        auto callback = Callback<IRoutedEventHandler>(this, &CanvasSwapChainPanel::OnLoaded);
-        CheckMakeResult(callback);
-
-        ThrowIfFailed(frameworkElement->add_Loaded(callback.Get(), &tokenThatIsThrownAway));
-    }
-
-    CanvasSwapChainPanel::~CanvasSwapChainPanel()
-    {
-    }
-
-    HRESULT CanvasSwapChainPanel::OnLoaded(IInspectable*, IRoutedEventArgs*)
-    {
-        return ExceptionBoundary(
-            [&]
+            if (value)
             {
-                As<IFrameworkElement>(GetComposableBase())->get_Parent(&m_lastSeenParent);
-            });
-    }
+                auto swapChainResourceWrapper = As<ICanvasResourceWrapperNative>(value);
 
-    IFACEMETHODIMP CanvasSwapChainPanel::get_SwapChain(ICanvasSwapChain** value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckAndClearOutPointer(value);
+                ThrowIfFailed(swapChainResourceWrapper->GetResource(IID_PPV_ARGS(&dxgiSwapChain)));
+            }
 
-                ThrowIfFailed(m_canvasSwapChain.CopyTo(value));
-            });
-    }
+            ThrowIfFailed(swapChainPanelNative->SetSwapChain(dxgiSwapChain.Get()));
 
-    IFACEMETHODIMP CanvasSwapChainPanel::put_SwapChain(ICanvasSwapChain* value)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                ComPtr<ISwapChainPanelNative> swapChainPanelNative = As<ISwapChainPanelNative>(this);
+            m_canvasSwapChain = value;
+        });
+}
 
-                ComPtr<IDXGISwapChain2> dxgiSwapChain;
+IFACEMETHODIMP CanvasSwapChainPanel::RemoveFromVisualTree()
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            RemoveFromVisualTreeImpl(m_lastSeenParent.Get(), As<IUIElement>(this).Get());
+        });
+}
 
-                if (value)
-                {
-                    auto swapChainResourceWrapper = As<ICanvasResourceWrapperNative>(value);
-
-                    ThrowIfFailed(swapChainResourceWrapper->GetResource(IID_PPV_ARGS(&dxgiSwapChain)));
-                }
-
-                ThrowIfFailed(swapChainPanelNative->SetSwapChain(dxgiSwapChain.Get()));
-
-                m_canvasSwapChain = value;
-            });
-    }
-
-    IFACEMETHODIMP CanvasSwapChainPanel::RemoveFromVisualTree()
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                RemoveFromVisualTreeImpl(m_lastSeenParent.Get(), As<IUIElement>(this).Get());
-            });
-    }
-
-    ActivatableClassWithFactory(CanvasSwapChainPanel, CanvasSwapChainPanelFactory);
-}}}}
+ActivatableClassWithFactory(CanvasSwapChainPanel, CanvasSwapChainPanelFactory);

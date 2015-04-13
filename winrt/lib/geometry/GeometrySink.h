@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     class GeometrySink : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1GeometrySink>,
         private LifespanTracker<GeometrySink>
@@ -164,4 +164,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_result;
         }
     };
-}}}}
+}}}}}

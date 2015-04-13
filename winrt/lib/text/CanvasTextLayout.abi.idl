@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace Microsoft.Graphics.Canvas
+namespace Microsoft.Graphics.Canvas.Text
 {
     runtimeclass CanvasTextLayout;
 
@@ -90,7 +90,7 @@ namespace Microsoft.Graphics.Canvas
         //
         HRESULT GetBrush(
             [in] INT32 characterIndex,
-            [out, retval] ICanvasBrush** brush); 
+            [out, retval] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush** brush); 
 
         HRESULT GetFontFamily(
             [in] INT32 characterIndex,
@@ -133,7 +133,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT SetBrush(
             [in] INT32 characterIndex,
             [in] INT32 characterCount,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         HRESULT SetFontFamily(
             [in] INT32 characterIndex,
@@ -309,7 +309,7 @@ namespace Microsoft.Graphics.Canvas
         // Get/SetFontFallback                      Relies on IDWriteFontFallback. Separate design issue on how to expose this.
         // GetMetrics                               Out of scope for this item. Backlog #820 for getting text metrics
 
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
 
     }
 
@@ -317,7 +317,7 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasTextLayoutFactory : IInspectable
     {
         HRESULT Create(
-            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] HSTRING textString,
             [in] CanvasTextFormat* textFormat,
             [in] float maximumLayoutWidth,

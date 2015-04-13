@@ -52,7 +52,7 @@ namespace CodeGen
 
     public class Namespace
     {
-        public Namespace(XmlBindings.Namespace xmlData, Overrides.XmlBindings.Namespace overrides, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
+        public Namespace(XmlBindings.Namespace xmlData, Overrides.XmlBindings.Namespace overrides, string rootProjectedNamespace, Dictionary<string, QualifiableType> typeDictionary, OutputDataTypes outputDataTypes)
         {
             m_rawName = xmlData.Name;
 
@@ -71,7 +71,7 @@ namespace CodeGen
                 Overrides.XmlBindings.Enum overridesEnum = null;
                 if(overrides != null) overridesEnum = overrides.Enums.Find(x => x.Name == enumXml.Name);
 
-                m_enums.Add(new Enum(this, enumXml, overridesEnum, typeDictionary, outputDataTypes));
+                m_enums.Add(new Enum(this, rootProjectedNamespace, enumXml, overridesEnum, typeDictionary, outputDataTypes));
             }
 
             m_structs = new List<Struct>();

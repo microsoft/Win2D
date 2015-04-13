@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::Foundation;
     using namespace ::Microsoft::WRL;
@@ -42,7 +42,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComposableBase<>>,
         private LifespanTracker<CanvasSwapChainPanel>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChainPanel, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasSwapChainPanel, BaseTrust);
 
         std::shared_ptr<ICanvasSwapChainPanelAdapter> m_adapter;
 
@@ -65,4 +65,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         HRESULT OnLoaded(IInspectable*, IRoutedEventArgs*);
     };
 
-}}}}
+}}}}}}

@@ -19,7 +19,7 @@ under the License.
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl">
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl">
       <summary>XAML control intended for displaying animating content.</summary>
       <remarks>
         <p>
@@ -282,24 +282,24 @@ under the License.
 
       </remarks>
     </member> 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedControl">
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl">
       <summary>XAML control intended for displaying animating content.</summary>
       <inheritdoc select="remarks"/>
     </member>   
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.#ctor">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.#ctor">
       <summary>Initializes a new instance of the CanvasAnimatedControl class.</summary>
     </member>    
     
-    <member name="M:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ResetElapsedTime">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.ResetElapsedTime">
       <summary>Ensures that only a single Update event will be raised on the next iteration of the game loop.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ResetElapsedTime">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ResetElapsedTime">
       <summary>Ensures that only a single Update event will be raised on the next iteration of the game loop.</summary>
       <inheritdoc/>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ClearColor">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.ClearColor">
       <summary>The color that the control is cleared to before the Draw event is raised.</summary>
       <remarks>
         <p>
@@ -314,17 +314,17 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ClearColor">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ClearColor">
       <summary>The color that the control is cleared to before the Draw event is raised.</summary>
       <inheritdoc/>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.IsFixedTimeStep">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.IsFixedTimeStep">
       <summary>Indicates whether the game loop is running in fixed or variable timing mode.</summary>
       <remarks>
         <p>
           See the remarks section of <see
-          cref="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl" /> for more
+          cref="T:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl" /> for more
           details on the different timing modes.
         </p>
         <p>
@@ -332,12 +332,12 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.IsFixedTimeStep">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.IsFixedTimeStep">
       <summary>Indicates whether the game loop is running in fixed or variable timing mode.</summary>
       <inheritdoc />
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Paused">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Paused">
       <summary>Indicates whether the control's game loop is paused.</summary>
       <remarks>
         <p>
@@ -345,12 +345,12 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Paused">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Paused">
       <summary>Indicates whether the control's game loop is paused.</summary>
       <inheritdoc />
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.ReadyToDraw">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.ReadyToDraw">
       <summary>Gets whether the control is in a state where it is ready to draw.</summary>
       <remarks>
         <p>
@@ -362,12 +362,12 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ReadyToDraw">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ReadyToDraw">
       <summary>Gets whether the control is in a state where it is ready to draw.</summary>
       <inheritdoc/>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Size">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Size">
       <summary>Gets the current size of the control.</summary>
       <remarks>
         This property may be accessed from any thread, including the game loop
@@ -375,12 +375,12 @@ under the License.
         handler.
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Size">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Size">
       <summary>Gets the current size of the control.</summary>
       <inheritdoc/>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.TargetElapsedTime">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.TargetElapsedTime">
       <summary>Gets or sets the time between Update events</summary>
       <remarks>
         <p>
@@ -388,7 +388,7 @@ under the License.
         </p>
         <p>
           See the remarks section of <see
-          cref="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl" /> for more
+          cref="T:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl" /> for more
           details.
         </p>
         <p>
@@ -396,12 +396,12 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.TargetElapsedTime">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.TargetElapsedTime">
       <summary>Gets or sets the time between Update events</summary>
       <inheritdoc/>
     </member>
     
-    <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.CreateResources">
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateResources">
       <summary>Hook this event to create any resources needed for your drawing.</summary>
       <remarks>
         <p>
@@ -416,7 +416,7 @@ under the License.
         </p>
         <p>
           See the remarks section of <see
-          cref="T:Microsoft.Graphics.Canvas.ICanvasAnimatedControl" /> for more
+          cref="T:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl" /> for more
           details.
         </p>
         <p>
@@ -424,12 +424,12 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.CreateResources">
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateResources">
       <summary>Hook this event to create any resources needed for your drawing.</summary>
       <inheritdoc/>
     </member>
     
-    <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Draw">
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Draw">
       <summary>Hook this event to draw the contents of the control.</summary>
       <remarks>
         <p>
@@ -447,12 +447,12 @@ under the License.
       </remarks>
     </member>
     
-    <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Draw">
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Draw">
       <summary>Hook this event to draw the contents of the control.</summary>
       <inheritdoc/>
     </member>
         
-    <member name="E:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Update">
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Update">
       <summary>Hook this event to update any data, as necessary, for your app's animation.</summary>
       <remarks>
         <p>
@@ -464,20 +464,20 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Update">
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Update">
       <summary>Hook this event to update any data, as necessary, for your app's animation.</summary>
       <inheritdoc/>
     </member>            
     
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ConvertPixelsToDips(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ConvertPixelsToDips(System.Int32)">
       <summary>Converts units from physical pixels to device independent pixels (dips) based on the current DPI of this control.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.ConvertDipsToPixels(System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ConvertDipsToPixels(System.Single)">
       <summary>Converts units from device independent pixels (dips) to physical pixels based on the current DPI of this control.</summary>
     </member>
     
     
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Device">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Device">
       <summary>Gets the underlying device used by this control.</summary>
       <remarks>
         <p>
@@ -486,7 +486,7 @@ under the License.
       </remarks>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Dpi">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Dpi">
       <summary>Gets the current dots-per-inch (DPI) of this control.</summary>
       <remarks>
         <p>
@@ -499,48 +499,48 @@ under the License.
       </remarks>
     </member>
     
-    <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs">
-      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Draw"/> event.</summary>
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs">
+      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Draw"/> event.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.CanvasTimingInformation)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.UI.CanvasTimingInformation)">
       <summary>Initializes a new instance of the CanvasAnimatedDrawEventArgs class.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs.DrawingSession">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs.DrawingSession">
       <summary>Gets the drawing session for use by the Draw event handler.
                This provides methods to draw lines, rectangles, text etc.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedDrawEventArgs.Timing">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs.Timing">
       <summary>Gets the control's timing information for use by the event handler.</summary>
       <remarks>This data is especially useful for apps which use variable-step timing,
                since these apps will likely control their animation based on the delta
                between timestamps.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasAnimatedUpdateEventArgs">
-      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Update"/> event.</summary>
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedUpdateEventArgs">
+      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Update"/> event.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedUpdateEventArgs.#ctor(Microsoft.Graphics.Canvas.CanvasTimingInformation)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedUpdateEventArgs.#ctor(Microsoft.Graphics.Canvas.UI.CanvasTimingInformation)">
       <summary>Initializes a new instance of the CanvasAnimatedUpdateEventArgs class.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedUpdateEventArgs.Timing">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedUpdateEventArgs.Timing">
       <summary>Gets the control's timing information for use by the event handler.</summary>
       <remarks>This data is especially useful for apps which use variable-step timing,
                since these apps will likely control their animation based on the delta
                between timestamps.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasTimingInformation">
+    <member name="T:Microsoft.Graphics.Canvas.UI.CanvasTimingInformation">
       <summary>Contains information about a CanvasAnimatedControl's timer.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.UpdateCount">
+    <member name="F:Microsoft.Graphics.Canvas.UI.CanvasTimingInformation.UpdateCount">
       <summary>The number of times the update event has been raised.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.TotalTime">
+    <member name="F:Microsoft.Graphics.Canvas.UI.CanvasTimingInformation.TotalTime">
       <summary>Represents the elapsed time, in ticks, for which this control has ever been running.</summary>
       <remarks>Time in which the control is paused doesn't contribute to this time.</remarks>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.ElapsedTime">
+    <member name="F:Microsoft.Graphics.Canvas.UI.CanvasTimingInformation.ElapsedTime">
       <summary>Represents the amount of time, in ticks, since the last update.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTimingInformation.IsRunningSlowly">
+    <member name="F:Microsoft.Graphics.Canvas.UI.CanvasTimingInformation.IsRunningSlowly">
       <summary>
         In fixed timing mode, indicates that each iteration of the game loop is
         taking longer than TargetElapsedTime to complete.
@@ -551,7 +551,7 @@ under the License.
       </remarks>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.Input">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Input">
       <summary>Gets an object used to configure pointer input for the control.</summary>
       <remarks>
         <p>
@@ -569,12 +569,12 @@ under the License.
         
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.Input">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Input">
       <summary>Gets an object used to configure pointer input for the control.</summary>
       <inheritdoc/>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.RemoveFromVisualTree">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RemoveFromVisualTree">
       <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
       <remarks>
         <p>
@@ -595,26 +595,26 @@ under the License.
         </example>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.RemoveFromVisualTree">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.RemoveFromVisualTree">
       <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
       <inheritdoc/>
     </member>
     
 
-    <member name="M:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
       <summary>Does some work, specified using a DispatchedHandler, on the game loop thread.</summary>
       <remarks>
       	If the control is paused, the work won't be performed until the control is unpaused.
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.ICanvasAnimatedControl.HasGameLoopThreadAccess">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.HasGameLoopThreadAccess">
       <summary>Gets whether the current thread is the game loop thread.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
       <summary>Does some work, specified using a DispatchedHandler, on the game loop thread.</summary>
       <inheritdoc/>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasAnimatedControl.HasGameLoopThreadAccess">
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.HasGameLoopThreadAccess">
       <summary>Gets whether the current thread is the game loop thread.</summary>
     </member>
     

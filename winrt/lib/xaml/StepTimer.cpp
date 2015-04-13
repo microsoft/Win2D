@@ -13,40 +13,38 @@
 #include "pch.h"
 #include "StepTimer.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
+
+StepTimer::StepTimer(std::shared_ptr<ICanvasTimingAdapter> adapter)
+    : m_adapter(adapter)
+    , m_elapsedTicks(0)
+    , m_totalTicks(0)
+    , m_leftOverTicks(0)
+    , m_frameCount(0)
+    , m_framesPerSecond(0)
+    , m_framesThisSecond(0)
+    , m_secondCounter(0)
+    , m_isFixedTimeStep(true)
+    , m_targetElapsedTicks(TicksPerSecond / 60)
 {
-    StepTimer::StepTimer(std::shared_ptr<ICanvasTimingAdapter> adapter)
-        : m_adapter(adapter)
-        , m_elapsedTicks(0)
-        , m_totalTicks(0)
-        , m_leftOverTicks(0)
-        , m_frameCount(0)
-        , m_framesPerSecond(0)
-        , m_framesThisSecond(0)
-        , m_secondCounter(0)
-        , m_isFixedTimeStep(true)
-        , m_targetElapsedTicks(TicksPerSecond / 60)
-    {
-        m_frequency = m_adapter->GetPerformanceFrequency();
+    m_frequency = m_adapter->GetPerformanceFrequency();
 
-        m_lastTime = m_adapter->GetPerformanceCounter();
+    m_lastTime = m_adapter->GetPerformanceCounter();
 
-        // Initialize max delta to 1/10 of a second.
-        m_maxDelta = m_frequency.QuadPart / 10;
-        assert(m_maxDelta > 0);
-    }
+    // Initialize max delta to 1/10 of a second.
+    m_maxDelta = m_frequency.QuadPart / 10;
+    assert(m_maxDelta > 0);
+}
 
-    void StepTimer::ResetElapsedTime()
-    {
-        m_lastTime = m_adapter->GetPerformanceCounter();
+void StepTimer::ResetElapsedTime()
+{
+    m_lastTime = m_adapter->GetPerformanceCounter();
 
-        m_leftOverTicks = 0;
-        m_framesPerSecond = 0;
-        m_framesThisSecond = 0;
-        m_secondCounter = 0;
-    }
+    m_leftOverTicks = 0;
+    m_framesPerSecond = 0;
+    m_framesThisSecond = 0;
+    m_secondCounter = 0;
+}
 
-    // TODO #3219: Determine if StepTimer should Sleep() if m_leftOverTicks
-    // falls far below m_targetElapsedTicks.
-
-}}}}
+// TODO #3219: Determine if StepTimer should Sleep() if m_leftOverTicks
+// falls far below m_targetElapsedTicks.

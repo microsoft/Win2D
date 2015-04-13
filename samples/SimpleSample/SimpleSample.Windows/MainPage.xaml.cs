@@ -10,9 +10,9 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
-using Microsoft.Graphics.Canvas;
 
 namespace SimpleSample
 {

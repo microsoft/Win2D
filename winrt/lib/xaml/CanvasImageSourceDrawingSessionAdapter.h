@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;
 
@@ -41,4 +41,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
     };
-}}}}
+}}}}}}

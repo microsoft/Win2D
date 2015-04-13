@@ -12,6 +12,7 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Diagnostics;
 using System.Numerics;

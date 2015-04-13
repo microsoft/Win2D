@@ -80,10 +80,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DEffectAuthor.xml</Link>
     </None>
-    <Content Include="..\..\..\winrt\lib\Canvas.codegen.cpp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>Deployed Files\Canvas.codegen.cpp</Link>
-    </Content>
     <Content Include="..\..\..\winrt\lib\Canvas.codegen.idl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\Canvas.codegen.idl</Link>

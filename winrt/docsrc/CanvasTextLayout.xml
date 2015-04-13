@@ -19,19 +19,19 @@ under the License.
   </assembly>
   <members>  
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasOpticalAlignment">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasOpticalAlignment">
       <summary>Specifies how glyphs are aligned to the margin.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasOpticalAlignment.Default">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasOpticalAlignment.Default">
       <summary>Glyphs are aligned according to their 'cell' boundaries. </summary>
       <remarks>This may include some whitespace beside the glyph.</remarks>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasOpticalAlignment.NoSideBearings">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasOpticalAlignment.NoSideBearings">
       <summary>Glyphs are aligned according to their 'ink' boundaries. </summary>
       <remarks>This will push the 'inked' part (usually, the rendered part) as close to the margin as possible.
       Note that some glyphs may still overhang outside the margin, such as flourishes or italic slants.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasTextLayout">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextLayout">
       <summary>Describes a cached, drawable piece of text.</summary>
       <remarks>For text which changes infrequently, use CanvasTextLayout.</remarks>
       <example>
@@ -52,10 +52,10 @@ under the License.
         
       </example>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasTextFormat,System.Single,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.Text.CanvasTextFormat,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasTextLayout class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetPairKerning(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetPairKerning(System.Int32)">
       <summary>Gets whether pair kerning is used for the character at the position specified.</summary>
       <remarks>
         <p>
@@ -70,7 +70,7 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetPairKerning(System.Int32,System.Int32,System.Boolean)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetPairKerning(System.Int32,System.Int32,System.Boolean)">
       <summary>Sets whether pair kerning is used for the group of characters specified.</summary>
       <remarks>
         <p>
@@ -85,13 +85,13 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetLeadingCharacterSpacing(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetLeadingCharacterSpacing(System.Int32)">
       <summary>Gets the the spacing before the character specified, in reading order. </summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetTrailingCharacterSpacing(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetTrailingCharacterSpacing(System.Int32)">
       <summary>Gets the spacing after the character specified, in reading order.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetMinimumCharacterAdvanceWidth(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetMinimumCharacterAdvanceWidth(System.Int32)">
       <summary>Gets the minimum advance of the character specified.</summary>
       <remarks>
         <p>
@@ -99,7 +99,7 @@ under the License.
           to the next, to prevent characters from becoming too thin or zero-width. This must be zero or greater.</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetCharacterSpacing(System.Int32,System.Int32,System.Single,System.Single,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCharacterSpacing(System.Int32,System.Int32,System.Single,System.Single,System.Single)">
       <summary>Sets the spacing between characters.</summary>
       <remarks>
         <p>Leading spacing is the spacing before each character, in reading order.</p>
@@ -108,50 +108,50 @@ under the License.
         to the next, to prevent characters from becoming too thin or zero-width. This must be zero or greater.</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.Dispose">
       <summary>Releases all resources used by the CanvasTextLayout.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFormatChangeIndices">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetFormatChangeIndices">
       <summary>Gets an array of position indices at which the text format changes.</summary>
       <remarks>By convention, an empty string will yield an array containing only {0}. </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetMinimumLayoutWidth">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetMinimumLayoutWidth">
       <summary>Gets the minimum possible width the layout can be set to, without any emergency breakings between the characters of whole words.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFontFamily(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetFontFamily(System.Int32)">
       <summary>Gets the font family of the character at the specified position.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFontSize(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetFontSize(System.Int32)">
       <summary>Gets the font size for the character at the specified position.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFontStretch(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetFontStretch(System.Int32)">
       <summary>Gets the font stretch for the character at the specified position.</summary>
       <remarks>This indicates the degree to which the font is stretched, compared to the normal aspect ratio of that font.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFontStyle(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetFontStyle(System.Int32)">
       <summary>Gets the font style for the character at the specified position.</summary>
       <remarks>Font style indicates whether a typeface is oblique, or italic, or the default.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetFontWeight(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetFontWeight(System.Int32)">
       <summary>Gets the font weight for the character at the specified position.</summary>
       <remarks>Font weight is the density of a typeface, in terms of the lightness or heaviness of the strokes.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetLocaleName(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetLocaleName(System.Int32)">
       <summary>Specifies the locale name for the character at the specified position.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetStrikethrough(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetStrikethrough(System.Int32)">
       <summary>Gets whether the character at the specified position has strikethrough.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetUnderline(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetUnderline(System.Int32)">
       <summary>Gets whether the character at the specified position is underlined.</summary>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetBrush(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetBrush(System.Int32)">
       <summary>Gets the brush associated with a character index in the text layout.</summary>
       <remarks>
       	<p>
-      	If the color was set using <see cref="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)"/> for this index, this method returns a 
-      	<see cref="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush"/> with the appropriate color.
+      	If the color was set using <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)"/> for this index, this method returns a 
+      	<see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush"/> with the appropriate color.
       	</p>
       	<p>
       	If there isn't an associated brush or color, null is returned.
@@ -159,54 +159,54 @@ under the License.
       	</remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetFontFamily(System.Int32,System.Int32,System.String)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetFontFamily(System.Int32,System.Int32,System.String)">
       <summary>Sets the font family of the specified group of characters.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetFontSize(System.Int32,System.Int32,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetFontSize(System.Int32,System.Int32,System.Single)">
       <summary>Sets the font size of the specified group of characters.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetFontStretch(System.Int32,System.Int32,Windows.UI.Text.FontStretch)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetFontStretch(System.Int32,System.Int32,Windows.UI.Text.FontStretch)">
       <summary>Sets the font stretch of the specified group of characters.</summary>
       <remarks>This indicates the degree to which the font is stretched, compared to the normal aspect ratio of that font.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetFontStyle(System.Int32,System.Int32,Windows.UI.Text.FontStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetFontStyle(System.Int32,System.Int32,Windows.UI.Text.FontStyle)">
       <summary>Sets the font style of the specified group of characters.</summary>
       <remarks>Font style indicates whether a typeface is oblique, or italic, or the default.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetFontWeight(System.Int32,System.Int32,Windows.UI.Text.FontWeight)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetFontWeight(System.Int32,System.Int32,Windows.UI.Text.FontWeight)">
       <summary>Sets the font weight of the specified group of characters.</summary>
       <remarks>Font weight is the density of a typeface, in terms of the lightness or heaviness of the strokes.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetLocaleName(System.Int32,System.Int32,System.String)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetLocaleName(System.Int32,System.Int32,System.String)">
       <summary>Sets the local name of the specified group of characters.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetStrikethrough(System.Int32,System.Int32,System.Boolean)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetStrikethrough(System.Int32,System.Int32,System.Boolean)">
       <summary>Applies strikethrough formatting to the specified group of characters.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetUnderline(System.Int32,System.Int32,System.Boolean)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetUnderline(System.Int32,System.Int32,System.Boolean)">
       <summary>Applies underline formatting to the specified group of characters.</summary>
     </member>  
     
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)">
       <summary>Sets the color associated with a group of characters in the text layout.</summary>
       <remarks>
       	<p>
       	This color takes effect while calling 
-      	<see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)"/>
+      	<see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.Text.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
       	It overrides the brush or color passed to DrawTextLayout.
       	</p>
       	<p>
-      	Calling <see cref="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetBrush(System.Int32)"/> for this same index, after calling this method, will yield a 
-      	<see cref="T:Microsoft.Graphics.Canvas.CanvasSolidColorBrush"/> with the appropriate color.
+      	Calling <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetBrush(System.Int32)"/> for this same index, after calling this method, will yield a 
+      	<see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush"/> with the appropriate color.
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.ICanvasBrush)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
       <summary>Sets the brush associated with a group of characters in the text layout.</summary>
       <remarks>
       	<p>
       	This brush takes effect while calling 
-      	<see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.ICanvasBrush)"/>
+      	<see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout(Microsoft.Graphics.Canvas.Text.CanvasTextLayout,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
       	It overrides the brush or color passed to DrawTextLayout.
       	</p>
       	<p>
@@ -215,34 +215,34 @@ under the License.
       </remarks>
     </member>
       
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.WordWrapping">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.WordWrapping">
       <summary>Specifies word wrapping behavior.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.VerticalGlyphOrientation">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.VerticalGlyphOrientation">
       <summary>Specifies the orientation of glyphs when a vertical reading direction is used.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.VerticalAlignment">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.VerticalAlignment">
       <summary>Specifies the vertical paragraph alignment.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.TrimmingGranularity">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingGranularity">
       <summary>Specifies the granularity used to trim text overflowing the layout box.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.TrimmingDelimiterCount">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingDelimiterCount">
       <summary>A value that indicates how many occurrences of the delimiter to step back.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.TrimmingDelimiter">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingDelimiter">
       <summary>
         A character code used as the delimiter that signals the beginning of the portion of text to be preserved.
         Most useful for path ellipsis, where the delimiter would be a slash.
        </summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.Direction">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.Direction">
       <summary>Specifies the direction in which the text is read.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.HorizontalAlignment">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HorizontalAlignment">
       <summary>Specifies the horizontal paragraph alignment.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.OpticalAlignment">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.OpticalAlignment">
       <summary>Specifies the optical margin aligment for the text layout.</summary>
       <remarks>
       	<p>
@@ -253,7 +253,7 @@ under the License.
       	</p>
       	</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.MaximumLayoutSize">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.MaximumLayoutSize">
       <summary>Specifies the maximum layout size.</summary>
       <remarks>
         This option is for controlling word wrapping- it won't perform any kind of
@@ -261,52 +261,52 @@ under the License.
         to these dimensions. 
         </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LineSpacingMethod">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingMethod">
       <summary>Specifies how line spacing is applied.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LineSpacingBaseline">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingBaseline">
       <summary>Specifies the distance from top of line to baseline. A reasonable ratio to lineSpacing is 80 percent.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LineSpacing">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacing">
       <summary>Specifies the line height, or distance from one baseline to another.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LastLineWrapping">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LastLineWrapping">
       <summary>Specifies whether or not the last word on the last line is wrapped.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.IncrementalTabStop">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.IncrementalTabStop">
       <summary>Specifies the incremental tab stop position.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DefaultFontFamily">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontFamily">
       <summary>Specifies the font family name for ranges of the layout that don't have an explicitly specified font family name.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DefaultFontSize">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontSize">
       <summary>Specifies the font size for ranges of the layout without an explicitly specified font size.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DefaultFontStretch">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontStretch">
       <summary>Specifies the font stretch for ranges of the layout without an explicitly specified font stretch.</summary>
       <remarks>Font stretch indicates the degree to which the font is stretched, compared to the normal aspect ratio of that font.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DefaultFontStyle">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontStyle">
       <summary>Specifies the font style for ranges of the layout without an explicitly specified font style.</summary>
       <remarks>Font style indicates whether a typeface is oblique, or italic, or the default.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DefaultFontWeight">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontWeight">
       <summary>Specifies the font weight for ranges of the layout without an explicitly specified font weight.</summary>
       <remarks>Font weight indicates the density of a typeface, in terms of the lightness or heaviness of the strokes.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DefaultLocaleName">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultLocaleName">
       <summary>Specifies the locale name for ranges of the layout without an explicitly specified locale name.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasVerticalGlyphOrientation">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation">
       <summary>Specifies the orientation of glyphs when a vertical reading direction is used.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasVerticalGlyphOrientation.Default">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation.Default">
       <summary>
       	With this default option and vertical layout, naturally horizontal scripts, such as Latin script,
       	rotate 90 degrees clockwise, while ideographic scripts, such as Chinese, remain upright.
       </summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasVerticalGlyphOrientation.Stacked">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation.Stacked">
       <summary>
       	With this option and vertical layout, ideographic scripts that permit stacking, such as Latin script,
       	appear stacked, and are not rotated. Connected scripts, such as Arabic, which would otherwise 
@@ -314,94 +314,94 @@ under the License.
       </summary>
     </member>    
 
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.Options">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.Options">
       <summary>Specifies text drawing options.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion">
       <summary>A struct describing the result of a hit test operation.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion.CharacterIndex">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.CharacterIndex">
       <summary>The position index within a piece of text.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion.CharacterCount">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.CharacterCount">
       <summary>A number of characters, counted from the PositionInText, used for describing a range of characters.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextLayoutRegion.LayoutBounds">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.LayoutBounds">
       <summary>A rectangle describing the bounds of a piece of text.</summary>
       <remarks>The bounds are relative to the text's layout box. 
       These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
       	<p>
       	  Hit tests are always performed using layout bounds, not draw bounds. See 
-      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	  <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBounds"/>. 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(System.Single,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Single,System.Single)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
       	<p>
       	  Hit tests are always performed using layout bounds, not draw bounds. See 
-      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	  <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBounds"/>. 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
       	<p>
       	  Hit tests are always performed using layout bounds, not draw bounds. See 
-      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	  <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBounds"/>. 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
       	<p>
       	  Hit tests are always performed using layout bounds, not draw bounds. See 
-      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	  <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBounds"/>. 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@,System.Boolean@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@,System.Boolean@)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
       	<p>
       	  Hit tests are always performed using layout bounds, not draw bounds. See 
-      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	  <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBounds"/>. 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.HitTest(System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@,System.Boolean@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@,System.Boolean@)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
       	<p>
       	  Hit tests are always performed using layout bounds, not draw bounds. See 
-      	  <see cref="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds"/>. 
+      	  <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBounds"/>. 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetCaretPosition(System.Int32,System.Boolean)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetCaretPosition(System.Int32,System.Boolean)">
       <summary>Gets position where the caret (text cursor) would be, given the current text position and caret direction.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetCaretPosition(System.Int32,System.Boolean,Microsoft.Graphics.Canvas.CanvasTextLayoutRegion@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetCaretPosition(System.Int32,System.Boolean,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@)">
       <summary>Gets position where the caret (text cursor) would be, given the current text position and caret direction.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextLayout.GetCharacterRegions(System.Int32,System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetCharacterRegions(System.Int32,System.Int32)">
       <summary>Gets an array of descriptions of the range of text.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.DrawBounds">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawBounds">
       <summary>Gets the bounds of the parts of the text that would get drawn.</summary>
       <remarks>
       	<p>
@@ -422,7 +422,7 @@ under the License.
       	</p>
       	</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LayoutBounds">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBounds">
       <summary>Gets the bounds of the parts of the text that align to the layout.</summary>
       <remarks>
       	<p>
@@ -443,11 +443,11 @@ under the License.
       	</p>
       	</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.LineCount">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineCount">
       <summary>Gets the number of lines in the text layout.</summary>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextLayout.Device">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.Device">
       <summary>Gets the device associated with this text layout.</summary>
     </member>
     

@@ -18,7 +18,7 @@ under the License.
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>  
     <members>
-      <member name="T:Microsoft.Graphics.Canvas.CanvasSwapChainPanel">
+      <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel">
         <summary>A swap chain panel is a XAML control which draws to a swap chain.</summary>
         <remarks>
         The size of the swap chain may be different from the control's layout size. In particular, it does not stretch to fill the control. For more information on swap chains, see <see cref="T:Microsoft.Graphics.Canvas.CanvasSwapChain"/>.
@@ -38,13 +38,13 @@ under the License.
         </code>
         </example>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChainPanel.#ctor">
+      <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel.#ctor">
         <summary>Initializes a new instance of the CanvasSwapChainPanel class.</summary>
       </member>
-      <member name="P:Microsoft.Graphics.Canvas.CanvasSwapChainPanel.SwapChain">
+      <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel.SwapChain">
         <summary>Gets or sets the associated swap chain object.</summary>
       </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChainPanel.RemoveFromVisualTree">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel.RemoveFromVisualTree">
       <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
       <remarks>
         <p>

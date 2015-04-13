@@ -57,6 +57,7 @@ namespace ExampleGallery
 #if WINDOWS_UAP
             new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
 #endif
+            new ExampleDefinition("Particle System", typeof(ParticleExample)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
             new ExampleDefinition("Layers", typeof(LayersExample)),
             new ExampleDefinition("Shapes", typeof(ShapesExample)),

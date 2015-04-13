@@ -19,132 +19,132 @@ under the License.
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasTextDirection">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextDirection">
       <summary>Specifies the direction in which text is formatted and read.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.LeftToRightThenTopToBottom">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenTopToBottom">
       <summary>Text is read from left to right and lines flow from top to bottom.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.RightToLeftThenTopToBottom">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenTopToBottom">
       <summary>Text is read from right to left and lines flow from top to bottom.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.LeftToRightThenBottomToTop">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenBottomToTop">
       <summary>Text is read from left to right and lines flow from bottom to top.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.RightToLeftThenBottomToTop">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenBottomToTop">
       <summary>Text is read from right to left and lines flow from bottom to top.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.TopToBottomThenLeftToRight">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenLeftToRight">
       <summary>Text is read from top to bottom and lines flow from left to right.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.BottomToTopThenLeftToRight">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenLeftToRight">
       <summary>Text is read from bottom to top and lines flow from left to right.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.TopToBottomThenRightToLeft">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenRightToLeft">
       <summary>Text is read from top to bottom and lines flow from right to left.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextDirection.BottomToTopThenRightToLeft">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenRightToLeft">
       <summary>Text is read from bottom to top and lines flow from right to left.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasLineSpacingMethod">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMethod">
       <summary>Specifies how text line spacing is applied.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasLineSpacingMethod.Default">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMethod.Default">
       <summary>Line spacing depends solely on the content, adjusting to accommodate the size of fonts and inline objects.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasLineSpacingMethod.Uniform">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMethod.Uniform">
       <summary>Lines are explicitly set to uniform spacing, regardless of the size of fonts and inline objects.
                This can be useful to avoid the uneven appearance that can occur from font fallback.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment">
       <summary>Specifies the horizontal alignment of paragraph text.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Left">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment.Left">
       <summary>The left edge of the text is aligned to the left edge of the layout box.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Right">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment.Right">
       <summary>The right edge of the text is aligned to the right edge of the layout box.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Center">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment.Center">
       <summary>The center of the text is aligned to the center of the layout box.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHorizontalAlignment.Justified">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment.Justified">
       <summary>The left edge of the text is aligned to the left edge of the layout box and broken lines are aligned to the right edge.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasVerticalAlignment">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasVerticalAlignment">
       <summary>Specifies the vertical alignment of paragraph text.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasVerticalAlignment.Top">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasVerticalAlignment.Top">
       <summary>The top of the text is aligned to the top edge of the layout box.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasVerticalAlignment.Bottom">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasVerticalAlignment.Bottom">
       <summary>The bottom of the text is aligned to the bottom edge of the layout box.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasVerticalAlignment.Center">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasVerticalAlignment.Center">
       <summary>The center of the text is aligned to the center of the layout box.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasTextTrimmingGranularity">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextTrimmingGranularity">
       <summary>Specifies the granularity used to trim text overflowing the layout box.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextTrimmingGranularity.None">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextTrimmingGranularity.None">
       <summary>No trimming occurs. Text flows beyond the layout width.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextTrimmingGranularity.Character">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextTrimmingGranularity.Character">
       <summary>Trimming occurs at a character cluster boundary.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasTextTrimmingGranularity.Word">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextTrimmingGranularity.Word">
       <summary>Trimming occurs at a word boundary.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasWordWrapping">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasWordWrapping">
       <summary>Specifies word wrapping behavior.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasWordWrapping.Wrap">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasWordWrapping.Wrap">
       <summary>Words are broken across lines to avoid text overflowing the layout box.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasWordWrapping.NoWrap">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasWordWrapping.NoWrap">
       <summary>Words are kept within the same line even when it overflows the layout box.
                This option is often used with scrolling to reveal overflow text.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasWordWrapping.EmergencyBreak">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasWordWrapping.EmergencyBreak">
       <summary>Words are broken across lines to avoid text overflowing the layout box.
                Emergency wrapping occurs if the word is larger than the maximum width.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasWordWrapping.WholeWord">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasWordWrapping.WholeWord">
       <summary>When emergency wrapping, only wrap whole words, never breaking words
                when the layout width is too small for even a single word.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasWordWrapping.Character">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasWordWrapping.Character">
       <summary>Wrap between any valid character clusters.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasDrawTextOptions">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasDrawTextOptions">
       <summary>Specifies text drawing options.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.Default">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasDrawTextOptions.Default">
       <summary>Text is vertically snapped to pixel boundaries and is not clipped to the layout rectangle.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.NoPixelSnap">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasDrawTextOptions.NoPixelSnap">
       <summary>Text is not vertically snapped to pixel boundaries. This setting is recommended for text that is being animated.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.Clip">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasDrawTextOptions.Clip">
       <summary>Text is clipped to the layout rectangle.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasDrawTextOptions.EnableColorFont">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasDrawTextOptions.EnableColorFont">
       <summary>Text is rendered using color versions of glyphs, if defined by the font.</summary>
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasTextFormat">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextFormat">
       <summary>Describes font and layout options for drawing text.</summary>
 
       <example>
@@ -176,67 +176,67 @@ under the License.
         </code>
       </example>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextFormat.#ctor">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.#ctor">
       <summary>Initializes a new instance of the CanvasTextFormat class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasTextFormat.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.Dispose">
       <summary>Releases all resources used by the CanvasTextFormat.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.WordWrapping">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.WordWrapping">
       <summary>Specifies word wrapping behavior.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.VerticalAlignment">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.VerticalAlignment">
       <summary>Specifies the vertical paragraph alignment.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.TrimmingGranularity">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.TrimmingGranularity">
       <summary>Specifies the granularity used to trim text overflowing the layout box.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.TrimmingDelimiterCount">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.TrimmingDelimiterCount">
       <summary>A value that indicates how many occurrences of the delimiter to step back.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.TrimmingDelimiter">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.TrimmingDelimiter">
       <summary>
         A character code used as the delimiter that signals the beginning of the portion of text to be preserved.
         Most useful for path ellipsis, where the delimiter would be a slash.
        </summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.Direction">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.Direction">
       <summary>Specifies the direction in which the text is read.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.HorizontalAlignment">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.HorizontalAlignment">
       <summary>Specifies the horizontal paragraph alignment.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.Options">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.Options">
       <summary>Specifies text drawing options.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LocaleName">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LocaleName">
       <summary>Specifies the locale name.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LineSpacingMethod">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingMethod">
       <summary>Specifies how line spacing is applied.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LineSpacingBaseline">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingBaseline">
       <summary>Specifies the distance from top of line to baseline. A reasonable ratio to lineSpacing is 80 percent.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.LineSpacing">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing">
       <summary>Specifies the line height, or distance from one baseline to another.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.IncrementalTabStop">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.IncrementalTabStop">
       <summary>Specifies the incremental tab stop position.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontWeight">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.FontWeight">
       <summary>Specifies the density of a typeface, in terms of the lightness or heaviness of the strokes.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontStyle">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.FontStyle">
       <summary>Specifies the style of a font face (for example, normal or italic).</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontStretch">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.FontStretch">
       <summary>Specifies the degree to which the font is stretched, compared to the normal aspect ratio of that font.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontSize">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.FontSize">
       <summary>Specifies the font size.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasTextFormat.FontFamily">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.FontFamily">
       <summary>Specifies the font family name (Arial, Times New Roman, etc.)</summary>
       <remarks>
         <p>

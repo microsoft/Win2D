@@ -12,12 +12,12 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI
 {
     class CanvasCreateResourcesEventArgs : public RuntimeClass<ICanvasCreateResourcesEventArgs>,
                                            private LifespanTracker<CanvasCreateResourcesEventArgs>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCreateResourcesEventArgs, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesEventArgs, BaseTrust);
 
         CanvasCreateResourcesReason m_reason;
         std::function<void(IAsyncAction*)> m_trackAsyncActionCallback;
@@ -28,4 +28,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP get_Reason(CanvasCreateResourcesReason* value) override;
         IFACEMETHODIMP TrackAsyncAction(IAsyncAction* action) override;
     };
-} } } }
+
+} } } } }

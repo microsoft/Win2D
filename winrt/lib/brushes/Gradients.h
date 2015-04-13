@@ -10,7 +10,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Brushes
 {
     using namespace ABI::Windows::UI;
 
@@ -33,4 +33,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     uint8_t DesaturateChannel(uint8_t channel, float amount);
 
-} } } }
+} } } } }

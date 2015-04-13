@@ -37,8 +37,8 @@ under the License.
           Composition swap chains are constructed via <see
           cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor"/> and are
           suitable for use in XAML apps.  These swap chains can be displayed
-          using <see cref="T:Microsoft.Graphics.Canvas.CanvasSwapChainPanel"/>.
-          <see cref="T:Microsoft.Graphics.Canvas.CanvasAnimatedControl"/> uses a
+          using <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel"/>.
+          <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl"/> uses a
           composition swap chain internally.
           <code>
             var swapChain = new CanvasSwapChain(device, width, height, dpi);

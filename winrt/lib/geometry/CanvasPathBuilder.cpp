@@ -11,377 +11,377 @@
 // under the License.
 
 #include "pch.h"
+
 #include "CanvasPathBuilder.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
+using namespace ABI::Microsoft::Graphics::Canvas;
+
+IFACEMETHODIMP CanvasPathBuilderFactory::Create(
+    ICanvasResourceCreator* resourceAllocator,
+    ICanvasPathBuilder** canvasPathBuilder)
 {
-    IFACEMETHODIMP CanvasPathBuilderFactory::Create(
-        ICanvasResourceCreator* resourceAllocator,
-        ICanvasPathBuilder** canvasPathBuilder)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resourceAllocator);
-                CheckAndClearOutPointer(canvasPathBuilder);
-
-                ComPtr<ICanvasDevice> canvasDevice;
-                ThrowIfFailed(resourceAllocator->get_Device(&canvasDevice));
-
-                auto newCanvasPathBuilder = Make<CanvasPathBuilder>(canvasDevice.Get());
-                CheckMakeResult(newCanvasPathBuilder);
-
-                ThrowIfFailed(newCanvasPathBuilder.CopyTo(canvasPathBuilder));
-            });
-    }
-
-    CanvasPathBuilder::CanvasPathBuilder(
-        ICanvasDevice* canvasDevice)
-        : m_canvasDevice(canvasDevice)
-        , m_isInFigure(false)
-        , m_beginFigureOccurred(false)
-    {
-        auto deviceInternal = As<ICanvasDeviceInternal>(canvasDevice);
-
-        auto d2dPathGeometry = deviceInternal->CreatePathGeometry();
-
-        ComPtr<ID2D1GeometrySink> d2dGeometrySink;
-        ThrowIfFailed(d2dPathGeometry->Open(&d2dGeometrySink));
-
-        m_d2dGeometrySink = d2dGeometrySink;
-
-        m_d2dPathGeometry = d2dPathGeometry;
-
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::Close()
-    {
-        if (m_d2dGeometrySink)
+    return ExceptionBoundary(
+        [&]
         {
-            auto d2dGeometrySink = m_d2dGeometrySink.Close();
+            CheckInPointer(resourceAllocator);
+            CheckAndClearOutPointer(canvasPathBuilder);
 
-            //
-            // The word 'Close' is overloaded here.
-            // ID2D1GeometrySink::Close is required to make the sink usable by the 
-            // path geometry. This is different from simply closing the smart pointer. 
-            //
-            d2dGeometrySink->Close();
+            ComPtr<ICanvasDevice> canvasDevice;
+            ThrowIfFailed(resourceAllocator->get_Device(&canvasDevice));
 
-            m_d2dPathGeometry.Close();
+            auto newCanvasPathBuilder = Make<CanvasPathBuilder>(canvasDevice.Get());
+            CheckMakeResult(newCanvasPathBuilder);
 
-            m_canvasDevice.Close();
-        }
+            ThrowIfFailed(newCanvasPathBuilder.CopyTo(canvasPathBuilder));
+        });
+}
 
-        return S_OK;
+CanvasPathBuilder::CanvasPathBuilder(
+    ICanvasDevice* canvasDevice)
+    : m_canvasDevice(canvasDevice)
+    , m_isInFigure(false)
+    , m_beginFigureOccurred(false)
+{
+    auto deviceInternal = As<ICanvasDeviceInternal>(canvasDevice);
+
+    auto d2dPathGeometry = deviceInternal->CreatePathGeometry();
+
+    ComPtr<ID2D1GeometrySink> d2dGeometrySink;
+    ThrowIfFailed(d2dPathGeometry->Open(&d2dGeometrySink));
+
+    m_d2dGeometrySink = d2dGeometrySink;
+
+    m_d2dPathGeometry = d2dPathGeometry;
+
+}
+
+IFACEMETHODIMP CanvasPathBuilder::Close()
+{
+    if (m_d2dGeometrySink)
+    {
+        auto d2dGeometrySink = m_d2dGeometrySink.Close();
+
+        //
+        // The word 'Close' is overloaded here.
+        // ID2D1GeometrySink::Close is required to make the sink usable by the 
+        // path geometry. This is different from simply closing the smart pointer. 
+        //
+        d2dGeometrySink->Close();
+
+        m_d2dPathGeometry.Close();
+
+        m_canvasDevice.Close();
     }
 
-    IFACEMETHODIMP CanvasPathBuilder::BeginFigureWithFigureFill(
-        Vector2 startPoint,
-        CanvasFigureFill figureFill)
-    {
-        return ExceptionBoundary(
-            [&]
+    return S_OK;
+}
+
+IFACEMETHODIMP CanvasPathBuilder::BeginFigureWithFigureFill(
+    Vector2 startPoint,
+    CanvasFigureFill figureFill)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            if (m_isInFigure)
             {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+                ThrowHR(E_INVALIDARG, HStringReference(Strings::TwoBeginFigures).Get());
+            }
 
-                if (m_isInFigure)
-                {
-                    ThrowHR(E_INVALIDARG, HStringReference(Strings::TwoBeginFigures).Get());
-                }
+            d2dGeometrySink->BeginFigure(ToD2DPoint(startPoint), static_cast<D2D1_FIGURE_BEGIN>(figureFill));
 
-                d2dGeometrySink->BeginFigure(ToD2DPoint(startPoint), static_cast<D2D1_FIGURE_BEGIN>(figureFill));
+            m_isInFigure = true;
 
-                m_isInFigure = true;
+            m_beginFigureOccurred = true;
+        });
+}
 
-                m_beginFigureOccurred = true;
-            });
-    }
+IFACEMETHODIMP CanvasPathBuilder::BeginFigure(
+    Vector2 startPoint)
+{
+    return BeginFigureWithFigureFill(startPoint, CanvasFigureFill::Default);
+}
 
-    IFACEMETHODIMP CanvasPathBuilder::BeginFigure(
-        Vector2 startPoint)
-    {
-        return BeginFigureWithFigureFill(startPoint, CanvasFigureFill::Default);
-    }
+IFACEMETHODIMP CanvasPathBuilder::BeginFigureAtCoordsWithFigureFill(
+    float startX,
+    float startY,
+    CanvasFigureFill figureFill)
+{
+    return BeginFigureWithFigureFill(Vector2{ startX, startY }, figureFill);
+}
 
-    IFACEMETHODIMP CanvasPathBuilder::BeginFigureAtCoordsWithFigureFill(
-        float startX,
-        float startY,
-        CanvasFigureFill figureFill)
-    {
-        return BeginFigureWithFigureFill(Vector2{ startX, startY }, figureFill);
-    }
+IFACEMETHODIMP CanvasPathBuilder::BeginFigureAtCoords(
+    float startX,
+    float startY)
+{
+    return BeginFigureWithFigureFill(Vector2{ startX, startY }, CanvasFigureFill::Default);
+}
 
-    IFACEMETHODIMP CanvasPathBuilder::BeginFigureAtCoords(
-        float startX,
-        float startY)
-    {
-        return BeginFigureWithFigureFill(Vector2{ startX, startY }, CanvasFigureFill::Default);
-    }
+IFACEMETHODIMP CanvasPathBuilder::AddArcToPoint(
+    Vector2 endPoint,
+    float xRadius,
+    float yRadius,
+    float rotationAngle,
+    CanvasSweepDirection sweepDirection,
+    CanvasArcSize arcSize)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
 
-    IFACEMETHODIMP CanvasPathBuilder::AddArcToPoint(
-        Vector2 endPoint,
-        float xRadius,
-        float yRadius,
-        float rotationAngle,
-        CanvasSweepDirection sweepDirection,
-        CanvasArcSize arcSize)
-    {
-        return ExceptionBoundary(
-            [&]
+            ValidateIsInFigure();
+
+            d2dGeometrySink->AddArc(
+                D2D1::ArcSegment(
+                    ToD2DPoint(endPoint), 
+                    D2D1::SizeF(xRadius, yRadius), 
+                    ::DirectX::XMConvertToDegrees(rotationAngle),
+                    static_cast<D2D1_SWEEP_DIRECTION>(sweepDirection),
+                    static_cast<D2D1_ARC_SIZE>(arcSize)));
+        });
+}
+
+IFACEMETHODIMP CanvasPathBuilder::AddArcAroundEllipse(
+    Vector2 centerPoint,
+    float radiusX,
+    float radiusY,
+    float startAngle,
+    float sweepAngle)
+{
+    using namespace ::DirectX;
+
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            ValidateIsInFigure();
+
+            // If the arc sweep covers a full 360, its start and end points will be the same. That
+            // does not provide enough info to fully specify an arc to D2D (there are an infinite
+            // number of possible ellipses passing through a single point!) so we must number of split
+            // up such requests into a pair of 180 degree arcs. Sweeps greater than 360 are clamped.
+            bool isFullCircle = fabs(sweepAngle) >= XM_2PI - FLT_EPSILON;
+
+            if (isFullCircle)
             {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+                sweepAngle = (sweepAngle < 0) ? -XM_PI : XM_PI;
+            }
 
-                ValidateIsInFigure();
-
-                d2dGeometrySink->AddArc(
-                    D2D1::ArcSegment(
-                        ToD2DPoint(endPoint), 
-                        D2D1::SizeF(xRadius, yRadius), 
-                        ::DirectX::XMConvertToDegrees(rotationAngle),
-                        static_cast<D2D1_SWEEP_DIRECTION>(sweepDirection),
-                        static_cast<D2D1_ARC_SIZE>(arcSize)));
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::AddArcAroundEllipse(
-        Vector2 centerPoint,
-        float radiusX,
-        float radiusY,
-        float startAngle,
-        float sweepAngle)
-    {
-        using namespace ::DirectX;
-
-        return ExceptionBoundary(
-            [&]
+            // Compute the arc start and end positions.
+            D2D1_POINT_2F startPoint
             {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+                centerPoint.X + cosf(startAngle) * radiusX,
+                centerPoint.Y + sinf(startAngle) * radiusY,
+            };
 
-                ValidateIsInFigure();
+            D2D1_POINT_2F endPoint
+            {
+                centerPoint.X + cosf(startAngle + sweepAngle) * radiusX,
+                centerPoint.Y + sinf(startAngle + sweepAngle) * radiusY,
+            };
 
-                // If the arc sweep covers a full 360, its start and end points will be the same. That
-                // does not provide enough info to fully specify an arc to D2D (there are an infinite
-                // number of possible ellipses passing through a single point!) so we must number of split
-                // up such requests into a pair of 180 degree arcs. Sweeps greater than 360 are clamped.
-                bool isFullCircle = fabs(sweepAngle) >= XM_2PI - FLT_EPSILON;
+            // Convert the arc description to D2D format.
+            D2D1_ARC_SEGMENT arc
+            {
+                endPoint,
+                D2D1_SIZE_F{ radiusX, radiusY },
+                0,
+                (sweepAngle >= 0) ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE,
+                (fabs(sweepAngle) > XM_PI) ? D2D1_ARC_SIZE_LARGE : D2D1_ARC_SIZE_SMALL,
+            };
 
-                if (isFullCircle)
-                {
-                    sweepAngle = (sweepAngle < 0) ? -XM_PI : XM_PI;
-                }
+            // Insert a line to move the current path location to the arc start point.
+            d2dGeometrySink->AddLine(startPoint);
 
-                // Compute the arc start and end positions.
-                D2D1_POINT_2F startPoint
-                {
-                    centerPoint.X + cosf(startAngle) * radiusX,
-                    centerPoint.Y + sinf(startAngle) * radiusY,
-                };
+            // Add the arc.
+            d2dGeometrySink->AddArc(arc);
 
-                D2D1_POINT_2F endPoint
-                {
-                    centerPoint.X + cosf(startAngle + sweepAngle) * radiusX,
-                    centerPoint.Y + sinf(startAngle + sweepAngle) * radiusY,
-                };
-
-                // Convert the arc description to D2D format.
-                D2D1_ARC_SEGMENT arc
-                {
-                    endPoint,
-                    D2D1_SIZE_F{ radiusX, radiusY },
-                    0,
-                    (sweepAngle >= 0) ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE,
-                    (fabs(sweepAngle) > XM_PI) ? D2D1_ARC_SIZE_LARGE : D2D1_ARC_SIZE_SMALL,
-                };
-
-                // Insert a line to move the current path location to the arc start point.
-                d2dGeometrySink->AddLine(startPoint);
-
-                // Add the arc.
+            // If necessary, add a second arc to complete a full circle.
+            if (isFullCircle)
+            {
+                arc.point = startPoint;
                 d2dGeometrySink->AddArc(arc);
+            }
+        });
+}
 
-                // If necessary, add a second arc to complete a full circle.
-                if (isFullCircle)
-                {
-                    arc.point = startPoint;
-                    d2dGeometrySink->AddArc(arc);
-                }
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::AddCubicBezier(
-        Vector2 controlPoint1,
-        Vector2 controlPoint2,
-        Vector2 endPoint)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-                ValidateIsInFigure();
-
-                d2dGeometrySink->AddBezier(D2D1::BezierSegment(ToD2DPoint(controlPoint1), ToD2DPoint(controlPoint2), ToD2DPoint(endPoint)));
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::AddLine(
-        Vector2 endPoint)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-                ValidateIsInFigure();
-
-                d2dGeometrySink->AddLine(ToD2DPoint(endPoint));
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::AddLineWithCoords(
-        float endPointX,
-        float endPointY)
-    {
-        return AddLine(Vector2{ endPointX, endPointY });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::AddQuadraticBezier(
-        Vector2 controlPoint,
-        Vector2 endPoint)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-                ValidateIsInFigure();
-
-                d2dGeometrySink->AddQuadraticBezier(D2D1::QuadraticBezierSegment(ToD2DPoint(controlPoint), ToD2DPoint(endPoint)));
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::AddGeometry(
-        ICanvasGeometry* geometry)
-    {        
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(geometry);
-
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-                auto otherD2DGeometry = GetWrappedResource<ID2D1Geometry>(geometry);
-
-                if (m_isInFigure)
-                {
-                    ThrowHR(E_INVALIDARG, HStringReference(Strings::PathBuilderAddGeometryMidFigure).Get());
-                }
-
-                auto otherD2DPathGeometry = MaybeAs<ID2D1PathGeometry>(otherD2DGeometry);
-
-                if (otherD2DPathGeometry)
-                {
-                    ThrowIfFailed(otherD2DPathGeometry->Stream(d2dGeometrySink.Get()));
-                }
-                else
-                {
-                    ThrowIfFailed(otherD2DGeometry->Simplify(
-                        D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES,
-                        nullptr,
-                        d2dGeometrySink.Get()));
-                }
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::SetSegmentOptions(
-        CanvasFigureSegmentOptions figureSegmentOptions)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-                d2dGeometrySink->SetSegmentFlags(static_cast<D2D1_PATH_SEGMENT>(figureSegmentOptions));
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::SetFilledRegionDetermination(
-        CanvasFilledRegionDetermination filledRegionDetermination)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-                if (m_beginFigureOccurred)
-                {
-                    ThrowHR(E_INVALIDARG, HStringReference(Strings::SetFilledRegionDeterminationAfterBeginFigure).Get());
-                }
-
-                d2dGeometrySink->SetFillMode(static_cast<D2D1_FILL_MODE>(filledRegionDetermination));
-            });
-    }
-
-    IFACEMETHODIMP CanvasPathBuilder::EndFigure(
-        CanvasFigureLoop figureLoop)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-                if (!m_isInFigure)
-                {
-                    ThrowHR(E_INVALIDARG, HStringReference(Strings::EndFigureWithoutBeginFigure).Get());
-                }
-
-                d2dGeometrySink->EndFigure(static_cast<D2D1_FIGURE_END>(figureLoop));
-
-                m_isInFigure = false;
-            });
-    }
-
-    ComPtr<ICanvasDevice> CanvasPathBuilder::GetDevice()
-    {
-        auto& canvasDevice = m_canvasDevice.EnsureNotClosed();
-
-        return canvasDevice;
-    }
-
-    ComPtr<ID2D1GeometrySink> CanvasPathBuilder::GetGeometrySink()
-    {
-        auto& geometrySink = m_d2dGeometrySink.EnsureNotClosed();
-
-        return geometrySink;
-    }
-
-    ComPtr<ID2D1PathGeometry1> CanvasPathBuilder::CloseAndReturnPath()
-    {
-        //
-        // The call to Close() below will actually close out m_d2dPathGeometry,
-        // so it is necessary to transfer ownership of it here.
-        //
-        ComPtr<ID2D1PathGeometry1> returnedPathGeometry = m_d2dPathGeometry.EnsureNotClosed();
-
-        if (m_isInFigure)
+IFACEMETHODIMP CanvasPathBuilder::AddCubicBezier(
+    Vector2 controlPoint1,
+    Vector2 controlPoint2,
+    Vector2 endPoint)
+{
+    return ExceptionBoundary(
+        [&]
         {
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::PathBuilderClosedMidFigure).Get());
-        }
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
 
-        ThrowIfFailed(Close());
+            ValidateIsInFigure();
 
-        return returnedPathGeometry;
-    }
+            d2dGeometrySink->AddBezier(D2D1::BezierSegment(ToD2DPoint(controlPoint1), ToD2DPoint(controlPoint2), ToD2DPoint(endPoint)));
+        });
+}
 
-    void CanvasPathBuilder::ValidateIsInFigure()
-    {
-        if (!m_isInFigure)
+IFACEMETHODIMP CanvasPathBuilder::AddLine(
+    Vector2 endPoint)
+{
+    return ExceptionBoundary(
+        [&]
         {
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::CanOnlyAddPathDataWhileInFigure).Get());
-        }
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            ValidateIsInFigure();
+
+            d2dGeometrySink->AddLine(ToD2DPoint(endPoint));
+        });
+}
+
+IFACEMETHODIMP CanvasPathBuilder::AddLineWithCoords(
+    float endPointX,
+    float endPointY)
+{
+    return AddLine(Vector2{ endPointX, endPointY });
+}
+
+IFACEMETHODIMP CanvasPathBuilder::AddQuadraticBezier(
+    Vector2 controlPoint,
+    Vector2 endPoint)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            ValidateIsInFigure();
+
+            d2dGeometrySink->AddQuadraticBezier(D2D1::QuadraticBezierSegment(ToD2DPoint(controlPoint), ToD2DPoint(endPoint)));
+        });
+}
+
+IFACEMETHODIMP CanvasPathBuilder::AddGeometry(
+    ICanvasGeometry* geometry)
+{        
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(geometry);
+
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            auto otherD2DGeometry = GetWrappedResource<ID2D1Geometry>(geometry);
+
+            if (m_isInFigure)
+            {
+                ThrowHR(E_INVALIDARG, HStringReference(Strings::PathBuilderAddGeometryMidFigure).Get());
+            }
+
+            auto otherD2DPathGeometry = MaybeAs<ID2D1PathGeometry>(otherD2DGeometry);
+
+            if (otherD2DPathGeometry)
+            {
+                ThrowIfFailed(otherD2DPathGeometry->Stream(d2dGeometrySink.Get()));
+            }
+            else
+            {
+                ThrowIfFailed(otherD2DGeometry->Simplify(
+                    D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES,
+                    nullptr,
+                    d2dGeometrySink.Get()));
+            }
+        });
+}
+
+IFACEMETHODIMP CanvasPathBuilder::SetSegmentOptions(
+    CanvasFigureSegmentOptions figureSegmentOptions)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            d2dGeometrySink->SetSegmentFlags(static_cast<D2D1_PATH_SEGMENT>(figureSegmentOptions));
+        });
+}
+
+IFACEMETHODIMP CanvasPathBuilder::SetFilledRegionDetermination(
+    CanvasFilledRegionDetermination filledRegionDetermination)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            if (m_beginFigureOccurred)
+            {
+                ThrowHR(E_INVALIDARG, HStringReference(Strings::SetFilledRegionDeterminationAfterBeginFigure).Get());
+            }
+
+            d2dGeometrySink->SetFillMode(static_cast<D2D1_FILL_MODE>(filledRegionDetermination));
+        });
+}
+
+IFACEMETHODIMP CanvasPathBuilder::EndFigure(
+    CanvasFigureLoop figureLoop)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& d2dGeometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+            if (!m_isInFigure)
+            {
+                ThrowHR(E_INVALIDARG, HStringReference(Strings::EndFigureWithoutBeginFigure).Get());
+            }
+
+            d2dGeometrySink->EndFigure(static_cast<D2D1_FIGURE_END>(figureLoop));
+
+            m_isInFigure = false;
+        });
+}
+
+ComPtr<ICanvasDevice> CanvasPathBuilder::GetDevice()
+{
+    auto& canvasDevice = m_canvasDevice.EnsureNotClosed();
+
+    return canvasDevice;
+}
+
+ComPtr<ID2D1GeometrySink> CanvasPathBuilder::GetGeometrySink()
+{
+    auto& geometrySink = m_d2dGeometrySink.EnsureNotClosed();
+
+    return geometrySink;
+}
+
+ComPtr<ID2D1PathGeometry1> CanvasPathBuilder::CloseAndReturnPath()
+{
+    //
+    // The call to Close() below will actually close out m_d2dPathGeometry,
+    // so it is necessary to transfer ownership of it here.
+    //
+    ComPtr<ID2D1PathGeometry1> returnedPathGeometry = m_d2dPathGeometry.EnsureNotClosed();
+
+    if (m_isInFigure)
+    {
+        ThrowHR(E_INVALIDARG, HStringReference(Strings::PathBuilderClosedMidFigure).Get());
     }
 
+    ThrowIfFailed(Close());
 
-    ActivatableClassWithFactory(CanvasPathBuilder, CanvasPathBuilderFactory);
+    return returnedPathGeometry;
+}
 
-}}}}
+void CanvasPathBuilder::ValidateIsInFigure()
+{
+    if (!m_isInFigure)
+    {
+        ThrowHR(E_INVALIDARG, HStringReference(Strings::CanOnlyAddPathDataWhileInFigure).Get());
+    }
+}
+
+
+ActivatableClassWithFactory(CanvasPathBuilder, CanvasPathBuilderFactory);

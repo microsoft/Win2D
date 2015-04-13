@@ -11,7 +11,9 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.Text;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation.Collections;

@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     class ICanvasTextFormatAdapter;
 
@@ -41,4 +41,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         WinString GetAbsolutePathFromUri(WinString const& uriString);
 
     };
-}}}}
+}}}}}

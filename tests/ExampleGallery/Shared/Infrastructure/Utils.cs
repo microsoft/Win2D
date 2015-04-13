@@ -10,11 +10,11 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Graphics.Canvas;
-using Windows.UI.Xaml;
+using Microsoft.Graphics.Canvas.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Windows.Foundation;
 
@@ -91,6 +91,18 @@ namespace ExampleGallery
         public static float DegreesToRadians(float angle)
         {
             return angle * (float)Math.PI / 180;
+        }
+
+        static readonly Random random = new Random();
+
+        public static Random Random
+        {
+            get { return random; }
+        }
+
+        public static float RandomBetween(float min, float max)
+        {
+            return min + (float)random.NextDouble() * (max - min);
         }
     }
 }

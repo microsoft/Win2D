@@ -19,7 +19,7 @@ under the License.
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.CanvasCachedGeometry">
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry">
       <summary>Cached geometries are a means of improving drawing performance of complicated geometry.</summary>
       <remarks>
       	<p>
@@ -79,30 +79,30 @@ under the License.
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasCachedGeometry.Dispose">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.Dispose">
       <summary>Releases all resources used by the CanvasCachedGeometry.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill(Microsoft.Graphics.Canvas.CanvasGeometry)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
       <summary>Creates a new, cached version of the fill of a geometry.</summary>
       <remarks>The cached version is created using the default flattening tolerance.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateFill(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateFill(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single)">
       <summary>Creates a new, cached version of the fill of a geometry.</summary>
       <remarks>The cached version is created using the specified flattening tolerance.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single)">
       <summary>Creates a new, cached version of the stroke of a geometry with the specified stroke width.</summary>
       <remarks>The cached version is created using the default flattening tolerance.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Creates a new, cached version of the stroke of a geometry with the specified stroke width and stroke style.</summary>
       <remarks>The cached version is created using the default flattening tolerance.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasCachedGeometry.CreateStroke(Microsoft.Graphics.Canvas.CanvasGeometry,System.Single,Microsoft.Graphics.Canvas.CanvasStrokeStyle,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.CreateStroke(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,System.Single)">
       <summary>Creates a new, cached version of the stroke of a geometry with the specified stroke width and stroke style.</summary>
       <remarks>The cached version is created using the specified flattening tolerance.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasCachedGeometry.Device">
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.Device">
       <summary>Gets the device associated with this CanvasCachedGeometry.</summary>
     </member>
     

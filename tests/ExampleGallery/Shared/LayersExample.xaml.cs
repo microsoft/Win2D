@@ -11,12 +11,16 @@
 // under the License.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
 
 namespace ExampleGallery

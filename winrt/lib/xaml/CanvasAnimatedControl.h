@@ -18,7 +18,7 @@
 #include "StepTimer.h"
 #include "AnimatedControlAsyncAction.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::UI::Xaml::Controls;
@@ -29,7 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasAnimatedUpdateEventArgs : public RuntimeClass<ICanvasAnimatedUpdateEventArgs>,
                                           private LifespanTracker<CanvasAnimatedUpdateEventArgs>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedUpdateEventArgs, BaseTrust);
         
         CanvasTimingInformation m_timingInformation;
 
@@ -42,7 +42,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasAnimatedUpdateEventArgsFactory : public ActivationFactory<ICanvasAnimatedUpdateEventArgsFactory>,
                                                  private LifespanTracker<CanvasAnimatedUpdateEventArgsFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedUpdateEventArgs, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedUpdateEventArgs, BaseTrust);
 
     public:
         IFACEMETHOD(Create)(
@@ -53,7 +53,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasAnimatedDrawEventArgsFactory : public ActivationFactory<ICanvasAnimatedDrawEventArgsFactory>,
                                                private LifespanTracker<CanvasAnimatedDrawEventArgsFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedDrawEventArgs, BaseTrust);
 
     public:
         IFACEMETHOD(Create)(
@@ -65,7 +65,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasAnimatedDrawEventArgs : public RuntimeClass<ICanvasAnimatedDrawEventArgs>,
                                         private LifespanTracker<CanvasAnimatedDrawEventArgs>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedDrawEventArgs, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedDrawEventArgs, BaseTrust);
 
         ClosablePtr<ICanvasDrawingSession> m_drawingSession;
 
@@ -142,7 +142,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComposableBase<>>,
         public BaseControl<CanvasAnimatedControlTraits>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasAnimatedControl, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl, BaseTrust);
 
         EventSource<Animated_UpdateEventHandler, InvokeModeOptions<StopOnFirstError>> m_updateEventList;
 
@@ -230,7 +230,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
-            CanvasBackground newBackgroundMode,
+            CanvasAlphaMode newAlphaMode,
             float newDpi,
             Size newSize,
             RenderTarget* renderTarget) override final;
@@ -268,4 +268,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             std::vector<ComPtr<AnimatedControlAsyncAction>> const& pendingActions);
     };
 
-}}}}
+}}}}}}

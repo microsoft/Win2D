@@ -36,7 +36,7 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.ICanvasResourceCreator">
       <summary>
         Represents any object that can create graphics resources. Implemented by
-        <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/>,
+        <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/>,
         <see cref="T:Microsoft.Graphics.Canvas.CanvasDevice"/>, and
         <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/>.
       </summary>
@@ -69,13 +69,13 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi">
       <summary>
         Represents an object that can create graphics resources, and which has a specific DPI. Implemented by
-        <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/> and
+        <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/> and
         <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/>.
       </summary>
 
       <remarks>
         Some objects (eg. <see cref="T:Microsoft.Graphics.Canvas.CanvasDevice"/>) can be used simultaneously to draw
-        at many different DPI (dots-per-inch) settings, but others (eg. <see cref="T:Microsoft.Graphics.Canvas.CanvasControl"/>)
+        at many different DPI (dots-per-inch) settings, but others (eg. <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/>)
         are fixed to a specific DPI. This interface represents things that have a specific DPI. When other resources
         are created from it they can automatically inherit this DPI, whereas when a resource that cares about DPI is
         created directly from a device, the DPI must be explicitly specified.

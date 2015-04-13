@@ -12,7 +12,7 @@
 
 #pragma once
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::UI;
     using namespace ABI::Windows::Foundation;
@@ -36,7 +36,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasImageSourceFactory : public ActivationFactory<ICanvasImageSourceFactory>,
                                      private LifespanTracker<CanvasImageSourceFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource, BaseTrust);
 
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
 
@@ -56,12 +56,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             _In_         float dpi,
             _COM_Outptr_ ICanvasImageSource** imageSource) override;
 
-        IFACEMETHOD(CreateWithDpiAndBackground)(
+        IFACEMETHOD(CreateWithDpiAndAlphaMode)(
             _In_         ICanvasResourceCreator* resourceCreator,
             _In_         float width,
             _In_         float height,
             _In_         float dpi,
-            _In_         CanvasBackground background,
+            _In_         CanvasAlphaMode alphaMode,
             _COM_Outptr_ ICanvasImageSource** imageSource) override;
     };
 
@@ -69,14 +69,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasImageSource : public RuntimeClass<ICanvasImageSource, ComposableBase<>>,
                               private LifespanTracker<CanvasImageSource>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImageSource, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource, BaseTrust);
 
         ComPtr<ICanvasDevice> m_device;
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
         const float m_width;
         const float m_height;
         const float m_dpi;
-        const CanvasBackground m_background;
+        const CanvasAlphaMode m_alphaMode;
 
     public:
         CanvasImageSource(
@@ -84,7 +84,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             _In_ float width,
             _In_ float height,
             _In_ float dpi,
-            _In_ CanvasBackground background,
+            _In_ CanvasAlphaMode alphaMode,
             _In_ ISurfaceImageSourceFactory* surfaceImageSourceFactory,
             _In_ std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory);
 
@@ -120,8 +120,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_Size)(
             _Out_ ABI::Windows::Foundation::Size* size) override;
 
-        IFACEMETHOD(get_Background)(
-            _Out_ CanvasBackground* value) override;
+        IFACEMETHOD(get_AlphaMode)(
+            _Out_ CanvasAlphaMode* value) override;
 
     private:
         void CreateBaseClass(
@@ -135,8 +135,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     // Drawing session factory
     //
-
-    class CanvasDrawingSessionManager;
 
     class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory,
                                                    private LifespanTracker<CanvasImageSourceDrawingSessionFactory>
@@ -153,4 +151,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             RECT const& updateRectangle,
             float dpi) const override;
     };
-}}}}
+}}}}}}

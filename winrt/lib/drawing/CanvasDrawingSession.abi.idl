@@ -285,7 +285,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawLineWithBrush(
             [in] NUMERICS.Vector2 point0,
             [in] NUMERICS.Vector2 point1,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawLine")]
         HRESULT DrawLineAtCoordsWithBrush(
@@ -293,7 +293,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y0,
             [in] float x1,
             [in] float y1,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawLine")]
         HRESULT DrawLineWithColor(
@@ -315,7 +315,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawLineWithBrushAndStrokeWidth(
             [in] NUMERICS.Vector2 point0,
             [in] NUMERICS.Vector2 point1,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawLine"), default_overload]
@@ -324,7 +324,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y0,
             [in] float x1,
             [in] float y1,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawLine")]
@@ -349,9 +349,9 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawLineWithBrushAndStrokeWidthAndStrokeStyle(
             [in] NUMERICS.Vector2 point0,
             [in] NUMERICS.Vector2 point1,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawLine"), default_overload]
         HRESULT DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
@@ -359,9 +359,9 @@ namespace Microsoft.Graphics.Canvas
             [in] float y0,
             [in] float x1,
             [in] float y1,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawLine")]
         HRESULT DrawLineWithColorAndStrokeWidthAndStrokeStyle(
@@ -369,7 +369,7 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Vector2 point1,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawLine")]
         HRESULT DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
@@ -379,7 +379,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y1,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         //
         // DrawRectangle
@@ -390,7 +390,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawRectangle"), default_overload]
         HRESULT DrawRectangleWithBrush(
             [in] Windows.Foundation.Rect rect,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawRectangle"), default_overload]
         HRESULT DrawRectangleAtCoordsWithBrush(
@@ -398,7 +398,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float w,
             [in] float h,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawRectangle")]
         HRESULT DrawRectangleWithColor(
@@ -418,7 +418,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawRectangle"), default_overload]
         HRESULT DrawRectangleWithBrushAndStrokeWidth(
             [in] Windows.Foundation.Rect rect,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawRectangle"), default_overload]
@@ -427,7 +427,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float w,
             [in] float h,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawRectangle")]
@@ -450,9 +450,9 @@ namespace Microsoft.Graphics.Canvas
         [overload("DrawRectangle"), default_overload]
         HRESULT DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(
             [in] Windows.Foundation.Rect rect,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawRectangle"), default_overload]
         HRESULT DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
@@ -460,16 +460,16 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float w,
             [in] float h,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawRectangle")]
         HRESULT DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(
             [in] Windows.Foundation.Rect rect,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawRectangle")]
         HRESULT DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
@@ -479,7 +479,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float h,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         //
         // FillRectangle
@@ -488,7 +488,7 @@ namespace Microsoft.Graphics.Canvas
         [overload("FillRectangle"), default_overload]
         HRESULT FillRectangleWithBrush(
             [in] Windows.Foundation.Rect rect,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillRectangle"), default_overload]
         HRESULT FillRectangleAtCoordsWithBrush(
@@ -496,7 +496,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float w,
             [in] float h,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillRectangle")]
         HRESULT FillRectangleWithColor(
@@ -514,8 +514,8 @@ namespace Microsoft.Graphics.Canvas
         [overload("FillRectangle")]
         HRESULT FillRectangleWithBrushAndOpacityBrush(
             [in] Windows.Foundation.Rect rect,
-            [in] ICanvasBrush* brush,
-            [in] ICanvasBrush* opacityBrush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush);
 
         [overload("FillRectangle")]
         HRESULT FillRectangleAtCoordsWithBrushAndOpacityBrush(
@@ -523,8 +523,8 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float w,
             [in] float h,
-            [in] ICanvasBrush* brush,
-            [in] ICanvasBrush* opacityBrush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush);
 
         //
         // DrawRoundedRectangle
@@ -537,7 +537,7 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Rect rect,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawRoundedRectangle"), default_overload]
         HRESULT DrawRoundedRectangleAtCoordsWithBrush(
@@ -547,7 +547,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float h,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawRoundedRectangle")]
         HRESULT DrawRoundedRectangleWithColor(
@@ -573,7 +573,7 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Rect rect,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawRoundedRectangle"), default_overload]
@@ -584,7 +584,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float h,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawRoundedRectangle")]
@@ -613,9 +613,9 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Rect rect,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawRoundedRectangle"), default_overload]
         HRESULT DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
@@ -625,9 +625,9 @@ namespace Microsoft.Graphics.Canvas
             [in] float h,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawRoundedRectangle")]
         HRESULT DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(
@@ -636,7 +636,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float radiusY,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawRoundedRectangle")]
         HRESULT DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
@@ -648,7 +648,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float radiusY,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         //
         // FillRoundedRectangle
@@ -659,7 +659,7 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Rect rect,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillRoundedRectangle"), default_overload]
         HRESULT FillRoundedRectangleAtCoordsWithBrush(
@@ -669,7 +669,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float h,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillRoundedRectangle")]
         HRESULT FillRoundedRectangleWithColor(
@@ -699,7 +699,7 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawEllipse")]
         HRESULT DrawEllipseAtCoordsWithBrush(
@@ -707,7 +707,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawEllipse")]
         HRESULT DrawEllipseWithColor(
@@ -731,7 +731,7 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawEllipse")]
@@ -740,7 +740,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawEllipse")]
@@ -767,9 +767,9 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawEllipse"), default_overload]
         HRESULT DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
@@ -777,9 +777,9 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawEllipse")]
         HRESULT DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(
@@ -788,7 +788,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float radiusY,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawEllipse")]
         HRESULT DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
@@ -798,7 +798,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float radiusY,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         //
         // FillEllipse
@@ -809,7 +809,7 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillEllipse"), default_overload]
         HRESULT FillEllipseAtCoordsWithBrush(
@@ -817,7 +817,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float radiusX,
             [in] float radiusY,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillEllipse")]
         HRESULT FillEllipseWithColor(
@@ -844,14 +844,14 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawCircleWithBrush(
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radius,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawCircle")]
         HRESULT DrawCircleAtCoordsWithBrush(
             [in] float x,
             [in] float y,
             [in] float radius,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawCircle")]
         HRESULT DrawCircleWithColor(
@@ -872,7 +872,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawCircleWithBrushAndStrokeWidth(
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radius,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawCircle")]
@@ -880,7 +880,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float x,
             [in] float y,
             [in] float radius,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawCircle")]
@@ -904,18 +904,18 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radius,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawCircle"), default_overload]
         HRESULT DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
             [in] float x,
             [in] float y,
             [in] float radius,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawCircle")]
         HRESULT DrawCircleWithColorAndStrokeWidthAndStrokeStyle(
@@ -923,7 +923,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float radius,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawCircle")]
         HRESULT DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
@@ -932,7 +932,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float radius,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         //
         // FillCircle
@@ -942,14 +942,14 @@ namespace Microsoft.Graphics.Canvas
         HRESULT FillCircleWithBrush(
             [in] NUMERICS.Vector2 centerPoint,
             [in] float radius,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillCircle"), default_overload]
         HRESULT FillCircleAtCoordsWithBrush(
             [in] float x,
             [in] float y,
             [in] float radius,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillCircle")]
         HRESULT FillCircleWithColor(
@@ -989,23 +989,23 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawTextAtPointWithBrushAndFormat(
             [in] HSTRING text,
             [in] NUMERICS.Vector2 point,
-            [in] ICanvasBrush* brush,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         [overload("DrawText"), default_overload]
         HRESULT DrawTextAtRectWithBrushAndFormat(
             [in] HSTRING text,
             [in] Windows.Foundation.Rect rectangle,
-            [in] ICanvasBrush* brush,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         [overload("DrawText"), default_overload]
         HRESULT DrawTextAtPointCoordsWithBrushAndFormat(
             [in] HSTRING text,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         [overload("DrawText"), default_overload]
         HRESULT DrawTextAtRectCoordsWithBrushAndFormat(
@@ -1014,22 +1014,22 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] float w,
             [in] float h,
-            [in] ICanvasBrush* brush,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         [overload("DrawText")]
         HRESULT DrawTextAtPointWithColorAndFormat(
             [in] HSTRING text,
             [in] NUMERICS.Vector2 point,
             [in] Windows.UI.Color color,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         [overload("DrawText")]
         HRESULT DrawTextAtRectWithColorAndFormat(
             [in] HSTRING text,
             [in] Windows.Foundation.Rect rectangle,
             [in] Windows.UI.Color color,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         [overload("DrawText")]
         HRESULT DrawTextAtPointCoordsWithColorAndFormat(
@@ -1037,7 +1037,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float x,
             [in] float y,
             [in] Windows.UI.Color color,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         [overload("DrawText")]
         HRESULT DrawTextAtRectCoordsWithColorAndFormat(
@@ -1047,7 +1047,7 @@ namespace Microsoft.Graphics.Canvas
             [in] float w,
             [in] float h,
             [in] Windows.UI.Color color,
-            [in] CanvasTextFormat* format);
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextFormat* format);
 
         //
         // DrawGeometry
@@ -1055,67 +1055,67 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryWithBrush(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryWithColor(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
             [in] Windows.UI.Color color);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtCoordsWithBrush(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtCoordsWithColor(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
             [in] Windows.UI.Color color);
 
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryAtOriginWithBrush(
-            [in] CanvasGeometry* geometry,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtOriginWithColor(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] Windows.UI.Color color);
 
         // 1 additional parameter (StrokeWidth)
 
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryWithBrushAndStrokeWidth(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryWithColorAndStrokeWidth(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
             [in] Windows.UI.Color color,
             [in] float strokeWidth);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtCoordsWithBrushAndStrokeWidth(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtCoordsWithColorAndStrokeWidth(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
             [in] Windows.UI.Color color,
@@ -1123,13 +1123,13 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtOriginWithBrushAndStrokeWidth(
-            [in] CanvasGeometry* geometry,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtOriginWithColorAndStrokeWidth(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] Windows.UI.Color color,
             [in] float strokeWidth);
 
@@ -1137,110 +1137,110 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryWithBrushAndStrokeWidthAndStrokeStyle(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryWithColorAndStrokeWidthAndStrokeStyle(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawGeometry"), default_overload]
         HRESULT DrawGeometryAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtCoordsWithColorAndStrokeWidthAndStrokeStyle(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtOriginWithBrushAndStrokeWidthAndStrokeStyle(
-            [in] CanvasGeometry* geometry,
-            [in] ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         [overload("DrawGeometry")]
         HRESULT DrawGeometryAtOriginWithColorAndStrokeWidthAndStrokeStyle(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] Windows.UI.Color color,
             [in] float strokeWidth,
-            [in] CanvasStrokeStyle* strokeStyle);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle* strokeStyle);
 
         //
         // FillGeometry
         //
         [overload("FillGeometry"), default_overload]
         HRESULT FillGeometryWithBrush(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryWithBrushAndOpacityBrush(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
-            [in] ICanvasBrush* brush,
-            [in] ICanvasBrush* opacityBrush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryWithColor(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
             [in] Windows.UI.Color color);
 
         [overload("FillGeometry"), default_overload]
         HRESULT FillGeometryAtCoordsWithBrush(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryAtCoordsWithBrushAndOpacityBrush(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush,
-            [in] ICanvasBrush* opacityBrush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryAtCoordsWithColor(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] float x,
             [in] float y,
             [in] Windows.UI.Color color);
 
         [overload("FillGeometry"), default_overload]
         HRESULT FillGeometryAtOriginWithBrush(
-            [in] CanvasGeometry* geometry,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryAtOriginWithBrushAndOpacityBrush(
-            [in] CanvasGeometry* geometry,
-            [in] ICanvasBrush* brush,
-            [in] ICanvasBrush* opacityBrush);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush);
 
         [overload("FillGeometry")]
         HRESULT FillGeometryAtOriginWithColor(
-            [in] CanvasGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* geometry,
             [in] Windows.UI.Color color);
 
         //
@@ -1248,38 +1248,38 @@ namespace Microsoft.Graphics.Canvas
         //
         [overload("DrawCachedGeometry"), default_overload]
         HRESULT DrawCachedGeometryWithBrush(
-            [in] CanvasCachedGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawCachedGeometry")]
         HRESULT DrawCachedGeometryWithColor(
-            [in] CanvasCachedGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry* geometry,
             [in] NUMERICS.Vector2 offset,
             [in] Windows.UI.Color color);
 
         [overload("DrawCachedGeometry"), default_overload]
         HRESULT DrawCachedGeometryAtCoordsWithBrush(
-            [in] CanvasCachedGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry* geometry,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawCachedGeometry")]
         HRESULT DrawCachedGeometryAtCoordsWithColor(
-            [in] CanvasCachedGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry* geometry,
             [in] float x,
             [in] float y,
             [in] Windows.UI.Color color);
 
         [overload("DrawCachedGeometry"), default_overload]
         HRESULT DrawCachedGeometryAtOriginWithBrush(
-            [in] CanvasCachedGeometry* geometry,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawCachedGeometry")]
         HRESULT DrawCachedGeometryAtOriginWithColor(
-            [in] CanvasCachedGeometry* geometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry* geometry,
             [in] Windows.UI.Color color);
 
         //
@@ -1287,26 +1287,26 @@ namespace Microsoft.Graphics.Canvas
         //
         [overload("DrawTextLayout"), default_overload]
         HRESULT DrawTextLayoutWithBrush(
-            [in] CanvasTextLayout* textLayout,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextLayout* textLayout,
             [in] NUMERICS.Vector2 point,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawTextLayout"), default_overload]
         HRESULT DrawTextLayoutAtCoordsWithBrush(
-            [in] CanvasTextLayout* textLayout,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextLayout* textLayout,
             [in] float x,
             [in] float y,
-            [in] ICanvasBrush* brush);
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
 
         [overload("DrawTextLayout")]
         HRESULT DrawTextLayoutWithColor(
-            [in] CanvasTextLayout* textLayout,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextLayout* textLayout,
             [in] NUMERICS.Vector2 point,
             [in] Windows.UI.Color color);
 
         [overload("DrawTextLayout")]
         HRESULT DrawTextLayoutAtCoordsWithColor(
-            [in] CanvasTextLayout* textLayout,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextLayout* textLayout,
             [in] float x,
             [in] float y,
             [in] Windows.UI.Color color);
@@ -1321,8 +1321,8 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT Blend([out, retval] CanvasBlend* value);
         [propput] HRESULT Blend([in] CanvasBlend value);
 
-        [propget] HRESULT TextAntialiasing([out, retval] CanvasTextAntialiasing* value);
-        [propput] HRESULT TextAntialiasing([in] CanvasTextAntialiasing value);
+        [propget] HRESULT TextAntialiasing([out, retval] Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing* value);
+        [propput] HRESULT TextAntialiasing([in] Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing value);
 
         [propget] HRESULT Transform([out, retval] NUMERICS.Matrix3x2* value);
         [propput] HRESULT Transform([in] NUMERICS.Matrix3x2 value);
@@ -1341,7 +1341,7 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("CreateLayer"), default_overload]
         HRESULT CreateLayerWithOpacityBrush(
-            [in] ICanvasBrush* opacityBrush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush,
             [out, retval] CanvasActiveLayer** layer);
 
         [overload("CreateLayer")]
@@ -1352,42 +1352,42 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("CreateLayer")]
         HRESULT CreateLayerWithOpacityBrushAndClipRectangle(
-            [in] ICanvasBrush* opacityBrush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush,
             [in] Windows.Foundation.Rect clipRectangle,
             [out, retval] CanvasActiveLayer** layer);
 
         [overload("CreateLayer")]
         HRESULT CreateLayerWithOpacityAndClipGeometry(
             [in] float opacity,
-            [in] CanvasGeometry* clipGeometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* clipGeometry,
             [out, retval] CanvasActiveLayer** layer);
 
         [overload("CreateLayer"), default_overload]
         HRESULT CreateLayerWithOpacityBrushAndClipGeometry(
-            [in] ICanvasBrush* opacityBrush,
-            [in] CanvasGeometry* clipGeometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* clipGeometry,
             [out, retval] CanvasActiveLayer** layer);
 
         [overload("CreateLayer")]
         HRESULT CreateLayerWithOpacityAndClipGeometryAndTransform(
             [in] float opacity,
-            [in] CanvasGeometry* clipGeometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* clipGeometry,
             [in] NUMERICS.Matrix3x2 geometryTransform,
             [out, retval] CanvasActiveLayer** layer);
 
         [overload("CreateLayer"), default_overload]
         HRESULT CreateLayerWithOpacityBrushAndClipGeometryAndTransform(
-            [in] ICanvasBrush* opacityBrush,
-            [in] CanvasGeometry* clipGeometry,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* clipGeometry,
             [in] NUMERICS.Matrix3x2 geometryTransform,
             [out, retval] CanvasActiveLayer** layer);
 
         [overload("CreateLayer")]
         HRESULT CreateLayerWithAllOptions(
             [in] float opacity,
-            [in] ICanvasBrush* opacityBrush,
+            [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* opacityBrush,
             [in] Windows.Foundation.Rect clipRectangle,
-            [in] CanvasGeometry* clipGeometry,
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry* clipGeometry,
             [in] NUMERICS.Matrix3x2 geometryTransform,
             [in] CanvasLayerOptions options,
             [out, retval] CanvasActiveLayer** layer);
