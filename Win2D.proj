@@ -26,6 +26,9 @@
   <PropertyGroup>
     <Has81Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot81)' != ''">true</Has81Sdk>
     <Has10Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)' != ''">true</Has10Sdk>
+
+    <ShouldRunUAPTests>false</ShouldRunUAPTests>
+    <ShouldRunUAPTests Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion@CurrentVersion)' &gt;= '6.3'">true</ShouldRunUAPTests>
   </PropertyGroup>
 
   <!-- Disable building targets when the SDK isn't installed -->
@@ -129,16 +132,17 @@
   <ItemGroup Condition="$(BuildUAP) and $(BuildTests)">
     <UAPProject Include="winrt\test.internal\winrt.test.internal.uap.vcxproj">
       <Platforms>Win32;x64</Platforms>
-      <AutomatedTests>desktop</AutomatedTests>
+      <AutomatedTests Condition="$(ShouldRunUAPTests)">desktop</AutomatedTests>
     </UAPProject>
     <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
       <Platforms>Win32</Platforms> <!-- TODO: remove this line when x64 UAP tests are fixed (DevDiv:1138788) -->
-      <AutomatedTests>store</AutomatedTests>
+      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\UAP\winrt.test.managed.uap.csproj">
       <Platforms>Win32</Platforms> <!-- TODO: remove this line when x64 UAP tests are fixed (DevDiv:1138788) -->
-      <AutomatedTests>store</AutomatedTests>
+<!--      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>  TODO: reenable managed UAP tests
+-->
     </UAPProject>
     <UAPProject Include="tests\CsConsumer\UAP\CsConsumer.uap.csproj" />
     <UAPProject Include="tests\ExampleGallery\UAP\ExampleGallery.uap.csproj" />

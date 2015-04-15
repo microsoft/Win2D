@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>Win2D-UAP</id>
+        <id>Win2D-NoUAP</id>
         <version>0.0.0-SpecifyVersionOnCommandline</version>
-        <title>Preview of Win2D with UAP support</title>
+        <title>Win2D (without universal app platform support)</title>
         <authors>Microsoft</authors>
         <owners>win2d,microsoft</owners>
         <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.</description>
@@ -85,35 +85,17 @@
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\Phone\arm" />
       <file src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" target="bin\Phone\arm" />
 
-      <!-- UAP -->
-
-      <file src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\x86" />
-      <file src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\x86" />
-      <file src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\x86" />
-      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x86" />
-
-      <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\arm" />
-      <file src="$bin$\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\arm" />
-      <file src="bin\UAParm\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\arm" />
-      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\arm" />
-
-      <file src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" target="bin\UAP\x64" />
-      <file src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" target="bin\UAP\x64" />
-      <file src="bin\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.lib" target="bin\UAP\x64" />
-      <file src="bin\intellisense\Microsoft.Graphics.Canvas.xml" target="bin\UAP\x64" />
-
-
       <!-- Build scripts used by managed Windows Store Apps and UAP apps -->
-      <file src="build\nuget\Win2D.props" target="build\win\Win2D-UAP.props" />
-      <file src="build\nuget\Win2D-managed.targets" target="build\win\Win2D-UAP.targets" />
+      <file src="build\nuget\Win2D.props" target="build\win\Win2D-NoUAP.props" />
+      <file src="build\nuget\Win2D-managed.targets" target="build\win\Win2D-NoUAP.targets" />
 
       <!-- Build scripts used by managed Windows Phone Apps -->
-      <file src="build\nuget\Win2D.props" target="build\wpa\Win2D-UAP.props" />
-      <file src="build\nuget\Win2D-managed.targets" target="build\wpa\Win2D-UAP.targets" />
+      <file src="build\nuget\Win2D.props" target="build\wpa\Win2D-NoUAP.props" />
+      <file src="build\nuget\Win2D-managed.targets" target="build\wpa\Win2D-NoUAP.targets" />
 
       <!-- Build scripts used by native apps (Windows Store, Windows Phone and UAP) -->
-      <file src="build\nuget\Win2D-native.targets" target="build\native\Win2D-UAP.targets" />
-      <file src="build\nuget\Win2D.props" target="build\native\Win2D-UAP.props" />
+      <file src="build\nuget\Win2D-native.targets" target="build\native\Win2D-NoUAP.targets" />
+      <file src="build\nuget\Win2D.props" target="build\native\Win2D-NoUAP.props" />
 
       <!-- Header files used by native apps -->
       <file src="winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h" target="Include\Windows"/>
@@ -127,10 +109,6 @@
       <file src="winrt\published\Microsoft.Graphics.Canvas.native.h" target="Include\Phone"/>
       <file src="bin\phonex86\release\IdlHeader\Microsoft.Graphics.Canvas.h" target="Include\Phone"/>
       <file src="numerics\cpp\WindowsNumerics.*" target="Include\Phone"/>
-
-      <file src="winrt\published\Microsoft.Graphics.Canvas.Effects.interop.h" target="Include\UAP"/> <!-- TODO: remove this when it is no longer required -->
-      <file src="winrt\published\Microsoft.Graphics.Canvas.native.h" target="Include\UAP"/>
-      <file src="bin\UAPx86\release\IdlHeader\Microsoft.Graphics.Canvas.h" target="Include\UAP"/>
 
       <!-- SHA-1 hash of the git HEAD this package was built from -->
       <file src="obj\Win2d.githash.txt" />

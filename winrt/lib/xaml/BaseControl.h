@@ -52,21 +52,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Helpers for adding member-function callbacks
         //
 
-#define CB_HELPER(NAME)                                                 \
+#define CB_HELPER(NAME, DELEGATE)                                       \
         template<typename T, typename METHOD, typename... EXTRA_ARGS>   \
         RegisteredEvent NAME(T* obj, METHOD method, EXTRA_ARGS... extraArgs) \
         {                                                               \
-            return AddCallback(&IBaseControlAdapter::NAME, obj, method, extraArgs...); \
+            return AddCallback<DELEGATE>(&IBaseControlAdapter::NAME, obj, method, extraArgs...); \
         }
 
-        CB_HELPER(AddApplicationSuspendingCallback);
-        CB_HELPER(AddApplicationResumingCallback);
-        CB_HELPER(AddDpiChangedCallback);
+        CB_HELPER(AddApplicationSuspendingCallback, IEventHandler<SuspendingEventArgs*>);
+        CB_HELPER(AddApplicationResumingCallback, IEventHandler<IInspectable*>);
+        CB_HELPER(AddDpiChangedCallback, DpiChangedEventHandler);
 
 #undef CB_HELPER
 
-        template<typename CLASS, typename DELEGATE, typename T, typename METHOD, typename... EXTRA_ARGS>
-        RegisteredEvent AddCallback(RegisteredEvent(CLASS::* addMethod)(DELEGATE*, EXTRA_ARGS...), T* obj, METHOD method, EXTRA_ARGS... extraArgs)
+        template<typename DELEGATE, typename T, typename METHOD, typename... EXTRA_ARGS>
+        RegisteredEvent AddCallback(RegisteredEvent(IBaseControlAdapter::* addMethod)(DELEGATE*, EXTRA_ARGS...), T* obj, METHOD method, EXTRA_ARGS... extraArgs)
         {
             auto callback = Callback<DELEGATE>(obj, method);
             CheckMakeResult(callback);

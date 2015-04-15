@@ -76,19 +76,4 @@
     </ItemGroup>
   </Target>
 
-  <!--
-       TODO: remove this workaround once DEVDIV:1122911 is fixed
-  -->
-  <PropertyGroup>
-    <!-- The SDKExtensionDirectoryRoot that we're fixing here is conditioned on
-         SDKTargetReferenceDirectoryRoot being not-empty.  That is the only
-         reference to SDKTargetReferenceDirectoryRoot I can find, so just
-         setting it to a random value is enough to allow us to override
-         SDKExtensionDirectoryRoot.
-    -->
-    <SDKTargetReferenceDirectoryRoot>Please let me override SDKExtensionDirectoryRoot, thank you.</SDKTargetReferenceDirectoryRoot>
-    <SDKExtensionDirectoryRoot>$(MSBuildProgramFiles32)\Windows Kits\10;$(LocalAppData)\$(SDKIdentifier)\$(SDKVersion);$(MSBuildProgramFiles32)\$(SDKIdentifier)\$(SDKVersion)</SDKExtensionDirectoryRoot>
-  </PropertyGroup>
-      
-
 </Project>
