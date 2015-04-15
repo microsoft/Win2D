@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22609.0
+VisualStudioVersion = 14.0.22815.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -71,6 +71,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.uap", "winrt\test.external\winrt.test.external.uap.vcxproj", "{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.uap", "tests\ExampleGallery\UAP\ExampleGallery.uap.csproj", "{F6867923-3A6E-4102-B546-E3A6A5F8EC36}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2B157B97-CBF7-4014-8655-1456F2807F43} = {2B157B97-CBF7-4014-8655-1456F2807F43}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsConsumer.uap", "tests\CsConsumer\UAP\CsConsumer.uap.csproj", "{DF81C02B-9D29-4724-82BC-9D56724F59B4}"
 EndProject
