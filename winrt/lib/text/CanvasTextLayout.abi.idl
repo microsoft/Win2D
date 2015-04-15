@@ -80,9 +80,9 @@ namespace Microsoft.Graphics.Canvas.Text
         // IDWriteTextLayout
         //
 
-        PROPERTY(MaximumLayoutSize, Windows.Foundation.Size); // Corresponds to Set/GetMaxWidth and Set/GetMaxHeight.
+        PROPERTY(RequestedSize, Windows.Foundation.Size); // Corresponds to Set/GetMaxWidth and Set/GetMaxHeight.
 
-        HRESULT GetMinimumLayoutWidth([out, retval] float* value); // Corresponds to DetermineMinWidth.
+        HRESULT GetMinimumLineLength([out, retval] float* value); // Corresponds to DetermineMinWidth.
 
         //
         // Exposed through IDWriteTextLayout::GetDrawingEffect.
@@ -286,16 +286,16 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] INT32 characterIndex,
             [out, retval] float* trailingSpacing);
 
-        HRESULT GetMinimumCharacterAdvanceWidth(
+        HRESULT GetMinimumCharacterAdvance(
             [in] INT32 characterIndex,
-            [out, retval] float* minimumAdvanceWidth);
+            [out, retval] float* minimumAdvance);
 
         HRESULT SetCharacterSpacing(
             [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] float leadingSpacing,
             [in] float trailingSpacing,
-            [in] float minimumAdvanceWidth);
+            [in] float minimumAdvance);
 
         ///////////////////////////////////////////////////////////////////////
         //
@@ -320,8 +320,8 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] HSTRING textString,
             [in] CanvasTextFormat* textFormat,
-            [in] float maximumLayoutWidth,
-            [in] float maximumLayoutHeight,
+            [in] float requestedWidth,
+            [in] float requestedHeight,
             [out, retval] CanvasTextLayout** canvasTextLayout);
     };
 

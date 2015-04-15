@@ -139,13 +139,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(put_Options)(
             CanvasDrawTextOptions value) override;
 
-        IFACEMETHOD(get_MaximumLayoutSize)(
+        IFACEMETHOD(get_RequestedSize)(
             ABI::Windows::Foundation::Size* value) override;
 
-        IFACEMETHOD(put_MaximumLayoutSize)(
+        IFACEMETHOD(put_RequestedSize)(
             ABI::Windows::Foundation::Size value) override;
 
-        IFACEMETHOD(GetMinimumLayoutWidth)(
+        IFACEMETHOD(GetMinimumLineLength)(
             float* value) override;
 
         IFACEMETHOD(GetBrush)(
@@ -251,16 +251,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             int32_t characterIndex,
             float *trailingSpacing) override;
 
-        IFACEMETHOD(GetMinimumCharacterAdvanceWidth)(
+        IFACEMETHOD(GetMinimumCharacterAdvance)(
             int32_t characterIndex,
-            float *minimumAdvanceWidth) override;
+            float *minimumAdvance) override;
 
         IFACEMETHOD(SetCharacterSpacing)(
             int32_t characterIndex,
             int32_t characterCount,
             float leadingSpacing,
             float trailingSpacing,
-            float minimumAdvanceWidth) override;
+            float minimumAdvance) override;
 
         IFACEMETHOD(get_VerticalGlyphOrientation)(
             CanvasVerticalGlyphOrientation* value) override;
@@ -369,8 +369,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasResourceCreator* resourceCreator,
             HSTRING textString,
             ICanvasTextFormat* textFormat,
-            float maximumLayoutWidth,
-            float maximumLayoutHeight);
+            float requestedWidth,
+            float requestedHeight);
 
         virtual ComPtr<CanvasTextLayout> CreateWrapper(
             ICanvasDevice* device,
@@ -398,8 +398,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasResourceCreator* resourceCreator,
             HSTRING textString,
             ICanvasTextFormat* textFormat,
-            float maximumLayoutWidth,
-            float maximumLayoutHeight,
+            float requestedWidth,
+            float requestedHeight,
             ICanvasTextLayout** textLayout);
 
         //

@@ -91,7 +91,7 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetTrailingCharacterSpacing(System.Int32)">
       <summary>Gets the spacing after the character specified, in reading order.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetMinimumCharacterAdvanceWidth(System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetMinimumCharacterAdvance(System.Int32)">
       <summary>Gets the minimum advance of the character specified.</summary>
       <remarks>
         <p>
@@ -115,8 +115,33 @@ under the License.
       <summary>Gets an array of position indices at which the text format changes.</summary>
       <remarks>By convention, an empty string will yield an array containing only {0}. </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetMinimumLayoutWidth">
-      <summary>Gets the minimum possible width the layout can be set to, without any emergency breakings between the characters of whole words.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetMinimumLineLength">
+      <summary>Gets the minimum possible width/height the layout can be set to, without any emergency breakings between the characters of whole words.</summary>
+      <remarks>
+        <p>
+          If the TextDirection property specifies horizontally oriented text
+          then this method returns the minimum width that can be set on the
+          layout.  If the TextDirection property specifies vertically oriented
+          text then this method returns the minimum height.
+        </p>
+        
+        <p>
+          Horizontally oriented text directions are:
+          <ul>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenTopToBottom" /></li>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenTopToBottom" /></li>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenBottomToTop" /></li>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenBottomToTop" /></li>
+          </ul>
+          Vertically oriented text directions are:
+          <ul>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenLeftToRight" /></li>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenLeftToRight" /></li>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenRightToLeft" /></li>
+            <li><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenRightToLeft" /></li>
+          </ul>
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetFontFamily(System.Int32)">
       <summary>Gets the font family of the character at the specified position.</summary>
@@ -253,12 +278,13 @@ under the License.
       	</p>
       	</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.MaximumLayoutSize">
-      <summary>Specifies the maximum layout size.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.RequestedSize">
+      <summary>Specifies the requested size.</summary>
       <remarks>
-        This option is for controlling word wrapping- it won't perform any kind of
-        clipping behavior. If word wrapping is enabled, text is wrapped according 
-        to these dimensions. 
+        This option is for controlling word wrapping and alignment - it won't
+        perform any kind of clipping behavior. If word wrapping is enabled, text
+        is wrapped according to these dimensions. The actual LayoutBounds or
+        DrawBounds may be larger than the RequestedSize.
         </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingMethod">

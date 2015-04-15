@@ -65,8 +65,8 @@ ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     HSTRING text,
     ICanvasTextFormat* textFormat,
-    float maximumLayoutWidth,
-    float maximumLayoutHeight)
+    float requestedWidth,
+    float requestedHeight)
 {
     auto dwriteFactory = GetSharedFactory();
 
@@ -79,8 +79,8 @@ ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateNew(
         textBuffer,
         textLength,
         GetWrappedResource<IDWriteTextFormat>(textFormat).Get(),
-        maximumLayoutWidth,
-        maximumLayoutHeight,
+        requestedWidth,
+        requestedHeight,
         &dwriteTextLayout));
 
     ComPtr<ICanvasDevice> device;
@@ -127,8 +127,8 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
     ICanvasResourceCreator* resourceCreator,
     HSTRING textString,
     ICanvasTextFormat* textFormat,
-    float maximumLayoutWidth,
-    float maximumLayoutHeight,
+    float requestedWidth,
+    float requestedHeight,
     ICanvasTextLayout** textLayout)
 {
     return ExceptionBoundary(
@@ -141,8 +141,8 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
                 resourceCreator,
                 textString,
                 textFormat,
-                maximumLayoutWidth,
-                maximumLayoutHeight);
+                requestedWidth,
+                requestedHeight);
 
             ThrowIfFailed(newTextLayout.CopyTo(textLayout));
         });
@@ -297,7 +297,7 @@ IFACEMETHODIMP CanvasTextLayout::put_Direction(CanvasTextDirection value)
 }
 
 
-IFACEMETHODIMP CanvasTextLayout::GetMinimumLayoutWidth(
+IFACEMETHODIMP CanvasTextLayout::GetMinimumLineLength(
     float* value)
 {
     return ExceptionBoundary(
@@ -547,7 +547,7 @@ IFACEMETHODIMP CanvasTextLayout::put_Options(
         });
 }
 
-IFACEMETHODIMP CanvasTextLayout::get_MaximumLayoutSize(
+IFACEMETHODIMP CanvasTextLayout::get_RequestedSize(
     ABI::Windows::Foundation::Size* value)
 {
     return ExceptionBoundary(
@@ -562,7 +562,7 @@ IFACEMETHODIMP CanvasTextLayout::get_MaximumLayoutSize(
         });
 }
 
-IFACEMETHODIMP CanvasTextLayout::put_MaximumLayoutSize(
+IFACEMETHODIMP CanvasTextLayout::put_RequestedSize(
     ABI::Windows::Foundation::Size value)
 {
     return ExceptionBoundary(
@@ -1062,8 +1062,8 @@ IFACEMETHODIMP CanvasTextLayout::GetLeadingCharacterSpacing(
 
             auto& resource = GetResource();
 
-            FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvanceWidth;
-            ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
+            FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvance;
+            ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvance));
 
             *value = leadingSpacing;
         });
@@ -1082,14 +1082,14 @@ IFACEMETHODIMP CanvasTextLayout::GetTrailingCharacterSpacing(
 
             auto& resource = GetResource();
 
-            FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvanceWidth;
-            ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
+            FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvance;
+            ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvance));
 
             *value = trailingSpacing;
         });
 }
 
-IFACEMETHODIMP CanvasTextLayout::GetMinimumCharacterAdvanceWidth(
+IFACEMETHODIMP CanvasTextLayout::GetMinimumCharacterAdvance(
     int32_t characterIndex,
     float* value)
 {
@@ -1102,10 +1102,10 @@ IFACEMETHODIMP CanvasTextLayout::GetMinimumCharacterAdvanceWidth(
 
             auto& resource = GetResource();
 
-            FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvanceWidth;
-            ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvanceWidth));
+            FLOAT leadingSpacing, trailingSpacing, minimumCharacterAdvance;
+            ThrowIfFailed(resource->GetCharacterSpacing(characterIndex, &leadingSpacing, &trailingSpacing, &minimumCharacterAdvance));
 
-            *value = minimumCharacterAdvanceWidth;
+            *value = minimumCharacterAdvance;
         });
 }
 
@@ -1114,7 +1114,7 @@ IFACEMETHODIMP CanvasTextLayout::SetCharacterSpacing(
     int32_t characterCount,
     float leadingSpacing,
     float trailingSpacing,
-    float minimumAdvanceWidth)
+    float minimumAdvance)
 {
     return ExceptionBoundary(
         [&]
@@ -1124,7 +1124,7 @@ IFACEMETHODIMP CanvasTextLayout::SetCharacterSpacing(
             ThrowIfFailed(resource->SetCharacterSpacing(
                 leadingSpacing, 
                 trailingSpacing, 
-                minimumAdvanceWidth,
+                minimumAdvance,
                 ToDWriteTextRange(characterIndex, characterCount)));
         });
 }

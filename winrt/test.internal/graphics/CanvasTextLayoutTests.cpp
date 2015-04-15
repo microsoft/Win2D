@@ -244,10 +244,10 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_Options(&drawTextOptions));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_Options(drawTextOptions));
 
-            Assert::AreEqual(RO_E_CLOSED, textLayout->get_MaximumLayoutSize(&size));
-            Assert::AreEqual(RO_E_CLOSED, textLayout->put_MaximumLayoutSize(size));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_RequestedSize(&size));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->put_RequestedSize(size));
 
-            Assert::AreEqual(RO_E_CLOSED, textLayout->GetMinimumLayoutWidth(&fl));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetMinimumLineLength(&fl));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFontFamily(0, &str));
             Assert::AreEqual(RO_E_CLOSED, textLayout->SetFontFamily(0, 0, str));
@@ -278,7 +278,7 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetLeadingCharacterSpacing(0, &fl));
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetTrailingCharacterSpacing(0, &fl));
-            Assert::AreEqual(RO_E_CLOSED, textLayout->GetMinimumCharacterAdvanceWidth(0, &fl));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetMinimumCharacterAdvance(0, &fl));
             Assert::AreEqual(RO_E_CLOSED, textLayout->SetCharacterSpacing(0, 0, fl, fl, fl));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_VerticalGlyphOrientation(&verticalGlyphOrientation));
@@ -336,8 +336,8 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingDelimiter(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingDelimiterCount(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_WordWrapping(nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->get_MaximumLayoutSize(nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumLayoutWidth(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_RequestedSize(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumLineLength(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFontFamily(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFontSize(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFontStretch(0, nullptr));
@@ -349,7 +349,7 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetPairKerning(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetLeadingCharacterSpacing(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetTrailingCharacterSpacing(0, nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumCharacterAdvanceWidth(0, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumCharacterAdvance(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_VerticalGlyphOrientation(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_OpticalAlignment(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LastLineWrapping(nullptr));
@@ -425,7 +425,7 @@ namespace canvas
 
             Assert::AreEqual(E_INVALIDARG, textLayout->GetLeadingCharacterSpacing(-1, &fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetTrailingCharacterSpacing(-1, &fl));
-            Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumCharacterAdvanceWidth(-1, &fl));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetMinimumCharacterAdvance(-1, &fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(-1, 0, fl, fl, fl));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetCharacterSpacing(0, -1, fl, fl, fl));
 
@@ -842,7 +842,7 @@ namespace canvas
             Assert::AreEqual(S_OK, textLayout->put_TrimmingDelimiterCount(123));
         }
 
-        TEST_METHOD_EX(CanvasTextLayoutTests_get_MaximumLayoutSize)
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_RequestedSize)
         {
             Fixture f;
 
@@ -852,12 +852,12 @@ namespace canvas
             f.Adapter->MockTextLayout->GetMaxHeightMethod.SetExpectedCalls(1, [&]() { return 456.0f; });
 
             Size size;
-            Assert::AreEqual(S_OK, textLayout->get_MaximumLayoutSize(&size));
+            Assert::AreEqual(S_OK, textLayout->get_RequestedSize(&size));
             Assert::AreEqual(123.0f, size.Width);
             Assert::AreEqual(456.0f, size.Height);
         }
 
-        TEST_METHOD_EX(CanvasTextLayoutTests_put_MaximumLayoutSize)
+        TEST_METHOD_EX(CanvasTextLayoutTests_put_RequestedSize)
         {
             Fixture f;
 
@@ -866,10 +866,10 @@ namespace canvas
             f.Adapter->MockTextLayout->SetMaxWidthMethod.SetExpectedCalls(1, [&](FLOAT value) { Assert::AreEqual(123.0f, value); return S_OK; });
             f.Adapter->MockTextLayout->SetMaxHeightMethod.SetExpectedCalls(1, [&](FLOAT value) { Assert::AreEqual(456.0f, value); return S_OK; });
 
-            Assert::AreEqual(S_OK, textLayout->put_MaximumLayoutSize(Size{ 123.0f, 456.0f }));
+            Assert::AreEqual(S_OK, textLayout->put_RequestedSize(Size{ 123.0f, 456.0f }));
         }
 
-        TEST_METHOD_EX(CanvasTextLayoutTests_GetMinimumLayoutWidth)
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetMinimumLineLength)
         {
             Fixture f;
 
@@ -883,7 +883,7 @@ namespace canvas
             });
 
             float value;
-            Assert::AreEqual(S_OK, textLayout->GetMinimumLayoutWidth(&value));
+            Assert::AreEqual(S_OK, textLayout->GetMinimumLineLength(&value));
             Assert::AreEqual(123.0f, value);
         }
 
@@ -1062,17 +1062,17 @@ namespace canvas
         }
         
         template<class GetCharacterSpacingMethodType>
-        void InitializeGetCharacterSpacingMethod(GetCharacterSpacingMethodType& characterSpacingMethod, FLOAT leadingSpacing, FLOAT trailingSpacing, FLOAT minimumAdvanceWidth)
+        void InitializeGetCharacterSpacingMethod(GetCharacterSpacingMethodType& characterSpacingMethod, FLOAT leadingSpacing, FLOAT trailingSpacing, FLOAT minimumAdvance)
         {            
             characterSpacingMethod.SetExpectedCalls(1,
-                [leadingSpacing, trailingSpacing, minimumAdvanceWidth](UINT32 currentPosition, FLOAT* leading, FLOAT* trailing, FLOAT* min, DWRITE_TEXT_RANGE* textRange)
+                [leadingSpacing, trailingSpacing, minimumAdvance](UINT32 currentPosition, FLOAT* leading, FLOAT* trailing, FLOAT* min, DWRITE_TEXT_RANGE* textRange)
                 {
                     Assert::AreEqual(currentPosition, 123u);
                     Assert::IsNull(textRange);
 
                     *leading = leadingSpacing;
                     *trailing = trailingSpacing;
-                    *min = minimumAdvanceWidth;
+                    *min = minimumAdvance;
 
                     return S_OK;
                 });
@@ -1104,7 +1104,7 @@ namespace canvas
             Assert::AreEqual(456.0f, value);
         }
 
-        TEST_METHOD_EX(CanvasTextLayoutTests_GetMinimumCharacterAdvanceWidth)
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetMinimumCharacterAdvance)
         {
             Fixture f;
 
@@ -1113,7 +1113,7 @@ namespace canvas
             auto textLayout = f.CreateSimpleTextLayout();
 
             float value;
-            Assert::AreEqual(S_OK, textLayout->GetMinimumCharacterAdvanceWidth(123, &value));
+            Assert::AreEqual(S_OK, textLayout->GetMinimumCharacterAdvance(123, &value));
             Assert::AreEqual(456.0f, value);
         }
 
@@ -1122,11 +1122,11 @@ namespace canvas
             Fixture f;
 
             f.Adapter->MockTextLayout->SetCharacterSpacingMethod.SetExpectedCalls(1,
-                [&](FLOAT leadingSpacing, FLOAT trailingSpacing, FLOAT minimumAdvanceWidth, DWRITE_TEXT_RANGE textRange)
+                [&](FLOAT leadingSpacing, FLOAT trailingSpacing, FLOAT minimumAdvance, DWRITE_TEXT_RANGE textRange)
                 {
                     Assert::AreEqual(12.0f, leadingSpacing);
                     Assert::AreEqual(34.0f, trailingSpacing);
-                    Assert::AreEqual(56.0f, minimumAdvanceWidth);
+                    Assert::AreEqual(56.0f, minimumAdvance);
                     Assert::AreEqual(78u, textRange.startPosition);
                     Assert::AreEqual(90u, textRange.length);
                     return S_OK;
