@@ -436,8 +436,7 @@ namespace CsConsumer
                 imageBytes,
                 4,
                 2,
-                DirectXPixelFormat.B8G8R8A8UIntNormalized,
-                CanvasAlphaMode.Premultiplied);
+                DirectXPixelFormat.B8G8R8A8UIntNormalized);
 
             Color[] imageColors = new Color[]
                 {
@@ -448,8 +447,7 @@ namespace CsConsumer
                 m_canvasControl,
                 imageColors,
                 4,
-                2,
-                CanvasAlphaMode.Premultiplied);
+                2);
 
             m_canvasControl.Invalidate();
         }

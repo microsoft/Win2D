@@ -125,7 +125,7 @@ namespace ExampleGallery
 
             args.TrackAsyncAction(canvasControl_CreateResourcesAsync(sender).AsAsyncAction());
 
-            var checks = CanvasBitmap.CreateFromColors(sender, new Color[] { Colors.Gray, Colors.Black, Colors.Black, Colors.Gray }, 2, 2, CanvasAlphaMode.Premultiplied);
+            var checks = CanvasBitmap.CreateFromColors(sender, new Color[] { Colors.Gray, Colors.Black, Colors.Black, Colors.Gray }, 2, 2);
             checkedFillPattern = new CanvasImageBrush(sender, checks)
             {
                 ExtendX = CanvasEdgeBehavior.Wrap,
@@ -183,7 +183,7 @@ namespace ExampleGallery
             {
                 fillPattern = example.checkedFillPattern;
 
-                var rt = new CanvasRenderTarget(sender, (float)example.tiger.Size.Width, (float)example.tiger.Size.Height, example.tiger.Format, example.tiger.AlphaMode, sender.Dpi / 3);
+                var rt = new CanvasRenderTarget(sender, (float)example.tiger.Size.Width, (float)example.tiger.Size.Height, sender.Dpi / 3);
                 using (var ds = rt.CreateDrawingSession())
                 {
                     ds.DrawImage(example.tiger, rt.Bounds);
@@ -196,7 +196,7 @@ namespace ExampleGallery
                     Angle = 1
                 };
 
-                showSourceRectRT = new CanvasRenderTarget(sender, (float)rt.Size.Width, (float)rt.Size.Height, rt.Format, rt.AlphaMode, rt.Dpi);
+                showSourceRectRT = new CanvasRenderTarget(sender, (float)rt.Size.Width, (float)rt.Size.Height, rt.Dpi);
             }
 
             public void Draw(CanvasDrawingSession ds, int frameCounter, float width, float height)
@@ -410,12 +410,12 @@ namespace ExampleGallery
 
             private CanvasRenderTarget CreateTarget(CanvasControl sender, CanvasAlphaMode alphaMode)
             {
-                return new CanvasRenderTarget(sender, 64, 64, DirectXPixelFormat.B8G8R8A8UIntNormalized, alphaMode);
+                return new CanvasRenderTarget(sender, 64, 64, sender.Dpi, DirectXPixelFormat.B8G8R8A8UIntNormalized, alphaMode);
             }
 
             private CanvasRenderTarget CreateSourceImage(CanvasControl sender, CanvasAlphaMode alphaMode)
             {
-                var image = new CanvasRenderTarget(sender, 64, 64, DirectXPixelFormat.B8G8R8A8UIntNormalized, alphaMode);
+                var image = new CanvasRenderTarget(sender, 64, 64, sender.Dpi, DirectXPixelFormat.B8G8R8A8UIntNormalized, alphaMode);
                 
                 using (var ds = image.CreateDrawingSession())
                 {
@@ -525,9 +525,6 @@ namespace ExampleGallery
 
                 ds.DrawText(text, x + 128, y + 256 - 16, Colors.White, textFormat);
             }
-
         }        
     }
-
-
 }

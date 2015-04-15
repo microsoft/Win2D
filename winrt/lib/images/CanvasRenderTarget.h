@@ -39,21 +39,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             ICanvasRenderTarget** renderTarget);
 
-        IFACEMETHOD(CreateWithWidthAndHeightAndFormatAndAlpha)(
-            ICanvasResourceCreatorWithDpi* resourceCreator,
-            float width,
-            float height,
-            DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
-            ICanvasRenderTarget** renderTarget);
-
-        IFACEMETHOD(CreateWithWidthAndHeightAndFormatAndAlphaAndDpi)(
+        IFACEMETHOD(CreateWithWidthAndHeightAndDpiAndFormatAndAlpha)(
             ICanvasResourceCreator* resourceCreator,
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
             CanvasAlphaMode alpha,
-            float dpi,
             ICanvasRenderTarget** renderTarget);
 
         IFACEMETHOD(GetOrCreate)(
@@ -70,17 +62,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IDirect3DSurface* surface,
             ICanvasRenderTarget** canvasRenderTarget) override;
 
-        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlpha)(
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpi)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
-            CanvasAlphaMode alpha,
+            float dpi,
             ICanvasRenderTarget** canvasRenderTarget) override;
 
-        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlphaAndDpi)(
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpiAndAlpha)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
-            CanvasAlphaMode alpha,
             float dpi,
+            CanvasAlphaMode alpha,
             ICanvasRenderTarget** canvasRenderTarget) override;
     };
 
@@ -124,9 +116,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* canvasDevice,
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
-            float dpi);
+            CanvasAlphaMode alpha);
 
         ComPtr<CanvasRenderTarget> CreateWrapper(
             ICanvasDevice* device,

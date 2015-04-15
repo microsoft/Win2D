@@ -92,17 +92,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IDirect3DSurface* surface,
             ICanvasBitmap** canvasBitmap) override;
 
-        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlpha)(
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpi)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
-            CanvasAlphaMode alpha,
+            float dpi,
             ICanvasBitmap** canvasBitmap) override;
 
-        IFACEMETHOD(CreateFromDirect3D11SurfaceWithAlphaAndDpi)(
+        IFACEMETHOD(CreateFromDirect3D11SurfaceWithDpiAndAlpha)(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
-            CanvasAlphaMode alpha,
             float dpi,
+            CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
         IFACEMETHOD(CreateFromBytes)(
@@ -112,7 +112,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
         IFACEMETHOD(CreateFromBytesWithDpi)(
@@ -122,8 +121,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
             float dpi,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromBytesWithDpiAndAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t byteCount,
+            BYTE* bytes,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            float dpi,
+            CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
         IFACEMETHOD(CreateFromColors)(
@@ -132,7 +141,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color* colors,
             int32_t widthInPixels,
             int32_t heightInPixels,
-            CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
         IFACEMETHOD(CreateFromColorsWithDpi)(
@@ -141,8 +149,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color* colors,
             int32_t widthInPixels,
             int32_t heightInPixels,
-            CanvasAlphaMode alpha,
             float dpi,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromColorsWithDpiAndAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t colorCount,
+            ABI::Windows::UI::Color* colors,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            float dpi,
+            CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
         IFACEMETHOD(LoadAsyncFromHstring)(
@@ -150,17 +167,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             HSTRING fileName,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
-        IFACEMETHOD(LoadAsyncFromHstringWithAlpha)(
+        IFACEMETHOD(LoadAsyncFromHstringWithDpi)(
             ICanvasResourceCreator* resourceCreator,
             HSTRING fileName,
-            CanvasAlphaMode alpha,
+            float dpi,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
-        IFACEMETHOD(LoadAsyncFromHstringWithAlphaAndDpi)(
+        IFACEMETHOD(LoadAsyncFromHstringWithDpiAndAlpha)(
             ICanvasResourceCreator* resourceCreator,
             HSTRING fileName,
-            CanvasAlphaMode alpha,
             float dpi,
+            CanvasAlphaMode alpha,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
         IFACEMETHOD(LoadAsyncFromUri)(
@@ -168,17 +185,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::Foundation::IUriRuntimeClass* uri,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
-        IFACEMETHOD(LoadAsyncFromUriWithAlpha)(
+        IFACEMETHOD(LoadAsyncFromUriWithDpi)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::Foundation::IUriRuntimeClass* uri,
-            CanvasAlphaMode alpha,
+            float dpi,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
-        IFACEMETHOD(LoadAsyncFromUriWithAlphaAndDpi)(
+        IFACEMETHOD(LoadAsyncFromUriWithDpiAndAlpha)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::Foundation::IUriRuntimeClass* uri,
-            CanvasAlphaMode alpha,
             float dpi,
+            CanvasAlphaMode alpha,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
         IFACEMETHOD(LoadAsyncFromStream)(
@@ -186,17 +203,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IRandomAccessStream* stream,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
-        IFACEMETHOD(LoadAsyncFromStreamWithAlpha)(
+        IFACEMETHOD(LoadAsyncFromStreamWithDpi)(
             ICanvasResourceCreator* resourceCreator,
             IRandomAccessStream* stream,
-            CanvasAlphaMode alpha,
+            float dpi,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
-        IFACEMETHOD(LoadAsyncFromStreamWithAlphaAndDpi)(
+        IFACEMETHOD(LoadAsyncFromStreamWithDpiAndAlpha)(
             ICanvasResourceCreator* resourceCreator,
             IRandomAccessStream* stream,
-            CanvasAlphaMode alpha,
             float dpi,
+            CanvasAlphaMode alpha,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
         //
@@ -787,14 +804,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* canvasDevice, 
             HSTRING fileName,
-            CanvasAlphaMode alpha,
-            float dpi);
+            float dpi,
+            CanvasAlphaMode alpha);
 
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* canvasDevice,
             IStream* fileStream,
-            CanvasAlphaMode alpha,
-            float dpi);
+            float dpi,
+            CanvasAlphaMode alpha);
 
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* device,
@@ -803,8 +820,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t widthInPixels,
             int32_t heightInPixels,
             DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
-            float dpi);
+            float dpi,
+            CanvasAlphaMode alpha);
 
         ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* device,
@@ -812,8 +829,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Color* colors,
             int32_t widthInPixels,
             int32_t heightInPixels,
-            CanvasAlphaMode alpha,
-            float dpi);
+            float dpi,
+            CanvasAlphaMode alpha);
 
         ComPtr<CanvasBitmap> CreateWrapper(
             ICanvasDevice* device,

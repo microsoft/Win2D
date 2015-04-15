@@ -388,7 +388,7 @@ public:
             };
 
         auto canvasDevice = m_deviceManager->GetOrCreate(d2dDevice.Get());
-        auto actualBitmap = canvasDevice->CreateRenderTargetBitmap(anyWidth, anyHeight, anyFormat, anyAlphaMode, anyDpi);
+        auto actualBitmap = canvasDevice->CreateRenderTargetBitmap(anyWidth, anyHeight, anyDpi, anyFormat, anyAlphaMode);
 
         Assert::IsTrue(IsSameInstance(d2dBitmap.Get(), actualBitmap.Get()));
     }

@@ -76,11 +76,7 @@ under the License.
         Size is in device independent pixels (dips).
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
-      <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
-      <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
       <remarks>Size is in device independent pixels (dips).</remarks>
     </member>
@@ -110,7 +106,7 @@ under the License.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32)">
       <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with CoreWindow.</summary>
       <remarks>
         <p>

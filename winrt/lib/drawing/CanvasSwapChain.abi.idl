@@ -61,18 +61,10 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasSwapChain** swapChain);
 
         HRESULT CreateWithAllOptions(
-            [in] ICanvasResourceCreatorWithDpi* resourceCreator,
-            [in] float width,
-            [in] float height,
-            [in] DIRECTX_PIXEL_FORMAT format,
-            [in] INT32 bufferCount,
-            [in] CanvasAlphaMode alphaMode,
-            [out, retval] CanvasSwapChain** swapChain);
-
-        HRESULT CreateWithAllOptionsAndDpi(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] float width,
             [in] float height,
+            [in] float dpi,
 
             // Must be one of R16G16B16A16_FLOAT, DXGI_FORMAT_B8G8R8A8_UNORM, or DXGI_FORMAT_R8G8B8A8_UNORM
             [in] DIRECTX_PIXEL_FORMAT format,
@@ -87,7 +79,6 @@ namespace Microsoft.Graphics.Canvas
             // An IDXGIOutput* argument is not included here. It represents less common 
             // usage scenarios and there is not a way to get to it from the current API.
             
-            [in] float dpi,
             [out, retval] CanvasSwapChain** swapChain);
     };
 
@@ -116,14 +107,14 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasSwapChain** swapChain);
 
         [overload("CreateForCoreWindow")]
-        HRESULT CreateForCoreWindowWithAllOptionsAndDpi(
+        HRESULT CreateForCoreWindowWithAllOptions(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Windows.UI.Core.CoreWindow* coreWindow,
             [in] float width,
             [in] float height,
+            [in] float dpi,
             [in] DIRECTX_PIXEL_FORMAT format,
             [in] INT32 bufferCount,
-            [in] float dpi,
             [out, retval] CanvasSwapChain** swapChain);
 
         // Note: no alpha mode can be specified for CoreWindow swap chains,

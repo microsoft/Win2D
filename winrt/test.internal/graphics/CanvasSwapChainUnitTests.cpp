@@ -41,10 +41,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 m_canvasDevice.Get(),
                 1.0f,
                 1.0f,
+                dpi,
                 CanvasSwapChain::DefaultPixelFormat,
                 CanvasSwapChain::DefaultBufferCount,
-                CanvasSwapChain::DefaultCompositionAlphaMode,
-                dpi);
+                CanvasSwapChain::DefaultCompositionAlphaMode);
         }
     };
 
@@ -84,10 +84,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             f.m_canvasDevice.Get(),
             23.0f,
             45.0f,
+            DEFAULT_DPI * dpiScale,
             PIXEL_FORMAT(B8G8R8A8UIntNormalizedSrgb),
             4,
-            CanvasAlphaMode::Ignore,
-            DEFAULT_DPI * dpiScale);
+            CanvasAlphaMode::Ignore);
 
         float dpi = 0;
         ThrowIfFailed(swapChain->get_Dpi(&dpi));
@@ -254,9 +254,9 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             f.Window.Get(),
             anyWidthInDips,
             anyHeightInDips,
+            anyDpi,
             anyPixelFormat,
-            anyBufferCount,
-            anyDpi);
+            anyBufferCount);
 
         auto wrappedSc = GetWrappedResource<IDXGISwapChain1>(sc);
         Assert::IsTrue(IsSameInstance(dxgiSwapChain.Get(), wrappedSc.Get()));
@@ -273,12 +273,12 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto anyBufferCount = 3;
         auto anyDpi = 50.0f;
 
-        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create((ICanvasDevice*)nullptr, f.Window.Get(), anyWidthInDips, anyHeightInDips, anyPixelFormat, anyBufferCount, anyDpi); });
-        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), (ICoreWindow*)nullptr, anyWidthInDips, anyHeightInDips, anyPixelFormat, anyBufferCount, anyDpi); });
-        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), -1.0f, anyHeightInDips, anyPixelFormat, anyBufferCount, anyDpi); });
-        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, -1.0f, anyPixelFormat, anyBufferCount, anyDpi); });
-        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, anyPixelFormat, -1, anyDpi); });
-        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, anyPixelFormat, anyBufferCount, -1.0f); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create((ICanvasDevice*)nullptr, f.Window.Get(), anyWidthInDips, anyHeightInDips, anyDpi, anyPixelFormat, anyBufferCount); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), (ICoreWindow*)nullptr, anyWidthInDips, anyHeightInDips, anyDpi, anyPixelFormat, anyBufferCount); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), -1.0f, anyHeightInDips, anyDpi, anyPixelFormat, anyBufferCount); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, -1.0f, anyDpi, anyPixelFormat, anyBufferCount); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, -1.0f, anyPixelFormat, anyBufferCount); });
+        ExpectHResultException(E_INVALIDARG, [&] { f.SwapChainManager->Create(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, anyDpi, anyPixelFormat, -1); });
     }
 
 
@@ -291,10 +291,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 Device.Get(),
                 width,
                 height,
+                DEFAULT_DPI,
                 CanvasSwapChain::DefaultPixelFormat,
                 bufferCount,
-                CanvasSwapChain::DefaultCompositionAlphaMode,
-                DEFAULT_DPI);
+                CanvasSwapChain::DefaultCompositionAlphaMode);
         }
     };
 
@@ -761,10 +761,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         auto canvasSwapChain = f.m_swapChainManager->Create(f.m_canvasDevice.Get(),
                                                             1.0f, 1.0f,
+                                                            DEFAULT_DPI,
                                                             originalPixelFormat,
                                                             originalBufferCount,
-                                                            CanvasAlphaMode::Premultiplied,
-                                                            DEFAULT_DPI);
+                                                            CanvasAlphaMode::Premultiplied);
 
         ThrowIfFailed(canvasSwapChain->ResizeBuffersWithSize(555, 666));
     }
@@ -1043,10 +1043,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 m_canvasDevice.Get(),
                 1.0f,
                 1.0f,
+                DEFAULT_DPI,
                 CanvasSwapChain::DefaultPixelFormat,
                 CanvasSwapChain::DefaultBufferCount,
-                CanvasSwapChain::DefaultCompositionAlphaMode,
-                DEFAULT_DPI);
+                CanvasSwapChain::DefaultCompositionAlphaMode);
         }
     };
 
@@ -1098,10 +1098,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         auto swapChain = f.m_swapChainManager->Create(f.m_canvasDevice.Get(),
                                                       1.0f, 1.0f,
+                                                      dpi,
                                                       PIXEL_FORMAT(B8G8R8A8UIntNormalizedSrgb),
                                                       2,
-                                                      CanvasAlphaMode::Ignore,
-                                                      dpi);
+                                                      CanvasAlphaMode::Ignore);
 
         float actualDpi = 0;
         ThrowIfFailed(swapChain->get_Dpi(&actualDpi));

@@ -68,9 +68,9 @@ TEST_CLASS(CanvasRenderTargetTests)
                 m_canvasDevice.Get(), 
                 size.Width, 
                 size.Height, 
+                DEFAULT_DPI,
                 PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-                CanvasAlphaMode::Premultiplied,
-                DEFAULT_DPI);
+                CanvasAlphaMode::Premultiplied);
 
             m_canvasDevice->MockCreateRenderTargetBitmap = nullptr;
 

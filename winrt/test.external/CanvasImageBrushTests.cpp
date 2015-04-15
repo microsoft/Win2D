@@ -23,6 +23,7 @@ static CanvasBitmap^ CreateArbitraryCanvasBitmap(CanvasDevice^ device)
         ref new Platform::Array<Color>(0),
         0,
         0,
+        DEFAULT_DPI,
         CanvasAlphaMode::Premultiplied);
 }
 

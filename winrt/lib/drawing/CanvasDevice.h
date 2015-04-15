@@ -74,14 +74,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) = 0;
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICFormatConverter* wicConverter,
-            CanvasAlphaMode alpha,
-            float dpi) = 0;
+            float dpi,
+            CanvasAlphaMode alpha) = 0;
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
-            float dpi) = 0;
+            CanvasAlphaMode alpha) = 0;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) = 0;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) = 0;
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) = 0;
@@ -203,14 +203,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override;
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICFormatConverter* wicConverter,
-            CanvasAlphaMode alpha,
-            float dpi) override;
+            float dpi,
+            CanvasAlphaMode alpha) override;
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
-            float dpi) override;
+            CanvasAlphaMode alpha) override;
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) override;
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) override;
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) override;

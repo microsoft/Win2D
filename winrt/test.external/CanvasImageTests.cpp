@@ -69,9 +69,9 @@ TEST_CLASS(CanvasImageTests)
                         device,
                         1,
                         1,
+                        dpi,
                         DirectXPixelFormat::B8G8R8A8UIntNormalized,
-                        CanvasAlphaMode::Premultiplied,
-                        dpi);
+                        CanvasAlphaMode::Premultiplied);
 
                     ICanvasImage^ testImage;
                     Rect expectedBounds;

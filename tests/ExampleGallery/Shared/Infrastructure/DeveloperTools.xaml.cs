@@ -162,6 +162,5 @@ namespace ExampleGallery
             leakCheckFrame.Visibility = Visibility.Collapsed;
             checkLeaksButton.IsEnabled = true;
         }
-
     }
 }

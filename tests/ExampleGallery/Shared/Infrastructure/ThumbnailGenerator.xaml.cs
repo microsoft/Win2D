@@ -277,7 +277,7 @@ namespace ExampleGallery
 
                 // Transfer the pixel data from XAML to Win2D for further processing.
                 using (CanvasDevice canvasDevice = new CanvasDevice())
-                using (CanvasBitmap canvasBitmap = CanvasBitmap.CreateFromBytes(canvasDevice, pixels.ToArray(), bitmap.PixelWidth, bitmap.PixelHeight, DirectXPixelFormat.B8G8R8A8UIntNormalized, CanvasAlphaMode.Premultiplied))
+                using (CanvasBitmap canvasBitmap = CanvasBitmap.CreateFromBytes(canvasDevice, pixels.ToArray(), bitmap.PixelWidth, bitmap.PixelHeight, DirectXPixelFormat.B8G8R8A8UIntNormalized))
                 {
                     await SaveThumbnails(canvasBitmap);
                 }

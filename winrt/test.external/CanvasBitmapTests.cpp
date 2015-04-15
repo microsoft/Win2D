@@ -102,20 +102,20 @@ public:
             Uri^ uri = ref new Uri("ms-appx:///Assets/HighDpiGrid.png");
             if (i == 0)
             {
-                bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, uri, CanvasAlphaMode::Ignore);
-                highDpiAsync = CanvasBitmap::LoadAsync(canvasDevice, uri, CanvasAlphaMode::Ignore, highDpi);
+                bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, uri, DEFAULT_DPI, CanvasAlphaMode::Ignore);
+                highDpiAsync = CanvasBitmap::LoadAsync(canvasDevice, uri, highDpi, CanvasAlphaMode::Ignore);
             }
             else
             {
                 auto storageFile = WaitExecution(Windows::Storage::StorageFile::GetFileFromApplicationUriAsync(uri));
                 auto stream = WaitExecution(storageFile->OpenReadAsync());
 
-                bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, stream, CanvasAlphaMode::Ignore);
+                bitmapAsync = CanvasBitmap::LoadAsync(canvasDevice, stream, DEFAULT_DPI, CanvasAlphaMode::Ignore);
 
                 storageFile = WaitExecution(Windows::Storage::StorageFile::GetFileFromApplicationUriAsync(uri));
                 stream = WaitExecution(storageFile->OpenReadAsync());
 
-                highDpiAsync = CanvasBitmap::LoadAsync(canvasDevice, stream, CanvasAlphaMode::Ignore, highDpi);
+                highDpiAsync = CanvasBitmap::LoadAsync(canvasDevice, stream, highDpi, CanvasAlphaMode::Ignore);
             }
 
             // Verify loading at default DPI.
@@ -239,8 +239,8 @@ public:
                 testCase.width,
                 testCase.height,
                 DirectXPixelFormat::A8UIntNormalized, // One of the few formats that is actually supported with straight alpha
-                CanvasAlphaMode::Straight,
-                99.0f);
+                99.0f,
+                CanvasAlphaMode::Straight);
             auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
             auto size = bitmap->SizeInPixels;
             Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
@@ -252,8 +252,8 @@ public:
                 colorArray1x1,
                 testCase.width,
                 testCase.height,
-                CanvasAlphaMode::Ignore,
-                25.0f);
+                25.0f,
+                CanvasAlphaMode::Ignore);
             d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
             size = bitmap->SizeInPixels;
             Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
@@ -279,16 +279,16 @@ public:
                         testCase.width,
                         testCase.height,
                         DirectXPixelFormat::B8G8R8A8UIntNormalized,
-                        CanvasAlphaMode::Premultiplied,
-                        DEFAULT_DPI);
+                        DEFAULT_DPI,
+                        CanvasAlphaMode::Premultiplied);
 
                     bitmap = CanvasBitmap::CreateFromColors(
                         canvasDevice,
                         colorArray1x1,
                         testCase.width,
                         testCase.height,
-                        CanvasAlphaMode::Premultiplied,
-                        DEFAULT_DPI);
+                        DEFAULT_DPI,
+                        CanvasAlphaMode::Premultiplied);
                 });
         }
     }
@@ -300,7 +300,7 @@ public:
         auto anyAlphaMode = CanvasAlphaMode::Premultiplied;
 
         auto zeroSizedArray = ref new Platform::Array<BYTE>(0);
-        auto bitmap = CanvasBitmap::CreateFromBytes(device, zeroSizedArray, 0, 0, anyFormat, anyAlphaMode);
+        auto bitmap = CanvasBitmap::CreateFromBytes(device, zeroSizedArray, 0, 0, anyFormat, DEFAULT_DPI, anyAlphaMode);
         
         auto size = bitmap->SizeInPixels;
         Assert::AreEqual(0u, size.Width);
@@ -313,7 +313,7 @@ public:
         auto anyAlphaMode = CanvasAlphaMode::Premultiplied;
 
         auto zeroSizedArray = ref new Platform::Array<Color>(0);
-        auto bitmap = CanvasBitmap::CreateFromColors(device, zeroSizedArray, 0, 0, anyAlphaMode);
+        auto bitmap = CanvasBitmap::CreateFromColors(device, zeroSizedArray, 0, 0, DEFAULT_DPI, anyAlphaMode);
         
         auto size = bitmap->SizeInPixels;
         Assert::AreEqual(0u, size.Width);
@@ -331,7 +331,7 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasBitmap::CreateFromBytes(device, oneElementArray, 256, 256, anyFormat, anyAlphaMode);
+                CanvasBitmap::CreateFromBytes(device, oneElementArray, 256, 256, anyFormat, DEFAULT_DPI, anyAlphaMode);
             });
     }
 
@@ -345,7 +345,7 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasBitmap::CreateFromColors(device, oneElementArray, 256, 256, anyAlphaMode);
+                CanvasBitmap::CreateFromColors(device, oneElementArray, 256, 256, DEFAULT_DPI, anyAlphaMode);
             });
     }
 
@@ -979,6 +979,7 @@ public:
             width,
             height,
             DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            DEFAULT_DPI,
             CanvasAlphaMode::Premultiplied);
             
         VerifyBitmapGetData<byte>(canvasBitmap, width, imageData, 4);
@@ -1003,6 +1004,7 @@ public:
             imageData,
             width,
             height,
+            DEFAULT_DPI,
             CanvasAlphaMode::Premultiplied);
 
         VerifyBitmapGetData<Color>(canvasBitmap, width, imageData, 1);
@@ -1088,7 +1090,7 @@ public:
 
     TEST_METHOD(CanvasRenderTarget_PixelColors_InvalidPixelFormat_ThrowsDescriptiveException)
     {
-        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DirectXPixelFormat::R8G8B8A8UIntNormalized, CanvasAlphaMode::Premultiplied, DEFAULT_DPI);
+        auto rt = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI, DirectXPixelFormat::R8G8B8A8UIntNormalized, CanvasAlphaMode::Premultiplied);
         Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
 
         const wchar_t* expectedMessage = L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.";
@@ -1382,7 +1384,7 @@ public:
                 WaitExecution(asyncLoad);
             });
 
-        asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead, CanvasAlphaMode::Ignore);
+        asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead);
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
             {
@@ -1499,7 +1501,7 @@ public:
                 WaitExecution(asyncLoad);
             });
 
-        asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, unreliableStream, CanvasAlphaMode::Ignore);
+        asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, unreliableStream);
         ExpectCOMException(INET_E_DOWNLOAD_FAILURE, 
             [&]
             {

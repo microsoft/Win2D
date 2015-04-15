@@ -461,8 +461,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicResource(
         IWICFormatConverter* wicConverter,
-        CanvasAlphaMode alpha,
-        float dpi)
+        float dpi,
+        CanvasAlphaMode alpha)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 
@@ -480,9 +480,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ID2D1Bitmap1> CanvasDevice::CreateRenderTargetBitmap(
         float width,
         float height,
+        float dpi,
         DirectXPixelFormat format,
-        CanvasAlphaMode alpha,
-        float dpi)
+        CanvasAlphaMode alpha)
     {
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 

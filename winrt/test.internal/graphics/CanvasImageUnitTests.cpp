@@ -73,9 +73,9 @@ TEST_CLASS(CanvasImageUnitTests)
             f.m_canvasDevice.Get(),
             1.0f,
             1.0f,
+            DEFAULT_DPI,
             PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-            CanvasAlphaMode::Premultiplied,
-            DEFAULT_DPI);
+            CanvasAlphaMode::Premultiplied);
         canvasBitmap->GetBounds(drawingSession.Get(), &bounds);
 
         Assert::AreEqual(someTransform, currentTransform); 

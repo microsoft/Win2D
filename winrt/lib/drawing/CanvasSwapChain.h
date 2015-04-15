@@ -53,22 +53,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasSwapChain** swapChain) override;
 
         IFACEMETHOD(CreateWithAllOptions)(
-            ICanvasResourceCreatorWithDpi* resourceCreator,
-            float width,
-            float height,
-            DirectXPixelFormat format,
-            int32_t bufferCount,
-            CanvasAlphaMode alphaMode,
-            ICanvasSwapChain** swapChain) override;
-
-        IFACEMETHOD(CreateWithAllOptionsAndDpi)(
             ICanvasResourceCreator* resourceCreator,
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
             int32_t bufferCount,
             CanvasAlphaMode alphaMode,
-            float dpi,
             ICanvasSwapChain** swapChain) override;
 
         //
@@ -81,14 +72,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             ICanvasSwapChain** swapChain);
 
-        IFACEMETHOD(CreateForCoreWindowWithAllOptionsAndDpi)(
+        IFACEMETHOD(CreateForCoreWindowWithAllOptions)(
             ICanvasResourceCreator* resourceCreator,
             ICoreWindow* coreWindow,
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            float dpi,
             ICanvasSwapChain** swapChain);
 
         //
@@ -196,10 +187,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* device,
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
             int32_t bufferCount,
-            CanvasAlphaMode alphaMode,
-            float dpi);
+            CanvasAlphaMode alphaMode);
 
         ComPtr<CanvasSwapChain> CreateNew(
             ICanvasDevice* device,
@@ -211,9 +202,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICoreWindow* coreWindow,
             float width,
             float height,
+            float dpi,
             DirectXPixelFormat format,
-            int32_t bufferCount,
-            float dpi);
+            int32_t bufferCount);
 
         virtual ComPtr<CanvasSwapChain> CreateWrapper(
             ICanvasDevice* device,

@@ -504,7 +504,6 @@ namespace ExampleGallery
                     points.Enqueue(new Vector2((float)point.Position.X, (float)point.Position.Y));
                 }
             }
-
         }
 
         public void Draw(CanvasDrawingSession ds)
@@ -526,7 +525,6 @@ namespace ExampleGallery
             if (points.Count > 0)
                 points.Dequeue();
         }
-
     }
 
     static class CanvasPathBuilderExtensions
@@ -545,5 +543,4 @@ namespace ExampleGallery
             builder.EndFigure(CanvasFigureLoop.Closed);
         }
     }
-
 }

@@ -207,14 +207,14 @@ public:
     {
         ComPtr<ICanvasSwapChain> swapChain;
 
-        ThrowIfFailed(m_canvasSwapChainFactory->CreateWithAllOptionsAndDpi(
+        ThrowIfFailed(m_canvasSwapChainFactory->CreateWithAllOptions(
             As<ICanvasResourceCreator>(device).Get(),
             width, 
             height, 
+            dpi,
             PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             2, 
             alphaMode,
-            dpi,
             &swapChain));
 
         return static_cast<CanvasSwapChain*>(swapChain.Get());

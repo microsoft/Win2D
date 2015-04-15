@@ -30,14 +30,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice* canvasDevice,
         float width,
         float height,
+        float dpi,
         DirectXPixelFormat format,
-        CanvasAlphaMode alpha,
-        float dpi)
+        CanvasAlphaMode alpha)
     {
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto d2dBitmap = canvasDeviceInternal->CreateRenderTargetBitmap(width, height, format, alpha, dpi);
+        auto d2dBitmap = canvasDeviceInternal->CreateRenderTargetBitmap(width, height, dpi, format, alpha);
 
         return Make<CanvasRenderTarget>(shared_from_this(), d2dBitmap.Get(), canvasDevice);
     }
@@ -77,40 +77,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float height,
         ICanvasRenderTarget** renderTarget)
     {
-        return CreateWithWidthAndHeightAndFormatAndAlpha(
-            resourceCreator,
-            width,
-            height,
-            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-            CanvasAlphaMode::Premultiplied,
-            renderTarget);
-    }
-
-    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndDpi(
-        ICanvasResourceCreator* resourceCreator,
-        float width,
-        float height,
-        float dpi,
-        ICanvasRenderTarget** renderTarget)
-    {
-        return CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
-            resourceCreator,
-            width,
-            height,
-            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-            CanvasAlphaMode::Premultiplied,
-            dpi,
-            renderTarget);
-    }
-
-    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormatAndAlpha(
-        ICanvasResourceCreatorWithDpi* resourceCreator,
-        float width,
-        float height,
-        DirectXPixelFormat format,
-        CanvasAlphaMode alpha,
-        ICanvasRenderTarget** renderTarget)
-    {
         return ExceptionBoundary(
             [&]
             {
@@ -127,21 +93,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     canvasDevice.Get(), 
                     width, 
                     height, 
-                    format, 
-                    alpha, 
-                    dpi);
+                    dpi,
+                    PIXEL_FORMAT(B8G8R8A8UIntNormalized),
+                    CanvasAlphaMode::Premultiplied);
 
                 ThrowIfFailed(bitmap.CopyTo(renderTarget));
             });
     }
 
-    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndFormatAndAlphaAndDpi(
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndDpi(
         ICanvasResourceCreator* resourceCreator,
         float width,
         float height,
+        float dpi,
+        ICanvasRenderTarget** renderTarget)
+    {
+        return CreateWithWidthAndHeightAndDpiAndFormatAndAlpha(
+            resourceCreator,
+            width,
+            height,
+            dpi,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
+            CanvasAlphaMode::Premultiplied,
+            renderTarget);
+    }
+
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeightAndDpiAndFormatAndAlpha(
+        ICanvasResourceCreator* resourceCreator,
+        float width,
+        float height,
+        float dpi,
         DirectXPixelFormat format,
         CanvasAlphaMode alpha,
-        float dpi,
         ICanvasRenderTarget** renderTarget)
     {
         return ExceptionBoundary(
@@ -157,9 +140,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     canvasDevice.Get(), 
                     width, 
                     height, 
+                    dpi,
                     format, 
-                    alpha, 
-                    dpi);
+                    alpha);
 
                 ThrowIfFailed(bitmap.CopyTo(renderTarget));
             });
@@ -190,33 +173,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IDirect3DSurface* surface,
         ICanvasRenderTarget** canvasRenderTarget)
     {
-        return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
+        return CreateFromDirect3D11SurfaceWithDpiAndAlpha(
             resourceCreator,
             surface,
-            CanvasAlphaMode::Premultiplied,
             DEFAULT_DPI,
+            CanvasAlphaMode::Premultiplied,
             canvasRenderTarget);
     }
 
-    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithAlpha(
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithDpi(
         ICanvasResourceCreator* resourceCreator,
         IDirect3DSurface* surface,
-        CanvasAlphaMode alpha,
+        float dpi,
         ICanvasRenderTarget** canvasRenderTarget)
     {
-        return CreateFromDirect3D11SurfaceWithAlphaAndDpi(
+        return CreateFromDirect3D11SurfaceWithDpiAndAlpha(
             resourceCreator,
             surface,
-            alpha,
-            DEFAULT_DPI,
+            dpi,
+            CanvasAlphaMode::Premultiplied,
             canvasRenderTarget);
     }
 
-    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithAlphaAndDpi(
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateFromDirect3D11SurfaceWithDpiAndAlpha(
         ICanvasResourceCreator* resourceCreator,
         IDirect3DSurface* surface,
-        CanvasAlphaMode alpha,
         float dpi,
+        CanvasAlphaMode alpha,
         ICanvasRenderTarget** canvasRenderTarget)
     {
         return ExceptionBoundary(
@@ -232,8 +215,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto newRenderTarget = GetManager()->CreateRenderTargetFromSurface(
                     canvasDevice.Get(), 
                     surface, 
-                    alpha, 
-                    dpi);
+                    dpi,
+                    alpha);
 
                 ThrowIfFailed(newRenderTarget.CopyTo(canvasRenderTarget));
             });
