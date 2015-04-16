@@ -23,7 +23,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-#if UAP
+#if WINDOWS_UAP
 using Windows.Graphics.DirectX;
 #else
 using Microsoft.Graphics.Canvas.DirectX;
