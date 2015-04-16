@@ -22,8 +22,14 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect">
       <summary>Abstract interface representing an effect used for image processing.</summary>
       <remarks>
-        C++ developers can QI an IGraphicsEffect for the IGraphicsEffectD2D1Interop interface,
-        which exposes all the information needed to construct a matching D2D effect.
+        <p>
+          When targeting the Windows universal app platform,
+          this interface is moved to the namespace Windows.Graphics.Effects.
+        </p>
+        <p>
+          C++ developers can QI an IGraphicsEffect for the IGraphicsEffectD2D1Interop interface,
+          which exposes all the information needed to construct a matching D2D effect.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect.Name">
@@ -39,6 +45,10 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource">
       <summary>Represents a type that can be accepted as input for an IGraphicsEffect.</summary>
       <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this interface is moved to the namespace Windows.Graphics.Effects.
+        </p>
         <p>Although IGraphicsEffect objects will accept any IGraphicsEffectSource as their source,
            <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/> can draw only objects
            which implement <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> such as

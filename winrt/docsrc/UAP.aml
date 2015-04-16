@@ -50,12 +50,20 @@ under the License.
             <entry><codeInline>Windows.Graphics.Imaging.BitmapSize</codeInline></entry>
           </row>
           <row>
+            <entry><codeEntityReference>N:Microsoft.Graphics.Canvas.DirectX</codeEntityReference>.*</entry>
+            <entry><codeInline>Windows.Graphics.DirectX.*</codeInline></entry>
+          </row>
+          <row>
             <entry><codeEntityReference>N:Microsoft.Graphics.Canvas.DirectX.Direct3D11</codeEntityReference>.*</entry>
             <entry><codeInline>Windows.Graphics.DirectX.Direct3D11.*</codeInline></entry>
           </row>
           <row>
-            <entry><codeEntityReference>N:Microsoft.Graphics.Canvas.DirectX</codeEntityReference>.*</entry>
-            <entry><codeInline>Windows.Graphics.DirectX.*</codeInline></entry>
+            <entry><codeEntityReference qualifyHint="true">T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect</codeEntityReference></entry>
+            <entry><codeInline>Windows.Graphics.Effects.IGraphicsEffect</codeInline></entry>
+          </row>
+          <row>
+            <entry><codeEntityReference qualifyHint="true">T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource</codeEntityReference></entry>
+            <entry><codeInline>Windows.Graphics.Effects.IGraphicsEffectSource</codeInline></entry>
           </row>
           <row>
             <entry><codeEntityReference>N:Microsoft.Graphics.Canvas.Numerics</codeEntityReference>.*</entry>
@@ -79,11 +87,6 @@ under the License.
         </para>
 
         <para>
-          In order to use this new implementation you must install the
-          System.Numerics.Vectors nuget package into your project.
-        </para>
-
-        <para>
           As a general rule, if you code against System.Numerics then the same
           code will build with all flavors of Win2D.
         </para>
@@ -103,6 +106,23 @@ under the License.
           Win2D.  For example, the Video Effect example in ExampleGallery uses
           the Win2D and the new media effects API (via IBasicVideoEffect) by
           exchanging IDirect3DDevice and IDirect3DSurface objects.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Effect Interfaces</title>
+      <content>
+        <para>
+          <codeEntityReference>
+          T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect
+          </codeEntityReference> and <codeEntityReference>
+          T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource
+          </codeEntityReference> are now built into the universal app platform.
+          This allows other universal app platform APIs to interoperate with
+          Win2D.  For example, the new <codeInline>Windows.UI.Composition.EffectVisual</codeInline>
+          API can use Win2D types such as CompositeEffect or SaturationEffect
+          to describe what effect processing should be applied to a composition visual.
         </para>
       </content>
     </section>

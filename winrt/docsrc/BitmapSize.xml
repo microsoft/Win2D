@@ -20,6 +20,10 @@ under the License.
   <members>
     <member name="T:Microsoft.Graphics.Canvas.BitmapSize">
       <summary>Describes the size of a bitmap, in integer pixel units.</summary>
+      <remarks>
+        When targeting the Windows universal app platform,
+        this struct is moved to the namespace Windows.Graphics.Imaging.
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.BitmapSize.Width">
       <summary>Width of the bitmap, in pixels.</summary>

@@ -21,7 +21,16 @@ under the License.
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat">
       <summary>Specifies the pixel format of a DirectX surface.</summary>
-      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173059">DXGI_FORMAT</a> enum.</remarks>
+      <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this enum is moved to the namespace Windows.Graphics.DirectX.
+        </p>
+        <p>
+          This Windows Runtime type corresponds to the DirectX
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173059">DXGI_FORMAT</a> enum.
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat.Unknown">
       <summary>The format is not known.</summary>

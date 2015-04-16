@@ -26,6 +26,9 @@ under the License.
            or C++ <a href="WindowsNumerics_float3x2.htm">float3x2</a> types instead.</p>
       </summary>
       <remarks>
+        <p>When targeting the Windows universal app platform,
+           this struct is moved to the namespace Windows.Foundation.Numerics.</p>
+
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
            For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
@@ -64,6 +67,9 @@ under the License.
            or C++ <a href="WindowsNumerics_float4x4.htm">float4x4</a> types instead.</p>
       </summary>
       <remarks>
+        <p>When targeting the Windows universal app platform,
+           this struct is moved to the namespace Windows.Foundation.Numerics.</p>
+
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
            For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
@@ -132,6 +138,9 @@ under the License.
            or C++ <a href="WindowsNumerics_plane.htm">plane</a> types instead.</p>
       </summary>
       <remarks>
+        <p>When targeting the Windows universal app platform,
+           this struct is moved to the namespace Windows.Foundation.Numerics.</p>
+
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
            For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
@@ -158,6 +167,9 @@ under the License.
            or C++ <a href="WindowsNumerics_quaternion.htm">quaternion</a> types instead.</p>
       </summary>
       <remarks>
+        <p>When targeting the Windows universal app platform,
+           this struct is moved to the namespace Windows.Foundation.Numerics.</p>
+
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
            For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
@@ -190,6 +202,9 @@ under the License.
            or C++ <a href="WindowsNumerics_float2.htm">float2</a> types instead.</p>
       </summary>
       <remarks>
+        <p>When targeting the Windows universal app platform,
+           this struct is moved to the namespace Windows.Foundation.Numerics.</p>
+
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
            For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
@@ -216,6 +231,9 @@ under the License.
            or C++ <a href="WindowsNumerics_float3.htm">float3</a> types instead.</p>
       </summary>
       <remarks>
+        <p>When targeting the Windows universal app platform,
+           this struct is moved to the namespace Windows.Foundation.Numerics.</p>
+
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
            For more complete functionality, see the .NET <see cref="N:System.Numerics"/>
@@ -245,6 +263,9 @@ under the License.
            or C++ <a href="WindowsNumerics_float4.htm">float4</a> types instead.</p>
       </summary>
       <remarks>
+        <p>When targeting the Windows universal app platform,
+           this struct is moved to the namespace Windows.Foundation.Numerics.</p>
+
         <p>This Windows Runtime type is only used for data exchange, and does not include
            any methods for manipulating the values or performing math computations.
            For more complete functionality, see the .NET <see cref="N:System.Numerics"/>

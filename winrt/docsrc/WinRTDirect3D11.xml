@@ -21,7 +21,16 @@ under the License.
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings">
       <summary>Identifies the ways in which a resource may be bound to the graphics pipeline.</summary>
-      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ff476085">D3D11_BIND_FLAG</a> enum.</remarks>
+      <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this enum is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
+        </p>
+        <p>
+          This Windows Runtime type corresponds to the DirectX
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ff476085">D3D11_BIND_FLAG</a> enum.
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DBindings.VertexBuffer">
       <summary>Bind a buffer as a vertex buffer to the input-assembler stage.</summary>
@@ -58,14 +67,23 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice">
       <summary>A GPU rendering device, used for interop between different APIs.</summary>
       <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this interface is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
+        </p>
         <p>Classes that implement this interface can be queried for the DirectX 
         <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174527">IDXGIDevice</a>.</p>
         
         <p>To move back and forth between IDirect3DDevice and IDXGIDevice, use the methods:</p>
         <code>
-          // header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
-          // namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
-          
+          // For Windows 8.1 / Windows Phone 8.1:
+          //   header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
+          //   namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
+          //
+          // For Windows universal app platform:
+          //   header: Windows.Graphics.DirectX.Direct3D11.interop.h
+          //   namespace: Windows::Graphics::DirectX::Direct3D11
+
           template&lt;typename DXGI_TYPE&gt;
           HRESULT GetDXGIInterface(_In_ IDirect3DDevice^ device, _COM_Outptr_ DXGI_TYPE** dxgi);
 
@@ -76,10 +94,24 @@ under the License.
         <p>First include the necessary headers and namespaces:</p>
         
         <code>
+          #include &lt;sdkddkver.h&gt;
+
+          #if WINVER &lt;= 0x0603
+
+          // Use the Windows 8.1 / Windows Phone 8.1 version
           #include &lt;Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h&gt;
+          using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+
+          #else
+
+          // Use the Windows universal app platform version
+          #include &lt;Windows.Graphics.DirectX.Direct3D11.interop.h&gt;
+          using namespace Windows::Graphics::DirectX::Direct3D11;
+
+          #endif
+
           #include &lt;d2d1_2.h&gt;
 
-          using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
           using namespace Microsoft::WRL;
         </code>
 
@@ -110,7 +142,16 @@ under the License.
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DMultisampleDescription">
       <summary>Describes multi-sampling parameters for a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface"/>.</summary>
-      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173072">DXGI_SAMPLE_DESC</a> structure.</remarks>
+      <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this struct is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
+        </p>
+        <p>
+          This Windows Runtime type corresponds to the DirectX
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173072">DXGI_SAMPLE_DESC</a> structure.
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DMultisampleDescription.Count">
       <summary>The number of multisamples per pixel.</summary>
@@ -123,15 +164,24 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface">
       <summary>A GPU format 2D bitmap surface, used for interop between different APIs.</summary>
       <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this interface is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
+        </p>
         <p>Classes that implement this interface can be queried for the DirectX 
         <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174565">IDXGISurface</a> 
         interface.</p>
 
         <p>To move back and forth between IDirect3DSurface and IDXGISurface, use the methods:</p>
         <code>
-          // header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
-          // namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
-          
+          // For Windows 8.1 / Windows Phone 8.1:
+          //   header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
+          //   namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
+          //
+          // For Windows universal app platform:
+          //   header: Windows.Graphics.DirectX.Direct3D11.interop.h
+          //   namespace: Windows::Graphics::DirectX::Direct3D11
+
           template&lt;typename DXGI_TYPE&gt;
           HRESULT GetDXGIInterface(_In_ IDirect3DSurface^ surface, _COM_Outptr_ DXGI_TYPE** dxgi);
 
@@ -142,10 +192,24 @@ under the License.
         <p>First include the necessary headers and namespaces:</p>
         
         <code>
+          #include &lt;sdkddkver.h&gt;
+
+          #if WINVER &lt;= 0x0603
+
+          // Use the Windows 8.1 / Windows Phone 8.1 version
           #include &lt;Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h&gt;
+          using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
+
+          #else
+
+          // Use the Windows universal app platform version
+          #include &lt;Windows.Graphics.DirectX.Direct3D11.interop.h&gt;
+          using namespace Windows::Graphics::DirectX::Direct3D11;
+
+          #endif
+
           #include &lt;d2d1_2.h&gt;
 
-          using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
           using namespace Microsoft::WRL;
         </code>
 
@@ -174,7 +238,16 @@ under the License.
 
     <member name="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription">
       <summary>Describes a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface"/>.</summary>
-      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173074">DXGI_SURFACE_DESC</a> structure.</remarks>
+      <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this struct is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
+        </p>
+        <p>
+          This Windows Runtime type corresponds to the DirectX
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb173074">DXGI_SURFACE_DESC</a> structure.
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DSurfaceDescription.Width">
       <summary>Width of the surface.</summary>
@@ -194,7 +267,16 @@ under the License.
       <summary>Identifies expected resource use during rendering.
                The usage directly reflects whether a resource is accessible by the CPU and/or the graphics processing unit (GPU).</summary>
       
-      <remarks>This Windows Runtime type corresponds to the DirectX <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ff476259">D3D11_USAGE</a> enum.</remarks>
+      <remarks>
+        <p>
+          When targeting the Windows universal app platform,
+          this enum is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
+        </p>
+        <p>
+          This Windows Runtime type corresponds to the DirectX
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ff476259">D3D11_USAGE</a> enum.
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.DirectX.Direct3D11.Direct3DUsage.Default">
       <summary>A resource that requires read and write access by the GPU.</summary>
