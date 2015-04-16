@@ -28,7 +28,7 @@
     <Has10Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)' != ''">true</Has10Sdk>
 
     <ShouldRunUAPTests>false</ShouldRunUAPTests>
-    <ShouldRunUAPTests Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion@CurrentVersion)' &gt;= '6.3'">true</ShouldRunUAPTests>
+    <ShouldRunUAPTests Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion@CurrentBuildNumber)' &gt;= '10000'">true</ShouldRunUAPTests>
   </PropertyGroup>
 
   <!-- Disable building targets when the SDK isn't installed -->
