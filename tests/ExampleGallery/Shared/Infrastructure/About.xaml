@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -34,10 +34,11 @@ under the License.
         <Hyperlink NavigateUri="http://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared">http://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared</Hyperlink>
         <LineBreak/>
         <LineBreak/>
-        Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics 
-        rendering with GPU acceleration. It is available to C# and C++ developers writing 
-        Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of 
-        Direct2D, and integrates seamlessly with XAML and CoreWindow.
+        Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
+        rendering with GPU acceleration. It is available to C# and C++ developers
+        writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
+        utilizes the power of Direct2D, and integrates seamlessly with XAML and
+        CoreWindow.
         <LineBreak/>
         <LineBreak/>
         More information about Win2D:
