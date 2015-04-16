@@ -17,20 +17,12 @@ under the License.
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
       <para>
-        Win2D can now be built to support the Windows universal app platform.
-        As this a preview, we are not shipping binaries in the NuGet package at
-        this time.  In order to use Win2D with the universal app platform you'll
-        need to build it from source.  This is early work in progress, and some
-        workarounds are required.  Further instructions can be found here:
+        As of Win2D version 0.0.17, Win2D can be used to build Windows universal
+        apps using the latest
         <externalLink>
-          <linkText>README.md</linkText>
-          <linkUri>https://github.com/Microsoft/Win2D/blob/master/README.md#preview-of-windows-universal-app-platform-support</linkUri>
-        </externalLink>
-      </para>
-      <para>
-        If you want to learn Win2D using something that's more stable and well
-        tested then it may be better to stick with Windows 8.1 / Windows Phone
-        8.1 version shipped via the NuGet package.
+          <linkText>Visual Studio 2015 Community Technology Preview</linkText>
+          <linkUri>https://www.visualstudio.com/downloads/visual-studio-2015-ctp-vs</linkUri>
+        </externalLink>.  
       </para>
     </introduction>
     

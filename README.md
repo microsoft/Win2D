@@ -1,9 +1,10 @@
 # Win2D
 
-Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics 
-rendering with GPU acceleration. It is available to C# and C++ developers writing 
-Windows Store apps for Windows 8.1 and Windows Phone 8.1. It utilizes the power of 
-Direct2D, and integrates seamlessly with XAML and CoreWindow.
+Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
+rendering with GPU acceleration. It is available to C# and C++ developers
+writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
+utilizes the power of Direct2D, and integrates seamlessly with XAML and
+CoreWindow.
 
 Win2D is work in progress and evolving rapidly. The goal of releasing this code 
 in an early, incomplete state is to solicit early developer feedback.
@@ -69,24 +70,3 @@ Only' setting to 'Include Prerelease' when adding them to your project.
 If you are building with Visual Studio 2013, then the generated package is
 called "Win2D-NoUAP".  This contains everything the usual Win2D package contains
 apart from any universal app platform binaries.
-
-
-## Using the Win2D NuGet package with an universal app platform application
-
-- Install the Win2D package as usual.
-
-As various parts of the platform, SDK and development tools are still under
-development, there are some rough edges:
-
-- Currently, C# apps will also need to install the System.Numerics.Vectors package.
-
-- Currently, C# apps will need to enable the "Compile with .NET Native tool
-  chain" option available through the "Build" tab of the app properties.
-
-- The template for C# UAP apps includes the following line in App.xaml.cs, which
-  needs to be removed or commented out as it is incompatible with the .NET
-  native tool chain:
-
-```C#
-public TelemetryClient TelemetryClient = new TelemetryClient();
-```
