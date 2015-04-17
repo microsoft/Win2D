@@ -6,17 +6,24 @@ writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
 utilizes the power of Direct2D, and integrates seamlessly with XAML and
 CoreWindow.
 
-Win2D is work in progress and evolving rapidly. The goal of releasing this code 
-in an early, incomplete state is to solicit early developer feedback.
-
+##### Where to get it
 - [NuGet packages](http://www.nuget.org/packages/Win2D)
+- [Source code](http://github.com/Microsoft/Win2D)
+
+##### How to use it
 - [Documentation](http://microsoft.github.io/Win2D)
+- Example Gallery
+    [source code](https://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared),
+    [Windows](http://apps.microsoft.com/windows/en-us/app/win2d-example-gallery/b668cfe1-e280-4c1e-adc1-09b7981ab084) and
+    [Phone](http://www.windowsphone.com/en-us/store/app/win2d-example-gallery/8797b9cb-1443-475f-9a43-dd959de6fcc1) apps
+
+##### More info
 - [Features](http://github.com/Microsoft/Win2D/wiki/Features) - *what's implemented so far*
 - [Backlog](http://github.com/Microsoft/Win2D/wiki/Backlog) - *what we plan to add next*
 - [Team blog](http://blogs.msdn.com/b/win2d)
+- [Report a bug or ask a question](http://github.com/Microsoft/Win2D/issues)
 - [License](http://www.apache.org/licenses/LICENSE-2.0.html)
 - [Contributing](http://github.com/Microsoft/Win2D/blob/master/CONTRIBUTING.md)
-- Example Gallery for [Windows](http://apps.microsoft.com/windows/en-us/app/win2d-example-gallery/b668cfe1-e280-4c1e-adc1-09b7981ab084) and [Phone](http://www.windowsphone.com/en-us/store/app/win2d-example-gallery/8797b9cb-1443-475f-9a43-dd959de6fcc1) - *source code [here](https://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared)*
 
 ## Code Example
 To give you a flavor of what the code looks like, here is a snippet of XAML:

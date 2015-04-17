@@ -25,24 +25,46 @@ under the License.
         CoreWindow.
       </para>
 
-      <para>
-        Win2D is work in progress and evolving rapidly. The goal of releasing this
-        code in an early, incomplete state is to solicit early developer feedback.
-      </para>
-
+      <para>Where to get it:</para>
       <list class="bullet">
-        <listItem>
-          <externalLink>
-            <linkText>Source code and issue tracking</linkText>
-            <linkUri>http://github.com/Microsoft/Win2D</linkUri>
-          </externalLink>
-        </listItem>
         <listItem>
           <externalLink>
             <linkText>NuGet packages</linkText>
             <linkUri>http://www.nuget.org/packages/Win2D</linkUri>
           </externalLink>
         </listItem>
+        <listItem>
+          <externalLink>
+            <linkText>Source code</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D</linkUri>
+          </externalLink>
+        </listItem>
+      </list>
+
+      <para>Example Gallery:</para>
+      <list class="bullet">
+        <listItem>
+          <externalLink>
+            <linkText>Source code</linkText>
+            <linkUri>https://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared</linkUri>
+          </externalLink>
+        </listItem>
+        <listItem>
+          <externalLink>
+            <linkText>Windows</linkText>
+            <linkUri>http://apps.microsoft.com/windows/en-us/app/win2d-example-gallery/b668cfe1-e280-4c1e-adc1-09b7981ab084</linkUri>
+          </externalLink>
+          and
+          <externalLink>
+            <linkText>Phone</linkText>
+            <linkUri>http://www.windowsphone.com/en-us/store/app/win2d-example-gallery/8797b9cb-1443-475f-9a43-dd959de6fcc1</linkUri>
+          </externalLink>
+          apps
+        </listItem>
+      </list>
+
+      <para>More info:</para>
+      <list class="bullet">
         <listItem>
           <externalLink>
             <linkText>Features</linkText>
@@ -64,24 +86,10 @@ under the License.
           </externalLink>
         </listItem>
         <listItem>
-          Example Gallery for
           <externalLink>
-            <linkText>Windows</linkText>
-            <linkUri>http://apps.microsoft.com/windows/en-us/app/win2d-example-gallery/b668cfe1-e280-4c1e-adc1-09b7981ab084</linkUri>
+            <linkText>Report a bug or ask a question</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D/issues</linkUri>
           </externalLink>
-          and
-          <externalLink>
-            <linkText>Phone</linkText>
-            <linkUri>http://www.windowsphone.com/en-us/store/app/win2d-example-gallery/8797b9cb-1443-475f-9a43-dd959de6fcc1</linkUri>
-          </externalLink>
-          -
-          <legacyItalic>
-            source code
-            <externalLink>
-              <linkText>here</linkText>
-              <linkUri>https://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared</linkUri>
-            </externalLink>
-          </legacyItalic>
         </listItem>
       </list>
     </introduction>
@@ -141,7 +149,7 @@ under the License.
           <listItem>
             Add a CanvasControl inside the existing Grid control:
             <code>
-              &lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"&gt;
+              &lt;Grid&gt;
                   &lt;canvas:CanvasControl Draw="CanvasControl_Draw" ClearColor="CornflowerBlue"/&gt;
               &lt;/Grid&gt;
             </code>
