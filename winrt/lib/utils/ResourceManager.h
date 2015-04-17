@@ -176,15 +176,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             HStringReference keyName(TEXT(__FUNCDNAME__));
             ComPtr<ManagerHolder> managerHolder;
+            ComPtr<IInspectable> inspectableManagerHolder;
 
-            boolean hasKey = false;
-            ThrowIfFailed(propertyMap->HasKey(keyName.Get(), &hasKey));
-
-            if (hasKey)
+            if (SUCCEEDED(propertyMap->Lookup(keyName.Get(), &inspectableManagerHolder)))
             {
-                ComPtr<IInspectable> inspectableManagerHolder;
-                ThrowIfFailed(propertyMap->Lookup(keyName.Get(), &inspectableManagerHolder));
-
                 managerHolder = static_cast<ManagerHolder*>(inspectableManagerHolder.Get());
             }
 
@@ -204,6 +199,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // previously
             //
 
+            // TODO: this isn't threadsafe
             auto manager = FACTORY::CreateManager();
 
             managerHolder = Make<ManagerHolder>();
