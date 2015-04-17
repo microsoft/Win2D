@@ -90,7 +90,7 @@
 
 
   <ItemGroup>
-    <PackagesConfig Include="$(MSBuildThisFileDirectory)..\..\.nuget\packages.config" />
+    <PackagesConfig Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
 
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
