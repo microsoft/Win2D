@@ -174,7 +174,6 @@ namespace canvas
             FontStretch fontStretch{};
             FontStyle fontStyle{};
             FontWeight fontWeight{};
-            CanvasLineSpacingMethod lineSpacingMethod{};
             CanvasVerticalAlignment verticalAlignment{};
             CanvasHorizontalAlignment horizontalAlignment{};
             CanvasTextTrimmingGranularity trimmingGranularity{};
@@ -211,9 +210,6 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_IncrementalTabStop(&fl));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_IncrementalTabStop(fl));
-
-            Assert::AreEqual(RO_E_CLOSED, textLayout->get_LineSpacingMethod(&lineSpacingMethod));
-            Assert::AreEqual(RO_E_CLOSED, textLayout->put_LineSpacingMethod(lineSpacingMethod));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LineSpacing(&fl));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_LineSpacing(fl));
@@ -326,7 +322,6 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontStyle(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontWeight(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_IncrementalTabStop(nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->get_LineSpacingMethod(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LineSpacing(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LineSpacingBaseline(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultLocaleName(nullptr));
@@ -643,9 +638,9 @@ namespace canvas
         }
 
         template<class GET_LINE_SPACING_METHOD>
-        void InitializeGetLineSpacingMethod(GET_LINE_SPACING_METHOD& lineSpacingMethod, DWRITE_LINE_SPACING_METHOD method, FLOAT spacing, FLOAT baseline)
+        void InitializeGetLineSpacingMethod(GET_LINE_SPACING_METHOD& getLineSpacingMethod, DWRITE_LINE_SPACING_METHOD method, FLOAT spacing, FLOAT baseline)
         {            
-            lineSpacingMethod.SetExpectedCalls(1,
+            getLineSpacingMethod.SetExpectedCalls(1,
                 [method, spacing, baseline](DWRITE_LINE_SPACING_METHOD* lineSpacingMethod, FLOAT* lineSpacing, FLOAT* lineBaseline)
                 {
                     *lineSpacingMethod = method;
@@ -655,26 +650,29 @@ namespace canvas
                 });
         }
 
-        TEST_METHOD_EX(CanvasTextLayoutTests_get_LineSpacingMethod)
-        {
-            Fixture f;
-            auto textLayout = f.CreateSimpleTextLayout();
-            InitializeGetLineSpacingMethod(f.Adapter->MockTextLayout->GetLineSpacingMethod, DWRITE_LINE_SPACING_METHOD_UNIFORM, 0, 0);
-
-            CanvasLineSpacingMethod lineSpacingMethod;
-            Assert::AreEqual(S_OK, textLayout->get_LineSpacingMethod(&lineSpacingMethod));
-            Assert::AreEqual(CanvasLineSpacingMethod::Uniform, lineSpacingMethod);    
-        }
-
         TEST_METHOD_EX(CanvasTextLayoutTests_get_LineSpacing)
         {
-            Fixture f;
-            auto textLayout = f.CreateSimpleTextLayout();
-            InitializeGetLineSpacingMethod(f.Adapter->MockTextLayout->GetLineSpacingMethod, DWRITE_LINE_SPACING_METHOD_DEFAULT, 123.0f, 0);
+            float const anyBaseline = 123.0f;
 
-            float fl;
-            Assert::AreEqual(S_OK, textLayout->get_LineSpacing(&fl));
-            Assert::AreEqual(123.0f, fl);         
+            struct Case { float DWriteValue; DWRITE_LINE_SPACING_METHOD Method; float Value; };
+
+            Case cases[] = { {  0.0f, DWRITE_LINE_SPACING_METHOD_DEFAULT,  0.0f },
+                             {  0.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM,  0.0f },
+                             {  1.0f, DWRITE_LINE_SPACING_METHOD_DEFAULT, -1.0f },
+                             {  1.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM,  1.0f } };            
+
+            for (auto c : cases)
+            {
+                Fixture f;
+                auto l = f.CreateSimpleTextLayout();
+
+                InitializeGetLineSpacingMethod(f.Adapter->MockTextLayout->GetLineSpacingMethod, c.Method, c.DWriteValue, anyBaseline);
+
+                float spacing{};
+                ThrowIfFailed(l->get_LineSpacing(&spacing));
+
+                Assert::AreEqual(c.Value, spacing);
+            }
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_get_LineSpacingBaseline)
@@ -689,9 +687,9 @@ namespace canvas
         }
 
         template<class SET_LINE_SPACING_METHOD>
-        void InitializeSetLineSpacingMethod(SET_LINE_SPACING_METHOD& lineSpacingMethod, DWRITE_LINE_SPACING_METHOD method, FLOAT spacing, FLOAT baseline)
+        void InitializeSetLineSpacingMethod(SET_LINE_SPACING_METHOD& setLineSpacingMethod, DWRITE_LINE_SPACING_METHOD method, FLOAT spacing, FLOAT baseline)
         {
-            lineSpacingMethod.SetExpectedCalls(1,
+            setLineSpacingMethod.SetExpectedCalls(1,
                 [method, spacing, baseline](DWRITE_LINE_SPACING_METHOD lineSpacingMethod, FLOAT lineSpacing, FLOAT lineBaseline)
                 {
                     Assert::AreEqual(method, lineSpacingMethod);
@@ -701,22 +699,26 @@ namespace canvas
                 });
         }
 
-        TEST_METHOD_EX(CanvasTextLayoutTests_put_LineSpacingMethod)
-        {
-            Fixture f;
-            auto textLayout = f.CreateSimpleTextLayout();
-
-            InitializeSetLineSpacingMethod(f.Adapter->MockTextLayout->SetLineSpacingMethod, DWRITE_LINE_SPACING_METHOD_UNIFORM, 0, 0);
-            Assert::AreEqual(S_OK, textLayout->put_LineSpacingMethod(CanvasLineSpacingMethod::Uniform));
-        }
-
         TEST_METHOD_EX(CanvasTextLayoutTests_put_LineSpacing)
         {
-            Fixture f;
-            auto textLayout = f.CreateSimpleTextLayout();
+            float const anyBaseline = 0.0f;
 
-            InitializeSetLineSpacingMethod(f.Adapter->MockTextLayout->SetLineSpacingMethod, DWRITE_LINE_SPACING_METHOD_DEFAULT, 123.0f, 0);
-            Assert::AreEqual(S_OK, textLayout->put_LineSpacing(123.0f));
+            struct Case { float Value; DWRITE_LINE_SPACING_METHOD Method; float DWriteValue; };
+
+            Case cases[] = { {  0.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 0.0f },
+                             { -1.0f, DWRITE_LINE_SPACING_METHOD_DEFAULT, 1.0f },
+                             { -5.0f, DWRITE_LINE_SPACING_METHOD_DEFAULT, 5.0f },
+                             {  1.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 1.0f } };
+
+            for (auto c : cases)
+            {
+                Fixture f;
+                auto l = f.CreateSimpleTextLayout();
+
+                InitializeSetLineSpacingMethod(f.Adapter->MockTextLayout->SetLineSpacingMethod, c.Method, c.DWriteValue, anyBaseline);
+                
+                ThrowIfFailed(l->put_LineSpacing(c.Value));
+            }
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_put_LineSpacingBaseline)

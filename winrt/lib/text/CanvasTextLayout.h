@@ -76,12 +76,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(put_IncrementalTabStop)(
             float value) override;
 
-        IFACEMETHOD(get_LineSpacingMethod)(
-            CanvasLineSpacingMethod* value) override;
-
-        IFACEMETHOD(put_LineSpacingMethod)(
-            CanvasLineSpacingMethod value) override;
-
         IFACEMETHOD(get_LineSpacing)(
             float* value) override;
 

@@ -58,7 +58,6 @@ namespace Microsoft.Graphics.Canvas.Text
         [propget] HRESULT DefaultFontStyle([out, retval] Windows.UI.Text.FontStyle* value);
         [propget] HRESULT DefaultFontWeight([out, retval] Windows.UI.Text.FontWeight* value);
         PROPERTY(IncrementalTabStop, float);
-        PROPERTY(LineSpacingMethod, CanvasLineSpacingMethod);
         PROPERTY(LineSpacing, float);
         PROPERTY(LineSpacingBaseline, float);
         [propget] HRESULT DefaultLocaleName([out, retval] HSTRING* value);

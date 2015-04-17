@@ -48,18 +48,6 @@ under the License.
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMethod">
-      <summary>Specifies how text line spacing is applied.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMethod.Default">
-      <summary>Line spacing depends solely on the content, adjusting to accommodate the size of fonts and inline objects.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMethod.Uniform">
-      <summary>Lines are explicitly set to uniform spacing, regardless of the size of fonts and inline objects.
-               This can be useful to avoid the uneven appearance that can occur from font fallback.</summary>
-    </member>
-
-
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment">
       <summary>Specifies the horizontal alignment of paragraph text.</summary>
     </member>
@@ -212,14 +200,20 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LocaleName">
       <summary>Specifies the locale name.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingMethod">
-      <summary>Specifies how line spacing is applied.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingBaseline">
       <summary>Specifies the distance from top of line to baseline. A reasonable ratio to lineSpacing is 80 percent.</summary>
+      <remarks>
+        This property is ignored when <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing" /> is negative.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing">
-      <summary>Specifies the line height, or distance from one baseline to another.</summary>
+      <summary>Negative values use default line spacing; non-negative values specify the line height.</summary>
+      <remarks>
+        The line height is the distance from one baseline to another.  When
+        LineSpacing is negative the <see
+        cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingBaseline"/>
+        property is ignored.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.IncrementalTabStop">
       <summary>Specifies the incremental tab stop position.</summary>

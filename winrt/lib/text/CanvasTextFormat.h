@@ -154,7 +154,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ABI::Windows::UI::Text::FontStyle m_fontStyle;
         ABI::Windows::UI::Text::FontWeight m_fontWeight;
         float m_incrementalTabStop;
-        CanvasLineSpacingMethod m_lineSpacingMethod;
         float m_lineSpacing;
         float m_lineSpacingBaseline;
         WinString m_localeName;
@@ -195,7 +194,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         PROPERTY(FontStyle,              ABI::Windows::UI::Text::FontStyle);
         PROPERTY(FontWeight,             ABI::Windows::UI::Text::FontWeight);
         PROPERTY(IncrementalTabStop,     float);
-        PROPERTY(LineSpacingMethod,      CanvasLineSpacingMethod);
         PROPERTY(LineSpacing,            float);
         PROPERTY(LineSpacingBaseline,    float);
         PROPERTY(LocaleName,             HSTRING);
@@ -265,6 +263,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         DWRITE_LINE_SPACING_METHOD Method;
         float Spacing;
         float Baseline;
+
+        float GetAdjustedSpacing() const
+        {
+            switch (Method)
+            {
+            case DWRITE_LINE_SPACING_METHOD_DEFAULT:
+                return -Spacing;
+
+            case DWRITE_LINE_SPACING_METHOD_UNIFORM:
+            default:
+                return Spacing;
+            }
+        }
+
+        static void Set(IDWriteTextFormat* format, float spacing, float baseline)
+        {
+            // The line spacing method is determined by the value of the
+            // LineSpacing property.  Negative means DEFAULT while non-negative
+            // means UNIFORM.  In the DEFAULT method, the actual value of
+            // m_lineSpacing is ignored, although it is still validated to be
+            // non-negative.  For this reason we pass in the fabs of the value
+            // that was set.  This also allows us to round-trip the values.
+            //
+            // signbit() is used so we can tell the difference between 0.0 and
+            // -0.0.
+            auto method = signbit(spacing)
+                ? DWRITE_LINE_SPACING_METHOD_DEFAULT 
+                : DWRITE_LINE_SPACING_METHOD_UNIFORM;
+
+            ThrowIfFailed(format->SetLineSpacing(
+                method,
+                fabs(spacing),
+                baseline));
+        }
     };
 
 

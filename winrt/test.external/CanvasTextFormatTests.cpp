@@ -84,7 +84,6 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(FontStyle,              Windows::UI::Text::FontStyle::Oblique);
         CHECK(FontWeight,             Windows::UI::Text::FontWeight { 100 } );
         CHECK(IncrementalTabStop,     12.0f);
-        CHECK(LineSpacingMethod,      CanvasLineSpacingMethod::Uniform);
         CHECK(LineSpacing,            2.0f);
         CHECK(LineSpacingBaseline,    4.0f);
         CHECK(LocaleName,             L"locale");
@@ -135,8 +134,7 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(FontStyle,              Windows::UI::Text::FontStyle::Oblique);
         CHECK(FontWeight,             Windows::UI::Text::FontWeight { 100 } );
         CHECK(IncrementalTabStop,     16.0f);
-        CHECK(LineSpacingMethod,      CanvasLineSpacingMethod::Default);
-        CHECK(LineSpacing,            5.0f);
+        CHECK(LineSpacing,            -5.0f);
         CHECK(LineSpacingBaseline,    7.0f);
         CHECK(LocaleName,             L"locale");
         CHECK(VerticalAlignment,      CanvasVerticalAlignment::Center);

@@ -187,8 +187,7 @@ CanvasTextFormat::CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> mana
     , m_fontStyle(ABI::Windows::UI::Text::FontStyle_Normal)
     , m_fontWeight(ToWindowsFontWeight(DWRITE_FONT_WEIGHT_NORMAL))
     , m_incrementalTabStop(-1.0f)          
-    , m_lineSpacingMethod(CanvasLineSpacingMethod::Default)
-    , m_lineSpacing(0.0f)
+    , m_lineSpacing(-1.0f)
     , m_lineSpacingBaseline(0.0f)
     , m_verticalAlignment(CanvasVerticalAlignment::Top)
     , m_horizontalAlignment(CanvasHorizontalAlignment::Left)
@@ -316,9 +315,9 @@ void CanvasTextFormat::SetShadowPropertiesFromDWrite()
     m_wordWrapping       = ToCanvasWordWrapping(m_format->GetWordWrapping());
     m_drawTextOptions    = CanvasDrawTextOptions::Default;
 
-    DWRITE_LINE_SPACING_METHOD method{};
-    ThrowIfFailed(m_format->GetLineSpacing(&method, &m_lineSpacing, &m_lineSpacingBaseline));
-    m_lineSpacingMethod = ToCanvasLineSpacingMethod(method);
+    DWriteLineSpacing spacing(m_format.Get());
+    m_lineSpacing = spacing.GetAdjustedSpacing();
+    m_lineSpacingBaseline = spacing.Baseline;
 
     DWRITE_TRIMMING trimmingOptions{};
     ComPtr<IDWriteInlineObject> inlineObject;
@@ -691,28 +690,6 @@ void CanvasTextFormat::RealizeIncrementalTabStop()
 }
 
 //
-// CanvasTextFormat.LineSpacingMethod
-//
-
-IFACEMETHODIMP CanvasTextFormat::get_LineSpacingMethod(CanvasLineSpacingMethod* value)
-{
-    return PropertyGet(
-        value,
-        m_lineSpacingMethod,
-        [&] { return ToCanvasLineSpacingMethod(DWriteLineSpacing(m_format.Get()).Method); });
-}
-
-
-IFACEMETHODIMP CanvasTextFormat::put_LineSpacingMethod(CanvasLineSpacingMethod value)
-{
-    return PropertyPut(
-        value, 
-        &m_lineSpacingMethod, 
-        ThrowIfInvalid<CanvasLineSpacingMethod>,
-        &CanvasTextFormat::RealizeLineSpacing);
-}
-
-//
 // CanvasTextFormat.LineSpacing
 //
 
@@ -721,7 +698,10 @@ IFACEMETHODIMP CanvasTextFormat::get_LineSpacing(float* value)
     return PropertyGet(
         value,
         m_lineSpacing,
-        [&] { return DWriteLineSpacing(m_format.Get()).Spacing; });
+        [&] 
+        { 
+            return DWriteLineSpacing(m_format.Get()).GetAdjustedSpacing();
+        });
 }
 
 
@@ -730,7 +710,7 @@ IFACEMETHODIMP CanvasTextFormat::put_LineSpacing(float value)
     return PropertyPut(
         value, 
         &m_lineSpacing, 
-        ThrowIfNegativeOrNan,
+        ThrowIfNan,
         &CanvasTextFormat::RealizeLineSpacing);
 }
 
@@ -759,10 +739,7 @@ IFACEMETHODIMP CanvasTextFormat::put_LineSpacingBaseline(float value)
 
 void CanvasTextFormat::RealizeLineSpacing()
 {
-    ThrowIfFailed(m_format->SetLineSpacing(
-        ToLineSpacingMethod(m_lineSpacingMethod),
-        m_lineSpacing,
-        m_lineSpacingBaseline));
+    DWriteLineSpacing::Set(m_format.Get(), m_lineSpacing, m_lineSpacingBaseline);
 }
 
 

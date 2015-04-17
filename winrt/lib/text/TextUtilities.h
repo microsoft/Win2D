@@ -24,22 +24,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         static_assert(static_cast<int>(DWRITE) == static_cast<int>(CANVAS), #CANVAS " is assumed to match " #DWRITE)
 
 
-    inline DWRITE_LINE_SPACING_METHOD ToLineSpacingMethod(CanvasLineSpacingMethod value)
-    {
-        CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_DEFAULT, CanvasLineSpacingMethod::Default);
-        CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_UNIFORM, CanvasLineSpacingMethod::Uniform);
-
-        return static_cast<DWRITE_LINE_SPACING_METHOD>(value);
-    }
-
-
-    inline CanvasLineSpacingMethod ToCanvasLineSpacingMethod(DWRITE_LINE_SPACING_METHOD value)
-    {
-        // static_asserts in ToLineSpacingMethod validate that this cast is ok
-        return static_cast<CanvasLineSpacingMethod>(value);
-    }
-
-
     inline DWRITE_FONT_STRETCH ToFontStretch(ABI::Windows::UI::Text::FontStretch value)
     {
         CHECK_ENUM_MEMBER(DWRITE_FONT_STRETCH_UNDEFINED, ABI::Windows::UI::Text::FontStretch_Undefined);
@@ -271,20 +255,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         case CanvasTextDirection::TopToBottomThenRightToLeft:
         case CanvasTextDirection::BottomToTopThenRightToLeft:
             return;
-        default:
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
-    template<>
-    inline void ThrowIfInvalid(CanvasLineSpacingMethod value)
-    {
-        switch (value)
-        {
-        case CanvasLineSpacingMethod::Default:
-        case CanvasLineSpacingMethod::Uniform:
-            return;
-
         default:
             ThrowHR(E_INVALIDARG);
         }

@@ -75,14 +75,6 @@ namespace Microsoft.Graphics.Canvas.Text
 
 
     [version(VERSION)]
-    typedef enum CanvasLineSpacingMethod
-    {
-        Default,
-        Uniform
-    } CanvasLineSpacingMethod;
-
-
-    [version(VERSION)]
     typedef enum CanvasHorizontalAlignment
     {
         Left,
@@ -135,8 +127,7 @@ namespace Microsoft.Graphics.Canvas.Text
         PROPERTY(FontStyle,              Windows.UI.Text.FontStyle);
         PROPERTY(FontWeight,             Windows.UI.Text.FontWeight);
         PROPERTY(IncrementalTabStop,     float);
-        PROPERTY(LineSpacingMethod,      CanvasLineSpacingMethod);
-        PROPERTY(LineSpacing,            float);
+        PROPERTY(LineSpacing,            float); // [6]
         PROPERTY(LineSpacingBaseline,    float);
         PROPERTY(LocaleName,             HSTRING);
         PROPERTY(VerticalAlignment,      CanvasVerticalAlignment); // [2]
@@ -171,6 +162,14 @@ namespace Microsoft.Graphics.Canvas.Text
         //     However, all cases where we may want to use a CanvasTextFormat
         //     will also need to have an Options provided, so it makes sense to
         //     combine the two.
+        //
+        // [6] When LineSpacing is negative (it defaults to -1) this indicates
+        //     that DWRITE_LINE_SPACING_METHOD_DEFAULT should be used.  When
+        //     non-negative, DWRITE_LINE_SPACING_METHOD_UNIFORM should be used.
+        //     This allows us to a) remove the error case when LineSpacing is
+        //     negative, b) remove the LineSpacingMethod property and c) remove
+        //     the need to explain why LineSpacing is ignored when the method is
+        //     set to default.
         //
         // FontCollection will be added in the future.  #821 covers adding
         // custom font loading which is when having configurable font collection

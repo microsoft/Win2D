@@ -311,42 +311,6 @@ IFACEMETHODIMP CanvasTextLayout::GetMinimumLineLength(
         });
 }
 
-IFACEMETHODIMP CanvasTextLayout::get_LineSpacingMethod(
-    CanvasLineSpacingMethod* value)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(value);
-            auto& resource = GetResource(); 
-
-            DWRITE_LINE_SPACING_METHOD method;
-            float unused;
-            ThrowIfFailed(resource->GetLineSpacing(&method, &unused, &unused));
-
-            *value = ToCanvasLineSpacingMethod(method);
-        });
-}
-
-IFACEMETHODIMP CanvasTextLayout::put_LineSpacingMethod(
-    CanvasLineSpacingMethod value)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            auto& resource = GetResource(); 
-
-            DWRITE_LINE_SPACING_METHOD unused;
-            float lineSpacing;
-            float baseline;
-            ThrowIfFailed(resource->GetLineSpacing(&unused, &lineSpacing, &baseline));
-
-            ThrowIfInvalid<CanvasLineSpacingMethod>(value);
-
-            ThrowIfFailed(resource->SetLineSpacing(static_cast<DWRITE_LINE_SPACING_METHOD>(value), lineSpacing, baseline));
-        });
-}
-
 IFACEMETHODIMP CanvasTextLayout::get_LineSpacing(
     float* value)
 {
@@ -356,9 +320,8 @@ IFACEMETHODIMP CanvasTextLayout::get_LineSpacing(
             CheckInPointer(value);
             auto& resource = GetResource(); 
 
-            DWRITE_LINE_SPACING_METHOD unusedMethod;
-            float unusedBaseline;
-            ThrowIfFailed(resource->GetLineSpacing(&unusedMethod, value, &unusedBaseline));
+            DWriteLineSpacing spacing(resource.Get());
+            *value = spacing.GetAdjustedSpacing();
         });
 }
 
@@ -370,12 +333,9 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacing(
         {
             auto& resource = GetResource(); 
 
-            DWRITE_LINE_SPACING_METHOD method;
-            float unusedSpacing;
-            float baseline;
-            ThrowIfFailed(resource->GetLineSpacing(&method, &unusedSpacing, &baseline));
+            DWriteLineSpacing originalSpacing(resource.Get());
 
-            ThrowIfFailed(resource->SetLineSpacing(method, value, baseline));
+            DWriteLineSpacing::Set(resource.Get(), value, originalSpacing.Baseline);
         });
 }
 

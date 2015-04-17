@@ -589,13 +589,6 @@ namespace Microsoft
                 END_ENUM(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT);
             }
 
-            ENUM_TO_STRING(CanvasLineSpacingMethod)
-            {
-                ENUM_VALUE(CanvasLineSpacingMethod::Default);
-                ENUM_VALUE(CanvasLineSpacingMethod::Uniform);
-                END_ENUM(CanvasLineSpacingMethod);
-            }
-
             ENUM_TO_STRING(DWRITE_LINE_SPACING_METHOD)
             {
                 ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_DEFAULT);
