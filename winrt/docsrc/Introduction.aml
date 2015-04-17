@@ -103,21 +103,41 @@ under the License.
         </para>
         <list class="bullet">
           <listItem>
-            Download <externalLink>
-              <linkText>here</linkText>
-              <linkUri>http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx</linkUri>
-            </externalLink>
+            To develop for Windows 8.1 or Windows Phone 8.1:
+            <list class="bullet">
+              <listItem>
+                Install
+                <externalLink>
+                  <linkText>Visual Studio 2013</linkText>
+                  <linkUri>http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx</linkUri>
+                </externalLink>
+              </listItem>
+              <listItem>Recommended version: Visual Studio Community 2013 with Update 4</listItem>
+              <listItem>Minimum version: Visual Studio 2013 Update 2</listItem>
+              <listItem>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</listItem>
+            </list>
           </listItem>
-          <listItem>Recommended version: Visual Studio Community 2013 with Update 4</listItem>
-          <listItem>Minimum version: Visual Studio 2013 Update 2</listItem>
-          <listItem>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</listItem>
+
+          <listItem>
+            To develop for the Windows 10 universal app platform:
+            <list class="bullet">
+              <listItem>
+                Install
+                <externalLink>
+                  <linkText>Visual Studio 2015 Community Technology Preview</linkText>
+                  <linkUri>https://www.visualstudio.com/downloads/visual-studio-2015-ctp-vs</linkUri>
+                </externalLink>
+              </listItem>
+              <listItem>Minimum version: Visual Studio 2015 CTP 7</listItem>
+            </list>
+          </listItem>
         </list>
 
         <para>Create your project:</para>
         <list class="bullet">
           <listItem>Go to 'File' -> 'New' -> 'Project...'</listItem>
-          <listItem>Select 'Visual C#' -> 'Store Apps' -> 'Universal Apps'</listItem>
-          <listItem>Create a 'Blank App (Universal Apps)'</listItem>
+          <listItem>Select 'Visual C#'</listItem>
+          <listItem>Create a 'Blank App (Universal Apps)' (Visual Studio 2013) or 'Blank App (Windows Universal)' (Visual Studio 2015)</listItem>
           <listItem>Enter a project name of your choosing</listItem>
           <listItem>Click 'OK'</listItem>
         </list>
@@ -129,7 +149,7 @@ under the License.
           <listItem>Select the 'Win2D' package and click 'Install', then 'OK'</listItem>
           <listItem>Accept the license agreement</listItem>
           <listItem>Click 'Close'</listItem>
-          <listItem>Change Solution Platform from 'Any CPU' to 'x86'</listItem>
+          <listItem>If creating a Windows 8.1 or Windows Phone 8.1 app, change Solution Platform from 'Any CPU' to 'x86', 'x64', or 'ARM'</listItem>
         </list>
       </content>
     </section>

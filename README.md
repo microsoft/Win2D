@@ -75,5 +75,5 @@ Locally built versions of Win2D are marked as prerelease, so you must change the
 Only' setting to 'Include Prerelease' when adding them to your project.
 
 If you are building with Visual Studio 2013, then the generated package is
-called "Win2D-NoUAP".  This contains everything the usual Win2D package contains
+called "Win2D-NoUAP". This contains everything the usual Win2D package contains
 apart from any universal app platform binaries.
