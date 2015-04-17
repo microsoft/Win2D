@@ -12,6 +12,8 @@
 
 using ExampleGallery.Effects;
 using System;
+using System.Net.Http;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Media.Editing;
 using Windows.Media.Effects;
 using Windows.Storage;
@@ -41,10 +43,24 @@ namespace ExampleGallery
             var thumbnail = RandomAccessStreamReference.CreateFromFile(thumbnailFile);
 
             var url = "http://video.ch9.ms/ch9/4597/8db5a656-b173-4897-b2aa-e2075fb24597/windows10recap.mp4";
-            var file = await StorageFile.CreateStreamedFileFromUriAsync(
-                "windows10recap.mp4",
-                new Uri(url),
-                thumbnail);
+
+            // TODO: replace TemporaryFolder and HttpClient with StorageFile.CreateStreamedFileFromUriAsync once TH:2458060 is fixed
+            //var file = await StorageFile.CreateStreamedFileFromUriAsync(
+            //    "windows10recap.mp4",
+            //    new Uri(url),
+            //    thumbnail);
+
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("windows10recap.mp4", CreationCollisionOption.ReplaceExisting);
+
+            using (var httpClient = new HttpClient())
+            {
+                byte[] videoData = await httpClient.GetByteArrayAsync(url);
+
+                using (var writer = await file.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    await writer.WriteAsync(videoData.AsBuffer());
+                }
+            }
 
             this.progressText.Text = "Creating clip...";
             var clip = await MediaClip.CreateFromFileAsync(file);
