@@ -353,8 +353,18 @@ under the License.
       <summary>Fills the interior of a rectangle with the specified color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
-      <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify an opacity mask.</summary>
       <remarks>
+        <p>
+          Transparent portions of the opacity mask brush indicate the areas where the contents of the rectangle
+          will be transparent, while opaque portions of the mask indicate where the rectangle is visible.
+          The RGB color of the opacity mask is ignored.
+        </p>
+        <p>
+          For more flexible opacity mask options, see the
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+          and <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.
+        </p>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
           <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
@@ -365,10 +375,22 @@ under the License.
           <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
         </ul>
       </remarks>
+      <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
-      <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <summary>Fills the interior of a rectangle, using a brush to define the color and a second brush to specify an opacity mask.</summary>
       <remarks>
+        <p>
+          Transparent portions of the opacity mask brush indicate the areas where the contents of the rectangle
+          will be transparent, while opaque portions of the mask indicate where the rectangle is visible.
+          The RGB color of the opacity mask is ignored.
+        </p>
+        <p>
+          For more flexible opacity mask options, see the
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+          and <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.
+        </p>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
           <li>The opacity brush is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
@@ -379,6 +401,8 @@ under the License.
           <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
         </ul>
       </remarks>
+      <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRoundedRectangle(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
@@ -751,8 +775,18 @@ under the License.
       <summary>Fills a geometry relative to the specified position with the specified color.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
-      <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify an opacity mask.</summary>
       <remarks>
+        <p>
+          Transparent portions of the opacity mask brush indicate the areas where the contents of the geometry
+          will be transparent, while opaque portions of the mask indicate where the geometry is visible.
+          The RGB color of the opacity mask is ignored.
+        </p>
+        <p>
+          For more flexible opacity mask options, see the
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+          and <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.
+        </p>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
           <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
@@ -760,10 +794,22 @@ under the License.
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
       </remarks>
+      <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
-      <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <summary>Fills a geometry relative to the specified position, using a brush to define the color and a second brush to specify an opacity mask.</summary>
       <remarks>
+        <p>
+          Transparent portions of the opacity mask brush indicate the areas where the contents of the geometry
+          will be transparent, while opaque portions of the mask indicate where the geometry is visible.
+          The RGB color of the opacity mask is ignored.
+        </p>
+        <p>
+          For more flexible opacity mask options, see the
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+          and <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.
+        </p>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
           <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
@@ -771,10 +817,22 @@ under the License.
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
       </remarks>
+      <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
-      <summary>Fills a geometry relative to the origin, using a brush to define the color and a second brush to specify its opacity.</summary>
+      <summary>Fills a geometry relative to the origin, using a brush to define the color and a second brush to specify an opacity mask.</summary>
       <remarks>
+        <p>
+          Transparent portions of the opacity mask brush indicate the areas where the contents of the geometry
+          will be transparent, while opaque portions of the mask indicate where the geometry is visible.
+          The RGB color of the opacity mask is ignored.
+        </p>
+        <p>
+          For more flexible opacity mask options, see the
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+          and <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.
+        </p>
         <p>Optimization note - this method is fastest when all the following requirements are satisfied:</p>
         <ul>
           <li>The main color brush (not necessarily the opacity brush, which can be any type of brush) is a <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/></li>
@@ -782,6 +840,8 @@ under the License.
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
       </remarks>
+      <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawCachedGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
@@ -845,28 +905,32 @@ under the License.
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
-      <summary>Creates a layer that will blend its contents using opacity from the specified brush (which could contain a bitmap or gradient).</summary>
+      <summary>Creates a layer that will blend its contents using the specified opacity mask brush (which could contain a bitmap or gradient).</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Windows.Foundation.Rect)">
       <summary>Creates a layer that will clip its contents to a rectangle, and blend using the specified opacity.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Windows.Foundation.Rect)">
-      <summary>Creates a layer that will clip its contents to a rectangle, and blend using opacity from the specified brush.</summary>
+      <summary>Creates a layer that will clip its contents to a rectangle, and blend using the specified opacity mask brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
       <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using the specified opacity.</summary>
@@ -874,15 +938,17 @@ under the License.
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
-      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using opacity from the specified brush.</summary>
+      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using the specified opacity mask brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using the specified opacity.</summary>
@@ -890,23 +956,26 @@ under the License.
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
-      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend using opacity from the specified brush.</summary>
+      <summary>Creates a layer that will clip its contents to an arbitrarily complex region defined by a geometry, and blend the specified opacity mask brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.CanvasLayerOptions)">
-      <summary>Creates a layer that will clip its contents to a rectangle and/or geometry region, and blend using the specified opacity and/or brush.</summary>
+      <summary>Creates a layer that will clip its contents to a rectangle and/or geometry region, and blend using the specified opacity and/or opacity mask brush.</summary>
       <remarks>
         <p>The layer affects all drawing until the returned <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> object is closed. In C#, this is typically done with a "using" statement.</p>
         <p>Antialising mode of the clip geometry is determined by the value of the <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property when CreateLayer is called.</p>
         <p>For more information about layers, see <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>.</p>
-        </remarks>
+      </remarks>
+      <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
   </members>
