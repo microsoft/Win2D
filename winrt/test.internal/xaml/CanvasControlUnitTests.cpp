@@ -373,7 +373,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         ResizeFixture()
             : m_adapter(std::make_shared<CanvasControlTestAdapter_VerifyCreateImageSource>())
             , m_control(Make<CanvasControl>(m_adapter))
-            , m_userControl(dynamic_cast<StubUserControl*>(As<IUserControl>(m_control).Get()))
+            , m_userControl(static_cast<StubUserControl*>(As<IUserControl>(m_control).Get()))
             , m_onDraw(L"Draw")
         {
             EventRegistrationToken tok;
@@ -477,7 +477,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             adapter->m_dpi = dpiCase;
 
             ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
-            ComPtr<StubUserControl> userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
+            ComPtr<StubUserControl> userControl = static_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
 
             float const controlSize = 1000;
             userControl->Resize(Size{controlSize, controlSize});

@@ -275,7 +275,7 @@ public:
         ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(canvasControlAdapter); 
 
         // Get the control to a point where it has created the device.
-        auto userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
+        auto userControl = static_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
         ThrowIfFailed(userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
         canvasControlAdapter->RaiseCompositionRenderingEvent();
 

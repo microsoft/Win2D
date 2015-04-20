@@ -44,7 +44,7 @@ struct BasicControlFixture
     void CreateControl()
     {
         Control = Make<control_t>(Adapter);
-        UserControl = dynamic_cast<StubUserControl*>(As<IUserControl>(Control).Get());
+        UserControl = static_cast<StubUserControl*>(As<IUserControl>(Control).Get());
     }
 
     void Load()

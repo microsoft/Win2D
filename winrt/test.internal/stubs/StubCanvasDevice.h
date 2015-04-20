@@ -69,7 +69,7 @@ namespace canvas
         void MarkAsLost()
         {
             auto d3dDevice = GetDXGIInterfaceFromResourceCreator<ID3D11Device>(this);
-            auto mockD3DDevice = dynamic_cast<MockD3D11Device*>(d3dDevice.Get());
+            auto mockD3DDevice = static_cast<MockD3D11Device*>(d3dDevice.Get());
             mockD3DDevice->GetDeviceRemovedReasonMethod.AllowAnyCall(
                 [] { return DXGI_ERROR_DEVICE_REMOVED; });
         }

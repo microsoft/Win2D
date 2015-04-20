@@ -93,7 +93,7 @@ TEST_CLASS(CanvasCommandListTests)
 
         Assert::IsNotNull(d2dCommandList.Get());
 
-        auto mockCl = dynamic_cast<MockD2DCommandList*>(d2dCommandList.Get());
+        auto mockCl = static_cast<MockD2DCommandList*>(d2dCommandList.Get());
         Assert::IsNotNull(mockCl);
     }
 
@@ -105,7 +105,7 @@ TEST_CLASS(CanvasCommandListTests)
 
         {
             auto d2dCommandList = GetWrappedResource<ID2D1CommandList>(f.CommandList);
-            auto mockCl = dynamic_cast<MockD2DCommandList*>(d2dCommandList.Get());
+            auto mockCl = static_cast<MockD2DCommandList*>(d2dCommandList.Get());
             mockCl->Token = std::make_shared<int>();
             weakToken = mockCl->Token;
         }
@@ -185,7 +185,7 @@ TEST_CLASS(CanvasCommandListTests)
         Fixture f;
 
         auto d2dCommandList = GetWrappedResource<ID2D1CommandList>(f.CommandList);
-        auto mockCl = dynamic_cast<MockD2DCommandList*>(d2dCommandList.Get());
+        auto mockCl = static_cast<MockD2DCommandList*>(d2dCommandList.Get());
 
         mockCl->CloseMethod.SetExpectedCalls(1);
 
@@ -204,7 +204,7 @@ TEST_CLASS(CanvasCommandListTests)
         Fixture f;
 
         auto d2dCommandList = GetWrappedResource<ID2D1CommandList>(f.CommandList);
-        auto mockCl = dynamic_cast<MockD2DCommandList*>(d2dCommandList.Get());
+        auto mockCl = static_cast<MockD2DCommandList*>(d2dCommandList.Get());
         mockCl->CloseMethod.AllowAnyCall();
 
         ID2D1DeviceContext* ignoredDeviceContext = nullptr;
@@ -220,7 +220,7 @@ TEST_CLASS(CanvasCommandListTests)
         Fixture f;
 
         auto d2dCommandList = GetWrappedResource<ID2D1CommandList>(f.CommandList);
-        auto mockCl = dynamic_cast<MockD2DCommandList*>(d2dCommandList.Get());
+        auto mockCl = static_cast<MockD2DCommandList*>(d2dCommandList.Get());
 
         // This might happen if the command list was created by wrapping a
         // D2DCommandList that had already been closed.
@@ -235,7 +235,7 @@ TEST_CLASS(CanvasCommandListTests)
         Fixture f;
         
         auto d2dCommandList = GetWrappedResource<ID2D1CommandList>(f.CommandList);
-        auto mockCl = dynamic_cast<MockD2DCommandList*>(d2dCommandList.Get());
+        auto mockCl = static_cast<MockD2DCommandList*>(d2dCommandList.Get());
 
         mockCl->CloseMethod.SetExpectedCalls(1);
 

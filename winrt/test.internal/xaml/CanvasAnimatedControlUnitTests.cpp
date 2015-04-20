@@ -716,7 +716,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
             Adapter->GetSwapChainPanel()->SetSwapChainMethod.AllowAnyCall(
                 [=] (IDXGISwapChain* swapChain)
                 {
-                    auto dxgiSwapChain = dynamic_cast<MockDxgiSwapChain*>(swapChain);
+                    auto dxgiSwapChain = static_cast<MockDxgiSwapChain*>(swapChain);
                     Assert::IsNotNull(dxgiSwapChain);
                     dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
                     return S_OK;
@@ -934,7 +934,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 ComPtr<ICanvasDevice> device;
                 Assert::AreEqual(S_OK, As<ICanvasResourceCreator>(sender)->get_Device(&device));
 
-                auto stubDevice = dynamic_cast<StubCanvasDevice*>(device.Get());
+                auto stubDevice = static_cast<StubCanvasDevice*>(device.Get());
                 Assert::IsNotNull(stubDevice);
 
                 stubDevice->MarkAsLost();

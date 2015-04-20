@@ -46,7 +46,7 @@ public:
 
     virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* value, IWindow* window) override
     {
-        MockWindow* mockWindow = dynamic_cast<MockWindow*>(window);
+        MockWindow* mockWindow = static_cast<MockWindow*>(window);
         return mockWindow->VisibilityChangedEventSource->Add(value);
     }
 

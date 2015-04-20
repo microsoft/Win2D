@@ -194,7 +194,7 @@ namespace canvas
             float dpi = DEFAULT_DPI)
         {
             auto swapChain = GetOrCreate(device, dxgiSwapChain, dpi);
-            ComPtr<MockCanvasSwapChain> mockSwapChain(dynamic_cast<MockCanvasSwapChain*>(swapChain.Get()));
+            ComPtr<MockCanvasSwapChain> mockSwapChain(static_cast<MockCanvasSwapChain*>(swapChain.Get()));
             Assert::IsNotNull(mockSwapChain.Get());
             return mockSwapChain;
         }

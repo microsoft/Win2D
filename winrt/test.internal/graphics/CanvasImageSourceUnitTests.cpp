@@ -282,7 +282,7 @@ public:
 
         // Get the control to a point where it has created the device.
         canvasControlAdapter->CreateCanvasImageSourceMethod.AllowAnyCall();
-        auto userControl = dynamic_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
+        auto userControl = static_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
         ThrowIfFailed(userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
         canvasControlAdapter->RaiseCompositionRenderingEvent();
         
