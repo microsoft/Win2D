@@ -108,10 +108,11 @@ namespace DocDiff
         {
             // Find all <see cref=""/> elements in the documentation.
             var references = from doc in docs
-                             from seeElement in doc.MemberElement.Descendants("see")
+                             from element in doc.MemberElement.Descendants()
+                             where element.Name == "see" || element.Name == "seealso"
                              select new
                              {
-                                 Target = seeElement.Attribute("cref").Value,
+                                 Target = element.Attribute("cref").Value,
                                  FileName = doc.FileName,
                              };
 
