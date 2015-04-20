@@ -19,7 +19,7 @@
 
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalLibraryDirectories>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(TargetPlatformIdentifier)' != 'UAP'">Microsoft.Graphics.Canvas.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
