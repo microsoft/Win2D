@@ -80,10 +80,12 @@ under the License.
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0), and identity transform on the specified drawing session.</summary>
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <inheritdoc/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of the CanvasImage, in device-independent units. These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</summary>
+      <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
+      <inheritdoc/>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect.Name">
       <summary>Attaches a user-defined name string to the effect.</summary>

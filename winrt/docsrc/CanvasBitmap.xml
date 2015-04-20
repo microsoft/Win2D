@@ -264,11 +264,33 @@ under the License.
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
       <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <remarks>These bounds are the area the image would fill if it were drawn at target offset (0, 0), and identity transform on the specified drawing session.</remarks>
+      <remarks>
+        <inheritdoc/>
+        <p>
+          <b>Note:</b> CanvasBitmap also has the <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Bounds"/> and <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size"/> properties that
+          can be used to directly query the bounds or size without the need for
+          a CanvasDrawingSession.
+        </p>
+      </remarks>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Bounds"/>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
-      <remarks>These bounds are the area the image would fill if it were drawn at target offset (0, 0) with the specified transform transform on the specified drawing session.</remarks>
+      <remarks>
+        <inheritdoc/>
+        <p>
+          <b>Note:</b> CanvasBitmap also has the <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Bounds"/> and <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size"/> properties that
+          can be used to directly query the bounds or size without the need for
+          a CanvasDrawingSession.
+        </p>
+      </remarks>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Bounds"/>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size"/>
     </member>
     
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap)">
