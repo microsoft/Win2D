@@ -39,8 +39,7 @@ under the License.
             <Button Content="Application.Exit" Click="exitButton_Click"/>
             <Button Content="Reset leak tracking" Click="resetLeakTracking_Click"/>
             <Button x:Name="checkLeaksButton" Content="Check for leaks" Click="checkLeaks_Click"/>
-            <TextBlock x:Name="leakText" Margin="16" FontSize="16" FontFamily="Consolas"/>
-            <Frame x:Name="leakCheckFrame" HorizontalContentAlignment="Stretch" Height="500" Visibility="Collapsed" />
+            <TextBlock x:Name="leakText" Margin="16" FontSize="16" FontFamily="Consolas"/>            
         </StackPanel>
     </ScrollViewer>
 </UserControl>

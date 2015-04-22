@@ -145,6 +145,12 @@ namespace ExampleGallery
 
         private async void checkLeaks_Click(object sender, RoutedEventArgs e)
         {
+            var leakCheckFrame = new Frame();
+            leakCheckFrame.HorizontalContentAlignment = Windows.UI.Xaml.HorizontalAlignment.Stretch;
+            leakCheckFrame.Height = 500;
+
+            panel.Children.Add(leakCheckFrame);
+
             leakCheckFrame.Visibility = Visibility.Visible;
             checkLeaksButton.IsEnabled = false;
 
@@ -155,11 +161,11 @@ namespace ExampleGallery
                 
                 leakCheckFrame.Navigate(typeof(ExamplePage), example);
                 await Task.Delay(1000);
-                leakCheckFrame.Content = null;
                 GenerateLeakReport();
             }
 
-            leakCheckFrame.Visibility = Visibility.Collapsed;
+            panel.Children.Remove(leakCheckFrame);
+
             checkLeaksButton.IsEnabled = true;
         }
     }
