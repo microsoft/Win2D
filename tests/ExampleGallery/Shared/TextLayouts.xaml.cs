@@ -81,11 +81,11 @@ namespace ExampleGallery
 
             Rect layoutBounds = textLayout.LayoutBounds;
 
-            textBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Blue, Colors.Yellow);
+            textBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Red, Colors.Green);
             textBrush.StartPoint = new System.Numerics.Vector2((float)(layoutBounds.Left + layoutBounds.Right) / 2, (float)layoutBounds.Top);
             textBrush.EndPoint = new System.Numerics.Vector2((float)(layoutBounds.Left + layoutBounds.Right) / 2, (float)layoutBounds.Bottom);
 
-            selectionTextBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Yellow, Colors.Blue);
+            selectionTextBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Green, Colors.Red);
             selectionTextBrush.StartPoint = textBrush.StartPoint;
             selectionTextBrush.EndPoint = textBrush.EndPoint;
 

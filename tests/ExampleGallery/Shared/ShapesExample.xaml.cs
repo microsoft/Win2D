@@ -191,8 +191,8 @@ namespace ExampleGallery
         private static Color GradientColor(float mu)
         {
             byte c = (byte)((Math.Sin(mu * Math.PI * 2) + 1) * 127.5);
-            
-            return Color.FromArgb(255, 90, 128, c);
+
+            return Color.FromArgb(255, (byte)(255 - c), c, 220);
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
