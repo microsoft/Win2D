@@ -38,7 +38,7 @@ IF "%NOUAP%" == "1" (
     SET BUILD_UAP=/p:BuildUAP=false
 )
 
-msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false %BUILD_UAP%
+msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /nr:false /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false %BUILD_UAP%
 
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Build failed; aborting.

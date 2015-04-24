@@ -5,7 +5,7 @@
 
     For best performance, enable parallel builds:
 
-        msbuild Win2D.proj /maxcpucount
+        msbuild Win2D.proj /maxcpucount /nr:false
 -->
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0" DefaultTargets="Build">
@@ -104,7 +104,9 @@
     </WindowsProject>
     <WindowsProject Include="tests\CoreWindowExample\Windows\CoreWindowExample.Windows.csproj" />
     <WindowsProject Include="tests\CsConsumer\Windows\CsConsumer.Windows.csproj" />
-    <WindowsProject Include="tests\ExampleGallery\Direct3DInterop\Windows\ExampleGallery.Direct3DInterop.Windows.vcxproj" />
+    <WindowsProject Include="tests\ExampleGallery\Direct3DInterop\Windows\ExampleGallery.Direct3DInterop.Windows.vcxproj">
+      <BuildInParallel>false</BuildInParallel>
+    </WindowsProject>
     <WindowsProject Include="tests\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
     <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj">
       <AutomatedTests>store</AutomatedTests>
@@ -124,7 +126,9 @@
     <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
     <PhoneProject Include="tests\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj" />
     <PhoneProject Include="tests\CsConsumer\WindowsPhone\CsConsumer.WindowsPhone.csproj" />
-    <PhoneProject Include="tests\ExampleGallery\Direct3DInterop\WindowsPhone\ExampleGallery.Direct3DInterop.WindowsPhone.vcxproj" />
+    <PhoneProject Include="tests\ExampleGallery\Direct3DInterop\WindowsPhone\ExampleGallery.Direct3DInterop.WindowsPhone.vcxproj">
+      <BuildInParallel>false</BuildInParallel>
+    </PhoneProject>
     <PhoneProject Include="tests\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj"/>
     <PhoneProject Include="numerics\Cpp\tests\CppNumericsTests.WindowsPhone.vcxproj" />
     <PhoneProject Include="numerics\DotNet\tests\WindowsPhone\DotNetNumericsTests.WindowsPhone.csproj" />
@@ -185,8 +189,8 @@
     <Message Importance="High" Text="Building all variants of project %(ProjectsToBuild.PlatformIndependentName):" />
     <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
 
-    <!-- All the variants (platform and configuration) of a project can be built in parallel -->
-    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="true" Properties="IncludeVersionInfo=true" />
+    <!-- All the variants (platform and configuration) of most projects can be built in parallel -->
+    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="%(ProjectsToBuild.BuildInParallel)" Properties="IncludeVersionInfo=true" />
   </Target>
 
 
@@ -214,6 +218,7 @@
       <ProjectsToBuild Include="@(ProjectsPerConfig)">
         <AdditionalProperties>Platform=%(ProjectsPerConfig.Platform);Configuration=%(ProjectsPerConfig.Configuration)</AdditionalProperties>
         <PlatformIndependentName>$([System.String]::new('%(ProjectsPerConfig.Filename)').Replace('Windows', '').Replace('Phone', '').Replace('uap', '').TrimEnd('.'))</PlatformIndependentName>
+        <BuildInParallel Condition="'%(ProjectsPerConfig.BuildInParallel)' == ''">true</BuildInParallel>
       </ProjectsToBuild>
     </ItemGroup>
   </Target>
