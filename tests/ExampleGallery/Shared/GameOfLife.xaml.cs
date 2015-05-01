@@ -123,8 +123,7 @@ namespace ExampleGallery
             // Step 1: use a convolve matrix to count how many neighbors are alive. This filter
             // also includes the state of the current cell, but with a lower weighting. The result
             // is an arithmetic encoding where (value / 2) indicates how many neighbors are alive,
-            // and (value % 2) is the state of the cell itself. This is divided by 18 to make it
-            // fit within 0-1 color range.
+            // and (value % 2) is the state of the cell itself.
 
             countNeighborsEffect = new ConvolveMatrixEffect
             {
@@ -135,7 +134,6 @@ namespace ExampleGallery
                     2, 2, 2
                 },
 
-                Divisor = 18,
                 BorderMode = EffectBorderMode.Hard,
             };
 
