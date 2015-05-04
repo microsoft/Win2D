@@ -281,10 +281,15 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.RequestedSize">
       <summary>Specifies the requested size.</summary>
       <remarks>
-        This option is for controlling word wrapping and alignment - it won't
-        perform any kind of clipping behavior. If word wrapping is enabled, text
-        is wrapped according to these dimensions. The actual LayoutBounds or
+      	<p>
+        This option is for controlling word wrapping and alignment. This option,
+        by itself, doesn't perform any kind of clipping behavior- to ensure text
+        is clipped to this rectangle, use <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasDrawTextOptions.Clip"/>. 
+      	</p>        
+      	<p>
+        If word wrapping is enabled, text is wrapped according to these dimensions. The actual LayoutBounds or
         DrawBounds may be larger than the RequestedSize.
+      	</p>
         </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingBaseline">
@@ -450,7 +455,7 @@ under the License.
       	</p>      	
       	<p>
       	Both types of bounds are useful for different purposes. Layout bounds are useful for positioning text,
-      	aligned against an edge. Draw bounds are useful for clipping behavior.
+      	aligned against an edge. Draw bounds are useful as a clip rect.
       	</p>
       	</remarks>
     </member>
@@ -471,7 +476,7 @@ under the License.
       	</p>      	
       	<p>
       	Both types of bounds are useful for different purposes. Layout bounds are useful for positioning text,
-      	aligned against an edge. Draw bounds are useful for clipping behavior.
+      	aligned against an edge. Draw bounds are useful as a clip rect.
       	</p>
       	</remarks>
     </member>
