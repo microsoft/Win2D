@@ -43,7 +43,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
             m_canvasDevice = Make<StubCanvasDevice>();
             m_canvasDevice->MockCreateBitmapFromWicResource =
-                [&](IWICFormatConverter* converter, CanvasAlphaMode alpha, float dpi) -> ComPtr<ID2D1Bitmap1>
+                [&](IWICBitmapSource* converter, CanvasAlphaMode alpha, float dpi) -> ComPtr<ID2D1Bitmap1>
                 {
                     auto bitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi);
 
@@ -126,7 +126,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         auto canvasDevice = Make<StubCanvasDevice>();
         auto d2dBitmap = Make<StubD2DBitmap>();
         
-        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICFormatConverter*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
+        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
         {
             return d2dBitmap;
         };
@@ -150,7 +150,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         auto canvasDevice = Make<StubCanvasDevice>();
         auto d2dBitmap = Make<StubD2DBitmap>();
         
-        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICFormatConverter*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
+        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
         {
             return d2dBitmap;
         };
@@ -288,7 +288,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
             auto sourceD2DBitmap = Make<StubD2DBitmap>();
             canvasDevice->MockCreateBitmapFromWicResource =
-                [&](IWICFormatConverter*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
+                [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
                 {
                     return sourceD2DBitmap;
                 };
@@ -349,7 +349,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
                 });
 
             canvasDevice->MockCreateBitmapFromWicResource =
-                [&](IWICFormatConverter*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
+                [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
                 {
                     return destD2DBitmap;
                 };
@@ -401,11 +401,11 @@ TEST_CLASS(CanvasBitmapUnitTest)
         auto canvasDevice = Make<StubCanvasDevice>();
 
         auto sourceD2DBitmap = Make<StubD2DBitmap>();
-        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICFormatConverter*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return sourceD2DBitmap; };
+        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return sourceD2DBitmap; };
         auto sourceBitmap = f.m_bitmapManager->Create(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         auto destD2DBitmap = Make<StubD2DBitmap>();
-        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICFormatConverter*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return destD2DBitmap; };
+        canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return destD2DBitmap; };
         auto destBitmap = f.m_bitmapManager->Create(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         // Negative coordinates

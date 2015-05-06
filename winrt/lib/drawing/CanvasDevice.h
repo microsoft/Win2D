@@ -73,7 +73,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) = 0;
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
-            IWICFormatConverter* wicConverter,
+            IWICBitmapSource* wicBitmapSource,
             float dpi,
             CanvasAlphaMode alpha) = 0;
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
@@ -202,7 +202,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContext() override;
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override;
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
-            IWICFormatConverter* wicConverter,
+            IWICBitmapSource* wicBitmapSource,
             float dpi,
             CanvasAlphaMode alpha) override;
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(

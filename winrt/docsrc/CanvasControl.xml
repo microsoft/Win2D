@@ -60,7 +60,7 @@ under the License.
               async Task myWidget_CreateResourcesAsync(CanvasControl sender)
               {
                    // Load bitmaps, create brushes, etc.
-                   bitmapTiget = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
+                   bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
               }
 
               void myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)

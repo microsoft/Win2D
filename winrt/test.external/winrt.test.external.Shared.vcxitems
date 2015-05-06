@@ -50,4 +50,23 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
+  
+  <ItemGroup>
+      <Image Include="$(AssetDir)imageTiger.jpg">
+        <Link>Assets\imageTiger.jpg</Link>
+      </Image>
+      <Image Include="$(AssetDir)HighDpiGrid.png">
+        <Link>Assets\HighDpiGrid.png</Link>
+      </Image>
+      <Image Include="$(MSBuildThisFileDirectory)Images\x.bmp">
+        <Link>Images\x.bmp</Link>
+      </Image>
+      <Image Include="$(MSBuildThisFileDirectory)Images\x.ico">
+        <Link>Images\x.ico</Link>
+      </Image>
+      <Image Include="$(MSBuildThisFileDirectory)Images\x.tif">
+        <Link>Images\x.tif</Link>
+      </Image>
+  </ItemGroup>
+  
 </Project>

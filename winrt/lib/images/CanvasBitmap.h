@@ -32,8 +32,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ~ICanvasBitmapResourceCreationAdapter() = default;
 
-        virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName) = 0;
-        virtual ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream) = 0;
+        virtual ComPtr<IWICBitmapSource> CreateWICFormatConverter(HSTRING fileName) = 0;
+        virtual ComPtr<IWICBitmapSource> CreateWICFormatConverter(IStream* fileStream) = 0;
 
         virtual void SaveLockedMemoryToFile(
             HSTRING fileName,

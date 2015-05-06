@@ -59,12 +59,6 @@
     <Image Include="$(AssetDir)UnitTestStoreLogo.scale-100.png">
       <Link>Assets\UnitTestStoreLogo.scale-100.png</Link>
     </Image>
-    <Image Include="$(AssetDir)imageTiger.jpg">
-      <Link>Assets\imageTiger.jpg</Link>
-    </Image>
-    <Image Include="$(AssetDir)HighDpiGrid.png">
-      <Link>Assets\HighDpiGrid.png</Link>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dll\winrt.dll.uap.vcxproj">

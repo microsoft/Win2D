@@ -460,7 +460,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicResource(
-        IWICFormatConverter* wicConverter,
+        IWICBitmapSource* wicBitmapSource,
         float dpi,
         CanvasAlphaMode alpha)
     {
@@ -471,7 +471,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bitmapProperties.dpiX = bitmapProperties.dpiY = dpi;
 
         ComPtr<ID2D1Bitmap1> bitmap;
-        ThrowIfFailed(deviceContext->CreateBitmapFromWicBitmap(wicConverter, &bitmapProperties, &bitmap));
+        ThrowIfFailed(deviceContext->CreateBitmapFromWicBitmap(wicBitmapSource, &bitmapProperties, &bitmap));
 
         return bitmap;
     }

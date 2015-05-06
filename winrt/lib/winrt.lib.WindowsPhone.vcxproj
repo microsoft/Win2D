@@ -17,5 +17,13 @@
   <Import Project="winrt.lib.Shared.vcxitems" Label="Shared" />
   
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
+  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />  
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <!-- This is, unfortuantely, necessary, because the header propkey.h exists in the Windows SDK but was not put into the Phone SDK. -->
+      <AdditionalIncludeDirectories>$(WindowsSDK80Path)\Include\um;$(WindowsSDK80Path)\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
 </Project>

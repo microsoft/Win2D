@@ -14,6 +14,8 @@
 
 #include "PolymorphicBitmapManager.h"
 
+#include <propkey.h>
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using ::Microsoft::WRL::Wrappers::HStringReference;
@@ -224,37 +226,117 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 bitmapLock);
         }
 
-        ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName)
+        UINT GetOrientationFromFrameDecode(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
         {
-            ComPtr<IWICFormatConverter> wicFormatConverter;
+            ComPtr<IWICMetadataQueryReader> queryReader;
 
-            WinString fileNameString(fileName);
+            HRESULT getMetadataHr = frameDecode->GetMetadataQueryReader(&queryReader);
+            if (getMetadataHr == WINCODEC_ERR_UNSUPPORTEDOPERATION)
+            {
+                // This is expected for some formats, such as BMP.
+                return PHOTO_ORIENTATION_NORMAL;
+            }
+            else
+                ThrowIfFailed(getMetadataHr);
 
-            ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
-            ThrowIfFailed(m_wicFactory->CreateDecoderFromFilename(
-                static_cast<const wchar_t*>(fileNameString),
-                nullptr, 
-                GENERIC_READ, 
-                WICDecodeMetadataCacheOnLoad, 
-                &wicBitmapDecoder));
+            PROPVARIANT orientation;
+            PropVariantInit(&orientation);
+            
+            HRESULT lookupHr = queryReader->GetMetadataByName(L"System.Photo.Orientation", &orientation);
 
-            ComPtr<IWICBitmapFrameDecode> wicBitmapFrameSource;
-            ThrowIfFailed(wicBitmapDecoder->GetFrame(0, &wicBitmapFrameSource));
+            const bool propertyNotFound = 
+                lookupHr == WINCODEC_ERR_PROPERTYNOTFOUND ||
+                lookupHr == WINCODEC_ERR_PROPERTYNOTSUPPORTED;
 
-            ThrowIfFailed(m_wicFactory->CreateFormatConverter(&wicFormatConverter));
+            // Anything other than property-not-found is unexpected
+            if (!propertyNotFound)
+                ThrowIfFailed(lookupHr);
 
-            ThrowIfFailed(wicFormatConverter->Initialize(
-                wicBitmapFrameSource.Get(), 
-                GUID_WICPixelFormat32bppPBGRA, 
-                WICBitmapDitherTypeNone, 
-                NULL, 
-                0, 
-                WICBitmapPaletteTypeMedianCut));
-
-            return wicFormatConverter;
+            // The property wasn't specified, or specifies an out-of-range value
+            if (propertyNotFound ||
+                orientation.vt != VT_UI2 ||
+                orientation.uiVal < 1 ||
+                orientation.uiVal > 8)
+            {                
+                return PHOTO_ORIENTATION_NORMAL;
+            }
+            else
+            {
+                return orientation.uiVal;
+            }
         }
 
-        ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream)
+        WICBitmapTransformOptions GetTransformOptionsFromPhotoOrientation(
+            UINT photoOrientation)
+        {
+            switch (photoOrientation)
+            {
+            case PHOTO_ORIENTATION_NORMAL: return WICBitmapTransformRotate0;
+            case PHOTO_ORIENTATION_ROTATE90: return WICBitmapTransformRotate270;
+            case PHOTO_ORIENTATION_ROTATE180: return WICBitmapTransformRotate180;
+            case PHOTO_ORIENTATION_ROTATE270: return WICBitmapTransformRotate90;
+            case PHOTO_ORIENTATION_FLIPHORIZONTAL: return WICBitmapTransformFlipHorizontal;
+            case PHOTO_ORIENTATION_FLIPVERTICAL: return WICBitmapTransformFlipVertical;
+            case PHOTO_ORIENTATION_TRANSPOSE: return static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate270 | WICBitmapTransformFlipHorizontal);
+            case PHOTO_ORIENTATION_TRANSVERSE: return static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate90 | WICBitmapTransformFlipHorizontal);
+            default:
+                ThrowHR(E_INVALIDARG);
+            }
+        }
+
+        ComPtr<IWICBitmapSource> CreateFlipRotator(
+            IWICImagingFactory* wicImagingFactory,
+            IWICBitmapSource* bitmapSource,
+            WICBitmapTransformOptions transformOptions)
+        {
+            ComPtr<IWICBitmap> bitmap;
+            if (transformOptions != WICBitmapTransformRotate0)
+            {
+
+                ComPtr<IWICBitmapFlipRotator> bitmapFlipRotator;
+                ThrowIfFailed(wicImagingFactory->CreateBitmapFlipRotator(&bitmapFlipRotator));
+                ThrowIfFailed(bitmapFlipRotator->Initialize(bitmapSource, transformOptions));
+
+                // WICBitmapCacheOnLoad is required so that the entire destination buffer is provided to the 
+                // flip/rotator.  Requesting the entire desination in one CopyPixels call enables optimizations.    
+                ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapFlipRotator.Get(), WICBitmapCacheOnLoad, &bitmap));
+            }
+            else
+            {
+                // No rotation needed, just cache the source.
+                // Note that because this is passed directly into D2D CreateBitmapFromWicBitmap,
+                // this doesn't introduce any additional memory costs. 
+                // Otherwise, if at some point this changes, we should remove this step.
+                //
+                ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapSource, WICBitmapCacheOnLoad, &bitmap));
+            }
+
+            return bitmap;
+        }
+
+        ComPtr<IWICBitmapSource> ApplyRotationIfNeeded(ComPtr<IWICBitmapFrameDecode> const& wicBitmapFrameSource, ComPtr<IWICFormatConverter>& postFormatConversion)
+        {
+            const UINT orientation = GetOrientationFromFrameDecode(wicBitmapFrameSource);
+
+            const WICBitmapTransformOptions transformOptions = GetTransformOptionsFromPhotoOrientation(orientation);
+
+            const ComPtr<IWICBitmapSource> rotator = CreateFlipRotator(m_wicFactory.Get(), postFormatConversion.Get(), transformOptions);
+
+            return rotator;
+        }
+
+        ComPtr<IWICBitmapSource> CreateWICFormatConverter(HSTRING fileName)
+        {
+            ComPtr<IWICStream> stream;
+            ThrowIfFailed(m_wicFactory->CreateStream(&stream));
+
+            WinString fileNameString(fileName);
+            ThrowIfFailed(stream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_READ));
+
+            return CreateWICFormatConverter(stream.Get());
+        }
+
+        ComPtr<IWICBitmapSource> CreateWICFormatConverter(IStream* fileStream)
         {
             ComPtr<IWICFormatConverter> wicFormatConverter;
 
@@ -278,7 +360,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 0,
                 WICBitmapPaletteTypeMedianCut));
 
-            return wicFormatConverter;
+            return ApplyRotationIfNeeded(wicBitmapFrameSource, wicFormatConverter);
         }
     };
 

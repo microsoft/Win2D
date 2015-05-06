@@ -60,12 +60,6 @@
     <Image Include="$(AssetDir)WideLogo.scale-240.png">
       <Link>Assets\WideLogo.scale-240.png</Link>
     </Image>
-    <Image Include="$(AssetDir)imageTiger.jpg">
-      <Link>Assets\imageTiger.jpg</Link>
-    </Image>
-    <Image Include="$(AssetDir)HighDpiGrid.png">
-      <Link>Assets\HighDpiGrid.png</Link>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="CppUnitTestFramework, Version=12.0" />

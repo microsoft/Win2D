@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -20,6 +20,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ArcOptions.xaml.cs">
       <DependentUpon>ArcOptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)BitmapRotation.xaml.cs">
+      <DependentUpon>BitmapRotation.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BurningTextExample.xaml.cs">
       <DependentUpon>BurningTextExample.xaml</DependentUpon>
@@ -148,6 +151,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)BitmapRotation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)BurningTextExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -208,6 +215,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BitmapRotationNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BitmapRotationWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BurningTextNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BurningTextWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CanvasControlNarrow.png" />
@@ -246,5 +255,60 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsWide.png" />
+  </ItemGroup>  
+
+  <ItemGroup>
+    <Content Include="$(AssetDir)imageTiger.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>    
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_0.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_3.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_5.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_6.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_7.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_8.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_9.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_65535.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    
+    <Content Include="$(AssetDir)Symbols.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-</Project>
+  
+  </Project>

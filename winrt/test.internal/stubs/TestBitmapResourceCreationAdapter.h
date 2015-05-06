@@ -14,7 +14,7 @@
 
 class TestBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
 {
-    ComPtr<IWICFormatConverter> m_converter;
+    ComPtr<IWICBitmapSource> m_converter;
 
 public:
     std::function<void()> MockCreateWICFormatConverter;
@@ -28,14 +28,14 @@ public:
     {
     }
 
-    ComPtr<IWICFormatConverter> CreateWICFormatConverter(HSTRING fileName)
+    ComPtr<IWICBitmapSource> CreateWICFormatConverter(HSTRING fileName)
     {
         if (MockCreateWICFormatConverter)
             MockCreateWICFormatConverter();
         return m_converter;
     }
 
-    ComPtr<IWICFormatConverter> CreateWICFormatConverter(IStream* fileStream)
+    ComPtr<IWICBitmapSource> CreateWICFormatConverter(IStream* fileStream)
     {
         Assert::Fail(); // Unexpected
         return nullptr;

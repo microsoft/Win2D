@@ -53,16 +53,40 @@ public:
 
     TEST_METHOD(CanvasBitmap_PropertiesAndClose)
     {
-        WIN32_FILE_ATTRIBUTE_DATA fileInfo;
-        Assert::AreNotEqual(GetFileAttributesEx(testImageFileName->Data(), GetFileExInfoStandard, &fileInfo), 0);
-        
-        CanvasDevice^ canvasDevice = ref new CanvasDevice();
+        //
+        // This exercises a typical test image, as well as the 
+        // ability two load two important edge-case formats
+        // (bmp and ico).
+        //
 
-        auto bitmapJpeg = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, testImageFileName));
-        Assert::AreEqual((uint32_t)testImageWidth, bitmapJpeg->SizeInPixels.Width);
-        Assert::AreEqual((uint32_t)testImageHeight, bitmapJpeg->SizeInPixels.Height);
-        Assert::AreEqual((float)testImageWidth, bitmapJpeg->Size.Width);
-        Assert::AreEqual((float)testImageHeight, bitmapJpeg->Size.Height);
+        struct TestCase
+        {
+            Platform::String^ FileName;
+            int ImageWidth;
+            int ImageHeight;
+        } testCases[] =
+        {
+            L"Assets/imageTiger.jpg", testImageWidth, testImageHeight,
+            L"Images/x.bmp", 16, 16,
+#if WINAPI_FAMILY!=WINAPI_FAMILY_PHONE_APP
+            L"Images/x.ico", 16, 16,
+#endif
+            L"Images/x.tif", 16, 16 // Metadata-less tif
+        };
+
+        for (auto testCase : testCases)
+        {
+            WIN32_FILE_ATTRIBUTE_DATA fileInfo;
+            Assert::AreNotEqual(GetFileAttributesEx(testCase.FileName->Data(), GetFileExInfoStandard, &fileInfo), 0);
+
+            CanvasDevice^ canvasDevice = ref new CanvasDevice();
+
+            auto bitmap = WaitExecution(CanvasBitmap::LoadAsync(canvasDevice, testCase.FileName));
+            Assert::AreEqual((uint32_t)testCase.ImageWidth, bitmap->SizeInPixels.Width);
+            Assert::AreEqual((uint32_t)testCase.ImageHeight, bitmap->SizeInPixels.Height);
+            Assert::AreEqual((float)testCase.ImageWidth, bitmap->Size.Width);
+            Assert::AreEqual((float)testCase.ImageHeight, bitmap->Size.Height);
+        }
     }
 
     TEST_METHOD(CanvasBitmap_LoadFromInvalidParameters)
