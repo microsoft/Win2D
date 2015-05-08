@@ -93,8 +93,9 @@ under the License.
            at a maximum of the display refresh rate. It will not redraw once for every Invalidate call
            if these are happening faster than the display can keep up.</p>
 
-        <p>If you want to animate the contents of a CanvasControl, simply call Invalidate at the end of
-           your Draw event handler. This will result in the control being redrawn over and over again.</p>
+        <p>If you want to animate the contents of a CanvasControl, you should use
+           <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl"/> instead. CanvasAnimatedControl
+           raises the Draw event on a configurable interval; by default this is 60 times per second.</p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Device">
@@ -125,12 +126,15 @@ under the License.
       <summary>This is where the magic happens! Hook this event to issue your immediate mode 2D drawing calls.</summary>
       <remarks>
         <p>The Draw event is raised once when the CanvasControl first becomes visible, then again
-           any time its contents need to be redrawn. This can occur if the control is resized, or in
-           response to the Invalidate method being called.</p>
+           any time its contents need to be redrawn. This can occur, for example, if the control is resized.
+           You can manually trigger a Draw event yourself by calling
+           <see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Invalidate"/>.
+        </p>
         
-        <p>If you want to animate the contents of a CanvasControl, simply call Invalidate at the end of
-           your Draw event handler. This will result in the control being redrawn over and over again,
-           so you can draw different things each time.</p>
+        <p>If you want to animate the contents of a CanvasControl, you should use
+           <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl"/> instead. CanvasAnimatedControl
+           raises the Draw event on a configurable interval; by default this is 60 times per second.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.ClearColor">
