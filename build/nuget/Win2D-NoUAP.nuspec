@@ -3,7 +3,7 @@
     <metadata>
         <id>Win2D-NoUAP</id>
         <version>0.0.0-SpecifyVersionOnCommandline</version>
-        <title>Win2D (without universal app platform support)</title>
+        <title>Win2D (without Universal Windows Platform support)</title>
         <authors>Microsoft</authors>
         <owners>win2d,microsoft</owners>
         <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.</description>

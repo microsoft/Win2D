@@ -23,7 +23,7 @@ under the License.
       <summary>Identifies the ways in which a resource may be bound to the graphics pipeline.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this enum is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
         </p>
         <p>
@@ -68,7 +68,7 @@ under the License.
       <summary>A GPU rendering device, used for interop between different APIs.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this interface is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
         </p>
         <p>Classes that implement this interface can be queried for the DirectX 
@@ -80,7 +80,7 @@ under the License.
           //   header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
           //   namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
           //
-          // For Windows universal app platform:
+          // For Universal Windows Platform:
           //   header: Windows.Graphics.DirectX.Direct3D11.interop.h
           //   namespace: Windows::Graphics::DirectX::Direct3D11
 
@@ -104,7 +104,7 @@ under the License.
 
           #else
 
-          // Use the Windows universal app platform version
+          // Use the Universal Windows Platform version
           #include &lt;Windows.Graphics.DirectX.Direct3D11.interop.h&gt;
           using namespace Windows::Graphics::DirectX::Direct3D11;
 
@@ -144,7 +144,7 @@ under the License.
       <summary>Describes multi-sampling parameters for a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface"/>.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this struct is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
         </p>
         <p>
@@ -165,7 +165,7 @@ under the License.
       <summary>A GPU format 2D bitmap surface, used for interop between different APIs.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this interface is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
         </p>
         <p>Classes that implement this interface can be queried for the DirectX 
@@ -178,7 +178,7 @@ under the License.
           //   header: Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h
           //   namespace: Microsoft::Graphics::Canvas::DirectX::Direct3D11
           //
-          // For Windows universal app platform:
+          // For Universal Windows Platform:
           //   header: Windows.Graphics.DirectX.Direct3D11.interop.h
           //   namespace: Windows::Graphics::DirectX::Direct3D11
 
@@ -202,7 +202,7 @@ under the License.
 
           #else
 
-          // Use the Windows universal app platform version
+          // Use the Universal Windows Platform version
           #include &lt;Windows.Graphics.DirectX.Direct3D11.interop.h&gt;
           using namespace Windows::Graphics::DirectX::Direct3D11;
 
@@ -240,7 +240,7 @@ under the License.
       <summary>Describes a <see cref="T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface"/>.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this struct is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
         </p>
         <p>
@@ -269,7 +269,7 @@ under the License.
       
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this enum is moved to the namespace Windows.Graphics.DirectX.Direct3D11.
         </p>
         <p>

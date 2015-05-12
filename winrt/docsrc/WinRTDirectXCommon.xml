@@ -23,7 +23,7 @@ under the License.
       <summary>Specifies the pixel format of a DirectX surface.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this enum is moved to the namespace Windows.Graphics.DirectX.
         </p>
         <p>

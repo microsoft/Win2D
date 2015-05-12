@@ -17,11 +17,11 @@ under the License.
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
       <para>
-        As of Win2D version 0.0.17, Win2D can be used to build Windows universal
-        apps using the latest
+        As of Win2D version 0.0.17, Win2D can be used to build Universal
+        Windows apps using the latest
         <externalLink>
-          <linkText>Visual Studio 2015 Community Technology Preview</linkText>
-          <linkUri>https://www.visualstudio.com/downloads/visual-studio-2015-ctp-vs</linkUri>
+          <linkText>Visual Studio 2015 RC</linkText>
+          <linkUri>http://www.visualstudio.com/products/visual-studio-2015-downloads-vs</linkUri>
         </externalLink>.  
       </para>
     </introduction>
@@ -31,18 +31,18 @@ under the License.
       <content>
         <para>
           Some types that were previously provided by Win2D are now included as
-          part of the Windows universal app platform.  This allows Win2D to
-          interoperate with other universal app platform APIs.  As an
+          part of the Universal Windows Platform.  This allows Win2D to
+          interoperate with other Universal Windows Platform APIs.  As an
           application developer you may need to update your application to use
           the updated type names.
         </para>
 
         <table>
-          <title>New universal app platform types used by Win2D</title>
+          <title>New Universal Windows Platform types used by Win2D</title>
           <tableHeader>
             <row>
               <entry><para>Win2D for Windows 8.1 / Windows Phone 8.1</para></entry>
-              <entry><para>Win2D for universal app platform</para></entry>
+              <entry><para>Win2D for Universal Windows Platform</para></entry>
             </row>
           </tableHeader>
           <row>
@@ -79,8 +79,8 @@ under the License.
         <para>
           The <codeEntityReference> N:System.Numerics </codeEntityReference>
           namespace was previously implemented by the
-          Microsoft.Graphics.Canvas.Numerics.dll assembly. For the universal app
-          platform it is implemented by the CLR assembly
+          Microsoft.Graphics.Canvas.Numerics.dll assembly. For the Universal
+          Windows Platform it is implemented by the CLR assembly
           System.Numerics.Vectors.  The CLR assembly is able to provide more
           efficient interop with WinRT APIs.  In addition, the runtime is able
           to perform SIMD optimizations on code using these types.
@@ -101,8 +101,8 @@ under the License.
           T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface
           </codeEntityReference> and <codeEntityReference>
           T:Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice
-          </codeEntityReference> are now built into the universal app platform.
-          This allows other universal app platform APIs to interoperate with
+          </codeEntityReference> are now built into the Universal Windows Platform.
+          This allows other Universal Windows Platform APIs to interoperate with
           Win2D.  For example, the Video Effect example in ExampleGallery uses
           the Win2D and the new media effects API (via IBasicVideoEffect) by
           exchanging IDirect3DDevice and IDirect3DSurface objects.
@@ -118,8 +118,8 @@ under the License.
           T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect
           </codeEntityReference> and <codeEntityReference>
           T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource
-          </codeEntityReference> are now built into the universal app platform.
-          This allows other universal app platform APIs to interoperate with
+          </codeEntityReference> are now built into the Universal Windows Platform.
+          This allows other Universal Windows Platform APIs to interoperate with
           Win2D.  For example, the new <codeInline>Windows.UI.Composition.EffectVisual</codeInline>
           API can use Win2D types such as CompositeEffect or SaturationEffect
           to describe what effect processing should be applied to a composition visual.

@@ -57,7 +57,7 @@ under the License.
     <member name="N:Microsoft.Graphics.Canvas.DirectX">
       <summary>This namespace defines DirectX types used for interop with other components.</summary>
       <remarks>
-        When targeting the Windows universal app platform,
+        When targeting the Universal Windows Platform,
         this namespace is renamed to Windows.Graphics.DirectX.
       </remarks>
     </member>
@@ -65,7 +65,7 @@ under the License.
     <member name="N:Microsoft.Graphics.Canvas.DirectX.Direct3D11">
       <summary>This namespace defines Direct3D11 types used for interop with other components.</summary>
       <remarks>
-        When targeting the Windows universal app platform,
+        When targeting the Universal Windows Platform,
         this namespace is renamed to Windows.Graphics.DirectX.Direct3D11.
       </remarks>
     </member>
@@ -77,7 +77,7 @@ under the License.
                C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this namespace is renamed to Windows.Foundation.Numerics.
         </p>
         <p>

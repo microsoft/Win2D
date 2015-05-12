@@ -119,16 +119,16 @@ under the License.
           </listItem>
 
           <listItem>
-            To develop for the Windows 10 universal app platform:
+            To develop for Windows 10 (Universal Windows Platform):
             <list class="bullet">
               <listItem>
                 Install
                 <externalLink>
-                  <linkText>Visual Studio 2015 Community Technology Preview</linkText>
-                  <linkUri>https://www.visualstudio.com/downloads/visual-studio-2015-ctp-vs</linkUri>
+                  <linkText>Visual Studio 2015</linkText>
+                  <linkUri>http://www.visualstudio.com/products/visual-studio-2015-downloads-vs</linkUri>
                 </externalLink>
               </listItem>
-              <listItem>Minimum version: Visual Studio 2015 CTP 7</listItem>
+              <listItem>Minimum version: Visual Studio 2015 RC</listItem>
             </list>
           </listItem>
         </list>

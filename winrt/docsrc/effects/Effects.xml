@@ -23,7 +23,7 @@ under the License.
       <summary>Abstract interface representing an effect used for image processing.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this interface is moved to the namespace Windows.Graphics.Effects.
         </p>
         <p>
@@ -46,7 +46,7 @@ under the License.
       <summary>Represents a type that can be accepted as input for an IGraphicsEffect.</summary>
       <remarks>
         <p>
-          When targeting the Windows universal app platform,
+          When targeting the Universal Windows Platform,
           this interface is moved to the namespace Windows.Graphics.Effects.
         </p>
         <p>Although IGraphicsEffect objects will accept any IGraphicsEffectSource as their source,

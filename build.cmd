@@ -18,8 +18,8 @@ IF "%1" NEQ "" (
 
 IF NOT "%NOUAP%" == "1" (
     IF "%VisualStudioVersion%" LSS "14.0" (
-        ECHO Warning: Visual Studio 2015 or higher required to build with Windows universal app platform support.
-        ECHO          Building without universal app platform support.
+        ECHO Warning: Visual Studio 2015 or higher required to build with Universal Windows Platform support.
+        ECHO          Building without Universal Windows Platform support.
         ECHO.
         SET NOUAP=1
     )
@@ -68,7 +68,7 @@ GOTO END
 
 ECHO %0 [nouap]
 ECHO.
-ECHO  nouap: pass this to disable building Windows universal app platform support
+ECHO  nouap: pass this to disable building Universal Windows Platform support
 GOTO END
 
 :WRONG_COMMAND_PROMPT
@@ -78,7 +78,7 @@ ECHO.
 ECHO For Visual Studio 2013, building for Windows / Phone 8.1:
 ECHO - Visual Studio 2013 Command Prompt
 ECHO.
-ECHO For Visual Studio 2015, building for Windows / Phone 8.1 and Windows universal app platform:
+ECHO For Visual Studio 2015, building for Windows / Phone 8.1 and Universal Windows Platform:
 ECHO - MSBuild Command Prompt for VS2015
 ECHO.
 PAUSE
