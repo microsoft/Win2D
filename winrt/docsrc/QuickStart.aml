@@ -1,0 +1,595 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="QuickStart" revisionNumber="1">
+  <developerHowToDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        This quick start tutorial introduces some of the basic capabilities of Win2D. You will learn how to:
+      </para>
+      <list class="bullet">
+        <listItem>Add Win2D to a XAML C# Windows project</listItem>
+        <listItem>Draw text and geometry</listItem>
+        <listItem>Apply filter effects</listItem>
+        <listItem>Animate your Win2D content</listItem>
+        <listItem>Follow Win2D best practices</listItem>
+      </list>
+
+    </introduction>
+    
+    <procedure>
+      <title>Install Visual Studio</title>
+      <steps class="ordered">
+
+        <step><content>
+          <para>
+            If you don't have a supported version of Visual Studio installed, follow the steps here: 
+            <link xlink:href="Introduction#GettingSetUp">Getting Set Up</link>.
+          </para>
+        </content></step>
+
+      </steps>
+    </procedure>
+
+    <procedure>
+      <title>Create a new project with Win2D</title>
+        <steps class="ordered">
+
+          <step><content>
+            <para>
+              Launch Visual Studio, and create a new project: <legacyBold>File → New → Project</legacyBold>.
+            </para>
+          </content></step>
+
+          <step><content>
+            <para>
+              If you are targeting Windows 8.1, select <legacyBold>Installed → Templates → Visual C# → Windows 8.1 → Blank App </legacyBold>.
+            </para>
+            <para>
+              If you are targeting Windows 10, select <legacyBold>Installed → Templates → Visual C# → Windows Universal → Blank App</legacyBold>.
+            </para>
+          </content></step>
+
+          <step><content><para>
+            Give the project a name, choose a location, and create it.
+          </para></content></step>
+
+          <step><content>
+            <para>
+              Win2D is released as a <externalLink><linkText>Nuget.org package</linkText><linkUri>http://www.nuget.org/packages/Win2D/</linkUri>
+              </externalLink> and needs to be installed before you can use it. Launch the NuGet Package Manager by going to <legacyBold>Tools →
+              NuGet Package Manager → Manage NuGet Packages for Solution</legacyBold>.
+            </para>
+          </content></step>
+
+          <step><content>
+            <para>
+              Search for "Win2D", select <legacyBold>Win2D</legacyBold> from the results list, and click <legacyBold>Install</legacyBold>.
+              If you are prompted to review changes, click <legacyBold>OK</legacyBold>.
+              If you are presented with the Win2D license terms, click <legacyBold>I Accept</legacyBold>.
+            </para>
+          </content></step>
+
+          <step><content>
+            <para>
+              Win2D is now installed in your project. You can confirm this by checking that the <codeEntityReference>N:Microsoft.Graphics.Canvas
+              </codeEntityReference> namespace is present in the <legacyBold>References</legacyBold> node of the
+              <legacyBold>Solution Explorer</legacyBold>.
+            </para>
+          </content></step>
+
+        </steps>
+    </procedure>
+
+    <procedure>
+      <title>Add a Win2D CanvasControl to your app's XAML</title>
+      <steps class="ordered">
+
+        <step><content>
+          <para>
+            In order to use Win2D, you need somewhere to draw your graphics. In a XAML app, the simplest way to do this is to add a
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> to your XAML page.
+          </para>
+          <para>
+            Before you continue, first ensure that the project’s Architecture option is set to <codeInline>x86</codeInline> or
+            <codeInline>x64</codeInline> and NOT to <codeInline>Any CPU</codeInline>. Win2D is implemented in C++ and therefore projects
+            that use Win2D need to be targeted to a specific CPU architecture.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Navigate to <legacyBold>MainPage.xaml</legacyBold> in your project by double clicking on it in <legacyBold>Solution Explorer</legacyBold>.
+            This will open the file. For convenience, you can double click on the <legacyBold>XAML</legacyBold> button in the
+            <legacyBold>Designer</legacyBold> tab; this will hide the visual designer and reserve all of the space for the code view.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Before you add the control, you first have to tell XAML where <codeInline>CanvasControl</codeInline> is defined.
+            To do this, go to the definition of the <codeInline>Page</codeInline> element, and add this statement:
+            <codeInline>xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"</codeInline>. Your XAML should now look like this:
+          </para>
+          <code language="xaml">
+            &lt;Page
+                ...
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+                mc:Ignorable="d"&gt;
+          </code>
+        </content></step>
+
+        <step><content>
+          <para>
+            Now, add a new <codeInline>canvas:CanvasControl</codeInline> as a child element to the root <codeInline>Grid</codeInline> element.
+            Your XAML should now look like this:
+          </para>
+          <code language="xaml">
+            &lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"&gt;
+                &lt;canvas:CanvasControl /&gt;
+            &lt;/Grid&gt;
+          </code>
+        </content></step>
+
+        <step><content>
+          <para>
+            Next, define an event handler for the <codeEntityReference>E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Draw</codeEntityReference>
+            event. <codeInline>CanvasControl</codeInline> raises <codeInline>Draw</codeInline> whenever your app needs to draw or redraw its content.
+            The easiest way is to let Visual Studio AutoComplete assist you. In the <codeInline>CanvasControl</codeInline> definition, begin typing
+            a new attribute for the <codeInline>Draw</codeInline> event handler:
+          </para>
+          <code language="xaml">
+            &lt;canvas:CanvasControl Draw="CanvasControl_Draw" /&gt;
+          </code>
+          <para>
+            Once you have entered in <codeInline>Draw=”</codeInline>, Visual Studio should pop up a box prompting you to let it automatically
+            fill out the right definition for the event handler. Press <legacyBold>TAB</legacyBold> to accept Visual Studio’s default event handler. 
+            This will also automatically add a correctly formatted event handler method in your code behind (<legacyBold>MainPage.xaml.cs</legacyBold>).
+            Don’t worry if you didn’t use AutoComplete; you can manually add the event handler method in the next step.
+          </para>
+        </content></step>
+
+      </steps>
+    </procedure>
+    
+    <procedure>
+      <title>Draw your first text in Win2D</title>
+      <steps class="ordered">
+
+        <step><content><para>
+          Now, let’s go to the C# code behind. Open <legacyBold>MainPage.xaml.cs</legacyBold> from <legacyBold>Solution Explorer</legacyBold>.
+        </para></content></step>
+
+        <step><content>
+          <para>
+            At the top of the C# file are various namespace definitions. Add the following namespaces:
+          </para>
+          <code language="cs">
+            using Windows.UI;
+            using System.Numerics;
+            using Microsoft.Graphics.Canvas;
+            using Microsoft.Graphics.Canvas.Effects;
+          </code>
+        </content></step>
+
+        <step><content>
+          <para>
+            Next, you should see the following blank event handler which was inserted by AutoComplete: 
+          </para>
+          <code language="cs">
+            private void CanvasControl_Draw(
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+            {}
+          </code>
+          <para>
+            (If you didn’t use AutoComplete in the previous step, add this code now.)
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            The <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs</codeEntityReference> parameter exposes a member,
+            <codeInline>DrawingSession</codeInline>, which is of the type <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasDrawingSession
+            </codeEntityReference>. This class provides most of the basic drawing functionality in Win2D: it has methods such as
+            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle</codeEntityReference>,
+            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage</codeEntityReference>,
+            and the method you need to draw text,
+            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText</codeEntityReference>.
+          </para>
+          <para>
+            Add the following code to the <codeInline>CanvasControl_Draw</codeInline> method:
+          </para>
+          <code language="cs">
+              args.DrawingSession.DrawText("Hello, World!", 100, 100, Colors.Black);   
+          </code>
+          <para>
+            The first argument, “<legacyBold>Hello, World!</legacyBold>”, is the string that you want Win2D to display. The two
+            “<legacyBold>100</legacyBold>”s tell Win2D to offset this text by 100 DIPs (device-independent pixels) to the right and down.
+            Finally, “<legacyBold>Colors.Black</legacyBold>” defines the color of the text.
+          </para>
+        </content></step>
+
+        <step><content><para>
+          Now you are ready to run your first Win2D app. Press the <legacyBold>F5</legacyBold> key to compile and launch. You should see
+          an empty window with "Hello, world!" in black.
+        </para></content></step>
+
+      </steps>
+    </procedure>
+
+    <procedure>
+      <title>Draw some shapes</title>
+      <steps class="ordered">
+
+        <step><content>
+          <para>
+            It’s just as easy to add 2D geometry to your app. Add the following code to the end of <codeInline>CanvasControl_Draw</codeInline>:
+          </para>
+          <code language="cs">
+            args.DrawingSession.DrawCircle(125, 125, 100, Colors.Green);
+            args.DrawingSession.DrawLine(0, 0, 50, 200, Colors.Red);
+          </code>
+          <para>
+            The arguments to these two methods are similar to <codeInline>DrawText</codeInline>. A circle is defined by a center point
+            (<legacyBold>125, 125</legacyBold>), a radius (<legacyBold>100</legacyBold>), and a color (<legacyBold>Green</legacyBold>).
+            A line is defined by a beginning (<legacyBold>0, 0</legacyBold>), an end (<legacyBold>50, 200</legacyBold>) and a color
+            (<legacyBold>Red</legacyBold>).
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Now, press <legacyBold>F5</legacyBold> to run the app. You should see "Hello, world!" along with a green circle and red line.
+          </para>
+          <para>
+            You may be wondering how to control more advanced drawing options, such as line thickness and dashes, or more complex fill options
+            such as using brushes. Win2D provides all of these options and more, and makes it easy to use them when you want. All of the
+            <codeInline>Draw[…]</codeInline> methods offer many overloads that can accept additional parameters such as
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasTextFormat</codeEntityReference>
+            (font family, size, etc) and
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle</codeEntityReference> (dashes, dots, endcaps, etc).
+            Feel free to explore the API surface to learn more about these options.
+          </para>
+        </content></step>
+
+      </steps>
+    </procedure>
+
+    <procedure>
+      <title>Dynamically generate drawing parameters</title>
+      <steps class="ordered">
+
+        <step><content>
+          <para>
+            Now, let’s add some variety by drawing a bunch of shapes and text with randomized colors.
+          </para>
+          <para>
+            Add the following code to the top of your <codeInline>MainPage</codeInline> class. This is helper functionality to
+            generate random values that you will use when drawing:
+          </para>
+          <code language="cs">
+            Random rnd = new Random();
+            private Vector2 RndPosition()
+            {
+                double x = rnd.NextDouble() * 500f;
+                double y = rnd.NextDouble() * 500f;
+                return new Vector2((float)x, (float)y);
+            }
+
+            private float RndRadius()
+            {
+                return (float)rnd.NextDouble() * 150f;
+            }
+
+            private byte RndByte()
+            {
+                return (byte)rnd.Next(256);
+            }
+          </code>
+        </content></step>
+
+        <step><content>
+          <para>
+            Modify your CanvasControl_Draw method to draw using these random parameters:
+          </para>
+          <code language="cs">
+            private void CanvasControl_Draw(
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+            {
+                args.DrawingSession.DrawText("Hello, World!", RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                args.DrawingSession.DrawCircle(RndPosition(), RndRadius(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                args.DrawingSession.DrawLine(RndPosition(), RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+            }
+          </code>
+          <para>
+            Let’s break down how <codeInline>DrawText</codeInline> has changed. “<legacyBold>Hello, World!</legacyBold>” remains the same
+            as before. The x and y offset parameters have been replaced with a single
+            <codeEntityReference>T:System.Numerics.Vector2</codeEntityReference> which is generated
+            by <codeInline>RndPosition</codeInline>. Finally, instead of using a predefined color, <codeInline>Color.FromArgb</codeInline>
+            allows you to define a color using A, R, G and B values. A is alpha, or the opacity level; in this case you always want fully
+            opaque (<legacyBold>255</legacyBold>).
+          </para>
+          <para>
+            <codeInline>DrawCircle</codeInline> and <codeInline>DrawLine</codeInline> operate similarly to <codeInline>DrawText</codeInline>.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Finally, wrap your drawing code in a <codeInline>for</codeInline> loop. You should end up with the following
+            <codeInline>CanvasControl_Draw</codeInline> code:
+          </para>
+          <code language="cs">
+            for (int i = 0; i &lt; 100; i++)
+            {
+                args.DrawingSession.DrawText("Hello, World!", RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                args.DrawingSession.DrawCircle(RndPosition(), RndRadius(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                args.DrawingSession.DrawLine(RndPosition(), RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+            }
+          </code>
+        </content></step>
+
+        <step><content><para>
+          Run the app again. You should see a whole bunch of text, lines and circles with random positions and sizes.
+        </para></content></step>
+      </steps>
+    </procedure>
+
+    <procedure>
+      <title>Apply an image effect to your content</title>
+      <steps class="ordered">
+
+        <step><content>
+          <para>
+            <legacyItalic>Image effects</legacyItalic>, also known as <legacyItalic>filter effects</legacyItalic>, are graphical
+            transformations that are applied to pixel data. Saturation, hue rotation, and Gaussian blur are some common image effects.
+            Image effects can be chained together, producing sophisticated visual appearance for minimal effort.
+          </para>
+          <para>
+            You use image effects by providing a source image (the content you’re starting with), creating an effect such as
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect</codeEntityReference>, setting properties such
+            as <codeEntityReference>P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.BlurAmount</codeEntityReference>,
+            and then drawing the effect’s output with <codeInline>DrawImage</codeInline>.
+          </para>
+          <para>
+            To apply an image effect to your text and shapes, you need to first render that content into a
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasCommandList</codeEntityReference>.
+            This object is usable as an input to your effect.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Change your <codeInline>CanvasControl_Draw</codeInline> method to use the following code:
+          </para>
+          <code language="cs">
+            CanvasCommandList cl = new CanvasCommandList(sender);
+            using (CanvasDrawingSession clds = cl.CreateDrawingSession())
+            {
+                for (int i = 0; i &lt; 100; i++)
+                {
+                    clds.DrawText("Hello, World!", RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                    clds.DrawCircle(RndPosition(), RndRadius(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                    clds.DrawLine(RndPosition(), RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                }
+            }
+          </code>
+          <para>
+            Just like how you obtain a <codeInline>CanvasDrawingSession</codeInline> from <codeInline>CanvasDrawEventArgs</codeInline>
+            which you can draw with, you can create a <codeInline>CanvasDrawingSession</codeInline> from a <codeInline>CanvasCommandList</codeInline>.
+            The only difference is that when you draw to the command list’s drawing session (<codeInline>clds</codeInline>), you are not directly
+            rendering to the <codeInline>CanvasControl</codeInline>. Instead, the command list is an intermediate object that stores the results of
+            rendering for later use.
+          </para>
+          <para>
+            You may have noticed the <codeInline>using</codeInline> block that wraps the command list’s drawing session. Drawing sessions implement
+            <externalLink><linkText>IDisposable</linkText><linkUri>http://msdn.microsoft.com/library/system.idisposable</linkUri></externalLink>
+            and must be disposed when you are done rendering (the <codeInline>using</codeInline> block does this).
+            The <codeInline>CanvasDrawingSession</codeInline> that you obtain from <codeInline>CanvasDrawEventArgs</codeInline> automatically is
+            closed for you, but <legacyItalic>you must dispose any drawing sessions that you explicitly created</legacyItalic>.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Finally, define the <codeInline>GaussianBlurEffect</codeInline> by adding the following code to the end of the
+            <codeInline>CanvasControl_Draw</codeInline> method:
+          </para>
+          <code language="cs">
+            GaussianBlurEffect blur = new GaussianBlurEffect();
+            blur.Source = cl;
+            blur.BlurAmount = 10.0f;
+            args.DrawingSession.DrawImage(blur);
+          </code>
+          <para>
+            This code creates a Gaussian blur, sets its source as the <codeInline>CanvasCommandList</codeInline> you just drew to,
+            sets its blur radius to <legacyBold>10</legacyBold>, and finally renders the output of the blur to the original drawing session
+            (<codeInline>args.DrawingSession</codeInline>).
+          </para>
+        </content></step>
+
+        <step><content><para>
+          Run the app again. You should see your lines, text and circles with a blurry appearance.
+        </para></content></step>
+
+      </steps>
+    </procedure>
+
+    <procedure>
+      <title>Animate your app with CanvasAnimatedControl</title>
+      <steps class="ordered">
+
+        <step><content>
+          <para>
+            Win2D gives you the ability to update and animate your content in realtime, for example by changing the blur radius of the
+            Gaussian blur with every frame. To do this, you will use
+            <codeEntityReference>T:Microosft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>.
+          </para>
+          <para>
+            <codeInline>CanvasControl</codeInline> is best suited for mostly static graphics content – it only raises the
+            <codeInline>Draw</codeInline> event when your content needs to be updated or redrawn. If you have continually changing
+            content then you should consider using <codeInline>CanvasAnimatedControl</codeInline> instead.
+            The two controls operate very similarly, except <codeInline>CanvasAnimatedControl</codeInline> raises the
+            <codeInline>Draw</codeInline> event on a periodic basis; by default it is called 60 times per second.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            To switch to <codeInline>CanvasAnimatedControl</codeInline>, go to <legacyBold>MainPage.xaml</legacyBold>, delete the
+            <codeInline>CanvasControl</codeInline> line, and replace it with the following XAML: 
+          </para>
+          <code language="xaml">
+            &lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"&gt;
+                &lt;canvas:CanvasAnimatedControl Draw="CanvasAnimatedControl_Draw" CreateResources="CanvasAnimatedControl_CreateResources"/&gt;
+            &lt;/Grid&gt;
+          </code>
+          <para>
+            Just like with <codeInline>CanvasControl</codeInline>, let AutoComplete create the <codeInline>Draw</codeInline> event handler for you.
+            Note that <codeInline>CanvasAnimatedControl_Draw</codeInline> is distinct from <codeInline>CanvasControl_Draw</codeInline>.
+            In addition, you are also handling a new event,
+            <codeEntityReference>E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateResources</codeEntityReference>.
+            Once again, let AutoComplete create the handler.
+          </para>
+          <para>
+            Now that your app will be redrawing at 60 frames per second, it is more efficient to create your Win2D visual resources once and reuse
+            them with every frame. It is inefficient to create a <codeInline>CanvasCommandList</codeInline> and draw 300 elements into it 60 times
+            per second when the content remains static. <codeInline>CreateResources</codeInline> is an event that is fired only when Win2D
+            determines you need to recreate your visual resources, such as when the page is loaded.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Switch back to <legacyBold>MainPage.xaml.cs</legacyBold>. Find your <codeInline>CanvasControl_Draw</codeInline> method which should look
+            like this:
+          </para>
+          <code language="cs">
+            private void CanvasControl_Draw(
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
+            {
+                CanvasCommandList cl = new CanvasCommandList(sender);
+                using (CanvasDrawingSession clds = cl.CreateDrawingSession())
+                {
+                    for (int i = 0; i &lt; 100; i++)
+                    {
+                        clds.DrawText("Hello, World!", RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                        clds.DrawCircle(RndPosition(), RndRadius(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                        clds.DrawLine(RndPosition(), RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                    }
+                }
+
+                GaussianBlurEffect blur = new GaussianBlurEffect();
+                blur.Source = cl;
+                blur.BlurAmount = 10.0f;
+                args.DrawingSession.DrawImage(blur);
+            }
+          </code>
+          <para>
+            The vast majority of this existing draw code does not need to be executed with every frame: the command list containing the text,
+            lines and circles remains the same with every frame, and the only thing that changes is the blur radius. Therefore, you can move
+            this "static" code into <codeInline>CreateResources</codeInline>.
+          </para>
+          <para>
+            To do this, first cut (<legacyBold>CTRL+X</legacyBold>) the entire contents of <codeInline>CanvasControl_Draw</codeInline>,
+            <legacyItalic>except</legacyItalic> for the very last line (<codeInline>args.DrawingSession.DrawImage(blur);</codeInline>).
+            You can now delete the remainder of <codeInline>CanvasControl_Draw</codeInline> as it is no longer needed: recall that
+            <codeInline>CanvasAnimatedControl</codeInline> has its own distinct <codeInline>Draw</codeInline> event.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Find the automatically generated <codeInline>CanvasAnimatedControl_CreateResources</codeInline> method:
+          </para>
+          <code language="cs">
+            private void CanvasAnimatedControl_CreateResources(
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, 
+                Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
+            {}
+          </code>
+          <para>
+            Paste (<legacyBold>CTRL+V</legacyBold>) your previously cut code into this method. Next, move the declaration of
+            <codeInline>GaussianBlurEffect</codeInline> outside the method body so the variable becomes a member of the MainPage class.
+            Your code should now look like the following:
+          </para>
+          <code language="cs">
+            GaussianBlurEffect blur;
+            private void CanvasAnimatedControl_CreateResources(
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender,
+                Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
+            {
+                CanvasCommandList cl = new CanvasCommandList(sender);
+                using (CanvasDrawingSession clds = cl.CreateDrawingSession())
+                {
+                    for (int i = 0; i &lt; 100; i++)
+                    {
+                        clds.DrawText("Hello, World!", RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                        clds.DrawCircle(RndPosition(), RndRadius(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                        clds.DrawLine(RndPosition(), RndPosition(), Color.FromArgb(255, RndByte(), RndByte(), RndByte()));
+                    }
+                }
+
+                blur = new GaussianBlurEffect()
+                {
+                    Source = cl,
+                    BlurAmount = 10.0f
+                };
+            }
+          </code>
+        </content></step>
+
+        <step><content>
+          <para>
+            Now you can animate the Gaussian blur. Find the <codeInline>CanvasAnimatedControl_Draw</codeInline> method and add the
+            following code:
+          </para>
+          <code language="cs">
+            private void CanvasAnimatedControl_Draw(
+                Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender,
+                Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
+            {
+                float radius = (float)(1 + Math.Sin(args.Timing.TotalTime.TotalSeconds)) * 10f;
+                blur.BlurAmount = radius;
+                args.DrawingSession.DrawImage(blur);
+            }
+          </code>
+          <para>
+            This reads the total elapsed time provided by
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs</codeEntityReference> and uses this to
+            calculate the desired blur amount; the sine function provides an interesting variation over time.
+            Finally, the <codeInline>GaussianBlurEffect</codeInline> is rendered.
+          </para>
+        </content></step>
+
+        <step><content>
+          <para>
+            Run the app to see the blurred content change over time. 
+          </para>
+          <para>
+            Congratulations on completing this quick start tutorial! Hopefully you have seen how you can use Win2D to create a
+            rich, animated visual scene with just a few lines of C# and XAML code.
+          </para>
+        </content></step>
+      </steps>
+    </procedure>
+
+  </developerHowToDocument>
+</topic>

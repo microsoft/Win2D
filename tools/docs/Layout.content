@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="Introduction" title="Introduction" isDefault="true" apiParentMode="InsertAfter" />
+  <Topic id="Introduction" title="Introduction" isDefault="true" />
+  <Topic id="QuickStart" title="Quick start"  apiParentMode="InsertAfter"/>
   <Topic id="WindowsNumerics" title="Windows.Foundation.Numerics Namespace" tocTitle="Windows.Foundation.Numerics">
     <Topic id="WindowsNumerics_float2" title="float2 Structure" />
     <Topic id="WindowsNumerics_float3" title="float3 Structure" />
