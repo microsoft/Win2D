@@ -90,21 +90,6 @@ public:
             handler);
     }
 
-    virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* handler, IWindow* window) override
-    {
-        // Don't register for the visiblity changed event if we're in design
-        // mode.  Although we have been given a valid IWindow, we'll crash
-        // if we attempt to call add_VisibilityChanged on it!
-        if (IsDesignModeEnabled())
-            return RegisteredEvent();
-
-        return RegisteredEvent(
-            window,
-            &IWindow::add_VisibilityChanged,
-            &IWindow::remove_VisibilityChanged,
-            handler);
-    }
-
     virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* handler) override
     {
         return RegisteredEvent(
@@ -212,11 +197,6 @@ void CanvasControl::RegisterEventHandlers()
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace Windows::Foundation;
 
-    m_windowVisibilityChangedEventRegistration = GetAdapter()->AddVisibilityChangedCallback(
-        this, 
-        &CanvasControl::OnWindowVisibilityChanged,
-        GetWindow());
-
     m_surfaceContentsLostEventRegistration = GetAdapter()->AddSurfaceContentsLostCallback(this, &CanvasControl::OnSurfaceContentsLost);
 }
 
@@ -228,7 +208,6 @@ void CanvasControl::UnregisterEventHandlers()
         m_needToHookCompositionRendering = true;
     }
 
-    m_windowVisibilityChangedEventRegistration.Release();
     m_surfaceContentsLostEventRegistration.Release();
 }
 
@@ -416,37 +395,30 @@ IFACEMETHODIMP CanvasControl::OnApplyTemplate()
         });
 }
 
-HRESULT CanvasControl::OnWindowVisibilityChanged(IInspectable*, IVisibilityChangedEventArgs* args)
+void CanvasControl::WindowVisibilityChanged()
 {
-    return ExceptionBoundary(
-        [&]
+    // Note that this is always called with ownership of the lock.
+
+    if (IsVisible())
+    {
+        HookCompositionRenderingIfNecessary();
+    }
+    else
+    {
+        if (m_renderingEventRegistration)
         {
-            boolean isVisible;
-            ThrowIfFailed(args->get_Visible(&isVisible));
-
-            auto lock = GetLock();
-
-            if (isVisible)
-            {
-                HookCompositionRenderingIfNecessary();
-            }
-            else
-            {
-                if (m_renderingEventRegistration)
-                {
-                    //
-                    // The window is invisible.  This means that
-                    // OnCompositionRendering() will not do anything.  However, XAML
-                    // will run composition if any handlers are registered on the
-                    // rendering event.  Since we want to avoid the system doing
-                    // unnecessary work we take steps to unhook the event when we're
-                    // not making good use of it.
-                    //
-                    m_renderingEventRegistration.Release();
-                    m_needToHookCompositionRendering = true;
-                }
-            }
-        });
+            //
+            // The window is invisible.  This means that
+            // OnCompositionRendering() will not do anything.  However, XAML
+            // will run composition if any handlers are registered on the
+            // rendering event.  Since we want to avoid the system doing
+            // unnecessary work we take steps to unhook the event when we're
+            // not making good use of it.
+            //
+            m_renderingEventRegistration.Release();
+            m_needToHookCompositionRendering = true;
+        }
+    }
 }
 
 HRESULT CanvasControl::OnSurfaceContentsLost(IInspectable*, IInspectable*)

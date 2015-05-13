@@ -70,7 +70,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
     public:
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
-        virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler*, IWindow*) = 0;
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
@@ -83,7 +82,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         CB_HELPER(AddCompositionRenderingCallback, IEventHandler<IInspectable*>);
-        CB_HELPER(AddVisibilityChangedCallback, IWindowVisibilityChangedEventHandler);
         CB_HELPER(AddSurfaceContentsLostCallback, IEventHandler<IInspectable*>);
 
 #undef CB_HELPER
@@ -109,7 +107,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RegisteredEvent m_renderingEventRegistration; // protected by BaseControl's mutex
         bool m_needToHookCompositionRendering;        // protected by BaseControl's mutex
 
-        RegisteredEvent m_windowVisibilityChangedEventRegistration;
         RegisteredEvent m_surfaceContentsLostEventRegistration;
 
         ComPtr<IImage> m_imageControl;
@@ -166,6 +163,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
+        virtual void WindowVisibilityChanged() override final;
 
     private:
         void HookCompositionRenderingIfNecessary();
@@ -175,7 +173,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void UnregisterEventHandlers();
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);
-        HRESULT OnWindowVisibilityChanged(IInspectable*, IVisibilityChangedEventArgs* args);
         HRESULT OnSurfaceContentsLost(IInspectable* sender, IInspectable* args);
 
         void ChangedImpl();

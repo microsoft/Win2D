@@ -46,6 +46,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* handler) = 0;
 
+        virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* handler, IWindow* window) = 0;
+
         virtual ComPtr<IWindow> GetWindowOfCurrentThread() = 0;
 
         //
@@ -62,6 +64,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CB_HELPER(AddApplicationSuspendingCallback, IEventHandler<SuspendingEventArgs*>);
         CB_HELPER(AddApplicationResumingCallback, IEventHandler<IInspectable*>);
         CB_HELPER(AddDpiChangedCallback, DpiChangedEventHandler);
+        CB_HELPER(AddVisibilityChangedCallback, IWindowVisibilityChangedEventHandler);
 
 #undef CB_HELPER
 
@@ -111,6 +114,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::unique_ptr<IRecreatableDeviceManager<TRAITS>> m_recreatableDeviceManager;
         bool m_isLoaded;
         bool m_isSuspended;
+        bool m_isVisible;
         float m_dpi;
 
         EventSource<drawEventHandler_t, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
@@ -118,6 +122,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RegisteredEvent m_applicationSuspendingEventRegistration;
         RegisteredEvent m_applicationResumingEventRegistration;
         RegisteredEvent m_dpiChangedEventRegistration;
+        RegisteredEvent m_windowVisibilityChangedEventRegistration;
 
         std::mutex m_mutex;
         Size m_currentSize;     // protected by m_mutex
@@ -133,6 +138,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_recreatableDeviceManager(adapter->CreateRecreatableDeviceManager())
             , m_isLoaded(false)
             , m_isSuspended(false)
+            , m_isVisible(true)
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_dpi(adapter->GetLogicalDpi())
             , m_currentSize{}
@@ -312,6 +318,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) = 0;
         virtual void ApplicationResuming() = 0;
+        virtual void WindowVisibilityChanged() = 0;
 
         void CheckIsOnUIThread()
         {
@@ -366,6 +373,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool IsSuspended() const
         {
             return m_isSuspended;
+        }
+
+        bool IsVisible() const
+        {
+            return m_isVisible;
         }
 
         std::shared_ptr<adapter_t> GetAdapter()
@@ -532,6 +544,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             RegisterEventHandlerOnSelf(frameworkElement, &IFrameworkElement::add_SizeChanged, &BaseControl::OnSizeChanged);
 
+
             m_recreatableDeviceManager->SetChangedCallback(
                 [=] (ChangeReason reason)
                 {
@@ -553,6 +566,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &BaseControl::OnDpiChanged);
 
+            m_windowVisibilityChangedEventRegistration = m_adapter->AddVisibilityChangedCallback(
+                this,
+                &BaseControl::OnWindowVisibilityChanged,
+                GetWindow());
+
             // Check if the DPI changed while we weren't listening for events.
             OnDpiChanged(nullptr, nullptr);
         }
@@ -562,6 +580,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             m_applicationSuspendingEventRegistration.Release();
             m_applicationResumingEventRegistration.Release();
             m_dpiChangedEventRegistration.Release();
+            m_windowVisibilityChangedEventRegistration.Release();
         }
 
         template<typename T, typename DELEGATE, typename HANDLER>
@@ -671,6 +690,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     m_recreatableDeviceManager->SetDpiChanged();
                 }
             });
+        }
+
+        HRESULT OnWindowVisibilityChanged(IInspectable*, IVisibilityChangedEventArgs* args)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    boolean isVisible;
+                    ThrowIfFailed(args->get_Visible(&isVisible));
+
+                    auto lock = GetLock();
+                    m_isVisible = !!isVisible;
+
+                    WindowVisibilityChanged();
+                });
+
         }
     };
 

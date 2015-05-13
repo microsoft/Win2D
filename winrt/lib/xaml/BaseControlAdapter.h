@@ -128,6 +128,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 &IDisplayInformation::remove_DpiChanged,
                 handler);
         }
+        
+        virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* handler, IWindow* window)
+        {
+            // Don't register for the visiblity changed event if we're in design
+            // mode.  Although we have been given a valid IWindow, we'll crash
+            // if we attempt to call add_VisibilityChanged on it!
+            if (IsDesignModeEnabled())
+                return RegisteredEvent();
+
+            return RegisteredEvent(
+                window,
+                &IWindow::add_VisibilityChanged,
+                &IWindow::remove_VisibilityChanged,
+                handler);
+        }
 
         virtual ComPtr<IWindow> GetWindowOfCurrentThread() override
         {

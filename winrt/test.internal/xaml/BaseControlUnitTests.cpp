@@ -132,6 +132,11 @@ namespace
             ApplicationResumingMethod.WasCalled();
         }
 
+        virtual void WindowVisibilityChanged() override final
+        {
+            Assert::Fail(L"Unexpected call to WindowVisibilityChanged");
+        }
+
         template<typename FN>
         void CallRunWithRenderTarget(Size const& size, FN&& fn)
         {

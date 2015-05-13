@@ -44,12 +44,6 @@ public:
         ThrowIfFailed(CompositionRenderingEventSource->InvokeAll(sender, arg));
     }
 
-    virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* value, IWindow* window) override
-    {
-        MockWindow* mockWindow = static_cast<MockWindow*>(window);
-        return mockWindow->VisibilityChangedEventSource->Add(value);
-    }
-
     virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* value) override
     {
         return SurfaceContentsLostEventSource->Add(value);

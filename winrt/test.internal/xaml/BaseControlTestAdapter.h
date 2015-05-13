@@ -101,6 +101,12 @@ public:
         return DpiChangedEventSource->Add(value);
     }
 
+    virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* value, IWindow* window) override
+    {
+        MockWindow* mockWindow = static_cast<MockWindow*>(window);
+        return mockWindow->VisibilityChangedEventSource->Add(value);
+    }
+
     void RaiseDpiChangedEvent()
     {
         ThrowIfFailed(DpiChangedEventSource->InvokeAll(nullptr, nullptr));

@@ -617,6 +617,14 @@ void CanvasAnimatedControl::ApplicationResuming()
     Changed(GetLock());
 }
 
+void CanvasAnimatedControl::WindowVisibilityChanged()
+{
+    //
+    // Note that we don't stop the game loop thread here, because
+    // we still expect Update to be called.
+    //
+}
+
 void CanvasAnimatedControl::Changed(Lock const& lock, ChangeReason reason)
 {
     //
@@ -974,6 +982,11 @@ bool CanvasAnimatedControl::Tick(
     // relevant for the ClearColor, since this indicates that we've
     // 'consumed' that color.
     m_sharedState.NeedsDraw = false;
+    
+    // We update, but forego drawing if the control is not in a visible state.
+    // Force-draws, like those due to device lost, are not performed either.
+    // Drawing behavior resumes when the control becomes visible once again.
+    bool isVisible = IsVisible();
 
     //
     // Copy out the list of async actions, to avoid retaining the lock while
@@ -1007,7 +1020,7 @@ bool CanvasAnimatedControl::Tick(
     // This is desireable since using Present to wait for the vsync can
     // result in missed frames.
     //
-    if (updateResult.Updated || forceDraw)
+    if ((updateResult.Updated || forceDraw) && isVisible)
     {
         //
         // If the control's size has changed then the swapchain's buffers

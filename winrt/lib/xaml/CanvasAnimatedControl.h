@@ -244,6 +244,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
+        virtual void WindowVisibilityChanged() override final;
 
     private:
         void CreateSwapChainPanel();

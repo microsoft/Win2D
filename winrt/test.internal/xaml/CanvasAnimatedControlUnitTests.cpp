@@ -19,6 +19,56 @@ static Color const AnyOtherOpaqueColor      { 255,   5,   6,   7 };
 static Color const AnyTranslucentColor      { 254, 253, 252, 251 };
 static Color const AnyOtherTranslucentColor { 250, 249, 248, 247 };
 
+static auto const TicksPerFrame = StepTimer::TicksPerSecond / 60;
+
+class FixtureWithSwapChainAccess : public CanvasAnimatedControlFixture
+{
+protected:
+    ComPtr<MockDxgiSwapChain> m_dxgiSwapChain;
+
+public:
+    FixtureWithSwapChainAccess()
+        : m_dxgiSwapChain(Make<MockDxgiSwapChain>())
+    {
+        m_dxgiSwapChain->Present1Method.AllowAnyCall();
+
+        m_dxgiSwapChain->GetDesc1Method.AllowAnyCall(
+            [=](DXGI_SWAP_CHAIN_DESC1* desc)
+        {
+            desc->Width = 1;
+            desc->Height = 1;
+            desc->Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+            desc->BufferCount = 2;
+            desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+            return S_OK;
+        });
+
+        m_dxgiSwapChain->GetBufferMethod.AllowAnyCall(
+            [=](UINT index, const IID& iid, void** out)
+        {
+            Assert::AreEqual(__uuidof(IDXGISurface2), iid);
+            auto surface = Make<MockDxgiSurface>();
+
+            return surface.CopyTo(reinterpret_cast<IDXGISurface2**>(out));
+        });
+
+        Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
+            [=](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
+        {
+            StubCanvasDevice* stubDevice = static_cast<StubCanvasDevice*>(device); // Ensured by test construction
+
+            stubDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+            {
+                return m_dxgiSwapChain;
+            });
+
+            auto canvasSwapChain = Adapter->SwapChainManager->GetOrCreate(device, m_dxgiSwapChain.Get(), DEFAULT_DPI);
+
+            return canvasSwapChain;
+        });
+    }
+};
+
 TEST_CLASS(CanvasAnimatedControl_DrawArgs)
 {
     struct Fixture
@@ -340,54 +390,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         VERIFY_THREADING_RESTRICTION(S_OK, f.Control->get_ClearColor(&color));
     }
 
-    class FixtureWithSwapChainAccess : public CanvasAnimatedControlFixture
-    {
-    protected:
-        ComPtr<MockDxgiSwapChain> m_dxgiSwapChain;
-
-    public:
-        FixtureWithSwapChainAccess()
-            : m_dxgiSwapChain(Make<MockDxgiSwapChain>())
-        {
-            m_dxgiSwapChain->Present1Method.AllowAnyCall();
-
-            m_dxgiSwapChain->GetDesc1Method.AllowAnyCall(
-                [=](DXGI_SWAP_CHAIN_DESC1* desc)
-                {
-                    desc->Width = 1;
-                    desc->Height = 1;
-                    desc->Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-                    desc->BufferCount = 2;
-                    desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-                    return S_OK;
-                });
-
-            m_dxgiSwapChain->GetBufferMethod.AllowAnyCall(
-                [=](UINT index, const IID& iid, void** out)
-                {
-                    Assert::AreEqual(__uuidof(IDXGISurface2), iid);
-                    auto surface = Make<MockDxgiSurface>();
-
-                    return surface.CopyTo(reinterpret_cast<IDXGISurface2**>(out));
-                });
-
-            Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
-                [=](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
-                {
-                    StubCanvasDevice* stubDevice = static_cast<StubCanvasDevice*>(device); // Ensured by test construction
-
-                    stubDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
-                    {
-                        return m_dxgiSwapChain;
-                    });
-
-                    auto canvasSwapChain = Adapter->SwapChainManager->GetOrCreate(device, m_dxgiSwapChain.Get(), DEFAULT_DPI);
-
-                    return canvasSwapChain;
-                });  
-        }
-    };
-
     class ResizeFixture : public FixtureWithSwapChainAccess
     {
     public:
@@ -695,8 +697,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
             [&] { f.Adapter->DoChanged(); });
     }
-
-    static auto const TicksPerFrame = StepTimer::TicksPerSecond / 60;
 
     struct UpdateRenderFixture : public CanvasAnimatedControlFixture
     {
@@ -2348,6 +2348,142 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
         ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
         f.Adapter->DoChanged();
         Assert::IsTrue(f.IsRenderActionRunning());
+    }
+};
+
+
+TEST_CLASS(CanvasAnimatedControl_VisibilityTests)
+{
+    class Fixture : public FixtureWithSwapChainAccess
+    {
+    public:
+        MockEventHandler<Animated_DrawEventHandler> OnDraw;
+        MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
+        ComPtr<MockWindow> Window;
+
+        Fixture()
+        {
+            Load();
+            Adapter->DoChanged();
+
+            Window = Adapter->GetCurrentMockWindow();
+
+            OnDraw = MockEventHandler<Animated_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
+            AddDrawHandler(OnDraw.Get());
+
+            OnUpdate = MockEventHandler<Animated_UpdateEventHandler>(L"Update", ExpectedEventParams::Both);
+            AddUpdateHandler(OnUpdate.Get());
+
+            m_dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+        }
+
+        void DoNotExpectResizeBuffers()
+        {
+            m_dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(0);
+        }
+
+        void ExpectOneResizeBuffers()
+        {
+            m_dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1);
+        }
+
+        void LoseDeviceDuringPresent()
+        {
+            m_dxgiSwapChain->Present1Method.SetExpectedCalls(1,
+                [=](UINT, UINT, const DXGI_PRESENT_PARAMETERS*)
+                {
+                    Adapter->InitialDevice->MarkAsLost();
+                    return DXGI_ERROR_DEVICE_REMOVED;
+                });
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenInvisible_NoDrawOccurs)
+    {
+        Fixture f;
+
+        f.Window->SetVisible(false);
+
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(0);
+        f.RenderSingleFrame();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenInvisible_SwapchainNotResized)
+    {
+        Fixture f;
+
+        f.Window->SetVisible(false);
+
+        f.UserControl->Resize(Size{ 3, 4 });
+
+        f.DoNotExpectResizeBuffers();
+        f.OnUpdate.SetExpectedCalls(1);
+        f.RenderSingleFrame();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenInvisibleThenVisible_SwapchainResizedOnNextDrawWithUpdate)
+    {
+        Fixture f;
+
+        f.Window->SetVisible(false);
+
+        f.UserControl->Resize(Size{ 3, 4 });
+
+        f.OnUpdate.SetExpectedCalls(1);
+        f.RenderSingleFrame();
+
+        f.Window->SetVisible(true);
+        f.Adapter->ProgressTime(TicksPerFrame);
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(1);
+        f.ExpectOneResizeBuffers();
+        f.RenderSingleFrame();
+
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenInvisible_ClearColorChanged_NoDrawOccurs)
+    {
+        Fixture f;
+
+        f.Window->SetVisible(false);
+
+        f.Control->put_ClearColor(AnyColor);
+
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(0);
+        f.RenderSingleFrame();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenInvisible_SizeChanged_NoDrawOccurs)
+    {
+        Fixture f;
+
+        f.Window->SetVisible(false);
+
+        f.UserControl->Resize(Size{ 3, 4 });
+
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(0);
+        f.RenderSingleFrame();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceLost_ThenInvisible_NoDrawOccurs)
+    {
+        Fixture f;
+
+        f.LoseDeviceDuringPresent();
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(1);
+        f.RenderSingleFrame();
+
+        f.Window->SetVisible(false);
+
+        f.Adapter->DoChanged();
+
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(0);
+        f.RenderSingleFrame();
     }
 };
 
