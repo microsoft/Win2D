@@ -91,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExampleVideoEffect.cs" />
+    <Compile Include="DisplacementEffect.cs" />
+    <Compile Include="RotatedTilesEffect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

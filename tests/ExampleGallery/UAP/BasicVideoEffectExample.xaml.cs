@@ -25,7 +25,7 @@ namespace ExampleGallery
 {
     public sealed partial class BasicVideoEffectExample : UserControl, ICustomThumbnailSource
     {
-        IRandomAccessStream m_thumbnail;
+        IRandomAccessStream thumbnail;
 
         public BasicVideoEffectExample()
         {
@@ -71,7 +71,7 @@ namespace ExampleGallery
 
             if (ThumbnailGenerator.IsDrawingThumbnail)
             {
-                m_thumbnail = await composition.GetThumbnailAsync(TimeSpan.FromSeconds(10), 1280, 720, VideoFramePrecision.NearestFrame);
+                this.thumbnail = await composition.GetThumbnailAsync(TimeSpan.FromSeconds(10), 1280, 720, VideoFramePrecision.NearestFrame);
             }
 
             mediaElement.SetMediaStreamSource(composition.GenerateMediaStreamSource());
@@ -84,7 +84,7 @@ namespace ExampleGallery
 
         IRandomAccessStream ICustomThumbnailSource.Thumbnail
         {
-            get { return m_thumbnail; }
+            get { return thumbnail; }
         }
     }
 }

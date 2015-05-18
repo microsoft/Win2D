@@ -56,6 +56,7 @@ namespace ExampleGallery
             new ExampleDefinition("Game of Life", typeof(GameOfLife)),
 #if WINDOWS_UAP
             new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
+            new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
 #endif
             new ExampleDefinition("Particle System", typeof(ParticleExample)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
