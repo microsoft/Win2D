@@ -55,10 +55,6 @@ Note: For the bulk of interesting product code, go to /winrt/lib.
 
 **/samples** - Example projects showing how to use Win2D
 
-**/tests** - Test projects that consume Win2D in a similar way to how an 
-external customer would. Each one is a Windows Store app. These tests are run for manual
-verification.
-
 **/tools** - Standalone utilities, separate from Win2D product code
 - /codegen - Generates headers+IDL from XML resource files (you don't have to build this to build Win2D)
 - /copyright - Verifies the right copyright banner appears at the top of each source file

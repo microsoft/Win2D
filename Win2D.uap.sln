@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.22815.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EC7BD4FF-9DAE-4698-9FDA-244478B0203B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{EC7BD4FF-9DAE-4698-9FDA-244478B0203B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D50-41BE-B46D-A61FF19B4694}"
 	ProjectSection(SolutionItems) = preProject
@@ -43,10 +43,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.managed", "winrt
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "winrt.test.managed.Shared", "winrt\test.managed\Shared\winrt.test.managed.Shared.shproj", "{EF6DBC39-A50D-47C4-B790-D459D4904D84}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CsConsumer", "CsConsumer", "{54689ECA-BD56-4F0F-8148-81727A607EF5}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CsConsumer.Shared", "tests\CsConsumer\Shared\CsConsumer.Shared.shproj", "{BED92440-609A-4A13-924C-75A7BAFC3969}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.dll.Shared", "winrt\dll\winrt.dll.Shared.vcxitems", "{D3D2A425-69D2-4F8C-98DC-760ABC25E535}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Published", "Published", "{5FE06651-5284-42B5-AEC4-280FBA034126}"
@@ -56,7 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Published", "Published", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExampleGallery", "ExampleGallery", "{671EACB0-6255-4050-B092-1A874625AD5C}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleGallery.Shared", "tests\ExampleGallery\Shared\ExampleGallery.Shared.shproj", "{F6F2B4AD-0B11-4919-BF8B-08DE6FE76170}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleGallery.Shared", "samples\ExampleGallery\Shared\ExampleGallery.Shared.shproj", "{F6F2B4AD-0B11-4919-BF8B-08DE6FE76170}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.lib.uap", "winrt\lib\winrt.lib.uap.vcxproj", "{26B85B6E-3520-42B5-ADB6-971010CC99FA}"
 EndProject
@@ -70,14 +66,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.dll.uap", "winrt\dll\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.uap", "winrt\test.external\winrt.test.external.uap.vcxproj", "{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.uap", "tests\ExampleGallery\UAP\ExampleGallery.uap.csproj", "{F6867923-3A6E-4102-B546-E3A6A5F8EC36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.uap", "samples\ExampleGallery\UAP\ExampleGallery.uap.csproj", "{F6867923-3A6E-4102-B546-E3A6A5F8EC36}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2B157B97-CBF7-4014-8655-1456F2807F43} = {2B157B97-CBF7-4014-8655-1456F2807F43}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsConsumer.uap", "tests\CsConsumer\UAP\CsConsumer.uap.csproj", "{DF81C02B-9D29-4724-82BC-9D56724F59B4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.Effects", "tests\ExampleGallery\Effects\ExampleGallery.Effects.csproj", "{2B157B97-CBF7-4014-8655-1456F2807F43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.Effects", "samples\ExampleGallery\Effects\ExampleGallery.Effects.csproj", "{2B157B97-CBF7-4014-8655-1456F2807F43}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.nativecomponent.uap", "winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj", "{9936FFEF-2686-4DF6-8D64-2BFA78B1222A}"
 EndProject
@@ -91,16 +85,14 @@ Global
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
 		winrt\test.external\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
-		tests\CsConsumer\Shared\CsConsumer.Shared.projitems*{bed92440-609a-4a13-924c-75a7bafc3969}*SharedItemsImports = 13
 		winrt\lib\winrt.lib.Shared.vcxitems*{1574c4de-318f-4555-b72e-97532f720a13}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{d3d2a425-69d2-4f8c-98dc-760abc25e535}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}*SharedItemsImports = 4
-		tests\CsConsumer\Shared\CsConsumer.Shared.projitems*{df81c02b-9d29-4724-82bc-9d56724f59b4}*SharedItemsImports = 4
-		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
+		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{063ab629-aadf-4749-b259-ab815b1aeb01}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{b038b2a3-0ff2-4313-a0db-b7b59dc2dc4c}*SharedItemsImports = 9
 		winrt\test.external\winrt.test.external.Shared.vcxitems*{f33c7cb9-5eca-47b7-9393-81e6e8f0bd34}*SharedItemsImports = 4
-		tests\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6867923-3a6e-4102-b546-e3a6a5f8ec36}*SharedItemsImports = 4
+		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6867923-3a6e-4102-b546-e3a6a5f8ec36}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM

@@ -102,12 +102,12 @@
     <WindowsProject Include="winrt\test.managed\Windows\winrt.test.managed.Windows.csproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
-    <WindowsProject Include="tests\CoreWindowExample\Windows\CoreWindowExample.Windows.csproj" />
-    <WindowsProject Include="tests\CsConsumer\Windows\CsConsumer.Windows.csproj" />
-    <WindowsProject Include="tests\ExampleGallery\Direct3DInterop\Windows\ExampleGallery.Direct3DInterop.Windows.vcxproj">
+    <WindowsProject Include="samples\SimpleSample\SimpleSample.Windows\SimpleSample.Windows.csproj" />
+    <WindowsProject Include="samples\CoreWindowExample\Windows\CoreWindowExample.Windows.csproj" />
+    <WindowsProject Include="samples\ExampleGallery\Direct3DInterop\Windows\ExampleGallery.Direct3DInterop.Windows.vcxproj">
       <BuildInParallel>false</BuildInParallel>
     </WindowsProject>
-    <WindowsProject Include="tests\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
+    <WindowsProject Include="samples\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
     <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
@@ -124,12 +124,12 @@
     <PhoneProject Include="winrt\test.external\winrt.test.external.WindowsPhone.vcxproj" />
     <PhoneProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.WindowsPhone.vcxproj" />
     <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
-    <PhoneProject Include="tests\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj" />
-    <PhoneProject Include="tests\CsConsumer\WindowsPhone\CsConsumer.WindowsPhone.csproj" />
-    <PhoneProject Include="tests\ExampleGallery\Direct3DInterop\WindowsPhone\ExampleGallery.Direct3DInterop.WindowsPhone.vcxproj">
+    <PhoneProject Include="samples\SimpleSample\SimpleSample.WindowsPhone\SimpleSample.WindowsPhone.csproj" />
+    <PhoneProject Include="samples\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj" />
+    <PhoneProject Include="samples\ExampleGallery\Direct3DInterop\WindowsPhone\ExampleGallery.Direct3DInterop.WindowsPhone.vcxproj">
       <BuildInParallel>false</BuildInParallel>
     </PhoneProject>
-    <PhoneProject Include="tests\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj"/>
+    <PhoneProject Include="samples\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj"/>
     <PhoneProject Include="numerics\Cpp\tests\CppNumericsTests.WindowsPhone.vcxproj" />
     <PhoneProject Include="numerics\DotNet\tests\WindowsPhone\DotNetNumericsTests.WindowsPhone.csproj" />
   </ItemGroup>
@@ -148,13 +148,12 @@
 <!--      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>  TODO: reenable managed UAP tests
 -->
     </UAPProject>
-    <UAPProject Include="tests\CsConsumer\UAP\CsConsumer.uap.csproj" />
-    <UAPProject Include="tests\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
+    <UAPProject Include="samples\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
   </ItemGroup>
 
   <!-- Restore NuGet packages for all projects -->
   <ItemGroup Condition="$(BuildTests)">
-    <PackagesConfig Include="tests\**\packages.config" />
+    <PackagesConfig Include="samples\**\packages.config" />
     <PackagesConfig Include="winrt\**\packages.config" />
   </ItemGroup>
 
