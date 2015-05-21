@@ -118,6 +118,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             std::function<void()> const& afterLoopFn) = 0;
 
         virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
+
+        virtual void Sleep(DWORD timeInMs) = 0;
     };
 
     class CanvasRenderLoop

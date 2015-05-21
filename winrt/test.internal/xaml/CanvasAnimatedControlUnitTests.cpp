@@ -69,6 +69,24 @@ public:
     }
 };
 
+struct SimpleDispatchedHandler
+{
+    ComPtr<IDispatchedHandler> Handler;
+    CALL_COUNTER_WITH_MOCK(CallbackMethod, void());
+    HRESULT HandlerReturnValue;
+
+    SimpleDispatchedHandler()
+        : HandlerReturnValue(S_OK)
+    {
+        Handler = Callback<Implements<RuntimeClassFlags<ClassicCom>, IDispatchedHandler, FtmBase>>(
+            [&]()
+        {
+            CallbackMethod.WasCalled();
+            return HandlerReturnValue;
+        });
+    }
+};
+
 TEST_CLASS(CanvasAnimatedControl_DrawArgs)
 {
     struct Fixture
@@ -417,11 +435,13 @@ TEST_CLASS(CanvasAnimatedControlTests)
                     });
         }
 
+        static const int TickCountForExecute = 5;
+
         void Execute(Size size)
         {
             UserControl->Resize(size);
 
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < TickCountForExecute; ++i)
             {
                 Adapter->Tick();
                 Assert::IsTrue(Adapter->IsUpdateRenderLoopActive());
@@ -499,6 +519,42 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->ProgressTime(TicksPerFrame);
         f.Execute(Size{ 0, 0 });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToZero_SleepOccurs)
+    {
+        // 
+        // A swap chain doesn't exist in this scenario. Sleep is used to threshold
+        // the progression of the control, instead of synch to vertical blank.
+        //
+
+        for (int i = 0; i < 2; ++i)
+        {
+            ResizeFixture f;
+
+            ThrowIfFailed(f.Control->put_IsFixedTimeStep(i==0));
+
+            f.UserControl->Resize(Size{ 0, 0 });
+            f.Adapter->Tick();
+            f.Adapter->DoChanged();
+
+            MockEventHandler<Animated_UpdateEventHandler> onUpdate(L"OnUpdate");
+            f.AddUpdateHandler(onUpdate.Get());
+            onUpdate.ExpectAtLeastOneCall();
+
+            int sleepCount = 0;
+            f.Adapter->m_sleepFn =
+                [&](DWORD timeInMs)
+            {
+                Assert::AreEqual(static_cast<DWORD>(16), timeInMs);
+                sleepCount++;
+            };
+
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Execute(Size{ 0, 0 });
+
+            Assert::AreEqual(ResizeFixture::TickCountForExecute, sleepCount);
+        }
     }
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess
@@ -1445,6 +1501,98 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.ProgressTime(TicksPerFrame * 3);
         f.RenderSingleFrame();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RenderThreadWaitsForVBlank)
+    {
+        CanvasAnimatedControlFixture f;
+        f.Load();
+        f.Adapter->DoChanged();
+
+        auto mockDxgiOutput = Make<MockDxgiOutput>();
+
+        f.Device->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
+            [&]()
+            {
+                return mockDxgiOutput;
+            });
+
+        mockDxgiOutput->WaitForVBlankMethod.SetExpectedCalls(1);
+
+        f.Adapter->Tick();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RenderThreadWaitsForVBlank_BeforeInputOrDrawOrUpdateOrAsyncActions)
+    {
+        CanvasAnimatedControlFixture f;
+        f.Load();
+        f.Adapter->DoChanged();
+
+        auto mockDxgiOutput = Make<MockDxgiOutput>();
+        f.Device->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
+            [&]()
+            {
+                return mockDxgiOutput;
+            });
+
+        int order = 0;
+
+        mockDxgiOutput->WaitForVBlankMethod.SetExpectedCalls(1,
+            [&]()
+            {
+                Assert::AreEqual(0, order);
+                order++;
+                return S_OK;
+            });
+
+        ComPtr<MockDispatcher> inputDispatcher = Make<MockDispatcher>();
+        auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
+        coreIndependentInputSource->get_DispatcherMethod.AllowAnyCall(
+            [&](ICoreDispatcher** out)
+            {
+                return inputDispatcher.CopyTo(out);
+            });
+        inputDispatcher->ProcessEventsMethod.SetExpectedCalls(1,
+            [&](CoreProcessEventsOption)
+            {
+                Assert::AreEqual(1, order);
+                order++;
+                return S_OK;
+            });
+
+        SimpleDispatchedHandler dispatchedHandler;
+        dispatchedHandler.CallbackMethod.SetExpectedCalls(1,
+            [&]()
+            {
+                Assert::AreEqual(2, order);
+                order++;
+            });
+        ComPtr<IAsyncAction> asyncAction;
+        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
+
+        MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
+        OnUpdate = MockEventHandler<Animated_UpdateEventHandler>(L"Update", ExpectedEventParams::Both);
+        f.AddUpdateHandler(OnUpdate.Get());
+        OnUpdate.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs*)
+            {
+                Assert::AreEqual(3, order);
+                order++;
+                return S_OK;
+            });
+                
+        MockEventHandler<Animated_DrawEventHandler> OnDraw;
+        OnDraw = MockEventHandler<Animated_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
+        f.AddDrawHandler(OnDraw.Get());
+        OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+            {
+                Assert::AreEqual(4, order);
+                order++;
+                return S_OK;
+            });
+
+        f.Adapter->Tick();
     }
 };
 
@@ -2485,6 +2633,29 @@ TEST_CLASS(CanvasAnimatedControl_VisibilityTests)
         f.OnDraw.SetExpectedCalls(0);
         f.RenderSingleFrame();
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenInvisible_SwapChainStillExists_NoSleep)
+    {
+        //
+        // Sleep doesn't occur because although the control is invisible,
+        // the swap chain still exists, and can still be used to synchronize with
+        // vertical blank.
+        //
+
+        Fixture f;
+
+        f.Window->SetVisible(false);
+
+        f.OnUpdate.SetExpectedCalls(1);
+
+        f.Adapter->m_sleepFn = 
+            [&](DWORD)
+            {
+                Assert::Fail(L"Unexpected");
+            };
+
+        f.RenderSingleFrame();
+    }
 };
 
 TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
@@ -2555,24 +2726,6 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
             AsyncStatus status;
             ThrowIfFailed(renderLoopAction->get_Status(&status));
             Assert::AreEqual(AsyncStatus::Started, status);
-        }
-    };
-
-    struct SimpleDispatchedHandler
-    {
-        ComPtr<IDispatchedHandler> Handler;
-        CALL_COUNTER_WITH_MOCK(CallbackMethod, void());
-        HRESULT HandlerReturnValue;
-
-        SimpleDispatchedHandler()
-            : HandlerReturnValue(S_OK)
-        {
-            Handler = Callback<Implements<RuntimeClassFlags<ClassicCom>, IDispatchedHandler, FtmBase>>(
-                [&]()
-                {
-                    CallbackMethod.WasCalled();
-                    return HandlerReturnValue;
-                });
         }
     };
 

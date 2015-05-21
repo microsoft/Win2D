@@ -13,16 +13,15 @@
 #include "pch.h"
 
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
-    ComPtr<MockD2DDeviceContext> const& deviceContext)
+    ComPtr<MockD2DDeviceContext> const& deviceContext,
+    ComPtr<StubD2DDevice> const& mockD2DDevice,
+    ComPtr<StubCanvasDevice> const& canvasDevice)
 {
-    auto mockD2DDevice = Make<StubD2DDevice>();
     mockD2DDevice->MockCreateDeviceContext =
         [=](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
         {
             ThrowIfFailed(deviceContext.CopyTo(value));
         };
-
-    auto canvasDevice = Make<StubCanvasDevice>(mockD2DDevice);
 
     canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall(
         [=](

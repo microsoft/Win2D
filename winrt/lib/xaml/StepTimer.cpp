@@ -25,7 +25,7 @@ StepTimer::StepTimer(std::shared_ptr<ICanvasTimingAdapter> adapter)
     , m_framesThisSecond(0)
     , m_secondCounter(0)
     , m_isFixedTimeStep(true)
-    , m_targetElapsedTicks(TicksPerSecond / 60)
+    , m_targetElapsedTicks(DefaultTargetElapsedTime)
 {
     m_frequency = m_adapter->GetPerformanceFrequency();
 
@@ -45,6 +45,3 @@ void StepTimer::ResetElapsedTime()
     m_framesThisSecond = 0;
     m_secondCounter = 0;
 }
-
-// TODO #3219: Determine if StepTimer should Sleep() if m_leftOverTicks
-// falls far below m_targetElapsedTicks.

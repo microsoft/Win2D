@@ -64,6 +64,14 @@ namespace canvas
                     ThrowIfFailed(m_d2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
                     return dc;
                 });
+
+            GetPrimaryDisplayOutputMethod.AllowAnyCall(
+                [=]
+                {
+                    auto mockDxgiOutput = Make<MockDxgiOutput>();
+                    mockDxgiOutput->WaitForVBlankMethod.AllowAnyCall();
+                    return mockDxgiOutput;
+                });
         }
 
         void MarkAsLost()

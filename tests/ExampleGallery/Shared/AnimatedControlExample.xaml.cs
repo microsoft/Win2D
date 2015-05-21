@@ -49,6 +49,8 @@ namespace ExampleGallery
 
             animatedControl.ClearColor = Colors.Transparent;
             clearColor.SelectedItem = transparentPropertyInfo;
+
+            CurrentTimestepType = TimestepTypeOption.Fixed;
         }
 
         public int SelectedTargetElapsedTime
@@ -77,6 +79,15 @@ namespace ExampleGallery
         private UpdatesPerDrawRenderer updatesPerDrawRenderer;
         private TouchPointsRenderer touchPointsRenderer;
         private bool step = false;
+
+        public enum TimestepTypeOption
+        {
+            Fixed,
+            Variable
+        }
+
+        public List<TimestepTypeOption> TimestepTypeOptions { get { return Utils.GetEnumAsList<TimestepTypeOption>(); } }
+        public TimestepTypeOption CurrentTimestepType { get; set; }
 
         private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
         {
@@ -112,7 +123,7 @@ namespace ExampleGallery
             // Draw
             //
             ds.Transform = counterTransform;
-            sweepRenderer.Draw(sender.TargetElapsedTime.TotalMilliseconds, args.Timing.UpdateCount, ds);
+            sweepRenderer.Draw(sender, args.Timing, ds);
 
             if (!ThumbnailGenerator.IsDrawingThumbnail)
             {
@@ -205,6 +216,13 @@ namespace ExampleGallery
             }
         }
 
+        public void TimestepTypeOptionsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.animatedControl.IsFixedTimeStep = CurrentTimestepType == TimestepTypeOption.Fixed;
+
+            targetElapsedTime.IsEnabled = CurrentTimestepType == TimestepTypeOption.Fixed;
+        }
+
         private void control_Unloaded(object sender, RoutedEventArgs e)
         {
             // Explicitly remove references to allow the Win2D controls to get garbage collected
@@ -290,32 +308,48 @@ namespace ExampleGallery
             }
         }
 
-        public void Draw(double targetElapsedTimeInMs, long updateCount, CanvasDrawingSession ds)
+        public void Draw(ICanvasAnimatedControl sender, CanvasTimingInformation timingInformation, CanvasDrawingSession ds)
         {
             ds.DrawCachedGeometry(clockFaceCachedFill, backgroundBrush);
 
-            double updatesPerSecond = 1000.0 / targetElapsedTimeInMs;
-            int seconds = (int)((updateCount / updatesPerSecond) % 10);
+            double fractionSecond;
+            int seconds;
+
+            if(sender.IsFixedTimeStep)
+            {
+                double updatesPerSecond = 1000.0 / sender.TargetElapsedTime.TotalMilliseconds;
+                seconds = (int)((timingInformation.UpdateCount / updatesPerSecond) % 10);
+
+                double updates = (double)timingInformation.UpdateCount;
+                fractionSecond = (updates / updatesPerSecond) % 1.0;
+            }
+            else
+            {
+                double totalMilliseconds = timingInformation.TotalTime.TotalMilliseconds;
+                double millisecondsThisIteration = totalMilliseconds % 1000;
+
+                fractionSecond = millisecondsThisIteration / 1000.0f;
+                seconds = (int)timingInformation.TotalTime.TotalSeconds % 10;
+            }
 
             hueRotationEffect.Angle = (float)Math.PI * (seconds / 10.0f) * 2.0f;
 
-            using (var timeSegmentGeometry = CreateTimeSegmentGeometry(ds, updateCount, updatesPerSecond))
+            using (var timeSegmentGeometry = CreateTimeSegmentGeometry(ds, fractionSecond))
             {
                 ds.FillGeometry(timeSegmentGeometry, foregroundBrush);
-                
+
                 DrawSecondsText(ds, new Vector2(center), seconds);
 
                 ds.DrawGeometry(timeSegmentGeometry, Colors.White, 1, hairlineStrokeStyle);
             }
 
+
             ds.DrawCachedGeometry(clockFaceCachedStroke18, Colors.White);
             ds.DrawCachedGeometry(clockFaceCachedStroke16, Colors.Black);
         }
 
-        static CanvasGeometry CreateTimeSegmentGeometry(CanvasDrawingSession ds, long updateCount, double updatesPerSecond)
+        static CanvasGeometry CreateTimeSegmentGeometry(CanvasDrawingSession ds, double fractionSecond)
         {
-            double updates = (double)updateCount;
-            double fractionSecond = (updates / updatesPerSecond) % 1.0;
             double fractionSecondAngle = 2 * Math.PI * fractionSecond;
             double angle = fractionSecondAngle % (2 * Math.PI);
 

@@ -76,6 +76,13 @@ under the License.
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            
+            <TextBlock>Timestep Type:</TextBlock>
+            <ComboBox 
+                      ItemsSource="{Binding ElementName=control, Path=TimestepTypeOptions}"
+                      SelectedItem="{Binding CurrentTimestepType, ElementName=control, Mode=TwoWay}"
+                      FontSize="15"
+                      SelectionChanged="TimestepTypeOptionsCombo_SelectionChanged"/>
         </StackPanel>
 
         <canvas:CanvasAnimatedControl x:Name="animatedControl" Grid.Row="0" Grid.Column="1"

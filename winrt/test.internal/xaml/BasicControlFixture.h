@@ -127,9 +127,13 @@ template<>
 struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicControlFixture
 {
     ComPtr<MockD2DDeviceContext> DeviceContext;
+    ComPtr<StubD2DDevice> D2DDevice;
+    ComPtr<StubCanvasDevice> Device;
 
     ControlFixture()
         : DeviceContext(Make<MockD2DDeviceContext>())
+        , D2DDevice(Make<StubD2DDevice>())
+        , Device(Make<StubCanvasDevice>(D2DDevice))
     {
         CreateAdapter();
         CreateControl();
@@ -137,7 +141,7 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
 
     virtual void CreateAdapter() override
     {
-        Adapter = CreateAnimatedControlTestAdapter(DeviceContext);
+        Adapter = CreateAnimatedControlTestAdapter(DeviceContext, D2DDevice, Device);
     }
 
     EventRegistrationToken AddUpdateHandler(Animated_UpdateEventHandler* handler)

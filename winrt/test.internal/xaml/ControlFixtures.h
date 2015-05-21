@@ -15,7 +15,9 @@
 #include "CanvasAnimatedControlTestAdapter.h"
 
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
-    ComPtr<MockD2DDeviceContext> const& deviceContext);
+    ComPtr<MockD2DDeviceContext> const& deviceContext,
+    ComPtr<StubD2DDevice> const& mockD2DDevice,
+    ComPtr<StubCanvasDevice> const& canvasDevice);
 
 class CanvasControlTestAdapter_InjectDeviceContext : public CanvasControlTestAdapter
 {
@@ -107,7 +109,9 @@ struct TestAdapter<CanvasAnimatedControlTraits>
 
     static std::shared_ptr<CanvasAnimatedControlTestAdapter> Create(MockD2DDeviceContext* deviceContext)
     {
-        return CreateAnimatedControlTestAdapter(deviceContext);
+        auto mockD2DDevice = Make<StubD2DDevice>();
+        auto canvasDevice = Make<StubCanvasDevice>(mockD2DDevice);
+        return CreateAnimatedControlTestAdapter(deviceContext, mockD2DDevice, canvasDevice);
     }
 };
 

@@ -115,9 +115,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Integer format represents time using 10,000,000 ticks per second.
         static const uint64_t TicksPerSecond = 10000000;
 
+        static const uint64_t DefaultTargetElapsedTime = TicksPerSecond / 60;
+
         static double TicksToSeconds(uint64_t ticks)            
         { 
             return static_cast<double>(ticks) / TicksPerSecond; 
+        }
+
+        static double TicksToMilliseconds(uint64_t ticks)
+        {
+            return TicksToSeconds(ticks) * 1000;
         }
 
         static uint64_t SecondsToTicks(double seconds)        

@@ -167,6 +167,12 @@ public:
         return m_swapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);
     }
 
+    std::function<void(DWORD)> m_sleepFn;
+    virtual void Sleep(DWORD timeInMs) override
+    {
+        if (m_sleepFn) m_sleepFn(timeInMs);
+    }
+
     void SetTime(int64_t time)
     {
         m_performanceCounter = time;

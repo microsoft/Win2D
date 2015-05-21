@@ -243,6 +243,10 @@ public:
         return m_canvasSwapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);
     }
 
+    virtual void Sleep(DWORD timeInMs) override
+    {
+        ::Sleep(timeInMs);
+    }
 
     virtual LARGE_INTEGER GetPerformanceCounter() override
     {
@@ -923,10 +927,32 @@ void CanvasAnimatedControl::IssueAsyncActions(
 }
 
 bool CanvasAnimatedControl::Tick(
-    CanvasSwapChain*, 
+    CanvasSwapChain* swapChain, 
     bool areResourcesCreated)
 {
     RenderTarget* renderTarget = GetCurrentRenderTarget();
+
+    //
+    // The control synchronizes to vertical blank in order to
+    //
+    // 1) Reduce the amount of busy-spinning for targetElapsedTime on fixed timestep 
+    // 2) Avoid performing imperceptible work on variable timestep.
+    //
+    // Unlike an awaitable timer for the swap chain object, this
+    // behaves identically regardless of whether any Present was
+    // actually issued.
+    //
+    // If there is no swap chain available, this avoids pegging
+    // the CPU, by sleeping.
+    //
+    if (swapChain)
+    {
+        ThrowIfFailed(swapChain->WaitForVerticalBlank());
+    }
+    else
+    {
+        GetAdapter()->Sleep(static_cast<DWORD>(StepTimer::TicksToMilliseconds(StepTimer::DefaultTargetElapsedTime)));
+    }
 
     //
     // Process input events; this is always done in order to avoid events
@@ -1016,7 +1042,7 @@ bool CanvasAnimatedControl::Tick(
 
     //
     // We only ever Draw/Present if an Update has actually happened.  This
-    // results in us effectively busy-waiting for the next time to update.
+    // results in us waiting until the next vblank to update.
     // This is desireable since using Present to wait for the vsync can
     // result in missed frames.
     //
@@ -1067,7 +1093,7 @@ CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpda
 {
     UpdateResult result{};
 
-    m_stepTimer.Tick(forceUpdate, 
+    m_stepTimer.Tick(forceUpdate,
         [this, &result](bool isRunningSlowly)
         {
             auto timing = GetTimingInformationFromTimer();
