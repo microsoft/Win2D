@@ -493,6 +493,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return hr;
 
         m_device.Close();
+        m_primaryOutput.Close();
         return S_OK;
     }
 
@@ -613,6 +614,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto newDrawingSession = drawingSessionManager->Create(deviceContext.Get(), adapter);
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
+            });
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::WaitForVerticalBlank()
+    {
+        return ExceptionBoundary(
+            [&]
+            {            
+                auto& device = m_device.EnsureNotClosed();
+
+                auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+                auto output = deviceInternal->GetPrimaryDisplayOutput();
+
+                ThrowIfFailed(output->WaitForVBlank());
             });
     }
 

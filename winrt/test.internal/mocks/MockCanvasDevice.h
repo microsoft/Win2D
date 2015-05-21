@@ -73,6 +73,8 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetResourceCreationDeviceContextMethod, ComPtr<ID2D1DeviceContext1>());
 
+        CALL_COUNTER_WITH_MOCK(GetPrimaryDisplayOutputMethod, ComPtr<IDXGIOutput>());
+
         //
         // ICanvasDevice
         //
@@ -333,9 +335,14 @@ namespace canvas
             return CreateStrokedGeometryRealizationMethod.WasCalled(geometry, strokeWidth, strokeStyle, flatteningTolerance);
         }
 
-        virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext()
+        virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() override
         {
             return GetResourceCreationDeviceContextMethod.WasCalled();
+        }
+
+        virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() override
+        {
+            return GetPrimaryDisplayOutputMethod.WasCalled();
         }
     };
 }

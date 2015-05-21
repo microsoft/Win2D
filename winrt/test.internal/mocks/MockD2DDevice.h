@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "stubs\StubDxgiDevice.h"
+
 namespace canvas
 {
     [uuid(D5B2FFD5-882E-4CB5-98FA-2342E52FC6F2)]
@@ -34,7 +36,7 @@ namespace canvas
 
         MockD2DDevice(ID2D1Factory2* parentD2DFactory = nullptr)
             : m_parentD2DFactory(parentD2DFactory)
-            , m_dxgiDevice(Make<MockDxgiDevice>())
+            , m_dxgiDevice(Make<StubDxgiDevice>())
         {            
         }
 

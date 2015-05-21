@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "stubs/StubD3D11Device.h"
+
 // This device is used for creating mock devices which include some basic functionality, but do not call any actual D2D/D3D.
 class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
 {
@@ -59,9 +61,9 @@ public:
         {
             m_numD3dDeviceCreationCalls++;
 
-            // Mock factory is used here, because, in execution of these tests, product code will 
+            // Stub device is used here, because, in execution of these tests, product code will 
             // actually call methods on the factory and expect them to succeed.
-            *device = Make<MockD3D11Device>();
+            *device = Make<StubD3D11Device>();
             return true;
         }
     }

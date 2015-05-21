@@ -133,6 +133,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float flatteningTolerance) = 0;
 
         virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() = 0;
+
+        virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() = 0;
     };
 
 
@@ -165,6 +167,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         ClosablePtr<IDXGIDevice3> m_dxgiDevice;
         ClosablePtr<ID2D1DeviceContext1> m_d2dResourceCreationDeviceContext;
+        ClosablePtr<IDXGIOutput> m_primaryOutput;
 
     public:
         CanvasDevice(
@@ -263,6 +266,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() override;
 
+        virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() override;
+
         //
         // IDirect3DDevice
         //
@@ -286,6 +291,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             FN&& createFn);
 
         ComPtr<ID2D1Factory2> GetD2DFactory();
+
+        void InitializePrimaryOutput(IDXGIDevice3* dxgiDevice);
     };
 
 

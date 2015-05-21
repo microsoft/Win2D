@@ -134,10 +134,10 @@ public:
 
     TEST_METHOD_EX(CanvasDevice_Create_With_Specific_Direct3DDevice)
     {
-        ComPtr<MockD3D11Device> mockD3D11Device = Make<MockD3D11Device>();
+        ComPtr<StubD3D11Device> stubD3D11Device = Make<StubD3D11Device>();
 
         ComPtr<IDirect3DDevice> stubDirect3DDevice;
-        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(mockD3D11Device.Get(), &stubDirect3DDevice));
+        ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(stubD3D11Device.Get(), &stubDirect3DDevice));
 
         auto canvasDevice = m_deviceManager->Create(
             CanvasDebugLevel::None, 

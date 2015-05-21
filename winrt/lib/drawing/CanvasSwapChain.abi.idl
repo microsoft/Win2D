@@ -176,6 +176,8 @@ namespace Microsoft.Graphics.Canvas
         HRESULT CreateDrawingSession(
             [in] Windows.UI.Color clearColor,
             [out, retval] CanvasDrawingSession** drawingSession);
+
+        HRESULT WaitForVerticalBlank();
     };
 
     [version(VERSION), activatable(ICanvasSwapChainFactory, VERSION), static(ICanvasSwapChainStatics, VERSION), marshaling_behavior(agile), threading(both)]

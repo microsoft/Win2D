@@ -113,6 +113,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ClosablePtr<ICanvasDevice> m_device;
         float m_dpi;
+        ClosablePtr<IDXGIOutput> m_primaryOutput;
 
     public:
         static DirectXPixelFormat const DefaultPixelFormat = PIXEL_FORMAT(B8G8R8A8UIntNormalized);
@@ -169,6 +170,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float newDpi,
             DirectXPixelFormat newFormat,
             int32_t bufferCount) override;
+
+        IFACEMETHOD(WaitForVerticalBlank)() override;
 
         // IClosable
         IFACEMETHOD(Close)() override;

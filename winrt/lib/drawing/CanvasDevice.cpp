@@ -380,6 +380,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(d2dDevice->CreateDeviceContext(
             D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
             &m_d2dResourceCreationDeviceContext));
+
+        InitializePrimaryOutput(dxgiDevice);
     }
 
     ComPtr<ID2D1Factory2> CanvasDevice::GetD2DFactory()
@@ -825,6 +827,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
 
         return deviceContext;
+    }
+
+    void CanvasDevice::InitializePrimaryOutput(IDXGIDevice3* dxgiDevice)
+    {
+        ComPtr<IDXGIAdapter> adapter;
+        ThrowIfFailed(dxgiDevice->GetAdapter(&adapter));
+
+        //
+        // This holds onto the primary output, which is the recommendation
+        // for synchronizing with vertical blank.
+        //
+        // If the primary display changes to a different one, or if
+        // the monitor is no longer is plugged in, WaitForVBlank will
+        // be emulated and the emulated behavior has shown to be reliable.
+        //
+        // In the uncommon scenario where no display is plugged in at
+        // all, an emulated primary will still be enumerated here.
+        //
+        ThrowIfFailed(adapter->EnumOutputs(0, &m_primaryOutput));
+    }
+
+    ComPtr<IDXGIOutput> CanvasDevice::GetPrimaryDisplayOutput()
+    {
+        return m_primaryOutput.EnsureNotClosed();
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

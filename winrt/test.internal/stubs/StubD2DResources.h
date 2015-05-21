@@ -90,7 +90,7 @@ class StubDxgiSurface : public MockDxgiSurface
 public:
     STDMETHODIMP GetDevice(IID const& iid, void ** out) override
     {
-        ComPtr<IDXGIDevice> device = Make<MockDxgiDevice>();
+        ComPtr<IDXGIDevice> device = Make<StubDxgiDevice>();
 
         return device.CopyTo(reinterpret_cast<IDXGIDevice**>(out));
     }

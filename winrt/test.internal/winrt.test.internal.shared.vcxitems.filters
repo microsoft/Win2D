@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="xaml">
@@ -253,6 +253,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIFactory.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIOutput.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGISwapChain.h">
       <Filter>mocks</Filter>
     </ClInclude>
@@ -296,6 +299,15 @@
       <Filter>stubs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DStrokeStyle.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD3D11Device.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiAdapter.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiDevice.h">
       <Filter>stubs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubImageControl.h">

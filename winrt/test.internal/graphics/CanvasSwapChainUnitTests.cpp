@@ -14,6 +14,7 @@
 #include "mocks/MockCoreWindow.h"
 #include "mocks/MockDXGIAdapter.h"
 #include "mocks/MockDXGIFactory.h"
+#include "stubs/StubDxgiDevice.h"
 
 TEST_CLASS(CanvasSwapChainUnitTests)
 {
@@ -97,13 +98,13 @@ TEST_CLASS(CanvasSwapChainUnitTests)
     struct MockDxgiFixture
     {
         ComPtr<MockDxgiFactory> DxgiFactory;
-        ComPtr<MockDxgiDevice> DxgiDevice;
+        ComPtr<StubDxgiDevice> DxgiDevice;
         ComPtr<CanvasDevice> Device;
         std::shared_ptr<CanvasSwapChainManager> SwapChainManager;
 
         MockDxgiFixture()
             : DxgiFactory(Make<MockDxgiFactory>())
-            , DxgiDevice(Make<MockDxgiDevice>())
+            , DxgiDevice(Make<StubDxgiDevice>())
             , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         {
             auto dxgiAdapter = Make<MockDxgiAdapter>();
@@ -351,6 +352,8 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->get_Device(&device));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasSwapChain->WaitForVerticalBlank());
     }
 
 
@@ -1116,5 +1119,32 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         float dips = 0;
         ThrowIfFailed(swapChain->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_WaitForVerticalBlank)
+    {
+        StubDeviceFixture f;
+
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall(
+            [=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+            {
+                auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+                dxgiSwapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
+                return dxgiSwapChain;
+            });
+
+        auto mockDxgiOutput = Make<MockDxgiOutput>();
+
+        f.m_canvasDevice->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1, 
+            [&]()
+            {
+                return mockDxgiOutput;
+            });
+
+        mockDxgiOutput->WaitForVBlankMethod.SetExpectedCalls(1);
+
+        auto canvasSwapChain = f.CreateTestSwapChain();
+
+        ThrowIfFailed(canvasSwapChain->WaitForVerticalBlank());
     }
 };

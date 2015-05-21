@@ -272,5 +272,33 @@ under the License.
       <summary>The swapchain is rotated 270 degrees clockwise.</summary>
     </member>
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.WaitForVerticalBlank">
+      <summary>Waits until the next vertical blank occurs on the display.</summary>
+      <remarks>
+      
+      <p>
+      A vertical blank on a display, such as a monitor, occurs when the monitor is ready
+      to begin drawing the next frame. For many monitors this occurs every 1/60th of a second,
+      or 60Hz. Because new imagery on a display cannot be seen with any finer granularity
+      than that, many apps threshold their game loop to not iterate any more frequently 
+      than vertical blank. An app's render thread may be able to save CPU usage by waiting 
+      until the next vertical blank to process information or redraw, rather than busy-spin 
+      for the correct time interval.
+      </p>
+      
+      <p>
+      WaitForVerticalBlank is designed to be a synchronous call in order to be as efficient 
+      as possible. It blocks until the next vertical blank occurs.
+      </p>
+      
+      <p>
+      If your app has multiple swap chains which will render on the same thread, and their
+      behavior should be synchronized to vertical blank, only call WaitForVerticalBlank
+      on <i>one</i> of the swap chains. The choice of which swap chain is arbitrary.
+      </p>
+      
+      </remarks>
+    </member>
+    
 </members>
 </doc>

@@ -25,6 +25,8 @@ public:
 
     std::function<HRESULT(IID const&, void **)> MockGetParent;
 
+    std::function<HRESULT(IDXGIAdapter**)> MockGetAdapter;
+
     STDMETHODIMP SetPrivateData(GUID const&,UINT,const void *)
     {
         Assert::Fail(L"Unexpected call to SetPrivateData");
@@ -53,8 +55,12 @@ public:
         return E_NOTIMPL;
     }
 
-    STDMETHODIMP GetAdapter(IDXGIAdapter **)
+    STDMETHODIMP GetAdapter(IDXGIAdapter** adapter)
     {
+        if (MockGetAdapter)
+        {
+            return MockGetAdapter(adapter);
+        }
         Assert::Fail(L"Unexpected call to GetAdapter");
         return E_NOTIMPL;
     }

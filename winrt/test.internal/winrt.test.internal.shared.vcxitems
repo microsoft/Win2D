@@ -61,6 +61,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD3D11Device.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIOutput.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGISwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h" />
@@ -81,6 +82,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DDeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DStrokeStyle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD3D11Device.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubGeometrySink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubImageControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubSurfaceImageSource.h" />
