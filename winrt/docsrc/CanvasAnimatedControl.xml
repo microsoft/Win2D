@@ -604,7 +604,41 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
       <summary>Does some work, specified using a DispatchedHandler, on the game loop thread.</summary>
       <remarks>
-      	If the control is paused, the work won't be performed until the control is unpaused.
+        <p>
+          If the control is paused, the work won't be performed until the control is unpaused.
+        </p>
+        <p>
+          Beware of passing async delegates to this method! The code:
+        </p>
+        <code>
+          await animatedControl.RunOnGameLoopThreadAsync(async () =>
+          {
+              Debug.WriteLine("a");
+              await Task.Delay(1000);
+              Debug.WriteLine("b");
+          });
+          Debug.WriteLine("c");
+        </code>
+        <p>
+          might reasonably be expected to print  "a", "b", "c",
+          but in fact the output is "a", "c", "b".
+          
+          You may also be surprised to learn that the Debug.WriteLine
+          call which prints "b" will run on an arbitrary threadpool
+          thread, not the game loop thread at all!
+        </p>
+        <p>
+          For a detailed explanation and solution to these issues, see the 
+          <a href="http://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/Infrastructure/GameLoopSynchronizationContext.cs">GameLoopSynchronizationContext</a>
+          helper which is part of the Example Gallery sample application.
+        </p>
+        <p>
+          Note that these complexities only occur when the callback passed
+          to RunOnGameLoopThreadAsync is itself async (containing one or
+          more await statements). Everything works straightforwardly with
+          no need for a custom synchronization context as long as your
+          callback is a regular (non async) method or lambda.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.HasGameLoopThreadAccess">

@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -38,7 +39,6 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.Graphics.Canvas.UI;
-
 
 namespace ExampleGallery
 {
@@ -102,7 +102,7 @@ namespace ExampleGallery
                         continue;
 
                     // Capture a thumbnail for this example.
-                    var generator = new Generator(exampleDefinition, outputFolder);
+                    var generator = new Generator(exampleDefinition, outputFolder, Dispatcher);
                     await generator.GenerateThumbnail(panel);
                 }
 
@@ -126,13 +126,15 @@ namespace ExampleGallery
         {
             ExampleDefinition exampleDefinition;
             StorageFolder outputFolder;
+            CoreDispatcher uiThreadDispatcher;
             UserControl exampleControl;
 
 
-            public Generator(ExampleDefinition exampleDefinition, StorageFolder outputFolder)
+            public Generator(ExampleDefinition exampleDefinition, StorageFolder outputFolder, CoreDispatcher uiThreadDispatcher)
             {
                 this.exampleDefinition = exampleDefinition;
                 this.outputFolder = outputFolder;
+                this.uiThreadDispatcher = uiThreadDispatcher;
             }
 
             
@@ -242,21 +244,18 @@ namespace ExampleGallery
                 // Wait a while for any animations to settle into a good looking state.
                 await Task.Delay(TimeSpan.FromSeconds(animationDelay));
 
-                // We will mess with the control device from somewhere other than its game loop thread,
-                // so must first pause the control to stop the game loop. There's no good way to
-                // synchronize this, so we just wait a moment to give the game loop a chance to exit.
-                animatedControl.Paused = true;
-                // TODO #3317: once we can RunAsync on the update/render thread, use that instead of this
-                await Task.Delay(TimeSpan.FromSeconds(0.1f));
-
-                // Capture a thumbnail from the control.
-                var timing = new CanvasTimingInformation
+                // Run the capture operation on the game loop thread.
+                await GameLoopSynchronizationContext.RunOnGameLoopThreadAsync(animatedControl, async () =>
                 {
-                    TotalTime = TimeSpan.FromSeconds(animationDelay),
-                    UpdateCount = (int)(animationDelay * 60),
-                };
+                    // Capture a thumbnail from the control.
+                    var timing = new CanvasTimingInformation
+                    {
+                        TotalTime = TimeSpan.FromSeconds(animationDelay),
+                        UpdateCount = (int)(animationDelay * 60),
+                    };
 
-                await CaptureThumbnailFromControl(animatedControl, animatedControl.Size, drawMethod, ds => new CanvasAnimatedDrawEventArgs(ds, timing));
+                    await CaptureThumbnailFromControl(animatedControl, animatedControl.Size, drawMethod, ds => new CanvasAnimatedDrawEventArgs(ds, timing));
+                });
             }
 
 
@@ -318,7 +317,25 @@ namespace ExampleGallery
 
             async Task SaveThumbnail(CanvasBitmap thumbnail, string suffix)
             {
-                using (var stream = await outputFolder.OpenStreamForWriteAsync(exampleDefinition.ThumbnailFilename(suffix), CreationCollisionOption.ReplaceExisting))
+                // Dispatch the file open operation back onto the UI thread (some machines have issues doing this elsewhere).
+                var streamSource = new TaskCompletionSource<Stream>();
+
+                await uiThreadDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    try
+                    {
+                        var stream = await outputFolder.OpenStreamForWriteAsync(exampleDefinition.ThumbnailFilename(suffix), CreationCollisionOption.ReplaceExisting);
+
+                        streamSource.SetResult(stream);
+                    }
+                    catch (Exception e)
+                    {
+                        streamSource.SetException(e);
+                    }
+                });
+
+                // Save the bitmap.
+                using (var stream = await streamSource.Task)
                 {
                     await thumbnail.SaveAsync(stream.AsRandomAccessStream(), CanvasBitmapFileFormat.Png);
                 }

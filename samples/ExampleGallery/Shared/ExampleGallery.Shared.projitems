@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -68,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ImageSourceUpdateRegion.xaml.cs">
       <DependentUpon>ImageSourceUpdateRegion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\GameLoopSynchronizationContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ThumbnailGenerator.xaml.cs">
       <DependentUpon>ThumbnailGenerator.xaml</DependentUpon>
     </Compile>
@@ -255,52 +256,40 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsWide.png" />
-  </ItemGroup>  
-
+  </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_0.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_1.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_2.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_3.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_4.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_5.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_6.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_7.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_8.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_9.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
-
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_65535.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  
-  </Project>
+</Project>
