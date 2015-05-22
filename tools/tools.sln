@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30303.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codegen.exe", "codegen\exe\codegen.exe.csproj", "{984ABFAE-12D5-4929-AF2B-A733341BCCCF}"
 EndProject
@@ -24,6 +23,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mock", "mock", "{A1494431-90FA-43B4-B7AA-F98166B17912}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mock.test", "mock\test\mock.test.csproj", "{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "exportsample", "exportsample\exportsample.csproj", "{7465574A-8830-4F80-8687-E1EA17BE5918}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +64,10 @@ Global
 		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FDE4A4E-DF4F-4823-B4C6-DCBD8D762D50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7465574A-8830-4F80-8687-E1EA17BE5918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7465574A-8830-4F80-8687-E1EA17BE5918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7465574A-8830-4F80-8687-E1EA17BE5918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7465574A-8830-4F80-8687-E1EA17BE5918}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

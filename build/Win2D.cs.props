@@ -2,6 +2,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="Win2D.common.props"/>
 
+  <!-- [[NOT IN SAMPLE]] -->
+
   <!-- This lets individual projects turn off their building.  This allows us to
        prevent building in the cloud for unsupported SDKs (ie Phone unit tests)
        -->
@@ -13,6 +15,11 @@
     <OutputPath>$(__OutputPath)</OutputPath>
     <OutDir>$(__OutputPath)\</OutDir>
     <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>
+  </PropertyGroup>
+
+  <!-- [[IN SAMPLE]] -->
+
+  <PropertyGroup>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>

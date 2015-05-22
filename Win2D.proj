@@ -171,6 +171,7 @@
     <AnyCPUProject Include="tools\docs\DocDiff\DocDiff.csproj" />
     <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
     <AnyCPUProject Include="tools\docs\MergeIntellisense\MergeIntellisense.csproj" />
+    <AnyCPUProject Include="tools\exportsample\exportsample.csproj" />
   </ItemGroup>
 
 

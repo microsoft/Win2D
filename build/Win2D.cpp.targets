@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <!-- [[NOT IN SAMPLE]] -->
+
   <!-- We'd like to just set WarningLevel once in Win2D.cpp.props, but
        Microsoft.Cpp.AppContainerApplication.props unconditionally overwrites it.
        So instead, we make sure each C++ project has individually set the right thing. -->

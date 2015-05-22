@@ -3,12 +3,16 @@
 
   <Import Project="Win2D.common.props" />
 
+  <!-- [[NOT IN SAMPLE]] -->
+
   <!-- This lets individual projects turn off their building.  This allows us to
        prevent building in the cloud for unsupported SDKs (ie Phone unit tests)
        -->
   <PropertyGroup Condition="'$(DoNotBuild)' == 'true'">
     <_InvalidConfigurationWarning>true</_InvalidConfigurationWarning>
   </PropertyGroup>
+
+  <!-- [[IN SAMPLE]] -->
 
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM" Condition="'$(ApplicationType)' != ''">
@@ -41,11 +45,18 @@
     <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '8.1'">v120</PlatformToolset>
     <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '8.2'">v140</PlatformToolset>
     <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Phone'">v120_wp81</PlatformToolset>
+  </PropertyGroup>
+
+  <!-- [[NOT IN SAMPLE]] -->
+
+  <PropertyGroup Label="Configuration">
     <UnmergedWinmdDirectory>$(IntermediateOutputPath)UnmergedWinMD</UnmergedWinmdDirectory>
     <MergedWinmdDirectory>$(MSBuildThisFileDirectory)..\bin\$(FullPlatform)\$(Configuration)\MergedWinMD</MergedWinmdDirectory>
     <IdlHeaderDirectory>$(MSBuildThisFileDirectory)..\bin\$(FullPlatform)\$(Configuration)\IdlHeader</IdlHeaderDirectory>
     <PublishedHeaderDirectory>$(MSBuildThisFileDirectory)..\winrt\published</PublishedHeaderDirectory>
   </PropertyGroup>
+
+  <!-- [[IN SAMPLE]] -->
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -54,6 +65,8 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
+
+  <!-- [[NOT IN SAMPLE]] -->
 
   <PropertyGroup>
     <GenerateManifest>false</GenerateManifest>
@@ -64,12 +77,19 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
+      <AdditionalIncludeDirectories>$(IdlHeaderDirectory);$(PublishedHeaderDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!-- [[IN SAMPLE]] -->
+
+  <ItemDefinitionGroup>
+    <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <SDLCheck>true</SDLCheck>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(IdlHeaderDirectory);$(PublishedHeaderDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj /Zm450 /wd4503 /D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1 %(AdditionalOptions)</AdditionalOptions>
       <!--
           /Zm999 - this value needs to be bumped occasionally when as our PCH grows
