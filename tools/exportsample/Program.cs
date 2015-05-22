@@ -12,6 +12,7 @@
 
 using Shared;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace exportsample
@@ -55,7 +56,11 @@ namespace exportsample
 
             if (options.Root == null)
             {
-                options.Root = FindEnlistmentRoot(options);
+                string dir = Path.GetFullPath(options.Config);
+                if (!FindEnlistmentRoot(dir, out options.Root))
+                {
+                    throw new FileNotFoundException("Couldn't find enlistment root");
+                }
             }
 
             if (options.Win2DVersion == null)
@@ -66,36 +71,42 @@ namespace exportsample
             return new Configuration(options);
         }
 
-        static string FindConfigFile()
-        {
-            string[] candidates = new string[] {
-                ".",
-                "../../../../tools/exportsample",
-            };
+        const string DefaultConfigFileName = "ExportSampleConfig.xml";
 
-            foreach (var candidate in candidates)
+        static string FindConfigFile()
+        {       
+            // Check the current directory
+            var candidate = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, DefaultConfigFileName));
+            if (File.Exists(candidate))
+                return candidate;
+
+            // Otherwise, maybe we're in some other directory in the enlistment
+            string enlistmentRoot;
+            if (FindEnlistmentRoot(Environment.CurrentDirectory, out enlistmentRoot))
             {
-                var normalizedCandidate = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, candidate, "ExportSampleConfig.xml"));
-                if (File.Exists(normalizedCandidate))
-                    return normalizedCandidate;
+                candidate = Path.GetFullPath(Path.Combine(enlistmentRoot, "tools", "exportsample", DefaultConfigFileName));
+                if (File.Exists(candidate))
+                    return candidate;
             }
 
             throw new FileNotFoundException("Couldn't find ExportSampleConfig.xml");
         }
         
-        static string FindEnlistmentRoot(CommandLineOptions options)
+        static bool FindEnlistmentRoot(string dir, out string root)
         {
-            string dir = Path.GetFullPath(options.Config);
-
             do
             {
-                dir = Path.GetDirectoryName(dir);
-
                 if (File.Exists(Path.Combine(dir, "Win2D.proj")))
-                    return dir;
+                {
+                    root = dir;
+                    return true;
+                }
+
+                dir = Path.GetDirectoryName(dir);
             } while (dir.Length > 3);
 
-            throw new FileNotFoundException("Couldn't find enlistment root");
+            root = null;
+            return false;
         }
     }
 
