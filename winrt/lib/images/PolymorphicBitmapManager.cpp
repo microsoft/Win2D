@@ -344,7 +344,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowIfFailed(m_wicFactory->CreateDecoderFromStream(
                 fileStream,
                 nullptr,
-                WICDecodeMetadataCacheOnLoad,
+                WICDecodeMetadataCacheOnDemand,
                 &wicBitmapDecoder));
 
             ComPtr<IWICBitmapFrameDecode> wicBitmapFrameSource;
