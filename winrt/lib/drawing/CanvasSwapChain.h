@@ -105,6 +105,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // a CoreWindow swap chain on Phone doesn't implement IDXGISwapChain2).
     };
 
+    class ICanvasSwapChainAdapter
+    {
+    public:
+        virtual ~ICanvasSwapChainAdapter() = default;
+
+        virtual void Sleep(DWORD timeInMs) = 0;
+    };
+
     class CanvasSwapChain : RESOURCE_WRAPPER_RUNTIME_CLASS(
         CanvasSwapChainTraits,
         IClosable)
@@ -113,7 +121,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ClosablePtr<ICanvasDevice> m_device;
         float m_dpi;
-        ClosablePtr<IDXGIOutput> m_primaryOutput;
+        std::shared_ptr<ICanvasSwapChainAdapter> m_adapter;
 
     public:
         static DirectXPixelFormat const DefaultPixelFormat = PIXEL_FORMAT(B8G8R8A8UIntNormalized);
@@ -124,6 +132,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasSwapChain(
             ICanvasDevice* device,
             std::shared_ptr<CanvasSwapChainManager> swapChainManager,
+            std::shared_ptr<ICanvasSwapChainAdapter> swapChainAdapter,
             IDXGISwapChain1* dxgiSwapChain,
             float dpi);
 
@@ -183,7 +192,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     
     class CanvasSwapChainManager : public ResourceManager<CanvasSwapChainTraits>
     {
+    protected:
+        std::shared_ptr<ICanvasSwapChainAdapter> m_adapter;
+
     public:
+        CanvasSwapChainManager();
+
         virtual ~CanvasSwapChainManager() = default;
 
         ComPtr<CanvasSwapChain> CreateNew(

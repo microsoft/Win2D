@@ -14,6 +14,22 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+
+    //
+    // CanvasSwapChainAdapter
+    //
+
+    class CanvasSwapChainAdapter : public ICanvasSwapChainAdapter
+    {
+    public:
+
+        virtual void Sleep(DWORD timeInMs) override
+        {
+            ::Sleep(timeInMs);
+        }
+
+    };
+
     //
     // CanvasSwapChainFactory
     //
@@ -194,11 +210,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasSwapChain::CanvasSwapChain(
         ICanvasDevice* device,
         std::shared_ptr<CanvasSwapChainManager> swapChainManager,
+        std::shared_ptr<ICanvasSwapChainAdapter> swapChainAdapter,
         IDXGISwapChain1* dxgiSwapChain,
         float dpi)
         : ResourceWrapper(swapChainManager, dxgiSwapChain)
         , m_device(device)
         , m_dpi(dpi)
+        , m_adapter(swapChainAdapter)
     {
     }
 
@@ -493,7 +511,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return hr;
 
         m_device.Close();
-        m_primaryOutput.Close();
         return S_OK;
     }
 
@@ -628,9 +645,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto output = deviceInternal->GetPrimaryDisplayOutput();
 
-                ThrowIfFailed(output->WaitForVBlank());
+                //
+                // Only hardware devices and WARP devices under MSBDA have
+                // access to display output. We do a yield on
+                // render-only (explicitly requested) SW devices, where 
+                // the output will be null.
+                //
+                if (output)
+                {
+                    ThrowIfFailed(output->WaitForVBlank());
+                }
+                else
+                {
+                    m_adapter->Sleep(0);
+                }
             });
     }
+
+    CanvasSwapChainManager::CanvasSwapChainManager()
+        : m_adapter(std::make_shared<CanvasSwapChainAdapter>())
+    {}
 
     ComPtr<CanvasSwapChain> CanvasSwapChainManager::CreateNew(
         ICanvasDevice* device,
@@ -656,6 +690,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto canvasSwapChain = Make<CanvasSwapChain>(
             device,
             shared_from_this(),
+            m_adapter,
             dxgiSwapChain.Get(),
             dpi);
         CheckMakeResult(canvasSwapChain);
@@ -709,6 +744,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto canvasSwapChain = Make<CanvasSwapChain>(
             device,
             shared_from_this(),
+            m_adapter,
             dxgiSwapChain.Get(),
             dpi);
         CheckMakeResult(canvasSwapChain);
@@ -724,6 +760,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto swapChain = Make<CanvasSwapChain>(
             device,
             shared_from_this(),
+            m_adapter,
             resource,
             dpi);
         CheckMakeResult(swapChain);

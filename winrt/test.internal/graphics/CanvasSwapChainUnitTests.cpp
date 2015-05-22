@@ -1147,4 +1147,48 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         ThrowIfFailed(canvasSwapChain->WaitForVerticalBlank());
     }
+
+    TEST_METHOD_EX(CanvasSwapChain_WaitForVerticalBlank_SleepsIfNoPrimaryOutput)
+    {
+        StubDeviceFixture f;
+
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall(
+            [=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        {
+            auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+            dxgiSwapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
+            return dxgiSwapChain;
+        });
+
+        f.m_canvasDevice->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
+            [&]()
+            {
+                return nullptr;
+            });
+
+        std::shared_ptr<MockCanvasSwapChainManager> swapChainManager =
+            std::make_shared<MockCanvasSwapChainManager>();
+
+        auto canvasSwapChain = swapChainManager->Create(
+            f.m_canvasDevice.Get(),
+            1.0f,
+            1.0f,
+            DEFAULT_DPI,
+            CanvasSwapChain::DefaultPixelFormat,
+            CanvasSwapChain::DefaultBufferCount,
+            CanvasSwapChain::DefaultCompositionAlphaMode);
+
+        bool sleepCalled = false;
+        swapChainManager->GetTestAdapter()->m_sleepFn =
+            [&](DWORD timeInMs)
+            {
+                Assert::IsFalse(sleepCalled);
+                sleepCalled = true;
+                Assert::AreEqual(static_cast<DWORD>(0), timeInMs);
+            };
+
+        ThrowIfFailed(canvasSwapChain->WaitForVerticalBlank());
+
+        Assert::IsTrue(sleepCalled);
+    }
 };

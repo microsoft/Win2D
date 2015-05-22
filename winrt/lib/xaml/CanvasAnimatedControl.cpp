@@ -933,7 +933,8 @@ bool CanvasAnimatedControl::Tick(
     RenderTarget* renderTarget = GetCurrentRenderTarget();
 
     //
-    // The control synchronizes to vertical blank in order to
+    // On hardware rendering, the control synchronizes to vertical blank 
+    // in order to
     //
     // 1) Reduce the amount of busy-spinning for targetElapsedTime on fixed timestep 
     // 2) Avoid performing imperceptible work on variable timestep.
@@ -942,8 +943,21 @@ bool CanvasAnimatedControl::Tick(
     // behaves identically regardless of whether any Present was
     // actually issued.
     //
-    // If there is no swap chain available, this avoids pegging
-    // the CPU, by sleeping.
+    // The exact behavior depends on the device of this control- whether
+    // it is hardware or software. CanvasAnimatedControl does not typically 
+    // run on software 'render-only' mode. It may run on basic display, but that has 
+    // no special implications for synching with v-blank. 
+    //
+    // The only way it may be initialized with WARP render-only is if
+    // something is malfunctioning in the system's driver, causing
+    // WARP to be used as a fallback (see CanvasDeviceManager::MakeD3D11Device). 
+    // 
+    // In the future, we may allow the app to use its own device with
+    // the control, making the software path to be more accessible to an app.
+    //
+    // On a software render-only device, the display is not accessible and
+    // IDXGIAdapter::EnumOutputs will fail. In this case, WaitForVerticalBlank
+    // will yield.
     //
     if (swapChain)
     {
@@ -951,6 +965,10 @@ bool CanvasAnimatedControl::Tick(
     }
     else
     {
+        //
+        // If there is no swap chain available, 
+        // a sleep is used instead to avoid pegging the CPU.
+        //
         GetAdapter()->Sleep(static_cast<DWORD>(StepTimer::TicksToMilliseconds(StepTimer::DefaultTargetElapsedTime)));
     }
 

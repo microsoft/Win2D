@@ -434,6 +434,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         m_dxgiDevice.Close();
         m_d2dResourceCreationDeviceContext.Close();
+        m_primaryOutput.Reset();
+
         return S_OK;
     }
 
@@ -831,6 +833,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasDevice::InitializePrimaryOutput(IDXGIDevice3* dxgiDevice)
     {
+        //
+        // Creating a CanvasDevice using CanvasHardwareAcceleration::Off 
+        // creates a 'render-only' WARP device, which cannot be used to 
+        // enumerate outputs.
+        //
+        // This is distinct from basic display, where EnumOutputs still works normally.
+        //
+        // But rather than check if hardware acceleration is on or off
+        // before calling EnumOutputs, we try it and just let it fail
+        // if it's not supported. Reason being, interop.
+        //
         ComPtr<IDXGIAdapter> adapter;
         ThrowIfFailed(dxgiDevice->GetAdapter(&adapter));
 
@@ -845,12 +858,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // In the uncommon scenario where no display is plugged in at
         // all, an emulated primary will still be enumerated here.
         //
-        ThrowIfFailed(adapter->EnumOutputs(0, &m_primaryOutput));
+        HRESULT enumOutputsHr = adapter->EnumOutputs(0, &m_primaryOutput);
+        if (FAILED(enumOutputsHr) && enumOutputsHr != DXGI_ERROR_NOT_FOUND)
+        {
+            ThrowHR(enumOutputsHr);
+        }
     }
 
     ComPtr<IDXGIOutput> CanvasDevice::GetPrimaryDisplayOutput()
     {
-        return m_primaryOutput.EnsureNotClosed();
+        return m_primaryOutput;
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

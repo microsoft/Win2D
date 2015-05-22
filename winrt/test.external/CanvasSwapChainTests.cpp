@@ -119,4 +119,22 @@ TEST_CLASS(CanvasSwapChainTests)
         Assert::AreEqual<float3x2>(float3x2{ 2, 0, 0, 3, 4, 5 }, swapChain->TransformMatrix);
         Assert::AreEqual(Size{ 257, 257 }, swapChain->SourceSize);
     }
+
+    TEST_METHOD(CanvasSwapChain_WaitForVBlank_HW)
+    {
+        auto device = ref new CanvasDevice();
+        auto swapChain = ref new CanvasSwapChain(device, 1, 1, DEFAULT_DPI);
+
+        // This should wait for vblank on the primary output.
+        swapChain->WaitForVerticalBlank();
+    }
+
+    TEST_METHOD(CanvasSwapChain_WaitForVBlank_SW)
+    {
+        auto device = ref new CanvasDevice(CanvasDebugLevel::None, CanvasHardwareAcceleration::Off);
+        auto swapChain = ref new CanvasSwapChain(device, 1, 1, DEFAULT_DPI);
+
+        // This should be a no-op and silently succeed.
+        swapChain->WaitForVerticalBlank();
+    }
 };

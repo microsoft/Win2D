@@ -167,7 +167,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         ClosablePtr<IDXGIDevice3> m_dxgiDevice;
         ClosablePtr<ID2D1DeviceContext1> m_d2dResourceCreationDeviceContext;
-        ClosablePtr<IDXGIOutput> m_primaryOutput;
+
+        // Null-versus-non-null is not necessarily tied to whether the 
+        // device object is open or closed.
+        ComPtr<IDXGIOutput> m_primaryOutput;
 
     public:
         CanvasDevice(
