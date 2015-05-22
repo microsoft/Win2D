@@ -25,8 +25,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BinariesDirectory Condition="'$(TF_BUILD_BINARIESDIRECTORY)' == ''">$(MSBuildThisFileDirectory)..\bin</BinariesDirectory>
-    <BinariesDirectory Condition="'$(TF_BUILD_BINARIESDIRECTORY)' != ''">$(TF_BUILD_BINARIESDIRECTORY)</BinariesDirectory>
+    <BinariesDirectory>$(MSBuildThisFileDirectory)..\bin</BinariesDirectory>
   </PropertyGroup>
 
   <PropertyGroup>

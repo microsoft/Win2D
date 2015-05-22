@@ -4,13 +4,6 @@
 
   <!-- [[NOT IN SAMPLE]] -->
 
-  <!-- This lets individual projects turn off their building.  This allows us to
-       prevent building in the cloud for unsupported SDKs (ie Phone unit tests)
-       -->
-  <PropertyGroup Condition="'$(DoNotBuild)' == 'true'">
-    <_InvalidConfigurationWarning>true</_InvalidConfigurationWarning>
-  </PropertyGroup>
-
   <PropertyGroup>
     <OutputPath>$(__OutputPath)</OutputPath>
     <OutDir>$(__OutputPath)\</OutDir>
