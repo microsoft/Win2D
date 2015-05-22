@@ -109,5 +109,7 @@ namespace exportsample
         public string Root = null;
 
         public string Win2DVersion = null;
+
+        public string PackageSource = null;
     }
 }

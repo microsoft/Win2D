@@ -38,13 +38,23 @@ namespace exportsample
 
         void Go()
         {
+            CleanDestinationDirectory();
+            ExportSampleProjects();
+            WriteNuGetConfig();
+        }
+
+        void CleanDestinationDirectory()
+        {
             // Delete all the directories under the sample (leaving any files in the root).  This is to allow
             // us to catch (re)moved files.
             foreach (var dir in Directory.EnumerateDirectories(sample.Destination))
             {
                 Directory.Delete(dir, true);
             }
+        }
 
+        void ExportSampleProjects()
+        {
             // Process all the projects.  Any files referenced by a project will be exported.
             var projects = FindProjects();
 
@@ -64,6 +74,26 @@ namespace exportsample
 
                 remainingProjects.Remove(project);
             }
+        }
+
+        void WriteNuGetConfig()
+        {
+            var doc = new XDocument();
+
+            var configuration = new XElement("configuration");
+            doc.Add(configuration);
+
+            if (config.Options.PackageSource != null)
+            {
+                var packageSources = new XElement("packageSources");
+                var add = new XElement("add");
+                add.SetAttributeValue("key", "Private Package Source");
+                add.SetAttributeValue("value", config.Options.PackageSource);
+                packageSources.Add(add);
+                configuration.Add(packageSources);
+            }
+
+            doc.Save(Path.Combine(sample.Destination, "nuget.config"));
         }
 
         FileInfo[] FindProjects()
