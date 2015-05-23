@@ -16,9 +16,10 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    ScopedBitmapLock::ScopedBitmapLock(ID2D1Bitmap1* d2dBitmap, D3D11_MAP mapType, D2D1_RECT_U const* optionalSubRectangle)
+    ScopedBitmapMappedPixelAccess::ScopedBitmapMappedPixelAccess(ID2D1Bitmap1* d2dBitmap, D3D11_MAP mapType, D2D1_RECT_U const* optionalSubRectangle)
         : m_mapType(mapType)
         , m_useSubrectangle(false)
+        , m_d2dResourceLock(d2dBitmap)
     {
         ComPtr<IDXGISurface> dxgiSurface;
         ThrowIfFailed(d2dBitmap->GetSurface(&dxgiSurface));
@@ -106,7 +107,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_lockedBufferSize = m_mappedSubresource.RowPitch * stagingDescription.Height;
     }
 
-    ScopedBitmapLock::~ScopedBitmapLock()
+    ScopedBitmapMappedPixelAccess::~ScopedBitmapMappedPixelAccess()
     {
         m_immediateContext->Unmap(m_stagingResource.Get(), m_subresourceIndex);
 
@@ -133,17 +134,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    void* ScopedBitmapLock::GetLockedData()
+    void* ScopedBitmapMappedPixelAccess::GetLockedData()
     {
         return m_mappedSubresource.pData;
     }
 
-    unsigned int ScopedBitmapLock::GetLockedBufferSize()
+    unsigned int ScopedBitmapMappedPixelAccess::GetLockedBufferSize()
     {
         return m_lockedBufferSize;
     }
 
-    unsigned int ScopedBitmapLock::GetStride()
+    unsigned int ScopedBitmapMappedPixelAccess::GetStride()
     {
         return m_mappedSubresource.RowPitch;
     }

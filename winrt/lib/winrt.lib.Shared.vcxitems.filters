@@ -484,6 +484,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\D2DResourceLock.h">
+      <Filter>utils</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h">
       <Filter>utils</Filter>
     </ClInclude>

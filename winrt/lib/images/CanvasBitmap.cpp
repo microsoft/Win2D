@@ -652,7 +652,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
 
-        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
+        ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
 
         const unsigned int bytesPerPixel = GetBytesPerPixel(d2dBitmap->GetPixelFormat().format);
         const unsigned int bytesPerRow = (subRectangle.right - subRectangle.left) * bytesPerPixel;
@@ -662,7 +662,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComArray<BYTE> array(destSizeInBytes);
 
         byte* destRowStart = array.GetData();
-        byte* sourceRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+        byte* sourceRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
         for (unsigned int y = subRectangle.top; y < subRectangle.bottom; y++)
         {
             const unsigned int byteCount = (subRectangle.right - subRectangle.left) * bytesPerPixel;
@@ -674,7 +674,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             memcpy_s(destRowStart, bytesLeftInBuffer, sourceRowStart, byteCount);
 
             destRowStart += bytesPerRow;
-            sourceRowStart += bitmapLock.GetStride();
+            sourceRowStart += bitmapPixelAccess.GetStride();
         }
 
         array.Detach(valueCount, valueElements);
@@ -696,14 +696,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowHR(E_INVALIDARG, HStringReference(Strings::PixelColorsFormatRestriction).Get());
         }
 
-        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
+        ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
 
         const unsigned int subRectangleWidth = subRectangle.right - subRectangle.left;
         const unsigned int subRectangleHeight = subRectangle.bottom - subRectangle.top;
         const unsigned int destSizeInPixels = subRectangleWidth * subRectangleHeight;
         ComArray<Color> array(destSizeInPixels);
 
-        byte* sourceRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+        byte* sourceRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
 
         for (unsigned int y = 0; y < subRectangleHeight; y++)
         {
@@ -716,7 +716,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 destColor.R = (sourcePixel >> 16) & 0xFF;
                 destColor.A = (sourcePixel >> 24) & 0xFF;
             }
-            sourceRowStart += bitmapLock.GetStride();
+            sourceRowStart += bitmapPixelAccess.GetStride();
         }
 
         array.Detach(valueCount, valueElements);
@@ -735,7 +735,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpiX, dpiY;
         d2dBitmap->GetDpi(&dpiX, &dpiY);
 
-        auto bitmapLock = std::make_shared<ScopedBitmapLock>(d2dBitmap.Get(), D3D11_MAP_READ);
+        auto bitmapPixelAccess = std::make_shared<ScopedBitmapMappedPixelAccess>(d2dBitmap.Get(), D3D11_MAP_READ);
 
         auto asyncAction = Make<AsyncAction>(
             [=]
@@ -748,7 +748,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     size.height,
                     dpiX,
                     dpiY,
-                    bitmapLock.get());
+                    bitmapPixelAccess.get());
             });
 
         CheckMakeResult(asyncAction);
@@ -772,7 +772,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpiX, dpiY;
         d2dBitmap->GetDpi(&dpiX, &dpiY);
 
-        auto bitmapLock = std::make_shared<ScopedBitmapLock>(d2dBitmap.Get(), D3D11_MAP_READ);
+        auto bitmapPixelAccess = std::make_shared<ScopedBitmapMappedPixelAccess>(d2dBitmap.Get(), D3D11_MAP_READ);
 
         auto asyncAction = Make<AsyncAction>(
             [=]
@@ -785,7 +785,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     size.height,
                     dpiX,
                     dpiY,
-                    bitmapLock.get());
+                    bitmapPixelAccess.get());
             });
 
         CheckMakeResult(asyncAction);
@@ -815,9 +815,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowHR(E_INVALIDARG, message.Get());
         }
 
-        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
+        ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
 
-        byte* destRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+        byte* destRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
         byte* sourceRowStart = valueElements;
 
         for (unsigned int y = subRectangle.top; y < subRectangle.bottom; y++)
@@ -828,7 +828,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             memcpy_s(destRowStart, bytesLeftInBuffer, sourceRowStart, byteCount);
 
-            destRowStart += bitmapLock.GetStride();
+            destRowStart += bitmapPixelAccess.GetStride();
             sourceRowStart += bytesPerRow;
         }
     }
@@ -859,12 +859,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowHR(E_INVALIDARG, HStringReference(Strings::PixelColorsFormatRestriction).Get());
         }
 
-        ScopedBitmapLock bitmapLock(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
+        ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
 
         const unsigned int destSizeInPixels = subRectangleWidth * subRectangleHeight;
         ComArray<Color> array(destSizeInPixels);
 
-        byte* destRowStart = static_cast<byte*>(bitmapLock.GetLockedData());
+        byte* destRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
 
         for (unsigned int y = 0; y < subRectangleHeight; y++)
         {
@@ -878,7 +878,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     (static_cast<uint32_t>(sourceColor.R) << 16) |
                     (static_cast<uint32_t>(sourceColor.A) << 24);
             }
-            destRowStart += bitmapLock.GetStride();
+            destRowStart += bitmapPixelAccess.GetStride();
         }
     }
 

@@ -43,7 +43,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             unsigned int height,
             float dpiX,
             float dpiY,
-            ScopedBitmapLock* bitmapLock) = 0;
+            ScopedBitmapMappedPixelAccess* bitmapLock) = 0;
 
         virtual void SaveLockedMemoryToStream(
             IRandomAccessStream* stream,
@@ -53,7 +53,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             unsigned int height,
             float dpiX,
             float dpiY,
-            ScopedBitmapLock* bitmapLock) = 0;
+            ScopedBitmapMappedPixelAccess* bitmapLock) = 0;
     };
     
 

@@ -85,7 +85,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         unsigned int height,
         float dpiX,
         float dpiY,
-        ScopedBitmapLock* bitmapLock)
+        ScopedBitmapMappedPixelAccess* bitmapLock)
     {
         ComPtr<IWICBitmapEncoder> encoder;
         ThrowIfFailed(wicFactory->CreateEncoder(encoderGuid, NULL, &encoder));
@@ -165,7 +165,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             unsigned int height,
             float dpiX,
             float dpiY,
-            ScopedBitmapLock* bitmapLock)
+            ScopedBitmapMappedPixelAccess* bitmapLock)
         {
             ComPtr<IWICStream> wicStream;
             ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
@@ -195,7 +195,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             unsigned int height,
             float dpiX,
             float dpiY,
-            ScopedBitmapLock* bitmapLock)
+            ScopedBitmapMappedPixelAccess* bitmapLock)
         {
             WinString fileNameString(fileName);
 

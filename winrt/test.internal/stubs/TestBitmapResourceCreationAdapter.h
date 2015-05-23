@@ -49,7 +49,7 @@ public:
         unsigned int height,
         float dpiX,
         float dpiY,
-        ScopedBitmapLock* bitmapLock)
+        ScopedBitmapMappedPixelAccess* bitmapLock)
     {
         Assert::Fail(); // Unexpected
     }
@@ -63,7 +63,7 @@ public:
         unsigned int height,
         float dpiX,
         float dpiY,
-        ScopedBitmapLock* bitmapLock)
+        ScopedBitmapMappedPixelAccess* bitmapLock)
     {
         Assert::Fail(); // Unexpected
     }

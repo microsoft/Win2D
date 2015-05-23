@@ -12,9 +12,11 @@
 
 #pragma once
 
+#include "utils/D2DResourceLock.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    class ScopedBitmapLock : LifespanTracker<ScopedBitmapLock>
+    class ScopedBitmapMappedPixelAccess : LifespanTracker<ScopedBitmapMappedPixelAccess>
     {
         D3D11_MAPPED_SUBRESOURCE m_mappedSubresource;
         unsigned int m_subresourceIndex;
@@ -26,10 +28,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         D2D1_RECT_U m_subRectangle;
         bool m_useSubrectangle;
 
-    public:
-        ScopedBitmapLock(ID2D1Bitmap1* d2dBitmap, D3D11_MAP mapType, D2D1_RECT_U const* optionalSubRectangle = nullptr);
+        D2DResourceLock m_d2dResourceLock;
 
-        ~ScopedBitmapLock();
+    public:
+        ScopedBitmapMappedPixelAccess(ID2D1Bitmap1* d2dBitmap, D3D11_MAP mapType, D2D1_RECT_U const* optionalSubRectangle = nullptr);
+
+        ~ScopedBitmapMappedPixelAccess();
 
         void* GetLockedData();
 

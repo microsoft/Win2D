@@ -125,6 +125,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\D2DResourceLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceTracker.h" />
