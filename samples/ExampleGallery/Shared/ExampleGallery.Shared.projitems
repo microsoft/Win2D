@@ -105,6 +105,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)TextLayouts.xaml.cs">
       <DependentUpon>TextLayouts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)VectorArt.xaml.cs">
+      <DependentUpon>VectorArt.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)VectorArtScene0.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VectorArtScene1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)AnimatedControlExample.xaml">
@@ -215,6 +220,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)VectorArt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Particles\explosion.png" />
@@ -265,6 +274,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtWide.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_0.jpg">

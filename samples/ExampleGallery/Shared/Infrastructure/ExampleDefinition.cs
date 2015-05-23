@@ -62,6 +62,7 @@ namespace ExampleGallery
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
             new ExampleDefinition("Layers", typeof(LayersExample)),
             new ExampleDefinition("Shapes", typeof(ShapesExample)),
+            new ExampleDefinition("Vector Art", typeof(VectorArt)),
             new ExampleDefinition("Stroke Styles", typeof(StrokeStyles)),
             new ExampleDefinition("Arc Options", typeof(ArcOptions)),
             new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
