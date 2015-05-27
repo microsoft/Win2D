@@ -12,8 +12,8 @@ CoreWindow.
 
 ##### How to use it
 - [Documentation](http://microsoft.github.io/Win2D)
-- [Sample code](http://github.com/Microsoft/Win2D-samples) -*
-    also available in the Store for
+- [Sample code](http://github.com/Microsoft/Win2D-samples) -
+    *also available in the Store for
     [Windows](http://apps.microsoft.com/windows/en-us/app/win2d-example-gallery/b668cfe1-e280-4c1e-adc1-09b7981ab084) and
     [Phone](http://www.windowsphone.com/en-us/store/app/win2d-example-gallery/8797b9cb-1443-475f-9a43-dd959de6fcc1)*
 
