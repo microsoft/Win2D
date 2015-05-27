@@ -31,7 +31,7 @@ under the License.
         <LineBreak/>
         Source code for these examples can be found at:
         <LineBreak/>
-        <Hyperlink NavigateUri="http://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared">http://github.com/Microsoft/Win2D/tree/master/tests/ExampleGallery/Shared</Hyperlink>
+        <Hyperlink NavigateUri="http://github.com/Microsoft/Win2D-samples">http://github.com/Microsoft/Win2D-samples</Hyperlink>
         <LineBreak/>
         <LineBreak/>
         Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
