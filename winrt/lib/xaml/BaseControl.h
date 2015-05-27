@@ -332,6 +332,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ComPtr<ICoreDispatcher> dispatcher;
             ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
 
+            //
+            // get_Dispatcher may succeed but return null if we're running in
+            // the designer.  In this case we assume that we must be running on
+            // the correct thread.
+            //
+            if (!dispatcher)
+            {
+                return;
+            }
+
             boolean hasAccess;
             ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasAccess));
 
