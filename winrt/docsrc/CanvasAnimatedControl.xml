@@ -216,7 +216,7 @@ under the License.
           When the control is paused the game loop thread stops running.
         </p>
 
-        <h3>Input</h3>
+        <h4>Pointer Input</h4>
         <p>
           CanvasAnimatedControl can raise pointer input (pen, mouse, touch)
           events on the game loop thread (where usually for XAML controls these
@@ -248,6 +248,72 @@ under the License.
         <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.hascapture.aspx">HasCapture</a>, or use the event
         <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.pointercapturelost.aspx">PointerCaptureLost</a>,
         as these are not supported through CanvasAnimatedControl.
+        </p>
+
+        <h4>Keyboard Input</h4>
+
+        <p>
+          The simplest way to receive keyboard input events is to subscribe to
+          CoreWindow's <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.corewindow.keydown.aspx">KeyDown</a>
+          and <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.corewindow.keyup.aspx">KeyUp</a>
+          events.  The handlers for these events will be called on the UI
+          thread, so if these need to access data that is also accessed by the
+          game loop thread some kind of synchronization is required.
+        </p>
+
+        <p>
+          One possible approach here is to use <see
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"
+          /> to execute code on the game loop thread.  The gotcha here is that
+          the <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.keyeventargs.aspx">KeyEventArgs</a>
+          is not agile and so should not be accessed from the game loop thead.
+          Although this will work, it may have surprising performance effects
+          since method calls / property accesses on the KeyEventArgs object
+          could involving dispatching back to the UI thread!
+        </p>
+
+        <p>
+          Instead, process or extract the data from KeyEventArgs that needs to
+          be accessed on the UI thread.  Example:
+
+          <code>
+            // Register for keyboard events in the loaded handler...
+            private void PageLoaded(object sender, RoutedEventArgs e)
+            {
+                Window.Current.CoreWindow.KeyDown += KeyDown_UIThread;
+            }
+
+            // Don't forget to unregister in unloaded!
+            private void PageUnloaded(object sender, RoutedEventArgs e)
+            {
+                Window.Current.CoreWindow.KeyDown -= KeyDown_UIThread;
+            }
+
+            // The KeyDown handler runs on the UI thread...
+            private async void KeyDown_UIThread(CoreWindow sender, KeyEventArgs args)
+            {
+                args.Handled = true;
+
+                // extract the data from the args before marshaling it to the
+                // game loop thread
+                var virtualKey = args.VirtualKey;
+
+                await animatedControl.RunOnGameLoopThreadAsync(() => KeyDown_GameLoopThread(virtualKey));
+            }
+
+            private void KeyDown_GameLoopThread(VirtualKey virtualKey)
+            {
+                // ...
+            }
+          </code>
+        </p>
+        <p>
+          A more complete example can be found in the <a
+          href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/KeyboardInputExample.xaml.cs">KeyboardInputExample</a>
+          in ExampleGallery.
         </p>
         
         <h4>Threading Considerations</h4>
