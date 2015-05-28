@@ -126,7 +126,7 @@ namespace ExampleGallery
 
         private void Canvas_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
-            Matrix3x2 displayTransform = Utils.GetDisplayTransform(sender.Size, sender, 1000, 1000);
+            Matrix3x2 displayTransform = Utils.GetDisplayTransform(sender.Size.ToVector2(), new Vector2(1000, 1000));
             args.DrawingSession.Transform = displayTransform;
 
             args.DrawingSession.FillGeometry(combinedGeometry, Colors.Blue);

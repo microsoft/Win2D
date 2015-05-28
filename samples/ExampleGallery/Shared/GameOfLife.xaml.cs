@@ -85,7 +85,7 @@ namespace ExampleGallery
 
             // Display the current surface.
             invertEffect.Source = currentSurface;
-            transformEffect.TransformMatrix = Utils.GetDisplayTransform(canvas.Size, canvas, simulationW, simulationH);
+            transformEffect.TransformMatrix = GetDisplayTransform(sender);
             args.DrawingSession.DrawImage(transformEffect);
 
             sender.Invalidate();
@@ -255,7 +255,7 @@ namespace ExampleGallery
 
             // Invert the display transform, to convert pointer positions into simulation rendertarget space.
             Matrix3x2 transform;
-            Matrix3x2.Invert(Utils.GetDisplayTransform(canvas.Size, canvas, simulationW, simulationH), out transform);
+            Matrix3x2.Invert(GetDisplayTransform(canvas), out transform);
 
             foreach (var point in e.GetIntermediatePoints(canvas))
             {
@@ -287,6 +287,14 @@ namespace ExampleGallery
                     lastPointerY = y;
                 }
             }
+        }
+
+        static Matrix3x2 GetDisplayTransform(CanvasControl canvas)
+        {
+            var outputSize = canvas.Size.ToVector2();
+            var sourceSize = new Vector2(canvas.ConvertPixelsToDips(simulationW), canvas.ConvertPixelsToDips(simulationH));
+
+            return Utils.GetDisplayTransform(outputSize, sourceSize);
         }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)

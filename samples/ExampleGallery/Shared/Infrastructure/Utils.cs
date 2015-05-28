@@ -55,13 +55,6 @@ namespace ExampleGallery
                                  offset.X, offset.Y);
         }
 
-        public static Matrix3x2 GetDisplayTransform(Size controlSize, ICanvasResourceCreatorWithDpi canvas, int designWidth, int designHeight)
-        {
-            var sourceSize = new Vector2(canvas.ConvertPixelsToDips(designWidth), canvas.ConvertPixelsToDips(designHeight));
-
-            return GetDisplayTransform(controlSize.ToVector2(), sourceSize);
-        }
-
         public static CanvasGeometry CreateStarGeometry(ICanvasResourceCreator resourceCreator, float scale, Vector2 center)
         {
             Vector2[] points =
