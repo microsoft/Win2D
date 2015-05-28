@@ -102,7 +102,7 @@
     <WindowsProject Include="winrt\test.managed\Windows\winrt.test.managed.Windows.csproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
-    <WindowsProject Include="samples\SimpleSample\SimpleSample.Windows\SimpleSample.Windows.csproj" />
+    <WindowsProject Include="samples\SimpleSample\Windows\SimpleSample.Windows.csproj" />
     <WindowsProject Include="samples\CoreWindowExample\Windows\CoreWindowExample.Windows.csproj" />
     <WindowsProject Include="samples\ExampleGallery\Direct3DInterop\Windows\ExampleGallery.Direct3DInterop.Windows.vcxproj">
       <BuildInParallel>false</BuildInParallel>
@@ -124,7 +124,7 @@
     <PhoneProject Include="winrt\test.external\winrt.test.external.WindowsPhone.vcxproj" />
     <PhoneProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.WindowsPhone.vcxproj" />
     <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
-    <PhoneProject Include="samples\SimpleSample\SimpleSample.WindowsPhone\SimpleSample.WindowsPhone.csproj" />
+    <PhoneProject Include="samples\SimpleSample\WindowsPhone\SimpleSample.WindowsPhone.csproj" />
     <PhoneProject Include="samples\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj" />
     <PhoneProject Include="samples\ExampleGallery\Direct3DInterop\WindowsPhone\ExampleGallery.Direct3DInterop.WindowsPhone.vcxproj">
       <BuildInParallel>false</BuildInParallel>
