@@ -79,6 +79,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "winrt.test.managed.uap", "w
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSample.uap", "samples\SimpleSample\UAP\SimpleSample.uap.csproj", "{16DE7EC1-EDB4-4C29-9598-487A0D211D99}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreWindowExample", "CoreWindowExample", "{593AF515-EA6A-42A9-B85A-4C9188EE2B4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreWindowExample.uap", "samples\CoreWindowExample\UAP\CoreWindowExample.uap.csproj", "{3AA4FCFF-99F7-4746-957F-79303E9A8952}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CoreWindowExample.Shared", "samples\CoreWindowExample\Shared\CoreWindowExample.Shared.shproj", "{FD83BF4B-D82C-463A-BE38-84F8B9374CCF}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{70fb7b71-d56c-4bf1-9282-27aa58043cc0}*SharedItemsImports = 4
@@ -86,10 +92,12 @@ Global
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{9936ffef-2686-4df6-8d64-2bfa78b1222a}*SharedItemsImports = 4
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
+		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{fd83bf4b-d82c-463a-be38-84f8b9374ccf}*SharedItemsImports = 13
 		winrt\test.external\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
 		winrt\lib\winrt.lib.Shared.vcxitems*{1574c4de-318f-4555-b72e-97532f720a13}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{d3d2a425-69d2-4f8c-98dc-760abc25e535}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}*SharedItemsImports = 4
+		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{3aa4fcff-99f7-4746-957f-79303e9a8952}*SharedItemsImports = 4
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{063ab629-aadf-4749-b259-ab815b1aeb01}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{b038b2a3-0ff2-4313-a0db-b7b59dc2dc4c}*SharedItemsImports = 9
@@ -230,6 +238,24 @@ Global
 		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|x64.ActiveCfg = Release|x64
 		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|x64.Build.0 = Release|x64
 		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|x64.Deploy.0 = Release|x64
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|ARM.ActiveCfg = Debug|ARM
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|ARM.Build.0 = Debug|ARM
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|ARM.Deploy.0 = Debug|ARM
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|Win32.Build.0 = Debug|Win32
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|Win32.Deploy.0 = Debug|Win32
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|x64.ActiveCfg = Debug|x64
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|x64.Build.0 = Debug|x64
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Debug|x64.Deploy.0 = Debug|x64
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|ARM.ActiveCfg = Release|ARM
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|ARM.Build.0 = Release|ARM
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|ARM.Deploy.0 = Release|ARM
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|Win32.ActiveCfg = Release|Win32
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|Win32.Build.0 = Release|Win32
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|Win32.Deploy.0 = Release|Win32
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|x64.ActiveCfg = Release|x64
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|x64.Build.0 = Release|x64
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952}.Release|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -260,5 +286,8 @@ Global
 		{9936FFEF-2686-4DF6-8D64-2BFA78B1222A} = {EA4A8B3A-56D1-4B01-BBAE-8F00F818CAA8}
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0} = {79418A70-2C3F-4A6E-9443-FFD655B85916}
 		{16DE7EC1-EDB4-4C29-9598-487A0D211D99} = {EC7BD4FF-9DAE-4698-9FDA-244478B0203B}
+		{593AF515-EA6A-42A9-B85A-4C9188EE2B4D} = {EC7BD4FF-9DAE-4698-9FDA-244478B0203B}
+		{3AA4FCFF-99F7-4746-957F-79303E9A8952} = {593AF515-EA6A-42A9-B85A-4C9188EE2B4D}
+		{FD83BF4B-D82C-463A-BE38-84F8B9374CCF} = {593AF515-EA6A-42A9-B85A-4C9188EE2B4D}
 	EndGlobalSection
 EndGlobal

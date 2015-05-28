@@ -149,6 +149,7 @@
 -->
     </UAPProject>
     <UAPProject Include="samples\SimpleSample\UAP\SimpleSample.uap.csproj" />
+    <UAPProject Include="samples\CoreWindowExample\UAP\CoreWindowExample.uap.csproj" />
     <UAPProject Include="samples\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
   </ItemGroup>
 
