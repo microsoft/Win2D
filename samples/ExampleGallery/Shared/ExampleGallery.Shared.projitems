@@ -72,6 +72,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ThumbnailGenerator.xaml.cs">
       <DependentUpon>ThumbnailGenerator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)KeyboardInputExample.xaml.cs">
+      <DependentUpon>KeyboardInputExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)LayersExample.xaml.cs">
       <DependentUpon>LayersExample.xaml</DependentUpon>
     </Compile>
@@ -176,6 +179,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)KeyboardInputExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)LayersExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -242,6 +249,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\KeyboardInputNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\KeyboardInputWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ParticleSystemNarrow.png" />
