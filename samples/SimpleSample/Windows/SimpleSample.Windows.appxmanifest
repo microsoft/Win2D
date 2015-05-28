@@ -6,7 +6,7 @@
             Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>SimpleSample.Windows</DisplayName>
+    <DisplayName>Win2D SimpleSample</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -25,13 +25,18 @@
         Executable="$targetnametoken$.exe"
         EntryPoint="SimpleSample.Windows.App">
         <m2:VisualElements
-            DisplayName="SimpleSample.Windows"
+            DisplayName="Win2D SimpleSample"
             Square150x150Logo="Assets\Logo.png"
             Square30x30Logo="Assets\SmallLogo.png"
-            Description="SimpleSample.Windows"
+            Description="Win2D SimpleSample"
             ForegroundText="light"
-            BackgroundColor="#464646">
-            <m2:SplashScreen Image="Assets\SplashScreen.png" />
+            BackgroundColor="#6495ED">
+            <m2:DefaultTile ShortName="Win2D SimpleSample">
+              <m2:ShowNameOnTiles>
+                <m2:ShowOn Tile="square150x150Logo" />
+              </m2:ShowNameOnTiles>
+            </m2:DefaultTile>
+            <m2:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="cornflowerBlue" />
         </m2:VisualElements>
     </Application>
   </Applications>

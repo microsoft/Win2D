@@ -148,6 +148,7 @@
 <!--      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>  TODO: reenable managed UAP tests
 -->
     </UAPProject>
+    <UAPProject Include="samples\SimpleSample\UAP\SimpleSample.uap.csproj" />
     <UAPProject Include="samples\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
   </ItemGroup>
 
