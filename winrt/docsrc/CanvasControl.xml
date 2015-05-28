@@ -119,8 +119,172 @@ under the License.
     </member>
     <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateResources">
       <summary>Hook this event to create any resources needed for your drawing.</summary>
-      <remarks>The CreateResources event is raised once when the CanvasControl is first initialized, then
-               again any time the resources need to be recreated, for instance if the underlying GPU gets reset.</remarks>
+      <remarks>      
+      <p>
+      The CreateResources event is raised once when the CanvasControl is first initialized, then
+      again any time the resources need to be recreated, for instance if the graphics device is lost.
+      </p>
+      <h3>On loading resources outside of CreateResources</h3>
+      <p>       
+      Normally, apps are expected to use the CreateResources handler for creating controls' resources, 
+      so that device dependent resources are re-recreated as necessary if the device is lost. This includes 
+      resources that are loaded asynchronously. For asynchronous resource loading, controls are encouraged to 
+      use <see cref="M:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs.TrackAsyncAction(Windows.Foundation.IAsyncAction)"/> 
+      with CreateResources to ensure correct behavior.
+      </p>        
+      <p>
+      All of this works well for cases where all resources are loaded at startup only.
+      </p>        
+      <p>     
+      But, what about apps which need to load some resources at startup, and some other 
+      resources later? For example, consider a game with different levels, and the levels need 
+      different graphical assets. Win2D doesn't have something built-in with CreateResources to 
+      enable this- an app cannot manually tell a control, "Re-issue CreateResources now, so 
+      that I can load different assets from before". However, the building blocks are there to make 
+      this work, and allow very good flexibility for how and when the resources are loaded, 
+      and be robust with respect to lost device.
+      </p>        
+      <p>
+      Really, what an app wants to do in this case, is have a custom LoadResourcesForLevelAsync method, 
+      a 'custom' CreateResources-launched task, like this:
+      <code>
+      async Task LoadResourcesForLevelAsync(CanvasControl resourceCreator, int level)
+      {
+          levelBackground = await CanvasBitmap.LoadAsync(resourceCreator, ...);
+          levelThingie = await CanvasBitmap.LoadAsync(resourceCreator, ...);
+          // etc.
+      }
+      </code>
+      </p>
+      The app needs to load some of its resources after CreateResources is completed. In particular, 
+      the app will issue the level load after CreateResources has completed- e.g., 
+      from its Draw handler. In the code below, the app's Draw handler controls the progress of its 
+      level-loading Task. 
+      <p>
+      </p>        
+      <p>
+      To make CreateResources work in this situation, and be robust against lost devices, an app needs to do four things:
+      <ol>
+      <li>
+      Track when LoadResourcesForLevelAsync is in progress.
+      </li>
+      <li>
+      Allow Win2D to handle any exceptions (in particular, device lost) that the app does't know how to handle.
+      </li>
+      <li>
+      If Win2D raises the CreateResources event to recover from a lost device while 
+      LoadResourcesForLevelAsync is in progress, your CreateResources handler should cancel that task.
+      </li>
+      <li>
+      If Win2D raises CreateResources to recover from a lost device after you have finished loading data 
+      using LoadResourcesForLevelAsync, your CreateResources handler must reload that custom data as well as its usual global resources.
+      </li>
+      </ol>
+      </p>        
+      <p> 
+      Using a CreateResources handler called CanvasControl_CreateResources, and the LoadResourcesForLevelAsync method shown above, 
+      here is a complete implementation that handles all four requirements:
+      </p>        
+      <p>
+      <code>
+      int? currentLevel, wantedLevel;
+
+      // This implements requirement #1.
+      Task levelLoadTask;
+
+
+      public void LoadNewLevel(int newLevel)
+      {
+          Debug.Assert(levelLoadTask == null);
+          wantedLevel = newLevel;
+          levelLoadTask = LoadResourcesForLevelAsync(canvasControl, newLevel);
+      }
+      
+      void CanvasControl_CreateResources(CanvasControl sender,
+                                         CanvasCreateResourcesEventArgs args)
+      {
+          // Synchronous resource creation, for globally-required resources goes here:
+          x = new CanvasRenderTarget(sender, ...);
+          y = new CanvasRadialGradientBrush(sender, ...);
+          // etc.
+      
+          args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
+      }  
+
+      async Task CreateResourcesAsync(CanvasControl sender)
+      {
+          // If there is a previous load in progress, stop it, and
+          // swallow any stale errors. This implements requirement #3.
+          if (levelLoadTask != null)
+          {
+              levelLoadTask.AsAsyncAction().Cancel();
+              try { await levelLoadTask; } catch { }
+              levelLoadTask = null;
+          }
+  
+          // Unload resources used by the previous level here.
+  
+          // Asynchronous resource loading, for globally-required resources goes here:
+          baz = await CanvasBitmap.LoadAsync(sender, ...);
+          qux = await CanvasBitmap.LoadAsync(sender, ...);
+          // etc.
+  
+          // If we are already in a level, reload its per-level resources.
+          // This implements requirement #4.
+          if (wantedLevel.HasValue)
+          {
+              LoadNewLevel(wantedLevel.Value);
+          }
+      }
+
+      // Because of how this is designed to throw an exception, this must only 
+      // ever be called from a Win2D event handler.
+      bool IsLoadInProgress()
+      {
+          // No loading task?
+          if (levelLoadTask == null)
+              return false;
+
+          // Loading task is still running?
+          if (!levelLoadTask.IsCompleted)
+              return true;
+
+          // Query the load task results and re-throw any exceptions
+          // so Win2D can see them. This implements requirement #2.
+          try
+          {
+              levelLoadTask.Wait();
+          }
+          catch (AggregateException aggregateException)
+          {
+              // .NET async tasks wrap all errors in an AggregateException.
+              // We unpack this so Win2D can directly see any lost device errors.
+              aggregateException.Handle(exception => { throw exception; });
+          }
+          finally
+          {
+              levelLoadTask = null;
+          }
+  
+          currentLevel = wantedLevel;
+          return false;
+      }
+  
+
+      void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+      {
+          if (IsLoadInProgress())
+          {
+              DrawLoadingScreen();
+          }
+          else
+          {
+              DrawCurrentLevel(currentLevel);
+          }
+      }
+      </code>
+      </p>  
+      </remarks>
     </member>
     <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Draw">
       <summary>This is where the magic happens! Hook this event to issue your immediate mode 2D drawing calls.</summary>
