@@ -275,7 +275,7 @@
 
   <!-- Make sure all our source files have the right copyright -->
   <Target Name="CheckCopyrightBanners"
-          Condition="$(BuildTools) and $(BuildPlatforms.Contains('AnyCPU')) and $(BuildConfigurations.Contains('Release'))">
+          Condition="$(BuildTools) and $(BuildPlatforms.Contains('AnyCPU'))">
 
     <Message Importance="High" Text="Checking copyright banners" />
 
