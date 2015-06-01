@@ -45,6 +45,7 @@ under the License.
     </Enum>
     <Enum Name="PRIMITIVE_BLEND" ShouldProject="true" ProjectedNameOverride="Blend"/>
     <Enum Name="TEXT_ANTIALIAS_MODE" ShouldProject="true" ProjectedNameOverride="TextAntialiasing" Namespace="Text">
+        <Field Name="DEFAULT" ProjectedNameOverride="Auto"/>
         <Field Name="CLEARTYPE" ProjectedNameOverride="ClearType"/>
     </Enum>
     <Enum Name="UNIT_MODE" ShouldProject="true" ProjectedNameOverride="Units"/>

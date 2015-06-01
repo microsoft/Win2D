@@ -774,7 +774,7 @@ namespace Microsoft
 
             ENUM_TO_STRING(CanvasTextAntialiasing)
             {
-                ENUM_VALUE(CanvasTextAntialiasing::Default);
+                ENUM_VALUE(CanvasTextAntialiasing::Auto);
                 ENUM_VALUE(CanvasTextAntialiasing::ClearType);
                 ENUM_VALUE(CanvasTextAntialiasing::Grayscale);
                 ENUM_VALUE(CanvasTextAntialiasing::Aliased);

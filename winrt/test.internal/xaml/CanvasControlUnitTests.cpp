@@ -461,6 +461,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
         auto deviceContext = Make<MockD2DDeviceContext>();
         deviceContext->ClearMethod.AllowAnyCall();
         deviceContext->SetTransformMethod.AllowAnyCall();
+        deviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
 
         float dpiCases[] = {
             50, 

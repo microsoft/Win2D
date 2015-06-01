@@ -157,6 +157,12 @@ TEST_CLASS(CanvasCommandListTests)
 
         auto dc = Make<MockD2DDeviceContext>();
 
+        dc->SetTextAntialiasModeMethod.SetExpectedCalls(1,
+            [](D2D1_TEXT_ANTIALIAS_MODE mode)
+            {
+                Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE, mode);
+            });
+
         f.Device->CreateDeviceContextMethod.SetExpectedCalls(1, [=] { return dc; });
 
         dc->SetTargetMethod.SetExpectedCalls(1, 

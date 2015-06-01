@@ -69,13 +69,15 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 
     struct Fixture
     {
-        ComPtr<ID2D1DeviceContext1> m_expectedDeviceContext;
+        ComPtr<MockD2DDeviceContext> m_expectedDeviceContext;
         std::shared_ptr<MockCanvasDrawingSessionAdapter> m_mockAdapter;
         ComPtr<CanvasDrawingSession> m_canvasDrawingSession;
 
         Fixture()
         {
             m_expectedDeviceContext = Make<MockD2DDeviceContext>();
+            m_expectedDeviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
+
             m_mockAdapter = std::make_shared<MockCanvasDrawingSessionAdapter>();
             
             auto manager = std::make_shared<CanvasDrawingSessionManager>();
@@ -4169,6 +4171,8 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 
         Assert::IsFalse(weakToken.expired());
 
+        deviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
+
         //
         // Create a drawing session using this device context, verifying that
         // this has taken ownership of the token.
@@ -4307,7 +4311,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Blend(nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Blend(CanvasBlend::SourceOver));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_TextAntialiasing(nullptr));
-        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_TextAntialiasing(CanvasTextAntialiasing::Default));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_TextAntialiasing(CanvasTextAntialiasing::Auto));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Transform(nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Transform(Numerics::Matrix3x2()));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Units(nullptr));
@@ -4343,6 +4347,10 @@ TEST_CLASS(CanvasDrawingSession_Interop)
         // or EndDraw() is called on it.  When wrapping a drawing session like
         // this we don't want these methods to be called automatically.
         auto deviceContext = Make<MockD2DDeviceContext>();
+
+        // Unlike when creating new Win2D drawing sessions,
+        // interop should not change the text antialias mode.
+        deviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(0);
 
         auto drawingSession = manager->GetOrCreate(deviceContext.Get());
 

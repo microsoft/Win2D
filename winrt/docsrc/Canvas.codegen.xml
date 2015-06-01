@@ -157,9 +157,31 @@ under the License.
     
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing">
       <summary>Specifies the antialiasing mode for drawing text.</summary>
+      <remarks>
+        <p>
+          In most cases, Grayscale is a better choice than the Auto algorithm.
+          Auto mode selects ClearType antialiasing unless:
+        </p>
+        <ul>
+          <li>
+            The output rendertarget has an alpha channel and is not set to
+            <see cref="F:Microsoft.Graphics.Canvas.CanvasAlphaMode.Ignore"/>,
+            in which case Grayscale mode is used.
+          </li>
+          <li>
+            There is a current <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>,
+            in which case Grayscale mode is used.
+          </li>
+          <li>
+            A DWrite rendering mode has been explicitly set on the output rendertarget 
+            (via D2D interop, as that functionality is not currently available in 
+            Win2D), in which case the DWrite mode determines text antialiasing behavior.
+          </li>
+        </ul>
+      </remarks>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.Default">
-      <summary>Use the system default.</summary>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.Auto">
+      <summary>Automatically choose the text antialiasing mode.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.ClearType">
       <summary>Use ClearType antialiasing.</summary>

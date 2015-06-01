@@ -884,6 +884,11 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 return deviceContext;
             });
 
+        deviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(1,
+            [](D2D1_TEXT_ANTIALIAS_MODE mode)
+            {
+                Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE, mode);
+            });
 
         deviceContext->ClearMethod.SetExpectedCalls(1,
             [&] (D2D1_COLOR_F const* actualClearColor)
@@ -1065,6 +1070,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto canvasSwapChain = f.CreateTestSwapChain();
 
         f.m_deviceContext->SetDpiMethod.SetExpectedCalls(1);
+        f.m_deviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         Color canvasBlue = { 255, 0, 0, 255 };

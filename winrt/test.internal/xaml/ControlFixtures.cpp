@@ -20,6 +20,8 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
     mockD2DDevice->MockCreateDeviceContext =
         [=](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
         {
+            deviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(1);
+
             ThrowIfFailed(deviceContext.CopyTo(value));
         };
 

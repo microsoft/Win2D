@@ -44,6 +44,11 @@ TEST_CLASS(CanvasRenderTargetTests)
                         Assert::AreEqual(expectedDpi, dpiY);
                     });
 
+                    deviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(1, [](D2D1_TEXT_ANTIALIAS_MODE mode)
+                    {
+                        Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE, mode);
+                    });
+
                     ThrowIfFailed(deviceContext.CopyTo(value));
                 };
         }

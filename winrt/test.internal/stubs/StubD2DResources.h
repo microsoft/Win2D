@@ -59,6 +59,8 @@ public:
         m_factory = Make<StubD2DFactoryWithCreateStrokeStyle>();
 
         CheckMakeResult(m_factory);
+
+        SetTextAntialiasModeMethod.AllowAnyCall();
     }
 
     IFACEMETHODIMP_(void) GetFactory(ID2D1Factory** factory) const override

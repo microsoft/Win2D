@@ -57,7 +57,7 @@ TEST_CLASS(CanvasDrawingSessionTests)
 
         drawingSession->Antialiasing = CanvasAntialiasing::Antialiased;
         drawingSession->Blend = CanvasBlend::SourceOver;
-        drawingSession->TextAntialiasing = CanvasTextAntialiasing::Default;
+        drawingSession->TextAntialiasing = CanvasTextAntialiasing::Auto;
         drawingSession->Transform = identity;
         drawingSession->Units = CanvasUnits::Dips;
 

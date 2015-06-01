@@ -1344,6 +1344,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<CanvasDrawingSession> CreateWrapper(
             ID2D1DeviceContext1* resource);
+
+    private:
+        static void InitializeDefaultState(ID2D1DeviceContext1* deviceContext);
     };
 
 

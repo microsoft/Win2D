@@ -567,6 +567,7 @@ public:
             DeviceContext->EndDrawMethod.AllowAnyCall();
             DeviceContext->DrawImageMethod.AllowAnyCall();
             DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
+            DeviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
 
             DeviceContext->SetTargetMethod.SetExpectedCalls(1,
                 [&] (ID2D1Image* newTarget)

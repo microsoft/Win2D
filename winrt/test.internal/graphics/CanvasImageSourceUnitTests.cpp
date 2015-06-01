@@ -316,6 +316,12 @@ public:
         ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
             Make<StubD2DDeviceContextWithGetFactory>();
 
+        d2dDeviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(1,
+            [](D2D1_TEXT_ANTIALIAS_MODE mode)
+            {
+                Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE, mode);
+            });
+
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
             canvasDevice.Get(),

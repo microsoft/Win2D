@@ -141,6 +141,7 @@ struct ClearColorFixture
         DeviceContext->ClearMethod.AllowAnyCall();
         DeviceContext->SetTransformMethod.AllowAnyCall();
         DeviceContext->SetDpiMethod.AllowAnyCall();
+        DeviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
 
         Adapter = TestAdapter<TRAITS>::Create(DeviceContext.Get());        
 

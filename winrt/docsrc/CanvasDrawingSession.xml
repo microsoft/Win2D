@@ -628,6 +628,7 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.TextAntialiasing">
       <summary>Sets the text antialiasing mode for this drawing session.</summary>
+      <remarks>The default mode is <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.Grayscale"/>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Blend">
       <summary>Sets the blend mode for this drawing session.</summary>

@@ -94,6 +94,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter)
     {
+        InitializeDefaultState(deviceContext);
+
         return Make<CanvasDrawingSession>(
             shared_from_this(),
             owner,
@@ -112,6 +114,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_adapter);
         CheckMakeResult(drawingSession);
         return drawingSession;
+    }
+    
+
+    void CanvasDrawingSessionManager::InitializeDefaultState(ID2D1DeviceContext1* deviceContext)
+    {
+        // Win2D wants a different text antialiasing default vs. native D2D.
+        deviceContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
     }
 
 
