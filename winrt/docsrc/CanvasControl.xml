@@ -22,9 +22,16 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl">
       <summary>XAML control providing immediate mode 2D rendering. Start here if you are new to the Win2D API.</summary>
       <remarks>
-        To get started using Win2D, simply add a CanvasControl to your XAML
-        tree, subscribe to its CanvasControl.Draw event, and use the methods of
-        CanvasDrawEventArgs.DrawingSession to draw your immediate mode 2D graphics.
+        <p>
+          To get started using Win2D, simply add a CanvasControl to your XAML
+          tree, subscribe to its CanvasControl.Draw event, and use the methods of
+          CanvasDrawEventArgs.DrawingSession to draw your immediate mode 2D graphics.
+        </p>
+        <p>
+          When using CanvasControl from managed code, care must be 
+          taken to avoid memory leaks due to reference count cycles. See 
+          <a href="RefCycles.htm">Avoiding memory leaks</a> for more information.
+        </p>
       </remarks>
       <example>
         <p>Starting with the "Blank App" XAML project template, edit MainPage.xaml and add the namespace and unloaded handler:</p>
@@ -331,6 +338,7 @@ under the License.
           from the Unloaded event handler of the page that the control was on
           and then release any explicit references to it.
         </p>
+        <p>For more information, see <a href="RefCycles.htm">Avoiding memory leaks</a>.</p>
         <example>
           <code>
         void page_Unloaded(object sender, RoutedEventArgs e)

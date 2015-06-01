@@ -13,5 +13,6 @@
     <Topic id="WindowsNumerics_Interop" title="Interop with DirectXMath" />
   </Topic>
   <Topic id="Interop" title="Interop with Direct2D" />
+  <Topic id="RefCycles" title="Avoiding memory leaks" />
   <Topic id="UAP" title="Windows 10 support" />
 </Topics>

@@ -23,7 +23,7 @@ under the License.
       <summary>XAML control intended for displaying animating content.</summary>
       <remarks>
         <p>
-          CanvasAnimatedControl uses a CanvasSwapChain and CanvasSwapChain panel
+          CanvasAnimatedControl uses a CanvasSwapChain and CanvasSwapChainPanel
           for displaying graphics.  The swap chain is automatically resized and
           recreated as necessary.
         </p>
@@ -36,6 +36,12 @@ under the License.
           doing (and vice versa).  However, it does require that care is taken
           when accessing data shared between the UI thread and the game loop
           thread.
+        </p>
+
+        <p>
+          When using CanvasAnimatedControl from managed code, care must be 
+          taken to avoid memory leaks due to reference count cycles. See 
+          <a href="RefCycles.htm">Avoiding memory leaks</a> for more information.
         </p>
 
         <p>
@@ -659,6 +665,7 @@ under the License.
           from the Unloaded event handler of the page that the control was on
           and then release any explicit references to it.
         </p>
+        <p>For more information, see <a href="RefCycles.htm">Avoiding memory leaks</a>.</p>
         <example>
           <code>
         void page_Unloaded(object sender, RoutedEventArgs e)
