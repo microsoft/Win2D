@@ -145,8 +145,7 @@
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\UAP\winrt.test.managed.uap.csproj">
-<!--      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>  TODO: reenable managed UAP tests
--->
+      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
     </UAPProject>
     <UAPProject Include="samples\SimpleSample\UAP\SimpleSample.uap.csproj" />
     <UAPProject Include="samples\CoreWindowExample\UAP\CoreWindowExample.uap.csproj" />

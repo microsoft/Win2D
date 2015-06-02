@@ -14,10 +14,8 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <AppxBundle>Never</AppxBundle>
-    <AllowCrossPlatformRetargeting>False</AllowCrossPlatformRetargeting>
     <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
-    <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
+    <EnableCoreRuntime>false</EnableCoreRuntime>
   </PropertyGroup>
   <PropertyGroup>
     <AppXPackage>True</AppXPackage>
@@ -98,8 +96,8 @@
       <Name>winrt.test.nativecomponent.uap</Name>
       <Project>{9936FFEF-2686-4DF6-8D64-2BFA78B1222A}</Project>
     </ProjectReference>
-    <SDKReference Include="MSTestFramework, Version=$(UnitTestPlatformVersion)" />
-    <SDKReference Include="TestPlatform, Version=$(UnitTestPlatformVersion)" />
+    <SDKReference Include="MSTestFramework.Universal, Version=$(UnitTestPlatformVersion)" />
+    <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="winrt.test.managed.uap.appxmanifest">
