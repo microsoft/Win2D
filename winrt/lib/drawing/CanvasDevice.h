@@ -146,6 +146,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef CanvasDeviceManager manager_t;
     };
 
+    typedef ITypedEventHandler<CanvasDevice*, IInspectable*> DeviceLostHandlerType;
 
     //
     // The CanvasDevice class itself.
@@ -172,6 +173,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // device object is open or closed.
         ComPtr<IDXGIOutput> m_primaryOutput;
 
+        EventSource<DeviceLostHandlerType, InvokeModeOptions<StopOnFirstError>> m_deviceLostEventList;
+
     public:
         CanvasDevice(
             std::shared_ptr<CanvasDeviceManager> manager,
@@ -187,6 +190,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration* value) override;
 
         IFACEMETHOD(get_MaximumBitmapSizeInPixels)(int32_t* value) override;
+
+        IFACEMETHOD(add_DeviceLost)(DeviceLostHandlerType* value, EventRegistrationToken* token) override;
+
+        IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;
+
+        IFACEMETHOD(IsDeviceLost)(int hresult, boolean* value) override;
+
+        IFACEMETHOD(RaiseDeviceLost)() override;
 
         //
         // ICanvasResourceCreator

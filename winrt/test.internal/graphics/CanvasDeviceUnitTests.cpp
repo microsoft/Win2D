@@ -428,3 +428,214 @@ TEST_CLASS(DefaultDeviceResourceCreationAdapterTests)
         Assert::AreEqual(dxgiDevice.Get(), actualDxgiDevice.Get());
     }
 };
+
+static const HRESULT deviceRemovedHResults[] = {
+    DXGI_ERROR_DEVICE_HUNG,
+    DXGI_ERROR_DEVICE_REMOVED,
+    DXGI_ERROR_DEVICE_RESET,
+    DXGI_ERROR_DRIVER_INTERNAL_ERROR,
+    DXGI_ERROR_INVALID_CALL,
+    D2DERR_RECREATE_TARGET
+};
+
+TEST_CLASS(CanvasDeviceLostTests)
+{
+    std::shared_ptr<TestDeviceResourceCreationAdapter> m_resourceCreationAdapter;
+    std::shared_ptr<CanvasDeviceManager> m_deviceManager;
+
+public:
+
+    TEST_METHOD_INITIALIZE(Reset)
+    {
+        m_resourceCreationAdapter = std::make_shared<TestDeviceResourceCreationAdapter>();
+        m_deviceManager = std::make_shared<CanvasDeviceManager>(m_resourceCreationAdapter);
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_Closed)
+    {
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        Assert::AreEqual(S_OK, canvasDevice->Close());
+
+        EventRegistrationToken token{};
+        MockEventHandler<DeviceLostHandlerType> dummyDeviceLostHandler(L"DeviceLost");
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->add_DeviceLost(dummyDeviceLostHandler.Get(), &token));
+
+        // remove_DeviceLost is intended to not check if the object is closed, and like all EventSource
+        // events it returns success if you try and remove an unregistered token.
+        Assert::AreEqual(S_OK, canvasDevice->remove_DeviceLost(token));
+
+        boolean b;
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->IsDeviceLost(0, &b));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->RaiseDeviceLost());
+
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_NullArgs)
+    {
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        EventRegistrationToken token{};
+        MockEventHandler<DeviceLostHandlerType> dummyDeviceLostHandler(L"DeviceLost");
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->add_DeviceLost(nullptr, &token));
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->add_DeviceLost(dummyDeviceLostHandler.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->IsDeviceLost(0, nullptr));
+    }
+
+    class DeviceLostResourceCreationAdapter : public TestDeviceResourceCreationAdapter
+    {
+        virtual ComPtr<StubD3D11Device> CreateStubD3D11Device() override
+        {
+            auto stubD3DDevice = Make<StubD3D11Device>();
+
+            stubD3DDevice->GetDeviceRemovedReasonMethod.AllowAnyCall(
+                [] { return DXGI_ERROR_DEVICE_REMOVED; });
+
+            return stubD3DDevice;
+        }
+    };
+
+    class DeviceLostFixture
+    {
+        std::shared_ptr<DeviceLostResourceCreationAdapter> m_resourceCreationAdapter;
+
+    public:
+        std::shared_ptr<CanvasDeviceManager> DeviceManager;
+
+        DeviceLostFixture()
+            : m_resourceCreationAdapter(std::make_shared<DeviceLostResourceCreationAdapter>())
+            , DeviceManager(std::make_shared<CanvasDeviceManager>(m_resourceCreationAdapter))
+        {
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_DeviceRemovedHr_DeviceIsLost_ReturnsTrue)
+    {
+        DeviceLostFixture f;
+        auto canvasDevice = f.DeviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        for (HRESULT hr : deviceRemovedHResults)
+        {
+            boolean isDeviceLost;
+            Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(hr, &isDeviceLost));
+            Assert::IsTrue(!!isDeviceLost);
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_SomeArbitraryHr_DeviceIsLost_ReturnsFalse)
+    {
+        DeviceLostFixture f;
+        auto canvasDevice = f.DeviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        boolean isDeviceLost;
+        Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(E_INVALIDARG, &isDeviceLost));
+        Assert::IsFalse(!!isDeviceLost);
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_DeviceRemovedHr_DeviceNotActuallyLost_ReturnsFalse)
+    {
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        for (HRESULT hr : deviceRemovedHResults)
+        {
+            boolean isDeviceLost;
+            Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(hr, &isDeviceLost));
+            Assert::IsFalse(!!isDeviceLost);
+        }
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_SomeArbitraryHr_DeviceNotActuallyLost_ReturnsFalse)
+    {
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        boolean isDeviceLost;
+        Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(E_INVALIDARG, &isDeviceLost));
+        Assert::IsFalse(!!isDeviceLost);
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_RaisesSubscribedHandlers_DeviceActuallyLost)
+    {
+        DeviceLostFixture f;
+        auto canvasDevice = f.DeviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
+        deviceLostHandler.SetExpectedCalls(1);
+
+        EventRegistrationToken token{};
+        Assert::AreEqual(S_OK, canvasDevice->add_DeviceLost(deviceLostHandler.Get(), &token));
+
+        Assert::AreEqual(S_OK, canvasDevice->RaiseDeviceLost());
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_RaisesSubscribedHandlers_DeviceNotActuallyLost)
+    {
+        //
+        // The unit tests testing the DeviceLost event do not exhaustively test 
+        // everything concerning  adding/removing events, because DeviceLost is 
+        // implemented directly on top of EventSource<...>, which 
+        // already has coverage elsewhere.
+        //
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
+        deviceLostHandler.SetExpectedCalls(1);
+
+        EventRegistrationToken token{};
+        Assert::AreEqual(S_OK, canvasDevice->add_DeviceLost(deviceLostHandler.Get(), &token));
+
+        Assert::AreEqual(S_OK, canvasDevice->RaiseDeviceLost());
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_RemoveEventThen_RaiseDeviceLost_DoesNotInvokeHandler)
+    {
+        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
+        deviceLostHandler.SetExpectedCalls(0);
+
+        EventRegistrationToken token{};
+        Assert::AreEqual(S_OK, canvasDevice->add_DeviceLost(deviceLostHandler.Get(), &token));
+        Assert::AreEqual(S_OK, canvasDevice->remove_DeviceLost(token));
+
+        Assert::AreEqual(S_OK, canvasDevice->RaiseDeviceLost());
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_HasCorrectSenderAndArgs)
+    {
+        DeviceLostFixture f;
+        auto canvasDevice = f.DeviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
+        deviceLostHandler.SetExpectedCalls(1, 
+            [&](ICanvasDevice* sender, IInspectable* args)
+            {
+                Assert::AreEqual(static_cast<ICanvasDevice*>(canvasDevice.Get()), sender);
+                Assert::IsNull(args);
+                return S_OK;
+            });
+
+        EventRegistrationToken token{};
+        Assert::AreEqual(S_OK, canvasDevice->add_DeviceLost(deviceLostHandler.Get(), &token));
+
+        Assert::AreEqual(S_OK, canvasDevice->RaiseDeviceLost());
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_ExceptionFromHandlerIsPropagated)
+    {
+        DeviceLostFixture f;
+        auto canvasDevice = f.DeviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+
+        MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
+        deviceLostHandler.SetExpectedCalls(1, 
+            [&](ICanvasDevice* sender, IInspectable* args)
+            {
+                return E_UNEXPECTED;
+            });
+
+        EventRegistrationToken token{};
+        Assert::AreEqual(S_OK, canvasDevice->add_DeviceLost(deviceLostHandler.Get(), &token));
+
+        Assert::AreEqual(E_UNEXPECTED, canvasDevice->RaiseDeviceLost());
+    }
+};

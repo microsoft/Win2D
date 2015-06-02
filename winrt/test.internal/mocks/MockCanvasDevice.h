@@ -91,6 +91,35 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHODIMP add_DeviceLost(
+            DeviceLostHandlerType* value,
+            EventRegistrationToken* token)
+        {
+            Assert::Fail(L"Unexpected call to add_DeviceLost");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP remove_DeviceLost(
+            EventRegistrationToken token)
+        {
+            Assert::Fail(L"Unexpected call to remove_DeviceLost");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP IsDeviceLost(
+            int hresult,
+            boolean* value)
+        {
+            Assert::Fail(L"Unexpected call to IsDeviceLost");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP RaiseDeviceLost()
+        {
+            Assert::Fail(L"Unexpected call to RaiseDeviceLost");
+            return E_NOTIMPL;
+        }
+
         //
         // ICanvasResourceCreator
         //

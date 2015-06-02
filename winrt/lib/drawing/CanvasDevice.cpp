@@ -426,6 +426,69 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDevice::add_DeviceLost(
+        DeviceLostHandlerType* value, 
+        EventRegistrationToken* token)
+    {        
+        return ExceptionBoundary(
+            [&]
+            {
+                GetResource();  // this ensures that Close() hasn't been called
+                CheckInPointer(value);
+                CheckInPointer(token);
+
+                ThrowIfFailed(m_deviceLostEventList.Add(value, token));
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::remove_DeviceLost(
+        EventRegistrationToken token)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                //
+                // This does not check if this object was closed, so to 
+                // allow shutdown paths to freely remove events.
+                //
+                ThrowIfFailed(m_deviceLostEventList.Remove(token));
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::IsDeviceLost(
+        int hresult,
+        boolean* value)
+    {        
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+                CheckInPointer(value);
+
+                if (DeviceLostException::IsDeviceLostHResult(hresult))
+                {
+                    auto d3dDevice = As<ID3D11Device>(dxgiDevice);
+                    *value = d3dDevice->GetDeviceRemovedReason() != S_OK;
+                }
+                else
+                {
+                    *value = false;
+                }
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::RaiseDeviceLost()
+    {        
+        return ExceptionBoundary(
+            [&]
+            {
+                GetResource();  // this ensures that Close() hasn't been called
+
+                ThrowIfFailed(m_deviceLostEventList.InvokeAll(this, nullptr));
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::Close()
     {
         HRESULT hr = ResourceWrapper::Close();

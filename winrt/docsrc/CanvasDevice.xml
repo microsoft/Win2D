@@ -89,7 +89,54 @@ under the License.
         <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/>, or
         <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/>.
       </remarks>
-    </member>
+    </member>    
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsDeviceLost(System.Int32)">
+      <summary>Returns whether this device has lost the ability to be operational.</summary>
+      <remarks>
+          <p>
+          This method expects an error code from an exception that your app has caught. 
+          IsDeviceLost will return true if the device is indeed lost, <i>and</i> the error
+          code actually corresponds to device removal.
+          </p>
+          <p>
+          This is intended to be used like:
+          <code>
+          try { DrawStuff(); }
+          catch (Exception e) where canvasDevice.IsDeviceLost(e.ErrorCode)
+          {
+              canvasDevice.RaiseDeviceLost();
+          }
+          </code>
+          </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost">
+      <summary>Raises an event on the device, indicating that it is no longer operational.</summary>
+      <remarks>
+          <p>
+          This method should be called when your app has caught a device lost exception.
+          See <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.IsDeviceLost(System.Int32)"/>.
+          </p>
+          <p>
+          Any event handlers subscribed to the <see cref="E:Microsoft.Graphics.Canvas.CanvasDevice.DeviceLost"/>
+          will be issued. This will occur, even if there was no actual Direct3D device loss. This
+          is just a convenience, to make application testing easier.
+          </p>
+      </remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.CanvasDevice.DeviceLost">
+      <summary>Subscribe to this event to be notified whenever the device ceases to be operational.</summary>
+      <remarks>
+          <p>
+          Any handlers subscribed to this event will be issued whenever <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
+          is called.
+          </p>
+          <p>
+          An implementation of this handler is expected to re-create the device, and any device-dependent resources.
+          </p>
+      </remarks>
+    </member>
+    
   </members>
 </doc>

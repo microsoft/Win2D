@@ -9,10 +9,11 @@
     <Import_RootNamespace>test.managed</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DeviceLost.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DpiTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EffectTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GraphicsInterop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)VectorInterop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PathReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VectorInterop.cs" />
   </ItemGroup>
 </Project>

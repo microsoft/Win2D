@@ -74,6 +74,35 @@ namespace Microsoft.Graphics.Canvas
         [propget]
         HRESULT MaximumBitmapSizeInPixels(
             [out, retval] INT32* value);
+
+        //
+        // This event is raised whenever the native device resource is lost-
+        // for example, due to a user switch, lock screen, or unexpected
+        // graphics driver behavior. Apps are expected to re-create their
+        // CanvasDevice and device-dependent resources in response to this event.
+        //
+        [eventadd] HRESULT DeviceLost(
+            [in]          Windows.Foundation.TypedEventHandler<CanvasDevice*, IInspectable*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT DeviceLost([in] EventRegistrationToken token);
+
+        //
+        // Identifies whether this error code matches a device lost.
+        // If this device was not actually lost, this method always
+        // returns false.
+        //
+        HRESULT IsDeviceLost([in] int hresult, [out, retval] boolean* value);
+
+        //
+        // Call this method when a lost device error occurs- in particular,
+        // if an exception was caught by the app, whose error code yielded
+        // IsDeviceLost = true.
+        // 
+        // This will cause invocation of the DeviceLost event. Occurs
+        // regardless of whether the native device as actually lost.
+        //
+        HRESULT RaiseDeviceLost();
     };
 
     [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]

@@ -63,7 +63,7 @@ public:
 
             // Stub device is used here, because, in execution of these tests, product code will 
             // actually call methods on the factory and expect them to succeed.
-            *device = Make<StubD3D11Device>();
+            *device = CreateStubD3D11Device();
             return true;
         }
     }
@@ -79,6 +79,11 @@ public:
     void SetHardwareEnabled(bool enable)
     {
         m_allowHardware = enable;
+    }
+
+    virtual ComPtr<StubD3D11Device> CreateStubD3D11Device()
+    {
+        return Make<StubD3D11Device>();
     }
 
     // These are left public because it's test code and it's convenient to do so.
