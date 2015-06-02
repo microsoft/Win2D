@@ -264,14 +264,11 @@ namespace ExampleGallery
 
         void DemandCreateBloomRenderTarget(ICanvasAnimatedControl sender)
         {
-            float w = (float)sender.Size.Width;
-            float h = (float)sender.Size.Height;
-
             // Early-out if we already have a rendertarget of the correct size.
             // Compare sizes as pixels rather than dips to avoid rounding artifacts.
             if (bloomRenderTarget != null &&
-                bloomRenderTarget.SizeInPixels.Width == sender.ConvertDipsToPixels(w) &&
-                bloomRenderTarget.SizeInPixels.Height == sender.ConvertDipsToPixels(h))
+                bloomRenderTarget.SizeInPixels.Width == sender.ConvertDipsToPixels((float)sender.Size.Width) &&
+                bloomRenderTarget.SizeInPixels.Height == sender.ConvertDipsToPixels((float)sender.Size.Height))
             {
                 return;
             }
@@ -283,7 +280,7 @@ namespace ExampleGallery
             }
 
             // Create the new rendertarget.
-            bloomRenderTarget = new CanvasRenderTarget(sender, w, h);
+            bloomRenderTarget = new CanvasRenderTarget(sender, sender.Size);
 
             // Configure the bloom effect to use this new rendertarget.
             extractBrightAreas.Source = bloomRenderTarget;

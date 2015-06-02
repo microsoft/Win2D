@@ -65,4 +65,16 @@ TEST_CLASS(CanvasRenderTargetTests)
         Assert::AreEqual(originalRenderTarget, newRenderTarget);
         Assert::AreEqual(originalD2DBitmap.Get(), newD2DBitmap.Get());
     }
+
+
+    TEST_METHOD(CanvasRenderTarget_Constructors)
+    {
+        auto creator = ref new StubResourceCreatorWithDpi(ref new CanvasDevice());
+
+        auto renderTarget1 = ref new CanvasRenderTarget(creator, 23, 42);
+        auto renderTarget2 = ref new CanvasRenderTarget(creator, Size{ 7, 21 });
+
+        Assert::AreEqual(renderTarget1->Size, Size{ 23, 42 });
+        Assert::AreEqual(renderTarget2->Size, Size{ 7, 21 });
+    }
 };

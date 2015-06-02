@@ -43,20 +43,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         CanvasImageSourceFactory();
 
-        IFACEMETHOD(Create)(
+        IFACEMETHOD(CreateWithSize)(
+            _In_         ICanvasResourceCreatorWithDpi* resourceCreator,
+            _In_         Size size,
+            _COM_Outptr_ ICanvasImageSource** imageSource) override;
+
+        IFACEMETHOD(CreateWithWidthAndHeight)(
             _In_         ICanvasResourceCreatorWithDpi* resourceCreator,
             _In_         float width,
             _In_         float height,
             _COM_Outptr_ ICanvasImageSource** imageSource) override;
 
-        IFACEMETHOD(CreateWithDpi)(
+        IFACEMETHOD(CreateWithWidthAndHeightAndDpi)(
             _In_         ICanvasResourceCreator* resourceCreator,
             _In_         float width,
             _In_         float height,
             _In_         float dpi,
             _COM_Outptr_ ICanvasImageSource** imageSource) override;
 
-        IFACEMETHOD(CreateWithDpiAndAlphaMode)(
+        IFACEMETHOD(CreateWithWidthAndHeightAndDpiAndAlphaMode)(
             _In_         ICanvasResourceCreator* resourceCreator,
             _In_         float width,
             _In_         float height,

@@ -64,7 +64,7 @@ namespace ExampleGallery
                 return;
             }
 
-            imageSource = new CanvasImageSource(canvasControl, (float)size.Width, (float)size.Height);
+            imageSource = new CanvasImageSource(canvasControl, size);
 
             using (var ds = imageSource.CreateDrawingSession(Colors.Transparent))
             {
@@ -86,12 +86,12 @@ namespace ExampleGallery
             }
             else if (swapChain == null)
             {
-                swapChain = new CanvasSwapChain(canvasControl, (float)size.Width, (float)size.Height);
+                swapChain = new CanvasSwapChain(canvasControl, size);
                 swapChainPanel.SwapChain = swapChain;
             }
             else
             {
-                swapChain.ResizeBuffers((float)size.Width, (float)size.Height);
+                swapChain.ResizeBuffers(size);
             }
 
             using (var ds = swapChain.CreateDrawingSession(Colors.Transparent))

@@ -541,7 +541,7 @@ void CanvasAnimatedControl::CreateOrUpdateRenderTarget(
     }
     else if (sizeChanged && !needsCreate)
     {
-        ThrowIfFailed(renderTarget->Target->ResizeBuffersWithSize(newSize.Width, newSize.Height));
+        ThrowIfFailed(renderTarget->Target->ResizeBuffersWithWidthAndHeight(newSize.Width, newSize.Height));
 
         renderTarget->Size = newSize;
     }
@@ -1090,7 +1090,7 @@ bool CanvasAnimatedControl::Tick(
                 //  - the current render target won't be updated by the UI thread
                 //    while the update/render thread is running
                 //
-                ThrowIfFailed(renderTarget->Target->ResizeBuffersWithSize(currentSize.Width, currentSize.Height));
+                ThrowIfFailed(renderTarget->Target->ResizeBuffersWithWidthAndHeight(currentSize.Width, currentSize.Height));
                 renderTarget->Size = currentSize;
             }
         }

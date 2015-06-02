@@ -510,3 +510,29 @@ inline void ExpectCOMException(HRESULT expectedHR, wchar_t const* expectedExcept
         Assert::IsTrue(msg.find(expectedExceptionText) != std::wstring::npos);
     }
 }
+
+
+ref class StubResourceCreatorWithDpi sealed : public ICanvasResourceCreatorWithDpi
+{
+    CanvasDevice^ m_device;
+    float m_dpi;
+
+public:
+    StubResourceCreatorWithDpi(CanvasDevice^ device, float dpi = DEFAULT_DPI)
+        : m_device(device)
+        , m_dpi(dpi)
+    { }
+
+    property CanvasDevice^ Device
+    {
+        virtual CanvasDevice^ get() { return m_device; }
+    }
+
+    property float Dpi
+    {
+        virtual float get() { return m_dpi; }
+    }
+
+    virtual float ConvertPixelsToDips(int pixels) { Assert::Fail(L"Not implemented"); return 0; }
+    virtual int   ConvertDipsToPixels(float dips) { Assert::Fail(L"Not implemented"); return 0; }
+};

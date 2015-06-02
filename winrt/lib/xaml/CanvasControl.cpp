@@ -105,7 +105,7 @@ public:
         ThrowIfFailed(device->QueryInterface(resourceCreator.GetAddressOf()));
 
         ComPtr<ICanvasImageSource> imageSource;
-        ThrowIfFailed(m_canvasImageSourceFactory->CreateWithDpiAndAlphaMode(
+        ThrowIfFailed(m_canvasImageSourceFactory->CreateWithWidthAndHeightAndDpiAndAlphaMode(
             resourceCreator.Get(),
             width, 
             height,

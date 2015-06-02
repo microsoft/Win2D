@@ -26,6 +26,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasRenderTargetFactory();
     
+        IFACEMETHOD(CreateWithSize)(
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            Size size,
+            ICanvasRenderTarget** renderTarget);
+
         IFACEMETHOD(CreateWithWidthAndHeight)(
             ICanvasResourceCreatorWithDpi* resourceCreator,
             float width,

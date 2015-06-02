@@ -48,12 +48,18 @@ namespace Microsoft.Graphics.Canvas
         // Creates a DXGI_FORMAT_B8G8R8A8_UNORM, 2-buffer premultiplied-alpha swap chain.
         HRESULT CreateWithSize(
             [in] ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in] Windows.Foundation.Size size,
+            [out, retval] CanvasSwapChain** swapChain);
+
+        // Creates a DXGI_FORMAT_B8G8R8A8_UNORM, 2-buffer premultiplied-alpha swap chain.
+        HRESULT CreateWithWidthAndHeight(
+            [in] ICanvasResourceCreatorWithDpi* resourceCreator,
             [in] float width,
             [in] float height,
             [out, retval] CanvasSwapChain** swapChain);
 
         // Creates a DXGI_FORMAT_B8G8R8A8_UNORM, 2-buffer premultiplied-alpha swap chain.
-        HRESULT CreateWithSizeAndDpi(
+        HRESULT CreateWithWidthAndHeightAndDpi(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] float width,
             [in] float height,
@@ -134,11 +140,15 @@ namespace Microsoft.Graphics.Canvas
 
         [overload("ResizeBuffers")]
         HRESULT ResizeBuffersWithSize(
+            [in] Windows.Foundation.Size newSize);
+
+        [overload("ResizeBuffers")]
+        HRESULT ResizeBuffersWithWidthAndHeight(
             [in] float newWidth,
             [in] float newHeight);
 
         [overload("ResizeBuffers")]
-        HRESULT ResizeBuffersWithSizeAndDpi(
+        HRESULT ResizeBuffersWithWidthAndHeightAndDpi(
             [in] float newWidth,
             [in] float newHeight,
             [in] float newDpi);

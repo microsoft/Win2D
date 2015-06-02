@@ -378,6 +378,11 @@ namespace Microsoft.Graphics.Canvas
         // and as a target.
         //
 
+        HRESULT CreateWithSize(
+            [in] ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in] Windows.Foundation.Size size,
+            [out, retval] CanvasRenderTarget** renderTarget);
+
         HRESULT CreateWithWidthAndHeight(
             [in] ICanvasResourceCreatorWithDpi* resourceCreator,
             [in] float width,

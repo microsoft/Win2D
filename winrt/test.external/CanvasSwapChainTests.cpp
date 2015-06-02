@@ -137,4 +137,15 @@ TEST_CLASS(CanvasSwapChainTests)
         // This should be a no-op and silently succeed.
         swapChain->WaitForVerticalBlank();
     }
+
+    TEST_METHOD(CanvasSwapChain_Constructors)
+    {
+        auto creator = ref new StubResourceCreatorWithDpi(ref new CanvasDevice());
+        
+        auto swapChain1 = ref new CanvasSwapChain(creator, 23, 42);
+        auto swapChain2 = ref new CanvasSwapChain(creator, Size{ 7, 21 });
+
+        Assert::AreEqual(swapChain1->Size, Size{ 23, 42 });
+        Assert::AreEqual(swapChain2->Size, Size{ 7, 21 });
+    }
 };

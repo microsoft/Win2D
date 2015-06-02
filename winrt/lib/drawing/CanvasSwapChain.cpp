@@ -41,6 +41,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasSwapChainFactory::CreateWithSize(
         ICanvasResourceCreatorWithDpi* resourceCreator,
+        Size size,
+        ICanvasSwapChain** swapChain)
+    {
+        return CreateWithWidthAndHeight(
+            resourceCreator,
+            size.Width,
+            size.Height,
+            swapChain);
+    }
+
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateWithWidthAndHeight(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
         float width,
         float height,
         ICanvasSwapChain** swapChain)
@@ -70,7 +82,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChainFactory::CreateWithSizeAndDpi(
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateWithWidthAndHeightAndDpi(
         ICanvasResourceCreator* resourceCreator,
         float width,
         float height,
@@ -436,6 +448,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithSize(
+        Size newSize)
+    {
+        return ResizeBuffersWithWidthAndHeight(
+            newSize.Width, 
+            newSize.Height);
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithWidthAndHeight(
         float newWidth,
         float newHeight)
     {
@@ -453,7 +473,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithSizeAndDpi(
+    IFACEMETHODIMP CanvasSwapChain::ResizeBuffersWithWidthAndHeightAndDpi(
         float newWidth,
         float newHeight,
         float newDpi)

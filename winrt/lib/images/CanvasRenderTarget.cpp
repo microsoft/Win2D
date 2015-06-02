@@ -71,6 +71,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
+    IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithSize(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        Size size,
+        ICanvasRenderTarget** renderTarget)
+    {
+        return CreateWithWidthAndHeight(
+            resourceCreator,
+            size.Width,
+            size.Height,
+            renderTarget);
+    }
+
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithWidthAndHeight(
         ICanvasResourceCreatorWithDpi* resourceCreator,
         float width,

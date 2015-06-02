@@ -43,20 +43,25 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
      exclusiveto(CanvasImageSource)]
     interface ICanvasImageSourceFactory : IInspectable
     {
-        HRESULT Create(
+        HRESULT CreateWithSize(
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in]          Windows.Foundation.Size size,
+            [out, retval] CanvasImageSource** imageSource);
+
+        HRESULT CreateWithWidthAndHeight(
             [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
             [in]          float width,
             [in]          float height, 
             [out, retval] CanvasImageSource** imageSource);
 
-        HRESULT CreateWithDpi(
+        HRESULT CreateWithWidthAndHeightAndDpi(
             [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in]          float width,
             [in]          float height,
             [in]          float dpi,
             [out, retval] CanvasImageSource** imageSource);
 
-        HRESULT CreateWithDpiAndAlphaMode(
+        HRESULT CreateWithWidthAndHeightAndDpiAndAlphaMode(
             [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in]          float width,
             [in]          float height,

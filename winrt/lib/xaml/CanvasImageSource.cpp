@@ -56,7 +56,21 @@ CanvasImageSourceFactory::CanvasImageSourceFactory()
 
 
 _Use_decl_annotations_
-IFACEMETHODIMP CanvasImageSourceFactory::Create(
+IFACEMETHODIMP CanvasImageSourceFactory::CreateWithSize(
+    ICanvasResourceCreatorWithDpi* resourceCreator,
+    Size size,
+    ICanvasImageSource** imageSource)
+{
+    return CreateWithWidthAndHeight(
+        resourceCreator, 
+        size.Width, 
+        size.Height, 
+        imageSource);
+}
+
+
+_Use_decl_annotations_
+IFACEMETHODIMP CanvasImageSourceFactory::CreateWithWidthAndHeight(
     ICanvasResourceCreatorWithDpi* resourceCreator,
     float width,
     float height,
@@ -70,7 +84,7 @@ IFACEMETHODIMP CanvasImageSourceFactory::Create(
             float dpi;
             ThrowIfFailed(resourceCreator->get_Dpi(&dpi));
 
-            ThrowIfFailed(CreateWithDpiAndAlphaMode(
+            ThrowIfFailed(CreateWithWidthAndHeightAndDpiAndAlphaMode(
                 As<ICanvasResourceCreator>(resourceCreator).Get(),
                 width,
                 height,
@@ -82,14 +96,14 @@ IFACEMETHODIMP CanvasImageSourceFactory::Create(
 
 
 _Use_decl_annotations_
-IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpi(
+IFACEMETHODIMP CanvasImageSourceFactory::CreateWithWidthAndHeightAndDpi(
     ICanvasResourceCreator* resourceCreator,
     float width,
     float height,
     float dpi,
     ICanvasImageSource** imageSource)
 {
-    return CreateWithDpiAndAlphaMode(
+    return CreateWithWidthAndHeightAndDpiAndAlphaMode(
         resourceCreator,
         width,
         height,
@@ -100,7 +114,7 @@ IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpi(
 
 
 _Use_decl_annotations_
-IFACEMETHODIMP CanvasImageSourceFactory::CreateWithDpiAndAlphaMode(
+IFACEMETHODIMP CanvasImageSourceFactory::CreateWithWidthAndHeightAndDpiAndAlphaMode(
     ICanvasResourceCreator* resourceCreator,
     float width,
     float height,

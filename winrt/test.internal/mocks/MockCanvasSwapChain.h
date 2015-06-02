@@ -140,13 +140,19 @@ namespace canvas
         }
 
         IFACEMETHOD(ResizeBuffersWithSize)(
+            Size newSize) override
+        {
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHOD(ResizeBuffersWithWidthAndHeight)(
             float newWidth,
             float newHeight) override
         {
             return E_NOTIMPL;
         }
 
-        IFACEMETHOD(ResizeBuffersWithSizeAndDpi)(
+        IFACEMETHOD(ResizeBuffersWithWidthAndHeightAndDpi)(
             float newWidth,
             float newHeight,
             float newDpi) override

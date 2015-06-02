@@ -43,6 +43,10 @@ under the License.
       </example>
     </member>
     
+    <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Size)">
+      <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>
+      <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasRenderTarget class.</summary>
       <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>

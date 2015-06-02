@@ -44,5 +44,27 @@ TEST_CLASS(CanvasImageSourceTests)
                 delete canvasImageSource;
             });
     }
+
+
+    TEST_METHOD(CanvasImageSource_Constructors)
+    {
+        Size size1{ 0, 0 };
+        Size size2{ 0, 0 };
+
+        RunOnUIThread(
+            [&]
+            {
+                auto creator = ref new StubResourceCreatorWithDpi(ref new CanvasDevice());
+
+                auto imageSource1 = ref new CanvasImageSource(creator, 23, 42);
+                auto imageSource2 = ref new CanvasImageSource(creator, Size{ 7, 21 });
+
+                size1 = imageSource1->Size;
+                size2 = imageSource2->Size;
+            });
+
+        Assert::AreEqual(size1, Size{ 23, 42 });
+        Assert::AreEqual(size2, Size{ 7, 21 });
+    }
 };
 

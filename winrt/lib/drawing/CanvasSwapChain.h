@@ -41,11 +41,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(CreateWithSize)(
             ICanvasResourceCreatorWithDpi* resourceCreator,
+            Size size,
+            ICanvasSwapChain** swapChain) override;
+
+        IFACEMETHOD(CreateWithWidthAndHeight)(
+            ICanvasResourceCreatorWithDpi* resourceCreator,
             float width,
             float height,
             ICanvasSwapChain** swapChain) override;
 
-        IFACEMETHOD(CreateWithSizeAndDpi)(
+        IFACEMETHOD(CreateWithWidthAndHeightAndDpi)(
             ICanvasResourceCreator* resourceCreator,
             float width,
             float height,
@@ -165,10 +170,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(PresentWithSyncInterval)(int32_t syncInterval) override;
 
         IFACEMETHOD(ResizeBuffersWithSize)(
+            Size newSize) override;
+
+        IFACEMETHOD(ResizeBuffersWithWidthAndHeight)(
             float newWidth,
             float newHeight) override;
 
-        IFACEMETHOD(ResizeBuffersWithSizeAndDpi)(
+        IFACEMETHOD(ResizeBuffersWithWidthAndHeightAndDpi)(
             float newWidth,
             float newHeight,
             float newDpi) override;
