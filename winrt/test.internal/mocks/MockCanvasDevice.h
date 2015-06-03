@@ -75,6 +75,11 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetPrimaryDisplayOutputMethod, ComPtr<IDXGIOutput>());
 
+        CALL_COUNTER_WITH_MOCK(RaiseDeviceLostMethod, HRESULT());
+
+        CALL_COUNTER_WITH_MOCK(add_DeviceLostMethod, HRESULT(DeviceLostHandlerType*, EventRegistrationToken*));
+        CALL_COUNTER_WITH_MOCK(remove_DeviceLostMethod, HRESULT(EventRegistrationToken));
+
         //
         // ICanvasDevice
         //
@@ -95,15 +100,13 @@ namespace canvas
             DeviceLostHandlerType* value,
             EventRegistrationToken* token)
         {
-            Assert::Fail(L"Unexpected call to add_DeviceLost");
-            return E_NOTIMPL;
+            return add_DeviceLostMethod.WasCalled(value, token);
         }
 
         IFACEMETHODIMP remove_DeviceLost(
             EventRegistrationToken token)
         {
-            Assert::Fail(L"Unexpected call to remove_DeviceLost");
-            return E_NOTIMPL;
+            return remove_DeviceLostMethod.WasCalled(token);
         }
 
         IFACEMETHODIMP IsDeviceLost(
@@ -116,8 +119,7 @@ namespace canvas
 
         IFACEMETHODIMP RaiseDeviceLost()
         {
-            Assert::Fail(L"Unexpected call to RaiseDeviceLost");
-            return E_NOTIMPL;
+            return RaiseDeviceLostMethod.WasCalled();
         }
 
         //

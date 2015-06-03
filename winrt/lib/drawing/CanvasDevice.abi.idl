@@ -102,6 +102,9 @@ namespace Microsoft.Graphics.Canvas
         // This will cause invocation of the DeviceLost event. Occurs
         // regardless of whether the native device as actually lost.
         //
+        // Win2D controls, which contain devices, will call this method if
+        // the device is lost.
+        //
         HRESULT RaiseDeviceLost();
     };
 

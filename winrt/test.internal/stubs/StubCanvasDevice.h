@@ -25,10 +25,12 @@ namespace canvas
     {
         ComPtr<ID2D1Device1> m_d2DDevice;
         ComPtr<MockD3D11Device> m_d3dDevice;
+        ComPtr<MockEventSource<DeviceLostHandlerType>> m_deviceLostEventSource;
 
     public:
         StubCanvasDevice(ComPtr<ID2D1Device1> device = Make<StubD2DDevice>())
             : m_d2DDevice(device)
+            , m_deviceLostEventSource(Make<MockEventSource<DeviceLostHandlerType>>(L"DeviceLost"))
         {
             GetInterfaceMethod.AllowAnyCall();
             CreateDeviceContextMethod.AllowAnyCall(
@@ -71,6 +73,24 @@ namespace canvas
                     auto mockDxgiOutput = Make<MockDxgiOutput>();
                     mockDxgiOutput->WaitForVBlankMethod.AllowAnyCall();
                     return mockDxgiOutput;
+                });
+
+            add_DeviceLostMethod.AllowAnyCall(
+                [=](DeviceLostHandlerType* value, EventRegistrationToken* token)
+                {
+                    return m_deviceLostEventSource->add_Event(value, token);
+                });
+
+            remove_DeviceLostMethod.AllowAnyCall(
+                [=](EventRegistrationToken token)
+                {
+                    return m_deviceLostEventSource->remove_Event(token);
+                });
+
+            RaiseDeviceLostMethod.AllowAnyCall(
+                [=]()
+                {
+                    return m_deviceLostEventSource->InvokeAll(this, nullptr);
                 });
         }
 

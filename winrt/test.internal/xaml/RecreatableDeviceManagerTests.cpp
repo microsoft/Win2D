@@ -42,8 +42,15 @@ TEST_CLASS(RecreatableDeviceManagerTests)
 public:
     typedef TestRecreatableDeviceManagerTraits::createResourcesEventHandler_t CreateResourcesHandler;
 
-    struct Fixture
+    class Fixture
     {
+        EventRegistrationToken m_deviceLostRegistration;
+        ComPtr<ICanvasDevice> m_expectedLostDevice;
+
+        // Used for tracking how many times the control is notified of a device lost event.
+        CALL_COUNTER_WITH_MOCK(m_onDeviceLostCallback, void());
+
+    public:
         IInspectable* AnySender;
         ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
         std::unique_ptr<ITestRecreatableDeviceManager> DeviceManager;
@@ -68,6 +75,8 @@ public:
             // expect anything being tested here to dereference this pointer.
             // However, we do need to validate that the value is passed through
             // unchanged.
+
+            m_onDeviceLostCallback.AllowAnyCall();
         }
 
         ComPtr<StubCanvasDevice> GetIntoStateWhereDeviceHasBeenCreated()
@@ -161,6 +170,22 @@ public:
             CallRunWithDeviceExpectFlagsSet(secondDevice.Get(), RunWithDeviceFlags::NewlyCreatedDevice);
         }
 
+        void RegisterEventAndExpectDeviceLostCallback(ICanvasDevice* device, bool setChangedExpectation = true)
+        {
+            auto callback = Callback<DeviceLostHandlerType>(this, &Fixture::OnDeviceLost);
+            ThrowIfFailed(device->add_DeviceLost(callback.Get(), &m_deviceLostRegistration));
+
+            m_onDeviceLostCallback.SetExpectedCalls(1);
+
+            //
+            // If setChangedExpectation==false, the test takes ownership of setting it itself.
+            //
+            if (setChangedExpectation)
+                ExpectChangedCallback(ChangeReason::DeviceLost);
+
+            m_expectedLostDevice = device;
+        }
+
         void ExpectChangedCallback(ChangeReason expectedReason)
         {
             ChangedCallback.SetExpectedCalls(1,
@@ -168,6 +193,16 @@ public:
                 {
                     Assert::AreEqual(expectedReason, actualReason);
                 });
+        }
+
+    private:
+
+        HRESULT OnDeviceLost(ICanvasDevice* sender, IInspectable* args)
+        {
+            Assert::AreEqual(m_expectedLostDevice.Get(), sender);
+            Assert::IsNull(args);
+            m_onDeviceLostCallback.WasCalled();
+            return S_OK;
         }
     };
 
@@ -258,7 +293,7 @@ public:
         auto deviceThatGetsLost = Make<StubCanvasDevice>();
         f.DeviceFactory->ExpectToActivateOne(deviceThatGetsLost);
 
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.CallRunWithDevice(
             [=](ICanvasDevice*, RunWithDeviceFlags)
@@ -426,7 +461,7 @@ public:
         //
 
         // To check this we first mark the device as lost:
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(device.Get());
 
         f.CallRunWithDevice(
             [=](ICanvasDevice*, RunWithDeviceFlags)
@@ -449,7 +484,7 @@ public:
         auto deviceThatGetsLost = Make<StubCanvasDevice>();
         f.DeviceFactory->ExpectToActivateOne(deviceThatGetsLost);
 
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.AddCreateResources1(
             [=](IInspectable*, ICanvasCreateResourcesEventArgs*)
@@ -475,7 +510,7 @@ public:
 
         f.CallRunWithDevice();
 
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.AddCreateResources1(
             [=](IInspectable*, ICanvasCreateResourcesEventArgs*)
@@ -550,7 +585,7 @@ public:
         Assert::AreEqual(1, createCount);
 
         // Cause the device to become lost.
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.CallRunWithDevice(
             [=](ICanvasDevice*, RunWithDeviceFlags)
@@ -783,7 +818,8 @@ public:
         // This is where the device manager realizes that the device was lost.
         // The change callback is triggered - the device will be recreated on
         // the next RunWithDevice.
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
+
         f.CallRunWithDeviceDontExpectFunctionToBeCalled();
         Assert::IsFalse(f.DeviceManager->IsReadyToDraw());
 
@@ -800,7 +836,7 @@ public:
         auto deviceThatGetsLost = f.CreateDeviceAndTriggerCreateResourcesAsync();
 
         deviceThatGetsLost->MarkAsLost();
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.CallRunWithDevice(
             [](ICanvasDevice*, RunWithDeviceFlags)
@@ -831,7 +867,7 @@ public:
         auto deviceThatGetsLost = f.CreateDeviceAndTriggerCreateResourcesAsync();
 
         deviceThatGetsLost->MarkAsLost();
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.CallRunWithDevice(
             [&](ICanvasDevice*, RunWithDeviceFlags)
@@ -864,7 +900,7 @@ public:
 
         auto deviceThatGetsLost = f.CreateDeviceAndTriggerCreateResourcesAsync();
         deviceThatGetsLost->MarkAsLost();
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.CallRunWithDevice(
             [](ICanvasDevice*, RunWithDeviceFlags)
@@ -926,7 +962,20 @@ public:
 
         auto deviceThatGetsLost = f.CreateDeviceAndTriggerCreateResourcesAsync();
         deviceThatGetsLost->MarkAsLost();
-        f.ChangedCallback.SetExpectedCalls(2);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get(), false);
+
+        int changedCount = 0;
+        f.ChangedCallback.ExpectAtLeastOneCall(
+            [&] (ChangeReason actualReason)
+            {
+                if (changedCount == 0)
+                    // Reported when the asynchronous action is complete
+                    Assert::AreEqual(ChangeReason::Other, actualReason);
+                else if (changedCount == 1)
+                    // Reported when the device is lost, and being recreated
+                    Assert::AreEqual(ChangeReason::DeviceLost, actualReason);
+                changedCount++;
+            });
 
         f.CallRunWithDevice(
             [&](ICanvasDevice*, RunWithDeviceFlags)
@@ -935,6 +984,8 @@ public:
                 ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
             });
 
+        f.ChangedCallback.SetExpectedCalls(0);
+
         f.DeviceFactory->ExpectToActivateOne();
         f.OnCreateResources.SetExpectedCalls(1);
         f.CallRunWithDeviceExpectExactFlags(RunWithDeviceFlags::NewlyCreatedDevice | RunWithDeviceFlags::ResourcesNotCreated);
@@ -942,6 +993,8 @@ public:
         f.ChangedCallback.SetExpectedCalls(1);
         f.Action->FireCompletion();
         f.CallRunWithDeviceExpectExactFlags(RunWithDeviceFlags::None);
+
+        Assert::IsTrue(changedCount >= 1);
     }
 
     TEST_METHOD_EX(RecreatableDeviceManager_WhenDeviceLostWhileCreateResourcesRunning_AddingCreateResourcesDoesNotInvokeItUntilPreviousOneCompletes)
@@ -950,7 +1003,7 @@ public:
 
         auto deviceThatGetsLost = f.CreateDeviceAndTriggerCreateResourcesAsync();
         deviceThatGetsLost->MarkAsLost();
-        f.ExpectChangedCallback(ChangeReason::DeviceLost);
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
 
         f.CallRunWithDevice(
             [](ICanvasDevice*, RunWithDeviceFlags)
@@ -1053,5 +1106,76 @@ public:
         f.OnCreateResources.SetExpectedCalls(1);
         f.CallRunWithDevice();
         Assert::AreEqual(2, createCount);
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_DeviceLost_CallsControlDeviceLostEventHandler)
+    {
+        Fixture f;
+
+        auto deviceThatGetsLost = Make<StubCanvasDevice>();
+        f.DeviceFactory->ExpectToActivateOne(deviceThatGetsLost);
+
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
+
+        f.CallRunWithDevice(
+            [=](ICanvasDevice*, RunWithDeviceFlags)
+            {
+                deviceThatGetsLost->MarkAsLost();
+                ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
+            });
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_DeviceLostDuringCreation_CallsControlDeviceLostEventHandler)
+    {
+        // 
+        // If a device loss occurs during a CreateResources tracked async 
+        // action, an exception is caught in RecreatableDeviceManager::EnsureDeviceCreated.
+        //
+        // EnsureDeviceCreated will null out the device, and re-throw. 
+        // When RunWithDevice catches this re-thrown exception, it should 
+        // early out- the legwork of handling the exception (nulling out
+        // the device) was already done.
+        //
+        // In other words, RecreatableDeviceManager::HandleDeviceLostException 
+        // is called twice, but RaiseDeviceLost should only be raised once.
+        //
+
+        FixtureWithCreateResourcesAsync f;
+
+        // Sets up the tracked async action
+        auto deviceThatGetsLost = f.CreateDeviceAndTriggerCreateResourcesAsync();
+        f.OnCreateResources.SetExpectedCalls(1);
+
+        // The device loss/recovery path causes Changed() to be called twice
+        deviceThatGetsLost->MarkAsLost();
+        f.ExpectChangedCallback(ChangeReason::Other);
+        f.Action->SetResult(DXGI_ERROR_DEVICE_REMOVED);
+
+        f.RegisterEventAndExpectDeviceLostCallback(deviceThatGetsLost.Get());
+
+        f.CallRunWithDeviceDontExpectFunctionToBeCalled();
+
+        f.DeviceFactory->ExpectToActivateOne();
+
+        f.CallRunWithDeviceExpectFlagsSet(RunWithDeviceFlags::NewlyCreatedDevice);
+    }
+
+    TEST_METHOD_EX(RecreatableDeviceManager_AribtraryErrorDuringRunWithDevice_DoesNotCallControlDeviceLostEventHandler)
+    {
+        Fixture f;
+
+        f.DeviceFactory->ExpectToActivateOne();
+        ExpectHResultException(E_UNEXPECTED,
+            [&]
+            {
+                f.CallRunWithDevice(
+                    [=](ICanvasDevice* device, RunWithDeviceFlags)
+                    {
+                        static_cast<StubCanvasDevice*>(device)->RaiseDeviceLostMethod.SetExpectedCalls(0);
+                        ThrowHR(E_UNEXPECTED);
+                    });
+            });
+
+        f.CallRunWithDeviceExpectExactFlags(RunWithDeviceFlags::None);
     }
 };

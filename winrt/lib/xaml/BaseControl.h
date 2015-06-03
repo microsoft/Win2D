@@ -123,6 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RegisteredEvent m_applicationResumingEventRegistration;
         RegisteredEvent m_dpiChangedEventRegistration;
         RegisteredEvent m_windowVisibilityChangedEventRegistration;
+        RegisteredEvent m_deviceLostEventRegistration;
 
         std::mutex m_mutex;
         Size m_currentSize;     // protected by m_mutex
@@ -420,6 +421,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
+        HRESULT OnDeviceLost(ICanvasDevice*, IInspectable*)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    //
+                    // Avoids keeping a reference to the device alive longer
+                    // than necessary. This event will be registered on 
+                    // a different device, once rendering starts up again.
+                    //
+                    auto lock = GetLock();
+
+                    m_deviceLostEventRegistration.Release();
+
+                    Changed(lock, ChangeReason::DeviceLost);
+                });
+        }
+
         //
         // Creates a drawing session, optionally calls the draw handlers and
         // finally closes the drawing session.
@@ -498,6 +517,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         template<typename FN>
         void RunWithRenderTarget(Size const& renderTargetSize, ICanvasDevice* device, RunWithDeviceFlags flags, FN&& fn)
         {
+            if (IsSet(flags, RunWithDeviceFlags::NewlyCreatedDevice))
+            {
+                auto callback = Callback<DeviceLostHandlerType>(this, &BaseControl::OnDeviceLost);
+                CheckMakeResult(callback);
+                m_deviceLostEventRegistration = RegisteredEvent(
+                    device,
+                    &ICanvasDevice::add_DeviceLost,
+                    &ICanvasDevice::remove_DeviceLost,
+                    callback.Get());
+            }
+
             auto clearColor = GetClearColor();
             bool areResourcesCreated = !IsSet(flags, RunWithDeviceFlags::ResourcesNotCreated);
 
@@ -591,6 +621,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             m_applicationResumingEventRegistration.Release();
             m_dpiChangedEventRegistration.Release();
             m_windowVisibilityChangedEventRegistration.Release();
+            m_deviceLostEventRegistration.Release();
         }
 
         template<typename T, typename DELEGATE, typename HANDLER>

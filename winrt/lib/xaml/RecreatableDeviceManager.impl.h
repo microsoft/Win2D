@@ -113,6 +113,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IActivationFactory> m_canvasDeviceFactory;
         EventSource<CreateResourcesHandler, InvokeModeOptions<StopOnFirstError>> m_createResourcesEventSource;
 
+        //
+        // This object has an m_device, separate from an m_committedDevice. 
+        //
+        // The device passed to CreateResources in the first place is m_device.
+        //
+        // m_device becomes an m_committedDevice after CreateResources 
+        // (and its tracked action) have finished running.
+        //
         ComPtr<ICanvasDevice> m_device;
 
         std::recursive_mutex m_currentOperationMutex;
@@ -364,12 +372,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             auto d3dDevice = GetDXGIInterface<ID3D11Device>(m_device.Get());
             if (d3dDevice->GetDeviceRemovedReason() != S_OK)
             {
-                // We need to create a new device
-                m_device.Reset();
-                
-                // Notify the control that it needs to try rendering again
+                ThrowIfFailed(m_device->RaiseDeviceLost());
+
+                // If the exception occurred during EnsureDeviceCreated, the
+                // control won't be subscribed to the DeviceLost event. So
+                // we call Changed explictly. Otherwise, this extra call to 
+                // Changed is redundant, and ignored.
                 if (m_changedCallback)
                     m_changedCallback(ChangeReason::DeviceLost);
+
+                // We need to create a new device
+                m_device.Reset();
             }
         }
 
