@@ -307,7 +307,7 @@ public:
         ComPtr<ICanvasBrushInternal> const& brushInternal,
         ComPtr<ID2D1Image>* outTarget = nullptr) // Optionally retrieve the target bitmap
     {
-        auto d2dBrush = brushInternal->GetD2DBrush(nullptr, false);
+        auto d2dBrush = brushInternal->GetD2DBrush(nullptr, GetBrushFlags::NoValidation);
         ComPtr<ID2D1BitmapBrush1> bitmapBrush;
         ThrowIfFailed(d2dBrush.As(&bitmapBrush));
         if (outTarget)
@@ -319,10 +319,10 @@ public:
     }
 
     void VerifyBackedByImageBrush(
-        ComPtr<ICanvasImageBrushInternal> const& brushInternal,
+        ComPtr<ICanvasBrushInternal> const& brushInternal,
         ComPtr<ID2D1Image>* outTarget = nullptr) // Optionally retrieve the target image
     {
-        auto d2dBrush = brushInternal->GetD2DBrushNoValidation();
+        auto d2dBrush = brushInternal->GetD2DBrush(nullptr, GetBrushFlags::NoValidation);
         ComPtr<ID2D1ImageBrush> imageBrush;
         ThrowIfFailed(d2dBrush.As(&imageBrush));
         if (outTarget)
@@ -332,7 +332,36 @@ public:
             *outTarget = target;
         }
     }
-    TEST_METHOD_EX(CanvasImageBrush_Switching)
+
+    TEST_METHOD_EX(CanvasImageBrush_Switching_TriggeredByImageVersusBitmap)
+    {
+        SwitchableTestBrushFixture f;
+
+        auto bitmap = CreateStubCanvasBitmap();
+        auto image = Make<TestEffect>(CLSID_D2D1GaussianBlur, 0, 0, true);
+
+        // With null source rectangle, switching bitmap <-> image changes the brush type.
+        f.m_canvasImageBrush->put_Image(bitmap.Get());
+        VerifyBackedByBitmapBrush(f.m_canvasBrushInternal);
+        
+        f.m_canvasImageBrush->put_Image(image.Get());
+        VerifyBackedByImageBrush(f.m_canvasBrushInternal);
+
+        f.m_canvasImageBrush->put_Image(bitmap.Get());
+        VerifyBackedByBitmapBrush(f.m_canvasBrushInternal);
+
+        // With a non-null source rectangle, put_Image does not change the brush type.
+        auto anyRectangle = Make<Nullable<Rect>>(Rect{ 0, 0, 10, 10 });
+        ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(anyRectangle.Get()));
+
+        f.m_canvasImageBrush->put_Image(image.Get());
+        VerifyBackedByImageBrush(f.m_canvasBrushInternal);
+
+        f.m_canvasImageBrush->put_Image(bitmap.Get());
+        VerifyBackedByImageBrush(f.m_canvasBrushInternal);
+    }
+
+    TEST_METHOD_EX(CanvasImageBrush_Switching_TriggeredBySourceRect)
     {
         auto anyRectangle = Make<Nullable<Rect>>(Rect{0,0,10,10});
 
@@ -345,27 +374,24 @@ public:
             SwitchableTestBrushFixture f(i == 0);
             ComPtr<ID2D1Image> target0, target1, target2;
 
-            ComPtr<ICanvasImageBrushInternal> brushInternal;
-            ThrowIfFailed(f.m_canvasImageBrush.As(&brushInternal));
-
             // Initially assigned to bitmap brush.
-            VerifyBackedByBitmapBrush(brushInternal, &target0);
+            VerifyBackedByBitmapBrush(f.m_canvasBrushInternal, &target0);
 
             // Assigning a null source rect doesn't change this.
             f.m_canvasImageBrush->put_SourceRectangle(nullptr);
-            VerifyBackedByBitmapBrush(brushInternal);
+            VerifyBackedByBitmapBrush(f.m_canvasBrushInternal);
 
             // Assigning a non-null source rect switches it to image brush.
             ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(anyRectangle.Get()));
-            VerifyBackedByImageBrush(brushInternal, &target1);
+            VerifyBackedByImageBrush(f.m_canvasBrushInternal, &target1);
 
             // Assigning a different source rect doesn't change this.
             ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(anyRectangle.Get()));
-            VerifyBackedByImageBrush(brushInternal);
+            VerifyBackedByImageBrush(f.m_canvasBrushInternal);
 
             // Removing the source rect switches back to bitmap brush.
             f.m_canvasImageBrush->put_SourceRectangle(nullptr);
-            VerifyBackedByBitmapBrush(brushInternal, &target2);
+            VerifyBackedByBitmapBrush(f.m_canvasBrushInternal, &target2);
 
             // Verify the target stayed the same.
             Assert::AreEqual(target0.Get(), target1.Get());

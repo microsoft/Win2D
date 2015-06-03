@@ -21,7 +21,7 @@ namespace canvas
         ComPtr<MockD2DImageBrush> m_imageBrush;
         ComPtr<ID2D1Image> m_targetImage;
         ComPtr<CanvasImageBrush> m_canvasImageBrush;
-        ComPtr<ICanvasImageBrushInternal> m_canvasBrushInternal;
+        ComPtr<ICanvasBrushInternal> m_canvasBrushInternal;
         ComPtr<MockCanvasDevice> m_canvasDevice;
 
         D2D1_MATRIX_3X2_F m_transform;

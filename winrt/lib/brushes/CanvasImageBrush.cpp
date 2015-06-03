@@ -124,10 +124,11 @@ void CanvasImageBrush::SetImage(ICanvasImage* image)
         return;
     }
 
-    // Can replace the current bitmap brush's bitmap
-    ComPtr<ICanvasBitmap> bitmap;
-    if (SUCCEEDED(image->QueryInterface(bitmap.GetAddressOf())) && m_useBitmapBrush)
+    auto bitmap = MaybeAs<ICanvasBitmap>(image);
+
+    if (bitmap && m_useBitmapBrush)
     {
+        // Can replace the current bitmap brush's bitmap
         ComPtr<ICanvasBitmapInternal> bitmapInternal;
         ThrowIfFailed(bitmap.As(&bitmapInternal));
 
@@ -135,24 +136,33 @@ void CanvasImageBrush::SetImage(ICanvasImage* image)
 
         m_d2dBitmapBrush->SetBitmap(d2dBitmap.Get());
     }
-    // If they specified an image, but this is currently backed by a bitmap brush,
-    // then we need to switch to using an image brush.
-    // And in all other cases, we stick with image brush.
     else
     {
-        if (m_useBitmapBrush) 
+        // If they specified an image, but this is currently backed by a bitmap brush,
+        // then we need to switch to using an image brush.
+        if (m_useBitmapBrush)
             SwitchFromBitmapBrushToImageBrush();
 
         auto deviceInternal = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed());
         m_d2dImageBrush->SetImage(deviceInternal->GetD2DImage(image).Get());
 
-        // Effects need to be reconfigured depending on the DPI of the device context they
-        // are drawn onto. We don't know target DPI at this point, so if the image is an
-        // effect, we store that away for use by a later fixup inside GetD2DBrush.
-        ComPtr<IGraphicsEffect> effect;
-        if (SUCCEEDED(image->QueryInterface(effect.GetAddressOf())))
+        if (bitmap)
         {
-            m_effectNeedingDpiFixup = As<ICanvasImageInternal>(effect);
+            // If they specified a bitmap, but this is currently backed by an image brush,
+            // then we may be able to switch to using a bitmap brush.
+            if (!m_isSourceRectSet)
+                TrySwitchFromImageBrushToBitmapBrush();
+        }
+        else
+        {
+            // Effects need to be reconfigured depending on the DPI of the device context they
+            // are drawn onto. We don't know target DPI at this point, so if the image is an
+            // effect, we store that away for use by a later fixup inside GetD2DBrush.
+            ComPtr<IGraphicsEffect> effect;
+            if (SUCCEEDED(image->QueryInterface(effect.GetAddressOf())))
+            {
+                m_effectNeedingDpiFixup = As<ICanvasImageInternal>(effect);
+            }
         }
     }
 }
@@ -347,11 +357,11 @@ IFACEMETHODIMP CanvasImageBrush::put_SourceRectangle(ABI::Windows::Foundation::I
                 {
                     D2D1_RECT_F defaultRect{};
                     m_d2dImageBrush->SetSourceRectangle(&defaultRect);
+                    m_isSourceRectSet = false;
 
                     // Source rect is null. We might be able to switch to
                     // bitmap brush.
                     TrySwitchFromImageBrushToBitmapBrush();
-                    m_isSourceRectSet = false;
                 }
             }
         });
@@ -397,7 +407,7 @@ IFACEMETHODIMP CanvasImageBrush::Close()
     return S_OK;
 }
 
-ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext, bool alwaysInsertDpiCompensation)
+ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags)
 {
     ThrowIfClosed();
 
@@ -407,31 +417,25 @@ ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceConte
     }
     else 
     {
-        if (!m_isSourceRectSet) 
+        // Validate the brush configuration?
+        if ((flags & GetBrushFlags::NoValidation) == GetBrushFlags::None)
         {
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::ImageBrushRequiresSourceRectangle).Get());
+            if (!m_isSourceRectSet)
+            {
+                ThrowHR(E_INVALIDARG, HStringReference(Strings::ImageBrushRequiresSourceRectangle).Get());
+            }
         }
 
         // If our input image is an effect graph, make sure it is fully configured to match the target DPI.
         if (m_effectNeedingDpiFixup && deviceContext)
         {
-            float targetDpi = alwaysInsertDpiCompensation ? MAGIC_FORCE_DPI_COMPENSATION_VALUE : GetDpi(deviceContext);
+            float targetDpi = ((flags & GetBrushFlags::AlwaysInsertDpiCompensation) != GetBrushFlags::None) ? MAGIC_FORCE_DPI_COMPENSATION_VALUE : GetDpi(deviceContext);
 
             m_effectNeedingDpiFixup->GetRealizedEffectNode(deviceContext, targetDpi);
         }
 
         return m_d2dImageBrush;
     }
-}
-
-ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrushNoValidation()
-{
-    ThrowIfClosed();
-
-    if (m_useBitmapBrush) 
-        return m_d2dBitmapBrush;
-    else
-        return m_d2dImageBrush;
 }
 
 IFACEMETHODIMP CanvasImageBrush::GetResource(REFIID iid, void** resource)
@@ -476,6 +480,7 @@ void CanvasImageBrush::SwitchFromBitmapBrushToImageBrush()
 void CanvasImageBrush::TrySwitchFromImageBrushToBitmapBrush()
 {
     assert(!m_useBitmapBrush);
+    assert(!m_isSourceRectSet);
 
     ComPtr<ID2D1Image> targetImage;
     m_d2dImageBrush->GetImage(&targetImage);

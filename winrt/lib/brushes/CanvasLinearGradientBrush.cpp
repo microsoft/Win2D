@@ -324,7 +324,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::Close()
     return ResourceWrapper::Close();
 }
 
-ComPtr<ID2D1Brush> CanvasLinearGradientBrush::GetD2DBrush(ID2D1DeviceContext*, bool)
+ComPtr<ID2D1Brush> CanvasLinearGradientBrush::GetD2DBrush(ID2D1DeviceContext*, GetBrushFlags)
 {
     return GetResource();
 }

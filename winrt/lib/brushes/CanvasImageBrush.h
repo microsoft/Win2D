@@ -16,13 +16,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
-    [uuid(DAA42776-D012-4A3D-A7A3-2A061B00CE4D)]
-    class ICanvasImageBrushInternal : public ICanvasBrushInternal
-    {
-    public:
-        virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() = 0;
-    };
-
     class CanvasImageBrushFactory
         : public ActivationFactory<
             ICanvasImageBrushFactory,
@@ -51,7 +44,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasImageBrush,
         ABI::Windows::Foundation::IClosable,
-        ChainInterfaces<CloakedIid<ICanvasImageBrushInternal>, CloakedIid<ICanvasBrushInternal>>,
         CloakedIid<ICanvasResourceWrapperNative>,
         MixIn<CanvasImageBrush, CanvasBrush>>,
         public CanvasBrush,
@@ -106,10 +98,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(Close)() override;
 
         // ICanvasBrushInternal
-        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, bool alwaysInsertDpiCompensation) override;
-
-        // ICanvasImageBrushInternal
-        virtual ComPtr<ID2D1Brush> GetD2DBrushNoValidation() override;
+        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags) override;
 
         // ICanvasResourceWrapperNative
         IFACEMETHOD(GetResource)(REFIID iid, void** resource) override;

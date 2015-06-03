@@ -838,12 +838,10 @@ IFACEMETHODIMP CanvasTextLayout::SetBrush(
                 // The DPI compensation effect will be inserted into the effect graph and the resulting
                 // d2dbrush will be committed to the text layout.
                 //
-                const bool alwaysInsertDpiCompensationEffect = true;
-
                 auto& device = m_device.EnsureNotClosed();
                 auto deviceInternal = As<ICanvasDeviceInternal>(device);
 
-                d2dBrush = brushInternal->GetD2DBrush(deviceInternal->GetResourceCreationDeviceContext().Get(), alwaysInsertDpiCompensationEffect);
+                d2dBrush = brushInternal->GetD2DBrush(deviceInternal->GetResourceCreationDeviceContext().Get(), GetBrushFlags::AlwaysInsertDpiCompensation);
             }
 
             auto textRange = ToDWriteTextRange(characterIndex, characterCount);

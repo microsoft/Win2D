@@ -34,7 +34,7 @@ namespace canvas
         // ICanvasBrushInternal
         //
 
-        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, bool alwaysInsertDpiCompensation) override
+        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags) override
         {
             return m_brush;
         }

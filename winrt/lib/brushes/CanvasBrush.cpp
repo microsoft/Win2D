@@ -24,7 +24,7 @@ IFACEMETHODIMP CanvasBrush::get_Opacity(float *value)
         [&]()
         {
             CheckInPointer(value);
-            *value = GetD2DBrush(nullptr, false)->GetOpacity();
+            *value = GetD2DBrush(nullptr, GetBrushFlags::NoValidation)->GetOpacity();
         });
 }
 
@@ -33,7 +33,7 @@ IFACEMETHODIMP CanvasBrush::put_Opacity(float value)
     return ExceptionBoundary(
         [&]()
         {
-            GetD2DBrush(nullptr, false)->SetOpacity(value);
+            GetD2DBrush(nullptr, GetBrushFlags::NoValidation)->SetOpacity(value);
         });
 }
 
@@ -45,7 +45,7 @@ IFACEMETHODIMP CanvasBrush::get_Transform(Numerics::Matrix3x2 *value)
         {
             CheckInPointer(value);
 
-            GetD2DBrush(nullptr, false)->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
+            GetD2DBrush(nullptr, GetBrushFlags::NoValidation)->GetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(value));
         });
 }
 
@@ -54,7 +54,7 @@ IFACEMETHODIMP CanvasBrush::put_Transform(Numerics::Matrix3x2 value)
     return ExceptionBoundary(
         [&]()
         {
-            GetD2DBrush(nullptr, false)->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
+            GetD2DBrush(nullptr, GetBrushFlags::NoValidation)->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
         });
 }
 

@@ -16,11 +16,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
 
+    enum class GetBrushFlags
+    {
+        None = 0,
+        AlwaysInsertDpiCompensation = 1,
+        NoValidation = 2,   // Used by CanvasImageBrush::GetD2DBrush
+    };
+
+    DEFINE_ENUM_FLAG_OPERATORS(GetBrushFlags)
+
     [uuid(3A6BF1D2-731A-4EBB-AA40-1419A89302F6)]
     class ICanvasBrushInternal : public IUnknown
     {
     public:
-        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, bool alwaysInsertDpiCompensation) = 0;
+        virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags) = 0;
     };    
 
     class CanvasBrush

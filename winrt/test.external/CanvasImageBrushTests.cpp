@@ -119,6 +119,20 @@ public:
         auto brush = ref new CanvasImageBrush(m_device, CreateArbitraryEffect());
         Assert::IsNull(brush->SourceRectangle);
     }
+
+    TEST_METHOD(CanvasImageBrush_AccessBaseBrushPropertiesBeforeSettingSourceRect)
+    {
+        auto brush = ref new CanvasImageBrush(m_device, CreateArbitraryEffect());
+
+        float opacity = 23;
+        float3x2 transform{ 1, 2, 3, 4, 5, 6 };
+
+        brush->Opacity = opacity;
+        brush->Transform = transform;
+
+        Assert::AreEqual(opacity, brush->Opacity);
+        Assert::AreEqual<float3x2>(transform, brush->Transform);
+    }
 };
 
 

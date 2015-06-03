@@ -1461,7 +1461,7 @@ namespace canvas
             f.Adapter->MockTextLayout->SetDrawingEffectMethod.SetExpectedCalls(1,
                 [&](IUnknown* drawingEffectObject, DWRITE_TEXT_RANGE textRange)
                 {
-                    Assert::AreEqual(static_cast<IUnknown*>(stubCanvasBrush->GetD2DBrush(nullptr, false).Get()), drawingEffectObject);
+                    Assert::AreEqual(static_cast<IUnknown*>(stubCanvasBrush->GetD2DBrush(nullptr, GetBrushFlags::None).Get()), drawingEffectObject);
                     Assert::AreEqual(123u, textRange.startPosition);
                     Assert::AreEqual(456u, textRange.length);
                     return S_OK;
@@ -1541,7 +1541,7 @@ namespace canvas
 
             auto retrievedBrushInternal = As<ICanvasBrushInternal>(retrievedBrush);
 
-            auto retrievedD2DResource = retrievedBrushInternal->GetD2DBrush(nullptr, false);
+            auto retrievedD2DResource = retrievedBrushInternal->GetD2DBrush(nullptr, GetBrushFlags::None);
 
             Assert::AreEqual(
                 static_cast<ID2D1Brush*>(d2dBrush.Get()),
