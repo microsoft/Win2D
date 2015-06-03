@@ -108,7 +108,34 @@ struct Static_BasicControlFixture : public BasicControlFixture<CanvasControlTrai
     }    
 };
 
-typedef BasicControlFixture<CanvasAnimatedControlTraits> Animated_BasicControlFixture;
+struct Animated_BasicControlFixture : public BasicControlFixture<CanvasAnimatedControlTraits>
+{
+    template<typename T>
+    void TickUntil(T predicate)
+    {
+        const int maxTickCount = 500;
+
+        int tickCount = 0;
+
+        while (tickCount < maxTickCount && !predicate())
+        {
+            Adapter->Tick();
+            ++tickCount;
+        }
+
+        Assert::IsFalse(tickCount == maxTickCount, L"TickUntil predicate never satisfied, even after loads of Ticks");
+    }
+
+    void VerifyTickLoopIsStillRunning()
+    {
+        for (int i = 0; i < 10; ++i)
+            Adapter->Tick();
+
+        Assert::IsTrue(Adapter->GetGameThreadDispatcher()->HasPendingActions(), L"Tick loop is running");
+        Assert::IsFalse(Adapter->HasPendingActionsOnUiThread(), L"No pending change action");
+    }
+
+};
 
 template<typename T>
 struct ControlFixture;
@@ -160,14 +187,9 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
             });
     }
 
-    bool IsRenderActionRunning()
-    {
-        return static_cast<bool>(Adapter->m_outstandingWorkItemAsyncAction);
-    }
-
     bool IsChangedActionRunning()
     {
-        return Adapter->HasPendingChangedActions();
+        return Adapter->HasPendingActionsOnUiThread();
     }
 
     void RaiseLoadedAndVerify()
@@ -178,18 +200,7 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
         Adapter->DoChanged();
         Assert::IsFalse(IsChangedActionRunning());
     }
-
-    void ExpectStableState()
-    {
-        Assert::IsFalse(IsChangedActionRunning());
-        Assert::IsTrue(IsRenderActionRunning());
-
-        Adapter->Tick();
-
-        Assert::IsFalse(IsChangedActionRunning());
-        Assert::IsTrue(IsRenderActionRunning());
-    }
-
+    
     static
     ComPtr<CanvasSwapChain> CreateTestSwapChain(
         std::shared_ptr<CanvasSwapChainManager> const& swapChainManager,

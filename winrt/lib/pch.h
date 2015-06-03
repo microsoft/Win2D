@@ -27,6 +27,7 @@
 // Standard C++
 #include <algorithm>
 #include <assert.h>
+#include <condition_variable>
 #include <cstdint>
 #include <functional>
 #include <iterator>

@@ -188,12 +188,12 @@ public:
 class StubCoreIndependentInputSource : public MockCoreIndependentInputSource
 {
 public:
-    StubCoreIndependentInputSource()
+    StubCoreIndependentInputSource(ICoreDispatcher* dispatcher)
     {
-        AllowAnyCall();
+        AllowAnyCall(dispatcher);
     }
 
-    void AllowAnyCall()
+    void AllowAnyCall(ComPtr<ICoreDispatcher> dispatcher)
     {
         put_PointerCursorMethod.AllowAnyCall();
 
@@ -220,12 +220,8 @@ public:
 
         get_DispatcherMethod.AllowAnyCall(
             [=](ICoreDispatcher** out)
-        {
-            auto dispatcher = Make<MockDispatcher>();
-
-            dispatcher->ProcessEventsMethod.AllowAnyCall();
-
-            return dispatcher.CopyTo(out);
-        });
+            {
+                return dispatcher.CopyTo(out);
+            });
     }
 };

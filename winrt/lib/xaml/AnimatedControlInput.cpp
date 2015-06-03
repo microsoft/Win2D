@@ -266,18 +266,6 @@ void AnimatedControlInput::RemoveSource()
     ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(CoreInputDeviceTypes_None, &dummyIgnored));
 }
 
-void AnimatedControlInput::ProcessEvents()
-{
-    //
-    // Because this may only be called on the render thread,
-    // and m_source is only ever set up or torn down on the
-    // render thread, it is not necessary to take out the lock
-    // for this.
-    //
-
-    ThrowIfFailed(GetDispatcher()->ProcessEvents(CoreProcessEventsOption_ProcessAllIfPresent));
-}
-
 void AnimatedControlInput::CheckHasSource()
 {
     //

@@ -38,6 +38,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         virtual ~IBaseControlAdapter() = default;
 
+        virtual bool IsDesignModeEnabled() = 0;
+
         virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) = 0;
         virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;

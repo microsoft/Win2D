@@ -16,11 +16,12 @@
 
 #include "mocks/MockCanvasDeviceActivationFactory.h"
 #include "mocks/MockWindow.h"
-#include "MockDispatcher.h"
+#include "StubDispatcher.h"
 
 template<typename TRAITS>
 class BaseControlTestAdapter : public TRAITS::adapter_t
 {
+    ComPtr<StubDispatcher> m_uiThreadDispatcher;
     ComPtr<MockWindow> m_mockWindow;
     bool m_hasUIThreadAccess;
 
@@ -33,47 +34,50 @@ public:
     ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
 
     float LogicalDpi;
+    bool DesignModeEnabled;
 
     BaseControlTestAdapter()
         : DeviceFactory(Make<MockCanvasDeviceActivationFactory>())
+        , m_uiThreadDispatcher(Make<StubDispatcher>())
         , m_mockWindow(Make<MockWindow>())
+        , m_hasUIThreadAccess(true)
         , DpiChangedEventSource(Make<MockEventSource<DpiChangedEventHandler>>(L"DpiChanged"))
         , SuspendingEventSource(Make<MockEventSource<IEventHandler<SuspendingEventArgs*>>>(L"Suspending"))
         , ResumingEventSource(Make<MockEventSource<IEventHandler<IInspectable*>>>(L"Resuming"))
         , LogicalDpi(DEFAULT_DPI)
-        , m_hasUIThreadAccess(true)
+        , DesignModeEnabled(false)
     {
         CreateRecreatableDeviceManagerMethod.AllowAnyCall();
         DeviceFactory->ActivateInstanceMethod.AllowAnyCall();
 
-        GetCurrentMockWindow()->get_DispatcherMethod.AllowAnyCall(
+        m_uiThreadDispatcher->get_HasThreadAccessMethod.AllowAnyCall(
+            [=](boolean* out)
+            {
+                *out = m_hasUIThreadAccess;
+                
+                return S_OK;
+            });
+
+        m_mockWindow->get_DispatcherMethod.AllowAnyCall(
             [=](ICoreDispatcher** out)
             {
-                auto dispatcher = Make<MockDispatcher>();
-
-                dispatcher->RunAsyncMethod.AllowAnyCall(
-                    [=](CoreDispatcherPriority priority, IDispatchedHandler *agileCallback, IAsyncAction **asyncAction)
-                    {
-                        // This just launches the action right away, and doesn't copy out an async action object.
-                        // Currently, product code doesn't use it anyway.
-
-                        *asyncAction = nullptr;
-
-                        Assert::AreEqual(S_OK, agileCallback->Invoke());
-
-                        return S_OK;
-                    });
-
-                dispatcher->get_HasThreadAccessMethod.AllowAnyCall(
-                    [=](boolean* out)
-                    {
-                        *out = m_hasUIThreadAccess;
-
-                        return S_OK;
-                    });
-
-                return dispatcher.CopyTo(out);
+                return m_uiThreadDispatcher.CopyTo(out);
             });
+    }
+
+    void TickUiThread()
+    {
+        m_uiThreadDispatcher->TickAll();
+    }
+
+    bool HasPendingActionsOnUiThread()
+    {
+        return m_uiThreadDispatcher->HasPendingActions();
+    }
+
+    virtual bool IsDesignModeEnabled() override
+    {
+        return DesignModeEnabled;
     }
 
     virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) override

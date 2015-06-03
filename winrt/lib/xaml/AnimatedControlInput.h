@@ -118,8 +118,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         void RemoveSource();
 
-        void ProcessEvents();
-
         boolean GetHasThreadAccess();
 
     private:

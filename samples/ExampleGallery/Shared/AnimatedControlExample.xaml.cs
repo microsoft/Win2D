@@ -98,7 +98,14 @@ namespace ExampleGallery
         {
             sweepRenderer = await SweepRenderer.Create(sender);
             updatesPerDrawRenderer = new UpdatesPerDrawRenderer();
-            touchPointsRenderer = new TouchPointsRenderer(sender);
+            touchPointsRenderer = new TouchPointsRenderer(sender, () =>
+            {
+                if (animatedControl.Paused)
+                {
+                    step = true;
+                    animatedControl.Paused = false;
+                }
+            });
         }
 
         private const float width = 1000;
@@ -512,9 +519,11 @@ namespace ExampleGallery
     {
         Queue<Vector2> points = new Queue<Vector2>();
         const int maxPoints = 100;
+        Action doStep;
 
-        public TouchPointsRenderer(CanvasAnimatedControl animatedControl)
+        public TouchPointsRenderer(CanvasAnimatedControl animatedControl, Action doStep)
         {
+            this.doStep = doStep;
             animatedControl.Input.PointerPressed += OnPointerPressed;
             animatedControl.Input.PointerMoved += OnPointerMoved;
         }
@@ -522,6 +531,7 @@ namespace ExampleGallery
         private void OnPointerPressed(object sender, PointerEventArgs args)
         {
             points.Clear();
+            doStep();
         }
 
         private void OnPointerMoved(object sender, PointerEventArgs args)
@@ -538,6 +548,7 @@ namespace ExampleGallery
                     points.Enqueue(new Vector2((float)point.Position.X, (float)point.Position.Y));
                 }
             }
+            doStep();
         }
 
         public void Draw(CanvasDrawingSession ds)

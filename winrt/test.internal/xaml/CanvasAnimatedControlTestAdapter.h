@@ -15,11 +15,14 @@
 #include "BaseControlTestAdapter.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
 #include "MockCoreIndependentInputSource.h"
+#include "StubDispatcher.h"
 
 class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter<CanvasAnimatedControlTraits>
 {
     std::shared_ptr<CanvasSwapChainPanelTestAdapter> m_swapChainPanelAdapter;
     int64_t m_performanceCounter;
+    ComPtr<MockAsyncAction> m_gameThreadAction;
+    ComPtr<StubDispatcher> m_gameThreadDispatcher;
     ComPtr<StubSwapChainPanel> m_swapChainPanel;
     ComPtr<StubCoreIndependentInputSource> m_coreIndependentInputSource;
 
@@ -32,8 +35,9 @@ public:
         : m_performanceCounter(0)
         , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         , InitialDevice(initialDevice)
+        , m_gameThreadDispatcher(Make<StubDispatcher>())
         , m_swapChainPanel(Make<StubSwapChainPanel>())
-        , m_coreIndependentInputSource(Make<StubCoreIndependentInputSource>())
+        , m_coreIndependentInputSource(Make<StubCoreIndependentInputSource>(m_gameThreadDispatcher.Get()))
     {
         m_swapChainPanel->SetSwapChainMethod.AllowAnyCall(
             [=](IDXGISwapChain*)
@@ -50,7 +54,7 @@ public:
         m_swapChainPanelAdapter = std::make_shared<CanvasSwapChainPanelTestAdapter>(m_swapChainPanel);
     }
 
-    ComPtr<CanvasSwapChain> CreateCanvasSwapChain(
+    virtual ComPtr<CanvasSwapChain> CreateCanvasSwapChain(
         ICanvasDevice* device,
         float width,
         float height,
@@ -60,7 +64,7 @@ public:
         return CreateCanvasSwapChainMethod.WasCalled(device, width, height, dpi, alphaMode);
     }
 
-    ComPtr<CanvasSwapChainPanel> CreateCanvasSwapChainPanel() override
+    virtual ComPtr<CanvasSwapChainPanel> CreateCanvasSwapChainPanel() override
     {
         auto swapChainPanel = Make<CanvasSwapChainPanel>(m_swapChainPanelAdapter);
 
@@ -72,94 +76,48 @@ public:
         return m_swapChainPanel.Get();
     }
 
-    std::function<void()> m_beforeLoopFn;
-    std::function<bool()> m_currentTickFn;
-    std::function<void()> m_afterLoopFn;
-    ComPtr<MockAsyncAction> m_outstandingWorkItemAsyncAction;
-
-    virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(
-        std::function<void()> const& beforeLoopFn,
-        std::function<bool()> const& tickFn,
-        std::function<void()> const& afterLoopFn)
+    StubDispatcher* GetGameThreadDispatcher()
     {
-        Assert::IsFalse(static_cast<bool>(m_currentTickFn));
-        Assert::IsFalse(m_outstandingWorkItemAsyncAction);
-
-        m_outstandingWorkItemAsyncAction = Make<MockAsyncAction>();
-        m_beforeLoopFn = beforeLoopFn;
-        m_currentTickFn = tickFn;
-        m_afterLoopFn = afterLoopFn;
-
-        return m_outstandingWorkItemAsyncAction;
+        return m_gameThreadDispatcher.Get();
     }
 
-    bool IsUpdateRenderLoopActive() const
+    bool GameThreadHasPendingWork()
     {
-        return bool(m_currentTickFn);
+        return m_gameThreadDispatcher->HasPendingActions();
     }
 
-    void UpdateRenderLoopFireCompletionOnCancel()
+    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel, ComPtr<AnimatedControlInput> input) override
     {
-        m_outstandingWorkItemAsyncAction->FireCompletionOnCancel();
-    }
+        m_gameThreadAction = Make<MockAsyncAction>();
 
-    typedef std::queue<std::function<void()>> ActionQueue;
+        m_gameThreadDispatcher->RunAsyncMethod.AllowAnyCall();
 
-    ActionQueue m_changedActions;
+        // Simulate the real behavior where the game loop's action is completed
+        // when the dispatcher stops processing events.
+        m_gameThreadDispatcher->SetOnStop(
+            [=] ()
+            {
+                m_gameThreadAction->SetResult(S_OK);
+            });
 
-    virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
-    {
-        m_changedActions.push(changedFn);
-    }
+        // Now create the game loop
+        auto gameLoop = std::make_shared<CanvasGameLoop>(m_gameThreadAction, m_gameThreadDispatcher, input);
 
-    bool HasPendingChangedActions() const
-    {
-        return !m_changedActions.empty();
+        // Allow any work the game loop constructor queued up to execute before
+        // returning
+        m_gameThreadDispatcher->TickAll();
+
+        return gameLoop;
     }
 
     void DoChanged()
     {
-        // Only process the actions that are currently queued (rather than any
-        // that are started as the result of processing one of the actions)
-        ActionQueue pendingActions;
-        std::swap(pendingActions, m_changedActions);
-
-        while (!pendingActions.empty())
-        {
-            auto action = pendingActions.front();
-            pendingActions.pop();
-            
-            action();
-        }
+        TickUiThread();
     }
 
     void Tick()
     {
-        if (m_beforeLoopFn)
-        {
-            m_beforeLoopFn();
-            m_beforeLoopFn = nullptr;
-        }
-        if (m_currentTickFn)
-        {
-            bool continueRunning;
-            HRESULT hr = ExceptionBoundary([&] { continueRunning = m_currentTickFn(); });
-
-            if (SUCCEEDED(hr) && continueRunning)
-                return;
-
-            if (m_afterLoopFn)
-            {
-                m_afterLoopFn();
-                m_afterLoopFn = nullptr;
-            }
-
-            auto action = m_outstandingWorkItemAsyncAction;
-            m_currentTickFn = nullptr;
-            m_outstandingWorkItemAsyncAction.Reset();
-
-            action->SetResult(hr);
-        }
+        m_gameThreadDispatcher->Tick();
     }
 
     ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
@@ -195,11 +153,6 @@ public:
         LARGE_INTEGER l;
         l.QuadPart = StepTimer::TicksPerSecond;
         return l;
-    }
-
-    void SetCoreIndpendentInputSource(ComPtr<StubCoreIndependentInputSource> const& value)
-    {
-        m_coreIndependentInputSource = value;
     }
 
     ComPtr<StubCoreIndependentInputSource> GetCoreIndependentInputSource()

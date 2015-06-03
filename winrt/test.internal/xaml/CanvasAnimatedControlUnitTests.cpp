@@ -361,14 +361,12 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Load();
         f.Adapter->DoChanged();
 
-        f.Adapter->Tick();
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
-        f.Adapter->DoChanged();
+        f.VerifyTickLoopIsStillRunning();
 
         ThrowIfFailed(f.Control->put_ClearColor(AnyColor));
         f.Adapter->Tick();
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
-        f.Adapter->DoChanged();       
+        f.Adapter->DoChanged();
+        f.VerifyTickLoopIsStillRunning();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_ThreadingRestrictions)
@@ -444,7 +442,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
             for (int i = 0; i < TickCountForExecute; ++i)
             {
                 Adapter->Tick();
-                Assert::IsTrue(Adapter->IsUpdateRenderLoopActive());
+                Assert::IsTrue(Adapter->GameThreadHasPendingWork());
                 Adapter->DoChanged();
             }
 
@@ -483,7 +481,8 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.SetExpectedCalls(0);
         f.UserControl->Resize(Size{ 0, 0 });
         f.Adapter->Tick();
-        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
 
         // The UI thread change handler should then restart the update/render loop.
         f.Adapter->GetSwapChainPanel()->SetSwapChainMethod.SetExpectedCalls(1, [](IDXGISwapChain* swapChain)
@@ -493,7 +492,8 @@ TEST_CLASS(CanvasAnimatedControlTests)
             });
 
         f.Adapter->DoChanged();
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+        
+        Assert::IsTrue(f.Adapter->GameThreadHasPendingWork());
 
         // Should now be in a steady state where there are no more calls to ResizeBuffers or SetSwapChain.
         f.Execute(Size{ 0, 0 });
@@ -1174,7 +1174,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         // Next changed/tick will cause the update/render loop to exit.
         f.Adapter->DoChanged();
         f.Adapter->Tick();
-        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
 
         // After the changing the clear color we allow one extra draw without an
         // update - consider the case of a very long TargetElapsedTime, we want
@@ -1522,7 +1522,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->Tick();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RenderThreadWaitsForVBlank_BeforeInputOrDrawOrUpdateOrAsyncActions)
+    TEST_METHOD_EX(CanvasAnimatedControl_RenderThreadWaitsForVBlank_BeforeDrawOrUpdateOrAsyncActions)
     {
         CanvasAnimatedControlFixture f;
         f.Load();
@@ -1545,26 +1545,11 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 return S_OK;
             });
 
-        ComPtr<MockDispatcher> inputDispatcher = Make<MockDispatcher>();
-        auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
-        coreIndependentInputSource->get_DispatcherMethod.AllowAnyCall(
-            [&](ICoreDispatcher** out)
-            {
-                return inputDispatcher.CopyTo(out);
-            });
-        inputDispatcher->ProcessEventsMethod.SetExpectedCalls(1,
-            [&](CoreProcessEventsOption)
-            {
-                Assert::AreEqual(1, order);
-                order++;
-                return S_OK;
-            });
-
         SimpleDispatchedHandler dispatchedHandler;
         dispatchedHandler.CallbackMethod.SetExpectedCalls(1,
             [&]()
             {
-                Assert::AreEqual(2, order);
+                Assert::AreEqual(1, order);
                 order++;
             });
         ComPtr<IAsyncAction> asyncAction;
@@ -1576,7 +1561,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         OnUpdate.SetExpectedCalls(1,
             [&](ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs*)
             {
-                Assert::AreEqual(3, order);
+                Assert::AreEqual(2, order);
                 order++;
                 return S_OK;
             });
@@ -1587,7 +1572,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         OnDraw.SetExpectedCalls(1,
             [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
             {
-                Assert::AreEqual(4, order);
+                Assert::AreEqual(3, order);
                 order++;
                 return S_OK;
             });
@@ -1610,7 +1595,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
             Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
                 [=] (ICanvasDevice*, float, float, float, CanvasAlphaMode)
                 {
-                    return swapChainManager->CreateMock();;
+                    return swapChainManager->CreateMock();
                 });
         }
 
@@ -1622,7 +1607,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
 
         bool IsChangedActionRunning()
         {
-            return Adapter->HasPendingChangedActions();
+            return Adapter->HasPendingActionsOnUiThread();
         }
     };
 
@@ -1689,7 +1674,7 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
 
 TEST_CLASS(CanvasAnimatedControlRenderLoop)
 {
-    struct Fixture : public BasicControlFixture<CanvasAnimatedControlTraits>
+    struct Fixture : public Animated_BasicControlFixture
     {
         ComPtr<MockCanvasSwapChain> SwapChain;
 
@@ -1740,26 +1725,16 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
                     return Make<MockCanvasDrawingSession>().CopyTo(value);
                 });
         }
-
-        void ClearCanceledActions()
-        {
-            if (Adapter->m_outstandingWorkItemAsyncAction)
-            {
-                AsyncStatus status = (AsyncStatus)-1;
-                Adapter->m_outstandingWorkItemAsyncAction->get_Status(&status);
-                if (status == AsyncStatus::Canceled)
-                {
-                    Adapter->m_outstandingWorkItemAsyncAction.Reset();
-                    Adapter->m_currentTickFn = nullptr;
-                }
-            }
-        }
     };
 
     TEST_METHOD_EX(CanvasAnimatedControl_OnConstruction_UpdateRenderLoopIsNotRunning)
     {
         Fixture f;
-        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenLoaded_SingleFrameIsPresented)
@@ -1772,7 +1747,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.ExpectRender();
         f.RenderSingleFrame();
 
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+        Assert::IsTrue(f.Adapter->GameThreadHasPendingWork());
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenLoadedWhilePaused_SingleFrameIsPresented_AndThen_UpdateRenderLoopIsNotRunning)
@@ -1787,15 +1762,15 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.ExpectRender();
         f.RenderSingleFrame();
 
-        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
 
         // Confirm that the update/render loop doesn't get restarted
         for (int i = 0; i < 5; ++i)
         {
             f.Adapter->DoChanged();
-            Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+            Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
             f.RenderSingleFrame();
-            Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());        
+            Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
         }
     }
 
@@ -1809,37 +1784,21 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.AllowAnyRendering();
         f.RenderSingleFrame();
 
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+        Assert::IsTrue(f.Adapter->GameThreadHasPendingWork());
 
         f.RaiseUnloadedEvent();
+
+        f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
+
         f.Control.Reset();
-
-        Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
-
-        f.ClearCanceledActions();
-
-        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_DestroyedWhileThreadPoolWaitingToScheduleRenderLoop)
-    {
-        Fixture f;
-
-        f.Load();
-        f.Adapter->DoChanged();
-
-        // Normally, Cancel signals the update/render thread to spin down, and then the async completed
-        // handler runs after the thread has stopped. But if the update/render loop has been created but
-        // not started yet (i.e. is sitting waiting for the thread pool to schedule it) the completion
-        // handler will run synchronously inside the Cancel call. This test simulates that case.
-
-        f.Adapter->UpdateRenderLoopFireCompletionOnCancel();
-
-        f.RaiseUnloadedEvent();
-
-        Assert::IsFalse(f.Adapter->HasPendingChangedActions());
-    }
-
+    //
+    // TODO: CanvasAnimatedControl_DestroyedWhileThreadPoolWaitingToScheduleRenderLoop)
+    //
+    // I don't believe this test applies any more.  Remove this comment after CR.
+    //
+    
     TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race0)
     {
         WhenBackgroundModeChanges(0);
@@ -1994,143 +1953,23 @@ public:
     }
 };
 
-TEST_CLASS(CanvasAnimatedControlAdapter_ChangedAction_UnitTests)
-{
-    struct Fixture
-    {
-        ComPtr<MockThreadPoolStatics> ThreadPoolStatics;
-        CanvasRenderLoop RenderLoop;
-        ComPtr<MockWindow> Window;
+//
+// CanvasAnimatedControlAdapter_StartChangedAction_SchedulesWorkItemThatCallsChanged:
+// this test is now redundant, since all the tests that rely on changed being
+// called exercise this.
+//
+// TODO: remove this comment after CR
+//
 
-        ComPtr<IDispatchedHandler> Handler;
-        ComPtr<IAsyncAction> Action;
-
-        Fixture()
-            : ThreadPoolStatics(Make<MockThreadPoolStatics>())
-            , RenderLoop(ThreadPoolStatics.Get())
-            , Window(Make<MockWindow>())
-        {
-            Window->get_DispatcherMethod.SetExpectedCalls(1,
-                [=](ICoreDispatcher** dispatcher)
-                {
-                    auto mockDispatcher = Make<MockDispatcher>();
-
-                    mockDispatcher->RunAsyncMethod.SetExpectedCalls(1,
-                        [=](CoreDispatcherPriority priority, IDispatchedHandler* callbackFn, IAsyncAction** action)
-                        {
-                            Assert::AreEqual(CoreDispatcherPriority_Normal, priority);
-
-                            Handler = callbackFn;
-
-                            Action = Make<MockAsyncAction>();
-
-                            return Action.CopyTo(action);
-                        });
-
-                    return mockDispatcher.CopyTo(dispatcher);
-                });
-        }
-    };    
-
-    TEST_METHOD_EX(CanvasAnimatedControlAdapter_StartChangedAction_SchedulesWorkItemThatCallsChanged)
-    {
-        Fixture f;
-
-        bool changedCalled = false;
-        auto fakeChangedFn =
-            [&]()
-            {
-                changedCalled = true;
-            };
-
-        f.RenderLoop.StartChangedAction(f.Window, fakeChangedFn);
-        Assert::IsNotNull(f.Action.Get());
-        Assert::IsNotNull(f.Handler.Get());
-
-        ThrowIfFailed(f.Handler->Invoke());
-        Assert::IsTrue(changedCalled);
-    }
-};
-
-TEST_CLASS(CanvasAnimatedControlAdapter_StartUpdateRenderLoop_UnitTests)
-{
-    struct Fixture 
-    {
-        ComPtr<MockThreadPoolStatics> ThreadPoolStatics;
-        CanvasRenderLoop RenderLoop;
-
-        ComPtr<IWorkItemHandler> Handler;
-        ComPtr<IAsyncAction> Action;
-
-        Fixture()
-            : ThreadPoolStatics(Make<MockThreadPoolStatics>())
-            , RenderLoop(ThreadPoolStatics.Get())
-        {
-            ThreadPoolStatics->RunWithPriorityAndOptionsAsyncMethod.SetExpectedCalls(1,
-                [=] (IWorkItemHandler* theHandler, WorkItemPriority priority, WorkItemOptions options, IAsyncAction** operation)
-                {
-                    Assert::AreEqual<int>(WorkItemPriority_Normal, priority);
-                    Assert::AreEqual<int>(WorkItemOptions_TimeSliced, options);
-                    Handler = theHandler;
-                
-                    Action = Make<MockAsyncAction>();
-                    return Action.CopyTo(operation);
-                });
-        }
-    };
-
-    TEST_METHOD_EX(CanvasAnimatedControlAdapter_StartUpdateRenderLoop_SchedulesWorkItemThatCallsTickFnUntilItReturnsFalse)
-    {
-        Fixture f;
-
-        int count = 0;
-        auto tickFn = 
-            [&]()
-            {
-                ++count;
-                if (count == 10)
-                    return false;
-                return true;
-            };
-
-        auto beforeLoopFn = [&](){};
-
-        auto afterLoopFn = [&](){};
-
-        auto returnedAction = f.RenderLoop.StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
-
-        Assert::IsTrue(IsSameInstance(f.Action.Get(), returnedAction.Get()));
-        Assert::IsNotNull(f.Handler.Get());
-
-        ThrowIfFailed(f.Handler->Invoke(f.Action.Get()));
-        Assert::AreEqual(10, count);
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControlAdapter_StartUpdateRenderLoop_SchedulesWorkItemThatStopsWhenAsyncActionIsCanceled)
-    {
-        Fixture f;
-
-        int count = 0;
-        auto tickFn = 
-            [&]()
-            {
-                ++count;
-                if (count == 10)
-                    As<IAsyncInfo>(f.Action)->Cancel();
-
-                return true;
-            };
-
-        auto beforeLoopFn = [&](){};
-
-        auto afterLoopFn = [&](){};
-
-        f.RenderLoop.StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
-
-        ThrowIfFailed(f.Handler->Invoke(f.Action.Get()));
-        Assert::AreEqual(10, count);
-    }
-};
+//
+// CanvasAnimatedControlAdapter_StartUpdateRenderLoop_SchedulesWorkItemThatCallsTickFnUntilItReturnsFalse
+// CanvasAnimatedControlAdapter_StartUpdateRenderLoop_SchedulesWorkItemThatStopsWhenAsyncActionIsCanceled
+//
+// These tests removed since they were testing implementation details that have
+// now changed.
+//
+// TODO: remove this comment after CR
+//
 
 TEST_CLASS(CanvasAnimatedControl_Input)
 {
@@ -2138,7 +1977,6 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     {
         InputFixture()
         {
-            Load();
         }
 
         ComPtr<ICorePointerInputSource> GetInputSource()
@@ -2166,7 +2004,11 @@ TEST_CLASS(CanvasAnimatedControl_Input)
             Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerPosition(&p));
             Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerCursor(&cursor));
             Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->put_PointerCursor(nullptr));
+        }
 
+        bool IsRenderActionRunning()
+        {
+            return Adapter->GameThreadHasPendingWork();
         }
     };
 
@@ -2180,6 +2022,8 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     TEST_METHOD_EX(CanvasAnimatedControl_Input_NoAccessToPropertiesBeforeRenderThreadIsStarted)
     {
         InputFixture f;
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
         Assert::IsFalse(f.IsRenderActionRunning());
 
         f.VerifyPropertiesAreInaccessibleToThisThread();
@@ -2188,11 +2032,9 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     TEST_METHOD_EX(CanvasAnimatedControl_Input_IfRenderThreadStops_PropertiesInaccessible)
     {
         InputFixture f;
+        f.Load();
         f.AllowWorkerThreadToStart();
-
-        f.Control->put_ClearColor(AnyOpaqueColor);
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
+        f.RaiseUnloadedEvent();
 
         Assert::IsFalse(f.IsRenderActionRunning());
 
@@ -2202,6 +2044,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     TEST_METHOD_EX(CanvasAnimatedControl_Input_WhenRenderThreadStops_CoreIndependentInputSourceIsRemoved)
     {
         InputFixture f;
+        f.Load();
         f.AllowWorkerThreadToStart();
 
         f.Adapter->GetSwapChainPanel()->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
@@ -2212,9 +2055,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
                 return S_OK;
             });
 
-        f.Control->put_ClearColor(AnyOpaqueColor);
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
+        f.RaiseUnloadedEvent();
 
         Assert::IsFalse(f.IsRenderActionRunning());
     }
@@ -2222,6 +2063,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     TEST_METHOD_EX(CanvasAnimatedControl_Input_PropertiesPassThruAfterRenderThreadIsStarted)
     {
         InputFixture f;
+        f.Load();
         f.AllowWorkerThreadToStart();
 
         auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
@@ -2268,6 +2110,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         // Verifies we don't accidentally sanitize or validate null values
         //
         InputFixture f;
+        f.Load();
         f.AllowWorkerThreadToStart();
 
         auto inputSource = f.GetInputSource();
@@ -2285,6 +2128,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     TEST_METHOD_EX(CanvasAnimatedControl_Input_AddEventDelegateNullArgs)
     {
         InputFixture f;
+        f.Load();
         auto inputSource = f.GetInputSource();
 
         EventRegistrationToken token;
@@ -2316,30 +2160,33 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     class InputFixture_EventTest
     {
     public:
-        ComPtr<StubCoreIndependentInputSource> CoreIndependentInputSource;
-
-        InputFixture_EventTest()
-            : CoreIndependentInputSource(Make<StubCoreIndependentInputSource>())
-        {}
-
         template<typename MOCK_EVENT_ADD_FN, typename INPUT_SOURCE_FN>
         void TestEvent(
             wchar_t const* name,
-            MOCK_EVENT_ADD_FN& mockEventAddMethod,
+            MOCK_EVENT_ADD_FN mockEventAddMethod,
             INPUT_SOURCE_FN inputSourceMethod)
         {
             InputFixture f;
 
-            CoreIndependentInputSource->AllowAnyCall();
-
             auto inputSource = f.GetInputSource();
 
-            f.Adapter->SetCoreIndpendentInputSource(CoreIndependentInputSource);
-
+            //
+            // Register an event handler before the control has loaded.
+            //
             auto appEventHandler = MockEventHandler<EventHandlerWithPointerArgs>(name);
 
+            EventRegistrationToken token;
+            ThrowIfFailed((*(inputSource.Get()).*inputSourceMethod)(appEventHandler.Get(), &token));
+
+            // 
+            // When the game loop thread starts it'll register for an event on
+            // the actual control.  We grab it's handler so we can call it
+            // later.
+            //
             ComPtr<EventHandlerWithPointerArgs> storedEventHandlerOfControl;
-            mockEventAddMethod.SetExpectedCalls(1,
+
+            auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource().Get();
+            (coreIndependentInputSource->*mockEventAddMethod).SetExpectedCalls(1,
                 [&storedEventHandlerOfControl](EventHandlerWithPointerArgs* eventHandlerOfControl, EventRegistrationToken*)
             {
                 Assert::IsNotNull(eventHandlerOfControl);
@@ -2347,12 +2194,10 @@ TEST_CLASS(CanvasAnimatedControl_Input)
                 return S_OK;
             });
 
-            EventRegistrationToken token;
-            ThrowIfFailed((*(inputSource.Get()).*inputSourceMethod)(appEventHandler.Get(), &token));
-
             //
-            // Once the render thread starts, the event handlers should be called as intended.
+            // Load the control; this'll start the game loop thread.
             //
+            f.Load();
             f.AllowWorkerThreadToStart();
 
             // When an input event happens, expect our event handler to be called.
@@ -2372,17 +2217,17 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         //
         InputFixture_EventTest f;
 
-        f.TestEvent(L"PointerEntered", f.CoreIndependentInputSource->add_PointerEnteredMethod, &ICorePointerInputSource::add_PointerEntered);
+#define TEST_EVENT(EVENT) \
+        f.TestEvent(WIDEN(#EVENT), &StubCoreIndependentInputSource::add_ ## EVENT ## Method, &ICorePointerInputSource::add_ ## EVENT)
 
-        f.TestEvent(L"PointerExited", f.CoreIndependentInputSource->add_PointerExitedMethod, &ICorePointerInputSource::add_PointerExited);
+        TEST_EVENT(PointerEntered);
+        TEST_EVENT(PointerExited);
+        TEST_EVENT(PointerMoved);
+        TEST_EVENT(PointerPressed);
+        TEST_EVENT(PointerReleased);
+        TEST_EVENT(PointerWheelChanged);
 
-        f.TestEvent(L"PointerMoved", f.CoreIndependentInputSource->add_PointerMovedMethod, &ICorePointerInputSource::add_PointerMoved);
-
-        f.TestEvent(L"PointerPressed", f.CoreIndependentInputSource->add_PointerPressedMethod, &ICorePointerInputSource::add_PointerPressed);
-
-        f.TestEvent(L"PointerReleased", f.CoreIndependentInputSource->add_PointerReleasedMethod, &ICorePointerInputSource::add_PointerReleased);
-
-        f.TestEvent(L"PointerWheelChanged", f.CoreIndependentInputSource->add_PointerWheelChangedMethod, &ICorePointerInputSource::add_PointerWheelChanged);
+#undef TEST_EVENT
     }
 };
 
@@ -2431,20 +2276,20 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
         Fixture f;
 
         // Initial state should have the render thread active.
-        Assert::IsTrue(f.IsRenderActionRunning());
+        Assert::IsTrue(f.Adapter->GameThreadHasPendingWork());
 
         // Suspending event should stop the render thread.
         ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
 
         f.Adapter->Tick();
-        Assert::IsFalse(f.IsRenderActionRunning());
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
 
         // Once rendering is stopped, Trim should be called.
         f.GetDevice()->TrimMethod.SetExpectedCalls(1);
         f.Adapter->DoChanged();
 
         // Render thread should not be restarted by DoChanged while app is in the suspended state.
-        Assert::IsFalse(f.IsRenderActionRunning());
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenSuspendingEventRaisedWhileControlIsPaused_TrimIsStillCalled)
@@ -2453,7 +2298,7 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
 
         ThrowIfFailed(f.Control->put_Paused(true));
         f.Adapter->Tick();
-        Assert::IsFalse(f.IsRenderActionRunning());
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
 
         ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
         f.Adapter->Tick();
@@ -2466,7 +2311,7 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
     {
         Fixture f;
 
-        Assert::IsTrue(f.IsRenderActionRunning());
+        Assert::IsTrue(f.Adapter->GameThreadHasPendingWork());
 
         // Send the suspending notification.
         ThrowIfFailed(f.Adapter->SuspendingEventSource->InvokeAll(nullptr, f.SuspendingEventArgs.Get()));
@@ -2475,8 +2320,6 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
         f.RaiseUnloadedEvent();
 
         // Trim should still happen.
-        f.Adapter->Tick();
-
         f.GetDevice()->TrimMethod.SetExpectedCalls(1);
         f.Adapter->DoChanged();
     }
@@ -2490,12 +2333,12 @@ TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
         f.Adapter->Tick();
         f.GetDevice()->TrimMethod.SetExpectedCalls(1);
         f.Adapter->DoChanged();
-        Assert::IsFalse(f.IsRenderActionRunning());
+        Assert::IsFalse(f.Adapter->GameThreadHasPendingWork());
 
         // Resume the app.
         ThrowIfFailed(f.Adapter->ResumingEventSource->InvokeAll(nullptr, nullptr));
         f.Adapter->DoChanged();
-        Assert::IsTrue(f.IsRenderActionRunning());
+        Assert::IsTrue(f.Adapter->GameThreadHasPendingWork());
     }
 };
 
@@ -2688,44 +2531,10 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
     struct DispatcherFixture : public CanvasAnimatedControlFixture
     {
-        ComPtr<MockDispatcher> Dispatcher;
-
         DispatcherFixture()
-            : Dispatcher(Make<MockDispatcher>())
-        {
-            auto coreIndependentInputSource = Adapter->GetCoreIndependentInputSource();
-
-            coreIndependentInputSource->get_DispatcherMethod.AllowAnyCall(
-                [&](ICoreDispatcher** out)
-                {
-                    return Dispatcher.CopyTo(out);
-                });
-        }
-
-        void EnsureRenderLoopIsRunning()
         {
             Load();
             Adapter->DoChanged();
-            Dispatcher->ProcessEventsMethod.AllowAnyCall();
-            Assert::IsTrue(Adapter->IsUpdateRenderLoopActive());
-        }
-
-        void Tick_ExpectRenderLoopExitWithError(HRESULT hr)
-        {
-            auto renderLoopAction = Adapter->m_outstandingWorkItemAsyncAction;
-            Adapter->Tick();
-
-            VerifyAsyncActionErrorStatus(renderLoopAction, hr);
-        }
-
-        void Tick_ExpectRenderLoopActive()
-        {
-            auto renderLoopAction = Adapter->m_outstandingWorkItemAsyncAction;
-            Adapter->Tick();
-
-            AsyncStatus status;
-            ThrowIfFailed(renderLoopAction->get_Status(&status));
-            Assert::AreEqual(AsyncStatus::Started, status);
         }
     };
 
@@ -2753,43 +2562,36 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         Assert::AreEqual(E_INVALIDARG, f.Control->get_HasGameLoopThreadAccess(nullptr));
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_HasGameLoopThreadAccess_WorkerThreadDoesntExist)
+    TEST_METHOD_EX(CanvasAnimatedControl_HasGameLoopThreadAccess_BeforeLoad)
     {
         CanvasAnimatedControlFixture f;
-
-        Assert::IsFalse(f.Adapter->IsUpdateRenderLoopActive());
 
         boolean b;
         Assert::AreEqual(S_OK, f.Control->get_HasGameLoopThreadAccess(&b));
         Assert::IsFalse(!!b);
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_HasGameLoopThreadAccess_ReflectsCorrectThread)
+    TEST_METHOD_EX(CanvasAnimatedControl_HasGameLoopThreadAccess_CallsTheGameLoopsDispatcher)
     {
-        for (int i = 0; i < 2; i++)
+        CanvasAnimatedControlFixture f;
+
+        f.Load();
+
+        for (int i = 0; i < 2; ++i)
         {
-            DispatcherFixture f;
+            boolean expectedResult = (i == 0);
 
-            auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
-
-            bool currentThreadIsWorkerThread = i == 0;
-
-            f.Dispatcher->ProcessEventsMethod.AllowAnyCall();
-            f.Dispatcher->get_HasThreadAccessMethod.AllowAnyCall(
-                [&](boolean* out)
+            f.Adapter->GetGameThreadDispatcher()->get_HasThreadAccessMethod.SetExpectedCalls(1,
+                [=] (boolean* value)
                 {
-                    *out = currentThreadIsWorkerThread;
+                    *value = expectedResult;
                     return S_OK;
                 });
 
-            f.Load();
-            f.Adapter->DoChanged();
-            f.Adapter->Tick();
-            Assert::IsTrue(f.Adapter->IsUpdateRenderLoopActive());
+            boolean result;
+            ThrowIfFailed(f.Control->get_HasGameLoopThreadAccess(&result));
 
-            boolean b;
-            Assert::AreEqual(S_OK, f.Control->get_HasGameLoopThreadAccess(&b));
-            Assert::AreEqual(currentThreadIsWorkerThread, !!b);
+            Assert::AreEqual(expectedResult, result, L"get_HasGameLoopThreadAccess returned the expected result");
         }
     }
 
@@ -2806,7 +2608,6 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_AsyncActionInvokedOnNextTick)
     {
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
 
         SimpleDispatchedHandler dispatchedHandler;
         dispatchedHandler.CallbackMethod.SetExpectedCalls(0);
@@ -2815,7 +2616,10 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
 
         dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
-        f.Tick_ExpectRenderLoopActive();
+
+        f.TickUntil([&] { return dispatchedHandler.CallbackMethod.GetCurrentCallCount() == 1; });
+
+        f.VerifyTickLoopIsStillRunning();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_MultipleAsyncActionsInvokedInCorrectOrder)
@@ -2823,7 +2627,6 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         static const int actionCount = 3;
 
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
 
         int callbackIndex = 0;
         SimpleDispatchedHandler dispatchedHandlers[actionCount];
@@ -2843,16 +2646,20 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
             Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[i].Handler.Get(), &asyncAction));
         }
 
-        f.Tick_ExpectRenderLoopActive();
+        f.TickUntil([&] { return callbackIndex == actionCount; });
+        f.VerifyTickLoopIsStillRunning();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsDeviceRemoved_RenderActionExitsWithDeviceRemoved)
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsDeviceRemoved_DeviceIsRecreated)
     {
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
-        
+                
         SimpleDispatchedHandler dispatchedHandler;
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
+        dispatchedHandler.CallbackMethod.SetExpectedCalls(1,
+            [&]
+            {
+                f.Adapter->InitialDevice->MarkAsLost();
+            });
         dispatchedHandler.HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
 
         ComPtr<IAsyncAction> asyncAction;
@@ -2860,22 +2667,35 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         CompletedHandlerWhichExpectsToBeCalled completedHandler(asyncAction);
 
-        f.Tick_ExpectRenderLoopExitWithError(DXGI_ERROR_DEVICE_REMOVED);
+        // Tick until the tick loop stops
+        f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
+
+        // It takes two rounds of DoChanged() for a device to get recreated
+        f.Adapter->DoChanged();
+        f.Adapter->DoChanged();
+
+        f.VerifyTickLoopIsStillRunning();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsDeviceRemoved_OtherAsyncActionsNotRunThatTick)
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsDeviceRemoved_OtherAsyncActionsNotRunUntilDeviceRecreated)
     {
         static const int actionCount = 3;
 
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
-
+        
         SimpleDispatchedHandler dispatchedHandlers[actionCount];
-        for (int i = 0; i < actionCount; ++i)
+
+        dispatchedHandlers[0].CallbackMethod.SetExpectedCalls(1,
+            [&]
+            {
+                f.Adapter->InitialDevice->MarkAsLost();
+            });
+        dispatchedHandlers[0].HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
+
+        for (int i = 1; i < actionCount; ++i)
         {
-            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(i == 0? 1 : 0);
+            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(0);
         }
-        dispatchedHandlers[0].HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED; // Just the first one returns device removed.
 
         for (int i = 0; i < actionCount; ++i)
         {
@@ -2883,14 +2703,28 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
             Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[i].Handler.Get(), &asyncAction));
         }
 
-        f.Tick_ExpectRenderLoopExitWithError(DXGI_ERROR_DEVICE_REMOVED);
+        // Tick until the tick loop stops
+        f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
+
+        // It takes two rounds of DoChanged() for a device to get recreated
+        f.Adapter->DoChanged();
+        f.Adapter->DoChanged();
+
+        // Now the remaining handlers should get invoked
+        for (int i = 1; i < actionCount; ++i)
+        {
+            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(1);
+        }
+
+        f.TickUntil([&] { return dispatchedHandlers[actionCount-1].CallbackMethod.GetCurrentCallCount() == 1; });
+
+        f.VerifyTickLoopIsStillRunning();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsSomeWeirdError_ActionStateIsSetCorrectly)
     {
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
-
+        
         SimpleDispatchedHandler dispatchedHandler;
         dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
         dispatchedHandler.HandlerReturnValue = E_INVALIDARG;
@@ -2900,7 +2734,8 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         CompletedHandlerWhichExpectsToBeCalled completedHandler(asyncAction);
 
-        f.Tick_ExpectRenderLoopActive();
+        f.TickUntil([&] { return completedHandler.CompletedCallbackMethod.GetCurrentCallCount() == 1; });
+        f.VerifyTickLoopIsStillRunning();
 
         VerifyAsyncActionErrorStatus(asyncAction, E_INVALIDARG);
     }
@@ -2910,8 +2745,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         static const int actionCount = 3;
 
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
-
+        
         SimpleDispatchedHandler dispatchedHandlers[actionCount];
         for (int i = 0; i < actionCount; ++i)
             dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(1);
@@ -2923,18 +2757,18 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
             Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[i].Handler.Get(), &asyncAction));
         }
 
-        f.Tick_ExpectRenderLoopActive();
+        f.TickUntil([&] { return dispatchedHandlers[actionCount-1].CallbackMethod.GetCurrentCallCount() == 1; });
+        f.VerifyTickLoopIsStillRunning();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfCompletedHandlerThrowsAnyError_RenderThreadExitsWithThatError)
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfCompletedHandlerThrowsAnyError_ErrorIsRethrownByChangedHandler)
     {
         HRESULT errors[] = { E_INVALIDARG, DXGI_ERROR_DEVICE_REMOVED };
 
         for (HRESULT error : errors)
         {
             DispatcherFixture f;
-            f.EnsureRenderLoopIsRunning();
-
+            
             SimpleDispatchedHandler dispatchedHandler;
             dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
 
@@ -2943,7 +2777,10 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
             AttachCompletedCallbackWhichReturnsHr(asyncAction, error);
 
-            f.Tick_ExpectRenderLoopExitWithError(error);
+            // Tick until the tick loop stops
+            f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
+
+            ExpectHResultException(error, [&] { f.Adapter->DoChanged(); });
         }
     }
 
@@ -2952,11 +2789,11 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         static const int actionCount = 3;
 
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
-
+        
         SimpleDispatchedHandler dispatchedHandlers[actionCount];
-        for (int i = 0; i < actionCount; ++i)
-            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(i == 0 ? 1 : 0);
+        dispatchedHandlers[0].CallbackMethod.SetExpectedCalls(1);
+        for (int i = 1; i < actionCount; ++i)
+            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(0);
 
         ComPtr<IAsyncAction> returnedActions[actionCount];
         for (int i = 0; i < actionCount; ++i)
@@ -2964,24 +2801,33 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         AttachCompletedCallbackWhichReturnsHr(returnedActions[0], E_INVALIDARG);
 
-        f.Tick_ExpectRenderLoopExitWithError(E_INVALIDARG);
+        f.TickUntil([&] { return dispatchedHandlers[0].CallbackMethod.GetCurrentCallCount() == 1; });
+        ExpectHResultException(E_INVALIDARG, [&] { f.Adapter->DoChanged(); });
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_HandlerThrowsDeviceRemoved_AndCompletedHandlerThrowsSomeError)
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_HandlerThrowsDeviceRemoved_AndCompletedHandlerThrowsSomeError_CompleteHandlerErrorIsIgnored)
     {
         // The design is for the 'device removed' to take precedence.
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
-
+        
         SimpleDispatchedHandler dispatchedHandler;
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
+        dispatchedHandler.CallbackMethod.SetExpectedCalls(1,
+            [&]
+            {
+                f.Adapter->InitialDevice->MarkAsLost();
+            });
         dispatchedHandler.HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
 
         ComPtr<IAsyncAction> asyncAction;
         Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
         AttachCompletedCallbackWhichReturnsHr(asyncAction, E_INVALIDARG);
 
-        f.Tick_ExpectRenderLoopExitWithError(DXGI_ERROR_DEVICE_REMOVED);
+        // Tick until the tick loop stops
+        f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
+
+        // if the completed handler's error had priority then this call to
+        // DoChanged() would throw
+        f.Adapter->DoChanged();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_AfterAnError_EventsAreRequeuedCorrectly)
@@ -3014,10 +2860,13 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         ComPtr<IAsyncAction> returnedActions[actionCount];
 
         DispatcherFixture f;
-        f.EnsureRenderLoopIsRunning();
-
+        
         dispatchedHandlers[0].CallbackMethod.SetExpectedCalls(1);
-        dispatchedHandlers[1].CallbackMethod.SetExpectedCalls(1);
+        dispatchedHandlers[1].CallbackMethod.SetExpectedCalls(1,
+            [&]
+            {
+                f.Adapter->InitialDevice->MarkAsLost();
+            });
         dispatchedHandlers[1].HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
 
         Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[0].Handler.Get(), &returnedActions[0]));
@@ -3025,13 +2874,11 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[2].Handler.Get(), &returnedActions[2]));
         Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[3].Handler.Get(), &returnedActions[3]));
 
-        f.Tick_ExpectRenderLoopExitWithError(DXGI_ERROR_DEVICE_REMOVED);
-        Expectations::Instance()->Validate();
+        // Tick until the tick loop stops
+        f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
 
         // This puts us down the device recreation path.
-        f.Adapter->InitialDevice->MarkAsLost();
         f.Adapter->DoChanged();
-        f.Adapter->Tick();
         f.Adapter->DoChanged();
 
         dispatchedHandlers[2].CallbackMethod.SetExpectedCalls(1);
@@ -3042,6 +2889,8 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[4].Handler.Get(), &returnedActions[4]));
         Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[5].Handler.Get(), &returnedActions[5]));
 
-        f.Tick_ExpectRenderLoopActive();
+        f.TickUntil([&] { return dispatchedHandlers[5].CallbackMethod.GetCurrentCallCount() == 1; });
+
+        f.VerifyTickLoopIsStillRunning();
     }
 };

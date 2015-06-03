@@ -68,6 +68,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual ~BaseControlAdapter() = default;
 
+        virtual bool IsDesignModeEnabled() override
+        {
+            return m_isDesignModeEnabled;
+        }
+
         virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) override
         {
             ComPtr<IInspectable> userControlInspectable;
@@ -154,12 +159,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() override
         {
             return std::make_unique<RecreatableDeviceManager<TRAITS>>(m_canvasDeviceFactory.Get());
-        }
-
-    protected:
-        bool IsDesignModeEnabled() const
-        {
-            return m_isDesignModeEnabled;
         }
 
     private:

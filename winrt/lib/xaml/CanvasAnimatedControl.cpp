@@ -100,77 +100,168 @@ IFACEMETHODIMP CanvasAnimatedDrawEventArgs::get_Timing(CanvasTimingInformation* 
         });
 }
 
-ComPtr<IAsyncAction> CanvasRenderLoop::StartUpdateRenderLoop(
-    std::function<void()> const& beforeLoopFn,
-    std::function<bool()> const& tickFn,
-    std::function<void()> const& afterLoopFn)
+//
+// CanvasGameLoop
+//
+
+CanvasGameLoop::CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher, ComPtr<AnimatedControlInput> input)
+    : m_threadAction(std::move(action))
+    , m_dispatcher(std::move(dispatcher))
+{ 
+    // Set the input by dispatching to the game thread
+    auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+        [input] ()
+        {
+            return ExceptionBoundary([&] { input->SetSource(); });
+        });
+    CheckMakeResult(handler);
+
+    ComPtr<IAsyncAction> ignoredAction;
+    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
+
+    // When the game thread exits we need to unset the input
+    auto onThreadExit = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
+        [input] (IAsyncAction*, AsyncStatus)
+        {
+            return ExceptionBoundary([&] { input->RemoveSource(); });
+        });
+    CheckMakeResult(onThreadExit);
+    ThrowIfFailed(m_threadAction->put_Completed(onThreadExit.Get()));
+}
+
+CanvasGameLoop::~CanvasGameLoop()
 {
-    auto handler = Callback<AddFtmBase<IWorkItemHandler>::Type>(
-        [beforeLoopFn, tickFn, afterLoopFn](IAsyncAction* action)
+    // Kill the game thread by stopping the dispatcher
+    As<ICoreDispatcherWithTaskPriority>(m_dispatcher)->StopProcessEvents();
+}
+
+void CanvasGameLoop::StartTickLoop(
+    CanvasAnimatedControl* control,
+    std::function<bool(CanvasAnimatedControl*)> const& tickFn,
+    std::function<void(CanvasAnimatedControl*)> const& completedFn)
+{
+    auto lock = Lock(m_mutex);
+
+    assert(!m_tickLoopAction);
+
+    std::weak_ptr<CanvasGameLoop> weakSelf(shared_from_this());
+    auto weakControl = AsWeak(control);
+
+    m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+        [weakSelf, weakControl, tickFn] () mutable
         {
             return ExceptionBoundary(
                 [&]
                 {
-                    auto asyncInfo = As<IAsyncInfo>(action);
+                    auto self = weakSelf.lock();
 
-                    beforeLoopFn();
+                    if (!self)
+                        return;
 
-                    auto afterLoopWarden = MakeScopeWarden([&] { afterLoopFn(); });
+                    self->m_tickLoopShouldContinue = false;
 
-                    for (;;)
+                    auto strongControl = LockWeakRef<ICanvasAnimatedControl>(weakControl);
+                    auto control = static_cast<CanvasAnimatedControl*>(strongControl.Get());
+
+                    if (!control)
+                        return;
+
+                    self->m_tickLoopShouldContinue = tickFn(control);
+                });
+        });
+    CheckMakeResult(m_tickHandler);
+
+    m_tickCompletedHandler = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
+        [weakSelf, weakControl, completedFn] (IAsyncAction*, AsyncStatus status) mutable
+        {
+            return ExceptionBoundary(
+                [&] 
+                {
+                    auto self = weakSelf.lock();
+
+                    if (!self)
+                        return;
+
+                    auto strongControl = LockWeakRef<ICanvasAnimatedControl>(weakControl);
+                    auto control = static_cast<CanvasAnimatedControl*>(strongControl.Get());
+                
+                    auto lock = Lock(self->m_mutex);
+
+                    if (self->m_tickLoopShouldContinue)
                     {
-                        AsyncStatus status;
-                        ThrowIfFailed(asyncInfo->get_Status(&status));
+                        assert(status == AsyncStatus::Completed);
 
-                        if (status != AsyncStatus::Started)
-                            break;
-
-                        if (!tickFn())
-                            break;
-                    };
+                        self->ScheduleTick(lock);
+                    }
+                    else
+                    {
+                        completedFn(control);
+                    }
                 });
         });
+    CheckMakeResult(m_tickCompletedHandler);
 
-    ComPtr<IAsyncAction> action;
-    ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
-        handler.Get(),
-        WorkItemPriority_Normal,
-        WorkItemOptions_TimeSliced,
-        &action));
-
-    return action;
+    ScheduleTick(lock);
 }
 
-void CanvasRenderLoop::StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
+void CanvasGameLoop::ScheduleTick(Lock const& lock)
 {
-    ComPtr<ICoreDispatcher> dispatcher;
-    ThrowIfFailed(window->get_Dispatcher(&dispatcher));
+    MustOwnLock(lock);
 
-    auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [=]
-        {
-            return ExceptionBoundary(
-                [&]
-                {
-                    changedFn();
-                });
-        });
-
-    ComPtr<IAsyncAction> asyncAction;
-    ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
+    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, m_tickHandler.Get(), &m_tickLoopAction));
+    ThrowIfFailed(m_tickLoopAction->put_Completed(m_tickCompletedHandler.Get()));
+    
 }
+
+void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* errorInfo)
+{
+    *isRunning = false;
+    *errorInfo = nullptr;
+
+    auto lock = Lock(m_mutex);
+
+    auto info = MaybeAs<IAsyncInfo>(m_tickLoopAction);
+
+    if (!info)
+    {
+        return;
+    }
+
+    AsyncStatus status;
+    ThrowIfFailed(info->get_Status(&status));
+
+    switch (status)
+    {
+    case AsyncStatus::Started:
+        *isRunning = true;
+        break;
+
+    case AsyncStatus::Completed:
+        m_tickLoopAction.Reset();
+        break;
+
+    default:
+        *errorInfo = info;
+        m_tickLoopAction.Reset();
+        break;
+    }
+}
+
+//
+// CanvasAnimatedControlAdapter
+//
 
 class CanvasAnimatedControlAdapter : public BaseControlAdapter<CanvasAnimatedControlTraits>,
     public std::enable_shared_from_this<CanvasAnimatedControlAdapter>
 {
+    ComPtr<IThreadPoolStatics> m_threadPoolStatics;
     ComPtr<ICanvasSwapChainFactory> m_canvasSwapChainFactory;
     std::shared_ptr<CanvasSwapChainPanelAdapter> m_canvasSwapChainPanelAdapter;
     ComPtr<IActivationFactory> m_canvasSwapChainPanelActivationFactory;
-    CanvasRenderLoop m_renderLoop;
 
 public:
     CanvasAnimatedControlAdapter(IThreadPoolStatics* threadPoolStatics)
-        : m_renderLoop(threadPoolStatics)
+        : m_threadPoolStatics(threadPoolStatics)        
         , m_canvasSwapChainPanelAdapter(std::make_shared<CanvasSwapChainPanelAdapter>())        
     {
         auto& module = Module<InProc>::GetModule();
@@ -220,22 +311,152 @@ public:
         return static_cast<CanvasSwapChain*>(swapChain.Get());
     }
 
-    virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(
-        std::function<void()> const& beforeLoopFn,
-        std::function<bool()> const& tickFn,
-        std::function<void()> const& afterLoopFn)
+    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel, ComPtr<AnimatedControlInput> input) override
     {
-        return m_renderLoop.StartUpdateRenderLoop(beforeLoopFn, tickFn, afterLoopFn);
+        //
+        // This needs to start a new thread and, while executing code on that
+        // thread, then get a CoreDispatcher set up on that thread, and then, on
+        // the original thread, create a CanvasGameLoop that has access to that
+        // dispatcher.
+        //
+
+        class GameLoopStartup
+        {
+            // This mutex & condition variable are used to block the incoming
+            // thread while waiting for the game loop thread to start up and set
+            // the dispatcher.
+            std::mutex m_mutex;
+            std::condition_variable m_conditionVariable;
+            
+            ComPtr<ICoreDispatcher> m_dispatcher;
+
+        public:
+            void SetDispatcher(ICoreDispatcher* dispatcher)
+            {
+                Lock lock(m_mutex);
+                m_dispatcher = dispatcher;
+                lock.unlock();
+                m_conditionVariable.notify_one();
+            }
+
+            void NotifyOne()
+            {
+                m_conditionVariable.notify_one();
+            }
+
+            ComPtr<ICoreDispatcher> WaitAndGetDispatcher(IAsyncAction* action)
+            {
+                auto info = As<IAsyncInfo>(action);
+
+                Lock lock(m_mutex);
+                m_conditionVariable.wait(lock,
+                    [&]
+                    {
+                        if (m_dispatcher)
+                        {
+                            // The dispatcher has been sent to us; we're done
+                            return true;
+                        }
+                        
+                        AsyncStatus status;
+                        ThrowIfFailed(info->get_Status(&status));
+
+                        switch (status)
+                        {
+                        case AsyncStatus::Started:
+                            // We're still waiting to find out
+                            return false;
+
+                        case AsyncStatus::Error:
+                        {
+                            HRESULT hr = S_OK;
+                            ThrowIfFailed(info->get_ErrorCode(&hr));
+                            ThrowHR(hr);
+                        }
+
+                        case AsyncStatus::Completed:
+                            return true;
+
+                        default:
+                            ThrowHR(E_UNEXPECTED);
+                        }
+                    });
+
+                // We should only get here if the dispatcher was actually set.
+                // All other cases should have resulted in an exception.
+                assert(m_dispatcher);
+                return m_dispatcher;
+            }
+        };
+
+        auto gameLoopStartup = std::make_shared<GameLoopStartup>();
+
+        auto startThreadHandler = Callback<AddFtmBase<IWorkItemHandler>::Type>(
+            [=](IAsyncAction*) mutable
+            {
+                return ExceptionBoundary(
+                    [&]
+                    {
+                        auto notifyWarden = MakeScopeWarden([&] { gameLoopStartup->NotifyOne(); });
+
+                        auto dispatcher = CreateCoreDispatcher(swapChainPanel.Get());
+
+                        // Now notify the original thread that we've got the
+                        // dispatcher
+                        gameLoopStartup->SetDispatcher(dispatcher.Get());
+                        notifyWarden.Dismiss();
+                        gameLoopStartup.reset();
+
+                        // At this point the original thread is likely to go
+                        // about its business - so we cannot access anything we
+                        // captured by reference from it.
+                        //
+                        // Which is ok, because all we want to do here is to
+                        // start processing events.
+
+                        ThrowIfFailed(dispatcher->ProcessEvents(CoreProcessEventsOption_ProcessUntilQuit));
+                    });
+            });
+        CheckMakeResult(startThreadHandler);
+
+        auto action = StartThread(std::move(startThreadHandler));
+        auto dispatcher = gameLoopStartup->WaitAndGetDispatcher(action.Get());
+
+        return std::make_shared<CanvasGameLoop>(std::move(action), std::move(dispatcher), input);
     }
 
-    virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn)
+    static ComPtr<ICoreDispatcher> CreateCoreDispatcher(ISwapChainPanel* swapChainPanel)
     {
-        if (IsDesignModeEnabled())
-        {
-            return;
-        }
+        // We do a little dance here to create the dispatcher.
+        // We first create a core independent input source,
+        // which will create a dispatcher.  We then discard the
+        // input source we created.
+        ComPtr<ICoreInputSourceBase> inputSource;
+        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
+            CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse, 
+            &inputSource));
 
-        m_renderLoop.StartChangedAction(window, changedFn);
+        ComPtr<ICoreDispatcher> dispatcher;
+        ThrowIfFailed(inputSource->get_Dispatcher(&dispatcher));
+
+        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
+            CoreInputDeviceTypes_None,
+            &inputSource));
+
+        return dispatcher;
+    }
+
+
+    ComPtr<IAsyncAction> StartThread(ComPtr<IWorkItemHandler>&& handler)
+    {
+        ComPtr<IAsyncAction> action;
+        ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
+            handler.Get(),
+            WorkItemPriority_Normal,
+            WorkItemOptions_TimeSliced,
+            &action));
+
+        return action;        
     }
 
     virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override
@@ -576,17 +797,13 @@ ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(
 
 void CanvasAnimatedControl::Loaded()
 {
+    assert(!m_gameLoop);
+    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(As<ISwapChainPanel>(m_canvasSwapChainPanel), m_input);
 }
 
 void CanvasAnimatedControl::Unloaded()
-{
-    // Stop the update/render thread if it is running
-    if (m_renderLoopAction)
-    {
-        auto asyncInfo = As<IAsyncInfo>(m_renderLoopAction);
-
-        ThrowIfFailed(asyncInfo->Cancel());
-    }
+{    
+    m_gameLoop.reset();
 }
 
 void CanvasAnimatedControl::ApplicationSuspending(ISuspendingEventArgs* args)
@@ -668,17 +885,29 @@ void CanvasAnimatedControl::Changed(Lock const& lock, ChangeReason reason)
     // scheduled at a time.
     //
 
+    if (GetAdapter()->IsDesignModeEnabled())
+        return;
+
+    ComPtr<ICoreDispatcher> dispatcher;
+    ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+
     WeakRef weakSelf = AsWeak(this);
-
-    GetAdapter()->StartChangedAction(GetWindow(),
-        [weakSelf]() mutable
+    auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+        [weakSelf] () mutable
         {
-            auto strongSelf = LockWeakRef<ICanvasAnimatedControl>(weakSelf);
-            auto self = static_cast<CanvasAnimatedControl*>(strongSelf.Get());
-
-            if (self)
-                self->ChangedImpl();
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto strongSelf = LockWeakRef<ICanvasAnimatedControl>(weakSelf);
+                    auto self = static_cast<CanvasAnimatedControl*>(strongSelf.Get());
+                    
+                    if (self)
+                        self->ChangedImpl();
+                });
         });
+
+    ComPtr<IAsyncAction> asyncAction;
+    ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
 }
 
 void CanvasAnimatedControl::ChangedImpl()
@@ -702,32 +931,23 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     // Get the status of the update/render thread.
     //
-    auto renderLoopInfo = MaybeAs<IAsyncInfo>(m_renderLoopAction);
-    auto renderLoopStatus = AsyncStatus::Completed;
+    bool tickLoopIsRunning = false;
+    ComPtr<IAsyncInfo> tickLoopErrorInfo;
 
-    if (renderLoopInfo)
+    if (m_gameLoop)
     {
-        ThrowIfFailed(renderLoopInfo->get_Status(&renderLoopStatus));
+        m_gameLoop->TakeTickLoopState(&tickLoopIsRunning, &tickLoopErrorInfo);
 
-        switch (renderLoopStatus)
+        if (tickLoopIsRunning)
         {
-        case AsyncStatus::Started:
-            // The update/render loop is still running
+            // The tick loop is still running, so we don't do anything here.
+            // Ultimately, we rely on the tick loop noticing that something
+            // needs to change.  When it does, it will stop itself and trigger
+            // another Changed().
             return;
-
-        case AsyncStatus::Completed:
-        case AsyncStatus::Canceled:
-        case AsyncStatus::Error:
-            m_renderLoopAction.Reset();
-            // We still hold renderLoopInfo; this is used when we process
-            // the error from within the RunWithRenderTarget call below.
-            break;
-
-        default:
-            assert(false);
         }
     }
-
+        
     //
     // Call Trim on application suspend, but only once we are sure the
     // render thread is no longer running.
@@ -757,7 +977,7 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     bool ignorePaused = false;
 
-    if (renderLoopStatus == AsyncStatus::Error)
+    if (tickLoopErrorInfo)
     {
         // If the last render loop ended due to an error (eg lost device)
         // then we want to process the error.  The error is processed below
@@ -795,13 +1015,10 @@ void CanvasAnimatedControl::ChangedImpl()
             // do this here, within RunWithRenderTarget, so that it can
             // handle errors (such as lost device).
             //
-            assert(!m_renderLoopAction);
-            assert(renderLoopStatus != AsyncStatus::Started);
-
-            if (renderLoopStatus == AsyncStatus::Error)
+            if (tickLoopErrorInfo)
             {
-                HRESULT hr = S_OK;
-                ThrowIfFailed(renderLoopInfo->get_ErrorCode(&hr));
+                HRESULT hr;
+                ThrowIfFailed(tickLoopErrorInfo->get_ErrorCode(&hr));
                 ThrowHR(hr);
             }
 
@@ -814,56 +1031,20 @@ void CanvasAnimatedControl::ChangedImpl()
                 return;
             }
 
-            if (wasPaused)
+            if (wasPaused)      // TODO: figure out the right thing here; resetting the timer probably isn't it.
                 m_stepTimer.ResetElapsedTime();
 
             ComPtr<CanvasSwapChain> target(rawTarget);
-            ComPtr<AnimatedControlInput> input = m_input;
-            WeakRef weakSelf = AsWeak(this);
 
-            auto beforeLoopFn = 
-                [input]()
-                {
-                    input->SetSource();
-                };
-
-            auto onEachTickFn = 
-                [target, areResourcesCreated, weakSelf]() mutable
-                {
-                    auto strongSelf = LockWeakRef<ICanvasAnimatedControl>(weakSelf);
-                    auto self = static_cast<CanvasAnimatedControl*>(strongSelf.Get());
-
-                    if (!self)
-                        return false;
-
-                    return self->Tick(target.Get(), areResourcesCreated);
-                };
-
-            auto afterLoopFn = 
-                [input]()
-                {
-                    input->RemoveSource();
-                };
-
-            m_renderLoopAction = GetAdapter()->StartUpdateRenderLoop(beforeLoopFn, onEachTickFn, afterLoopFn);
-
-            auto completed = Callback<IAsyncActionCompletedHandler>(
-                [weakSelf](IAsyncAction*, AsyncStatus) mutable
-                {
-                    return ExceptionBoundary(
-                        [&]
-                        {
-                            auto strongSelf = LockWeakRef<ICanvasAnimatedControl>(weakSelf);
-                            auto self = static_cast<CanvasAnimatedControl*>(strongSelf.Get());
-
-                            if (self)
-                                self->Changed(self->GetLock());
-                        });
+            m_gameLoop->StartTickLoop(this,
+                [target, areResourcesCreated] (CanvasAnimatedControl* control)
+                { 
+                    return control->Tick(target.Get(), areResourcesCreated); 
+                },
+                [] (CanvasAnimatedControl* control)
+                { 
+                    control->Changed(control->GetLock()); 
                 });
-
-            CheckMakeResult(completed);
-
-            ThrowIfFailed(m_renderLoopAction->put_Completed(completed.Get()));
         });
 }
 
@@ -971,13 +1152,6 @@ bool CanvasAnimatedControl::Tick(
         //
         GetAdapter()->Sleep(static_cast<DWORD>(StepTimer::TicksToMilliseconds(StepTimer::DefaultTargetElapsedTime)));
     }
-
-    //
-    // Process input events; this is always done in order to avoid events
-    // getting missed in the case of anything that restarts the
-    // update/render loop.
-    //
-    m_input->ProcessEvents();
 
     //
     // Access shared state that's shared between the UI thread and the

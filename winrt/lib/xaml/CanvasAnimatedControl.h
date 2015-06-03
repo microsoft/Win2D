@@ -84,6 +84,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     typedef ITypedEventHandler<ICanvasAnimatedControl*, CanvasAnimatedDrawEventArgs*> Animated_DrawEventHandler;
 
     class CanvasAnimatedControl;
+    class CanvasGameLoop;
     class ICanvasAnimatedControlAdapter;
 
     struct CanvasAnimatedControlTraits
@@ -112,31 +113,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual ComPtr<CanvasSwapChainPanel> CreateCanvasSwapChainPanel() = 0;
 
-        virtual ComPtr<IAsyncAction> StartUpdateRenderLoop(
-            std::function<void()> const& beforeLoopFn,
-            std::function<bool()> const& tickFn,
-            std::function<void()> const& afterLoopFn) = 0;
-
-        virtual void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn) = 0;
+        virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel, ComPtr<AnimatedControlInput> input) = 0;
 
         virtual void Sleep(DWORD timeInMs) = 0;
     };
 
-    class CanvasRenderLoop
+    class CanvasGameLoop : public std::enable_shared_from_this<CanvasGameLoop>
     {
-        ComPtr<IThreadPoolStatics> m_threadPoolStatics;
+        std::mutex m_mutex;
+
+        ComPtr<IAsyncAction> m_threadAction;
+        ComPtr<ICoreDispatcher> m_dispatcher;
+
+        ComPtr<IAsyncAction> m_tickLoopAction;
+        
+        ComPtr<IDispatchedHandler> m_tickHandler;
+        ComPtr<IAsyncActionCompletedHandler> m_tickCompletedHandler;
+        bool m_tickLoopShouldContinue;
 
     public:
-        CanvasRenderLoop(IThreadPoolStatics* threadPoolStatics)
-            : m_threadPoolStatics(threadPoolStatics)
-        { }
+        CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher, ComPtr<AnimatedControlInput> input);
 
-        ComPtr<IAsyncAction> StartUpdateRenderLoop(
-            std::function<void()> const& beforeLoopFn,
-            std::function<bool()> const& tickFn,
-            std::function<void()> const& afterLoopFn);
+        ~CanvasGameLoop();
 
-        void StartChangedAction(ComPtr<IWindow> const& window, std::function<void()> changedFn);
+        void StartTickLoop(
+            CanvasAnimatedControl* control,
+            std::function<bool(CanvasAnimatedControl*)> const& tickFn,
+            std::function<void(CanvasAnimatedControl*)> const& completedFn);
+
+        void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* asyncInfo);
+
+    private:
+        void ScheduleTick(Lock const& lock);
     };
 
     class CanvasAnimatedControl : public RuntimeClass<
@@ -152,6 +160,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<AnimatedControlInput> m_input;
 
+        std::shared_ptr<CanvasGameLoop> m_gameLoop;
         ComPtr<IAsyncAction> m_renderLoopAction;
         
         ComPtr<ISuspendingDeferral> m_suspendingDeferral;
@@ -189,7 +198,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasAnimatedControl(
             std::shared_ptr<ICanvasAnimatedControlAdapter> adapter);
 
-        ~CanvasAnimatedControl();
+        virtual ~CanvasAnimatedControl();
 
         //
         // ICanvasControl
