@@ -120,6 +120,11 @@ public:
         m_gameThreadDispatcher->Tick();
     }
 
+    void TickAll()
+    {
+        m_gameThreadDispatcher->TickAll();
+    }
+
     ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
     {
         return m_swapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);

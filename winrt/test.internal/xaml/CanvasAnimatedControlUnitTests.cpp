@@ -1793,12 +1793,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
         f.Control.Reset();
     }
 
-    //
-    // TODO: CanvasAnimatedControl_DestroyedWhileThreadPoolWaitingToScheduleRenderLoop)
-    //
-    // I don't believe this test applies any more.  Remove this comment after CR.
-    //
-    
     TEST_METHOD_EX(CanvasAnimatedControl_WhenBackgroundModeChanges_UpdateRenderLoopKeepsRunning_Race0)
     {
         WhenBackgroundModeChanges(0);
@@ -1953,23 +1947,6 @@ public:
     }
 };
 
-//
-// CanvasAnimatedControlAdapter_StartChangedAction_SchedulesWorkItemThatCallsChanged:
-// this test is now redundant, since all the tests that rely on changed being
-// called exercise this.
-//
-// TODO: remove this comment after CR
-//
-
-//
-// CanvasAnimatedControlAdapter_StartUpdateRenderLoop_SchedulesWorkItemThatCallsTickFnUntilItReturnsFalse
-// CanvasAnimatedControlAdapter_StartUpdateRenderLoop_SchedulesWorkItemThatStopsWhenAsyncActionIsCanceled
-//
-// These tests removed since they were testing implementation details that have
-// now changed.
-//
-// TODO: remove this comment after CR
-//
 
 TEST_CLASS(CanvasAnimatedControl_Input)
 {
@@ -2160,10 +2137,10 @@ TEST_CLASS(CanvasAnimatedControl_Input)
     class InputFixture_EventTest
     {
     public:
-        template<typename MOCK_EVENT_ADD_FN, typename INPUT_SOURCE_FN>
+        template<typename MOCK_EVENT_SOURCE, typename INPUT_SOURCE_FN>
         void TestEvent(
             wchar_t const* name,
-            MOCK_EVENT_ADD_FN mockEventAddMethod,
+            MOCK_EVENT_SOURCE pointerToMockEventSource,
             INPUT_SOURCE_FN inputSourceMethod)
         {
             InputFixture f;
@@ -2176,23 +2153,9 @@ TEST_CLASS(CanvasAnimatedControl_Input)
             auto appEventHandler = MockEventHandler<EventHandlerWithPointerArgs>(name);
 
             EventRegistrationToken token;
-            ThrowIfFailed((*(inputSource.Get()).*inputSourceMethod)(appEventHandler.Get(), &token));
-
-            // 
-            // When the game loop thread starts it'll register for an event on
-            // the actual control.  We grab it's handler so we can call it
-            // later.
-            //
-            ComPtr<EventHandlerWithPointerArgs> storedEventHandlerOfControl;
+            ThrowIfFailed((inputSource.Get()->*inputSourceMethod)(appEventHandler.Get(), &token));
 
             auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource().Get();
-            (coreIndependentInputSource->*mockEventAddMethod).SetExpectedCalls(1,
-                [&storedEventHandlerOfControl](EventHandlerWithPointerArgs* eventHandlerOfControl, EventRegistrationToken*)
-            {
-                Assert::IsNotNull(eventHandlerOfControl);
-                storedEventHandlerOfControl = eventHandlerOfControl;
-                return S_OK;
-            });
 
             //
             // Load the control; this'll start the game loop thread.
@@ -2202,13 +2165,18 @@ TEST_CLASS(CanvasAnimatedControl_Input)
 
             // When an input event happens, expect our event handler to be called.
             appEventHandler.SetExpectedCalls(1);
+            coreIndependentInputSource->InvokeViaDispatcher(pointerToMockEventSource);
+            f.Adapter->TickAll();
 
-            // Issue a fake input event by raising the saved event handler.
-            storedEventHandlerOfControl->Invoke(nullptr, nullptr);
+            // ...even when the control is paused...
+            ThrowIfFailed(f.Control->put_Paused(TRUE));
+            appEventHandler.SetExpectedCalls(1);
+            coreIndependentInputSource->InvokeViaDispatcher(pointerToMockEventSource);
+            f.Adapter->TickAll();
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_CanAddEventsBeforeWorkerThreadIsStarted)
+    TEST_METHOD_EX(CanvasAnimatedControl_Input_EventsAreRaisedAsAppropriate)
     {
         //
         // Implementation detail: The control's input events are tracked using 
@@ -2218,7 +2186,7 @@ TEST_CLASS(CanvasAnimatedControl_Input)
         InputFixture_EventTest f;
 
 #define TEST_EVENT(EVENT) \
-        f.TestEvent(WIDEN(#EVENT), &StubCoreIndependentInputSource::add_ ## EVENT ## Method, &ICorePointerInputSource::add_ ## EVENT)
+        f.TestEvent(WIDEN(#EVENT), &StubCoreIndependentInputSource::##EVENT, &ICorePointerInputSource::add_ ## EVENT)
 
         TEST_EVENT(PointerEntered);
         TEST_EVENT(PointerExited);

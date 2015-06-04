@@ -187,41 +187,74 @@ public:
 
 class StubCoreIndependentInputSource : public MockCoreIndependentInputSource
 {
-public:
-    StubCoreIndependentInputSource(ICoreDispatcher* dispatcher)
-    {
-        AllowAnyCall(dispatcher);
-    }
+    ComPtr<ICoreDispatcher> m_dispatcher;
 
-    void AllowAnyCall(ComPtr<ICoreDispatcher> dispatcher)
+public:
+    MockEventSource<EventHandlerWithPointerArgs> PointerCaptureLost;
+    MockEventSource<EventHandlerWithPointerArgs> PointerEntered;
+    MockEventSource<EventHandlerWithPointerArgs> PointerExited;
+    MockEventSource<EventHandlerWithPointerArgs> PointerMoved;
+    MockEventSource<EventHandlerWithPointerArgs> PointerPressed;
+    MockEventSource<EventHandlerWithPointerArgs> PointerReleased;
+    MockEventSource<EventHandlerWithPointerArgs> PointerWheelChanged;
+
+    StubCoreIndependentInputSource(ComPtr<ICoreDispatcher> dispatcher)
+        : m_dispatcher(dispatcher)
+        , PointerCaptureLost(L"PointerCaptureLost")
+        , PointerEntered(L"PointerEntered")
+        , PointerExited(L"PointerExited")
+        , PointerMoved(L"PointerMoved")
+        , PointerPressed(L"PointerPressed")
+        , PointerReleased(L"PointerReleased")
+        , PointerWheelChanged(L"PointerWheelChanged")
     {
         put_PointerCursorMethod.AllowAnyCall();
-
-        add_PointerCaptureLostMethod.AllowAnyCall();
-        remove_PointerCaptureLostMethod.AllowAnyCall();
-
-        add_PointerEnteredMethod.AllowAnyCall();
-        remove_PointerEnteredMethod.AllowAnyCall();
-
-        add_PointerExitedMethod.AllowAnyCall();
-        remove_PointerExitedMethod.AllowAnyCall();
-
-        add_PointerMovedMethod.AllowAnyCall();
-        remove_PointerMovedMethod.AllowAnyCall();
-
-        add_PointerPressedMethod.AllowAnyCall();
-        remove_PointerPressedMethod.AllowAnyCall();
-
-        add_PointerReleasedMethod.AllowAnyCall();
-        remove_PointerReleasedMethod.AllowAnyCall();
-
-        add_PointerWheelChangedMethod.AllowAnyCall();
-        remove_PointerWheelChangedMethod.AllowAnyCall();
 
         get_DispatcherMethod.AllowAnyCall(
             [=](ICoreDispatcher** out)
             {
-                return dispatcher.CopyTo(out);
+                return m_dispatcher.CopyTo(out);
             });
+
+#define ALLOW(EVENT) \
+        add_##EVENT##Method.AllowAnyCall([=] (EventHandlerWithPointerArgs* delegate, EventRegistrationToken* token) { return EVENT.add_Event(delegate, token); }); \
+        remove_##EVENT##Method.AllowAnyCall([=] (EventRegistrationToken token) { return EVENT.remove_Event(token); })
+
+        ALLOW(PointerCaptureLost);
+        ALLOW(PointerEntered);
+        ALLOW(PointerExited);
+        ALLOW(PointerMoved);
+        ALLOW(PointerPressed);
+        ALLOW(PointerReleased);
+        ALLOW(PointerWheelChanged);
+
+#undef ALLOW
+    }
+
+    //
+    // Raises the event (specified as pointer to member - eg
+    // &StubCoreIndependentInputSource::PointerMoved) via the dispatcher.  This
+    // simulates how these events are raised on the real
+    // CoreIndependentInputSource.
+    //
+    template<typename EVENT>
+    ComPtr<IAsyncAction> InvokeViaDispatcher(EVENT eventMember)
+    {
+        auto handler = Callback<IDispatchedHandler>(
+            [=]
+            {
+                return ExceptionBoundary(
+                    [&]
+                    {
+                        auto& event = (this->*eventMember);
+                        ThrowIfFailed(event.InvokeAll(nullptr, nullptr));
+                    });
+            });
+        CheckMakeResult(handler);
+
+        ComPtr<IAsyncAction> action;
+        ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &action));
+
+        return action;
     }
 };
