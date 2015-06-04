@@ -16,7 +16,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     class CanvasAnimatedControl;
 
-    class CanvasGameLoop : public std::enable_shared_from_this<CanvasGameLoop>
+    class CanvasGameLoop : public std::enable_shared_from_this<CanvasGameLoop>,
+                           private LifespanTracker<CanvasGameLoop>
     {
         std::mutex m_mutex;
 
