@@ -12,12 +12,16 @@
 
 #include "pch.h"
 
-#include "BaseControlAdapter.h"
+#include "CanvasGameLoop.h"
 
 using namespace ::ABI::Microsoft::Graphics::Canvas;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ::Microsoft::WRL::Wrappers;
+
+//
+// CanvasAnimatedUpdateEventArgsFactory implementation
+//
 
 IFACEMETHODIMP CanvasAnimatedUpdateEventArgsFactory::Create(
     CanvasTimingInformation timingInformation,
@@ -35,6 +39,10 @@ IFACEMETHODIMP CanvasAnimatedUpdateEventArgsFactory::Create(
         });
 }
 
+//
+// CanvasAnimatedUpdateEventArgs implementation
+//
+
 CanvasAnimatedUpdateEventArgs::CanvasAnimatedUpdateEventArgs(CanvasTimingInformation timing)
     : m_timingInformation(timing)
 {
@@ -50,6 +58,10 @@ IFACEMETHODIMP CanvasAnimatedUpdateEventArgs::get_Timing(CanvasTimingInformation
             *value = m_timingInformation;
         });
 }
+
+//
+// CanvasAnimatedDrawEventArgsFactory implementation
+//
 
 IFACEMETHODIMP CanvasAnimatedDrawEventArgsFactory::Create(
     ICanvasDrawingSession* drawingSession,
@@ -67,6 +79,10 @@ IFACEMETHODIMP CanvasAnimatedDrawEventArgsFactory::Create(
             ThrowIfFailed(newCanvasDrawEventArgs.CopyTo(drawEventArgs));
         });
 }
+
+//
+// CanvasAnimatedDrawEventArgs implementation
+//
 
 CanvasAnimatedDrawEventArgs::CanvasAnimatedDrawEventArgs(
     ICanvasDrawingSession* drawingSession,
@@ -101,408 +117,8 @@ IFACEMETHODIMP CanvasAnimatedDrawEventArgs::get_Timing(CanvasTimingInformation* 
 }
 
 //
-// CanvasGameLoop
+// CanvasAnimatedControlFactory
 //
-
-CanvasGameLoop::CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher, ComPtr<AnimatedControlInput> input)
-    : m_threadAction(std::move(action))
-    , m_dispatcher(std::move(dispatcher))
-{ 
-    // Set the input by dispatching to the game thread
-    auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [input] ()
-        {
-            return ExceptionBoundary([&] { input->SetSource(); });
-        });
-    CheckMakeResult(handler);
-
-    ComPtr<IAsyncAction> ignoredAction;
-    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
-
-    // When the game thread exits we need to unset the input
-    auto onThreadExit = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
-        [input] (IAsyncAction*, AsyncStatus)
-        {
-            return ExceptionBoundary([&] { input->RemoveSource(); });
-        });
-    CheckMakeResult(onThreadExit);
-    ThrowIfFailed(m_threadAction->put_Completed(onThreadExit.Get()));
-}
-
-CanvasGameLoop::~CanvasGameLoop()
-{
-    // Kill the game thread by stopping the dispatcher
-    As<ICoreDispatcherWithTaskPriority>(m_dispatcher)->StopProcessEvents();
-}
-
-void CanvasGameLoop::StartTickLoop(
-    CanvasAnimatedControl* control,
-    std::function<bool(CanvasAnimatedControl*)> const& tickFn,
-    std::function<void(CanvasAnimatedControl*)> const& completedFn)
-{
-    auto lock = Lock(m_mutex);
-
-    assert(!m_tickLoopAction);
-
-    std::weak_ptr<CanvasGameLoop> weakSelf(shared_from_this());
-    auto weakControl = AsWeak(control);
-
-    m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [weakSelf, weakControl, tickFn] () mutable
-        {
-            return ExceptionBoundary(
-                [&]
-                {
-                    auto self = weakSelf.lock();
-
-                    if (!self)
-                        return;
-
-                    self->m_tickLoopShouldContinue = false;
-
-                    auto strongControl = LockWeakRef<ICanvasAnimatedControl>(weakControl);
-                    auto control = static_cast<CanvasAnimatedControl*>(strongControl.Get());
-
-                    if (!control)
-                        return;
-
-                    self->m_tickLoopShouldContinue = tickFn(control);
-                });
-        });
-    CheckMakeResult(m_tickHandler);
-
-    m_tickCompletedHandler = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
-        [weakSelf, weakControl, completedFn] (IAsyncAction*, AsyncStatus status) mutable
-        {
-            return ExceptionBoundary(
-                [&] 
-                {
-                    auto self = weakSelf.lock();
-
-                    if (!self)
-                        return;
-
-                    auto strongControl = LockWeakRef<ICanvasAnimatedControl>(weakControl);
-                    auto control = static_cast<CanvasAnimatedControl*>(strongControl.Get());
-                
-                    auto lock = Lock(self->m_mutex);
-
-                    if (self->m_tickLoopShouldContinue)
-                    {
-#ifdef NDEBUG
-                        UNREFERENCED_PARAMETER(status);
-#else
-                        assert(status == AsyncStatus::Completed);
-#endif
-
-                        self->ScheduleTick(lock);
-                    }
-                    else
-                    {
-                        completedFn(control);
-                    }
-                });
-        });
-    CheckMakeResult(m_tickCompletedHandler);
-
-    ScheduleTick(lock);
-}
-
-void CanvasGameLoop::ScheduleTick(Lock const& lock)
-{
-    MustOwnLock(lock);
-
-    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, m_tickHandler.Get(), &m_tickLoopAction));
-    ThrowIfFailed(m_tickLoopAction->put_Completed(m_tickCompletedHandler.Get()));
-    
-}
-
-void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* errorInfo)
-{
-    *isRunning = false;
-    *errorInfo = nullptr;
-
-    auto lock = Lock(m_mutex);
-
-    auto info = MaybeAs<IAsyncInfo>(m_tickLoopAction);
-
-    if (!info)
-    {
-        return;
-    }
-
-    AsyncStatus status;
-    ThrowIfFailed(info->get_Status(&status));
-
-    switch (status)
-    {
-    case AsyncStatus::Started:
-        *isRunning = true;
-        break;
-
-    case AsyncStatus::Completed:
-        m_tickLoopAction.Reset();
-        break;
-
-    default:
-        *errorInfo = info;
-        m_tickLoopAction.Reset();
-        break;
-    }
-}
-
-//
-// CanvasAnimatedControlAdapter
-//
-
-class CanvasAnimatedControlAdapter : public BaseControlAdapter<CanvasAnimatedControlTraits>,
-    public std::enable_shared_from_this<CanvasAnimatedControlAdapter>
-{
-    ComPtr<IThreadPoolStatics> m_threadPoolStatics;
-    ComPtr<ICanvasSwapChainFactory> m_canvasSwapChainFactory;
-    std::shared_ptr<CanvasSwapChainPanelAdapter> m_canvasSwapChainPanelAdapter;
-    ComPtr<IActivationFactory> m_canvasSwapChainPanelActivationFactory;
-
-public:
-    CanvasAnimatedControlAdapter(IThreadPoolStatics* threadPoolStatics)
-        : m_threadPoolStatics(threadPoolStatics)        
-        , m_canvasSwapChainPanelAdapter(std::make_shared<CanvasSwapChainPanelAdapter>())        
-    {
-        auto& module = Module<InProc>::GetModule();
-
-        ComPtr<IActivationFactory> swapChainActivationFactory;
-
-        ThrowIfFailed(module.GetActivationFactory(
-            HStringReference(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain).Get(),
-            &swapChainActivationFactory));
-
-        m_canvasSwapChainFactory = As<ICanvasSwapChainFactory>(swapChainActivationFactory);
-
-        ThrowIfFailed(module.GetActivationFactory(
-            HStringReference(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasSwapChainPanel).Get(),
-            &m_canvasSwapChainPanelActivationFactory));
-    }        
-
-    virtual ComPtr<CanvasSwapChainPanel> CreateCanvasSwapChainPanel() override
-    {
-        ComPtr<IInspectable> canvasSwapChainPanelInspectable;
-        ThrowIfFailed(m_canvasSwapChainPanelActivationFactory->ActivateInstance(&canvasSwapChainPanelInspectable));
-
-        auto canvasSwapChainPanel = As<ICanvasSwapChainPanel>(canvasSwapChainPanelInspectable);
-
-        return static_cast<CanvasSwapChainPanel*>(canvasSwapChainPanel.Get());
-    }
-
-    virtual ComPtr<CanvasSwapChain> CreateCanvasSwapChain(
-        ICanvasDevice* device,
-        float width,
-        float height,
-        float dpi,
-        CanvasAlphaMode alphaMode) override
-    {
-        ComPtr<ICanvasSwapChain> swapChain;
-
-        ThrowIfFailed(m_canvasSwapChainFactory->CreateWithAllOptions(
-            As<ICanvasResourceCreator>(device).Get(),
-            width, 
-            height, 
-            dpi,
-            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-            2, 
-            alphaMode,
-            &swapChain));
-
-        return static_cast<CanvasSwapChain*>(swapChain.Get());
-    }
-
-    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel, ComPtr<AnimatedControlInput> input) override
-    {
-        //
-        // This needs to start a new thread and, while executing code on that
-        // thread, then get a CoreDispatcher set up on that thread, and then, on
-        // the original thread, create a CanvasGameLoop that has access to that
-        // dispatcher.
-        //
-
-        class GameLoopStartup
-        {
-            // This mutex & condition variable are used to block the incoming
-            // thread while waiting for the game loop thread to start up and set
-            // the dispatcher.
-            std::mutex m_mutex;
-            std::condition_variable m_conditionVariable;
-            
-            ComPtr<ICoreDispatcher> m_dispatcher;
-
-        public:
-            void SetDispatcher(ICoreDispatcher* dispatcher)
-            {
-                Lock lock(m_mutex);
-                m_dispatcher = dispatcher;
-                lock.unlock();
-                m_conditionVariable.notify_one();
-            }
-
-            void NotifyOne()
-            {
-                m_conditionVariable.notify_one();
-            }
-
-            ComPtr<ICoreDispatcher> WaitAndGetDispatcher(IAsyncAction* action)
-            {
-                auto info = As<IAsyncInfo>(action);
-
-                Lock lock(m_mutex);
-                m_conditionVariable.wait(lock,
-                    [&]
-                    {
-                        if (m_dispatcher)
-                        {
-                            // The dispatcher has been sent to us; we're done
-                            return true;
-                        }
-                        
-                        AsyncStatus status;
-                        ThrowIfFailed(info->get_Status(&status));
-
-                        switch (status)
-                        {
-                        case AsyncStatus::Started:
-                            // We're still waiting to find out
-                            return false;
-
-                        case AsyncStatus::Error:
-                        {
-                            HRESULT hr = S_OK;
-                            ThrowIfFailed(info->get_ErrorCode(&hr));
-                            ThrowHR(hr);
-                        }
-
-                        case AsyncStatus::Completed:
-                            return true;
-
-                        default:
-                            ThrowHR(E_UNEXPECTED);
-                        }
-                    });
-
-                // We should only get here if the dispatcher was actually set.
-                // All other cases should have resulted in an exception.
-                assert(m_dispatcher);
-                return m_dispatcher;
-            }
-        };
-
-        auto gameLoopStartup = std::make_shared<GameLoopStartup>();
-
-        auto startThreadHandler = Callback<AddFtmBase<IWorkItemHandler>::Type>(
-            [=](IAsyncAction*) mutable
-            {
-                return ExceptionBoundary(
-                    [&]
-                    {
-                        auto notifyWarden = MakeScopeWarden([&] { gameLoopStartup->NotifyOne(); });
-
-                        auto dispatcher = CreateCoreDispatcher(swapChainPanel.Get());
-
-                        // Now notify the original thread that we've got the
-                        // dispatcher
-                        gameLoopStartup->SetDispatcher(dispatcher.Get());
-                        notifyWarden.Dismiss();
-                        gameLoopStartup.reset();
-
-                        // At this point the original thread is likely to go
-                        // about its business - so we cannot access anything we
-                        // captured by reference from it.
-                        //
-                        // Which is ok, because all we want to do here is to
-                        // start processing events.
-
-                        ThrowIfFailed(dispatcher->ProcessEvents(CoreProcessEventsOption_ProcessUntilQuit));
-                    });
-            });
-        CheckMakeResult(startThreadHandler);
-
-        auto action = StartThread(std::move(startThreadHandler));
-        auto dispatcher = gameLoopStartup->WaitAndGetDispatcher(action.Get());
-
-        return std::make_shared<CanvasGameLoop>(std::move(action), std::move(dispatcher), input);
-    }
-
-    static ComPtr<ICoreDispatcher> CreateCoreDispatcher(ISwapChainPanel* swapChainPanel)
-    {
-        // We do a little dance here to create the dispatcher.
-        // We first create a core independent input source,
-        // which will create a dispatcher.  We then discard the
-        // input source we created.
-        ComPtr<ICoreInputSourceBase> inputSource;
-        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
-            CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse, 
-            &inputSource));
-
-        ComPtr<ICoreDispatcher> dispatcher;
-        ThrowIfFailed(inputSource->get_Dispatcher(&dispatcher));
-
-        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
-            CoreInputDeviceTypes_None,
-            &inputSource));
-
-        return dispatcher;
-    }
-
-
-    ComPtr<IAsyncAction> StartThread(ComPtr<IWorkItemHandler>&& handler)
-    {
-        ComPtr<IAsyncAction> action;
-        ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
-            handler.Get(),
-            WorkItemPriority_Normal,
-            WorkItemOptions_TimeSliced,
-            &action));
-
-        return action;        
-    }
-
-    virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override
-    {
-        return m_canvasSwapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);
-    }
-
-    virtual void Sleep(DWORD timeInMs) override
-    {
-        ::Sleep(timeInMs);
-    }
-
-    virtual LARGE_INTEGER GetPerformanceCounter() override
-    {
-        LARGE_INTEGER counter;
-        if (QueryPerformanceCounter(&counter) == 0)
-        {
-            ThrowHR(E_FAIL);
-        }
-        return counter;
-    }
-
-    virtual LARGE_INTEGER GetPerformanceFrequency() override
-    {
-        LARGE_INTEGER frequency;
-        if (QueryPerformanceFrequency(&frequency) == 0)
-        {
-            ThrowHR(E_FAIL);
-        }
-        return frequency;
-    }
-};
-
-static std::shared_ptr<ICanvasAnimatedControlAdapter> CreateCanvasAnimatedControlAdapter()
-{
-    ComPtr<IThreadPoolStatics> threadPoolStatics;
-    ThrowIfFailed(GetActivationFactory(
-        HStringReference(RuntimeClass_Windows_System_Threading_ThreadPool).Get(),
-        &threadPoolStatics));
-
-    return std::make_shared<CanvasAnimatedControlAdapter>(threadPoolStatics.Get());
-}
 
 class CanvasAnimatedControlFactory : public ActivationFactory<>,
                                      private LifespanTracker<CanvasAnimatedControlFactory>
@@ -530,6 +146,10 @@ public:
     }
 };
 
+//
+// CanvasAnimatedControl implementation
+//
+
 CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedControlAdapter> adapter)
     : BaseControl<CanvasAnimatedControlTraits>(adapter)
     , m_stepTimer(adapter)
@@ -548,10 +168,6 @@ CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedCont
 CanvasAnimatedControl::~CanvasAnimatedControl()
 {
 }
-
-//
-// ICanvasControl
-//
 
 IFACEMETHODIMP CanvasAnimatedControl::add_Update(
     Animated_UpdateEventHandler* value,
@@ -672,7 +288,6 @@ IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
         });
 }
 
-
 IFACEMETHODIMP CanvasAnimatedControl::get_Input(ICorePointerInputSource** value)
 {
     return ExceptionBoundary(
@@ -683,7 +298,6 @@ IFACEMETHODIMP CanvasAnimatedControl::get_Input(ICorePointerInputSource** value)
             ThrowIfFailed(m_input.CopyTo(value));
         });
 }
-
 
 IFACEMETHODIMP CanvasAnimatedControl::RemoveFromVisualTree()
 {
@@ -740,7 +354,6 @@ IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
             ThrowIfFailed(newAsyncAction.CopyTo(asyncAction));
         });
 }
-
 
 void CanvasAnimatedControl::CreateOrUpdateRenderTarget(
     ICanvasDevice* device,

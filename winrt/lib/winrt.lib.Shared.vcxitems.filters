@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -252,6 +252,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp">
       <Filter>directx</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp">
+      <Filter>xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasGameLoop.cpp">
+      <Filter>xaml</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -519,6 +525,12 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasGameLoop.h">
+      <Filter>xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\RemoveFromVisualTree.h">
+      <Filter>xaml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

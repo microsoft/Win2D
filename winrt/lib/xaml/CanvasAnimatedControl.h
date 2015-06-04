@@ -12,11 +12,11 @@
 
 #pragma once
 
-#include "BaseControl.h"
+#include "AnimatedControlAsyncAction.h"
 #include "AnimatedControlInput.h"
+#include "BaseControlAdapter.h"
 #include "CanvasSwapChainPanel.h"
 #include "StepTimer.h"
-#include "AnimatedControlAsyncAction.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
@@ -118,34 +118,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual void Sleep(DWORD timeInMs) = 0;
     };
 
-    class CanvasGameLoop : public std::enable_shared_from_this<CanvasGameLoop>
-    {
-        std::mutex m_mutex;
-
-        ComPtr<IAsyncAction> m_threadAction;
-        ComPtr<ICoreDispatcher> m_dispatcher;
-
-        ComPtr<IAsyncAction> m_tickLoopAction;
-        
-        ComPtr<IDispatchedHandler> m_tickHandler;
-        ComPtr<IAsyncActionCompletedHandler> m_tickCompletedHandler;
-        bool m_tickLoopShouldContinue;
-
-    public:
-        CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher, ComPtr<AnimatedControlInput> input);
-
-        ~CanvasGameLoop();
-
-        void StartTickLoop(
-            CanvasAnimatedControl* control,
-            std::function<bool(CanvasAnimatedControl*)> const& tickFn,
-            std::function<void(CanvasAnimatedControl*)> const& completedFn);
-
-        void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* asyncInfo);
-
-    private:
-        void ScheduleTick(Lock const& lock);
-    };
+    std::shared_ptr<ICanvasAnimatedControlAdapter> CreateCanvasAnimatedControlAdapter();
 
     class CanvasAnimatedControl : public RuntimeClass<
         MixIn<CanvasAnimatedControl, BaseControl<CanvasAnimatedControlTraits>>,

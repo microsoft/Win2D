@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <lib/xaml/CanvasGameLoop.h>
+
 #include "BaseControlTestAdapter.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
 #include "MockCoreIndependentInputSource.h"
