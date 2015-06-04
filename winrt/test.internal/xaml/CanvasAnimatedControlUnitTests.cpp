@@ -1924,30 +1924,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 };
 
 
-class MockThreadPoolStatics : public RuntimeClass<IThreadPoolStatics>
-{
-public:
-    CALL_COUNTER_WITH_MOCK(RunAsyncMethod, HRESULT(IWorkItemHandler*, IAsyncAction**));
-    CALL_COUNTER_WITH_MOCK(RunWithPriorityAsyncMethod, HRESULT(IWorkItemHandler*, WorkItemPriority, IAsyncAction**));
-    CALL_COUNTER_WITH_MOCK(RunWithPriorityAndOptionsAsyncMethod, HRESULT(IWorkItemHandler*, WorkItemPriority, WorkItemOptions, IAsyncAction**));
-
-    IFACEMETHODIMP RunAsync(IWorkItemHandler* handler, IAsyncAction** operation)
-    {
-        return RunAsyncMethod.WasCalled(handler, operation);
-    }
-
-    IFACEMETHODIMP RunWithPriorityAsync(IWorkItemHandler* handler, WorkItemPriority priority, IAsyncAction** operation)
-    {
-        return RunWithPriorityAsyncMethod.WasCalled(handler, priority, operation);
-    }
-
-    IFACEMETHODIMP RunWithPriorityAndOptionsAsync(IWorkItemHandler* handler, WorkItemPriority priority, WorkItemOptions options, IAsyncAction** operation)
-    {
-        return RunWithPriorityAndOptionsAsyncMethod.WasCalled(handler, priority, options, operation);
-    }
-};
-
-
 TEST_CLASS(CanvasAnimatedControl_Input)
 {
     struct InputFixture : public CanvasAnimatedControlFixture
