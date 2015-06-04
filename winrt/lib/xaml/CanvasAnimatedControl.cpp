@@ -189,7 +189,11 @@ void CanvasGameLoop::StartTickLoop(
 
                     if (self->m_tickLoopShouldContinue)
                     {
+#ifdef NDEBUG
+                        UNREFERENCED_PARAMETER(status);
+#else
                         assert(status == AsyncStatus::Completed);
+#endif
 
                         self->ScheduleTick(lock);
                     }
