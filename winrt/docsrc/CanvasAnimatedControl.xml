@@ -720,6 +720,38 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.HasGameLoopThreadAccess">
       <summary>Gets whether the current thread is the game loop thread.</summary>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Invalidate">
+      <summary>Marks this control as requiring redrawing.</summary>
+      <remarks>
+        <p>
+          When Paused=false, the control will redraw anyway and so calling
+          Invalidate has no effect.  However, when Paused=true, the control will
+          not normally redraw itself.  Calling Invalidate() will cause the
+          control to schedule a Draw without an Update.
+        </p>
+        <p>
+          This method can be called from any thread.
+        </p>
+        <p>        
+          Multiple calls to Invalidate() between Draw events are coalesced.
+        </p>
+        <p>
+          The policy around completed CreateResources remains unchanged; after a
+          call to Invalidate() the Draw event will not be raised until
+          CreateResources has completed.
+        </p>
+        <p>
+          Be aware, though, that the Update event will not be raised.  This
+          opens up the possibility of a Draw occurring before the first Update
+          if the control is created with Paused=true.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Invalidate">
+      <summary>Marks this control as requiring redrawing.</summary>
+      <inheritdoc/>
+    </member>
     
     
   </members>

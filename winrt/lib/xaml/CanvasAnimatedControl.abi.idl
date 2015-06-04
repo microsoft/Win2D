@@ -164,6 +164,27 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* value);
 
+        //
+        // Marks the control as requiring redrawing.  When Paused=false, the
+        // control will redraw anyway and so calling Invalidate has no effect.
+        // However, when Paused=true, the control will not normally redraw
+        // itself.  Calling Invalidate() will cause the control to schedule a
+        // Draw without an Update.
+        //
+        // This method can be called from any thread.
+        //
+        // Multiple calls to Invalidate() between Draw events are coalesced.
+        //
+        // Note: the policy around completed CreateResources remains unchanged;
+        // after a call to Invalidate() the Draw event will not be raised until
+        // CreateResources has completed.
+        //
+        // Be aware, though, that the Update event will not be raised.  This
+        // opens up the possibility of a Draw occurring before the first Update
+        // if the control is created with Paused=true.
+        //
+        HRESULT Invalidate();
+
         // Resets the elapsed time.
         //
         // This method can be called from any thread.

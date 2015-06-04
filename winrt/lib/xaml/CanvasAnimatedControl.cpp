@@ -277,6 +277,24 @@ IFACEMETHODIMP CanvasAnimatedControl::get_Paused(boolean* value)
         });
 }
 
+IFACEMETHODIMP CanvasAnimatedControl::Invalidate()
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto lock = GetLock();
+
+            auto wasInvalidated = m_sharedState.Invalidated;
+            
+            m_sharedState.Invalidated = true;
+
+            if (!wasInvalidated)
+            {
+                Changed(lock);
+            }
+        });
+}
+
 IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
 {
     return ExceptionBoundary(
@@ -539,7 +557,7 @@ void CanvasAnimatedControl::ChangedImpl()
 
     auto lock = GetLock();
 
-    bool needsDraw = m_sharedState.NeedsDraw;
+    bool needsDraw = m_sharedState.NeedsDraw || m_sharedState.Invalidated;
     bool isPaused = m_sharedState.IsPaused;
     bool wasPaused = m_sharedState.FirstTickAfterWasPaused;
 
@@ -817,6 +835,13 @@ bool CanvasAnimatedControl::Tick(
     // relevant for the ClearColor, since this indicates that we've
     // 'consumed' that color.
     m_sharedState.NeedsDraw = false;
+
+    bool invalidated = m_sharedState.Invalidated; 
+
+    // If resources are created then we know that we'll be able to process the
+    // Invalidated request, so we can reset this flag now.
+    if (areResourcesCreated)
+        m_sharedState.Invalidated = false;
     
     // We update, but forego drawing if the control is not in a visible state.
     // Force-draws, like those due to device lost, are not performed either.
@@ -855,7 +880,7 @@ bool CanvasAnimatedControl::Tick(
     // This is desireable since using Present to wait for the vsync can
     // result in missed frames.
     //
-    if ((updateResult.Updated || forceDraw) && isVisible)
+    if ((updateResult.Updated || forceDraw || invalidated) && isVisible)
     {
         //
         // If the control's size has changed then the swapchain's buffers
@@ -888,7 +913,7 @@ bool CanvasAnimatedControl::Tick(
 
         if (renderTarget->Target)
         {
-            bool invokeDrawHandlers = (areResourcesCreated && m_hasUpdated);
+            bool invokeDrawHandlers = (areResourcesCreated && (m_hasUpdated || invalidated));
 
             Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers, updateResult.IsRunningSlowly);
             ThrowIfFailed(renderTarget->Target->Present());

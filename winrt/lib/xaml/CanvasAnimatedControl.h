@@ -154,6 +154,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 , TargetElapsedTime(0)
                 , ShouldResetElapsedTime(false)
                 , NeedsDraw(true)
+                , Invalidated(false)
             {}
 
             bool IsPaused;
@@ -162,6 +163,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint64_t TargetElapsedTime;
             bool ShouldResetElapsedTime;
             bool NeedsDraw;
+            bool Invalidated;
             std::vector<ComPtr<AnimatedControlAsyncAction>> PendingAsyncActions;
         };
 
@@ -195,7 +197,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP put_Paused(boolean value) override;
 
         IFACEMETHODIMP get_Paused(boolean* value) override;
-
+        
+        IFACEMETHODIMP Invalidate() override;
+        
         IFACEMETHODIMP ResetElapsedTime() override;
 
         IFACEMETHODIMP get_Input(ICorePointerInputSource** value) override;

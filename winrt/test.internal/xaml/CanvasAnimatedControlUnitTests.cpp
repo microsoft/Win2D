@@ -1579,6 +1579,155 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->Tick();
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_When_InvalidateCalled_AnyNumberOfTimes_WhileNotPaused_ThenSingleDrawCalled)
+    {
+        UpdateRenderFixture f;        
+        f.GetIntoSteadyState();
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+
+        // Do one changed/tick so that there are no more updates pending
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(1);
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        // Now, we don't progress time, so we don't expect any more updates.  We
+        // call Invalidate many times, but only get a single Draw as a result.
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 20; ++i)
+            ThrowIfFailed(f.Control->Invalidate());
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_When_InvalidateCalled_AnyNumberOfTimes_WhileNotPaused_AndTimeProgresses_ThenSingleUpdateAndDrawCalled)
+    {
+        UpdateRenderFixture f;        
+        f.GetIntoSteadyState();
+        ThrowIfFailed(f.Control->put_Paused(FALSE));
+
+        // Do one changed/tick so that there are no more updates pending
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(1);
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        // When time progresses and we call Invalidate() we still only see a
+        // single Draw.
+        f.OnUpdate.SetExpectedCalls(1);
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 20; ++i)
+            ThrowIfFailed(f.Control->Invalidate());
+
+        f.Adapter->ProgressTime(TicksPerFrame);
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_When_InvalidateCalled_AnyNumberOfTimes_WhilePaused_ThenOnlySingleDrawIsCalled)
+    {
+        UpdateRenderFixture f;        
+        f.GetIntoSteadyState();
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 20; ++i)
+            ThrowIfFailed(f.Control->Invalidate());
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_When_ControlStartsPaused_AndInvalidateIsCalled_ThenDrawIsCalledBeforeFirstUpdate)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.OnCreateResources.SetExpectedCalls(1);
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(1);
+
+        f.Load();
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        for (int i = 0; i < 20; ++i)
+            ThrowIfFailed(f.Control->Invalidate());
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_When_ControlStartsPaused_AndCreateResourcesHasAnAsyncAction_AndInvalidateIsCalled_ThenDrawIsCalledAfterCreateResourcesCompletes)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        auto action = Make<MockAsyncAction>();
+        f.OnCreateResources.SetExpectedCalls(1,
+            [=] (IInspectable*, ICanvasCreateResourcesEventArgs* args)
+            {
+                return args->TrackAsyncAction(action.Get());
+            });
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+
+        f.Load();
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        for (int i = 0; i < 20; ++i)
+            ThrowIfFailed(f.Control->Invalidate());
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        // The draw only happens after the async action completes
+        action->SetResult(S_OK);
+        f.OnDraw.SetExpectedCalls(1);
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->ProgressTime(TicksPerFrame);
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+    }
 };
 
 TEST_CLASS(CanvasAnimatedControlChangedAction)
