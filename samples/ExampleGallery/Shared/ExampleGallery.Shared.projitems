@@ -276,40 +276,16 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtWide.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_0.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_1.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_2.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_3.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_4.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_5.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_6.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_7.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_8.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_9.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_65535.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_0.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_1.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_2.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_3.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_4.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_5.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_6.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_7.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_8.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_9.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_65535.jpg" />
   </ItemGroup>
 </Project>
