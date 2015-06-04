@@ -16,7 +16,6 @@ under the License.
 <ExportSamples>
 
   <File Source="LICENSE.txt" />
-  <File Source="README.md" />
 
   <Sample Source="samples\CoreWindowExample" Destination="CoreWindowExample" />
   <Sample Source="samples\ExampleGallery"    Destination="ExampleGallery" />
