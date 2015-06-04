@@ -452,22 +452,22 @@ public:
 
     enum DrawImageOverload
     {
-        TAKES_IMAGE  = 1 << 0,
+        TAKES_IMAGE = 1 << 0,
         TAKES_BITMAP = 1 << 1,
 
         TAKES_OFFSET = 1 << 2,
-        TAKES_DRECT  = 1 << 3,
+        TAKES_DRECT = 1 << 3,
 
-        TAKES_SOURCE_RECT   = (1 << 4),
-        TAKES_OPACITY       = (1 << 5),
+        TAKES_SOURCE_RECT = (1 << 4),
+        TAKES_OPACITY = (1 << 5),
         TAKES_INTERPOLATION = (1 << 6),
-        TAKES_COMPOSITE     = (1 << 7),
-        TAKES_PERSPECTIVE   = (1 << 8),
+        TAKES_COMPOSITE = (1 << 7),
+        TAKES_PERSPECTIVE = (1 << 8),
 
-        ALSO_TAKES_OPACITY       = TAKES_OPACITY        | TAKES_SOURCE_RECT,
-        ALSO_TAKES_INTERPOLATION = TAKES_INTERPOLATION  | ALSO_TAKES_OPACITY,
-        ALSO_TAKES_COMPOSITE     = TAKES_COMPOSITE      | ALSO_TAKES_INTERPOLATION,
-        ALSO_TAKES_PERSPECTIVE   = TAKES_PERSPECTIVE    | ALSO_TAKES_INTERPOLATION,
+        ALSO_TAKES_OPACITY = TAKES_OPACITY | TAKES_SOURCE_RECT,
+        ALSO_TAKES_INTERPOLATION = TAKES_INTERPOLATION | ALSO_TAKES_OPACITY,
+        ALSO_TAKES_COMPOSITE = TAKES_COMPOSITE | ALSO_TAKES_INTERPOLATION,
+        ALSO_TAKES_PERSPECTIVE = TAKES_PERSPECTIVE | ALSO_TAKES_INTERPOLATION,
     };
 
     template<typename FIXTURE, typename... ARGS>
@@ -478,12 +478,12 @@ public:
         CallCounter<> counter(L"OverloadsCalled");
         counter.SetExpectedCalls(expectedCalls);
 
-#define CALL(method, flags)                     \
-        if (filter.Accepts(flags))              \
-        {                                       \
-            FIXTURE f(fixtureArgs...);          \
-            f.method();                         \
-            counter.WasCalled();                \
+#define CALL(method, flags)                                                     \
+        if (filter.Accepts(flags))                                              \
+        {                                                                       \
+            FIXTURE f(static_cast<DrawImageOverload>(flags), fixtureArgs...);   \
+            f.method();                                                         \
+            counter.WasCalled();                                                \
         }
 
         CALL(DrawImageAtOrigin,                                                       TAKES_IMAGE);
@@ -514,7 +514,7 @@ public:
     {
         struct Fixture : public DrawImageFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 ThrowIfFailed(DS->Close());
             }
@@ -533,7 +533,7 @@ public:
     {
         struct Fixture : public DrawImageFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Image = nullptr;
                 Bitmap = nullptr;
@@ -569,7 +569,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Offset = Vector2{ 0, 0 };
                 DestinationRectangle = Rect{ 0, 0, BitmapSize.width, BitmapSize.height };
@@ -595,7 +595,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture(D2D1_UNIT_MODE unitMode)
+            Fixture(DrawImageOverload, D2D1_UNIT_MODE unitMode)
             {
                 Offset = Vector2{ 1, 2 };
 
@@ -634,7 +634,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Offset = Vector2{ 1, 2 };
 
@@ -660,7 +660,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Opacity = 0.5f;
 
@@ -679,7 +679,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture(CanvasImageInterpolation interpolation, bool expectBitmap)
+            Fixture(DrawImageOverload flags, CanvasImageInterpolation interpolation, bool expectBitmap)
             {
                 Interpolation = interpolation;
 
@@ -695,6 +695,15 @@ public:
                 {                    
                     DeviceContext->GetTransformMethod.AllowAnyCall();
                     DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                    if (flags & TAKES_DRECT)
+                    {
+                        DeviceContext->CreateEffectMethod.SetExpectedCalls(2,
+                            [=](IID const& iid, ID2D1Effect** effect)
+                            {
+                                return Make<StubD2DEffect>(iid).CopyTo(effect);
+                            });
+                    }
 
                     DeviceContext->DrawImageMethod.SetExpectedCalls(1,
                         [=](ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE actualInterpolation, D2D1_COMPOSITE_MODE)
@@ -748,7 +757,7 @@ public:
 
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture(TestPass params)
+            Fixture(DrawImageOverload flags, TestPass params)
             {
                 CompositeMode = params.CompositeMode;
 
@@ -762,6 +771,15 @@ public:
                 {
                     DeviceContext->GetTransformMethod.AllowAnyCall();
                     DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                    if (flags & TAKES_DRECT)
+                    {
+                        DeviceContext->CreateEffectMethod.SetExpectedCalls(2,
+                            [=] (IID const& iid, ID2D1Effect** effect)
+                            {
+                                return Make<StubD2DEffect>(iid).CopyTo(effect);
+                            });
+                    }
 
                     DeviceContext->DrawImageMethod.SetExpectedCalls(1,
                         [=](ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE actualCompositeMode)
@@ -851,7 +869,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 DeviceContext->DrawBitmapMethod.SetExpectedCalls(1,
                     [=](ID2D1Bitmap*, const D2D1_RECT_F*, FLOAT, D2D1_INTERPOLATION_MODE, const D2D1_RECT_F*, const D2D1_MATRIX_4X4_F* perspective)
@@ -883,7 +901,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Offset = Vector2{ 0, 0 };
                 DestinationRectangle = Rect{ 0, 0, 3, 4 };
@@ -910,7 +928,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Offset = Vector2{ 1, 2 };
 
@@ -929,7 +947,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 DestinationRectangle = Rect{ 1, 2, 3, 4 };
                 SourceRectangle = Rect{ 5, 6, 7, 8 };
@@ -973,7 +991,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 DestinationRectangle = Rect{ 1, 2, 3, 4 };
                 SourceRectangle = Rect{ 5, 6, 0, 0 };
@@ -1000,7 +1018,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture(D2D1_UNIT_MODE unitMode)
+            Fixture(DrawImageOverload, D2D1_UNIT_MODE unitMode)
             {
                 DeviceContext->GetUnitModeMethod.AllowAnyCall([=] { return unitMode; });
 
@@ -1028,6 +1046,12 @@ public:
                 Interpolation = CanvasImageInterpolation::Anisotropic; // this will force DrawImage rather than DrawBitmap
 
                 EnableGetSetTransform(D2D1::Matrix3x2F(0, 2, -3, 0, -4, 5));
+
+                DeviceContext->CreateEffectMethod.SetExpectedCalls(2,
+                    [=](IID const& iid, ID2D1Effect** effect)
+                    {
+                        return Make<StubD2DEffect>(iid).CopyTo(effect);
+                    });
 
                 DeviceContext->DrawImageMethod.SetExpectedCalls(1,
                     [=](ID2D1Image* image, D2D1_POINT_2F const* actualOffset, D2D1_RECT_F const* sourceRectangle, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
@@ -1070,7 +1094,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 CompositeMode = CanvasComposite::MaskInvert;
 
@@ -1099,7 +1123,7 @@ public:
 
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture(TestPass params)
+            Fixture(DrawImageOverload, TestPass params)
             {
                 DeviceContext->GetTransformMethod.AllowAnyCall();
                 DeviceContext->SetTransformMethod.AllowAnyCall();
@@ -1131,7 +1155,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([&] { return D2D1_PRIMITIVE_BLEND_MIN; });
             }
@@ -1150,7 +1174,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Opacity = 1;
 
@@ -1172,7 +1196,7 @@ public:
     {
         struct Fixture : public DrawImageNonBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload)
             {
                 Opacity = 0.5f;
 
@@ -1223,7 +1247,7 @@ public:
     {
         struct Fixture : public DrawImageBitmapFixture
         {
-            Fixture()
+            Fixture(DrawImageOverload flags)
             {
                 Opacity = 0.5f;
 
@@ -1240,7 +1264,7 @@ public:
                 DeviceContext->GetTransformMethod.AllowAnyCall();
                 DeviceContext->SetTransformMethod.AllowAnyCall();
                 
-                DeviceContext->CreateEffectMethod.SetExpectedCalls(2,
+                DeviceContext->CreateEffectMethod.SetExpectedCalls((flags & TAKES_DRECT) ? 3 : 2,
                     [=] (IID const& iid, ID2D1Effect** effect)
                     {
                         return Make<StubD2DEffect>(iid).CopyTo(effect);
@@ -1268,14 +1292,36 @@ public:
 
                         Assert::AreEqual(expectedMatrix, actualMatrix, L"ColorMatrix is identity apart from alpha multiply to give opacity");
 
-                        // The input to the color matrix should be a dpi compensation effect
+                        // Check the input to the color matrix effect
                         Assert::AreEqual(1U, colorMatrixEffect->GetInputCount());
 
                         ComPtr<ID2D1Image> colorMatrixInput;
                         colorMatrixEffect->GetInput(0, &colorMatrixInput);
 
-                        auto dpiEffect = MaybeAs<ID2D1Effect>(colorMatrixInput);
-                        Assert::IsNotNull(dpiEffect.Get(), L"The input to the ColorMatrix should also be an effect");
+                        auto inputEffect = MaybeAs<ID2D1Effect>(colorMatrixInput);
+                        Assert::IsNotNull(inputEffect.Get(), L"The input to the ColorMatrix should also be an effect");
+
+                        ComPtr<ID2D1Effect> dpiEffect;
+
+                        if (flags & TAKES_DRECT)
+                        {
+                            // In dest rect mode, the chain should be color matrix <- border effect <- DPI compensation <- bitmap
+                            inputEffect->GetValue(D2D1_PROPERTY_CLSID, &clsId);
+                            Assert::AreEqual(CLSID_D2D1Border, clsId, L"Effect is a border effect");
+
+                            Assert::AreEqual(1U, inputEffect->GetInputCount());
+
+                            ComPtr<ID2D1Image> borderInput;
+                            inputEffect->GetInput(0, &borderInput);
+
+                            dpiEffect = MaybeAs<ID2D1Effect>(borderInput);
+                            Assert::IsNotNull(dpiEffect.Get(), L"The input to the border effect should also be an effect");
+                        }
+                        else
+                        {
+                            // In offset mode, the chain should be color matrix <- DPI compensation <- bitmap
+                            dpiEffect = inputEffect;
+                        }
 
                         dpiEffect->GetValue(D2D1_PROPERTY_CLSID, &clsId);
                         Assert::AreEqual(CLSID_D2D1DpiCompensation, clsId, L"Effect is a DpiCompensation effect");
@@ -1291,6 +1337,65 @@ public:
         };
 
         CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_IMAGE | TAKES_INTERPOLATION), 6);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawImage_WhenUsingDrawImageAndPassedBitmap_InsertsBorderEffectAndDpiCompensationEffect)
+    {
+        struct Fixture : public DrawImageBitmapFixture
+        {
+            Fixture(DrawImageOverload flags)
+            {
+                //
+                // Force DrawImage to be used rather than DrawBitmap by picking
+                // an interpolation value that isn't supported by DrawBitmap.
+                //
+                // When the source is a bitmap we need to ensure that a suitable
+                // border effect and DPI compenstion effect have been added between
+                // the opacity effect and the bitmap.
+                //
+                Interpolation = CanvasImageInterpolation::Cubic;
+
+                DeviceContext->GetTransformMethod.AllowAnyCall();
+                DeviceContext->SetTransformMethod.AllowAnyCall();
+
+                DeviceContext->CreateEffectMethod.SetExpectedCalls(2,
+                    [=](IID const& iid, ID2D1Effect** effect)
+                    {
+                        return Make<StubD2DEffect>(iid).CopyTo(effect);
+                    });
+
+                DeviceContext->DrawImageMethod.SetExpectedCalls(1,
+                    [=](ID2D1Image* actualImage, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+                    {
+                        auto borderEffect = MaybeAs<ID2D1Effect>(actualImage);
+                        Assert::IsNotNull(borderEffect.Get(), L"DrawImage was called with an effect");
+
+                        CLSID clsId;
+                        borderEffect->GetValue(D2D1_PROPERTY_CLSID, &clsId);
+                        Assert::AreEqual(CLSID_D2D1Border, clsId, L"Effect is a border effect");
+
+                        Assert::AreEqual(1U, borderEffect->GetInputCount());
+
+                        ComPtr<ID2D1Image> borderInput;
+                        borderEffect->GetInput(0, &borderInput);
+
+                        auto dpiEffect = MaybeAs<ID2D1Effect>(borderInput);
+                        Assert::IsNotNull(dpiEffect.Get(), L"The input to the border effect should also be an effect");
+
+                        dpiEffect->GetValue(D2D1_PROPERTY_CLSID, &clsId);
+                        Assert::AreEqual(CLSID_D2D1DpiCompensation, clsId, L"Effect is a DpiCompensation effect");
+
+                        Assert::AreEqual(1U, dpiEffect->GetInputCount());
+
+                        ComPtr<ID2D1Image> dpiCompensationInput;
+                        dpiEffect->GetInput(0, &dpiCompensationInput);
+
+                        Assert::IsTrue(IsSameInstance(D2DBitmap.Get(), dpiCompensationInput.Get()), L"ID2D1Image passed to DrawImage is the input to the DPI compensation effect");
+                    });
+            }
+        };
+
+        CallDrawImageOverloads<Fixture>(OverloadFilter().Matches(TAKES_DRECT | TAKES_IMAGE | TAKES_INTERPOLATION), 2);
     }
 
 

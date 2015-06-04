@@ -396,6 +396,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         D2D1_RECT_F m_d2dSourceRect;
         ComPtr<ID2D1Image> m_opacityEffectOutput;
+        ComPtr<ID2D1Image> m_borderEffectOutput;
 
     public:
         DrawImageWorker(ID2D1DeviceContext1* deviceContext, Vector2* offset, Rect* destinationRect, Rect* sourceRect, float opacity, CanvasImageInterpolation interpolation)
@@ -483,7 +484,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             assert(m_sourceRect);
 
-            AdjustD2DSourceRect(d2dImage);
+            d2dImage = MaybeAdjustD2DSourceRect(d2dImage);
             d2dImage = MaybeApplyOpacityEffect(d2dImage);
 
             float sourceWidth  = m_d2dSourceRect.right - m_d2dSourceRect.left;
@@ -492,7 +493,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             if (sourceWidth == 0.0f || sourceHeight == 0.0f)
             {
                 // There's no useful scale factor for scaling from something
-                // that is zero sized. Consistent with oberved DrawBitmap
+                // that is zero sized. Consistent with observed DrawBitmap
                 // behavior, we don't attempt to draw anything in this case.
                 return;
             }
@@ -637,11 +638,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             };
         }
 
-        void AdjustD2DSourceRect(ID2D1Image* d2dImage)
+        ID2D1Image* MaybeAdjustD2DSourceRect(ID2D1Image* d2dImage)
         {
             auto d2dBitmap = MaybeAs<ID2D1Bitmap>(d2dImage);
             if (!d2dBitmap)
-                return;
+                return d2dImage;
 
             // If this is actually a bitmap, then sourceRect needs to be
             // adjusted so that it doesn't go beyond the bounds of the image.
@@ -656,6 +657,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             m_d2dSourceRect.right  = std::min(m_d2dSourceRect.right,  size.width);
             m_d2dSourceRect.bottom = std::min(m_d2dSourceRect.bottom, size.height);
+
+            // D2D bitmap and image rendering paths have different border sampling behavior, so
+            // when we emulate DrawBitmap using DrawImage, we must insert an explicit BorderEffect
+            // to avoid unwanted translucency along the edges. We could get fancy and only do this
+            // if the source rect is such that we will actually sample outside the bounds of the
+            // image, but it is non trivial to detect that for different filter modes, and this
+            // is a slow path in any case so we keep it simple and always add the border.
+
+            ComPtr<ID2D1Effect> borderEffect;
+            ThrowIfFailed(m_deviceContext->CreateEffect(CLSID_D2D1Border, &borderEffect));
+            ThrowIfFailed(D2D1::SetDpiCompensatedEffectInput(m_deviceContext, borderEffect.Get(), 0, d2dBitmap.Get()));
+
+            borderEffect->GetOutput(&m_borderEffectOutput);
+            return m_borderEffectOutput.Get();
         }
 
         D2D1_RECT_F* GetD2DSourceRect()
