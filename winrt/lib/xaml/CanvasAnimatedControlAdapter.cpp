@@ -20,6 +20,108 @@ using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ::Microsoft::WRL::Wrappers;
 
+//
+// Helper for CreateAndStartGameLoop, tracks state shared between the UI thread
+// and the newly created game loop thread.  The game loop thread needs to
+// communicate back the ICoreDispatcher.
+//
+class GameLoopStartup
+{
+    // This mutex & condition variable are used to block the incoming
+    // thread while waiting for the game loop thread to start up and set
+    // the dispatcher.
+    std::mutex m_mutex;
+    std::condition_variable m_conditionVariable;
+            
+    ComPtr<ICoreDispatcher> m_dispatcher;
+
+public:
+    void SetDispatcher(ICoreDispatcher* dispatcher)
+    {
+        Lock lock(m_mutex);
+        m_dispatcher = dispatcher;
+        lock.unlock();
+        m_conditionVariable.notify_one();
+    }
+
+    void NotifyOne()
+    {
+        m_conditionVariable.notify_one();
+    }
+
+    ComPtr<ICoreDispatcher> WaitAndGetDispatcher(IAsyncAction* action)
+    {
+        auto info = As<IAsyncInfo>(action);
+
+        Lock lock(m_mutex);
+        m_conditionVariable.wait(lock,
+            [&]
+            {
+                if (m_dispatcher)
+                {
+                    // The dispatcher has been sent to us; we're done
+                    return true;
+                }
+                        
+                AsyncStatus status;
+                ThrowIfFailed(info->get_Status(&status));
+
+                switch (status)
+                {
+                case AsyncStatus::Started:
+                    // We're still waiting to find out
+                    return false;
+
+                case AsyncStatus::Error:
+                {
+                    HRESULT hr = S_OK;
+                    ThrowIfFailed(info->get_ErrorCode(&hr));
+                    ThrowHR(hr);
+                }
+
+                case AsyncStatus::Completed:
+                    return true;
+
+                default:
+                    ThrowHR(E_UNEXPECTED);
+                }
+            });
+
+        // We should only get here if the dispatcher was actually set.
+        // All other cases should have resulted in an exception.
+        assert(m_dispatcher);
+        return m_dispatcher;
+    }
+};
+
+//
+// Creates a CoreDispatcher for the current thread.
+//
+// We do a little dance here to create the dispatcher.  We first create a core
+// independent input source (via the swapChainPanel), which will create a
+// dispatcher.  We then discard the input source we created.
+//
+static ComPtr<ICoreDispatcher> CreateCoreDispatcher(ISwapChainPanel* swapChainPanel)
+{
+    ComPtr<ICoreInputSourceBase> inputSource;
+    ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
+        CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse, 
+        &inputSource));
+
+    ComPtr<ICoreDispatcher> dispatcher;
+    ThrowIfFailed(inputSource->get_Dispatcher(&dispatcher));
+
+    ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
+        CoreInputDeviceTypes_None,
+        &inputSource));
+
+    return dispatcher;
+}
+
+//
+// CanvasAnimatedControlAdapter
+//
+
 class CanvasAnimatedControlAdapter : public BaseControlAdapter<CanvasAnimatedControlTraits>,
     public std::enable_shared_from_this<CanvasAnimatedControlAdapter>
 {
@@ -89,75 +191,6 @@ public:
         // dispatcher.
         //
 
-        class GameLoopStartup
-        {
-            // This mutex & condition variable are used to block the incoming
-            // thread while waiting for the game loop thread to start up and set
-            // the dispatcher.
-            std::mutex m_mutex;
-            std::condition_variable m_conditionVariable;
-            
-            ComPtr<ICoreDispatcher> m_dispatcher;
-
-        public:
-            void SetDispatcher(ICoreDispatcher* dispatcher)
-            {
-                Lock lock(m_mutex);
-                m_dispatcher = dispatcher;
-                lock.unlock();
-                m_conditionVariable.notify_one();
-            }
-
-            void NotifyOne()
-            {
-                m_conditionVariable.notify_one();
-            }
-
-            ComPtr<ICoreDispatcher> WaitAndGetDispatcher(IAsyncAction* action)
-            {
-                auto info = As<IAsyncInfo>(action);
-
-                Lock lock(m_mutex);
-                m_conditionVariable.wait(lock,
-                    [&]
-                    {
-                        if (m_dispatcher)
-                        {
-                            // The dispatcher has been sent to us; we're done
-                            return true;
-                        }
-                        
-                        AsyncStatus status;
-                        ThrowIfFailed(info->get_Status(&status));
-
-                        switch (status)
-                        {
-                        case AsyncStatus::Started:
-                            // We're still waiting to find out
-                            return false;
-
-                        case AsyncStatus::Error:
-                        {
-                            HRESULT hr = S_OK;
-                            ThrowIfFailed(info->get_ErrorCode(&hr));
-                            ThrowHR(hr);
-                        }
-
-                        case AsyncStatus::Completed:
-                            return true;
-
-                        default:
-                            ThrowHR(E_UNEXPECTED);
-                        }
-                    });
-
-                // We should only get here if the dispatcher was actually set.
-                // All other cases should have resulted in an exception.
-                assert(m_dispatcher);
-                return m_dispatcher;
-            }
-        };
-
         auto gameLoopStartup = std::make_shared<GameLoopStartup>();
 
         auto startThreadHandler = Callback<AddFtmBase<IWorkItemHandler>::Type>(
@@ -194,40 +227,6 @@ public:
         return std::make_shared<CanvasGameLoop>(std::move(action), std::move(dispatcher), input);
     }
 
-    static ComPtr<ICoreDispatcher> CreateCoreDispatcher(ISwapChainPanel* swapChainPanel)
-    {
-        // We do a little dance here to create the dispatcher.
-        // We first create a core independent input source,
-        // which will create a dispatcher.  We then discard the
-        // input source we created.
-        ComPtr<ICoreInputSourceBase> inputSource;
-        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
-            CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse, 
-            &inputSource));
-
-        ComPtr<ICoreDispatcher> dispatcher;
-        ThrowIfFailed(inputSource->get_Dispatcher(&dispatcher));
-
-        ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
-            CoreInputDeviceTypes_None,
-            &inputSource));
-
-        return dispatcher;
-    }
-
-
-    ComPtr<IAsyncAction> StartThread(ComPtr<IWorkItemHandler>&& handler)
-    {
-        ComPtr<IAsyncAction> action;
-        ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
-            handler.Get(),
-            WorkItemPriority_Normal,
-            WorkItemOptions_TimeSliced,
-            &action));
-
-        return action;        
-    }
-
     virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override
     {
         return m_canvasSwapChainPanelAdapter->CreateSwapChainPanel(canvasSwapChainPanel);
@@ -256,6 +255,19 @@ public:
             ThrowHR(E_FAIL);
         }
         return frequency;
+    }
+
+private:
+    ComPtr<IAsyncAction> StartThread(ComPtr<IWorkItemHandler>&& handler)
+    {
+        ComPtr<IAsyncAction> action;
+        ThrowIfFailed(m_threadPoolStatics->RunWithPriorityAndOptionsAsync(
+            handler.Get(),
+            WorkItemPriority_Normal,
+            WorkItemOptions_TimeSliced,
+            &action));
+
+        return action;        
     }
 };
 
