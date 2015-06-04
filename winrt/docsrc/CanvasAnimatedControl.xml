@@ -29,7 +29,7 @@ under the License.
         </p>
 
         <p>
-          The control provides a game-style process-input, update and draw loop.
+          The control provides a game-style update and draw loop.
           This game loop runs on a dedicated thread.  This means that the game
           loop and XAML's UI thread cannot block each other, ensuring that XAML
           UI elements remain responsive regardless of what the game loop is
@@ -104,7 +104,6 @@ under the License.
         <p>
           Each iteration of the game loop:
           <ul>
-            <li>Processes any input events</li>
             <li>raises some number of Update events</li>
             <li>raises one Draw event</li>
           </ul>
@@ -218,10 +217,6 @@ under the License.
           display has been updated accordingly.
         </p>
 
-        <p>
-          When the control is paused the game loop thread stops running.
-        </p>
-
         <h4>Pointer Input</h4>
         <p>
           CanvasAnimatedControl can raise pointer input (pen, mouse, touch)
@@ -240,11 +235,6 @@ under the License.
           <code>
             animatedControl.Input.PointerPressed += OnPointerPressed;
           </code>
-        </p>
-        
-        <p>
-          Note that, since the input processing happens in the game loop, no
-          input events will be raised while the Paused property is set to true.
         </p>
         
         <p>
@@ -325,18 +315,9 @@ under the License.
         <h4>Threading Considerations</h4>
 
         <p>
-          CanvasAnimatedControl runs its game loop on a dedicated
-          thread.  In general, it aims to run this on the same thread.  However,
-          in some circumstances it is necessary for the thread to be recreated.
-          These include:
-          <ul>
-            <li>Handling a lost device</li>
-            <li>Clear color changing from fully opaque to translucent</li>
-            <li>Pausing / unpausing via the Paused property</li>
-          </ul>
-          This means that apps should not make assumptions about which thread
-          Update or Draw is raised on.  It is, however, guaranteed to not be
-          the UI thread.         
+          CanvasAnimatedControl runs its game loop on a dedicated thread.  This
+          thread is started in response to the control's Loaded event, and
+          stopped in response to the control's Unloaded event.
         </p>
         <p>
           The CreateResources event is raised on the UI thread.  Update and Draw
@@ -350,6 +331,12 @@ under the License.
         <p>
           Input events are raised on the game loop thread and will never run
           simultaneously with the Update or Draw events.
+        </p>
+        <p>
+          Arbitrary code can be scheduled to execute on the game loop thread
+          using <see
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"
+          />.
         </p>
 
       </remarks>
