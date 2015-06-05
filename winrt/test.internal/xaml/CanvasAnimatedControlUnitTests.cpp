@@ -1728,6 +1728,37 @@ TEST_CLASS(CanvasAnimatedControlTests)
             f.Adapter->Tick();
         }
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_When_ControlIsPaused_AndRunOnGameLoopAsyncActionCallsInvalidate_Then_DrawHandlerIsCalledOnTheSameTick)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.OnCreateResources.SetExpectedCalls(1);
+        f.OnUpdate.SetExpectedCalls(0);
+        f.OnDraw.SetExpectedCalls(0);
+
+        f.Load();
+
+        for (int i = 0; i < 20; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        auto handler = Callback<IDispatchedHandler>(
+            [&]
+            {
+                ThrowIfFailed(f.Control->Invalidate());
+                return S_OK;
+            });
+        ComPtr<IAsyncAction> action;
+        ThrowIfFailed(f.Control->RunOnGameLoopThreadAsync(handler.Get(), &action));
+
+        f.OnDraw.SetExpectedCalls(1);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();        
+    }
 };
 
 TEST_CLASS(CanvasAnimatedControlChangedAction)
@@ -2713,6 +2744,27 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         f.TickUntil([&] { return dispatchedHandler.CallbackMethod.GetCurrentCallCount() == 1; });
 
         f.VerifyTickLoopIsStillRunning();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_AsyncActionInvokedOnNextTick_WhenPaused)
+    {
+        DispatcherFixture f;
+
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        // Wait until any outstanding ticks have completed
+        f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
+
+
+        SimpleDispatchedHandler dispatchedHandler;
+
+        ComPtr<IAsyncAction> action;
+        ThrowIfFailed(f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &action));
+
+        dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
+
+        f.Adapter->DoChanged();
+        f.TickUntil([&] { return dispatchedHandler.CallbackMethod.GetCurrentCallCount() == 1; });
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_MultipleAsyncActionsInvokedInCorrectOrder)

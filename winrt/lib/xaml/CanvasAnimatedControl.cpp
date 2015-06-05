@@ -370,6 +370,13 @@ IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
             m_sharedState.PendingAsyncActions.push_back(newAsyncAction);
 
             ThrowIfFailed(newAsyncAction.CopyTo(asyncAction));
+
+            // If we're paused then we need to arrange to reschedule the tick
+            // loop, otherwise we won't get around to running the callback.
+            if (m_sharedState.IsPaused)
+            {
+                Changed(lock);
+            }
         });
 }
 
@@ -560,6 +567,7 @@ void CanvasAnimatedControl::ChangedImpl()
     bool needsDraw = m_sharedState.NeedsDraw || m_sharedState.Invalidated;
     bool isPaused = m_sharedState.IsPaused;
     bool wasPaused = m_sharedState.FirstTickAfterWasPaused;
+    bool hasPendingActions = !m_sharedState.PendingAsyncActions.empty();
 
     lock.unlock();
 
@@ -626,6 +634,13 @@ void CanvasAnimatedControl::ChangedImpl()
     {
         // If we've marked that we need to redraw (eg because the clear
         // color has changed) then we'll need to start the loop.
+        ignorePaused = true;
+    }
+
+    if (hasPendingActions)
+    {
+        // If there are actions pending then we want to give the loop a chance
+        // to run those actions.
         ignorePaused = true;
     }
 
@@ -830,9 +845,9 @@ bool CanvasAnimatedControl::Tick(
 
     bool forceDraw = m_sharedState.NeedsDraw;
 
-    // At this point we know that we're going to draw (unless there's some
-    // kind of failure) so we can reset this flag now.  This is particularly
-    // relevant for the ClearColor, since this indicates that we've
+    // At this point we know that we're going to handle the NeedsDraw (unless
+    // there's some kind of failure) so we can reset this flag now.  This is
+    // particularly relevant for the ClearColor, since this indicates that we've
     // 'consumed' that color.
     m_sharedState.NeedsDraw = false;
 
@@ -857,7 +872,22 @@ bool CanvasAnimatedControl::Tick(
 
     lock.unlock();
 
+    //
+    // Run any async actions
+    //
+    bool hadPendingActions = !pendingActions.empty();
     IssueAsyncActions(pendingActions);
+
+    // One of the async actions may have changed the shared state, in which case
+    // we want to respond immediately.
+    if (hadPendingActions && !invalidated)
+    {
+        auto lock2 = GetLock();
+
+        invalidated = m_sharedState.Invalidated;
+        if (areResourcesCreated)
+            m_sharedState.Invalidated = false;
+    }
 
     //
     // Now do the update/render for this tick
