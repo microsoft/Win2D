@@ -639,3 +639,204 @@ public:
         Assert::AreEqual(E_UNEXPECTED, canvasDevice->RaiseDeviceLost());
     }
 };
+
+CanvasHardwareAcceleration allHardwareAccelerationTypes[] = {
+    CanvasHardwareAcceleration::Auto,
+    CanvasHardwareAcceleration::On,
+    CanvasHardwareAcceleration::Off
+};
+
+TEST_CLASS(CanvasGetSharedDeviceTests)
+{
+public:
+
+    class GetSharedDevice_Adapter : public TestDeviceResourceCreationAdapter
+    {
+        int m_deviceLostCounter;
+        bool m_canCreateDevices;
+
+    public:
+        CALL_COUNTER_WITH_MOCK(CreateStubD3D11DeviceMethod, ComPtr<StubD3D11Device>());
+
+        GetSharedDevice_Adapter()
+            : m_canCreateDevices(true)
+        {
+            CreateStubD3D11DeviceMethod.AllowAnyCall([]{return Make<StubD3D11Device>(); });
+        }
+
+        ComPtr<StubD3D11Device> CreateStubD3D11Device() override
+        {
+            return CreateStubD3D11DeviceMethod.WasCalled();
+        }
+
+        virtual bool TryCreateD3DDevice(
+            CanvasHardwareAcceleration hardwareAcceleration,
+            ComPtr<ID3D11Device>* device) override
+        {
+            if (m_canCreateDevices)
+                return __super::TryCreateD3DDevice(hardwareAcceleration, device);
+            else
+                return false;
+        }
+
+        void SetCreatingDevicesEnabled(bool value)
+        {
+            m_canCreateDevices = value;
+        }
+
+    };
+
+    class Fixture
+    {
+    public:
+        std::shared_ptr<GetSharedDevice_Adapter> Adapter;
+        std::shared_ptr<CanvasDeviceManager> Manager;
+
+        Fixture()
+            : Adapter(std::make_shared<GetSharedDevice_Adapter>())
+            , Manager(std::make_shared<CanvasDeviceManager>(Adapter))
+        {
+        }
+    };
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_NullArg)
+    {
+        auto canvasDeviceFactory = Make<CanvasDeviceFactory>();
+
+        Assert::AreEqual(E_INVALIDARG, canvasDeviceFactory->GetSharedDevice(CanvasHardwareAcceleration::Auto, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_InvalidArg)
+    {
+        auto canvasDeviceFactory = Make<CanvasDeviceFactory>();
+
+        ComPtr<ICanvasDevice> unused;
+        Assert::AreEqual(E_INVALIDARG, canvasDeviceFactory->GetSharedDevice(CanvasHardwareAcceleration::Unknown, &unused));
+        ValidateStoredErrorState(E_INVALIDARG, Strings::GetSharedDeviceUnknown);
+    }
+
+    ComPtr<ICanvasDevice> GetSharedDevice_ExpectHardwareAcceleration(
+        Fixture& f,
+        CanvasHardwareAcceleration passedIn, 
+        CanvasHardwareAcceleration expected)
+    {
+        ComPtr<ICanvasDevice> device = f.Manager->GetSharedDevice(passedIn);
+
+        CanvasHardwareAcceleration retrievedHardwareAcceleration;
+        Assert::AreEqual(S_OK, device->get_HardwareAcceleration(&retrievedHardwareAcceleration));
+        Assert::AreEqual(expected, retrievedHardwareAcceleration);
+
+        return device;
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_CreateNewDevice)
+    {
+        Fixture f;
+
+        GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::Auto, CanvasHardwareAcceleration::On);
+        GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::On, CanvasHardwareAcceleration::On);
+        GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::Off, CanvasHardwareAcceleration::Off);
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_GetExistingDevice)
+    {
+        Fixture f; 
+
+        // Set up this way to validate against cache entries overwriting the wrong spot.
+        ComPtr<ICanvasDevice> devices[_countof(allHardwareAccelerationTypes) * 2];
+
+        devices[0] = GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::Auto, CanvasHardwareAcceleration::On);
+        devices[1] = GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::On, CanvasHardwareAcceleration::On);
+        devices[2] = GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::Off, CanvasHardwareAcceleration::Off);
+
+        devices[3] = GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::Auto, CanvasHardwareAcceleration::On);
+        devices[4] = GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::On, CanvasHardwareAcceleration::On);
+        devices[5] = GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::Off, CanvasHardwareAcceleration::Off);
+
+        Assert::AreEqual(devices[0].Get(), devices[3].Get());
+        Assert::AreEqual(devices[1].Get(), devices[4].Get());
+        Assert::AreEqual(devices[2].Get(), devices[5].Get());
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_CreateNewDevice_Auto_CausesFallback)
+    {
+        Fixture f;
+        f.Adapter->SetHardwareEnabled(false);
+
+        GetSharedDevice_ExpectHardwareAcceleration(f, CanvasHardwareAcceleration::Auto, CanvasHardwareAcceleration::Off);
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_NoDeviceAvailable)
+    {
+        Fixture f;
+        f.Adapter->SetCreatingDevicesEnabled(false);
+
+        ExpectHResultException(E_FAIL, [&]{ f.Manager->GetSharedDevice(CanvasHardwareAcceleration::Auto); });
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_ExistingDevice_Lost_RaisesEvent)
+    {
+        Fixture f;
+
+        auto d3dDevice = Make<StubD3D11Device>();
+        f.Adapter->CreateStubD3D11DeviceMethod.AllowAnyCall([&](){ return d3dDevice; });
+
+        auto device = f.Manager->GetSharedDevice(CanvasHardwareAcceleration::Auto);
+
+        // 
+        //Expect the DeviceLost event to get raised.
+        //
+        MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
+        deviceLostHandler.SetExpectedCalls(1);
+        EventRegistrationToken token{};
+        Assert::AreEqual(S_OK, device->add_DeviceLost(deviceLostHandler.Get(), &token));
+
+        // Lose the device
+        int callIndex = 0;
+        d3dDevice->GetDeviceRemovedReasonMethod.AllowAnyCall(
+            [&] 
+            { 
+                callIndex++;
+                return callIndex == 1? DXGI_ERROR_DEVICE_REMOVED : S_OK;
+            });
+
+        // Try and get the cached device again
+        f.Manager->GetSharedDevice(CanvasHardwareAcceleration::Auto);
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_ExistingDevice_LastDeviceReferenceWasReleased)
+    {
+        Fixture f;
+
+        auto device = f.Manager->GetSharedDevice(CanvasHardwareAcceleration::Auto);
+        Assert::IsNotNull(device.Get());
+        device.Reset();
+
+        auto device2 = f.Manager->GetSharedDevice(CanvasHardwareAcceleration::Auto);
+        Assert::IsNotNull(device2.Get());
+    }
+
+    TEST_METHOD_EX(CanvasGetSharedDeviceTests_ManagerReleasesAllReferences)
+    {
+        WeakRef weakDevices[3];
+        {
+            Fixture f;
+
+            auto d1 = f.Manager->GetSharedDevice(CanvasHardwareAcceleration::Auto);
+            ThrowIfFailed(AsWeak(d1.Get(), &weakDevices[0]));
+
+            auto d2 = f.Manager->GetSharedDevice(CanvasHardwareAcceleration::On);
+            ThrowIfFailed(AsWeak(d2.Get(), &weakDevices[1]));
+
+            auto d3 = f.Manager->GetSharedDevice(CanvasHardwareAcceleration::Off);
+            ThrowIfFailed(AsWeak(d3.Get(), &weakDevices[2]));
+
+            Assert::IsTrue(IsWeakRefValid(weakDevices[0]));
+            Assert::IsTrue(IsWeakRefValid(weakDevices[1]));
+            Assert::IsTrue(IsWeakRefValid(weakDevices[2]));
+        }
+        Assert::IsFalse(IsWeakRefValid(weakDevices[0]));
+        Assert::IsFalse(IsWeakRefValid(weakDevices[1]));
+        Assert::IsFalse(IsWeakRefValid(weakDevices[2]));
+    }
+};

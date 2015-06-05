@@ -294,6 +294,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(GetInterface)(IID const&, void**) override;
 
+        //
+        // Internal
+        //
+        HRESULT GetDeviceRemovedErrorCode();
+
     private:
         template<typename FN>
         ComPtr<IDXGISwapChain1> CreateSwapChain(
@@ -317,14 +322,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasDeviceManager : public ResourceManager<CanvasDeviceTraits>
     {
         std::shared_ptr<ICanvasDeviceResourceCreationAdapter> m_adapter;
+
+        WeakRef m_sharedDevices[3];
+        std::mutex m_mutex;
     public:
         CanvasDeviceManager(std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter);
+
+        virtual ~CanvasDeviceManager() = default;
         
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
+
+        ComPtr<ICanvasDevice> GetSharedDevice(
+            CanvasHardwareAcceleration hardwareAcceleration);
 
     private:
         ComPtr<IDXGIDevice3> MakeDXGIDevice(
@@ -376,6 +389,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IDirect3DDevice* direct3DDevice,
             CanvasDebugLevel debugLevel,
             ICanvasDevice** canvasDevice) override;
+
+        //
+        // ICanvasDeviceStatics
+        //
+        IFACEMETHOD(GetSharedDevice)(
+            CanvasHardwareAcceleration hardwareAcceleration,
+            ICanvasDevice** device);
 
         //
         // Used by PerApplicationManager

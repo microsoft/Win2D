@@ -46,3 +46,4 @@ STRING(DidNotPopLayer, L"After calling CanvasDrawingSession.CreateLayer, you mus
 STRING(InvalidFontFamilyUri, L"The URI specified in the CanvasTextFormat's FontFamily is not a valid application URI that can be opened by StorageFile.GetFileFromApplicationUriAsync.")
 STRING(InvalidFontFamilyUriScheme, L"The URI specified in the CanvasTextFormat's FontFamily has an invalid scheme; the scheme may be omitted, or must be one of ms-appx:// or ms-appdata://.")
 STRING(InvalidAlphaModeForImageSource, L"An invalid alpha mode was specified. Use either CanvasAlphaMode.Ignore or CanvasAlphaMode.Premultiplied.")
+STRING(GetSharedDeviceUnknown, L"CanvasHardwareAcceleration.Unknown is not a valid parameter to this API.")

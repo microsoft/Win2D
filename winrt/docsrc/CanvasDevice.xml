@@ -137,6 +137,17 @@ under the License.
           </p>
       </remarks>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)">
+      <summary>Gets a device that can be shared between multiple different rendering components, such as controls.</summary>
+          <p>
+          CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown"/> is not a valid parameter to this method.
+          </p>
+          <p>
+          Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
+          is called on the device, and then it is re-created.
+          </p>
+    </member>
     
   </members>
 </doc>

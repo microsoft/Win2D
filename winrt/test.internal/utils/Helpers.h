@@ -1233,3 +1233,11 @@ void AssertClassName(ComPtr<T> obj, wchar_t const* expectedClassName)
     
     Assert::AreEqual(expectedClassName, static_cast<wchar_t const*>(className));
 }
+
+
+inline bool IsWeakRefValid(WeakRef weakRef)
+{
+    ComPtr<IInspectable> obj;
+    ThrowIfFailed(weakRef.As(&obj));
+    return static_cast<bool>(obj);
+}

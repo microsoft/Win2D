@@ -289,6 +289,50 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowHR(E_FAIL);
     }
 
+    ComPtr<ICanvasDevice> CanvasDeviceManager::GetSharedDevice(
+        CanvasHardwareAcceleration hardwareAcceleration)
+    {
+        if (hardwareAcceleration == CanvasHardwareAcceleration::Unknown)
+            ThrowHR(E_INVALIDARG, HStringReference(Strings::GetSharedDeviceUnknown).Get());
+
+        //
+        // This code, unlike other non-control APIs, cannot rely on the D2D
+        // API lock. CanvasDeviceManager keeps its own lock for this purpose.
+        //
+        Lock lock(m_mutex);
+
+        int cacheIndex = static_cast<int>(hardwareAcceleration);
+        assert(cacheIndex < _countof(m_sharedDevices));
+
+        //
+        // If the returned device is null, it has the side effect of nulling
+        // out m_sharedDevices[cacheIndex].
+        //
+        ComPtr<ICanvasDevice> device = LockWeakRef<ICanvasDevice>(m_sharedDevices[cacheIndex]);
+
+        if (m_sharedDevices[cacheIndex])
+        {
+            if (device && FAILED(static_cast<CanvasDevice*>(device.Get())->GetDeviceRemovedErrorCode()))
+            {
+                device->RaiseDeviceLost();
+                m_sharedDevices[cacheIndex].Reset();
+            }
+        }
+
+        if (!m_sharedDevices[cacheIndex])
+        {
+            auto newDevice = Create(CanvasDebugLevel::None, hardwareAcceleration);
+            m_sharedDevices[cacheIndex] = AsWeak(newDevice.Get());
+            return newDevice;
+        }
+        else
+        {
+            assert(device);
+            return device;
+        }
+
+    }
+
 
     //
     // CanvasDeviceFactory
@@ -343,20 +387,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-
     _Use_decl_annotations_
-    IFACEMETHODIMP CanvasDeviceFactory::ActivateInstance(IInspectable **object)
+        IFACEMETHODIMP CanvasDeviceFactory::ActivateInstance(IInspectable **object)
+    {
+        return ExceptionBoundary(
+            [&]
+        {
+            CheckAndClearOutPointer(object);
+
+            auto newCanvasDevice = GetManager()->Create(
+                CanvasDebugLevel::None,
+                CanvasHardwareAcceleration::Auto);
+
+            ThrowIfFailed(newCanvasDevice.CopyTo(object));
+        });
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::GetSharedDevice(
+        CanvasHardwareAcceleration hardwareAcceleration,
+        ICanvasDevice** device)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckAndClearOutPointer(object);
+                CheckAndClearOutPointer(device);
 
-                auto newCanvasDevice = GetManager()->Create(
-                    CanvasDebugLevel::None,
-                    CanvasHardwareAcceleration::Auto);
+                auto sharedDevice = GetManager()->GetSharedDevice(hardwareAcceleration);
 
-                ThrowIfFailed(newCanvasDevice.CopyTo(object));
+                ThrowIfFailed(sharedDevice.CopyTo(device));
             });
     }
 
@@ -462,14 +520,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+                GetResource();  // this ensures that Close() hasn't been called
 
                 CheckInPointer(value);
 
                 if (DeviceLostException::IsDeviceLostHResult(hresult))
                 {
-                    auto d3dDevice = As<ID3D11Device>(dxgiDevice);
-                    *value = d3dDevice->GetDeviceRemovedReason() != S_OK;
+                    *value = GetDeviceRemovedErrorCode() != S_OK;
                 }
                 else
                 {
@@ -931,6 +988,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<IDXGIOutput> CanvasDevice::GetPrimaryDisplayOutput()
     {
         return m_primaryOutput;
+    }
+
+    HRESULT CanvasDevice::GetDeviceRemovedErrorCode()
+    {
+        auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+        auto d3dDevice = As<ID3D11Device>(dxgiDevice);
+
+        return d3dDevice->GetDeviceRemovedReason();
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

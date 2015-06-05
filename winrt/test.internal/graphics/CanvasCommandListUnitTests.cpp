@@ -118,13 +118,6 @@ TEST_CLASS(CanvasCommandListTests)
         Assert::IsTrue(weakToken.expired());
     }
 
-    bool IsWeakRefValid(WeakRef weakRef)
-    {
-        ComPtr<IInspectable> obj;
-        ThrowIfFailed(weakRef.As(&obj));        
-        return static_cast<bool>(obj);
-    }
-
     TEST_METHOD_EX(CanvasCommandList_WhenClosed_DeviceIsReleased)
     {
         Fixture f;

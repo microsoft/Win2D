@@ -59,6 +59,19 @@ namespace Microsoft.Graphics.Canvas
             [in] IDIRECT3DDEVICE* direct3DDevice,
             [in] CanvasDebugLevel debugLevel,
             [out, retval] CanvasDevice** canvasDevice);
+        
+        //
+        // This may create a new device, or return an existing one from the 
+        // pool.
+        //
+        // The implementation checks if a device is already lost before it 
+        // returns it. If the device is already lost it will recreate it.
+        // 
+        // CanvasHardwareAcceleration.Unknown is not a valid parameter.
+        //
+        HRESULT GetSharedDevice(
+            [in] CanvasHardwareAcceleration hardwareAcceleration, 
+            [out, retval] CanvasDevice** canvasDevice);
     };
 
     [version(VERSION), uuid(A27F0B5D-EC2C-4D4F-948F-0AA1E95E33E6), exclusiveto(CanvasDevice)]

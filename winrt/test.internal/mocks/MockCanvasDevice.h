@@ -80,6 +80,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(add_DeviceLostMethod, HRESULT(DeviceLostHandlerType*, EventRegistrationToken*));
         CALL_COUNTER_WITH_MOCK(remove_DeviceLostMethod, HRESULT(EventRegistrationToken));
 
+        CALL_COUNTER_WITH_MOCK(GetDeviceRemovedErrorCodeMethod, HRESULT());
+
         //
         // ICanvasDevice
         //

@@ -78,4 +78,22 @@ TEST_CLASS(CanvasDeviceTests)
         Assert::AreEqual(originalCanvasDevice, newCanvasDevice);
         Assert::AreEqual(originalD2DDevice.Get(), newD2DDevice.Get());
     }
+
+    TEST_METHOD(CanvasDevice_GetSharedDevice_UnknownNotAllowed)
+    {        
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::Unknown);
+            });
+    }
+
+    TEST_METHOD(CanvasDevice_GetSharedDevice_ReturnsExisting)
+    {
+        auto d1 = CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::On);
+
+        auto d2 = CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::On);
+
+        Assert::AreEqual(d1, d2);
+    }
 };
