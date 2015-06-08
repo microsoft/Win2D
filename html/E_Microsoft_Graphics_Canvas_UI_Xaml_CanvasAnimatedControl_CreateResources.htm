@@ -11,4 +11,12 @@
           details.
         </p><p>
           The CreateResources event is raised on XAML's UI thread.
+        </p><p>
+        If your app cannot be structured in a way where it loads all of its resources
+        at the beginning (for example, a game with multiple levels, and the levels require
+        different assets), see the note 'On loading resources at different times' in CanvasControl.
+        <a href="E_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl_CreateResources.htm">CreateResources</a>.
+        For CanvasAnimatedControl, note that awaiting on asynchronous work in an event
+        handler such as Draw or Update will cause the app to continue on an arbitrary thread,
+        and not necessarily the game loop thread.
         </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl.htm">CanvasAnimatedControl Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_UI_Xaml.htm">Microsoft.Graphics.Canvas.UI.Xaml Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
