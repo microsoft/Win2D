@@ -20,6 +20,7 @@ using System;
 using System.Numerics;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.Xaml.Controls;
 
 namespace ExampleGallery
@@ -41,10 +42,6 @@ namespace ExampleGallery
         public CustomFonts()
         {
             this.InitializeComponent();
-           
-            animatedControl.Input.PointerPressed += Input_PointerPressed;
-            animatedControl.Input.PointerReleased += Input_PointerReleased;
-            animatedControl.Input.PointerMoved += Input_PointerMoved;
         }
 
         static CanvasTextFormat labelText = new CanvasTextFormat()
@@ -66,6 +63,41 @@ namespace ExampleGallery
 
         CanvasLinearGradientBrush textOpacityBrush;
         CanvasLinearGradientBrush blurOpacityBrush;
+
+        GestureRecognizer gestureRecognizer;
+
+        private async void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            await animatedControl.RunOnGameLoopThreadAsync(() =>
+            {
+                //
+                // The GestureRecognizer needs to be created and accessed from the 
+                // same thread -- in this case the game loop thread, so RunOnGameLoopThreadAsync 
+                // is used.
+                //
+
+                gestureRecognizer = new GestureRecognizer();
+                gestureRecognizer.GestureSettings = GestureSettings.ManipulationTranslateInertia | GestureSettings.ManipulationTranslateY;
+                
+                gestureRecognizer.ManipulationStarted += gestureRecognizer_ManipulationStarted;
+                gestureRecognizer.ManipulationUpdated += gestureRecognizer_ManipulationUpdated;
+                gestureRecognizer.ManipulationCompleted += gestureRecognizer_ManipulationCompleted;
+
+                gestureRecognizer.InertiaTranslationDeceleration = -0.05f;
+
+                //
+                // When the GestureRecognizer goes into intertia mode (ie after the pointer is released)
+                // we want it to generate ManipulationUpdated events in sync with the game loop's Update.
+                // We do this by disabling AutoProcessIntertia and explicitly calling ProcessInertia() 
+                // from the Update.
+                //
+                gestureRecognizer.AutoProcessInertia = false;
+
+                animatedControl.Input.PointerPressed += Input_PointerPressed;
+                animatedControl.Input.PointerMoved += Input_PointerMoved;
+                animatedControl.Input.PointerReleased += Input_PointerReleased;
+            });
+        }
 
         private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
         {
@@ -90,35 +122,51 @@ namespace ExampleGallery
             blurOpacityBrush = new CanvasLinearGradientBrush(sender, stops, CanvasEdgeBehavior.Clamp, CanvasAlphaMode.Premultiplied);
         }
 
-        float offset = 0;
-        float velocity = 0;
-
-        float startOffset;
-        float lastDelta;
-        float startPoint;
+        //
+        // The various Pointer events just forward to the GestureRecognizer
+        //
 
         private void Input_PointerPressed(object sender, PointerEventArgs args)
         {
-            startPoint = (float)args.CurrentPoint.Position.Y;
-            startOffset = offset;
-            velocity = 0;
+            gestureRecognizer.ProcessDownEvent(args.CurrentPoint);
+            args.Handled = true;
         }
 
         private void Input_PointerMoved(object sender, PointerEventArgs args)      
         {
-            if (!args.CurrentPoint.IsInContact)
-                return;
-
-            float point = (float)args.CurrentPoint.Position.Y;
-            lastDelta = startPoint - point;
-            offset = startOffset + (float)lastDelta;
-            velocity = 0;
+            gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints());
+            args.Handled = true;
         }
 
         private void Input_PointerReleased(object sender, PointerEventArgs args)
         {
-            velocity = lastDelta / 30.0f;
+            gestureRecognizer.ProcessUpEvent(args.CurrentPoint);
+            args.Handled = true;
         }
+
+        float offset = 0;
+        float velocity = 0;
+        const float targetSpeed = 2;
+        float targetVelocity = targetSpeed;        
+        bool inManipulation;
+
+        void gestureRecognizer_ManipulationStarted(GestureRecognizer sender, ManipulationStartedEventArgs args)
+        {
+            velocity = 0;
+            inManipulation = true;
+        }
+
+        void gestureRecognizer_ManipulationUpdated(GestureRecognizer sender, ManipulationUpdatedEventArgs args)
+        {
+            offset = offset - (float)args.Delta.Translation.Y;
+            targetVelocity = -Math.Sign(args.Velocities.Linear.Y) * targetSpeed;
+        }
+
+        void gestureRecognizer_ManipulationCompleted(GestureRecognizer sender, ManipulationCompletedEventArgs args)
+        {
+            inManipulation = false;
+        }
+
 
 
         int firstLine;
@@ -129,16 +177,25 @@ namespace ExampleGallery
             float height = (float)sender.Size.Height;
             float totalHeight = characters.Length * lineHeight + height;
 
-            offset = (offset + velocity) % totalHeight;
+            if (inManipulation)
+            {
+                if (gestureRecognizer != null)
+                    gestureRecognizer.ProcessInertia();
+            }
+            else
+            {
+                velocity = velocity * 0.90f + targetVelocity * 0.10f;
+
+                offset = offset + velocity;                
+            }
+
+            offset = offset % totalHeight;
             while (offset < 0)
                 offset += totalHeight;
-
-            velocity = velocity * 0.90f + 2.0f * 0.10f;
 
             float top = height - offset;
             firstLine = Math.Max(0, (int)(-top / lineHeight));
             lastLine = Math.Min(characters.Length, (int)((height + lineHeight - top) / lineHeight));
-
         }
 
         private CanvasCommandList GenerateTextDisplay(ICanvasResourceCreator resourceCreator, float width, float height)

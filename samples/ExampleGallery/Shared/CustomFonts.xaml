@@ -42,8 +42,10 @@ under the License.
    FontFamily="Symbols.ttf#Symbols"
  }</Span>
         </TextBlock>
-       
-        <canvas:CanvasAnimatedControl x:Name="animatedControl" ClearColor="CornflowerBlue" CreateResources="OnCreateResources" Update="OnUpdate" Draw="OnDraw" Grid.Row="1"/>
+
+        <canvas:CanvasAnimatedControl x:Name="animatedControl" ClearColor="CornflowerBlue" Grid.Row="1"
+                                      Loaded="OnLoaded" CreateResources="OnCreateResources" 
+                                      Update="OnUpdate" Draw="OnDraw" />
 
         <TextBlock Grid.Row="2" Margin="5" Style="{ThemeResource BaseTextBlockStyle}">
             This example uses Symbols.ttf, available from:<LineBreak />
