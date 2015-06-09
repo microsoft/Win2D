@@ -34,19 +34,18 @@ under the License.
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
-            <ToggleButton Content="Slow" IsChecked="{Binding Slow, ElementName=control, Mode=TwoWay}"/>
-            <ToggleButton Content="Pause" IsChecked="{Binding Paused, ElementName=control, Mode=TwoWay}"/>
-            <Button Content="Randomize" Click="RandomizeSimulation"/>
-            <Button Content="Clear" Click="ClearSimulation"/>
+            <ToggleButton Content="Slow" IsChecked="{Binding Slow, ElementName=control, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+            <ToggleButton Content="Pause" IsChecked="{Binding Paused, ElementName=control, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+            <Button Content="Randomize" Click="RandomizeSimulation" HorizontalAlignment="Stretch"/>
+            <Button Content="Clear" Click="ClearSimulation" HorizontalAlignment="Stretch"/>
             <TextBlock Width="100" Margin="5" TextWrapping="WrapWholeWords">Click on the main view to draw custom cell patterns</TextBlock>
         </StackPanel>
 
-        <canvas:CanvasControl x:Name="canvas"
-                              Grid.Column="1" Margin="5"
-                              Draw="Canvas_Draw"
-                              CreateResources="Canvas_CreateResources"
-                              PointerPressed="Canvas_PointerPressed"
-                              PointerReleased="Canvas_PointerReleased"
-                              PointerMoved="Canvas_PointerMoved"/>
+        <canvas:CanvasAnimatedControl x:Name="canvas"
+                                      Grid.Column="1" Margin="5"
+                                      Loaded="Canvas_Loaded"
+                                      Update="Canvas_Update"
+                                      Draw="Canvas_Draw"
+                                      CreateResources="Canvas_CreateResources"/>    
     </Grid>
 </UserControl>
